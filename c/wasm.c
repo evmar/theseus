@@ -2,30 +2,6 @@
 #include "wasm.h"
 #include "kernel32.h"
 
-typedef struct {
-    u32 eax, ecx, edx, ebx;
-    u32 esp;
-} Regs;
-
-static Regs* regs = (Regs*)0x1000;
-
-inline void push(u32 x) {
-    regs->esp -= 4;
-    *((u32*)regs->esp) = x;
-}
-
-inline void stdcall_GetStdHandle() {
-    u32* stack = (u32*)regs->esp;
-    regs->eax = kernel32_GetStdHandle(stack[0]);
-    regs->esp += 4;
-}
-
-inline void stdcall_WriteFile() {
-    u32* stack = (u32*)regs->esp;
-    regs->eax = kernel32_WriteFile(stack[0], stack[1], stack[2], stack[3], stack[4]);
-    regs->esp += 5*4;
-}
-
 export void x401000(int x) {
     regs->esp = 0x2000;
     u8* mem  = (u8*)0x402000;
