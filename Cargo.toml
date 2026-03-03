@@ -1,0 +1,8 @@
+[workspace]
+resolver = "2"
+members = [
+  "fc"
+]
+
+[workspace.dependencies]
+pe = { path = "../../win/rs/pe" }
