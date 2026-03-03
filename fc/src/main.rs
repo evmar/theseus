@@ -1,17 +1,21 @@
 mod memory;
 
+use std::collections::HashMap;
+
 use memory::*;
 
 #[derive(Debug)]
 struct State {
     pe_file: pe::File,
     mem: Memory,
+    imports: HashMap<u32, (String, String)>,
 }
 
 impl State {
     fn new(buf: Vec<u8>) -> State {
         let f = pe::File::parse(&buf).unwrap();
         let mut mem = Memory::default();
+
         let image_base = AddrAbs(f.opt_header.ImageBase);
         mem.alloc("exe header".into(), image_base, 0x1000);
         mem.put(image_base, &buf[..0x1000.min(buf.len())]);
@@ -25,11 +29,41 @@ impl State {
         }
         println!("{:#x?}", mem);
 
-        State { pe_file: f, mem }
+        State {
+            pe_file: f,
+            mem,
+            imports: Default::default(),
+        }
+    }
+
+    fn read_imports(&mut self) {
+        let Some(imports) = self
+            .pe_file
+            .get_data_directory(pe::IMAGE_DIRECTORY_ENTRY::IMPORT)
+        else {
+            return;
+        };
+        let image_base = self.image_base();
+        let image = self.mem.slice_all(image_base);
+        for imp in pe::read_imports(imports.as_slice(image).unwrap()) {
+            let name = std::str::from_utf8(imp.image_name(image)).unwrap();
+            println!("{name:?}");
+            for (addr, entry) in imp.iat_iter(image) {
+                let addr = AddrImage(addr);
+                self.imports.insert(
+                    addr.to_abs(image_base).0,
+                    (name.into(), entry.as_import_symbol(image).to_string()),
+                );
+            }
+        }
     }
 
     fn image_base(&self) -> AddrAbs {
         AddrAbs(self.pe_file.opt_header.ImageBase)
+    }
+
+    fn image(&self) -> &[u8] {
+        self.mem.slice_all(self.image_base())
     }
 }
 
@@ -37,23 +71,18 @@ fn main() {
     let buf = std::fs::read("../../win/rs/exe/winapi/winapi.exe").unwrap();
     let mut state = State::new(buf);
     let image_base = state.image_base();
-    println!("{:#x?}", state);
+    state.read_imports();
+    println!("{:#x?}", state.imports);
 
     let ip = AddrImage(state.pe_file.opt_header.AddressOfEntryPoint);
-    let mapping = state.mem.find(ip.to_abs(image_base));
-
     let mut decoder = iced_x86::Decoder::with_ip(
         32,
-        &mapping.data,
-        ip.to_abs(image_base).to_mapping(&mapping).0 as u64,
+        &state.mem.data[ip.to_abs(image_base).0 as usize..],
+        ip.to_abs(image_base).0 as u64,
         iced_x86::DecoderOptions::NONE,
     );
     for instr in &mut decoder {
-        println!(
-            "{:08x} {}",
-            AddrMapping(instr.ip32()).to_abs(mapping),
-            instr
-        );
+        println!("{:08x} {}", AddrAbs(instr.ip32()).0, instr);
         if instr.flow_control() != iced_x86::FlowControl::Next {
             if instr.mnemonic() == iced_x86::Mnemonic::Call {
             } else {
