@@ -2,7 +2,7 @@
 resolver = "2"
 members = [
   "fc"
-]
+, "kernel32"]
 
 [workspace.dependencies]
 pe = { path = "../../win/rs/pe" }
