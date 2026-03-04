@@ -19,7 +19,7 @@ pub fn stdcall_GetStdHandle() {
 }
 
 pub fn WriteFile(hFile: u32, lpBuffer: u32, n: u32, nr: u32, o: u32) -> u32 {
-    let buf = format!("WriteFile({hFile:x} {lpBuffer:x} {n:x} {nr:x} {o:x})");
+    let buf = format!("WriteFile({hFile:x} {lpBuffer:x} {n:x} {nr:x} {o:x})\n");
     HOST.print(buf.as_bytes());
 
     if hFile == 1 {

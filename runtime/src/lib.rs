@@ -10,7 +10,7 @@ static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
 unsafe extern "C" {
     #[link_name = "panic"]
     safe fn host_panic(s: u32, len: u32);
-    safe fn console_log(s: u32, len: u32);
+    safe fn print(s: u32, len: u32);
 }
 
 pub trait Host {
@@ -25,7 +25,7 @@ impl Host for WasmHost {
     }
 
     fn print(&self, text: &[u8]) {
-        console_log(text.as_ptr() as u32, text.len() as u32);
+        print(text.as_ptr() as u32, text.len() as u32);
     }
 }
 

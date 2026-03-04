@@ -86,4 +86,12 @@ fn main() {
             }
         }
     }
+
+    for map in &state.mem.mappings {
+        std::fs::write(
+            format!("exe/data/{:08x}.raw", map.addr.0),
+            state.mem.slice(map.addr, map.len),
+        )
+        .unwrap();
+    }
 }

@@ -10,9 +10,9 @@ async function main() {
   const imports = {
     env: { memory },
     host: {
-      console_log(addr, len) {
+      print(addr, len) {
         let text = utf8.decode(memory.buffer.slice(addr, addr + len));
-        console.log(text);
+        process.stdout.write(text);
       },
       panic(addr, len) {
         let text = utf8.decode(memory.buffer.slice(addr, addr + len));

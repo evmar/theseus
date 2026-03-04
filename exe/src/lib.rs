@@ -2,11 +2,23 @@
 
 use runtime::{REGS, push};
 
+fn init_memory() {
+    unsafe {
+        let sections = [
+            (0x40_0000, include_bytes!("../data/00400000.raw").as_slice()),
+            (0x40_1000, include_bytes!("../data/00401000.raw")),
+            (0x40_2000, include_bytes!("../data/00402000.raw")),
+            (0x40_3000, include_bytes!("../data/00403000.raw")),
+        ];
+        for (addr, data) in sections {
+            let out = core::slice::from_raw_parts_mut(addr as *mut _, data.len());
+            out.copy_from_slice(data);
+        }
+    }
+}
+
 fn x401000() {
     unsafe {
-        let mem: *mut u8 = 0x402000 as *mut u8;
-        *mem = b'h';
-
         /*
         00401000 push 0FFFFFFF5h
         00401002 call dword ptr ds:[402058h]
@@ -34,5 +46,6 @@ fn x401000() {
 
 #[unsafe(no_mangle)]
 pub extern "C" fn entry_point() {
+    init_memory();
     x401000();
 }
