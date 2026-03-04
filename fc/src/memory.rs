@@ -1,3 +1,5 @@
+#![allow(unused)]
+
 pub struct Mapping {
     pub name: String,
     pub addr: AddrAbs,

@@ -61,10 +61,6 @@ impl State {
     fn image_base(&self) -> AddrAbs {
         AddrAbs(self.pe_file.opt_header.ImageBase)
     }
-
-    fn image(&self) -> &[u8] {
-        self.mem.slice_all(self.image_base())
-    }
 }
 
 fn main() {
