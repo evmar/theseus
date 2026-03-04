@@ -3,6 +3,12 @@
 use runtime::{REGS, push};
 
 fn init_memory() {
+    // It would be cool if we could just link a wasm object file that contains data sections
+    // like
+    //   (data (i32.const 0x400000) "....")
+    // Unfortunately, wasm-lld only supports "relocatable" object files which means it moves
+    // the location of such data at link time.  We could do it by postprocessing the wasm
+    // file, maybe.
     unsafe {
         let sections = [
             (0x40_0000, include_bytes!("../data/00400000.raw").as_slice()),
