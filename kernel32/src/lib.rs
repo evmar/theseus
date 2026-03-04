@@ -1,7 +1,7 @@
 #![no_std]
 #![allow(non_snake_case)]
 
-use runtime::{HOST, Host};
+use runtime::{HOST, Host, REGS};
 
 #[macro_use]
 extern crate alloc;
@@ -9,25 +9,6 @@ extern crate alloc;
 pub fn GetStdHandle(_x: u32) -> u32 {
     return 1;
 }
-
-#[repr(C)]
-pub struct Regs {
-    pub eax: u32,
-    pub ecx: u32,
-    pub edx: u32,
-    pub ebx: u32,
-
-    pub esp: u32,
-}
-
-pub static mut REGS: Regs = Regs {
-    eax: 0,
-    ecx: 0,
-    edx: 0,
-    ebx: 0,
-    esp: 0x2000,
-};
-//const REGS: &mut Regs = unsafe { &mut *(0x1000 as *mut Regs) };
 
 pub fn stdcall_GetStdHandle() {
     unsafe {

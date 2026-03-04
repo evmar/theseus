@@ -1,13 +1,6 @@
 #![no_std]
 
-use kernel32::REGS;
-
-fn push(x: u32) {
-    unsafe {
-        REGS.esp -= 4;
-        *(REGS.esp as *mut u32) = x;
-    }
-}
+use runtime::{REGS, push};
 
 fn x401000() {
     unsafe {

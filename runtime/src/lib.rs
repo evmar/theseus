@@ -39,3 +39,29 @@ fn panic(info: &core::panic::PanicInfo) -> ! {
         core::hint::unreachable_unchecked();
     }
 }
+
+#[repr(C)]
+pub struct Regs {
+    pub eax: u32,
+    pub ecx: u32,
+    pub edx: u32,
+    pub ebx: u32,
+
+    pub esp: u32,
+}
+
+pub static mut REGS: Regs = Regs {
+    eax: 0,
+    ecx: 0,
+    edx: 0,
+    ebx: 0,
+    esp: 0x2000,
+};
+//const REGS: &mut Regs = unsafe { &mut *(0x1000 as *mut Regs) };
+
+pub fn push(x: u32) {
+    unsafe {
+        REGS.esp -= 4;
+        *(REGS.esp as *mut u32) = x;
+    }
+}
