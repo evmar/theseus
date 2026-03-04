@@ -8,4 +8,4 @@ crate-type = ["cdylib"]
 
 [dependencies]
 kernel32 = { path = "../kernel32" }
-wee_alloc = "0.4.5"
+runtime = { workspace = true }

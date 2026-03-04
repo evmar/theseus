@@ -40,6 +40,9 @@ dependencies = [
 [[package]]
 name = "kernel32"
 version = "0.1.0"
+dependencies = [
+ "runtime",
+]
 
 [[package]]
 name = "lazy_static"
@@ -83,11 +86,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "runtime"
+version = "0.1.0"
+dependencies = [
+ "wee_alloc",
+]
+
+[[package]]
 name = "wasm"
 version = "0.1.0"
 dependencies = [
  "kernel32",
- "wee_alloc",
+ "runtime",
 ]
 
 [[package]]

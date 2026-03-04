@@ -2,9 +2,6 @@
 
 use kernel32::REGS;
 
-#[global_allocator]
-static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
-
 fn push(x: u32) {
     unsafe {
         REGS.esp -= 4;
@@ -12,8 +9,7 @@ fn push(x: u32) {
     }
 }
 
-#[unsafe(no_mangle)]
-pub extern "C" fn x401000() {
+fn x401000() {
     unsafe {
         let mem: *mut u8 = 0x402000 as *mut u8;
         *mem = b'h';
@@ -43,7 +39,7 @@ pub extern "C" fn x401000() {
     }
 }
 
-#[panic_handler]
-fn panic(_info: &core::panic::PanicInfo) -> ! {
-    loop {}
+#[unsafe(no_mangle)]
+pub extern "C" fn entry_point() {
+    x401000();
 }

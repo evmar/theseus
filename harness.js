@@ -13,20 +13,18 @@ async function main() {
     env: { memory },
     host: {
       console_log(addr, len) {
-        console.log("console.log", addr.toString(16), len);
         let text = utf8.decode(memory.buffer.slice(addr, addr + len));
         console.log(text);
       },
       panic(addr, len) {
-        console.log("panic", addr.toString(16), len);
         let text = utf8.decode(memory.buffer.slice(addr, addr + len));
-        console.error("panic", JSON.stringify(text));
+        throw new Error(text);
       },
     },
   };
   const mod = await WebAssembly.instantiate(buf, imports);
-  const { x401000 } = mod.instance.exports;
-  x401000();
+  const { entry_point } = mod.instance.exports;
+  entry_point();
 }
 
 main().catch((err) => console.error(err));

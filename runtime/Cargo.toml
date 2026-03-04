@@ -1,7 +1,7 @@
 [package]
-name = "kernel32"
+name = "runtime"
 version = "0.1.0"
 edition = "2024"
 
 [dependencies]
-runtime = { workspace = true }
+wee_alloc = "0.4.5"

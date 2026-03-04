@@ -3,8 +3,10 @@ resolver = "2"
 members = [
     "fc",
     "kernel32",
+    "runtime",
     "wasm"
 ]
 
 [workspace.dependencies]
 pe = { path = "../../win/rs/pe" }
+runtime = { path = "runtime" }

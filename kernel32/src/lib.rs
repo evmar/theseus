@@ -1,14 +1,10 @@
 #![no_std]
 #![allow(non_snake_case)]
 
-extern crate alloc;
+use runtime::{HOST, Host};
 
-#[link(wasm_import_module = "host")]
-unsafe extern "C" {
-    safe fn console_log(s: u32, len: u32);
-    #[link_name = "panic"]
-    safe fn panic_(s: u32, len: u32);
-}
+#[macro_use]
+extern crate alloc;
 
 pub fn GetStdHandle(_x: u32) -> u32 {
     return 1;
@@ -42,13 +38,13 @@ pub fn stdcall_GetStdHandle() {
 }
 
 pub fn WriteFile(hFile: u32, lpBuffer: u32, n: u32, nr: u32, o: u32) -> u32 {
-    let buf = alloc::format!("WriteFile {hFile:x} {lpBuffer:x} {n:x} {nr:x} {o:x}");
-    console_log(buf.as_ptr() as u32, buf.len() as u32);
+    let buf = format!("WriteFile({hFile:x} {lpBuffer:x} {n:x} {nr:x} {o:x})");
+    HOST.print(buf.as_bytes());
 
     if hFile == 1 {
-        console_log(lpBuffer, n);
+        HOST.print(unsafe { core::slice::from_raw_parts(lpBuffer as *const u8, n as usize) });
     } else {
-        panic_("writefile".as_ptr() as u32, 9);
+        todo!("WriteFile(hFile={hFile:x})");
     }
     return 1;
 }
