@@ -1,0 +1,11 @@
+[package]
+name = "wasm"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+kernel32 = { path = "../kernel32" }
+wee_alloc = "0.4.5"

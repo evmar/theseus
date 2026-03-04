@@ -1,8 +1,10 @@
 [workspace]
 resolver = "2"
 members = [
-  "fc"
-, "kernel32"]
+    "fc",
+    "kernel32",
+    "wasm"
+]
 
 [workspace.dependencies]
 pe = { path = "../../win/rs/pe" }
