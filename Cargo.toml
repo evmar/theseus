@@ -1,10 +1,10 @@
 [workspace]
 resolver = "2"
 members = [
+    "exe",
     "fc",
     "kernel32",
     "runtime",
-    "wasm"
 ]
 
 [workspace.dependencies]

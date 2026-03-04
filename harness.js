@@ -3,9 +3,7 @@ const fs = require("node:fs");
 const utf8 = new TextDecoder();
 
 async function main() {
-  const buf = fs.readFileSync(
-    "target/wasm32-unknown-unknown/release/wasm.wasm",
-  );
+  const buf = fs.readFileSync("target/wasm32-unknown-unknown/release/exe.wasm");
   const memory = new WebAssembly.Memory({
     initial: (0x40_0000 * 2) / (64 << 10),
   });
