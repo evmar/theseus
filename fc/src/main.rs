@@ -63,6 +63,75 @@ impl State {
     }
 }
 
+fn is_abs_addr(instr: iced_x86::Instruction) -> Option<u32> {
+    let iced_x86::OpKind::Memory = instr.op0_kind() else {
+        return None;
+    };
+    let iced_x86::Register::None = instr.memory_base() else {
+        return None;
+    };
+    let iced_x86::Register::None = instr.memory_index() else {
+        return None;
+    };
+    Some(instr.memory_displacement32())
+}
+
+fn gen_op(instr: iced_x86::Instruction, n: u32) -> String {
+    use iced_x86::OpKind::*;
+    use iced_x86::Register::*;
+    match instr.op_kind(n) {
+        Immediate8to32 => format!("{:#x}u32", instr.immediate8to32()),
+        Immediate32 => format!("{:#x}u32", instr.immediate32()),
+        Register => match instr.op_register(n) {
+            EAX => format!("REGS.eax"),
+            ECX => format!("REGS.ecx"),
+            EDX => format!("REGS.edx"),
+            EBX => format!("REGS.ebx"),
+            r => todo!("{:?}", r),
+        },
+        k => todo!("{:?}", k),
+    }
+}
+
+fn gen_block(state: &State, buf: &[u8], ip: AddrAbs) {
+    let mut decoder =
+        iced_x86::Decoder::with_ip(32, buf, ip.0 as u64, iced_x86::DecoderOptions::NONE);
+
+    for instr in &mut decoder {
+        println!("// {:08x} {}", AddrAbs(instr.ip32()).0, instr);
+        match instr.mnemonic() {
+            iced_x86::Mnemonic::Push => println!("push({});", gen_op(instr, 0)),
+            iced_x86::Mnemonic::Call => {
+                if let Some(addr) = is_abs_addr(instr) {
+                    if let Some((dll, func)) = state.imports.get(&addr) {
+                        println!("todo!(\"{dll}:{func}\");");
+                    } else {
+                        todo!("{}", instr);
+                    }
+                } else {
+                    todo!("{}", instr);
+                }
+            }
+            iced_x86::Mnemonic::Xor => {
+                let op0 = gen_op(instr, 0);
+                let op1 = gen_op(instr, 1);
+                println!("{op0} ^= {op1};");
+            }
+            iced_x86::Mnemonic::Ret => {
+                println!("return None;");
+            }
+
+            c => todo!("{:?}", c),
+        }
+        if instr.flow_control() != iced_x86::FlowControl::Next {
+            match instr.mnemonic() {
+                iced_x86::Mnemonic::Call => {}
+                _ => break,
+            }
+        }
+    }
+}
+
 fn main() {
     let args = std::env::args().collect::<Vec<_>>();
     let [_, exe_path, outdir] = args.as_slice() else {
@@ -76,22 +145,9 @@ fn main() {
     state.read_imports();
     println!("{:#x?}", state.imports);
 
-    let ip = AddrImage(state.pe_file.opt_header.AddressOfEntryPoint);
-    let mut decoder = iced_x86::Decoder::with_ip(
-        32,
-        &state.mem.data[ip.to_abs(image_base).0 as usize..],
-        ip.to_abs(image_base).0 as u64,
-        iced_x86::DecoderOptions::NONE,
-    );
-    for instr in &mut decoder {
-        println!("{:08x} {}", AddrAbs(instr.ip32()).0, instr);
-        if instr.flow_control() != iced_x86::FlowControl::Next {
-            if instr.mnemonic() == iced_x86::Mnemonic::Call {
-            } else {
-                break;
-            }
-        }
-    }
+    let ip = AddrImage(state.pe_file.opt_header.AddressOfEntryPoint).to_abs(image_base);
+
+    gen_block(&state, &state.mem.data[ip.0 as usize..], ip);
 
     for map in &state.mem.mappings {
         std::fs::write(
