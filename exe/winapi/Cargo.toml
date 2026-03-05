@@ -1,5 +1,5 @@
 [package]
-name = "exe"
+name = "winapi-exe"
 version = "0.1.0"
 edition = "2024"
 
@@ -7,5 +7,5 @@ edition = "2024"
 crate-type = ["cdylib"]
 
 [dependencies]
-kernel32 = { path = "../kernel32" }
+kernel32 = { workspace = true }
 runtime = { workspace = true }

@@ -3,7 +3,12 @@ const fs = require("node:fs");
 const utf8 = new TextDecoder();
 
 async function main() {
-  const buf = fs.readFileSync("target/wasm32-unknown-unknown/release/exe.wasm");
+  const args = process.argv.slice(2);
+  if (args.length !== 1) {
+    throw new Error("Usage: node harness.js <path-to-wasm>");
+  }
+  const [path] = args;
+  const buf = fs.readFileSync(path);
   const memory = new WebAssembly.Memory({
     initial: (0x40_0000 * 2) / (64 << 10),
   });

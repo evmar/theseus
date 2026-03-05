@@ -21,14 +21,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4785bdd1c96b2a846b2bd7cc02e86b6b3dbf14e7e53446c4f54c92a361040822"
 
 [[package]]
-name = "exe"
-version = "0.1.0"
-dependencies = [
- "kernel32",
- "runtime",
-]
-
-[[package]]
 name = "fc"
 version = "0.1.0"
 dependencies = [
@@ -120,6 +112,14 @@ checksum = "5c839a674fcd7a98952e593242ea400abe93992746761e38641405d28b00f419"
 dependencies = [
  "winapi-i686-pc-windows-gnu",
  "winapi-x86_64-pc-windows-gnu",
+]
+
+[[package]]
+name = "winapi-exe"
+version = "0.1.0"
+dependencies = [
+ "kernel32",
+ "runtime",
 ]
 
 [[package]]

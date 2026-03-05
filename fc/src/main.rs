@@ -64,7 +64,13 @@ impl State {
 }
 
 fn main() {
-    let buf = std::fs::read("../../win/rs/exe/winapi/winapi.exe").unwrap();
+    let args = std::env::args().collect::<Vec<_>>();
+    let [_, exe_path, outdir] = args.as_slice() else {
+        println!("usage: {} exe outdir", args[0]);
+        return;
+    };
+
+    let buf = std::fs::read(exe_path).unwrap();
     let mut state = State::new(buf);
     let image_base = state.image_base();
     state.read_imports();
@@ -89,7 +95,7 @@ fn main() {
 
     for map in &state.mem.mappings {
         std::fs::write(
-            format!("exe/data/{:08x}.raw", map.addr.0),
+            format!("{outdir}/data/{:08x}.raw", map.addr.0),
             state.mem.slice(map.addr, map.len),
         )
         .unwrap();

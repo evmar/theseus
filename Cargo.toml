@@ -1,7 +1,7 @@
 [workspace]
 resolver = "2"
 members = [
-    "exe",
+    "exe/winapi",
     "fc",
     "kernel32",
     "runtime",
@@ -10,3 +10,4 @@ members = [
 [workspace.dependencies]
 pe = { path = "../../win/rs/pe" }
 runtime = { path = "runtime" }
+kernel32 = { path = "kernel32" }
