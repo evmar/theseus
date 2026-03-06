@@ -4,7 +4,7 @@ pub fn x00401000() -> Option<u32> {
         // 00401000 push 0FFFFFFF5h
         push(0xfffffff5u32);
         // 00401002 call dword ptr ds:[402058h]
-        todo!("KERNEL32.dll:GetStdHandle");
+        kernel32::stdcall_GetStdHandle();
         // 00401008 xor ecx,ecx
         REGS.ecx ^= REGS.ecx;
         // 0040100a push ecx
@@ -18,7 +18,7 @@ pub fn x00401000() -> Option<u32> {
         // 00401013 push eax
         push(REGS.eax);
         // 00401014 call dword ptr ds:[40205Ch]
-        todo!("KERNEL32.dll:WriteFile");
+        kernel32::stdcall_WriteFile();
         // 0040101a ret
         return None;
     }

@@ -107,7 +107,9 @@ fn gen_block(w: &mut dyn std::fmt::Write, state: &State, buf: &[u8], ip: AddrAbs
             iced_x86::Mnemonic::Call => {
                 if let Some(addr) = is_abs_addr(instr) {
                     if let Some((dll, func)) = state.imports.get(&addr) {
-                        write!(w, "todo!(\"{dll}:{func}\");\n");
+                        let dll = dll.to_lowercase();
+                        let dll = dll.trim_end_matches(".dll");
+                        write!(w, "{dll}::stdcall_{func}();\n");
                     } else {
                         todo!("{}", instr);
                     }
