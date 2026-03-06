@@ -1,5 +1,7 @@
 #![no_std]
 
+mod generated;
+
 use runtime::{REGS, push};
 
 fn init_memory() {
@@ -53,5 +55,5 @@ fn x401000() {
 #[unsafe(no_mangle)]
 pub extern "C" fn entry_point() {
     init_memory();
-    x401000();
+    generated::x00401000();
 }

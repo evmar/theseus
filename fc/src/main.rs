@@ -1,5 +1,6 @@
 mod memory;
 
+use anyhow::{Result, anyhow, bail};
 use std::collections::HashMap;
 
 use memory::*;
@@ -93,18 +94,20 @@ fn gen_op(instr: iced_x86::Instruction, n: u32) -> String {
     }
 }
 
-fn gen_block(state: &State, buf: &[u8], ip: AddrAbs) {
+fn gen_block(w: &mut dyn std::fmt::Write, state: &State, buf: &[u8], ip: AddrAbs) {
     let mut decoder =
         iced_x86::Decoder::with_ip(32, buf, ip.0 as u64, iced_x86::DecoderOptions::NONE);
 
     for instr in &mut decoder {
-        println!("// {:08x} {}", AddrAbs(instr.ip32()).0, instr);
+        write!(w, "// {:08x} {}\n", AddrAbs(instr.ip32()).0, instr);
         match instr.mnemonic() {
-            iced_x86::Mnemonic::Push => println!("push({});", gen_op(instr, 0)),
+            iced_x86::Mnemonic::Push => {
+                write!(w, "push({});\n", gen_op(instr, 0));
+            }
             iced_x86::Mnemonic::Call => {
                 if let Some(addr) = is_abs_addr(instr) {
                     if let Some((dll, func)) = state.imports.get(&addr) {
-                        println!("todo!(\"{dll}:{func}\");");
+                        write!(w, "todo!(\"{dll}:{func}\");\n");
                     } else {
                         todo!("{}", instr);
                     }
@@ -115,10 +118,10 @@ fn gen_block(state: &State, buf: &[u8], ip: AddrAbs) {
             iced_x86::Mnemonic::Xor => {
                 let op0 = gen_op(instr, 0);
                 let op1 = gen_op(instr, 1);
-                println!("{op0} ^= {op1};");
+                write!(w, "{op0} ^= {op1};\n");
             }
             iced_x86::Mnemonic::Ret => {
-                println!("return None;");
+                write!(w, "return None;\n");
             }
 
             c => todo!("{:?}", c),
@@ -132,28 +135,70 @@ fn gen_block(state: &State, buf: &[u8], ip: AddrAbs) {
     }
 }
 
-fn main() {
+fn gen_file(state: &State, outdir: &str) -> Result<()> {
+    use std::fmt::Write;
+    let mut text = String::new();
+
+    let ip = AddrImage(state.pe_file.opt_header.AddressOfEntryPoint).to_abs(state.image_base());
+    write!(&mut text, "use runtime::{{REGS, push}};\n");
+
+    write!(&mut text, "pub fn x{:08x}() -> Option<u32> {{\n", ip.0);
+    write!(&mut text, "unsafe {{\n");
+    gen_block(&mut text, &state, &state.mem.data[ip.0 as usize..], ip);
+    write!(&mut text, "}}}}\n");
+
+    let path = format!("{outdir}/src/generated.rs");
+    let text = rustfmt(&text)?;
+    std::fs::write(&path, text).map_err(|err| anyhow!("{path}: {err}"))?;
+    Ok(())
+}
+
+fn rustfmt(text: &str) -> Result<String> {
+    use std::io::Write;
+    // Stolen from https://github.com/microsoft/windows-rs/blob/master/crates/tools/lib/src/lib.rs
+    let mut child = std::process::Command::new("rustfmt")
+        .arg("--edition")
+        .arg("2024")
+        .stdin(std::process::Stdio::piped())
+        .stdout(std::process::Stdio::piped())
+        .stderr(std::process::Stdio::piped())
+        .spawn()?;
+    let mut stdin = child.stdin.take().unwrap();
+    stdin.write_all(text.as_bytes())?;
+    drop(stdin);
+    let output = child.wait_with_output()?;
+
+    if !output.status.success() {
+        bail!("rustfmt failed: {}", std::str::from_utf8(&output.stderr)?);
+    }
+    Ok(String::from_utf8(output.stdout)?)
+}
+
+fn run() -> Result<()> {
     let args = std::env::args().collect::<Vec<_>>();
     let [_, exe_path, outdir] = args.as_slice() else {
         println!("usage: {} exe outdir", args[0]);
-        return;
+        return Ok(());
     };
 
     let buf = std::fs::read(exe_path).unwrap();
     let mut state = State::new(buf);
-    let image_base = state.image_base();
     state.read_imports();
     println!("{:#x?}", state.imports);
 
-    let ip = AddrImage(state.pe_file.opt_header.AddressOfEntryPoint).to_abs(image_base);
-
-    gen_block(&state, &state.mem.data[ip.0 as usize..], ip);
+    gen_file(&state, outdir)?;
 
     for map in &state.mem.mappings {
         std::fs::write(
             format!("{outdir}/data/{:08x}.raw", map.addr.0),
             state.mem.slice(map.addr, map.len),
-        )
-        .unwrap();
+        )?;
+    }
+    Ok(())
+}
+
+fn main() {
+    if let Err(err) = run() {
+        println!("error: {err}");
     }
 }
