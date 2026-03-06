@@ -47,7 +47,10 @@ pub struct Regs {
     pub edx: u32,
     pub ebx: u32,
 
+    pub esi: u32,
+    pub edi: u32,
     pub esp: u32,
+    pub ebp: u32,
 }
 
 pub static mut REGS: Regs = Regs {
@@ -55,7 +58,11 @@ pub static mut REGS: Regs = Regs {
     ecx: 0,
     edx: 0,
     ebx: 0,
+
+    esi: 0,
+    edi: 0,
     esp: 0x2000,
+    ebp: 0x2000,
 };
 //const REGS: &mut Regs = unsafe { &mut *(0x1000 as *mut Regs) };
 
@@ -64,4 +71,9 @@ pub fn push(x: u32) {
         REGS.esp -= 4;
         *(REGS.esp as *mut u32) = x;
     }
+}
+
+pub fn call(addr: u32) -> Option<u32> {
+    todo!("call");
+    return Some(addr);
 }

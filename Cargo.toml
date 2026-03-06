@@ -2,6 +2,7 @@
 resolver = "2"
 members = [
     "exe/winapi",
+    "exe/zig_hello",
     "fc",
     "kernel32",
     "runtime",

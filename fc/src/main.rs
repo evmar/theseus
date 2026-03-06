@@ -64,7 +64,7 @@ impl State {
     }
 }
 
-fn is_abs_addr(instr: iced_x86::Instruction) -> Option<u32> {
+fn is_abs_memory_ref(instr: iced_x86::Instruction) -> Option<u32> {
     let iced_x86::OpKind::Memory = instr.op0_kind() else {
         return None;
     };
@@ -88,6 +88,12 @@ fn gen_op(instr: iced_x86::Instruction, n: u32) -> String {
             ECX => format!("REGS.ecx"),
             EDX => format!("REGS.edx"),
             EBX => format!("REGS.ebx"),
+
+            ESI => format!("REGS.esi"),
+            EDI => format!("REGS.edi"),
+            ESP => format!("REGS.esp"),
+            EBP => format!("REGS.ebp"),
+
             r => todo!("{:?}", r),
         },
         k => todo!("{:?}", k),
@@ -105,7 +111,7 @@ fn gen_block(w: &mut dyn std::fmt::Write, state: &State, buf: &[u8], ip: AddrAbs
                 write!(w, "push({});\n", gen_op(instr, 0));
             }
             iced_x86::Mnemonic::Call => {
-                if let Some(addr) = is_abs_addr(instr) {
+                if let Some(addr) = is_abs_memory_ref(instr) {
                     if let Some((dll, func)) = state.imports.get(&addr) {
                         let dll = dll.to_lowercase();
                         let dll = dll.trim_end_matches(".dll");
@@ -113,8 +119,10 @@ fn gen_block(w: &mut dyn std::fmt::Write, state: &State, buf: &[u8], ip: AddrAbs
                     } else {
                         todo!("{}", instr);
                     }
+                } else if instr.op0_kind() == iced_x86::OpKind::NearBranch32 {
+                    write!(w, "return call({:#08x});\n", instr.near_branch32());
                 } else {
-                    todo!("{}", instr);
+                    todo!("{} {:?}", instr, instr.op0_kind());
                 }
             }
             iced_x86::Mnemonic::Xor => {
@@ -122,15 +130,30 @@ fn gen_block(w: &mut dyn std::fmt::Write, state: &State, buf: &[u8], ip: AddrAbs
                 let op1 = gen_op(instr, 1);
                 write!(w, "{op0} ^= {op1};\n");
             }
+            iced_x86::Mnemonic::And => {
+                let op0 = gen_op(instr, 0);
+                let op1 = gen_op(instr, 1);
+                write!(w, "{op0} &= {op1};\n");
+            }
+            iced_x86::Mnemonic::Sub => {
+                let op0 = gen_op(instr, 0);
+                let op1 = gen_op(instr, 1);
+                write!(w, "{op0} -= {op1};\n");
+            }
             iced_x86::Mnemonic::Ret => {
                 write!(w, "return None;\n");
             }
+            iced_x86::Mnemonic::Mov => {
+                let op0 = gen_op(instr, 0);
+                let op1 = gen_op(instr, 1);
+                write!(w, "{op0} = {op1};\n");
+            }
 
-            c => todo!("{:?}", c),
+            c => todo!("{:?} in {}", c, instr),
         }
         if instr.flow_control() != iced_x86::FlowControl::Next {
             match instr.mnemonic() {
-                iced_x86::Mnemonic::Call => {}
+                // iced_x86::Mnemonic::Call => {}
                 _ => break,
             }
         }
@@ -142,16 +165,17 @@ fn gen_file(state: &State, outdir: &str) -> Result<()> {
     let mut text = String::new();
 
     let ip = AddrImage(state.pe_file.opt_header.AddressOfEntryPoint).to_abs(state.image_base());
-    write!(&mut text, "use runtime::{{REGS, push}};\n");
+    write!(&mut text, "use runtime::*;\n");
 
     write!(&mut text, "pub fn x{:08x}() -> Option<u32> {{\n", ip.0);
     write!(&mut text, "unsafe {{\n");
     gen_block(&mut text, &state, &state.mem.data[ip.0 as usize..], ip);
     write!(&mut text, "}}}}\n");
 
+    std::fs::create_dir_all(format!("{outdir}/src"))?;
     let path = format!("{outdir}/src/generated.rs");
     let text = rustfmt(&text)?;
-    std::fs::write(&path, text).map_err(|err| anyhow!("{path}: {err}"))?;
+    std::fs::write(&path, text).map_err(|err| anyhow!("write {path}: {err}"))?;
     Ok(())
 }
 
@@ -190,6 +214,8 @@ fn run() -> Result<()> {
 
     gen_file(&state, outdir)?;
 
+    let data_dir = format!("{outdir}/data");
+    std::fs::create_dir_all(&data_dir)?;
     for map in &state.mem.mappings {
         std::fs::write(
             format!("{outdir}/data/{:08x}.raw", map.addr.0),
