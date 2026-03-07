@@ -1,5 +1,6 @@
 #![allow(unused_unsafe)]
 #![allow(unreachable_code)]
+#![allow(static_mut_refs)]
 
 use runtime::*;
 

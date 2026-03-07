@@ -14,8 +14,8 @@ pub fn GetStdHandle(_x: u32) -> u32 {
 
 pub fn stdcall_GetStdHandle() -> u32 {
     unsafe {
-        let stack: *mut u32 = REGS.esp as *mut u32;
-        REGS.eax = GetStdHandle(*stack);
+        let stack: *mut u32 = MEMORY.add(REGS.esp as usize) as *mut u32;
+        REGS.eax = GetStdHandle(*stack.add(1));
         REGS.esp += 4;
         runtime::pop()
     }
@@ -25,7 +25,7 @@ pub fn WriteFile(hFile: u32, lpBuffer: u32, n: u32, nr: u32, o: u32) -> u32 {
     let buf = format!("WriteFile({hFile:x} {lpBuffer:x} {n:x} {nr:x} {o:x})\n");
     HOST.print(buf.as_bytes());
 
-    if hFile == 1 {
+    if hFile == 0xf11e_0002 || hFile == 0xf11e_0003 {
         HOST.print(unsafe { core::slice::from_raw_parts(lpBuffer as *const u8, n as usize) });
     } else {
         todo!("WriteFile(hFile={hFile:x})");
@@ -35,13 +35,13 @@ pub fn WriteFile(hFile: u32, lpBuffer: u32, n: u32, nr: u32, o: u32) -> u32 {
 
 pub fn stdcall_WriteFile() -> u32 {
     unsafe {
-        let stack: *mut u32 = REGS.esp as *mut u32;
+        let stack: *mut u32 = MEMORY.add(REGS.esp as usize) as *mut u32;
         REGS.eax = WriteFile(
-            *stack.add(0),
             *stack.add(1),
             *stack.add(2),
             *stack.add(3),
             *stack.add(4),
+            *stack.add(5),
         );
         REGS.esp += 5 * 4;
         runtime::pop()
@@ -54,8 +54,8 @@ pub fn ExitProcess(uExitCode: u32) -> u32 {
 
 pub fn stdcall_ExitProcess() -> u32 {
     unsafe {
-        let stack: *mut u32 = REGS.esp as *mut u32;
-        REGS.eax = ExitProcess(*stack.add(0));
+        let stack: *mut u32 = MEMORY.add(REGS.esp as usize) as *mut u32;
+        REGS.eax = ExitProcess(*stack.add(1));
         REGS.esp += 4;
         runtime::pop()
     }
@@ -127,7 +127,7 @@ pub struct PEB {
 }
 
 #[repr(C)]
-#[derive(zerocopy::FromBytes, zerocopy::IntoBytes, zerocopy::KnownLayout)]
+#[derive(Debug, zerocopy::FromBytes, zerocopy::IntoBytes, zerocopy::KnownLayout)]
 struct RTL_USER_PROCESS_PARAMETERS {
     AllocationSize: u32,
     Size: u32,
@@ -149,7 +149,8 @@ pub fn init_process() {
         let buf = core::slice::from_raw_parts_mut(MEMORY.add(0x1000), 0x1000);
 
         let (params, buf) = RTL_USER_PROCESS_PARAMETERS::mut_from_prefix(buf).unwrap();
-        params.hStdOutput = 0xF113_0002;
+        params.hStdOutput = 0xF11E_0002;
+        params.hStdError = 0xF11E_0003;
 
         let (peb, buf) = PEB::mut_from_prefix(buf).unwrap();
         peb.ProcessParameters = (&raw const *params).byte_offset_from_unsigned(MEMORY) as u32;

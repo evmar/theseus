@@ -339,6 +339,7 @@ fn gen_file(state: &State, outdir: &str) -> Result<()> {
 
     write!(&mut text, "#![allow(unused_unsafe)]\n");
     write!(&mut text, "#![allow(unreachable_code)]\n\n");
+    write!(&mut text, "#![allow(static_mut_refs)]\n\n");
 
     write!(&mut text, "use runtime::*;\n\n");
 
