@@ -50,7 +50,6 @@ pub fn WriteFile(
 }
 
 pub fn stdcall_WriteFile() -> u32 {
-    runtime::dump_state();
     unsafe {
         let stack: *mut u32 = MEMORY.add(REGS.esp as usize) as *mut u32;
         let ret = *stack.add(0);

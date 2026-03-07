@@ -226,7 +226,8 @@ fn gen_block(w: &mut dyn std::fmt::Write, state: &State, ip: AddrAbs, block: &Bl
                 write!(w, "sub({op0}, {op1});\n");
             }
             Ret => {
-                write!(w, "todo!(\"ret\");\n");
+                assert!(instr.op_count() == 0);
+                write!(w, "pop()");
             }
             Mov => {
                 let op0 = gen_op(instr, 0);

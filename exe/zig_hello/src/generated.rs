@@ -171,7 +171,7 @@ pub fn x00401068() -> u32 {
         // 00401075 pop ebp
         REGS.ebp = pop();
         // 00401076 ret
-        todo!("ret");
+        pop()
     }
 }
 
