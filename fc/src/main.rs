@@ -7,11 +7,11 @@ use std::collections::{HashMap, VecDeque};
 
 use memory::*;
 
-#[derive(Debug)]
 struct State {
     pe_file: pe::File,
     mem: Memory,
     imports: HashMap<u32, (String, String)>,
+    blocks: HashMap<u32, Block>,
 }
 
 impl State {
@@ -36,6 +36,7 @@ impl State {
             pe_file: f,
             mem,
             imports: Default::default(),
+            blocks: Default::default(),
         }
     }
 
@@ -139,9 +140,20 @@ fn gen_op(instr: &iced_x86::Instruction, n: u32) -> String {
     }
 }
 
+fn gen_abs_jmp(state: &State, addr: u32) -> String {
+    if state.blocks.contains_key(&addr) {
+        format!("Cont(x{:08x})", addr)
+    } else {
+        format!("indirect({:#08x}u32)", addr)
+    }
+}
+
 fn gen_jmp(state: &State, instr: &iced_x86::Instruction) -> String {
     match instr.op_kind(0) {
-        iced_x86::OpKind::NearBranch32 => format!("indirect({:#08x}u32)", instr.near_branch32()),
+        iced_x86::OpKind::NearBranch32 => {
+            let addr = instr.near_branch32();
+            gen_abs_jmp(state, addr)
+        }
         iced_x86::OpKind::Memory => {
             if let Some(addr) = is_abs_memory_ref(instr) {
                 if let Some((dll, func)) = state.imports.get(&addr) {
@@ -225,16 +237,16 @@ fn gen_block(w: &mut dyn std::fmt::Write, state: &State, ip: AddrAbs, block: &Bl
             Je => {
                 write!(
                     w,
-                    "je(indirect({:#08x}), {})\n",
-                    instr.next_ip32(),
+                    "je({}, {})\n",
+                    gen_abs_jmp(state, instr.next_ip32()),
                     gen_jmp(state, instr)
                 );
             }
             Jne => {
                 write!(
                     w,
-                    "jne(indirect({:#08x}), {})\n",
-                    instr.next_ip32(),
+                    "jne({}, {})\n",
+                    gen_abs_jmp(state, instr.next_ip32()),
                     gen_jmp(state, instr)
                 );
             }
@@ -322,20 +334,16 @@ fn gen_file(state: &State, outdir: &str) -> Result<()> {
     use std::fmt::Write;
     let mut text = String::new();
 
-    let ip = AddrImage(state.pe_file.opt_header.AddressOfEntryPoint).to_abs(state.image_base());
-
-    let blocks = traverse(state, ip.0);
-
     write!(&mut text, "#![allow(unused_unsafe)]\n");
     write!(&mut text, "#![allow(unreachable_code)]\n\n");
     write!(&mut text, "#![allow(static_mut_refs)]\n\n");
 
     write!(&mut text, "use runtime::*;\n\n");
 
-    let mut ips = blocks.keys().copied().collect::<Vec<_>>();
+    let mut ips = state.blocks.keys().copied().collect::<Vec<_>>();
     ips.sort();
     for &ip in &ips {
-        let block = blocks.get(&ip).unwrap();
+        let block = state.blocks.get(&ip).unwrap();
         gen_block(&mut text, &state, AddrAbs(ip), &block);
     }
 
@@ -427,6 +435,9 @@ fn run() -> Result<()> {
     let mut state = State::new(buf);
     state.read_imports();
     println!("{:#x?}", state.imports);
+
+    let ip = AddrImage(state.pe_file.opt_header.AddressOfEntryPoint).to_abs(state.image_base());
+    state.blocks = traverse(&state, ip.0);
 
     gen_file(&state, outdir)?;
 

@@ -15,7 +15,7 @@ pub fn x00401000() -> Cont {
         // 00401006 sub esp,10h
         REGS.esp = sub(REGS.esp, 0x10u32);
         // 00401009 call 00401015h
-        call(0x40100e, indirect(0x401015u32))
+        call(0x40100e, Cont(x00401015))
     }
 }
 
@@ -24,7 +24,7 @@ pub fn x0040100e() -> Cont {
         // 0040100e push 0
         push(0x0u32);
         // 00401010 call 00401077h
-        call(0x401015, indirect(0x401077u32))
+        call(0x401015, Cont(x00401077))
     }
 }
 
@@ -43,7 +43,7 @@ pub fn x00401015() -> Cont {
         // 0040101a cmp byte ptr ds:[403000h],0
         sub(*(MEMORY.add((0x403000u32) as usize) as *mut u8), 0x0u8);
         // 00401021 jne short 0040102Ah
-        jne(indirect(0x401023), indirect(0x40102au32))
+        jne(Cont(x00401023), Cont(x0040102a))
     }
 }
 
@@ -70,7 +70,7 @@ pub fn x00401023() -> Cont {
         // 00401040 cmp edi,0Eh
         sub(REGS.edi, 0xeu32);
         // 00401043 je short 00401068h
-        je(indirect(0x401045), indirect(0x401068u32))
+        je(Cont(x00401045), Cont(x00401068))
     }
 }
 
@@ -95,7 +95,7 @@ pub fn x0040102a() -> Cont {
         // 00401040 cmp edi,0Eh
         sub(REGS.edi, 0xeu32);
         // 00401043 je short 00401068h
-        je(indirect(0x401045), indirect(0x401068u32))
+        je(Cont(x00401045), Cont(x00401068))
     }
 }
 
@@ -104,7 +104,7 @@ pub fn x00401040() -> Cont {
         // 00401040 cmp edi,0Eh
         sub(REGS.edi, 0xeu32);
         // 00401043 je short 00401068h
-        je(indirect(0x401045), indirect(0x401068u32))
+        je(Cont(x00401045), Cont(x00401068))
     }
 }
 
@@ -127,7 +127,7 @@ pub fn x00401045() -> Cont {
         // 00401054 push esi
         push(REGS.esi);
         // 00401055 call 00401083h
-        call(0x40105a, indirect(0x401083u32))
+        call(0x40105a, Cont(x00401083))
     }
 }
 
@@ -136,7 +136,7 @@ pub fn x0040105a() -> Cont {
         // 0040105a test eax,eax
         and(REGS.eax, REGS.eax);
         // 0040105c je short 00401063h
-        je(indirect(0x40105e), indirect(0x401063u32))
+        je(Cont(x0040105e), Cont(x00401063))
     }
 }
 
@@ -145,14 +145,14 @@ pub fn x0040105e() -> Cont {
         // 0040105e add edi,[esp]
         REGS.edi += *(MEMORY.add((REGS.esp + 0x0u32) as usize) as *mut u32);
         // 00401061 jmp short 00401040h
-        indirect(0x401040u32)
+        Cont(x00401040)
     }
 }
 
 pub fn x00401063() -> Cont {
     unsafe {
         // 00401063 call 0040107Dh
-        call(0x401068, indirect(0x40107du32))
+        call(0x401068, Cont(x0040107d))
     }
 }
 
