@@ -11,6 +11,6 @@ pub extern "C" fn entry_point() {
             .binary_search_by_key(&ip, |(ip, _)| *ip)
             .unwrap();
         let f = generated::BLOCKS[index].1;
-        ip = f().unwrap();
+        ip = f();
     }
 }

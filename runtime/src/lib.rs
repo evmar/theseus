@@ -1,4 +1,5 @@
 #![no_std]
+#![allow(static_mut_refs)]
 
 #[macro_use]
 extern crate alloc;
@@ -110,9 +111,9 @@ pub fn pop() -> u32 {
     }
 }
 
-pub fn call(ret: u32, addr: u32) -> Option<u32> {
+pub fn call(ret: u32, addr: u32) -> u32 {
     push(ret);
-    return Some(addr);
+    addr
 }
 
 pub trait Int: num_traits::PrimInt {
@@ -142,7 +143,6 @@ impl Int for u8 {
     }
 }
 
-#[allow(static_mut_refs)]
 fn sbb<I: Int + num_traits::ops::overflowing::OverflowingSub + num_traits::WrappingAdd>(
     x: I,
     y: I,
@@ -172,4 +172,13 @@ pub fn sub<I: Int + num_traits::ops::overflowing::OverflowingSub + num_traits::W
     y: I,
 ) -> I {
     sbb(x, y, false)
+}
+
+pub fn jne(from: u32, x: u32) -> u32 {
+    unsafe {
+        if !REGS.flags.contains(Flags::ZF) {
+            return x;
+        }
+        from
+    }
 }

@@ -1,5 +1,5 @@
 use runtime::*;
-pub fn x00401000() -> Option<u32> {
+pub fn x00401000() -> u32 {
     unsafe {
         // 00401000 push ebp
         push(REGS.ebp);
@@ -10,11 +10,11 @@ pub fn x00401000() -> Option<u32> {
         // 00401006 sub esp,10h
         REGS.esp = sub(REGS.esp, 0x10u32);
         // 00401009 call 00401015h
-        return call(0x40100e, 0x401015);
+        call(0x40100e, 0x401015)
     }
 }
 
-pub fn x00401015() -> Option<u32> {
+pub fn x00401015() -> u32 {
     unsafe {
         // 00401015 push ebp
         push(REGS.ebp);
@@ -29,11 +29,11 @@ pub fn x00401015() -> Option<u32> {
         // 0040101a cmp byte ptr ds:[403000h],0
         sub(*((0x403000u32) as *mut u8), 0x0u8);
         // 00401021 jne short 0040102Ah
-        todo!("jne short 0040102Ah");
+        jne(4198435, 4198442)
     }
 }
 
-pub fn x0040102a() -> Option<u32> {
+pub fn x0040102a() -> u32 {
     unsafe {
         // 0040102a mov eax,fs:[18h]
         REGS.eax = todo!();
@@ -58,7 +58,7 @@ pub fn x0040102a() -> Option<u32> {
     }
 }
 
-pub fn x00401068() -> Option<u32> {
+pub fn x00401068() -> u32 {
     unsafe {
         // 00401068 mov byte ptr ds:[403000h],0
         *((0x403000u32) as *mut u8) = 0x0u8;
@@ -73,11 +73,11 @@ pub fn x00401068() -> Option<u32> {
         // 00401075 pop ebp
         REGS.ebp = pop();
         // 00401076 ret
-        return None;
+        todo!("ret");
     }
 }
 
-pub const BLOCKS: [(u32, fn() -> Option<u32>); 4] = [
+pub const BLOCKS: [(u32, fn() -> u32); 4] = [
     (0x401000, x00401000),
     (0x401015, x00401015),
     (0x40102a, x0040102a),

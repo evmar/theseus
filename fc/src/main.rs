@@ -142,7 +142,7 @@ struct Block {
 }
 
 fn gen_block(w: &mut dyn std::fmt::Write, state: &State, ip: AddrAbs, block: &Block) {
-    write!(w, "pub fn x{:08x}() -> Option<u32> {{\n", ip.0);
+    write!(w, "pub fn x{:08x}() -> u32 {{\n", ip.0);
     write!(w, "unsafe {{\n");
 
     for instr in &block.instrs {
@@ -168,7 +168,7 @@ fn gen_block(w: &mut dyn std::fmt::Write, state: &State, ip: AddrAbs, block: &Bl
                 } else if instr.op0_kind() == iced_x86::OpKind::NearBranch32 {
                     write!(
                         w,
-                        "return call({:#08x}, {:#08x});\n",
+                        "call({:#08x}, {:#08x})\n",
                         instr.next_ip32(),
                         instr.near_branch32()
                     );
@@ -202,14 +202,17 @@ fn gen_block(w: &mut dyn std::fmt::Write, state: &State, ip: AddrAbs, block: &Bl
                 write!(w, "sub({op0}, {op1});\n");
             }
             Ret => {
-                write!(w, "return None;\n");
+                write!(w, "todo!(\"ret\");\n");
             }
             Mov => {
                 let op0 = gen_op(instr, 0);
                 let op1 = gen_op(instr, 1);
                 write!(w, "{op0} = {op1};\n");
             }
-            Jne | Je => {
+            Jne => {
+                write!(w, "jne({}, {})\n", instr.next_ip32(), instr.near_branch32());
+            }
+            Je => {
                 write!(w, "todo!(\"{}\");\n", instr);
             }
 
@@ -296,7 +299,7 @@ fn gen_file(state: &State, outdir: &str) -> Result<()> {
 
     write!(
         &mut text,
-        "pub const BLOCKS: [(u32, fn() -> Option<u32>); {}] = [\n",
+        "pub const BLOCKS: [(u32, fn() -> u32); {}] = [\n",
         ips.len()
     );
     for &ip in &ips {
