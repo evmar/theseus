@@ -105,7 +105,7 @@ fn gen_op(instr: &iced_x86::Instruction, n: u32) -> String {
         Register => gen_reg(instr.op_register(n)),
         Memory => {
             match instr.memory_segment() {
-                iced_x86::Register::DS => {}
+                iced_x86::Register::DS | iced_x86::Register::SS => {}
                 iced_x86::Register::FS => return format!("todo!();"),
                 iced_x86::Register::None => {}
                 r => todo!("{r:?}"),
@@ -219,7 +219,7 @@ fn gen_block(w: &mut dyn std::fmt::Write, state: &State, ip: AddrAbs, block: &Bl
                     instr.near_branch32()
                 );
             }
-            Je => {
+            Jmp | Je | Lea | Test => {
                 write!(w, "todo!(\"{}\");\n", instr);
             }
 
@@ -301,7 +301,10 @@ fn gen_file(state: &State, outdir: &str) -> Result<()> {
 
     let blocks = traverse(state, ip.0);
 
-    write!(&mut text, "use runtime::*;\n");
+    write!(&mut text, "#![allow(unused_unsafe)]\n");
+    write!(&mut text, "#![allow(unreachable_code)]\n\n");
+
+    write!(&mut text, "use runtime::*;\n\n");
 
     let mut ips = blocks.keys().copied().collect::<Vec<_>>();
     ips.sort();
@@ -376,5 +379,6 @@ fn run() -> Result<()> {
 fn main() {
     if let Err(err) = run() {
         println!("error: {err}");
+        std::process::exit(1);
     }
 }
