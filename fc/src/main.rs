@@ -142,6 +142,8 @@ struct Block {
 }
 
 fn gen_block(w: &mut dyn std::fmt::Write, state: &State, ip: AddrAbs, block: &Block) {
+    println!("gen block: {:#08x}", ip.0);
+
     write!(w, "pub fn x{:08x}() -> u32 {{\n", ip.0);
     write!(w, "unsafe {{\n");
 
@@ -260,18 +262,24 @@ fn traverse(state: &State, ip: u32) -> HashMap<u32, Block> {
             }
             use iced_x86::Mnemonic::*;
             match instr.mnemonic() {
-                Call => match instr.op0_kind() {
-                    iced_x86::OpKind::NearBranch32 => {
-                        queue.push_back(instr.near_branch32());
+                Call | Jmp | Je | Jne => {
+                    let dst = match instr.op0_kind() {
+                        iced_x86::OpKind::NearBranch32 => queue.push_back(instr.near_branch32()),
+                        iced_x86::OpKind::Memory => {
+                            if let Some(addr) = is_abs_memory_ref(&instr)
+                                && state.imports.contains_key(&addr)
+                            {
+                                // ok
+                            } else {
+                                todo!("indirect jmp");
+                            }
+                        }
+                        d => todo!("dest {d:?}"),
+                    };
+                    if instr.mnemonic() != Jmp {
+                        queue.push_back(instr.next_ip32());
                     }
-                    _ => todo!("call dest {}", instr),
-                },
-                Je | Jne => match instr.op0_kind() {
-                    iced_x86::OpKind::NearBranch32 => {
-                        queue.push_back(instr.near_branch32());
-                    }
-                    _ => todo!("jne dest {}", instr),
-                },
+                }
                 Ret => {}
                 _ => todo!("control flow {}", instr),
             }
