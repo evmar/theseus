@@ -128,7 +128,7 @@ fn gen_op(instr: &iced_x86::Instruction, n: u32) -> String {
                 iced_x86::MemorySize::UInt32 => "u32",
                 s => todo!("{s:?}"),
             };
-            format!("*(({expr}) as *mut {size})")
+            format!("*(MEMORY.add(({expr}) as usize) as *mut {size})")
         }
         k => {
             dbg!(instr);
@@ -210,7 +210,12 @@ fn gen_block(w: &mut dyn std::fmt::Write, state: &State, ip: AddrAbs, block: &Bl
                 write!(w, "{op0} = {op1};\n");
             }
             Jne => {
-                write!(w, "jne({}, {})\n", instr.next_ip32(), instr.near_branch32());
+                write!(
+                    w,
+                    "jne({:#08x}, {:#08x})\n",
+                    instr.next_ip32(),
+                    instr.near_branch32()
+                );
             }
             Je => {
                 write!(w, "todo!(\"{}\");\n", instr);

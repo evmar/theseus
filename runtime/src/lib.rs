@@ -8,12 +8,20 @@ use std::io::Write;
 use bitflags::bitflags;
 
 pub trait Host {
+    fn init(&self);
     fn panic(&self, msg: &str);
     fn print(&self, text: &[u8]);
 }
 
 pub struct NativeHost {}
 impl Host for NativeHost {
+    fn init(&self) {
+        unsafe {
+            MEMORY =
+                std::alloc::alloc(std::alloc::Layout::from_size_align(32 << 20, 0x1000).unwrap());
+        }
+    }
+
     fn panic(&self, msg: &str) {
         panic!("{}", msg);
     }
@@ -78,16 +86,18 @@ pub static mut REGS: Regs = Regs {
 };
 //const REGS: &mut Regs = unsafe { &mut *(0x1000 as *mut Regs) };
 
+pub static mut MEMORY: *mut u8 = std::ptr::null_mut();
+
 pub fn push(x: u32) {
     unsafe {
         REGS.esp -= 4;
-        *(REGS.esp as *mut u32) = x;
+        *(MEMORY.add(REGS.esp as usize) as *mut u32) = x;
     }
 }
 
 pub fn pop() -> u32 {
     unsafe {
-        let x = *(REGS.esp as *mut u32);
+        let x = *(MEMORY.add(REGS.esp as usize) as *mut u32);
         REGS.esp += 4;
         x
     }

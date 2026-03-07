@@ -1,11 +1,14 @@
-#![no_std]
-
 mod generated;
 
+use runtime::*;
+
 pub fn entry_point() {
+    runtime::HOST.init();
+
     //init_memory();
     let mut ip = 0x00401000u32;
     loop {
+        println!("ip: {ip:#08x}");
         let index = generated::BLOCKS
             .binary_search_by_key(&ip, |(ip, _)| *ip)
             .unwrap();

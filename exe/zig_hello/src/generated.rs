@@ -27,9 +27,9 @@ pub fn x00401015() -> u32 {
         // 00401019 push eax
         push(REGS.eax);
         // 0040101a cmp byte ptr ds:[403000h],0
-        sub(*((0x403000u32) as *mut u8), 0x0u8);
+        sub(*(MEMORY.add((0x403000u32) as usize) as *mut u8), 0x0u8);
         // 00401021 jne short 0040102Ah
-        jne(4198435, 4198442)
+        jne(0x401023, 0x40102a)
     }
 }
 
@@ -38,13 +38,13 @@ pub fn x0040102a() -> u32 {
         // 0040102a mov eax,fs:[18h]
         REGS.eax = todo!();
         // 00401030 mov eax,[eax+30h]
-        REGS.eax = *((REGS.eax + 0x30u32) as *mut u32);
+        REGS.eax = *(MEMORY.add((REGS.eax + 0x30u32) as usize) as *mut u32);
         // 00401033 xor edi,edi
         REGS.edi ^= REGS.edi;
         // 00401035 mov eax,[eax+10h]
-        REGS.eax = *((REGS.eax + 0x10u32) as *mut u32);
+        REGS.eax = *(MEMORY.add((REGS.eax + 0x10u32) as usize) as *mut u32);
         // 00401038 mov esi,[eax+20h]
-        REGS.esi = *((REGS.eax + 0x20u32) as *mut u32);
+        REGS.esi = *(MEMORY.add((REGS.eax + 0x20u32) as usize) as *mut u32);
         // 0040103b push 0Eh
         push(0xeu32);
         // 0040103d pop ebx
@@ -61,7 +61,7 @@ pub fn x0040102a() -> u32 {
 pub fn x00401068() -> u32 {
     unsafe {
         // 00401068 mov byte ptr ds:[403000h],0
-        *((0x403000u32) as *mut u8) = 0x0u8;
+        *(MEMORY.add((0x403000u32) as usize) as *mut u8) = 0x0u8;
         // 0040106f add esp,4
         REGS.esp -= 0x4u32;
         // 00401072 pop esi
