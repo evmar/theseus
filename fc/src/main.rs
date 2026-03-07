@@ -1,7 +1,7 @@
 mod memory;
 
 use anyhow::{Result, anyhow, bail};
-use std::collections::HashMap;
+use std::collections::{HashMap, VecDeque};
 
 use memory::*;
 
@@ -64,7 +64,7 @@ impl State {
     }
 }
 
-fn is_abs_memory_ref(instr: iced_x86::Instruction) -> Option<u32> {
+fn is_abs_memory_ref(instr: &iced_x86::Instruction) -> Option<u32> {
     let iced_x86::OpKind::Memory = instr.op0_kind() else {
         return None;
     };
@@ -77,7 +77,7 @@ fn is_abs_memory_ref(instr: iced_x86::Instruction) -> Option<u32> {
     Some(instr.memory_displacement32())
 }
 
-fn gen_op(instr: iced_x86::Instruction, n: u32) -> String {
+fn gen_op(instr: &iced_x86::Instruction, n: u32) -> String {
     use iced_x86::OpKind::*;
     use iced_x86::Register::*;
     match instr.op_kind(n) {
@@ -100,17 +100,23 @@ fn gen_op(instr: iced_x86::Instruction, n: u32) -> String {
     }
 }
 
-fn gen_block(w: &mut dyn std::fmt::Write, state: &State, buf: &[u8], ip: AddrAbs) {
-    let mut decoder =
-        iced_x86::Decoder::with_ip(32, buf, ip.0 as u64, iced_x86::DecoderOptions::NONE);
+struct Block {
+    instrs: Vec<iced_x86::Instruction>,
+}
 
-    for instr in &mut decoder {
+fn gen_block(w: &mut dyn std::fmt::Write, state: &State, ip: AddrAbs, block: &Block) {
+    write!(w, "pub fn x{:08x}() -> Option<u32> {{\n", ip.0);
+    write!(w, "unsafe {{\n");
+
+    for instr in &block.instrs {
+        println!("gen: {}", instr);
         write!(w, "// {:08x} {}\n", AddrAbs(instr.ip32()).0, instr);
+        use iced_x86::Mnemonic::*;
         match instr.mnemonic() {
-            iced_x86::Mnemonic::Push => {
+            Push => {
                 write!(w, "push({});\n", gen_op(instr, 0));
             }
-            iced_x86::Mnemonic::Call => {
+            Call => {
                 if let Some(addr) = is_abs_memory_ref(instr) {
                     if let Some((dll, func)) = state.imports.get(&addr) {
                         let dll = dll.to_lowercase();
@@ -125,28 +131,31 @@ fn gen_block(w: &mut dyn std::fmt::Write, state: &State, buf: &[u8], ip: AddrAbs
                     todo!("{} {:?}", instr, instr.op0_kind());
                 }
             }
-            iced_x86::Mnemonic::Xor => {
+            Xor => {
                 let op0 = gen_op(instr, 0);
                 let op1 = gen_op(instr, 1);
                 write!(w, "{op0} ^= {op1};\n");
             }
-            iced_x86::Mnemonic::And => {
+            And => {
                 let op0 = gen_op(instr, 0);
                 let op1 = gen_op(instr, 1);
                 write!(w, "{op0} &= {op1};\n");
             }
-            iced_x86::Mnemonic::Sub => {
+            Sub => {
                 let op0 = gen_op(instr, 0);
                 let op1 = gen_op(instr, 1);
                 write!(w, "{op0} -= {op1};\n");
             }
-            iced_x86::Mnemonic::Ret => {
+            Ret => {
                 write!(w, "return None;\n");
             }
-            iced_x86::Mnemonic::Mov => {
+            Mov => {
                 let op0 = gen_op(instr, 0);
                 let op1 = gen_op(instr, 1);
                 write!(w, "{op0} = {op1};\n");
+            }
+            Cmp | Jne | Je => {
+                write!(w, "todo!(\"{}\");\n", instr);
             }
 
             c => todo!("{:?} in {}", c, instr),
@@ -158,6 +167,59 @@ fn gen_block(w: &mut dyn std::fmt::Write, state: &State, buf: &[u8], ip: AddrAbs
             }
         }
     }
+    write!(w, "}}}}\n");
+}
+
+fn traverse(state: &State, ip: u32) -> HashMap<u32, Block> {
+    let mut blocks = HashMap::<u32, Block>::new();
+
+    let mut queue = VecDeque::<u32>::new();
+    queue.push_back(ip);
+
+    while let Some(ip) = queue.pop_front() {
+        if blocks.contains_key(&ip) {
+            continue;
+        }
+        println!("visit {ip:#08x}");
+
+        let mut instrs = Vec::new();
+        let decoder = iced_x86::Decoder::with_ip(
+            32,
+            state.mem.slice_all(AddrAbs(ip)),
+            ip as u64,
+            iced_x86::DecoderOptions::NONE,
+        );
+        for instr in decoder {
+            println!("{:08x} {}", instr.ip32(), instr);
+            instrs.push(instr);
+            if instr.flow_control() == iced_x86::FlowControl::Next {
+                continue;
+            }
+            use iced_x86::Mnemonic::*;
+            match instr.mnemonic() {
+                Call => match instr.op0_kind() {
+                    iced_x86::OpKind::NearBranch32 => {
+                        queue.push_back(instr.near_branch32());
+                    }
+                    _ => todo!("call dest {}", instr),
+                },
+                Je | Jne => match instr.op0_kind() {
+                    iced_x86::OpKind::NearBranch32 => {
+                        queue.push_back(instr.near_branch32());
+                    }
+                    _ => todo!("jne dest {}", instr),
+                },
+                Ret => {}
+                _ => todo!("control flow {}", instr),
+            }
+            break;
+        }
+
+        let block = Block { instrs };
+        blocks.insert(ip, block);
+    }
+
+    blocks
 }
 
 fn gen_file(state: &State, outdir: &str) -> Result<()> {
@@ -165,12 +227,17 @@ fn gen_file(state: &State, outdir: &str) -> Result<()> {
     let mut text = String::new();
 
     let ip = AddrImage(state.pe_file.opt_header.AddressOfEntryPoint).to_abs(state.image_base());
+
+    let blocks = traverse(state, ip.0);
+
     write!(&mut text, "use runtime::*;\n");
 
-    write!(&mut text, "pub fn x{:08x}() -> Option<u32> {{\n", ip.0);
-    write!(&mut text, "unsafe {{\n");
-    gen_block(&mut text, &state, &state.mem.data[ip.0 as usize..], ip);
-    write!(&mut text, "}}}}\n");
+    let mut ips = blocks.keys().collect::<Vec<_>>();
+    ips.sort();
+    for &ip in ips {
+        let block = blocks.get(&ip).unwrap();
+        gen_block(&mut text, &state, AddrAbs(ip), &block);
+    }
 
     std::fs::create_dir_all(format!("{outdir}/src"))?;
     let path = format!("{outdir}/src/generated.rs");
