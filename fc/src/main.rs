@@ -96,6 +96,26 @@ fn gen_reg(r: iced_x86::Register) -> String {
     }
 }
 
+fn gen_addr(instr: &iced_x86::Instruction) -> String {
+    let mut expr = Vec::new();
+    match instr.memory_segment() {
+        iced_x86::Register::DS | iced_x86::Register::SS => {}
+        iced_x86::Register::FS => expr.push(format!("REGS.fs_base")),
+        iced_x86::Register::None => {}
+        r => todo!("{r:?}"),
+    }
+    match instr.memory_base() {
+        iced_x86::Register::None => {}
+        r => expr.push(gen_reg(r)),
+    }
+    if instr.memory_index() != iced_x86::Register::None {
+        todo!();
+    }
+    let addr = instr.memory_displacement32();
+    expr.push(format!("{addr:#x}u32"));
+    expr.join(" + ")
+}
+
 fn gen_op(instr: &iced_x86::Instruction, n: u32) -> String {
     use iced_x86::OpKind::*;
     match instr.op_kind(n) {
@@ -104,29 +124,13 @@ fn gen_op(instr: &iced_x86::Instruction, n: u32) -> String {
         Immediate32 => format!("{:#x}u32", instr.immediate32()),
         Register => gen_reg(instr.op_register(n)),
         Memory => {
-            let mut expr = Vec::new();
-            match instr.memory_segment() {
-                iced_x86::Register::DS | iced_x86::Register::SS => {}
-                iced_x86::Register::FS => expr.push(format!("REGS.fs_base")),
-                iced_x86::Register::None => {}
-                r => todo!("{r:?}"),
-            }
-            match instr.memory_base() {
-                iced_x86::Register::None => {}
-                r => expr.push(gen_reg(r)),
-            }
-            if instr.memory_index() != iced_x86::Register::None {
-                todo!();
-            }
-            let addr = instr.memory_displacement32();
-            expr.push(format!("{addr:#x}u32"));
+            let addr = gen_addr(instr);
             let size = match instr.memory_size() {
                 iced_x86::MemorySize::UInt8 => "u8",
                 iced_x86::MemorySize::UInt32 => "u32",
                 s => todo!("{s:?}"),
             };
-            let expr = expr.join(" + ");
-            format!("*(MEMORY.add(({expr}) as usize) as *mut {size})")
+            format!("*(MEMORY.add(({addr}) as usize) as *mut {size})")
         }
         k => {
             dbg!(instr);
@@ -232,7 +236,10 @@ fn gen_block(w: &mut dyn std::fmt::Write, state: &State, ip: AddrAbs, block: &Bl
             Jmp => {
                 write!(w, "jmp({})\n", gen_jmp(instr));
             }
-            Lea | Test => {
+            Lea => {
+                write!(w, "{} = {};\n", gen_op(instr, 0), gen_addr(instr));
+            }
+            Test => {
                 write!(w, "todo!(\"{}\");\n", instr);
             }
 

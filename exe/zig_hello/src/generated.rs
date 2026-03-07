@@ -112,7 +112,7 @@ pub fn x00401045() -> u32 {
         // 00401045 mov ecx,ebx
         REGS.ecx = REGS.ebx;
         // 00401047 lea eax,[edi+402000h]
-        todo!("lea eax,[edi+402000h]");
+        REGS.eax = REGS.edi + 0x402000u32;
         // 0040104d sub ecx,edi
         REGS.ecx = sub(REGS.ecx, REGS.edi);
         // 0040104f push 0
