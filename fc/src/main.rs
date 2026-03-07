@@ -77,25 +77,51 @@ fn is_abs_memory_ref(instr: &iced_x86::Instruction) -> Option<u32> {
     Some(instr.memory_displacement32())
 }
 
+fn gen_reg(r: iced_x86::Register) -> String {
+    use iced_x86::Register::*;
+    match r {
+        EAX => format!("REGS.eax"),
+        ECX => format!("REGS.ecx"),
+        EDX => format!("REGS.edx"),
+        EBX => format!("REGS.ebx"),
+
+        ESI => format!("REGS.esi"),
+        EDI => format!("REGS.edi"),
+        ESP => format!("REGS.esp"),
+        EBP => format!("REGS.ebp"),
+
+        r => todo!("{:?}", r),
+    }
+}
+
 fn gen_op(instr: &iced_x86::Instruction, n: u32) -> String {
     use iced_x86::OpKind::*;
-    use iced_x86::Register::*;
     match instr.op_kind(n) {
         Immediate8to32 => format!("{:#x}u32", instr.immediate8to32()),
         Immediate32 => format!("{:#x}u32", instr.immediate32()),
-        Register => match instr.op_register(n) {
-            EAX => format!("REGS.eax"),
-            ECX => format!("REGS.ecx"),
-            EDX => format!("REGS.edx"),
-            EBX => format!("REGS.ebx"),
-
-            ESI => format!("REGS.esi"),
-            EDI => format!("REGS.edi"),
-            ESP => format!("REGS.esp"),
-            EBP => format!("REGS.ebp"),
-
-            r => todo!("{:?}", r),
-        },
+        Register => gen_reg(instr.op_register(n)),
+        Memory => {
+            match instr.memory_segment() {
+                iced_x86::Register::DS => {}
+                iced_x86::Register::FS => return format!("todo!();"),
+                iced_x86::Register::None => {}
+                r => todo!("{r:?}"),
+            }
+            let mut expr = String::new();
+            match instr.memory_base() {
+                iced_x86::Register::None => {}
+                r => expr = gen_reg(r),
+            }
+            if instr.memory_index() != iced_x86::Register::None {
+                todo!();
+            }
+            let addr = instr.memory_displacement32();
+            if !expr.is_empty() {
+                expr = expr + "+";
+            }
+            expr = expr + &format!("{addr:#x}u32");
+            format!("*({expr} as *mut u32)")
+        }
         k => todo!("{:?}", k),
     }
 }
