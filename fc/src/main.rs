@@ -194,7 +194,12 @@ fn gen_block(w: &mut dyn std::fmt::Write, state: &State, ip: AddrAbs, block: &Bl
             Sub => {
                 let op0 = gen_op(instr, 0);
                 let op1 = gen_op(instr, 1);
-                write!(w, "{op0} -= {op1};\n");
+                write!(w, "{op0} = sub({op0}, {op1});\n");
+            }
+            Cmp => {
+                let op0 = gen_op(instr, 0);
+                let op1 = gen_op(instr, 1);
+                write!(w, "sub({op0}, {op1});\n");
             }
             Ret => {
                 write!(w, "return None;\n");
@@ -204,7 +209,7 @@ fn gen_block(w: &mut dyn std::fmt::Write, state: &State, ip: AddrAbs, block: &Bl
                 let op1 = gen_op(instr, 1);
                 write!(w, "{op0} = {op1};\n");
             }
-            Cmp | Jne | Je => {
+            Jne | Je => {
                 write!(w, "todo!(\"{}\");\n", instr);
             }
 

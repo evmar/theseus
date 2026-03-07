@@ -8,7 +8,7 @@ pub fn x00401000() -> Option<u32> {
         // 00401003 and esp,0FFFFFFF0h
         REGS.esp &= 0xfffffff0u32;
         // 00401006 sub esp,10h
-        REGS.esp -= 0x10u32;
+        REGS.esp = sub(REGS.esp, 0x10u32);
         // 00401009 call 00401015h
         return call(0x40100e, 0x401015);
     }
@@ -27,7 +27,7 @@ pub fn x00401015() -> Option<u32> {
         // 00401019 push eax
         push(REGS.eax);
         // 0040101a cmp byte ptr ds:[403000h],0
-        todo!("cmp byte ptr ds:[403000h],0");
+        sub(*((0x403000u32) as *mut u8), 0x0u8);
         // 00401021 jne short 0040102Ah
         todo!("jne short 0040102Ah");
     }
@@ -52,7 +52,7 @@ pub fn x0040102a() -> Option<u32> {
         // 0040103e mov ebp,esp
         REGS.ebp = REGS.esp;
         // 00401040 cmp edi,0Eh
-        todo!("cmp edi,0Eh");
+        sub(REGS.edi, 0xeu32);
         // 00401043 je short 00401068h
         todo!("je short 00401068h");
     }
