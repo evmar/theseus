@@ -351,6 +351,36 @@ fn gen_file(state: &State, outdir: &str) -> Result<()> {
         gen_block(&mut text, &state, AddrAbs(ip), &block);
     }
 
+    // It would be cool if we could just link a wasm object file that contains data sections
+    // like
+    //   (data (i32.const 0x400000) "....")
+    // Unfortunately, wasm-lld only supports "relocatable" object files which means it moves
+    // the location of such data at link time.  We could do it by postprocessing the wasm
+    // file, maybe.
+    write!(&mut text, "pub fn init_memory() {{\n");
+    write!(&mut text, "unsafe {{\n");
+    write!(&mut text, "let sections = [\n");
+    for map in &state.mem.mappings {
+        write!(
+            &mut text,
+            "({:#x}, include_bytes!(\"../data/{:08x}.raw\").as_slice()),\n",
+            map.addr.0, map.addr.0
+        );
+    }
+    write!(&mut text, "];\n");
+    write!(
+        &mut text,
+        "
+        for (addr, data) in sections {{
+            let out = core::slice::from_raw_parts_mut(MEMORY.add(addr), data.len());
+            out.copy_from_slice(data);
+        }}
+        }}
+        }}
+
+    "
+    );
+
     write!(
         &mut text,
         "pub const BLOCKS: [(u32, fn() -> u32); {}] = [\n",

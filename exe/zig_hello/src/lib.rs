@@ -5,11 +5,12 @@ use runtime::*;
 pub fn entry_point() {
     runtime::HOST.init();
     kernel32::init_process();
+    generated::init_memory();
 
     //init_memory();
     let mut ip = 0x00401000u32;
     loop {
-        println!("ip: {ip:#08x}");
+        //println!("ip: {ip:#08x}");
         let index = generated::BLOCKS
             .binary_search_by_key(&ip, |(ip, _)| *ip)
             .unwrap();

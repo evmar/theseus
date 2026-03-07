@@ -32,7 +32,7 @@ pub fn WriteFile(
     let buf = format!(
         "WriteFile({hFile:x} {lpBuffer:x} {nNumberOfBytesToWrite:x} {lpNumberOfBytesWritten:x} {o:x})\n"
     );
-    HOST.print(buf.as_bytes());
+    //HOST.print(buf.as_bytes());
 
     if hFile == 0xf11e_0002 || hFile == 0xf11e_0003 {
         unsafe {

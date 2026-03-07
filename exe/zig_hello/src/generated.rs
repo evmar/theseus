@@ -196,6 +196,23 @@ pub fn x00401083() -> u32 {
     }
 }
 
+pub fn init_memory() {
+    unsafe {
+        let sections = [
+            (0x400000, include_bytes!("../data/00400000.raw").as_slice()),
+            (0x401000, include_bytes!("../data/00401000.raw").as_slice()),
+            (0x402000, include_bytes!("../data/00402000.raw").as_slice()),
+            (0x403000, include_bytes!("../data/00403000.raw").as_slice()),
+            (0x404000, include_bytes!("../data/00404000.raw").as_slice()),
+        ];
+
+        for (addr, data) in sections {
+            let out = core::slice::from_raw_parts_mut(MEMORY.add(addr), data.len());
+            out.copy_from_slice(data);
+        }
+    }
+}
+
 pub const BLOCKS: [(u32, fn() -> u32); 14] = [
     (0x401000, x00401000),
     (0x40100e, x0040100e),
