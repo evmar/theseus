@@ -1,3 +1,5 @@
+#![allow(unused_must_use)]
+
 mod memory;
 
 use anyhow::{Result, anyhow, bail};
@@ -97,6 +99,7 @@ fn gen_reg(r: iced_x86::Register) -> String {
 fn gen_op(instr: &iced_x86::Instruction, n: u32) -> String {
     use iced_x86::OpKind::*;
     match instr.op_kind(n) {
+        Immediate8 => format!("{:#x}u8", instr.immediate8()),
         Immediate8to32 => format!("{:#x}u32", instr.immediate8to32()),
         Immediate32 => format!("{:#x}u32", instr.immediate32()),
         Register => gen_reg(instr.op_register(n)),
@@ -120,9 +123,17 @@ fn gen_op(instr: &iced_x86::Instruction, n: u32) -> String {
                 expr = expr + "+";
             }
             expr = expr + &format!("{addr:#x}u32");
-            format!("*({expr} as *mut u32)")
+            let size = match instr.memory_size() {
+                iced_x86::MemorySize::UInt8 => "u8",
+                iced_x86::MemorySize::UInt32 => "u32",
+                s => todo!("{s:?}"),
+            };
+            format!("*(({expr}) as *mut {size})")
         }
-        k => todo!("{:?}", k),
+        k => {
+            dbg!(instr);
+            todo!("{:?}", k);
+        }
     }
 }
 
@@ -141,6 +152,9 @@ fn gen_block(w: &mut dyn std::fmt::Write, state: &State, ip: AddrAbs, block: &Bl
         match instr.mnemonic() {
             Push => {
                 write!(w, "push({});\n", gen_op(instr, 0));
+            }
+            Pop => {
+                write!(w, "{} = pop();\n", gen_op(instr, 0));
             }
             Call => {
                 if let Some(addr) = is_abs_memory_ref(instr) {
@@ -166,6 +180,11 @@ fn gen_block(w: &mut dyn std::fmt::Write, state: &State, ip: AddrAbs, block: &Bl
                 let op0 = gen_op(instr, 0);
                 let op1 = gen_op(instr, 1);
                 write!(w, "{op0} &= {op1};\n");
+            }
+            Add => {
+                let op0 = gen_op(instr, 0);
+                let op1 = gen_op(instr, 1);
+                write!(w, "{op0} -= {op1};\n");
             }
             Sub => {
                 let op0 = gen_op(instr, 0);

@@ -73,6 +73,14 @@ pub fn push(x: u32) {
     }
 }
 
+pub fn pop() -> u32 {
+    unsafe {
+        let x = *(REGS.esp as *mut u32);
+        REGS.esp += 4;
+        x
+    }
+}
+
 pub fn call(addr: u32) -> Option<u32> {
     todo!("call");
     return Some(addr);
