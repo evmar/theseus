@@ -1,4 +1,4 @@
-#![no_std]
+//#![no_std]
 #![allow(non_snake_case)]
 #![allow(non_camel_case_types)]
 
@@ -12,11 +12,12 @@ pub fn GetStdHandle(_x: u32) -> u32 {
     return 1;
 }
 
-pub fn stdcall_GetStdHandle() {
+pub fn stdcall_GetStdHandle() -> u32 {
     unsafe {
         let stack: *mut u32 = REGS.esp as *mut u32;
         REGS.eax = GetStdHandle(*stack);
         REGS.esp += 4;
+        runtime::pop()
     }
 }
 
@@ -32,7 +33,7 @@ pub fn WriteFile(hFile: u32, lpBuffer: u32, n: u32, nr: u32, o: u32) -> u32 {
     return 1;
 }
 
-pub fn stdcall_WriteFile() {
+pub fn stdcall_WriteFile() -> u32 {
     unsafe {
         let stack: *mut u32 = REGS.esp as *mut u32;
         REGS.eax = WriteFile(
@@ -43,6 +44,31 @@ pub fn stdcall_WriteFile() {
             *stack.add(4),
         );
         REGS.esp += 5 * 4;
+        runtime::pop()
+    }
+}
+
+pub fn ExitProcess(uExitCode: u32) -> u32 {
+    std::process::exit(uExitCode as i32);
+}
+
+pub fn stdcall_ExitProcess() -> u32 {
+    unsafe {
+        let stack: *mut u32 = REGS.esp as *mut u32;
+        REGS.eax = ExitProcess(*stack.add(0));
+        REGS.esp += 4;
+        runtime::pop()
+    }
+}
+
+pub fn GetLastError() -> u32 {
+    0
+}
+
+pub fn stdcall_GetLastError() -> u32 {
+    unsafe {
+        REGS.eax = GetLastError();
+        runtime::pop()
     }
 }
 

@@ -177,21 +177,21 @@ pub fn x00401068() -> u32 {
 pub fn x00401077() -> u32 {
     unsafe {
         // 00401077 jmp dword ptr ds:[402048h]
-        jmp(*(MEMORY.add(0x402048u32 as usize) as *const u32))
+        jmp(kernel32::stdcall_ExitProcess())
     }
 }
 
 pub fn x0040107d() -> u32 {
     unsafe {
         // 0040107d jmp dword ptr ds:[40204Ch]
-        jmp(*(MEMORY.add(0x40204cu32 as usize) as *const u32))
+        jmp(kernel32::stdcall_GetLastError())
     }
 }
 
 pub fn x00401083() -> u32 {
     unsafe {
         // 00401083 jmp dword ptr ds:[402050h]
-        jmp(*(MEMORY.add(0x402050u32 as usize) as *const u32))
+        jmp(kernel32::stdcall_WriteFile())
     }
 }
 

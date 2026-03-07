@@ -139,12 +139,18 @@ fn gen_op(instr: &iced_x86::Instruction, n: u32) -> String {
     }
 }
 
-fn gen_jmp(instr: &iced_x86::Instruction) -> String {
+fn gen_jmp(state: &State, instr: &iced_x86::Instruction) -> String {
     match instr.op_kind(0) {
         iced_x86::OpKind::NearBranch32 => format!("{:#08x}u32", instr.near_branch32()),
         iced_x86::OpKind::Memory => {
             if let Some(addr) = is_abs_memory_ref(instr) {
-                format!("*(MEMORY.add({addr:#x}u32 as usize) as *const u32)")
+                if let Some((dll, func)) = state.imports.get(&addr) {
+                    let dll = dll.to_lowercase();
+                    let dll = dll.trim_end_matches(".dll");
+                    format!("{dll}::stdcall_{func}()")
+                } else {
+                    format!("*(MEMORY.add({addr:#x}u32 as usize) as *const u32)")
+                }
             } else {
                 todo!("indirect jmp");
             }
@@ -228,13 +234,23 @@ fn gen_block(w: &mut dyn std::fmt::Write, state: &State, ip: AddrAbs, block: &Bl
                 write!(w, "{op0} = {op1};\n");
             }
             Je => {
-                write!(w, "je({:#08x}, {})\n", instr.next_ip32(), gen_jmp(instr));
+                write!(
+                    w,
+                    "je({:#08x}, {})\n",
+                    instr.next_ip32(),
+                    gen_jmp(state, instr)
+                );
             }
             Jne => {
-                write!(w, "jne({:#08x}, {})\n", instr.next_ip32(), gen_jmp(instr));
+                write!(
+                    w,
+                    "jne({:#08x}, {})\n",
+                    instr.next_ip32(),
+                    gen_jmp(state, instr)
+                );
             }
             Jmp => {
-                write!(w, "jmp({})\n", gen_jmp(instr));
+                write!(w, "jmp({})\n", gen_jmp(state, instr));
             }
             Lea => {
                 write!(w, "{} = {};\n", gen_op(instr, 0), gen_addr(instr));
