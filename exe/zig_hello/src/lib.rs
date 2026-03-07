@@ -2,8 +2,7 @@
 
 mod generated;
 
-#[unsafe(no_mangle)]
-pub extern "C" fn entry_point() {
+pub fn entry_point() {
     //init_memory();
     let mut ip = 0x00401000u32;
     loop {
@@ -13,4 +12,10 @@ pub extern "C" fn entry_point() {
         let f = generated::BLOCKS[index].1;
         ip = f();
     }
+}
+
+#[cfg(feature = "wasm")]
+#[unsafe(no_mangle)]
+pub extern "C" fn entry_point_wasm() {
+    entry_point();
 }

@@ -3,8 +3,11 @@ name = "zig-hello-exe"
 version = "0.1.0"
 edition = "2024"
 
-[lib]
-crate-type = ["cdylib"]
+# [lib]
+# crate-type = ["cdylib"]
+
+[features]
+wasm = ["runtime/wasm"]
 
 [dependencies]
 kernel32 = { workspace = true }
