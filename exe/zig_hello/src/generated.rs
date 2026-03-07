@@ -51,7 +51,7 @@ pub fn x00401023() -> u32 {
         // 00401023 mov byte ptr ds:[403000h],1
         *(MEMORY.add((0x403000u32) as usize) as *mut u8) = 0x1u8;
         // 0040102a mov eax,fs:[18h]
-        REGS.eax = todo!();
+        REGS.eax = *(MEMORY.add((REGS.fs_base + 0x18u32) as usize) as *mut u32);
         // 00401030 mov eax,[eax+30h]
         REGS.eax = *(MEMORY.add((REGS.eax + 0x30u32) as usize) as *mut u32);
         // 00401033 xor edi,edi
@@ -76,7 +76,7 @@ pub fn x00401023() -> u32 {
 pub fn x0040102a() -> u32 {
     unsafe {
         // 0040102a mov eax,fs:[18h]
-        REGS.eax = todo!();
+        REGS.eax = *(MEMORY.add((REGS.fs_base + 0x18u32) as usize) as *mut u32);
         // 00401030 mov eax,[eax+30h]
         REGS.eax = *(MEMORY.add((REGS.eax + 0x30u32) as usize) as *mut u32);
         // 00401033 xor edi,edi

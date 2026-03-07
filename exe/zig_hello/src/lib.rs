@@ -4,6 +4,7 @@ use runtime::*;
 
 pub fn entry_point() {
     runtime::HOST.init();
+    kernel32::init_process();
 
     //init_memory();
     let mut ip = 0x00401000u32;

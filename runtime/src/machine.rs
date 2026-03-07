@@ -1,6 +1,7 @@
 use bitflags::bitflags;
 
 #[repr(C)]
+#[derive(Debug)]
 pub struct Regs {
     pub eax: u32,
     pub ecx: u32,
@@ -13,6 +14,8 @@ pub struct Regs {
     pub ebp: u32,
 
     pub flags: Flags,
+
+    pub fs_base: u32,
 }
 
 bitflags! {
@@ -50,6 +53,8 @@ pub static mut REGS: Regs = Regs {
     ebp: 0x2000,
 
     flags: Flags::empty(),
+
+    fs_base: 0, // set when initializing process
 };
 
 pub static mut MEMORY: *mut u8 = std::ptr::null_mut();

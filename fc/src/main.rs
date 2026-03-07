@@ -104,30 +104,28 @@ fn gen_op(instr: &iced_x86::Instruction, n: u32) -> String {
         Immediate32 => format!("{:#x}u32", instr.immediate32()),
         Register => gen_reg(instr.op_register(n)),
         Memory => {
+            let mut expr = Vec::new();
             match instr.memory_segment() {
                 iced_x86::Register::DS | iced_x86::Register::SS => {}
-                iced_x86::Register::FS => return format!("todo!();"),
+                iced_x86::Register::FS => expr.push(format!("REGS.fs_base")),
                 iced_x86::Register::None => {}
                 r => todo!("{r:?}"),
             }
-            let mut expr = String::new();
             match instr.memory_base() {
                 iced_x86::Register::None => {}
-                r => expr = gen_reg(r),
+                r => expr.push(gen_reg(r)),
             }
             if instr.memory_index() != iced_x86::Register::None {
                 todo!();
             }
             let addr = instr.memory_displacement32();
-            if !expr.is_empty() {
-                expr = expr + "+";
-            }
-            expr = expr + &format!("{addr:#x}u32");
+            expr.push(format!("{addr:#x}u32"));
             let size = match instr.memory_size() {
                 iced_x86::MemorySize::UInt8 => "u8",
                 iced_x86::MemorySize::UInt32 => "u32",
                 s => todo!("{s:?}"),
             };
+            let expr = expr.join(" + ");
             format!("*(MEMORY.add(({expr}) as usize) as *mut {size})")
         }
         k => {
@@ -263,7 +261,7 @@ fn traverse(state: &State, ip: u32) -> HashMap<u32, Block> {
             use iced_x86::Mnemonic::*;
             match instr.mnemonic() {
                 Call | Jmp | Je | Jne => {
-                    let dst = match instr.op0_kind() {
+                    match instr.op0_kind() {
                         iced_x86::OpKind::NearBranch32 => queue.push_back(instr.near_branch32()),
                         iced_x86::OpKind::Memory => {
                             if let Some(addr) = is_abs_memory_ref(&instr)

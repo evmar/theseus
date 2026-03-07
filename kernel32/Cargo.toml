@@ -5,3 +5,4 @@ edition = "2024"
 
 [dependencies]
 runtime = { workspace = true }
+zerocopy = { version = "0.8.40", features = ["derive"] }
