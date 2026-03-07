@@ -217,7 +217,7 @@ fn gen_block(w: &mut dyn std::fmt::Write, state: &State, ip: AddrAbs, block: &Bl
             }
         }
     }
-    write!(w, "}}}}\n");
+    write!(w, "}}}}\n\n");
 }
 
 fn traverse(state: &State, ip: u32) -> HashMap<u32, Block> {
@@ -282,12 +282,22 @@ fn gen_file(state: &State, outdir: &str) -> Result<()> {
 
     write!(&mut text, "use runtime::*;\n");
 
-    let mut ips = blocks.keys().collect::<Vec<_>>();
+    let mut ips = blocks.keys().copied().collect::<Vec<_>>();
     ips.sort();
-    for &ip in ips {
+    for &ip in &ips {
         let block = blocks.get(&ip).unwrap();
         gen_block(&mut text, &state, AddrAbs(ip), &block);
     }
+
+    write!(
+        &mut text,
+        "pub const BLOCKS: [(u32, fn() -> Option<u32>); {}] = [\n",
+        ips.len()
+    );
+    for &ip in &ips {
+        write!(&mut text, "({ip:#08x}, x{ip:08x}),\n");
+    }
+    write!(&mut text, "];\n\n");
 
     std::fs::create_dir_all(format!("{outdir}/src"))?;
     let path = format!("{outdir}/src/generated.rs");

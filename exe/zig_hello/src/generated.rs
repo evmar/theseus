@@ -13,6 +13,7 @@ pub fn x00401000() -> Option<u32> {
         return call(0x40100e, 0x401015);
     }
 }
+
 pub fn x00401015() -> Option<u32> {
     unsafe {
         // 00401015 push ebp
@@ -31,6 +32,7 @@ pub fn x00401015() -> Option<u32> {
         todo!("jne short 0040102Ah");
     }
 }
+
 pub fn x0040102a() -> Option<u32> {
     unsafe {
         // 0040102a mov eax,fs:[18h]
@@ -55,6 +57,7 @@ pub fn x0040102a() -> Option<u32> {
         todo!("je short 00401068h");
     }
 }
+
 pub fn x00401068() -> Option<u32> {
     unsafe {
         // 00401068 mov byte ptr ds:[403000h],0
@@ -73,3 +76,10 @@ pub fn x00401068() -> Option<u32> {
         return None;
     }
 }
+
+pub const BLOCKS: [(u32, fn() -> Option<u32>); 4] = [
+    (0x401000, x00401000),
+    (0x401015, x00401015),
+    (0x40102a, x0040102a),
+    (0x401068, x00401068),
+];
