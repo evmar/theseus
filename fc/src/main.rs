@@ -166,7 +166,12 @@ fn gen_block(w: &mut dyn std::fmt::Write, state: &State, ip: AddrAbs, block: &Bl
                         todo!("{}", instr);
                     }
                 } else if instr.op0_kind() == iced_x86::OpKind::NearBranch32 {
-                    write!(w, "return call({:#08x});\n", instr.near_branch32());
+                    write!(
+                        w,
+                        "return call({:#08x}, {:#08x});\n",
+                        instr.next_ip32(),
+                        instr.near_branch32()
+                    );
                 } else {
                     todo!("{} {:?}", instr, instr.op0_kind());
                 }

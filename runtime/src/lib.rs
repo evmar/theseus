@@ -81,7 +81,7 @@ pub fn pop() -> u32 {
     }
 }
 
-pub fn call(addr: u32) -> Option<u32> {
-    todo!("call");
+pub fn call(ret: u32, addr: u32) -> Option<u32> {
+    push(ret);
     return Some(addr);
 }

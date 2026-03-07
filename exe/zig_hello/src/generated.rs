@@ -10,7 +10,7 @@ pub fn x00401000() -> Option<u32> {
         // 00401006 sub esp,10h
         REGS.esp -= 0x10u32;
         // 00401009 call 00401015h
-        return call(0x401015);
+        return call(0x40100e, 0x401015);
     }
 }
 pub fn x00401015() -> Option<u32> {
