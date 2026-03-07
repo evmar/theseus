@@ -42,7 +42,7 @@ pub fn x00401015() -> u32 {
         // 0040101a cmp byte ptr ds:[403000h],0
         sub(*(MEMORY.add((0x403000u32) as usize) as *mut u8), 0x0u8);
         // 00401021 jne short 0040102Ah
-        jne(0x401023, 0x40102a)
+        jne(0x401023, 0x40102au32)
     }
 }
 
@@ -69,7 +69,7 @@ pub fn x00401023() -> u32 {
         // 00401040 cmp edi,0Eh
         sub(REGS.edi, 0xeu32);
         // 00401043 je short 00401068h
-        todo!("je short 00401068h");
+        je(0x401045, 0x401068u32)
     }
 }
 
@@ -94,7 +94,7 @@ pub fn x0040102a() -> u32 {
         // 00401040 cmp edi,0Eh
         sub(REGS.edi, 0xeu32);
         // 00401043 je short 00401068h
-        todo!("je short 00401068h");
+        je(0x401045, 0x401068u32)
     }
 }
 
@@ -103,7 +103,7 @@ pub fn x00401040() -> u32 {
         // 00401040 cmp edi,0Eh
         sub(REGS.edi, 0xeu32);
         // 00401043 je short 00401068h
-        todo!("je short 00401068h");
+        je(0x401045, 0x401068u32)
     }
 }
 
@@ -135,7 +135,7 @@ pub fn x0040105a() -> u32 {
         // 0040105a test eax,eax
         todo!("test eax,eax");
         // 0040105c je short 00401063h
-        todo!("je short 00401063h");
+        je(0x40105e, 0x401063u32)
     }
 }
 
@@ -144,7 +144,7 @@ pub fn x0040105e() -> u32 {
         // 0040105e add edi,[esp]
         REGS.edi -= *(MEMORY.add((REGS.esp + 0x0u32) as usize) as *mut u32);
         // 00401061 jmp short 00401040h
-        todo!("jmp short 00401040h");
+        jmp(0x401040u32)
     }
 }
 
@@ -177,21 +177,21 @@ pub fn x00401068() -> u32 {
 pub fn x00401077() -> u32 {
     unsafe {
         // 00401077 jmp dword ptr ds:[402048h]
-        todo!("jmp dword ptr ds:[402048h]");
+        jmp(*(MEMORY.add(0x402048u32 as usize) as *const u32))
     }
 }
 
 pub fn x0040107d() -> u32 {
     unsafe {
         // 0040107d jmp dword ptr ds:[40204Ch]
-        todo!("jmp dword ptr ds:[40204Ch]");
+        jmp(*(MEMORY.add(0x40204cu32 as usize) as *const u32))
     }
 }
 
 pub fn x00401083() -> u32 {
     unsafe {
         // 00401083 jmp dword ptr ds:[402050h]
-        todo!("jmp dword ptr ds:[402050h]");
+        jmp(*(MEMORY.add(0x402050u32 as usize) as *const u32))
     }
 }
 

@@ -135,6 +135,20 @@ fn gen_op(instr: &iced_x86::Instruction, n: u32) -> String {
     }
 }
 
+fn gen_jmp(instr: &iced_x86::Instruction) -> String {
+    match instr.op_kind(0) {
+        iced_x86::OpKind::NearBranch32 => format!("{:#08x}u32", instr.near_branch32()),
+        iced_x86::OpKind::Memory => {
+            if let Some(addr) = is_abs_memory_ref(instr) {
+                format!("*(MEMORY.add({addr:#x}u32 as usize) as *const u32)")
+            } else {
+                todo!("indirect jmp");
+            }
+        }
+        k => todo!("{:?}", k),
+    }
+}
+
 struct Block {
     instrs: Vec<iced_x86::Instruction>,
 }
@@ -209,15 +223,16 @@ fn gen_block(w: &mut dyn std::fmt::Write, state: &State, ip: AddrAbs, block: &Bl
                 let op1 = gen_op(instr, 1);
                 write!(w, "{op0} = {op1};\n");
             }
-            Jne => {
-                write!(
-                    w,
-                    "jne({:#08x}, {:#08x})\n",
-                    instr.next_ip32(),
-                    instr.near_branch32()
-                );
+            Je => {
+                write!(w, "je({:#08x}, {})\n", instr.next_ip32(), gen_jmp(instr));
             }
-            Jmp | Je | Lea | Test => {
+            Jne => {
+                write!(w, "jne({:#08x}, {})\n", instr.next_ip32(), gen_jmp(instr));
+            }
+            Jmp => {
+                write!(w, "jmp({})\n", gen_jmp(instr));
+            }
+            Lea | Test => {
                 write!(w, "todo!(\"{}\");\n", instr);
             }
 

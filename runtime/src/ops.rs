@@ -77,6 +77,15 @@ pub fn sub<I: Int + num_traits::ops::overflowing::OverflowingSub + num_traits::W
     sbb(x, y, false)
 }
 
+pub fn je(from: u32, x: u32) -> u32 {
+    unsafe {
+        if REGS.flags.contains(Flags::ZF) {
+            return x;
+        }
+        from
+    }
+}
+
 pub fn jne(from: u32, x: u32) -> u32 {
     unsafe {
         if !REGS.flags.contains(Flags::ZF) {
@@ -84,4 +93,8 @@ pub fn jne(from: u32, x: u32) -> u32 {
         }
         from
     }
+}
+
+pub fn jmp(x: u32) -> u32 {
+    x
 }
