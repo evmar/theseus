@@ -8,14 +8,9 @@ pub fn entry_point() {
     generated::init_memory();
 
     //init_memory();
-    let mut ip = 0x00401000u32;
+    let mut f: fn() -> Cont = generated::x00401000;
     loop {
-        //println!("ip: {ip:#08x}");
-        let index = generated::BLOCKS
-            .binary_search_by_key(&ip, |(ip, _)| *ip)
-            .unwrap();
-        let f = generated::BLOCKS[index].1;
-        ip = f();
+        f = f().0;
     }
 }
 

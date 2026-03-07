@@ -34,3 +34,5 @@ pub fn dump_state() {
         }
     }
 }
+
+pub struct Cont(pub fn() -> Cont);

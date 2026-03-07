@@ -1,3 +1,4 @@
+use crate::Cont;
 use crate::machine::{Flags, MEMORY, REGS};
 
 pub fn push(x: u32) {
@@ -15,7 +16,7 @@ pub fn pop() -> u32 {
     }
 }
 
-pub fn call(ret: u32, addr: u32) -> u32 {
+pub fn call(ret: u32, addr: Cont) -> Cont {
     push(ret);
     addr
 }
@@ -77,7 +78,7 @@ pub fn sub<I: Int + num_traits::ops::overflowing::OverflowingSub + num_traits::W
     sbb(x, y, false)
 }
 
-pub fn je(from: u32, x: u32) -> u32 {
+pub fn je(from: Cont, x: Cont) -> Cont {
     unsafe {
         if REGS.flags.contains(Flags::ZF) {
             return x;
@@ -86,17 +87,13 @@ pub fn je(from: u32, x: u32) -> u32 {
     }
 }
 
-pub fn jne(from: u32, x: u32) -> u32 {
+pub fn jne(from: Cont, x: Cont) -> Cont {
     unsafe {
         if !REGS.flags.contains(Flags::ZF) {
             return x;
         }
         from
     }
-}
-
-pub fn jmp(x: u32) -> u32 {
-    x
 }
 
 pub fn and<I: Int>(x: I, y: I) -> I {

@@ -4,7 +4,7 @@
 
 use runtime::*;
 
-pub fn x00401000() -> u32 {
+pub fn x00401000() -> Cont {
     unsafe {
         // 00401000 push ebp
         push(REGS.ebp);
@@ -15,20 +15,20 @@ pub fn x00401000() -> u32 {
         // 00401006 sub esp,10h
         REGS.esp = sub(REGS.esp, 0x10u32);
         // 00401009 call 00401015h
-        call(0x40100e, 0x401015)
+        call(0x40100e, indirect(0x401015u32))
     }
 }
 
-pub fn x0040100e() -> u32 {
+pub fn x0040100e() -> Cont {
     unsafe {
         // 0040100e push 0
         push(0x0u32);
         // 00401010 call 00401077h
-        call(0x401015, 0x401077)
+        call(0x401015, indirect(0x401077u32))
     }
 }
 
-pub fn x00401015() -> u32 {
+pub fn x00401015() -> Cont {
     unsafe {
         // 00401015 push ebp
         push(REGS.ebp);
@@ -43,11 +43,11 @@ pub fn x00401015() -> u32 {
         // 0040101a cmp byte ptr ds:[403000h],0
         sub(*(MEMORY.add((0x403000u32) as usize) as *mut u8), 0x0u8);
         // 00401021 jne short 0040102Ah
-        jne(0x401023, 0x40102au32)
+        jne(indirect(0x401023), indirect(0x40102au32))
     }
 }
 
-pub fn x00401023() -> u32 {
+pub fn x00401023() -> Cont {
     unsafe {
         // 00401023 mov byte ptr ds:[403000h],1
         *(MEMORY.add((0x403000u32) as usize) as *mut u8) = 0x1u8;
@@ -70,11 +70,11 @@ pub fn x00401023() -> u32 {
         // 00401040 cmp edi,0Eh
         sub(REGS.edi, 0xeu32);
         // 00401043 je short 00401068h
-        je(0x401045, 0x401068u32)
+        je(indirect(0x401045), indirect(0x401068u32))
     }
 }
 
-pub fn x0040102a() -> u32 {
+pub fn x0040102a() -> Cont {
     unsafe {
         // 0040102a mov eax,fs:[18h]
         REGS.eax = *(MEMORY.add((REGS.fs_base + 0x18u32) as usize) as *mut u32);
@@ -95,20 +95,20 @@ pub fn x0040102a() -> u32 {
         // 00401040 cmp edi,0Eh
         sub(REGS.edi, 0xeu32);
         // 00401043 je short 00401068h
-        je(0x401045, 0x401068u32)
+        je(indirect(0x401045), indirect(0x401068u32))
     }
 }
 
-pub fn x00401040() -> u32 {
+pub fn x00401040() -> Cont {
     unsafe {
         // 00401040 cmp edi,0Eh
         sub(REGS.edi, 0xeu32);
         // 00401043 je short 00401068h
-        je(0x401045, 0x401068u32)
+        je(indirect(0x401045), indirect(0x401068u32))
     }
 }
 
-pub fn x00401045() -> u32 {
+pub fn x00401045() -> Cont {
     unsafe {
         // 00401045 mov ecx,ebx
         REGS.ecx = REGS.ebx;
@@ -127,36 +127,36 @@ pub fn x00401045() -> u32 {
         // 00401054 push esi
         push(REGS.esi);
         // 00401055 call 00401083h
-        call(0x40105a, 0x401083)
+        call(0x40105a, indirect(0x401083u32))
     }
 }
 
-pub fn x0040105a() -> u32 {
+pub fn x0040105a() -> Cont {
     unsafe {
         // 0040105a test eax,eax
         and(REGS.eax, REGS.eax);
         // 0040105c je short 00401063h
-        je(0x40105e, 0x401063u32)
+        je(indirect(0x40105e), indirect(0x401063u32))
     }
 }
 
-pub fn x0040105e() -> u32 {
+pub fn x0040105e() -> Cont {
     unsafe {
         // 0040105e add edi,[esp]
         REGS.edi += *(MEMORY.add((REGS.esp + 0x0u32) as usize) as *mut u32);
         // 00401061 jmp short 00401040h
-        jmp(0x401040u32)
+        indirect(0x401040u32)
     }
 }
 
-pub fn x00401063() -> u32 {
+pub fn x00401063() -> Cont {
     unsafe {
         // 00401063 call 0040107Dh
-        call(0x401068, 0x40107d)
+        call(0x401068, indirect(0x40107du32))
     }
 }
 
-pub fn x00401068() -> u32 {
+pub fn x00401068() -> Cont {
     unsafe {
         // 00401068 mov byte ptr ds:[403000h],0
         *(MEMORY.add((0x403000u32) as usize) as *mut u8) = 0x0u8;
@@ -171,28 +171,28 @@ pub fn x00401068() -> u32 {
         // 00401075 pop ebp
         REGS.ebp = pop();
         // 00401076 ret
-        pop()
+        indirect(pop())
     }
 }
 
-pub fn x00401077() -> u32 {
+pub fn x00401077() -> Cont {
     unsafe {
         // 00401077 jmp dword ptr ds:[402048h]
-        jmp(kernel32::stdcall_ExitProcess())
+        indirect(kernel32::stdcall_ExitProcess())
     }
 }
 
-pub fn x0040107d() -> u32 {
+pub fn x0040107d() -> Cont {
     unsafe {
         // 0040107d jmp dword ptr ds:[40204Ch]
-        jmp(kernel32::stdcall_GetLastError())
+        indirect(kernel32::stdcall_GetLastError())
     }
 }
 
-pub fn x00401083() -> u32 {
+pub fn x00401083() -> Cont {
     unsafe {
         // 00401083 jmp dword ptr ds:[402050h]
-        jmp(kernel32::stdcall_WriteFile())
+        indirect(kernel32::stdcall_WriteFile())
     }
 }
 
@@ -213,7 +213,7 @@ pub fn init_memory() {
     }
 }
 
-pub const BLOCKS: [(u32, fn() -> u32); 14] = [
+const BLOCKS: [(u32, fn() -> Cont); 14] = [
     (0x401000, x00401000),
     (0x40100e, x0040100e),
     (0x401015, x00401015),
@@ -229,3 +229,10 @@ pub const BLOCKS: [(u32, fn() -> u32); 14] = [
     (0x40107d, x0040107d),
     (0x401083, x00401083),
 ];
+
+pub fn indirect(addr: u32) -> Cont {
+    let index = BLOCKS
+        .binary_search_by_key(&addr, |(addr, _)| *addr)
+        .unwrap();
+    Cont(BLOCKS[index].1)
+}

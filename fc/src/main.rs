@@ -141,13 +141,13 @@ fn gen_op(instr: &iced_x86::Instruction, n: u32) -> String {
 
 fn gen_jmp(state: &State, instr: &iced_x86::Instruction) -> String {
     match instr.op_kind(0) {
-        iced_x86::OpKind::NearBranch32 => format!("{:#08x}u32", instr.near_branch32()),
+        iced_x86::OpKind::NearBranch32 => format!("indirect({:#08x}u32)", instr.near_branch32()),
         iced_x86::OpKind::Memory => {
             if let Some(addr) = is_abs_memory_ref(instr) {
                 if let Some((dll, func)) = state.imports.get(&addr) {
                     let dll = dll.to_lowercase();
                     let dll = dll.trim_end_matches(".dll");
-                    format!("{dll}::stdcall_{func}()")
+                    format!("indirect({dll}::stdcall_{func}())")
                 } else {
                     format!("*(MEMORY.add({addr:#x}u32 as usize) as *const u32)")
                 }
@@ -166,7 +166,7 @@ struct Block {
 fn gen_block(w: &mut dyn std::fmt::Write, state: &State, ip: AddrAbs, block: &Block) {
     println!("gen block: {:#08x}", ip.0);
 
-    write!(w, "pub fn x{:08x}() -> u32 {{\n", ip.0);
+    write!(w, "pub fn x{:08x}() -> Cont {{\n", ip.0);
     write!(w, "unsafe {{\n");
 
     for instr in &block.instrs {
@@ -181,24 +181,12 @@ fn gen_block(w: &mut dyn std::fmt::Write, state: &State, ip: AddrAbs, block: &Bl
                 write!(w, "{} = pop();\n", gen_op(instr, 0));
             }
             Call => {
-                if let Some(addr) = is_abs_memory_ref(instr) {
-                    if let Some((dll, func)) = state.imports.get(&addr) {
-                        let dll = dll.to_lowercase();
-                        let dll = dll.trim_end_matches(".dll");
-                        write!(w, "{dll}::stdcall_{func}();\n");
-                    } else {
-                        todo!("{}", instr);
-                    }
-                } else if instr.op0_kind() == iced_x86::OpKind::NearBranch32 {
-                    write!(
-                        w,
-                        "call({:#08x}, {:#08x})\n",
-                        instr.next_ip32(),
-                        instr.near_branch32()
-                    );
-                } else {
-                    todo!("{} {:?}", instr, instr.op0_kind());
-                }
+                write!(
+                    w,
+                    "call({:#08x}, {})\n",
+                    instr.next_ip32(),
+                    gen_jmp(state, instr)
+                );
             }
             Xor => {
                 let op0 = gen_op(instr, 0);
@@ -227,7 +215,7 @@ fn gen_block(w: &mut dyn std::fmt::Write, state: &State, ip: AddrAbs, block: &Bl
             }
             Ret => {
                 assert!(instr.op_count() == 0);
-                write!(w, "pop()");
+                write!(w, "indirect(pop())\n");
             }
             Mov => {
                 let op0 = gen_op(instr, 0);
@@ -237,7 +225,7 @@ fn gen_block(w: &mut dyn std::fmt::Write, state: &State, ip: AddrAbs, block: &Bl
             Je => {
                 write!(
                     w,
-                    "je({:#08x}, {})\n",
+                    "je(indirect({:#08x}), {})\n",
                     instr.next_ip32(),
                     gen_jmp(state, instr)
                 );
@@ -245,13 +233,13 @@ fn gen_block(w: &mut dyn std::fmt::Write, state: &State, ip: AddrAbs, block: &Bl
             Jne => {
                 write!(
                     w,
-                    "jne({:#08x}, {})\n",
+                    "jne(indirect({:#08x}), {})\n",
                     instr.next_ip32(),
                     gen_jmp(state, instr)
                 );
             }
             Jmp => {
-                write!(w, "jmp({})\n", gen_jmp(state, instr));
+                write!(w, "{}\n", gen_jmp(state, instr));
             }
             Lea => {
                 write!(w, "{} = {};\n", gen_op(instr, 0), gen_addr(instr));
@@ -383,13 +371,22 @@ fn gen_file(state: &State, outdir: &str) -> Result<()> {
 
     write!(
         &mut text,
-        "pub const BLOCKS: [(u32, fn() -> u32); {}] = [\n",
+        "const BLOCKS: [(u32, fn() -> Cont); {}] = [\n",
         ips.len()
     );
     for &ip in &ips {
         write!(&mut text, "({ip:#08x}, x{ip:08x}),\n");
     }
     write!(&mut text, "];\n\n");
+    write!(
+        &mut text,
+        "pub fn indirect(addr: u32) -> Cont {{
+            let index = BLOCKS
+                .binary_search_by_key(&addr, |(addr, _)| *addr)
+                .unwrap();
+            Cont(BLOCKS[index].1)
+        }}"
+    );
 
     std::fs::create_dir_all(format!("{outdir}/src"))?;
     let path = format!("{outdir}/src/generated.rs");
