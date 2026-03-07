@@ -15,9 +15,10 @@ pub fn GetStdHandle(_x: u32) -> u32 {
 pub fn stdcall_GetStdHandle() -> u32 {
     unsafe {
         let stack: *mut u32 = MEMORY.add(REGS.esp as usize) as *mut u32;
+        let ret = *stack.add(0);
         REGS.eax = GetStdHandle(*stack.add(1));
-        REGS.esp += 4;
-        runtime::pop()
+        REGS.esp += 2 * 4;
+        ret
     }
 }
 
@@ -26,7 +27,9 @@ pub fn WriteFile(hFile: u32, lpBuffer: u32, n: u32, nr: u32, o: u32) -> u32 {
     HOST.print(buf.as_bytes());
 
     if hFile == 0xf11e_0002 || hFile == 0xf11e_0003 {
-        HOST.print(unsafe { core::slice::from_raw_parts(lpBuffer as *const u8, n as usize) });
+        HOST.print(unsafe {
+            core::slice::from_raw_parts(MEMORY.add(lpBuffer as usize), n as usize)
+        });
     } else {
         todo!("WriteFile(hFile={hFile:x})");
     }
@@ -34,8 +37,10 @@ pub fn WriteFile(hFile: u32, lpBuffer: u32, n: u32, nr: u32, o: u32) -> u32 {
 }
 
 pub fn stdcall_WriteFile() -> u32 {
+    runtime::dump_state();
     unsafe {
         let stack: *mut u32 = MEMORY.add(REGS.esp as usize) as *mut u32;
+        let ret = *stack.add(0);
         REGS.eax = WriteFile(
             *stack.add(1),
             *stack.add(2),
@@ -43,8 +48,8 @@ pub fn stdcall_WriteFile() -> u32 {
             *stack.add(4),
             *stack.add(5),
         );
-        REGS.esp += 5 * 4;
-        runtime::pop()
+        REGS.esp += 6 * 4;
+        ret
     }
 }
 
@@ -55,9 +60,10 @@ pub fn ExitProcess(uExitCode: u32) -> u32 {
 pub fn stdcall_ExitProcess() -> u32 {
     unsafe {
         let stack: *mut u32 = MEMORY.add(REGS.esp as usize) as *mut u32;
+        let ret = *stack.add(0);
         REGS.eax = ExitProcess(*stack.add(1));
-        REGS.esp += 4;
-        runtime::pop()
+        REGS.esp += 2 * 4;
+        ret
     }
 }
 
@@ -67,8 +73,11 @@ pub fn GetLastError() -> u32 {
 
 pub fn stdcall_GetLastError() -> u32 {
     unsafe {
+        let stack: *mut u32 = MEMORY.add(REGS.esp as usize) as *mut u32;
+        let ret = *stack.add(0);
         REGS.eax = GetLastError();
-        runtime::pop()
+        REGS.esp += 1 * 4;
+        ret
     }
 }
 
