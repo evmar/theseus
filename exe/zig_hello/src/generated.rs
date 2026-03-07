@@ -134,7 +134,7 @@ pub fn x00401045() -> u32 {
 pub fn x0040105a() -> u32 {
     unsafe {
         // 0040105a test eax,eax
-        todo!("test eax,eax");
+        and(REGS.eax, REGS.eax);
         // 0040105c je short 00401063h
         je(0x40105e, 0x401063u32)
     }
@@ -143,7 +143,7 @@ pub fn x0040105a() -> u32 {
 pub fn x0040105e() -> u32 {
     unsafe {
         // 0040105e add edi,[esp]
-        REGS.edi -= *(MEMORY.add((REGS.esp + 0x0u32) as usize) as *mut u32);
+        REGS.edi += *(MEMORY.add((REGS.esp + 0x0u32) as usize) as *mut u32);
         // 00401061 jmp short 00401040h
         jmp(0x401040u32)
     }
@@ -161,7 +161,7 @@ pub fn x00401068() -> u32 {
         // 00401068 mov byte ptr ds:[403000h],0
         *(MEMORY.add((0x403000u32) as usize) as *mut u8) = 0x0u8;
         // 0040106f add esp,4
-        REGS.esp -= 0x4u32;
+        REGS.esp += 0x4u32;
         // 00401072 pop esi
         REGS.esi = pop();
         // 00401073 pop edi

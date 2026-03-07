@@ -22,14 +22,27 @@ pub fn stdcall_GetStdHandle() -> u32 {
     }
 }
 
-pub fn WriteFile(hFile: u32, lpBuffer: u32, n: u32, nr: u32, o: u32) -> u32 {
-    let buf = format!("WriteFile({hFile:x} {lpBuffer:x} {n:x} {nr:x} {o:x})\n");
+pub fn WriteFile(
+    hFile: u32,
+    lpBuffer: u32,
+    nNumberOfBytesToWrite: u32,
+    lpNumberOfBytesWritten: u32,
+    o: u32,
+) -> u32 {
+    let buf = format!(
+        "WriteFile({hFile:x} {lpBuffer:x} {nNumberOfBytesToWrite:x} {lpNumberOfBytesWritten:x} {o:x})\n"
+    );
     HOST.print(buf.as_bytes());
 
     if hFile == 0xf11e_0002 || hFile == 0xf11e_0003 {
-        HOST.print(unsafe {
-            core::slice::from_raw_parts(MEMORY.add(lpBuffer as usize), n as usize)
-        });
+        unsafe {
+            let buf = core::slice::from_raw_parts(
+                MEMORY.add(lpBuffer as usize),
+                nNumberOfBytesToWrite as usize,
+            );
+            HOST.print(buf);
+            *(MEMORY.add(lpNumberOfBytesWritten as usize) as *mut u32) = nNumberOfBytesToWrite;
+        }
     } else {
         todo!("WriteFile(hFile={hFile:x})");
     }

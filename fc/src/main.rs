@@ -213,7 +213,7 @@ fn gen_block(w: &mut dyn std::fmt::Write, state: &State, ip: AddrAbs, block: &Bl
             Add => {
                 let op0 = gen_op(instr, 0);
                 let op1 = gen_op(instr, 1);
-                write!(w, "{op0} -= {op1};\n");
+                write!(w, "{op0} += {op1};\n");
             }
             Sub => {
                 let op0 = gen_op(instr, 0);
@@ -256,7 +256,7 @@ fn gen_block(w: &mut dyn std::fmt::Write, state: &State, ip: AddrAbs, block: &Bl
                 write!(w, "{} = {};\n", gen_op(instr, 0), gen_addr(instr));
             }
             Test => {
-                write!(w, "todo!(\"{}\");\n", instr);
+                write!(w, "and({}, {});\n", gen_op(instr, 0), gen_op(instr, 1));
             }
 
             c => todo!("{:?} in {}", c, instr),

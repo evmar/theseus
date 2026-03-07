@@ -98,3 +98,16 @@ pub fn jne(from: u32, x: u32) -> u32 {
 pub fn jmp(x: u32) -> u32 {
     x
 }
+
+pub fn and<I: Int>(x: I, y: I) -> I {
+    let result = x & y;
+    unsafe {
+        REGS.flags.set(Flags::ZF, result.is_zero());
+        REGS.flags.set(Flags::SF, result.high_bit().is_one());
+        REGS.flags.set(Flags::OF, false);
+        REGS.flags.set(Flags::CF, false);
+        REGS.flags
+            .set(Flags::PF, result.low_byte().count_ones() % 2 == 0);
+    }
+    result
+}
