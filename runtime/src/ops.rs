@@ -104,6 +104,15 @@ pub fn jne(from: Cont, x: Cont) -> Cont {
     }
 }
 
+pub fn jb(from: Cont, x: Cont) -> Cont {
+    unsafe {
+        if MACHINE.regs.flags.contains(Flags::CF) {
+            return x;
+        }
+        from
+    }
+}
+
 pub fn and<I: Int>(x: I, y: I) -> I {
     let result = x & y;
     unsafe {
