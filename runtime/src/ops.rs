@@ -224,3 +224,18 @@ pub fn ret(n: u16) -> Cont {
         (MACHINE.indirect)(ret)
     }
 }
+
+/// neg: Two's Complement Negation
+pub fn neg<I: Int + num_traits::ops::overflowing::OverflowingSub>(x: I) -> I {
+    let (result, of) = I::zero().overflowing_sub(&x);
+    unsafe {
+        MACHINE.regs.flags.set(Flags::ZF, result.is_zero());
+        MACHINE.regs.flags.set(Flags::CF, !result.is_zero());
+        MACHINE.regs.flags.set(Flags::OF, of);
+        MACHINE
+            .regs
+            .flags
+            .set(Flags::PF, result.low_byte().count_ones() % 2 == 0);
+    }
+    result
+}

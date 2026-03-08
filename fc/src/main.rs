@@ -346,6 +346,12 @@ fn gen_block(w: &mut dyn std::fmt::Write, state: &State, ip: AddrAbs, block: &Bl
             Test => {
                 write!(w, "and({}, {});\n", gen_op(instr, 0), gen_op(instr, 1));
             }
+            Neg => {
+                write!(w, "{} = neg({});\n", gen_op(instr, 0), gen_op(instr, 0));
+            }
+            Stosd => {
+                write!(w, "todo!();\n");
+            }
 
             c => todo!("{:?} in {}", c, instr),
         }
