@@ -258,6 +258,14 @@ fn gen_block(w: &mut dyn std::fmt::Write, state: &State, ip: AddrAbs, block: &Bl
                     gen_jmp(state, instr)
                 );
             }
+            Ja => {
+                write!(
+                    w,
+                    "ja({}, {})\n",
+                    gen_abs_jmp(state, instr.next_ip32()),
+                    gen_jmp(state, instr)
+                );
+            }
             Jmp => {
                 write!(w, "{}\n", gen_jmp(state, instr));
             }
@@ -307,7 +315,7 @@ fn traverse(state: &State, ip: u32) -> HashMap<u32, Block> {
             }
             use iced_x86::Mnemonic::*;
             match instr.mnemonic() {
-                Call | Jmp | Je | Jne | Jb => {
+                Call | Jmp | Je | Jne | Jb | Ja => {
                     match instr.op0_kind() {
                         iced_x86::OpKind::NearBranch32 => queue.push_back(instr.near_branch32()),
                         iced_x86::OpKind::Memory => {
