@@ -180,6 +180,15 @@ pub fn jle(from: Cont, x: Cont) -> Cont {
     }
 }
 
+pub fn jbe(from: Cont, x: Cont) -> Cont {
+    unsafe {
+        if MACHINE.regs.flags.contains(Flags::CF) || MACHINE.regs.flags.contains(Flags::ZF) {
+            return x;
+        }
+        from
+    }
+}
+
 pub fn and<I: Int>(x: I, y: I) -> I {
     let result = x & y;
     unsafe {
