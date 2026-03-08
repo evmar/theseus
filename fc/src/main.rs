@@ -335,6 +335,10 @@ fn traverse(state: &State, ip: u32) -> HashMap<u32, Block> {
                                 todo!("indirect jmp");
                             }
                         }
+                        iced_x86::OpKind::Register => {
+                            let reg = gen_reg(instr.op_register(0));
+                            println!("indirect via register dest: {reg}");
+                        }
                         d => todo!("dest {d:?}"),
                     };
                     if instr.mnemonic() != Jmp {
