@@ -164,8 +164,11 @@ fn gen_jmp(state: &State, instr: &iced_x86::Instruction) -> String {
                     format!("*(MACHINE.memory.add({addr:#x}u32 as usize) as *const u32)")
                 }
             } else {
-                todo!("indirect jmp");
+                format!("indirect({})", gen_addr(instr))
             }
+        }
+        iced_x86::OpKind::Register => {
+            format!("indirect({})", gen_reg(instr.op0_register()))
         }
         k => todo!("{:?}", k),
     }
