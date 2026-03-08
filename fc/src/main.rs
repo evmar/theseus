@@ -376,7 +376,7 @@ fn gen_block(w: &mut dyn std::fmt::Write, state: &State, ip: AddrAbs, block: &Bl
                     gen_op(instr, 1)
                 );
             }
-            Stosd | Movzx | Leave => {
+            Stosd | Movzx | Leave | Dec | Inc | Sete => {
                 write!(w, "todo!();\n");
             }
 
