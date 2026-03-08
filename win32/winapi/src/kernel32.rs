@@ -347,3 +347,13 @@ pub fn WideCharToMultiByte(
 ) -> i32 {
     todo!()
 }
+
+#[win32_derive::dllexport]
+pub fn GetOEMCP() -> u32 {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn GetACP() -> u32 {
+    todo!()
+}

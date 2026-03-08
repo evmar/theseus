@@ -1,6 +1,7 @@
 #![allow(non_snake_case)]
 #![allow(non_camel_case_types)]
 
+pub mod ddraw;
 pub mod gdi32;
 pub mod kernel32;
 pub mod user32;
