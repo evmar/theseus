@@ -380,7 +380,7 @@ fn gen_block(w: &mut dyn std::fmt::Write, state: &State, ip: AddrAbs, block: &Bl
                 );
             }
             Stosd | Scasb | Cmpsb | Movzx | Movsx | Movsd | Std | Cld | Stosb | Div | Leave
-            | Dec | Inc | Sete | Sar | Imul | Not | Setge => {
+            | Dec | Inc | Sete | Sar | Imul | Not | Setge | Int => {
                 write!(w, "todo!();\n");
             }
 
@@ -448,6 +448,8 @@ fn traverse(state: &State, ip: u32) -> HashMap<u32, Block> {
                     }
                 }
                 Ret => {}
+                Int => {}  // terminates
+                Int3 => {} // breakpoint
                 _ => todo!("control flow {}", instr),
             }
             break;
