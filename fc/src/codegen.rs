@@ -2,7 +2,7 @@ use anyhow::{Result, anyhow, bail};
 
 use crate::{Block, State, is_abs_memory_ref, memory::AddrAbs};
 
-fn gen_reg(r: iced_x86::Register) -> String {
+fn get_reg(r: iced_x86::Register) -> String {
     use iced_x86::Register::*;
     match r {
         EAX => format!("MACHINE.regs.eax"),
@@ -19,6 +19,23 @@ fn gen_reg(r: iced_x86::Register) -> String {
     }
 }
 
+fn set_reg(r: iced_x86::Register, expr: String) -> String {
+    use iced_x86::Register::*;
+    match r {
+        EAX => format!("MACHINE.regs.eax = {expr};"),
+        ECX => format!("MACHINE.regs.ecx = {expr};"),
+        EDX => format!("MACHINE.regs.edx = {expr};"),
+        EBX => format!("MACHINE.regs.ebx = {expr};"),
+
+        ESI => format!("MACHINE.regs.esi = {expr};"),
+        EDI => format!("MACHINE.regs.edi = {expr};"),
+        ESP => format!("MACHINE.regs.esp = {expr};"),
+        EBP => format!("MACHINE.regs.ebp = {expr};"),
+
+        r => format!("todo!(\"{:?}\")", r),
+    }
+}
+
 fn gen_addr(instr: &iced_x86::Instruction) -> String {
     let mut expr = Vec::new();
     match instr.memory_segment() {
@@ -29,12 +46,12 @@ fn gen_addr(instr: &iced_x86::Instruction) -> String {
     }
     match instr.memory_base() {
         iced_x86::Register::None => {}
-        r => expr.push(gen_reg(r)),
+        r => expr.push(get_reg(r)),
     }
     if instr.memory_index() != iced_x86::Register::None {
         expr.push(format!(
             "({}*{})",
-            gen_reg(instr.memory_index()),
+            get_reg(instr.memory_index()),
             instr.memory_index_scale()
         ));
     }
@@ -43,7 +60,7 @@ fn gen_addr(instr: &iced_x86::Instruction) -> String {
     expr.join(" + ")
 }
 
-fn gen_op(instr: &iced_x86::Instruction, n: u32) -> String {
+fn get_op(instr: &iced_x86::Instruction, n: u32) -> String {
     use iced_x86::OpKind::*;
     match instr.op_kind(n) {
         Immediate8 => format!("{:#x}u8", instr.immediate8()),
@@ -51,7 +68,28 @@ fn gen_op(instr: &iced_x86::Instruction, n: u32) -> String {
         Immediate8to16 => format!("{:#x}u16", instr.immediate8to16()),
         Immediate8to32 => format!("{:#x}u32", instr.immediate8to32()),
         Immediate32 => format!("{:#x}u32", instr.immediate32()),
-        Register => gen_reg(instr.op_register(n)),
+        Register => get_reg(instr.op_register(n)),
+        Memory => {
+            let addr = gen_addr(instr);
+            let size = match instr.memory_size() {
+                iced_x86::MemorySize::UInt8 => "u8",
+                iced_x86::MemorySize::UInt16 => "u16",
+                iced_x86::MemorySize::UInt32 => "u32",
+                s => todo!("{s:?}"),
+            };
+            format!("*(MACHINE.memory.add(({addr}) as usize) as *mut {size})")
+        }
+        k => {
+            dbg!(instr);
+            todo!("{:?}", k);
+        }
+    }
+}
+
+fn set_op(instr: &iced_x86::Instruction, n: u32, expr: String) -> String {
+    use iced_x86::OpKind::*;
+    match instr.op_kind(n) {
+        Register => set_reg(instr.op_register(n), expr),
         Memory => {
             let addr = gen_addr(instr);
             let size = match instr.memory_size() {
@@ -97,7 +135,7 @@ fn gen_jmp(state: &State, instr: &iced_x86::Instruction) -> String {
             }
         }
         iced_x86::OpKind::Register => {
-            format!("indirect({})", gen_reg(instr.op0_register()))
+            format!("indirect({})", get_reg(instr.op0_register()))
         }
         k => todo!("{:?}", k),
     }
@@ -115,10 +153,10 @@ fn gen_block(w: &mut dyn std::fmt::Write, state: &State, ip: AddrAbs, block: &Bl
         use iced_x86::Mnemonic::*;
         match instr.mnemonic() {
             Push => {
-                write!(w, "push({});\n", gen_op(instr, 0));
+                write!(w, "push({});\n", get_op(instr, 0));
             }
             Pop => {
-                write!(w, "{} = pop();\n", gen_op(instr, 0));
+                write!(w, "{}", set_op(instr, 0, "pop();\n".into()));
             }
             Call => {
                 write!(
@@ -129,38 +167,38 @@ fn gen_block(w: &mut dyn std::fmt::Write, state: &State, ip: AddrAbs, block: &Bl
                 );
             }
             Xor => {
-                let op0 = gen_op(instr, 0);
-                let op1 = gen_op(instr, 1);
+                let op0 = get_op(instr, 0);
+                let op1 = get_op(instr, 1);
                 write!(w, "{op0} ^= {op1};\n");
             }
             And => {
-                let op0 = gen_op(instr, 0);
-                let op1 = gen_op(instr, 1);
+                let op0 = get_op(instr, 0);
+                let op1 = get_op(instr, 1);
                 write!(w, "{op0} = and({op0}, {op1});\n");
             }
             Or => {
-                let op0 = gen_op(instr, 0);
-                let op1 = gen_op(instr, 1);
+                let op0 = get_op(instr, 0);
+                let op1 = get_op(instr, 1);
                 write!(w, "{op0} = or({op0}, {op1});\n");
             }
             Add => {
-                let op0 = gen_op(instr, 0);
-                let op1 = gen_op(instr, 1);
+                let op0 = get_op(instr, 0);
+                let op1 = get_op(instr, 1);
                 write!(w, "{op0} += {op1};\n");
             }
             Sub => {
-                let op0 = gen_op(instr, 0);
-                let op1 = gen_op(instr, 1);
+                let op0 = get_op(instr, 0);
+                let op1 = get_op(instr, 1);
                 write!(w, "{op0} = sub({op0}, {op1});\n");
             }
             Sbb => {
-                let op0 = gen_op(instr, 0);
-                let op1 = gen_op(instr, 1);
+                let op0 = get_op(instr, 0);
+                let op1 = get_op(instr, 1);
                 write!(w, "{op0} = sbb({op0}, {op1});\n");
             }
             Cmp => {
-                let op0 = gen_op(instr, 0);
-                let op1 = gen_op(instr, 1);
+                let op0 = get_op(instr, 0);
+                let op1 = get_op(instr, 1);
                 write!(w, "sub({op0}, {op1});\n");
             }
             Ret => {
@@ -175,8 +213,8 @@ fn gen_block(w: &mut dyn std::fmt::Write, state: &State, ip: AddrAbs, block: &Bl
                 write!(w, "ret({n})\n");
             }
             Mov => {
-                let op0 = gen_op(instr, 0);
-                let op1 = gen_op(instr, 1);
+                let op0 = get_op(instr, 0);
+                let op1 = get_op(instr, 1);
                 write!(w, "{op0} = {op1};\n");
             }
             Je => {
@@ -287,30 +325,30 @@ fn gen_block(w: &mut dyn std::fmt::Write, state: &State, ip: AddrAbs, block: &Bl
                 write!(w, "{}\n", gen_jmp(state, instr));
             }
             Lea => {
-                write!(w, "{} = {};\n", gen_op(instr, 0), gen_addr(instr));
+                write!(w, "{} = {};\n", get_op(instr, 0), gen_addr(instr));
             }
             Test => {
-                write!(w, "and({}, {});\n", gen_op(instr, 0), gen_op(instr, 1));
+                write!(w, "and({}, {});\n", get_op(instr, 0), get_op(instr, 1));
             }
             Neg => {
-                write!(w, "{} = neg({});\n", gen_op(instr, 0), gen_op(instr, 0));
+                write!(w, "{} = neg({});\n", get_op(instr, 0), get_op(instr, 0));
             }
             Shl => {
                 write!(
                     w,
                     "{} = shl({}, {});\n",
-                    gen_op(instr, 0),
-                    gen_op(instr, 0),
-                    gen_op(instr, 1)
+                    get_op(instr, 0),
+                    get_op(instr, 0),
+                    get_op(instr, 1)
                 );
             }
             Shr => {
                 write!(
                     w,
                     "{} = shr({}, {});\n",
-                    gen_op(instr, 0),
-                    gen_op(instr, 0),
-                    gen_op(instr, 1)
+                    get_op(instr, 0),
+                    get_op(instr, 0),
+                    get_op(instr, 1)
                 );
             }
             Stosd | Scasb | Cmpsb | Movzx | Movsx | Movsd | Std | Cld | Stosb | Div | Leave

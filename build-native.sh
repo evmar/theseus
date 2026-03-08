@@ -2,5 +2,5 @@
 
 set -e
 
-cargo run -p fc ~/win/rs/deploy/archive/zip.exe exe/zip
-cargo build -p zip-exe "$@"
+cargo run -p fc ~/win/rs/exe/zig_hello/hello.exe exe/zig_hello
+cargo build -p zig-hello-exe "$@"

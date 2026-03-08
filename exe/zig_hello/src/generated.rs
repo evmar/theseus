@@ -11,7 +11,7 @@ pub fn x00401000() -> Cont {
         // 00401001 mov ebp,esp
         MACHINE.regs.ebp = MACHINE.regs.esp;
         // 00401003 and esp,0FFFFFFF0h
-        MACHINE.regs.esp &= 0xfffffff0u32;
+        MACHINE.regs.esp = and(MACHINE.regs.esp, 0xfffffff0u32);
         // 00401006 sub esp,10h
         MACHINE.regs.esp = sub(MACHINE.regs.esp, 0x10u32);
         // 00401009 call 00401015h
@@ -70,8 +70,7 @@ pub fn x00401023() -> Cont {
         // 0040103b push 0Eh
         push(0xeu32);
         // 0040103d pop ebx
-        MACHINE.regs.ebx = pop();
-        // 0040103e mov ebp,esp
+        MACHINE.regs.ebx = pop(); // 0040103e mov ebp,esp
         MACHINE.regs.ebp = MACHINE.regs.esp;
         // 00401040 cmp edi,0Eh
         sub(MACHINE.regs.edi, 0xeu32);
@@ -98,8 +97,7 @@ pub fn x0040102a() -> Cont {
         // 0040103b push 0Eh
         push(0xeu32);
         // 0040103d pop ebx
-        MACHINE.regs.ebx = pop();
-        // 0040103e mov ebp,esp
+        MACHINE.regs.ebx = pop(); // 0040103e mov ebp,esp
         MACHINE.regs.ebp = MACHINE.regs.esp;
         // 00401040 cmp edi,0Eh
         sub(MACHINE.regs.edi, 0xeu32);
@@ -172,15 +170,11 @@ pub fn x00401068() -> Cont {
         // 0040106f add esp,4
         MACHINE.regs.esp += 0x4u32;
         // 00401072 pop esi
-        MACHINE.regs.esi = pop();
-        // 00401073 pop edi
-        MACHINE.regs.edi = pop();
-        // 00401074 pop ebx
-        MACHINE.regs.ebx = pop();
-        // 00401075 pop ebp
-        MACHINE.regs.ebp = pop();
-        // 00401076 ret
-        indirect(pop())
+        MACHINE.regs.esi = pop(); // 00401073 pop edi
+        MACHINE.regs.edi = pop(); // 00401074 pop ebx
+        MACHINE.regs.ebx = pop(); // 00401075 pop ebp
+        MACHINE.regs.ebp = pop(); // 00401076 ret
+        ret(0)
     }
 }
 
@@ -222,7 +216,8 @@ pub fn init_memory() {
     }
 }
 
-const BLOCKS: [(u32, fn() -> Cont); 14] = [
+const BLOCKS: [(u32, fn() -> Cont); 16] = [
+    (0, runtime::null_pointer_error),
     (0x401000, x00401000),
     (0x40100e, x0040100e),
     (0x401015, x00401015),
@@ -237,6 +232,7 @@ const BLOCKS: [(u32, fn() -> Cont); 14] = [
     (0x401077, x00401077),
     (0x40107d, x0040107d),
     (0x401083, x00401083),
+    (0xf000_0000, runtime::return_from_main),
 ];
 
 pub fn indirect(addr: u32) -> Cont {
