@@ -382,7 +382,7 @@ fn traverse(state: &State, ip: u32) -> HashMap<u32, Block> {
                                     println!("indirect jmp via memory {addr:x}");
                                 }
                             } else {
-                                todo!("indirect jmp");
+                                println!("complex indirect jmp");
                             }
                         }
                         iced_x86::OpKind::Register => {
