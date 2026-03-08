@@ -228,6 +228,11 @@ fn gen_block(w: &mut dyn std::fmt::Write, state: &State, ip: AddrAbs, block: &Bl
                 let op1 = gen_op(instr, 1);
                 write!(w, "{op0} = sub({op0}, {op1});\n");
             }
+            Sbb => {
+                let op0 = gen_op(instr, 0);
+                let op1 = gen_op(instr, 1);
+                write!(w, "{op0} = sbb({op0}, {op1});\n");
+            }
             Cmp => {
                 let op0 = gen_op(instr, 0);
                 let op1 = gen_op(instr, 1);
