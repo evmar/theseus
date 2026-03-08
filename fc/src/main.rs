@@ -125,6 +125,8 @@ fn gen_op(instr: &iced_x86::Instruction, n: u32) -> String {
     use iced_x86::OpKind::*;
     match instr.op_kind(n) {
         Immediate8 => format!("{:#x}u8", instr.immediate8()),
+        Immediate16 => format!("{:#x}u16", instr.immediate16()),
+        Immediate8to16 => format!("{:#x}u16", instr.immediate8to16()),
         Immediate8to32 => format!("{:#x}u32", instr.immediate8to32()),
         Immediate32 => format!("{:#x}u32", instr.immediate32()),
         Register => gen_reg(instr.op_register(n)),
@@ -377,7 +379,7 @@ fn gen_block(w: &mut dyn std::fmt::Write, state: &State, ip: AddrAbs, block: &Bl
                     gen_op(instr, 1)
                 );
             }
-            Stosd | Movzx | Leave | Dec | Inc | Sete => {
+            Stosd | Movzx | Leave | Dec | Inc | Sete | Sar => {
                 write!(w, "todo!();\n");
             }
 
