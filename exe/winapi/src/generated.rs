@@ -55,10 +55,12 @@ pub fn init_memory() {
     }
 }
 
-const BLOCKS: [(u32, fn() -> Cont); 3] = [
+const BLOCKS: [(u32, fn() -> Cont); 5] = [
+    (0, runtime::null_pointer_error),
     (0x401000, x00401000),
     (0x401008, x00401008),
     (0x40101a, x0040101a),
+    (0xf000_0000, runtime::return_from_main),
 ];
 
 pub fn indirect(addr: u32) -> Cont {

@@ -380,11 +380,13 @@ fn gen_file(state: &State, outdir: &str) -> Result<()> {
     write!(
         &mut text,
         "const BLOCKS: [(u32, fn() -> Cont); {}] = [\n",
-        ips.len()
+        ips.len() + 2,
     );
+    write!(&mut text, "(0, runtime::null_pointer_error),\n");
     for &ip in &ips {
         write!(&mut text, "({ip:#08x}, x{ip:08x}),\n");
     }
+    write!(&mut text, "(0xf000_0000, runtime::return_from_main),\n");
     write!(&mut text, "];\n\n");
     write!(
         &mut text,
