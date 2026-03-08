@@ -149,6 +149,15 @@ pub fn jge(from: Cont, x: Cont) -> Cont {
     }
 }
 
+pub fn jecxz(from: Cont, x: Cont) -> Cont {
+    unsafe {
+        if MACHINE.regs.ecx == 0 {
+            return x;
+        }
+        from
+    }
+}
+
 pub fn and<I: Int>(x: I, y: I) -> I {
     let result = x & y;
     unsafe {
