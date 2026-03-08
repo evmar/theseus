@@ -5,34 +5,33 @@ use crate::{Block, State, is_abs_memory_ref, memory::AddrAbs};
 fn get_reg(r: iced_x86::Register) -> String {
     use iced_x86::Register::*;
     match r {
-        EAX => format!("MACHINE.regs.eax"),
-        ECX => format!("MACHINE.regs.ecx"),
-        EDX => format!("MACHINE.regs.edx"),
-        EBX => format!("MACHINE.regs.ebx"),
+        EAX | ECX | EDX | EBX | ESI | EDI | ESP | EBP => {
+            let reg = format!("{r:?}").to_ascii_lowercase();
+            format!("MACHINE.regs.{reg}")
+        }
 
-        ESI => format!("MACHINE.regs.esi"),
-        EDI => format!("MACHINE.regs.edi"),
-        ESP => format!("MACHINE.regs.esp"),
-        EBP => format!("MACHINE.regs.ebp"),
+        AL | AH | AX | CL | CH | CX | DL | DH | DX | BL | BH | BX => {
+            let reg = format!("{r:?}").to_ascii_lowercase();
+            format!("MACHINE.regs.get_{reg}()")
+        }
 
-        r => format!("todo!(\"{:?}\")", r),
+        r => todo!("{r:?}"),
     }
 }
 
 fn set_reg(r: iced_x86::Register, expr: String) -> String {
     use iced_x86::Register::*;
     match r {
-        EAX => format!("MACHINE.regs.eax = {expr};"),
-        ECX => format!("MACHINE.regs.ecx = {expr};"),
-        EDX => format!("MACHINE.regs.edx = {expr};"),
-        EBX => format!("MACHINE.regs.ebx = {expr};"),
+        EAX | ECX | EDX | EBX | ESI | EDI | ESP | EBP => {
+            let reg = format!("{r:?}").to_ascii_lowercase();
+            format!("MACHINE.regs.{reg} = {expr};")
+        }
 
-        ESI => format!("MACHINE.regs.esi = {expr};"),
-        EDI => format!("MACHINE.regs.edi = {expr};"),
-        ESP => format!("MACHINE.regs.esp = {expr};"),
-        EBP => format!("MACHINE.regs.ebp = {expr};"),
-
-        r => format!("todo!(\"{:?}\")", r),
+        AL | AH | AX | CL | CH | CX | DL | DH | DX | BL | BH | BX => {
+            let reg = format!("{r:?}").to_ascii_lowercase();
+            format!("MACHINE.regs.set_{reg}({expr});")
+        }
+        r => todo!("{r:?}"),
     }
 }
 
@@ -98,7 +97,7 @@ fn set_op(instr: &iced_x86::Instruction, n: u32, expr: String) -> String {
                 iced_x86::MemorySize::UInt32 => "u32",
                 s => todo!("{s:?}"),
             };
-            format!("*(MACHINE.memory.add(({addr}) as usize) as *mut {size})")
+            format!("*(MACHINE.memory.add(({addr}) as usize) as *mut {size}) = {expr};")
         }
         k => {
             dbg!(instr);
@@ -213,9 +212,7 @@ fn gen_block(w: &mut dyn std::fmt::Write, state: &State, ip: AddrAbs, block: &Bl
                 write!(w, "ret({n})\n");
             }
             Mov => {
-                let op0 = get_op(instr, 0);
-                let op1 = get_op(instr, 1);
-                write!(w, "{op0} = {op1};\n");
+                write!(w, "{};\n", set_op(instr, 0, get_op(instr, 1)));
             }
             Je => {
                 write!(

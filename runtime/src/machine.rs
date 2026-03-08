@@ -32,6 +32,86 @@ pub static mut MACHINE: Machine = Machine {
     indirect: indirect_unimpl,
 };
 
+impl Regs {
+    pub fn get_ax(&self) -> u16 {
+        self.eax as u16
+    }
+    pub fn get_cx(&self) -> u16 {
+        self.ecx as u16
+    }
+    pub fn get_dx(&self) -> u16 {
+        self.edx as u16
+    }
+    pub fn get_bx(&self) -> u16 {
+        self.ebx as u16
+    }
+
+    pub fn set_ax(&mut self, val: u16) {
+        self.eax = (self.eax & 0xFFFF_0000) | (val as u32);
+    }
+    pub fn set_cx(&mut self, val: u16) {
+        self.ecx = (self.ecx & 0xFFFF_0000) | (val as u32);
+    }
+    pub fn set_dx(&mut self, val: u16) {
+        self.edx = (self.edx & 0xFFFF_0000) | (val as u32);
+    }
+    pub fn set_bx(&mut self, val: u16) {
+        self.ebx = (self.ebx & 0xFFFF_0000) | (val as u32);
+    }
+
+    pub fn get_al(&self) -> u8 {
+        self.eax as u8
+    }
+    pub fn get_cl(&self) -> u8 {
+        self.ecx as u8
+    }
+    pub fn get_dl(&self) -> u8 {
+        self.edx as u8
+    }
+    pub fn get_bl(&self) -> u8 {
+        self.ebx as u8
+    }
+
+    pub fn set_al(&mut self, val: u8) {
+        self.eax = (self.eax & 0xFFFF_FF00) | (val as u32)
+    }
+    pub fn set_cl(&mut self, val: u8) {
+        self.ecx = (self.ecx & 0xFFFF_FF00) | (val as u32)
+    }
+    pub fn set_dl(&mut self, val: u8) {
+        self.edx = (self.edx & 0xFFFF_FF00) | (val as u32)
+    }
+    pub fn set_bl(&mut self, val: u8) {
+        self.ebx = (self.ebx & 0xFFFF_FF00) | (val as u32)
+    }
+
+    pub fn get_ah(&self) -> u8 {
+        (self.eax >> 8) as u8
+    }
+    pub fn get_ch(&self) -> u8 {
+        (self.ecx >> 8) as u8
+    }
+    pub fn get_dh(&self) -> u8 {
+        (self.edx >> 8) as u8
+    }
+    pub fn get_bh(&self) -> u8 {
+        (self.ebx >> 8) as u8
+    }
+
+    pub fn set_ah(&mut self, val: u8) {
+        self.eax = (self.eax & 0xFFFF_00FF) | ((val as u32) << 8)
+    }
+    pub fn set_ch(&mut self, val: u8) {
+        self.ecx = (self.ecx & 0xFFFF_00FF) | ((val as u32) << 8)
+    }
+    pub fn set_dh(&mut self, val: u8) {
+        self.edx = (self.edx & 0xFFFF_00FF) | ((val as u32) << 8)
+    }
+    pub fn set_bh(&mut self, val: u8) {
+        self.ebx = (self.ebx & 0xFFFF_00FF) | ((val as u32) << 8)
+    }
+}
+
 impl Machine {
     pub fn dump_state(&self) {
         unsafe {
