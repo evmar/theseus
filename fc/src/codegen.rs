@@ -156,7 +156,7 @@ fn gen_block(w: &mut dyn std::fmt::Write, state: &State, ip: AddrAbs, block: &Bl
                 write!(w, "push({});\n", get_op(instr, 0));
             }
             Pop => {
-                write!(w, "{}", set_op(instr, 0, "pop();\n".into()));
+                write!(w, "{};\n", set_op(instr, 0, "pop()".into()));
             }
             Call => {
                 write!(
