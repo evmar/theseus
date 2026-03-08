@@ -122,6 +122,15 @@ pub fn js(from: Cont, x: Cont) -> Cont {
     }
 }
 
+pub fn jns(from: Cont, x: Cont) -> Cont {
+    unsafe {
+        if !MACHINE.regs.flags.contains(Flags::SF) {
+            return x;
+        }
+        from
+    }
+}
+
 pub fn ja(from: Cont, x: Cont) -> Cont {
     unsafe {
         if !MACHINE.regs.flags.contains(Flags::CF) && !MACHINE.regs.flags.contains(Flags::ZF) {
