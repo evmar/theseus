@@ -1,17 +1,17 @@
 use crate::Cont;
-use crate::machine::{Flags, MEMORY, REGS};
+use crate::machine::{Flags, MACHINE};
 
 pub fn push(x: u32) {
     unsafe {
-        REGS.esp -= 4;
-        *(MEMORY.add(REGS.esp as usize) as *mut u32) = x;
+        MACHINE.regs.esp -= 4;
+        *(MACHINE.memory.add(MACHINE.regs.esp as usize) as *mut u32) = x;
     }
 }
 
 pub fn pop() -> u32 {
     unsafe {
-        let x = *(MEMORY.add(REGS.esp as usize) as *mut u32);
-        REGS.esp += 4;
+        let x = *(MACHINE.memory.add(MACHINE.regs.esp as usize) as *mut u32);
+        MACHINE.regs.esp += 4;
         x
     }
 }
@@ -56,16 +56,24 @@ fn sbb<I: Int + num_traits::ops::overflowing::OverflowingSub + num_traits::Wrapp
     let z = if b { y.wrapping_add(&I::one()) } else { y };
     let (result, borrow) = x.overflowing_sub(&z);
     unsafe {
-        REGS.flags.set(Flags::CF, borrow || (b && z == I::zero()));
-        REGS.flags.set(Flags::ZF, result.is_zero());
-        REGS.flags.set(Flags::SF, result.high_bit().is_one());
+        MACHINE
+            .regs
+            .flags
+            .set(Flags::CF, borrow || (b && z == I::zero()));
+        MACHINE.regs.flags.set(Flags::ZF, result.is_zero());
+        MACHINE
+            .regs
+            .flags
+            .set(Flags::SF, result.high_bit().is_one());
         // Overflow is true exactly when the high (sign) bits are like:
         //   x  y  result
         //   0  1  1
         //   1  0  0
         let of = ((x ^ y) & (x ^ result)).high_bit().is_one();
-        REGS.flags.set(Flags::OF, of);
-        REGS.flags
+        MACHINE.regs.flags.set(Flags::OF, of);
+        MACHINE
+            .regs
+            .flags
             .set(Flags::PF, result.low_byte().count_ones() % 2 == 0);
     }
     result
@@ -80,7 +88,7 @@ pub fn sub<I: Int + num_traits::ops::overflowing::OverflowingSub + num_traits::W
 
 pub fn je(from: Cont, x: Cont) -> Cont {
     unsafe {
-        if REGS.flags.contains(Flags::ZF) {
+        if MACHINE.regs.flags.contains(Flags::ZF) {
             return x;
         }
         from
@@ -89,7 +97,7 @@ pub fn je(from: Cont, x: Cont) -> Cont {
 
 pub fn jne(from: Cont, x: Cont) -> Cont {
     unsafe {
-        if !REGS.flags.contains(Flags::ZF) {
+        if !MACHINE.regs.flags.contains(Flags::ZF) {
             return x;
         }
         from
@@ -99,11 +107,16 @@ pub fn jne(from: Cont, x: Cont) -> Cont {
 pub fn and<I: Int>(x: I, y: I) -> I {
     let result = x & y;
     unsafe {
-        REGS.flags.set(Flags::ZF, result.is_zero());
-        REGS.flags.set(Flags::SF, result.high_bit().is_one());
-        REGS.flags.set(Flags::OF, false);
-        REGS.flags.set(Flags::CF, false);
-        REGS.flags
+        MACHINE.regs.flags.set(Flags::ZF, result.is_zero());
+        MACHINE
+            .regs
+            .flags
+            .set(Flags::SF, result.high_bit().is_one());
+        MACHINE.regs.flags.set(Flags::OF, false);
+        MACHINE.regs.flags.set(Flags::CF, false);
+        MACHINE
+            .regs
+            .flags
             .set(Flags::PF, result.low_byte().count_ones() % 2 == 0);
     }
     result

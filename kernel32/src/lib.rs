@@ -2,7 +2,7 @@
 #![allow(non_snake_case)]
 #![allow(non_camel_case_types)]
 
-use runtime::{HOST, Host, MEMORY, REGS};
+use runtime::{HOST, Host, MACHINE};
 use zerocopy::FromBytes;
 
 #[macro_use]
@@ -14,10 +14,10 @@ pub fn GetStdHandle(_x: u32) -> u32 {
 
 pub fn stdcall_GetStdHandle() -> u32 {
     unsafe {
-        let stack: *mut u32 = MEMORY.add(REGS.esp as usize) as *mut u32;
+        let stack: *mut u32 = MACHINE.memory.add(MACHINE.regs.esp as usize) as *mut u32;
         let ret = *stack.add(0);
-        REGS.eax = GetStdHandle(*stack.add(1));
-        REGS.esp += 2 * 4;
+        MACHINE.regs.eax = GetStdHandle(*stack.add(1));
+        MACHINE.regs.esp += 2 * 4;
         ret
     }
 }
@@ -37,11 +37,12 @@ pub fn WriteFile(
     if hFile == 0xf11e_0002 || hFile == 0xf11e_0003 {
         unsafe {
             let buf = core::slice::from_raw_parts(
-                MEMORY.add(lpBuffer as usize),
+                MACHINE.memory.add(lpBuffer as usize),
                 nNumberOfBytesToWrite as usize,
             );
             HOST.print(buf);
-            *(MEMORY.add(lpNumberOfBytesWritten as usize) as *mut u32) = nNumberOfBytesToWrite;
+            *(MACHINE.memory.add(lpNumberOfBytesWritten as usize) as *mut u32) =
+                nNumberOfBytesToWrite;
         }
     } else {
         todo!("WriteFile(hFile={hFile:x})");
@@ -51,16 +52,16 @@ pub fn WriteFile(
 
 pub fn stdcall_WriteFile() -> u32 {
     unsafe {
-        let stack: *mut u32 = MEMORY.add(REGS.esp as usize) as *mut u32;
+        let stack: *mut u32 = MACHINE.memory.add(MACHINE.regs.esp as usize) as *mut u32;
         let ret = *stack.add(0);
-        REGS.eax = WriteFile(
+        MACHINE.regs.eax = WriteFile(
             *stack.add(1),
             *stack.add(2),
             *stack.add(3),
             *stack.add(4),
             *stack.add(5),
         );
-        REGS.esp += 6 * 4;
+        MACHINE.regs.esp += 6 * 4;
         ret
     }
 }
@@ -71,10 +72,10 @@ pub fn ExitProcess(uExitCode: u32) -> u32 {
 
 pub fn stdcall_ExitProcess() -> u32 {
     unsafe {
-        let stack: *mut u32 = MEMORY.add(REGS.esp as usize) as *mut u32;
+        let stack: *mut u32 = MACHINE.memory.add(MACHINE.regs.esp as usize) as *mut u32;
         let ret = *stack.add(0);
-        REGS.eax = ExitProcess(*stack.add(1));
-        REGS.esp += 2 * 4;
+        MACHINE.regs.eax = ExitProcess(*stack.add(1));
+        MACHINE.regs.esp += 2 * 4;
         ret
     }
 }
@@ -85,10 +86,10 @@ pub fn GetLastError() -> u32 {
 
 pub fn stdcall_GetLastError() -> u32 {
     unsafe {
-        let stack: *mut u32 = MEMORY.add(REGS.esp as usize) as *mut u32;
+        let stack: *mut u32 = MACHINE.memory.add(MACHINE.regs.esp as usize) as *mut u32;
         let ret = *stack.add(0);
-        REGS.eax = GetLastError();
-        REGS.esp += 1 * 4;
+        MACHINE.regs.eax = GetLastError();
+        MACHINE.regs.esp += 1 * 4;
         ret
     }
 }
@@ -167,19 +168,20 @@ struct RTL_USER_PROCESS_PARAMETERS {
 
 pub fn init_process() {
     unsafe {
-        let buf = core::slice::from_raw_parts_mut(MEMORY.add(0x1000), 0x1000);
+        let buf = core::slice::from_raw_parts_mut(MACHINE.memory.add(0x1000), 0x1000);
 
         let (params, buf) = RTL_USER_PROCESS_PARAMETERS::mut_from_prefix(buf).unwrap();
         params.hStdOutput = 0xF11E_0002;
         params.hStdError = 0xF11E_0003;
 
         let (peb, buf) = PEB::mut_from_prefix(buf).unwrap();
-        peb.ProcessParameters = (&raw const *params).byte_offset_from_unsigned(MEMORY) as u32;
+        peb.ProcessParameters =
+            (&raw const *params).byte_offset_from_unsigned(MACHINE.memory) as u32;
 
         let (teb, _) = TEB::mut_from_prefix(buf).unwrap();
-        teb.Peb = (&raw const *peb).byte_offset_from_unsigned(MEMORY) as u32;
-        teb.Tib._Self = (&raw const *teb).byte_offset_from_unsigned(MEMORY) as u32;
+        teb.Peb = (&raw const *peb).byte_offset_from_unsigned(MACHINE.memory) as u32;
+        teb.Tib._Self = (&raw const *teb).byte_offset_from_unsigned(MACHINE.memory) as u32;
 
-        REGS.fs_base = (&raw const *teb).byte_offset_from_unsigned(MEMORY) as u32;
+        MACHINE.regs.fs_base = (&raw const *teb).byte_offset_from_unsigned(MACHINE.memory) as u32;
     }
 }

@@ -83,15 +83,15 @@ fn is_abs_memory_ref(instr: &iced_x86::Instruction) -> Option<u32> {
 fn gen_reg(r: iced_x86::Register) -> String {
     use iced_x86::Register::*;
     match r {
-        EAX => format!("REGS.eax"),
-        ECX => format!("REGS.ecx"),
-        EDX => format!("REGS.edx"),
-        EBX => format!("REGS.ebx"),
+        EAX => format!("MACHINE.regs.eax"),
+        ECX => format!("MACHINE.regs.ecx"),
+        EDX => format!("MACHINE.regs.edx"),
+        EBX => format!("MACHINE.regs.ebx"),
 
-        ESI => format!("REGS.esi"),
-        EDI => format!("REGS.edi"),
-        ESP => format!("REGS.esp"),
-        EBP => format!("REGS.ebp"),
+        ESI => format!("MACHINE.regs.esi"),
+        EDI => format!("MACHINE.regs.edi"),
+        ESP => format!("MACHINE.regs.esp"),
+        EBP => format!("MACHINE.regs.ebp"),
 
         r => todo!("{:?}", r),
     }
@@ -101,7 +101,7 @@ fn gen_addr(instr: &iced_x86::Instruction) -> String {
     let mut expr = Vec::new();
     match instr.memory_segment() {
         iced_x86::Register::DS | iced_x86::Register::SS => {}
-        iced_x86::Register::FS => expr.push(format!("REGS.fs_base")),
+        iced_x86::Register::FS => expr.push(format!("MACHINE.regs.fs_base")),
         iced_x86::Register::None => {}
         r => todo!("{r:?}"),
     }
@@ -131,7 +131,7 @@ fn gen_op(instr: &iced_x86::Instruction, n: u32) -> String {
                 iced_x86::MemorySize::UInt32 => "u32",
                 s => todo!("{s:?}"),
             };
-            format!("*(MEMORY.add(({addr}) as usize) as *mut {size})")
+            format!("*(MACHINE.memory.add(({addr}) as usize) as *mut {size})")
         }
         k => {
             dbg!(instr);
@@ -161,7 +161,7 @@ fn gen_jmp(state: &State, instr: &iced_x86::Instruction) -> String {
                     let dll = dll.trim_end_matches(".dll");
                     format!("indirect({dll}::stdcall_{func}())")
                 } else {
-                    format!("*(MEMORY.add({addr:#x}u32 as usize) as *const u32)")
+                    format!("*(MACHINE.memory.add({addr:#x}u32 as usize) as *const u32)")
                 }
             } else {
                 todo!("indirect jmp");
@@ -368,7 +368,7 @@ fn gen_file(state: &State, outdir: &str) -> Result<()> {
         &mut text,
         "
         for (addr, data) in sections {{
-            let out = core::slice::from_raw_parts_mut(MEMORY.add(addr), data.len());
+            let out = core::slice::from_raw_parts_mut(MACHINE.memory.add(addr), data.len());
             out.copy_from_slice(data);
         }}
         }}

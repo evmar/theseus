@@ -1,5 +1,47 @@
 use bitflags::bitflags;
 
+pub struct Machine {
+    pub regs: Regs,
+    pub memory: *mut u8,
+}
+pub static mut MACHINE: Machine = Machine {
+    regs: Regs {
+        eax: 0,
+        ecx: 0,
+        edx: 0,
+        ebx: 0,
+
+        esi: 0,
+        edi: 0,
+        esp: 0x2000,
+        ebp: 0x2000,
+
+        flags: Flags::empty(),
+
+        fs_base: 0, // set when initializing process
+    },
+    memory: std::ptr::null_mut(),
+};
+
+impl Machine {
+    pub fn dump_state(&self) {
+        unsafe {
+            println!(
+                "eax={:08x} ecx={:08x} edx={:08x} ebx={:08x}",
+                self.regs.eax, self.regs.ecx, self.regs.edx, self.regs.ebx
+            );
+            println!("stack:");
+            for i in 0..8 {
+                let addr = self.regs.esp + i * 4;
+                println!(
+                    "{addr:#08x} {:#08x}",
+                    *(self.memory.add(addr as usize) as *const u32)
+                );
+            }
+        }
+    }
+}
+
 #[repr(C)]
 #[derive(Debug)]
 pub struct Regs {
@@ -40,21 +82,3 @@ bitflags! {
         const ALL = !0;
     }
 }
-
-pub static mut REGS: Regs = Regs {
-    eax: 0,
-    ecx: 0,
-    edx: 0,
-    ebx: 0,
-
-    esi: 0,
-    edi: 0,
-    esp: 0x2000,
-    ebp: 0x2000,
-
-    flags: Flags::empty(),
-
-    fs_base: 0, // set when initializing process
-};
-
-pub static mut MEMORY: *mut u8 = std::ptr::null_mut();
