@@ -208,12 +208,20 @@ pub fn and<I: Int>(x: I, y: I) -> I {
 }
 
 /// or: Logical Inclusive OR
-fn or<I: Int>(x: I, y: I, flags: &mut Flags) -> I {
+pub fn or<I: Int>(x: I, y: I) -> I {
     let result = x | y;
-    flags.remove(Flags::OF | Flags::CF);
-    flags.set(Flags::SF, result.high_bit().is_one());
-    flags.set(Flags::ZF, result.is_zero());
-    flags.set(Flags::PF, result.low_byte().count_ones() % 2 == 0);
+    unsafe {
+        MACHINE.regs.flags.remove(Flags::OF | Flags::CF);
+        MACHINE
+            .regs
+            .flags
+            .set(Flags::SF, result.high_bit().is_one());
+        MACHINE.regs.flags.set(Flags::ZF, result.is_zero());
+        MACHINE
+            .regs
+            .flags
+            .set(Flags::PF, result.low_byte().count_ones() % 2 == 0);
+    }
     result
 }
 
