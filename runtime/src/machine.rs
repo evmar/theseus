@@ -1,9 +1,17 @@
 use bitflags::bitflags;
 
+use crate::Cont;
+
 pub struct Machine {
     pub regs: Regs,
     pub memory: *mut u8,
+    pub indirect: fn(u32) -> Cont,
 }
+
+fn indirect_unimpl(_: u32) -> Cont {
+    unimplemented!()
+}
+
 pub static mut MACHINE: Machine = Machine {
     regs: Regs {
         eax: 0,
@@ -21,6 +29,7 @@ pub static mut MACHINE: Machine = Machine {
         fs_base: 0, // set when initializing process
     },
     memory: std::ptr::null_mut(),
+    indirect: indirect_unimpl,
 };
 
 impl Machine {

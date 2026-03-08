@@ -2,7 +2,7 @@
 #![allow(non_snake_case)]
 #![allow(non_camel_case_types)]
 
-use runtime::{HOST, Host, MACHINE};
+use runtime::{Cont, HOST, Host, MACHINE};
 use zerocopy::FromBytes;
 
 #[macro_use]
@@ -12,13 +12,13 @@ pub fn GetStdHandle(_x: u32) -> u32 {
     return 1;
 }
 
-pub fn stdcall_GetStdHandle() -> u32 {
+pub fn stdcall_GetStdHandle() -> Cont {
     unsafe {
         let stack: *mut u32 = MACHINE.memory.add(MACHINE.regs.esp as usize) as *mut u32;
         let ret = *stack.add(0);
         MACHINE.regs.eax = GetStdHandle(*stack.add(1));
         MACHINE.regs.esp += 2 * 4;
-        ret
+        (MACHINE.indirect)(ret)
     }
 }
 
@@ -50,7 +50,7 @@ pub fn WriteFile(
     return 1;
 }
 
-pub fn stdcall_WriteFile() -> u32 {
+pub fn stdcall_WriteFile() -> Cont {
     unsafe {
         let stack: *mut u32 = MACHINE.memory.add(MACHINE.regs.esp as usize) as *mut u32;
         let ret = *stack.add(0);
@@ -62,7 +62,7 @@ pub fn stdcall_WriteFile() -> u32 {
             *stack.add(5),
         );
         MACHINE.regs.esp += 6 * 4;
-        ret
+        (MACHINE.indirect)(ret)
     }
 }
 
@@ -70,13 +70,13 @@ pub fn ExitProcess(uExitCode: u32) -> u32 {
     std::process::exit(uExitCode as i32);
 }
 
-pub fn stdcall_ExitProcess() -> u32 {
+pub fn stdcall_ExitProcess() -> Cont {
     unsafe {
         let stack: *mut u32 = MACHINE.memory.add(MACHINE.regs.esp as usize) as *mut u32;
         let ret = *stack.add(0);
         MACHINE.regs.eax = ExitProcess(*stack.add(1));
         MACHINE.regs.esp += 2 * 4;
-        ret
+        (MACHINE.indirect)(ret)
     }
 }
 
@@ -84,13 +84,13 @@ pub fn GetLastError() -> u32 {
     0
 }
 
-pub fn stdcall_GetLastError() -> u32 {
+pub fn stdcall_GetLastError() -> Cont {
     unsafe {
         let stack: *mut u32 = MACHINE.memory.add(MACHINE.regs.esp as usize) as *mut u32;
         let ret = *stack.add(0);
         MACHINE.regs.eax = GetLastError();
         MACHINE.regs.esp += 1 * 4;
-        ret
+        (MACHINE.indirect)(ret)
     }
 }
 

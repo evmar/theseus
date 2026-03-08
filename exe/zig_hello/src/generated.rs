@@ -187,21 +187,21 @@ pub fn x00401068() -> Cont {
 pub fn x00401077() -> Cont {
     unsafe {
         // 00401077 jmp dword ptr ds:[402048h]
-        indirect(kernel32::stdcall_ExitProcess())
+        Cont(kernel32::stdcall_ExitProcess)
     }
 }
 
 pub fn x0040107d() -> Cont {
     unsafe {
         // 0040107d jmp dword ptr ds:[40204Ch]
-        indirect(kernel32::stdcall_GetLastError())
+        Cont(kernel32::stdcall_GetLastError)
     }
 }
 
 pub fn x00401083() -> Cont {
     unsafe {
         // 00401083 jmp dword ptr ds:[402050h]
-        indirect(kernel32::stdcall_WriteFile())
+        Cont(kernel32::stdcall_WriteFile)
     }
 }
 

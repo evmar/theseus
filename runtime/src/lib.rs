@@ -13,7 +13,7 @@ pub use native::HOST;
 pub use ops::*;
 
 pub trait Host {
-    fn init(&self);
+    fn init(&self, indirect: fn(u32) -> Cont);
     fn panic(&self, msg: &str);
     fn print(&self, text: &[u8]);
 }

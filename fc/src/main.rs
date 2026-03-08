@@ -159,7 +159,7 @@ fn gen_jmp(state: &State, instr: &iced_x86::Instruction) -> String {
                 if let Some((dll, func)) = state.imports.get(&addr) {
                     let dll = dll.to_lowercase();
                     let dll = dll.trim_end_matches(".dll");
-                    format!("indirect({dll}::stdcall_{func}())")
+                    format!("Cont({dll}::stdcall_{func})")
                 } else {
                     format!("*(MACHINE.memory.add({addr:#x}u32 as usize) as *const u32)")
                 }

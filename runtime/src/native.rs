@@ -1,11 +1,12 @@
-use crate::{Host, MACHINE};
+use crate::{Cont, Host, MACHINE};
 
 pub struct NativeHost {}
 impl Host for NativeHost {
-    fn init(&self) {
+    fn init(&self, indirect: fn(u32) -> Cont) {
         unsafe {
             MACHINE.memory =
                 std::alloc::alloc(std::alloc::Layout::from_size_align(32 << 20, 0x1000).unwrap());
+            MACHINE.indirect = indirect;
         }
     }
 
