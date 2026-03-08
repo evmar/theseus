@@ -93,7 +93,7 @@ fn gen_reg(r: iced_x86::Register) -> String {
         ESP => format!("MACHINE.regs.esp"),
         EBP => format!("MACHINE.regs.ebp"),
 
-        r => todo!("{:?}", r),
+        r => format!("todo!(\"{:?}\")", r),
     }
 }
 
@@ -353,6 +353,24 @@ fn gen_block(w: &mut dyn std::fmt::Write, state: &State, ip: AddrAbs, block: &Bl
             }
             Neg => {
                 write!(w, "{} = neg({});\n", gen_op(instr, 0), gen_op(instr, 0));
+            }
+            Shl => {
+                write!(
+                    w,
+                    "{} = shl({}, {});\n",
+                    gen_op(instr, 0),
+                    gen_op(instr, 0),
+                    gen_op(instr, 1)
+                );
+            }
+            Shr => {
+                write!(
+                    w,
+                    "{} = shr({}, {});\n",
+                    gen_op(instr, 0),
+                    gen_op(instr, 0),
+                    gen_op(instr, 1)
+                );
             }
             Stosd => {
                 write!(w, "todo!();\n");
