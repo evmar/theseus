@@ -242,15 +242,107 @@ fn gen_block(w: &mut dyn std::fmt::Write, state: &State, ip: AddrAbs, block: &Bl
                 );
             }
 
-            Stosd | Scasb | Cmpsb | Movzx | Movsx | Movsd | Std | Cld | Stosb | Div | Leave
-            | Dec | Inc | Sete | Sar | Imul | Not | Setge | Int | Cdq | Idiv | Int3 | Xchg
-            | Cmpxchg | Pushfd | Setne | Cpuid | Nop | Xgetbv | Setg | Bt | Movsb | Movq
-            | Movdqa => {
-                writeln!(
-                    w,
-                    "todo!({:?});",
-                    format!("{:?}", instr.mnemonic()).to_lowercase()
-                );
+            Stosd => {
+                writeln!(w, "stosd();");
+            }
+            Scasb => {
+                writeln!(w, "scasb();");
+            }
+            Cmpsb => {
+                writeln!(w, "cmpsb();");
+            }
+            Movzx => {
+                writeln!(w, "movzx();");
+            }
+            Movsx => {
+                writeln!(w, "movsx();");
+            }
+            Movsd => {
+                writeln!(w, "movsd();");
+            }
+            Std => {
+                writeln!(w, "std();");
+            }
+            Cld => {
+                writeln!(w, "cld();");
+            }
+            Stosb => {
+                writeln!(w, "stosb();");
+            }
+            Div => {
+                writeln!(w, "div();");
+            }
+            Leave => {
+                writeln!(w, "leave();");
+            }
+            Dec => {
+                writeln!(w, "dec();");
+            }
+            Inc => {
+                writeln!(w, "inc();");
+            }
+            Sete => {
+                writeln!(w, "sete();");
+            }
+            Sar => {
+                writeln!(w, "sar();");
+            }
+            Imul => {
+                writeln!(w, "imul();");
+            }
+            Not => {
+                writeln!(w, "not();");
+            }
+            Setge => {
+                writeln!(w, "setge();");
+            }
+            Int => {
+                writeln!(w, "int();");
+            }
+            Cdq => {
+                writeln!(w, "cdq();");
+            }
+            Idiv => {
+                writeln!(w, "idiv();");
+            }
+            Int3 => {
+                writeln!(w, "int3();");
+            }
+            Xchg => {
+                writeln!(w, "xchg();");
+            }
+            Cmpxchg => {
+                writeln!(w, "cmpxchg();");
+            }
+            Pushfd => {
+                writeln!(w, "pushfd();");
+            }
+            Setne => {
+                writeln!(w, "setne();");
+            }
+            Cpuid => {
+                writeln!(w, "cpuid();");
+            }
+            Nop => {
+                writeln!(w, "nop();");
+            }
+            Xgetbv => {
+                writeln!(w, "xgetbv();");
+            }
+            Setg => {
+                writeln!(w, "setg();");
+            }
+            Bt => {
+                writeln!(w, "bt();");
+            }
+            Movsb => {
+                writeln!(w, "movsb();");
+            }
+            Movq => {
+                writeln!(w, "movq();");
+            }
+            Movdqa => {
+                writeln!(w, "movdqa();");
             }
 
             c => todo!("{:?} in {}", c, instr),

@@ -186,3 +186,39 @@ pub fn shr<I: Int>(x: I, y: u8) -> I {
     }
     val
 }
+
+pub fn div() {
+    todo!("div");
+}
+
+pub fn dec() {
+    todo!("dec");
+}
+
+pub fn inc() {
+    todo!("inc");
+}
+
+pub fn sar() {
+    todo!("sar");
+}
+
+pub fn imul() {
+    todo!("imul");
+}
+
+pub fn not() {
+    todo!("not");
+}
+
+pub fn cdq() {
+    todo!("cdq");
+}
+
+pub fn idiv() {
+    todo!("idiv");
+}
+
+pub fn bt() {
+    todo!("bt");
+}

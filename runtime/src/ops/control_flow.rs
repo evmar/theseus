@@ -134,3 +134,23 @@ pub fn ret(n: u16) -> Cont {
         (MACHINE.indirect)(ret)
     }
 }
+
+pub fn leave() {
+    todo!("leave");
+}
+
+pub fn sete() {
+    todo!("sete");
+}
+
+pub fn setge() {
+    todo!("setge");
+}
+
+pub fn setne() {
+    todo!("setne");
+}
+
+pub fn setg() {
+    todo!("setg");
+}

@@ -14,3 +14,15 @@ pub fn pop() -> u32 {
         x
     }
 }
+
+pub fn std() {
+    todo!("std");
+}
+
+pub fn cld() {
+    todo!("cld");
+}
+
+pub fn pushfd() {
+    todo!("pushfd");
+}
