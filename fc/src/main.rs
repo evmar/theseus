@@ -132,6 +132,7 @@ fn gen_op(instr: &iced_x86::Instruction, n: u32) -> String {
             let addr = gen_addr(instr);
             let size = match instr.memory_size() {
                 iced_x86::MemorySize::UInt8 => "u8",
+                iced_x86::MemorySize::UInt16 => "u16",
                 iced_x86::MemorySize::UInt32 => "u32",
                 s => todo!("{s:?}"),
             };
