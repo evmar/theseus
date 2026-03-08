@@ -206,3 +206,13 @@ pub fn and<I: Int>(x: I, y: I) -> I {
     }
     result
 }
+
+/// or: Logical Inclusive OR
+fn or<I: Int>(x: I, y: I, flags: &mut Flags) -> I {
+    let result = x | y;
+    flags.remove(Flags::OF | Flags::CF);
+    flags.set(Flags::SF, result.high_bit().is_one());
+    flags.set(Flags::ZF, result.is_zero());
+    flags.set(Flags::PF, result.low_byte().count_ones() % 2 == 0);
+    result
+}

@@ -208,7 +208,12 @@ fn gen_block(w: &mut dyn std::fmt::Write, state: &State, ip: AddrAbs, block: &Bl
             And => {
                 let op0 = gen_op(instr, 0);
                 let op1 = gen_op(instr, 1);
-                write!(w, "{op0} &= {op1};\n");
+                write!(w, "{op0} = and({op0}, {op1});\n");
+            }
+            Or => {
+                let op0 = gen_op(instr, 0);
+                let op1 = gen_op(instr, 1);
+                write!(w, "{op0} = or({op0}, {op1});\n");
             }
             Add => {
                 let op0 = gen_op(instr, 0);
