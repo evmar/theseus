@@ -335,10 +335,12 @@ fn traverse(state: &State, ip: u32) -> HashMap<u32, Block> {
                     match instr.op0_kind() {
                         iced_x86::OpKind::NearBranch32 => queue.push_back(instr.near_branch32()),
                         iced_x86::OpKind::Memory => {
-                            if let Some(addr) = is_abs_memory_ref(&instr)
-                                && state.imports.contains_key(&addr)
-                            {
-                                // ok
+                            if let Some(addr) = is_abs_memory_ref(&instr) {
+                                if state.imports.contains_key(&addr) {
+                                    // ok
+                                } else {
+                                    println!("indirect jmp via memory {addr:x}");
+                                }
                             } else {
                                 todo!("indirect jmp");
                             }
