@@ -231,8 +231,15 @@ fn gen_block(w: &mut dyn std::fmt::Write, state: &State, ip: AddrAbs, block: &Bl
                 write!(w, "sub({op0}, {op1});\n");
             }
             Ret => {
-                assert!(instr.op_count() == 0);
-                write!(w, "indirect(pop())\n");
+                let n = match instr.op_count() {
+                    0 => 0,
+                    1 => {
+                        assert!(instr.op0_kind() == iced_x86::OpKind::Immediate16);
+                        instr.immediate16()
+                    }
+                    _ => todo!(),
+                };
+                write!(w, "ret({n})\n");
             }
             Mov => {
                 let op0 = gen_op(instr, 0);

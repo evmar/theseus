@@ -216,3 +216,11 @@ fn or<I: Int>(x: I, y: I, flags: &mut Flags) -> I {
     flags.set(Flags::PF, result.low_byte().count_ones() % 2 == 0);
     result
 }
+
+pub fn ret(n: u16) -> Cont {
+    unsafe {
+        let ret = pop();
+        MACHINE.regs.esp += n as u32;
+        (MACHINE.indirect)(ret)
+    }
+}
