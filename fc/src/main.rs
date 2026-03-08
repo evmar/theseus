@@ -110,7 +110,11 @@ fn gen_addr(instr: &iced_x86::Instruction) -> String {
         r => expr.push(gen_reg(r)),
     }
     if instr.memory_index() != iced_x86::Register::None {
-        todo!();
+        expr.push(format!(
+            "({}*{})",
+            gen_reg(instr.memory_index()),
+            instr.memory_index_scale()
+        ));
     }
     let addr = instr.memory_displacement32();
     expr.push(format!("{addr:#x}u32"));
@@ -372,7 +376,7 @@ fn gen_block(w: &mut dyn std::fmt::Write, state: &State, ip: AddrAbs, block: &Bl
                     gen_op(instr, 1)
                 );
             }
-            Stosd => {
+            Stosd | Movzx | Leave => {
                 write!(w, "todo!();\n");
             }
 
