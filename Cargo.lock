@@ -223,11 +223,3 @@ dependencies = [
  "kernel32",
  "runtime",
 ]
-
-[[package]]
-name = "zip-exe"
-version = "0.1.0"
-dependencies = [
- "kernel32",
- "runtime",
-]

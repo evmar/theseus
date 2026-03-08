@@ -1,9 +1,9 @@
 [workspace]
 resolver = "2"
-members = ["exe/basicdd",
+members = [
+    "exe/basicdd",
     "exe/winapi",
     "exe/zig_hello",
-    "exe/zip",
     "fc",
     "kernel32",
     "runtime",
