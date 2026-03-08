@@ -39,6 +39,15 @@ impl Int for u32 {
     }
 }
 
+impl Int for u16 {
+    fn bits() -> usize {
+        16
+    }
+    fn low_byte(&self) -> u8 {
+        *self as u8
+    }
+}
+
 impl Int for u8 {
     fn bits() -> usize {
         8
