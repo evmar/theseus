@@ -9,7 +9,7 @@ use zerocopy::FromBytes;
 extern crate alloc;
 
 pub fn GetStdHandle(_x: u32) -> u32 {
-    return 1;
+    return 0xf11e_0002;
 }
 
 pub fn stdcall_GetStdHandle() -> Cont {

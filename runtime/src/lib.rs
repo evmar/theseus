@@ -19,3 +19,9 @@ pub trait Host {
 }
 
 pub struct Cont(pub fn() -> Cont);
+
+pub fn run_loop(mut f: Cont) {
+    loop {
+        f = f.0();
+    }
+}

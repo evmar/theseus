@@ -7,11 +7,7 @@ pub fn entry_point() {
     kernel32::init_process();
     generated::init_memory();
 
-    //init_memory();
-    let mut f: fn() -> Cont = generated::x00401000;
-    loop {
-        f = f().0;
-    }
+    run_loop(Cont(generated::x00401000));
 }
 
 #[cfg(feature = "wasm")]
