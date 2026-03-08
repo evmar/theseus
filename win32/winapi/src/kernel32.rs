@@ -1,3 +1,4 @@
+use crate::ABIReturn;
 use runtime::{Cont, HOST, Host, MACHINE};
 use zerocopy::FromBytes;
 
@@ -135,4 +136,214 @@ pub fn init_process() {
 
         MACHINE.regs.fs_base = (&raw const *teb).byte_offset_from_unsigned(MACHINE.memory) as u32;
     }
+}
+
+pub type PSTR = u32;
+pub type PWSTR = u32;
+pub type HANDLE = u32;
+
+#[win32_derive::dllexport]
+pub fn FreeEnvironmentStringsA(_penv: PSTR) -> bool {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn FreeEnvironmentStringsW(_penv: PWSTR) -> bool {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn GetCommandLineA() -> PSTR {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn GetCPInfo(_CodePage: u32, _lpCPInfo: u32) -> bool {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn GetCurrentProcess() -> HANDLE {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn GetEnvironmentStrings() -> PSTR {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn GetEnvironmentVariableA(_lpName: PSTR, _lpBuffer: PSTR, _nSize: u32) -> u32 {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn GetFileType(_hFile: HANDLE) -> u32 /* FILE_TYPE */ {
+    todo!()
+}
+
+pub type HMODULE = u32;
+
+#[win32_derive::dllexport]
+pub fn GetModuleFileNameA(_hModule: HMODULE, _lpFilename: PSTR, _nSize: u32) -> u32 {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn GetModuleHandleA(_lpModuleName: PSTR) -> HMODULE {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn GetStartupInfoA(_lpStartupInfo: u32) {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn GetStringTypeA(
+    _Locale: u32,
+    _dwInfoType: u32,
+    _lpSrcStr: PSTR,
+    _cchSrc: i32,
+    _lpCharType: u32,
+) -> bool {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn GetStringTypeW(_dwInfoType: u32, _lpSrcStr: PWSTR, _cchSrc: i32, _lpCharType: u32) -> bool {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn GetVersion() -> u32 {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn GetVersionExA(_lpVersionInformation: u32) -> bool {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn HeapAlloc(_hHeap: HANDLE, _dwFlags: u32 /* HEAP_FLAGS */, _dwBytes: usize) -> u32 {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn HeapCreate(
+    _flOptions: u32, /* HEAP_FLAGS */
+    _dwInitialSize: usize,
+    _dwMaximumSize: usize,
+) -> HANDLE {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn HeapDestroy(_hHeap: HANDLE) -> bool {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn HeapFree(_hHeap: HANDLE, _dwFlags: u32 /* HEAP_FLAGS */, _lpMem: u32) -> bool {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn HeapReAlloc(
+    _hHeap: HANDLE,
+    _dwFlags: u32, /* HEAP_FLAGS */
+    _lpMem: u32,
+    _dwBytes: usize,
+) -> u32 {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn LCMapStringA(
+    _Locale: u32,
+    _dwMapFlags: u32,
+    _lpSrcStr: PSTR,
+    _cchSrc: i32,
+    _lpDestStr: PSTR,
+    _cchDest: i32,
+) -> i32 {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn LCMapStringW(
+    _Locale: u32,
+    _dwMapFlags: u32,
+    _lpSrcStr: PWSTR,
+    _cchSrc: i32,
+    _lpDestStr: PWSTR,
+    _cchDest: i32,
+) -> i32 {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn LoadLibraryA(_lpLibFileName: PSTR) -> HMODULE {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn MultiByteToWideChar(
+    _CodePage: u32,
+    _dwFlags: u32, /* MULTI_BYTE_TO_WIDE_CHAR_FLAGS */
+    _lpMultiByteStr: PSTR,
+    _cbMultiByte: i32,
+    _lpWideCharStr: PWSTR,
+    _cchWideChar: i32,
+) -> i32 {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn SetHandleCount(_uNumber: u32) -> u32 {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn TerminateProcess(_hProcess: HANDLE, _uExitCode: u32) -> bool {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn UnhandledExceptionFilter(_ExceptionInfo: u32) -> i32 {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn VirtualAlloc(
+    _lpAddress: u32,
+    _dwSize: usize,
+    _flAllocationType: u32, /* VIRTUAL_ALLOCATION_TYPE */
+    _flProtect: u32,        /* PAGE_PROTECTION_FLAGS */
+) -> u32 {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn VirtualFree(
+    _lpAddress: u32,
+    _dwSize: usize,
+    _dwFreeType: u32, /* VIRTUAL_FREE_TYPE */
+) -> bool {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn WideCharToMultiByte(
+    _CodePage: u32,
+    _dwFlags: u32,
+    _lpWideCharStr: PWSTR,
+    _cchWideChar: i32,
+    _lpMultiByteStr: PSTR,
+    _cbMultiByte: i32,
+    _lpDefaultChar: PSTR,
+    _lpUsedDefaultChar: u32,
+) -> i32 {
+    todo!()
 }

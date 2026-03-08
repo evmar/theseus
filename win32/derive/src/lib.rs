@@ -36,14 +36,15 @@ pub fn dllexport(_attr: TokenStream, mut tokens: TokenStream) -> TokenStream {
     let args = args
         .iter()
         .enumerate()
-        .map(|(i, _)| quote! { *stack.add(#i) });
+        .map(|(i, _)| quote! { *stack.add(#i) as _ });
     let wrapper: TokenStream = quote! {
-        fn #wrapper_name() -> Cont { unsafe {
+        pub fn #wrapper_name() -> Cont { unsafe {
             let stack: *mut u32 = MACHINE.memory.add(MACHINE.regs.esp as usize) as *mut u32;
-            let ret = *stack.add(0);
-            MACHINE.regs.eax = #name(#(#args),*);
+            let return_addr = *stack.add(0);
+            let ret: ABIReturn = #name(#(#args),*).into();
+            MACHINE.regs.eax = ret.0;
             MACHINE.regs.esp += #arg_count * 4;
-            (MACHINE.indirect)(ret)
+            (MACHINE.indirect)(return_addr)
         } }
     }
     .into();
