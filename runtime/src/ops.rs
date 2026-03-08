@@ -131,6 +131,15 @@ pub fn jae(from: Cont, x: Cont) -> Cont {
     }
 }
 
+pub fn jl(from: Cont, x: Cont) -> Cont {
+    unsafe {
+        if MACHINE.regs.flags.contains(Flags::SF) != MACHINE.regs.flags.contains(Flags::OF) {
+            return x;
+        }
+        from
+    }
+}
+
 pub fn and<I: Int>(x: I, y: I) -> I {
     let result = x & y;
     unsafe {
