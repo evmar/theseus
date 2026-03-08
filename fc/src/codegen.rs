@@ -127,7 +127,9 @@ fn gen_jmp(state: &State, instr: &iced_x86::Instruction) -> String {
                     let dll = dll.trim_end_matches(".dll");
                     format!("Cont({dll}::stdcall_{func})")
                 } else {
-                    format!("*(MACHINE.memory.add({addr:#x}u32 as usize) as *const u32)")
+                    format!(
+                        "(MACHINE.indirect)(*(MACHINE.memory.add({addr:#x}u32 as usize) as *const u32))"
+                    )
                 }
             } else {
                 format!("indirect({})", gen_addr(instr))
@@ -173,27 +175,27 @@ fn gen_block(w: &mut dyn std::fmt::Write, state: &State, ip: AddrAbs, block: &Bl
             And => {
                 let op0 = get_op(instr, 0);
                 let op1 = get_op(instr, 1);
-                write!(w, "{op0} = and({op0}, {op1});\n");
+                write!(w, "{};\n", set_op(instr, 0, format!("and({op0}, {op1})")));
             }
             Or => {
                 let op0 = get_op(instr, 0);
                 let op1 = get_op(instr, 1);
-                write!(w, "{op0} = or({op0}, {op1});\n");
+                write!(w, "{};\n", set_op(instr, 0, format!("or({op0}, {op1})")));
             }
             Add => {
                 let op0 = get_op(instr, 0);
                 let op1 = get_op(instr, 1);
-                write!(w, "{op0} += {op1};\n");
+                write!(w, "{};\n", set_op(instr, 0, format!("add({op0}, {op1})")));
             }
             Sub => {
                 let op0 = get_op(instr, 0);
                 let op1 = get_op(instr, 1);
-                write!(w, "{op0} = sub({op0}, {op1});\n");
+                write!(w, "{};\n", set_op(instr, 0, format!("sub({op0}, {op1})")));
             }
             Sbb => {
                 let op0 = get_op(instr, 0);
                 let op1 = get_op(instr, 1);
-                write!(w, "{op0} = sbb({op0}, {op1});\n");
+                write!(w, "{};\n", set_op(instr, 0, format!("sbb({op0}, {op1})")));
             }
             Cmp => {
                 let op0 = get_op(instr, 0);
@@ -328,7 +330,11 @@ fn gen_block(w: &mut dyn std::fmt::Write, state: &State, ip: AddrAbs, block: &Bl
                 write!(w, "and({}, {});\n", get_op(instr, 0), get_op(instr, 1));
             }
             Neg => {
-                write!(w, "{} = neg({});\n", get_op(instr, 0), get_op(instr, 0));
+                write!(
+                    w,
+                    "{};\n",
+                    set_op(instr, 0, format!("neg({})", get_op(instr, 0)))
+                );
             }
             Shl => {
                 write!(

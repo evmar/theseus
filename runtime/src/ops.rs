@@ -48,7 +48,7 @@ impl Int for u8 {
     }
 }
 
-fn sbb<I: Int + num_traits::ops::overflowing::OverflowingSub + num_traits::WrappingAdd>(
+fn sbb_impl<I: Int + num_traits::ops::overflowing::OverflowingSub + num_traits::WrappingAdd>(
     x: I,
     y: I,
     b: bool,
@@ -79,11 +79,49 @@ fn sbb<I: Int + num_traits::ops::overflowing::OverflowingSub + num_traits::Wrapp
     result
 }
 
+pub fn sbb<I: Int + num_traits::ops::overflowing::OverflowingSub + num_traits::WrappingAdd>(
+    x: I,
+    y: I,
+) -> I {
+    unsafe { sbb_impl(x, y, MACHINE.regs.flags.contains(Flags::CF)) }
+}
+
 pub fn sub<I: Int + num_traits::ops::overflowing::OverflowingSub + num_traits::WrappingAdd>(
     x: I,
     y: I,
 ) -> I {
-    sbb(x, y, false)
+    sbb_impl(x, y, false)
+}
+
+pub fn add<I: Int + num_traits::ops::wrapping::WrappingAdd>(x: I, y: I) -> I {
+    addc(x, y, I::zero())
+}
+
+pub fn addc<I: Int + num_traits::ops::wrapping::WrappingAdd>(x: I, y: I, z: I) -> I {
+    // TODO "The CF, OF, SF, ZF, AF, and PF flags are set according to the result."
+    let result = x.wrapping_add(&y.wrapping_add(&z));
+    unsafe {
+        MACHINE
+            .regs
+            .flags
+            .set(Flags::CF, result < x || (result == x && !z.is_zero()));
+        MACHINE.regs.flags.set(Flags::ZF, result.is_zero());
+        MACHINE
+            .regs
+            .flags
+            .set(Flags::SF, result.high_bit().is_one());
+        // Overflow is true exactly when the high (sign) bits are like:
+        //   x  y  result
+        //   0  0  1
+        //   1  1  0
+        let of = ((x ^ !y) & (x ^ result)).high_bit().is_one();
+        MACHINE.regs.flags.set(Flags::OF, of);
+        MACHINE
+            .regs
+            .flags
+            .set(Flags::PF, result.low_byte().count_ones() % 2 == 0);
+    }
+    result
 }
 
 pub fn je(from: Cont, x: Cont) -> Cont {
