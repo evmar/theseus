@@ -12,3 +12,6 @@ members = [
 pe = { path = "../../win/rs/pe" }
 runtime = { path = "runtime" }
 kernel32 = { path = "kernel32" }
+
+[profile.release]
+debug = true
