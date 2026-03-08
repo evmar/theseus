@@ -1,6 +1,7 @@
 #![allow(unused_unsafe)]
 #![allow(unreachable_code)]
 #![allow(static_mut_refs)]
+#![allow(unused_parens)]
 
 use runtime::*;
 use winapi::*;
@@ -8,13 +9,19 @@ use winapi::*;
 pub fn x00401040() -> Cont {
     unsafe {
         // 00401040 mov ecx,[esp+10h]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.esp + 0x10u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x10u32) as usize)
+            as *mut u32);
         // 00401044 mov eax,[esp+4]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.esp + 0x4u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x4u32) as usize)
+            as *mut u32);
         // 00401048 sub esp,1Ch
         MACHINE.regs.esp = sub(MACHINE.regs.esp, 0x1cu32);
         // 0040104b mov ds:[40957Ch],eax
-        *(MACHINE.memory.add((0x40957cu32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE.memory.add(0x40957cu32 as usize) as *mut u32) = MACHINE.regs.eax;
         // 00401050 push ecx
         push(MACHINE.regs.ecx);
         // 00401051 call 00401200h
@@ -27,7 +34,7 @@ pub fn x00401056() -> Cont {
         // 00401056 add esp,4
         MACHINE.regs.esp = add(MACHINE.regs.esp, 0x4u32);
         // 00401059 mov ds:[409580h],eax
-        *(MACHINE.memory.add((0x409580u32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE.memory.add(0x409580u32 as usize) as *mut u32) = MACHINE.regs.eax;
         // 0040105e test eax,eax
         and(MACHINE.regs.eax, MACHINE.regs.eax);
         // 00401060 jne short 0040106Bh
@@ -72,7 +79,7 @@ pub fn x00401074() -> Cont {
 pub fn x00401079() -> Cont {
     unsafe {
         // 00401079 mov edx,ds:[409580h]
-        MACHINE.regs.edx = *(MACHINE.memory.add((0x409580u32) as usize) as *mut u32);
+        MACHINE.regs.edx = *(MACHINE.memory.add(0x409580u32 as usize) as *mut u32);
         // 0040107f push 30h
         push(0x30u32);
         // 00401081 push 40709Ch
@@ -100,7 +107,7 @@ pub fn x00401092() -> Cont {
 pub fn x0040109a() -> Cont {
     unsafe {
         // 0040109a mov eax,ds:[409584h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((0x409584u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE.memory.add(0x409584u32 as usize) as *mut u32);
         // 0040109f push ebx
         push(MACHINE.regs.ebx);
         // 004010a0 push esi
@@ -125,7 +132,7 @@ pub fn x0040109a() -> Cont {
 pub fn x004010b9() -> Cont {
     unsafe {
         // 004010b9 mov ecx,ds:[40957Ch]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((0x40957cu32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE.memory.add(0x40957cu32 as usize) as *mut u32);
         // 004010bf push 118h
         push(0x118u32);
         // 004010c4 push 5DCh
@@ -148,11 +155,11 @@ pub fn x004010b9() -> Cont {
 pub fn x004010da() -> Cont {
     unsafe {
         // 004010da mov esi,ds:[4060D4h]
-        MACHINE.regs.esi = *(MACHINE.memory.add((0x4060d4u32) as usize) as *mut u32);
+        MACHINE.regs.esi = *(MACHINE.memory.add(0x4060d4u32 as usize) as *mut u32);
         // 004010e0 mov edi,ds:[4060D0h]
-        MACHINE.regs.edi = *(MACHINE.memory.add((0x4060d0u32) as usize) as *mut u32);
+        MACHINE.regs.edi = *(MACHINE.memory.add(0x4060d0u32 as usize) as *mut u32);
         // 004010e6 mov ebx,ds:[4060CCh]
-        MACHINE.regs.ebx = *(MACHINE.memory.add((0x4060ccu32) as usize) as *mut u32);
+        MACHINE.regs.ebx = *(MACHINE.memory.add(0x4060ccu32 as usize) as *mut u32);
         // 004010ec push 1
         push(0x1u32);
         // 004010ee push 0
@@ -160,7 +167,7 @@ pub fn x004010da() -> Cont {
         // 004010f0 push 0
         push(0x0u32);
         // 004010f2 lea edx,[esp+18h]
-        MACHINE.regs.edx = MACHINE.regs.esp + 0x18u32;
+        MACHINE.regs.edx = MACHINE.regs.esp.wrapping_add(0x18u32);
         // 004010f6 push 0
         push(0x0u32);
         // 004010f8 push edx
@@ -179,7 +186,7 @@ pub fn x004010ec() -> Cont {
         // 004010f0 push 0
         push(0x0u32);
         // 004010f2 lea edx,[esp+18h]
-        MACHINE.regs.edx = MACHINE.regs.esp + 0x18u32;
+        MACHINE.regs.edx = MACHINE.regs.esp.wrapping_add(0x18u32);
         // 004010f6 push 0
         push(0x0u32);
         // 004010f8 push edx
@@ -202,7 +209,9 @@ pub fn x004010ff() -> Cont {
     unsafe {
         // 004010ff cmp dword ptr [esp+10h],12h
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.esp + 0x10u32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esp.wrapping_add(0x10u32) as usize) as *mut u32),
             0x12u32,
         );
         // 00401104 je short 0040111Dh
@@ -213,7 +222,7 @@ pub fn x004010ff() -> Cont {
 pub fn x00401106() -> Cont {
     unsafe {
         // 00401106 lea eax,[esp+0Ch]
-        MACHINE.regs.eax = MACHINE.regs.esp + 0xcu32;
+        MACHINE.regs.eax = MACHINE.regs.esp.wrapping_add(0xcu32);
         // 0040110a push eax
         push(MACHINE.regs.eax);
         // 0040110b call edi
@@ -224,7 +233,7 @@ pub fn x00401106() -> Cont {
 pub fn x0040110d() -> Cont {
     unsafe {
         // 0040110d lea ecx,[esp+0Ch]
-        MACHINE.regs.ecx = MACHINE.regs.esp + 0xcu32;
+        MACHINE.regs.ecx = MACHINE.regs.esp.wrapping_add(0xcu32);
         // 00401111 push ecx
         push(MACHINE.regs.ecx);
         // 00401112 call ebx
@@ -282,7 +291,7 @@ pub fn x00401130() -> Cont {
         // 00401130 push edi
         push(MACHINE.regs.edi);
         // 00401131 mov edi,ds:[406080h]
-        MACHINE.regs.edi = *(MACHINE.memory.add((0x406080u32) as usize) as *mut u32);
+        MACHINE.regs.edi = *(MACHINE.memory.add(0x406080u32 as usize) as *mut u32);
         // 00401137 call edi
         call(0x401139, indirect(MACHINE.regs.edi))
     }
@@ -293,7 +302,7 @@ pub fn x00401139() -> Cont {
         // 00401139 sub eax,ds:[409548h]
         MACHINE.regs.eax = sub(
             MACHINE.regs.eax,
-            *(MACHINE.memory.add((0x409548u32) as usize) as *mut u32),
+            *(MACHINE.memory.add(0x409548u32 as usize) as *mut u32),
         );
         // 0040113f cmp eax,32h
         sub(MACHINE.regs.eax, 0x32u32);
@@ -305,11 +314,11 @@ pub fn x00401139() -> Cont {
 pub fn x00401148() -> Cont {
     unsafe {
         // 00401148 mov eax,ds:[409594h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((0x409594u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE.memory.add(0x409594u32 as usize) as *mut u32);
         // 0040114d mov ecx,ds:[409590h]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((0x409590u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE.memory.add(0x409590u32 as usize) as *mut u32);
         // 00401153 mov edx,ds:[40958Ch]
-        MACHINE.regs.edx = *(MACHINE.memory.add((0x40958cu32) as usize) as *mut u32);
+        MACHINE.regs.edx = *(MACHINE.memory.add(0x40958cu32 as usize) as *mut u32);
         // 00401159 push 8Ch
         push(0x8cu32);
         // 0040115e push 96h
@@ -334,7 +343,7 @@ pub fn x00401148() -> Cont {
 pub fn x0040117a() -> Cont {
     unsafe {
         // 0040117a mov eax,ds:[409588h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((0x409588u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE.memory.add(0x409588u32 as usize) as *mut u32);
         // 0040117f push 0
         push(0x0u32);
         // 00401181 push 0
@@ -342,9 +351,12 @@ pub fn x0040117a() -> Cont {
         // 00401183 push eax
         push(MACHINE.regs.eax);
         // 00401184 mov ecx,[eax]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize)
+            as *mut u32);
         // 00401186 call dword ptr [ecx+2Ch]
-        call(0x401189, indirect(MACHINE.regs.ecx + 0x2cu32))
+        call(0x401189, indirect(MACHINE.regs.ecx.wrapping_add(0x2cu32)))
     }
 }
 
@@ -385,26 +397,29 @@ pub fn x0040119b() -> Cont {
 pub fn x0040119d() -> Cont {
     unsafe {
         // 0040119d mov eax,ds:[409588h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((0x409588u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE.memory.add(0x409588u32 as usize) as *mut u32);
         // 004011a2 push eax
         push(MACHINE.regs.eax);
         // 004011a3 mov edx,[eax]
-        MACHINE.regs.edx = *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u32);
+        MACHINE.regs.edx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize)
+            as *mut u32);
         // 004011a5 call dword ptr [edx+6Ch]
-        call(0x4011a8, indirect(MACHINE.regs.edx + 0x6cu32))
+        call(0x4011a8, indirect(MACHINE.regs.edx.wrapping_add(0x6cu32)))
     }
 }
 
 pub fn x004011a8() -> Cont {
     unsafe {
         // 004011a8 mov eax,ds:[409590h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((0x409590u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE.memory.add(0x409590u32 as usize) as *mut u32);
         // 004011ad add eax,96h
         MACHINE.regs.eax = add(MACHINE.regs.eax, 0x96u32);
         // 004011b2 cmp eax,5DCh
         sub(MACHINE.regs.eax, 0x5dcu32);
         // 004011b7 mov ds:[409590h],eax
-        *(MACHINE.memory.add((0x409590u32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE.memory.add(0x409590u32 as usize) as *mut u32) = MACHINE.regs.eax;
         // 004011bc jl short 004011E8h
         jl(Cont(x004011be), Cont(x004011e8))
     }
@@ -413,15 +428,15 @@ pub fn x004011a8() -> Cont {
 pub fn x004011be() -> Cont {
     unsafe {
         // 004011be mov eax,ds:[409594h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((0x409594u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE.memory.add(0x409594u32 as usize) as *mut u32);
         // 004011c3 mov dword ptr ds:[409590h],0
-        *(MACHINE.memory.add((0x409590u32) as usize) as *mut u32) = 0x0u32;
+        *(MACHINE.memory.add(0x409590u32 as usize) as *mut u32) = 0x0u32;
         // 004011cd add eax,8Ch
         MACHINE.regs.eax = add(MACHINE.regs.eax, 0x8cu32);
         // 004011d2 cmp eax,118h
         sub(MACHINE.regs.eax, 0x118u32);
         // 004011d7 mov ds:[409594h],eax
-        *(MACHINE.memory.add((0x409594u32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE.memory.add(0x409594u32 as usize) as *mut u32) = MACHINE.regs.eax;
         // 004011dc jl short 004011E8h
         jl(Cont(x004011de), Cont(x004011e8))
     }
@@ -430,7 +445,7 @@ pub fn x004011be() -> Cont {
 pub fn x004011de() -> Cont {
     unsafe {
         // 004011de mov dword ptr ds:[409594h],0
-        *(MACHINE.memory.add((0x409594u32) as usize) as *mut u32) = 0x0u32;
+        *(MACHINE.memory.add(0x409594u32 as usize) as *mut u32) = 0x0u32;
         // 004011e8 call edi
         call(0x4011ea, indirect(MACHINE.regs.edi))
     }
@@ -446,7 +461,7 @@ pub fn x004011e8() -> Cont {
 pub fn x004011ea() -> Cont {
     unsafe {
         // 004011ea mov ds:[409548h],eax
-        *(MACHINE.memory.add((0x409548u32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE.memory.add(0x409548u32 as usize) as *mut u32) = MACHINE.regs.eax;
         // 004011ef pop edi
         MACHINE.regs.edi = pop();
         // 004011f0 ret
@@ -468,7 +483,7 @@ pub fn x00401200() -> Cont {
         // 00401200 sub esp,28h
         MACHINE.regs.esp = sub(MACHINE.regs.esp, 0x28u32);
         // 00401203 mov eax,ds:[40957Ch]
-        MACHINE.regs.eax = *(MACHINE.memory.add((0x40957cu32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE.memory.add(0x40957cu32 as usize) as *mut u32);
         // 00401208 push esi
         push(MACHINE.regs.esi);
         // 00401209 push 7F00h
@@ -476,15 +491,25 @@ pub fn x00401200() -> Cont {
         // 0040120e push eax
         push(MACHINE.regs.eax);
         // 0040120f mov dword ptr [esp+0Ch],3
-        *(MACHINE.memory.add((MACHINE.regs.esp + 0xcu32) as usize) as *mut u32) = 0x3u32;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0xcu32) as usize) as *mut u32) = 0x3u32;
         // 00401217 mov dword ptr [esp+10h],4012D0h
-        *(MACHINE.memory.add((MACHINE.regs.esp + 0x10u32) as usize) as *mut u32) = 0x4012d0u32;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x10u32) as usize) as *mut u32) = 0x4012d0u32;
         // 0040121f mov dword ptr [esp+14h],0
-        *(MACHINE.memory.add((MACHINE.regs.esp + 0x14u32) as usize) as *mut u32) = 0x0u32;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x14u32) as usize) as *mut u32) = 0x0u32;
         // 00401227 mov dword ptr [esp+18h],0
-        *(MACHINE.memory.add((MACHINE.regs.esp + 0x18u32) as usize) as *mut u32) = 0x0u32;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x18u32) as usize) as *mut u32) = 0x0u32;
         // 0040122f mov [esp+1Ch],eax
-        *(MACHINE.memory.add((MACHINE.regs.esp + 0x1cu32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x1cu32) as usize) as *mut u32) = MACHINE.regs.eax;
         // 00401233 call dword ptr ds:[4060FCh]
         call(0x401239, Cont(user32::stdcall_LoadIconA))
     }
@@ -497,7 +522,9 @@ pub fn x00401239() -> Cont {
         // 0040123e push 0
         push(0x0u32);
         // 00401240 mov [esp+20h],eax
-        *(MACHINE.memory.add((MACHINE.regs.esp + 0x20u32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x20u32) as usize) as *mut u32) = MACHINE.regs.eax;
         // 00401244 call dword ptr ds:[406100h]
         call(0x40124a, Cont(user32::stdcall_LoadCursorA))
     }
@@ -508,7 +535,9 @@ pub fn x0040124a() -> Cont {
         // 0040124a push 4
         push(0x4u32);
         // 0040124c mov [esp+20h],eax
-        *(MACHINE.memory.add((MACHINE.regs.esp + 0x20u32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x20u32) as usize) as *mut u32) = MACHINE.regs.eax;
         // 00401250 call dword ptr ds:[40601Ch]
         call(0x401256, Cont(gdi32::stdcall_GetStockObject))
     }
@@ -517,15 +546,21 @@ pub fn x0040124a() -> Cont {
 pub fn x00401256() -> Cont {
     unsafe {
         // 00401256 mov [esp+20h],eax
-        *(MACHINE.memory.add((MACHINE.regs.esp + 0x20u32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x20u32) as usize) as *mut u32) = MACHINE.regs.eax;
         // 0040125a lea eax,[esp+4]
-        MACHINE.regs.eax = MACHINE.regs.esp + 0x4u32;
+        MACHINE.regs.eax = MACHINE.regs.esp.wrapping_add(0x4u32);
         // 0040125e push eax
         push(MACHINE.regs.eax);
         // 0040125f mov dword ptr [esp+28h],409598h
-        *(MACHINE.memory.add((MACHINE.regs.esp + 0x28u32) as usize) as *mut u32) = 0x409598u32;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x28u32) as usize) as *mut u32) = 0x409598u32;
         // 00401267 mov dword ptr [esp+2Ch],4070A4h
-        *(MACHINE.memory.add((MACHINE.regs.esp + 0x2cu32) as usize) as *mut u32) = 0x4070a4u32;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x2cu32) as usize) as *mut u32) = 0x4070a4u32;
         // 0040126f call dword ptr ds:[406104h]
         call(0x401275, Cont(user32::stdcall_RegisterClassA))
     }
@@ -534,9 +569,9 @@ pub fn x00401256() -> Cont {
 pub fn x00401275() -> Cont {
     unsafe {
         // 00401275 mov ecx,ds:[40957Ch]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((0x40957cu32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE.memory.add(0x40957cu32 as usize) as *mut u32);
         // 0040127b mov esi,ds:[4060ECh]
-        MACHINE.regs.esi = *(MACHINE.memory.add((0x4060ecu32) as usize) as *mut u32);
+        MACHINE.regs.esi = *(MACHINE.memory.add(0x4060ecu32 as usize) as *mut u32);
         // 00401281 push 0
         push(0x0u32);
         // 00401283 push ecx
@@ -587,7 +622,10 @@ pub fn x00401291() -> Cont {
 pub fn x004012ad() -> Cont {
     unsafe {
         // 004012ad mov edx,[esp+30h]
-        MACHINE.regs.edx = *(MACHINE.memory.add((MACHINE.regs.esp + 0x30u32) as usize) as *mut u32);
+        MACHINE.regs.edx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x30u32) as usize)
+            as *mut u32);
         // 004012b1 mov esi,eax
         MACHINE.regs.esi = MACHINE.regs.eax;
         // 004012b3 push edx
@@ -670,19 +708,22 @@ pub fn x0040132d() -> Cont {
 pub fn x00401337() -> Cont {
     unsafe {
         // 00401337 mov eax,ds:[409584h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((0x409584u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE.memory.add(0x409584u32 as usize) as *mut u32);
         // 0040133c mov edx,ds:[409580h]
-        MACHINE.regs.edx = *(MACHINE.memory.add((0x409580u32) as usize) as *mut u32);
+        MACHINE.regs.edx = *(MACHINE.memory.add(0x409580u32 as usize) as *mut u32);
         // 00401342 push 11h
         push(0x11u32);
         // 00401344 push edx
         push(MACHINE.regs.edx);
         // 00401345 mov ecx,[eax]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize)
+            as *mut u32);
         // 00401347 push eax
         push(MACHINE.regs.eax);
         // 00401348 call dword ptr [ecx+50h]
-        call(0x40134b, indirect(MACHINE.regs.ecx + 0x50u32))
+        call(0x40134b, indirect(MACHINE.regs.ecx.wrapping_add(0x50u32)))
     }
 }
 
@@ -709,7 +750,7 @@ pub fn x0040134f() -> Cont {
 pub fn x0040135b() -> Cont {
     unsafe {
         // 0040135b mov eax,ds:[409584h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((0x409584u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE.memory.add(0x409584u32 as usize) as *mut u32);
         // 00401360 push 0
         push(0x0u32);
         // 00401362 push 0
@@ -717,7 +758,10 @@ pub fn x0040135b() -> Cont {
         // 00401364 push 10h
         push(0x10u32);
         // 00401366 mov ecx,[eax]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize)
+            as *mut u32);
         // 00401368 push 1E0h
         push(0x1e0u32);
         // 0040136d push 280h
@@ -725,7 +769,7 @@ pub fn x0040135b() -> Cont {
         // 00401372 push eax
         push(MACHINE.regs.eax);
         // 00401373 call dword ptr [ecx+54h]
-        call(0x401376, indirect(MACHINE.regs.ecx + 0x54u32))
+        call(0x401376, indirect(MACHINE.regs.ecx.wrapping_add(0x54u32)))
     }
 }
 
@@ -758,25 +802,36 @@ pub fn x00401386() -> Cont {
         // 0040138c xor eax,eax
         MACHINE.regs.eax ^= MACHINE.regs.eax;
         // 0040138e lea edi,[esp+14h]
-        MACHINE.regs.edi = MACHINE.regs.esp + 0x14u32;
+        MACHINE.regs.edi = MACHINE.regs.esp.wrapping_add(0x14u32);
         // 00401392 rep stosd
         todo!();
         // 00401394 mov eax,ds:[409584h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((0x409584u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE.memory.add(0x409584u32 as usize) as *mut u32);
         // 00401399 push 0
         push(0x0u32);
         // 0040139b lea ecx,[esp+18h]
-        MACHINE.regs.ecx = MACHINE.regs.esp + 0x18u32;
+        MACHINE.regs.ecx = MACHINE.regs.esp.wrapping_add(0x18u32);
         // 0040139f mov dword ptr [esp+18h],7Ch
-        *(MACHINE.memory.add((MACHINE.regs.esp + 0x18u32) as usize) as *mut u32) = 0x7cu32;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x18u32) as usize) as *mut u32) = 0x7cu32;
         // 004013a7 mov dword ptr [esp+1Ch],21h
-        *(MACHINE.memory.add((MACHINE.regs.esp + 0x1cu32) as usize) as *mut u32) = 0x21u32;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x1cu32) as usize) as *mut u32) = 0x21u32;
         // 004013af mov dword ptr [esp+80h],218h
-        *(MACHINE.memory.add((MACHINE.regs.esp + 0x80u32) as usize) as *mut u32) = 0x218u32;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x80u32) as usize) as *mut u32) = 0x218u32;
         // 004013ba mov dword ptr [esp+2Ch],1
-        *(MACHINE.memory.add((MACHINE.regs.esp + 0x2cu32) as usize) as *mut u32) = 0x1u32;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x2cu32) as usize) as *mut u32) = 0x1u32;
         // 004013c2 mov edx,[eax]
-        MACHINE.regs.edx = *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u32);
+        MACHINE.regs.edx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize)
+            as *mut u32);
         // 004013c4 push 409588h
         push(0x409588u32);
         // 004013c9 push ecx
@@ -784,7 +839,7 @@ pub fn x00401386() -> Cont {
         // 004013ca push eax
         push(MACHINE.regs.eax);
         // 004013cb call dword ptr [edx+18h]
-        call(0x4013ce, indirect(MACHINE.regs.edx + 0x18u32))
+        call(0x4013ce, indirect(MACHINE.regs.edx.wrapping_add(0x18u32)))
     }
 }
 
@@ -815,29 +870,42 @@ pub fn x004013dd() -> Cont {
         // 004013dd xor edx,edx
         MACHINE.regs.edx ^= MACHINE.regs.edx;
         // 004013df mov eax,ds:[409588h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((0x409588u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE.memory.add(0x409588u32 as usize) as *mut u32);
         // 004013e4 mov [esp],edx
-        *(MACHINE.memory.add((MACHINE.regs.esp + 0x0u32) as usize) as *mut u32) = MACHINE.regs.edx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x0u32) as usize) as *mut u32) = MACHINE.regs.edx;
         // 004013e8 mov dword ptr [esp],4
-        *(MACHINE.memory.add((MACHINE.regs.esp + 0x0u32) as usize) as *mut u32) = 0x4u32;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x0u32) as usize) as *mut u32) = 0x4u32;
         // 004013f0 mov [esp+4],edx
-        *(MACHINE.memory.add((MACHINE.regs.esp + 0x4u32) as usize) as *mut u32) = MACHINE.regs.edx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x4u32) as usize) as *mut u32) = MACHINE.regs.edx;
         // 004013f4 push 40958Ch
         push(0x40958cu32);
         // 004013f9 mov [esp+0Ch],edx
-        *(MACHINE.memory.add((MACHINE.regs.esp + 0xcu32) as usize) as *mut u32) = MACHINE.regs.edx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0xcu32) as usize) as *mut u32) = MACHINE.regs.edx;
         // 004013fd mov [esp+10h],edx
-        *(MACHINE.memory.add((MACHINE.regs.esp + 0x10u32) as usize) as *mut u32) = MACHINE.regs.edx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x10u32) as usize) as *mut u32) = MACHINE.regs.edx;
         // 00401401 mov ecx,[eax]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize)
+            as *mut u32);
         // 00401403 lea edx,[esp+4]
-        MACHINE.regs.edx = MACHINE.regs.esp + 0x4u32;
+        MACHINE.regs.edx = MACHINE.regs.esp.wrapping_add(0x4u32);
         // 00401407 push edx
         push(MACHINE.regs.edx);
         // 00401408 push eax
         push(MACHINE.regs.eax);
         // 00401409 call dword ptr [ecx+30h]
-        call(0x40140c, indirect(MACHINE.regs.ecx + 0x30u32))
+        call(0x40140c, indirect(MACHINE.regs.ecx.wrapping_add(0x30u32)))
     }
 }
 
@@ -866,7 +934,7 @@ pub fn x00401420() -> Cont {
 pub fn x0040142a() -> Cont {
     unsafe {
         // 0040142a mov eax,ds:[40958Ch]
-        MACHINE.regs.eax = *(MACHINE.memory.add((0x40958cu32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE.memory.add(0x40958cu32 as usize) as *mut u32);
         // 0040142f test eax,eax
         and(MACHINE.regs.eax, MACHINE.regs.eax);
         // 00401431 je short 00401439h
@@ -877,18 +945,21 @@ pub fn x0040142a() -> Cont {
 pub fn x00401433() -> Cont {
     unsafe {
         // 00401433 mov ecx,[eax]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize)
+            as *mut u32);
         // 00401435 push eax
         push(MACHINE.regs.eax);
         // 00401436 call dword ptr [ecx+8]
-        call(0x401439, indirect(MACHINE.regs.ecx + 0x8u32))
+        call(0x401439, indirect(MACHINE.regs.ecx.wrapping_add(0x8u32)))
     }
 }
 
 pub fn x00401439() -> Cont {
     unsafe {
         // 00401439 mov eax,ds:[409588h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((0x409588u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE.memory.add(0x409588u32 as usize) as *mut u32);
         // 0040143e test eax,eax
         and(MACHINE.regs.eax, MACHINE.regs.eax);
         // 00401440 je short 00401448h
@@ -899,18 +970,21 @@ pub fn x00401439() -> Cont {
 pub fn x00401442() -> Cont {
     unsafe {
         // 00401442 mov edx,[eax]
-        MACHINE.regs.edx = *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u32);
+        MACHINE.regs.edx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize)
+            as *mut u32);
         // 00401444 push eax
         push(MACHINE.regs.eax);
         // 00401445 call dword ptr [edx+8]
-        call(0x401448, indirect(MACHINE.regs.edx + 0x8u32))
+        call(0x401448, indirect(MACHINE.regs.edx.wrapping_add(0x8u32)))
     }
 }
 
 pub fn x00401448() -> Cont {
     unsafe {
         // 00401448 mov eax,ds:[409584h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((0x409584u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE.memory.add(0x409584u32 as usize) as *mut u32);
         // 0040144d test eax,eax
         and(MACHINE.regs.eax, MACHINE.regs.eax);
         // 0040144f je short 00401457h
@@ -921,11 +995,14 @@ pub fn x00401448() -> Cont {
 pub fn x00401451() -> Cont {
     unsafe {
         // 00401451 mov ecx,[eax]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize)
+            as *mut u32);
         // 00401453 push eax
         push(MACHINE.regs.eax);
         // 00401454 call dword ptr [ecx+8]
-        call(0x401457, indirect(MACHINE.regs.ecx + 0x8u32))
+        call(0x401457, indirect(MACHINE.regs.ecx.wrapping_add(0x8u32)))
     }
 }
 
@@ -939,15 +1016,24 @@ pub fn x00401457() -> Cont {
 pub fn x004014d0() -> Cont {
     unsafe {
         // 004014d0 mov eax,[esp+18h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.esp + 0x18u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x18u32) as usize)
+            as *mut u32);
         // 004014d4 sub esp,98h
         MACHINE.regs.esp = sub(MACHINE.regs.esp, 0x98u32);
         // 004014da mov edx,[esp+9Ch]
-        MACHINE.regs.edx = *(MACHINE.memory.add((MACHINE.regs.esp + 0x9cu32) as usize) as *mut u32);
+        MACHINE.regs.edx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x9cu32) as usize)
+            as *mut u32);
         // 004014e1 push ebx
         push(MACHINE.regs.ebx);
         // 004014e2 mov ebx,[esp+0B0h]
-        MACHINE.regs.ebx = *(MACHINE.memory.add((MACHINE.regs.esp + 0xb0u32) as usize) as *mut u32);
+        MACHINE.regs.ebx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0xb0u32) as usize)
+            as *mut u32);
         // 004014e9 push ebp
         push(MACHINE.regs.ebp);
         // 004014ea push esi
@@ -957,7 +1043,10 @@ pub fn x004014d0() -> Cont {
         // 004014ed push edi
         push(MACHINE.regs.edi);
         // 004014ee mov ecx,[esp+0B0h]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.esp + 0xb0u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0xb0u32) as usize)
+            as *mut u32);
         // 004014f5 push 0
         push(0x0u32);
         // 004014f7 push eax
@@ -991,7 +1080,10 @@ pub fn x00401509() -> Cont {
 pub fn x00401513() -> Cont {
     unsafe {
         // 00401513 mov eax,[esi+28h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.esi + 0x28u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x28u32) as usize)
+            as *mut u32);
         // 00401516 test eax,eax
         and(MACHINE.regs.eax, MACHINE.regs.eax);
         // 00401518 je near ptr 00401627h
@@ -1002,11 +1094,14 @@ pub fn x00401513() -> Cont {
 pub fn x0040151e() -> Cont {
     unsafe {
         // 0040151e mov ecx,[eax]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize)
+            as *mut u32);
         // 00401520 push eax
         push(MACHINE.regs.eax);
         // 00401521 call dword ptr [ecx+6Ch]
-        call(0x401524, indirect(MACHINE.regs.ecx + 0x6cu32))
+        call(0x401524, indirect(MACHINE.regs.ecx.wrapping_add(0x6cu32)))
     }
 }
 
@@ -1044,7 +1139,7 @@ pub fn x00401536() -> Cont {
 pub fn x0040153e() -> Cont {
     unsafe {
         // 0040153e lea edx,[esp+14h]
-        MACHINE.regs.edx = MACHINE.regs.esp + 0x14u32;
+        MACHINE.regs.edx = MACHINE.regs.esp.wrapping_add(0x14u32);
         // 00401542 push edx
         push(MACHINE.regs.edx);
         // 00401543 push 18h
@@ -1068,9 +1163,15 @@ pub fn x0040154c() -> Cont {
 pub fn x00401550() -> Cont {
     unsafe {
         // 00401550 mov ebx,[esp+18h]
-        MACHINE.regs.ebx = *(MACHINE.memory.add((MACHINE.regs.esp + 0x18u32) as usize) as *mut u32);
+        MACHINE.regs.ebx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x18u32) as usize)
+            as *mut u32);
         // 00401554 mov eax,[esp+0C0h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.esp + 0xc0u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0xc0u32) as usize)
+            as *mut u32);
         // 0040155b test eax,eax
         and(MACHINE.regs.eax, MACHINE.regs.eax);
         // 0040155d jne short 0040156Ah
@@ -1081,7 +1182,10 @@ pub fn x00401550() -> Cont {
 pub fn x00401554() -> Cont {
     unsafe {
         // 00401554 mov eax,[esp+0C0h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.esp + 0xc0u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0xc0u32) as usize)
+            as *mut u32);
         // 0040155b test eax,eax
         and(MACHINE.regs.eax, MACHINE.regs.eax);
         // 0040155d jne short 0040156Ah
@@ -1092,70 +1196,104 @@ pub fn x00401554() -> Cont {
 pub fn x0040155f() -> Cont {
     unsafe {
         // 0040155f mov eax,[esp+1Ch]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.esp + 0x1cu32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x1cu32) as usize)
+            as *mut u32);
         // 00401563 mov [esp+0C0h],eax
-        *(MACHINE.memory.add((MACHINE.regs.esp + 0xc0u32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0xc0u32) as usize) as *mut u32) = MACHINE.regs.eax;
         // 0040156a mov eax,[esi+28h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.esi + 0x28u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x28u32) as usize)
+            as *mut u32);
         // 0040156d lea edx,[esp+2Ch]
-        MACHINE.regs.edx = MACHINE.regs.esp + 0x2cu32;
+        MACHINE.regs.edx = MACHINE.regs.esp.wrapping_add(0x2cu32);
         // 00401571 mov dword ptr [esp+2Ch],7Ch
-        *(MACHINE.memory.add((MACHINE.regs.esp + 0x2cu32) as usize) as *mut u32) = 0x7cu32;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x2cu32) as usize) as *mut u32) = 0x7cu32;
         // 00401579 mov dword ptr [esp+30h],6
-        *(MACHINE.memory.add((MACHINE.regs.esp + 0x30u32) as usize) as *mut u32) = 0x6u32;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x30u32) as usize) as *mut u32) = 0x6u32;
         // 00401581 mov ecx,[eax]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize)
+            as *mut u32);
         // 00401583 push edx
         push(MACHINE.regs.edx);
         // 00401584 push eax
         push(MACHINE.regs.eax);
         // 00401585 call dword ptr [ecx+58h]
-        call(0x401588, indirect(MACHINE.regs.ecx + 0x58u32))
+        call(0x401588, indirect(MACHINE.regs.ecx.wrapping_add(0x58u32)))
     }
 }
 
 pub fn x0040156a() -> Cont {
     unsafe {
         // 0040156a mov eax,[esi+28h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.esi + 0x28u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x28u32) as usize)
+            as *mut u32);
         // 0040156d lea edx,[esp+2Ch]
-        MACHINE.regs.edx = MACHINE.regs.esp + 0x2cu32;
+        MACHINE.regs.edx = MACHINE.regs.esp.wrapping_add(0x2cu32);
         // 00401571 mov dword ptr [esp+2Ch],7Ch
-        *(MACHINE.memory.add((MACHINE.regs.esp + 0x2cu32) as usize) as *mut u32) = 0x7cu32;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x2cu32) as usize) as *mut u32) = 0x7cu32;
         // 00401579 mov dword ptr [esp+30h],6
-        *(MACHINE.memory.add((MACHINE.regs.esp + 0x30u32) as usize) as *mut u32) = 0x6u32;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x30u32) as usize) as *mut u32) = 0x6u32;
         // 00401581 mov ecx,[eax]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize)
+            as *mut u32);
         // 00401583 push edx
         push(MACHINE.regs.edx);
         // 00401584 push eax
         push(MACHINE.regs.eax);
         // 00401585 call dword ptr [ecx+58h]
-        call(0x401588, indirect(MACHINE.regs.ecx + 0x58u32))
+        call(0x401588, indirect(MACHINE.regs.ecx.wrapping_add(0x58u32)))
     }
 }
 
 pub fn x00401588() -> Cont {
     unsafe {
         // 00401588 mov eax,[esi+28h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.esi + 0x28u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x28u32) as usize)
+            as *mut u32);
         // 0040158b lea edx,[esp+10h]
-        MACHINE.regs.edx = MACHINE.regs.esp + 0x10u32;
+        MACHINE.regs.edx = MACHINE.regs.esp.wrapping_add(0x10u32);
         // 0040158f push edx
         push(MACHINE.regs.edx);
         // 00401590 push eax
         push(MACHINE.regs.eax);
         // 00401591 mov ecx,[eax]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize)
+            as *mut u32);
         // 00401593 call dword ptr [ecx+44h]
-        call(0x401596, indirect(MACHINE.regs.ecx + 0x44u32))
+        call(0x401596, indirect(MACHINE.regs.ecx.wrapping_add(0x44u32)))
     }
 }
 
 pub fn x00401596() -> Cont {
     unsafe {
         // 00401596 mov ebp,[esp+0B8h]
-        MACHINE.regs.ebp = *(MACHINE.memory.add((MACHINE.regs.esp + 0xb8u32) as usize) as *mut u32);
+        MACHINE.regs.ebp = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0xb8u32) as usize)
+            as *mut u32);
         // 0040159d test eax,eax
         and(MACHINE.regs.eax, MACHINE.regs.eax);
         // 0040159f jne short 004015E0h
@@ -1166,17 +1304,29 @@ pub fn x00401596() -> Cont {
 pub fn x004015a1() -> Cont {
     unsafe {
         // 004015a1 mov eax,[esp+0C0h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.esp + 0xc0u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0xc0u32) as usize)
+            as *mut u32);
         // 004015a8 mov ecx,[esp+0B4h]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.esp + 0xb4u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0xb4u32) as usize)
+            as *mut u32);
         // 004015af mov edx,[esp+34h]
-        MACHINE.regs.edx = *(MACHINE.memory.add((MACHINE.regs.esp + 0x34u32) as usize) as *mut u32);
+        MACHINE.regs.edx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x34u32) as usize)
+            as *mut u32);
         // 004015b3 push 0CC0020h
         push(0xcc0020u32);
         // 004015b8 push eax
         push(MACHINE.regs.eax);
         // 004015b9 mov eax,[esp+40h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.esp + 0x40u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x40u32) as usize)
+            as *mut u32);
         // 004015bd push ebx
         push(MACHINE.regs.ebx);
         // 004015be push ebp
@@ -1184,7 +1334,10 @@ pub fn x004015a1() -> Cont {
         // 004015bf push ecx
         push(MACHINE.regs.ecx);
         // 004015c0 mov ecx,[esp+24h]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.esp + 0x24u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x24u32) as usize)
+            as *mut u32);
         // 004015c4 push edi
         push(MACHINE.regs.edi);
         // 004015c5 push edx
@@ -1205,17 +1358,26 @@ pub fn x004015a1() -> Cont {
 pub fn x004015d2() -> Cont {
     unsafe {
         // 004015d2 mov eax,[esi+28h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.esi + 0x28u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x28u32) as usize)
+            as *mut u32);
         // 004015d5 mov ecx,[esp+10h]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.esp + 0x10u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x10u32) as usize)
+            as *mut u32);
         // 004015d9 push ecx
         push(MACHINE.regs.ecx);
         // 004015da push eax
         push(MACHINE.regs.eax);
         // 004015db mov edx,[eax]
-        MACHINE.regs.edx = *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u32);
+        MACHINE.regs.edx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize)
+            as *mut u32);
         // 004015dd call dword ptr [edx+68h]
-        call(0x4015e0, indirect(MACHINE.regs.edx + 0x68u32))
+        call(0x4015e0, indirect(MACHINE.regs.edx.wrapping_add(0x68u32)))
     }
 }
 
@@ -1231,25 +1393,49 @@ pub fn x004015e0() -> Cont {
 pub fn x004015e7() -> Cont {
     unsafe {
         // 004015e7 mov edx,[esp+0ACh]
-        MACHINE.regs.edx = *(MACHINE.memory.add((MACHINE.regs.esp + 0xacu32) as usize) as *mut u32);
+        MACHINE.regs.edx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0xacu32) as usize)
+            as *mut u32);
         // 004015ee mov eax,[esp+0B0h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.esp + 0xb0u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0xb0u32) as usize)
+            as *mut u32);
         // 004015f5 mov ecx,[esp+0B4h]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.esp + 0xb4u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0xb4u32) as usize)
+            as *mut u32);
         // 004015fc mov [esi+4],edx
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0x4u32) as usize) as *mut u32) = MACHINE.regs.edx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x4u32) as usize) as *mut u32) = MACHINE.regs.edx;
         // 004015ff mov edx,[esp+0C0h]
-        MACHINE.regs.edx = *(MACHINE.memory.add((MACHINE.regs.esp + 0xc0u32) as usize) as *mut u32);
+        MACHINE.regs.edx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0xc0u32) as usize)
+            as *mut u32);
         // 00401606 mov [esi+8],eax
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0x8u32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x8u32) as usize) as *mut u32) = MACHINE.regs.eax;
         // 00401609 mov [esi+0Ch],ecx
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0xcu32) as usize) as *mut u32) = MACHINE.regs.ecx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0xcu32) as usize) as *mut u32) = MACHINE.regs.ecx;
         // 0040160c mov [esi+10h],ebp
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0x10u32) as usize) as *mut u32) = MACHINE.regs.ebp;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x10u32) as usize) as *mut u32) = MACHINE.regs.ebp;
         // 0040160f mov [esi+14h],ebx
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0x14u32) as usize) as *mut u32) = MACHINE.regs.ebx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x14u32) as usize) as *mut u32) = MACHINE.regs.ebx;
         // 00401612 mov [esi+18h],edx
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0x18u32) as usize) as *mut u32) = MACHINE.regs.edx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x18u32) as usize) as *mut u32) = MACHINE.regs.edx;
         // 00401615 pop edi
         MACHINE.regs.edi = pop();
         // 00401616 pop esi
@@ -1297,31 +1483,43 @@ pub fn x00401640() -> Cont {
         // 00401648 push esi
         push(MACHINE.regs.esi);
         // 00401649 mov esi,[esp+94h]
-        MACHINE.regs.esi = *(MACHINE.memory.add((MACHINE.regs.esp + 0x94u32) as usize) as *mut u32);
+        MACHINE.regs.esi = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x94u32) as usize)
+            as *mut u32);
         // 00401650 mov ebx,ecx
         MACHINE.regs.ebx = MACHINE.regs.ecx;
         // 00401652 push edi
         push(MACHINE.regs.edi);
         // 00401653 mov ebp,[esp+9Ch]
-        MACHINE.regs.ebp = *(MACHINE.memory.add((MACHINE.regs.esp + 0x9cu32) as usize) as *mut u32);
+        MACHINE.regs.ebp = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x9cu32) as usize)
+            as *mut u32);
         // 0040165a mov ecx,1Fh
         MACHINE.regs.ecx = 0x1fu32;
         // 0040165f xor eax,eax
         MACHINE.regs.eax ^= MACHINE.regs.eax;
         // 00401661 lea edi,[esp+18h]
-        MACHINE.regs.edi = MACHINE.regs.esp + 0x18u32;
+        MACHINE.regs.edi = MACHINE.regs.esp.wrapping_add(0x18u32);
         // 00401665 rep stosd
         todo!();
         // 00401667 mov eax,[esp+0A0h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.esp + 0xa0u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0xa0u32) as usize)
+            as *mut u32);
         // 0040166e mov ecx,[esi]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize)
+            as *mut u32);
         // 00401670 lea edi,[ebx+28h]
-        MACHINE.regs.edi = MACHINE.regs.ebx + 0x28u32;
+        MACHINE.regs.edi = MACHINE.regs.ebx.wrapping_add(0x28u32);
         // 00401673 push 0
         push(0x0u32);
         // 00401675 lea edx,[esp+1Ch]
-        MACHINE.regs.edx = MACHINE.regs.esp + 0x1cu32;
+        MACHINE.regs.edx = MACHINE.regs.esp.wrapping_add(0x1cu32);
         // 00401679 push edi
         push(MACHINE.regs.edi);
         // 0040167a push edx
@@ -1329,17 +1527,27 @@ pub fn x00401640() -> Cont {
         // 0040167b push esi
         push(MACHINE.regs.esi);
         // 0040167c mov dword ptr [esp+28h],7Ch
-        *(MACHINE.memory.add((MACHINE.regs.esp + 0x28u32) as usize) as *mut u32) = 0x7cu32;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x28u32) as usize) as *mut u32) = 0x7cu32;
         // 00401684 mov dword ptr [esp+2Ch],7
-        *(MACHINE.memory.add((MACHINE.regs.esp + 0x2cu32) as usize) as *mut u32) = 0x7u32;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x2cu32) as usize) as *mut u32) = 0x7u32;
         // 0040168c mov dword ptr [esp+90h],4040h
-        *(MACHINE.memory.add((MACHINE.regs.esp + 0x90u32) as usize) as *mut u32) = 0x4040u32;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x90u32) as usize) as *mut u32) = 0x4040u32;
         // 00401697 mov [esp+34h],ebp
-        *(MACHINE.memory.add((MACHINE.regs.esp + 0x34u32) as usize) as *mut u32) = MACHINE.regs.ebp;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x34u32) as usize) as *mut u32) = MACHINE.regs.ebp;
         // 0040169b mov [esp+30h],eax
-        *(MACHINE.memory.add((MACHINE.regs.esp + 0x30u32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x30u32) as usize) as *mut u32) = MACHINE.regs.eax;
         // 0040169f call dword ptr [ecx+18h]
-        call(0x4016a2, indirect(MACHINE.regs.ecx + 0x18u32))
+        call(0x4016a2, indirect(MACHINE.regs.ecx.wrapping_add(0x18u32)))
     }
 }
 
@@ -1364,11 +1572,14 @@ pub fn x004016a6() -> Cont {
 pub fn x004016ad() -> Cont {
     unsafe {
         // 004016ad mov eax,[esi]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize)
+            as *mut u32);
         // 004016af push 0
         push(0x0u32);
         // 004016b1 lea ecx,[esp+1Ch]
-        MACHINE.regs.ecx = MACHINE.regs.esp + 0x1cu32;
+        MACHINE.regs.ecx = MACHINE.regs.esp.wrapping_add(0x1cu32);
         // 004016b5 push edi
         push(MACHINE.regs.edi);
         // 004016b6 push ecx
@@ -1376,9 +1587,11 @@ pub fn x004016ad() -> Cont {
         // 004016b7 push esi
         push(MACHINE.regs.esi);
         // 004016b8 mov dword ptr [esp+90h],840h
-        *(MACHINE.memory.add((MACHINE.regs.esp + 0x90u32) as usize) as *mut u32) = 0x840u32;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x90u32) as usize) as *mut u32) = 0x840u32;
         // 004016c3 call dword ptr [eax+18h]
-        call(0x4016c6, indirect(MACHINE.regs.eax + 0x18u32))
+        call(0x4016c6, indirect(MACHINE.regs.eax.wrapping_add(0x18u32)))
     }
 }
 
@@ -1413,7 +1626,10 @@ pub fn x004016ca() -> Cont {
 pub fn x004016d9() -> Cont {
     unsafe {
         // 004016d9 mov esi,[esp+0A4h]
-        MACHINE.regs.esi = *(MACHINE.memory.add((MACHINE.regs.esp + 0xa4u32) as usize) as *mut u32);
+        MACHINE.regs.esi = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0xa4u32) as usize)
+            as *mut u32);
         // 004016e0 cmp esi,0FFFFFFFFh
         sub(MACHINE.regs.esi, 0xffffffffu32);
         // 004016e3 je short 00401700h
@@ -1424,15 +1640,25 @@ pub fn x004016d9() -> Cont {
 pub fn x004016e5() -> Cont {
     unsafe {
         // 004016e5 mov edi,[edi]
-        MACHINE.regs.edi = *(MACHINE.memory.add((MACHINE.regs.edi + 0x0u32) as usize) as *mut u32);
+        MACHINE.regs.edi = *(MACHINE
+            .memory
+            .add(MACHINE.regs.edi.wrapping_add(0x0u32) as usize)
+            as *mut u32);
         // 004016e7 lea eax,[esp+10h]
-        MACHINE.regs.eax = MACHINE.regs.esp + 0x10u32;
+        MACHINE.regs.eax = MACHINE.regs.esp.wrapping_add(0x10u32);
         // 004016eb mov [esp+10h],esi
-        *(MACHINE.memory.add((MACHINE.regs.esp + 0x10u32) as usize) as *mut u32) = MACHINE.regs.esi;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x10u32) as usize) as *mut u32) = MACHINE.regs.esi;
         // 004016ef mov dword ptr [esp+14h],0
-        *(MACHINE.memory.add((MACHINE.regs.esp + 0x14u32) as usize) as *mut u32) = 0x0u32;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x14u32) as usize) as *mut u32) = 0x0u32;
         // 004016f7 mov edx,[edi]
-        MACHINE.regs.edx = *(MACHINE.memory.add((MACHINE.regs.edi + 0x0u32) as usize) as *mut u32);
+        MACHINE.regs.edx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.edi.wrapping_add(0x0u32) as usize)
+            as *mut u32);
         // 004016f9 push eax
         push(MACHINE.regs.eax);
         // 004016fa push 8
@@ -1440,24 +1666,33 @@ pub fn x004016e5() -> Cont {
         // 004016fc push edi
         push(MACHINE.regs.edi);
         // 004016fd call dword ptr [edx+74h]
-        call(0x401700, indirect(MACHINE.regs.edx + 0x74u32))
+        call(0x401700, indirect(MACHINE.regs.edx.wrapping_add(0x74u32)))
     }
 }
 
 pub fn x00401700() -> Cont {
     unsafe {
         // 00401700 mov ecx,[esp+0A0h]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.esp + 0xa0u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0xa0u32) as usize)
+            as *mut u32);
         // 00401707 mov [ebx+1Ch],esi
-        *(MACHINE.memory.add((MACHINE.regs.ebx + 0x1cu32) as usize) as *mut u32) = MACHINE.regs.esi;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebx.wrapping_add(0x1cu32) as usize) as *mut u32) = MACHINE.regs.esi;
         // 0040170a pop edi
         MACHINE.regs.edi = pop();
         // 0040170b mov [ebx+24h],ebp
-        *(MACHINE.memory.add((MACHINE.regs.ebx + 0x24u32) as usize) as *mut u32) = MACHINE.regs.ebp;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebx.wrapping_add(0x24u32) as usize) as *mut u32) = MACHINE.regs.ebp;
         // 0040170e pop esi
         MACHINE.regs.esi = pop();
         // 0040170f mov [ebx+20h],ecx
-        *(MACHINE.memory.add((MACHINE.regs.ebx + 0x20u32) as usize) as *mut u32) = MACHINE.regs.ecx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebx.wrapping_add(0x20u32) as usize) as *mut u32) = MACHINE.regs.ecx;
         // 00401712 pop ebp
         MACHINE.regs.ebp = pop();
         // 00401713 mov eax,1
@@ -1482,7 +1717,10 @@ pub fn x00401730() -> Cont {
         // 00401735 push esi
         push(MACHINE.regs.esi);
         // 00401736 mov esi,[esp+34h]
-        MACHINE.regs.esi = *(MACHINE.memory.add((MACHINE.regs.esp + 0x34u32) as usize) as *mut u32);
+        MACHINE.regs.esi = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x34u32) as usize)
+            as *mut u32);
         // 0040173a push edi
         push(MACHINE.regs.edi);
         // 0040173b mov edi,ecx
@@ -1497,9 +1735,15 @@ pub fn x00401730() -> Cont {
 pub fn x00401741() -> Cont {
     unsafe {
         // 00401741 mov esi,[edi+24h]
-        MACHINE.regs.esi = *(MACHINE.memory.add((MACHINE.regs.edi + 0x24u32) as usize) as *mut u32);
+        MACHINE.regs.esi = *(MACHINE
+            .memory
+            .add(MACHINE.regs.edi.wrapping_add(0x24u32) as usize)
+            as *mut u32);
         // 00401744 mov edx,[esp+3Ch]
-        MACHINE.regs.edx = *(MACHINE.memory.add((MACHINE.regs.esp + 0x3cu32) as usize) as *mut u32);
+        MACHINE.regs.edx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x3cu32) as usize)
+            as *mut u32);
         // 00401748 test edx,edx
         and(MACHINE.regs.edx, MACHINE.regs.edx);
         // 0040174a jne short 0040174Fh
@@ -1510,7 +1754,10 @@ pub fn x00401741() -> Cont {
 pub fn x00401744() -> Cont {
     unsafe {
         // 00401744 mov edx,[esp+3Ch]
-        MACHINE.regs.edx = *(MACHINE.memory.add((MACHINE.regs.esp + 0x3cu32) as usize) as *mut u32);
+        MACHINE.regs.edx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x3cu32) as usize)
+            as *mut u32);
         // 00401748 test edx,edx
         and(MACHINE.regs.edx, MACHINE.regs.edx);
         // 0040174a jne short 0040174Fh
@@ -1521,35 +1768,67 @@ pub fn x00401744() -> Cont {
 pub fn x0040174c() -> Cont {
     unsafe {
         // 0040174c mov edx,[edi+20h]
-        MACHINE.regs.edx = *(MACHINE.memory.add((MACHINE.regs.edi + 0x20u32) as usize) as *mut u32);
+        MACHINE.regs.edx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.edi.wrapping_add(0x20u32) as usize)
+            as *mut u32);
         // 0040174f mov eax,[esp+30h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.esp + 0x30u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x30u32) as usize)
+            as *mut u32);
         // 00401753 mov ecx,[esp+34h]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.esp + 0x34u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x34u32) as usize)
+            as *mut u32);
         // 00401757 mov ebx,[esp+2Ch]
-        MACHINE.regs.ebx = *(MACHINE.memory.add((MACHINE.regs.esp + 0x2cu32) as usize) as *mut u32);
+        MACHINE.regs.ebx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x2cu32) as usize)
+            as *mut u32);
         // 0040175b mov ebp,[esp+28h]
-        MACHINE.regs.ebp = *(MACHINE.memory.add((MACHINE.regs.esp + 0x28u32) as usize) as *mut u32);
+        MACHINE.regs.ebp = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x28u32) as usize)
+            as *mut u32);
         // 0040175f mov [esp+10h],eax
-        *(MACHINE.memory.add((MACHINE.regs.esp + 0x10u32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x10u32) as usize) as *mut u32) = MACHINE.regs.eax;
         // 00401763 mov [esp+14h],ecx
-        *(MACHINE.memory.add((MACHINE.regs.esp + 0x14u32) as usize) as *mut u32) = MACHINE.regs.ecx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x14u32) as usize) as *mut u32) = MACHINE.regs.ecx;
         // 00401767 add eax,esi
         MACHINE.regs.eax = add(MACHINE.regs.eax, MACHINE.regs.esi);
         // 00401769 mov esi,[esp+24h]
-        MACHINE.regs.esi = *(MACHINE.memory.add((MACHINE.regs.esp + 0x24u32) as usize) as *mut u32);
+        MACHINE.regs.esi = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x24u32) as usize)
+            as *mut u32);
         // 0040176d add ecx,edx
         MACHINE.regs.ecx = add(MACHINE.regs.ecx, MACHINE.regs.edx);
         // 0040176f mov [esp+18h],eax
-        *(MACHINE.memory.add((MACHINE.regs.esp + 0x18u32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x18u32) as usize) as *mut u32) = MACHINE.regs.eax;
         // 00401773 mov [esp+1Ch],ecx
-        *(MACHINE.memory.add((MACHINE.regs.esp + 0x1cu32) as usize) as *mut u32) = MACHINE.regs.ecx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x1cu32) as usize) as *mut u32) = MACHINE.regs.ecx;
         // 00401777 mov eax,[edi+1Ch]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.edi + 0x1cu32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.edi.wrapping_add(0x1cu32) as usize)
+            as *mut u32);
         // 0040177a test eax,eax
         and(MACHINE.regs.eax, MACHINE.regs.eax);
         // 0040177c mov eax,[esi]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize)
+            as *mut u32);
         // 0040177e jge short 00401784h
         jge(Cont(x00401780), Cont(x00401784))
     }
@@ -1558,33 +1837,62 @@ pub fn x0040174c() -> Cont {
 pub fn x0040174f() -> Cont {
     unsafe {
         // 0040174f mov eax,[esp+30h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.esp + 0x30u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x30u32) as usize)
+            as *mut u32);
         // 00401753 mov ecx,[esp+34h]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.esp + 0x34u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x34u32) as usize)
+            as *mut u32);
         // 00401757 mov ebx,[esp+2Ch]
-        MACHINE.regs.ebx = *(MACHINE.memory.add((MACHINE.regs.esp + 0x2cu32) as usize) as *mut u32);
+        MACHINE.regs.ebx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x2cu32) as usize)
+            as *mut u32);
         // 0040175b mov ebp,[esp+28h]
-        MACHINE.regs.ebp = *(MACHINE.memory.add((MACHINE.regs.esp + 0x28u32) as usize) as *mut u32);
+        MACHINE.regs.ebp = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x28u32) as usize)
+            as *mut u32);
         // 0040175f mov [esp+10h],eax
-        *(MACHINE.memory.add((MACHINE.regs.esp + 0x10u32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x10u32) as usize) as *mut u32) = MACHINE.regs.eax;
         // 00401763 mov [esp+14h],ecx
-        *(MACHINE.memory.add((MACHINE.regs.esp + 0x14u32) as usize) as *mut u32) = MACHINE.regs.ecx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x14u32) as usize) as *mut u32) = MACHINE.regs.ecx;
         // 00401767 add eax,esi
         MACHINE.regs.eax = add(MACHINE.regs.eax, MACHINE.regs.esi);
         // 00401769 mov esi,[esp+24h]
-        MACHINE.regs.esi = *(MACHINE.memory.add((MACHINE.regs.esp + 0x24u32) as usize) as *mut u32);
+        MACHINE.regs.esi = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x24u32) as usize)
+            as *mut u32);
         // 0040176d add ecx,edx
         MACHINE.regs.ecx = add(MACHINE.regs.ecx, MACHINE.regs.edx);
         // 0040176f mov [esp+18h],eax
-        *(MACHINE.memory.add((MACHINE.regs.esp + 0x18u32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x18u32) as usize) as *mut u32) = MACHINE.regs.eax;
         // 00401773 mov [esp+1Ch],ecx
-        *(MACHINE.memory.add((MACHINE.regs.esp + 0x1cu32) as usize) as *mut u32) = MACHINE.regs.ecx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x1cu32) as usize) as *mut u32) = MACHINE.regs.ecx;
         // 00401777 mov eax,[edi+1Ch]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.edi + 0x1cu32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.edi.wrapping_add(0x1cu32) as usize)
+            as *mut u32);
         // 0040177a test eax,eax
         and(MACHINE.regs.eax, MACHINE.regs.eax);
         // 0040177c mov eax,[esi]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize)
+            as *mut u32);
         // 0040177e jge short 00401784h
         jge(Cont(x00401780), Cont(x00401784))
     }
@@ -1593,11 +1901,17 @@ pub fn x0040174f() -> Cont {
 pub fn x00401777() -> Cont {
     unsafe {
         // 00401777 mov eax,[edi+1Ch]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.edi + 0x1cu32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.edi.wrapping_add(0x1cu32) as usize)
+            as *mut u32);
         // 0040177a test eax,eax
         and(MACHINE.regs.eax, MACHINE.regs.eax);
         // 0040177c mov eax,[esi]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize)
+            as *mut u32);
         // 0040177e jge short 00401784h
         jge(Cont(x00401780), Cont(x00401784))
     }
@@ -1617,9 +1931,12 @@ pub fn x00401784() -> Cont {
         // 00401784 push 1
         push(0x1u32);
         // 00401786 mov edx,[edi+28h]
-        MACHINE.regs.edx = *(MACHINE.memory.add((MACHINE.regs.edi + 0x28u32) as usize) as *mut u32);
+        MACHINE.regs.edx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.edi.wrapping_add(0x28u32) as usize)
+            as *mut u32);
         // 00401789 lea ecx,[esp+14h]
-        MACHINE.regs.ecx = MACHINE.regs.esp + 0x14u32;
+        MACHINE.regs.ecx = MACHINE.regs.esp.wrapping_add(0x14u32);
         // 0040178d push ecx
         push(MACHINE.regs.ecx);
         // 0040178e push edx
@@ -1631,16 +1948,19 @@ pub fn x00401784() -> Cont {
         // 00401791 push esi
         push(MACHINE.regs.esi);
         // 00401792 call dword ptr [eax+1Ch]
-        call(0x401795, indirect(MACHINE.regs.eax + 0x1cu32))
+        call(0x401795, indirect(MACHINE.regs.eax.wrapping_add(0x1cu32)))
     }
 }
 
 pub fn x00401786() -> Cont {
     unsafe {
         // 00401786 mov edx,[edi+28h]
-        MACHINE.regs.edx = *(MACHINE.memory.add((MACHINE.regs.edi + 0x28u32) as usize) as *mut u32);
+        MACHINE.regs.edx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.edi.wrapping_add(0x28u32) as usize)
+            as *mut u32);
         // 00401789 lea ecx,[esp+14h]
-        MACHINE.regs.ecx = MACHINE.regs.esp + 0x14u32;
+        MACHINE.regs.ecx = MACHINE.regs.esp.wrapping_add(0x14u32);
         // 0040178d push ecx
         push(MACHINE.regs.ecx);
         // 0040178e push edx
@@ -1652,7 +1972,7 @@ pub fn x00401786() -> Cont {
         // 00401791 push esi
         push(MACHINE.regs.esi);
         // 00401792 call dword ptr [eax+1Ch]
-        call(0x401795, indirect(MACHINE.regs.eax + 0x1cu32))
+        call(0x401795, indirect(MACHINE.regs.eax.wrapping_add(0x1cu32)))
     }
 }
 
@@ -1744,7 +2064,10 @@ pub fn x004017d0() -> Cont {
         // 004017d1 mov esi,ecx
         MACHINE.regs.esi = MACHINE.regs.ecx;
         // 004017d3 mov eax,[esi+28h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.esi + 0x28u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x28u32) as usize)
+            as *mut u32);
         // 004017d6 test eax,eax
         and(MACHINE.regs.eax, MACHINE.regs.eax);
         // 004017d8 je short 004017E7h
@@ -1755,18 +2078,23 @@ pub fn x004017d0() -> Cont {
 pub fn x004017da() -> Cont {
     unsafe {
         // 004017da mov ecx,[eax]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize)
+            as *mut u32);
         // 004017dc push eax
         push(MACHINE.regs.eax);
         // 004017dd call dword ptr [ecx+8]
-        call(0x4017e0, indirect(MACHINE.regs.ecx + 0x8u32))
+        call(0x4017e0, indirect(MACHINE.regs.ecx.wrapping_add(0x8u32)))
     }
 }
 
 pub fn x004017e0() -> Cont {
     unsafe {
         // 004017e0 mov dword ptr [esi+28h],0
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0x28u32) as usize) as *mut u32) = 0x0u32;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x28u32) as usize) as *mut u32) = 0x0u32;
         // 004017e7 pop esi
         MACHINE.regs.esi = pop();
         // 004017e8 ret
@@ -1786,13 +2114,19 @@ pub fn x004017e7() -> Cont {
 pub fn x004017f0() -> Cont {
     unsafe {
         // 004017f0 mov eax,[ecx+28h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.ecx + 0x28u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ecx.wrapping_add(0x28u32) as usize)
+            as *mut u32);
         // 004017f3 push eax
         push(MACHINE.regs.eax);
         // 004017f4 mov ecx,[eax]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize)
+            as *mut u32);
         // 004017f6 call dword ptr [ecx+6Ch]
-        call(0x4017f9, indirect(MACHINE.regs.ecx + 0x6cu32))
+        call(0x4017f9, indirect(MACHINE.regs.ecx.wrapping_add(0x6cu32)))
     }
 }
 
@@ -1823,12 +2157,16 @@ pub fn x004018bf() -> Cont {
         // 004018c9 push 4029A8h
         push(0x4029a8u32);
         // 004018ce mov eax,fs:[0]
-        MACHINE.regs.eax =
-            *(MACHINE.memory.add((MACHINE.regs.fs_base + 0x0u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.fs_base.wrapping_add(0x0u32) as usize)
+            as *mut u32);
         // 004018d4 push eax
         push(MACHINE.regs.eax);
         // 004018d5 mov fs:[0],esp
-        *(MACHINE.memory.add((MACHINE.regs.fs_base + 0x0u32) as usize) as *mut u32) =
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.fs_base.wrapping_add(0x0u32) as usize) as *mut u32) =
             MACHINE.regs.esp;
         // 004018dc sub esp,58h
         MACHINE.regs.esp = sub(MACHINE.regs.esp, 0x58u32);
@@ -1841,7 +2179,8 @@ pub fn x004018bf() -> Cont {
         // 004018e2 mov [ebp-18h],esp
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xffffffe8u32) as usize) as *mut u32) = MACHINE.regs.esp;
+            .add(MACHINE.regs.ebp.wrapping_add(0xffffffe8u32) as usize) as *mut u32) =
+            MACHINE.regs.esp;
         // 004018e5 call dword ptr ds:[406074h]
         call(0x4018eb, Cont(kernel32::stdcall_GetVersion))
     }
@@ -1854,23 +2193,23 @@ pub fn x004018eb() -> Cont {
         // 004018ed mov dl,ah
         MACHINE.regs.set_dl(MACHINE.regs.get_ah());
         // 004018ef mov ds:[4095C0h],edx
-        *(MACHINE.memory.add((0x4095c0u32) as usize) as *mut u32) = MACHINE.regs.edx;
+        *(MACHINE.memory.add(0x4095c0u32 as usize) as *mut u32) = MACHINE.regs.edx;
         // 004018f5 mov ecx,eax
         MACHINE.regs.ecx = MACHINE.regs.eax;
         // 004018f7 and ecx,0FFh
         MACHINE.regs.ecx = and(MACHINE.regs.ecx, 0xffu32);
         // 004018fd mov ds:[4095BCh],ecx
-        *(MACHINE.memory.add((0x4095bcu32) as usize) as *mut u32) = MACHINE.regs.ecx;
+        *(MACHINE.memory.add(0x4095bcu32 as usize) as *mut u32) = MACHINE.regs.ecx;
         // 00401903 shl ecx,8
         MACHINE.regs.ecx = shl(MACHINE.regs.ecx, 0x8u8);
         // 00401906 add ecx,edx
         MACHINE.regs.ecx = add(MACHINE.regs.ecx, MACHINE.regs.edx);
         // 00401908 mov ds:[4095B8h],ecx
-        *(MACHINE.memory.add((0x4095b8u32) as usize) as *mut u32) = MACHINE.regs.ecx;
+        *(MACHINE.memory.add(0x4095b8u32 as usize) as *mut u32) = MACHINE.regs.ecx;
         // 0040190e shr eax,10h
         MACHINE.regs.eax = shr(MACHINE.regs.eax, 0x10u8);
         // 00401911 mov ds:[4095B4h],eax
-        *(MACHINE.memory.add((0x4095b4u32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE.memory.add(0x4095b4u32 as usize) as *mut u32) = MACHINE.regs.eax;
         // 00401916 xor esi,esi
         MACHINE.regs.esi ^= MACHINE.regs.esi;
         // 00401918 push esi
@@ -1907,7 +2246,8 @@ pub fn x0040192a() -> Cont {
         // 0040192b mov [ebp-4],esi
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize) as *mut u32) = MACHINE.regs.esi;
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize) as *mut u32) =
+            MACHINE.regs.esi;
         // 0040192e call 00402530h
         call(0x401933, Cont(x00402530))
     }
@@ -1918,7 +2258,8 @@ pub fn x0040192b() -> Cont {
         // 0040192b mov [ebp-4],esi
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize) as *mut u32) = MACHINE.regs.esi;
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize) as *mut u32) =
+            MACHINE.regs.esi;
         // 0040192e call 00402530h
         call(0x401933, Cont(x00402530))
     }
@@ -1934,7 +2275,7 @@ pub fn x00401933() -> Cont {
 pub fn x00401939() -> Cont {
     unsafe {
         // 00401939 mov ds:[409AB8h],eax
-        *(MACHINE.memory.add((0x409ab8u32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE.memory.add(0x409ab8u32 as usize) as *mut u32) = MACHINE.regs.eax;
         // 0040193e call 004023FEh
         call(0x401943, Cont(x004023fe))
     }
@@ -1943,7 +2284,7 @@ pub fn x00401939() -> Cont {
 pub fn x00401943() -> Cont {
     unsafe {
         // 00401943 mov ds:[40959Ch],eax
-        *(MACHINE.memory.add((0x40959cu32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE.memory.add(0x40959cu32 as usize) as *mut u32) = MACHINE.regs.eax;
         // 00401948 call 004021B1h
         call(0x40194d, Cont(x004021b1))
     }
@@ -1968,9 +2309,10 @@ pub fn x00401957() -> Cont {
         // 00401957 mov [ebp-30h],esi
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xffffffd0u32) as usize) as *mut u32) = MACHINE.regs.esi;
+            .add(MACHINE.regs.ebp.wrapping_add(0xffffffd0u32) as usize) as *mut u32) =
+            MACHINE.regs.esi;
         // 0040195a lea eax,[ebp-5Ch]
-        MACHINE.regs.eax = MACHINE.regs.ebp + 0xffffffa4u32;
+        MACHINE.regs.eax = MACHINE.regs.ebp.wrapping_add(0xffffffa4u32);
         // 0040195d push eax
         push(MACHINE.regs.eax);
         // 0040195e call dword ptr ds:[40606Ch]
@@ -1990,12 +2332,14 @@ pub fn x00401969() -> Cont {
         // 00401969 mov [ebp-64h],eax
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xffffff9cu32) as usize) as *mut u32) = MACHINE.regs.eax;
+            .add(MACHINE.regs.ebp.wrapping_add(0xffffff9cu32) as usize) as *mut u32) =
+            MACHINE.regs.eax;
         // 0040196c test byte ptr [ebp-30h],1
         and(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.ebp + 0xffffffd0u32) as usize) as *mut u8),
+                .add(MACHINE.regs.ebp.wrapping_add(0xffffffd0u32) as usize)
+                as *mut u8),
             0x1u8,
         );
         // 00401970 je short 00401978h
@@ -2024,7 +2368,8 @@ pub fn x00401978() -> Cont {
         push(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.ebp + 0xffffff9cu32) as usize) as *mut u32),
+                .add(MACHINE.regs.ebp.wrapping_add(0xffffff9cu32) as usize)
+                as *mut u32),
         );
         // 0040197f push esi
         push(MACHINE.regs.esi);
@@ -2043,7 +2388,8 @@ pub fn x0040197b() -> Cont {
         push(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.ebp + 0xffffff9cu32) as usize) as *mut u32),
+                .add(MACHINE.regs.ebp.wrapping_add(0xffffff9cu32) as usize)
+                as *mut u32),
         );
         // 0040197f push esi
         push(MACHINE.regs.esi);
@@ -2068,7 +2414,8 @@ pub fn x0040198d() -> Cont {
         // 0040198d mov [ebp-60h],eax
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xffffffa0u32) as usize) as *mut u32) = MACHINE.regs.eax;
+            .add(MACHINE.regs.ebp.wrapping_add(0xffffffa0u32) as usize) as *mut u32) =
+            MACHINE.regs.eax;
         // 00401990 push eax
         push(MACHINE.regs.eax);
         // 00401991 call 00401CCBh
@@ -2081,16 +2428,23 @@ pub fn x00401996() -> Cont {
         // 00401996 mov eax,[ebp-14h]
         MACHINE.regs.eax = *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xffffffecu32) as usize)
+            .add(MACHINE.regs.ebp.wrapping_add(0xffffffecu32) as usize)
             as *mut u32);
         // 00401999 mov ecx,[eax]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize)
+            as *mut u32);
         // 0040199b mov ecx,[ecx]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.ecx + 0x0u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ecx.wrapping_add(0x0u32) as usize)
+            as *mut u32);
         // 0040199d mov [ebp-68h],ecx
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xffffff98u32) as usize) as *mut u32) = MACHINE.regs.ecx;
+            .add(MACHINE.regs.ebp.wrapping_add(0xffffff98u32) as usize) as *mut u32) =
+            MACHINE.regs.ecx;
         // 004019a0 push eax
         push(MACHINE.regs.eax);
         // 004019a1 push ecx
@@ -2115,7 +2469,7 @@ pub fn x004019b5() -> Cont {
     unsafe {
         // 004019b5 cmp dword ptr ds:[4095A4h],1
         sub(
-            *(MACHINE.memory.add((0x4095a4u32) as usize) as *mut u32),
+            *(MACHINE.memory.add(0x4095a4u32 as usize) as *mut u32),
             0x1u32,
         );
         // 004019bc jne short 004019C3h
@@ -2133,7 +2487,11 @@ pub fn x004019be() -> Cont {
 pub fn x004019c3() -> Cont {
     unsafe {
         // 004019c3 push dword ptr [esp+4]
-        push(*(MACHINE.memory.add((MACHINE.regs.esp + 0x4u32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esp.wrapping_add(0x4u32) as usize) as *mut u32),
+        );
         // 004019c7 call 00402AB9h
         call(0x4019cc, Cont(x00402ab9))
     }
@@ -2166,7 +2524,7 @@ pub fn x004019da() -> Cont {
     unsafe {
         // 004019da cmp dword ptr ds:[4095A4h],1
         sub(
-            *(MACHINE.memory.add((0x4095a4u32) as usize) as *mut u32),
+            *(MACHINE.memory.add(0x4095a4u32 as usize) as *mut u32),
             0x1u32,
         );
         // 004019e1 jne short 004019E8h
@@ -2184,7 +2542,11 @@ pub fn x004019e3() -> Cont {
 pub fn x004019e8() -> Cont {
     unsafe {
         // 004019e8 push dword ptr [esp+4]
-        push(*(MACHINE.memory.add((MACHINE.regs.esp + 0x4u32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esp.wrapping_add(0x4u32) as usize) as *mut u32),
+        );
         // 004019ec call 00402AB9h
         call(0x4019f1, Cont(x00402ab9))
     }
@@ -2211,7 +2573,7 @@ pub fn x004019fd() -> Cont {
 pub fn x00401c9e() -> Cont {
     unsafe {
         // 00401c9e mov eax,ds:[409AB4h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((0x409ab4u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE.memory.add(0x409ab4u32 as usize) as *mut u32);
         // 00401ca3 test eax,eax
         and(MACHINE.regs.eax, MACHINE.regs.eax);
         // 00401ca5 je short 00401CA9h
@@ -2264,7 +2626,11 @@ pub fn x00401ccb() -> Cont {
         // 00401ccd push 0
         push(0x0u32);
         // 00401ccf push dword ptr [esp+0Ch]
-        push(*(MACHINE.memory.add((MACHINE.regs.esp + 0xcu32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esp.wrapping_add(0xcu32) as usize) as *mut u32),
+        );
         // 00401cd3 call 00401CEDh
         call(0x401cd8, Cont(x00401ced))
     }
@@ -2289,7 +2655,7 @@ pub fn x00401ced() -> Cont {
         MACHINE.regs.edi = pop();
         // 00401cf1 cmp ds:[4095F0h],edi
         sub(
-            *(MACHINE.memory.add((0x4095f0u32) as usize) as *mut u32),
+            *(MACHINE.memory.add(0x4095f0u32 as usize) as *mut u32),
             MACHINE.regs.edi,
         );
         // 00401cf7 jne short 00401D0Ah
@@ -2300,7 +2666,11 @@ pub fn x00401ced() -> Cont {
 pub fn x00401cf9() -> Cont {
     unsafe {
         // 00401cf9 push dword ptr [esp+8]
-        push(*(MACHINE.memory.add((MACHINE.regs.esp + 0x8u32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esp.wrapping_add(0x8u32) as usize) as *mut u32),
+        );
         // 00401cfd call dword ptr ds:[406088h]
         call(0x401d03, Cont(kernel32::stdcall_GetCurrentProcess))
     }
@@ -2319,17 +2689,22 @@ pub fn x00401d0a() -> Cont {
     unsafe {
         // 00401d0a cmp dword ptr [esp+0Ch],0
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.esp + 0xcu32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esp.wrapping_add(0xcu32) as usize) as *mut u32),
             0x0u32,
         );
         // 00401d0f push ebx
         push(MACHINE.regs.ebx);
         // 00401d10 mov ebx,[esp+14h]
-        MACHINE.regs.ebx = *(MACHINE.memory.add((MACHINE.regs.esp + 0x14u32) as usize) as *mut u32);
+        MACHINE.regs.ebx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x14u32) as usize)
+            as *mut u32);
         // 00401d14 mov ds:[4095ECh],edi
-        *(MACHINE.memory.add((0x4095ecu32) as usize) as *mut u32) = MACHINE.regs.edi;
+        *(MACHINE.memory.add(0x4095ecu32 as usize) as *mut u32) = MACHINE.regs.edi;
         // 00401d1a mov ds:[4095E8h],bl
-        *(MACHINE.memory.add((0x4095e8u32) as usize) as *mut u8) = MACHINE.regs.get_bl();
+        *(MACHINE.memory.add(0x4095e8u32 as usize) as *mut u8) = MACHINE.regs.get_bl();
         // 00401d20 jne short 00401D5Eh
         jne(Cont(x00401d22), Cont(x00401d5e))
     }
@@ -2338,7 +2713,7 @@ pub fn x00401d0a() -> Cont {
 pub fn x00401d22() -> Cont {
     unsafe {
         // 00401d22 mov eax,ds:[409AB0h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((0x409ab0u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE.memory.add(0x409ab0u32 as usize) as *mut u32);
         // 00401d27 test eax,eax
         and(MACHINE.regs.eax, MACHINE.regs.eax);
         // 00401d29 je short 00401D4Dh
@@ -2349,11 +2724,11 @@ pub fn x00401d22() -> Cont {
 pub fn x00401d2b() -> Cont {
     unsafe {
         // 00401d2b mov ecx,ds:[409AACh]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((0x409aacu32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE.memory.add(0x409aacu32 as usize) as *mut u32);
         // 00401d31 push esi
         push(MACHINE.regs.esi);
         // 00401d32 lea esi,[ecx-4]
-        MACHINE.regs.esi = MACHINE.regs.ecx + 0xfffffffcu32;
+        MACHINE.regs.esi = MACHINE.regs.ecx.wrapping_add(0xfffffffcu32);
         // 00401d35 cmp esi,eax
         sub(MACHINE.regs.esi, MACHINE.regs.eax);
         // 00401d37 jb short 00401D4Ch
@@ -2364,7 +2739,10 @@ pub fn x00401d2b() -> Cont {
 pub fn x00401d39() -> Cont {
     unsafe {
         // 00401d39 mov eax,[esi]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize)
+            as *mut u32);
         // 00401d3b test eax,eax
         and(MACHINE.regs.eax, MACHINE.regs.eax);
         // 00401d3d je short 00401D41h
@@ -2386,7 +2764,7 @@ pub fn x00401d41() -> Cont {
         // 00401d44 cmp esi,ds:[409AB0h]
         sub(
             MACHINE.regs.esi,
-            *(MACHINE.memory.add((0x409ab0u32) as usize) as *mut u32),
+            *(MACHINE.memory.add(0x409ab0u32 as usize) as *mut u32),
         );
         // 00401d4a jae short 00401D39h
         jae(Cont(x00401d4c), Cont(x00401d39))
@@ -2461,9 +2839,13 @@ pub fn x00401d6d() -> Cont {
 pub fn x00401d74() -> Cont {
     unsafe {
         // 00401d74 push dword ptr [esp+8]
-        push(*(MACHINE.memory.add((MACHINE.regs.esp + 0x8u32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esp.wrapping_add(0x8u32) as usize) as *mut u32),
+        );
         // 00401d78 mov ds:[4095F0h],edi
-        *(MACHINE.memory.add((0x4095f0u32) as usize) as *mut u32) = MACHINE.regs.edi;
+        *(MACHINE.memory.add(0x4095f0u32 as usize) as *mut u32) = MACHINE.regs.edi;
         // 00401d7e call dword ptr ds:[406078h]
         call(0x401d84, Cont(kernel32::stdcall_ExitProcess))
     }
@@ -2483,11 +2865,16 @@ pub fn x00401d86() -> Cont {
         // 00401d86 push esi
         push(MACHINE.regs.esi);
         // 00401d87 mov esi,[esp+8]
-        MACHINE.regs.esi = *(MACHINE.memory.add((MACHINE.regs.esp + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.esi = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 00401d8b cmp esi,[esp+0Ch]
         sub(
             MACHINE.regs.esi,
-            *(MACHINE.memory.add((MACHINE.regs.esp + 0xcu32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esp.wrapping_add(0xcu32) as usize) as *mut u32),
         );
         // 00401d8f jae short 00401D9Eh
         jae(Cont(x00401d91), Cont(x00401d9e))
@@ -2499,7 +2886,9 @@ pub fn x00401d8b() -> Cont {
         // 00401d8b cmp esi,[esp+0Ch]
         sub(
             MACHINE.regs.esi,
-            *(MACHINE.memory.add((MACHINE.regs.esp + 0xcu32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esp.wrapping_add(0xcu32) as usize) as *mut u32),
         );
         // 00401d8f jae short 00401D9Eh
         jae(Cont(x00401d91), Cont(x00401d9e))
@@ -2509,7 +2898,10 @@ pub fn x00401d8b() -> Cont {
 pub fn x00401d91() -> Cont {
     unsafe {
         // 00401d91 mov eax,[esi]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize)
+            as *mut u32);
         // 00401d93 test eax,eax
         and(MACHINE.regs.eax, MACHINE.regs.eax);
         // 00401d95 je short 00401D99h
@@ -2545,9 +2937,13 @@ pub fn x00401d9e() -> Cont {
 pub fn x00401e01() -> Cont {
     unsafe {
         // 00401e01 push dword ptr ds:[40970Ch]
-        push(*(MACHINE.memory.add((0x40970cu32) as usize) as *mut u32));
+        push(*(MACHINE.memory.add(0x40970cu32 as usize) as *mut u32));
         // 00401e07 push dword ptr [esp+8]
-        push(*(MACHINE.memory.add((MACHINE.regs.esp + 0x8u32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esp.wrapping_add(0x8u32) as usize) as *mut u32),
+        );
         // 00401e0b call 00401E13h
         call(0x401e10, Cont(x00401e13))
     }
@@ -2568,7 +2964,9 @@ pub fn x00401e13() -> Cont {
     unsafe {
         // 00401e13 cmp dword ptr [esp+4],0FFFFFFE0h
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.esp + 0x4u32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esp.wrapping_add(0x4u32) as usize) as *mut u32),
             0xffffffe0u32,
         );
         // 00401e18 ja short 00401E3Ch
@@ -2579,7 +2977,11 @@ pub fn x00401e13() -> Cont {
 pub fn x00401e1a() -> Cont {
     unsafe {
         // 00401e1a push dword ptr [esp+4]
-        push(*(MACHINE.memory.add((MACHINE.regs.esp + 0x4u32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esp.wrapping_add(0x4u32) as usize) as *mut u32),
+        );
         // 00401e1e call 00401E3Fh
         call(0x401e23, Cont(x00401e3f))
     }
@@ -2600,7 +3002,9 @@ pub fn x00401e28() -> Cont {
     unsafe {
         // 00401e28 cmp [esp+8],eax
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.esp + 0x8u32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esp.wrapping_add(0x8u32) as usize) as *mut u32),
             MACHINE.regs.eax,
         );
         // 00401e2c je short 00401E3Eh
@@ -2611,7 +3015,11 @@ pub fn x00401e28() -> Cont {
 pub fn x00401e2e() -> Cont {
     unsafe {
         // 00401e2e push dword ptr [esp+4]
-        push(*(MACHINE.memory.add((MACHINE.regs.esp + 0x4u32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esp.wrapping_add(0x4u32) as usize) as *mut u32),
+        );
         // 00401e32 call 00403E20h
         call(0x401e37, Cont(x00403e20))
     }
@@ -2647,11 +3055,14 @@ pub fn x00401e3e() -> Cont {
 pub fn x00401e3f() -> Cont {
     unsafe {
         // 00401e3f mov eax,ds:[409988h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((0x409988u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE.memory.add(0x409988u32 as usize) as *mut u32);
         // 00401e44 push esi
         push(MACHINE.regs.esi);
         // 00401e45 mov esi,[esp+8]
-        MACHINE.regs.esi = *(MACHINE.memory.add((MACHINE.regs.esp + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.esi = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 00401e49 cmp eax,3
         sub(MACHINE.regs.eax, 0x3u32);
         // 00401e4c jne short 00401E63h
@@ -2664,7 +3075,7 @@ pub fn x00401e4e() -> Cont {
         // 00401e4e cmp esi,ds:[409980h]
         sub(
             MACHINE.regs.esi,
-            *(MACHINE.memory.add((0x409980u32) as usize) as *mut u32),
+            *(MACHINE.memory.add(0x409980u32 as usize) as *mut u32),
         );
         // 00401e54 ja short 00401E95h
         ja(Cont(x00401e56), Cont(x00401e95))
@@ -2712,7 +3123,10 @@ pub fn x00401e63() -> Cont {
 pub fn x00401e68() -> Cont {
     unsafe {
         // 00401e68 mov eax,[esp+8]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.esp + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 00401e6c test eax,eax
         and(MACHINE.regs.eax, MACHINE.regs.eax);
         // 00401e6e je short 00401E78h
@@ -2723,7 +3137,7 @@ pub fn x00401e68() -> Cont {
 pub fn x00401e70() -> Cont {
     unsafe {
         // 00401e70 lea esi,[eax+0Fh]
-        MACHINE.regs.esi = MACHINE.regs.eax + 0xfu32;
+        MACHINE.regs.esi = MACHINE.regs.eax.wrapping_add(0xfu32);
         // 00401e73 and esi,0FFFFFFF0h
         MACHINE.regs.esi = and(MACHINE.regs.esi, 0xfffffff0u32);
         // 00401e76 jmp short 00401E7Bh
@@ -2740,7 +3154,7 @@ pub fn x00401e78() -> Cont {
         // 00401e7b cmp esi,ds:[40922Ch]
         sub(
             MACHINE.regs.esi,
-            *(MACHINE.memory.add((0x40922cu32) as usize) as *mut u32),
+            *(MACHINE.memory.add(0x40922cu32 as usize) as *mut u32),
         );
         // 00401e81 ja short 00401EA2h
         ja(Cont(x00401e83), Cont(x00401ea2))
@@ -2752,7 +3166,7 @@ pub fn x00401e7b() -> Cont {
         // 00401e7b cmp esi,ds:[40922Ch]
         sub(
             MACHINE.regs.esi,
-            *(MACHINE.memory.add((0x40922cu32) as usize) as *mut u32),
+            *(MACHINE.memory.add(0x40922cu32 as usize) as *mut u32),
         );
         // 00401e81 ja short 00401EA2h
         ja(Cont(x00401e83), Cont(x00401ea2))
@@ -2814,7 +3228,7 @@ pub fn x00401e99() -> Cont {
         // 00401ea3 push 0
         push(0x0u32);
         // 00401ea5 push dword ptr ds:[409984h]
-        push(*(MACHINE.memory.add((0x409984u32) as usize) as *mut u32));
+        push(*(MACHINE.memory.add(0x409984u32 as usize) as *mut u32));
         // 00401eab call dword ptr ds:[406028h]
         call(0x401eb1, Cont(kernel32::stdcall_HeapAlloc))
     }
@@ -2831,7 +3245,7 @@ pub fn x00401e9c() -> Cont {
         // 00401ea3 push 0
         push(0x0u32);
         // 00401ea5 push dword ptr ds:[409984h]
-        push(*(MACHINE.memory.add((0x409984u32) as usize) as *mut u32));
+        push(*(MACHINE.memory.add(0x409984u32 as usize) as *mut u32));
         // 00401eab call dword ptr ds:[406028h]
         call(0x401eb1, Cont(kernel32::stdcall_HeapAlloc))
     }
@@ -2844,7 +3258,7 @@ pub fn x00401ea2() -> Cont {
         // 00401ea3 push 0
         push(0x0u32);
         // 00401ea5 push dword ptr ds:[409984h]
-        push(*(MACHINE.memory.add((0x409984u32) as usize) as *mut u32));
+        push(*(MACHINE.memory.add(0x409984u32 as usize) as *mut u32));
         // 00401eab call dword ptr ds:[406028h]
         call(0x401eb1, Cont(kernel32::stdcall_HeapAlloc))
     }
@@ -2870,7 +3284,10 @@ pub fn x00401eb3() -> Cont {
         // 00401eb7 push esi
         push(MACHINE.regs.esi);
         // 00401eb8 mov esi,[ebp+8]
-        MACHINE.regs.esi = *(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.esi = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 00401ebb test esi,esi
         and(MACHINE.regs.esi, MACHINE.regs.esi);
         // 00401ebd je short 00401F19h
@@ -2881,7 +3298,7 @@ pub fn x00401eb3() -> Cont {
 pub fn x00401ebf() -> Cont {
     unsafe {
         // 00401ebf mov eax,ds:[409988h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((0x409988u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE.memory.add(0x409988u32 as usize) as *mut u32);
         // 00401ec4 cmp eax,3
         sub(MACHINE.regs.eax, 0x3u32);
         // 00401ec7 jne short 00401EDFh
@@ -2943,11 +3360,11 @@ pub fn x00401edf() -> Cont {
 pub fn x00401ee4() -> Cont {
     unsafe {
         // 00401ee4 lea eax,[ebp+8]
-        MACHINE.regs.eax = MACHINE.regs.ebp + 0x8u32;
+        MACHINE.regs.eax = MACHINE.regs.ebp.wrapping_add(0x8u32);
         // 00401ee7 push eax
         push(MACHINE.regs.eax);
         // 00401ee8 lea eax,[ebp-4]
-        MACHINE.regs.eax = MACHINE.regs.ebp + 0xfffffffcu32;
+        MACHINE.regs.eax = MACHINE.regs.ebp.wrapping_add(0xfffffffcu32);
         // 00401eeb push eax
         push(MACHINE.regs.eax);
         // 00401eec push esi
@@ -2973,12 +3390,17 @@ pub fn x00401ef9() -> Cont {
         // 00401ef9 push eax
         push(MACHINE.regs.eax);
         // 00401efa push dword ptr [ebp+8]
-        push(*(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize) as *mut u32),
+        );
         // 00401efd push dword ptr [ebp-4]
         push(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize) as *mut u32),
+                .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize)
+                as *mut u32),
         );
         // 00401f00 call 00403A06h
         call(0x401f05, Cont(x00403a06))
@@ -3001,7 +3423,7 @@ pub fn x00401f0a() -> Cont {
         // 00401f0b push 0
         push(0x0u32);
         // 00401f0d push dword ptr ds:[409984h]
-        push(*(MACHINE.memory.add((0x409984u32) as usize) as *mut u32));
+        push(*(MACHINE.memory.add(0x409984u32 as usize) as *mut u32));
         // 00401f13 call dword ptr ds:[406090h]
         call(0x401f19, Cont(kernel32::stdcall_HeapFree))
     }
@@ -3012,7 +3434,7 @@ pub fn x00401f0b() -> Cont {
         // 00401f0b push 0
         push(0x0u32);
         // 00401f0d push dword ptr ds:[409984h]
-        push(*(MACHINE.memory.add((0x409984u32) as usize) as *mut u32));
+        push(*(MACHINE.memory.add(0x409984u32 as usize) as *mut u32));
         // 00401f13 call dword ptr ds:[406090h]
         call(0x401f19, Cont(kernel32::stdcall_HeapFree))
     }
@@ -3038,7 +3460,11 @@ pub fn x00401f1c() -> Cont {
         // 00401f1f push ebx
         push(MACHINE.regs.ebx);
         // 00401f20 push dword ptr [ebp+8]
-        push(*(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize) as *mut u32),
+        );
         // 00401f23 call 0040205Dh
         call(0x401f28, Cont(x0040205d))
     }
@@ -3058,7 +3484,10 @@ pub fn x00401f28() -> Cont {
 pub fn x00401f31() -> Cont {
     unsafe {
         // 00401f31 mov ebx,[eax+8]
-        MACHINE.regs.ebx = *(MACHINE.memory.add((MACHINE.regs.eax + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.ebx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 00401f34 test ebx,ebx
         and(MACHINE.regs.ebx, MACHINE.regs.ebx);
         // 00401f36 je near ptr 00402051h
@@ -3078,8 +3507,12 @@ pub fn x00401f3c() -> Cont {
 pub fn x00401f41() -> Cont {
     unsafe {
         // 00401f41 and dword ptr [eax+8],0
-        *(MACHINE.memory.add((MACHINE.regs.eax + 0x8u32) as usize) as *mut u32) = and(
-            *(MACHINE.memory.add((MACHINE.regs.eax + 0x8u32) as usize) as *mut u32),
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x8u32) as usize) as *mut u32) = and(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0x8u32) as usize) as *mut u32),
             0x0u32,
         );
         // 00401f45 push 1
@@ -3103,15 +3536,23 @@ pub fn x00401f4d() -> Cont {
 pub fn x00401f56() -> Cont {
     unsafe {
         // 00401f56 mov ecx,ds:[4095F4h]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((0x4095f4u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE.memory.add(0x4095f4u32 as usize) as *mut u32);
         // 00401f5c mov [ebp+8],ecx
-        *(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32) = MACHINE.regs.ecx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize) as *mut u32) = MACHINE.regs.ecx;
         // 00401f5f mov ecx,[ebp+0Ch]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.ebp + 0xcu32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0xcu32) as usize)
+            as *mut u32);
         // 00401f62 mov ds:[4095F4h],ecx
-        *(MACHINE.memory.add((0x4095f4u32) as usize) as *mut u32) = MACHINE.regs.ecx;
+        *(MACHINE.memory.add(0x4095f4u32 as usize) as *mut u32) = MACHINE.regs.ecx;
         // 00401f68 mov ecx,[eax+4]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.eax + 0x4u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x4u32) as usize)
+            as *mut u32);
         // 00401f6b cmp ecx,8
         sub(MACHINE.regs.ecx, 0x8u32);
         // 00401f6e jne near ptr 0040203Ch
@@ -3122,9 +3563,9 @@ pub fn x00401f56() -> Cont {
 pub fn x00401f74() -> Cont {
     unsafe {
         // 00401f74 mov ecx,ds:[407148h]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((0x407148u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE.memory.add(0x407148u32 as usize) as *mut u32);
         // 00401f7a mov edx,ds:[40714Ch]
-        MACHINE.regs.edx = *(MACHINE.memory.add((0x40714cu32) as usize) as *mut u32);
+        MACHINE.regs.edx = *(MACHINE.memory.add(0x40714cu32 as usize) as *mut u32);
         // 00401f80 add edx,ecx
         MACHINE.regs.edx = add(MACHINE.regs.edx, MACHINE.regs.ecx);
         // 00401f82 push esi
@@ -3139,14 +3580,22 @@ pub fn x00401f74() -> Cont {
 pub fn x00401f87() -> Cont {
     unsafe {
         // 00401f87 lea esi,[ecx+ecx*2]
-        MACHINE.regs.esi = MACHINE.regs.ecx + (MACHINE.regs.ecx * 2) + 0x0u32;
+        MACHINE.regs.esi = MACHINE
+            .regs
+            .ecx
+            .wrapping_add((MACHINE.regs.ecx * 2))
+            .wrapping_add(0x0u32);
         // 00401f8a sub edx,ecx
         MACHINE.regs.edx = sub(MACHINE.regs.edx, MACHINE.regs.ecx);
         // 00401f8c lea esi,[esi*4+4070D8h]
-        MACHINE.regs.esi = (MACHINE.regs.esi * 4) + 0x4070d8u32;
+        MACHINE.regs.esi = (MACHINE.regs.esi * 4).wrapping_add(0x4070d8u32);
         // 00401f93 and dword ptr [esi],0
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u32) = and(
-            *(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u32),
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize) as *mut u32) = and(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize) as *mut u32),
             0x0u32,
         );
         // 00401f96 add esi,0Ch
@@ -3161,8 +3610,12 @@ pub fn x00401f87() -> Cont {
 pub fn x00401f93() -> Cont {
     unsafe {
         // 00401f93 and dword ptr [esi],0
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u32) = and(
-            *(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u32),
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize) as *mut u32) = and(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize) as *mut u32),
             0x0u32,
         );
         // 00401f96 add esi,0Ch
@@ -3177,9 +3630,12 @@ pub fn x00401f93() -> Cont {
 pub fn x00401f9c() -> Cont {
     unsafe {
         // 00401f9c mov eax,[eax]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize)
+            as *mut u32);
         // 00401f9e mov esi,ds:[407154h]
-        MACHINE.regs.esi = *(MACHINE.memory.add((0x407154u32) as usize) as *mut u32);
+        MACHINE.regs.esi = *(MACHINE.memory.add(0x407154u32 as usize) as *mut u32);
         // 00401fa4 cmp eax,0C000008Eh
         sub(MACHINE.regs.eax, 0xc000008eu32);
         // 00401fa9 jne short 00401FB7h
@@ -3190,7 +3646,7 @@ pub fn x00401f9c() -> Cont {
 pub fn x00401fab() -> Cont {
     unsafe {
         // 00401fab mov dword ptr ds:[407154h],83h
-        *(MACHINE.memory.add((0x407154u32) as usize) as *mut u32) = 0x83u32;
+        *(MACHINE.memory.add(0x407154u32 as usize) as *mut u32) = 0x83u32;
         // 00401fb5 jmp short 00402027h
         Cont(x00402027)
     }
@@ -3208,7 +3664,7 @@ pub fn x00401fb7() -> Cont {
 pub fn x00401fbe() -> Cont {
     unsafe {
         // 00401fbe mov dword ptr ds:[407154h],81h
-        *(MACHINE.memory.add((0x407154u32) as usize) as *mut u32) = 0x81u32;
+        *(MACHINE.memory.add(0x407154u32 as usize) as *mut u32) = 0x81u32;
         // 00401fc8 jmp short 00402027h
         Cont(x00402027)
     }
@@ -3226,7 +3682,7 @@ pub fn x00401fca() -> Cont {
 pub fn x00401fd1() -> Cont {
     unsafe {
         // 00401fd1 mov dword ptr ds:[407154h],84h
-        *(MACHINE.memory.add((0x407154u32) as usize) as *mut u32) = 0x84u32;
+        *(MACHINE.memory.add(0x407154u32 as usize) as *mut u32) = 0x84u32;
         // 00401fdb jmp short 00402027h
         Cont(x00402027)
     }
@@ -3244,7 +3700,7 @@ pub fn x00401fdd() -> Cont {
 pub fn x00401fe4() -> Cont {
     unsafe {
         // 00401fe4 mov dword ptr ds:[407154h],85h
-        *(MACHINE.memory.add((0x407154u32) as usize) as *mut u32) = 0x85u32;
+        *(MACHINE.memory.add(0x407154u32 as usize) as *mut u32) = 0x85u32;
         // 00401fee jmp short 00402027h
         Cont(x00402027)
     }
@@ -3262,7 +3718,7 @@ pub fn x00401ff0() -> Cont {
 pub fn x00401ff7() -> Cont {
     unsafe {
         // 00401ff7 mov dword ptr ds:[407154h],82h
-        *(MACHINE.memory.add((0x407154u32) as usize) as *mut u32) = 0x82u32;
+        *(MACHINE.memory.add(0x407154u32 as usize) as *mut u32) = 0x82u32;
         // 00402001 jmp short 00402027h
         Cont(x00402027)
     }
@@ -3280,7 +3736,7 @@ pub fn x00402003() -> Cont {
 pub fn x0040200a() -> Cont {
     unsafe {
         // 0040200a mov dword ptr ds:[407154h],86h
-        *(MACHINE.memory.add((0x407154u32) as usize) as *mut u32) = 0x86u32;
+        *(MACHINE.memory.add(0x407154u32 as usize) as *mut u32) = 0x86u32;
         // 00402014 jmp short 00402027h
         Cont(x00402027)
     }
@@ -3298,9 +3754,9 @@ pub fn x00402016() -> Cont {
 pub fn x0040201d() -> Cont {
     unsafe {
         // 0040201d mov dword ptr ds:[407154h],8Ah
-        *(MACHINE.memory.add((0x407154u32) as usize) as *mut u32) = 0x8au32;
+        *(MACHINE.memory.add(0x407154u32 as usize) as *mut u32) = 0x8au32;
         // 00402027 push dword ptr ds:[407154h]
-        push(*(MACHINE.memory.add((0x407154u32) as usize) as *mut u32));
+        push(*(MACHINE.memory.add(0x407154u32 as usize) as *mut u32));
         // 0040202d push 8
         push(0x8u32);
         // 0040202f call ebx
@@ -3311,7 +3767,7 @@ pub fn x0040201d() -> Cont {
 pub fn x00402027() -> Cont {
     unsafe {
         // 00402027 push dword ptr ds:[407154h]
-        push(*(MACHINE.memory.add((0x407154u32) as usize) as *mut u32));
+        push(*(MACHINE.memory.add(0x407154u32 as usize) as *mut u32));
         // 0040202d push 8
         push(0x8u32);
         // 0040202f call ebx
@@ -3324,7 +3780,7 @@ pub fn x00402031() -> Cont {
         // 00402031 pop ecx
         MACHINE.regs.ecx = pop();
         // 00402032 mov ds:[407154h],esi
-        *(MACHINE.memory.add((0x407154u32) as usize) as *mut u32) = MACHINE.regs.esi;
+        *(MACHINE.memory.add(0x407154u32 as usize) as *mut u32) = MACHINE.regs.esi;
         // 00402038 pop ecx
         MACHINE.regs.ecx = pop();
         // 00402039 pop esi
@@ -3337,8 +3793,12 @@ pub fn x00402031() -> Cont {
 pub fn x0040203c() -> Cont {
     unsafe {
         // 0040203c and dword ptr [eax+8],0
-        *(MACHINE.memory.add((MACHINE.regs.eax + 0x8u32) as usize) as *mut u32) = and(
-            *(MACHINE.memory.add((MACHINE.regs.eax + 0x8u32) as usize) as *mut u32),
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x8u32) as usize) as *mut u32) = and(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0x8u32) as usize) as *mut u32),
             0x0u32,
         );
         // 00402040 push ecx
@@ -3353,9 +3813,12 @@ pub fn x00402043() -> Cont {
         // 00402043 pop ecx
         MACHINE.regs.ecx = pop();
         // 00402044 mov eax,[ebp+8]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 00402047 mov ds:[4095F4h],eax
-        *(MACHINE.memory.add((0x4095f4u32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE.memory.add(0x4095f4u32 as usize) as *mut u32) = MACHINE.regs.eax;
         // 0040204c or eax,0FFFFFFFFh
         MACHINE.regs.eax = or(MACHINE.regs.eax, 0xffffffffu32);
         // 0040204f jmp short 0040205Ah
@@ -3366,9 +3829,12 @@ pub fn x00402043() -> Cont {
 pub fn x00402044() -> Cont {
     unsafe {
         // 00402044 mov eax,[ebp+8]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 00402047 mov ds:[4095F4h],eax
-        *(MACHINE.memory.add((0x4095f4u32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE.memory.add(0x4095f4u32 as usize) as *mut u32) = MACHINE.regs.eax;
         // 0040204c or eax,0FFFFFFFFh
         MACHINE.regs.eax = or(MACHINE.regs.eax, 0xffffffffu32);
         // 0040204f jmp short 0040205Ah
@@ -3388,7 +3854,11 @@ pub fn x0040204c() -> Cont {
 pub fn x00402051() -> Cont {
     unsafe {
         // 00402051 push dword ptr [ebp+0Ch]
-        push(*(MACHINE.memory.add((MACHINE.regs.ebp + 0xcu32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0xcu32) as usize) as *mut u32),
+        );
         // 00402054 call dword ptr ds:[406030h]
         call(0x40205a, Cont(kernel32::stdcall_UnhandledExceptionFilter))
     }
@@ -3408,12 +3878,15 @@ pub fn x0040205a() -> Cont {
 pub fn x0040205d() -> Cont {
     unsafe {
         // 0040205d mov edx,[esp+4]
-        MACHINE.regs.edx = *(MACHINE.memory.add((MACHINE.regs.esp + 0x4u32) as usize) as *mut u32);
+        MACHINE.regs.edx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x4u32) as usize)
+            as *mut u32);
         // 00402061 mov ecx,ds:[407150h]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((0x407150u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE.memory.add(0x407150u32 as usize) as *mut u32);
         // 00402067 cmp ds:[4070D0h],edx
         sub(
-            *(MACHINE.memory.add((0x4070d0u32) as usize) as *mut u32),
+            *(MACHINE.memory.add(0x4070d0u32 as usize) as *mut u32),
             MACHINE.regs.edx,
         );
         // 0040206d push esi
@@ -3428,9 +3901,13 @@ pub fn x0040205d() -> Cont {
 pub fn x00402075() -> Cont {
     unsafe {
         // 00402075 lea esi,[ecx+ecx*2]
-        MACHINE.regs.esi = MACHINE.regs.ecx + (MACHINE.regs.ecx * 2) + 0x0u32;
+        MACHINE.regs.esi = MACHINE
+            .regs
+            .ecx
+            .wrapping_add((MACHINE.regs.ecx * 2))
+            .wrapping_add(0x0u32);
         // 00402078 lea esi,[esi*4+4070D0h]
-        MACHINE.regs.esi = (MACHINE.regs.esi * 4) + 0x4070d0u32;
+        MACHINE.regs.esi = (MACHINE.regs.esi * 4).wrapping_add(0x4070d0u32);
         // 0040207f add eax,0Ch
         MACHINE.regs.eax = add(MACHINE.regs.eax, 0xcu32);
         // 00402082 cmp eax,esi
@@ -3455,7 +3932,9 @@ pub fn x00402086() -> Cont {
     unsafe {
         // 00402086 cmp [eax],edx
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u32),
             MACHINE.regs.edx,
         );
         // 00402088 jne short 0040207Fh
@@ -3466,11 +3945,15 @@ pub fn x00402086() -> Cont {
 pub fn x0040208a() -> Cont {
     unsafe {
         // 0040208a lea ecx,[ecx+ecx*2]
-        MACHINE.regs.ecx = MACHINE.regs.ecx + (MACHINE.regs.ecx * 2) + 0x0u32;
+        MACHINE.regs.ecx = MACHINE
+            .regs
+            .ecx
+            .wrapping_add((MACHINE.regs.ecx * 2))
+            .wrapping_add(0x0u32);
         // 0040208d pop esi
         MACHINE.regs.esi = pop();
         // 0040208e lea ecx,[ecx*4+4070D0h]
-        MACHINE.regs.ecx = (MACHINE.regs.ecx * 4) + 0x4070d0u32;
+        MACHINE.regs.ecx = (MACHINE.regs.ecx * 4).wrapping_add(0x4070d0u32);
         // 00402095 cmp eax,ecx
         sub(MACHINE.regs.eax, MACHINE.regs.ecx);
         // 00402097 jae short 0040209Dh
@@ -3482,7 +3965,9 @@ pub fn x00402099() -> Cont {
     unsafe {
         // 00402099 cmp [eax],edx
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u32),
             MACHINE.regs.edx,
         );
         // 0040209b je short 0040209Fh
@@ -3510,7 +3995,7 @@ pub fn x004020a0() -> Cont {
     unsafe {
         // 004020a0 cmp dword ptr ds:[409AA8h],0
         sub(
-            *(MACHINE.memory.add((0x409aa8u32) as usize) as *mut u32),
+            *(MACHINE.memory.add(0x409aa8u32 as usize) as *mut u32),
             0x0u32,
         );
         // 004020a7 jne short 004020AEh
@@ -3530,11 +4015,13 @@ pub fn x004020ae() -> Cont {
         // 004020ae push esi
         push(MACHINE.regs.esi);
         // 004020af mov esi,ds:[409AB8h]
-        MACHINE.regs.esi = *(MACHINE.memory.add((0x409ab8u32) as usize) as *mut u32);
+        MACHINE.regs.esi = *(MACHINE.memory.add(0x409ab8u32 as usize) as *mut u32);
         // 004020b5 mov al,[esi]
-        MACHINE
-            .regs
-            .set_al(*(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u8));
+        MACHINE.regs.set_al(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize) as *mut u8),
+        );
         // 004020b7 cmp al,22h
         sub(MACHINE.regs.get_al(), 0x22u8);
         // 004020b9 jne short 004020E0h
@@ -3545,9 +4032,11 @@ pub fn x004020ae() -> Cont {
 pub fn x004020bb() -> Cont {
     unsafe {
         // 004020bb mov al,[esi+1]
-        MACHINE
-            .regs
-            .set_al(*(MACHINE.memory.add((MACHINE.regs.esi + 0x1u32) as usize) as *mut u8));
+        MACHINE.regs.set_al(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esi.wrapping_add(0x1u32) as usize) as *mut u8),
+        );
         // 004020be inc esi
         todo!();
         // 004020bf cmp al,22h
@@ -3601,7 +4090,9 @@ pub fn x004020d8() -> Cont {
     unsafe {
         // 004020d8 cmp byte ptr [esi],22h
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u8),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize) as *mut u8),
             0x22u8,
         );
         // 004020db jne short 004020EAh
@@ -3633,7 +4124,9 @@ pub fn x004020e4() -> Cont {
         todo!();
         // 004020e5 cmp byte ptr [esi],20h
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u8),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize) as *mut u8),
             0x20u8,
         );
         // 004020e8 ja short 004020E4h
@@ -3644,9 +4137,11 @@ pub fn x004020e4() -> Cont {
 pub fn x004020ea() -> Cont {
     unsafe {
         // 004020ea mov al,[esi]
-        MACHINE
-            .regs
-            .set_al(*(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u8));
+        MACHINE.regs.set_al(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize) as *mut u8),
+        );
         // 004020ec test al,al
         and(MACHINE.regs.get_al(), MACHINE.regs.get_al());
         // 004020ee je short 004020F4h
@@ -3682,7 +4177,7 @@ pub fn x004020f8() -> Cont {
         MACHINE.regs.ebx ^= MACHINE.regs.ebx;
         // 004020fb cmp ds:[409AA8h],ebx
         sub(
-            *(MACHINE.memory.add((0x409aa8u32) as usize) as *mut u32),
+            *(MACHINE.memory.add(0x409aa8u32 as usize) as *mut u32),
             MACHINE.regs.ebx,
         );
         // 00402101 push esi
@@ -3704,13 +4199,15 @@ pub fn x00402105() -> Cont {
 pub fn x0040210a() -> Cont {
     unsafe {
         // 0040210a mov esi,ds:[40959Ch]
-        MACHINE.regs.esi = *(MACHINE.memory.add((0x40959cu32) as usize) as *mut u32);
+        MACHINE.regs.esi = *(MACHINE.memory.add(0x40959cu32 as usize) as *mut u32);
         // 00402110 xor edi,edi
         MACHINE.regs.edi ^= MACHINE.regs.edi;
         // 00402112 mov al,[esi]
-        MACHINE
-            .regs
-            .set_al(*(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u8));
+        MACHINE.regs.set_al(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize) as *mut u8),
+        );
         // 00402114 cmp al,bl
         sub(MACHINE.regs.get_al(), MACHINE.regs.get_bl());
         // 00402116 je short 0040212Ah
@@ -3721,9 +4218,11 @@ pub fn x0040210a() -> Cont {
 pub fn x00402112() -> Cont {
     unsafe {
         // 00402112 mov al,[esi]
-        MACHINE
-            .regs
-            .set_al(*(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u8));
+        MACHINE.regs.set_al(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize) as *mut u8),
+        );
         // 00402114 cmp al,bl
         sub(MACHINE.regs.get_al(), MACHINE.regs.get_bl());
         // 00402116 je short 0040212Ah
@@ -3765,7 +4264,11 @@ pub fn x00402123() -> Cont {
         // 00402123 pop ecx
         MACHINE.regs.ecx = pop();
         // 00402124 lea esi,[esi+eax+1]
-        MACHINE.regs.esi = MACHINE.regs.esi + (MACHINE.regs.eax * 1) + 0x1u32;
+        MACHINE.regs.esi = MACHINE
+            .regs
+            .esi
+            .wrapping_add((MACHINE.regs.eax * 1))
+            .wrapping_add(0x1u32);
         // 00402128 jmp short 00402112h
         Cont(x00402112)
     }
@@ -3774,7 +4277,7 @@ pub fn x00402123() -> Cont {
 pub fn x0040212a() -> Cont {
     unsafe {
         // 0040212a lea eax,[edi*4+4]
-        MACHINE.regs.eax = (MACHINE.regs.edi * 4) + 0x4u32;
+        MACHINE.regs.eax = (MACHINE.regs.edi * 4).wrapping_add(0x4u32);
         // 00402131 push eax
         push(MACHINE.regs.eax);
         // 00402132 call 00401E01h
@@ -3791,7 +4294,7 @@ pub fn x00402137() -> Cont {
         // 0040213a cmp esi,ebx
         sub(MACHINE.regs.esi, MACHINE.regs.ebx);
         // 0040213c mov ds:[4095D0h],esi
-        *(MACHINE.memory.add((0x4095d0u32) as usize) as *mut u32) = MACHINE.regs.esi;
+        *(MACHINE.memory.add(0x4095d0u32 as usize) as *mut u32) = MACHINE.regs.esi;
         // 00402142 jne short 0040214Ch
         jne(Cont(x00402144), Cont(x0040214c))
     }
@@ -3811,10 +4314,12 @@ pub fn x0040214b() -> Cont {
         // 0040214b pop ecx
         MACHINE.regs.ecx = pop();
         // 0040214c mov edi,ds:[40959Ch]
-        MACHINE.regs.edi = *(MACHINE.memory.add((0x40959cu32) as usize) as *mut u32);
+        MACHINE.regs.edi = *(MACHINE.memory.add(0x40959cu32 as usize) as *mut u32);
         // 00402152 cmp [edi],bl
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.edi + 0x0u32) as usize) as *mut u8),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.edi.wrapping_add(0x0u32) as usize) as *mut u8),
             MACHINE.regs.get_bl(),
         );
         // 00402154 je short 0040218Fh
@@ -3825,10 +4330,12 @@ pub fn x0040214b() -> Cont {
 pub fn x0040214c() -> Cont {
     unsafe {
         // 0040214c mov edi,ds:[40959Ch]
-        MACHINE.regs.edi = *(MACHINE.memory.add((0x40959cu32) as usize) as *mut u32);
+        MACHINE.regs.edi = *(MACHINE.memory.add(0x40959cu32 as usize) as *mut u32);
         // 00402152 cmp [edi],bl
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.edi + 0x0u32) as usize) as *mut u8),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.edi.wrapping_add(0x0u32) as usize) as *mut u8),
             MACHINE.regs.get_bl(),
         );
         // 00402154 je short 0040218Fh
@@ -3866,7 +4373,9 @@ pub fn x0040215d() -> Cont {
         todo!();
         // 00402161 cmp byte ptr [edi],3Dh
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.edi + 0x0u32) as usize) as *mut u8),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.edi.wrapping_add(0x0u32) as usize) as *mut u8),
             0x3du8,
         );
         // 00402164 je short 00402188h
@@ -3890,7 +4399,9 @@ pub fn x0040216c() -> Cont {
         // 0040216e pop ecx
         MACHINE.regs.ecx = pop();
         // 0040216f mov [esi],eax
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize) as *mut u32) = MACHINE.regs.eax;
         // 00402171 jne short 0040217Bh
         jne(Cont(x00402173), Cont(x0040217b))
     }
@@ -3912,7 +4423,11 @@ pub fn x0040217a() -> Cont {
         // 0040217b push edi
         push(MACHINE.regs.edi);
         // 0040217c push dword ptr [esi]
-        push(*(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize) as *mut u32),
+        );
         // 0040217e call 004045A0h
         call(0x402183, Cont(x004045a0))
     }
@@ -3923,7 +4438,11 @@ pub fn x0040217b() -> Cont {
         // 0040217b push edi
         push(MACHINE.regs.edi);
         // 0040217c push dword ptr [esi]
-        push(*(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize) as *mut u32),
+        );
         // 0040217e call 004045A0h
         call(0x402183, Cont(x004045a0))
     }
@@ -3941,7 +4460,9 @@ pub fn x00402183() -> Cont {
         MACHINE.regs.edi = add(MACHINE.regs.edi, MACHINE.regs.ebp);
         // 0040218a cmp [edi],bl
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.edi + 0x0u32) as usize) as *mut u8),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.edi.wrapping_add(0x0u32) as usize) as *mut u8),
             MACHINE.regs.get_bl(),
         );
         // 0040218c jne short 00402157h
@@ -3955,7 +4476,9 @@ pub fn x00402188() -> Cont {
         MACHINE.regs.edi = add(MACHINE.regs.edi, MACHINE.regs.ebp);
         // 0040218a cmp [edi],bl
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.edi + 0x0u32) as usize) as *mut u8),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.edi.wrapping_add(0x0u32) as usize) as *mut u8),
             MACHINE.regs.get_bl(),
         );
         // 0040218c jne short 00402157h
@@ -3968,7 +4491,7 @@ pub fn x0040218e() -> Cont {
         // 0040218e pop ebp
         MACHINE.regs.ebp = pop();
         // 0040218f push dword ptr ds:[40959Ch]
-        push(*(MACHINE.memory.add((0x40959cu32) as usize) as *mut u32));
+        push(*(MACHINE.memory.add(0x40959cu32 as usize) as *mut u32));
         // 00402195 call 00401EB3h
         call(0x40219a, Cont(x00401eb3))
     }
@@ -3977,7 +4500,7 @@ pub fn x0040218e() -> Cont {
 pub fn x0040218f() -> Cont {
     unsafe {
         // 0040218f push dword ptr ds:[40959Ch]
-        push(*(MACHINE.memory.add((0x40959cu32) as usize) as *mut u32));
+        push(*(MACHINE.memory.add(0x40959cu32 as usize) as *mut u32));
         // 00402195 call 00401EB3h
         call(0x40219a, Cont(x00401eb3))
     }
@@ -3988,15 +4511,17 @@ pub fn x0040219a() -> Cont {
         // 0040219a pop ecx
         MACHINE.regs.ecx = pop();
         // 0040219b mov ds:[40959Ch],ebx
-        *(MACHINE.memory.add((0x40959cu32) as usize) as *mut u32) = MACHINE.regs.ebx;
+        *(MACHINE.memory.add(0x40959cu32 as usize) as *mut u32) = MACHINE.regs.ebx;
         // 004021a1 mov [esi],ebx
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u32) = MACHINE.regs.ebx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize) as *mut u32) = MACHINE.regs.ebx;
         // 004021a3 pop edi
         MACHINE.regs.edi = pop();
         // 004021a4 pop esi
         MACHINE.regs.esi = pop();
         // 004021a5 mov dword ptr ds:[409AA4h],1
-        *(MACHINE.memory.add((0x409aa4u32) as usize) as *mut u32) = 0x1u32;
+        *(MACHINE.memory.add(0x409aa4u32 as usize) as *mut u32) = 0x1u32;
         // 004021af pop ebx
         MACHINE.regs.ebx = pop();
         // 004021b0 ret
@@ -4020,7 +4545,7 @@ pub fn x004021b1() -> Cont {
         MACHINE.regs.ebx ^= MACHINE.regs.ebx;
         // 004021b9 cmp ds:[409AA8h],ebx
         sub(
-            *(MACHINE.memory.add((0x409aa8u32) as usize) as *mut u32),
+            *(MACHINE.memory.add(0x409aa8u32 as usize) as *mut u32),
             MACHINE.regs.ebx,
         );
         // 004021bf push esi
@@ -4057,14 +4582,16 @@ pub fn x004021c8() -> Cont {
 pub fn x004021da() -> Cont {
     unsafe {
         // 004021da mov eax,ds:[409AB8h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((0x409ab8u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE.memory.add(0x409ab8u32 as usize) as *mut u32);
         // 004021df mov ds:[4095E0h],esi
-        *(MACHINE.memory.add((0x4095e0u32) as usize) as *mut u32) = MACHINE.regs.esi;
+        *(MACHINE.memory.add(0x4095e0u32 as usize) as *mut u32) = MACHINE.regs.esi;
         // 004021e5 mov edi,esi
         MACHINE.regs.edi = MACHINE.regs.esi;
         // 004021e7 cmp [eax],bl
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u8),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u8),
             MACHINE.regs.get_bl(),
         );
         // 004021e9 je short 004021EDh
@@ -4077,11 +4604,11 @@ pub fn x004021eb() -> Cont {
         // 004021eb mov edi,eax
         MACHINE.regs.edi = MACHINE.regs.eax;
         // 004021ed lea eax,[ebp-8]
-        MACHINE.regs.eax = MACHINE.regs.ebp + 0xfffffff8u32;
+        MACHINE.regs.eax = MACHINE.regs.ebp.wrapping_add(0xfffffff8u32);
         // 004021f0 push eax
         push(MACHINE.regs.eax);
         // 004021f1 lea eax,[ebp-4]
-        MACHINE.regs.eax = MACHINE.regs.ebp + 0xfffffffcu32;
+        MACHINE.regs.eax = MACHINE.regs.ebp.wrapping_add(0xfffffffcu32);
         // 004021f4 push eax
         push(MACHINE.regs.eax);
         // 004021f5 push ebx
@@ -4098,11 +4625,11 @@ pub fn x004021eb() -> Cont {
 pub fn x004021ed() -> Cont {
     unsafe {
         // 004021ed lea eax,[ebp-8]
-        MACHINE.regs.eax = MACHINE.regs.ebp + 0xfffffff8u32;
+        MACHINE.regs.eax = MACHINE.regs.ebp.wrapping_add(0xfffffff8u32);
         // 004021f0 push eax
         push(MACHINE.regs.eax);
         // 004021f1 lea eax,[ebp-4]
-        MACHINE.regs.eax = MACHINE.regs.ebp + 0xfffffffcu32;
+        MACHINE.regs.eax = MACHINE.regs.ebp.wrapping_add(0xfffffffcu32);
         // 004021f4 push eax
         push(MACHINE.regs.eax);
         // 004021f5 push ebx
@@ -4121,15 +4648,19 @@ pub fn x004021fd() -> Cont {
         // 004021fd mov eax,[ebp-8]
         MACHINE.regs.eax = *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffff8u32) as usize)
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffff8u32) as usize)
             as *mut u32);
         // 00402200 mov ecx,[ebp-4]
         MACHINE.regs.ecx = *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize)
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize)
             as *mut u32);
         // 00402203 lea eax,[eax+ecx*4]
-        MACHINE.regs.eax = MACHINE.regs.eax + (MACHINE.regs.ecx * 4) + 0x0u32;
+        MACHINE.regs.eax = MACHINE
+            .regs
+            .eax
+            .wrapping_add((MACHINE.regs.ecx * 4))
+            .wrapping_add(0x0u32);
         // 00402206 push eax
         push(MACHINE.regs.eax);
         // 00402207 call 00401E01h
@@ -4164,20 +4695,24 @@ pub fn x0040221c() -> Cont {
         // 0040221c pop ecx
         MACHINE.regs.ecx = pop();
         // 0040221d lea eax,[ebp-8]
-        MACHINE.regs.eax = MACHINE.regs.ebp + 0xfffffff8u32;
+        MACHINE.regs.eax = MACHINE.regs.ebp.wrapping_add(0xfffffff8u32);
         // 00402220 push eax
         push(MACHINE.regs.eax);
         // 00402221 lea eax,[ebp-4]
-        MACHINE.regs.eax = MACHINE.regs.ebp + 0xfffffffcu32;
+        MACHINE.regs.eax = MACHINE.regs.ebp.wrapping_add(0xfffffffcu32);
         // 00402224 push eax
         push(MACHINE.regs.eax);
         // 00402225 mov eax,[ebp-4]
         MACHINE.regs.eax = *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize)
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize)
             as *mut u32);
         // 00402228 lea eax,[esi+eax*4]
-        MACHINE.regs.eax = MACHINE.regs.esi + (MACHINE.regs.eax * 4) + 0x0u32;
+        MACHINE.regs.eax = MACHINE
+            .regs
+            .esi
+            .wrapping_add((MACHINE.regs.eax * 4))
+            .wrapping_add(0x0u32);
         // 0040222b push eax
         push(MACHINE.regs.eax);
         // 0040222c push esi
@@ -4192,20 +4727,24 @@ pub fn x0040221c() -> Cont {
 pub fn x0040221d() -> Cont {
     unsafe {
         // 0040221d lea eax,[ebp-8]
-        MACHINE.regs.eax = MACHINE.regs.ebp + 0xfffffff8u32;
+        MACHINE.regs.eax = MACHINE.regs.ebp.wrapping_add(0xfffffff8u32);
         // 00402220 push eax
         push(MACHINE.regs.eax);
         // 00402221 lea eax,[ebp-4]
-        MACHINE.regs.eax = MACHINE.regs.ebp + 0xfffffffcu32;
+        MACHINE.regs.eax = MACHINE.regs.ebp.wrapping_add(0xfffffffcu32);
         // 00402224 push eax
         push(MACHINE.regs.eax);
         // 00402225 mov eax,[ebp-4]
         MACHINE.regs.eax = *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize)
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize)
             as *mut u32);
         // 00402228 lea eax,[esi+eax*4]
-        MACHINE.regs.eax = MACHINE.regs.esi + (MACHINE.regs.eax * 4) + 0x0u32;
+        MACHINE.regs.eax = MACHINE
+            .regs
+            .esi
+            .wrapping_add((MACHINE.regs.eax * 4))
+            .wrapping_add(0x0u32);
         // 0040222b push eax
         push(MACHINE.regs.eax);
         // 0040222c push esi
@@ -4222,20 +4761,20 @@ pub fn x00402233() -> Cont {
         // 00402233 mov eax,[ebp-4]
         MACHINE.regs.eax = *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize)
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize)
             as *mut u32);
         // 00402236 add esp,14h
         MACHINE.regs.esp = add(MACHINE.regs.esp, 0x14u32);
         // 00402239 dec eax
         todo!();
         // 0040223a mov ds:[4095C8h],esi
-        *(MACHINE.memory.add((0x4095c8u32) as usize) as *mut u32) = MACHINE.regs.esi;
+        *(MACHINE.memory.add(0x4095c8u32 as usize) as *mut u32) = MACHINE.regs.esi;
         // 00402240 pop edi
         MACHINE.regs.edi = pop();
         // 00402241 pop esi
         MACHINE.regs.esi = pop();
         // 00402242 mov ds:[4095C4h],eax
-        *(MACHINE.memory.add((0x4095c4u32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE.memory.add(0x4095c4u32 as usize) as *mut u32) = MACHINE.regs.eax;
         // 00402247 pop ebx
         MACHINE.regs.ebx = pop();
         // 00402248 leave
@@ -4252,28 +4791,49 @@ pub fn x0040224a() -> Cont {
         // 0040224b mov ebp,esp
         MACHINE.regs.ebp = MACHINE.regs.esp;
         // 0040224d mov ecx,[ebp+18h]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.ebp + 0x18u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x18u32) as usize)
+            as *mut u32);
         // 00402250 mov eax,[ebp+14h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.ebp + 0x14u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x14u32) as usize)
+            as *mut u32);
         // 00402253 push ebx
         push(MACHINE.regs.ebx);
         // 00402254 push esi
         push(MACHINE.regs.esi);
         // 00402255 and dword ptr [ecx],0
-        *(MACHINE.memory.add((MACHINE.regs.ecx + 0x0u32) as usize) as *mut u32) = and(
-            *(MACHINE.memory.add((MACHINE.regs.ecx + 0x0u32) as usize) as *mut u32),
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ecx.wrapping_add(0x0u32) as usize) as *mut u32) = and(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ecx.wrapping_add(0x0u32) as usize) as *mut u32),
             0x0u32,
         );
         // 00402258 mov esi,[ebp+10h]
-        MACHINE.regs.esi = *(MACHINE.memory.add((MACHINE.regs.ebp + 0x10u32) as usize) as *mut u32);
+        MACHINE.regs.esi = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x10u32) as usize)
+            as *mut u32);
         // 0040225b push edi
         push(MACHINE.regs.edi);
         // 0040225c mov edi,[ebp+0Ch]
-        MACHINE.regs.edi = *(MACHINE.memory.add((MACHINE.regs.ebp + 0xcu32) as usize) as *mut u32);
+        MACHINE.regs.edi = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0xcu32) as usize)
+            as *mut u32);
         // 0040225f mov dword ptr [eax],1
-        *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u32) = 0x1u32;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u32) = 0x1u32;
         // 00402265 mov eax,[ebp+8]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 00402268 test edi,edi
         and(MACHINE.regs.edi, MACHINE.regs.edi);
         // 0040226a je short 00402274h
@@ -4284,14 +4844,20 @@ pub fn x0040224a() -> Cont {
 pub fn x0040226c() -> Cont {
     unsafe {
         // 0040226c mov [edi],esi
-        *(MACHINE.memory.add((MACHINE.regs.edi + 0x0u32) as usize) as *mut u32) = MACHINE.regs.esi;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.edi.wrapping_add(0x0u32) as usize) as *mut u32) = MACHINE.regs.esi;
         // 0040226e add edi,4
         MACHINE.regs.edi = add(MACHINE.regs.edi, 0x4u32);
         // 00402271 mov [ebp+0Ch],edi
-        *(MACHINE.memory.add((MACHINE.regs.ebp + 0xcu32) as usize) as *mut u32) = MACHINE.regs.edi;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0xcu32) as usize) as *mut u32) = MACHINE.regs.edi;
         // 00402274 cmp byte ptr [eax],22h
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u8),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u8),
             0x22u8,
         );
         // 00402277 jne short 004022BDh
@@ -4303,7 +4869,9 @@ pub fn x00402274() -> Cont {
     unsafe {
         // 00402274 cmp byte ptr [eax],22h
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u8),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u8),
             0x22u8,
         );
         // 00402277 jne short 004022BDh
@@ -4314,9 +4882,11 @@ pub fn x00402274() -> Cont {
 pub fn x00402279() -> Cont {
     unsafe {
         // 00402279 mov dl,[eax+1]
-        MACHINE
-            .regs
-            .set_dl(*(MACHINE.memory.add((MACHINE.regs.eax + 0x1u32) as usize) as *mut u8));
+        MACHINE.regs.set_dl(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0x1u32) as usize) as *mut u8),
+        );
         // 0040227c inc eax
         todo!();
         // 0040227d cmp dl,22h
@@ -4343,7 +4913,7 @@ pub fn x00402286() -> Cont {
         and(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.edx + 0x409861u32) as usize) as *mut u8),
+                .add(MACHINE.regs.edx.wrapping_add(0x409861u32) as usize) as *mut u8),
             0x4u8,
         );
         // 00402290 je short 0040229Eh
@@ -4365,11 +4935,15 @@ pub fn x00402292() -> Cont {
 pub fn x00402298() -> Cont {
     unsafe {
         // 00402298 mov dl,[eax]
-        MACHINE
-            .regs
-            .set_dl(*(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u8));
+        MACHINE.regs.set_dl(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u8),
+        );
         // 0040229a mov [esi],dl
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u8) =
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize) as *mut u8) =
             MACHINE.regs.get_dl();
         // 0040229c inc esi
         todo!();
@@ -4398,11 +4972,15 @@ pub fn x0040229e() -> Cont {
 pub fn x004022a4() -> Cont {
     unsafe {
         // 004022a4 mov dl,[eax]
-        MACHINE
-            .regs
-            .set_dl(*(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u8));
+        MACHINE.regs.set_dl(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u8),
+        );
         // 004022a6 mov [esi],dl
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u8) =
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize) as *mut u8) =
             MACHINE.regs.get_dl();
         // 004022a8 inc esi
         todo!();
@@ -4425,15 +5003,21 @@ pub fn x004022ab() -> Cont {
 pub fn x004022b1() -> Cont {
     unsafe {
         // 004022b1 and byte ptr [esi],0
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u8) = and(
-            *(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u8),
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize) as *mut u8) = and(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize) as *mut u8),
             0x0u8,
         );
         // 004022b4 inc esi
         todo!();
         // 004022b5 cmp byte ptr [eax],22h
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u8),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u8),
             0x22u8,
         );
         // 004022b8 jne short 00402300h
@@ -4445,7 +5029,9 @@ pub fn x004022b5() -> Cont {
     unsafe {
         // 004022b5 cmp byte ptr [eax],22h
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u8),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u8),
             0x22u8,
         );
         // 004022b8 jne short 00402300h
@@ -4476,18 +5062,24 @@ pub fn x004022bd() -> Cont {
 pub fn x004022c3() -> Cont {
     unsafe {
         // 004022c3 mov dl,[eax]
-        MACHINE
-            .regs
-            .set_dl(*(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u8));
+        MACHINE.regs.set_dl(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u8),
+        );
         // 004022c5 mov [esi],dl
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u8) =
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize) as *mut u8) =
             MACHINE.regs.get_dl();
         // 004022c7 inc esi
         todo!();
         // 004022c8 mov dl,[eax]
-        MACHINE
-            .regs
-            .set_dl(*(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u8));
+        MACHINE.regs.set_dl(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u8),
+        );
         // 004022ca inc eax
         todo!();
         // 004022cb movzx ebx,dl
@@ -4496,7 +5088,7 @@ pub fn x004022c3() -> Cont {
         and(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.ebx + 0x409861u32) as usize) as *mut u8),
+                .add(MACHINE.regs.ebx.wrapping_add(0x409861u32) as usize) as *mut u8),
             0x4u8,
         );
         // 004022d5 je short 004022E3h
@@ -4507,9 +5099,11 @@ pub fn x004022c3() -> Cont {
 pub fn x004022c8() -> Cont {
     unsafe {
         // 004022c8 mov dl,[eax]
-        MACHINE
-            .regs
-            .set_dl(*(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u8));
+        MACHINE.regs.set_dl(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u8),
+        );
         // 004022ca inc eax
         todo!();
         // 004022cb movzx ebx,dl
@@ -4518,7 +5112,7 @@ pub fn x004022c8() -> Cont {
         and(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.ebx + 0x409861u32) as usize) as *mut u8),
+                .add(MACHINE.regs.ebx.wrapping_add(0x409861u32) as usize) as *mut u8),
             0x4u8,
         );
         // 004022d5 je short 004022E3h
@@ -4540,11 +5134,15 @@ pub fn x004022d7() -> Cont {
 pub fn x004022dd() -> Cont {
     unsafe {
         // 004022dd mov bl,[eax]
-        MACHINE
-            .regs
-            .set_bl(*(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u8));
+        MACHINE.regs.set_bl(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u8),
+        );
         // 004022df mov [esi],bl
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u8) =
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize) as *mut u8) =
             MACHINE.regs.get_bl();
         // 004022e1 inc esi
         todo!();
@@ -4627,20 +5225,27 @@ pub fn x004022fc() -> Cont {
         // 004022fc and byte ptr [esi-1],0
         *(MACHINE
             .memory
-            .add((MACHINE.regs.esi + 0xffffffffu32) as usize) as *mut u8) = and(
+            .add(MACHINE.regs.esi.wrapping_add(0xffffffffu32) as usize) as *mut u8) = and(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.esi + 0xffffffffu32) as usize) as *mut u8),
+                .add(MACHINE.regs.esi.wrapping_add(0xffffffffu32) as usize)
+                as *mut u8),
             0x0u8,
         );
         // 00402300 and dword ptr [ebp+18h],0
-        *(MACHINE.memory.add((MACHINE.regs.ebp + 0x18u32) as usize) as *mut u32) = and(
-            *(MACHINE.memory.add((MACHINE.regs.ebp + 0x18u32) as usize) as *mut u32),
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x18u32) as usize) as *mut u32) = and(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x18u32) as usize) as *mut u32),
             0x0u32,
         );
         // 00402304 cmp byte ptr [eax],0
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u8),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u8),
             0x0u8,
         );
         // 00402307 je near ptr 004023EDh
@@ -4651,13 +5256,19 @@ pub fn x004022fc() -> Cont {
 pub fn x00402300() -> Cont {
     unsafe {
         // 00402300 and dword ptr [ebp+18h],0
-        *(MACHINE.memory.add((MACHINE.regs.ebp + 0x18u32) as usize) as *mut u32) = and(
-            *(MACHINE.memory.add((MACHINE.regs.ebp + 0x18u32) as usize) as *mut u32),
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x18u32) as usize) as *mut u32) = and(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x18u32) as usize) as *mut u32),
             0x0u32,
         );
         // 00402304 cmp byte ptr [eax],0
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u8),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u8),
             0x0u8,
         );
         // 00402307 je near ptr 004023EDh
@@ -4669,7 +5280,9 @@ pub fn x00402304() -> Cont {
     unsafe {
         // 00402304 cmp byte ptr [eax],0
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u8),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u8),
             0x0u8,
         );
         // 00402307 je near ptr 004023EDh
@@ -4680,9 +5293,11 @@ pub fn x00402304() -> Cont {
 pub fn x0040230d() -> Cont {
     unsafe {
         // 0040230d mov dl,[eax]
-        MACHINE
-            .regs
-            .set_dl(*(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u8));
+        MACHINE.regs.set_dl(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u8),
+        );
         // 0040230f cmp dl,20h
         sub(MACHINE.regs.get_dl(), 0x20u8);
         // 00402312 je short 00402319h
@@ -4712,7 +5327,9 @@ pub fn x0040231c() -> Cont {
     unsafe {
         // 0040231c cmp byte ptr [eax],0
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u8),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u8),
             0x0u8,
         );
         // 0040231f je near ptr 004023EDh
@@ -4732,22 +5349,33 @@ pub fn x00402325() -> Cont {
 pub fn x00402329() -> Cont {
     unsafe {
         // 00402329 mov [edi],esi
-        *(MACHINE.memory.add((MACHINE.regs.edi + 0x0u32) as usize) as *mut u32) = MACHINE.regs.esi;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.edi.wrapping_add(0x0u32) as usize) as *mut u32) = MACHINE.regs.esi;
         // 0040232b add edi,4
         MACHINE.regs.edi = add(MACHINE.regs.edi, 0x4u32);
         // 0040232e mov [ebp+0Ch],edi
-        *(MACHINE.memory.add((MACHINE.regs.ebp + 0xcu32) as usize) as *mut u32) = MACHINE.regs.edi;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0xcu32) as usize) as *mut u32) = MACHINE.regs.edi;
         // 00402331 mov edx,[ebp+14h]
-        MACHINE.regs.edx = *(MACHINE.memory.add((MACHINE.regs.ebp + 0x14u32) as usize) as *mut u32);
+        MACHINE.regs.edx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x14u32) as usize)
+            as *mut u32);
         // 00402334 inc dword ptr [edx]
         todo!();
         // 00402336 mov dword ptr [ebp+8],1
-        *(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32) = 0x1u32;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize) as *mut u32) = 0x1u32;
         // 0040233d xor ebx,ebx
         MACHINE.regs.ebx ^= MACHINE.regs.ebx;
         // 0040233f cmp byte ptr [eax],5Ch
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u8),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u8),
             0x5cu8,
         );
         // 00402342 jne short 00402348h
@@ -4758,16 +5386,23 @@ pub fn x00402329() -> Cont {
 pub fn x00402331() -> Cont {
     unsafe {
         // 00402331 mov edx,[ebp+14h]
-        MACHINE.regs.edx = *(MACHINE.memory.add((MACHINE.regs.ebp + 0x14u32) as usize) as *mut u32);
+        MACHINE.regs.edx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x14u32) as usize)
+            as *mut u32);
         // 00402334 inc dword ptr [edx]
         todo!();
         // 00402336 mov dword ptr [ebp+8],1
-        *(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32) = 0x1u32;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize) as *mut u32) = 0x1u32;
         // 0040233d xor ebx,ebx
         MACHINE.regs.ebx ^= MACHINE.regs.ebx;
         // 0040233f cmp byte ptr [eax],5Ch
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u8),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u8),
             0x5cu8,
         );
         // 00402342 jne short 00402348h
@@ -4778,12 +5413,16 @@ pub fn x00402331() -> Cont {
 pub fn x00402336() -> Cont {
     unsafe {
         // 00402336 mov dword ptr [ebp+8],1
-        *(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32) = 0x1u32;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize) as *mut u32) = 0x1u32;
         // 0040233d xor ebx,ebx
         MACHINE.regs.ebx ^= MACHINE.regs.ebx;
         // 0040233f cmp byte ptr [eax],5Ch
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u8),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u8),
             0x5cu8,
         );
         // 00402342 jne short 00402348h
@@ -4795,7 +5434,9 @@ pub fn x0040233f() -> Cont {
     unsafe {
         // 0040233f cmp byte ptr [eax],5Ch
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u8),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u8),
             0x5cu8,
         );
         // 00402342 jne short 00402348h
@@ -4818,7 +5459,9 @@ pub fn x00402348() -> Cont {
     unsafe {
         // 00402348 cmp byte ptr [eax],22h
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u8),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u8),
             0x22u8,
         );
         // 0040234b jne short 00402379h
@@ -4841,7 +5484,9 @@ pub fn x00402352() -> Cont {
         MACHINE.regs.edi ^= MACHINE.regs.edi;
         // 00402354 cmp [ebp+18h],edi
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.ebp + 0x18u32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x18u32) as usize) as *mut u32),
             MACHINE.regs.edi,
         );
         // 00402357 je short 00402366h
@@ -4853,11 +5498,13 @@ pub fn x00402359() -> Cont {
     unsafe {
         // 00402359 cmp byte ptr [eax+1],22h
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.eax + 0x1u32) as usize) as *mut u8),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0x1u32) as usize) as *mut u8),
             0x22u8,
         );
         // 0040235d lea edx,[eax+1]
-        MACHINE.regs.edx = MACHINE.regs.eax + 0x1u32;
+        MACHINE.regs.edx = MACHINE.regs.eax.wrapping_add(0x1u32);
         // 00402360 jne short 00402366h
         jne(Cont(x00402362), Cont(x00402366))
     }
@@ -4875,20 +5522,29 @@ pub fn x00402362() -> Cont {
 pub fn x00402366() -> Cont {
     unsafe {
         // 00402366 mov [ebp+8],edi
-        *(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32) = MACHINE.regs.edi;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize) as *mut u32) = MACHINE.regs.edi;
         // 00402369 mov edi,[ebp+0Ch]
-        MACHINE.regs.edi = *(MACHINE.memory.add((MACHINE.regs.ebp + 0xcu32) as usize) as *mut u32);
+        MACHINE.regs.edi = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0xcu32) as usize)
+            as *mut u32);
         // 0040236c xor edx,edx
         MACHINE.regs.edx ^= MACHINE.regs.edx;
         // 0040236e cmp [ebp+18h],edx
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.ebp + 0x18u32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x18u32) as usize) as *mut u32),
             MACHINE.regs.edx,
         );
         // 00402371 sete dl
         todo!();
         // 00402374 mov [ebp+18h],edx
-        *(MACHINE.memory.add((MACHINE.regs.ebp + 0x18u32) as usize) as *mut u32) = MACHINE.regs.edx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x18u32) as usize) as *mut u32) = MACHINE.regs.edx;
         // 00402377 shr ebx,1
         MACHINE.regs.ebx = shr(MACHINE.regs.ebx, 0x1u8);
         // 00402379 mov edx,ebx
@@ -4905,18 +5561,25 @@ pub fn x00402366() -> Cont {
 pub fn x00402369() -> Cont {
     unsafe {
         // 00402369 mov edi,[ebp+0Ch]
-        MACHINE.regs.edi = *(MACHINE.memory.add((MACHINE.regs.ebp + 0xcu32) as usize) as *mut u32);
+        MACHINE.regs.edi = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0xcu32) as usize)
+            as *mut u32);
         // 0040236c xor edx,edx
         MACHINE.regs.edx ^= MACHINE.regs.edx;
         // 0040236e cmp [ebp+18h],edx
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.ebp + 0x18u32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x18u32) as usize) as *mut u32),
             MACHINE.regs.edx,
         );
         // 00402371 sete dl
         todo!();
         // 00402374 mov [ebp+18h],edx
-        *(MACHINE.memory.add((MACHINE.regs.ebp + 0x18u32) as usize) as *mut u32) = MACHINE.regs.edx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x18u32) as usize) as *mut u32) = MACHINE.regs.edx;
         // 00402377 shr ebx,1
         MACHINE.regs.ebx = shr(MACHINE.regs.ebx, 0x1u8);
         // 00402379 mov edx,ebx
@@ -4981,7 +5644,9 @@ pub fn x00402381() -> Cont {
 pub fn x00402385() -> Cont {
     unsafe {
         // 00402385 mov byte ptr [esi],5Ch
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u8) = 0x5cu8;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize) as *mut u8) = 0x5cu8;
         // 00402388 inc esi
         todo!();
         // 00402389 inc dword ptr [ecx]
@@ -5007,9 +5672,11 @@ pub fn x00402389() -> Cont {
 pub fn x0040238e() -> Cont {
     unsafe {
         // 0040238e mov dl,[eax]
-        MACHINE
-            .regs
-            .set_dl(*(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u8));
+        MACHINE.regs.set_dl(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u8),
+        );
         // 00402390 test dl,dl
         and(MACHINE.regs.get_dl(), MACHINE.regs.get_dl());
         // 00402392 je short 004023DEh
@@ -5021,7 +5688,9 @@ pub fn x00402394() -> Cont {
     unsafe {
         // 00402394 cmp dword ptr [ebp+18h],0
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.ebp + 0x18u32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x18u32) as usize) as *mut u32),
             0x0u32,
         );
         // 00402398 jne short 004023A4h
@@ -5051,7 +5720,9 @@ pub fn x004023a4() -> Cont {
     unsafe {
         // 004023a4 cmp dword ptr [ebp+8],0
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize) as *mut u32),
             0x0u32,
         );
         // 004023a8 je short 004023D8h
@@ -5076,7 +5747,7 @@ pub fn x004023ae() -> Cont {
         and(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.ebx + 0x409861u32) as usize) as *mut u8),
+                .add(MACHINE.regs.ebx.wrapping_add(0x409861u32) as usize) as *mut u8),
             0x4u8,
         );
         // 004023b8 je short 004023C0h
@@ -5087,7 +5758,9 @@ pub fn x004023ae() -> Cont {
 pub fn x004023ba() -> Cont {
     unsafe {
         // 004023ba mov [esi],dl
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u8) =
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize) as *mut u8) =
             MACHINE.regs.get_dl();
         // 004023bc inc esi
         todo!();
@@ -5096,11 +5769,15 @@ pub fn x004023ba() -> Cont {
         // 004023be inc dword ptr [ecx]
         todo!();
         // 004023c0 mov dl,[eax]
-        MACHINE
-            .regs
-            .set_dl(*(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u8));
+        MACHINE.regs.set_dl(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u8),
+        );
         // 004023c2 mov [esi],dl
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u8) =
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize) as *mut u8) =
             MACHINE.regs.get_dl();
         // 004023c4 inc esi
         todo!();
@@ -5112,11 +5789,15 @@ pub fn x004023ba() -> Cont {
 pub fn x004023c0() -> Cont {
     unsafe {
         // 004023c0 mov dl,[eax]
-        MACHINE
-            .regs
-            .set_dl(*(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u8));
+        MACHINE.regs.set_dl(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u8),
+        );
         // 004023c2 mov [esi],dl
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u8) =
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize) as *mut u8) =
             MACHINE.regs.get_dl();
         // 004023c4 inc esi
         todo!();
@@ -5133,7 +5814,7 @@ pub fn x004023c7() -> Cont {
         and(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.edx + 0x409861u32) as usize) as *mut u8),
+                .add(MACHINE.regs.edx.wrapping_add(0x409861u32) as usize) as *mut u8),
             0x4u8,
         );
         // 004023d1 je short 004023D6h
@@ -5188,8 +5869,12 @@ pub fn x004023de() -> Cont {
 pub fn x004023e2() -> Cont {
     unsafe {
         // 004023e2 and byte ptr [esi],0
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u8) = and(
-            *(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u8),
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize) as *mut u8) = and(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize) as *mut u8),
             0x0u8,
         );
         // 004023e5 inc esi
@@ -5222,12 +5907,19 @@ pub fn x004023ed() -> Cont {
 pub fn x004023f1() -> Cont {
     unsafe {
         // 004023f1 and dword ptr [edi],0
-        *(MACHINE.memory.add((MACHINE.regs.edi + 0x0u32) as usize) as *mut u32) = and(
-            *(MACHINE.memory.add((MACHINE.regs.edi + 0x0u32) as usize) as *mut u32),
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.edi.wrapping_add(0x0u32) as usize) as *mut u32) = and(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.edi.wrapping_add(0x0u32) as usize) as *mut u32),
             0x0u32,
         );
         // 004023f4 mov eax,[ebp+14h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.ebp + 0x14u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x14u32) as usize)
+            as *mut u32);
         // 004023f7 pop edi
         MACHINE.regs.edi = pop();
         // 004023f8 pop esi
@@ -5246,7 +5938,10 @@ pub fn x004023f1() -> Cont {
 pub fn x004023f4() -> Cont {
     unsafe {
         // 004023f4 mov eax,[ebp+14h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.ebp + 0x14u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x14u32) as usize)
+            as *mut u32);
         // 004023f7 pop edi
         MACHINE.regs.edi = pop();
         // 004023f8 pop esi
@@ -5269,13 +5964,13 @@ pub fn x004023fe() -> Cont {
         // 004023ff push ecx
         push(MACHINE.regs.ecx);
         // 00402400 mov eax,ds:[4096FCh]
-        MACHINE.regs.eax = *(MACHINE.memory.add((0x4096fcu32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE.memory.add(0x4096fcu32 as usize) as *mut u32);
         // 00402405 push ebx
         push(MACHINE.regs.ebx);
         // 00402406 push ebp
         push(MACHINE.regs.ebp);
         // 00402407 mov ebp,ds:[4060ACh]
-        MACHINE.regs.ebp = *(MACHINE.memory.add((0x4060acu32) as usize) as *mut u32);
+        MACHINE.regs.ebp = *(MACHINE.memory.add(0x4060acu32 as usize) as *mut u32);
         // 0040240d push esi
         push(MACHINE.regs.esi);
         // 0040240e push edi
@@ -5314,7 +6009,7 @@ pub fn x0040241b() -> Cont {
 pub fn x00402421() -> Cont {
     unsafe {
         // 00402421 mov dword ptr ds:[4096FCh],1
-        *(MACHINE.memory.add((0x4096fcu32) as usize) as *mut u32) = 0x1u32;
+        *(MACHINE.memory.add(0x4096fcu32 as usize) as *mut u32) = 0x1u32;
         // 0040242b jmp short 00402455h
         Cont(x00402455)
     }
@@ -5341,7 +6036,7 @@ pub fn x00402433() -> Cont {
 pub fn x0040243d() -> Cont {
     unsafe {
         // 0040243d mov dword ptr ds:[4096FCh],2
-        *(MACHINE.memory.add((0x4096fcu32) as usize) as *mut u32) = 0x2u32;
+        *(MACHINE.memory.add(0x4096fcu32 as usize) as *mut u32) = 0x2u32;
         // 00402447 jmp near ptr 004024DBh
         Cont(x004024db)
     }
@@ -5387,7 +6082,9 @@ pub fn x00402465() -> Cont {
     unsafe {
         // 00402465 cmp [esi],bx
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u16),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize) as *mut u16),
             MACHINE.regs.get_bx(),
         );
         // 00402468 mov eax,esi
@@ -5405,7 +6102,9 @@ pub fn x0040246c() -> Cont {
         todo!();
         // 0040246e cmp [eax],bx
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u16),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u16),
             MACHINE.regs.get_bx(),
         );
         // 00402471 jne short 0040246Ch
@@ -5421,7 +6120,9 @@ pub fn x00402473() -> Cont {
         todo!();
         // 00402475 cmp [eax],bx
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u16),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u16),
             MACHINE.regs.get_bx(),
         );
         // 00402478 jne short 0040246Ch
@@ -5434,7 +6135,7 @@ pub fn x0040247a() -> Cont {
         // 0040247a sub eax,esi
         MACHINE.regs.eax = sub(MACHINE.regs.eax, MACHINE.regs.esi);
         // 0040247c mov edi,ds:[4060A4h]
-        MACHINE.regs.edi = *(MACHINE.memory.add((0x4060a4u32) as usize) as *mut u32);
+        MACHINE.regs.edi = *(MACHINE.memory.add(0x4060a4u32 as usize) as *mut u32);
         // 00402482 sar eax,1
         todo!();
         // 00402484 push ebx
@@ -5456,7 +6157,9 @@ pub fn x0040247a() -> Cont {
         // 0040248c push ebx
         push(MACHINE.regs.ebx);
         // 0040248d mov [esp+34h],eax
-        *(MACHINE.memory.add((MACHINE.regs.esp + 0x34u32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x34u32) as usize) as *mut u32) = MACHINE.regs.eax;
         // 00402491 call edi
         call(0x402493, indirect(MACHINE.regs.edi))
     }
@@ -5489,7 +6192,9 @@ pub fn x0040249f() -> Cont {
         // 004024a1 pop ecx
         MACHINE.regs.ecx = pop();
         // 004024a2 mov [esp+10h],eax
-        *(MACHINE.memory.add((MACHINE.regs.esp + 0x10u32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x10u32) as usize) as *mut u32) = MACHINE.regs.eax;
         // 004024a6 je short 004024CBh
         je(Cont(x004024a8), Cont(x004024cb))
     }
@@ -5506,7 +6211,11 @@ pub fn x004024a8() -> Cont {
         // 004024ab push eax
         push(MACHINE.regs.eax);
         // 004024ac push dword ptr [esp+24h]
-        push(*(MACHINE.memory.add((MACHINE.regs.esp + 0x24u32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esp.wrapping_add(0x24u32) as usize) as *mut u32),
+        );
         // 004024b0 push esi
         push(MACHINE.regs.esi);
         // 004024b1 push ebx
@@ -5530,7 +6239,11 @@ pub fn x004024b5() -> Cont {
 pub fn x004024b9() -> Cont {
     unsafe {
         // 004024b9 push dword ptr [esp+10h]
-        push(*(MACHINE.memory.add((MACHINE.regs.esp + 0x10u32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esp.wrapping_add(0x10u32) as usize) as *mut u32),
+        );
         // 004024bd call 00401EB3h
         call(0x4024c2, Cont(x00401eb3))
     }
@@ -5541,9 +6254,14 @@ pub fn x004024c2() -> Cont {
         // 004024c2 pop ecx
         MACHINE.regs.ecx = pop();
         // 004024c3 mov [esp+10h],ebx
-        *(MACHINE.memory.add((MACHINE.regs.esp + 0x10u32) as usize) as *mut u32) = MACHINE.regs.ebx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x10u32) as usize) as *mut u32) = MACHINE.regs.ebx;
         // 004024c7 mov ebx,[esp+10h]
-        MACHINE.regs.ebx = *(MACHINE.memory.add((MACHINE.regs.esp + 0x10u32) as usize) as *mut u32);
+        MACHINE.regs.ebx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x10u32) as usize)
+            as *mut u32);
         // 004024cb push esi
         push(MACHINE.regs.esi);
         // 004024cc call dword ptr ds:[4060A0h]
@@ -5554,7 +6272,10 @@ pub fn x004024c2() -> Cont {
 pub fn x004024c7() -> Cont {
     unsafe {
         // 004024c7 mov ebx,[esp+10h]
-        MACHINE.regs.ebx = *(MACHINE.memory.add((MACHINE.regs.esp + 0x10u32) as usize) as *mut u32);
+        MACHINE.regs.ebx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x10u32) as usize)
+            as *mut u32);
         // 004024cb push esi
         push(MACHINE.regs.esi);
         // 004024cc call dword ptr ds:[4060A0h]
@@ -5620,7 +6341,9 @@ pub fn x004024eb() -> Cont {
     unsafe {
         // 004024eb cmp [edi],bl
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.edi + 0x0u32) as usize) as *mut u8),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.edi.wrapping_add(0x0u32) as usize) as *mut u8),
             MACHINE.regs.get_bl(),
         );
         // 004024ed mov eax,edi
@@ -5636,7 +6359,9 @@ pub fn x004024f1() -> Cont {
         todo!();
         // 004024f2 cmp [eax],bl
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u8),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u8),
             MACHINE.regs.get_bl(),
         );
         // 004024f4 jne short 004024F1h
@@ -5650,7 +6375,9 @@ pub fn x004024f6() -> Cont {
         todo!();
         // 004024f7 cmp [eax],bl
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u8),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u8),
             MACHINE.regs.get_bl(),
         );
         // 004024f9 jne short 004024F1h
@@ -5823,11 +6550,11 @@ pub fn x0040254f() -> Cont {
         // 0040254f pop ecx
         MACHINE.regs.ecx = pop();
         // 00402550 mov ds:[4099A0h],esi
-        *(MACHINE.memory.add((0x4099a0u32) as usize) as *mut u32) = MACHINE.regs.esi;
+        *(MACHINE.memory.add(0x4099a0u32 as usize) as *mut u32) = MACHINE.regs.esi;
         // 00402556 mov dword ptr ds:[409AA0h],20h
-        *(MACHINE.memory.add((0x409aa0u32) as usize) as *mut u32) = 0x20u32;
+        *(MACHINE.memory.add(0x409aa0u32 as usize) as *mut u32) = 0x20u32;
         // 00402560 lea eax,[esi+100h]
-        MACHINE.regs.eax = MACHINE.regs.esi + 0x100u32;
+        MACHINE.regs.eax = MACHINE.regs.esi.wrapping_add(0x100u32);
         // 00402566 cmp esi,eax
         sub(MACHINE.regs.esi, MACHINE.regs.eax);
         // 00402568 jae short 00402584h
@@ -5838,11 +6565,11 @@ pub fn x0040254f() -> Cont {
 pub fn x00402550() -> Cont {
     unsafe {
         // 00402550 mov ds:[4099A0h],esi
-        *(MACHINE.memory.add((0x4099a0u32) as usize) as *mut u32) = MACHINE.regs.esi;
+        *(MACHINE.memory.add(0x4099a0u32 as usize) as *mut u32) = MACHINE.regs.esi;
         // 00402556 mov dword ptr ds:[409AA0h],20h
-        *(MACHINE.memory.add((0x409aa0u32) as usize) as *mut u32) = 0x20u32;
+        *(MACHINE.memory.add(0x409aa0u32 as usize) as *mut u32) = 0x20u32;
         // 00402560 lea eax,[esi+100h]
-        MACHINE.regs.eax = MACHINE.regs.esi + 0x100u32;
+        MACHINE.regs.eax = MACHINE.regs.esi.wrapping_add(0x100u32);
         // 00402566 cmp esi,eax
         sub(MACHINE.regs.esi, MACHINE.regs.eax);
         // 00402568 jae short 00402584h
@@ -5862,19 +6589,29 @@ pub fn x00402566() -> Cont {
 pub fn x0040256a() -> Cont {
     unsafe {
         // 0040256a and byte ptr [esi+4],0
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0x4u32) as usize) as *mut u8) = and(
-            *(MACHINE.memory.add((MACHINE.regs.esi + 0x4u32) as usize) as *mut u8),
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x4u32) as usize) as *mut u8) = and(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esi.wrapping_add(0x4u32) as usize) as *mut u8),
             0x0u8,
         );
         // 0040256e or dword ptr [esi],0FFFFFFFFh
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u32) = or(
-            *(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u32),
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize) as *mut u32) = or(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize) as *mut u32),
             0xffffffffu32,
         );
         // 00402571 mov byte ptr [esi+5],0Ah
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0x5u32) as usize) as *mut u8) = 0xau8;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x5u32) as usize) as *mut u8) = 0xau8;
         // 00402575 mov eax,ds:[4099A0h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((0x4099a0u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE.memory.add(0x4099a0u32 as usize) as *mut u32);
         // 0040257a add esi,8
         MACHINE.regs.esi = add(MACHINE.regs.esi, 0x8u32);
         // 0040257d add eax,100h
@@ -5887,7 +6624,7 @@ pub fn x0040256a() -> Cont {
 pub fn x00402584() -> Cont {
     unsafe {
         // 00402584 lea eax,[esp+10h]
-        MACHINE.regs.eax = MACHINE.regs.esp + 0x10u32;
+        MACHINE.regs.eax = MACHINE.regs.esp.wrapping_add(0x10u32);
         // 00402588 push eax
         push(MACHINE.regs.eax);
         // 00402589 call dword ptr ds:[40606Ch]
@@ -5899,7 +6636,9 @@ pub fn x0040258f() -> Cont {
     unsafe {
         // 0040258f cmp word ptr [esp+42h],0
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.esp + 0x42u32) as usize) as *mut u16),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esp.wrapping_add(0x42u32) as usize) as *mut u16),
             0x0u16,
         );
         // 00402595 je near ptr 00402660h
@@ -5910,7 +6649,10 @@ pub fn x0040258f() -> Cont {
 pub fn x0040259b() -> Cont {
     unsafe {
         // 0040259b mov eax,[esp+44h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.esp + 0x44u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x44u32) as usize)
+            as *mut u32);
         // 0040259f test eax,eax
         and(MACHINE.regs.eax, MACHINE.regs.eax);
         // 004025a1 je near ptr 00402660h
@@ -5921,15 +6663,22 @@ pub fn x0040259b() -> Cont {
 pub fn x004025a7() -> Cont {
     unsafe {
         // 004025a7 mov esi,[eax]
-        MACHINE.regs.esi = *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u32);
+        MACHINE.regs.esi = *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize)
+            as *mut u32);
         // 004025a9 lea ebp,[eax+4]
-        MACHINE.regs.ebp = MACHINE.regs.eax + 0x4u32;
+        MACHINE.regs.ebp = MACHINE.regs.eax.wrapping_add(0x4u32);
         // 004025ac mov eax,800h
         MACHINE.regs.eax = 0x800u32;
         // 004025b1 cmp esi,eax
         sub(MACHINE.regs.esi, MACHINE.regs.eax);
         // 004025b3 lea ebx,[esi+ebp]
-        MACHINE.regs.ebx = MACHINE.regs.esi + (MACHINE.regs.ebp * 1) + 0x0u32;
+        MACHINE.regs.ebx = MACHINE
+            .regs
+            .esi
+            .wrapping_add((MACHINE.regs.ebp * 1))
+            .wrapping_add(0x0u32);
         // 004025b6 jl short 004025BAh
         jl(Cont(x004025b8), Cont(x004025ba))
     }
@@ -5941,7 +6690,7 @@ pub fn x004025b8() -> Cont {
         MACHINE.regs.esi = MACHINE.regs.eax;
         // 004025ba cmp ds:[409AA0h],esi
         sub(
-            *(MACHINE.memory.add((0x409aa0u32) as usize) as *mut u32),
+            *(MACHINE.memory.add(0x409aa0u32 as usize) as *mut u32),
             MACHINE.regs.esi,
         );
         // 004025c0 jge short 00402614h
@@ -5953,7 +6702,7 @@ pub fn x004025ba() -> Cont {
     unsafe {
         // 004025ba cmp ds:[409AA0h],esi
         sub(
-            *(MACHINE.memory.add((0x409aa0u32) as usize) as *mut u32),
+            *(MACHINE.memory.add(0x409aa0u32 as usize) as *mut u32),
             MACHINE.regs.esi,
         );
         // 004025c0 jge short 00402614h
@@ -5995,14 +6744,16 @@ pub fn x004025d1() -> Cont {
 pub fn x004025d6() -> Cont {
     unsafe {
         // 004025d6 add dword ptr ds:[409AA0h],20h
-        *(MACHINE.memory.add((0x409aa0u32) as usize) as *mut u32) = add(
-            *(MACHINE.memory.add((0x409aa0u32) as usize) as *mut u32),
+        *(MACHINE.memory.add(0x409aa0u32 as usize) as *mut u32) = add(
+            *(MACHINE.memory.add(0x409aa0u32 as usize) as *mut u32),
             0x20u32,
         );
         // 004025dd mov [edi],eax
-        *(MACHINE.memory.add((MACHINE.regs.edi + 0x0u32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.edi.wrapping_add(0x0u32) as usize) as *mut u32) = MACHINE.regs.eax;
         // 004025df lea ecx,[eax+100h]
-        MACHINE.regs.ecx = MACHINE.regs.eax + 0x100u32;
+        MACHINE.regs.ecx = MACHINE.regs.eax.wrapping_add(0x100u32);
         // 004025e5 cmp eax,ecx
         sub(MACHINE.regs.eax, MACHINE.regs.ecx);
         // 004025e7 jae short 00402601h
@@ -6022,19 +6773,32 @@ pub fn x004025e5() -> Cont {
 pub fn x004025e9() -> Cont {
     unsafe {
         // 004025e9 and byte ptr [eax+4],0
-        *(MACHINE.memory.add((MACHINE.regs.eax + 0x4u32) as usize) as *mut u8) = and(
-            *(MACHINE.memory.add((MACHINE.regs.eax + 0x4u32) as usize) as *mut u8),
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x4u32) as usize) as *mut u8) = and(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0x4u32) as usize) as *mut u8),
             0x0u8,
         );
         // 004025ed or dword ptr [eax],0FFFFFFFFh
-        *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u32) = or(
-            *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u32),
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u32) = or(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u32),
             0xffffffffu32,
         );
         // 004025f0 mov byte ptr [eax+5],0Ah
-        *(MACHINE.memory.add((MACHINE.regs.eax + 0x5u32) as usize) as *mut u8) = 0xau8;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x5u32) as usize) as *mut u8) = 0xau8;
         // 004025f4 mov ecx,[edi]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.edi + 0x0u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.edi.wrapping_add(0x0u32) as usize)
+            as *mut u32);
         // 004025f6 add eax,8
         MACHINE.regs.eax = add(MACHINE.regs.eax, 0x8u32);
         // 004025f9 add ecx,100h
@@ -6050,7 +6814,7 @@ pub fn x00402601() -> Cont {
         MACHINE.regs.edi = add(MACHINE.regs.edi, 0x4u32);
         // 00402604 cmp ds:[409AA0h],esi
         sub(
-            *(MACHINE.memory.add((0x409aa0u32) as usize) as *mut u32),
+            *(MACHINE.memory.add(0x409aa0u32 as usize) as *mut u32),
             MACHINE.regs.esi,
         );
         // 0040260a jl short 004025C7h
@@ -6068,7 +6832,7 @@ pub fn x0040260c() -> Cont {
 pub fn x0040260e() -> Cont {
     unsafe {
         // 0040260e mov esi,ds:[409AA0h]
-        MACHINE.regs.esi = *(MACHINE.memory.add((0x409aa0u32) as usize) as *mut u32);
+        MACHINE.regs.esi = *(MACHINE.memory.add(0x409aa0u32 as usize) as *mut u32);
         // 00402614 xor edi,edi
         MACHINE.regs.edi ^= MACHINE.regs.edi;
         // 00402616 test esi,esi
@@ -6092,7 +6856,10 @@ pub fn x00402614() -> Cont {
 pub fn x0040261a() -> Cont {
     unsafe {
         // 0040261a mov eax,[ebx]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.ebx + 0x0u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebx.wrapping_add(0x0u32) as usize)
+            as *mut u32);
         // 0040261c cmp eax,0FFFFFFFFh
         sub(MACHINE.regs.eax, 0xffffffffu32);
         // 0040261f je short 00402657h
@@ -6103,9 +6870,11 @@ pub fn x0040261a() -> Cont {
 pub fn x00402621() -> Cont {
     unsafe {
         // 00402621 mov cl,[ebp]
-        MACHINE
-            .regs
-            .set_cl(*(MACHINE.memory.add((MACHINE.regs.ebp + 0x0u32) as usize) as *mut u8));
+        MACHINE.regs.set_cl(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x0u32) as usize) as *mut u8),
+        );
         // 00402624 test cl,1
         and(MACHINE.regs.get_cl(), 0x1u8);
         // 00402627 je short 00402657h
@@ -6153,20 +6922,33 @@ pub fn x00402639() -> Cont {
         // 00402643 mov eax,[eax*4+4099A0h]
         MACHINE.regs.eax = *(MACHINE
             .memory
-            .add(((MACHINE.regs.eax * 4) + 0x4099a0u32) as usize)
+            .add((MACHINE.regs.eax * 4).wrapping_add(0x4099a0u32) as usize)
             as *mut u32);
         // 0040264a lea eax,[eax+ecx*8]
-        MACHINE.regs.eax = MACHINE.regs.eax + (MACHINE.regs.ecx * 8) + 0x0u32;
-        // 0040264d mov ecx,[ebx]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.ebx + 0x0u32) as usize) as *mut u32);
-        // 0040264f mov [eax],ecx
-        *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u32) = MACHINE.regs.ecx;
-        // 00402651 mov cl,[ebp]
-        MACHINE
+        MACHINE.regs.eax = MACHINE
             .regs
-            .set_cl(*(MACHINE.memory.add((MACHINE.regs.ebp + 0x0u32) as usize) as *mut u8));
+            .eax
+            .wrapping_add((MACHINE.regs.ecx * 8))
+            .wrapping_add(0x0u32);
+        // 0040264d mov ecx,[ebx]
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebx.wrapping_add(0x0u32) as usize)
+            as *mut u32);
+        // 0040264f mov [eax],ecx
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u32) = MACHINE.regs.ecx;
+        // 00402651 mov cl,[ebp]
+        MACHINE.regs.set_cl(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x0u32) as usize) as *mut u8),
+        );
         // 00402654 mov [eax+4],cl
-        *(MACHINE.memory.add((MACHINE.regs.eax + 0x4u32) as usize) as *mut u8) =
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x4u32) as usize) as *mut u8) =
             MACHINE.regs.get_cl();
         // 00402657 inc edi
         todo!();
@@ -6201,17 +6983,24 @@ pub fn x00402660() -> Cont {
         // 00402660 xor ebx,ebx
         MACHINE.regs.ebx ^= MACHINE.regs.ebx;
         // 00402662 mov eax,ds:[4099A0h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((0x4099a0u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE.memory.add(0x4099a0u32 as usize) as *mut u32);
         // 00402667 cmp dword ptr [eax+ebx*8],0FFFFFFFFh
         sub(
-            *(MACHINE
-                .memory
-                .add((MACHINE.regs.eax + (MACHINE.regs.ebx * 8) + 0x0u32) as usize)
-                as *mut u32),
+            *(MACHINE.memory.add(
+                MACHINE
+                    .regs
+                    .eax
+                    .wrapping_add((MACHINE.regs.ebx * 8))
+                    .wrapping_add(0x0u32) as usize,
+            ) as *mut u32),
             0xffffffffu32,
         );
         // 0040266b lea esi,[eax+ebx*8]
-        MACHINE.regs.esi = MACHINE.regs.eax + (MACHINE.regs.ebx * 8) + 0x0u32;
+        MACHINE.regs.esi = MACHINE
+            .regs
+            .eax
+            .wrapping_add((MACHINE.regs.ebx * 8))
+            .wrapping_add(0x0u32);
         // 0040266e jne short 004026BDh
         jne(Cont(x00402670), Cont(x004026bd))
     }
@@ -6220,17 +7009,24 @@ pub fn x00402660() -> Cont {
 pub fn x00402662() -> Cont {
     unsafe {
         // 00402662 mov eax,ds:[4099A0h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((0x4099a0u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE.memory.add(0x4099a0u32 as usize) as *mut u32);
         // 00402667 cmp dword ptr [eax+ebx*8],0FFFFFFFFh
         sub(
-            *(MACHINE
-                .memory
-                .add((MACHINE.regs.eax + (MACHINE.regs.ebx * 8) + 0x0u32) as usize)
-                as *mut u32),
+            *(MACHINE.memory.add(
+                MACHINE
+                    .regs
+                    .eax
+                    .wrapping_add((MACHINE.regs.ebx * 8))
+                    .wrapping_add(0x0u32) as usize,
+            ) as *mut u32),
             0xffffffffu32,
         );
         // 0040266b lea esi,[eax+ebx*8]
-        MACHINE.regs.esi = MACHINE.regs.eax + (MACHINE.regs.ebx * 8) + 0x0u32;
+        MACHINE.regs.esi = MACHINE
+            .regs
+            .eax
+            .wrapping_add((MACHINE.regs.ebx * 8))
+            .wrapping_add(0x0u32);
         // 0040266e jne short 004026BDh
         jne(Cont(x00402670), Cont(x004026bd))
     }
@@ -6241,7 +7037,9 @@ pub fn x00402670() -> Cont {
         // 00402670 test ebx,ebx
         and(MACHINE.regs.ebx, MACHINE.regs.ebx);
         // 00402672 mov byte ptr [esi+4],81h
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0x4u32) as usize) as *mut u8) = 0x81u8;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x4u32) as usize) as *mut u8) = 0x81u8;
         // 00402676 jne short 0040267Dh
         jne(Cont(x00402678), Cont(x0040267d))
     }
@@ -6320,7 +7118,9 @@ pub fn x004026a0() -> Cont {
         // 004026a0 and eax,0FFh
         MACHINE.regs.eax = and(MACHINE.regs.eax, 0xffu32);
         // 004026a5 mov [esi],edi
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u32) = MACHINE.regs.edi;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize) as *mut u32) = MACHINE.regs.edi;
         // 004026a7 cmp eax,2
         sub(MACHINE.regs.eax, 0x2u32);
         // 004026aa jne short 004026B2h
@@ -6331,8 +7131,12 @@ pub fn x004026a0() -> Cont {
 pub fn x004026ac() -> Cont {
     unsafe {
         // 004026ac or byte ptr [esi+4],40h
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0x4u32) as usize) as *mut u8) = or(
-            *(MACHINE.memory.add((MACHINE.regs.esi + 0x4u32) as usize) as *mut u8),
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x4u32) as usize) as *mut u8) = or(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esi.wrapping_add(0x4u32) as usize) as *mut u8),
             0x40u8,
         );
         // 004026b0 jmp short 004026C1h
@@ -6352,8 +7156,12 @@ pub fn x004026b2() -> Cont {
 pub fn x004026b7() -> Cont {
     unsafe {
         // 004026b7 or byte ptr [esi+4],8
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0x4u32) as usize) as *mut u8) = or(
-            *(MACHINE.memory.add((MACHINE.regs.esi + 0x4u32) as usize) as *mut u8),
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x4u32) as usize) as *mut u8) = or(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esi.wrapping_add(0x4u32) as usize) as *mut u8),
             0x8u8,
         );
         // 004026bb jmp short 004026C1h
@@ -6364,8 +7172,12 @@ pub fn x004026b7() -> Cont {
 pub fn x004026bd() -> Cont {
     unsafe {
         // 004026bd or byte ptr [esi+4],80h
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0x4u32) as usize) as *mut u8) = or(
-            *(MACHINE.memory.add((MACHINE.regs.esi + 0x4u32) as usize) as *mut u8),
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x4u32) as usize) as *mut u8) = or(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esi.wrapping_add(0x4u32) as usize) as *mut u8),
             0x80u8,
         );
         // 004026c1 inc ebx
@@ -6391,7 +7203,7 @@ pub fn x004026c1() -> Cont {
 pub fn x004026c7() -> Cont {
     unsafe {
         // 004026c7 push dword ptr ds:[409AA0h]
-        push(*(MACHINE.memory.add((0x409aa0u32) as usize) as *mut u32));
+        push(*(MACHINE.memory.add(0x409aa0u32 as usize) as *mut u32));
         // 004026cd call dword ptr ds:[4060B0h]
         call(0x4026d3, Cont(kernel32::stdcall_SetHandleCount))
     }
@@ -6419,12 +7231,19 @@ pub fn x004026db() -> Cont {
         // 004026db push esi
         push(MACHINE.regs.esi);
         // 004026dc mov esi,[esp+8]
-        MACHINE.regs.esi = *(MACHINE.memory.add((MACHINE.regs.esp + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.esi = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 004026e0 push 0
         push(0x0u32);
         // 004026e2 and dword ptr [esi],0
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u32) = and(
-            *(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u32),
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize) as *mut u32) = and(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize) as *mut u32),
             0x0u32,
         );
         // 004026e5 call dword ptr ds:[406068h]
@@ -6436,7 +7255,9 @@ pub fn x004026eb() -> Cont {
     unsafe {
         // 004026eb cmp word ptr [eax],5A4Dh
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u16),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u16),
             0x5a4du16,
         );
         // 004026f0 jne short 00402706h
@@ -6447,7 +7268,10 @@ pub fn x004026eb() -> Cont {
 pub fn x004026f2() -> Cont {
     unsafe {
         // 004026f2 mov ecx,[eax+3Ch]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.eax + 0x3cu32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x3cu32) as usize)
+            as *mut u32);
         // 004026f5 test ecx,ecx
         and(MACHINE.regs.ecx, MACHINE.regs.ecx);
         // 004026f7 je short 00402706h
@@ -6460,18 +7284,26 @@ pub fn x004026f9() -> Cont {
         // 004026f9 add eax,ecx
         MACHINE.regs.eax = add(MACHINE.regs.eax, MACHINE.regs.ecx);
         // 004026fb mov cl,[eax+1Ah]
-        MACHINE
-            .regs
-            .set_cl(*(MACHINE.memory.add((MACHINE.regs.eax + 0x1au32) as usize) as *mut u8));
+        MACHINE.regs.set_cl(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0x1au32) as usize) as *mut u8),
+        );
         // 004026fe mov [esi],cl
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u8) =
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize) as *mut u8) =
             MACHINE.regs.get_cl();
         // 00402700 mov al,[eax+1Bh]
-        MACHINE
-            .regs
-            .set_al(*(MACHINE.memory.add((MACHINE.regs.eax + 0x1bu32) as usize) as *mut u8));
+        MACHINE.regs.set_al(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0x1bu32) as usize) as *mut u8),
+        );
         // 00402703 mov [esi+1],al
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0x1u32) as usize) as *mut u8) =
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x1u32) as usize) as *mut u8) =
             MACHINE.regs.get_al();
         // 00402706 pop esi
         MACHINE.regs.esi = pop();
@@ -6505,7 +7337,7 @@ pub fn x00402708() -> Cont {
 pub fn x00402715() -> Cont {
     unsafe {
         // 00402715 lea eax,[ebp-98h]
-        MACHINE.regs.eax = MACHINE.regs.ebp + 0xffffff68u32;
+        MACHINE.regs.eax = MACHINE.regs.ebp.wrapping_add(0xffffff68u32);
         // 0040271b push ebx
         push(MACHINE.regs.ebx);
         // 0040271c push eax
@@ -6513,7 +7345,7 @@ pub fn x00402715() -> Cont {
         // 0040271d mov dword ptr [ebp-98h],94h
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xffffff68u32) as usize) as *mut u32) = 0x94u32;
+            .add(MACHINE.regs.ebp.wrapping_add(0xffffff68u32) as usize) as *mut u32) = 0x94u32;
         // 00402727 call dword ptr ds:[4060C0h]
         call(0x40272d, Cont(kernel32::stdcall_GetVersionExA))
     }
@@ -6534,7 +7366,8 @@ pub fn x00402731() -> Cont {
         sub(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.ebp + 0xffffff78u32) as usize) as *mut u32),
+                .add(MACHINE.regs.ebp.wrapping_add(0xffffff78u32) as usize)
+                as *mut u32),
             0x2u32,
         );
         // 00402738 jne short 0040274Bh
@@ -6548,7 +7381,8 @@ pub fn x0040273a() -> Cont {
         sub(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.ebp + 0xffffff6cu32) as usize) as *mut u32),
+                .add(MACHINE.regs.ebp.wrapping_add(0xffffff6cu32) as usize)
+                as *mut u32),
             0x5u32,
         );
         // 00402741 jb short 0040274Bh
@@ -6570,7 +7404,7 @@ pub fn x00402743() -> Cont {
 pub fn x0040274b() -> Cont {
     unsafe {
         // 0040274b lea eax,[ebp-122Ch]
-        MACHINE.regs.eax = MACHINE.regs.ebp + 0xffffedd4u32;
+        MACHINE.regs.eax = MACHINE.regs.ebp.wrapping_add(0xffffedd4u32);
         // 00402751 push 1090h
         push(0x1090u32);
         // 00402756 push eax
@@ -6596,12 +7430,13 @@ pub fn x0040276a() -> Cont {
         // 0040276a xor ebx,ebx
         MACHINE.regs.ebx ^= MACHINE.regs.ebx;
         // 0040276c lea ecx,[ebp-122Ch]
-        MACHINE.regs.ecx = MACHINE.regs.ebp + 0xffffedd4u32;
+        MACHINE.regs.ecx = MACHINE.regs.ebp.wrapping_add(0xffffedd4u32);
         // 00402772 cmp [ebp-122Ch],bl
         sub(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.ebp + 0xffffedd4u32) as usize) as *mut u8),
+                .add(MACHINE.regs.ebp.wrapping_add(0xffffedd4u32) as usize)
+                as *mut u8),
             MACHINE.regs.get_bl(),
         );
         // 00402778 je short 0040278Dh
@@ -6612,9 +7447,11 @@ pub fn x0040276a() -> Cont {
 pub fn x0040277a() -> Cont {
     unsafe {
         // 0040277a mov al,[ecx]
-        MACHINE
-            .regs
-            .set_al(*(MACHINE.memory.add((MACHINE.regs.ecx + 0x0u32) as usize) as *mut u8));
+        MACHINE.regs.set_al(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ecx.wrapping_add(0x0u32) as usize) as *mut u8),
+        );
         // 0040277c cmp al,61h
         sub(MACHINE.regs.get_al(), 0x61u8);
         // 0040277e jl short 00402788h
@@ -6636,13 +7473,17 @@ pub fn x00402784() -> Cont {
         // 00402784 sub al,20h
         MACHINE.regs.set_al(sub(MACHINE.regs.get_al(), 0x20u8));
         // 00402786 mov [ecx],al
-        *(MACHINE.memory.add((MACHINE.regs.ecx + 0x0u32) as usize) as *mut u8) =
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ecx.wrapping_add(0x0u32) as usize) as *mut u8) =
             MACHINE.regs.get_al();
         // 00402788 inc ecx
         todo!();
         // 00402789 cmp [ecx],bl
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.ecx + 0x0u32) as usize) as *mut u8),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ecx.wrapping_add(0x0u32) as usize) as *mut u8),
             MACHINE.regs.get_bl(),
         );
         // 0040278b jne short 0040277Ah
@@ -6656,7 +7497,9 @@ pub fn x00402788() -> Cont {
         todo!();
         // 00402789 cmp [ecx],bl
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.ecx + 0x0u32) as usize) as *mut u8),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ecx.wrapping_add(0x0u32) as usize) as *mut u8),
             MACHINE.regs.get_bl(),
         );
         // 0040278b jne short 0040277Ah
@@ -6667,7 +7510,7 @@ pub fn x00402788() -> Cont {
 pub fn x0040278d() -> Cont {
     unsafe {
         // 0040278d lea eax,[ebp-122Ch]
-        MACHINE.regs.eax = MACHINE.regs.ebp + 0xffffedd4u32;
+        MACHINE.regs.eax = MACHINE.regs.ebp.wrapping_add(0xffffedd4u32);
         // 00402793 push 16h
         push(0x16u32);
         // 00402795 push eax
@@ -6693,7 +7536,7 @@ pub fn x004027a0() -> Cont {
 pub fn x004027a7() -> Cont {
     unsafe {
         // 004027a7 lea eax,[ebp-122Ch]
-        MACHINE.regs.eax = MACHINE.regs.ebp + 0xffffedd4u32;
+        MACHINE.regs.eax = MACHINE.regs.ebp.wrapping_add(0xffffedd4u32);
         // 004027ad jmp short 004027F8h
         Cont(x004027f8)
     }
@@ -6702,7 +7545,7 @@ pub fn x004027a7() -> Cont {
 pub fn x004027af() -> Cont {
     unsafe {
         // 004027af lea eax,[ebp-19Ch]
-        MACHINE.regs.eax = MACHINE.regs.ebp + 0xfffffe64u32;
+        MACHINE.regs.eax = MACHINE.regs.ebp.wrapping_add(0xfffffe64u32);
         // 004027b5 push 104h
         push(0x104u32);
         // 004027ba push eax
@@ -6720,11 +7563,12 @@ pub fn x004027c2() -> Cont {
         sub(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.ebp + 0xfffffe64u32) as usize) as *mut u8),
+                .add(MACHINE.regs.ebp.wrapping_add(0xfffffe64u32) as usize)
+                as *mut u8),
             MACHINE.regs.get_bl(),
         );
         // 004027c8 lea ecx,[ebp-19Ch]
-        MACHINE.regs.ecx = MACHINE.regs.ebp + 0xfffffe64u32;
+        MACHINE.regs.ecx = MACHINE.regs.ebp.wrapping_add(0xfffffe64u32);
         // 004027ce je short 004027E3h
         je(Cont(x004027d0), Cont(x004027e3))
     }
@@ -6733,9 +7577,11 @@ pub fn x004027c2() -> Cont {
 pub fn x004027d0() -> Cont {
     unsafe {
         // 004027d0 mov al,[ecx]
-        MACHINE
-            .regs
-            .set_al(*(MACHINE.memory.add((MACHINE.regs.ecx + 0x0u32) as usize) as *mut u8));
+        MACHINE.regs.set_al(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ecx.wrapping_add(0x0u32) as usize) as *mut u8),
+        );
         // 004027d2 cmp al,61h
         sub(MACHINE.regs.get_al(), 0x61u8);
         // 004027d4 jl short 004027DEh
@@ -6757,13 +7603,17 @@ pub fn x004027da() -> Cont {
         // 004027da sub al,20h
         MACHINE.regs.set_al(sub(MACHINE.regs.get_al(), 0x20u8));
         // 004027dc mov [ecx],al
-        *(MACHINE.memory.add((MACHINE.regs.ecx + 0x0u32) as usize) as *mut u8) =
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ecx.wrapping_add(0x0u32) as usize) as *mut u8) =
             MACHINE.regs.get_al();
         // 004027de inc ecx
         todo!();
         // 004027df cmp [ecx],bl
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.ecx + 0x0u32) as usize) as *mut u8),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ecx.wrapping_add(0x0u32) as usize) as *mut u8),
             MACHINE.regs.get_bl(),
         );
         // 004027e1 jne short 004027D0h
@@ -6777,7 +7627,9 @@ pub fn x004027de() -> Cont {
         todo!();
         // 004027df cmp [ecx],bl
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.ecx + 0x0u32) as usize) as *mut u8),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ecx.wrapping_add(0x0u32) as usize) as *mut u8),
             MACHINE.regs.get_bl(),
         );
         // 004027e1 jne short 004027D0h
@@ -6788,11 +7640,11 @@ pub fn x004027de() -> Cont {
 pub fn x004027e3() -> Cont {
     unsafe {
         // 004027e3 lea eax,[ebp-19Ch]
-        MACHINE.regs.eax = MACHINE.regs.ebp + 0xfffffe64u32;
+        MACHINE.regs.eax = MACHINE.regs.ebp.wrapping_add(0xfffffe64u32);
         // 004027e9 push eax
         push(MACHINE.regs.eax);
         // 004027ea lea eax,[ebp-122Ch]
-        MACHINE.regs.eax = MACHINE.regs.ebp + 0xffffedd4u32;
+        MACHINE.regs.eax = MACHINE.regs.ebp.wrapping_add(0xffffedd4u32);
         // 004027f0 push eax
         push(MACHINE.regs.eax);
         // 004027f1 call 00404A00h
@@ -6854,7 +7706,9 @@ pub fn x0040280a() -> Cont {
         MACHINE.regs.ecx = MACHINE.regs.eax;
         // 0040280d cmp [eax],bl
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u8),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u8),
             MACHINE.regs.get_bl(),
         );
         // 0040280f je short 0040281Fh
@@ -6866,7 +7720,9 @@ pub fn x00402811() -> Cont {
     unsafe {
         // 00402811 cmp byte ptr [ecx],3Bh
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.ecx + 0x0u32) as usize) as *mut u8),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ecx.wrapping_add(0x0u32) as usize) as *mut u8),
             0x3bu8,
         );
         // 00402814 jne short 0040281Ah
@@ -6877,7 +7733,9 @@ pub fn x00402811() -> Cont {
 pub fn x00402816() -> Cont {
     unsafe {
         // 00402816 mov [ecx],bl
-        *(MACHINE.memory.add((MACHINE.regs.ecx + 0x0u32) as usize) as *mut u8) =
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ecx.wrapping_add(0x0u32) as usize) as *mut u8) =
             MACHINE.regs.get_bl();
         // 00402818 jmp short 0040281Bh
         Cont(x0040281b)
@@ -6890,7 +7748,9 @@ pub fn x0040281a() -> Cont {
         todo!();
         // 0040281b cmp [ecx],bl
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.ecx + 0x0u32) as usize) as *mut u8),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ecx.wrapping_add(0x0u32) as usize) as *mut u8),
             MACHINE.regs.get_bl(),
         );
         // 0040281d jne short 00402811h
@@ -6902,7 +7762,9 @@ pub fn x0040281b() -> Cont {
     unsafe {
         // 0040281b cmp [ecx],bl
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.ecx + 0x0u32) as usize) as *mut u8),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ecx.wrapping_add(0x0u32) as usize) as *mut u8),
             MACHINE.regs.get_bl(),
         );
         // 0040281d jne short 00402811h
@@ -6955,7 +7817,7 @@ pub fn x00402835() -> Cont {
 pub fn x0040283a() -> Cont {
     unsafe {
         // 0040283a lea eax,[ebp-4]
-        MACHINE.regs.eax = MACHINE.regs.ebp + 0xfffffffcu32;
+        MACHINE.regs.eax = MACHINE.regs.ebp.wrapping_add(0xfffffffcu32);
         // 0040283d push eax
         push(MACHINE.regs.eax);
         // 0040283e call 004026DBh
@@ -6969,7 +7831,8 @@ pub fn x00402843() -> Cont {
         sub(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize) as *mut u8),
+                .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize)
+                as *mut u8),
             0x6u8,
         );
         // 00402847 pop ecx
@@ -7006,7 +7869,9 @@ pub fn x00402850() -> Cont {
         push(0x0u32);
         // 00402854 cmp [esp+8],eax
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.esp + 0x8u32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esp.wrapping_add(0x8u32) as usize) as *mut u32),
             MACHINE.regs.eax,
         );
         // 00402858 push 1000h
@@ -7025,7 +7890,7 @@ pub fn x00402867() -> Cont {
         // 00402867 test eax,eax
         and(MACHINE.regs.eax, MACHINE.regs.eax);
         // 00402869 mov ds:[409984h],eax
-        *(MACHINE.memory.add((0x409984u32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE.memory.add(0x409984u32 as usize) as *mut u32) = MACHINE.regs.eax;
         // 0040286e je short 004028A6h
         je(Cont(x00402870), Cont(x004028a6))
     }
@@ -7043,7 +7908,7 @@ pub fn x00402875() -> Cont {
         // 00402875 cmp eax,3
         sub(MACHINE.regs.eax, 0x3u32);
         // 00402878 mov ds:[409988h],eax
-        *(MACHINE.memory.add((0x409988u32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE.memory.add(0x409988u32 as usize) as *mut u32) = MACHINE.regs.eax;
         // 0040287d jne short 0040288Ch
         jne(Cont(x0040287f), Cont(x0040288c))
     }
@@ -7095,7 +7960,7 @@ pub fn x00402896() -> Cont {
 pub fn x0040289a() -> Cont {
     unsafe {
         // 0040289a push dword ptr ds:[409984h]
-        push(*(MACHINE.memory.add((0x409984u32) as usize) as *mut u32));
+        push(*(MACHINE.memory.add(0x409984u32 as usize) as *mut u32));
         // 004028a0 call dword ptr ds:[4060C4h]
         call(0x4028a6, Cont(kernel32::stdcall_HeapDestroy))
     }
@@ -7124,7 +7989,7 @@ pub fn x004028a9() -> Cont {
 pub fn x00402a80() -> Cont {
     unsafe {
         // 00402a80 mov eax,ds:[4095A4h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((0x4095a4u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE.memory.add(0x4095a4u32 as usize) as *mut u32);
         // 00402a85 cmp eax,1
         sub(MACHINE.regs.eax, 0x1u32);
         // 00402a88 je short 00402A97h
@@ -7145,7 +8010,7 @@ pub fn x00402a8e() -> Cont {
     unsafe {
         // 00402a8e cmp dword ptr ds:[4070C8h],1
         sub(
-            *(MACHINE.memory.add((0x4070c8u32) as usize) as *mut u32),
+            *(MACHINE.memory.add(0x4070c8u32 as usize) as *mut u32),
             0x1u32,
         );
         // 00402a95 jne short 00402AB8h
@@ -7165,7 +8030,7 @@ pub fn x00402a97() -> Cont {
 pub fn x00402aa1() -> Cont {
     unsafe {
         // 00402aa1 mov eax,ds:[409700h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((0x409700u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE.memory.add(0x409700u32 as usize) as *mut u32);
         // 00402aa6 pop ecx
         MACHINE.regs.ecx = pop();
         // 00402aa7 test eax,eax
@@ -7216,7 +8081,10 @@ pub fn x00402ab9() -> Cont {
         // 00402abc sub esp,1A4h
         MACHINE.regs.esp = sub(MACHINE.regs.esp, 0x1a4u32);
         // 00402ac2 mov edx,[ebp+8]
-        MACHINE.regs.edx = *(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.edx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 00402ac5 xor ecx,ecx
         MACHINE.regs.ecx ^= MACHINE.regs.ecx;
         // 00402ac7 mov eax,407178h
@@ -7224,7 +8092,9 @@ pub fn x00402ab9() -> Cont {
         // 00402acc cmp edx,[eax]
         sub(
             MACHINE.regs.edx,
-            *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u32),
         );
         // 00402ace je short 00402ADBh
         je(Cont(x00402ad0), Cont(x00402adb))
@@ -7236,7 +8106,9 @@ pub fn x00402acc() -> Cont {
         // 00402acc cmp edx,[eax]
         sub(
             MACHINE.regs.edx,
-            *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u32),
         );
         // 00402ace je short 00402ADBh
         je(Cont(x00402ad0), Cont(x00402adb))
@@ -7269,7 +8141,8 @@ pub fn x00402adb() -> Cont {
             MACHINE.regs.edx,
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.esi + 0x407178u32) as usize) as *mut u32),
+                .add(MACHINE.regs.esi.wrapping_add(0x407178u32) as usize)
+                as *mut u32),
         );
         // 00402ae7 jne near ptr 00402C09h
         jne(Cont(x00402aed), Cont(x00402c09))
@@ -7279,7 +8152,7 @@ pub fn x00402adb() -> Cont {
 pub fn x00402aed() -> Cont {
     unsafe {
         // 00402aed mov eax,ds:[4095A4h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((0x4095a4u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE.memory.add(0x4095a4u32 as usize) as *mut u32);
         // 00402af2 cmp eax,1
         sub(MACHINE.regs.eax, 0x1u32);
         // 00402af5 je near ptr 00402BE3h
@@ -7300,7 +8173,7 @@ pub fn x00402aff() -> Cont {
     unsafe {
         // 00402aff cmp dword ptr ds:[4070C8h],1
         sub(
-            *(MACHINE.memory.add((0x4070c8u32) as usize) as *mut u32),
+            *(MACHINE.memory.add(0x4070c8u32 as usize) as *mut u32),
             0x1u32,
         );
         // 00402b06 je near ptr 00402BE3h
@@ -7320,7 +8193,7 @@ pub fn x00402b0c() -> Cont {
 pub fn x00402b18() -> Cont {
     unsafe {
         // 00402b18 lea eax,[ebp-1A4h]
-        MACHINE.regs.eax = MACHINE.regs.ebp + 0xfffffe5cu32;
+        MACHINE.regs.eax = MACHINE.regs.ebp.wrapping_add(0xfffffe5cu32);
         // 00402b1e push 104h
         push(0x104u32);
         // 00402b23 push eax
@@ -7344,7 +8217,7 @@ pub fn x00402b2c() -> Cont {
 pub fn x00402b30() -> Cont {
     unsafe {
         // 00402b30 lea eax,[ebp-1A4h]
-        MACHINE.regs.eax = MACHINE.regs.ebp + 0xfffffe5cu32;
+        MACHINE.regs.eax = MACHINE.regs.ebp.wrapping_add(0xfffffe5cu32);
         // 00402b36 push 40643Ch
         push(0x40643cu32);
         // 00402b3b push eax
@@ -7361,13 +8234,13 @@ pub fn x00402b41() -> Cont {
         // 00402b42 pop ecx
         MACHINE.regs.ecx = pop();
         // 00402b43 lea eax,[ebp-1A4h]
-        MACHINE.regs.eax = MACHINE.regs.ebp + 0xfffffe5cu32;
+        MACHINE.regs.eax = MACHINE.regs.ebp.wrapping_add(0xfffffe5cu32);
         // 00402b49 push edi
         push(MACHINE.regs.edi);
         // 00402b4a push eax
         push(MACHINE.regs.eax);
         // 00402b4b lea edi,[ebp-1A4h]
-        MACHINE.regs.edi = MACHINE.regs.ebp + 0xfffffe5cu32;
+        MACHINE.regs.edi = MACHINE.regs.ebp.wrapping_add(0xfffffe5cu32);
         // 00402b51 call 00404690h
         call(0x402b56, Cont(x00404690))
     }
@@ -7376,13 +8249,13 @@ pub fn x00402b41() -> Cont {
 pub fn x00402b43() -> Cont {
     unsafe {
         // 00402b43 lea eax,[ebp-1A4h]
-        MACHINE.regs.eax = MACHINE.regs.ebp + 0xfffffe5cu32;
+        MACHINE.regs.eax = MACHINE.regs.ebp.wrapping_add(0xfffffe5cu32);
         // 00402b49 push edi
         push(MACHINE.regs.edi);
         // 00402b4a push eax
         push(MACHINE.regs.eax);
         // 00402b4b lea edi,[ebp-1A4h]
-        MACHINE.regs.edi = MACHINE.regs.ebp + 0xfffffe5cu32;
+        MACHINE.regs.edi = MACHINE.regs.ebp.wrapping_add(0xfffffe5cu32);
         // 00402b51 call 00404690h
         call(0x402b56, Cont(x00404690))
     }
@@ -7404,7 +8277,7 @@ pub fn x00402b56() -> Cont {
 pub fn x00402b5d() -> Cont {
     unsafe {
         // 00402b5d lea eax,[ebp-1A4h]
-        MACHINE.regs.eax = MACHINE.regs.ebp + 0xfffffe5cu32;
+        MACHINE.regs.eax = MACHINE.regs.ebp.wrapping_add(0xfffffe5cu32);
         // 00402b63 push eax
         push(MACHINE.regs.eax);
         // 00402b64 call 00404690h
@@ -7417,7 +8290,7 @@ pub fn x00402b69() -> Cont {
         // 00402b69 mov edi,eax
         MACHINE.regs.edi = MACHINE.regs.eax;
         // 00402b6b lea eax,[ebp-1A4h]
-        MACHINE.regs.eax = MACHINE.regs.ebp + 0xfffffe5cu32;
+        MACHINE.regs.eax = MACHINE.regs.ebp.wrapping_add(0xfffffe5cu32);
         // 00402b71 sub eax,3Bh
         MACHINE.regs.eax = sub(MACHINE.regs.eax, 0x3bu32);
         // 00402b74 push 3
@@ -7438,7 +8311,7 @@ pub fn x00402b83() -> Cont {
         // 00402b83 add esp,10h
         MACHINE.regs.esp = add(MACHINE.regs.esp, 0x10u32);
         // 00402b86 lea eax,[ebp-0A0h]
-        MACHINE.regs.eax = MACHINE.regs.ebp + 0xffffff60u32;
+        MACHINE.regs.eax = MACHINE.regs.ebp.wrapping_add(0xffffff60u32);
         // 00402b8c push 40641Ch
         push(0x40641cu32);
         // 00402b91 push eax
@@ -7451,7 +8324,7 @@ pub fn x00402b83() -> Cont {
 pub fn x00402b86() -> Cont {
     unsafe {
         // 00402b86 lea eax,[ebp-0A0h]
-        MACHINE.regs.eax = MACHINE.regs.ebp + 0xffffff60u32;
+        MACHINE.regs.eax = MACHINE.regs.ebp.wrapping_add(0xffffff60u32);
         // 00402b8c push 40641Ch
         push(0x40641cu32);
         // 00402b91 push eax
@@ -7464,7 +8337,7 @@ pub fn x00402b86() -> Cont {
 pub fn x00402b97() -> Cont {
     unsafe {
         // 00402b97 lea eax,[ebp-0A0h]
-        MACHINE.regs.eax = MACHINE.regs.ebp + 0xffffff60u32;
+        MACHINE.regs.eax = MACHINE.regs.ebp.wrapping_add(0xffffff60u32);
         // 00402b9d push edi
         push(MACHINE.regs.edi);
         // 00402b9e push eax
@@ -7477,7 +8350,7 @@ pub fn x00402b97() -> Cont {
 pub fn x00402ba4() -> Cont {
     unsafe {
         // 00402ba4 lea eax,[ebp-0A0h]
-        MACHINE.regs.eax = MACHINE.regs.ebp + 0xffffff60u32;
+        MACHINE.regs.eax = MACHINE.regs.ebp.wrapping_add(0xffffff60u32);
         // 00402baa push 406418h
         push(0x406418u32);
         // 00402baf push eax
@@ -7493,10 +8366,11 @@ pub fn x00402bb5() -> Cont {
         push(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.esi + 0x40717cu32) as usize) as *mut u32),
+                .add(MACHINE.regs.esi.wrapping_add(0x40717cu32) as usize)
+                as *mut u32),
         );
         // 00402bbb lea eax,[ebp-0A0h]
-        MACHINE.regs.eax = MACHINE.regs.ebp + 0xffffff60u32;
+        MACHINE.regs.eax = MACHINE.regs.ebp.wrapping_add(0xffffff60u32);
         // 00402bc1 push eax
         push(MACHINE.regs.eax);
         // 00402bc2 call 004045B0h
@@ -7509,7 +8383,7 @@ pub fn x00402bc7() -> Cont {
         // 00402bc7 push 12010h
         push(0x12010u32);
         // 00402bcc lea eax,[ebp-0A0h]
-        MACHINE.regs.eax = MACHINE.regs.ebp + 0xffffff60u32;
+        MACHINE.regs.eax = MACHINE.regs.ebp.wrapping_add(0xffffff60u32);
         // 00402bd2 push 4063F0h
         push(0x4063f0u32);
         // 00402bd7 push eax
@@ -7533,15 +8407,19 @@ pub fn x00402bdd() -> Cont {
 pub fn x00402be3() -> Cont {
     unsafe {
         // 00402be3 lea eax,[ebp+8]
-        MACHINE.regs.eax = MACHINE.regs.ebp + 0x8u32;
+        MACHINE.regs.eax = MACHINE.regs.ebp.wrapping_add(0x8u32);
         // 00402be6 lea esi,[esi+40717Ch]
-        MACHINE.regs.esi = MACHINE.regs.esi + 0x40717cu32;
+        MACHINE.regs.esi = MACHINE.regs.esi.wrapping_add(0x40717cu32);
         // 00402bec push 0
         push(0x0u32);
         // 00402bee push eax
         push(MACHINE.regs.eax);
         // 00402bef push dword ptr [esi]
-        push(*(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize) as *mut u32),
+        );
         // 00402bf1 call 00404690h
         call(0x402bf6, Cont(x00404690))
     }
@@ -7554,7 +8432,11 @@ pub fn x00402bf6() -> Cont {
         // 00402bf7 push eax
         push(MACHINE.regs.eax);
         // 00402bf8 push dword ptr [esi]
-        push(*(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize) as *mut u32),
+        );
         // 00402bfa push 0FFFFFFF4h
         push(0xfffffff4u32);
         // 00402bfc call dword ptr ds:[4060B4h]
@@ -7589,7 +8471,7 @@ pub fn x00402c0c() -> Cont {
         // 00402c11 push 0
         push(0x0u32);
         // 00402c13 push dword ptr ds:[409984h]
-        push(*(MACHINE.memory.add((0x409984u32) as usize) as *mut u32));
+        push(*(MACHINE.memory.add(0x409984u32 as usize) as *mut u32));
         // 00402c19 call dword ptr ds:[406028h]
         call(0x402c1f, Cont(kernel32::stdcall_HeapAlloc))
     }
@@ -7600,7 +8482,7 @@ pub fn x00402c1f() -> Cont {
         // 00402c1f test eax,eax
         and(MACHINE.regs.eax, MACHINE.regs.eax);
         // 00402c21 mov ds:[40997Ch],eax
-        *(MACHINE.memory.add((0x40997cu32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE.memory.add(0x40997cu32 as usize) as *mut u32) = MACHINE.regs.eax;
         // 00402c26 jne short 00402C29h
         jne(Cont(x00402c28), Cont(x00402c29))
     }
@@ -7616,25 +8498,28 @@ pub fn x00402c28() -> Cont {
 pub fn x00402c29() -> Cont {
     unsafe {
         // 00402c29 mov ecx,[esp+4]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.esp + 0x4u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x4u32) as usize)
+            as *mut u32);
         // 00402c2d and dword ptr ds:[409974h],0
-        *(MACHINE.memory.add((0x409974u32) as usize) as *mut u32) = and(
-            *(MACHINE.memory.add((0x409974u32) as usize) as *mut u32),
+        *(MACHINE.memory.add(0x409974u32 as usize) as *mut u32) = and(
+            *(MACHINE.memory.add(0x409974u32 as usize) as *mut u32),
             0x0u32,
         );
         // 00402c34 and dword ptr ds:[409978h],0
-        *(MACHINE.memory.add((0x409978u32) as usize) as *mut u32) = and(
-            *(MACHINE.memory.add((0x409978u32) as usize) as *mut u32),
+        *(MACHINE.memory.add(0x409978u32 as usize) as *mut u32) = and(
+            *(MACHINE.memory.add(0x409978u32 as usize) as *mut u32),
             0x0u32,
         );
         // 00402c3b push 1
         push(0x1u32);
         // 00402c3d mov ds:[409970h],eax
-        *(MACHINE.memory.add((0x409970u32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE.memory.add(0x409970u32 as usize) as *mut u32) = MACHINE.regs.eax;
         // 00402c42 mov ds:[409980h],ecx
-        *(MACHINE.memory.add((0x409980u32) as usize) as *mut u32) = MACHINE.regs.ecx;
+        *(MACHINE.memory.add(0x409980u32 as usize) as *mut u32) = MACHINE.regs.ecx;
         // 00402c48 mov dword ptr ds:[409968h],10h
-        *(MACHINE.memory.add((0x409968u32) as usize) as *mut u32) = 0x10u32;
+        *(MACHINE.memory.add(0x409968u32 as usize) as *mut u32) = 0x10u32;
         // 00402c52 pop eax
         MACHINE.regs.eax = pop();
         // 00402c53 ret
@@ -7645,13 +8530,21 @@ pub fn x00402c29() -> Cont {
 pub fn x00402c54() -> Cont {
     unsafe {
         // 00402c54 mov eax,ds:[409978h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((0x409978u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE.memory.add(0x409978u32 as usize) as *mut u32);
         // 00402c59 lea ecx,[eax+eax*4]
-        MACHINE.regs.ecx = MACHINE.regs.eax + (MACHINE.regs.eax * 4) + 0x0u32;
+        MACHINE.regs.ecx = MACHINE
+            .regs
+            .eax
+            .wrapping_add((MACHINE.regs.eax * 4))
+            .wrapping_add(0x0u32);
         // 00402c5c mov eax,ds:[40997Ch]
-        MACHINE.regs.eax = *(MACHINE.memory.add((0x40997cu32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE.memory.add(0x40997cu32 as usize) as *mut u32);
         // 00402c61 lea ecx,[eax+ecx*4]
-        MACHINE.regs.ecx = MACHINE.regs.eax + (MACHINE.regs.ecx * 4) + 0x0u32;
+        MACHINE.regs.ecx = MACHINE
+            .regs
+            .eax
+            .wrapping_add((MACHINE.regs.ecx * 4))
+            .wrapping_add(0x0u32);
         // 00402c64 cmp eax,ecx
         sub(MACHINE.regs.eax, MACHINE.regs.ecx);
         // 00402c66 jae short 00402C7Ch
@@ -7671,11 +8564,16 @@ pub fn x00402c64() -> Cont {
 pub fn x00402c68() -> Cont {
     unsafe {
         // 00402c68 mov edx,[esp+4]
-        MACHINE.regs.edx = *(MACHINE.memory.add((MACHINE.regs.esp + 0x4u32) as usize) as *mut u32);
+        MACHINE.regs.edx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x4u32) as usize)
+            as *mut u32);
         // 00402c6c sub edx,[eax+0Ch]
         MACHINE.regs.edx = sub(
             MACHINE.regs.edx,
-            *(MACHINE.memory.add((MACHINE.regs.eax + 0xcu32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0xcu32) as usize) as *mut u32),
         );
         // 00402c6f cmp edx,100000h
         sub(MACHINE.regs.edx, 0x100000u32);
@@ -7718,15 +8616,24 @@ pub fn x00402c7f() -> Cont {
         // 00402c82 sub esp,10h
         MACHINE.regs.esp = sub(MACHINE.regs.esp, 0x10u32);
         // 00402c85 mov ecx,[ebp+8]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 00402c88 push ebx
         push(MACHINE.regs.ebx);
         // 00402c89 push esi
         push(MACHINE.regs.esi);
         // 00402c8a mov esi,[ebp+0Ch]
-        MACHINE.regs.esi = *(MACHINE.memory.add((MACHINE.regs.ebp + 0xcu32) as usize) as *mut u32);
+        MACHINE.regs.esi = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0xcu32) as usize)
+            as *mut u32);
         // 00402c8d mov eax,[ecx+10h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.ecx + 0x10u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ecx.wrapping_add(0x10u32) as usize)
+            as *mut u32);
         // 00402c90 push edi
         push(MACHINE.regs.edi);
         // 00402c91 mov edi,esi
@@ -7736,7 +8643,9 @@ pub fn x00402c7f() -> Cont {
         // 00402c96 sub edi,[ecx+0Ch]
         MACHINE.regs.edi = sub(
             MACHINE.regs.edi,
-            *(MACHINE.memory.add((MACHINE.regs.ecx + 0xcu32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ecx.wrapping_add(0xcu32) as usize) as *mut u32),
         );
         // 00402c99 shr edi,0Fh
         MACHINE.regs.edi = shr(MACHINE.regs.edi, 0xfu8);
@@ -7745,13 +8654,21 @@ pub fn x00402c7f() -> Cont {
         // 00402c9e imul ecx,204h
         todo!();
         // 00402ca4 lea ecx,[ecx+eax+144h]
-        MACHINE.regs.ecx = MACHINE.regs.ecx + (MACHINE.regs.eax * 1) + 0x144u32;
+        MACHINE.regs.ecx = MACHINE
+            .regs
+            .ecx
+            .wrapping_add((MACHINE.regs.eax * 1))
+            .wrapping_add(0x144u32);
         // 00402cab mov [ebp-10h],ecx
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffff0u32) as usize) as *mut u32) = MACHINE.regs.ecx;
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffff0u32) as usize) as *mut u32) =
+            MACHINE.regs.ecx;
         // 00402cae mov ecx,[esi]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize)
+            as *mut u32);
         // 00402cb0 dec ecx
         todo!();
         // 00402cb1 test cl,1
@@ -7759,7 +8676,8 @@ pub fn x00402c7f() -> Cont {
         // 00402cb4 mov [ebp-4],ecx
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize) as *mut u32) = MACHINE.regs.ecx;
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize) as *mut u32) =
+            MACHINE.regs.ecx;
         // 00402cb7 jne near ptr 00402FA3h
         jne(Cont(x00402cbd), Cont(x00402fa3))
     }
@@ -7768,34 +8686,45 @@ pub fn x00402c7f() -> Cont {
 pub fn x00402cbd() -> Cont {
     unsafe {
         // 00402cbd mov edx,[ecx+esi]
-        MACHINE.regs.edx = *(MACHINE
-            .memory
-            .add((MACHINE.regs.ecx + (MACHINE.regs.esi * 1) + 0x0u32) as usize)
-            as *mut u32);
+        MACHINE.regs.edx = *(MACHINE.memory.add(
+            MACHINE
+                .regs
+                .ecx
+                .wrapping_add((MACHINE.regs.esi * 1))
+                .wrapping_add(0x0u32) as usize,
+        ) as *mut u32);
         // 00402cc0 lea ebx,[ecx+esi]
-        MACHINE.regs.ebx = MACHINE.regs.ecx + (MACHINE.regs.esi * 1) + 0x0u32;
+        MACHINE.regs.ebx = MACHINE
+            .regs
+            .ecx
+            .wrapping_add((MACHINE.regs.esi * 1))
+            .wrapping_add(0x0u32);
         // 00402cc3 mov [ebp-0Ch],edx
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffff4u32) as usize) as *mut u32) = MACHINE.regs.edx;
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffff4u32) as usize) as *mut u32) =
+            MACHINE.regs.edx;
         // 00402cc6 mov edx,[esi-4]
         MACHINE.regs.edx = *(MACHINE
             .memory
-            .add((MACHINE.regs.esi + 0xfffffffcu32) as usize)
+            .add(MACHINE.regs.esi.wrapping_add(0xfffffffcu32) as usize)
             as *mut u32);
         // 00402cc9 mov [ebp-8],edx
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffff8u32) as usize) as *mut u32) = MACHINE.regs.edx;
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffff8u32) as usize) as *mut u32) =
+            MACHINE.regs.edx;
         // 00402ccc mov edx,[ebp-0Ch]
         MACHINE.regs.edx = *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffff4u32) as usize)
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffff4u32) as usize)
             as *mut u32);
         // 00402ccf test dl,1
         and(MACHINE.regs.get_dl(), 0x1u8);
         // 00402cd2 mov [ebp+0Ch],ebx
-        *(MACHINE.memory.add((MACHINE.regs.ebp + 0xcu32) as usize) as *mut u32) = MACHINE.regs.ebx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0xcu32) as usize) as *mut u32) = MACHINE.regs.ebx;
         // 00402cd5 jne short 00402D55h
         jne(Cont(x00402cd7), Cont(x00402d55))
     }
@@ -7821,11 +8750,16 @@ pub fn x00402ce0() -> Cont {
         // 00402ce2 pop edx
         MACHINE.regs.edx = pop();
         // 00402ce3 mov ecx,[ebx+4]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.ebx + 0x4u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebx.wrapping_add(0x4u32) as usize)
+            as *mut u32);
         // 00402ce6 cmp ecx,[ebx+8]
         sub(
             MACHINE.regs.ecx,
-            *(MACHINE.memory.add((MACHINE.regs.ebx + 0x8u32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebx.wrapping_add(0x8u32) as usize) as *mut u32),
         );
         // 00402ce9 jne short 00402D37h
         jne(Cont(x00402ceb), Cont(x00402d37))
@@ -7835,11 +8769,16 @@ pub fn x00402ce0() -> Cont {
 pub fn x00402ce3() -> Cont {
     unsafe {
         // 00402ce3 mov ecx,[ebx+4]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.ebx + 0x4u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebx.wrapping_add(0x4u32) as usize)
+            as *mut u32);
         // 00402ce6 cmp ecx,[ebx+8]
         sub(
             MACHINE.regs.ecx,
-            *(MACHINE.memory.add((MACHINE.regs.ebx + 0x8u32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebx.wrapping_add(0x8u32) as usize) as *mut u32),
         );
         // 00402ce9 jne short 00402D37h
         jne(Cont(x00402ceb), Cont(x00402d37))
@@ -7864,18 +8803,28 @@ pub fn x00402cf0() -> Cont {
         // 00402cf7 shr ebx,cl
         MACHINE.regs.ebx = shr(MACHINE.regs.ebx, MACHINE.regs.get_cl());
         // 00402cf9 lea ecx,[edx+eax+4]
-        MACHINE.regs.ecx = MACHINE.regs.edx + (MACHINE.regs.eax * 1) + 0x4u32;
+        MACHINE.regs.ecx = MACHINE
+            .regs
+            .edx
+            .wrapping_add((MACHINE.regs.eax * 1))
+            .wrapping_add(0x4u32);
         // 00402cfd not ebx
         todo!();
         // 00402cff and [eax+edi*4+44h],ebx
-        *(MACHINE
-            .memory
-            .add((MACHINE.regs.eax + (MACHINE.regs.edi * 4) + 0x44u32) as usize)
-            as *mut u32) = and(
-            *(MACHINE
-                .memory
-                .add((MACHINE.regs.eax + (MACHINE.regs.edi * 4) + 0x44u32) as usize)
-                as *mut u32),
+        *(MACHINE.memory.add(
+            MACHINE
+                .regs
+                .eax
+                .wrapping_add((MACHINE.regs.edi * 4))
+                .wrapping_add(0x44u32) as usize,
+        ) as *mut u32) = and(
+            *(MACHINE.memory.add(
+                MACHINE
+                    .regs
+                    .eax
+                    .wrapping_add((MACHINE.regs.edi * 4))
+                    .wrapping_add(0x44u32) as usize,
+            ) as *mut u32),
             MACHINE.regs.ebx,
         );
         // 00402d03 dec byte ptr [ecx]
@@ -7888,10 +8837,17 @@ pub fn x00402cf0() -> Cont {
 pub fn x00402d07() -> Cont {
     unsafe {
         // 00402d07 mov ecx,[ebp+8]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 00402d0a and [ecx],ebx
-        *(MACHINE.memory.add((MACHINE.regs.ecx + 0x0u32) as usize) as *mut u32) = and(
-            *(MACHINE.memory.add((MACHINE.regs.ecx + 0x0u32) as usize) as *mut u32),
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ecx.wrapping_add(0x0u32) as usize) as *mut u32) = and(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ecx.wrapping_add(0x0u32) as usize) as *mut u32),
             MACHINE.regs.ebx,
         );
         // 00402d0c jmp short 00402D2Fh
@@ -7902,24 +8858,34 @@ pub fn x00402d07() -> Cont {
 pub fn x00402d0e() -> Cont {
     unsafe {
         // 00402d0e lea ecx,[edx-20h]
-        MACHINE.regs.ecx = MACHINE.regs.edx + 0xffffffe0u32;
+        MACHINE.regs.ecx = MACHINE.regs.edx.wrapping_add(0xffffffe0u32);
         // 00402d11 mov ebx,80000000h
         MACHINE.regs.ebx = 0x80000000u32;
         // 00402d16 shr ebx,cl
         MACHINE.regs.ebx = shr(MACHINE.regs.ebx, MACHINE.regs.get_cl());
         // 00402d18 lea ecx,[edx+eax+4]
-        MACHINE.regs.ecx = MACHINE.regs.edx + (MACHINE.regs.eax * 1) + 0x4u32;
+        MACHINE.regs.ecx = MACHINE
+            .regs
+            .edx
+            .wrapping_add((MACHINE.regs.eax * 1))
+            .wrapping_add(0x4u32);
         // 00402d1c not ebx
         todo!();
         // 00402d1e and [eax+edi*4+0C4h],ebx
-        *(MACHINE
-            .memory
-            .add((MACHINE.regs.eax + (MACHINE.regs.edi * 4) + 0xc4u32) as usize)
-            as *mut u32) = and(
-            *(MACHINE
-                .memory
-                .add((MACHINE.regs.eax + (MACHINE.regs.edi * 4) + 0xc4u32) as usize)
-                as *mut u32),
+        *(MACHINE.memory.add(
+            MACHINE
+                .regs
+                .eax
+                .wrapping_add((MACHINE.regs.edi * 4))
+                .wrapping_add(0xc4u32) as usize,
+        ) as *mut u32) = and(
+            *(MACHINE.memory.add(
+                MACHINE
+                    .regs
+                    .eax
+                    .wrapping_add((MACHINE.regs.edi * 4))
+                    .wrapping_add(0xc4u32) as usize,
+            ) as *mut u32),
             MACHINE.regs.ebx,
         );
         // 00402d25 dec byte ptr [ecx]
@@ -7932,19 +8898,29 @@ pub fn x00402d0e() -> Cont {
 pub fn x00402d29() -> Cont {
     unsafe {
         // 00402d29 mov ecx,[ebp+8]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 00402d2c and [ecx+4],ebx
-        *(MACHINE.memory.add((MACHINE.regs.ecx + 0x4u32) as usize) as *mut u32) = and(
-            *(MACHINE.memory.add((MACHINE.regs.ecx + 0x4u32) as usize) as *mut u32),
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ecx.wrapping_add(0x4u32) as usize) as *mut u32) = and(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ecx.wrapping_add(0x4u32) as usize) as *mut u32),
             MACHINE.regs.ebx,
         );
         // 00402d2f mov ecx,[ebp-4]
         MACHINE.regs.ecx = *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize)
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize)
             as *mut u32);
         // 00402d32 mov ebx,[ebp+0Ch]
-        MACHINE.regs.ebx = *(MACHINE.memory.add((MACHINE.regs.ebp + 0xcu32) as usize) as *mut u32);
+        MACHINE.regs.ebx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0xcu32) as usize)
+            as *mut u32);
         // 00402d35 jmp short 00402D3Ah
         Cont(x00402d3a)
     }
@@ -7955,10 +8931,13 @@ pub fn x00402d2f() -> Cont {
         // 00402d2f mov ecx,[ebp-4]
         MACHINE.regs.ecx = *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize)
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize)
             as *mut u32);
         // 00402d32 mov ebx,[ebp+0Ch]
-        MACHINE.regs.ebx = *(MACHINE.memory.add((MACHINE.regs.ebp + 0xcu32) as usize) as *mut u32);
+        MACHINE.regs.ebx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0xcu32) as usize)
+            as *mut u32);
         // 00402d35 jmp short 00402D3Ah
         Cont(x00402d3a)
     }
@@ -7969,33 +8948,54 @@ pub fn x00402d37() -> Cont {
         // 00402d37 mov ecx,[ebp-4]
         MACHINE.regs.ecx = *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize)
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize)
             as *mut u32);
         // 00402d3a mov edx,[ebx+8]
-        MACHINE.regs.edx = *(MACHINE.memory.add((MACHINE.regs.ebx + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.edx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebx.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 00402d3d mov ebx,[ebx+4]
-        MACHINE.regs.ebx = *(MACHINE.memory.add((MACHINE.regs.ebx + 0x4u32) as usize) as *mut u32);
+        MACHINE.regs.ebx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebx.wrapping_add(0x4u32) as usize)
+            as *mut u32);
         // 00402d40 add ecx,[ebp-0Ch]
         MACHINE.regs.ecx = add(
             MACHINE.regs.ecx,
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.ebp + 0xfffffff4u32) as usize) as *mut u32),
+                .add(MACHINE.regs.ebp.wrapping_add(0xfffffff4u32) as usize)
+                as *mut u32),
         );
         // 00402d43 mov [edx+4],ebx
-        *(MACHINE.memory.add((MACHINE.regs.edx + 0x4u32) as usize) as *mut u32) = MACHINE.regs.ebx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.edx.wrapping_add(0x4u32) as usize) as *mut u32) = MACHINE.regs.ebx;
         // 00402d46 mov edx,[ebp+0Ch]
-        MACHINE.regs.edx = *(MACHINE.memory.add((MACHINE.regs.ebp + 0xcu32) as usize) as *mut u32);
+        MACHINE.regs.edx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0xcu32) as usize)
+            as *mut u32);
         // 00402d49 mov [ebp-4],ecx
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize) as *mut u32) = MACHINE.regs.ecx;
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize) as *mut u32) =
+            MACHINE.regs.ecx;
         // 00402d4c mov ebx,[edx+4]
-        MACHINE.regs.ebx = *(MACHINE.memory.add((MACHINE.regs.edx + 0x4u32) as usize) as *mut u32);
+        MACHINE.regs.ebx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.edx.wrapping_add(0x4u32) as usize)
+            as *mut u32);
         // 00402d4f mov edx,[edx+8]
-        MACHINE.regs.edx = *(MACHINE.memory.add((MACHINE.regs.edx + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.edx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.edx.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 00402d52 mov [ebx+8],edx
-        *(MACHINE.memory.add((MACHINE.regs.ebx + 0x8u32) as usize) as *mut u32) = MACHINE.regs.edx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebx.wrapping_add(0x8u32) as usize) as *mut u32) = MACHINE.regs.edx;
         // 00402d55 mov edx,ecx
         MACHINE.regs.edx = MACHINE.regs.ecx;
         // 00402d57 sar edx,4
@@ -8012,30 +9012,51 @@ pub fn x00402d37() -> Cont {
 pub fn x00402d3a() -> Cont {
     unsafe {
         // 00402d3a mov edx,[ebx+8]
-        MACHINE.regs.edx = *(MACHINE.memory.add((MACHINE.regs.ebx + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.edx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebx.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 00402d3d mov ebx,[ebx+4]
-        MACHINE.regs.ebx = *(MACHINE.memory.add((MACHINE.regs.ebx + 0x4u32) as usize) as *mut u32);
+        MACHINE.regs.ebx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebx.wrapping_add(0x4u32) as usize)
+            as *mut u32);
         // 00402d40 add ecx,[ebp-0Ch]
         MACHINE.regs.ecx = add(
             MACHINE.regs.ecx,
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.ebp + 0xfffffff4u32) as usize) as *mut u32),
+                .add(MACHINE.regs.ebp.wrapping_add(0xfffffff4u32) as usize)
+                as *mut u32),
         );
         // 00402d43 mov [edx+4],ebx
-        *(MACHINE.memory.add((MACHINE.regs.edx + 0x4u32) as usize) as *mut u32) = MACHINE.regs.ebx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.edx.wrapping_add(0x4u32) as usize) as *mut u32) = MACHINE.regs.ebx;
         // 00402d46 mov edx,[ebp+0Ch]
-        MACHINE.regs.edx = *(MACHINE.memory.add((MACHINE.regs.ebp + 0xcu32) as usize) as *mut u32);
+        MACHINE.regs.edx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0xcu32) as usize)
+            as *mut u32);
         // 00402d49 mov [ebp-4],ecx
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize) as *mut u32) = MACHINE.regs.ecx;
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize) as *mut u32) =
+            MACHINE.regs.ecx;
         // 00402d4c mov ebx,[edx+4]
-        MACHINE.regs.ebx = *(MACHINE.memory.add((MACHINE.regs.edx + 0x4u32) as usize) as *mut u32);
+        MACHINE.regs.ebx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.edx.wrapping_add(0x4u32) as usize)
+            as *mut u32);
         // 00402d4f mov edx,[edx+8]
-        MACHINE.regs.edx = *(MACHINE.memory.add((MACHINE.regs.edx + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.edx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.edx.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 00402d52 mov [ebx+8],edx
-        *(MACHINE.memory.add((MACHINE.regs.ebx + 0x8u32) as usize) as *mut u32) = MACHINE.regs.edx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebx.wrapping_add(0x8u32) as usize) as *mut u32) = MACHINE.regs.edx;
         // 00402d55 mov edx,ecx
         MACHINE.regs.edx = MACHINE.regs.ecx;
         // 00402d57 sar edx,4
@@ -8073,14 +9094,15 @@ pub fn x00402d60() -> Cont {
         // 00402d63 mov ebx,[ebp-8]
         MACHINE.regs.ebx = *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffff8u32) as usize)
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffff8u32) as usize)
             as *mut u32);
         // 00402d66 and ebx,1
         MACHINE.regs.ebx = and(MACHINE.regs.ebx, 0x1u32);
         // 00402d69 mov [ebp-0Ch],ebx
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffff4u32) as usize) as *mut u32) = MACHINE.regs.ebx;
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffff4u32) as usize) as *mut u32) =
+            MACHINE.regs.ebx;
         // 00402d6c jne near ptr 00402E06h
         jne(Cont(x00402d72), Cont(x00402e06))
     }
@@ -8091,14 +9113,15 @@ pub fn x00402d63() -> Cont {
         // 00402d63 mov ebx,[ebp-8]
         MACHINE.regs.ebx = *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffff8u32) as usize)
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffff8u32) as usize)
             as *mut u32);
         // 00402d66 and ebx,1
         MACHINE.regs.ebx = and(MACHINE.regs.ebx, 0x1u32);
         // 00402d69 mov [ebp-0Ch],ebx
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffff4u32) as usize) as *mut u32) = MACHINE.regs.ebx;
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffff4u32) as usize) as *mut u32) =
+            MACHINE.regs.ebx;
         // 00402d6c jne near ptr 00402E06h
         jne(Cont(x00402d72), Cont(x00402e06))
     }
@@ -8111,19 +9134,22 @@ pub fn x00402d72() -> Cont {
             MACHINE.regs.esi,
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.ebp + 0xfffffff8u32) as usize) as *mut u32),
+                .add(MACHINE.regs.ebp.wrapping_add(0xfffffff8u32) as usize)
+                as *mut u32),
         );
         // 00402d75 mov ebx,[ebp-8]
         MACHINE.regs.ebx = *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffff8u32) as usize)
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffff8u32) as usize)
             as *mut u32);
         // 00402d78 sar ebx,4
         todo!();
         // 00402d7b push 3Fh
         push(0x3fu32);
         // 00402d7d mov [ebp+0Ch],esi
-        *(MACHINE.memory.add((MACHINE.regs.ebp + 0xcu32) as usize) as *mut u32) = MACHINE.regs.esi;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0xcu32) as usize) as *mut u32) = MACHINE.regs.esi;
         // 00402d80 dec ebx
         todo!();
         // 00402d81 pop esi
@@ -8144,14 +9170,16 @@ pub fn x00402d86() -> Cont {
             MACHINE.regs.ecx,
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.ebp + 0xfffffff8u32) as usize) as *mut u32),
+                .add(MACHINE.regs.ebp.wrapping_add(0xfffffff8u32) as usize)
+                as *mut u32),
         );
         // 00402d8b mov edx,ecx
         MACHINE.regs.edx = MACHINE.regs.ecx;
         // 00402d8d mov [ebp-4],ecx
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize) as *mut u32) = MACHINE.regs.ecx;
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize) as *mut u32) =
+            MACHINE.regs.ecx;
         // 00402d90 sar edx,4
         todo!();
         // 00402d93 dec edx
@@ -8170,14 +9198,16 @@ pub fn x00402d88() -> Cont {
             MACHINE.regs.ecx,
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.ebp + 0xfffffff8u32) as usize) as *mut u32),
+                .add(MACHINE.regs.ebp.wrapping_add(0xfffffff8u32) as usize)
+                as *mut u32),
         );
         // 00402d8b mov edx,ecx
         MACHINE.regs.edx = MACHINE.regs.ecx;
         // 00402d8d mov [ebp-4],ecx
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize) as *mut u32) = MACHINE.regs.ecx;
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize) as *mut u32) =
+            MACHINE.regs.ecx;
         // 00402d90 sar edx,4
         todo!();
         // 00402d93 dec edx
@@ -8212,13 +9242,21 @@ pub fn x00402d9a() -> Cont {
 pub fn x00402d9e() -> Cont {
     unsafe {
         // 00402d9e mov ecx,[ebp+0Ch]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.ebp + 0xcu32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0xcu32) as usize)
+            as *mut u32);
         // 00402da1 mov esi,[ecx+4]
-        MACHINE.regs.esi = *(MACHINE.memory.add((MACHINE.regs.ecx + 0x4u32) as usize) as *mut u32);
+        MACHINE.regs.esi = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ecx.wrapping_add(0x4u32) as usize)
+            as *mut u32);
         // 00402da4 cmp esi,[ecx+8]
         sub(
             MACHINE.regs.esi,
-            *(MACHINE.memory.add((MACHINE.regs.ecx + 0x8u32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ecx.wrapping_add(0x8u32) as usize) as *mut u32),
         );
         // 00402da7 jne short 00402DE9h
         jne(Cont(x00402da9), Cont(x00402de9))
@@ -8245,14 +9283,20 @@ pub fn x00402dae() -> Cont {
         // 00402db7 not esi
         todo!();
         // 00402db9 and [eax+edi*4+44h],esi
-        *(MACHINE
-            .memory
-            .add((MACHINE.regs.eax + (MACHINE.regs.edi * 4) + 0x44u32) as usize)
-            as *mut u32) = and(
-            *(MACHINE
-                .memory
-                .add((MACHINE.regs.eax + (MACHINE.regs.edi * 4) + 0x44u32) as usize)
-                as *mut u32),
+        *(MACHINE.memory.add(
+            MACHINE
+                .regs
+                .eax
+                .wrapping_add((MACHINE.regs.edi * 4))
+                .wrapping_add(0x44u32) as usize,
+        ) as *mut u32) = and(
+            *(MACHINE.memory.add(
+                MACHINE
+                    .regs
+                    .eax
+                    .wrapping_add((MACHINE.regs.edi * 4))
+                    .wrapping_add(0x44u32) as usize,
+            ) as *mut u32),
             MACHINE.regs.esi,
         );
         // 00402dbd dec byte ptr [ebx+eax+4]
@@ -8265,10 +9309,17 @@ pub fn x00402dae() -> Cont {
 pub fn x00402dc3() -> Cont {
     unsafe {
         // 00402dc3 mov ecx,[ebp+8]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 00402dc6 and [ecx],esi
-        *(MACHINE.memory.add((MACHINE.regs.ecx + 0x0u32) as usize) as *mut u32) = and(
-            *(MACHINE.memory.add((MACHINE.regs.ecx + 0x0u32) as usize) as *mut u32),
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ecx.wrapping_add(0x0u32) as usize) as *mut u32) = and(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ecx.wrapping_add(0x0u32) as usize) as *mut u32),
             MACHINE.regs.esi,
         );
         // 00402dc8 jmp short 00402DE9h
@@ -8279,7 +9330,7 @@ pub fn x00402dc3() -> Cont {
 pub fn x00402dca() -> Cont {
     unsafe {
         // 00402dca lea ecx,[ebx-20h]
-        MACHINE.regs.ecx = MACHINE.regs.ebx + 0xffffffe0u32;
+        MACHINE.regs.ecx = MACHINE.regs.ebx.wrapping_add(0xffffffe0u32);
         // 00402dcd mov esi,80000000h
         MACHINE.regs.esi = 0x80000000u32;
         // 00402dd2 shr esi,cl
@@ -8287,14 +9338,20 @@ pub fn x00402dca() -> Cont {
         // 00402dd4 not esi
         todo!();
         // 00402dd6 and [eax+edi*4+0C4h],esi
-        *(MACHINE
-            .memory
-            .add((MACHINE.regs.eax + (MACHINE.regs.edi * 4) + 0xc4u32) as usize)
-            as *mut u32) = and(
-            *(MACHINE
-                .memory
-                .add((MACHINE.regs.eax + (MACHINE.regs.edi * 4) + 0xc4u32) as usize)
-                as *mut u32),
+        *(MACHINE.memory.add(
+            MACHINE
+                .regs
+                .eax
+                .wrapping_add((MACHINE.regs.edi * 4))
+                .wrapping_add(0xc4u32) as usize,
+        ) as *mut u32) = and(
+            *(MACHINE.memory.add(
+                MACHINE
+                    .regs
+                    .eax
+                    .wrapping_add((MACHINE.regs.edi * 4))
+                    .wrapping_add(0xc4u32) as usize,
+            ) as *mut u32),
             MACHINE.regs.esi,
         );
         // 00402ddd dec byte ptr [ebx+eax+4]
@@ -8307,30 +9364,62 @@ pub fn x00402dca() -> Cont {
 pub fn x00402de3() -> Cont {
     unsafe {
         // 00402de3 mov ecx,[ebp+8]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 00402de6 and [ecx+4],esi
-        *(MACHINE.memory.add((MACHINE.regs.ecx + 0x4u32) as usize) as *mut u32) = and(
-            *(MACHINE.memory.add((MACHINE.regs.ecx + 0x4u32) as usize) as *mut u32),
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ecx.wrapping_add(0x4u32) as usize) as *mut u32) = and(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ecx.wrapping_add(0x4u32) as usize) as *mut u32),
             MACHINE.regs.esi,
         );
         // 00402de9 mov ecx,[ebp+0Ch]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.ebp + 0xcu32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0xcu32) as usize)
+            as *mut u32);
         // 00402dec mov esi,[ecx+8]
-        MACHINE.regs.esi = *(MACHINE.memory.add((MACHINE.regs.ecx + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.esi = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ecx.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 00402def mov ecx,[ecx+4]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.ecx + 0x4u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ecx.wrapping_add(0x4u32) as usize)
+            as *mut u32);
         // 00402df2 mov [esi+4],ecx
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0x4u32) as usize) as *mut u32) = MACHINE.regs.ecx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x4u32) as usize) as *mut u32) = MACHINE.regs.ecx;
         // 00402df5 mov ecx,[ebp+0Ch]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.ebp + 0xcu32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0xcu32) as usize)
+            as *mut u32);
         // 00402df8 mov esi,[ecx+4]
-        MACHINE.regs.esi = *(MACHINE.memory.add((MACHINE.regs.ecx + 0x4u32) as usize) as *mut u32);
+        MACHINE.regs.esi = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ecx.wrapping_add(0x4u32) as usize)
+            as *mut u32);
         // 00402dfb mov ecx,[ecx+8]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.ecx + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ecx.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 00402dfe mov [esi+8],ecx
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0x8u32) as usize) as *mut u32) = MACHINE.regs.ecx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x8u32) as usize) as *mut u32) = MACHINE.regs.ecx;
         // 00402e01 mov esi,[ebp+0Ch]
-        MACHINE.regs.esi = *(MACHINE.memory.add((MACHINE.regs.ebp + 0xcu32) as usize) as *mut u32);
+        MACHINE.regs.esi = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0xcu32) as usize)
+            as *mut u32);
         // 00402e04 jmp short 00402E09h
         Cont(x00402e09)
     }
@@ -8339,23 +9428,48 @@ pub fn x00402de3() -> Cont {
 pub fn x00402de9() -> Cont {
     unsafe {
         // 00402de9 mov ecx,[ebp+0Ch]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.ebp + 0xcu32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0xcu32) as usize)
+            as *mut u32);
         // 00402dec mov esi,[ecx+8]
-        MACHINE.regs.esi = *(MACHINE.memory.add((MACHINE.regs.ecx + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.esi = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ecx.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 00402def mov ecx,[ecx+4]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.ecx + 0x4u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ecx.wrapping_add(0x4u32) as usize)
+            as *mut u32);
         // 00402df2 mov [esi+4],ecx
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0x4u32) as usize) as *mut u32) = MACHINE.regs.ecx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x4u32) as usize) as *mut u32) = MACHINE.regs.ecx;
         // 00402df5 mov ecx,[ebp+0Ch]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.ebp + 0xcu32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0xcu32) as usize)
+            as *mut u32);
         // 00402df8 mov esi,[ecx+4]
-        MACHINE.regs.esi = *(MACHINE.memory.add((MACHINE.regs.ecx + 0x4u32) as usize) as *mut u32);
+        MACHINE.regs.esi = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ecx.wrapping_add(0x4u32) as usize)
+            as *mut u32);
         // 00402dfb mov ecx,[ecx+8]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.ecx + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ecx.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 00402dfe mov [esi+8],ecx
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0x8u32) as usize) as *mut u32) = MACHINE.regs.ecx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x8u32) as usize) as *mut u32) = MACHINE.regs.ecx;
         // 00402e01 mov esi,[ebp+0Ch]
-        MACHINE.regs.esi = *(MACHINE.memory.add((MACHINE.regs.ebp + 0xcu32) as usize) as *mut u32);
+        MACHINE.regs.esi = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0xcu32) as usize)
+            as *mut u32);
         // 00402e04 jmp short 00402E09h
         Cont(x00402e09)
     }
@@ -8364,7 +9478,10 @@ pub fn x00402de9() -> Cont {
 pub fn x00402e01() -> Cont {
     unsafe {
         // 00402e01 mov esi,[ebp+0Ch]
-        MACHINE.regs.esi = *(MACHINE.memory.add((MACHINE.regs.ebp + 0xcu32) as usize) as *mut u32);
+        MACHINE.regs.esi = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0xcu32) as usize)
+            as *mut u32);
         // 00402e04 jmp short 00402E09h
         Cont(x00402e09)
     }
@@ -8373,12 +9490,16 @@ pub fn x00402e01() -> Cont {
 pub fn x00402e06() -> Cont {
     unsafe {
         // 00402e06 mov ebx,[ebp+8]
-        MACHINE.regs.ebx = *(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.ebx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 00402e09 cmp dword ptr [ebp-0Ch],0
         sub(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.ebp + 0xfffffff4u32) as usize) as *mut u32),
+                .add(MACHINE.regs.ebp.wrapping_add(0xfffffff4u32) as usize)
+                as *mut u32),
             0x0u32,
         );
         // 00402e0d jne short 00402E17h
@@ -8392,7 +9513,8 @@ pub fn x00402e09() -> Cont {
         sub(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.ebp + 0xfffffff4u32) as usize) as *mut u32),
+                .add(MACHINE.regs.ebp.wrapping_add(0xfffffff4u32) as usize)
+                as *mut u32),
             0x0u32,
         );
         // 00402e0d jne short 00402E17h
@@ -8414,31 +9536,54 @@ pub fn x00402e17() -> Cont {
         // 00402e17 mov ecx,[ebp-10h]
         MACHINE.regs.ecx = *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffff0u32) as usize)
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffff0u32) as usize)
             as *mut u32);
         // 00402e1a mov ebx,[ecx+edx*8+4]
-        MACHINE.regs.ebx = *(MACHINE
-            .memory
-            .add((MACHINE.regs.ecx + (MACHINE.regs.edx * 8) + 0x4u32) as usize)
-            as *mut u32);
+        MACHINE.regs.ebx = *(MACHINE.memory.add(
+            MACHINE
+                .regs
+                .ecx
+                .wrapping_add((MACHINE.regs.edx * 8))
+                .wrapping_add(0x4u32) as usize,
+        ) as *mut u32);
         // 00402e1e lea ecx,[ecx+edx*8]
-        MACHINE.regs.ecx = MACHINE.regs.ecx + (MACHINE.regs.edx * 8) + 0x0u32;
+        MACHINE.regs.ecx = MACHINE
+            .regs
+            .ecx
+            .wrapping_add((MACHINE.regs.edx * 8))
+            .wrapping_add(0x0u32);
         // 00402e21 mov [esi+4],ebx
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0x4u32) as usize) as *mut u32) = MACHINE.regs.ebx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x4u32) as usize) as *mut u32) = MACHINE.regs.ebx;
         // 00402e24 mov [esi+8],ecx
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0x8u32) as usize) as *mut u32) = MACHINE.regs.ecx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x8u32) as usize) as *mut u32) = MACHINE.regs.ecx;
         // 00402e27 mov [ecx+4],esi
-        *(MACHINE.memory.add((MACHINE.regs.ecx + 0x4u32) as usize) as *mut u32) = MACHINE.regs.esi;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ecx.wrapping_add(0x4u32) as usize) as *mut u32) = MACHINE.regs.esi;
         // 00402e2a mov ecx,[esi+4]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.esi + 0x4u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x4u32) as usize)
+            as *mut u32);
         // 00402e2d mov [ecx+8],esi
-        *(MACHINE.memory.add((MACHINE.regs.ecx + 0x8u32) as usize) as *mut u32) = MACHINE.regs.esi;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ecx.wrapping_add(0x8u32) as usize) as *mut u32) = MACHINE.regs.esi;
         // 00402e30 mov ecx,[esi+4]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.esi + 0x4u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x4u32) as usize)
+            as *mut u32);
         // 00402e33 cmp ecx,[esi+8]
         sub(
             MACHINE.regs.ecx,
-            *(MACHINE.memory.add((MACHINE.regs.esi + 0x8u32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esi.wrapping_add(0x8u32) as usize) as *mut u32),
         );
         // 00402e36 jne short 00402E98h
         jne(Cont(x00402e38), Cont(x00402e98))
@@ -8449,23 +9594,31 @@ pub fn x00402e38() -> Cont {
     unsafe {
         // 00402e38 mov cl,[edx+eax+4]
         MACHINE.regs.set_cl(
-            *(MACHINE
-                .memory
-                .add((MACHINE.regs.edx + (MACHINE.regs.eax * 1) + 0x4u32) as usize)
-                as *mut u8),
+            *(MACHINE.memory.add(
+                MACHINE
+                    .regs
+                    .edx
+                    .wrapping_add((MACHINE.regs.eax * 1))
+                    .wrapping_add(0x4u32) as usize,
+            ) as *mut u8),
         );
         // 00402e3c cmp edx,20h
         sub(MACHINE.regs.edx, 0x20u32);
         // 00402e3f mov [ebp+0Fh],cl
-        *(MACHINE.memory.add((MACHINE.regs.ebp + 0xfu32) as usize) as *mut u8) =
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0xfu32) as usize) as *mut u8) =
             MACHINE.regs.get_cl();
         // 00402e42 inc cl
         todo!();
         // 00402e44 mov [edx+eax+4],cl
-        *(MACHINE
-            .memory
-            .add((MACHINE.regs.edx + (MACHINE.regs.eax * 1) + 0x4u32) as usize)
-            as *mut u8) = MACHINE.regs.get_cl();
+        *(MACHINE.memory.add(
+            MACHINE
+                .regs
+                .edx
+                .wrapping_add((MACHINE.regs.eax * 1))
+                .wrapping_add(0x4u32) as usize,
+        ) as *mut u8) = MACHINE.regs.get_cl();
         // 00402e48 jae short 00402E6Fh
         jae(Cont(x00402e4a), Cont(x00402e6f))
     }
@@ -8475,7 +9628,9 @@ pub fn x00402e4a() -> Cont {
     unsafe {
         // 00402e4a cmp byte ptr [ebp+0Fh],0
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.ebp + 0xfu32) as usize) as *mut u8),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0xfu32) as usize) as *mut u8),
             0x0u8,
         );
         // 00402e4e jne short 00402E5Eh
@@ -8492,10 +9647,17 @@ pub fn x00402e50() -> Cont {
         // 00402e57 shr ebx,cl
         MACHINE.regs.ebx = shr(MACHINE.regs.ebx, MACHINE.regs.get_cl());
         // 00402e59 mov ecx,[ebp+8]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 00402e5c or [ecx],ebx
-        *(MACHINE.memory.add((MACHINE.regs.ecx + 0x0u32) as usize) as *mut u32) = or(
-            *(MACHINE.memory.add((MACHINE.regs.ecx + 0x0u32) as usize) as *mut u32),
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ecx.wrapping_add(0x0u32) as usize) as *mut u32) = or(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ecx.wrapping_add(0x0u32) as usize) as *mut u32),
             MACHINE.regs.ebx,
         );
         // 00402e5e mov ebx,80000000h
@@ -8505,10 +9667,18 @@ pub fn x00402e50() -> Cont {
         // 00402e65 shr ebx,cl
         MACHINE.regs.ebx = shr(MACHINE.regs.ebx, MACHINE.regs.get_cl());
         // 00402e67 lea eax,[eax+edi*4+44h]
-        MACHINE.regs.eax = MACHINE.regs.eax + (MACHINE.regs.edi * 4) + 0x44u32;
+        MACHINE.regs.eax = MACHINE
+            .regs
+            .eax
+            .wrapping_add((MACHINE.regs.edi * 4))
+            .wrapping_add(0x44u32);
         // 00402e6b or [eax],ebx
-        *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u32) = or(
-            *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u32),
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u32) = or(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u32),
             MACHINE.regs.ebx,
         );
         // 00402e6d jmp short 00402E98h
@@ -8525,10 +9695,18 @@ pub fn x00402e5e() -> Cont {
         // 00402e65 shr ebx,cl
         MACHINE.regs.ebx = shr(MACHINE.regs.ebx, MACHINE.regs.get_cl());
         // 00402e67 lea eax,[eax+edi*4+44h]
-        MACHINE.regs.eax = MACHINE.regs.eax + (MACHINE.regs.edi * 4) + 0x44u32;
+        MACHINE.regs.eax = MACHINE
+            .regs
+            .eax
+            .wrapping_add((MACHINE.regs.edi * 4))
+            .wrapping_add(0x44u32);
         // 00402e6b or [eax],ebx
-        *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u32) = or(
-            *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u32),
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u32) = or(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u32),
             MACHINE.regs.ebx,
         );
         // 00402e6d jmp short 00402E98h
@@ -8540,7 +9718,9 @@ pub fn x00402e6f() -> Cont {
     unsafe {
         // 00402e6f cmp byte ptr [ebp+0Fh],0
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.ebp + 0xfu32) as usize) as *mut u8),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0xfu32) as usize) as *mut u8),
             0x0u8,
         );
         // 00402e73 jne short 00402E85h
@@ -8551,47 +9731,67 @@ pub fn x00402e6f() -> Cont {
 pub fn x00402e75() -> Cont {
     unsafe {
         // 00402e75 lea ecx,[edx-20h]
-        MACHINE.regs.ecx = MACHINE.regs.edx + 0xffffffe0u32;
+        MACHINE.regs.ecx = MACHINE.regs.edx.wrapping_add(0xffffffe0u32);
         // 00402e78 mov ebx,80000000h
         MACHINE.regs.ebx = 0x80000000u32;
         // 00402e7d shr ebx,cl
         MACHINE.regs.ebx = shr(MACHINE.regs.ebx, MACHINE.regs.get_cl());
         // 00402e7f mov ecx,[ebp+8]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 00402e82 or [ecx+4],ebx
-        *(MACHINE.memory.add((MACHINE.regs.ecx + 0x4u32) as usize) as *mut u32) = or(
-            *(MACHINE.memory.add((MACHINE.regs.ecx + 0x4u32) as usize) as *mut u32),
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ecx.wrapping_add(0x4u32) as usize) as *mut u32) = or(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ecx.wrapping_add(0x4u32) as usize) as *mut u32),
             MACHINE.regs.ebx,
         );
         // 00402e85 lea ecx,[edx-20h]
-        MACHINE.regs.ecx = MACHINE.regs.edx + 0xffffffe0u32;
+        MACHINE.regs.ecx = MACHINE.regs.edx.wrapping_add(0xffffffe0u32);
         // 00402e88 mov edx,80000000h
         MACHINE.regs.edx = 0x80000000u32;
         // 00402e8d shr edx,cl
         MACHINE.regs.edx = shr(MACHINE.regs.edx, MACHINE.regs.get_cl());
         // 00402e8f lea eax,[eax+edi*4+0C4h]
-        MACHINE.regs.eax = MACHINE.regs.eax + (MACHINE.regs.edi * 4) + 0xc4u32;
+        MACHINE.regs.eax = MACHINE
+            .regs
+            .eax
+            .wrapping_add((MACHINE.regs.edi * 4))
+            .wrapping_add(0xc4u32);
         // 00402e96 or [eax],edx
-        *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u32) = or(
-            *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u32),
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u32) = or(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u32),
             MACHINE.regs.edx,
         );
         // 00402e98 mov eax,[ebp-4]
         MACHINE.regs.eax = *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize)
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize)
             as *mut u32);
         // 00402e9b mov [esi],eax
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u32) = MACHINE.regs.eax;
-        // 00402e9d mov [eax+esi-4],eax
         *(MACHINE
             .memory
-            .add((MACHINE.regs.eax + (MACHINE.regs.esi * 1) + 0xfffffffcu32) as usize)
-            as *mut u32) = MACHINE.regs.eax;
+            .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize) as *mut u32) = MACHINE.regs.eax;
+        // 00402e9d mov [eax+esi-4],eax
+        *(MACHINE.memory.add(
+            MACHINE
+                .regs
+                .eax
+                .wrapping_add((MACHINE.regs.esi * 1))
+                .wrapping_add(0xfffffffcu32) as usize,
+        ) as *mut u32) = MACHINE.regs.eax;
         // 00402ea1 mov eax,[ebp-10h]
         MACHINE.regs.eax = *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffff0u32) as usize)
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffff0u32) as usize)
             as *mut u32);
         // 00402ea4 dec dword ptr [eax]
         todo!();
@@ -8603,34 +9803,47 @@ pub fn x00402e75() -> Cont {
 pub fn x00402e85() -> Cont {
     unsafe {
         // 00402e85 lea ecx,[edx-20h]
-        MACHINE.regs.ecx = MACHINE.regs.edx + 0xffffffe0u32;
+        MACHINE.regs.ecx = MACHINE.regs.edx.wrapping_add(0xffffffe0u32);
         // 00402e88 mov edx,80000000h
         MACHINE.regs.edx = 0x80000000u32;
         // 00402e8d shr edx,cl
         MACHINE.regs.edx = shr(MACHINE.regs.edx, MACHINE.regs.get_cl());
         // 00402e8f lea eax,[eax+edi*4+0C4h]
-        MACHINE.regs.eax = MACHINE.regs.eax + (MACHINE.regs.edi * 4) + 0xc4u32;
+        MACHINE.regs.eax = MACHINE
+            .regs
+            .eax
+            .wrapping_add((MACHINE.regs.edi * 4))
+            .wrapping_add(0xc4u32);
         // 00402e96 or [eax],edx
-        *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u32) = or(
-            *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u32),
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u32) = or(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u32),
             MACHINE.regs.edx,
         );
         // 00402e98 mov eax,[ebp-4]
         MACHINE.regs.eax = *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize)
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize)
             as *mut u32);
         // 00402e9b mov [esi],eax
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u32) = MACHINE.regs.eax;
-        // 00402e9d mov [eax+esi-4],eax
         *(MACHINE
             .memory
-            .add((MACHINE.regs.eax + (MACHINE.regs.esi * 1) + 0xfffffffcu32) as usize)
-            as *mut u32) = MACHINE.regs.eax;
+            .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize) as *mut u32) = MACHINE.regs.eax;
+        // 00402e9d mov [eax+esi-4],eax
+        *(MACHINE.memory.add(
+            MACHINE
+                .regs
+                .eax
+                .wrapping_add((MACHINE.regs.esi * 1))
+                .wrapping_add(0xfffffffcu32) as usize,
+        ) as *mut u32) = MACHINE.regs.eax;
         // 00402ea1 mov eax,[ebp-10h]
         MACHINE.regs.eax = *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffff0u32) as usize)
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffff0u32) as usize)
             as *mut u32);
         // 00402ea4 dec dword ptr [eax]
         todo!();
@@ -8644,19 +9857,24 @@ pub fn x00402e98() -> Cont {
         // 00402e98 mov eax,[ebp-4]
         MACHINE.regs.eax = *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize)
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize)
             as *mut u32);
         // 00402e9b mov [esi],eax
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u32) = MACHINE.regs.eax;
-        // 00402e9d mov [eax+esi-4],eax
         *(MACHINE
             .memory
-            .add((MACHINE.regs.eax + (MACHINE.regs.esi * 1) + 0xfffffffcu32) as usize)
-            as *mut u32) = MACHINE.regs.eax;
+            .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize) as *mut u32) = MACHINE.regs.eax;
+        // 00402e9d mov [eax+esi-4],eax
+        *(MACHINE.memory.add(
+            MACHINE
+                .regs
+                .eax
+                .wrapping_add((MACHINE.regs.esi * 1))
+                .wrapping_add(0xfffffffcu32) as usize,
+        ) as *mut u32) = MACHINE.regs.eax;
         // 00402ea1 mov eax,[ebp-10h]
         MACHINE.regs.eax = *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffff0u32) as usize)
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffff0u32) as usize)
             as *mut u32);
         // 00402ea4 dec dword ptr [eax]
         todo!();
@@ -8668,7 +9886,7 @@ pub fn x00402e98() -> Cont {
 pub fn x00402eac() -> Cont {
     unsafe {
         // 00402eac mov eax,ds:[409974h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((0x409974u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE.memory.add(0x409974u32 as usize) as *mut u32);
         // 00402eb1 test eax,eax
         and(MACHINE.regs.eax, MACHINE.regs.eax);
         // 00402eb3 je near ptr 00402F95h
@@ -8679,15 +9897,17 @@ pub fn x00402eac() -> Cont {
 pub fn x00402eb9() -> Cont {
     unsafe {
         // 00402eb9 mov ecx,ds:[40996Ch]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((0x40996cu32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE.memory.add(0x40996cu32 as usize) as *mut u32);
         // 00402ebf mov esi,ds:[406098h]
-        MACHINE.regs.esi = *(MACHINE.memory.add((0x406098u32) as usize) as *mut u32);
+        MACHINE.regs.esi = *(MACHINE.memory.add(0x406098u32 as usize) as *mut u32);
         // 00402ec5 shl ecx,0Fh
         MACHINE.regs.ecx = shl(MACHINE.regs.ecx, 0xfu8);
         // 00402ec8 add ecx,[eax+0Ch]
         MACHINE.regs.ecx = add(
             MACHINE.regs.ecx,
-            *(MACHINE.memory.add((MACHINE.regs.eax + 0xcu32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0xcu32) as usize) as *mut u32),
         );
         // 00402ecb mov ebx,8000h
         MACHINE.regs.ebx = 0x8000u32;
@@ -8705,48 +9925,69 @@ pub fn x00402eb9() -> Cont {
 pub fn x00402ed9() -> Cont {
     unsafe {
         // 00402ed9 mov ecx,ds:[40996Ch]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((0x40996cu32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE.memory.add(0x40996cu32 as usize) as *mut u32);
         // 00402edf mov eax,ds:[409974h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((0x409974u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE.memory.add(0x409974u32 as usize) as *mut u32);
         // 00402ee4 mov edx,80000000h
         MACHINE.regs.edx = 0x80000000u32;
         // 00402ee9 shr edx,cl
         MACHINE.regs.edx = shr(MACHINE.regs.edx, MACHINE.regs.get_cl());
         // 00402eeb or [eax+8],edx
-        *(MACHINE.memory.add((MACHINE.regs.eax + 0x8u32) as usize) as *mut u32) = or(
-            *(MACHINE.memory.add((MACHINE.regs.eax + 0x8u32) as usize) as *mut u32),
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x8u32) as usize) as *mut u32) = or(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0x8u32) as usize) as *mut u32),
             MACHINE.regs.edx,
         );
         // 00402eee mov eax,ds:[409974h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((0x409974u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE.memory.add(0x409974u32 as usize) as *mut u32);
         // 00402ef3 mov ecx,ds:[40996Ch]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((0x40996cu32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE.memory.add(0x40996cu32 as usize) as *mut u32);
         // 00402ef9 mov eax,[eax+10h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.eax + 0x10u32) as usize) as *mut u32);
-        // 00402efc and dword ptr [eax+ecx*4+0C4h],0
-        *(MACHINE
+        MACHINE.regs.eax = *(MACHINE
             .memory
-            .add((MACHINE.regs.eax + (MACHINE.regs.ecx * 4) + 0xc4u32) as usize)
-            as *mut u32) = and(
-            *(MACHINE
-                .memory
-                .add((MACHINE.regs.eax + (MACHINE.regs.ecx * 4) + 0xc4u32) as usize)
-                as *mut u32),
+            .add(MACHINE.regs.eax.wrapping_add(0x10u32) as usize)
+            as *mut u32);
+        // 00402efc and dword ptr [eax+ecx*4+0C4h],0
+        *(MACHINE.memory.add(
+            MACHINE
+                .regs
+                .eax
+                .wrapping_add((MACHINE.regs.ecx * 4))
+                .wrapping_add(0xc4u32) as usize,
+        ) as *mut u32) = and(
+            *(MACHINE.memory.add(
+                MACHINE
+                    .regs
+                    .eax
+                    .wrapping_add((MACHINE.regs.ecx * 4))
+                    .wrapping_add(0xc4u32) as usize,
+            ) as *mut u32),
             0x0u32,
         );
         // 00402f04 mov eax,ds:[409974h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((0x409974u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE.memory.add(0x409974u32 as usize) as *mut u32);
         // 00402f09 mov eax,[eax+10h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.eax + 0x10u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x10u32) as usize)
+            as *mut u32);
         // 00402f0c dec byte ptr [eax+43h]
         todo!();
         // 00402f0f mov eax,ds:[409974h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((0x409974u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE.memory.add(0x409974u32 as usize) as *mut u32);
         // 00402f14 mov ecx,[eax+10h]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.eax + 0x10u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x10u32) as usize)
+            as *mut u32);
         // 00402f17 cmp byte ptr [ecx+43h],0
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.ecx + 0x43u32) as usize) as *mut u8),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ecx.wrapping_add(0x43u32) as usize) as *mut u8),
             0x0u8,
         );
         // 00402f1b jne short 00402F26h
@@ -8757,15 +9998,21 @@ pub fn x00402ed9() -> Cont {
 pub fn x00402f1d() -> Cont {
     unsafe {
         // 00402f1d and dword ptr [eax+4],0FFFFFFFEh
-        *(MACHINE.memory.add((MACHINE.regs.eax + 0x4u32) as usize) as *mut u32) = and(
-            *(MACHINE.memory.add((MACHINE.regs.eax + 0x4u32) as usize) as *mut u32),
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x4u32) as usize) as *mut u32) = and(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0x4u32) as usize) as *mut u32),
             0xfffffffeu32,
         );
         // 00402f21 mov eax,ds:[409974h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((0x409974u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE.memory.add(0x409974u32 as usize) as *mut u32);
         // 00402f26 cmp dword ptr [eax+8],0FFFFFFFFh
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.eax + 0x8u32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0x8u32) as usize) as *mut u32),
             0xffffffffu32,
         );
         // 00402f2a jne short 00402F95h
@@ -8777,7 +10024,9 @@ pub fn x00402f26() -> Cont {
     unsafe {
         // 00402f26 cmp dword ptr [eax+8],0FFFFFFFFh
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.eax + 0x8u32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0x8u32) as usize) as *mut u32),
             0xffffffffu32,
         );
         // 00402f2a jne short 00402F95h
@@ -8792,7 +10041,11 @@ pub fn x00402f2c() -> Cont {
         // 00402f2d push 0
         push(0x0u32);
         // 00402f2f push dword ptr [eax+0Ch]
-        push(*(MACHINE.memory.add((MACHINE.regs.eax + 0xcu32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0xcu32) as usize) as *mut u32),
+        );
         // 00402f32 call esi
         call(0x402f34, indirect(MACHINE.regs.esi))
     }
@@ -8801,13 +10054,17 @@ pub fn x00402f2c() -> Cont {
 pub fn x00402f34() -> Cont {
     unsafe {
         // 00402f34 mov eax,ds:[409974h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((0x409974u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE.memory.add(0x409974u32 as usize) as *mut u32);
         // 00402f39 push dword ptr [eax+10h]
-        push(*(MACHINE.memory.add((MACHINE.regs.eax + 0x10u32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0x10u32) as usize) as *mut u32),
+        );
         // 00402f3c push 0
         push(0x0u32);
         // 00402f3e push dword ptr ds:[409984h]
-        push(*(MACHINE.memory.add((0x409984u32) as usize) as *mut u32));
+        push(*(MACHINE.memory.add(0x409984u32 as usize) as *mut u32));
         // 00402f44 call dword ptr ds:[406090h]
         call(0x402f4a, Cont(kernel32::stdcall_HeapFree))
     }
@@ -8816,25 +10073,33 @@ pub fn x00402f34() -> Cont {
 pub fn x00402f4a() -> Cont {
     unsafe {
         // 00402f4a mov eax,ds:[409978h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((0x409978u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE.memory.add(0x409978u32 as usize) as *mut u32);
         // 00402f4f mov edx,ds:[40997Ch]
-        MACHINE.regs.edx = *(MACHINE.memory.add((0x40997cu32) as usize) as *mut u32);
+        MACHINE.regs.edx = *(MACHINE.memory.add(0x40997cu32 as usize) as *mut u32);
         // 00402f55 lea eax,[eax+eax*4]
-        MACHINE.regs.eax = MACHINE.regs.eax + (MACHINE.regs.eax * 4) + 0x0u32;
+        MACHINE.regs.eax = MACHINE
+            .regs
+            .eax
+            .wrapping_add((MACHINE.regs.eax * 4))
+            .wrapping_add(0x0u32);
         // 00402f58 shl eax,2
         MACHINE.regs.eax = shl(MACHINE.regs.eax, 0x2u8);
         // 00402f5b mov ecx,eax
         MACHINE.regs.ecx = MACHINE.regs.eax;
         // 00402f5d mov eax,ds:[409974h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((0x409974u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE.memory.add(0x409974u32 as usize) as *mut u32);
         // 00402f62 sub ecx,eax
         MACHINE.regs.ecx = sub(MACHINE.regs.ecx, MACHINE.regs.eax);
         // 00402f64 lea ecx,[ecx+edx-14h]
-        MACHINE.regs.ecx = MACHINE.regs.ecx + (MACHINE.regs.edx * 1) + 0xffffffecu32;
+        MACHINE.regs.ecx = MACHINE
+            .regs
+            .ecx
+            .wrapping_add((MACHINE.regs.edx * 1))
+            .wrapping_add(0xffffffecu32);
         // 00402f68 push ecx
         push(MACHINE.regs.ecx);
         // 00402f69 lea ecx,[eax+14h]
-        MACHINE.regs.ecx = MACHINE.regs.eax + 0x14u32;
+        MACHINE.regs.ecx = MACHINE.regs.eax.wrapping_add(0x14u32);
         // 00402f6c push ecx
         push(MACHINE.regs.ecx);
         // 00402f6d push eax
@@ -8847,7 +10112,10 @@ pub fn x00402f4a() -> Cont {
 pub fn x00402f73() -> Cont {
     unsafe {
         // 00402f73 mov eax,[ebp+8]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 00402f76 add esp,0Ch
         MACHINE.regs.esp = add(MACHINE.regs.esp, 0xcu32);
         // 00402f79 dec dword ptr ds:[409978h]
@@ -8855,7 +10123,7 @@ pub fn x00402f73() -> Cont {
         // 00402f7f cmp eax,ds:[409974h]
         sub(
             MACHINE.regs.eax,
-            *(MACHINE.memory.add((0x409974u32) as usize) as *mut u32),
+            *(MACHINE.memory.add(0x409974u32 as usize) as *mut u32),
         );
         // 00402f85 jbe short 00402F8Bh
         jbe(Cont(x00402f87), Cont(x00402f8b))
@@ -8865,20 +10133,27 @@ pub fn x00402f73() -> Cont {
 pub fn x00402f87() -> Cont {
     unsafe {
         // 00402f87 sub dword ptr [ebp+8],14h
-        *(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32) = sub(
-            *(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32),
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize) as *mut u32) = sub(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize) as *mut u32),
             0x14u32,
         );
         // 00402f8b mov eax,ds:[40997Ch]
-        MACHINE.regs.eax = *(MACHINE.memory.add((0x40997cu32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE.memory.add(0x40997cu32 as usize) as *mut u32);
         // 00402f90 mov ds:[409970h],eax
-        *(MACHINE.memory.add((0x409970u32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE.memory.add(0x409970u32 as usize) as *mut u32) = MACHINE.regs.eax;
         // 00402f95 mov eax,[ebp+8]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 00402f98 mov ds:[40996Ch],edi
-        *(MACHINE.memory.add((0x40996cu32) as usize) as *mut u32) = MACHINE.regs.edi;
+        *(MACHINE.memory.add(0x40996cu32 as usize) as *mut u32) = MACHINE.regs.edi;
         // 00402f9e mov ds:[409974h],eax
-        *(MACHINE.memory.add((0x409974u32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE.memory.add(0x409974u32 as usize) as *mut u32) = MACHINE.regs.eax;
         // 00402fa3 pop edi
         MACHINE.regs.edi = pop();
         // 00402fa4 pop esi
@@ -8895,15 +10170,18 @@ pub fn x00402f87() -> Cont {
 pub fn x00402f8b() -> Cont {
     unsafe {
         // 00402f8b mov eax,ds:[40997Ch]
-        MACHINE.regs.eax = *(MACHINE.memory.add((0x40997cu32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE.memory.add(0x40997cu32 as usize) as *mut u32);
         // 00402f90 mov ds:[409970h],eax
-        *(MACHINE.memory.add((0x409970u32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE.memory.add(0x409970u32 as usize) as *mut u32) = MACHINE.regs.eax;
         // 00402f95 mov eax,[ebp+8]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 00402f98 mov ds:[40996Ch],edi
-        *(MACHINE.memory.add((0x40996cu32) as usize) as *mut u32) = MACHINE.regs.edi;
+        *(MACHINE.memory.add(0x40996cu32 as usize) as *mut u32) = MACHINE.regs.edi;
         // 00402f9e mov ds:[409974h],eax
-        *(MACHINE.memory.add((0x409974u32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE.memory.add(0x409974u32 as usize) as *mut u32) = MACHINE.regs.eax;
         // 00402fa3 pop edi
         MACHINE.regs.edi = pop();
         // 00402fa4 pop esi
@@ -8920,11 +10198,14 @@ pub fn x00402f8b() -> Cont {
 pub fn x00402f95() -> Cont {
     unsafe {
         // 00402f95 mov eax,[ebp+8]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 00402f98 mov ds:[40996Ch],edi
-        *(MACHINE.memory.add((0x40996cu32) as usize) as *mut u32) = MACHINE.regs.edi;
+        *(MACHINE.memory.add(0x40996cu32 as usize) as *mut u32) = MACHINE.regs.edi;
         // 00402f9e mov ds:[409974h],eax
-        *(MACHINE.memory.add((0x409974u32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE.memory.add(0x409974u32 as usize) as *mut u32) = MACHINE.regs.eax;
         // 00402fa3 pop edi
         MACHINE.regs.edi = pop();
         // 00402fa4 pop esi
@@ -8962,33 +10243,46 @@ pub fn x00402fa8() -> Cont {
         // 00402fab sub esp,14h
         MACHINE.regs.esp = sub(MACHINE.regs.esp, 0x14u32);
         // 00402fae mov eax,ds:[409978h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((0x409978u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE.memory.add(0x409978u32 as usize) as *mut u32);
         // 00402fb3 mov edx,ds:[40997Ch]
-        MACHINE.regs.edx = *(MACHINE.memory.add((0x40997cu32) as usize) as *mut u32);
+        MACHINE.regs.edx = *(MACHINE.memory.add(0x40997cu32 as usize) as *mut u32);
         // 00402fb9 push ebx
         push(MACHINE.regs.ebx);
         // 00402fba push esi
         push(MACHINE.regs.esi);
         // 00402fbb lea eax,[eax+eax*4]
-        MACHINE.regs.eax = MACHINE.regs.eax + (MACHINE.regs.eax * 4) + 0x0u32;
+        MACHINE.regs.eax = MACHINE
+            .regs
+            .eax
+            .wrapping_add((MACHINE.regs.eax * 4))
+            .wrapping_add(0x0u32);
         // 00402fbe push edi
         push(MACHINE.regs.edi);
         // 00402fbf lea edi,[edx+eax*4]
-        MACHINE.regs.edi = MACHINE.regs.edx + (MACHINE.regs.eax * 4) + 0x0u32;
+        MACHINE.regs.edi = MACHINE
+            .regs
+            .edx
+            .wrapping_add((MACHINE.regs.eax * 4))
+            .wrapping_add(0x0u32);
         // 00402fc2 mov eax,[ebp+8]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 00402fc5 mov [ebp-4],edi
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize) as *mut u32) = MACHINE.regs.edi;
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize) as *mut u32) =
+            MACHINE.regs.edi;
         // 00402fc8 lea ecx,[eax+17h]
-        MACHINE.regs.ecx = MACHINE.regs.eax + 0x17u32;
+        MACHINE.regs.ecx = MACHINE.regs.eax.wrapping_add(0x17u32);
         // 00402fcb and ecx,0FFFFFFF0h
         MACHINE.regs.ecx = and(MACHINE.regs.ecx, 0xfffffff0u32);
         // 00402fce mov [ebp-10h],ecx
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffff0u32) as usize) as *mut u32) = MACHINE.regs.ecx;
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffff0u32) as usize) as *mut u32) =
+            MACHINE.regs.ecx;
         // 00402fd1 sar ecx,4
         todo!();
         // 00402fd4 dec ecx
@@ -9009,16 +10303,18 @@ pub fn x00402fda() -> Cont {
         // 00402fdf or dword ptr [ebp-8],0FFFFFFFFh
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffff8u32) as usize) as *mut u32) = or(
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffff8u32) as usize) as *mut u32) = or(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.ebp + 0xfffffff8u32) as usize) as *mut u32),
+                .add(MACHINE.regs.ebp.wrapping_add(0xfffffff8u32) as usize)
+                as *mut u32),
             0xffffffffu32,
         );
         // 00402fe3 mov [ebp-0Ch],esi
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffff4u32) as usize) as *mut u32) = MACHINE.regs.esi;
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffff4u32) as usize) as *mut u32) =
+            MACHINE.regs.esi;
         // 00402fe6 jmp short 00402FF8h
         Cont(x00402ff8)
     }
@@ -9037,19 +10333,23 @@ pub fn x00402fe8() -> Cont {
         // 00402ff2 mov [ebp-0Ch],esi
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffff4u32) as usize) as *mut u32) = MACHINE.regs.esi;
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffff4u32) as usize) as *mut u32) =
+            MACHINE.regs.esi;
         // 00402ff5 mov [ebp-8],eax
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffff8u32) as usize) as *mut u32) = MACHINE.regs.eax;
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffff8u32) as usize) as *mut u32) =
+            MACHINE.regs.eax;
         // 00402ff8 mov eax,ds:[409970h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((0x409970u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE.memory.add(0x409970u32 as usize) as *mut u32);
         // 00402ffd mov ebx,eax
         MACHINE.regs.ebx = MACHINE.regs.eax;
         // 00402fff cmp ebx,edi
         sub(MACHINE.regs.ebx, MACHINE.regs.edi);
         // 00403001 mov [ebp+8],ebx
-        *(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32) = MACHINE.regs.ebx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize) as *mut u32) = MACHINE.regs.ebx;
         // 00403004 jae short 0040301Fh
         jae(Cont(x00403006), Cont(x0040301f))
     }
@@ -9058,13 +10358,15 @@ pub fn x00402fe8() -> Cont {
 pub fn x00402ff8() -> Cont {
     unsafe {
         // 00402ff8 mov eax,ds:[409970h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((0x409970u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE.memory.add(0x409970u32 as usize) as *mut u32);
         // 00402ffd mov ebx,eax
         MACHINE.regs.ebx = MACHINE.regs.eax;
         // 00402fff cmp ebx,edi
         sub(MACHINE.regs.ebx, MACHINE.regs.edi);
         // 00403001 mov [ebp+8],ebx
-        *(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32) = MACHINE.regs.ebx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize) as *mut u32) = MACHINE.regs.ebx;
         // 00403004 jae short 0040301Fh
         jae(Cont(x00403006), Cont(x0040301f))
     }
@@ -9073,15 +10375,22 @@ pub fn x00402ff8() -> Cont {
 pub fn x00403006() -> Cont {
     unsafe {
         // 00403006 mov ecx,[ebx+4]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.ebx + 0x4u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebx.wrapping_add(0x4u32) as usize)
+            as *mut u32);
         // 00403009 mov edi,[ebx]
-        MACHINE.regs.edi = *(MACHINE.memory.add((MACHINE.regs.ebx + 0x0u32) as usize) as *mut u32);
+        MACHINE.regs.edi = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebx.wrapping_add(0x0u32) as usize)
+            as *mut u32);
         // 0040300b and ecx,[ebp-8]
         MACHINE.regs.ecx = and(
             MACHINE.regs.ecx,
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.ebp + 0xfffffff8u32) as usize) as *mut u32),
+                .add(MACHINE.regs.ebp.wrapping_add(0xfffffff8u32) as usize)
+                as *mut u32),
         );
         // 0040300e and edi,esi
         MACHINE.regs.edi = and(MACHINE.regs.edi, MACHINE.regs.esi);
@@ -9101,10 +10410,13 @@ pub fn x00403014() -> Cont {
             MACHINE.regs.ebx,
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize) as *mut u32),
+                .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize)
+                as *mut u32),
         );
         // 0040301a mov [ebp+8],ebx
-        *(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32) = MACHINE.regs.ebx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize) as *mut u32) = MACHINE.regs.ebx;
         // 0040301d jb short 00403006h
         jb(Cont(x0040301f), Cont(x00403006))
     }
@@ -9117,7 +10429,8 @@ pub fn x0040301f() -> Cont {
             MACHINE.regs.ebx,
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize) as *mut u32),
+                .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize)
+                as *mut u32),
         );
         // 00403022 jne short 0040309Dh
         jne(Cont(x00403024), Cont(x0040309d))
@@ -9131,7 +10444,9 @@ pub fn x00403024() -> Cont {
         // 00403026 cmp ebx,eax
         sub(MACHINE.regs.ebx, MACHINE.regs.eax);
         // 00403028 mov [ebp+8],ebx
-        *(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32) = MACHINE.regs.ebx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize) as *mut u32) = MACHINE.regs.ebx;
         // 0040302b jae short 00403042h
         jae(Cont(x0040302d), Cont(x00403042))
     }
@@ -9142,7 +10457,9 @@ pub fn x00403026() -> Cont {
         // 00403026 cmp ebx,eax
         sub(MACHINE.regs.ebx, MACHINE.regs.eax);
         // 00403028 mov [ebp+8],ebx
-        *(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32) = MACHINE.regs.ebx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize) as *mut u32) = MACHINE.regs.ebx;
         // 0040302b jae short 00403042h
         jae(Cont(x0040302d), Cont(x00403042))
     }
@@ -9151,15 +10468,22 @@ pub fn x00403026() -> Cont {
 pub fn x0040302d() -> Cont {
     unsafe {
         // 0040302d mov ecx,[ebx+4]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.ebx + 0x4u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebx.wrapping_add(0x4u32) as usize)
+            as *mut u32);
         // 00403030 mov edi,[ebx]
-        MACHINE.regs.edi = *(MACHINE.memory.add((MACHINE.regs.ebx + 0x0u32) as usize) as *mut u32);
+        MACHINE.regs.edi = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebx.wrapping_add(0x0u32) as usize)
+            as *mut u32);
         // 00403032 and ecx,[ebp-8]
         MACHINE.regs.ecx = and(
             MACHINE.regs.ecx,
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.ebp + 0xfffffff8u32) as usize) as *mut u32),
+                .add(MACHINE.regs.ebp.wrapping_add(0xfffffff8u32) as usize)
+                as *mut u32),
         );
         // 00403035 and edi,esi
         MACHINE.regs.edi = and(MACHINE.regs.edi, MACHINE.regs.esi);
@@ -9202,7 +10526,8 @@ pub fn x00403044() -> Cont {
             MACHINE.regs.ebx,
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize) as *mut u32),
+                .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize)
+                as *mut u32),
         );
         // 00403047 jae short 0040305Ah
         jae(Cont(x00403049), Cont(x0040305a))
@@ -9213,7 +10538,9 @@ pub fn x00403049() -> Cont {
     unsafe {
         // 00403049 cmp dword ptr [ebx+8],0
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.ebx + 0x8u32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebx.wrapping_add(0x8u32) as usize) as *mut u32),
             0x0u32,
         );
         // 0040304d jne short 00403057h
@@ -9226,7 +10553,9 @@ pub fn x0040304f() -> Cont {
         // 0040304f add ebx,14h
         MACHINE.regs.ebx = add(MACHINE.regs.ebx, 0x14u32);
         // 00403052 mov [ebp+8],ebx
-        *(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32) = MACHINE.regs.ebx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize) as *mut u32) = MACHINE.regs.ebx;
         // 00403055 jmp short 00403044h
         Cont(x00403044)
     }
@@ -9239,7 +10568,8 @@ pub fn x00403057() -> Cont {
             MACHINE.regs.ebx,
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize) as *mut u32),
+                .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize)
+                as *mut u32),
         );
         // 0040305a jne short 00403082h
         jne(Cont(x0040305c), Cont(x00403082))
@@ -9260,7 +10590,9 @@ pub fn x0040305c() -> Cont {
         // 0040305e cmp ebx,eax
         sub(MACHINE.regs.ebx, MACHINE.regs.eax);
         // 00403060 mov [ebp+8],ebx
-        *(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32) = MACHINE.regs.ebx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize) as *mut u32) = MACHINE.regs.ebx;
         // 00403063 jae short 00403072h
         jae(Cont(x00403065), Cont(x00403072))
     }
@@ -9271,7 +10603,9 @@ pub fn x0040305e() -> Cont {
         // 0040305e cmp ebx,eax
         sub(MACHINE.regs.ebx, MACHINE.regs.eax);
         // 00403060 mov [ebp+8],ebx
-        *(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32) = MACHINE.regs.ebx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize) as *mut u32) = MACHINE.regs.ebx;
         // 00403063 jae short 00403072h
         jae(Cont(x00403065), Cont(x00403072))
     }
@@ -9281,7 +10615,9 @@ pub fn x00403065() -> Cont {
     unsafe {
         // 00403065 cmp dword ptr [ebx+8],0
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.ebx + 0x8u32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebx.wrapping_add(0x8u32) as usize) as *mut u32),
             0x0u32,
         );
         // 00403069 jne short 00403070h
@@ -9328,7 +10664,9 @@ pub fn x00403079() -> Cont {
         // 0040307b test ebx,ebx
         and(MACHINE.regs.ebx, MACHINE.regs.ebx);
         // 0040307d mov [ebp+8],ebx
-        *(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32) = MACHINE.regs.ebx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize) as *mut u32) = MACHINE.regs.ebx;
         // 00403080 je short 00403096h
         je(Cont(x00403082), Cont(x00403096))
     }
@@ -9348,14 +10686,24 @@ pub fn x00403088() -> Cont {
         // 00403088 pop ecx
         MACHINE.regs.ecx = pop();
         // 00403089 mov ecx,[ebx+10h]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.ebx + 0x10u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebx.wrapping_add(0x10u32) as usize)
+            as *mut u32);
         // 0040308c mov [ecx],eax
-        *(MACHINE.memory.add((MACHINE.regs.ecx + 0x0u32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ecx.wrapping_add(0x0u32) as usize) as *mut u32) = MACHINE.regs.eax;
         // 0040308e mov eax,[ebx+10h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.ebx + 0x10u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebx.wrapping_add(0x10u32) as usize)
+            as *mut u32);
         // 00403091 cmp dword ptr [eax],0FFFFFFFFh
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u32),
             0xffffffffu32,
         );
         // 00403094 jne short 0040309Dh
@@ -9375,17 +10723,24 @@ pub fn x00403096() -> Cont {
 pub fn x0040309d() -> Cont {
     unsafe {
         // 0040309d mov ds:[409970h],ebx
-        *(MACHINE.memory.add((0x409970u32) as usize) as *mut u32) = MACHINE.regs.ebx;
+        *(MACHINE.memory.add(0x409970u32 as usize) as *mut u32) = MACHINE.regs.ebx;
         // 004030a3 mov eax,[ebx+10h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.ebx + 0x10u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebx.wrapping_add(0x10u32) as usize)
+            as *mut u32);
         // 004030a6 mov edx,[eax]
-        MACHINE.regs.edx = *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u32);
+        MACHINE.regs.edx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize)
+            as *mut u32);
         // 004030a8 cmp edx,0FFFFFFFFh
         sub(MACHINE.regs.edx, 0xffffffffu32);
         // 004030ab mov [ebp-4],edx
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize) as *mut u32) = MACHINE.regs.edx;
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize) as *mut u32) =
+            MACHINE.regs.edx;
         // 004030ae je short 004030C4h
         je(Cont(x004030b0), Cont(x004030c4))
     }
@@ -9394,21 +10749,28 @@ pub fn x0040309d() -> Cont {
 pub fn x004030b0() -> Cont {
     unsafe {
         // 004030b0 mov ecx,[eax+edx*4+0C4h]
-        MACHINE.regs.ecx = *(MACHINE
-            .memory
-            .add((MACHINE.regs.eax + (MACHINE.regs.edx * 4) + 0xc4u32) as usize)
-            as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE.memory.add(
+            MACHINE
+                .regs
+                .eax
+                .wrapping_add((MACHINE.regs.edx * 4))
+                .wrapping_add(0xc4u32) as usize,
+        ) as *mut u32);
         // 004030b7 mov edi,[eax+edx*4+44h]
-        MACHINE.regs.edi = *(MACHINE
-            .memory
-            .add((MACHINE.regs.eax + (MACHINE.regs.edx * 4) + 0x44u32) as usize)
-            as *mut u32);
+        MACHINE.regs.edi = *(MACHINE.memory.add(
+            MACHINE
+                .regs
+                .eax
+                .wrapping_add((MACHINE.regs.edx * 4))
+                .wrapping_add(0x44u32) as usize,
+        ) as *mut u32);
         // 004030bb and ecx,[ebp-8]
         MACHINE.regs.ecx = and(
             MACHINE.regs.ecx,
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.ebp + 0xfffffff8u32) as usize) as *mut u32),
+                .add(MACHINE.regs.ebp.wrapping_add(0xfffffff8u32) as usize)
+                as *mut u32),
         );
         // 004030be and edi,esi
         MACHINE.regs.edi = and(MACHINE.regs.edi, MACHINE.regs.esi);
@@ -9422,40 +10784,49 @@ pub fn x004030b0() -> Cont {
 pub fn x004030c4() -> Cont {
     unsafe {
         // 004030c4 mov edx,[eax+0C4h]
-        MACHINE.regs.edx = *(MACHINE.memory.add((MACHINE.regs.eax + 0xc4u32) as usize) as *mut u32);
+        MACHINE.regs.edx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0xc4u32) as usize)
+            as *mut u32);
         // 004030ca mov esi,[eax+44h]
-        MACHINE.regs.esi = *(MACHINE.memory.add((MACHINE.regs.eax + 0x44u32) as usize) as *mut u32);
+        MACHINE.regs.esi = *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x44u32) as usize)
+            as *mut u32);
         // 004030cd and edx,[ebp-8]
         MACHINE.regs.edx = and(
             MACHINE.regs.edx,
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.ebp + 0xfffffff8u32) as usize) as *mut u32),
+                .add(MACHINE.regs.ebp.wrapping_add(0xfffffff8u32) as usize)
+                as *mut u32),
         );
         // 004030d0 and esi,[ebp-0Ch]
         MACHINE.regs.esi = and(
             MACHINE.regs.esi,
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.ebp + 0xfffffff4u32) as usize) as *mut u32),
+                .add(MACHINE.regs.ebp.wrapping_add(0xfffffff4u32) as usize)
+                as *mut u32),
         );
         // 004030d3 and dword ptr [ebp-4],0
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize) as *mut u32) = and(
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize) as *mut u32) = and(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize) as *mut u32),
+                .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize)
+                as *mut u32),
             0x0u32,
         );
         // 004030d7 lea ecx,[eax+44h]
-        MACHINE.regs.ecx = MACHINE.regs.eax + 0x44u32;
+        MACHINE.regs.ecx = MACHINE.regs.eax.wrapping_add(0x44u32);
         // 004030da or edx,esi
         MACHINE.regs.edx = or(MACHINE.regs.edx, MACHINE.regs.esi);
         // 004030dc mov esi,[ebp-0Ch]
         MACHINE.regs.esi = *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffff4u32) as usize)
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffff4u32) as usize)
             as *mut u32);
         // 004030df jne short 004030F8h
         jne(Cont(x004030e1), Cont(x004030f8))
@@ -9465,7 +10836,10 @@ pub fn x004030c4() -> Cont {
 pub fn x004030e1() -> Cont {
     unsafe {
         // 004030e1 mov edx,[ecx+84h]
-        MACHINE.regs.edx = *(MACHINE.memory.add((MACHINE.regs.ecx + 0x84u32) as usize) as *mut u32);
+        MACHINE.regs.edx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ecx.wrapping_add(0x84u32) as usize)
+            as *mut u32);
         // 004030e7 inc dword ptr [ebp-4]
         todo!();
         // 004030ea and edx,[ebp-8]
@@ -9473,7 +10847,8 @@ pub fn x004030e1() -> Cont {
             MACHINE.regs.edx,
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.ebp + 0xfffffff8u32) as usize) as *mut u32),
+                .add(MACHINE.regs.ebp.wrapping_add(0xfffffff8u32) as usize)
+                as *mut u32),
         );
         // 004030ed add ecx,4
         MACHINE.regs.ecx = add(MACHINE.regs.ecx, 0x4u32);
@@ -9482,7 +10857,9 @@ pub fn x004030e1() -> Cont {
         // 004030f2 and edi,[ecx]
         MACHINE.regs.edi = and(
             MACHINE.regs.edi,
-            *(MACHINE.memory.add((MACHINE.regs.ecx + 0x0u32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ecx.wrapping_add(0x0u32) as usize) as *mut u32),
         );
         // 004030f4 or edx,edi
         MACHINE.regs.edx = or(MACHINE.regs.edx, MACHINE.regs.edi);
@@ -9496,7 +10873,7 @@ pub fn x004030f8() -> Cont {
         // 004030f8 mov edx,[ebp-4]
         MACHINE.regs.edx = *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize)
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize)
             as *mut u32);
         // 004030fb mov ecx,edx
         MACHINE.regs.ecx = MACHINE.regs.edx;
@@ -9505,16 +10882,24 @@ pub fn x004030f8() -> Cont {
         // 004030ff imul ecx,204h
         todo!();
         // 00403105 lea ecx,[ecx+eax+144h]
-        MACHINE.regs.ecx = MACHINE.regs.ecx + (MACHINE.regs.eax * 1) + 0x144u32;
+        MACHINE.regs.ecx = MACHINE
+            .regs
+            .ecx
+            .wrapping_add((MACHINE.regs.eax * 1))
+            .wrapping_add(0x144u32);
         // 0040310c mov [ebp-0Ch],ecx
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffff4u32) as usize) as *mut u32) = MACHINE.regs.ecx;
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffff4u32) as usize) as *mut u32) =
+            MACHINE.regs.ecx;
         // 0040310f mov ecx,[eax+edx*4+44h]
-        MACHINE.regs.ecx = *(MACHINE
-            .memory
-            .add((MACHINE.regs.eax + (MACHINE.regs.edx * 4) + 0x44u32) as usize)
-            as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE.memory.add(
+            MACHINE
+                .regs
+                .eax
+                .wrapping_add((MACHINE.regs.edx * 4))
+                .wrapping_add(0x44u32) as usize,
+        ) as *mut u32);
         // 00403113 and ecx,esi
         MACHINE.regs.ecx = and(MACHINE.regs.ecx, MACHINE.regs.esi);
         // 00403115 jne short 00403124h
@@ -9531,16 +10916,24 @@ pub fn x004030fb() -> Cont {
         // 004030ff imul ecx,204h
         todo!();
         // 00403105 lea ecx,[ecx+eax+144h]
-        MACHINE.regs.ecx = MACHINE.regs.ecx + (MACHINE.regs.eax * 1) + 0x144u32;
+        MACHINE.regs.ecx = MACHINE
+            .regs
+            .ecx
+            .wrapping_add((MACHINE.regs.eax * 1))
+            .wrapping_add(0x144u32);
         // 0040310c mov [ebp-0Ch],ecx
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffff4u32) as usize) as *mut u32) = MACHINE.regs.ecx;
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffff4u32) as usize) as *mut u32) =
+            MACHINE.regs.ecx;
         // 0040310f mov ecx,[eax+edx*4+44h]
-        MACHINE.regs.ecx = *(MACHINE
-            .memory
-            .add((MACHINE.regs.eax + (MACHINE.regs.edx * 4) + 0x44u32) as usize)
-            as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE.memory.add(
+            MACHINE
+                .regs
+                .eax
+                .wrapping_add((MACHINE.regs.edx * 4))
+                .wrapping_add(0x44u32) as usize,
+        ) as *mut u32);
         // 00403113 and ecx,esi
         MACHINE.regs.ecx = and(MACHINE.regs.ecx, MACHINE.regs.esi);
         // 00403115 jne short 00403124h
@@ -9551,10 +10944,13 @@ pub fn x004030fb() -> Cont {
 pub fn x00403117() -> Cont {
     unsafe {
         // 00403117 mov ecx,[eax+edx*4+0C4h]
-        MACHINE.regs.ecx = *(MACHINE
-            .memory
-            .add((MACHINE.regs.eax + (MACHINE.regs.edx * 4) + 0xc4u32) as usize)
-            as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE.memory.add(
+            MACHINE
+                .regs
+                .eax
+                .wrapping_add((MACHINE.regs.edx * 4))
+                .wrapping_add(0xc4u32) as usize,
+        ) as *mut u32);
         // 0040311e push 20h
         push(0x20u32);
         // 00403120 and ecx,[ebp-8]
@@ -9562,7 +10958,8 @@ pub fn x00403117() -> Cont {
             MACHINE.regs.ecx,
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.ebp + 0xfffffff8u32) as usize) as *mut u32),
+                .add(MACHINE.regs.ebp.wrapping_add(0xfffffff8u32) as usize)
+                as *mut u32),
         );
         // 00403123 pop edi
         MACHINE.regs.edi = pop();
@@ -9598,28 +10995,36 @@ pub fn x0040312d() -> Cont {
         // 0040312d mov ecx,[ebp-0Ch]
         MACHINE.regs.ecx = *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffff4u32) as usize)
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffff4u32) as usize)
             as *mut u32);
         // 00403130 mov edx,[ecx+edi*8+4]
-        MACHINE.regs.edx = *(MACHINE
-            .memory
-            .add((MACHINE.regs.ecx + (MACHINE.regs.edi * 8) + 0x4u32) as usize)
-            as *mut u32);
+        MACHINE.regs.edx = *(MACHINE.memory.add(
+            MACHINE
+                .regs
+                .ecx
+                .wrapping_add((MACHINE.regs.edi * 8))
+                .wrapping_add(0x4u32) as usize,
+        ) as *mut u32);
         // 00403134 mov ecx,[edx]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.edx + 0x0u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.edx.wrapping_add(0x0u32) as usize)
+            as *mut u32);
         // 00403136 sub ecx,[ebp-10h]
         MACHINE.regs.ecx = sub(
             MACHINE.regs.ecx,
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.ebp + 0xfffffff0u32) as usize) as *mut u32),
+                .add(MACHINE.regs.ebp.wrapping_add(0xfffffff0u32) as usize)
+                as *mut u32),
         );
         // 00403139 mov esi,ecx
         MACHINE.regs.esi = MACHINE.regs.ecx;
         // 0040313b mov [ebp-8],ecx
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffff8u32) as usize) as *mut u32) = MACHINE.regs.ecx;
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffff8u32) as usize) as *mut u32) =
+            MACHINE.regs.ecx;
         // 0040313e sar esi,4
         todo!();
         // 00403141 dec esi
@@ -9656,11 +11061,16 @@ pub fn x0040314a() -> Cont {
 pub fn x00403152() -> Cont {
     unsafe {
         // 00403152 mov ecx,[edx+4]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.edx + 0x4u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.edx.wrapping_add(0x4u32) as usize)
+            as *mut u32);
         // 00403155 cmp ecx,[edx+8]
         sub(
             MACHINE.regs.ecx,
-            *(MACHINE.memory.add((MACHINE.regs.edx + 0x8u32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.edx.wrapping_add(0x8u32) as usize) as *mut u32),
         );
         // 00403158 jne short 004031BBh
         jne(Cont(x0040315a), Cont(x004031bb))
@@ -9687,29 +11097,40 @@ pub fn x0040315f() -> Cont {
         // 00403168 mov ecx,[ebp-4]
         MACHINE.regs.ecx = *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize)
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize)
             as *mut u32);
         // 0040316b lea edi,[eax+edi+4]
-        MACHINE.regs.edi = MACHINE.regs.eax + (MACHINE.regs.edi * 1) + 0x4u32;
+        MACHINE.regs.edi = MACHINE
+            .regs
+            .eax
+            .wrapping_add((MACHINE.regs.edi * 1))
+            .wrapping_add(0x4u32);
         // 0040316f not ebx
         todo!();
         // 00403171 mov [ebp-14h],ebx
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xffffffecu32) as usize) as *mut u32) = MACHINE.regs.ebx;
+            .add(MACHINE.regs.ebp.wrapping_add(0xffffffecu32) as usize) as *mut u32) =
+            MACHINE.regs.ebx;
         // 00403174 and ebx,[eax+ecx*4+44h]
         MACHINE.regs.ebx = and(
             MACHINE.regs.ebx,
-            *(MACHINE
-                .memory
-                .add((MACHINE.regs.eax + (MACHINE.regs.ecx * 4) + 0x44u32) as usize)
-                as *mut u32),
+            *(MACHINE.memory.add(
+                MACHINE
+                    .regs
+                    .eax
+                    .wrapping_add((MACHINE.regs.ecx * 4))
+                    .wrapping_add(0x44u32) as usize,
+            ) as *mut u32),
         );
         // 00403178 mov [eax+ecx*4+44h],ebx
-        *(MACHINE
-            .memory
-            .add((MACHINE.regs.eax + (MACHINE.regs.ecx * 4) + 0x44u32) as usize)
-            as *mut u32) = MACHINE.regs.ebx;
+        *(MACHINE.memory.add(
+            MACHINE
+                .regs
+                .eax
+                .wrapping_add((MACHINE.regs.ecx * 4))
+                .wrapping_add(0x44u32) as usize,
+        ) as *mut u32) = MACHINE.regs.ebx;
         // 0040317c dec byte ptr [edi]
         todo!();
         // 0040317e jne short 004031B8h
@@ -9720,15 +11141,22 @@ pub fn x0040315f() -> Cont {
 pub fn x00403180() -> Cont {
     unsafe {
         // 00403180 mov ebx,[ebp+8]
-        MACHINE.regs.ebx = *(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.ebx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 00403183 mov ecx,[ebp-14h]
         MACHINE.regs.ecx = *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xffffffecu32) as usize)
+            .add(MACHINE.regs.ebp.wrapping_add(0xffffffecu32) as usize)
             as *mut u32);
         // 00403186 and [ebx],ecx
-        *(MACHINE.memory.add((MACHINE.regs.ebx + 0x0u32) as usize) as *mut u32) = and(
-            *(MACHINE.memory.add((MACHINE.regs.ebx + 0x0u32) as usize) as *mut u32),
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebx.wrapping_add(0x0u32) as usize) as *mut u32) = and(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebx.wrapping_add(0x0u32) as usize) as *mut u32),
             MACHINE.regs.ecx,
         );
         // 00403188 jmp short 004031BBh
@@ -9739,7 +11167,7 @@ pub fn x00403180() -> Cont {
 pub fn x0040318a() -> Cont {
     unsafe {
         // 0040318a lea ecx,[edi-20h]
-        MACHINE.regs.ecx = MACHINE.regs.edi + 0xffffffe0u32;
+        MACHINE.regs.ecx = MACHINE.regs.edi.wrapping_add(0xffffffe0u32);
         // 0040318d mov ebx,80000000h
         MACHINE.regs.ebx = 0x80000000u32;
         // 00403192 shr ebx,cl
@@ -9747,17 +11175,29 @@ pub fn x0040318a() -> Cont {
         // 00403194 mov ecx,[ebp-4]
         MACHINE.regs.ecx = *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize)
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize)
             as *mut u32);
         // 00403197 lea edi,[eax+edi+4]
-        MACHINE.regs.edi = MACHINE.regs.eax + (MACHINE.regs.edi * 1) + 0x4u32;
+        MACHINE.regs.edi = MACHINE
+            .regs
+            .eax
+            .wrapping_add((MACHINE.regs.edi * 1))
+            .wrapping_add(0x4u32);
         // 0040319b lea ecx,[eax+ecx*4+0C4h]
-        MACHINE.regs.ecx = MACHINE.regs.eax + (MACHINE.regs.ecx * 4) + 0xc4u32;
+        MACHINE.regs.ecx = MACHINE
+            .regs
+            .eax
+            .wrapping_add((MACHINE.regs.ecx * 4))
+            .wrapping_add(0xc4u32);
         // 004031a2 not ebx
         todo!();
         // 004031a4 and [ecx],ebx
-        *(MACHINE.memory.add((MACHINE.regs.ecx + 0x0u32) as usize) as *mut u32) = and(
-            *(MACHINE.memory.add((MACHINE.regs.ecx + 0x0u32) as usize) as *mut u32),
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ecx.wrapping_add(0x0u32) as usize) as *mut u32) = and(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ecx.wrapping_add(0x0u32) as usize) as *mut u32),
             MACHINE.regs.ebx,
         );
         // 004031a6 dec byte ptr [edi]
@@ -9765,7 +11205,8 @@ pub fn x0040318a() -> Cont {
         // 004031a8 mov [ebp-14h],ebx
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xffffffecu32) as usize) as *mut u32) = MACHINE.regs.ebx;
+            .add(MACHINE.regs.ebp.wrapping_add(0xffffffecu32) as usize) as *mut u32) =
+            MACHINE.regs.ebx;
         // 004031ab jne short 004031B8h
         jne(Cont(x004031ad), Cont(x004031b8))
     }
@@ -9774,15 +11215,22 @@ pub fn x0040318a() -> Cont {
 pub fn x004031ad() -> Cont {
     unsafe {
         // 004031ad mov ebx,[ebp+8]
-        MACHINE.regs.ebx = *(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.ebx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 004031b0 mov ecx,[ebp-14h]
         MACHINE.regs.ecx = *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xffffffecu32) as usize)
+            .add(MACHINE.regs.ebp.wrapping_add(0xffffffecu32) as usize)
             as *mut u32);
         // 004031b3 and [ebx+4],ecx
-        *(MACHINE.memory.add((MACHINE.regs.ebx + 0x4u32) as usize) as *mut u32) = and(
-            *(MACHINE.memory.add((MACHINE.regs.ebx + 0x4u32) as usize) as *mut u32),
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebx.wrapping_add(0x4u32) as usize) as *mut u32) = and(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebx.wrapping_add(0x4u32) as usize) as *mut u32),
             MACHINE.regs.ecx,
         );
         // 004031b6 jmp short 004031BBh
@@ -9793,26 +11241,46 @@ pub fn x004031ad() -> Cont {
 pub fn x004031b8() -> Cont {
     unsafe {
         // 004031b8 mov ebx,[ebp+8]
-        MACHINE.regs.ebx = *(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.ebx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 004031bb mov ecx,[edx+8]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.edx + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.edx.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 004031be mov edi,[edx+4]
-        MACHINE.regs.edi = *(MACHINE.memory.add((MACHINE.regs.edx + 0x4u32) as usize) as *mut u32);
+        MACHINE.regs.edi = *(MACHINE
+            .memory
+            .add(MACHINE.regs.edx.wrapping_add(0x4u32) as usize)
+            as *mut u32);
         // 004031c1 cmp dword ptr [ebp-8],0
         sub(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.ebp + 0xfffffff8u32) as usize) as *mut u32),
+                .add(MACHINE.regs.ebp.wrapping_add(0xfffffff8u32) as usize)
+                as *mut u32),
             0x0u32,
         );
         // 004031c5 mov [ecx+4],edi
-        *(MACHINE.memory.add((MACHINE.regs.ecx + 0x4u32) as usize) as *mut u32) = MACHINE.regs.edi;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ecx.wrapping_add(0x4u32) as usize) as *mut u32) = MACHINE.regs.edi;
         // 004031c8 mov ecx,[edx+4]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.edx + 0x4u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.edx.wrapping_add(0x4u32) as usize)
+            as *mut u32);
         // 004031cb mov edi,[edx+8]
-        MACHINE.regs.edi = *(MACHINE.memory.add((MACHINE.regs.edx + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.edi = *(MACHINE
+            .memory
+            .add(MACHINE.regs.edx.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 004031ce mov [ecx+8],edi
-        *(MACHINE.memory.add((MACHINE.regs.ecx + 0x8u32) as usize) as *mut u32) = MACHINE.regs.edi;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ecx.wrapping_add(0x8u32) as usize) as *mut u32) = MACHINE.regs.edi;
         // 004031d1 je near ptr 0040326Bh
         je(Cont(x004031d7), Cont(x0040326b))
     }
@@ -9821,24 +11289,41 @@ pub fn x004031b8() -> Cont {
 pub fn x004031bb() -> Cont {
     unsafe {
         // 004031bb mov ecx,[edx+8]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.edx + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.edx.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 004031be mov edi,[edx+4]
-        MACHINE.regs.edi = *(MACHINE.memory.add((MACHINE.regs.edx + 0x4u32) as usize) as *mut u32);
+        MACHINE.regs.edi = *(MACHINE
+            .memory
+            .add(MACHINE.regs.edx.wrapping_add(0x4u32) as usize)
+            as *mut u32);
         // 004031c1 cmp dword ptr [ebp-8],0
         sub(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.ebp + 0xfffffff8u32) as usize) as *mut u32),
+                .add(MACHINE.regs.ebp.wrapping_add(0xfffffff8u32) as usize)
+                as *mut u32),
             0x0u32,
         );
         // 004031c5 mov [ecx+4],edi
-        *(MACHINE.memory.add((MACHINE.regs.ecx + 0x4u32) as usize) as *mut u32) = MACHINE.regs.edi;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ecx.wrapping_add(0x4u32) as usize) as *mut u32) = MACHINE.regs.edi;
         // 004031c8 mov ecx,[edx+4]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.edx + 0x4u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.edx.wrapping_add(0x4u32) as usize)
+            as *mut u32);
         // 004031cb mov edi,[edx+8]
-        MACHINE.regs.edi = *(MACHINE.memory.add((MACHINE.regs.edx + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.edi = *(MACHINE
+            .memory
+            .add(MACHINE.regs.edx.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 004031ce mov [ecx+8],edi
-        *(MACHINE.memory.add((MACHINE.regs.ecx + 0x8u32) as usize) as *mut u32) = MACHINE.regs.edi;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ecx.wrapping_add(0x8u32) as usize) as *mut u32) = MACHINE.regs.edi;
         // 004031d1 je near ptr 0040326Bh
         je(Cont(x004031d7), Cont(x0040326b))
     }
@@ -9849,31 +11334,54 @@ pub fn x004031d7() -> Cont {
         // 004031d7 mov ecx,[ebp-0Ch]
         MACHINE.regs.ecx = *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffff4u32) as usize)
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffff4u32) as usize)
             as *mut u32);
         // 004031da mov edi,[ecx+esi*8+4]
-        MACHINE.regs.edi = *(MACHINE
-            .memory
-            .add((MACHINE.regs.ecx + (MACHINE.regs.esi * 8) + 0x4u32) as usize)
-            as *mut u32);
+        MACHINE.regs.edi = *(MACHINE.memory.add(
+            MACHINE
+                .regs
+                .ecx
+                .wrapping_add((MACHINE.regs.esi * 8))
+                .wrapping_add(0x4u32) as usize,
+        ) as *mut u32);
         // 004031de lea ecx,[ecx+esi*8]
-        MACHINE.regs.ecx = MACHINE.regs.ecx + (MACHINE.regs.esi * 8) + 0x0u32;
+        MACHINE.regs.ecx = MACHINE
+            .regs
+            .ecx
+            .wrapping_add((MACHINE.regs.esi * 8))
+            .wrapping_add(0x0u32);
         // 004031e1 mov [edx+4],edi
-        *(MACHINE.memory.add((MACHINE.regs.edx + 0x4u32) as usize) as *mut u32) = MACHINE.regs.edi;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.edx.wrapping_add(0x4u32) as usize) as *mut u32) = MACHINE.regs.edi;
         // 004031e4 mov [edx+8],ecx
-        *(MACHINE.memory.add((MACHINE.regs.edx + 0x8u32) as usize) as *mut u32) = MACHINE.regs.ecx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.edx.wrapping_add(0x8u32) as usize) as *mut u32) = MACHINE.regs.ecx;
         // 004031e7 mov [ecx+4],edx
-        *(MACHINE.memory.add((MACHINE.regs.ecx + 0x4u32) as usize) as *mut u32) = MACHINE.regs.edx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ecx.wrapping_add(0x4u32) as usize) as *mut u32) = MACHINE.regs.edx;
         // 004031ea mov ecx,[edx+4]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.edx + 0x4u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.edx.wrapping_add(0x4u32) as usize)
+            as *mut u32);
         // 004031ed mov [ecx+8],edx
-        *(MACHINE.memory.add((MACHINE.regs.ecx + 0x8u32) as usize) as *mut u32) = MACHINE.regs.edx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ecx.wrapping_add(0x8u32) as usize) as *mut u32) = MACHINE.regs.edx;
         // 004031f0 mov ecx,[edx+4]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.edx + 0x4u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.edx.wrapping_add(0x4u32) as usize)
+            as *mut u32);
         // 004031f3 cmp ecx,[edx+8]
         sub(
             MACHINE.regs.ecx,
-            *(MACHINE.memory.add((MACHINE.regs.edx + 0x8u32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.edx.wrapping_add(0x8u32) as usize) as *mut u32),
         );
         // 004031f6 jne short 0040325Ch
         jne(Cont(x004031f8), Cont(x0040325c))
@@ -9884,15 +11392,20 @@ pub fn x004031f8() -> Cont {
     unsafe {
         // 004031f8 mov cl,[esi+eax+4]
         MACHINE.regs.set_cl(
-            *(MACHINE
-                .memory
-                .add((MACHINE.regs.esi + (MACHINE.regs.eax * 1) + 0x4u32) as usize)
-                as *mut u8),
+            *(MACHINE.memory.add(
+                MACHINE
+                    .regs
+                    .esi
+                    .wrapping_add((MACHINE.regs.eax * 1))
+                    .wrapping_add(0x4u32) as usize,
+            ) as *mut u8),
         );
         // 004031fc cmp esi,20h
         sub(MACHINE.regs.esi, 0x20u32);
         // 004031ff mov [ebp+0Bh],cl
-        *(MACHINE.memory.add((MACHINE.regs.ebp + 0xbu32) as usize) as *mut u8) =
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0xbu32) as usize) as *mut u8) =
             MACHINE.regs.get_cl();
         // 00403202 jge short 0040322Dh
         jge(Cont(x00403204), Cont(x0040322d))
@@ -9905,14 +11418,19 @@ pub fn x00403204() -> Cont {
         todo!();
         // 00403206 cmp byte ptr [ebp+0Bh],0
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.ebp + 0xbu32) as usize) as *mut u8),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0xbu32) as usize) as *mut u8),
             0x0u8,
         );
         // 0040320a mov [esi+eax+4],cl
-        *(MACHINE
-            .memory
-            .add((MACHINE.regs.esi + (MACHINE.regs.eax * 1) + 0x4u32) as usize)
-            as *mut u8) = MACHINE.regs.get_cl();
+        *(MACHINE.memory.add(
+            MACHINE
+                .regs
+                .esi
+                .wrapping_add((MACHINE.regs.eax * 1))
+                .wrapping_add(0x4u32) as usize,
+        ) as *mut u8) = MACHINE.regs.get_cl();
         // 0040320e jne short 0040321Bh
         jne(Cont(x00403210), Cont(x0040321b))
     }
@@ -9927,8 +11445,12 @@ pub fn x00403210() -> Cont {
         // 00403217 shr edi,cl
         MACHINE.regs.edi = shr(MACHINE.regs.edi, MACHINE.regs.get_cl());
         // 00403219 or [ebx],edi
-        *(MACHINE.memory.add((MACHINE.regs.ebx + 0x0u32) as usize) as *mut u32) = or(
-            *(MACHINE.memory.add((MACHINE.regs.ebx + 0x0u32) as usize) as *mut u32),
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebx.wrapping_add(0x0u32) as usize) as *mut u32) = or(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebx.wrapping_add(0x0u32) as usize) as *mut u32),
             MACHINE.regs.edi,
         );
         // 0040321b mov edi,80000000h
@@ -9940,17 +11462,23 @@ pub fn x00403210() -> Cont {
         // 00403224 mov ecx,[ebp-4]
         MACHINE.regs.ecx = *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize)
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize)
             as *mut u32);
         // 00403227 or [eax+ecx*4+44h],edi
-        *(MACHINE
-            .memory
-            .add((MACHINE.regs.eax + (MACHINE.regs.ecx * 4) + 0x44u32) as usize)
-            as *mut u32) = or(
-            *(MACHINE
-                .memory
-                .add((MACHINE.regs.eax + (MACHINE.regs.ecx * 4) + 0x44u32) as usize)
-                as *mut u32),
+        *(MACHINE.memory.add(
+            MACHINE
+                .regs
+                .eax
+                .wrapping_add((MACHINE.regs.ecx * 4))
+                .wrapping_add(0x44u32) as usize,
+        ) as *mut u32) = or(
+            *(MACHINE.memory.add(
+                MACHINE
+                    .regs
+                    .eax
+                    .wrapping_add((MACHINE.regs.ecx * 4))
+                    .wrapping_add(0x44u32) as usize,
+            ) as *mut u32),
             MACHINE.regs.edi,
         );
         // 0040322b jmp short 0040325Ch
@@ -9969,17 +11497,23 @@ pub fn x0040321b() -> Cont {
         // 00403224 mov ecx,[ebp-4]
         MACHINE.regs.ecx = *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize)
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize)
             as *mut u32);
         // 00403227 or [eax+ecx*4+44h],edi
-        *(MACHINE
-            .memory
-            .add((MACHINE.regs.eax + (MACHINE.regs.ecx * 4) + 0x44u32) as usize)
-            as *mut u32) = or(
-            *(MACHINE
-                .memory
-                .add((MACHINE.regs.eax + (MACHINE.regs.ecx * 4) + 0x44u32) as usize)
-                as *mut u32),
+        *(MACHINE.memory.add(
+            MACHINE
+                .regs
+                .eax
+                .wrapping_add((MACHINE.regs.ecx * 4))
+                .wrapping_add(0x44u32) as usize,
+        ) as *mut u32) = or(
+            *(MACHINE.memory.add(
+                MACHINE
+                    .regs
+                    .eax
+                    .wrapping_add((MACHINE.regs.ecx * 4))
+                    .wrapping_add(0x44u32) as usize,
+            ) as *mut u32),
             MACHINE.regs.edi,
         );
         // 0040322b jmp short 0040325Ch
@@ -9993,14 +11527,19 @@ pub fn x0040322d() -> Cont {
         todo!();
         // 0040322f cmp byte ptr [ebp+0Bh],0
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.ebp + 0xbu32) as usize) as *mut u8),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0xbu32) as usize) as *mut u8),
             0x0u8,
         );
         // 00403233 mov [esi+eax+4],cl
-        *(MACHINE
-            .memory
-            .add((MACHINE.regs.esi + (MACHINE.regs.eax * 1) + 0x4u32) as usize)
-            as *mut u8) = MACHINE.regs.get_cl();
+        *(MACHINE.memory.add(
+            MACHINE
+                .regs
+                .esi
+                .wrapping_add((MACHINE.regs.eax * 1))
+                .wrapping_add(0x4u32) as usize,
+        ) as *mut u8) = MACHINE.regs.get_cl();
         // 00403237 jne short 00403246h
         jne(Cont(x00403239), Cont(x00403246))
     }
@@ -10009,38 +11548,50 @@ pub fn x0040322d() -> Cont {
 pub fn x00403239() -> Cont {
     unsafe {
         // 00403239 lea ecx,[esi-20h]
-        MACHINE.regs.ecx = MACHINE.regs.esi + 0xffffffe0u32;
+        MACHINE.regs.ecx = MACHINE.regs.esi.wrapping_add(0xffffffe0u32);
         // 0040323c mov edi,80000000h
         MACHINE.regs.edi = 0x80000000u32;
         // 00403241 shr edi,cl
         MACHINE.regs.edi = shr(MACHINE.regs.edi, MACHINE.regs.get_cl());
         // 00403243 or [ebx+4],edi
-        *(MACHINE.memory.add((MACHINE.regs.ebx + 0x4u32) as usize) as *mut u32) = or(
-            *(MACHINE.memory.add((MACHINE.regs.ebx + 0x4u32) as usize) as *mut u32),
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebx.wrapping_add(0x4u32) as usize) as *mut u32) = or(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebx.wrapping_add(0x4u32) as usize) as *mut u32),
             MACHINE.regs.edi,
         );
         // 00403246 mov ecx,[ebp-4]
         MACHINE.regs.ecx = *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize)
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize)
             as *mut u32);
         // 00403249 lea edi,[eax+ecx*4+0C4h]
-        MACHINE.regs.edi = MACHINE.regs.eax + (MACHINE.regs.ecx * 4) + 0xc4u32;
+        MACHINE.regs.edi = MACHINE
+            .regs
+            .eax
+            .wrapping_add((MACHINE.regs.ecx * 4))
+            .wrapping_add(0xc4u32);
         // 00403250 lea ecx,[esi-20h]
-        MACHINE.regs.ecx = MACHINE.regs.esi + 0xffffffe0u32;
+        MACHINE.regs.ecx = MACHINE.regs.esi.wrapping_add(0xffffffe0u32);
         // 00403253 mov esi,80000000h
         MACHINE.regs.esi = 0x80000000u32;
         // 00403258 shr esi,cl
         MACHINE.regs.esi = shr(MACHINE.regs.esi, MACHINE.regs.get_cl());
         // 0040325a or [edi],esi
-        *(MACHINE.memory.add((MACHINE.regs.edi + 0x0u32) as usize) as *mut u32) = or(
-            *(MACHINE.memory.add((MACHINE.regs.edi + 0x0u32) as usize) as *mut u32),
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.edi.wrapping_add(0x0u32) as usize) as *mut u32) = or(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.edi.wrapping_add(0x0u32) as usize) as *mut u32),
             MACHINE.regs.esi,
         );
         // 0040325c mov ecx,[ebp-8]
         MACHINE.regs.ecx = *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffff8u32) as usize)
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffff8u32) as usize)
             as *mut u32);
         // 0040325f test ecx,ecx
         and(MACHINE.regs.ecx, MACHINE.regs.ecx);
@@ -10054,25 +11605,33 @@ pub fn x00403246() -> Cont {
         // 00403246 mov ecx,[ebp-4]
         MACHINE.regs.ecx = *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize)
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize)
             as *mut u32);
         // 00403249 lea edi,[eax+ecx*4+0C4h]
-        MACHINE.regs.edi = MACHINE.regs.eax + (MACHINE.regs.ecx * 4) + 0xc4u32;
+        MACHINE.regs.edi = MACHINE
+            .regs
+            .eax
+            .wrapping_add((MACHINE.regs.ecx * 4))
+            .wrapping_add(0xc4u32);
         // 00403250 lea ecx,[esi-20h]
-        MACHINE.regs.ecx = MACHINE.regs.esi + 0xffffffe0u32;
+        MACHINE.regs.ecx = MACHINE.regs.esi.wrapping_add(0xffffffe0u32);
         // 00403253 mov esi,80000000h
         MACHINE.regs.esi = 0x80000000u32;
         // 00403258 shr esi,cl
         MACHINE.regs.esi = shr(MACHINE.regs.esi, MACHINE.regs.get_cl());
         // 0040325a or [edi],esi
-        *(MACHINE.memory.add((MACHINE.regs.edi + 0x0u32) as usize) as *mut u32) = or(
-            *(MACHINE.memory.add((MACHINE.regs.edi + 0x0u32) as usize) as *mut u32),
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.edi.wrapping_add(0x0u32) as usize) as *mut u32) = or(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.edi.wrapping_add(0x0u32) as usize) as *mut u32),
             MACHINE.regs.esi,
         );
         // 0040325c mov ecx,[ebp-8]
         MACHINE.regs.ecx = *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffff8u32) as usize)
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffff8u32) as usize)
             as *mut u32);
         // 0040325f test ecx,ecx
         and(MACHINE.regs.ecx, MACHINE.regs.ecx);
@@ -10086,7 +11645,7 @@ pub fn x0040325c() -> Cont {
         // 0040325c mov ecx,[ebp-8]
         MACHINE.regs.ecx = *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffff8u32) as usize)
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffff8u32) as usize)
             as *mut u32);
         // 0040325f test ecx,ecx
         and(MACHINE.regs.ecx, MACHINE.regs.ecx);
@@ -10107,12 +11666,17 @@ pub fn x0040325f() -> Cont {
 pub fn x00403263() -> Cont {
     unsafe {
         // 00403263 mov [edx],ecx
-        *(MACHINE.memory.add((MACHINE.regs.edx + 0x0u32) as usize) as *mut u32) = MACHINE.regs.ecx;
-        // 00403265 mov [ecx+edx-4],ecx
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ecx + (MACHINE.regs.edx * 1) + 0xfffffffcu32) as usize)
-            as *mut u32) = MACHINE.regs.ecx;
+            .add(MACHINE.regs.edx.wrapping_add(0x0u32) as usize) as *mut u32) = MACHINE.regs.ecx;
+        // 00403265 mov [ecx+edx-4],ecx
+        *(MACHINE.memory.add(
+            MACHINE
+                .regs
+                .ecx
+                .wrapping_add((MACHINE.regs.edx * 1))
+                .wrapping_add(0xfffffffcu32) as usize,
+        ) as *mut u32) = MACHINE.regs.ecx;
         // 00403269 jmp short 0040326Eh
         Cont(x0040326e)
     }
@@ -10123,37 +11687,47 @@ pub fn x0040326b() -> Cont {
         // 0040326b mov ecx,[ebp-8]
         MACHINE.regs.ecx = *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffff8u32) as usize)
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffff8u32) as usize)
             as *mut u32);
         // 0040326e mov esi,[ebp-10h]
         MACHINE.regs.esi = *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffff0u32) as usize)
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffff0u32) as usize)
             as *mut u32);
         // 00403271 add edx,ecx
         MACHINE.regs.edx = add(MACHINE.regs.edx, MACHINE.regs.ecx);
         // 00403273 lea ecx,[esi+1]
-        MACHINE.regs.ecx = MACHINE.regs.esi + 0x1u32;
+        MACHINE.regs.ecx = MACHINE.regs.esi.wrapping_add(0x1u32);
         // 00403276 mov [edx],ecx
-        *(MACHINE.memory.add((MACHINE.regs.edx + 0x0u32) as usize) as *mut u32) = MACHINE.regs.ecx;
-        // 00403278 mov [edx+esi-4],ecx
         *(MACHINE
             .memory
-            .add((MACHINE.regs.edx + (MACHINE.regs.esi * 1) + 0xfffffffcu32) as usize)
-            as *mut u32) = MACHINE.regs.ecx;
+            .add(MACHINE.regs.edx.wrapping_add(0x0u32) as usize) as *mut u32) = MACHINE.regs.ecx;
+        // 00403278 mov [edx+esi-4],ecx
+        *(MACHINE.memory.add(
+            MACHINE
+                .regs
+                .edx
+                .wrapping_add((MACHINE.regs.esi * 1))
+                .wrapping_add(0xfffffffcu32) as usize,
+        ) as *mut u32) = MACHINE.regs.ecx;
         // 0040327c mov esi,[ebp-0Ch]
         MACHINE.regs.esi = *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffff4u32) as usize)
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffff4u32) as usize)
             as *mut u32);
         // 0040327f mov ecx,[esi]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize)
+            as *mut u32);
         // 00403281 test ecx,ecx
         and(MACHINE.regs.ecx, MACHINE.regs.ecx);
         // 00403283 lea edi,[ecx+1]
-        MACHINE.regs.edi = MACHINE.regs.ecx + 0x1u32;
+        MACHINE.regs.edi = MACHINE.regs.ecx.wrapping_add(0x1u32);
         // 00403286 mov [esi],edi
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u32) = MACHINE.regs.edi;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize) as *mut u32) = MACHINE.regs.edi;
         // 00403288 jne short 004032A4h
         jne(Cont(x0040328a), Cont(x004032a4))
     }
@@ -10164,32 +11738,42 @@ pub fn x0040326e() -> Cont {
         // 0040326e mov esi,[ebp-10h]
         MACHINE.regs.esi = *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffff0u32) as usize)
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffff0u32) as usize)
             as *mut u32);
         // 00403271 add edx,ecx
         MACHINE.regs.edx = add(MACHINE.regs.edx, MACHINE.regs.ecx);
         // 00403273 lea ecx,[esi+1]
-        MACHINE.regs.ecx = MACHINE.regs.esi + 0x1u32;
+        MACHINE.regs.ecx = MACHINE.regs.esi.wrapping_add(0x1u32);
         // 00403276 mov [edx],ecx
-        *(MACHINE.memory.add((MACHINE.regs.edx + 0x0u32) as usize) as *mut u32) = MACHINE.regs.ecx;
-        // 00403278 mov [edx+esi-4],ecx
         *(MACHINE
             .memory
-            .add((MACHINE.regs.edx + (MACHINE.regs.esi * 1) + 0xfffffffcu32) as usize)
-            as *mut u32) = MACHINE.regs.ecx;
+            .add(MACHINE.regs.edx.wrapping_add(0x0u32) as usize) as *mut u32) = MACHINE.regs.ecx;
+        // 00403278 mov [edx+esi-4],ecx
+        *(MACHINE.memory.add(
+            MACHINE
+                .regs
+                .edx
+                .wrapping_add((MACHINE.regs.esi * 1))
+                .wrapping_add(0xfffffffcu32) as usize,
+        ) as *mut u32) = MACHINE.regs.ecx;
         // 0040327c mov esi,[ebp-0Ch]
         MACHINE.regs.esi = *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffff4u32) as usize)
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffff4u32) as usize)
             as *mut u32);
         // 0040327f mov ecx,[esi]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize)
+            as *mut u32);
         // 00403281 test ecx,ecx
         and(MACHINE.regs.ecx, MACHINE.regs.ecx);
         // 00403283 lea edi,[ecx+1]
-        MACHINE.regs.edi = MACHINE.regs.ecx + 0x1u32;
+        MACHINE.regs.edi = MACHINE.regs.ecx.wrapping_add(0x1u32);
         // 00403286 mov [esi],edi
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u32) = MACHINE.regs.edi;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize) as *mut u32) = MACHINE.regs.edi;
         // 00403288 jne short 004032A4h
         jne(Cont(x0040328a), Cont(x004032a4))
     }
@@ -10200,7 +11784,7 @@ pub fn x0040328a() -> Cont {
         // 0040328a cmp ebx,ds:[409974h]
         sub(
             MACHINE.regs.ebx,
-            *(MACHINE.memory.add((0x409974u32) as usize) as *mut u32),
+            *(MACHINE.memory.add(0x409974u32 as usize) as *mut u32),
         );
         // 00403290 jne short 004032A4h
         jne(Cont(x00403292), Cont(x004032a4))
@@ -10212,12 +11796,12 @@ pub fn x00403292() -> Cont {
         // 00403292 mov ecx,[ebp-4]
         MACHINE.regs.ecx = *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize)
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize)
             as *mut u32);
         // 00403295 cmp ecx,ds:[40996Ch]
         sub(
             MACHINE.regs.ecx,
-            *(MACHINE.memory.add((0x40996cu32) as usize) as *mut u32),
+            *(MACHINE.memory.add(0x40996cu32 as usize) as *mut u32),
         );
         // 0040329b jne short 004032A4h
         jne(Cont(x0040329d), Cont(x004032a4))
@@ -10227,19 +11811,21 @@ pub fn x00403292() -> Cont {
 pub fn x0040329d() -> Cont {
     unsafe {
         // 0040329d and dword ptr ds:[409974h],0
-        *(MACHINE.memory.add((0x409974u32) as usize) as *mut u32) = and(
-            *(MACHINE.memory.add((0x409974u32) as usize) as *mut u32),
+        *(MACHINE.memory.add(0x409974u32 as usize) as *mut u32) = and(
+            *(MACHINE.memory.add(0x409974u32 as usize) as *mut u32),
             0x0u32,
         );
         // 004032a4 mov ecx,[ebp-4]
         MACHINE.regs.ecx = *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize)
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize)
             as *mut u32);
         // 004032a7 mov [eax],ecx
-        *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u32) = MACHINE.regs.ecx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u32) = MACHINE.regs.ecx;
         // 004032a9 lea eax,[edx+4]
-        MACHINE.regs.eax = MACHINE.regs.edx + 0x4u32;
+        MACHINE.regs.eax = MACHINE.regs.edx.wrapping_add(0x4u32);
         // 004032ac pop edi
         MACHINE.regs.edi = pop();
         // 004032ad pop esi
@@ -10258,12 +11844,14 @@ pub fn x004032a4() -> Cont {
         // 004032a4 mov ecx,[ebp-4]
         MACHINE.regs.ecx = *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize)
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize)
             as *mut u32);
         // 004032a7 mov [eax],ecx
-        *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u32) = MACHINE.regs.ecx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u32) = MACHINE.regs.ecx;
         // 004032a9 lea eax,[edx+4]
-        MACHINE.regs.eax = MACHINE.regs.edx + 0x4u32;
+        MACHINE.regs.eax = MACHINE.regs.edx.wrapping_add(0x4u32);
         // 004032ac pop edi
         MACHINE.regs.edi = pop();
         // 004032ad pop esi
@@ -10295,9 +11883,9 @@ pub fn x004032ac() -> Cont {
 pub fn x004032b1() -> Cont {
     unsafe {
         // 004032b1 mov eax,ds:[409978h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((0x409978u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE.memory.add(0x409978u32 as usize) as *mut u32);
         // 004032b6 mov ecx,ds:[409968h]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((0x409968u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE.memory.add(0x409968u32 as usize) as *mut u32);
         // 004032bc push esi
         push(MACHINE.regs.esi);
         // 004032bd push edi
@@ -10314,17 +11902,21 @@ pub fn x004032b1() -> Cont {
 pub fn x004032c4() -> Cont {
     unsafe {
         // 004032c4 lea eax,[ecx+ecx*4+50h]
-        MACHINE.regs.eax = MACHINE.regs.ecx + (MACHINE.regs.ecx * 4) + 0x50u32;
+        MACHINE.regs.eax = MACHINE
+            .regs
+            .ecx
+            .wrapping_add((MACHINE.regs.ecx * 4))
+            .wrapping_add(0x50u32);
         // 004032c8 shl eax,2
         MACHINE.regs.eax = shl(MACHINE.regs.eax, 0x2u8);
         // 004032cb push eax
         push(MACHINE.regs.eax);
         // 004032cc push dword ptr ds:[40997Ch]
-        push(*(MACHINE.memory.add((0x40997cu32) as usize) as *mut u32));
+        push(*(MACHINE.memory.add(0x40997cu32 as usize) as *mut u32));
         // 004032d2 push edi
         push(MACHINE.regs.edi);
         // 004032d3 push dword ptr ds:[409984h]
-        push(*(MACHINE.memory.add((0x409984u32) as usize) as *mut u32));
+        push(*(MACHINE.memory.add(0x409984u32 as usize) as *mut u32));
         // 004032d9 call dword ptr ds:[40607Ch]
         call(0x4032df, Cont(kernel32::stdcall_HeapReAlloc))
     }
@@ -10342,26 +11934,34 @@ pub fn x004032df() -> Cont {
 pub fn x004032e3() -> Cont {
     unsafe {
         // 004032e3 add dword ptr ds:[409968h],10h
-        *(MACHINE.memory.add((0x409968u32) as usize) as *mut u32) = add(
-            *(MACHINE.memory.add((0x409968u32) as usize) as *mut u32),
+        *(MACHINE.memory.add(0x409968u32 as usize) as *mut u32) = add(
+            *(MACHINE.memory.add(0x409968u32 as usize) as *mut u32),
             0x10u32,
         );
         // 004032ea mov ds:[40997Ch],eax
-        *(MACHINE.memory.add((0x40997cu32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE.memory.add(0x40997cu32 as usize) as *mut u32) = MACHINE.regs.eax;
         // 004032ef mov eax,ds:[409978h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((0x409978u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE.memory.add(0x409978u32 as usize) as *mut u32);
         // 004032f4 mov ecx,ds:[40997Ch]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((0x40997cu32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE.memory.add(0x40997cu32 as usize) as *mut u32);
         // 004032fa push 41C4h
         push(0x41c4u32);
         // 004032ff push 8
         push(0x8u32);
         // 00403301 lea eax,[eax+eax*4]
-        MACHINE.regs.eax = MACHINE.regs.eax + (MACHINE.regs.eax * 4) + 0x0u32;
+        MACHINE.regs.eax = MACHINE
+            .regs
+            .eax
+            .wrapping_add((MACHINE.regs.eax * 4))
+            .wrapping_add(0x0u32);
         // 00403304 push dword ptr ds:[409984h]
-        push(*(MACHINE.memory.add((0x409984u32) as usize) as *mut u32));
+        push(*(MACHINE.memory.add(0x409984u32 as usize) as *mut u32));
         // 0040330a lea esi,[ecx+eax*4]
-        MACHINE.regs.esi = MACHINE.regs.ecx + (MACHINE.regs.eax * 4) + 0x0u32;
+        MACHINE.regs.esi = MACHINE
+            .regs
+            .ecx
+            .wrapping_add((MACHINE.regs.eax * 4))
+            .wrapping_add(0x0u32);
         // 0040330d call dword ptr ds:[406028h]
         call(0x403313, Cont(kernel32::stdcall_HeapAlloc))
     }
@@ -10370,17 +11970,25 @@ pub fn x004032e3() -> Cont {
 pub fn x004032f4() -> Cont {
     unsafe {
         // 004032f4 mov ecx,ds:[40997Ch]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((0x40997cu32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE.memory.add(0x40997cu32 as usize) as *mut u32);
         // 004032fa push 41C4h
         push(0x41c4u32);
         // 004032ff push 8
         push(0x8u32);
         // 00403301 lea eax,[eax+eax*4]
-        MACHINE.regs.eax = MACHINE.regs.eax + (MACHINE.regs.eax * 4) + 0x0u32;
+        MACHINE.regs.eax = MACHINE
+            .regs
+            .eax
+            .wrapping_add((MACHINE.regs.eax * 4))
+            .wrapping_add(0x0u32);
         // 00403304 push dword ptr ds:[409984h]
-        push(*(MACHINE.memory.add((0x409984u32) as usize) as *mut u32));
+        push(*(MACHINE.memory.add(0x409984u32 as usize) as *mut u32));
         // 0040330a lea esi,[ecx+eax*4]
-        MACHINE.regs.esi = MACHINE.regs.ecx + (MACHINE.regs.eax * 4) + 0x0u32;
+        MACHINE.regs.esi = MACHINE
+            .regs
+            .ecx
+            .wrapping_add((MACHINE.regs.eax * 4))
+            .wrapping_add(0x0u32);
         // 0040330d call dword ptr ds:[406028h]
         call(0x403313, Cont(kernel32::stdcall_HeapAlloc))
     }
@@ -10391,7 +11999,9 @@ pub fn x00403313() -> Cont {
         // 00403313 cmp eax,edi
         sub(MACHINE.regs.eax, MACHINE.regs.edi);
         // 00403315 mov [esi+10h],eax
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0x10u32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x10u32) as usize) as *mut u32) = MACHINE.regs.eax;
         // 00403318 je short 00403344h
         je(Cont(x0040331a), Cont(x00403344))
     }
@@ -10417,7 +12027,9 @@ pub fn x0040332d() -> Cont {
         // 0040332d cmp eax,edi
         sub(MACHINE.regs.eax, MACHINE.regs.edi);
         // 0040332f mov [esi+0Ch],eax
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0xcu32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0xcu32) as usize) as *mut u32) = MACHINE.regs.eax;
         // 00403332 jne short 00403348h
         jne(Cont(x00403334), Cont(x00403348))
     }
@@ -10426,11 +12038,15 @@ pub fn x0040332d() -> Cont {
 pub fn x00403334() -> Cont {
     unsafe {
         // 00403334 push dword ptr [esi+10h]
-        push(*(MACHINE.memory.add((MACHINE.regs.esi + 0x10u32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esi.wrapping_add(0x10u32) as usize) as *mut u32),
+        );
         // 00403337 push edi
         push(MACHINE.regs.edi);
         // 00403338 push dword ptr ds:[409984h]
-        push(*(MACHINE.memory.add((0x409984u32) as usize) as *mut u32));
+        push(*(MACHINE.memory.add(0x409984u32 as usize) as *mut u32));
         // 0040333e call dword ptr ds:[406090h]
         call(0x403344, Cont(kernel32::stdcall_HeapFree))
     }
@@ -10448,21 +12064,36 @@ pub fn x00403344() -> Cont {
 pub fn x00403348() -> Cont {
     unsafe {
         // 00403348 or dword ptr [esi+8],0FFFFFFFFh
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0x8u32) as usize) as *mut u32) = or(
-            *(MACHINE.memory.add((MACHINE.regs.esi + 0x8u32) as usize) as *mut u32),
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x8u32) as usize) as *mut u32) = or(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esi.wrapping_add(0x8u32) as usize) as *mut u32),
             0xffffffffu32,
         );
         // 0040334c mov [esi],edi
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u32) = MACHINE.regs.edi;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize) as *mut u32) = MACHINE.regs.edi;
         // 0040334e mov [esi+4],edi
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0x4u32) as usize) as *mut u32) = MACHINE.regs.edi;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x4u32) as usize) as *mut u32) = MACHINE.regs.edi;
         // 00403351 inc dword ptr ds:[409978h]
         todo!();
         // 00403357 mov eax,[esi+10h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.esi + 0x10u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x10u32) as usize)
+            as *mut u32);
         // 0040335a or dword ptr [eax],0FFFFFFFFh
-        *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u32) = or(
-            *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u32),
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u32) = or(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u32),
             0xffffffffu32,
         );
         // 0040335d mov eax,esi
@@ -10496,7 +12127,10 @@ pub fn x00403362() -> Cont {
         // 00403365 push ecx
         push(MACHINE.regs.ecx);
         // 00403366 mov ecx,[ebp+8]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 00403369 push ebx
         push(MACHINE.regs.ebx);
         // 0040336a push esi
@@ -10504,9 +12138,15 @@ pub fn x00403362() -> Cont {
         // 0040336b push edi
         push(MACHINE.regs.edi);
         // 0040336c mov esi,[ecx+10h]
-        MACHINE.regs.esi = *(MACHINE.memory.add((MACHINE.regs.ecx + 0x10u32) as usize) as *mut u32);
+        MACHINE.regs.esi = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ecx.wrapping_add(0x10u32) as usize)
+            as *mut u32);
         // 0040336f mov eax,[ecx+8]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.ecx + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ecx.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 00403372 xor ebx,ebx
         MACHINE.regs.ebx ^= MACHINE.regs.ebx;
         // 00403374 test eax,eax
@@ -10547,15 +12187,24 @@ pub fn x0040337d() -> Cont {
         // 00403387 pop edx
         MACHINE.regs.edx = pop();
         // 00403388 lea eax,[eax+esi+144h]
-        MACHINE.regs.eax = MACHINE.regs.eax + (MACHINE.regs.esi * 1) + 0x144u32;
+        MACHINE.regs.eax = MACHINE
+            .regs
+            .eax
+            .wrapping_add((MACHINE.regs.esi * 1))
+            .wrapping_add(0x144u32);
         // 0040338f mov [ebp-4],eax
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize) as *mut u32) = MACHINE.regs.eax;
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize) as *mut u32) =
+            MACHINE.regs.eax;
         // 00403392 mov [eax+8],eax
-        *(MACHINE.memory.add((MACHINE.regs.eax + 0x8u32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x8u32) as usize) as *mut u32) = MACHINE.regs.eax;
         // 00403395 mov [eax+4],eax
-        *(MACHINE.memory.add((MACHINE.regs.eax + 0x4u32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x4u32) as usize) as *mut u32) = MACHINE.regs.eax;
         // 00403398 add eax,8
         MACHINE.regs.eax = add(MACHINE.regs.eax, 0x8u32);
         // 0040339b dec edx
@@ -10568,9 +12217,13 @@ pub fn x0040337d() -> Cont {
 pub fn x00403392() -> Cont {
     unsafe {
         // 00403392 mov [eax+8],eax
-        *(MACHINE.memory.add((MACHINE.regs.eax + 0x8u32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x8u32) as usize) as *mut u32) = MACHINE.regs.eax;
         // 00403395 mov [eax+4],eax
-        *(MACHINE.memory.add((MACHINE.regs.eax + 0x4u32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x4u32) as usize) as *mut u32) = MACHINE.regs.eax;
         // 00403398 add eax,8
         MACHINE.regs.eax = add(MACHINE.regs.eax, 0x8u32);
         // 0040339b dec edx
@@ -10591,7 +12244,9 @@ pub fn x0040339e() -> Cont {
         // 004033a5 add edi,[ecx+0Ch]
         MACHINE.regs.edi = add(
             MACHINE.regs.edi,
-            *(MACHINE.memory.add((MACHINE.regs.ecx + 0xcu32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ecx.wrapping_add(0xcu32) as usize) as *mut u32),
         );
         // 004033a8 push 1000h
         push(0x1000u32);
@@ -10625,7 +12280,7 @@ pub fn x004033bd() -> Cont {
 pub fn x004033c5() -> Cont {
     unsafe {
         // 004033c5 lea edx,[edi+7000h]
-        MACHINE.regs.edx = MACHINE.regs.edi + 0x7000u32;
+        MACHINE.regs.edx = MACHINE.regs.edi.wrapping_add(0x7000u32);
         // 004033cb cmp edi,edx
         sub(MACHINE.regs.edi, MACHINE.regs.edx);
         // 004033cd ja short 0040340Bh
@@ -10636,39 +12291,50 @@ pub fn x004033c5() -> Cont {
 pub fn x004033cf() -> Cont {
     unsafe {
         // 004033cf lea eax,[edi+10h]
-        MACHINE.regs.eax = MACHINE.regs.edi + 0x10u32;
+        MACHINE.regs.eax = MACHINE.regs.edi.wrapping_add(0x10u32);
         // 004033d2 or dword ptr [eax-8],0FFFFFFFFh
         *(MACHINE
             .memory
-            .add((MACHINE.regs.eax + 0xfffffff8u32) as usize) as *mut u32) = or(
+            .add(MACHINE.regs.eax.wrapping_add(0xfffffff8u32) as usize) as *mut u32) = or(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.eax + 0xfffffff8u32) as usize) as *mut u32),
+                .add(MACHINE.regs.eax.wrapping_add(0xfffffff8u32) as usize)
+                as *mut u32),
             0xffffffffu32,
         );
         // 004033d6 or dword ptr [eax+0FECh],0FFFFFFFFh
-        *(MACHINE.memory.add((MACHINE.regs.eax + 0xfecu32) as usize) as *mut u32) = or(
-            *(MACHINE.memory.add((MACHINE.regs.eax + 0xfecu32) as usize) as *mut u32),
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0xfecu32) as usize) as *mut u32) = or(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0xfecu32) as usize) as *mut u32),
             0xffffffffu32,
         );
         // 004033dd lea ecx,[eax+0FFCh]
-        MACHINE.regs.ecx = MACHINE.regs.eax + 0xffcu32;
+        MACHINE.regs.ecx = MACHINE.regs.eax.wrapping_add(0xffcu32);
         // 004033e3 mov dword ptr [eax-4],0FF0h
         *(MACHINE
             .memory
-            .add((MACHINE.regs.eax + 0xfffffffcu32) as usize) as *mut u32) = 0xff0u32;
+            .add(MACHINE.regs.eax.wrapping_add(0xfffffffcu32) as usize) as *mut u32) = 0xff0u32;
         // 004033ea mov [eax],ecx
-        *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u32) = MACHINE.regs.ecx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u32) = MACHINE.regs.ecx;
         // 004033ec lea ecx,[eax-1004h]
-        MACHINE.regs.ecx = MACHINE.regs.eax + 0xffffeffcu32;
+        MACHINE.regs.ecx = MACHINE.regs.eax.wrapping_add(0xffffeffcu32);
         // 004033f2 mov [eax+4],ecx
-        *(MACHINE.memory.add((MACHINE.regs.eax + 0x4u32) as usize) as *mut u32) = MACHINE.regs.ecx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x4u32) as usize) as *mut u32) = MACHINE.regs.ecx;
         // 004033f5 mov dword ptr [eax+0FE8h],0FF0h
-        *(MACHINE.memory.add((MACHINE.regs.eax + 0xfe8u32) as usize) as *mut u32) = 0xff0u32;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0xfe8u32) as usize) as *mut u32) = 0xff0u32;
         // 004033ff add eax,1000h
         MACHINE.regs.eax = add(MACHINE.regs.eax, 0x1000u32);
         // 00403404 lea ecx,[eax-10h]
-        MACHINE.regs.ecx = MACHINE.regs.eax + 0xfffffff0u32;
+        MACHINE.regs.ecx = MACHINE.regs.eax.wrapping_add(0xfffffff0u32);
         // 00403407 cmp ecx,edx
         sub(MACHINE.regs.ecx, MACHINE.regs.edx);
         // 00403409 jbe short 004033D2h
@@ -10681,35 +12347,46 @@ pub fn x004033d2() -> Cont {
         // 004033d2 or dword ptr [eax-8],0FFFFFFFFh
         *(MACHINE
             .memory
-            .add((MACHINE.regs.eax + 0xfffffff8u32) as usize) as *mut u32) = or(
+            .add(MACHINE.regs.eax.wrapping_add(0xfffffff8u32) as usize) as *mut u32) = or(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.eax + 0xfffffff8u32) as usize) as *mut u32),
+                .add(MACHINE.regs.eax.wrapping_add(0xfffffff8u32) as usize)
+                as *mut u32),
             0xffffffffu32,
         );
         // 004033d6 or dword ptr [eax+0FECh],0FFFFFFFFh
-        *(MACHINE.memory.add((MACHINE.regs.eax + 0xfecu32) as usize) as *mut u32) = or(
-            *(MACHINE.memory.add((MACHINE.regs.eax + 0xfecu32) as usize) as *mut u32),
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0xfecu32) as usize) as *mut u32) = or(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0xfecu32) as usize) as *mut u32),
             0xffffffffu32,
         );
         // 004033dd lea ecx,[eax+0FFCh]
-        MACHINE.regs.ecx = MACHINE.regs.eax + 0xffcu32;
+        MACHINE.regs.ecx = MACHINE.regs.eax.wrapping_add(0xffcu32);
         // 004033e3 mov dword ptr [eax-4],0FF0h
         *(MACHINE
             .memory
-            .add((MACHINE.regs.eax + 0xfffffffcu32) as usize) as *mut u32) = 0xff0u32;
+            .add(MACHINE.regs.eax.wrapping_add(0xfffffffcu32) as usize) as *mut u32) = 0xff0u32;
         // 004033ea mov [eax],ecx
-        *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u32) = MACHINE.regs.ecx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u32) = MACHINE.regs.ecx;
         // 004033ec lea ecx,[eax-1004h]
-        MACHINE.regs.ecx = MACHINE.regs.eax + 0xffffeffcu32;
+        MACHINE.regs.ecx = MACHINE.regs.eax.wrapping_add(0xffffeffcu32);
         // 004033f2 mov [eax+4],ecx
-        *(MACHINE.memory.add((MACHINE.regs.eax + 0x4u32) as usize) as *mut u32) = MACHINE.regs.ecx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x4u32) as usize) as *mut u32) = MACHINE.regs.ecx;
         // 004033f5 mov dword ptr [eax+0FE8h],0FF0h
-        *(MACHINE.memory.add((MACHINE.regs.eax + 0xfe8u32) as usize) as *mut u32) = 0xff0u32;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0xfe8u32) as usize) as *mut u32) = 0xff0u32;
         // 004033ff add eax,1000h
         MACHINE.regs.eax = add(MACHINE.regs.eax, 0x1000u32);
         // 00403404 lea ecx,[eax-10h]
-        MACHINE.regs.ecx = MACHINE.regs.eax + 0xfffffff0u32;
+        MACHINE.regs.ecx = MACHINE.regs.eax.wrapping_add(0xfffffff0u32);
         // 00403407 cmp ecx,edx
         sub(MACHINE.regs.ecx, MACHINE.regs.edx);
         // 00403409 jbe short 004033D2h
@@ -10722,10 +12399,10 @@ pub fn x0040340b() -> Cont {
         // 0040340b mov eax,[ebp-4]
         MACHINE.regs.eax = *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize)
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize)
             as *mut u32);
         // 0040340e lea ecx,[edi+0Ch]
-        MACHINE.regs.ecx = MACHINE.regs.edi + 0xcu32;
+        MACHINE.regs.ecx = MACHINE.regs.edi.wrapping_add(0xcu32);
         // 00403411 add eax,1F8h
         MACHINE.regs.eax = add(MACHINE.regs.eax, 0x1f8u32);
         // 00403416 push 1
@@ -10733,35 +12410,54 @@ pub fn x0040340b() -> Cont {
         // 00403418 pop edi
         MACHINE.regs.edi = pop();
         // 00403419 mov [eax+4],ecx
-        *(MACHINE.memory.add((MACHINE.regs.eax + 0x4u32) as usize) as *mut u32) = MACHINE.regs.ecx;
-        // 0040341c mov [ecx+8],eax
-        *(MACHINE.memory.add((MACHINE.regs.ecx + 0x8u32) as usize) as *mut u32) = MACHINE.regs.eax;
-        // 0040341f lea ecx,[edx+0Ch]
-        MACHINE.regs.ecx = MACHINE.regs.edx + 0xcu32;
-        // 00403422 mov [eax+8],ecx
-        *(MACHINE.memory.add((MACHINE.regs.eax + 0x8u32) as usize) as *mut u32) = MACHINE.regs.ecx;
-        // 00403425 mov [ecx+4],eax
-        *(MACHINE.memory.add((MACHINE.regs.ecx + 0x4u32) as usize) as *mut u32) = MACHINE.regs.eax;
-        // 00403428 and dword ptr [esi+ebx*4+44h],0
         *(MACHINE
             .memory
-            .add((MACHINE.regs.esi + (MACHINE.regs.ebx * 4) + 0x44u32) as usize)
-            as *mut u32) = and(
-            *(MACHINE
-                .memory
-                .add((MACHINE.regs.esi + (MACHINE.regs.ebx * 4) + 0x44u32) as usize)
-                as *mut u32),
+            .add(MACHINE.regs.eax.wrapping_add(0x4u32) as usize) as *mut u32) = MACHINE.regs.ecx;
+        // 0040341c mov [ecx+8],eax
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ecx.wrapping_add(0x8u32) as usize) as *mut u32) = MACHINE.regs.eax;
+        // 0040341f lea ecx,[edx+0Ch]
+        MACHINE.regs.ecx = MACHINE.regs.edx.wrapping_add(0xcu32);
+        // 00403422 mov [eax+8],ecx
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x8u32) as usize) as *mut u32) = MACHINE.regs.ecx;
+        // 00403425 mov [ecx+4],eax
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ecx.wrapping_add(0x4u32) as usize) as *mut u32) = MACHINE.regs.eax;
+        // 00403428 and dword ptr [esi+ebx*4+44h],0
+        *(MACHINE.memory.add(
+            MACHINE
+                .regs
+                .esi
+                .wrapping_add((MACHINE.regs.ebx * 4))
+                .wrapping_add(0x44u32) as usize,
+        ) as *mut u32) = and(
+            *(MACHINE.memory.add(
+                MACHINE
+                    .regs
+                    .esi
+                    .wrapping_add((MACHINE.regs.ebx * 4))
+                    .wrapping_add(0x44u32) as usize,
+            ) as *mut u32),
             0x0u32,
         );
         // 0040342d mov [esi+ebx*4+0C4h],edi
-        *(MACHINE
-            .memory
-            .add((MACHINE.regs.esi + (MACHINE.regs.ebx * 4) + 0xc4u32) as usize)
-            as *mut u32) = MACHINE.regs.edi;
+        *(MACHINE.memory.add(
+            MACHINE
+                .regs
+                .esi
+                .wrapping_add((MACHINE.regs.ebx * 4))
+                .wrapping_add(0xc4u32) as usize,
+        ) as *mut u32) = MACHINE.regs.edi;
         // 00403434 mov al,[esi+43h]
-        MACHINE
-            .regs
-            .set_al(*(MACHINE.memory.add((MACHINE.regs.esi + 0x43u32) as usize) as *mut u8));
+        MACHINE.regs.set_al(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esi.wrapping_add(0x43u32) as usize) as *mut u8),
+        );
         // 00403437 mov cl,al
         MACHINE.regs.set_cl(MACHINE.regs.get_al());
         // 00403439 inc cl
@@ -10769,9 +12465,14 @@ pub fn x0040340b() -> Cont {
         // 0040343b test al,al
         and(MACHINE.regs.get_al(), MACHINE.regs.get_al());
         // 0040343d mov eax,[ebp+8]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 00403440 mov [esi+43h],cl
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0x43u32) as usize) as *mut u8) =
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x43u32) as usize) as *mut u8) =
             MACHINE.regs.get_cl();
         // 00403443 jne short 00403448h
         jne(Cont(x00403445), Cont(x00403448))
@@ -10781,8 +12482,12 @@ pub fn x0040340b() -> Cont {
 pub fn x00403445() -> Cont {
     unsafe {
         // 00403445 or [eax+4],edi
-        *(MACHINE.memory.add((MACHINE.regs.eax + 0x4u32) as usize) as *mut u32) = or(
-            *(MACHINE.memory.add((MACHINE.regs.eax + 0x4u32) as usize) as *mut u32),
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x4u32) as usize) as *mut u32) = or(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0x4u32) as usize) as *mut u32),
             MACHINE.regs.edi,
         );
         // 00403448 mov edx,80000000h
@@ -10794,8 +12499,12 @@ pub fn x00403445() -> Cont {
         // 00403451 not edx
         todo!();
         // 00403453 and [eax+8],edx
-        *(MACHINE.memory.add((MACHINE.regs.eax + 0x8u32) as usize) as *mut u32) = and(
-            *(MACHINE.memory.add((MACHINE.regs.eax + 0x8u32) as usize) as *mut u32),
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x8u32) as usize) as *mut u32) = and(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0x8u32) as usize) as *mut u32),
             MACHINE.regs.edx,
         );
         // 00403456 mov eax,ebx
@@ -10824,8 +12533,12 @@ pub fn x00403448() -> Cont {
         // 00403451 not edx
         todo!();
         // 00403453 and [eax+8],edx
-        *(MACHINE.memory.add((MACHINE.regs.eax + 0x8u32) as usize) as *mut u32) = and(
-            *(MACHINE.memory.add((MACHINE.regs.eax + 0x8u32) as usize) as *mut u32),
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x8u32) as usize) as *mut u32) = and(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0x8u32) as usize) as *mut u32),
             MACHINE.regs.edx,
         );
         // 00403456 mov eax,ebx
@@ -10862,7 +12575,7 @@ pub fn x00403753() -> Cont {
     unsafe {
         // 00403753 cmp dword ptr ds:[407218h],0FFFFFFFFh
         sub(
-            *(MACHINE.memory.add((0x407218u32) as usize) as *mut u32),
+            *(MACHINE.memory.add(0x407218u32 as usize) as *mut u32),
             0xffffffffu32,
         );
         // 0040375a push ebx
@@ -10894,7 +12607,7 @@ pub fn x00403767() -> Cont {
         // 0040376c push 0
         push(0x0u32);
         // 0040376e push dword ptr ds:[409984h]
-        push(*(MACHINE.memory.add((0x409984u32) as usize) as *mut u32));
+        push(*(MACHINE.memory.add(0x409984u32 as usize) as *mut u32));
         // 00403774 call dword ptr ds:[406028h]
         call(0x40377a, Cont(kernel32::stdcall_HeapAlloc))
     }
@@ -10914,7 +12627,7 @@ pub fn x0040377a() -> Cont {
 pub fn x00403784() -> Cont {
     unsafe {
         // 00403784 mov ebp,ds:[40605Ch]
-        MACHINE.regs.ebp = *(MACHINE.memory.add((0x40605cu32) as usize) as *mut u32);
+        MACHINE.regs.ebp = *(MACHINE.memory.add(0x40605cu32 as usize) as *mut u32);
         // 0040378a push 4
         push(0x4u32);
         // 0040378c push 2000h
@@ -10980,7 +12693,7 @@ pub fn x004037c5() -> Cont {
     unsafe {
         // 004037c5 cmp dword ptr ds:[407208h],0
         sub(
-            *(MACHINE.memory.add((0x407208u32) as usize) as *mut u32),
+            *(MACHINE.memory.add(0x407208u32 as usize) as *mut u32),
             0x0u32,
         );
         // 004037cc jne short 004037D3h
@@ -10991,10 +12704,10 @@ pub fn x004037c5() -> Cont {
 pub fn x004037ce() -> Cont {
     unsafe {
         // 004037ce mov ds:[407208h],eax
-        *(MACHINE.memory.add((0x407208u32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE.memory.add(0x407208u32 as usize) as *mut u32) = MACHINE.regs.eax;
         // 004037d3 cmp dword ptr ds:[40720Ch],0
         sub(
-            *(MACHINE.memory.add((0x40720cu32) as usize) as *mut u32),
+            *(MACHINE.memory.add(0x40720cu32 as usize) as *mut u32),
             0x0u32,
         );
         // 004037da jne short 004037F8h
@@ -11006,7 +12719,7 @@ pub fn x004037d3() -> Cont {
     unsafe {
         // 004037d3 cmp dword ptr ds:[40720Ch],0
         sub(
-            *(MACHINE.memory.add((0x40720cu32) as usize) as *mut u32),
+            *(MACHINE.memory.add(0x40720cu32 as usize) as *mut u32),
             0x0u32,
         );
         // 004037da jne short 004037F8h
@@ -11017,7 +12730,7 @@ pub fn x004037d3() -> Cont {
 pub fn x004037dc() -> Cont {
     unsafe {
         // 004037dc mov ds:[40720Ch],eax
-        *(MACHINE.memory.add((0x40720cu32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE.memory.add(0x40720cu32 as usize) as *mut u32) = MACHINE.regs.eax;
         // 004037e1 jmp short 004037F8h
         Cont(x004037f8)
     }
@@ -11026,31 +12739,48 @@ pub fn x004037dc() -> Cont {
 pub fn x004037e3() -> Cont {
     unsafe {
         // 004037e3 mov [esi],eax
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize) as *mut u32) = MACHINE.regs.eax;
         // 004037e5 mov eax,ds:[40720Ch]
-        MACHINE.regs.eax = *(MACHINE.memory.add((0x40720cu32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE.memory.add(0x40720cu32 as usize) as *mut u32);
         // 004037ea mov [esi+4],eax
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0x4u32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x4u32) as usize) as *mut u32) = MACHINE.regs.eax;
         // 004037ed mov ds:[40720Ch],esi
-        *(MACHINE.memory.add((0x40720cu32) as usize) as *mut u32) = MACHINE.regs.esi;
+        *(MACHINE.memory.add(0x40720cu32 as usize) as *mut u32) = MACHINE.regs.esi;
         // 004037f3 mov eax,[esi+4]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.esi + 0x4u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x4u32) as usize)
+            as *mut u32);
         // 004037f6 mov [eax],esi
-        *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u32) = MACHINE.regs.esi;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u32) = MACHINE.regs.esi;
         // 004037f8 lea eax,[edi+400000h]
-        MACHINE.regs.eax = MACHINE.regs.edi + 0x400000u32;
+        MACHINE.regs.eax = MACHINE.regs.edi.wrapping_add(0x400000u32);
         // 004037fe lea ecx,[esi+98h]
-        MACHINE.regs.ecx = MACHINE.regs.esi + 0x98u32;
+        MACHINE.regs.ecx = MACHINE.regs.esi.wrapping_add(0x98u32);
         // 00403804 mov [esi+14h],eax
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0x14u32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x14u32) as usize) as *mut u32) = MACHINE.regs.eax;
         // 00403807 lea eax,[esi+18h]
-        MACHINE.regs.eax = MACHINE.regs.esi + 0x18u32;
+        MACHINE.regs.eax = MACHINE.regs.esi.wrapping_add(0x18u32);
         // 0040380a mov [esi+0Ch],ecx
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0xcu32) as usize) as *mut u32) = MACHINE.regs.ecx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0xcu32) as usize) as *mut u32) = MACHINE.regs.ecx;
         // 0040380d mov [esi+10h],edi
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0x10u32) as usize) as *mut u32) = MACHINE.regs.edi;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x10u32) as usize) as *mut u32) = MACHINE.regs.edi;
         // 00403810 mov [esi+8],eax
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0x8u32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x8u32) as usize) as *mut u32) = MACHINE.regs.eax;
         // 00403813 xor ebp,ebp
         MACHINE.regs.ebp ^= MACHINE.regs.ebp;
         // 00403815 mov ecx,0F1h
@@ -11070,9 +12800,13 @@ pub fn x004037e3() -> Cont {
         // 00403826 inc ebp
         todo!();
         // 00403827 mov [eax],edx
-        *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u32) = MACHINE.regs.edx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u32) = MACHINE.regs.edx;
         // 00403829 mov [eax+4],ecx
-        *(MACHINE.memory.add((MACHINE.regs.eax + 0x4u32) as usize) as *mut u32) = MACHINE.regs.ecx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x4u32) as usize) as *mut u32) = MACHINE.regs.ecx;
         // 0040382c add eax,8
         MACHINE.regs.eax = add(MACHINE.regs.eax, 0x8u32);
         // 0040382f cmp ebp,400h
@@ -11085,19 +12819,27 @@ pub fn x004037e3() -> Cont {
 pub fn x004037f8() -> Cont {
     unsafe {
         // 004037f8 lea eax,[edi+400000h]
-        MACHINE.regs.eax = MACHINE.regs.edi + 0x400000u32;
+        MACHINE.regs.eax = MACHINE.regs.edi.wrapping_add(0x400000u32);
         // 004037fe lea ecx,[esi+98h]
-        MACHINE.regs.ecx = MACHINE.regs.esi + 0x98u32;
+        MACHINE.regs.ecx = MACHINE.regs.esi.wrapping_add(0x98u32);
         // 00403804 mov [esi+14h],eax
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0x14u32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x14u32) as usize) as *mut u32) = MACHINE.regs.eax;
         // 00403807 lea eax,[esi+18h]
-        MACHINE.regs.eax = MACHINE.regs.esi + 0x18u32;
+        MACHINE.regs.eax = MACHINE.regs.esi.wrapping_add(0x18u32);
         // 0040380a mov [esi+0Ch],ecx
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0xcu32) as usize) as *mut u32) = MACHINE.regs.ecx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0xcu32) as usize) as *mut u32) = MACHINE.regs.ecx;
         // 0040380d mov [esi+10h],edi
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0x10u32) as usize) as *mut u32) = MACHINE.regs.edi;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x10u32) as usize) as *mut u32) = MACHINE.regs.edi;
         // 00403810 mov [esi+8],eax
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0x8u32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x8u32) as usize) as *mut u32) = MACHINE.regs.eax;
         // 00403813 xor ebp,ebp
         MACHINE.regs.ebp ^= MACHINE.regs.ebp;
         // 00403815 mov ecx,0F1h
@@ -11117,9 +12859,13 @@ pub fn x004037f8() -> Cont {
         // 00403826 inc ebp
         todo!();
         // 00403827 mov [eax],edx
-        *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u32) = MACHINE.regs.edx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u32) = MACHINE.regs.edx;
         // 00403829 mov [eax+4],ecx
-        *(MACHINE.memory.add((MACHINE.regs.eax + 0x4u32) as usize) as *mut u32) = MACHINE.regs.ecx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x4u32) as usize) as *mut u32) = MACHINE.regs.ecx;
         // 0040382c add eax,8
         MACHINE.regs.eax = add(MACHINE.regs.eax, 0x8u32);
         // 0040382f cmp ebp,400h
@@ -11146,9 +12892,13 @@ pub fn x0040381a() -> Cont {
         // 00403826 inc ebp
         todo!();
         // 00403827 mov [eax],edx
-        *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u32) = MACHINE.regs.edx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u32) = MACHINE.regs.edx;
         // 00403829 mov [eax+4],ecx
-        *(MACHINE.memory.add((MACHINE.regs.eax + 0x4u32) as usize) as *mut u32) = MACHINE.regs.ecx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x4u32) as usize) as *mut u32) = MACHINE.regs.ecx;
         // 0040382c add eax,8
         MACHINE.regs.eax = add(MACHINE.regs.eax, 0x8u32);
         // 0040382f cmp ebp,400h
@@ -11176,7 +12926,10 @@ pub fn x00403840() -> Cont {
         // 00403840 add esp,0Ch
         MACHINE.regs.esp = add(MACHINE.regs.esp, 0xcu32);
         // 00403843 mov eax,[esi+10h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.esi + 0x10u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x10u32) as usize)
+            as *mut u32);
         // 00403846 add eax,ebx
         MACHINE.regs.eax = add(MACHINE.regs.eax, MACHINE.regs.ebx);
         // 00403848 cmp edi,eax
@@ -11189,7 +12942,10 @@ pub fn x00403840() -> Cont {
 pub fn x00403843() -> Cont {
     unsafe {
         // 00403843 mov eax,[esi+10h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.esi + 0x10u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x10u32) as usize)
+            as *mut u32);
         // 00403846 add eax,ebx
         MACHINE.regs.eax = add(MACHINE.regs.eax, MACHINE.regs.ebx);
         // 00403848 cmp edi,eax
@@ -11202,16 +12958,24 @@ pub fn x00403843() -> Cont {
 pub fn x0040384c() -> Cont {
     unsafe {
         // 0040384c or byte ptr [edi+0F8h],0FFh
-        *(MACHINE.memory.add((MACHINE.regs.edi + 0xf8u32) as usize) as *mut u8) = or(
-            *(MACHINE.memory.add((MACHINE.regs.edi + 0xf8u32) as usize) as *mut u8),
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.edi.wrapping_add(0xf8u32) as usize) as *mut u8) = or(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.edi.wrapping_add(0xf8u32) as usize) as *mut u8),
             0xffu8,
         );
         // 00403853 lea eax,[edi+8]
-        MACHINE.regs.eax = MACHINE.regs.edi + 0x8u32;
+        MACHINE.regs.eax = MACHINE.regs.edi.wrapping_add(0x8u32);
         // 00403856 mov [edi],eax
-        *(MACHINE.memory.add((MACHINE.regs.edi + 0x0u32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.edi.wrapping_add(0x0u32) as usize) as *mut u32) = MACHINE.regs.eax;
         // 00403858 mov dword ptr [edi+4],0F0h
-        *(MACHINE.memory.add((MACHINE.regs.edi + 0x4u32) as usize) as *mut u32) = 0xf0u32;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.edi.wrapping_add(0x4u32) as usize) as *mut u32) = 0xf0u32;
         // 0040385f add edi,1000h
         MACHINE.regs.edi = add(MACHINE.regs.edi, 0x1000u32);
         // 00403865 jmp short 00403843h
@@ -11257,7 +13021,7 @@ pub fn x00403881() -> Cont {
         // 00403882 push 0
         push(0x0u32);
         // 00403884 push dword ptr ds:[409984h]
-        push(*(MACHINE.memory.add((0x409984u32) as usize) as *mut u32));
+        push(*(MACHINE.memory.add(0x409984u32 as usize) as *mut u32));
         // 0040388a call dword ptr ds:[406090h]
         call(0x403890, Cont(kernel32::stdcall_HeapFree))
     }
@@ -11300,13 +13064,20 @@ pub fn x00403897() -> Cont {
         // 00403897 push esi
         push(MACHINE.regs.esi);
         // 00403898 mov esi,[esp+8]
-        MACHINE.regs.esi = *(MACHINE.memory.add((MACHINE.regs.esp + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.esi = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 0040389c push 8000h
         push(0x8000u32);
         // 004038a1 push 0
         push(0x0u32);
         // 004038a3 push dword ptr [esi+10h]
-        push(*(MACHINE.memory.add((MACHINE.regs.esi + 0x10u32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esi.wrapping_add(0x10u32) as usize) as *mut u32),
+        );
         // 004038a6 call dword ptr ds:[406098h]
         call(0x4038ac, Cont(kernel32::stdcall_VirtualFree))
     }
@@ -11316,7 +13087,7 @@ pub fn x004038ac() -> Cont {
     unsafe {
         // 004038ac cmp ds:[409228h],esi
         sub(
-            *(MACHINE.memory.add((0x409228u32) as usize) as *mut u32),
+            *(MACHINE.memory.add(0x409228u32 as usize) as *mut u32),
             MACHINE.regs.esi,
         );
         // 004038b2 jne short 004038BCh
@@ -11327,9 +13098,12 @@ pub fn x004038ac() -> Cont {
 pub fn x004038b4() -> Cont {
     unsafe {
         // 004038b4 mov eax,[esi+4]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.esi + 0x4u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x4u32) as usize)
+            as *mut u32);
         // 004038b7 mov ds:[409228h],eax
-        *(MACHINE.memory.add((0x409228u32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE.memory.add(0x409228u32 as usize) as *mut u32) = MACHINE.regs.eax;
         // 004038bc cmp esi,407208h
         sub(MACHINE.regs.esi, 0x407208u32);
         // 004038c2 je short 004038E4h
@@ -11349,23 +13123,39 @@ pub fn x004038bc() -> Cont {
 pub fn x004038c4() -> Cont {
     unsafe {
         // 004038c4 mov eax,[esi+4]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.esi + 0x4u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x4u32) as usize)
+            as *mut u32);
         // 004038c7 mov ecx,[esi]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize)
+            as *mut u32);
         // 004038c9 push esi
         push(MACHINE.regs.esi);
         // 004038ca push 0
         push(0x0u32);
         // 004038cc mov [eax],ecx
-        *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u32) = MACHINE.regs.ecx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u32) = MACHINE.regs.ecx;
         // 004038ce mov eax,[esi]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize)
+            as *mut u32);
         // 004038d0 mov ecx,[esi+4]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.esi + 0x4u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x4u32) as usize)
+            as *mut u32);
         // 004038d3 mov [eax+4],ecx
-        *(MACHINE.memory.add((MACHINE.regs.eax + 0x4u32) as usize) as *mut u32) = MACHINE.regs.ecx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x4u32) as usize) as *mut u32) = MACHINE.regs.ecx;
         // 004038d6 push dword ptr ds:[409984h]
-        push(*(MACHINE.memory.add((0x409984u32) as usize) as *mut u32));
+        push(*(MACHINE.memory.add(0x409984u32 as usize) as *mut u32));
         // 004038dc call dword ptr ds:[406090h]
         call(0x4038e2, Cont(kernel32::stdcall_HeapFree))
     }
@@ -11383,8 +13173,8 @@ pub fn x004038e2() -> Cont {
 pub fn x004038e4() -> Cont {
     unsafe {
         // 004038e4 or dword ptr ds:[407218h],0FFFFFFFFh
-        *(MACHINE.memory.add((0x407218u32) as usize) as *mut u32) = or(
-            *(MACHINE.memory.add((0x407218u32) as usize) as *mut u32),
+        *(MACHINE.memory.add(0x407218u32 as usize) as *mut u32) = or(
+            *(MACHINE.memory.add(0x407218u32 as usize) as *mut u32),
             0xffffffffu32,
         );
         // 004038eb pop esi
@@ -11407,12 +13197,14 @@ pub fn x004038ed() -> Cont {
         // 004038f2 push esi
         push(MACHINE.regs.esi);
         // 004038f3 mov esi,ds:[40720Ch]
-        MACHINE.regs.esi = *(MACHINE.memory.add((0x40720cu32) as usize) as *mut u32);
+        MACHINE.regs.esi = *(MACHINE.memory.add(0x40720cu32 as usize) as *mut u32);
         // 004038f9 push edi
         push(MACHINE.regs.edi);
         // 004038fa cmp dword ptr [esi+10h],0FFFFFFFFh
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.esi + 0x10u32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esi.wrapping_add(0x10u32) as usize) as *mut u32),
             0xffffffffu32,
         );
         // 004038fe je near ptr 00403998h
@@ -11424,7 +13216,9 @@ pub fn x004038fa() -> Cont {
     unsafe {
         // 004038fa cmp dword ptr [esi+10h],0FFFFFFFFh
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.esi + 0x10u32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esi.wrapping_add(0x10u32) as usize) as *mut u32),
             0xffffffffu32,
         );
         // 004038fe je near ptr 00403998h
@@ -11437,19 +13231,22 @@ pub fn x00403904() -> Cont {
         // 00403904 and dword ptr [ebp-4],0
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize) as *mut u32) = and(
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize) as *mut u32) = and(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize) as *mut u32),
+                .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize)
+                as *mut u32),
             0x0u32,
         );
         // 00403908 lea edi,[esi+2010h]
-        MACHINE.regs.edi = MACHINE.regs.esi + 0x2010u32;
+        MACHINE.regs.edi = MACHINE.regs.esi.wrapping_add(0x2010u32);
         // 0040390e mov ebx,3FF000h
         MACHINE.regs.ebx = 0x3ff000u32;
         // 00403913 cmp dword ptr [edi],0F0h
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.edi + 0x0u32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.edi.wrapping_add(0x0u32) as usize) as *mut u32),
             0xf0u32,
         );
         // 00403919 jne short 00403954h
@@ -11461,7 +13258,9 @@ pub fn x00403913() -> Cont {
     unsafe {
         // 00403913 cmp dword ptr [edi],0F0h
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.edi + 0x0u32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.edi.wrapping_add(0x0u32) as usize) as *mut u32),
             0xf0u32,
         );
         // 00403919 jne short 00403954h
@@ -11478,7 +13277,9 @@ pub fn x0040391b() -> Cont {
         // 00403922 add eax,[esi+10h]
         MACHINE.regs.eax = add(
             MACHINE.regs.eax,
-            *(MACHINE.memory.add((MACHINE.regs.esi + 0x10u32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esi.wrapping_add(0x10u32) as usize) as *mut u32),
         );
         // 00403925 push 1000h
         push(0x1000u32);
@@ -11501,14 +13302,21 @@ pub fn x00403931() -> Cont {
 pub fn x00403935() -> Cont {
     unsafe {
         // 00403935 or dword ptr [edi],0FFFFFFFFh
-        *(MACHINE.memory.add((MACHINE.regs.edi + 0x0u32) as usize) as *mut u32) = or(
-            *(MACHINE.memory.add((MACHINE.regs.edi + 0x0u32) as usize) as *mut u32),
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.edi.wrapping_add(0x0u32) as usize) as *mut u32) = or(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.edi.wrapping_add(0x0u32) as usize) as *mut u32),
             0xffffffffu32,
         );
         // 00403938 dec dword ptr ds:[409704h]
         todo!();
         // 0040393e mov eax,[esi+0Ch]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.esi + 0xcu32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0xcu32) as usize)
+            as *mut u32);
         // 00403941 test eax,eax
         and(MACHINE.regs.eax, MACHINE.regs.eax);
         // 00403943 je short 00403949h
@@ -11528,7 +13336,9 @@ pub fn x00403945() -> Cont {
 pub fn x00403949() -> Cont {
     unsafe {
         // 00403949 mov [esi+0Ch],edi
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0xcu32) as usize) as *mut u32) = MACHINE.regs.edi;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0xcu32) as usize) as *mut u32) = MACHINE.regs.edi;
         // 0040394c inc dword ptr [ebp-4]
         todo!();
         // 0040394f dec dword ptr [ebp+8]
@@ -11568,13 +13378,17 @@ pub fn x00403961() -> Cont {
         sub(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize) as *mut u32),
+                .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize)
+                as *mut u32),
             0x0u32,
         );
         // 00403965 mov ecx,esi
         MACHINE.regs.ecx = MACHINE.regs.esi;
         // 00403967 mov esi,[esi+4]
-        MACHINE.regs.esi = *(MACHINE.memory.add((MACHINE.regs.esi + 0x4u32) as usize) as *mut u32);
+        MACHINE.regs.esi = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x4u32) as usize)
+            as *mut u32);
         // 0040396a je short 00403998h
         je(Cont(x0040396c), Cont(x00403998))
     }
@@ -11584,7 +13398,9 @@ pub fn x0040396c() -> Cont {
     unsafe {
         // 0040396c cmp dword ptr [ecx+18h],0FFFFFFFFh
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.ecx + 0x18u32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ecx.wrapping_add(0x18u32) as usize) as *mut u32),
             0xffffffffu32,
         );
         // 00403970 jne short 00403998h
@@ -11597,12 +13413,14 @@ pub fn x00403972() -> Cont {
         // 00403972 push 1
         push(0x1u32);
         // 00403974 lea eax,[ecx+20h]
-        MACHINE.regs.eax = MACHINE.regs.ecx + 0x20u32;
+        MACHINE.regs.eax = MACHINE.regs.ecx.wrapping_add(0x20u32);
         // 00403977 pop edx
         MACHINE.regs.edx = pop();
         // 00403978 cmp dword ptr [eax],0FFFFFFFFh
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u32),
             0xffffffffu32,
         );
         // 0040397b jne short 00403989h
@@ -11614,7 +13432,9 @@ pub fn x00403978() -> Cont {
     unsafe {
         // 00403978 cmp dword ptr [eax],0FFFFFFFFh
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u32),
             0xffffffffu32,
         );
         // 0040397b jne short 00403989h
@@ -11660,7 +13480,7 @@ pub fn x00403997() -> Cont {
         // 00403998 cmp esi,ds:[40720Ch]
         sub(
             MACHINE.regs.esi,
-            *(MACHINE.memory.add((0x40720cu32) as usize) as *mut u32),
+            *(MACHINE.memory.add(0x40720cu32 as usize) as *mut u32),
         );
         // 0040399e je short 004039AAh
         je(Cont(x004039a0), Cont(x004039aa))
@@ -11672,7 +13492,7 @@ pub fn x00403998() -> Cont {
         // 00403998 cmp esi,ds:[40720Ch]
         sub(
             MACHINE.regs.esi,
-            *(MACHINE.memory.add((0x40720cu32) as usize) as *mut u32),
+            *(MACHINE.memory.add(0x40720cu32 as usize) as *mut u32),
         );
         // 0040399e je short 004039AAh
         je(Cont(x004039a0), Cont(x004039aa))
@@ -11683,7 +13503,9 @@ pub fn x004039a0() -> Cont {
     unsafe {
         // 004039a0 cmp dword ptr [ebp+8],0
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize) as *mut u32),
             0x0u32,
         );
         // 004039a4 jg near ptr 004038FAh
@@ -11709,7 +13531,10 @@ pub fn x004039aa() -> Cont {
 pub fn x004039af() -> Cont {
     unsafe {
         // 004039af mov eax,[esp+4]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.esp + 0x4u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x4u32) as usize)
+            as *mut u32);
         // 004039b3 mov edx,407208h
         MACHINE.regs.edx = 0x407208u32;
         // 004039b8 push esi
@@ -11719,7 +13544,9 @@ pub fn x004039af() -> Cont {
         // 004039bb cmp eax,[ecx+10h]
         sub(
             MACHINE.regs.eax,
-            *(MACHINE.memory.add((MACHINE.regs.ecx + 0x10u32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ecx.wrapping_add(0x10u32) as usize) as *mut u32),
         );
         // 004039be jbe short 004039C5h
         jbe(Cont(x004039c0), Cont(x004039c5))
@@ -11731,7 +13558,9 @@ pub fn x004039bb() -> Cont {
         // 004039bb cmp eax,[ecx+10h]
         sub(
             MACHINE.regs.eax,
-            *(MACHINE.memory.add((MACHINE.regs.ecx + 0x10u32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ecx.wrapping_add(0x10u32) as usize) as *mut u32),
         );
         // 004039be jbe short 004039C5h
         jbe(Cont(x004039c0), Cont(x004039c5))
@@ -11743,7 +13572,9 @@ pub fn x004039c0() -> Cont {
         // 004039c0 cmp eax,[ecx+14h]
         sub(
             MACHINE.regs.eax,
-            *(MACHINE.memory.add((MACHINE.regs.ecx + 0x14u32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ecx.wrapping_add(0x14u32) as usize) as *mut u32),
         );
         // 004039c3 jb short 004039CDh
         jb(Cont(x004039c5), Cont(x004039cd))
@@ -11753,7 +13584,10 @@ pub fn x004039c0() -> Cont {
 pub fn x004039c5() -> Cont {
     unsafe {
         // 004039c5 mov ecx,[ecx]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.ecx + 0x0u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ecx.wrapping_add(0x0u32) as usize)
+            as *mut u32);
         // 004039c7 cmp ecx,edx
         sub(MACHINE.regs.ecx, MACHINE.regs.edx);
         // 004039c9 je short 00403A02h
@@ -11795,11 +13629,19 @@ pub fn x004039d1() -> Cont {
 pub fn x004039e2() -> Cont {
     unsafe {
         // 004039e2 mov esi,[esp+0Ch]
-        MACHINE.regs.esi = *(MACHINE.memory.add((MACHINE.regs.esp + 0xcu32) as usize) as *mut u32);
+        MACHINE.regs.esi = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0xcu32) as usize)
+            as *mut u32);
         // 004039e6 mov [esi],ecx
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u32) = MACHINE.regs.ecx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize) as *mut u32) = MACHINE.regs.ecx;
         // 004039e8 mov esi,[esp+10h]
-        MACHINE.regs.esi = *(MACHINE.memory.add((MACHINE.regs.esp + 0x10u32) as usize) as *mut u32);
+        MACHINE.regs.esi = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x10u32) as usize)
+            as *mut u32);
         // 004039ec mov ecx,eax
         MACHINE.regs.ecx = MACHINE.regs.eax;
         // 004039ee and cx,0F000h
@@ -11807,7 +13649,9 @@ pub fn x004039e2() -> Cont {
         // 004039f3 sub eax,ecx
         MACHINE.regs.eax = sub(MACHINE.regs.eax, MACHINE.regs.ecx);
         // 004039f5 mov [esi],ecx
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u32) = MACHINE.regs.ecx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize) as *mut u32) = MACHINE.regs.ecx;
         // 004039f7 sub eax,edx
         MACHINE.regs.eax = sub(MACHINE.regs.eax, MACHINE.regs.edx);
         // 004039f9 pop esi
@@ -11815,7 +13659,11 @@ pub fn x004039e2() -> Cont {
         // 004039fa sar eax,4
         todo!();
         // 004039fd lea eax,[eax+ecx+8]
-        MACHINE.regs.eax = MACHINE.regs.eax + (MACHINE.regs.ecx * 1) + 0x8u32;
+        MACHINE.regs.eax = MACHINE
+            .regs
+            .eax
+            .wrapping_add((MACHINE.regs.ecx * 1))
+            .wrapping_add(0x8u32);
         // 00403a01 ret
         ret(0)
     }
@@ -11835,39 +13683,66 @@ pub fn x00403a02() -> Cont {
 pub fn x00403a06() -> Cont {
     unsafe {
         // 00403a06 mov eax,[esp+4]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.esp + 0x4u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x4u32) as usize)
+            as *mut u32);
         // 00403a0a mov ecx,[esp+8]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.esp + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 00403a0e sub ecx,[eax+10h]
         MACHINE.regs.ecx = sub(
             MACHINE.regs.ecx,
-            *(MACHINE.memory.add((MACHINE.regs.eax + 0x10u32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0x10u32) as usize) as *mut u32),
         );
         // 00403a11 sar ecx,0Ch
         todo!();
         // 00403a14 lea eax,[eax+ecx*8+18h]
-        MACHINE.regs.eax = MACHINE.regs.eax + (MACHINE.regs.ecx * 8) + 0x18u32;
+        MACHINE.regs.eax = MACHINE
+            .regs
+            .eax
+            .wrapping_add((MACHINE.regs.ecx * 8))
+            .wrapping_add(0x18u32);
         // 00403a18 mov ecx,[esp+0Ch]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.esp + 0xcu32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0xcu32) as usize)
+            as *mut u32);
         // 00403a1c movzx edx,byte ptr [ecx]
         todo!();
         // 00403a1f add [eax],edx
-        *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u32) = add(
-            *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u32),
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u32) = add(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u32),
             MACHINE.regs.edx,
         );
         // 00403a21 and byte ptr [ecx],0
-        *(MACHINE.memory.add((MACHINE.regs.ecx + 0x0u32) as usize) as *mut u8) = and(
-            *(MACHINE.memory.add((MACHINE.regs.ecx + 0x0u32) as usize) as *mut u8),
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ecx.wrapping_add(0x0u32) as usize) as *mut u8) = and(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ecx.wrapping_add(0x0u32) as usize) as *mut u8),
             0x0u8,
         );
         // 00403a24 cmp dword ptr [eax],0F0h
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u32),
             0xf0u32,
         );
         // 00403a2a mov dword ptr [eax+4],0F1h
-        *(MACHINE.memory.add((MACHINE.regs.eax + 0x4u32) as usize) as *mut u32) = 0xf1u32;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x4u32) as usize) as *mut u32) = 0xf1u32;
         // 00403a31 jne short 00403A4Ah
         jne(Cont(x00403a33), Cont(x00403a4a))
     }
@@ -11879,7 +13754,7 @@ pub fn x00403a33() -> Cont {
         todo!();
         // 00403a39 cmp dword ptr ds:[409704h],20h
         sub(
-            *(MACHINE.memory.add((0x409704u32) as usize) as *mut u32),
+            *(MACHINE.memory.add(0x409704u32 as usize) as *mut u32),
             0x20u32,
         );
         // 00403a40 jne short 00403A4Ah
@@ -11927,11 +13802,14 @@ pub fn x00403a4b() -> Cont {
         // 00403a51 push esi
         push(MACHINE.regs.esi);
         // 00403a52 mov esi,ds:[409228h]
-        MACHINE.regs.esi = *(MACHINE.memory.add((0x409228u32) as usize) as *mut u32);
+        MACHINE.regs.esi = *(MACHINE.memory.add(0x409228u32 as usize) as *mut u32);
         // 00403a58 push edi
         push(MACHINE.regs.edi);
         // 00403a59 mov edx,[esi+10h]
-        MACHINE.regs.edx = *(MACHINE.memory.add((MACHINE.regs.esi + 0x10u32) as usize) as *mut u32);
+        MACHINE.regs.edx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x10u32) as usize)
+            as *mut u32);
         // 00403a5c cmp edx,0FFFFFFFFh
         sub(MACHINE.regs.edx, 0xffffffffu32);
         // 00403a5f je near ptr 00403B04h
@@ -11942,7 +13820,10 @@ pub fn x00403a4b() -> Cont {
 pub fn x00403a59() -> Cont {
     unsafe {
         // 00403a59 mov edx,[esi+10h]
-        MACHINE.regs.edx = *(MACHINE.memory.add((MACHINE.regs.esi + 0x10u32) as usize) as *mut u32);
+        MACHINE.regs.edx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x10u32) as usize)
+            as *mut u32);
         // 00403a5c cmp edx,0FFFFFFFFh
         sub(MACHINE.regs.edx, 0xffffffffu32);
         // 00403a5f je near ptr 00403B04h
@@ -11953,9 +13834,12 @@ pub fn x00403a59() -> Cont {
 pub fn x00403a65() -> Cont {
     unsafe {
         // 00403a65 mov edi,[esi+8]
-        MACHINE.regs.edi = *(MACHINE.memory.add((MACHINE.regs.esi + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.edi = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 00403a68 lea ecx,[esi+2018h]
-        MACHINE.regs.ecx = MACHINE.regs.esi + 0x2018u32;
+        MACHINE.regs.ecx = MACHINE.regs.esi.wrapping_add(0x2018u32);
         // 00403a6e mov eax,edi
         MACHINE.regs.eax = MACHINE.regs.edi;
         // 00403a70 sub eax,esi
@@ -11973,7 +13857,8 @@ pub fn x00403a65() -> Cont {
         // 00403a7f mov [ebp-4],eax
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize) as *mut u32) = MACHINE.regs.eax;
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize) as *mut u32) =
+            MACHINE.regs.eax;
         // 00403a82 jae short 00403ABEh
         jae(Cont(x00403a84), Cont(x00403abe))
     }
@@ -11982,9 +13867,15 @@ pub fn x00403a65() -> Cont {
 pub fn x00403a84() -> Cont {
     unsafe {
         // 00403a84 mov ecx,[edi]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.edi + 0x0u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.edi.wrapping_add(0x0u32) as usize)
+            as *mut u32);
         // 00403a86 mov ebx,[ebp+8]
-        MACHINE.regs.ebx = *(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.ebx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 00403a89 cmp ecx,ebx
         sub(MACHINE.regs.ecx, MACHINE.regs.ebx);
         // 00403a8b jl short 00403AA7h
@@ -11996,7 +13887,9 @@ pub fn x00403a8d() -> Cont {
     unsafe {
         // 00403a8d cmp [edi+4],ebx
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.edi + 0x4u32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.edi.wrapping_add(0x4u32) as usize) as *mut u32),
             MACHINE.regs.ebx,
         );
         // 00403a90 jbe short 00403AA7h
@@ -12033,14 +13926,16 @@ pub fn x00403aa1() -> Cont {
         // 00403aa1 mov eax,[ebp-4]
         MACHINE.regs.eax = *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize)
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize)
             as *mut u32);
         // 00403aa4 mov [edi+4],ebx
-        *(MACHINE.memory.add((MACHINE.regs.edi + 0x4u32) as usize) as *mut u32) = MACHINE.regs.ebx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.edi.wrapping_add(0x4u32) as usize) as *mut u32) = MACHINE.regs.ebx;
         // 00403aa7 add edi,8
         MACHINE.regs.edi = add(MACHINE.regs.edi, 0x8u32);
         // 00403aaa lea ecx,[esi+2018h]
-        MACHINE.regs.ecx = MACHINE.regs.esi + 0x2018u32;
+        MACHINE.regs.ecx = MACHINE.regs.esi.wrapping_add(0x2018u32);
         // 00403ab0 add eax,1000h
         MACHINE.regs.eax = add(MACHINE.regs.eax, 0x1000u32);
         // 00403ab5 cmp edi,ecx
@@ -12048,7 +13943,8 @@ pub fn x00403aa1() -> Cont {
         // 00403ab7 mov [ebp-4],eax
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize) as *mut u32) = MACHINE.regs.eax;
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize) as *mut u32) =
+            MACHINE.regs.eax;
         // 00403aba jb short 00403A84h
         jb(Cont(x00403abc), Cont(x00403a84))
     }
@@ -12059,7 +13955,7 @@ pub fn x00403aa7() -> Cont {
         // 00403aa7 add edi,8
         MACHINE.regs.edi = add(MACHINE.regs.edi, 0x8u32);
         // 00403aaa lea ecx,[esi+2018h]
-        MACHINE.regs.ecx = MACHINE.regs.esi + 0x2018u32;
+        MACHINE.regs.ecx = MACHINE.regs.esi.wrapping_add(0x2018u32);
         // 00403ab0 add eax,1000h
         MACHINE.regs.eax = add(MACHINE.regs.eax, 0x1000u32);
         // 00403ab5 cmp edi,ecx
@@ -12067,7 +13963,8 @@ pub fn x00403aa7() -> Cont {
         // 00403ab7 mov [ebp-4],eax
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize) as *mut u32) = MACHINE.regs.eax;
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize) as *mut u32) =
+            MACHINE.regs.eax;
         // 00403aba jb short 00403A84h
         jb(Cont(x00403abc), Cont(x00403a84))
     }
@@ -12083,23 +13980,34 @@ pub fn x00403abc() -> Cont {
 pub fn x00403abe() -> Cont {
     unsafe {
         // 00403abe mov ebx,[ebp+8]
-        MACHINE.regs.ebx = *(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.ebx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 00403ac1 mov eax,[esi+8]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.esi + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 00403ac4 mov ecx,[esi+10h]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.esi + 0x10u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x10u32) as usize)
+            as *mut u32);
         // 00403ac7 lea edi,[esi+18h]
-        MACHINE.regs.edi = MACHINE.regs.esi + 0x18u32;
+        MACHINE.regs.edi = MACHINE.regs.esi.wrapping_add(0x18u32);
         // 00403aca mov [ebp-8],eax
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffff8u32) as usize) as *mut u32) = MACHINE.regs.eax;
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffff8u32) as usize) as *mut u32) =
+            MACHINE.regs.eax;
         // 00403acd cmp edi,eax
         sub(MACHINE.regs.edi, MACHINE.regs.eax);
         // 00403acf mov [ebp-4],ecx
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize) as *mut u32) = MACHINE.regs.ecx;
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize) as *mut u32) =
+            MACHINE.regs.ecx;
         // 00403ad2 jae short 00403B07h
         jae(Cont(x00403ad4), Cont(x00403b07))
     }
@@ -12108,21 +14016,29 @@ pub fn x00403abe() -> Cont {
 pub fn x00403ac1() -> Cont {
     unsafe {
         // 00403ac1 mov eax,[esi+8]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.esi + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 00403ac4 mov ecx,[esi+10h]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.esi + 0x10u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x10u32) as usize)
+            as *mut u32);
         // 00403ac7 lea edi,[esi+18h]
-        MACHINE.regs.edi = MACHINE.regs.esi + 0x18u32;
+        MACHINE.regs.edi = MACHINE.regs.esi.wrapping_add(0x18u32);
         // 00403aca mov [ebp-8],eax
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffff8u32) as usize) as *mut u32) = MACHINE.regs.eax;
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffff8u32) as usize) as *mut u32) =
+            MACHINE.regs.eax;
         // 00403acd cmp edi,eax
         sub(MACHINE.regs.edi, MACHINE.regs.eax);
         // 00403acf mov [ebp-4],ecx
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize) as *mut u32) = MACHINE.regs.ecx;
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize) as *mut u32) =
+            MACHINE.regs.ecx;
         // 00403ad2 jae short 00403B07h
         jae(Cont(x00403ad4), Cont(x00403b07))
     }
@@ -12131,7 +14047,10 @@ pub fn x00403ac1() -> Cont {
 pub fn x00403ad4() -> Cont {
     unsafe {
         // 00403ad4 mov eax,[edi]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.edi + 0x0u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.edi.wrapping_add(0x0u32) as usize)
+            as *mut u32);
         // 00403ad6 cmp eax,ebx
         sub(MACHINE.regs.eax, MACHINE.regs.ebx);
         // 00403ad8 jl short 00403AF3h
@@ -12143,7 +14062,9 @@ pub fn x00403ada() -> Cont {
     unsafe {
         // 00403ada cmp [edi+4],ebx
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.edi + 0x4u32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.edi.wrapping_add(0x4u32) as usize) as *mut u32),
             MACHINE.regs.ebx,
         );
         // 00403add jbe short 00403AF3h
@@ -12161,7 +14082,8 @@ pub fn x00403adf() -> Cont {
         push(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize) as *mut u32),
+                .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize)
+                as *mut u32),
         );
         // 00403ae4 call 00403C53h
         call(0x403ae9, Cont(x00403c53))
@@ -12182,14 +14104,17 @@ pub fn x00403ae9() -> Cont {
 pub fn x00403af0() -> Cont {
     unsafe {
         // 00403af0 mov [edi+4],ebx
-        *(MACHINE.memory.add((MACHINE.regs.edi + 0x4u32) as usize) as *mut u32) = MACHINE.regs.ebx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.edi.wrapping_add(0x4u32) as usize) as *mut u32) = MACHINE.regs.ebx;
         // 00403af3 add dword ptr [ebp-4],1000h
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize) as *mut u32) = add(
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize) as *mut u32) = add(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize) as *mut u32),
+                .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize)
+                as *mut u32),
             0x1000u32,
         );
         // 00403afa add edi,8
@@ -12199,7 +14124,8 @@ pub fn x00403af0() -> Cont {
             MACHINE.regs.edi,
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.ebp + 0xfffffff8u32) as usize) as *mut u32),
+                .add(MACHINE.regs.ebp.wrapping_add(0xfffffff8u32) as usize)
+                as *mut u32),
         );
         // 00403b00 jb short 00403AD4h
         jb(Cont(x00403b02), Cont(x00403ad4))
@@ -12211,10 +14137,11 @@ pub fn x00403af3() -> Cont {
         // 00403af3 add dword ptr [ebp-4],1000h
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize) as *mut u32) = add(
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize) as *mut u32) = add(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize) as *mut u32),
+                .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize)
+                as *mut u32),
             0x1000u32,
         );
         // 00403afa add edi,8
@@ -12224,7 +14151,8 @@ pub fn x00403af3() -> Cont {
             MACHINE.regs.edi,
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.ebp + 0xfffffff8u32) as usize) as *mut u32),
+                .add(MACHINE.regs.ebp.wrapping_add(0xfffffff8u32) as usize)
+                as *mut u32),
         );
         // 00403b00 jb short 00403AD4h
         jb(Cont(x00403b02), Cont(x00403ad4))
@@ -12241,13 +14169,19 @@ pub fn x00403b02() -> Cont {
 pub fn x00403b04() -> Cont {
     unsafe {
         // 00403b04 mov ebx,[ebp+8]
-        MACHINE.regs.ebx = *(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.ebx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 00403b07 mov esi,[esi]
-        MACHINE.regs.esi = *(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u32);
+        MACHINE.regs.esi = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize)
+            as *mut u32);
         // 00403b09 cmp esi,ds:[409228h]
         sub(
             MACHINE.regs.esi,
-            *(MACHINE.memory.add((0x409228u32) as usize) as *mut u32),
+            *(MACHINE.memory.add(0x409228u32 as usize) as *mut u32),
         );
         // 00403b0f je short 00403B26h
         je(Cont(x00403b11), Cont(x00403b26))
@@ -12257,11 +14191,14 @@ pub fn x00403b04() -> Cont {
 pub fn x00403b07() -> Cont {
     unsafe {
         // 00403b07 mov esi,[esi]
-        MACHINE.regs.esi = *(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u32);
+        MACHINE.regs.esi = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize)
+            as *mut u32);
         // 00403b09 cmp esi,ds:[409228h]
         sub(
             MACHINE.regs.esi,
-            *(MACHINE.memory.add((0x409228u32) as usize) as *mut u32),
+            *(MACHINE.memory.add(0x409228u32 as usize) as *mut u32),
         );
         // 00403b0f je short 00403B26h
         je(Cont(x00403b11), Cont(x00403b26))
@@ -12278,14 +14215,20 @@ pub fn x00403b11() -> Cont {
 pub fn x00403b16() -> Cont {
     unsafe {
         // 00403b16 mov ds:[409228h],esi
-        *(MACHINE.memory.add((0x409228u32) as usize) as *mut u32) = MACHINE.regs.esi;
+        *(MACHINE.memory.add(0x409228u32 as usize) as *mut u32) = MACHINE.regs.esi;
         // 00403b1c sub [edi],ebx
-        *(MACHINE.memory.add((MACHINE.regs.edi + 0x0u32) as usize) as *mut u32) = sub(
-            *(MACHINE.memory.add((MACHINE.regs.edi + 0x0u32) as usize) as *mut u32),
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.edi.wrapping_add(0x0u32) as usize) as *mut u32) = sub(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.edi.wrapping_add(0x0u32) as usize) as *mut u32),
             MACHINE.regs.ebx,
         );
         // 00403b1e mov [esi+8],edi
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0x8u32) as usize) as *mut u32) = MACHINE.regs.edi;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x8u32) as usize) as *mut u32) = MACHINE.regs.edi;
         // 00403b21 jmp near ptr 00403C4Eh
         Cont(x00403c4e)
     }
@@ -12299,7 +14242,9 @@ pub fn x00403b26() -> Cont {
         MACHINE.regs.edi = MACHINE.regs.eax;
         // 00403b2d cmp dword ptr [edi+10h],0FFFFFFFFh
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.edi + 0x10u32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.edi.wrapping_add(0x10u32) as usize) as *mut u32),
             0xffffffffu32,
         );
         // 00403b31 je short 00403B39h
@@ -12311,7 +14256,9 @@ pub fn x00403b2d() -> Cont {
     unsafe {
         // 00403b2d cmp dword ptr [edi+10h],0FFFFFFFFh
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.edi + 0x10u32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.edi.wrapping_add(0x10u32) as usize) as *mut u32),
             0xffffffffu32,
         );
         // 00403b31 je short 00403B39h
@@ -12323,7 +14270,9 @@ pub fn x00403b33() -> Cont {
     unsafe {
         // 00403b33 cmp dword ptr [edi+0Ch],0
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.edi + 0xcu32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.edi.wrapping_add(0xcu32) as usize) as *mut u32),
             0x0u32,
         );
         // 00403b37 jne short 00403B45h
@@ -12334,7 +14283,10 @@ pub fn x00403b33() -> Cont {
 pub fn x00403b39() -> Cont {
     unsafe {
         // 00403b39 mov edi,[edi]
-        MACHINE.regs.edi = *(MACHINE.memory.add((MACHINE.regs.edi + 0x0u32) as usize) as *mut u32);
+        MACHINE.regs.edi = *(MACHINE
+            .memory
+            .add(MACHINE.regs.edi.wrapping_add(0x0u32) as usize)
+            as *mut u32);
         // 00403b3b cmp edi,eax
         sub(MACHINE.regs.edi, MACHINE.regs.eax);
         // 00403b3d je near ptr 00403C1Ah
@@ -12352,14 +14304,18 @@ pub fn x00403b43() -> Cont {
 pub fn x00403b45() -> Cont {
     unsafe {
         // 00403b45 mov ebx,[edi+0Ch]
-        MACHINE.regs.ebx = *(MACHINE.memory.add((MACHINE.regs.edi + 0xcu32) as usize) as *mut u32);
+        MACHINE.regs.ebx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.edi.wrapping_add(0xcu32) as usize)
+            as *mut u32);
         // 00403b48 and dword ptr [ebp-4],0
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize) as *mut u32) = and(
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize) as *mut u32) = and(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize) as *mut u32),
+                .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize)
+                as *mut u32),
             0x0u32,
         );
         // 00403b4c mov esi,ebx
@@ -12377,11 +14333,15 @@ pub fn x00403b45() -> Cont {
         // 00403b5b add esi,[edi+10h]
         MACHINE.regs.esi = add(
             MACHINE.regs.esi,
-            *(MACHINE.memory.add((MACHINE.regs.edi + 0x10u32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.edi.wrapping_add(0x10u32) as usize) as *mut u32),
         );
         // 00403b5e cmp dword ptr [ebx],0FFFFFFFFh
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.ebx + 0x0u32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebx.wrapping_add(0x0u32) as usize) as *mut u32),
             0xffffffffu32,
         );
         // 00403b61 jne short 00403B74h
@@ -12395,7 +14355,8 @@ pub fn x00403b63() -> Cont {
         sub(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize) as *mut u32),
+                .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize)
+                as *mut u32),
             0x10u32,
         );
         // 00403b67 jge short 00403B74h
@@ -12411,7 +14372,9 @@ pub fn x00403b69() -> Cont {
         todo!();
         // 00403b6f cmp dword ptr [eax],0FFFFFFFFh
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u32),
             0xffffffffu32,
         );
         // 00403b72 je short 00403B63h
@@ -12424,7 +14387,7 @@ pub fn x00403b74() -> Cont {
         // 00403b74 mov eax,[ebp-4]
         MACHINE.regs.eax = *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize)
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize)
             as *mut u32);
         // 00403b77 push 4
         push(0x4u32);
@@ -12439,7 +14402,8 @@ pub fn x00403b74() -> Cont {
         // 00403b83 mov [ebp-8],eax
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffff8u32) as usize) as *mut u32) = MACHINE.regs.eax;
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffff8u32) as usize) as *mut u32) =
+            MACHINE.regs.eax;
         // 00403b86 call dword ptr ds:[40605Ch]
         call(0x403b8c, Cont(kernel32::stdcall_VirtualAlloc))
     }
@@ -12462,7 +14426,8 @@ pub fn x00403b94() -> Cont {
         push(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.ebp + 0xfffffff8u32) as usize) as *mut u32),
+                .add(MACHINE.regs.ebp.wrapping_add(0xfffffff8u32) as usize)
+                as *mut u32),
         );
         // 00403b99 push esi
         push(MACHINE.regs.esi);
@@ -12476,7 +14441,7 @@ pub fn x00403b9f() -> Cont {
         // 00403b9f mov edx,[ebp-4]
         MACHINE.regs.edx = *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize)
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize)
             as *mut u32);
         // 00403ba2 add esp,0Ch
         MACHINE.regs.esp = add(MACHINE.regs.esp, 0xcu32);
@@ -12492,30 +14457,42 @@ pub fn x00403b9f() -> Cont {
 pub fn x00403bab() -> Cont {
     unsafe {
         // 00403bab lea eax,[esi+4]
-        MACHINE.regs.eax = MACHINE.regs.esi + 0x4u32;
+        MACHINE.regs.eax = MACHINE.regs.esi.wrapping_add(0x4u32);
         // 00403bae mov [ebp-4],edx
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize) as *mut u32) = MACHINE.regs.edx;
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize) as *mut u32) =
+            MACHINE.regs.edx;
         // 00403bb1 or byte ptr [eax+0F4h],0FFh
-        *(MACHINE.memory.add((MACHINE.regs.eax + 0xf4u32) as usize) as *mut u8) = or(
-            *(MACHINE.memory.add((MACHINE.regs.eax + 0xf4u32) as usize) as *mut u8),
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0xf4u32) as usize) as *mut u8) = or(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0xf4u32) as usize) as *mut u8),
             0xffu8,
         );
         // 00403bb8 lea edx,[eax+4]
-        MACHINE.regs.edx = MACHINE.regs.eax + 0x4u32;
+        MACHINE.regs.edx = MACHINE.regs.eax.wrapping_add(0x4u32);
         // 00403bbb mov [eax-4],edx
         *(MACHINE
             .memory
-            .add((MACHINE.regs.eax + 0xfffffffcu32) as usize) as *mut u32) = MACHINE.regs.edx;
+            .add(MACHINE.regs.eax.wrapping_add(0xfffffffcu32) as usize) as *mut u32) =
+            MACHINE.regs.edx;
         // 00403bbe mov edx,0F0h
         MACHINE.regs.edx = 0xf0u32;
         // 00403bc3 mov [eax],edx
-        *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u32) = MACHINE.regs.edx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u32) = MACHINE.regs.edx;
         // 00403bc5 mov [ecx],edx
-        *(MACHINE.memory.add((MACHINE.regs.ecx + 0x0u32) as usize) as *mut u32) = MACHINE.regs.edx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ecx.wrapping_add(0x0u32) as usize) as *mut u32) = MACHINE.regs.edx;
         // 00403bc7 mov dword ptr [ecx+4],0F1h
-        *(MACHINE.memory.add((MACHINE.regs.ecx + 0x4u32) as usize) as *mut u32) = 0xf1u32;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ecx.wrapping_add(0x4u32) as usize) as *mut u32) = 0xf1u32;
         // 00403bce add eax,1000h
         MACHINE.regs.eax = add(MACHINE.regs.eax, 0x1000u32);
         // 00403bd3 add ecx,8
@@ -12530,24 +14507,35 @@ pub fn x00403bab() -> Cont {
 pub fn x00403bb1() -> Cont {
     unsafe {
         // 00403bb1 or byte ptr [eax+0F4h],0FFh
-        *(MACHINE.memory.add((MACHINE.regs.eax + 0xf4u32) as usize) as *mut u8) = or(
-            *(MACHINE.memory.add((MACHINE.regs.eax + 0xf4u32) as usize) as *mut u8),
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0xf4u32) as usize) as *mut u8) = or(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0xf4u32) as usize) as *mut u8),
             0xffu8,
         );
         // 00403bb8 lea edx,[eax+4]
-        MACHINE.regs.edx = MACHINE.regs.eax + 0x4u32;
+        MACHINE.regs.edx = MACHINE.regs.eax.wrapping_add(0x4u32);
         // 00403bbb mov [eax-4],edx
         *(MACHINE
             .memory
-            .add((MACHINE.regs.eax + 0xfffffffcu32) as usize) as *mut u32) = MACHINE.regs.edx;
+            .add(MACHINE.regs.eax.wrapping_add(0xfffffffcu32) as usize) as *mut u32) =
+            MACHINE.regs.edx;
         // 00403bbe mov edx,0F0h
         MACHINE.regs.edx = 0xf0u32;
         // 00403bc3 mov [eax],edx
-        *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u32) = MACHINE.regs.edx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u32) = MACHINE.regs.edx;
         // 00403bc5 mov [ecx],edx
-        *(MACHINE.memory.add((MACHINE.regs.ecx + 0x0u32) as usize) as *mut u32) = MACHINE.regs.edx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ecx.wrapping_add(0x0u32) as usize) as *mut u32) = MACHINE.regs.edx;
         // 00403bc7 mov dword ptr [ecx+4],0F1h
-        *(MACHINE.memory.add((MACHINE.regs.ecx + 0x4u32) as usize) as *mut u32) = 0xf1u32;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ecx.wrapping_add(0x4u32) as usize) as *mut u32) = 0xf1u32;
         // 00403bce add eax,1000h
         MACHINE.regs.eax = add(MACHINE.regs.eax, 0x1000u32);
         // 00403bd3 add ecx,8
@@ -12562,9 +14550,9 @@ pub fn x00403bb1() -> Cont {
 pub fn x00403bdb() -> Cont {
     unsafe {
         // 00403bdb mov ds:[409228h],edi
-        *(MACHINE.memory.add((0x409228u32) as usize) as *mut u32) = MACHINE.regs.edi;
+        *(MACHINE.memory.add(0x409228u32 as usize) as *mut u32) = MACHINE.regs.edi;
         // 00403be1 lea eax,[edi+2018h]
-        MACHINE.regs.eax = MACHINE.regs.edi + 0x2018u32;
+        MACHINE.regs.eax = MACHINE.regs.edi.wrapping_add(0x2018u32);
         // 00403be7 cmp ecx,eax
         sub(MACHINE.regs.ecx, MACHINE.regs.eax);
         // 00403be9 jae short 00403BF7h
@@ -12585,7 +14573,9 @@ pub fn x00403beb() -> Cont {
     unsafe {
         // 00403beb cmp dword ptr [ecx],0FFFFFFFFh
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.ecx + 0x0u32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ecx.wrapping_add(0x0u32) as usize) as *mut u32),
             0xffffffffu32,
         );
         // 00403bee je short 00403BF5h
@@ -12611,30 +14601,53 @@ pub fn x00403bf5() -> Cont {
         // 00403bf9 and eax,ecx
         MACHINE.regs.eax = and(MACHINE.regs.eax, MACHINE.regs.ecx);
         // 00403bfb mov [edi+0Ch],eax
-        *(MACHINE.memory.add((MACHINE.regs.edi + 0xcu32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.edi.wrapping_add(0xcu32) as usize) as *mut u32) = MACHINE.regs.eax;
         // 00403bfe mov eax,[ebp+8]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 00403c01 mov [esi+8],al
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0x8u32) as usize) as *mut u8) =
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x8u32) as usize) as *mut u8) =
             MACHINE.regs.get_al();
         // 00403c04 mov [edi+8],ebx
-        *(MACHINE.memory.add((MACHINE.regs.edi + 0x8u32) as usize) as *mut u32) = MACHINE.regs.ebx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.edi.wrapping_add(0x8u32) as usize) as *mut u32) = MACHINE.regs.ebx;
         // 00403c07 sub [ebx],eax
-        *(MACHINE.memory.add((MACHINE.regs.ebx + 0x0u32) as usize) as *mut u32) = sub(
-            *(MACHINE.memory.add((MACHINE.regs.ebx + 0x0u32) as usize) as *mut u32),
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebx.wrapping_add(0x0u32) as usize) as *mut u32) = sub(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebx.wrapping_add(0x0u32) as usize) as *mut u32),
             MACHINE.regs.eax,
         );
         // 00403c09 sub [esi+4],eax
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0x4u32) as usize) as *mut u32) = sub(
-            *(MACHINE.memory.add((MACHINE.regs.esi + 0x4u32) as usize) as *mut u32),
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x4u32) as usize) as *mut u32) = sub(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esi.wrapping_add(0x4u32) as usize) as *mut u32),
             MACHINE.regs.eax,
         );
         // 00403c0c lea ecx,[esi+eax+8]
-        MACHINE.regs.ecx = MACHINE.regs.esi + (MACHINE.regs.eax * 1) + 0x8u32;
+        MACHINE.regs.ecx = MACHINE
+            .regs
+            .esi
+            .wrapping_add((MACHINE.regs.eax * 1))
+            .wrapping_add(0x8u32);
         // 00403c10 lea eax,[esi+100h]
-        MACHINE.regs.eax = MACHINE.regs.esi + 0x100u32;
+        MACHINE.regs.eax = MACHINE.regs.esi.wrapping_add(0x100u32);
         // 00403c16 mov [esi],ecx
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u32) = MACHINE.regs.ecx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize) as *mut u32) = MACHINE.regs.ecx;
         // 00403c18 jmp short 00403C4Eh
         Cont(x00403c4e)
     }
@@ -12647,30 +14660,53 @@ pub fn x00403bf7() -> Cont {
         // 00403bf9 and eax,ecx
         MACHINE.regs.eax = and(MACHINE.regs.eax, MACHINE.regs.ecx);
         // 00403bfb mov [edi+0Ch],eax
-        *(MACHINE.memory.add((MACHINE.regs.edi + 0xcu32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.edi.wrapping_add(0xcu32) as usize) as *mut u32) = MACHINE.regs.eax;
         // 00403bfe mov eax,[ebp+8]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 00403c01 mov [esi+8],al
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0x8u32) as usize) as *mut u8) =
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x8u32) as usize) as *mut u8) =
             MACHINE.regs.get_al();
         // 00403c04 mov [edi+8],ebx
-        *(MACHINE.memory.add((MACHINE.regs.edi + 0x8u32) as usize) as *mut u32) = MACHINE.regs.ebx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.edi.wrapping_add(0x8u32) as usize) as *mut u32) = MACHINE.regs.ebx;
         // 00403c07 sub [ebx],eax
-        *(MACHINE.memory.add((MACHINE.regs.ebx + 0x0u32) as usize) as *mut u32) = sub(
-            *(MACHINE.memory.add((MACHINE.regs.ebx + 0x0u32) as usize) as *mut u32),
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebx.wrapping_add(0x0u32) as usize) as *mut u32) = sub(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebx.wrapping_add(0x0u32) as usize) as *mut u32),
             MACHINE.regs.eax,
         );
         // 00403c09 sub [esi+4],eax
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0x4u32) as usize) as *mut u32) = sub(
-            *(MACHINE.memory.add((MACHINE.regs.esi + 0x4u32) as usize) as *mut u32),
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x4u32) as usize) as *mut u32) = sub(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esi.wrapping_add(0x4u32) as usize) as *mut u32),
             MACHINE.regs.eax,
         );
         // 00403c0c lea ecx,[esi+eax+8]
-        MACHINE.regs.ecx = MACHINE.regs.esi + (MACHINE.regs.eax * 1) + 0x8u32;
+        MACHINE.regs.ecx = MACHINE
+            .regs
+            .esi
+            .wrapping_add((MACHINE.regs.eax * 1))
+            .wrapping_add(0x8u32);
         // 00403c10 lea eax,[esi+100h]
-        MACHINE.regs.eax = MACHINE.regs.esi + 0x100u32;
+        MACHINE.regs.eax = MACHINE.regs.esi.wrapping_add(0x100u32);
         // 00403c16 mov [esi],ecx
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u32) = MACHINE.regs.ecx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize) as *mut u32) = MACHINE.regs.ecx;
         // 00403c18 jmp short 00403C4Eh
         Cont(x00403c4e)
     }
@@ -12695,31 +14731,48 @@ pub fn x00403c1f() -> Cont {
 pub fn x00403c23() -> Cont {
     unsafe {
         // 00403c23 mov ecx,[eax+10h]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.eax + 0x10u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x10u32) as usize)
+            as *mut u32);
         // 00403c26 mov [ecx+8],bl
-        *(MACHINE.memory.add((MACHINE.regs.ecx + 0x8u32) as usize) as *mut u8) =
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ecx.wrapping_add(0x8u32) as usize) as *mut u8) =
             MACHINE.regs.get_bl();
         // 00403c29 lea edx,[ecx+ebx+8]
-        MACHINE.regs.edx = MACHINE.regs.ecx + (MACHINE.regs.ebx * 1) + 0x8u32;
+        MACHINE.regs.edx = MACHINE
+            .regs
+            .ecx
+            .wrapping_add((MACHINE.regs.ebx * 1))
+            .wrapping_add(0x8u32);
         // 00403c2d mov ds:[409228h],eax
-        *(MACHINE.memory.add((0x409228u32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE.memory.add(0x409228u32 as usize) as *mut u32) = MACHINE.regs.eax;
         // 00403c32 mov [ecx],edx
-        *(MACHINE.memory.add((MACHINE.regs.ecx + 0x0u32) as usize) as *mut u32) = MACHINE.regs.edx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ecx.wrapping_add(0x0u32) as usize) as *mut u32) = MACHINE.regs.edx;
         // 00403c34 mov edx,0F0h
         MACHINE.regs.edx = 0xf0u32;
         // 00403c39 sub edx,ebx
         MACHINE.regs.edx = sub(MACHINE.regs.edx, MACHINE.regs.ebx);
         // 00403c3b mov [ecx+4],edx
-        *(MACHINE.memory.add((MACHINE.regs.ecx + 0x4u32) as usize) as *mut u32) = MACHINE.regs.edx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ecx.wrapping_add(0x4u32) as usize) as *mut u32) = MACHINE.regs.edx;
         // 00403c3e movzx edx,bl
         todo!();
         // 00403c41 sub [eax+18h],edx
-        *(MACHINE.memory.add((MACHINE.regs.eax + 0x18u32) as usize) as *mut u32) = sub(
-            *(MACHINE.memory.add((MACHINE.regs.eax + 0x18u32) as usize) as *mut u32),
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x18u32) as usize) as *mut u32) = sub(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0x18u32) as usize) as *mut u32),
             MACHINE.regs.edx,
         );
         // 00403c44 lea eax,[ecx+100h]
-        MACHINE.regs.eax = MACHINE.regs.ecx + 0x100u32;
+        MACHINE.regs.eax = MACHINE.regs.ecx.wrapping_add(0x100u32);
         // 00403c4a jmp short 00403C4Eh
         Cont(x00403c4e)
     }
@@ -12766,31 +14819,46 @@ pub fn x00403c53() -> Cont {
         // 00403c56 push ecx
         push(MACHINE.regs.ecx);
         // 00403c57 mov ecx,[ebp+8]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 00403c5a mov edx,[ebp+10h]
-        MACHINE.regs.edx = *(MACHINE.memory.add((MACHINE.regs.ebp + 0x10u32) as usize) as *mut u32);
+        MACHINE.regs.edx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x10u32) as usize)
+            as *mut u32);
         // 00403c5d push ebx
         push(MACHINE.regs.ebx);
         // 00403c5e push esi
         push(MACHINE.regs.esi);
         // 00403c5f mov esi,[ecx+4]
-        MACHINE.regs.esi = *(MACHINE.memory.add((MACHINE.regs.ecx + 0x4u32) as usize) as *mut u32);
+        MACHINE.regs.esi = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ecx.wrapping_add(0x4u32) as usize)
+            as *mut u32);
         // 00403c62 push edi
         push(MACHINE.regs.edi);
         // 00403c63 mov edi,[ecx]
-        MACHINE.regs.edi = *(MACHINE.memory.add((MACHINE.regs.ecx + 0x0u32) as usize) as *mut u32);
+        MACHINE.regs.edi = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ecx.wrapping_add(0x0u32) as usize)
+            as *mut u32);
         // 00403c65 lea ebx,[ecx+0F8h]
-        MACHINE.regs.ebx = MACHINE.regs.ecx + 0xf8u32;
+        MACHINE.regs.ebx = MACHINE.regs.ecx.wrapping_add(0xf8u32);
         // 00403c6b cmp esi,edx
         sub(MACHINE.regs.esi, MACHINE.regs.edx);
         // 00403c6d mov [ebp-4],edi
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize) as *mut u32) = MACHINE.regs.edi;
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize) as *mut u32) =
+            MACHINE.regs.edi;
         // 00403c70 mov eax,edi
         MACHINE.regs.eax = MACHINE.regs.edi;
         // 00403c72 mov [ebp+8],ebx
-        *(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32) = MACHINE.regs.ebx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize) as *mut u32) = MACHINE.regs.ebx;
         // 00403c75 jb short 00403C98h
         jb(Cont(x00403c77), Cont(x00403c98))
     }
@@ -12799,9 +14867,15 @@ pub fn x00403c53() -> Cont {
 pub fn x00403c77() -> Cont {
     unsafe {
         // 00403c77 lea eax,[edi+edx]
-        MACHINE.regs.eax = MACHINE.regs.edi + (MACHINE.regs.edx * 1) + 0x0u32;
+        MACHINE.regs.eax = MACHINE
+            .regs
+            .edi
+            .wrapping_add((MACHINE.regs.edx * 1))
+            .wrapping_add(0x0u32);
         // 00403c7a mov [edi],dl
-        *(MACHINE.memory.add((MACHINE.regs.edi + 0x0u32) as usize) as *mut u8) =
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.edi.wrapping_add(0x0u32) as usize) as *mut u8) =
             MACHINE.regs.get_dl();
         // 00403c7c cmp eax,ebx
         sub(MACHINE.regs.eax, MACHINE.regs.ebx);
@@ -12813,13 +14887,21 @@ pub fn x00403c77() -> Cont {
 pub fn x00403c80() -> Cont {
     unsafe {
         // 00403c80 add [ecx],edx
-        *(MACHINE.memory.add((MACHINE.regs.ecx + 0x0u32) as usize) as *mut u32) = add(
-            *(MACHINE.memory.add((MACHINE.regs.ecx + 0x0u32) as usize) as *mut u32),
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ecx.wrapping_add(0x0u32) as usize) as *mut u32) = add(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ecx.wrapping_add(0x0u32) as usize) as *mut u32),
             MACHINE.regs.edx,
         );
         // 00403c82 sub [ecx+4],edx
-        *(MACHINE.memory.add((MACHINE.regs.ecx + 0x4u32) as usize) as *mut u32) = sub(
-            *(MACHINE.memory.add((MACHINE.regs.ecx + 0x4u32) as usize) as *mut u32),
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ecx.wrapping_add(0x4u32) as usize) as *mut u32) = sub(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ecx.wrapping_add(0x4u32) as usize) as *mut u32),
             MACHINE.regs.edx,
         );
         // 00403c85 jmp short 00403C90h
@@ -12830,16 +14912,22 @@ pub fn x00403c80() -> Cont {
 pub fn x00403c87() -> Cont {
     unsafe {
         // 00403c87 and dword ptr [ecx+4],0
-        *(MACHINE.memory.add((MACHINE.regs.ecx + 0x4u32) as usize) as *mut u32) = and(
-            *(MACHINE.memory.add((MACHINE.regs.ecx + 0x4u32) as usize) as *mut u32),
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ecx.wrapping_add(0x4u32) as usize) as *mut u32) = and(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ecx.wrapping_add(0x4u32) as usize) as *mut u32),
             0x0u32,
         );
         // 00403c8b lea eax,[ecx+8]
-        MACHINE.regs.eax = MACHINE.regs.ecx + 0x8u32;
+        MACHINE.regs.eax = MACHINE.regs.ecx.wrapping_add(0x8u32);
         // 00403c8e mov [ecx],eax
-        *(MACHINE.memory.add((MACHINE.regs.ecx + 0x0u32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ecx.wrapping_add(0x0u32) as usize) as *mut u32) = MACHINE.regs.eax;
         // 00403c90 lea eax,[edi+8]
-        MACHINE.regs.eax = MACHINE.regs.edi + 0x8u32;
+        MACHINE.regs.eax = MACHINE.regs.edi.wrapping_add(0x8u32);
         // 00403c93 jmp near ptr 00403D66h
         Cont(x00403d66)
     }
@@ -12848,7 +14936,7 @@ pub fn x00403c87() -> Cont {
 pub fn x00403c90() -> Cont {
     unsafe {
         // 00403c90 lea eax,[edi+8]
-        MACHINE.regs.eax = MACHINE.regs.edi + 0x8u32;
+        MACHINE.regs.eax = MACHINE.regs.edi.wrapping_add(0x8u32);
         // 00403c93 jmp near ptr 00403D66h
         Cont(x00403d66)
     }
@@ -12860,7 +14948,9 @@ pub fn x00403c98() -> Cont {
         MACHINE.regs.esi = add(MACHINE.regs.esi, MACHINE.regs.edi);
         // 00403c9a cmp byte ptr [esi],0
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u8),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize) as *mut u8),
             0x0u8,
         );
         // 00403c9d je short 00403CA1h
@@ -12873,7 +14963,11 @@ pub fn x00403c9f() -> Cont {
         // 00403c9f mov eax,esi
         MACHINE.regs.eax = MACHINE.regs.esi;
         // 00403ca1 lea esi,[eax+edx]
-        MACHINE.regs.esi = MACHINE.regs.eax + (MACHINE.regs.edx * 1) + 0x0u32;
+        MACHINE.regs.esi = MACHINE
+            .regs
+            .eax
+            .wrapping_add((MACHINE.regs.edx * 1))
+            .wrapping_add(0x0u32);
         // 00403ca4 cmp esi,ebx
         sub(MACHINE.regs.esi, MACHINE.regs.ebx);
         // 00403ca6 jae short 00403CEBh
@@ -12884,7 +14978,11 @@ pub fn x00403c9f() -> Cont {
 pub fn x00403ca1() -> Cont {
     unsafe {
         // 00403ca1 lea esi,[eax+edx]
-        MACHINE.regs.esi = MACHINE.regs.eax + (MACHINE.regs.edx * 1) + 0x0u32;
+        MACHINE.regs.esi = MACHINE
+            .regs
+            .eax
+            .wrapping_add((MACHINE.regs.edx * 1))
+            .wrapping_add(0x0u32);
         // 00403ca4 cmp esi,ebx
         sub(MACHINE.regs.esi, MACHINE.regs.ebx);
         // 00403ca6 jae short 00403CEBh
@@ -12895,9 +14993,11 @@ pub fn x00403ca1() -> Cont {
 pub fn x00403ca8() -> Cont {
     unsafe {
         // 00403ca8 mov bl,[eax]
-        MACHINE
-            .regs
-            .set_bl(*(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u8));
+        MACHINE.regs.set_bl(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u8),
+        );
         // 00403caa test bl,bl
         and(MACHINE.regs.get_bl(), MACHINE.regs.get_bl());
         // 00403cac jne short 00403CDEh
@@ -12910,12 +15010,14 @@ pub fn x00403cae() -> Cont {
         // 00403cae push 1
         push(0x1u32);
         // 00403cb0 lea ebx,[eax+1]
-        MACHINE.regs.ebx = MACHINE.regs.eax + 0x1u32;
+        MACHINE.regs.ebx = MACHINE.regs.eax.wrapping_add(0x1u32);
         // 00403cb3 pop esi
         MACHINE.regs.esi = pop();
         // 00403cb4 cmp byte ptr [ebx],0
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.ebx + 0x0u32) as usize) as *mut u8),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebx.wrapping_add(0x0u32) as usize) as *mut u8),
             0x0u8,
         );
         // 00403cb7 jne short 00403CBDh
@@ -12927,7 +15029,9 @@ pub fn x00403cb4() -> Cont {
     unsafe {
         // 00403cb4 cmp byte ptr [ebx],0
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.ebx + 0x0u32) as usize) as *mut u8),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebx.wrapping_add(0x0u32) as usize) as *mut u8),
             0x0u8,
         );
         // 00403cb7 jne short 00403CBDh
@@ -12962,7 +15066,8 @@ pub fn x00403cc1() -> Cont {
             MACHINE.regs.eax,
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize) as *mut u32),
+                .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize)
+                as *mut u32),
         );
         // 00403cc4 jne short 00403CCBh
         jne(Cont(x00403cc6), Cont(x00403ccb))
@@ -12972,7 +15077,9 @@ pub fn x00403cc1() -> Cont {
 pub fn x00403cc6() -> Cont {
     unsafe {
         // 00403cc6 mov [ecx+4],esi
-        *(MACHINE.memory.add((MACHINE.regs.ecx + 0x4u32) as usize) as *mut u32) = MACHINE.regs.esi;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ecx.wrapping_add(0x4u32) as usize) as *mut u32) = MACHINE.regs.esi;
         // 00403cc9 jmp short 00403CD7h
         Cont(x00403cd7)
     }
@@ -12981,13 +15088,19 @@ pub fn x00403cc6() -> Cont {
 pub fn x00403ccb() -> Cont {
     unsafe {
         // 00403ccb sub [ebp+0Ch],esi
-        *(MACHINE.memory.add((MACHINE.regs.ebp + 0xcu32) as usize) as *mut u32) = sub(
-            *(MACHINE.memory.add((MACHINE.regs.ebp + 0xcu32) as usize) as *mut u32),
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0xcu32) as usize) as *mut u32) = sub(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0xcu32) as usize) as *mut u32),
             MACHINE.regs.esi,
         );
         // 00403cce cmp [ebp+0Ch],edx
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.ebp + 0xcu32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0xcu32) as usize) as *mut u32),
             MACHINE.regs.edx,
         );
         // 00403cd1 jb near ptr 00403D70h
@@ -13000,7 +15113,7 @@ pub fn x00403cd7() -> Cont {
         // 00403cd7 mov edi,[ebp-4]
         MACHINE.regs.edi = *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize)
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize)
             as *mut u32);
         // 00403cda mov eax,ebx
         MACHINE.regs.eax = MACHINE.regs.ebx;
@@ -13016,11 +15129,17 @@ pub fn x00403cde() -> Cont {
         // 00403ce1 add eax,esi
         MACHINE.regs.eax = add(MACHINE.regs.eax, MACHINE.regs.esi);
         // 00403ce3 lea esi,[eax+edx]
-        MACHINE.regs.esi = MACHINE.regs.eax + (MACHINE.regs.edx * 1) + 0x0u32;
+        MACHINE.regs.esi = MACHINE
+            .regs
+            .eax
+            .wrapping_add((MACHINE.regs.edx * 1))
+            .wrapping_add(0x0u32);
         // 00403ce6 cmp esi,[ebp+8]
         sub(
             MACHINE.regs.esi,
-            *(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize) as *mut u32),
         );
         // 00403ce9 jb short 00403CA8h
         jb(Cont(x00403ceb), Cont(x00403ca8))
@@ -13030,11 +15149,17 @@ pub fn x00403cde() -> Cont {
 pub fn x00403ce3() -> Cont {
     unsafe {
         // 00403ce3 lea esi,[eax+edx]
-        MACHINE.regs.esi = MACHINE.regs.eax + (MACHINE.regs.edx * 1) + 0x0u32;
+        MACHINE.regs.esi = MACHINE
+            .regs
+            .eax
+            .wrapping_add((MACHINE.regs.edx * 1))
+            .wrapping_add(0x0u32);
         // 00403ce6 cmp esi,[ebp+8]
         sub(
             MACHINE.regs.esi,
-            *(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize) as *mut u32),
         );
         // 00403ce9 jb short 00403CA8h
         jb(Cont(x00403ceb), Cont(x00403ca8))
@@ -13044,7 +15169,7 @@ pub fn x00403ce3() -> Cont {
 pub fn x00403ceb() -> Cont {
     unsafe {
         // 00403ceb lea esi,[ecx+8]
-        MACHINE.regs.esi = MACHINE.regs.ecx + 0x8u32;
+        MACHINE.regs.esi = MACHINE.regs.ecx.wrapping_add(0x8u32);
         // 00403cee cmp esi,edi
         sub(MACHINE.regs.esi, MACHINE.regs.edi);
         // 00403cf0 jae short 00403D70h
@@ -13064,11 +15189,17 @@ pub fn x00403cee() -> Cont {
 pub fn x00403cf2() -> Cont {
     unsafe {
         // 00403cf2 lea eax,[esi+edx]
-        MACHINE.regs.eax = MACHINE.regs.esi + (MACHINE.regs.edx * 1) + 0x0u32;
+        MACHINE.regs.eax = MACHINE
+            .regs
+            .esi
+            .wrapping_add((MACHINE.regs.edx * 1))
+            .wrapping_add(0x0u32);
         // 00403cf5 cmp eax,[ebp+8]
         sub(
             MACHINE.regs.eax,
-            *(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize) as *mut u32),
         );
         // 00403cf8 jae short 00403D70h
         jae(Cont(x00403cfa), Cont(x00403d70))
@@ -13078,9 +15209,11 @@ pub fn x00403cf2() -> Cont {
 pub fn x00403cfa() -> Cont {
     unsafe {
         // 00403cfa mov al,[esi]
-        MACHINE
-            .regs
-            .set_al(*(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u8));
+        MACHINE.regs.set_al(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize) as *mut u8),
+        );
         // 00403cfc test al,al
         and(MACHINE.regs.get_al(), MACHINE.regs.get_al());
         // 00403cfe jne short 00403D40h
@@ -13093,12 +15226,14 @@ pub fn x00403d00() -> Cont {
         // 00403d00 push 1
         push(0x1u32);
         // 00403d02 lea ebx,[esi+1]
-        MACHINE.regs.ebx = MACHINE.regs.esi + 0x1u32;
+        MACHINE.regs.ebx = MACHINE.regs.esi.wrapping_add(0x1u32);
         // 00403d05 pop eax
         MACHINE.regs.eax = pop();
         // 00403d06 cmp byte ptr [ebx],0
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.ebx + 0x0u32) as usize) as *mut u8),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebx.wrapping_add(0x0u32) as usize) as *mut u8),
             0x0u8,
         );
         // 00403d09 jne short 00403D30h
@@ -13110,7 +15245,9 @@ pub fn x00403d06() -> Cont {
     unsafe {
         // 00403d06 cmp byte ptr [ebx],0
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.ebx + 0x0u32) as usize) as *mut u8),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebx.wrapping_add(0x0u32) as usize) as *mut u8),
             0x0u8,
         );
         // 00403d09 jne short 00403D30h
@@ -13132,11 +15269,17 @@ pub fn x00403d0b() -> Cont {
 pub fn x00403d0f() -> Cont {
     unsafe {
         // 00403d0f lea ebx,[eax+edx]
-        MACHINE.regs.ebx = MACHINE.regs.eax + (MACHINE.regs.edx * 1) + 0x0u32;
+        MACHINE.regs.ebx = MACHINE
+            .regs
+            .eax
+            .wrapping_add((MACHINE.regs.edx * 1))
+            .wrapping_add(0x0u32);
         // 00403d12 cmp ebx,[ebp+8]
         sub(
             MACHINE.regs.ebx,
-            *(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize) as *mut u32),
         );
         // 00403d15 jae short 00403D20h
         jae(Cont(x00403d17), Cont(x00403d20))
@@ -13148,9 +15291,13 @@ pub fn x00403d17() -> Cont {
         // 00403d17 sub esi,edx
         MACHINE.regs.esi = sub(MACHINE.regs.esi, MACHINE.regs.edx);
         // 00403d19 mov [ecx],ebx
-        *(MACHINE.memory.add((MACHINE.regs.ecx + 0x0u32) as usize) as *mut u32) = MACHINE.regs.ebx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ecx.wrapping_add(0x0u32) as usize) as *mut u32) = MACHINE.regs.ebx;
         // 00403d1b mov [ecx+4],esi
-        *(MACHINE.memory.add((MACHINE.regs.ecx + 0x4u32) as usize) as *mut u32) = MACHINE.regs.esi;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ecx.wrapping_add(0x4u32) as usize) as *mut u32) = MACHINE.regs.esi;
         // 00403d1e jmp short 00403D29h
         Cont(x00403d29)
     }
@@ -13159,16 +15306,24 @@ pub fn x00403d17() -> Cont {
 pub fn x00403d20() -> Cont {
     unsafe {
         // 00403d20 and dword ptr [ecx+4],0
-        *(MACHINE.memory.add((MACHINE.regs.ecx + 0x4u32) as usize) as *mut u32) = and(
-            *(MACHINE.memory.add((MACHINE.regs.ecx + 0x4u32) as usize) as *mut u32),
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ecx.wrapping_add(0x4u32) as usize) as *mut u32) = and(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ecx.wrapping_add(0x4u32) as usize) as *mut u32),
             0x0u32,
         );
         // 00403d24 lea esi,[ecx+8]
-        MACHINE.regs.esi = MACHINE.regs.ecx + 0x8u32;
+        MACHINE.regs.esi = MACHINE.regs.ecx.wrapping_add(0x8u32);
         // 00403d27 mov [ecx],esi
-        *(MACHINE.memory.add((MACHINE.regs.ecx + 0x0u32) as usize) as *mut u32) = MACHINE.regs.esi;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ecx.wrapping_add(0x0u32) as usize) as *mut u32) = MACHINE.regs.esi;
         // 00403d29 mov [eax],dl
-        *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u8) =
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u8) =
             MACHINE.regs.get_dl();
         // 00403d2b add eax,8
         MACHINE.regs.eax = add(MACHINE.regs.eax, 0x8u32);
@@ -13180,7 +15335,9 @@ pub fn x00403d20() -> Cont {
 pub fn x00403d29() -> Cont {
     unsafe {
         // 00403d29 mov [eax],dl
-        *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u8) =
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u8) =
             MACHINE.regs.get_dl();
         // 00403d2b add eax,8
         MACHINE.regs.eax = add(MACHINE.regs.eax, 0x8u32);
@@ -13201,13 +15358,19 @@ pub fn x00403d30() -> Cont {
 pub fn x00403d34() -> Cont {
     unsafe {
         // 00403d34 sub [ebp+0Ch],eax
-        *(MACHINE.memory.add((MACHINE.regs.ebp + 0xcu32) as usize) as *mut u32) = sub(
-            *(MACHINE.memory.add((MACHINE.regs.ebp + 0xcu32) as usize) as *mut u32),
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0xcu32) as usize) as *mut u32) = sub(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0xcu32) as usize) as *mut u32),
             MACHINE.regs.eax,
         );
         // 00403d37 cmp [ebp+0Ch],edx
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.ebp + 0xcu32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0xcu32) as usize) as *mut u32),
             MACHINE.regs.edx,
         );
         // 00403d3a jb short 00403D70h
@@ -13238,11 +15401,17 @@ pub fn x00403d40() -> Cont {
 pub fn x00403d47() -> Cont {
     unsafe {
         // 00403d47 lea ebx,[esi+edx]
-        MACHINE.regs.ebx = MACHINE.regs.esi + (MACHINE.regs.edx * 1) + 0x0u32;
+        MACHINE.regs.ebx = MACHINE
+            .regs
+            .esi
+            .wrapping_add((MACHINE.regs.edx * 1))
+            .wrapping_add(0x0u32);
         // 00403d4a cmp ebx,[ebp+8]
         sub(
             MACHINE.regs.ebx,
-            *(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize) as *mut u32),
         );
         // 00403d4d jae short 00403D58h
         jae(Cont(x00403d4f), Cont(x00403d58))
@@ -13254,9 +15423,13 @@ pub fn x00403d4f() -> Cont {
         // 00403d4f sub eax,edx
         MACHINE.regs.eax = sub(MACHINE.regs.eax, MACHINE.regs.edx);
         // 00403d51 mov [ecx],ebx
-        *(MACHINE.memory.add((MACHINE.regs.ecx + 0x0u32) as usize) as *mut u32) = MACHINE.regs.ebx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ecx.wrapping_add(0x0u32) as usize) as *mut u32) = MACHINE.regs.ebx;
         // 00403d53 mov [ecx+4],eax
-        *(MACHINE.memory.add((MACHINE.regs.ecx + 0x4u32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ecx.wrapping_add(0x4u32) as usize) as *mut u32) = MACHINE.regs.eax;
         // 00403d56 jmp short 00403D61h
         Cont(x00403d61)
     }
@@ -13265,19 +15438,27 @@ pub fn x00403d4f() -> Cont {
 pub fn x00403d58() -> Cont {
     unsafe {
         // 00403d58 and dword ptr [ecx+4],0
-        *(MACHINE.memory.add((MACHINE.regs.ecx + 0x4u32) as usize) as *mut u32) = and(
-            *(MACHINE.memory.add((MACHINE.regs.ecx + 0x4u32) as usize) as *mut u32),
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ecx.wrapping_add(0x4u32) as usize) as *mut u32) = and(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ecx.wrapping_add(0x4u32) as usize) as *mut u32),
             0x0u32,
         );
         // 00403d5c lea eax,[ecx+8]
-        MACHINE.regs.eax = MACHINE.regs.ecx + 0x8u32;
+        MACHINE.regs.eax = MACHINE.regs.ecx.wrapping_add(0x8u32);
         // 00403d5f mov [ecx],eax
-        *(MACHINE.memory.add((MACHINE.regs.ecx + 0x0u32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ecx.wrapping_add(0x0u32) as usize) as *mut u32) = MACHINE.regs.eax;
         // 00403d61 mov [esi],dl
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u8) =
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize) as *mut u8) =
             MACHINE.regs.get_dl();
         // 00403d63 lea eax,[esi+8]
-        MACHINE.regs.eax = MACHINE.regs.esi + 0x8u32;
+        MACHINE.regs.eax = MACHINE.regs.esi.wrapping_add(0x8u32);
         // 00403d66 imul ecx,0Fh
         todo!();
         // 00403d69 shl eax,4
@@ -13292,10 +15473,12 @@ pub fn x00403d58() -> Cont {
 pub fn x00403d61() -> Cont {
     unsafe {
         // 00403d61 mov [esi],dl
-        *(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u8) =
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize) as *mut u8) =
             MACHINE.regs.get_dl();
         // 00403d63 lea eax,[esi+8]
-        MACHINE.regs.eax = MACHINE.regs.esi + 0x8u32;
+        MACHINE.regs.eax = MACHINE.regs.esi.wrapping_add(0x8u32);
         // 00403d66 imul ecx,0Fh
         todo!();
         // 00403d69 shl eax,4
@@ -13355,7 +15538,7 @@ pub fn x00403d72() -> Cont {
 pub fn x00403e20() -> Cont {
     unsafe {
         // 00403e20 mov eax,ds:[409708h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((0x409708u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE.memory.add(0x409708u32 as usize) as *mut u32);
         // 00403e25 test eax,eax
         and(MACHINE.regs.eax, MACHINE.regs.eax);
         // 00403e27 je short 00403E38h
@@ -13366,7 +15549,11 @@ pub fn x00403e20() -> Cont {
 pub fn x00403e29() -> Cont {
     unsafe {
         // 00403e29 push dword ptr [esp+4]
-        push(*(MACHINE.memory.add((MACHINE.regs.esp + 0x4u32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esp.wrapping_add(0x4u32) as usize) as *mut u32),
+        );
         // 00403e2d call eax
         call(0x403e2f, indirect(MACHINE.regs.eax))
     }
@@ -13414,11 +15601,20 @@ pub fn x00403e40() -> Cont {
         // 00403e44 push esi
         push(MACHINE.regs.esi);
         // 00403e45 mov esi,[ebp+0Ch]
-        MACHINE.regs.esi = *(MACHINE.memory.add((MACHINE.regs.ebp + 0xcu32) as usize) as *mut u32);
+        MACHINE.regs.esi = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0xcu32) as usize)
+            as *mut u32);
         // 00403e48 mov ecx,[ebp+10h]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.ebp + 0x10u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x10u32) as usize)
+            as *mut u32);
         // 00403e4b mov edi,[ebp+8]
-        MACHINE.regs.edi = *(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.edi = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 00403e4e mov eax,ecx
         MACHINE.regs.eax = MACHINE.regs.ecx;
         // 00403e50 mov edx,ecx
@@ -13468,7 +15664,7 @@ pub fn x00403e73() -> Cont {
         // 00403e73 rep movsd
         todo!();
         // 00403e75 jmp dword ptr [edx*4+403F88h]
-        indirect((MACHINE.regs.edx * 4) + 0x403f88u32)
+        indirect((MACHINE.regs.edx * 4).wrapping_add(0x403f88u32))
     }
 }
 
@@ -13492,30 +15688,38 @@ pub fn x00403e88() -> Cont {
         // 00403e8b add ecx,eax
         MACHINE.regs.ecx = add(MACHINE.regs.ecx, MACHINE.regs.eax);
         // 00403e8d jmp dword ptr [eax*4+403EA0h]
-        indirect((MACHINE.regs.eax * 4) + 0x403ea0u32)
+        indirect((MACHINE.regs.eax * 4).wrapping_add(0x403ea0u32))
     }
 }
 
 pub fn x00403e94() -> Cont {
     unsafe {
         // 00403e94 jmp dword ptr [ecx*4+403F98h]
-        indirect((MACHINE.regs.ecx * 4) + 0x403f98u32)
+        indirect((MACHINE.regs.ecx * 4).wrapping_add(0x403f98u32))
     }
 }
 
 pub fn x00403e9c() -> Cont {
     unsafe {
         // 00403e9c jmp dword ptr [ecx*4+403F1Ch]
-        indirect((MACHINE.regs.ecx * 4) + 0x403f1cu32)
+        indirect((MACHINE.regs.ecx * 4).wrapping_add(0x403f1cu32))
     }
 }
 
 pub fn x00403fd8() -> Cont {
     unsafe {
         // 00403fd8 lea esi,[ecx+esi-4]
-        MACHINE.regs.esi = MACHINE.regs.ecx + (MACHINE.regs.esi * 1) + 0xfffffffcu32;
+        MACHINE.regs.esi = MACHINE
+            .regs
+            .ecx
+            .wrapping_add((MACHINE.regs.esi * 1))
+            .wrapping_add(0xfffffffcu32);
         // 00403fdc lea edi,[ecx+edi-4]
-        MACHINE.regs.edi = MACHINE.regs.ecx + (MACHINE.regs.edi * 1) + 0xfffffffcu32;
+        MACHINE.regs.edi = MACHINE
+            .regs
+            .ecx
+            .wrapping_add((MACHINE.regs.edi * 1))
+            .wrapping_add(0xfffffffcu32);
         // 00403fe0 test edi,3
         and(MACHINE.regs.edi, 0x3u32);
         // 00403fe6 jne short 0040400Ch
@@ -13545,7 +15749,7 @@ pub fn x00403ff3() -> Cont {
         // 00403ff6 cld
         todo!();
         // 00403ff7 jmp dword ptr [edx*4+404120h]
-        indirect((MACHINE.regs.edx * 4) + 0x404120u32)
+        indirect((MACHINE.regs.edx * 4).wrapping_add(0x404120u32))
     }
 }
 
@@ -13554,7 +15758,7 @@ pub fn x00404000() -> Cont {
         // 00404000 neg ecx
         MACHINE.regs.ecx = neg(MACHINE.regs.ecx);
         // 00404002 jmp dword ptr [ecx*4+4040D0h]
-        indirect((MACHINE.regs.ecx * 4) + 0x4040d0u32)
+        indirect((MACHINE.regs.ecx * 4).wrapping_add(0x4040d0u32))
     }
 }
 
@@ -13578,14 +15782,14 @@ pub fn x00404018() -> Cont {
         // 0040401b sub ecx,eax
         MACHINE.regs.ecx = sub(MACHINE.regs.ecx, MACHINE.regs.eax);
         // 0040401d jmp dword ptr [eax*4+404028h]
-        indirect((MACHINE.regs.eax * 4) + 0x404028u32)
+        indirect((MACHINE.regs.eax * 4).wrapping_add(0x404028u32))
     }
 }
 
 pub fn x00404024() -> Cont {
     unsafe {
         // 00404024 jmp dword ptr [ecx*4+404120h]
-        indirect((MACHINE.regs.ecx * 4) + 0x404120u32)
+        indirect((MACHINE.regs.ecx * 4).wrapping_add(0x404120u32))
     }
 }
 
@@ -13596,7 +15800,11 @@ pub fn x00404175() -> Cont {
         // 00404177 push 0
         push(0x0u32);
         // 00404179 push dword ptr [esp+0Ch]
-        push(*(MACHINE.memory.add((MACHINE.regs.esp + 0xcu32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esp.wrapping_add(0xcu32) as usize) as *mut u32),
+        );
         // 0040417d call 00404186h
         call(0x404182, Cont(x00404186))
     }
@@ -13616,14 +15824,16 @@ pub fn x00404186() -> Cont {
         // 00404186 movzx eax,byte ptr [esp+4]
         todo!();
         // 0040418b mov cl,[esp+0Ch]
-        MACHINE
-            .regs
-            .set_cl(*(MACHINE.memory.add((MACHINE.regs.esp + 0xcu32) as usize) as *mut u8));
+        MACHINE.regs.set_cl(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esp.wrapping_add(0xcu32) as usize) as *mut u8),
+        );
         // 0040418f test [eax+409861h],cl
         and(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.eax + 0x409861u32) as usize) as *mut u8),
+                .add(MACHINE.regs.eax.wrapping_add(0x409861u32) as usize) as *mut u8),
             MACHINE.regs.get_cl(),
         );
         // 00404195 jne short 004041B3h
@@ -13635,7 +15845,9 @@ pub fn x00404197() -> Cont {
     unsafe {
         // 00404197 cmp dword ptr [esp+8],0
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.esp + 0x8u32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esp.wrapping_add(0x8u32) as usize) as *mut u32),
             0x0u32,
         );
         // 0040419c je short 004041ACh
@@ -13650,7 +15862,9 @@ pub fn x0040419e() -> Cont {
         // 004041a6 and eax,[esp+8]
         MACHINE.regs.eax = and(
             MACHINE.regs.eax,
-            *(MACHINE.memory.add((MACHINE.regs.esp + 0x8u32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esp.wrapping_add(0x8u32) as usize) as *mut u32),
         );
         // 004041aa jmp short 004041AEh
         Cont(x004041ae)
@@ -13710,7 +15924,11 @@ pub fn x004041b7() -> Cont {
         // 004041bf push edi
         push(MACHINE.regs.edi);
         // 004041c0 push dword ptr [ebp+8]
-        push(*(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize) as *mut u32),
+        );
         // 004041c3 call 00404350h
         call(0x4041c8, Cont(x00404350))
     }
@@ -13725,10 +15943,12 @@ pub fn x004041c8() -> Cont {
         // 004041cb cmp esi,ds:[409748h]
         sub(
             MACHINE.regs.esi,
-            *(MACHINE.memory.add((0x409748u32) as usize) as *mut u32),
+            *(MACHINE.memory.add(0x409748u32 as usize) as *mut u32),
         );
         // 004041d1 mov [ebp+8],esi
-        *(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32) = MACHINE.regs.esi;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize) as *mut u32) = MACHINE.regs.esi;
         // 004041d4 je near ptr 00404344h
         je(Cont(x004041da), Cont(x00404344))
     }
@@ -13753,7 +15973,9 @@ pub fn x004041e4() -> Cont {
         MACHINE.regs.eax = 0x409238u32;
         // 004041eb cmp [eax],esi
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u32),
             MACHINE.regs.esi,
         );
         // 004041ed je short 00404261h
@@ -13765,7 +15987,9 @@ pub fn x004041eb() -> Cont {
     unsafe {
         // 004041eb cmp [eax],esi
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u32),
             MACHINE.regs.esi,
         );
         // 004041ed je short 00404261h
@@ -13789,7 +16013,7 @@ pub fn x004041ef() -> Cont {
 pub fn x004041fa() -> Cont {
     unsafe {
         // 004041fa lea eax,[ebp-18h]
-        MACHINE.regs.eax = MACHINE.regs.ebp + 0xffffffe8u32;
+        MACHINE.regs.eax = MACHINE.regs.ebp.wrapping_add(0xffffffe8u32);
         // 004041fd push eax
         push(MACHINE.regs.eax);
         // 004041fe push esi
@@ -13822,17 +16046,18 @@ pub fn x0040420e() -> Cont {
         sub(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.ebp + 0xffffffe8u32) as usize) as *mut u32),
+                .add(MACHINE.regs.ebp.wrapping_add(0xffffffe8u32) as usize)
+                as *mut u32),
             0x1u32,
         );
         // 0040421c mov ds:[409748h],esi
-        *(MACHINE.memory.add((0x409748u32) as usize) as *mut u32) = MACHINE.regs.esi;
+        *(MACHINE.memory.add(0x409748u32 as usize) as *mut u32) = MACHINE.regs.esi;
         // 00404222 rep stosd
         todo!();
         // 00404224 stosb
         todo!();
         // 00404225 mov ds:[409964h],ebx
-        *(MACHINE.memory.add((0x409964u32) as usize) as *mut u32) = MACHINE.regs.ebx;
+        *(MACHINE.memory.add(0x409964u32 as usize) as *mut u32) = MACHINE.regs.ebx;
         // 0040422b jbe near ptr 00404320h
         jbe(Cont(x00404231), Cont(x00404320))
     }
@@ -13844,7 +16069,8 @@ pub fn x00404231() -> Cont {
         sub(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.ebp + 0xffffffeeu32) as usize) as *mut u8),
+                .add(MACHINE.regs.ebp.wrapping_add(0xffffffeeu32) as usize)
+                as *mut u8),
             0x0u8,
         );
         // 00404235 je near ptr 004042F6h
@@ -13855,11 +16081,13 @@ pub fn x00404231() -> Cont {
 pub fn x0040423b() -> Cont {
     unsafe {
         // 0040423b lea ecx,[ebp-11h]
-        MACHINE.regs.ecx = MACHINE.regs.ebp + 0xffffffefu32;
+        MACHINE.regs.ecx = MACHINE.regs.ebp.wrapping_add(0xffffffefu32);
         // 0040423e mov dl,[ecx]
-        MACHINE
-            .regs
-            .set_dl(*(MACHINE.memory.add((MACHINE.regs.ecx + 0x0u32) as usize) as *mut u8));
+        MACHINE.regs.set_dl(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ecx.wrapping_add(0x0u32) as usize) as *mut u8),
+        );
         // 00404240 test dl,dl
         and(MACHINE.regs.get_dl(), MACHINE.regs.get_dl());
         // 00404242 je near ptr 004042F6h
@@ -13870,9 +16098,11 @@ pub fn x0040423b() -> Cont {
 pub fn x0040423e() -> Cont {
     unsafe {
         // 0040423e mov dl,[ecx]
-        MACHINE
-            .regs
-            .set_dl(*(MACHINE.memory.add((MACHINE.regs.ecx + 0x0u32) as usize) as *mut u8));
+        MACHINE.regs.set_dl(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ecx.wrapping_add(0x0u32) as usize) as *mut u8),
+        );
         // 00404240 test dl,dl
         and(MACHINE.regs.get_dl(), MACHINE.regs.get_dl());
         // 00404242 je near ptr 004042F6h
@@ -13907,10 +16137,10 @@ pub fn x00404257() -> Cont {
         // 00404257 or byte ptr [eax+409861h],4
         *(MACHINE
             .memory
-            .add((MACHINE.regs.eax + 0x409861u32) as usize) as *mut u8) = or(
+            .add(MACHINE.regs.eax.wrapping_add(0x409861u32) as usize) as *mut u8) = or(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.eax + 0x409861u32) as usize) as *mut u8),
+                .add(MACHINE.regs.eax.wrapping_add(0x409861u32) as usize) as *mut u8),
             0x4u8,
         );
         // 0040425e inc eax
@@ -13933,20 +16163,27 @@ pub fn x00404261() -> Cont {
         // 0040426b rep stosd
         todo!();
         // 0040426d lea esi,[edx+edx*2]
-        MACHINE.regs.esi = MACHINE.regs.edx + (MACHINE.regs.edx * 2) + 0x0u32;
+        MACHINE.regs.esi = MACHINE
+            .regs
+            .edx
+            .wrapping_add((MACHINE.regs.edx * 2))
+            .wrapping_add(0x0u32);
         // 00404270 mov [ebp-4],ebx
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize) as *mut u32) = MACHINE.regs.ebx;
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize) as *mut u32) =
+            MACHINE.regs.ebx;
         // 00404273 shl esi,4
         MACHINE.regs.esi = shl(MACHINE.regs.esi, 0x4u8);
         // 00404276 stosb
         todo!();
         // 00404277 lea ebx,[esi+409248h]
-        MACHINE.regs.ebx = MACHINE.regs.esi + 0x409248u32;
+        MACHINE.regs.ebx = MACHINE.regs.esi.wrapping_add(0x409248u32);
         // 0040427d cmp byte ptr [ebx],0
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.ebx + 0x0u32) as usize) as *mut u8),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebx.wrapping_add(0x0u32) as usize) as *mut u8),
             0x0u8,
         );
         // 00404280 mov ecx,ebx
@@ -13960,7 +16197,9 @@ pub fn x0040427d() -> Cont {
     unsafe {
         // 0040427d cmp byte ptr [ebx],0
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.ebx + 0x0u32) as usize) as *mut u8),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebx.wrapping_add(0x0u32) as usize) as *mut u8),
             0x0u8,
         );
         // 00404280 mov ecx,ebx
@@ -13973,9 +16212,11 @@ pub fn x0040427d() -> Cont {
 pub fn x00404284() -> Cont {
     unsafe {
         // 00404284 mov dl,[ecx+1]
-        MACHINE
-            .regs
-            .set_dl(*(MACHINE.memory.add((MACHINE.regs.ecx + 0x1u32) as usize) as *mut u8));
+        MACHINE.regs.set_dl(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ecx.wrapping_add(0x1u32) as usize) as *mut u8),
+        );
         // 00404287 test dl,dl
         and(MACHINE.regs.get_dl(), MACHINE.regs.get_dl());
         // 00404289 je short 004042B0h
@@ -14001,21 +16242,21 @@ pub fn x00404295() -> Cont {
         // 00404295 mov edx,[ebp-4]
         MACHINE.regs.edx = *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize)
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize)
             as *mut u32);
         // 00404298 mov dl,[edx+409230h]
         MACHINE.regs.set_dl(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.edx + 0x409230u32) as usize) as *mut u8),
+                .add(MACHINE.regs.edx.wrapping_add(0x409230u32) as usize) as *mut u8),
         );
         // 0040429e or [eax+409861h],dl
         *(MACHINE
             .memory
-            .add((MACHINE.regs.eax + 0x409861u32) as usize) as *mut u8) = or(
+            .add(MACHINE.regs.eax.wrapping_add(0x409861u32) as usize) as *mut u8) = or(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.eax + 0x409861u32) as usize) as *mut u8),
+                .add(MACHINE.regs.eax.wrapping_add(0x409861u32) as usize) as *mut u8),
             MACHINE.regs.get_dl(),
         );
         // 004042a4 inc eax
@@ -14032,10 +16273,10 @@ pub fn x0040429e() -> Cont {
         // 0040429e or [eax+409861h],dl
         *(MACHINE
             .memory
-            .add((MACHINE.regs.eax + 0x409861u32) as usize) as *mut u8) = or(
+            .add(MACHINE.regs.eax.wrapping_add(0x409861u32) as usize) as *mut u8) = or(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.eax + 0x409861u32) as usize) as *mut u8),
+                .add(MACHINE.regs.eax.wrapping_add(0x409861u32) as usize) as *mut u8),
             MACHINE.regs.get_dl(),
         );
         // 004042a4 inc eax
@@ -14055,7 +16296,9 @@ pub fn x004042a9() -> Cont {
         todo!();
         // 004042ab cmp byte ptr [ecx],0
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.ecx + 0x0u32) as usize) as *mut u8),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ecx.wrapping_add(0x0u32) as usize) as *mut u8),
             0x0u8,
         );
         // 004042ae jne short 00404284h
@@ -14073,7 +16316,8 @@ pub fn x004042b0() -> Cont {
         sub(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize) as *mut u32),
+                .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize)
+                as *mut u32),
             0x4u32,
         );
         // 004042ba jb short 0040427Dh
@@ -14084,13 +16328,16 @@ pub fn x004042b0() -> Cont {
 pub fn x004042bc() -> Cont {
     unsafe {
         // 004042bc mov eax,[ebp+8]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 004042bf mov dword ptr ds:[40975Ch],1
-        *(MACHINE.memory.add((0x40975cu32) as usize) as *mut u32) = 0x1u32;
+        *(MACHINE.memory.add(0x40975cu32 as usize) as *mut u32) = 0x1u32;
         // 004042c9 push eax
         push(MACHINE.regs.eax);
         // 004042ca mov ds:[409748h],eax
-        *(MACHINE.memory.add((0x409748u32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE.memory.add(0x409748u32 as usize) as *mut u32) = MACHINE.regs.eax;
         // 004042cf call 0040439Ah
         call(0x4042d4, Cont(x0040439a))
     }
@@ -14099,7 +16346,7 @@ pub fn x004042bc() -> Cont {
 pub fn x004042d4() -> Cont {
     unsafe {
         // 004042d4 lea esi,[esi+40923Ch]
-        MACHINE.regs.esi = MACHINE.regs.esi + 0x40923cu32;
+        MACHINE.regs.esi = MACHINE.regs.esi.wrapping_add(0x40923cu32);
         // 004042da mov edi,409750h
         MACHINE.regs.edi = 0x409750u32;
         // 004042df movsd
@@ -14109,7 +16356,7 @@ pub fn x004042d4() -> Cont {
         // 004042e1 pop ecx
         MACHINE.regs.ecx = pop();
         // 004042e2 mov ds:[409964h],eax
-        *(MACHINE.memory.add((0x409964u32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE.memory.add(0x409964u32 as usize) as *mut u32) = MACHINE.regs.eax;
         // 004042e7 movsd
         todo!();
         // 004042e8 jmp short 0040433Fh
@@ -14127,7 +16374,8 @@ pub fn x004042ea() -> Cont {
         sub(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.ecx + 0xffffffffu32) as usize) as *mut u8),
+                .add(MACHINE.regs.ecx.wrapping_add(0xffffffffu32) as usize)
+                as *mut u8),
             0x0u8,
         );
         // 004042f0 jne near ptr 0040423Eh
@@ -14144,10 +16392,10 @@ pub fn x004042f6() -> Cont {
         // 004042f9 or byte ptr [eax+409861h],8
         *(MACHINE
             .memory
-            .add((MACHINE.regs.eax + 0x409861u32) as usize) as *mut u8) = or(
+            .add(MACHINE.regs.eax.wrapping_add(0x409861u32) as usize) as *mut u8) = or(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.eax + 0x409861u32) as usize) as *mut u8),
+                .add(MACHINE.regs.eax.wrapping_add(0x409861u32) as usize) as *mut u8),
             0x8u8,
         );
         // 00404300 inc eax
@@ -14164,10 +16412,10 @@ pub fn x004042f9() -> Cont {
         // 004042f9 or byte ptr [eax+409861h],8
         *(MACHINE
             .memory
-            .add((MACHINE.regs.eax + 0x409861u32) as usize) as *mut u8) = or(
+            .add(MACHINE.regs.eax.wrapping_add(0x409861u32) as usize) as *mut u8) = or(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.eax + 0x409861u32) as usize) as *mut u8),
+                .add(MACHINE.regs.eax.wrapping_add(0x409861u32) as usize) as *mut u8),
             0x8u8,
         );
         // 00404300 inc eax
@@ -14193,9 +16441,9 @@ pub fn x0040430e() -> Cont {
         // 0040430e pop ecx
         MACHINE.regs.ecx = pop();
         // 0040430f mov ds:[409964h],eax
-        *(MACHINE.memory.add((0x409964u32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE.memory.add(0x409964u32 as usize) as *mut u32) = MACHINE.regs.eax;
         // 00404314 mov dword ptr ds:[40975Ch],1
-        *(MACHINE.memory.add((0x40975cu32) as usize) as *mut u32) = 0x1u32;
+        *(MACHINE.memory.add(0x40975cu32 as usize) as *mut u32) = 0x1u32;
         // 0040431e jmp short 00404326h
         Cont(x00404326)
     }
@@ -14204,7 +16452,7 @@ pub fn x0040430e() -> Cont {
 pub fn x00404320() -> Cont {
     unsafe {
         // 00404320 mov ds:[40975Ch],ebx
-        *(MACHINE.memory.add((0x40975cu32) as usize) as *mut u32) = MACHINE.regs.ebx;
+        *(MACHINE.memory.add(0x40975cu32 as usize) as *mut u32) = MACHINE.regs.ebx;
         // 00404326 xor eax,eax
         MACHINE.regs.eax ^= MACHINE.regs.eax;
         // 00404328 mov edi,409750h
@@ -14241,7 +16489,7 @@ pub fn x00404332() -> Cont {
     unsafe {
         // 00404332 cmp ds:[409710h],ebx
         sub(
-            *(MACHINE.memory.add((0x409710u32) as usize) as *mut u32),
+            *(MACHINE.memory.add(0x409710u32 as usize) as *mut u32),
             MACHINE.regs.ebx,
         );
         // 00404338 je short 00404348h
@@ -14307,10 +16555,13 @@ pub fn x0040434b() -> Cont {
 pub fn x00404350() -> Cont {
     unsafe {
         // 00404350 mov eax,[esp+4]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.esp + 0x4u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x4u32) as usize)
+            as *mut u32);
         // 00404354 and dword ptr ds:[409710h],0
-        *(MACHINE.memory.add((0x409710u32) as usize) as *mut u32) = and(
-            *(MACHINE.memory.add((0x409710u32) as usize) as *mut u32),
+        *(MACHINE.memory.add(0x409710u32 as usize) as *mut u32) = and(
+            *(MACHINE.memory.add(0x409710u32 as usize) as *mut u32),
             0x0u32,
         );
         // 0040435b cmp eax,0FFFFFFFEh
@@ -14323,7 +16574,7 @@ pub fn x00404350() -> Cont {
 pub fn x00404360() -> Cont {
     unsafe {
         // 00404360 mov dword ptr ds:[409710h],1
-        *(MACHINE.memory.add((0x409710u32) as usize) as *mut u32) = 0x1u32;
+        *(MACHINE.memory.add(0x409710u32 as usize) as *mut u32) = 0x1u32;
         // 0040436a jmp dword ptr ds:[406050h]
         Cont(kernel32::stdcall_GetOEMCP)
     }
@@ -14341,7 +16592,7 @@ pub fn x00404370() -> Cont {
 pub fn x00404375() -> Cont {
     unsafe {
         // 00404375 mov dword ptr ds:[409710h],1
-        *(MACHINE.memory.add((0x409710u32) as usize) as *mut u32) = 0x1u32;
+        *(MACHINE.memory.add(0x409710u32 as usize) as *mut u32) = 0x1u32;
         // 0040437f jmp dword ptr ds:[406054h]
         Cont(kernel32::stdcall_GetACP)
     }
@@ -14359,9 +16610,9 @@ pub fn x00404385() -> Cont {
 pub fn x0040438a() -> Cont {
     unsafe {
         // 0040438a mov eax,ds:[409738h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((0x409738u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE.memory.add(0x409738u32 as usize) as *mut u32);
         // 0040438f mov dword ptr ds:[409710h],1
-        *(MACHINE.memory.add((0x409710u32) as usize) as *mut u32) = 0x1u32;
+        *(MACHINE.memory.add(0x409710u32 as usize) as *mut u32) = 0x1u32;
         // 00404399 ret
         ret(0)
     }
@@ -14377,7 +16628,10 @@ pub fn x00404399() -> Cont {
 pub fn x0040439a() -> Cont {
     unsafe {
         // 0040439a mov eax,[esp+4]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.esp + 0x4u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x4u32) as usize)
+            as *mut u32);
         // 0040439e sub eax,3A4h
         MACHINE.regs.eax = sub(MACHINE.regs.eax, 0x3a4u32);
         // 004043a3 je short 004043C7h
@@ -14478,11 +16732,11 @@ pub fn x004043cd() -> Cont {
         // 004043dd mov edi,409750h
         MACHINE.regs.edi = 0x409750u32;
         // 004043e2 mov ds:[409748h],eax
-        *(MACHINE.memory.add((0x409748u32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE.memory.add(0x409748u32 as usize) as *mut u32) = MACHINE.regs.eax;
         // 004043e7 mov ds:[40975Ch],eax
-        *(MACHINE.memory.add((0x40975cu32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE.memory.add(0x40975cu32 as usize) as *mut u32) = MACHINE.regs.eax;
         // 004043ec mov ds:[409964h],eax
-        *(MACHINE.memory.add((0x409964u32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE.memory.add(0x409964u32 as usize) as *mut u32) = MACHINE.regs.eax;
         // 004043f1 stosd
         todo!();
         // 004043f2 stosd
@@ -14505,13 +16759,13 @@ pub fn x004043f6() -> Cont {
         // 004043f9 sub esp,514h
         MACHINE.regs.esp = sub(MACHINE.regs.esp, 0x514u32);
         // 004043ff lea eax,[ebp-14h]
-        MACHINE.regs.eax = MACHINE.regs.ebp + 0xffffffecu32;
+        MACHINE.regs.eax = MACHINE.regs.ebp.wrapping_add(0xffffffecu32);
         // 00404402 push esi
         push(MACHINE.regs.esi);
         // 00404403 push eax
         push(MACHINE.regs.eax);
         // 00404404 push dword ptr ds:[409748h]
-        push(*(MACHINE.memory.add((0x409748u32) as usize) as *mut u32));
+        push(*(MACHINE.memory.add(0x409748u32 as usize) as *mut u32));
         // 0040440a call dword ptr ds:[406058h]
         call(0x404410, Cont(kernel32::stdcall_GetCPInfo))
     }
@@ -14533,10 +16787,13 @@ pub fn x00404419() -> Cont {
         // 0040441b mov esi,100h
         MACHINE.regs.esi = 0x100u32;
         // 00404420 mov [ebp+eax-114h],al
-        *(MACHINE
-            .memory
-            .add((MACHINE.regs.ebp + (MACHINE.regs.eax * 1) + 0xfffffeecu32) as usize)
-            as *mut u8) = MACHINE.regs.get_al();
+        *(MACHINE.memory.add(
+            MACHINE
+                .regs
+                .ebp
+                .wrapping_add((MACHINE.regs.eax * 1))
+                .wrapping_add(0xfffffeecu32) as usize,
+        ) as *mut u8) = MACHINE.regs.get_al();
         // 00404427 inc eax
         todo!();
         // 00404428 cmp eax,esi
@@ -14549,10 +16806,13 @@ pub fn x00404419() -> Cont {
 pub fn x00404420() -> Cont {
     unsafe {
         // 00404420 mov [ebp+eax-114h],al
-        *(MACHINE
-            .memory
-            .add((MACHINE.regs.ebp + (MACHINE.regs.eax * 1) + 0xfffffeecu32) as usize)
-            as *mut u8) = MACHINE.regs.get_al();
+        *(MACHINE.memory.add(
+            MACHINE
+                .regs
+                .ebp
+                .wrapping_add((MACHINE.regs.eax * 1))
+                .wrapping_add(0xfffffeecu32) as usize,
+        ) as *mut u8) = MACHINE.regs.get_al();
         // 00404427 inc eax
         todo!();
         // 00404428 cmp eax,esi
@@ -14568,12 +16828,13 @@ pub fn x0040442c() -> Cont {
         MACHINE.regs.set_al(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.ebp + 0xfffffff2u32) as usize) as *mut u8),
+                .add(MACHINE.regs.ebp.wrapping_add(0xfffffff2u32) as usize)
+                as *mut u8),
         );
         // 0040442f mov byte ptr [ebp-114h],20h
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffeecu32) as usize) as *mut u8) = 0x20u8;
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffeecu32) as usize) as *mut u8) = 0x20u8;
         // 00404436 test al,al
         and(MACHINE.regs.get_al(), MACHINE.regs.get_al());
         // 00404438 je short 00404471h
@@ -14588,7 +16849,7 @@ pub fn x0040443a() -> Cont {
         // 0040443b push edi
         push(MACHINE.regs.edi);
         // 0040443c lea edx,[ebp-0Dh]
-        MACHINE.regs.edx = MACHINE.regs.ebp + 0xfffffff3u32;
+        MACHINE.regs.edx = MACHINE.regs.ebp.wrapping_add(0xfffffff3u32);
         // 0040443f movzx ecx,byte ptr [edx]
         todo!();
         // 00404442 movzx eax,al
@@ -14618,7 +16879,11 @@ pub fn x00404449() -> Cont {
         // 00404449 sub ecx,eax
         MACHINE.regs.ecx = sub(MACHINE.regs.ecx, MACHINE.regs.eax);
         // 0040444b lea edi,[ebp+eax-114h]
-        MACHINE.regs.edi = MACHINE.regs.ebp + (MACHINE.regs.eax * 1) + 0xfffffeecu32;
+        MACHINE.regs.edi = MACHINE
+            .regs
+            .ebp
+            .wrapping_add((MACHINE.regs.eax * 1))
+            .wrapping_add(0xfffffeecu32);
         // 00404452 inc ecx
         todo!();
         // 00404453 mov eax,20202020h
@@ -14643,7 +16908,8 @@ pub fn x00404449() -> Cont {
         MACHINE.regs.set_al(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.edx + 0xffffffffu32) as usize) as *mut u8),
+                .add(MACHINE.regs.edx.wrapping_add(0xffffffffu32) as usize)
+                as *mut u8),
         );
         // 0040446b test al,al
         and(MACHINE.regs.get_al(), MACHINE.regs.get_al());
@@ -14662,7 +16928,8 @@ pub fn x00404466() -> Cont {
         MACHINE.regs.set_al(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.edx + 0xffffffffu32) as usize) as *mut u8),
+                .add(MACHINE.regs.edx.wrapping_add(0xffffffffu32) as usize)
+                as *mut u8),
         );
         // 0040446b test al,al
         and(MACHINE.regs.get_al(), MACHINE.regs.get_al());
@@ -14680,15 +16947,15 @@ pub fn x0040446f() -> Cont {
         // 00404471 push 0
         push(0x0u32);
         // 00404473 lea eax,[ebp-514h]
-        MACHINE.regs.eax = MACHINE.regs.ebp + 0xfffffaecu32;
+        MACHINE.regs.eax = MACHINE.regs.ebp.wrapping_add(0xfffffaecu32);
         // 00404479 push dword ptr ds:[409964h]
-        push(*(MACHINE.memory.add((0x409964u32) as usize) as *mut u32));
+        push(*(MACHINE.memory.add(0x409964u32 as usize) as *mut u32));
         // 0040447f push dword ptr ds:[409748h]
-        push(*(MACHINE.memory.add((0x409748u32) as usize) as *mut u32));
+        push(*(MACHINE.memory.add(0x409748u32 as usize) as *mut u32));
         // 00404485 push eax
         push(MACHINE.regs.eax);
         // 00404486 lea eax,[ebp-114h]
-        MACHINE.regs.eax = MACHINE.regs.ebp + 0xfffffeecu32;
+        MACHINE.regs.eax = MACHINE.regs.ebp.wrapping_add(0xfffffeecu32);
         // 0040448c push esi
         push(MACHINE.regs.esi);
         // 0040448d push eax
@@ -14705,15 +16972,15 @@ pub fn x00404471() -> Cont {
         // 00404471 push 0
         push(0x0u32);
         // 00404473 lea eax,[ebp-514h]
-        MACHINE.regs.eax = MACHINE.regs.ebp + 0xfffffaecu32;
+        MACHINE.regs.eax = MACHINE.regs.ebp.wrapping_add(0xfffffaecu32);
         // 00404479 push dword ptr ds:[409964h]
-        push(*(MACHINE.memory.add((0x409964u32) as usize) as *mut u32));
+        push(*(MACHINE.memory.add(0x409964u32 as usize) as *mut u32));
         // 0040447f push dword ptr ds:[409748h]
-        push(*(MACHINE.memory.add((0x409748u32) as usize) as *mut u32));
+        push(*(MACHINE.memory.add(0x409748u32 as usize) as *mut u32));
         // 00404485 push eax
         push(MACHINE.regs.eax);
         // 00404486 lea eax,[ebp-114h]
-        MACHINE.regs.eax = MACHINE.regs.ebp + 0xfffffeecu32;
+        MACHINE.regs.eax = MACHINE.regs.ebp.wrapping_add(0xfffffeecu32);
         // 0040448c push esi
         push(MACHINE.regs.esi);
         // 0040448d push eax
@@ -14730,15 +16997,15 @@ pub fn x00404495() -> Cont {
         // 00404495 push 0
         push(0x0u32);
         // 00404497 lea eax,[ebp-214h]
-        MACHINE.regs.eax = MACHINE.regs.ebp + 0xfffffdecu32;
+        MACHINE.regs.eax = MACHINE.regs.ebp.wrapping_add(0xfffffdecu32);
         // 0040449d push dword ptr ds:[409748h]
-        push(*(MACHINE.memory.add((0x409748u32) as usize) as *mut u32));
+        push(*(MACHINE.memory.add(0x409748u32 as usize) as *mut u32));
         // 004044a3 push esi
         push(MACHINE.regs.esi);
         // 004044a4 push eax
         push(MACHINE.regs.eax);
         // 004044a5 lea eax,[ebp-114h]
-        MACHINE.regs.eax = MACHINE.regs.ebp + 0xfffffeecu32;
+        MACHINE.regs.eax = MACHINE.regs.ebp.wrapping_add(0xfffffeecu32);
         // 004044ab push esi
         push(MACHINE.regs.esi);
         // 004044ac push eax
@@ -14746,7 +17013,7 @@ pub fn x00404495() -> Cont {
         // 004044ad push esi
         push(MACHINE.regs.esi);
         // 004044ae push dword ptr ds:[409964h]
-        push(*(MACHINE.memory.add((0x409964u32) as usize) as *mut u32));
+        push(*(MACHINE.memory.add(0x409964u32 as usize) as *mut u32));
         // 004044b4 call 00405018h
         call(0x4044b9, Cont(x00405018))
     }
@@ -14757,15 +17024,15 @@ pub fn x004044b9() -> Cont {
         // 004044b9 push 0
         push(0x0u32);
         // 004044bb lea eax,[ebp-314h]
-        MACHINE.regs.eax = MACHINE.regs.ebp + 0xfffffcecu32;
+        MACHINE.regs.eax = MACHINE.regs.ebp.wrapping_add(0xfffffcecu32);
         // 004044c1 push dword ptr ds:[409748h]
-        push(*(MACHINE.memory.add((0x409748u32) as usize) as *mut u32));
+        push(*(MACHINE.memory.add(0x409748u32 as usize) as *mut u32));
         // 004044c7 push esi
         push(MACHINE.regs.esi);
         // 004044c8 push eax
         push(MACHINE.regs.eax);
         // 004044c9 lea eax,[ebp-114h]
-        MACHINE.regs.eax = MACHINE.regs.ebp + 0xfffffeecu32;
+        MACHINE.regs.eax = MACHINE.regs.ebp.wrapping_add(0xfffffeecu32);
         // 004044cf push esi
         push(MACHINE.regs.esi);
         // 004044d0 push eax
@@ -14773,7 +17040,7 @@ pub fn x004044b9() -> Cont {
         // 004044d1 push 200h
         push(0x200u32);
         // 004044d6 push dword ptr ds:[409964h]
-        push(*(MACHINE.memory.add((0x409964u32) as usize) as *mut u32));
+        push(*(MACHINE.memory.add(0x409964u32 as usize) as *mut u32));
         // 004044dc call 00405018h
         call(0x4044e1, Cont(x00405018))
     }
@@ -14786,11 +17053,13 @@ pub fn x004044e1() -> Cont {
         // 004044e4 xor eax,eax
         MACHINE.regs.eax ^= MACHINE.regs.eax;
         // 004044e6 lea ecx,[ebp-514h]
-        MACHINE.regs.ecx = MACHINE.regs.ebp + 0xfffffaecu32;
+        MACHINE.regs.ecx = MACHINE.regs.ebp.wrapping_add(0xfffffaecu32);
         // 004044ec mov dx,[ecx]
-        MACHINE
-            .regs
-            .set_dx(*(MACHINE.memory.add((MACHINE.regs.ecx + 0x0u32) as usize) as *mut u16));
+        MACHINE.regs.set_dx(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ecx.wrapping_add(0x0u32) as usize) as *mut u16),
+        );
         // 004044ef test dl,1
         and(MACHINE.regs.get_dl(), 0x1u8);
         // 004044f2 je short 0040450Ah
@@ -14801,9 +17070,11 @@ pub fn x004044e1() -> Cont {
 pub fn x004044ec() -> Cont {
     unsafe {
         // 004044ec mov dx,[ecx]
-        MACHINE
-            .regs
-            .set_dx(*(MACHINE.memory.add((MACHINE.regs.ecx + 0x0u32) as usize) as *mut u16));
+        MACHINE.regs.set_dx(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ecx.wrapping_add(0x0u32) as usize) as *mut u16),
+        );
         // 004044ef test dl,1
         and(MACHINE.regs.get_dl(), 0x1u8);
         // 004044f2 je short 0040450Ah
@@ -14816,23 +17087,27 @@ pub fn x004044f4() -> Cont {
         // 004044f4 or byte ptr [eax+409861h],10h
         *(MACHINE
             .memory
-            .add((MACHINE.regs.eax + 0x409861u32) as usize) as *mut u8) = or(
+            .add(MACHINE.regs.eax.wrapping_add(0x409861u32) as usize) as *mut u8) = or(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.eax + 0x409861u32) as usize) as *mut u8),
+                .add(MACHINE.regs.eax.wrapping_add(0x409861u32) as usize) as *mut u8),
             0x10u8,
         );
         // 004044fb mov dl,[ebp+eax-214h]
         MACHINE.regs.set_dl(
-            *(MACHINE
-                .memory
-                .add((MACHINE.regs.ebp + (MACHINE.regs.eax * 1) + 0xfffffdecu32) as usize)
-                as *mut u8),
+            *(MACHINE.memory.add(
+                MACHINE
+                    .regs
+                    .ebp
+                    .wrapping_add((MACHINE.regs.eax * 1))
+                    .wrapping_add(0xfffffdecu32) as usize,
+            ) as *mut u8),
         );
         // 00404502 mov [eax+409760h],dl
         *(MACHINE
             .memory
-            .add((MACHINE.regs.eax + 0x409760u32) as usize) as *mut u8) = MACHINE.regs.get_dl();
+            .add(MACHINE.regs.eax.wrapping_add(0x409760u32) as usize) as *mut u8) =
+            MACHINE.regs.get_dl();
         // 00404508 jmp short 00404526h
         Cont(x00404526)
     }
@@ -14843,7 +17118,8 @@ pub fn x00404502() -> Cont {
         // 00404502 mov [eax+409760h],dl
         *(MACHINE
             .memory
-            .add((MACHINE.regs.eax + 0x409760u32) as usize) as *mut u8) = MACHINE.regs.get_dl();
+            .add(MACHINE.regs.eax.wrapping_add(0x409760u32) as usize) as *mut u8) =
+            MACHINE.regs.get_dl();
         // 00404508 jmp short 00404526h
         Cont(x00404526)
     }
@@ -14863,18 +17139,21 @@ pub fn x0040450f() -> Cont {
         // 0040450f or byte ptr [eax+409861h],20h
         *(MACHINE
             .memory
-            .add((MACHINE.regs.eax + 0x409861u32) as usize) as *mut u8) = or(
+            .add(MACHINE.regs.eax.wrapping_add(0x409861u32) as usize) as *mut u8) = or(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.eax + 0x409861u32) as usize) as *mut u8),
+                .add(MACHINE.regs.eax.wrapping_add(0x409861u32) as usize) as *mut u8),
             0x20u8,
         );
         // 00404516 mov dl,[ebp+eax-314h]
         MACHINE.regs.set_dl(
-            *(MACHINE
-                .memory
-                .add((MACHINE.regs.ebp + (MACHINE.regs.eax * 1) + 0xfffffcecu32) as usize)
-                as *mut u8),
+            *(MACHINE.memory.add(
+                MACHINE
+                    .regs
+                    .ebp
+                    .wrapping_add((MACHINE.regs.eax * 1))
+                    .wrapping_add(0xfffffcecu32) as usize,
+            ) as *mut u8),
         );
         // 0040451d jmp short 00404502h
         Cont(x00404502)
@@ -14886,10 +17165,10 @@ pub fn x0040451f() -> Cont {
         // 0040451f and byte ptr [eax+409760h],0
         *(MACHINE
             .memory
-            .add((MACHINE.regs.eax + 0x409760u32) as usize) as *mut u8) = and(
+            .add(MACHINE.regs.eax.wrapping_add(0x409760u32) as usize) as *mut u8) = and(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.eax + 0x409760u32) as usize) as *mut u8),
+                .add(MACHINE.regs.eax.wrapping_add(0x409760u32) as usize) as *mut u8),
             0x0u8,
         );
         // 00404526 inc eax
@@ -14963,10 +17242,10 @@ pub fn x00404540() -> Cont {
         // 00404540 or byte ptr [eax+409861h],10h
         *(MACHINE
             .memory
-            .add((MACHINE.regs.eax + 0x409861u32) as usize) as *mut u8) = or(
+            .add(MACHINE.regs.eax.wrapping_add(0x409861u32) as usize) as *mut u8) = or(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.eax + 0x409861u32) as usize) as *mut u8),
+                .add(MACHINE.regs.eax.wrapping_add(0x409861u32) as usize) as *mut u8),
             0x10u8,
         );
         // 00404547 mov cl,al
@@ -14976,7 +17255,8 @@ pub fn x00404540() -> Cont {
         // 0040454c mov [eax+409760h],cl
         *(MACHINE
             .memory
-            .add((MACHINE.regs.eax + 0x409760u32) as usize) as *mut u8) = MACHINE.regs.get_cl();
+            .add(MACHINE.regs.eax.wrapping_add(0x409760u32) as usize) as *mut u8) =
+            MACHINE.regs.get_cl();
         // 00404552 jmp short 00404573h
         Cont(x00404573)
     }
@@ -14987,7 +17267,8 @@ pub fn x0040454c() -> Cont {
         // 0040454c mov [eax+409760h],cl
         *(MACHINE
             .memory
-            .add((MACHINE.regs.eax + 0x409760u32) as usize) as *mut u8) = MACHINE.regs.get_cl();
+            .add(MACHINE.regs.eax.wrapping_add(0x409760u32) as usize) as *mut u8) =
+            MACHINE.regs.get_cl();
         // 00404552 jmp short 00404573h
         Cont(x00404573)
     }
@@ -15016,10 +17297,10 @@ pub fn x0040455e() -> Cont {
         // 0040455e or byte ptr [eax+409861h],20h
         *(MACHINE
             .memory
-            .add((MACHINE.regs.eax + 0x409861u32) as usize) as *mut u8) = or(
+            .add(MACHINE.regs.eax.wrapping_add(0x409861u32) as usize) as *mut u8) = or(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.eax + 0x409861u32) as usize) as *mut u8),
+                .add(MACHINE.regs.eax.wrapping_add(0x409861u32) as usize) as *mut u8),
             0x20u8,
         );
         // 00404565 mov cl,al
@@ -15036,10 +17317,10 @@ pub fn x0040456c() -> Cont {
         // 0040456c and byte ptr [eax+409760h],0
         *(MACHINE
             .memory
-            .add((MACHINE.regs.eax + 0x409760u32) as usize) as *mut u8) = and(
+            .add(MACHINE.regs.eax.wrapping_add(0x409760u32) as usize) as *mut u8) = and(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.eax + 0x409760u32) as usize) as *mut u8),
+                .add(MACHINE.regs.eax.wrapping_add(0x409760u32) as usize) as *mut u8),
             0x0u8,
         );
         // 00404573 inc eax
@@ -15077,7 +17358,7 @@ pub fn x0040457b() -> Cont {
     unsafe {
         // 0040457b cmp dword ptr ds:[409AA8h],0
         sub(
-            *(MACHINE.memory.add((0x409aa8u32) as usize) as *mut u32),
+            *(MACHINE.memory.add(0x409aa8u32 as usize) as *mut u32),
             0x0u32,
         );
         // 00404582 jne short 00404596h
@@ -15099,7 +17380,7 @@ pub fn x0040458b() -> Cont {
         // 0040458b pop ecx
         MACHINE.regs.ecx = pop();
         // 0040458c mov dword ptr ds:[409AA8h],1
-        *(MACHINE.memory.add((0x409aa8u32) as usize) as *mut u32) = 0x1u32;
+        *(MACHINE.memory.add(0x409aa8u32 as usize) as *mut u32) = 0x1u32;
         // 00404596 ret
         ret(0)
     }
@@ -15117,7 +17398,10 @@ pub fn x004045a0() -> Cont {
         // 004045a0 push edi
         push(MACHINE.regs.edi);
         // 004045a1 mov edi,[esp+8]
-        MACHINE.regs.edi = *(MACHINE.memory.add((MACHINE.regs.esp + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.edi = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 004045a5 jmp short 00404611h
         Cont(x00404611)
     }
@@ -15126,7 +17410,10 @@ pub fn x004045a0() -> Cont {
 pub fn x004045b0() -> Cont {
     unsafe {
         // 004045b0 mov ecx,[esp+4]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.esp + 0x4u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x4u32) as usize)
+            as *mut u32);
         // 004045b4 push edi
         push(MACHINE.regs.edi);
         // 004045b5 test ecx,3
@@ -15139,9 +17426,11 @@ pub fn x004045b0() -> Cont {
 pub fn x004045bd() -> Cont {
     unsafe {
         // 004045bd mov al,[ecx]
-        MACHINE
-            .regs
-            .set_al(*(MACHINE.memory.add((MACHINE.regs.ecx + 0x0u32) as usize) as *mut u8));
+        MACHINE.regs.set_al(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ecx.wrapping_add(0x0u32) as usize) as *mut u8),
+        );
         // 004045bf inc ecx
         todo!();
         // 004045c0 test al,al
@@ -15163,7 +17452,10 @@ pub fn x004045c4() -> Cont {
 pub fn x004045cc() -> Cont {
     unsafe {
         // 004045cc mov eax,[ecx]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.ecx + 0x0u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ecx.wrapping_add(0x0u32) as usize)
+            as *mut u32);
         // 004045ce mov edx,7EFEFEFFh
         MACHINE.regs.edx = 0x7efefeffu32;
         // 004045d3 add edx,eax
@@ -15186,7 +17478,7 @@ pub fn x004045e4() -> Cont {
         // 004045e4 mov eax,[ecx-4]
         MACHINE.regs.eax = *(MACHINE
             .memory
-            .add((MACHINE.regs.ecx + 0xfffffffcu32) as usize)
+            .add(MACHINE.regs.ecx.wrapping_add(0xfffffffcu32) as usize)
             as *mut u32);
         // 004045e7 test al,al
         and(MACHINE.regs.get_al(), MACHINE.regs.get_al());
@@ -15232,7 +17524,7 @@ pub fn x004045fd() -> Cont {
 pub fn x004045ff() -> Cont {
     unsafe {
         // 004045ff lea edi,[ecx-1]
-        MACHINE.regs.edi = MACHINE.regs.ecx + 0xffffffffu32;
+        MACHINE.regs.edi = MACHINE.regs.ecx.wrapping_add(0xffffffffu32);
         // 00404602 jmp short 00404611h
         Cont(x00404611)
     }
@@ -15241,7 +17533,7 @@ pub fn x004045ff() -> Cont {
 pub fn x00404604() -> Cont {
     unsafe {
         // 00404604 lea edi,[ecx-2]
-        MACHINE.regs.edi = MACHINE.regs.ecx + 0xfffffffeu32;
+        MACHINE.regs.edi = MACHINE.regs.ecx.wrapping_add(0xfffffffeu32);
         // 00404607 jmp short 00404611h
         Cont(x00404611)
     }
@@ -15250,7 +17542,7 @@ pub fn x00404604() -> Cont {
 pub fn x00404609() -> Cont {
     unsafe {
         // 00404609 lea edi,[ecx-3]
-        MACHINE.regs.edi = MACHINE.regs.ecx + 0xfffffffdu32;
+        MACHINE.regs.edi = MACHINE.regs.ecx.wrapping_add(0xfffffffdu32);
         // 0040460c jmp short 00404611h
         Cont(x00404611)
     }
@@ -15259,9 +17551,12 @@ pub fn x00404609() -> Cont {
 pub fn x0040460e() -> Cont {
     unsafe {
         // 0040460e lea edi,[ecx-4]
-        MACHINE.regs.edi = MACHINE.regs.ecx + 0xfffffffcu32;
+        MACHINE.regs.edi = MACHINE.regs.ecx.wrapping_add(0xfffffffcu32);
         // 00404611 mov ecx,[esp+0Ch]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.esp + 0xcu32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0xcu32) as usize)
+            as *mut u32);
         // 00404615 test ecx,3
         and(MACHINE.regs.ecx, 0x3u32);
         // 0040461b je short 00404636h
@@ -15272,7 +17567,10 @@ pub fn x0040460e() -> Cont {
 pub fn x00404611() -> Cont {
     unsafe {
         // 00404611 mov ecx,[esp+0Ch]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.esp + 0xcu32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0xcu32) as usize)
+            as *mut u32);
         // 00404615 test ecx,3
         and(MACHINE.regs.ecx, 0x3u32);
         // 0040461b je short 00404636h
@@ -15283,9 +17581,11 @@ pub fn x00404611() -> Cont {
 pub fn x0040461d() -> Cont {
     unsafe {
         // 0040461d mov dl,[ecx]
-        MACHINE
-            .regs
-            .set_dl(*(MACHINE.memory.add((MACHINE.regs.ecx + 0x0u32) as usize) as *mut u8));
+        MACHINE.regs.set_dl(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ecx.wrapping_add(0x0u32) as usize) as *mut u8),
+        );
         // 0040461f inc ecx
         todo!();
         // 00404620 test dl,dl
@@ -15298,7 +17598,9 @@ pub fn x0040461d() -> Cont {
 pub fn x00404624() -> Cont {
     unsafe {
         // 00404624 mov [edi],dl
-        *(MACHINE.memory.add((MACHINE.regs.edi + 0x0u32) as usize) as *mut u8) =
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.edi.wrapping_add(0x0u32) as usize) as *mut u8) =
             MACHINE.regs.get_dl();
         // 00404626 inc edi
         todo!();
@@ -15319,13 +17621,18 @@ pub fn x0040462f() -> Cont {
 pub fn x00404631() -> Cont {
     unsafe {
         // 00404631 mov [edi],edx
-        *(MACHINE.memory.add((MACHINE.regs.edi + 0x0u32) as usize) as *mut u32) = MACHINE.regs.edx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.edi.wrapping_add(0x0u32) as usize) as *mut u32) = MACHINE.regs.edx;
         // 00404633 add edi,4
         MACHINE.regs.edi = add(MACHINE.regs.edi, 0x4u32);
         // 00404636 mov edx,7EFEFEFFh
         MACHINE.regs.edx = 0x7efefeffu32;
         // 0040463b mov eax,[ecx]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.ecx + 0x0u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ecx.wrapping_add(0x0u32) as usize)
+            as *mut u32);
         // 0040463d add edx,eax
         MACHINE.regs.edx = add(MACHINE.regs.edx, MACHINE.regs.eax);
         // 0040463f xor eax,0FFFFFFFFh
@@ -15333,7 +17640,10 @@ pub fn x00404631() -> Cont {
         // 00404642 xor eax,edx
         MACHINE.regs.eax ^= MACHINE.regs.edx;
         // 00404644 mov edx,[ecx]
-        MACHINE.regs.edx = *(MACHINE.memory.add((MACHINE.regs.ecx + 0x0u32) as usize) as *mut u32);
+        MACHINE.regs.edx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ecx.wrapping_add(0x0u32) as usize)
+            as *mut u32);
         // 00404646 add ecx,4
         MACHINE.regs.ecx = add(MACHINE.regs.ecx, 0x4u32);
         // 00404649 test eax,81010100h
@@ -15348,7 +17658,10 @@ pub fn x00404636() -> Cont {
         // 00404636 mov edx,7EFEFEFFh
         MACHINE.regs.edx = 0x7efefeffu32;
         // 0040463b mov eax,[ecx]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.ecx + 0x0u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ecx.wrapping_add(0x0u32) as usize)
+            as *mut u32);
         // 0040463d add edx,eax
         MACHINE.regs.edx = add(MACHINE.regs.edx, MACHINE.regs.eax);
         // 0040463f xor eax,0FFFFFFFFh
@@ -15356,7 +17669,10 @@ pub fn x00404636() -> Cont {
         // 00404642 xor eax,edx
         MACHINE.regs.eax ^= MACHINE.regs.edx;
         // 00404644 mov edx,[ecx]
-        MACHINE.regs.edx = *(MACHINE.memory.add((MACHINE.regs.ecx + 0x0u32) as usize) as *mut u32);
+        MACHINE.regs.edx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ecx.wrapping_add(0x0u32) as usize)
+            as *mut u32);
         // 00404646 add ecx,4
         MACHINE.regs.ecx = add(MACHINE.regs.ecx, 0x4u32);
         // 00404649 test eax,81010100h
@@ -15412,9 +17728,14 @@ pub fn x00404668() -> Cont {
 pub fn x0040466a() -> Cont {
     unsafe {
         // 0040466a mov [edi],edx
-        *(MACHINE.memory.add((MACHINE.regs.edi + 0x0u32) as usize) as *mut u32) = MACHINE.regs.edx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.edi.wrapping_add(0x0u32) as usize) as *mut u32) = MACHINE.regs.edx;
         // 0040466c mov eax,[esp+8]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.esp + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 00404670 pop edi
         MACHINE.regs.edi = pop();
         // 00404671 ret
@@ -15425,12 +17746,19 @@ pub fn x0040466a() -> Cont {
 pub fn x00404672() -> Cont {
     unsafe {
         // 00404672 mov [edi],dx
-        *(MACHINE.memory.add((MACHINE.regs.edi + 0x0u32) as usize) as *mut u16) =
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.edi.wrapping_add(0x0u32) as usize) as *mut u16) =
             MACHINE.regs.get_dx();
         // 00404675 mov eax,[esp+8]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.esp + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 00404679 mov byte ptr [edi+2],0
-        *(MACHINE.memory.add((MACHINE.regs.edi + 0x2u32) as usize) as *mut u8) = 0x0u8;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.edi.wrapping_add(0x2u32) as usize) as *mut u8) = 0x0u8;
         // 0040467d pop edi
         MACHINE.regs.edi = pop();
         // 0040467e ret
@@ -15441,10 +17769,15 @@ pub fn x00404672() -> Cont {
 pub fn x0040467f() -> Cont {
     unsafe {
         // 0040467f mov [edi],dx
-        *(MACHINE.memory.add((MACHINE.regs.edi + 0x0u32) as usize) as *mut u16) =
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.edi.wrapping_add(0x0u32) as usize) as *mut u16) =
             MACHINE.regs.get_dx();
         // 00404682 mov eax,[esp+8]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.esp + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 00404686 pop edi
         MACHINE.regs.edi = pop();
         // 00404687 ret
@@ -15455,10 +17788,15 @@ pub fn x0040467f() -> Cont {
 pub fn x00404688() -> Cont {
     unsafe {
         // 00404688 mov [edi],dl
-        *(MACHINE.memory.add((MACHINE.regs.edi + 0x0u32) as usize) as *mut u8) =
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.edi.wrapping_add(0x0u32) as usize) as *mut u8) =
             MACHINE.regs.get_dl();
         // 0040468a mov eax,[esp+8]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.esp + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 0040468e pop edi
         MACHINE.regs.edi = pop();
         // 0040468f ret
@@ -15469,7 +17807,10 @@ pub fn x00404688() -> Cont {
 pub fn x00404690() -> Cont {
     unsafe {
         // 00404690 mov ecx,[esp+4]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.esp + 0x4u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x4u32) as usize)
+            as *mut u32);
         // 00404694 test ecx,3
         and(MACHINE.regs.ecx, 0x3u32);
         // 0040469a je short 004046B0h
@@ -15480,9 +17821,11 @@ pub fn x00404690() -> Cont {
 pub fn x0040469c() -> Cont {
     unsafe {
         // 0040469c mov al,[ecx]
-        MACHINE
-            .regs
-            .set_al(*(MACHINE.memory.add((MACHINE.regs.ecx + 0x0u32) as usize) as *mut u8));
+        MACHINE.regs.set_al(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ecx.wrapping_add(0x0u32) as usize) as *mut u8),
+        );
         // 0040469e inc ecx
         todo!();
         // 0040469f test al,al
@@ -15506,7 +17849,10 @@ pub fn x004046ab() -> Cont {
         // 004046ab add eax,0
         MACHINE.regs.eax = add(MACHINE.regs.eax, 0x0u32);
         // 004046b0 mov eax,[ecx]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.ecx + 0x0u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ecx.wrapping_add(0x0u32) as usize)
+            as *mut u32);
         // 004046b2 mov edx,7EFEFEFFh
         MACHINE.regs.edx = 0x7efefeffu32;
         // 004046b7 add edx,eax
@@ -15527,7 +17873,10 @@ pub fn x004046ab() -> Cont {
 pub fn x004046b0() -> Cont {
     unsafe {
         // 004046b0 mov eax,[ecx]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.ecx + 0x0u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ecx.wrapping_add(0x0u32) as usize)
+            as *mut u32);
         // 004046b2 mov edx,7EFEFEFFh
         MACHINE.regs.edx = 0x7efefeffu32;
         // 004046b7 add edx,eax
@@ -15550,7 +17899,7 @@ pub fn x004046c8() -> Cont {
         // 004046c8 mov eax,[ecx-4]
         MACHINE.regs.eax = *(MACHINE
             .memory
-            .add((MACHINE.regs.ecx + 0xfffffffcu32) as usize)
+            .add(MACHINE.regs.ecx.wrapping_add(0xfffffffcu32) as usize)
             as *mut u32);
         // 004046cb test al,al
         and(MACHINE.regs.get_al(), MACHINE.regs.get_al());
@@ -15596,9 +17945,12 @@ pub fn x004046e1() -> Cont {
 pub fn x004046e3() -> Cont {
     unsafe {
         // 004046e3 lea eax,[ecx-1]
-        MACHINE.regs.eax = MACHINE.regs.ecx + 0xffffffffu32;
+        MACHINE.regs.eax = MACHINE.regs.ecx.wrapping_add(0xffffffffu32);
         // 004046e6 mov ecx,[esp+4]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.esp + 0x4u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x4u32) as usize)
+            as *mut u32);
         // 004046ea sub eax,ecx
         MACHINE.regs.eax = sub(MACHINE.regs.eax, MACHINE.regs.ecx);
         // 004046ec ret
@@ -15609,9 +17961,12 @@ pub fn x004046e3() -> Cont {
 pub fn x004046ed() -> Cont {
     unsafe {
         // 004046ed lea eax,[ecx-2]
-        MACHINE.regs.eax = MACHINE.regs.ecx + 0xfffffffeu32;
+        MACHINE.regs.eax = MACHINE.regs.ecx.wrapping_add(0xfffffffeu32);
         // 004046f0 mov ecx,[esp+4]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.esp + 0x4u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x4u32) as usize)
+            as *mut u32);
         // 004046f4 sub eax,ecx
         MACHINE.regs.eax = sub(MACHINE.regs.eax, MACHINE.regs.ecx);
         // 004046f6 ret
@@ -15622,9 +17977,12 @@ pub fn x004046ed() -> Cont {
 pub fn x004046f7() -> Cont {
     unsafe {
         // 004046f7 lea eax,[ecx-3]
-        MACHINE.regs.eax = MACHINE.regs.ecx + 0xfffffffdu32;
+        MACHINE.regs.eax = MACHINE.regs.ecx.wrapping_add(0xfffffffdu32);
         // 004046fa mov ecx,[esp+4]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.esp + 0x4u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x4u32) as usize)
+            as *mut u32);
         // 004046fe sub eax,ecx
         MACHINE.regs.eax = sub(MACHINE.regs.eax, MACHINE.regs.ecx);
         // 00404700 ret
@@ -15635,9 +17993,12 @@ pub fn x004046f7() -> Cont {
 pub fn x00404701() -> Cont {
     unsafe {
         // 00404701 lea eax,[ecx-4]
-        MACHINE.regs.eax = MACHINE.regs.ecx + 0xfffffffcu32;
+        MACHINE.regs.eax = MACHINE.regs.ecx.wrapping_add(0xfffffffcu32);
         // 00404704 mov ecx,[esp+4]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.esp + 0x4u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x4u32) as usize)
+            as *mut u32);
         // 00404708 sub eax,ecx
         MACHINE.regs.eax = sub(MACHINE.regs.eax, MACHINE.regs.ecx);
         // 0040470a ret
@@ -15650,11 +18011,23 @@ pub fn x0040470b() -> Cont {
         // 0040470b push 0
         push(0x0u32);
         // 0040470d push dword ptr [esp+10h]
-        push(*(MACHINE.memory.add((MACHINE.regs.esp + 0x10u32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esp.wrapping_add(0x10u32) as usize) as *mut u32),
+        );
         // 00404711 push dword ptr [esp+10h]
-        push(*(MACHINE.memory.add((MACHINE.regs.esp + 0x10u32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esp.wrapping_add(0x10u32) as usize) as *mut u32),
+        );
         // 00404715 push dword ptr [esp+10h]
-        push(*(MACHINE.memory.add((MACHINE.regs.esp + 0x10u32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esp.wrapping_add(0x10u32) as usize) as *mut u32),
+        );
         // 00404719 call 00404722h
         call(0x40471e, Cont(x00404722))
     }
@@ -15682,10 +18055,11 @@ pub fn x00404722() -> Cont {
         // 00404729 and dword ptr [ebp-8],0
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffff8u32) as usize) as *mut u32) = and(
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffff8u32) as usize) as *mut u32) = and(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.ebp + 0xfffffff8u32) as usize) as *mut u32),
+                .add(MACHINE.regs.ebp.wrapping_add(0xfffffff8u32) as usize)
+                as *mut u32),
             0x0u32,
         );
         // 0040472d push esi
@@ -15693,20 +18067,26 @@ pub fn x00404722() -> Cont {
         // 0040472e push edi
         push(MACHINE.regs.edi);
         // 0040472f mov edi,[ebp+8]
-        MACHINE.regs.edi = *(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.edi = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 00404732 mov bl,[edi]
-        MACHINE
-            .regs
-            .set_bl(*(MACHINE.memory.add((MACHINE.regs.edi + 0x0u32) as usize) as *mut u8));
+        MACHINE.regs.set_bl(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.edi.wrapping_add(0x0u32) as usize) as *mut u8),
+        );
         // 00404734 lea esi,[edi+1]
-        MACHINE.regs.esi = MACHINE.regs.edi + 0x1u32;
+        MACHINE.regs.esi = MACHINE.regs.edi.wrapping_add(0x1u32);
         // 00404737 mov [ebp-4],esi
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize) as *mut u32) = MACHINE.regs.esi;
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize) as *mut u32) =
+            MACHINE.regs.esi;
         // 0040473a cmp dword ptr ds:[40953Ch],1
         sub(
-            *(MACHINE.memory.add((0x40953cu32) as usize) as *mut u32),
+            *(MACHINE.memory.add(0x40953cu32 as usize) as *mut u32),
             0x1u32,
         );
         // 00404741 jle short 00404752h
@@ -15718,7 +18098,7 @@ pub fn x0040473a() -> Cont {
     unsafe {
         // 0040473a cmp dword ptr ds:[40953Ch],1
         sub(
-            *(MACHINE.memory.add((0x40953cu32) as usize) as *mut u32),
+            *(MACHINE.memory.add(0x40953cu32 as usize) as *mut u32),
             0x1u32,
         );
         // 00404741 jle short 00404752h
@@ -15753,15 +18133,18 @@ pub fn x0040474e() -> Cont {
 pub fn x00404752() -> Cont {
     unsafe {
         // 00404752 mov ecx,ds:[409330h]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((0x409330u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE.memory.add(0x409330u32 as usize) as *mut u32);
         // 00404758 movzx eax,bl
         todo!();
         // 0040475b mov al,[ecx+eax*2]
         MACHINE.regs.set_al(
-            *(MACHINE
-                .memory
-                .add((MACHINE.regs.ecx + (MACHINE.regs.eax * 2) + 0x0u32) as usize)
-                as *mut u8),
+            *(MACHINE.memory.add(
+                MACHINE
+                    .regs
+                    .ecx
+                    .wrapping_add((MACHINE.regs.eax * 2))
+                    .wrapping_add(0x0u32) as usize,
+            ) as *mut u8),
         );
         // 0040475e and eax,8
         MACHINE.regs.eax = and(MACHINE.regs.eax, 0x8u32);
@@ -15784,9 +18167,11 @@ pub fn x00404761() -> Cont {
 pub fn x00404765() -> Cont {
     unsafe {
         // 00404765 mov bl,[esi]
-        MACHINE
-            .regs
-            .set_bl(*(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u8));
+        MACHINE.regs.set_bl(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize) as *mut u8),
+        );
         // 00404767 inc esi
         todo!();
         // 00404768 jmp short 0040473Ah
@@ -15801,7 +18186,8 @@ pub fn x0040476a() -> Cont {
         // 0040476d mov [ebp-4],esi
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize) as *mut u32) = MACHINE.regs.esi;
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize) as *mut u32) =
+            MACHINE.regs.esi;
         // 00404770 jne short 00404778h
         jne(Cont(x00404772), Cont(x00404778))
     }
@@ -15810,8 +18196,12 @@ pub fn x0040476a() -> Cont {
 pub fn x00404772() -> Cont {
     unsafe {
         // 00404772 or dword ptr [ebp+14h],2
-        *(MACHINE.memory.add((MACHINE.regs.ebp + 0x14u32) as usize) as *mut u32) = or(
-            *(MACHINE.memory.add((MACHINE.regs.ebp + 0x14u32) as usize) as *mut u32),
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x14u32) as usize) as *mut u32) = or(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x14u32) as usize) as *mut u32),
             0x2u32,
         );
         // 00404776 jmp short 0040477Dh
@@ -15831,17 +18221,23 @@ pub fn x00404778() -> Cont {
 pub fn x0040477d() -> Cont {
     unsafe {
         // 0040477d mov bl,[esi]
-        MACHINE
-            .regs
-            .set_bl(*(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u8));
+        MACHINE.regs.set_bl(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize) as *mut u8),
+        );
         // 0040477f inc esi
         todo!();
         // 00404780 mov [ebp-4],esi
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize) as *mut u32) = MACHINE.regs.esi;
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize) as *mut u32) =
+            MACHINE.regs.esi;
         // 00404783 mov eax,[ebp+10h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.ebp + 0x10u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x10u32) as usize)
+            as *mut u32);
         // 00404786 test eax,eax
         and(MACHINE.regs.eax, MACHINE.regs.eax);
         // 00404788 jl near ptr 0040491Ah
@@ -15852,7 +18248,10 @@ pub fn x0040477d() -> Cont {
 pub fn x00404783() -> Cont {
     unsafe {
         // 00404783 mov eax,[ebp+10h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.ebp + 0x10u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x10u32) as usize)
+            as *mut u32);
         // 00404786 test eax,eax
         and(MACHINE.regs.eax, MACHINE.regs.eax);
         // 00404788 jl near ptr 0040491Ah
@@ -15903,7 +18302,9 @@ pub fn x004047a7() -> Cont {
 pub fn x004047ac() -> Cont {
     unsafe {
         // 004047ac mov dword ptr [ebp+10h],0Ah
-        *(MACHINE.memory.add((MACHINE.regs.ebp + 0x10u32) as usize) as *mut u32) = 0xau32;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x10u32) as usize) as *mut u32) = 0xau32;
         // 004047b3 jmp short 004047E7h
         Cont(x004047e7)
     }
@@ -15912,9 +18313,11 @@ pub fn x004047ac() -> Cont {
 pub fn x004047b5() -> Cont {
     unsafe {
         // 004047b5 mov al,[esi]
-        MACHINE
-            .regs
-            .set_al(*(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u8));
+        MACHINE.regs.set_al(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize) as *mut u8),
+        );
         // 004047b7 cmp al,78h
         sub(MACHINE.regs.get_al(), 0x78u8);
         // 004047b9 je short 004047C8h
@@ -15934,7 +18337,9 @@ pub fn x004047bb() -> Cont {
 pub fn x004047bf() -> Cont {
     unsafe {
         // 004047bf mov dword ptr [ebp+10h],8
-        *(MACHINE.memory.add((MACHINE.regs.ebp + 0x10u32) as usize) as *mut u32) = 0x8u32;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x10u32) as usize) as *mut u32) = 0x8u32;
         // 004047c6 jmp short 004047E7h
         Cont(x004047e7)
     }
@@ -15943,10 +18348,14 @@ pub fn x004047bf() -> Cont {
 pub fn x004047c8() -> Cont {
     unsafe {
         // 004047c8 mov [ebp+10h],ecx
-        *(MACHINE.memory.add((MACHINE.regs.ebp + 0x10u32) as usize) as *mut u32) = MACHINE.regs.ecx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x10u32) as usize) as *mut u32) = MACHINE.regs.ecx;
         // 004047cb cmp [ebp+10h],ecx
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.ebp + 0x10u32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x10u32) as usize) as *mut u32),
             MACHINE.regs.ecx,
         );
         // 004047ce jne short 004047E7h
@@ -15958,7 +18367,9 @@ pub fn x004047cb() -> Cont {
     unsafe {
         // 004047cb cmp [ebp+10h],ecx
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.ebp + 0x10u32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x10u32) as usize) as *mut u32),
             MACHINE.regs.ecx,
         );
         // 004047ce jne short 004047E7h
@@ -15978,9 +18389,11 @@ pub fn x004047d0() -> Cont {
 pub fn x004047d5() -> Cont {
     unsafe {
         // 004047d5 mov al,[esi]
-        MACHINE
-            .regs
-            .set_al(*(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u8));
+        MACHINE.regs.set_al(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize) as *mut u8),
+        );
         // 004047d7 cmp al,78h
         sub(MACHINE.regs.get_al(), 0x78u8);
         // 004047d9 je short 004047DFh
@@ -16000,9 +18413,11 @@ pub fn x004047db() -> Cont {
 pub fn x004047df() -> Cont {
     unsafe {
         // 004047df mov bl,[esi+1]
-        MACHINE
-            .regs
-            .set_bl(*(MACHINE.memory.add((MACHINE.regs.esi + 0x1u32) as usize) as *mut u8));
+        MACHINE.regs.set_bl(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esi.wrapping_add(0x1u32) as usize) as *mut u8),
+        );
         // 004047e2 inc esi
         todo!();
         // 004047e3 inc esi
@@ -16010,7 +18425,8 @@ pub fn x004047df() -> Cont {
         // 004047e4 mov [ebp-4],esi
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize) as *mut u32) = MACHINE.regs.esi;
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize) as *mut u32) =
+            MACHINE.regs.esi;
         // 004047e7 or eax,0FFFFFFFFh
         MACHINE.regs.eax = or(MACHINE.regs.eax, 0xffffffffu32);
         // 004047ea xor edx,edx
@@ -16022,10 +18438,11 @@ pub fn x004047df() -> Cont {
         // 004047f4 mov [ebp-0Ch],eax
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffff4u32) as usize) as *mut u32) = MACHINE.regs.eax;
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffff4u32) as usize) as *mut u32) =
+            MACHINE.regs.eax;
         // 004047f7 cmp dword ptr ds:[40953Ch],1
         sub(
-            *(MACHINE.memory.add((0x40953cu32) as usize) as *mut u32),
+            *(MACHINE.memory.add(0x40953cu32 as usize) as *mut u32),
             0x1u32,
         );
         // 004047fe movzx esi,bl
@@ -16048,10 +18465,11 @@ pub fn x004047e7() -> Cont {
         // 004047f4 mov [ebp-0Ch],eax
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffff4u32) as usize) as *mut u32) = MACHINE.regs.eax;
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffff4u32) as usize) as *mut u32) =
+            MACHINE.regs.eax;
         // 004047f7 cmp dword ptr ds:[40953Ch],1
         sub(
-            *(MACHINE.memory.add((0x40953cu32) as usize) as *mut u32),
+            *(MACHINE.memory.add(0x40953cu32 as usize) as *mut u32),
             0x1u32,
         );
         // 004047fe movzx esi,bl
@@ -16065,7 +18483,7 @@ pub fn x004047f7() -> Cont {
     unsafe {
         // 004047f7 cmp dword ptr ds:[40953Ch],1
         sub(
-            *(MACHINE.memory.add((0x40953cu32) as usize) as *mut u32),
+            *(MACHINE.memory.add(0x40953cu32 as usize) as *mut u32),
             0x1u32,
         );
         // 004047fe movzx esi,bl
@@ -16100,13 +18518,16 @@ pub fn x0040480b() -> Cont {
 pub fn x0040480f() -> Cont {
     unsafe {
         // 0040480f mov eax,ds:[409330h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((0x409330u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE.memory.add(0x409330u32 as usize) as *mut u32);
         // 00404814 mov al,[eax+esi*2]
         MACHINE.regs.set_al(
-            *(MACHINE
-                .memory
-                .add((MACHINE.regs.eax + (MACHINE.regs.esi * 2) + 0x0u32) as usize)
-                as *mut u8),
+            *(MACHINE.memory.add(
+                MACHINE
+                    .regs
+                    .eax
+                    .wrapping_add((MACHINE.regs.esi * 2))
+                    .wrapping_add(0x0u32) as usize,
+            ) as *mut u8),
         );
         // 00404817 and eax,4
         MACHINE.regs.eax = and(MACHINE.regs.eax, 0x4u32);
@@ -16141,7 +18562,7 @@ pub fn x00404826() -> Cont {
     unsafe {
         // 00404826 cmp dword ptr ds:[40953Ch],1
         sub(
-            *(MACHINE.memory.add((0x40953cu32) as usize) as *mut u32),
+            *(MACHINE.memory.add(0x40953cu32 as usize) as *mut u32),
             0x1u32,
         );
         // 0040482d jle short 0040483Ah
@@ -16174,13 +18595,16 @@ pub fn x00404836() -> Cont {
 pub fn x0040483a() -> Cont {
     unsafe {
         // 0040483a mov eax,ds:[409330h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((0x409330u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE.memory.add(0x409330u32 as usize) as *mut u32);
         // 0040483f mov ax,[eax+esi*2]
         MACHINE.regs.set_ax(
-            *(MACHINE
-                .memory
-                .add((MACHINE.regs.eax + (MACHINE.regs.esi * 2) + 0x0u32) as usize)
-                as *mut u16),
+            *(MACHINE.memory.add(
+                MACHINE
+                    .regs
+                    .eax
+                    .wrapping_add((MACHINE.regs.esi * 2))
+                    .wrapping_add(0x0u32) as usize,
+            ) as *mut u16),
         );
         // 00404843 and eax,edi
         MACHINE.regs.eax = and(MACHINE.regs.eax, MACHINE.regs.edi);
@@ -16222,7 +18646,9 @@ pub fn x00404852() -> Cont {
         // 00404858 cmp ecx,[ebp+10h]
         sub(
             MACHINE.regs.ecx,
-            *(MACHINE.memory.add((MACHINE.regs.ebp + 0x10u32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x10u32) as usize) as *mut u32),
         );
         // 0040485b jae short 00404893h
         jae(Cont(x0040485d), Cont(x00404893))
@@ -16234,7 +18660,9 @@ pub fn x00404858() -> Cont {
         // 00404858 cmp ecx,[ebp+10h]
         sub(
             MACHINE.regs.ecx,
-            *(MACHINE.memory.add((MACHINE.regs.ebp + 0x10u32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x10u32) as usize) as *mut u32),
         );
         // 0040485b jae short 00404893h
         jae(Cont(x0040485d), Cont(x00404893))
@@ -16246,11 +18674,15 @@ pub fn x0040485d() -> Cont {
         // 0040485d mov esi,[ebp-8]
         MACHINE.regs.esi = *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffff8u32) as usize)
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffff8u32) as usize)
             as *mut u32);
         // 00404860 or dword ptr [ebp+14h],8
-        *(MACHINE.memory.add((MACHINE.regs.ebp + 0x14u32) as usize) as *mut u32) = or(
-            *(MACHINE.memory.add((MACHINE.regs.ebp + 0x14u32) as usize) as *mut u32),
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x14u32) as usize) as *mut u32) = or(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x14u32) as usize) as *mut u32),
             0x8u32,
         );
         // 00404864 cmp esi,[ebp-0Ch]
@@ -16258,7 +18690,8 @@ pub fn x0040485d() -> Cont {
             MACHINE.regs.esi,
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.ebp + 0xfffffff4u32) as usize) as *mut u32),
+                .add(MACHINE.regs.ebp.wrapping_add(0xfffffff4u32) as usize)
+                as *mut u32),
         );
         // 00404867 jb short 0040487Dh
         jb(Cont(x00404869), Cont(x0040487d))
@@ -16290,8 +18723,12 @@ pub fn x0040486b() -> Cont {
 pub fn x00404877() -> Cont {
     unsafe {
         // 00404877 or dword ptr [ebp+14h],4
-        *(MACHINE.memory.add((MACHINE.regs.ebp + 0x14u32) as usize) as *mut u32) = or(
-            *(MACHINE.memory.add((MACHINE.regs.ebp + 0x14u32) as usize) as *mut u32),
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x14u32) as usize) as *mut u32) = or(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x14u32) as usize) as *mut u32),
             0x4u32,
         );
         // 0040487b jmp short 00404886h
@@ -16308,18 +18745,21 @@ pub fn x0040487d() -> Cont {
         // 00404883 mov [ebp-8],esi
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffff8u32) as usize) as *mut u32) = MACHINE.regs.esi;
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffff8u32) as usize) as *mut u32) =
+            MACHINE.regs.esi;
         // 00404886 mov eax,[ebp-4]
         MACHINE.regs.eax = *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize)
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize)
             as *mut u32);
         // 00404889 inc dword ptr [ebp-4]
         todo!();
         // 0040488c mov bl,[eax]
-        MACHINE
-            .regs
-            .set_bl(*(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u8));
+        MACHINE.regs.set_bl(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u8),
+        );
         // 0040488e jmp near ptr 004047F7h
         Cont(x004047f7)
     }
@@ -16330,14 +18770,16 @@ pub fn x00404886() -> Cont {
         // 00404886 mov eax,[ebp-4]
         MACHINE.regs.eax = *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize)
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize)
             as *mut u32);
         // 00404889 inc dword ptr [ebp-4]
         todo!();
         // 0040488c mov bl,[eax]
-        MACHINE
-            .regs
-            .set_bl(*(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u8));
+        MACHINE.regs.set_bl(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u8),
+        );
         // 0040488e jmp near ptr 004047F7h
         Cont(x004047f7)
     }
@@ -16346,11 +18788,17 @@ pub fn x00404886() -> Cont {
 pub fn x00404893() -> Cont {
     unsafe {
         // 00404893 mov ecx,[ebp+14h]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.ebp + 0x14u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x14u32) as usize)
+            as *mut u32);
         // 00404896 dec dword ptr [ebp-4]
         todo!();
         // 00404899 mov edx,[ebp+0Ch]
-        MACHINE.regs.edx = *(MACHINE.memory.add((MACHINE.regs.ebp + 0xcu32) as usize) as *mut u32);
+        MACHINE.regs.edx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0xcu32) as usize)
+            as *mut u32);
         // 0040489c test cl,8
         and(MACHINE.regs.get_cl(), 0x8u8);
         // 0040489f jne short 004048B1h
@@ -16370,18 +18818,23 @@ pub fn x004048a1() -> Cont {
 pub fn x004048a5() -> Cont {
     unsafe {
         // 004048a5 mov eax,[ebp+8]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 004048a8 mov [ebp-4],eax
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize) as *mut u32) = MACHINE.regs.eax;
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize) as *mut u32) =
+            MACHINE.regs.eax;
         // 004048ab and dword ptr [ebp-8],0
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffff8u32) as usize) as *mut u32) = and(
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffff8u32) as usize) as *mut u32) = and(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.ebp + 0xfffffff8u32) as usize) as *mut u32),
+                .add(MACHINE.regs.ebp.wrapping_add(0xfffffff8u32) as usize)
+                as *mut u32),
             0x0u32,
         );
         // 004048af jmp short 004048FEh
@@ -16394,10 +18847,11 @@ pub fn x004048ab() -> Cont {
         // 004048ab and dword ptr [ebp-8],0
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffff8u32) as usize) as *mut u32) = and(
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffff8u32) as usize) as *mut u32) = and(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.ebp + 0xfffffff8u32) as usize) as *mut u32),
+                .add(MACHINE.regs.ebp.wrapping_add(0xfffffff8u32) as usize)
+                as *mut u32),
             0x0u32,
         );
         // 004048af jmp short 004048FEh
@@ -16440,7 +18894,8 @@ pub fn x004048c5() -> Cont {
         sub(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.ebp + 0xfffffff8u32) as usize) as *mut u32),
+                .add(MACHINE.regs.ebp.wrapping_add(0xfffffff8u32) as usize)
+                as *mut u32),
             0x80000000u32,
         );
         // 004048cc ja short 004048D7h
@@ -16463,7 +18918,8 @@ pub fn x004048d2() -> Cont {
         sub(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.ebp + 0xfffffff8u32) as usize) as *mut u32),
+                .add(MACHINE.regs.ebp.wrapping_add(0xfffffff8u32) as usize)
+                as *mut u32),
             MACHINE.regs.eax,
         );
         // 004048d5 jbe short 004048FEh
@@ -16475,11 +18931,13 @@ pub fn x004048d7() -> Cont {
     unsafe {
         // 004048d7 test byte ptr [ebp+14h],1
         and(
-            *(MACHINE.memory.add((MACHINE.regs.ebp + 0x14u32) as usize) as *mut u8),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x14u32) as usize) as *mut u8),
             0x1u8,
         );
         // 004048db mov dword ptr ds:[4095A8h],22h
-        *(MACHINE.memory.add((0x4095a8u32) as usize) as *mut u32) = 0x22u32;
+        *(MACHINE.memory.add(0x4095a8u32 as usize) as *mut u32) = 0x22u32;
         // 004048e5 je short 004048EDh
         je(Cont(x004048e7), Cont(x004048ed))
     }
@@ -16490,10 +18948,11 @@ pub fn x004048e7() -> Cont {
         // 004048e7 or dword ptr [ebp-8],0FFFFFFFFh
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffff8u32) as usize) as *mut u32) = or(
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffff8u32) as usize) as *mut u32) = or(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.ebp + 0xfffffff8u32) as usize) as *mut u32),
+                .add(MACHINE.regs.ebp.wrapping_add(0xfffffff8u32) as usize)
+                as *mut u32),
             0xffffffffu32,
         );
         // 004048eb jmp short 004048FEh
@@ -16504,7 +18963,10 @@ pub fn x004048e7() -> Cont {
 pub fn x004048ed() -> Cont {
     unsafe {
         // 004048ed mov ecx,[ebp+14h]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.ebp + 0x14u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x14u32) as usize)
+            as *mut u32);
         // 004048f0 and cl,2
         MACHINE.regs.set_cl(and(MACHINE.regs.get_cl(), 0x2u8));
         // 004048f3 neg cl
@@ -16518,7 +18980,8 @@ pub fn x004048ed() -> Cont {
         // 004048fb mov [ebp-8],ecx
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffff8u32) as usize) as *mut u32) = MACHINE.regs.ecx;
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffff8u32) as usize) as *mut u32) =
+            MACHINE.regs.ecx;
         // 004048fe test edx,edx
         and(MACHINE.regs.edx, MACHINE.regs.edx);
         // 00404900 je short 00404907h
@@ -16540,13 +19003,17 @@ pub fn x00404902() -> Cont {
         // 00404902 mov eax,[ebp-4]
         MACHINE.regs.eax = *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize)
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize)
             as *mut u32);
         // 00404905 mov [edx],eax
-        *(MACHINE.memory.add((MACHINE.regs.edx + 0x0u32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.edx.wrapping_add(0x0u32) as usize) as *mut u32) = MACHINE.regs.eax;
         // 00404907 test byte ptr [ebp+14h],2
         and(
-            *(MACHINE.memory.add((MACHINE.regs.ebp + 0x14u32) as usize) as *mut u8),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x14u32) as usize) as *mut u8),
             0x2u8,
         );
         // 0040490b je short 00404915h
@@ -16558,7 +19025,9 @@ pub fn x00404907() -> Cont {
     unsafe {
         // 00404907 test byte ptr [ebp+14h],2
         and(
-            *(MACHINE.memory.add((MACHINE.regs.ebp + 0x14u32) as usize) as *mut u8),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x14u32) as usize) as *mut u8),
             0x2u8,
         );
         // 0040490b je short 00404915h
@@ -16571,18 +19040,19 @@ pub fn x0040490d() -> Cont {
         // 0040490d mov eax,[ebp-8]
         MACHINE.regs.eax = *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffff8u32) as usize)
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffff8u32) as usize)
             as *mut u32);
         // 00404910 neg eax
         MACHINE.regs.eax = neg(MACHINE.regs.eax);
         // 00404912 mov [ebp-8],eax
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffff8u32) as usize) as *mut u32) = MACHINE.regs.eax;
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffff8u32) as usize) as *mut u32) =
+            MACHINE.regs.eax;
         // 00404915 mov eax,[ebp-8]
         MACHINE.regs.eax = *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffff8u32) as usize)
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffff8u32) as usize)
             as *mut u32);
         // 00404918 jmp short 00404925h
         Cont(x00404925)
@@ -16594,7 +19064,7 @@ pub fn x00404915() -> Cont {
         // 00404915 mov eax,[ebp-8]
         MACHINE.regs.eax = *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffff8u32) as usize)
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffff8u32) as usize)
             as *mut u32);
         // 00404918 jmp short 00404925h
         Cont(x00404925)
@@ -16604,7 +19074,10 @@ pub fn x00404915() -> Cont {
 pub fn x0040491a() -> Cont {
     unsafe {
         // 0040491a mov eax,[ebp+0Ch]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.ebp + 0xcu32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0xcu32) as usize)
+            as *mut u32);
         // 0040491d test eax,eax
         and(MACHINE.regs.eax, MACHINE.regs.eax);
         // 0040491f je short 00404923h
@@ -16615,7 +19088,9 @@ pub fn x0040491a() -> Cont {
 pub fn x00404921() -> Cont {
     unsafe {
         // 00404921 mov [eax],edi
-        *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u32) = MACHINE.regs.edi;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u32) = MACHINE.regs.edi;
         // 00404923 xor eax,eax
         MACHINE.regs.eax ^= MACHINE.regs.eax;
         // 00404925 pop edi
@@ -16666,7 +19141,7 @@ pub fn x00404925() -> Cont {
 pub fn x00404930() -> Cont {
     unsafe {
         // 00404930 lea eax,[edx-1]
-        MACHINE.regs.eax = MACHINE.regs.edx + 0xffffffffu32;
+        MACHINE.regs.eax = MACHINE.regs.edx.wrapping_add(0xffffffffu32);
         // 00404933 pop ebx
         MACHINE.regs.ebx = pop();
         // 00404934 ret
@@ -16679,9 +19154,11 @@ pub fn x00404940() -> Cont {
         // 00404940 xor eax,eax
         MACHINE.regs.eax ^= MACHINE.regs.eax;
         // 00404942 mov al,[esp+8]
-        MACHINE
-            .regs
-            .set_al(*(MACHINE.memory.add((MACHINE.regs.esp + 0x8u32) as usize) as *mut u8));
+        MACHINE.regs.set_al(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esp.wrapping_add(0x8u32) as usize) as *mut u8),
+        );
         // 00404946 push ebx
         push(MACHINE.regs.ebx);
         // 00404947 mov ebx,eax
@@ -16689,7 +19166,10 @@ pub fn x00404940() -> Cont {
         // 00404949 shl eax,8
         MACHINE.regs.eax = shl(MACHINE.regs.eax, 0x8u8);
         // 0040494c mov edx,[esp+8]
-        MACHINE.regs.edx = *(MACHINE.memory.add((MACHINE.regs.esp + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.edx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 00404950 test edx,3
         and(MACHINE.regs.edx, 0x3u32);
         // 00404956 je short 0040496Bh
@@ -16706,7 +19186,10 @@ pub fn x00404946() -> Cont {
         // 00404949 shl eax,8
         MACHINE.regs.eax = shl(MACHINE.regs.eax, 0x8u8);
         // 0040494c mov edx,[esp+8]
-        MACHINE.regs.edx = *(MACHINE.memory.add((MACHINE.regs.esp + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.edx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 00404950 test edx,3
         and(MACHINE.regs.edx, 0x3u32);
         // 00404956 je short 0040496Bh
@@ -16717,9 +19200,11 @@ pub fn x00404946() -> Cont {
 pub fn x00404958() -> Cont {
     unsafe {
         // 00404958 mov cl,[edx]
-        MACHINE
-            .regs
-            .set_cl(*(MACHINE.memory.add((MACHINE.regs.edx + 0x0u32) as usize) as *mut u8));
+        MACHINE.regs.set_cl(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.edx.wrapping_add(0x0u32) as usize) as *mut u8),
+        );
         // 0040495a inc edx
         todo!();
         // 0040495b cmp cl,bl
@@ -16762,7 +19247,10 @@ pub fn x0040496b() -> Cont {
         // 00404974 or ebx,eax
         MACHINE.regs.ebx = or(MACHINE.regs.ebx, MACHINE.regs.eax);
         // 00404976 mov ecx,[edx]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.edx + 0x0u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.edx.wrapping_add(0x0u32) as usize)
+            as *mut u32);
         // 00404978 mov edi,7EFEFEFFh
         MACHINE.regs.edi = 0x7efefeffu32;
         // 0040497d mov eax,ecx
@@ -16795,7 +19283,10 @@ pub fn x0040496b() -> Cont {
 pub fn x00404976() -> Cont {
     unsafe {
         // 00404976 mov ecx,[edx]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.edx + 0x0u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.edx.wrapping_add(0x0u32) as usize)
+            as *mut u32);
         // 00404978 mov edi,7EFEFEFFh
         MACHINE.regs.edi = 0x7efefeffu32;
         // 0040497d mov eax,ecx
@@ -16883,7 +19374,7 @@ pub fn x004049b8() -> Cont {
         // 004049b8 mov eax,[edx-4]
         MACHINE.regs.eax = *(MACHINE
             .memory
-            .add((MACHINE.regs.edx + 0xfffffffcu32) as usize)
+            .add(MACHINE.regs.edx.wrapping_add(0xfffffffcu32) as usize)
             as *mut u32);
         // 004049bb cmp al,bl
         sub(MACHINE.regs.get_al(), MACHINE.regs.get_bl());
@@ -16971,7 +19462,7 @@ pub fn x004049e0() -> Cont {
         // 004049e1 pop edi
         MACHINE.regs.edi = pop();
         // 004049e2 lea eax,[edx-1]
-        MACHINE.regs.eax = MACHINE.regs.edx + 0xffffffffu32;
+        MACHINE.regs.eax = MACHINE.regs.edx.wrapping_add(0xffffffffu32);
         // 004049e5 pop ebx
         MACHINE.regs.ebx = pop();
         // 004049e6 ret
@@ -16982,7 +19473,7 @@ pub fn x004049e0() -> Cont {
 pub fn x004049e7() -> Cont {
     unsafe {
         // 004049e7 lea eax,[edx-2]
-        MACHINE.regs.eax = MACHINE.regs.edx + 0xfffffffeu32;
+        MACHINE.regs.eax = MACHINE.regs.edx.wrapping_add(0xfffffffeu32);
         // 004049ea pop esi
         MACHINE.regs.esi = pop();
         // 004049eb pop edi
@@ -16997,7 +19488,7 @@ pub fn x004049e7() -> Cont {
 pub fn x004049ee() -> Cont {
     unsafe {
         // 004049ee lea eax,[edx-3]
-        MACHINE.regs.eax = MACHINE.regs.edx + 0xfffffffdu32;
+        MACHINE.regs.eax = MACHINE.regs.edx.wrapping_add(0xfffffffdu32);
         // 004049f1 pop esi
         MACHINE.regs.esi = pop();
         // 004049f2 pop edi
@@ -17012,7 +19503,7 @@ pub fn x004049ee() -> Cont {
 pub fn x004049f5() -> Cont {
     unsafe {
         // 004049f5 lea eax,[edx-4]
-        MACHINE.regs.eax = MACHINE.regs.edx + 0xfffffffcu32;
+        MACHINE.regs.eax = MACHINE.regs.edx.wrapping_add(0xfffffffcu32);
         // 004049f8 pop esi
         MACHINE.regs.esi = pop();
         // 004049f9 pop edi
@@ -17027,7 +19518,10 @@ pub fn x004049f5() -> Cont {
 pub fn x00404a00() -> Cont {
     unsafe {
         // 00404a00 mov ecx,[esp+8]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.esp + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 00404a04 push edi
         push(MACHINE.regs.edi);
         // 00404a05 push ebx
@@ -17035,11 +19529,16 @@ pub fn x00404a00() -> Cont {
         // 00404a06 push esi
         push(MACHINE.regs.esi);
         // 00404a07 mov dl,[ecx]
-        MACHINE
-            .regs
-            .set_dl(*(MACHINE.memory.add((MACHINE.regs.ecx + 0x0u32) as usize) as *mut u8));
+        MACHINE.regs.set_dl(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ecx.wrapping_add(0x0u32) as usize) as *mut u8),
+        );
         // 00404a09 mov edi,[esp+10h]
-        MACHINE.regs.edi = *(MACHINE.memory.add((MACHINE.regs.esp + 0x10u32) as usize) as *mut u32);
+        MACHINE.regs.edi = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x10u32) as usize)
+            as *mut u32);
         // 00404a0d test dl,dl
         and(MACHINE.regs.get_dl(), MACHINE.regs.get_dl());
         // 00404a0f je short 00404A7Ah
@@ -17050,9 +19549,11 @@ pub fn x00404a00() -> Cont {
 pub fn x00404a11() -> Cont {
     unsafe {
         // 00404a11 mov dh,[ecx+1]
-        MACHINE
-            .regs
-            .set_dh(*(MACHINE.memory.add((MACHINE.regs.ecx + 0x1u32) as usize) as *mut u8));
+        MACHINE.regs.set_dh(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ecx.wrapping_add(0x1u32) as usize) as *mut u8),
+        );
         // 00404a14 test dh,dh
         and(MACHINE.regs.get_dh(), MACHINE.regs.get_dh());
         // 00404a16 je short 00404A67h
@@ -17065,11 +19566,16 @@ pub fn x00404a18() -> Cont {
         // 00404a18 mov esi,edi
         MACHINE.regs.esi = MACHINE.regs.edi;
         // 00404a1a mov ecx,[esp+14h]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.esp + 0x14u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x14u32) as usize)
+            as *mut u32);
         // 00404a1e mov al,[edi]
-        MACHINE
-            .regs
-            .set_al(*(MACHINE.memory.add((MACHINE.regs.edi + 0x0u32) as usize) as *mut u8));
+        MACHINE.regs.set_al(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.edi.wrapping_add(0x0u32) as usize) as *mut u8),
+        );
         // 00404a20 inc esi
         todo!();
         // 00404a21 cmp al,dl
@@ -17091,9 +19597,11 @@ pub fn x00404a25() -> Cont {
 pub fn x00404a29() -> Cont {
     unsafe {
         // 00404a29 mov al,[esi]
-        MACHINE
-            .regs
-            .set_al(*(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u8));
+        MACHINE.regs.set_al(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize) as *mut u8),
+        );
         // 00404a2b inc esi
         todo!();
         // 00404a2c cmp al,dl
@@ -17139,9 +19647,11 @@ pub fn x00404a34() -> Cont {
 pub fn x00404a3a() -> Cont {
     unsafe {
         // 00404a3a mov al,[esi]
-        MACHINE
-            .regs
-            .set_al(*(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u8));
+        MACHINE.regs.set_al(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize) as *mut u8),
+        );
         // 00404a3c inc esi
         todo!();
         // 00404a3d cmp al,dh
@@ -17154,11 +19664,13 @@ pub fn x00404a3a() -> Cont {
 pub fn x00404a41() -> Cont {
     unsafe {
         // 00404a41 lea edi,[esi-1]
-        MACHINE.regs.edi = MACHINE.regs.esi + 0xffffffffu32;
+        MACHINE.regs.edi = MACHINE.regs.esi.wrapping_add(0xffffffffu32);
         // 00404a44 mov ah,[ecx+2]
-        MACHINE
-            .regs
-            .set_ah(*(MACHINE.memory.add((MACHINE.regs.ecx + 0x2u32) as usize) as *mut u8));
+        MACHINE.regs.set_ah(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ecx.wrapping_add(0x2u32) as usize) as *mut u8),
+        );
         // 00404a47 test ah,ah
         and(MACHINE.regs.get_ah(), MACHINE.regs.get_ah());
         // 00404a49 je short 00404A73h
@@ -17169,9 +19681,11 @@ pub fn x00404a41() -> Cont {
 pub fn x00404a44() -> Cont {
     unsafe {
         // 00404a44 mov ah,[ecx+2]
-        MACHINE
-            .regs
-            .set_ah(*(MACHINE.memory.add((MACHINE.regs.ecx + 0x2u32) as usize) as *mut u8));
+        MACHINE.regs.set_ah(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ecx.wrapping_add(0x2u32) as usize) as *mut u8),
+        );
         // 00404a47 test ah,ah
         and(MACHINE.regs.get_ah(), MACHINE.regs.get_ah());
         // 00404a49 je short 00404A73h
@@ -17182,9 +19696,11 @@ pub fn x00404a44() -> Cont {
 pub fn x00404a4b() -> Cont {
     unsafe {
         // 00404a4b mov al,[esi]
-        MACHINE
-            .regs
-            .set_al(*(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u8));
+        MACHINE.regs.set_al(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize) as *mut u8),
+        );
         // 00404a4d add esi,2
         MACHINE.regs.esi = add(MACHINE.regs.esi, 0x2u32);
         // 00404a50 cmp al,ah
@@ -17197,9 +19713,11 @@ pub fn x00404a4b() -> Cont {
 pub fn x00404a54() -> Cont {
     unsafe {
         // 00404a54 mov al,[ecx+3]
-        MACHINE
-            .regs
-            .set_al(*(MACHINE.memory.add((MACHINE.regs.ecx + 0x3u32) as usize) as *mut u8));
+        MACHINE.regs.set_al(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ecx.wrapping_add(0x3u32) as usize) as *mut u8),
+        );
         // 00404a57 test al,al
         and(MACHINE.regs.get_al(), MACHINE.regs.get_al());
         // 00404a59 je short 00404A73h
@@ -17213,7 +19731,8 @@ pub fn x00404a5b() -> Cont {
         MACHINE.regs.set_ah(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.esi + 0xffffffffu32) as usize) as *mut u8),
+                .add(MACHINE.regs.esi.wrapping_add(0xffffffffu32) as usize)
+                as *mut u8),
         );
         // 00404a5e add ecx,2
         MACHINE.regs.ecx = add(MACHINE.regs.ecx, 0x2u32);
@@ -17251,7 +19770,7 @@ pub fn x00404a67() -> Cont {
 pub fn x00404a73() -> Cont {
     unsafe {
         // 00404a73 lea eax,[edi-1]
-        MACHINE.regs.eax = MACHINE.regs.edi + 0xffffffffu32;
+        MACHINE.regs.eax = MACHINE.regs.edi.wrapping_add(0xffffffffu32);
         // 00404a76 pop esi
         MACHINE.regs.esi = pop();
         // 00404a77 pop ebx
@@ -17291,7 +19810,10 @@ pub fn x00404a80() -> Cont {
         // 00404a85 push ebx
         push(MACHINE.regs.ebx);
         // 00404a86 mov ecx,[ebp+10h]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.ebp + 0x10u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x10u32) as usize)
+            as *mut u32);
         // 00404a89 jecxz 00404AB1h
         jecxz(Cont(x00404a8b), Cont(x00404ab1))
     }
@@ -17302,7 +19824,10 @@ pub fn x00404a8b() -> Cont {
         // 00404a8b mov ebx,ecx
         MACHINE.regs.ebx = MACHINE.regs.ecx;
         // 00404a8d mov edi,[ebp+8]
-        MACHINE.regs.edi = *(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.edi = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 00404a90 mov esi,edi
         MACHINE.regs.esi = MACHINE.regs.edi;
         // 00404a92 xor eax,eax
@@ -17316,14 +19841,18 @@ pub fn x00404a8b() -> Cont {
         // 00404a9a mov edi,esi
         MACHINE.regs.edi = MACHINE.regs.esi;
         // 00404a9c mov esi,[ebp+0Ch]
-        MACHINE.regs.esi = *(MACHINE.memory.add((MACHINE.regs.ebp + 0xcu32) as usize) as *mut u32);
+        MACHINE.regs.esi = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0xcu32) as usize)
+            as *mut u32);
         // 00404a9f repe cmpsb
         todo!();
         // 00404aa1 mov al,[esi-1]
         MACHINE.regs.set_al(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.esi + 0xffffffffu32) as usize) as *mut u8),
+                .add(MACHINE.regs.esi.wrapping_add(0xffffffffu32) as usize)
+                as *mut u8),
         );
         // 00404aa4 xor ecx,ecx
         MACHINE.regs.ecx ^= MACHINE.regs.ecx;
@@ -17332,7 +19861,8 @@ pub fn x00404a8b() -> Cont {
             MACHINE.regs.get_al(),
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.edi + 0xffffffffu32) as usize) as *mut u8),
+                .add(MACHINE.regs.edi.wrapping_add(0xffffffffu32) as usize)
+                as *mut u8),
         );
         // 00404aa9 ja short 00404AAFh
         ja(Cont(x00404aab), Cont(x00404aaf))
@@ -17412,7 +19942,7 @@ pub fn x00404ac0() -> Cont {
         // 00404ac1 cmp eax,1000h
         sub(MACHINE.regs.eax, 0x1000u32);
         // 00404ac6 lea ecx,[esp+8]
-        MACHINE.regs.ecx = MACHINE.regs.esp + 0x8u32;
+        MACHINE.regs.ecx = MACHINE.regs.esp.wrapping_add(0x8u32);
         // 00404aca jb short 00404AE0h
         jb(Cont(x00404acc), Cont(x00404ae0))
     }
@@ -17426,7 +19956,9 @@ pub fn x00404acc() -> Cont {
         MACHINE.regs.eax = sub(MACHINE.regs.eax, 0x1000u32);
         // 00404ad7 test [ecx],eax
         and(
-            *(MACHINE.memory.add((MACHINE.regs.ecx + 0x0u32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ecx.wrapping_add(0x0u32) as usize) as *mut u32),
             MACHINE.regs.eax,
         );
         // 00404ad9 cmp eax,1000h
@@ -17444,15 +19976,23 @@ pub fn x00404ae0() -> Cont {
         MACHINE.regs.eax = MACHINE.regs.esp;
         // 00404ae4 test [ecx],eax
         and(
-            *(MACHINE.memory.add((MACHINE.regs.ecx + 0x0u32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ecx.wrapping_add(0x0u32) as usize) as *mut u32),
             MACHINE.regs.eax,
         );
         // 00404ae6 mov esp,ecx
         MACHINE.regs.esp = MACHINE.regs.ecx;
         // 00404ae8 mov ecx,[eax]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize)
+            as *mut u32);
         // 00404aea mov eax,[eax+4]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.eax + 0x4u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.eax.wrapping_add(0x4u32) as usize)
+            as *mut u32);
         // 00404aed push eax
         push(MACHINE.regs.eax);
         // 00404aee ret
@@ -17468,7 +20008,7 @@ pub fn x00404aef() -> Cont {
         MACHINE.regs.ebx ^= MACHINE.regs.ebx;
         // 00404af2 cmp ds:[409714h],ebx
         sub(
-            *(MACHINE.memory.add((0x409714u32) as usize) as *mut u32),
+            *(MACHINE.memory.add(0x409714u32 as usize) as *mut u32),
             MACHINE.regs.ebx,
         );
         // 00404af8 push esi
@@ -17503,7 +20043,7 @@ pub fn x00404b07() -> Cont {
 pub fn x00404b0d() -> Cont {
     unsafe {
         // 00404b0d mov esi,ds:[40604Ch]
-        MACHINE.regs.esi = *(MACHINE.memory.add((0x40604cu32) as usize) as *mut u32);
+        MACHINE.regs.esi = *(MACHINE.memory.add(0x40604cu32 as usize) as *mut u32);
         // 00404b13 push 406478h
         push(0x406478u32);
         // 00404b18 push edi
@@ -17518,7 +20058,7 @@ pub fn x00404b1b() -> Cont {
         // 00404b1b test eax,eax
         and(MACHINE.regs.eax, MACHINE.regs.eax);
         // 00404b1d mov ds:[409714h],eax
-        *(MACHINE.memory.add((0x409714u32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE.memory.add(0x409714u32 as usize) as *mut u32) = MACHINE.regs.eax;
         // 00404b22 je short 00404B74h
         je(Cont(x00404b24), Cont(x00404b74))
     }
@@ -17542,7 +20082,7 @@ pub fn x00404b2c() -> Cont {
         // 00404b31 push edi
         push(MACHINE.regs.edi);
         // 00404b32 mov ds:[409718h],eax
-        *(MACHINE.memory.add((0x409718u32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE.memory.add(0x409718u32 as usize) as *mut u32) = MACHINE.regs.eax;
         // 00404b37 call esi
         call(0x404b39, indirect(MACHINE.regs.esi))
     }
@@ -17551,9 +20091,9 @@ pub fn x00404b2c() -> Cont {
 pub fn x00404b39() -> Cont {
     unsafe {
         // 00404b39 mov ds:[40971Ch],eax
-        *(MACHINE.memory.add((0x40971cu32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE.memory.add(0x40971cu32 as usize) as *mut u32) = MACHINE.regs.eax;
         // 00404b3e mov eax,ds:[409718h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((0x409718u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE.memory.add(0x409718u32 as usize) as *mut u32);
         // 00404b43 test eax,eax
         and(MACHINE.regs.eax, MACHINE.regs.eax);
         // 00404b45 je short 00404B5Dh
@@ -17564,7 +20104,7 @@ pub fn x00404b39() -> Cont {
 pub fn x00404b3e() -> Cont {
     unsafe {
         // 00404b3e mov eax,ds:[409718h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((0x409718u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE.memory.add(0x409718u32 as usize) as *mut u32);
         // 00404b43 test eax,eax
         and(MACHINE.regs.eax, MACHINE.regs.eax);
         // 00404b45 je short 00404B5Dh
@@ -17593,7 +20133,7 @@ pub fn x00404b49() -> Cont {
 pub fn x00404b4f() -> Cont {
     unsafe {
         // 00404b4f mov eax,ds:[40971Ch]
-        MACHINE.regs.eax = *(MACHINE.memory.add((0x40971cu32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE.memory.add(0x40971cu32 as usize) as *mut u32);
         // 00404b54 test eax,eax
         and(MACHINE.regs.eax, MACHINE.regs.eax);
         // 00404b56 je short 00404B5Dh
@@ -17615,11 +20155,23 @@ pub fn x00404b5b() -> Cont {
         // 00404b5b mov ebx,eax
         MACHINE.regs.ebx = MACHINE.regs.eax;
         // 00404b5d push dword ptr [esp+18h]
-        push(*(MACHINE.memory.add((MACHINE.regs.esp + 0x18u32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esp.wrapping_add(0x18u32) as usize) as *mut u32),
+        );
         // 00404b61 push dword ptr [esp+18h]
-        push(*(MACHINE.memory.add((MACHINE.regs.esp + 0x18u32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esp.wrapping_add(0x18u32) as usize) as *mut u32),
+        );
         // 00404b65 push dword ptr [esp+18h]
-        push(*(MACHINE.memory.add((MACHINE.regs.esp + 0x18u32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esp.wrapping_add(0x18u32) as usize) as *mut u32),
+        );
         // 00404b69 push ebx
         push(MACHINE.regs.ebx);
         // 00404b6a call dword ptr ds:[409714h]
@@ -17633,11 +20185,23 @@ pub fn x00404b5b() -> Cont {
 pub fn x00404b5d() -> Cont {
     unsafe {
         // 00404b5d push dword ptr [esp+18h]
-        push(*(MACHINE.memory.add((MACHINE.regs.esp + 0x18u32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esp.wrapping_add(0x18u32) as usize) as *mut u32),
+        );
         // 00404b61 push dword ptr [esp+18h]
-        push(*(MACHINE.memory.add((MACHINE.regs.esp + 0x18u32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esp.wrapping_add(0x18u32) as usize) as *mut u32),
+        );
         // 00404b65 push dword ptr [esp+18h]
-        push(*(MACHINE.memory.add((MACHINE.regs.esp + 0x18u32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esp.wrapping_add(0x18u32) as usize) as *mut u32),
+        );
         // 00404b69 push ebx
         push(MACHINE.regs.ebx);
         // 00404b6a call dword ptr ds:[409714h]
@@ -17673,7 +20237,10 @@ pub fn x00404b74() -> Cont {
 pub fn x00404b80() -> Cont {
     unsafe {
         // 00404b80 mov ecx,[esp+0Ch]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.esp + 0xcu32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0xcu32) as usize)
+            as *mut u32);
         // 00404b84 push edi
         push(MACHINE.regs.edi);
         // 00404b85 test ecx,ecx
@@ -17692,11 +20259,17 @@ pub fn x00404b89() -> Cont {
         // 00404b8b mov ebx,ecx
         MACHINE.regs.ebx = MACHINE.regs.ecx;
         // 00404b8d mov esi,[esp+14h]
-        MACHINE.regs.esi = *(MACHINE.memory.add((MACHINE.regs.esp + 0x14u32) as usize) as *mut u32);
+        MACHINE.regs.esi = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x14u32) as usize)
+            as *mut u32);
         // 00404b91 test esi,3
         and(MACHINE.regs.esi, 0x3u32);
         // 00404b97 mov edi,[esp+10h]
-        MACHINE.regs.edi = *(MACHINE.memory.add((MACHINE.regs.esp + 0x10u32) as usize) as *mut u32);
+        MACHINE.regs.edi = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x10u32) as usize)
+            as *mut u32);
         // 00404b9b jne short 00404BA4h
         jne(Cont(x00404b9d), Cont(x00404ba4))
     }
@@ -17721,13 +20294,17 @@ pub fn x00404ba2() -> Cont {
 pub fn x00404ba4() -> Cont {
     unsafe {
         // 00404ba4 mov al,[esi]
-        MACHINE
-            .regs
-            .set_al(*(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u8));
+        MACHINE.regs.set_al(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize) as *mut u8),
+        );
         // 00404ba6 inc esi
         todo!();
         // 00404ba7 mov [edi],al
-        *(MACHINE.memory.add((MACHINE.regs.edi + 0x0u32) as usize) as *mut u8) =
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.edi.wrapping_add(0x0u32) as usize) as *mut u8) =
             MACHINE.regs.get_al();
         // 00404ba9 inc edi
         todo!();
@@ -17779,13 +20356,17 @@ pub fn x00404bc0() -> Cont {
 pub fn x00404bc5() -> Cont {
     unsafe {
         // 00404bc5 mov al,[esi]
-        MACHINE
-            .regs
-            .set_al(*(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u8));
+        MACHINE.regs.set_al(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize) as *mut u8),
+        );
         // 00404bc7 inc esi
         todo!();
         // 00404bc8 mov [edi],al
-        *(MACHINE.memory.add((MACHINE.regs.edi + 0x0u32) as usize) as *mut u8) =
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.edi.wrapping_add(0x0u32) as usize) as *mut u8) =
             MACHINE.regs.get_al();
         // 00404bca inc edi
         todo!();
@@ -17808,7 +20389,10 @@ pub fn x00404bcf() -> Cont {
 pub fn x00404bd2() -> Cont {
     unsafe {
         // 00404bd2 mov eax,[esp+10h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.esp + 0x10u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x10u32) as usize)
+            as *mut u32);
         // 00404bd6 pop ebx
         MACHINE.regs.ebx = pop();
         // 00404bd7 pop esi
@@ -17832,7 +20416,9 @@ pub fn x00404bda() -> Cont {
 pub fn x00404be2() -> Cont {
     unsafe {
         // 00404be2 mov [edi],al
-        *(MACHINE.memory.add((MACHINE.regs.edi + 0x0u32) as usize) as *mut u8) =
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.edi.wrapping_add(0x0u32) as usize) as *mut u8) =
             MACHINE.regs.get_al();
         // 00404be4 inc edi
         todo!();
@@ -17866,7 +20452,9 @@ pub fn x00404bf4() -> Cont {
 pub fn x00404bfb() -> Cont {
     unsafe {
         // 00404bfb mov [edi],al
-        *(MACHINE.memory.add((MACHINE.regs.edi + 0x0u32) as usize) as *mut u8) =
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.edi.wrapping_add(0x0u32) as usize) as *mut u8) =
             MACHINE.regs.get_al();
         // 00404bfd inc edi
         todo!();
@@ -17893,7 +20481,10 @@ pub fn x00404c01() -> Cont {
         // 00404c02 pop esi
         MACHINE.regs.esi = pop();
         // 00404c03 mov eax,[esp+8]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.esp + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 00404c07 pop edi
         MACHINE.regs.edi = pop();
         // 00404c08 ret
@@ -17904,7 +20495,10 @@ pub fn x00404c01() -> Cont {
 pub fn x00404c03() -> Cont {
     unsafe {
         // 00404c03 mov eax,[esp+8]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.esp + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 00404c07 pop edi
         MACHINE.regs.edi = pop();
         // 00404c08 ret
@@ -17915,7 +20509,9 @@ pub fn x00404c03() -> Cont {
 pub fn x00404c09() -> Cont {
     unsafe {
         // 00404c09 mov [edi],edx
-        *(MACHINE.memory.add((MACHINE.regs.edi + 0x0u32) as usize) as *mut u32) = MACHINE.regs.edx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.edi.wrapping_add(0x0u32) as usize) as *mut u32) = MACHINE.regs.edx;
         // 00404c0b add edi,4
         MACHINE.regs.edi = add(MACHINE.regs.edi, 0x4u32);
         // 00404c0e dec ecx
@@ -17930,7 +20526,10 @@ pub fn x00404c11() -> Cont {
         // 00404c11 mov edx,7EFEFEFFh
         MACHINE.regs.edx = 0x7efefeffu32;
         // 00404c16 mov eax,[esi]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize)
+            as *mut u32);
         // 00404c18 add edx,eax
         MACHINE.regs.edx = add(MACHINE.regs.edx, MACHINE.regs.eax);
         // 00404c1a xor eax,0FFFFFFFFh
@@ -17938,7 +20537,10 @@ pub fn x00404c11() -> Cont {
         // 00404c1d xor eax,edx
         MACHINE.regs.eax ^= MACHINE.regs.edx;
         // 00404c1f mov edx,[esi]
-        MACHINE.regs.edx = *(MACHINE.memory.add((MACHINE.regs.esi + 0x0u32) as usize) as *mut u32);
+        MACHINE.regs.edx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esi.wrapping_add(0x0u32) as usize)
+            as *mut u32);
         // 00404c21 add esi,4
         MACHINE.regs.esi = add(MACHINE.regs.esi, 0x4u32);
         // 00404c24 test eax,81010100h
@@ -17987,7 +20589,9 @@ pub fn x00404c3b() -> Cont {
 pub fn x00404c43() -> Cont {
     unsafe {
         // 00404c43 mov [edi],edx
-        *(MACHINE.memory.add((MACHINE.regs.edi + 0x0u32) as usize) as *mut u32) = MACHINE.regs.edx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.edi.wrapping_add(0x0u32) as usize) as *mut u32) = MACHINE.regs.edx;
         // 00404c45 jmp short 00404C5Fh
         Cont(x00404c5f)
     }
@@ -17998,7 +20602,9 @@ pub fn x00404c47() -> Cont {
         // 00404c47 and edx,0FFFFh
         MACHINE.regs.edx = and(MACHINE.regs.edx, 0xffffu32);
         // 00404c4d mov [edi],edx
-        *(MACHINE.memory.add((MACHINE.regs.edi + 0x0u32) as usize) as *mut u32) = MACHINE.regs.edx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.edi.wrapping_add(0x0u32) as usize) as *mut u32) = MACHINE.regs.edx;
         // 00404c4f jmp short 00404C5Fh
         Cont(x00404c5f)
     }
@@ -18009,7 +20615,9 @@ pub fn x00404c51() -> Cont {
         // 00404c51 and edx,0FFh
         MACHINE.regs.edx = and(MACHINE.regs.edx, 0xffu32);
         // 00404c57 mov [edi],edx
-        *(MACHINE.memory.add((MACHINE.regs.edi + 0x0u32) as usize) as *mut u32) = MACHINE.regs.edx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.edi.wrapping_add(0x0u32) as usize) as *mut u32) = MACHINE.regs.edx;
         // 00404c59 jmp short 00404C5Fh
         Cont(x00404c5f)
     }
@@ -18020,7 +20628,9 @@ pub fn x00404c5b() -> Cont {
         // 00404c5b xor edx,edx
         MACHINE.regs.edx ^= MACHINE.regs.edx;
         // 00404c5d mov [edi],edx
-        *(MACHINE.memory.add((MACHINE.regs.edi + 0x0u32) as usize) as *mut u32) = MACHINE.regs.edx;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.edi.wrapping_add(0x0u32) as usize) as *mut u32) = MACHINE.regs.edx;
         // 00404c5f add edi,4
         MACHINE.regs.edi = add(MACHINE.regs.edi, 0x4u32);
         // 00404c62 xor eax,eax
@@ -18050,7 +20660,9 @@ pub fn x00404c67() -> Cont {
         // 00404c67 xor eax,eax
         MACHINE.regs.eax ^= MACHINE.regs.eax;
         // 00404c69 mov [edi],eax
-        *(MACHINE.memory.add((MACHINE.regs.edi + 0x0u32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.edi.wrapping_add(0x0u32) as usize) as *mut u32) = MACHINE.regs.eax;
         // 00404c6b add edi,4
         MACHINE.regs.edi = add(MACHINE.regs.edi, 0x4u32);
         // 00404c6e dec ecx
@@ -18063,7 +20675,9 @@ pub fn x00404c67() -> Cont {
 pub fn x00404c69() -> Cont {
     unsafe {
         // 00404c69 mov [edi],eax
-        *(MACHINE.memory.add((MACHINE.regs.edi + 0x0u32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.edi.wrapping_add(0x0u32) as usize) as *mut u32) = MACHINE.regs.eax;
         // 00404c6b add edi,4
         MACHINE.regs.edi = add(MACHINE.regs.edi, 0x4u32);
         // 00404c6e dec ecx
@@ -18085,7 +20699,10 @@ pub fn x00404c71() -> Cont {
 pub fn x00404c76() -> Cont {
     unsafe {
         // 00404c76 mov eax,[esp+10h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.esp + 0x10u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x10u32) as usize)
+            as *mut u32);
         // 00404c7a pop ebx
         MACHINE.regs.ebx = pop();
         // 00404c7b pop esi
@@ -18108,11 +20725,20 @@ pub fn x00404c80() -> Cont {
         // 00404c84 push esi
         push(MACHINE.regs.esi);
         // 00404c85 mov esi,[ebp+0Ch]
-        MACHINE.regs.esi = *(MACHINE.memory.add((MACHINE.regs.ebp + 0xcu32) as usize) as *mut u32);
+        MACHINE.regs.esi = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0xcu32) as usize)
+            as *mut u32);
         // 00404c88 mov ecx,[ebp+10h]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.ebp + 0x10u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x10u32) as usize)
+            as *mut u32);
         // 00404c8b mov edi,[ebp+8]
-        MACHINE.regs.edi = *(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.edi = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 00404c8e mov eax,ecx
         MACHINE.regs.eax = MACHINE.regs.ecx;
         // 00404c90 mov edx,ecx
@@ -18162,7 +20788,7 @@ pub fn x00404cb3() -> Cont {
         // 00404cb3 rep movsd
         todo!();
         // 00404cb5 jmp dword ptr [edx*4+404DC8h]
-        indirect((MACHINE.regs.edx * 4) + 0x404dc8u32)
+        indirect((MACHINE.regs.edx * 4).wrapping_add(0x404dc8u32))
     }
 }
 
@@ -18186,30 +20812,38 @@ pub fn x00404cc8() -> Cont {
         // 00404ccb add ecx,eax
         MACHINE.regs.ecx = add(MACHINE.regs.ecx, MACHINE.regs.eax);
         // 00404ccd jmp dword ptr [eax*4+404CE0h]
-        indirect((MACHINE.regs.eax * 4) + 0x404ce0u32)
+        indirect((MACHINE.regs.eax * 4).wrapping_add(0x404ce0u32))
     }
 }
 
 pub fn x00404cd4() -> Cont {
     unsafe {
         // 00404cd4 jmp dword ptr [ecx*4+404DD8h]
-        indirect((MACHINE.regs.ecx * 4) + 0x404dd8u32)
+        indirect((MACHINE.regs.ecx * 4).wrapping_add(0x404dd8u32))
     }
 }
 
 pub fn x00404cdc() -> Cont {
     unsafe {
         // 00404cdc jmp dword ptr [ecx*4+404D5Ch]
-        indirect((MACHINE.regs.ecx * 4) + 0x404d5cu32)
+        indirect((MACHINE.regs.ecx * 4).wrapping_add(0x404d5cu32))
     }
 }
 
 pub fn x00404e18() -> Cont {
     unsafe {
         // 00404e18 lea esi,[ecx+esi-4]
-        MACHINE.regs.esi = MACHINE.regs.ecx + (MACHINE.regs.esi * 1) + 0xfffffffcu32;
+        MACHINE.regs.esi = MACHINE
+            .regs
+            .ecx
+            .wrapping_add((MACHINE.regs.esi * 1))
+            .wrapping_add(0xfffffffcu32);
         // 00404e1c lea edi,[ecx+edi-4]
-        MACHINE.regs.edi = MACHINE.regs.ecx + (MACHINE.regs.edi * 1) + 0xfffffffcu32;
+        MACHINE.regs.edi = MACHINE
+            .regs
+            .ecx
+            .wrapping_add((MACHINE.regs.edi * 1))
+            .wrapping_add(0xfffffffcu32);
         // 00404e20 test edi,3
         and(MACHINE.regs.edi, 0x3u32);
         // 00404e26 jne short 00404E4Ch
@@ -18239,7 +20873,7 @@ pub fn x00404e33() -> Cont {
         // 00404e36 cld
         todo!();
         // 00404e37 jmp dword ptr [edx*4+404F60h]
-        indirect((MACHINE.regs.edx * 4) + 0x404f60u32)
+        indirect((MACHINE.regs.edx * 4).wrapping_add(0x404f60u32))
     }
 }
 
@@ -18248,7 +20882,7 @@ pub fn x00404e40() -> Cont {
         // 00404e40 neg ecx
         MACHINE.regs.ecx = neg(MACHINE.regs.ecx);
         // 00404e42 jmp dword ptr [ecx*4+404F10h]
-        indirect((MACHINE.regs.ecx * 4) + 0x404f10u32)
+        indirect((MACHINE.regs.ecx * 4).wrapping_add(0x404f10u32))
     }
 }
 
@@ -18272,23 +20906,29 @@ pub fn x00404e58() -> Cont {
         // 00404e5b sub ecx,eax
         MACHINE.regs.ecx = sub(MACHINE.regs.ecx, MACHINE.regs.eax);
         // 00404e5d jmp dword ptr [eax*4+404E68h]
-        indirect((MACHINE.regs.eax * 4) + 0x404e68u32)
+        indirect((MACHINE.regs.eax * 4).wrapping_add(0x404e68u32))
     }
 }
 
 pub fn x00404e64() -> Cont {
     unsafe {
         // 00404e64 jmp dword ptr [ecx*4+404F60h]
-        indirect((MACHINE.regs.ecx * 4) + 0x404f60u32)
+        indirect((MACHINE.regs.ecx * 4).wrapping_add(0x404f60u32))
     }
 }
 
 pub fn x00404fc0() -> Cont {
     unsafe {
         // 00404fc0 mov edx,[esp+0Ch]
-        MACHINE.regs.edx = *(MACHINE.memory.add((MACHINE.regs.esp + 0xcu32) as usize) as *mut u32);
+        MACHINE.regs.edx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0xcu32) as usize)
+            as *mut u32);
         // 00404fc4 mov ecx,[esp+4]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((MACHINE.regs.esp + 0x4u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x4u32) as usize)
+            as *mut u32);
         // 00404fc8 test edx,edx
         and(MACHINE.regs.edx, MACHINE.regs.edx);
         // 00404fca je short 00405013h
@@ -18301,9 +20941,11 @@ pub fn x00404fcc() -> Cont {
         // 00404fcc xor eax,eax
         MACHINE.regs.eax ^= MACHINE.regs.eax;
         // 00404fce mov al,[esp+8]
-        MACHINE
-            .regs
-            .set_al(*(MACHINE.memory.add((MACHINE.regs.esp + 0x8u32) as usize) as *mut u8));
+        MACHINE.regs.set_al(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esp.wrapping_add(0x8u32) as usize) as *mut u8),
+        );
         // 00404fd2 push edi
         push(MACHINE.regs.edi);
         // 00404fd3 mov edi,ecx
@@ -18331,7 +20973,9 @@ pub fn x00404fe1() -> Cont {
         // 00404fe1 sub edx,ecx
         MACHINE.regs.edx = sub(MACHINE.regs.edx, MACHINE.regs.ecx);
         // 00404fe3 mov [edi],al
-        *(MACHINE.memory.add((MACHINE.regs.edi + 0x0u32) as usize) as *mut u8) =
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.edi.wrapping_add(0x0u32) as usize) as *mut u8) =
             MACHINE.regs.get_al();
         // 00404fe5 inc edi
         todo!();
@@ -18345,7 +20989,9 @@ pub fn x00404fe1() -> Cont {
 pub fn x00404fe3() -> Cont {
     unsafe {
         // 00404fe3 mov [edi],al
-        *(MACHINE.memory.add((MACHINE.regs.edi + 0x0u32) as usize) as *mut u8) =
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.edi.wrapping_add(0x0u32) as usize) as *mut u8) =
             MACHINE.regs.get_al();
         // 00404fe5 inc edi
         todo!();
@@ -18395,7 +21041,9 @@ pub fn x00405001() -> Cont {
 pub fn x00405007() -> Cont {
     unsafe {
         // 00405007 mov [edi],al
-        *(MACHINE.memory.add((MACHINE.regs.edi + 0x0u32) as usize) as *mut u8) =
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.edi.wrapping_add(0x0u32) as usize) as *mut u8) =
             MACHINE.regs.get_al();
         // 00405009 inc edi
         todo!();
@@ -18409,7 +21057,10 @@ pub fn x00405007() -> Cont {
 pub fn x0040500d() -> Cont {
     unsafe {
         // 0040500d mov eax,[esp+8]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.esp + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 00405011 pop edi
         MACHINE.regs.edi = pop();
         // 00405012 ret
@@ -18420,7 +21071,10 @@ pub fn x0040500d() -> Cont {
 pub fn x00405013() -> Cont {
     unsafe {
         // 00405013 mov eax,[esp+4]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.esp + 0x4u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x4u32) as usize)
+            as *mut u32);
         // 00405017 ret
         ret(0)
     }
@@ -18439,12 +21093,16 @@ pub fn x00405018() -> Cont {
         // 00405022 push 4029A8h
         push(0x4029a8u32);
         // 00405027 mov eax,fs:[0]
-        MACHINE.regs.eax =
-            *(MACHINE.memory.add((MACHINE.regs.fs_base + 0x0u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.fs_base.wrapping_add(0x0u32) as usize)
+            as *mut u32);
         // 0040502d push eax
         push(MACHINE.regs.eax);
         // 0040502e mov fs:[0],esp
-        *(MACHINE.memory.add((MACHINE.regs.fs_base + 0x0u32) as usize) as *mut u32) =
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.fs_base.wrapping_add(0x0u32) as usize) as *mut u32) =
             MACHINE.regs.esp;
         // 00405035 sub esp,1Ch
         MACHINE.regs.esp = sub(MACHINE.regs.esp, 0x1cu32);
@@ -18457,12 +21115,13 @@ pub fn x00405018() -> Cont {
         // 0040503b mov [ebp-18h],esp
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xffffffe8u32) as usize) as *mut u32) = MACHINE.regs.esp;
+            .add(MACHINE.regs.ebp.wrapping_add(0xffffffe8u32) as usize) as *mut u32) =
+            MACHINE.regs.esp;
         // 0040503e xor edi,edi
         MACHINE.regs.edi ^= MACHINE.regs.edi;
         // 00405040 cmp ds:[409740h],edi
         sub(
-            *(MACHINE.memory.add((0x409740u32) as usize) as *mut u32),
+            *(MACHINE.memory.add(0x409740u32 as usize) as *mut u32),
             MACHINE.regs.edi,
         );
         // 00405046 jne short 0040508Eh
@@ -18507,7 +21166,7 @@ pub fn x00405060() -> Cont {
 pub fn x00405064() -> Cont {
     unsafe {
         // 00405064 mov ds:[409740h],ebx
-        *(MACHINE.memory.add((0x409740u32) as usize) as *mut u32) = MACHINE.regs.ebx;
+        *(MACHINE.memory.add(0x409740u32 as usize) as *mut u32) = MACHINE.regs.ebx;
         // 0040506a jmp short 0040508Eh
         Cont(x0040508e)
     }
@@ -18544,10 +21203,12 @@ pub fn x0040507c() -> Cont {
 pub fn x00405084() -> Cont {
     unsafe {
         // 00405084 mov dword ptr ds:[409740h],2
-        *(MACHINE.memory.add((0x409740u32) as usize) as *mut u32) = 0x2u32;
+        *(MACHINE.memory.add(0x409740u32 as usize) as *mut u32) = 0x2u32;
         // 0040508e cmp [ebp+14h],edi
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.ebp + 0x14u32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x14u32) as usize) as *mut u32),
             MACHINE.regs.edi,
         );
         // 00405091 jle short 004050A3h
@@ -18559,7 +21220,9 @@ pub fn x0040508e() -> Cont {
     unsafe {
         // 0040508e cmp [ebp+14h],edi
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.ebp + 0x14u32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x14u32) as usize) as *mut u32),
             MACHINE.regs.edi,
         );
         // 00405091 jle short 004050A3h
@@ -18570,9 +21233,17 @@ pub fn x0040508e() -> Cont {
 pub fn x00405093() -> Cont {
     unsafe {
         // 00405093 push dword ptr [ebp+14h]
-        push(*(MACHINE.memory.add((MACHINE.regs.ebp + 0x14u32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x14u32) as usize) as *mut u32),
+        );
         // 00405096 push dword ptr [ebp+10h]
-        push(*(MACHINE.memory.add((MACHINE.regs.ebp + 0x10u32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x10u32) as usize) as *mut u32),
+        );
         // 00405099 call 0040523Ch
         call(0x40509e, Cont(x0040523c))
     }
@@ -18585,9 +21256,11 @@ pub fn x0040509e() -> Cont {
         // 0040509f pop ecx
         MACHINE.regs.ecx = pop();
         // 004050a0 mov [ebp+14h],eax
-        *(MACHINE.memory.add((MACHINE.regs.ebp + 0x14u32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x14u32) as usize) as *mut u32) = MACHINE.regs.eax;
         // 004050a3 mov eax,ds:[409740h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((0x409740u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE.memory.add(0x409740u32 as usize) as *mut u32);
         // 004050a8 cmp eax,2
         sub(MACHINE.regs.eax, 0x2u32);
         // 004050ab jne short 004050CAh
@@ -18598,7 +21271,7 @@ pub fn x0040509e() -> Cont {
 pub fn x004050a3() -> Cont {
     unsafe {
         // 004050a3 mov eax,ds:[409740h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((0x409740u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE.memory.add(0x409740u32 as usize) as *mut u32);
         // 004050a8 cmp eax,2
         sub(MACHINE.regs.eax, 0x2u32);
         // 004050ab jne short 004050CAh
@@ -18609,17 +21282,41 @@ pub fn x004050a3() -> Cont {
 pub fn x004050ad() -> Cont {
     unsafe {
         // 004050ad push dword ptr [ebp+1Ch]
-        push(*(MACHINE.memory.add((MACHINE.regs.ebp + 0x1cu32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x1cu32) as usize) as *mut u32),
+        );
         // 004050b0 push dword ptr [ebp+18h]
-        push(*(MACHINE.memory.add((MACHINE.regs.ebp + 0x18u32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x18u32) as usize) as *mut u32),
+        );
         // 004050b3 push dword ptr [ebp+14h]
-        push(*(MACHINE.memory.add((MACHINE.regs.ebp + 0x14u32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x14u32) as usize) as *mut u32),
+        );
         // 004050b6 push dword ptr [ebp+10h]
-        push(*(MACHINE.memory.add((MACHINE.regs.ebp + 0x10u32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x10u32) as usize) as *mut u32),
+        );
         // 004050b9 push dword ptr [ebp+0Ch]
-        push(*(MACHINE.memory.add((MACHINE.regs.ebp + 0xcu32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0xcu32) as usize) as *mut u32),
+        );
         // 004050bc push dword ptr [ebp+8]
-        push(*(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize) as *mut u32),
+        );
         // 004050bf call dword ptr ds:[406040h]
         call(0x4050c5, Cont(kernel32::stdcall_LCMapStringA))
     }
@@ -18645,7 +21342,9 @@ pub fn x004050d3() -> Cont {
     unsafe {
         // 004050d3 cmp [ebp+20h],edi
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.ebp + 0x20u32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x20u32) as usize) as *mut u32),
             MACHINE.regs.edi,
         );
         // 004050d6 jne short 004050E0h
@@ -18656,19 +21355,32 @@ pub fn x004050d3() -> Cont {
 pub fn x004050d8() -> Cont {
     unsafe {
         // 004050d8 mov eax,ds:[409738h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((0x409738u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE.memory.add(0x409738u32 as usize) as *mut u32);
         // 004050dd mov [ebp+20h],eax
-        *(MACHINE.memory.add((MACHINE.regs.ebp + 0x20u32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x20u32) as usize) as *mut u32) = MACHINE.regs.eax;
         // 004050e0 push edi
         push(MACHINE.regs.edi);
         // 004050e1 push edi
         push(MACHINE.regs.edi);
         // 004050e2 push dword ptr [ebp+14h]
-        push(*(MACHINE.memory.add((MACHINE.regs.ebp + 0x14u32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x14u32) as usize) as *mut u32),
+        );
         // 004050e5 push dword ptr [ebp+10h]
-        push(*(MACHINE.memory.add((MACHINE.regs.ebp + 0x10u32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x10u32) as usize) as *mut u32),
+        );
         // 004050e8 mov eax,[ebp+24h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.ebp + 0x24u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x24u32) as usize)
+            as *mut u32);
         // 004050eb neg eax
         MACHINE.regs.eax = neg(MACHINE.regs.eax);
         // 004050ed sbb eax,eax
@@ -18680,7 +21392,11 @@ pub fn x004050d8() -> Cont {
         // 004050f3 push eax
         push(MACHINE.regs.eax);
         // 004050f4 push dword ptr [ebp+20h]
-        push(*(MACHINE.memory.add((MACHINE.regs.ebp + 0x20u32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x20u32) as usize) as *mut u32),
+        );
         // 004050f7 call dword ptr ds:[406044h]
         call(0x4050fd, Cont(kernel32::stdcall_MultiByteToWideChar))
     }
@@ -18693,11 +21409,22 @@ pub fn x004050e0() -> Cont {
         // 004050e1 push edi
         push(MACHINE.regs.edi);
         // 004050e2 push dword ptr [ebp+14h]
-        push(*(MACHINE.memory.add((MACHINE.regs.ebp + 0x14u32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x14u32) as usize) as *mut u32),
+        );
         // 004050e5 push dword ptr [ebp+10h]
-        push(*(MACHINE.memory.add((MACHINE.regs.ebp + 0x10u32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x10u32) as usize) as *mut u32),
+        );
         // 004050e8 mov eax,[ebp+24h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.ebp + 0x24u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x24u32) as usize)
+            as *mut u32);
         // 004050eb neg eax
         MACHINE.regs.eax = neg(MACHINE.regs.eax);
         // 004050ed sbb eax,eax
@@ -18709,7 +21436,11 @@ pub fn x004050e0() -> Cont {
         // 004050f3 push eax
         push(MACHINE.regs.eax);
         // 004050f4 push dword ptr [ebp+20h]
-        push(*(MACHINE.memory.add((MACHINE.regs.ebp + 0x20u32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x20u32) as usize) as *mut u32),
+        );
         // 004050f7 call dword ptr ds:[406044h]
         call(0x4050fd, Cont(kernel32::stdcall_MultiByteToWideChar))
     }
@@ -18722,7 +21453,8 @@ pub fn x004050fd() -> Cont {
         // 004050ff mov [ebp-1Ch],ebx
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xffffffe4u32) as usize) as *mut u32) = MACHINE.regs.ebx;
+            .add(MACHINE.regs.ebp.wrapping_add(0xffffffe4u32) as usize) as *mut u32) =
+            MACHINE.regs.ebx;
         // 00405102 cmp ebx,edi
         sub(MACHINE.regs.ebx, MACHINE.regs.edi);
         // 00405104 je near ptr 004051A6h
@@ -18735,9 +21467,14 @@ pub fn x0040510a() -> Cont {
         // 0040510a mov [ebp-4],edi
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize) as *mut u32) = MACHINE.regs.edi;
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize) as *mut u32) =
+            MACHINE.regs.edi;
         // 0040510d lea eax,[ebx+ebx]
-        MACHINE.regs.eax = MACHINE.regs.ebx + (MACHINE.regs.ebx * 1) + 0x0u32;
+        MACHINE.regs.eax = MACHINE
+            .regs
+            .ebx
+            .wrapping_add((MACHINE.regs.ebx * 1))
+            .wrapping_add(0x0u32);
         // 00405110 add eax,3
         MACHINE.regs.eax = add(MACHINE.regs.eax, 0x3u32);
         // 00405113 and al,0FCh
@@ -18752,20 +21489,23 @@ pub fn x0040511a() -> Cont {
         // 0040511a mov [ebp-18h],esp
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xffffffe8u32) as usize) as *mut u32) = MACHINE.regs.esp;
+            .add(MACHINE.regs.ebp.wrapping_add(0xffffffe8u32) as usize) as *mut u32) =
+            MACHINE.regs.esp;
         // 0040511d mov eax,esp
         MACHINE.regs.eax = MACHINE.regs.esp;
         // 0040511f mov [ebp-24h],eax
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xffffffdcu32) as usize) as *mut u32) = MACHINE.regs.eax;
+            .add(MACHINE.regs.ebp.wrapping_add(0xffffffdcu32) as usize) as *mut u32) =
+            MACHINE.regs.eax;
         // 00405122 or dword ptr [ebp-4],0FFFFFFFFh
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize) as *mut u32) = or(
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize) as *mut u32) = or(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize) as *mut u32),
+                .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize)
+                as *mut u32),
             0xffffffffu32,
         );
         // 00405126 jmp short 0040513Bh
@@ -18779,7 +21519,8 @@ pub fn x0040513b() -> Cont {
         sub(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.ebp + 0xffffffdcu32) as usize) as *mut u32),
+                .add(MACHINE.regs.ebp.wrapping_add(0xffffffdcu32) as usize)
+                as *mut u32),
             MACHINE.regs.edi,
         );
         // 0040513e je short 004051A6h
@@ -18795,16 +21536,29 @@ pub fn x00405140() -> Cont {
         push(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.ebp + 0xffffffdcu32) as usize) as *mut u32),
+                .add(MACHINE.regs.ebp.wrapping_add(0xffffffdcu32) as usize)
+                as *mut u32),
         );
         // 00405144 push dword ptr [ebp+14h]
-        push(*(MACHINE.memory.add((MACHINE.regs.ebp + 0x14u32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x14u32) as usize) as *mut u32),
+        );
         // 00405147 push dword ptr [ebp+10h]
-        push(*(MACHINE.memory.add((MACHINE.regs.ebp + 0x10u32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x10u32) as usize) as *mut u32),
+        );
         // 0040514a push 1
         push(0x1u32);
         // 0040514c push dword ptr [ebp+20h]
-        push(*(MACHINE.memory.add((MACHINE.regs.ebp + 0x20u32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x20u32) as usize) as *mut u32),
+        );
         // 0040514f call dword ptr ds:[406044h]
         call(0x405155, Cont(kernel32::stdcall_MultiByteToWideChar))
     }
@@ -18831,12 +21585,21 @@ pub fn x00405159() -> Cont {
         push(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.ebp + 0xffffffdcu32) as usize) as *mut u32),
+                .add(MACHINE.regs.ebp.wrapping_add(0xffffffdcu32) as usize)
+                as *mut u32),
         );
         // 0040515f push dword ptr [ebp+0Ch]
-        push(*(MACHINE.memory.add((MACHINE.regs.ebp + 0xcu32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0xcu32) as usize) as *mut u32),
+        );
         // 00405162 push dword ptr [ebp+8]
-        push(*(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize) as *mut u32),
+        );
         // 00405165 call dword ptr ds:[40603Ch]
         call(0x40516b, Cont(kernel32::stdcall_LCMapStringW))
     }
@@ -18849,7 +21612,8 @@ pub fn x0040516b() -> Cont {
         // 0040516d mov [ebp-28h],esi
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xffffffd8u32) as usize) as *mut u32) = MACHINE.regs.esi;
+            .add(MACHINE.regs.ebp.wrapping_add(0xffffffd8u32) as usize) as *mut u32) =
+            MACHINE.regs.esi;
         // 00405170 cmp esi,edi
         sub(MACHINE.regs.esi, MACHINE.regs.edi);
         // 00405172 je short 004051A6h
@@ -18861,7 +21625,9 @@ pub fn x00405174() -> Cont {
     unsafe {
         // 00405174 test byte ptr [ebp+0Dh],4
         and(
-            *(MACHINE.memory.add((MACHINE.regs.ebp + 0xdu32) as usize) as *mut u8),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0xdu32) as usize) as *mut u8),
             0x4u8,
         );
         // 00405178 je short 004051BAh
@@ -18873,7 +21639,9 @@ pub fn x0040517a() -> Cont {
     unsafe {
         // 0040517a cmp [ebp+1Ch],edi
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.ebp + 0x1cu32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x1cu32) as usize) as *mut u32),
             MACHINE.regs.edi,
         );
         // 0040517d je near ptr 00405235h
@@ -18886,7 +21654,9 @@ pub fn x00405183() -> Cont {
         // 00405183 cmp esi,[ebp+1Ch]
         sub(
             MACHINE.regs.esi,
-            *(MACHINE.memory.add((MACHINE.regs.ebp + 0x1cu32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x1cu32) as usize) as *mut u32),
         );
         // 00405186 jg short 004051A6h
         jg(Cont(x00405188), Cont(x004051a6))
@@ -18896,21 +21666,38 @@ pub fn x00405183() -> Cont {
 pub fn x00405188() -> Cont {
     unsafe {
         // 00405188 push dword ptr [ebp+1Ch]
-        push(*(MACHINE.memory.add((MACHINE.regs.ebp + 0x1cu32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x1cu32) as usize) as *mut u32),
+        );
         // 0040518b push dword ptr [ebp+18h]
-        push(*(MACHINE.memory.add((MACHINE.regs.ebp + 0x18u32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x18u32) as usize) as *mut u32),
+        );
         // 0040518e push ebx
         push(MACHINE.regs.ebx);
         // 0040518f push dword ptr [ebp-24h]
         push(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.ebp + 0xffffffdcu32) as usize) as *mut u32),
+                .add(MACHINE.regs.ebp.wrapping_add(0xffffffdcu32) as usize)
+                as *mut u32),
         );
         // 00405192 push dword ptr [ebp+0Ch]
-        push(*(MACHINE.memory.add((MACHINE.regs.ebp + 0xcu32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0xcu32) as usize) as *mut u32),
+        );
         // 00405195 push dword ptr [ebp+8]
-        push(*(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize) as *mut u32),
+        );
         // 00405198 call dword ptr ds:[40603Ch]
         call(0x40519e, Cont(kernel32::stdcall_LCMapStringW))
     }
@@ -18930,14 +21717,16 @@ pub fn x004051a6() -> Cont {
         // 004051a6 xor eax,eax
         MACHINE.regs.eax ^= MACHINE.regs.eax;
         // 004051a8 lea esp,[ebp-38h]
-        MACHINE.regs.esp = MACHINE.regs.ebp + 0xffffffc8u32;
+        MACHINE.regs.esp = MACHINE.regs.ebp.wrapping_add(0xffffffc8u32);
         // 004051ab mov ecx,[ebp-10h]
         MACHINE.regs.ecx = *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffff0u32) as usize)
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffff0u32) as usize)
             as *mut u32);
         // 004051ae mov fs:[0],ecx
-        *(MACHINE.memory.add((MACHINE.regs.fs_base + 0x0u32) as usize) as *mut u32) =
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.fs_base.wrapping_add(0x0u32) as usize) as *mut u32) =
             MACHINE.regs.ecx;
         // 004051b5 pop edi
         MACHINE.regs.edi = pop();
@@ -18955,14 +21744,16 @@ pub fn x004051a6() -> Cont {
 pub fn x004051a8() -> Cont {
     unsafe {
         // 004051a8 lea esp,[ebp-38h]
-        MACHINE.regs.esp = MACHINE.regs.ebp + 0xffffffc8u32;
+        MACHINE.regs.esp = MACHINE.regs.ebp.wrapping_add(0xffffffc8u32);
         // 004051ab mov ecx,[ebp-10h]
         MACHINE.regs.ecx = *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffff0u32) as usize)
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffff0u32) as usize)
             as *mut u32);
         // 004051ae mov fs:[0],ecx
-        *(MACHINE.memory.add((MACHINE.regs.fs_base + 0x0u32) as usize) as *mut u32) =
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.fs_base.wrapping_add(0x0u32) as usize) as *mut u32) =
             MACHINE.regs.ecx;
         // 004051b5 pop edi
         MACHINE.regs.edi = pop();
@@ -18982,9 +21773,13 @@ pub fn x004051ba() -> Cont {
         // 004051ba mov dword ptr [ebp-4],1
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize) as *mut u32) = 0x1u32;
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize) as *mut u32) = 0x1u32;
         // 004051c1 lea eax,[esi+esi]
-        MACHINE.regs.eax = MACHINE.regs.esi + (MACHINE.regs.esi * 1) + 0x0u32;
+        MACHINE.regs.eax = MACHINE
+            .regs
+            .esi
+            .wrapping_add((MACHINE.regs.esi * 1))
+            .wrapping_add(0x0u32);
         // 004051c4 add eax,3
         MACHINE.regs.eax = add(MACHINE.regs.eax, 0x3u32);
         // 004051c7 and al,0FCh
@@ -18999,20 +21794,23 @@ pub fn x004051ce() -> Cont {
         // 004051ce mov [ebp-18h],esp
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xffffffe8u32) as usize) as *mut u32) = MACHINE.regs.esp;
+            .add(MACHINE.regs.ebp.wrapping_add(0xffffffe8u32) as usize) as *mut u32) =
+            MACHINE.regs.esp;
         // 004051d1 mov ebx,esp
         MACHINE.regs.ebx = MACHINE.regs.esp;
         // 004051d3 mov [ebp-20h],ebx
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xffffffe0u32) as usize) as *mut u32) = MACHINE.regs.ebx;
+            .add(MACHINE.regs.ebp.wrapping_add(0xffffffe0u32) as usize) as *mut u32) =
+            MACHINE.regs.ebx;
         // 004051d6 or dword ptr [ebp-4],0FFFFFFFFh
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize) as *mut u32) = or(
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize) as *mut u32) = or(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize) as *mut u32),
+                .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize)
+                as *mut u32),
             0xffffffffu32,
         );
         // 004051da jmp short 004051EEh
@@ -19039,18 +21837,28 @@ pub fn x004051f2() -> Cont {
         push(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.ebp + 0xffffffe4u32) as usize) as *mut u32),
+                .add(MACHINE.regs.ebp.wrapping_add(0xffffffe4u32) as usize)
+                as *mut u32),
         );
         // 004051f7 push dword ptr [ebp-24h]
         push(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.ebp + 0xffffffdcu32) as usize) as *mut u32),
+                .add(MACHINE.regs.ebp.wrapping_add(0xffffffdcu32) as usize)
+                as *mut u32),
         );
         // 004051fa push dword ptr [ebp+0Ch]
-        push(*(MACHINE.memory.add((MACHINE.regs.ebp + 0xcu32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0xcu32) as usize) as *mut u32),
+        );
         // 004051fd push dword ptr [ebp+8]
-        push(*(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize) as *mut u32),
+        );
         // 00405200 call dword ptr ds:[40603Ch]
         call(0x405206, Cont(kernel32::stdcall_LCMapStringW))
     }
@@ -19069,7 +21877,9 @@ pub fn x0040520a() -> Cont {
     unsafe {
         // 0040520a cmp [ebp+1Ch],edi
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.ebp + 0x1cu32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x1cu32) as usize) as *mut u32),
             MACHINE.regs.edi,
         );
         // 0040520d push edi
@@ -19095,9 +21905,17 @@ pub fn x00405211() -> Cont {
 pub fn x00405215() -> Cont {
     unsafe {
         // 00405215 push dword ptr [ebp+1Ch]
-        push(*(MACHINE.memory.add((MACHINE.regs.ebp + 0x1cu32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x1cu32) as usize) as *mut u32),
+        );
         // 00405218 push dword ptr [ebp+18h]
-        push(*(MACHINE.memory.add((MACHINE.regs.ebp + 0x18u32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x18u32) as usize) as *mut u32),
+        );
         // 0040521b push esi
         push(MACHINE.regs.esi);
         // 0040521c push ebx
@@ -19105,7 +21923,11 @@ pub fn x00405215() -> Cont {
         // 0040521d push 220h
         push(0x220u32);
         // 00405222 push dword ptr [ebp+20h]
-        push(*(MACHINE.memory.add((MACHINE.regs.ebp + 0x20u32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x20u32) as usize) as *mut u32),
+        );
         // 00405225 call dword ptr ds:[4060A4h]
         call(0x40522b, Cont(kernel32::stdcall_WideCharToMultiByte))
     }
@@ -19120,7 +21942,11 @@ pub fn x0040521b() -> Cont {
         // 0040521d push 220h
         push(0x220u32);
         // 00405222 push dword ptr [ebp+20h]
-        push(*(MACHINE.memory.add((MACHINE.regs.ebp + 0x20u32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x20u32) as usize) as *mut u32),
+        );
         // 00405225 call dword ptr ds:[4060A4h]
         call(0x40522b, Cont(kernel32::stdcall_WideCharToMultiByte))
     }
@@ -19149,15 +21975,21 @@ pub fn x00405235() -> Cont {
 pub fn x0040523c() -> Cont {
     unsafe {
         // 0040523c mov edx,[esp+8]
-        MACHINE.regs.edx = *(MACHINE.memory.add((MACHINE.regs.esp + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.edx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 00405240 mov eax,[esp+4]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.esp + 0x4u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.esp.wrapping_add(0x4u32) as usize)
+            as *mut u32);
         // 00405244 test edx,edx
         and(MACHINE.regs.edx, MACHINE.regs.edx);
         // 00405246 push esi
         push(MACHINE.regs.esi);
         // 00405247 lea ecx,[edx-1]
-        MACHINE.regs.ecx = MACHINE.regs.edx + 0xffffffffu32;
+        MACHINE.regs.ecx = MACHINE.regs.edx.wrapping_add(0xffffffffu32);
         // 0040524a je short 00405259h
         je(Cont(x0040524c), Cont(x00405259))
     }
@@ -19167,7 +21999,9 @@ pub fn x0040524c() -> Cont {
     unsafe {
         // 0040524c cmp byte ptr [eax],0
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u8),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u8),
             0x0u8,
         );
         // 0040524f je short 00405259h
@@ -19194,7 +22028,9 @@ pub fn x00405259() -> Cont {
     unsafe {
         // 00405259 cmp byte ptr [eax],0
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.eax + 0x0u32) as usize) as *mut u8),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.eax.wrapping_add(0x0u32) as usize) as *mut u8),
             0x0u8,
         );
         // 0040525c pop esi
@@ -19209,7 +22045,9 @@ pub fn x0040525f() -> Cont {
         // 0040525f sub eax,[esp+4]
         MACHINE.regs.eax = sub(
             MACHINE.regs.eax,
-            *(MACHINE.memory.add((MACHINE.regs.esp + 0x4u32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.esp.wrapping_add(0x4u32) as usize) as *mut u32),
         );
         // 00405263 ret
         ret(0)
@@ -19238,12 +22076,16 @@ pub fn x00405267() -> Cont {
         // 00405271 push 4029A8h
         push(0x4029a8u32);
         // 00405276 mov eax,fs:[0]
-        MACHINE.regs.eax =
-            *(MACHINE.memory.add((MACHINE.regs.fs_base + 0x0u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.fs_base.wrapping_add(0x0u32) as usize)
+            as *mut u32);
         // 0040527c push eax
         push(MACHINE.regs.eax);
         // 0040527d mov fs:[0],esp
-        *(MACHINE.memory.add((MACHINE.regs.fs_base + 0x0u32) as usize) as *mut u32) =
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.fs_base.wrapping_add(0x0u32) as usize) as *mut u32) =
             MACHINE.regs.esp;
         // 00405284 sub esp,18h
         MACHINE.regs.esp = sub(MACHINE.regs.esp, 0x18u32);
@@ -19256,9 +22098,10 @@ pub fn x00405267() -> Cont {
         // 0040528a mov [ebp-18h],esp
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xffffffe8u32) as usize) as *mut u32) = MACHINE.regs.esp;
+            .add(MACHINE.regs.ebp.wrapping_add(0xffffffe8u32) as usize) as *mut u32) =
+            MACHINE.regs.esp;
         // 0040528d mov eax,ds:[409744h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((0x409744u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE.memory.add(0x409744u32 as usize) as *mut u32);
         // 00405292 xor ebx,ebx
         MACHINE.regs.ebx ^= MACHINE.regs.ebx;
         // 00405294 cmp eax,ebx
@@ -19271,7 +22114,7 @@ pub fn x00405267() -> Cont {
 pub fn x00405298() -> Cont {
     unsafe {
         // 00405298 lea eax,[ebp-1Ch]
-        MACHINE.regs.eax = MACHINE.regs.ebp + 0xffffffe4u32;
+        MACHINE.regs.eax = MACHINE.regs.ebp.wrapping_add(0xffffffe4u32);
         // 0040529b push eax
         push(MACHINE.regs.eax);
         // 0040529c push 1
@@ -19310,7 +22153,7 @@ pub fn x004052b0() -> Cont {
 pub fn x004052b4() -> Cont {
     unsafe {
         // 004052b4 lea eax,[ebp-1Ch]
-        MACHINE.regs.eax = MACHINE.regs.ebp + 0xffffffe4u32;
+        MACHINE.regs.eax = MACHINE.regs.ebp.wrapping_add(0xffffffe4u32);
         // 004052b7 push eax
         push(MACHINE.regs.eax);
         // 004052b8 push esi
@@ -19342,7 +22185,7 @@ pub fn x004052ce() -> Cont {
         // 004052d0 pop eax
         MACHINE.regs.eax = pop();
         // 004052d1 mov ds:[409744h],eax
-        *(MACHINE.memory.add((0x409744u32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE.memory.add(0x409744u32 as usize) as *mut u32) = MACHINE.regs.eax;
         // 004052d6 cmp eax,2
         sub(MACHINE.regs.eax, 0x2u32);
         // 004052d9 jne short 004052FFh
@@ -19353,7 +22196,7 @@ pub fn x004052ce() -> Cont {
 pub fn x004052d1() -> Cont {
     unsafe {
         // 004052d1 mov ds:[409744h],eax
-        *(MACHINE.memory.add((0x409744u32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE.memory.add(0x409744u32 as usize) as *mut u32) = MACHINE.regs.eax;
         // 004052d6 cmp eax,2
         sub(MACHINE.regs.eax, 0x2u32);
         // 004052d9 jne short 004052FFh
@@ -19373,7 +22216,10 @@ pub fn x004052d6() -> Cont {
 pub fn x004052db() -> Cont {
     unsafe {
         // 004052db mov eax,[ebp+1Ch]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.ebp + 0x1cu32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x1cu32) as usize)
+            as *mut u32);
         // 004052de cmp eax,ebx
         sub(MACHINE.regs.eax, MACHINE.regs.ebx);
         // 004052e0 jne short 004052E7h
@@ -19384,15 +22230,31 @@ pub fn x004052db() -> Cont {
 pub fn x004052e2() -> Cont {
     unsafe {
         // 004052e2 mov eax,ds:[409728h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((0x409728u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE.memory.add(0x409728u32 as usize) as *mut u32);
         // 004052e7 push dword ptr [ebp+14h]
-        push(*(MACHINE.memory.add((MACHINE.regs.ebp + 0x14u32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x14u32) as usize) as *mut u32),
+        );
         // 004052ea push dword ptr [ebp+10h]
-        push(*(MACHINE.memory.add((MACHINE.regs.ebp + 0x10u32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x10u32) as usize) as *mut u32),
+        );
         // 004052ed push dword ptr [ebp+0Ch]
-        push(*(MACHINE.memory.add((MACHINE.regs.ebp + 0xcu32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0xcu32) as usize) as *mut u32),
+        );
         // 004052f0 push dword ptr [ebp+8]
-        push(*(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize) as *mut u32),
+        );
         // 004052f3 push eax
         push(MACHINE.regs.eax);
         // 004052f4 call dword ptr ds:[406038h]
@@ -19403,13 +22265,29 @@ pub fn x004052e2() -> Cont {
 pub fn x004052e7() -> Cont {
     unsafe {
         // 004052e7 push dword ptr [ebp+14h]
-        push(*(MACHINE.memory.add((MACHINE.regs.ebp + 0x14u32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x14u32) as usize) as *mut u32),
+        );
         // 004052ea push dword ptr [ebp+10h]
-        push(*(MACHINE.memory.add((MACHINE.regs.ebp + 0x10u32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x10u32) as usize) as *mut u32),
+        );
         // 004052ed push dword ptr [ebp+0Ch]
-        push(*(MACHINE.memory.add((MACHINE.regs.ebp + 0xcu32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0xcu32) as usize) as *mut u32),
+        );
         // 004052f0 push dword ptr [ebp+8]
-        push(*(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize) as *mut u32),
+        );
         // 004052f3 push eax
         push(MACHINE.regs.eax);
         // 004052f4 call dword ptr ds:[406038h]
@@ -19437,7 +22315,9 @@ pub fn x00405308() -> Cont {
     unsafe {
         // 00405308 cmp [ebp+18h],ebx
         sub(
-            *(MACHINE.memory.add((MACHINE.regs.ebp + 0x18u32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x18u32) as usize) as *mut u32),
             MACHINE.regs.ebx,
         );
         // 0040530b jne short 00405315h
@@ -19448,19 +22328,32 @@ pub fn x00405308() -> Cont {
 pub fn x0040530d() -> Cont {
     unsafe {
         // 0040530d mov eax,ds:[409738h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((0x409738u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE.memory.add(0x409738u32 as usize) as *mut u32);
         // 00405312 mov [ebp+18h],eax
-        *(MACHINE.memory.add((MACHINE.regs.ebp + 0x18u32) as usize) as *mut u32) = MACHINE.regs.eax;
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x18u32) as usize) as *mut u32) = MACHINE.regs.eax;
         // 00405315 push ebx
         push(MACHINE.regs.ebx);
         // 00405316 push ebx
         push(MACHINE.regs.ebx);
         // 00405317 push dword ptr [ebp+10h]
-        push(*(MACHINE.memory.add((MACHINE.regs.ebp + 0x10u32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x10u32) as usize) as *mut u32),
+        );
         // 0040531a push dword ptr [ebp+0Ch]
-        push(*(MACHINE.memory.add((MACHINE.regs.ebp + 0xcu32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0xcu32) as usize) as *mut u32),
+        );
         // 0040531d mov eax,[ebp+20h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.ebp + 0x20u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x20u32) as usize)
+            as *mut u32);
         // 00405320 neg eax
         MACHINE.regs.eax = neg(MACHINE.regs.eax);
         // 00405322 sbb eax,eax
@@ -19472,7 +22365,11 @@ pub fn x0040530d() -> Cont {
         // 00405328 push eax
         push(MACHINE.regs.eax);
         // 00405329 push dword ptr [ebp+18h]
-        push(*(MACHINE.memory.add((MACHINE.regs.ebp + 0x18u32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x18u32) as usize) as *mut u32),
+        );
         // 0040532c call dword ptr ds:[406044h]
         call(0x405332, Cont(kernel32::stdcall_MultiByteToWideChar))
     }
@@ -19485,11 +22382,22 @@ pub fn x00405315() -> Cont {
         // 00405316 push ebx
         push(MACHINE.regs.ebx);
         // 00405317 push dword ptr [ebp+10h]
-        push(*(MACHINE.memory.add((MACHINE.regs.ebp + 0x10u32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x10u32) as usize) as *mut u32),
+        );
         // 0040531a push dword ptr [ebp+0Ch]
-        push(*(MACHINE.memory.add((MACHINE.regs.ebp + 0xcu32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0xcu32) as usize) as *mut u32),
+        );
         // 0040531d mov eax,[ebp+20h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.ebp + 0x20u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x20u32) as usize)
+            as *mut u32);
         // 00405320 neg eax
         MACHINE.regs.eax = neg(MACHINE.regs.eax);
         // 00405322 sbb eax,eax
@@ -19501,7 +22409,11 @@ pub fn x00405315() -> Cont {
         // 00405328 push eax
         push(MACHINE.regs.eax);
         // 00405329 push dword ptr [ebp+18h]
-        push(*(MACHINE.memory.add((MACHINE.regs.ebp + 0x18u32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x18u32) as usize) as *mut u32),
+        );
         // 0040532c call dword ptr ds:[406044h]
         call(0x405332, Cont(kernel32::stdcall_MultiByteToWideChar))
     }
@@ -19512,7 +22424,8 @@ pub fn x00405332() -> Cont {
         // 00405332 mov [ebp-20h],eax
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xffffffe0u32) as usize) as *mut u32) = MACHINE.regs.eax;
+            .add(MACHINE.regs.ebp.wrapping_add(0xffffffe0u32) as usize) as *mut u32) =
+            MACHINE.regs.eax;
         // 00405335 cmp eax,ebx
         sub(MACHINE.regs.eax, MACHINE.regs.ebx);
         // 00405337 je short 0040539Ch
@@ -19525,9 +22438,14 @@ pub fn x00405339() -> Cont {
         // 00405339 mov [ebp-4],ebx
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize) as *mut u32) = MACHINE.regs.ebx;
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize) as *mut u32) =
+            MACHINE.regs.ebx;
         // 0040533c lea edi,[eax+eax]
-        MACHINE.regs.edi = MACHINE.regs.eax + (MACHINE.regs.eax * 1) + 0x0u32;
+        MACHINE.regs.edi = MACHINE
+            .regs
+            .eax
+            .wrapping_add((MACHINE.regs.eax * 1))
+            .wrapping_add(0x0u32);
         // 0040533f mov eax,edi
         MACHINE.regs.eax = MACHINE.regs.edi;
         // 00405341 add eax,3
@@ -19544,13 +22462,15 @@ pub fn x0040534b() -> Cont {
         // 0040534b mov [ebp-18h],esp
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xffffffe8u32) as usize) as *mut u32) = MACHINE.regs.esp;
+            .add(MACHINE.regs.ebp.wrapping_add(0xffffffe8u32) as usize) as *mut u32) =
+            MACHINE.regs.esp;
         // 0040534e mov esi,esp
         MACHINE.regs.esi = MACHINE.regs.esp;
         // 00405350 mov [ebp-24h],esi
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xffffffdcu32) as usize) as *mut u32) = MACHINE.regs.esi;
+            .add(MACHINE.regs.ebp.wrapping_add(0xffffffdcu32) as usize) as *mut u32) =
+            MACHINE.regs.esi;
         // 00405353 push edi
         push(MACHINE.regs.edi);
         // 00405354 push ebx
@@ -19576,10 +22496,11 @@ pub fn x0040536b() -> Cont {
         // 0040536b or dword ptr [ebp-4],0FFFFFFFFh
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize) as *mut u32) = or(
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize) as *mut u32) = or(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize) as *mut u32),
+                .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize)
+                as *mut u32),
             0xffffffffu32,
         );
         // 0040536f cmp esi,ebx
@@ -19595,18 +22516,31 @@ pub fn x00405373() -> Cont {
         push(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.ebp + 0xffffffe0u32) as usize) as *mut u32),
+                .add(MACHINE.regs.ebp.wrapping_add(0xffffffe0u32) as usize)
+                as *mut u32),
         );
         // 00405376 push esi
         push(MACHINE.regs.esi);
         // 00405377 push dword ptr [ebp+10h]
-        push(*(MACHINE.memory.add((MACHINE.regs.ebp + 0x10u32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x10u32) as usize) as *mut u32),
+        );
         // 0040537a push dword ptr [ebp+0Ch]
-        push(*(MACHINE.memory.add((MACHINE.regs.ebp + 0xcu32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0xcu32) as usize) as *mut u32),
+        );
         // 0040537d push 1
         push(0x1u32);
         // 0040537f push dword ptr [ebp+18h]
-        push(*(MACHINE.memory.add((MACHINE.regs.ebp + 0x18u32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x18u32) as usize) as *mut u32),
+        );
         // 00405382 call dword ptr ds:[406044h]
         call(0x405388, Cont(kernel32::stdcall_MultiByteToWideChar))
     }
@@ -19624,13 +22558,21 @@ pub fn x00405388() -> Cont {
 pub fn x0040538c() -> Cont {
     unsafe {
         // 0040538c push dword ptr [ebp+14h]
-        push(*(MACHINE.memory.add((MACHINE.regs.ebp + 0x14u32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x14u32) as usize) as *mut u32),
+        );
         // 0040538f push eax
         push(MACHINE.regs.eax);
         // 00405390 push esi
         push(MACHINE.regs.esi);
         // 00405391 push dword ptr [ebp+8]
-        push(*(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32));
+        push(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize) as *mut u32),
+        );
         // 00405394 call dword ptr ds:[406034h]
         call(0x40539a, Cont(kernel32::stdcall_GetStringTypeW))
     }
@@ -19648,14 +22590,16 @@ pub fn x0040539c() -> Cont {
         // 0040539c xor eax,eax
         MACHINE.regs.eax ^= MACHINE.regs.eax;
         // 0040539e lea esp,[ebp-34h]
-        MACHINE.regs.esp = MACHINE.regs.ebp + 0xffffffccu32;
+        MACHINE.regs.esp = MACHINE.regs.ebp.wrapping_add(0xffffffccu32);
         // 004053a1 mov ecx,[ebp-10h]
         MACHINE.regs.ecx = *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffff0u32) as usize)
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffff0u32) as usize)
             as *mut u32);
         // 004053a4 mov fs:[0],ecx
-        *(MACHINE.memory.add((MACHINE.regs.fs_base + 0x0u32) as usize) as *mut u32) =
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.fs_base.wrapping_add(0x0u32) as usize) as *mut u32) =
             MACHINE.regs.ecx;
         // 004053ab pop edi
         MACHINE.regs.edi = pop();
@@ -19673,14 +22617,16 @@ pub fn x0040539c() -> Cont {
 pub fn x0040539e() -> Cont {
     unsafe {
         // 0040539e lea esp,[ebp-34h]
-        MACHINE.regs.esp = MACHINE.regs.ebp + 0xffffffccu32;
+        MACHINE.regs.esp = MACHINE.regs.ebp.wrapping_add(0xffffffccu32);
         // 004053a1 mov ecx,[ebp-10h]
         MACHINE.regs.ecx = *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffff0u32) as usize)
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffff0u32) as usize)
             as *mut u32);
         // 004053a4 mov fs:[0],ecx
-        *(MACHINE.memory.add((MACHINE.regs.fs_base + 0x0u32) as usize) as *mut u32) =
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.fs_base.wrapping_add(0x0u32) as usize) as *mut u32) =
             MACHINE.regs.ecx;
         // 004053ab pop edi
         MACHINE.regs.edi = pop();
@@ -19705,7 +22651,7 @@ pub fn x004053b0() -> Cont {
         push(MACHINE.regs.ecx);
         // 004053b4 cmp dword ptr ds:[409728h],0
         sub(
-            *(MACHINE.memory.add((0x409728u32) as usize) as *mut u32),
+            *(MACHINE.memory.add(0x409728u32 as usize) as *mut u32),
             0x0u32,
         );
         // 004053bb push ebx
@@ -19718,7 +22664,10 @@ pub fn x004053b0() -> Cont {
 pub fn x004053be() -> Cont {
     unsafe {
         // 004053be mov eax,[ebp+8]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 004053c1 cmp eax,61h
         sub(MACHINE.regs.eax, 0x61u32);
         // 004053c4 jl near ptr 00405479h
@@ -19747,7 +22696,10 @@ pub fn x004053d3() -> Cont {
 pub fn x004053db() -> Cont {
     unsafe {
         // 004053db mov ebx,[ebp+8]
-        MACHINE.regs.ebx = *(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.ebx = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 004053de cmp ebx,100h
         sub(MACHINE.regs.ebx, 0x100u32);
         // 004053e4 jge short 0040540Eh
@@ -19759,7 +22711,7 @@ pub fn x004053e6() -> Cont {
     unsafe {
         // 004053e6 cmp dword ptr ds:[40953Ch],1
         sub(
-            *(MACHINE.memory.add((0x40953cu32) as usize) as *mut u32),
+            *(MACHINE.memory.add(0x40953cu32 as usize) as *mut u32),
             0x1u32,
         );
         // 004053ed jle short 004053FBh
@@ -19792,13 +22744,16 @@ pub fn x004053f7() -> Cont {
 pub fn x004053fb() -> Cont {
     unsafe {
         // 004053fb mov eax,ds:[409330h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((0x409330u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE.memory.add(0x409330u32 as usize) as *mut u32);
         // 00405400 mov al,[eax+ebx*2]
         MACHINE.regs.set_al(
-            *(MACHINE
-                .memory
-                .add((MACHINE.regs.eax + (MACHINE.regs.ebx * 2) + 0x0u32) as usize)
-                as *mut u8),
+            *(MACHINE.memory.add(
+                MACHINE
+                    .regs
+                    .eax
+                    .wrapping_add((MACHINE.regs.ebx * 2))
+                    .wrapping_add(0x0u32) as usize,
+            ) as *mut u8),
         );
         // 00405403 and eax,2
         MACHINE.regs.eax = and(MACHINE.regs.eax, 0x2u32);
@@ -19830,7 +22785,7 @@ pub fn x0040540a() -> Cont {
 pub fn x0040540e() -> Cont {
     unsafe {
         // 0040540e mov edx,ds:[409330h]
-        MACHINE.regs.edx = *(MACHINE.memory.add((0x409330u32) as usize) as *mut u32);
+        MACHINE.regs.edx = *(MACHINE.memory.add(0x409330u32 as usize) as *mut u32);
         // 00405414 mov eax,ebx
         MACHINE.regs.eax = MACHINE.regs.ebx;
         // 00405416 sar eax,8
@@ -19839,10 +22794,13 @@ pub fn x0040540e() -> Cont {
         todo!();
         // 0040541c test byte ptr [edx+ecx*2+1],80h
         and(
-            *(MACHINE
-                .memory
-                .add((MACHINE.regs.edx + (MACHINE.regs.ecx * 2) + 0x1u32) as usize)
-                as *mut u8),
+            *(MACHINE.memory.add(
+                MACHINE
+                    .regs
+                    .edx
+                    .wrapping_add((MACHINE.regs.ecx * 2))
+                    .wrapping_add(0x1u32) as usize,
+            ) as *mut u8),
             0x80u8,
         );
         // 00405421 je short 00405431h
@@ -19853,15 +22811,23 @@ pub fn x0040540e() -> Cont {
 pub fn x00405423() -> Cont {
     unsafe {
         // 00405423 and byte ptr [ebp+0Ah],0
-        *(MACHINE.memory.add((MACHINE.regs.ebp + 0xau32) as usize) as *mut u8) = and(
-            *(MACHINE.memory.add((MACHINE.regs.ebp + 0xau32) as usize) as *mut u8),
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0xau32) as usize) as *mut u8) = and(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0xau32) as usize) as *mut u8),
             0x0u8,
         );
         // 00405427 mov [ebp+8],al
-        *(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u8) =
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize) as *mut u8) =
             MACHINE.regs.get_al();
         // 0040542a mov [ebp+9],bl
-        *(MACHINE.memory.add((MACHINE.regs.ebp + 0x9u32) as usize) as *mut u8) =
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x9u32) as usize) as *mut u8) =
             MACHINE.regs.get_bl();
         // 0040542d push 2
         push(0x2u32);
@@ -19873,19 +22839,25 @@ pub fn x00405423() -> Cont {
 pub fn x00405431() -> Cont {
     unsafe {
         // 00405431 and byte ptr [ebp+9],0
-        *(MACHINE.memory.add((MACHINE.regs.ebp + 0x9u32) as usize) as *mut u8) = and(
-            *(MACHINE.memory.add((MACHINE.regs.ebp + 0x9u32) as usize) as *mut u8),
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x9u32) as usize) as *mut u8) = and(
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0x9u32) as usize) as *mut u8),
             0x0u8,
         );
         // 00405435 mov [ebp+8],bl
-        *(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u8) =
+        *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize) as *mut u8) =
             MACHINE.regs.get_bl();
         // 00405438 push 1
         push(0x1u32);
         // 0040543a pop eax
         MACHINE.regs.eax = pop();
         // 0040543b lea ecx,[ebp-4]
-        MACHINE.regs.ecx = MACHINE.regs.ebp + 0xfffffffcu32;
+        MACHINE.regs.ecx = MACHINE.regs.ebp.wrapping_add(0xfffffffcu32);
         // 0040543e push 1
         push(0x1u32);
         // 00405440 push 0
@@ -19897,13 +22869,13 @@ pub fn x00405431() -> Cont {
         // 00405445 push eax
         push(MACHINE.regs.eax);
         // 00405446 lea eax,[ebp+8]
-        MACHINE.regs.eax = MACHINE.regs.ebp + 0x8u32;
+        MACHINE.regs.eax = MACHINE.regs.ebp.wrapping_add(0x8u32);
         // 00405449 push eax
         push(MACHINE.regs.eax);
         // 0040544a push 200h
         push(0x200u32);
         // 0040544f push dword ptr ds:[409728h]
-        push(*(MACHINE.memory.add((0x409728u32) as usize) as *mut u32));
+        push(*(MACHINE.memory.add(0x409728u32 as usize) as *mut u32));
         // 00405455 call 00405018h
         call(0x40545a, Cont(x00405018))
     }
@@ -19914,7 +22886,7 @@ pub fn x0040543a() -> Cont {
         // 0040543a pop eax
         MACHINE.regs.eax = pop();
         // 0040543b lea ecx,[ebp-4]
-        MACHINE.regs.ecx = MACHINE.regs.ebp + 0xfffffffcu32;
+        MACHINE.regs.ecx = MACHINE.regs.ebp.wrapping_add(0xfffffffcu32);
         // 0040543e push 1
         push(0x1u32);
         // 00405440 push 0
@@ -19926,13 +22898,13 @@ pub fn x0040543a() -> Cont {
         // 00405445 push eax
         push(MACHINE.regs.eax);
         // 00405446 lea eax,[ebp+8]
-        MACHINE.regs.eax = MACHINE.regs.ebp + 0x8u32;
+        MACHINE.regs.eax = MACHINE.regs.ebp.wrapping_add(0x8u32);
         // 00405449 push eax
         push(MACHINE.regs.eax);
         // 0040544a push 200h
         push(0x200u32);
         // 0040544f push dword ptr ds:[409728h]
-        push(*(MACHINE.memory.add((0x409728u32) as usize) as *mut u32));
+        push(*(MACHINE.memory.add(0x409728u32 as usize) as *mut u32));
         // 00405455 call 00405018h
         call(0x40545a, Cont(x00405018))
     }
@@ -20006,9 +22978,12 @@ pub fn x0040547c() -> Cont {
         // 0040547f push ecx
         push(MACHINE.regs.ecx);
         // 00405480 mov eax,[ebp+8]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.ebp + 0x8u32) as usize) as *mut u32);
+        MACHINE.regs.eax = *(MACHINE
+            .memory
+            .add(MACHINE.regs.ebp.wrapping_add(0x8u32) as usize)
+            as *mut u32);
         // 00405483 lea ecx,[eax+1]
-        MACHINE.regs.ecx = MACHINE.regs.eax + 0x1u32;
+        MACHINE.regs.ecx = MACHINE.regs.eax.wrapping_add(0x1u32);
         // 00405486 cmp ecx,100h
         sub(MACHINE.regs.ecx, 0x100u32);
         // 0040548c ja short 0040549Ah
@@ -20019,7 +22994,7 @@ pub fn x0040547c() -> Cont {
 pub fn x0040548e() -> Cont {
     unsafe {
         // 0040548e mov ecx,ds:[409330h]
-        MACHINE.regs.ecx = *(MACHINE.memory.add((0x409330u32) as usize) as *mut u32);
+        MACHINE.regs.ecx = *(MACHINE.memory.add(0x409330u32 as usize) as *mut u32);
         // 00405494 movzx eax,word ptr [ecx+eax*2]
         todo!();
         // 00405498 jmp short 004054ECh
@@ -20034,17 +23009,20 @@ pub fn x0040549a() -> Cont {
         // 0040549c push esi
         push(MACHINE.regs.esi);
         // 0040549d mov esi,ds:[409330h]
-        MACHINE.regs.esi = *(MACHINE.memory.add((0x409330u32) as usize) as *mut u32);
+        MACHINE.regs.esi = *(MACHINE.memory.add(0x409330u32 as usize) as *mut u32);
         // 004054a3 sar ecx,8
         todo!();
         // 004054a6 movzx edx,cl
         todo!();
         // 004054a9 test byte ptr [esi+edx*2+1],80h
         and(
-            *(MACHINE
-                .memory
-                .add((MACHINE.regs.esi + (MACHINE.regs.edx * 2) + 0x1u32) as usize)
-                as *mut u8),
+            *(MACHINE.memory.add(
+                MACHINE
+                    .regs
+                    .esi
+                    .wrapping_add((MACHINE.regs.edx * 2))
+                    .wrapping_add(0x1u32) as usize,
+            ) as *mut u8),
             0x80u8,
         );
         // 004054ae pop esi
@@ -20059,20 +23037,23 @@ pub fn x004054b1() -> Cont {
         // 004054b1 and byte ptr [ebp-2],0
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffffeu32) as usize) as *mut u8) = and(
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffffeu32) as usize) as *mut u8) = and(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.ebp + 0xfffffffeu32) as usize) as *mut u8),
+                .add(MACHINE.regs.ebp.wrapping_add(0xfffffffeu32) as usize)
+                as *mut u8),
             0x0u8,
         );
         // 004054b5 mov [ebp-4],cl
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize) as *mut u8) = MACHINE.regs.get_cl();
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize) as *mut u8) =
+            MACHINE.regs.get_cl();
         // 004054b8 mov [ebp-3],al
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffffdu32) as usize) as *mut u8) = MACHINE.regs.get_al();
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffffdu32) as usize) as *mut u8) =
+            MACHINE.regs.get_al();
         // 004054bb push 2
         push(0x2u32);
         // 004054bd jmp short 004054C8h
@@ -20085,22 +23066,24 @@ pub fn x004054bf() -> Cont {
         // 004054bf and byte ptr [ebp-3],0
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffffdu32) as usize) as *mut u8) = and(
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffffdu32) as usize) as *mut u8) = and(
             *(MACHINE
                 .memory
-                .add((MACHINE.regs.ebp + 0xfffffffdu32) as usize) as *mut u8),
+                .add(MACHINE.regs.ebp.wrapping_add(0xfffffffdu32) as usize)
+                as *mut u8),
             0x0u8,
         );
         // 004054c3 mov [ebp-4],al
         *(MACHINE
             .memory
-            .add((MACHINE.regs.ebp + 0xfffffffcu32) as usize) as *mut u8) = MACHINE.regs.get_al();
+            .add(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32) as usize) as *mut u8) =
+            MACHINE.regs.get_al();
         // 004054c6 push 1
         push(0x1u32);
         // 004054c8 pop eax
         MACHINE.regs.eax = pop();
         // 004054c9 lea ecx,[ebp+0Ah]
-        MACHINE.regs.ecx = MACHINE.regs.ebp + 0xau32;
+        MACHINE.regs.ecx = MACHINE.regs.ebp.wrapping_add(0xau32);
         // 004054cc push 1
         push(0x1u32);
         // 004054ce push 0
@@ -20112,7 +23095,7 @@ pub fn x004054bf() -> Cont {
         // 004054d3 push eax
         push(MACHINE.regs.eax);
         // 004054d4 lea eax,[ebp-4]
-        MACHINE.regs.eax = MACHINE.regs.ebp + 0xfffffffcu32;
+        MACHINE.regs.eax = MACHINE.regs.ebp.wrapping_add(0xfffffffcu32);
         // 004054d7 push eax
         push(MACHINE.regs.eax);
         // 004054d8 push 1
@@ -20127,7 +23110,7 @@ pub fn x004054c8() -> Cont {
         // 004054c8 pop eax
         MACHINE.regs.eax = pop();
         // 004054c9 lea ecx,[ebp+0Ah]
-        MACHINE.regs.ecx = MACHINE.regs.ebp + 0xau32;
+        MACHINE.regs.ecx = MACHINE.regs.ebp.wrapping_add(0xau32);
         // 004054cc push 1
         push(0x1u32);
         // 004054ce push 0
@@ -20139,7 +23122,7 @@ pub fn x004054c8() -> Cont {
         // 004054d3 push eax
         push(MACHINE.regs.eax);
         // 004054d4 lea eax,[ebp-4]
-        MACHINE.regs.eax = MACHINE.regs.ebp + 0xfffffffcu32;
+        MACHINE.regs.eax = MACHINE.regs.ebp.wrapping_add(0xfffffffcu32);
         // 004054d7 push eax
         push(MACHINE.regs.eax);
         // 004054d8 push 1
@@ -20176,7 +23159,9 @@ pub fn x004054e8() -> Cont {
         // 004054ec and eax,[ebp+0Ch]
         MACHINE.regs.eax = and(
             MACHINE.regs.eax,
-            *(MACHINE.memory.add((MACHINE.regs.ebp + 0xcu32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0xcu32) as usize) as *mut u32),
         );
         // 004054ef leave
         todo!();
@@ -20190,7 +23175,9 @@ pub fn x004054ec() -> Cont {
         // 004054ec and eax,[ebp+0Ch]
         MACHINE.regs.eax = and(
             MACHINE.regs.eax,
-            *(MACHINE.memory.add((MACHINE.regs.ebp + 0xcu32) as usize) as *mut u32),
+            *(MACHINE
+                .memory
+                .add(MACHINE.regs.ebp.wrapping_add(0xcu32) as usize) as *mut u32),
         );
         // 004054ef leave
         todo!();

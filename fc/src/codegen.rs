@@ -56,7 +56,17 @@ fn gen_addr(instr: &iced_x86::Instruction) -> String {
     }
     let addr = instr.memory_displacement32();
     expr.push(format!("{addr:#x}u32"));
-    expr.join(" + ")
+    expr.into_iter()
+        .enumerate()
+        .map(|(i, e)| {
+            if i == 0 {
+                e
+            } else {
+                format!(".wrapping_add({e})")
+            }
+        })
+        .collect::<Vec<_>>()
+        .join("")
 }
 
 fn get_op(instr: &iced_x86::Instruction, n: u32) -> String {
@@ -76,7 +86,7 @@ fn get_op(instr: &iced_x86::Instruction, n: u32) -> String {
                 iced_x86::MemorySize::UInt32 => "u32",
                 s => todo!("{s:?}"),
             };
-            format!("*(MACHINE.memory.add(({addr}) as usize) as *mut {size})")
+            format!("*(MACHINE.memory.add({addr} as usize) as *mut {size})")
         }
         k => {
             dbg!(instr);
@@ -97,7 +107,7 @@ fn set_op(instr: &iced_x86::Instruction, n: u32, expr: String) -> String {
                 iced_x86::MemorySize::UInt32 => "u32",
                 s => todo!("{s:?}"),
             };
-            format!("*(MACHINE.memory.add(({addr}) as usize) as *mut {size}) = {expr};")
+            format!("*(MACHINE.memory.add({addr} as usize) as *mut {size}) = {expr};")
         }
         k => {
             dbg!(instr);
@@ -380,6 +390,7 @@ pub fn gen_file(state: &State, outdir: &str) -> Result<()> {
     write!(&mut text, "#![allow(unused_unsafe)]\n");
     write!(&mut text, "#![allow(unreachable_code)]\n\n");
     write!(&mut text, "#![allow(static_mut_refs)]\n\n");
+    write!(&mut text, "#![allow(unused_parens)]\n\n");
 
     write!(&mut text, "use runtime::*;\n");
     write!(&mut text, "use winapi::*;\n\n");
