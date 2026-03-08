@@ -5,8 +5,9 @@ members = [
     "exe/winapi",
     "exe/zig_hello",
     "fc",
-    "win32/winapi",
     "runtime",
+    "win32/derive",
+    "win32/winapi",
 ]
 
 [workspace.dependencies]

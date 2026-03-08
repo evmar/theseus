@@ -159,10 +159,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "win32-derive"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
 name = "winapi"
 version = "0.1.0"
 dependencies = [
  "runtime",
+ "win32-derive",
  "zerocopy",
 ]
 

@@ -1,20 +1,12 @@
-use runtime::{Cont, Host, HOST, MACHINE};
+use runtime::{Cont, HOST, Host, MACHINE};
 use zerocopy::FromBytes;
 
+#[win32_derive::dllexport]
 pub fn GetStdHandle(_x: u32) -> u32 {
     return 0xf11e_0002;
 }
 
-pub fn stdcall_GetStdHandle() -> Cont {
-    unsafe {
-        let stack: *mut u32 = MACHINE.memory.add(MACHINE.regs.esp as usize) as *mut u32;
-        let ret = *stack.add(0);
-        MACHINE.regs.eax = GetStdHandle(*stack.add(1));
-        MACHINE.regs.esp += 2 * 4;
-        (MACHINE.indirect)(ret)
-    }
-}
-
+#[win32_derive::dllexport]
 pub fn WriteFile(
     hFile: u32,
     lpBuffer: u32,
@@ -43,48 +35,14 @@ pub fn WriteFile(
     return 1;
 }
 
-pub fn stdcall_WriteFile() -> Cont {
-    unsafe {
-        let stack: *mut u32 = MACHINE.memory.add(MACHINE.regs.esp as usize) as *mut u32;
-        let ret = *stack.add(0);
-        MACHINE.regs.eax = WriteFile(
-            *stack.add(1),
-            *stack.add(2),
-            *stack.add(3),
-            *stack.add(4),
-            *stack.add(5),
-        );
-        MACHINE.regs.esp += 6 * 4;
-        (MACHINE.indirect)(ret)
-    }
-}
-
+#[win32_derive::dllexport]
 pub fn ExitProcess(uExitCode: u32) -> u32 {
     std::process::exit(uExitCode as i32);
 }
 
-pub fn stdcall_ExitProcess() -> Cont {
-    unsafe {
-        let stack: *mut u32 = MACHINE.memory.add(MACHINE.regs.esp as usize) as *mut u32;
-        let ret = *stack.add(0);
-        MACHINE.regs.eax = ExitProcess(*stack.add(1));
-        MACHINE.regs.esp += 2 * 4;
-        (MACHINE.indirect)(ret)
-    }
-}
-
+#[win32_derive::dllexport]
 pub fn GetLastError() -> u32 {
     0
-}
-
-pub fn stdcall_GetLastError() -> Cont {
-    unsafe {
-        let stack: *mut u32 = MACHINE.memory.add(MACHINE.regs.esp as usize) as *mut u32;
-        let ret = *stack.add(0);
-        MACHINE.regs.eax = GetLastError();
-        MACHINE.regs.esp += 1 * 4;
-        (MACHINE.indirect)(ret)
-    }
 }
 
 #[repr(C)]

@@ -1,0 +1,17 @@
+[package]
+name = "win32-derive"
+version = "0.1.0"
+edition = "2024"
+
+[lib]
+proc-macro = true
+
+[dependencies]
+anyhow = "1.0"
+proc-macro2 = { version = "1.0", features = ["span-locations"] }
+quote = "1.0"
+
+[dependencies.syn]
+version = "2.0"
+default-features = false
+features = ["extra-traits", "full", "parsing", "printing", "proc-macro"]
