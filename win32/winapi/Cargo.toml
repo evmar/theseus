@@ -7,3 +7,4 @@ edition = "2024"
 runtime = { workspace = true }
 zerocopy = { version = "0.8.40", features = ["derive"] }
 win32-derive = { path = "../derive" }
+log = "0.4.29"
