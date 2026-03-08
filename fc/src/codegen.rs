@@ -246,7 +246,11 @@ fn gen_block(w: &mut dyn std::fmt::Write, state: &State, ip: AddrAbs, block: &Bl
             | Dec | Inc | Sete | Sar | Imul | Not | Setge | Int | Cdq | Idiv | Int3 | Xchg
             | Cmpxchg | Pushfd | Setne | Cpuid | Nop | Xgetbv | Setg | Bt | Movsb | Movq
             | Movdqa => {
-                writeln!(w, "todo!();");
+                writeln!(
+                    w,
+                    "todo!({:?});",
+                    format!("{:?}", instr.mnemonic()).to_lowercase()
+                );
             }
 
             c => todo!("{:?} in {}", c, instr),
