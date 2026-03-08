@@ -1,3 +1,5 @@
+#![allow(unused_must_use)]
+
 use anyhow::{Result, anyhow, bail};
 
 use crate::{Block, State, is_abs_memory_ref, memory::AddrAbs};
@@ -160,57 +162,27 @@ fn gen_block(w: &mut dyn std::fmt::Write, state: &State, ip: AddrAbs, block: &Bl
 
     for instr in &block.instrs {
         println!("gen: {}", instr);
-        write!(w, "// {:08x} {}\n", AddrAbs(instr.ip32()).0, instr);
+        writeln!(w, "// {:08x} {}", AddrAbs(instr.ip32()).0, instr);
         use iced_x86::Mnemonic::*;
         match instr.mnemonic() {
             Push => {
-                write!(w, "push({});\n", get_op(instr, 0));
+                writeln!(w, "push({});", get_op(instr, 0));
             }
             Pop => {
-                write!(w, "{};\n", set_op(instr, 0, "pop()".into()));
+                writeln!(w, "{};", set_op(instr, 0, "pop()".into()));
             }
+
+            Jmp => {
+                writeln!(w, "{}", gen_jmp(state, instr));
+            }
+
             Call => {
-                write!(
+                writeln!(
                     w,
-                    "call({:#08x}, {})\n",
+                    "call({:#08x}, {})",
                     instr.next_ip32(),
                     gen_jmp(state, instr)
                 );
-            }
-            Xor => {
-                let op0 = get_op(instr, 0);
-                let op1 = get_op(instr, 1);
-                write!(w, "{op0} ^= {op1};\n");
-            }
-            And => {
-                let op0 = get_op(instr, 0);
-                let op1 = get_op(instr, 1);
-                write!(w, "{};\n", set_op(instr, 0, format!("and({op0}, {op1})")));
-            }
-            Or => {
-                let op0 = get_op(instr, 0);
-                let op1 = get_op(instr, 1);
-                write!(w, "{};\n", set_op(instr, 0, format!("or({op0}, {op1})")));
-            }
-            Add => {
-                let op0 = get_op(instr, 0);
-                let op1 = get_op(instr, 1);
-                write!(w, "{};\n", set_op(instr, 0, format!("add({op0}, {op1})")));
-            }
-            Sub => {
-                let op0 = get_op(instr, 0);
-                let op1 = get_op(instr, 1);
-                write!(w, "{};\n", set_op(instr, 0, format!("sub({op0}, {op1})")));
-            }
-            Sbb => {
-                let op0 = get_op(instr, 0);
-                let op1 = get_op(instr, 1);
-                write!(w, "{};\n", set_op(instr, 0, format!("sbb({op0}, {op1})")));
-            }
-            Cmp => {
-                let op0 = get_op(instr, 0);
-                let op1 = get_op(instr, 1);
-                write!(w, "sub({op0}, {op1});\n");
             }
             Ret => {
                 let n = match instr.op_count() {
@@ -221,154 +193,60 @@ fn gen_block(w: &mut dyn std::fmt::Write, state: &State, ip: AddrAbs, block: &Bl
                     }
                     _ => todo!(),
                 };
-                write!(w, "ret({n})\n");
+                writeln!(w, "ret({n})");
             }
-            Mov => {
-                write!(w, "{};\n", set_op(instr, 0, get_op(instr, 1)));
+
+            Xor => {
+                let op0 = get_op(instr, 0);
+                let op1 = get_op(instr, 1);
+                writeln!(w, "{op0} ^= {op1};");
             }
-            Je => {
-                write!(
-                    w,
-                    "je({}, {})\n",
-                    gen_abs_jmp(state, instr.next_ip32()),
-                    gen_jmp(state, instr)
-                );
+
+            // Binary operations.
+            And | Or | Add | Sub | Sbb | Shl | Shr => {
+                let op0 = get_op(instr, 0);
+                let op1 = get_op(instr, 1);
+                let func = format!("{:?}", instr.mnemonic()).to_ascii_lowercase();
+                let _ = writeln!(w, "{};", set_op(instr, 0, format!("{func}({op0}, {op1})")));
             }
-            Jne => {
-                write!(
-                    w,
-                    "jne({}, {})\n",
-                    gen_abs_jmp(state, instr.next_ip32()),
-                    gen_jmp(state, instr)
-                );
-            }
-            Jb => {
-                write!(
-                    w,
-                    "jb({}, {})\n",
-                    gen_abs_jmp(state, instr.next_ip32()),
-                    gen_jmp(state, instr)
-                );
-            }
-            Js => {
-                write!(
-                    w,
-                    "js({}, {})\n",
-                    gen_abs_jmp(state, instr.next_ip32()),
-                    gen_jmp(state, instr)
-                );
-            }
-            Jns => {
-                write!(
-                    w,
-                    "jns({}, {})\n",
-                    gen_abs_jmp(state, instr.next_ip32()),
-                    gen_jmp(state, instr)
-                );
-            }
-            Ja => {
-                write!(
-                    w,
-                    "ja({}, {})\n",
-                    gen_abs_jmp(state, instr.next_ip32()),
-                    gen_jmp(state, instr)
-                );
-            }
-            Jae => {
-                write!(
-                    w,
-                    "jae({}, {})\n",
-                    gen_abs_jmp(state, instr.next_ip32()),
-                    gen_jmp(state, instr)
-                );
-            }
-            Jl => {
-                write!(
-                    w,
-                    "jl({}, {})\n",
-                    gen_abs_jmp(state, instr.next_ip32()),
-                    gen_jmp(state, instr)
-                );
-            }
-            Jge => {
-                write!(
-                    w,
-                    "jge({}, {})\n",
-                    gen_abs_jmp(state, instr.next_ip32()),
-                    gen_jmp(state, instr)
-                );
-            }
-            Jecxz => {
-                write!(
-                    w,
-                    "jecxz({}, {})\n",
-                    gen_abs_jmp(state, instr.next_ip32()),
-                    gen_jmp(state, instr)
-                );
-            }
-            Jg => {
-                write!(
-                    w,
-                    "jg({}, {})\n",
-                    gen_abs_jmp(state, instr.next_ip32()),
-                    gen_jmp(state, instr)
-                );
-            }
-            Jle => {
-                write!(
-                    w,
-                    "jle({}, {})\n",
-                    gen_abs_jmp(state, instr.next_ip32()),
-                    gen_jmp(state, instr)
-                );
-            }
-            Jbe => {
-                write!(
-                    w,
-                    "jbe({}, {})\n",
-                    gen_abs_jmp(state, instr.next_ip32()),
-                    gen_jmp(state, instr)
-                );
-            }
-            Jmp => {
-                write!(w, "{}\n", gen_jmp(state, instr));
-            }
-            Lea => {
-                write!(w, "{} = {};\n", get_op(instr, 0), gen_addr(instr));
+
+            Cmp => {
+                let op0 = get_op(instr, 0);
+                let op1 = get_op(instr, 1);
+                writeln!(w, "sub({op0}, {op1});");
             }
             Test => {
-                write!(w, "and({}, {});\n", get_op(instr, 0), get_op(instr, 1));
+                writeln!(w, "and({}, {});", get_op(instr, 0), get_op(instr, 1));
+            }
+
+            Mov => {
+                writeln!(w, "{};", set_op(instr, 0, get_op(instr, 1)));
+            }
+
+            // Conditional jumps.
+            Je | Jne | Jb | Js | Jns | Ja | Jae | Jl | Jg | Jge | Jecxz | Jle | Jbe => {
+                let next = gen_abs_jmp(state, instr.next_ip32());
+                let dst = gen_jmp(state, instr);
+                let func = format!("{:?}", instr.mnemonic()).to_ascii_lowercase();
+                writeln!(w, "{func}({next}, {dst})");
+            }
+
+            Lea => {
+                writeln!(w, "{} = {};", get_op(instr, 0), gen_addr(instr));
             }
             Neg => {
-                write!(
+                writeln!(
                     w,
-                    "{};\n",
+                    "{};",
                     set_op(instr, 0, format!("neg({})", get_op(instr, 0)))
                 );
             }
-            Shl => {
-                write!(
-                    w,
-                    "{} = shl({}, {});\n",
-                    get_op(instr, 0),
-                    get_op(instr, 0),
-                    get_op(instr, 1)
-                );
-            }
-            Shr => {
-                write!(
-                    w,
-                    "{} = shr({}, {});\n",
-                    get_op(instr, 0),
-                    get_op(instr, 0),
-                    get_op(instr, 1)
-                );
-            }
+
             Stosd | Scasb | Cmpsb | Movzx | Movsx | Movsd | Std | Cld | Stosb | Div | Leave
             | Dec | Inc | Sete | Sar | Imul | Not | Setge | Int | Cdq | Idiv | Int3 | Xchg
             | Cmpxchg | Pushfd | Setne | Cpuid | Nop | Xgetbv | Setg | Bt | Movsb | Movq
             | Movdqa => {
-                write!(w, "todo!();\n");
+                writeln!(w, "todo!();");
             }
 
             c => todo!("{:?} in {}", c, instr),

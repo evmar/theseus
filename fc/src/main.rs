@@ -1,5 +1,3 @@
-#![allow(unused_must_use)]
-
 mod codegen;
 mod memory;
 
