@@ -2,5 +2,5 @@
 
 set -e
 
-cargo run -p fc  ~/win/rs/exe/winapi/winapi.exe exe/winapi
-cargo build -p winapi-exe "$@"
+cargo run -p fc ~/win/rs/deploy/archive/BasicDD.exe exe/basicdd
+cargo build -p basicdd-exe "$@"
