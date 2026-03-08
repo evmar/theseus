@@ -378,7 +378,8 @@ pub fn gen_file(state: &State, outdir: &str) -> Result<()> {
     write!(&mut text, "#![allow(unreachable_code)]\n\n");
     write!(&mut text, "#![allow(static_mut_refs)]\n\n");
 
-    write!(&mut text, "use runtime::*;\n\n");
+    write!(&mut text, "use runtime::*;\n");
+    write!(&mut text, "use winapi::*;\n\n");
 
     let mut ips = state.blocks.keys().copied().collect::<Vec<_>>();
     ips.sort();

@@ -18,8 +18,8 @@ checksum = "c08606f8c3cbf4ce6ec8e28fb0014a2c086708fe954eaa885384a6165172e7e8"
 name = "basicdd-exe"
 version = "0.1.0"
 dependencies = [
- "kernel32",
  "runtime",
+ "winapi 0.1.0",
 ]
 
 [[package]]
@@ -50,14 +50,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "7c447cff8c7f384a7d4f741cfcff32f75f3ad02b406432e8d6c878d56b1edf6b"
 dependencies = [
  "lazy_static",
-]
-
-[[package]]
-name = "kernel32"
-version = "0.1.0"
-dependencies = [
- "runtime",
- "zerocopy",
 ]
 
 [[package]]
@@ -163,7 +155,15 @@ dependencies = [
  "cfg-if",
  "libc",
  "memory_units",
- "winapi",
+ "winapi 0.3.9",
+]
+
+[[package]]
+name = "winapi"
+version = "0.1.0"
+dependencies = [
+ "runtime",
+ "zerocopy",
 ]
 
 [[package]]
@@ -180,8 +180,8 @@ dependencies = [
 name = "winapi-exe"
 version = "0.1.0"
 dependencies = [
- "kernel32",
  "runtime",
+ "winapi 0.1.0",
 ]
 
 [[package]]
@@ -220,6 +220,6 @@ dependencies = [
 name = "zig-hello-exe"
 version = "0.1.0"
 dependencies = [
- "kernel32",
  "runtime",
+ "winapi 0.1.0",
 ]

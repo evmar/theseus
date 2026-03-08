@@ -1,12 +1,5 @@
-//#![no_std]
-#![allow(non_snake_case)]
-#![allow(non_camel_case_types)]
-
-use runtime::{Cont, HOST, Host, MACHINE};
+use runtime::{Cont, Host, HOST, MACHINE};
 use zerocopy::FromBytes;
-
-#[macro_use]
-extern crate alloc;
 
 pub fn GetStdHandle(_x: u32) -> u32 {
     return 0xf11e_0002;

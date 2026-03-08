@@ -3,6 +3,7 @@
 #![allow(static_mut_refs)]
 
 use runtime::*;
+use winapi::*;
 
 pub fn x00401040() -> Cont {
     unsafe {

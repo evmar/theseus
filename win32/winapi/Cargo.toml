@@ -1,5 +1,5 @@
 [package]
-name = "kernel32"
+name = "winapi"
 version = "0.1.0"
 edition = "2024"
 
