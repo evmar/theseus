@@ -1,5 +1,6 @@
 #![allow(non_snake_case)]
 #![allow(non_camel_case_types)]
+#![allow(static_mut_refs)]
 
 pub mod ddraw;
 pub mod gdi32;

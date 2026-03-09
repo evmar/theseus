@@ -32,7 +32,7 @@ pub fn dllexport(_attr: TokenStream, mut tokens: TokenStream) -> TokenStream {
     }
     */
     let wrapper_name = format_ident!("stdcall_{}", name);
-    let arg_count = args.len() as u32;
+    let stack_popped = args.len() as u32 + 1;
     let args = args
         .iter()
         .enumerate()
@@ -43,7 +43,7 @@ pub fn dllexport(_attr: TokenStream, mut tokens: TokenStream) -> TokenStream {
             let return_addr = *stack.add(0);
             let ret: ABIReturn = #name(#(#args),*).into();
             MACHINE.regs.eax = ret.0;
-            MACHINE.regs.esp += #arg_count * 4;
+            MACHINE.regs.esp += #stack_popped * 4;
             (MACHINE.indirect)(return_addr)
         } }
     }

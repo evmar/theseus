@@ -409,9 +409,8 @@ pub fn gen_file(state: &State, outdir: &str) -> Result<()> {
     write!(
         &mut text,
         "const BLOCKS: [(u32, fn() -> Cont); {}] = [\n",
-        ips.len() + 2,
+        ips.len() + 1,
     );
-    write!(&mut text, "(0, runtime::null_pointer_error),\n");
     for &ip in &ips {
         write!(&mut text, "({ip:#08x}, x{ip:08x}),\n");
     }
@@ -420,6 +419,7 @@ pub fn gen_file(state: &State, outdir: &str) -> Result<()> {
     write!(
         &mut text,
         "pub fn indirect(addr: u32) -> Cont {{
+            if addr == 0 {{ panic!(\"null ptr\"); }}
             let index = BLOCKS
                 .binary_search_by_key(&addr, |(addr, _)| *addr)
                 .unwrap();

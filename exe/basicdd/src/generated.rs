@@ -23203,8 +23203,7 @@ pub fn init_memory() {
     }
 }
 
-const BLOCKS: [(u32, fn() -> Cont); 1359] = [
-    (0, runtime::null_pointer_error),
+const BLOCKS: [(u32, fn() -> Cont); 1358] = [
     (0x401040, x00401040),
     (0x401056, x00401056),
     (0x401062, x00401062),
@@ -24566,6 +24565,9 @@ const BLOCKS: [(u32, fn() -> Cont); 1359] = [
 ];
 
 pub fn indirect(addr: u32) -> Cont {
+    if addr == 0 {
+        panic!("null ptr");
+    }
     let index = BLOCKS
         .binary_search_by_key(&addr, |(addr, _)| *addr)
         .unwrap();
