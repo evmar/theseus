@@ -5540,7 +5540,7 @@ pub fn x00402366() -> Cont {
             MACHINE.regs.edx,
         );
         // 00402371 sete dl
-        sete();
+        MACHINE.regs.set_dl(sete());
         // 00402374 mov [ebp+18h],edx
         *(MACHINE
             .memory
@@ -5575,7 +5575,7 @@ pub fn x00402369() -> Cont {
             MACHINE.regs.edx,
         );
         // 00402371 sete dl
-        sete();
+        MACHINE.regs.set_dl(sete());
         // 00402374 mov [ebp+18h],edx
         *(MACHINE
             .memory
@@ -7877,7 +7877,7 @@ pub fn x00402850() -> Cont {
         // 00402858 push 1000h
         push(0x1000u32);
         // 0040285d sete al
-        sete();
+        MACHINE.regs.set_al(sete());
         // 00402860 push eax
         push(MACHINE.regs.eax);
         // 00402861 call dword ptr ds:[406094h]

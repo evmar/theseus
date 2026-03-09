@@ -139,8 +139,8 @@ pub fn leave() {
     todo!("leave");
 }
 
-pub fn sete() {
-    todo!("sete");
+pub fn sete() -> u8 {
+    unsafe { MACHINE.regs.flags.contains(Flags::ZF) as u8 }
 }
 
 pub fn setge() {

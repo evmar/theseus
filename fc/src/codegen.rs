@@ -282,7 +282,7 @@ fn gen_block(w: &mut dyn std::fmt::Write, state: &State, ip: AddrAbs, block: &Bl
                 writeln!(w, "inc();");
             }
             Sete => {
-                writeln!(w, "sete();");
+                writeln!(w, "{};", set_op(instr, 0, "sete()".into()));
             }
             Sar => {
                 writeln!(w, "sar();");
