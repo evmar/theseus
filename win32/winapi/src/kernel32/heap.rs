@@ -1,4 +1,4 @@
-use crate::{ABIReturn, kernel32::HANDLE};
+use crate::{ABIReturn, kernel32::HANDLE, stub};
 use runtime::{Cont, MACHINE};
 
 #[win32_derive::dllexport]
@@ -40,7 +40,7 @@ pub fn HeapCreate(
     _dwInitialSize: usize,
     _dwMaximumSize: usize,
 ) -> HANDLE {
-    0
+    stub!(0)
     /*
     flOptions.unwrap();
     // Currently none of the flags will affect behavior, but we might need to revisit this

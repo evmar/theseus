@@ -38,3 +38,11 @@ impl From<()> for ABIReturn {
         Self(0)
     }
 }
+
+macro_rules! stub {
+    ($arg:tt) => {{
+        println!("{}:{}: stub: returning {:?}", file!(), line!(), $arg);
+        $arg
+    }};
+}
+pub(crate) use stub;

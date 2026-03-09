@@ -1,4 +1,4 @@
-use crate::ABIReturn;
+use crate::{ABIReturn, stub};
 use runtime::{Cont, MACHINE};
 
 pub type HMODULE = u32;
@@ -8,7 +8,7 @@ pub fn GetModuleFileNameA(_hModule: HMODULE, _lpFilename: u32, _nSize: u32) -> u
     /*
     get_module_file_name(sys, hModule, &mut EncoderAnsi::new(&mut filename))
     */
-    0
+    stub!(0)
 }
 
 #[win32_derive::dllexport]
@@ -32,6 +32,6 @@ pub fn GetModuleHandleA(_lpModuleName: u32) -> HMODULE {
 
 #[win32_derive::dllexport]
 pub fn LoadLibraryA(_lpLibFileName: u32) -> HMODULE {
-    0
+    stub!(0)
     // load_library(sys, filename.unwrap()).await
 }
