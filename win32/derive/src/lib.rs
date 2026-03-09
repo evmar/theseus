@@ -31,17 +31,36 @@ pub fn dllexport(_attr: TokenStream, mut tokens: TokenStream) -> TokenStream {
         }
     }
     */
+
+    let trace = {
+        let fmt_string = {
+            let named_args = args
+                .iter()
+                .map(|arg| format!("{arg}={{:x}}"))
+                .collect::<Vec<_>>()
+                .join(", ");
+            format!("{{return_addr:08x}} {name}({named_args})")
+        };
+        let stack_args = args
+            .iter()
+            .enumerate()
+            .map(|(i, _)| quote! { *stack.add(#i + 1) as u32 });
+        quote![println!(#fmt_string, #(#stack_args),*);]
+    };
+
     let wrapper_name = format_ident!("stdcall_{}", name);
     let stack_popped = args.len() as u32 + 1;
-    let args = args
+    let stack_args = args
         .iter()
         .enumerate()
         .map(|(i, _)| quote! { *stack.add(#i) as _ });
+
     let wrapper: TokenStream = quote! {
         pub fn #wrapper_name() -> Cont { unsafe {
             let stack: *mut u32 = MACHINE.memory.add(MACHINE.regs.esp as usize) as *mut u32;
             let return_addr = *stack.add(0);
-            let ret: ABIReturn = #name(#(#args),*).into();
+            #trace
+            let ret: ABIReturn = #name(#(#stack_args),*).into();
             MACHINE.regs.eax = ret.0;
             MACHINE.regs.esp += #stack_popped * 4;
             (MACHINE.indirect)(return_addr)

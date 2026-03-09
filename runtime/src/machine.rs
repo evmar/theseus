@@ -21,8 +21,8 @@ pub static mut MACHINE: Machine = Machine {
 
         esi: 0,
         edi: 0,
-        esp: 0x2000,
-        ebp: 0x2000,
+        esp: 0x1_0000,
+        ebp: 0x1_0000,
 
         flags: Flags::empty(),
 
