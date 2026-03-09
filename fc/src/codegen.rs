@@ -276,10 +276,18 @@ fn gen_block(w: &mut dyn std::fmt::Write, state: &State, ip: AddrAbs, block: &Bl
                 writeln!(w, "leave();");
             }
             Dec => {
-                writeln!(w, "dec();");
+                writeln!(
+                    w,
+                    "{};",
+                    set_op(instr, 0, format!("dec({})", get_op(instr, 0)))
+                );
             }
             Inc => {
-                writeln!(w, "inc();");
+                writeln!(
+                    w,
+                    "{};",
+                    set_op(instr, 0, format!("inc({})", get_op(instr, 0)))
+                );
             }
             Sete => {
                 writeln!(w, "{};", set_op(instr, 0, "sete()".into()));

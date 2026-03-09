@@ -191,12 +191,22 @@ pub fn div() {
     todo!("div");
 }
 
-pub fn dec() {
-    todo!("dec");
+pub fn dec<I: Int + num_traits::ops::overflowing::OverflowingSub + num_traits::WrappingAdd>(x: I) -> I {
+    let old_cf = unsafe { MACHINE.regs.flags.contains(Flags::CF) };
+    let result = sub(x, I::one());
+    unsafe {
+        MACHINE.regs.flags.set(Flags::CF, old_cf);
+    }
+    result
 }
 
-pub fn inc() {
-    todo!("inc");
+pub fn inc<I: Int + num_traits::ops::wrapping::WrappingAdd>(x: I) -> I {
+    let old_cf = unsafe { MACHINE.regs.flags.contains(Flags::CF) };
+    let result = add(x, I::one());
+    unsafe {
+        MACHINE.regs.flags.set(Flags::CF, old_cf);
+    }
+    result
 }
 
 pub fn sar() {
