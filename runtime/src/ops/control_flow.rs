@@ -136,7 +136,10 @@ pub fn ret(n: u16) -> Cont {
 }
 
 pub fn leave() {
-    todo!("leave");
+    unsafe {
+        MACHINE.regs.esp = MACHINE.regs.ebp;
+        MACHINE.regs.ebp = super::pop();
+    }
 }
 
 pub fn sete() -> u8 {
