@@ -1,5 +1,8 @@
+use std::rc::Rc;
+
 use crate::{
     ABIReturn,
+    heap::Heap,
     kernel32::{self, HANDLE},
     stub,
 };
@@ -41,19 +44,21 @@ pub fn HeapAlloc(_hHeap: HANDLE, _dwFlags: u32 /* HEAP_FLAGS */, _dwBytes: usize
 #[win32_derive::dllexport]
 pub fn HeapCreate(
     _flOptions: u32, /* HEAP_FLAGS */
-    _dwInitialSize: usize,
-    _dwMaximumSize: usize,
+    dwInitialSize: u32,
+    _dwMaximumSize: u32,
 ) -> HANDLE {
-    kernel32::state();
-
-    stub!(0)
-    /*
-    flOptions.unwrap();
     // Currently none of the flags will affect behavior, but we might need to revisit this
     // with exceptions or threads support...
-    let size = max(dwInitialSize as usize, 20 << 20);
-    sys.memory_mut().new_heap(size, "HeapCreate".into()).addr
-    */
+    let size = dwInitialSize.max(20 << 20);
+    let addr = kernel32::alloc_mapping("HeapCreate".into(), size);
+
+    let heap = Heap::new(addr, size);
+    kernel32::state()
+        .heaps
+        .borrow_mut()
+        .insert(addr, Rc::new(heap));
+
+    addr
 }
 
 #[win32_derive::dllexport]

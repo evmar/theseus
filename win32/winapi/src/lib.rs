@@ -4,6 +4,7 @@
 
 pub mod ddraw;
 pub mod gdi32;
+mod heap;
 pub mod kernel32;
 pub mod user32;
 

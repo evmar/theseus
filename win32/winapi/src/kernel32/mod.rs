@@ -20,6 +20,8 @@ pub use misc::*;
 pub use nls::*;
 pub use process::*;
 
+use crate::heap::Heap;
+
 #[derive(Debug, Default)]
 pub struct Mapping {
     #[allow(unused)]
@@ -31,7 +33,7 @@ pub struct Mapping {
 #[derive(Default)]
 pub struct State {
     mappings: RefCell<Vec<Mapping>>,
-    heaps: RefCell<HashMap<u32, Rc<()>>>,
+    heaps: RefCell<HashMap<u32, Rc<Heap>>>,
 }
 
 struct StaticState(OnceCell<State>);
