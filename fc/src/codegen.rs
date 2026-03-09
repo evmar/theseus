@@ -88,7 +88,9 @@ fn get_op(instr: &iced_x86::Instruction, n: u32) -> String {
                 iced_x86::MemorySize::UInt32 => "u32",
                 s => todo!("{s:?}"),
             };
-            format!("*(MACHINE.memory.add({addr} as usize) as *mut {size})")
+            format!(
+                "std::ptr::read_unaligned((MACHINE.memory.add({addr} as usize) as *mut {size}))"
+            )
         }
         k => {
             dbg!(instr);
@@ -109,7 +111,9 @@ fn set_op(instr: &iced_x86::Instruction, n: u32, expr: String) -> String {
                 iced_x86::MemorySize::UInt32 => "u32",
                 s => todo!("{s:?}"),
             };
-            format!("*(MACHINE.memory.add({addr} as usize) as *mut {size}) = {expr};")
+            format!(
+                "std::ptr::write_unaligned(MACHINE.memory.add({addr} as usize) as *mut {size}, {expr});"
+            )
         }
         k => {
             dbg!(instr);
