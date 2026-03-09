@@ -1,4 +1,7 @@
-use crate::{ABIReturn, kernel32::HANDLE};
+use crate::{
+    ABIReturn,
+    kernel32::{self, HANDLE},
+};
 use runtime::{Cont, MACHINE};
 use zerocopy::FromBytes;
 
@@ -81,6 +84,7 @@ struct RTL_USER_PROCESS_PARAMETERS {
 
 pub fn init_process() {
     unsafe {
+        kernel32::init_state();
         let buf = &mut MACHINE.memory.bytes[0x1000..][..0x1000];
 
         let (params, buf) = RTL_USER_PROCESS_PARAMETERS::mut_from_prefix(buf).unwrap();

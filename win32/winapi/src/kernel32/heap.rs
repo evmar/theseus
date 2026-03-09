@@ -1,4 +1,8 @@
-use crate::{ABIReturn, kernel32::HANDLE, stub};
+use crate::{
+    ABIReturn,
+    kernel32::{self, HANDLE},
+    stub,
+};
 use runtime::{Cont, MACHINE};
 
 #[win32_derive::dllexport]
@@ -40,6 +44,8 @@ pub fn HeapCreate(
     _dwInitialSize: usize,
     _dwMaximumSize: usize,
 ) -> HANDLE {
+    kernel32::state();
+
     stub!(0)
     /*
     flOptions.unwrap();
