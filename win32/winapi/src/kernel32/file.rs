@@ -21,13 +21,11 @@ pub fn WriteFile(
 
     if hFile == 0xf11e_0002 || hFile == 0xf11e_0003 {
         unsafe {
-            let buf = core::slice::from_raw_parts(
-                MACHINE.memory.add(lpBuffer as usize),
-                nNumberOfBytesToWrite as usize,
-            );
+            let buf = &MACHINE.memory.bytes[lpBuffer as usize..][..nNumberOfBytesToWrite as usize];
             HOST.print(buf);
-            *(MACHINE.memory.add(lpNumberOfBytesWritten as usize) as *mut u32) =
-                nNumberOfBytesToWrite;
+            MACHINE
+                .memory
+                .write(lpNumberOfBytesWritten, nNumberOfBytesToWrite);
         }
     } else {
         todo!("WriteFile(hFile={hFile:x})");

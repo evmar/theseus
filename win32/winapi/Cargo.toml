@@ -5,6 +5,6 @@ edition = "2024"
 
 [dependencies]
 runtime = { workspace = true }
-zerocopy = { version = "0.8.40", features = ["derive"] }
+zerocopy = { workspace = true }
 win32-derive = { path = "../derive" }
 log = "0.4.29"

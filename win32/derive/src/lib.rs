@@ -41,24 +41,23 @@ pub fn dllexport(_attr: TokenStream, mut tokens: TokenStream) -> TokenStream {
                 .join(", ");
             format!("{{return_addr:08x}} {name}({named_args})")
         };
-        let stack_args = args
-            .iter()
-            .enumerate()
-            .map(|(i, _)| quote! { *stack.add(#i + 1) as u32 });
+        let stack_args = args.iter().enumerate().map(|(i, _)| {
+            let i = (i as u32 + 1) * 4;
+            quote! { MACHINE.memory.read::<u32>(MACHINE.regs.esp + #i) }
+        });
         quote![println!(#fmt_string, #(#stack_args),*);]
     };
 
     let wrapper_name = format_ident!("stdcall_{}", name);
     let stack_popped = args.len() as u32 + 1;
-    let stack_args = args
-        .iter()
-        .enumerate()
-        .map(|(i, _)| quote! { *stack.add(#i) as _ });
+    let stack_args = args.iter().enumerate().map(|(i, _)| {
+        let i = (i as u32 + 1) * 4;
+        quote! { MACHINE.memory.read(MACHINE.regs.esp + #i ) }
+    });
 
     let wrapper: TokenStream = quote! {
         pub fn #wrapper_name() -> Cont { unsafe {
-            let stack: *mut u32 = MACHINE.memory.add(MACHINE.regs.esp as usize) as *mut u32;
-            let return_addr = *stack.add(0);
+            let return_addr: u32 =  MACHINE.memory.read(MACHINE.regs.esp);
             #trace
             let ret: ABIReturn = #name(#(#stack_args),*).into();
             MACHINE.regs.eax = ret.0;

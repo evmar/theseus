@@ -88,9 +88,7 @@ fn get_op(instr: &iced_x86::Instruction, n: u32) -> String {
                 iced_x86::MemorySize::UInt32 => "u32",
                 s => todo!("{s:?}"),
             };
-            format!(
-                "std::ptr::read_unaligned((MACHINE.memory.add({addr} as usize) as *mut {size}))"
-            )
+            format!("MACHINE.memory.read::<{size}>({addr})")
         }
         k => {
             dbg!(instr);
@@ -111,9 +109,7 @@ fn set_op(instr: &iced_x86::Instruction, n: u32, expr: String) -> String {
                 iced_x86::MemorySize::UInt32 => "u32",
                 s => todo!("{s:?}"),
             };
-            format!(
-                "std::ptr::write_unaligned(MACHINE.memory.add({addr} as usize) as *mut {size}, {expr});"
-            )
+            format!("MACHINE.memory.write::<{size}>({addr}, {expr});")
         }
         k => {
             dbg!(instr);
@@ -143,9 +139,7 @@ fn gen_jmp(state: &State, instr: &iced_x86::Instruction) -> String {
                     let dll = dll.trim_end_matches(".dll");
                     format!("Cont({dll}::stdcall_{func})")
                 } else {
-                    format!(
-                        "(MACHINE.indirect)(*(MACHINE.memory.add({addr:#x}u32 as usize) as *const u32))"
-                    )
+                    format!("(MACHINE.indirect)(MACHINE.memory.read({addr:#x}u32))")
                 }
             } else {
                 format!("indirect({})", gen_addr(instr))
@@ -409,7 +403,7 @@ pub fn gen_file(state: &State, outdir: &str) -> Result<()> {
         &mut text,
         "
         for (addr, data) in sections {{
-            let out = core::slice::from_raw_parts_mut(MACHINE.memory.add(addr), data.len());
+            let out = &mut MACHINE.memory.bytes[addr..][..data.len()];
             out.copy_from_slice(data);
         }}
         }}

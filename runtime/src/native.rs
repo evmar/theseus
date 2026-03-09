@@ -4,8 +4,9 @@ pub struct NativeHost {}
 impl Host for NativeHost {
     fn init(&self, indirect: fn(u32) -> Cont) {
         unsafe {
-            MACHINE.memory =
-                std::alloc::alloc(std::alloc::Layout::from_size_align(32 << 20, 0x1000).unwrap());
+            let size = 32 << 20;
+            let mem = std::alloc::alloc(std::alloc::Layout::from_size_align(size, 0x1000).unwrap());
+            MACHINE.memory.bytes = std::slice::from_raw_parts_mut(mem, size);
             MACHINE.indirect = indirect;
         }
     }

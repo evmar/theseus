@@ -127,6 +127,7 @@ dependencies = [
  "bitflags",
  "num-traits",
  "wee_alloc",
+ "zerocopy",
 ]
 
 [[package]]

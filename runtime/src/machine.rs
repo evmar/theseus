@@ -1,11 +1,28 @@
-use bitflags::bitflags;
-
 use crate::Cont;
+use bitflags::bitflags;
+use zerocopy::{FromBytes, IntoBytes};
 
 pub struct Machine {
     pub regs: Regs,
-    pub memory: *mut u8,
+    pub memory: Memory,
     pub indirect: fn(u32) -> Cont,
+}
+
+pub struct Memory {
+    // TODO: this could be a slice owned by Memory, except that
+    // we want to store a Machine in a static.
+    pub bytes: &'static mut [u8],
+}
+
+impl Memory {
+    pub fn read<T: FromBytes>(&self, addr: u32) -> T {
+        T::read_from_prefix(&self.bytes[addr as usize..]).unwrap().0
+    }
+
+    pub fn write<T: IntoBytes + zerocopy::Immutable>(&mut self, addr: u32, val: T) {
+        val.write_to_prefix(&mut self.bytes[addr as usize..])
+            .unwrap();
+    }
 }
 
 fn indirect_unimpl(_: u32) -> Cont {
@@ -28,7 +45,7 @@ pub static mut MACHINE: Machine = Machine {
 
         fs_base: 0, // set when initializing process
     },
-    memory: std::ptr::null_mut(),
+    memory: Memory { bytes: &mut [] },
     indirect: indirect_unimpl,
 };
 
@@ -114,19 +131,21 @@ impl Regs {
 
 impl Machine {
     pub fn dump_state(&self) {
-        unsafe {
-            println!(
-                "eax={:08x} ecx={:08x} edx={:08x} ebx={:08x}",
-                self.regs.eax, self.regs.ecx, self.regs.edx, self.regs.ebx
-            );
-            println!("stack:");
-            for i in 0..8 {
-                let addr = self.regs.esp + i * 4;
-                println!(
-                    "{addr:#08x} {:#08x}",
-                    *(self.memory.add(addr as usize) as *const u32)
-                );
-            }
+        println!(
+            "eax={:08x} ecx={:08x} edx={:08x} ebx={:08x}\nesi={:08x} edi={:08x} esp={:08x} ebp={:08x}",
+            self.regs.eax,
+            self.regs.ecx,
+            self.regs.edx,
+            self.regs.ebx,
+            self.regs.esi,
+            self.regs.edi,
+            self.regs.esp,
+            self.regs.ebp
+        );
+        println!("stack:");
+        for i in 0..8 {
+            let addr = self.regs.esp + i * 4;
+            println!("{addr:#08x} {:#08x}", self.memory.read::<u32>(addr));
         }
     }
 }

@@ -14,6 +14,7 @@ members = [
 pe = { path = "../../win/rs/pe" }
 runtime = { path = "runtime" }
 winapi = { path = "win32/winapi" }
+zerocopy = { version = "0.8.40", features = ["derive"] }
 
 [profile.release]
 debug = true
