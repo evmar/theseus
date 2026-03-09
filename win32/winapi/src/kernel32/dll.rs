@@ -5,10 +5,10 @@ pub type HMODULE = u32;
 
 #[win32_derive::dllexport]
 pub fn GetModuleFileNameA(_hModule: HMODULE, _lpFilename: u32, _nSize: u32) -> u32 {
-    todo!();
     /*
     get_module_file_name(sys, hModule, &mut EncoderAnsi::new(&mut filename))
     */
+    0
 }
 
 #[win32_derive::dllexport]
@@ -32,6 +32,6 @@ pub fn GetModuleHandleA(_lpModuleName: u32) -> HMODULE {
 
 #[win32_derive::dllexport]
 pub fn LoadLibraryA(_lpLibFileName: u32) -> HMODULE {
-    todo!()
+    0
     // load_library(sys, filename.unwrap()).await
 }
