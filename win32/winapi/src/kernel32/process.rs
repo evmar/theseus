@@ -1,6 +1,6 @@
 use crate::{
     ABIReturn,
-    kernel32::{self, HANDLE, alloc_mapping},
+    kernel32::{self, HANDLE, alloc_mapping, dump_mappings},
 };
 use runtime::{Cont, MACHINE};
 use zerocopy::FromBytes;
@@ -86,6 +86,11 @@ pub fn init_process() {
     unsafe {
         kernel32::init_state();
 
+        let stack_size = 64 << 10;
+        let addr = alloc_mapping("stack".into(), stack_size);
+        MACHINE.regs.esp = addr + stack_size;
+        MACHINE.regs.ebp = addr + stack_size;
+
         let addr = alloc_mapping("process data".into(), 0x1000);
         let buf = &mut MACHINE.memory.bytes[addr as usize..][..0x1000];
 
@@ -103,6 +108,9 @@ pub fn init_process() {
 
         MACHINE.regs.fs_base =
             (&raw const *teb).byte_offset_from_unsigned(MACHINE.memory.bytes) as u32;
+
+        dump_mappings();
+        MACHINE.dump_state();
     }
 }
 
