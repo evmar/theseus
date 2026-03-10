@@ -9,6 +9,8 @@ pub fn dllexport(_attr: TokenStream, mut tokens: TokenStream) -> TokenStream {
     let func: ItemFn = syn::parse_macro_input!(input);
     let name = func.sig.ident;
     let mut args = Vec::new();
+    let return_addr = format_ident!("return_addr");
+    args.push(&return_addr);
     for arg in func.sig.inputs.iter() {
         let FnArg::Typed(arg) = arg else {
             unimplemented!()
@@ -19,35 +21,49 @@ pub fn dllexport(_attr: TokenStream, mut tokens: TokenStream) -> TokenStream {
         args.push(&name.ident);
     }
 
+    // generate
+    //   let foo = read(esp + 0);
+    //   let bar = read(esp + 4);
+    //   ...
+    let fetch_args = {
+        let mut v = vec![];
+        for (i, arg) in args.iter().enumerate() {
+            let offset = i as u32 * 4;
+            v.push(quote! {
+                let #arg = MACHINE.memory.read::<u32>(MACHINE.regs.esp + #offset);
+            });
+        }
+        quote!(#(#v)*)
+    };
+
+    // generate
+    //    println!("00401000 FooBar(baz=3 blah=4)");
     let trace = {
         let fmt_string = {
             let named_args = args
                 .iter()
-                .map(|arg| format!("{arg}={{:x}}"))
+                .map(|arg| format!("{arg}={{{arg}:x}}"))
                 .collect::<Vec<_>>()
                 .join(", ");
             format!("{{return_addr:08x}} {name}({named_args})")
         };
-        let stack_args = args.iter().enumerate().map(|(i, _)| {
-            let i = (i as u32 + 1) * 4;
-            quote! { MACHINE.memory.read::<u32>(MACHINE.regs.esp + #i) }
-        });
-        quote![println!(#fmt_string, #(#stack_args),*);]
+        quote![println!(#fmt_string);]
     };
 
     let wrapper_name = format_ident!("stdcall_{}", name);
-    let stack_popped = args.len() as u32 + 1;
-    let stack_args = args.iter().enumerate().map(|(i, _)| {
-        let i = (i as u32 + 1) * 4;
+    let stack_popped = args.len() as u32;
+    let mut stack_args = args.iter().enumerate().map(|(i, _)| {
+        let i = (i as u32) * 4;
         quote! { MACHINE.memory.read(MACHINE.regs.esp + #i ) }
     });
+    stack_args.next(); // skip return_addr
 
     let wrapper: TokenStream = quote! {
         pub fn #wrapper_name() -> Cont { unsafe {
-            let return_addr: u32 = MACHINE.memory.read(MACHINE.regs.esp);
+            #fetch_args
             #trace
             let ret: ABIReturn = #name(#(#stack_args),*).into();
-            MACHINE.regs.eax = ret.0;
+            MACHINE.regs.eax = ret.to_abi_return();
             MACHINE.regs.esp += #stack_popped * 4;
             runtime::indirect(return_addr)
         } }
