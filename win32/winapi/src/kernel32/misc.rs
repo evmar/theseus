@@ -1,4 +1,3 @@
-use crate::ABIReturn;
 use runtime::{Cont, MACHINE};
 
 #[win32_derive::dllexport]
@@ -78,7 +77,7 @@ pub fn UnhandledExceptionFilter(_ExceptionInfo: u32) -> i32 {
 #[win32_derive::dllexport]
 pub fn VirtualAlloc(
     _lpAddress: u32,
-    _dwSize: usize,
+    _dwSize: u32,
     _flAllocationType: u32, /* VIRTUAL_ALLOCATION_TYPE */
     _flProtect: u32,        /* PAGE_PROTECTION_FLAGS */
 ) -> u32 {
@@ -115,7 +114,7 @@ pub fn VirtualAlloc(
 #[win32_derive::dllexport]
 pub fn VirtualFree(
     _lpAddress: u32,
-    _dwSize: usize,
+    _dwSize: u32,
     _dwFreeType: u32, /* VIRTUAL_FREE_TYPE */
 ) -> bool {
     true // success

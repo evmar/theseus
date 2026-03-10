@@ -1,7 +1,6 @@
 use std::rc::Rc;
 
 use crate::{
-    ABIReturn,
     heap::Heap,
     kernel32::{self, HANDLE},
     stub,
@@ -9,7 +8,7 @@ use crate::{
 use runtime::{Cont, MACHINE};
 
 #[win32_derive::dllexport]
-pub fn HeapAlloc(_hHeap: HANDLE, _dwFlags: u32 /* HEAP_FLAGS */, _dwBytes: usize) -> u32 {
+pub fn HeapAlloc(_hHeap: HANDLE, _dwFlags: u32 /* HEAP_FLAGS */, _dwBytes: u32) -> u32 {
     stub!(0)
     /*
     let mut flags = dwFlags.unwrap_or_else(|_| {
@@ -83,7 +82,7 @@ pub fn HeapReAlloc(
     _hHeap: HANDLE,
     dwFlags: u32, /* HEAP_FLAGS */
     _lpMem: u32,
-    _dwBytes: usize,
+    _dwBytes: u32,
 ) -> u32 {
     if dwFlags != 0 {
         log::warn!("HeapReAlloc flags: {:x}", dwFlags);

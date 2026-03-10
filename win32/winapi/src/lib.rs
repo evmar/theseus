@@ -8,7 +8,7 @@ pub mod gdi32;
 mod heap;
 pub mod kernel32;
 pub mod user32;
-pub use dllexport::ABIReturn;
+pub use dllexport::{ABIReturn, FromABIParam};
 
 macro_rules! stub {
     ($arg:tt) => {{

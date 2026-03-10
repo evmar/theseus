@@ -10,7 +10,8 @@ pub fn dllexport(_attr: TokenStream, mut tokens: TokenStream) -> TokenStream {
     let name = func.sig.ident;
     let mut args = Vec::new();
     let return_addr = format_ident!("return_addr");
-    args.push(&return_addr);
+    let u32_ty = syn::parse::<syn::Type>(quote!(u32).into()).unwrap();
+    args.push((&return_addr, &u32_ty));
     for arg in func.sig.inputs.iter() {
         let FnArg::Typed(arg) = arg else {
             unimplemented!()
@@ -18,7 +19,7 @@ pub fn dllexport(_attr: TokenStream, mut tokens: TokenStream) -> TokenStream {
         let Pat::Ident(name) = arg.pat.as_ref() else {
             unimplemented!()
         };
-        args.push(&name.ident);
+        args.push((&name.ident, &*arg.ty));
     }
 
     // generate
@@ -27,10 +28,10 @@ pub fn dllexport(_attr: TokenStream, mut tokens: TokenStream) -> TokenStream {
     //   ...
     let fetch_args = {
         let mut v = vec![];
-        for (i, arg) in args.iter().enumerate() {
+        for (i, (arg, ty)) in args.iter().enumerate() {
             let offset = i as u32 * 4;
             v.push(quote! {
-                let #arg = MACHINE.memory.read::<u32>(MACHINE.regs.esp + #offset);
+                let #arg = <#ty>::from_abi(MACHINE.memory.read::<u32>(MACHINE.regs.esp + #offset));
             });
         }
         quote!(#(#v)*)
@@ -42,7 +43,7 @@ pub fn dllexport(_attr: TokenStream, mut tokens: TokenStream) -> TokenStream {
         let fmt_string = {
             let named_args = args
                 .iter()
-                .map(|arg| format!("{arg}={{{arg}:x}}"))
+                .map(|(arg, _)| format!("{arg}={{{arg}:x}}"))
                 .collect::<Vec<_>>()
                 .join(", ");
             format!("{{return_addr:08x}} {name}({named_args})")
@@ -60,6 +61,7 @@ pub fn dllexport(_attr: TokenStream, mut tokens: TokenStream) -> TokenStream {
 
     let wrapper: TokenStream = quote! {
         pub fn #wrapper_name() -> Cont { unsafe {
+            use crate::{ABIReturn, FromABIParam};
             #fetch_args
             #trace
             let ret: ABIReturn = #name(#(#stack_args),*).into();
