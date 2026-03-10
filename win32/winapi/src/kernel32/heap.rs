@@ -2,6 +2,7 @@ use bitflags::bitflags;
 use std::rc::Rc;
 
 use crate::{
+    FromABIParam,
     heap::Heap,
     kernel32::{self, HANDLE},
     stub,
@@ -14,44 +15,27 @@ bitflags! {
     impl HEAP_FLAGS: u32 {
     }
 }
-impl TryFrom<u32> for HEAP_FLAGS {
-    type Error = u32;
-    fn try_from(value: u32) -> Result<Self, Self::Error> {
-        HEAP_FLAGS::from_bits(value).ok_or(value)
+
+impl FromABIParam for HEAP_FLAGS {
+    fn from_abi(value: u32) -> Self {
+        HEAP_FLAGS::from_bits(value).unwrap()
     }
 }
 
 #[win32_derive::dllexport]
-pub fn HeapAlloc(_hHeap: HANDLE, dwFlags: Result<HEAP_FLAGS, u32>, _dwBytes: u32) -> u32 {
-    dwFlags.unwrap();
-    stub!(0)
-    /*
-    let mut flags = dwFlags.unwrap_or_else(|_| {
-        log::warn!("HeapAlloc invalid flags {dwFlags:x?}");
-        HeapAllocFlags::empty()
-    });
-    flags.remove(HeapAllocFlags::HEAP_GENERATE_EXCEPTIONS); // todo: OOM
-    flags.remove(HeapAllocFlags::HEAP_NO_SERIALIZE); // todo: threads
-    let memory = sys.memory();
-    let heap = match memory.heaps.get(&hHeap) {
-        None => {
-            log::error!("HeapAlloc({hHeap:x}): no such heap");
-            return 0;
-        }
-        Some(heap) => heap,
-    };
-    let addr = heap.alloc(memory.mem(), dwBytes);
-    if addr == 0 {
-        log::warn!("HeapAlloc({hHeap:x}) failed");
+pub fn HeapAlloc(hHeap: HANDLE, dwFlags: HEAP_FLAGS, dwBytes: u32) -> u32 {
+    if !dwFlags.is_empty() {
+        todo!();
     }
+
+    let heaps = kernel32::state().heaps.borrow();
+    let heap = heaps.get(&hHeap).unwrap();
+    heap.alloc(unsafe { &mut MACHINE.memory }, dwBytes)
+    /*
     if flags.contains(HeapAllocFlags::HEAP_ZERO_MEMORY) {
         memory.mem().sub32_mut(addr, dwBytes).fill(0);
         flags.remove(HeapAllocFlags::HEAP_ZERO_MEMORY);
     }
-    if !flags.is_empty() {
-        log::error!("HeapAlloc: unhandled flags {flags:?}");
-    }
-    addr
     */
 }
 

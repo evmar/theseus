@@ -40,20 +40,8 @@ pub trait FromABIParam {
     fn from_abi(val: u32) -> Self;
 }
 
-impl FromABIParam for u32 {
+impl<T: TryFrom<u32>> FromABIParam for T {
     fn from_abi(val: u32) -> Self {
-        val
-    }
-}
-
-impl FromABIParam for i32 {
-    fn from_abi(val: u32) -> Self {
-        val as i32
-    }
-}
-
-impl<T: TryFrom<u32>> FromABIParam for Result<T, u32> {
-    fn from_abi(val: u32) -> Self {
-        T::try_from(val).map_err(|_| val)
+        T::try_from(val).unwrap_or_else(|_| panic!("{val:x}"))
     }
 }
