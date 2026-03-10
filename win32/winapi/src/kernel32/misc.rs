@@ -1,4 +1,4 @@
-use crate::{ABIReturn, stub};
+use crate::ABIReturn;
 use runtime::{Cont, MACHINE};
 
 #[win32_derive::dllexport]
@@ -35,22 +35,33 @@ pub fn GetVersion() -> u32 {
     (1 << 31) | 0x4
 }
 
+#[repr(C)]
+#[derive(Debug, Default, zerocopy::FromBytes, zerocopy::IntoBytes, zerocopy::Immutable)]
+pub struct OSVERSIONINFO {
+    dwOSVersionInfoSize: u32,
+    dwMajorVersion: u32,
+    dwMinorVersion: u32,
+    dwBuildNumber: u32,
+    dwPlatformId: u32,
+    //szCSDVersion: [u8; 128],
+}
+
 #[win32_derive::dllexport]
-pub fn GetVersionExA(_lpVersionInformation: u32) -> bool {
-    stub!(false)
-    /*
-    let info = lpVersionInformation.unwrap();
+pub fn GetVersionExA(lpVersionInformation: u32) -> bool {
+    let info: OSVERSIONINFO = unsafe { MACHINE.memory.read(lpVersionInformation) };
     if info.dwOSVersionInfoSize < std::mem::size_of::<OSVERSIONINFO>() as u32 {
         log::error!("GetVersionExA undersized buffer");
-        return 0;
+        return false;
     }
-    unsafe { info.clear_memory(info.dwOSVersionInfoSize) };
 
-    info.dwMajorVersion = 6; // ? pulled from debugger
-    info.dwPlatformId = 2 /* VER_PLATFORM_WIN32_NT */;
+    let info = OSVERSIONINFO {
+        dwMajorVersion: 6, // ? pulled from debugger
+        dwPlatformId: 2,   /* VER_PLATFORM_WIN32_NT */
+        ..Default::default()
+    };
+    unsafe { MACHINE.memory.write(lpVersionInformation, info) };
 
-    1
-    */
+    true
 }
 
 #[win32_derive::dllexport]
