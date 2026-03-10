@@ -62,7 +62,7 @@ pub fn HeapCreate(
 }
 
 #[win32_derive::dllexport]
-pub fn HeapDestroy(hHeap: HANDLE) -> bool {
+pub fn HeapDestroy(_hHeap: HANDLE) -> bool {
     stub!(true) // success
 }
 

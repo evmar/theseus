@@ -2,12 +2,12 @@ use crate::{Cont, Host, MACHINE};
 
 pub struct NativeHost {}
 impl Host for NativeHost {
-    fn init(&self, indirect: fn(u32) -> Cont) {
+    fn init(&self, blocks: &'static [(u32, fn() -> Cont)]) {
         unsafe {
             let size = 32 << 20;
             let mem = std::alloc::alloc(std::alloc::Layout::from_size_align(size, 0x1000).unwrap());
             MACHINE.memory.bytes = std::slice::from_raw_parts_mut(mem, size);
-            MACHINE.indirect = indirect;
+            MACHINE.blocks = blocks;
         }
     }
 

@@ -139,7 +139,7 @@ fn gen_jmp(state: &State, instr: &iced_x86::Instruction) -> String {
                     let dll = dll.trim_end_matches(".dll");
                     format!("Cont({dll}::stdcall_{func})")
                 } else {
-                    format!("(MACHINE.indirect)(MACHINE.memory.read({addr:#x}u32))")
+                    format!("indirect(MACHINE.memory.read({addr:#x}u32))")
                 }
             } else {
                 format!("indirect({})", gen_addr(instr))
@@ -414,7 +414,7 @@ pub fn gen_file(state: &State, outdir: &str) -> Result<()> {
 
     write!(
         &mut text,
-        "const BLOCKS: [(u32, fn() -> Cont); {}] = [\n",
+        "pub const BLOCKS: [(u32, fn() -> Cont); {}] = [\n",
         ips.len() + 1,
     );
     for &ip in &ips {
@@ -422,16 +422,6 @@ pub fn gen_file(state: &State, outdir: &str) -> Result<()> {
     }
     write!(&mut text, "(0xf000_0000, runtime::return_from_main),\n");
     write!(&mut text, "];\n\n");
-    write!(
-        &mut text,
-        "pub fn indirect(addr: u32) -> Cont {{
-            if addr == 0 {{ panic!(\"null ptr\"); }}
-            let index = BLOCKS
-                .binary_search_by_key(&addr, |(addr, _)| *addr)
-                .unwrap_or_else(|_| panic!(\"jmp to unknown addr {{addr:#08x}}\"));
-            Cont(BLOCKS[index].1)
-        }}"
-    );
 
     std::fs::create_dir_all(format!("{outdir}/src"))?;
     let path = format!("{outdir}/src/generated.rs");

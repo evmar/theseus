@@ -19,19 +19,6 @@ pub fn dllexport(_attr: TokenStream, mut tokens: TokenStream) -> TokenStream {
         args.push(&name.ident);
     }
 
-    /*
-    *
-    pub fn stdcall_GetStdHandle() -> Cont {
-        unsafe {
-            let stack: *mut u32 = MACHINE.memory.add(MACHINE.regs.esp as usize) as *mut u32;
-            let ret = *stack.add(0);
-            MACHINE.regs.eax = GetStdHandle(*stack.add(1));
-            MACHINE.regs.esp += 2 * 4;
-            (MACHINE.indirect)(ret)
-        }
-    }
-    */
-
     let trace = {
         let fmt_string = {
             let named_args = args
@@ -57,12 +44,12 @@ pub fn dllexport(_attr: TokenStream, mut tokens: TokenStream) -> TokenStream {
 
     let wrapper: TokenStream = quote! {
         pub fn #wrapper_name() -> Cont { unsafe {
-            let return_addr: u32 =  MACHINE.memory.read(MACHINE.regs.esp);
+            let return_addr: u32 = MACHINE.memory.read(MACHINE.regs.esp);
             #trace
             let ret: ABIReturn = #name(#(#stack_args),*).into();
             MACHINE.regs.eax = ret.0;
             MACHINE.regs.esp += #stack_popped * 4;
-            (MACHINE.indirect)(return_addr)
+            runtime::indirect(return_addr)
         } }
     }
     .into();

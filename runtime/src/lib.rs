@@ -8,12 +8,12 @@ mod native;
 mod machine;
 mod ops;
 
-pub use machine::{MACHINE, Memory};
+pub use machine::{MACHINE, Memory, indirect};
 pub use native::HOST;
 pub use ops::*;
 
 pub trait Host {
-    fn init(&self, indirect: fn(u32) -> Cont);
+    fn init(&self, blocks: &'static [(u32, fn() -> Cont)]);
     fn panic(&self, msg: &str);
     fn print(&self, text: &[u8]);
 }

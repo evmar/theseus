@@ -2411,10 +2411,7 @@ pub fn x004019cc() -> Cont {
         // 004019cc push 0FFh
         push(0xffu32);
         // 004019d1 call dword ptr ds:[4070C4h]
-        call(
-            0x4019d7,
-            (MACHINE.indirect)(MACHINE.memory.read(0x4070c4u32)),
-        )
+        call(0x4019d7, indirect(MACHINE.memory.read(0x4070c4u32)))
     }
 }
 
@@ -19950,10 +19947,7 @@ pub fn x00404b5b() -> Cont {
         // 00404b69 push ebx
         push(MACHINE.regs.ebx);
         // 00404b6a call dword ptr ds:[409714h]
-        call(
-            0x404b70,
-            (MACHINE.indirect)(MACHINE.memory.read(0x409714u32)),
-        )
+        call(0x404b70, indirect(MACHINE.memory.read(0x409714u32)))
     }
 }
 
@@ -19980,10 +19974,7 @@ pub fn x00404b5d() -> Cont {
         // 00404b69 push ebx
         push(MACHINE.regs.ebx);
         // 00404b6a call dword ptr ds:[409714h]
-        call(
-            0x404b70,
-            (MACHINE.indirect)(MACHINE.memory.read(0x409714u32)),
-        )
+        call(0x404b70, indirect(MACHINE.memory.read(0x409714u32)))
     }
 }
 
@@ -22916,7 +22907,7 @@ pub fn init_memory() {
     }
 }
 
-const BLOCKS: [(u32, fn() -> Cont); 1358] = [
+pub const BLOCKS: [(u32, fn() -> Cont); 1358] = [
     (0x401040, x00401040),
     (0x401056, x00401056),
     (0x401062, x00401062),
@@ -24276,13 +24267,3 @@ const BLOCKS: [(u32, fn() -> Cont); 1358] = [
     (0x4054ec, x004054ec),
     (0xf000_0000, runtime::return_from_main),
 ];
-
-pub fn indirect(addr: u32) -> Cont {
-    if addr == 0 {
-        panic!("null ptr");
-    }
-    let index = BLOCKS
-        .binary_search_by_key(&addr, |(addr, _)| *addr)
-        .unwrap_or_else(|_| panic!("jmp to unknown addr {addr:#08x}"));
-    Cont(BLOCKS[index].1)
-}

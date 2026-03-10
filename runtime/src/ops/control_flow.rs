@@ -1,5 +1,5 @@
 use crate::Cont;
-use crate::machine::{Flags, MACHINE};
+use crate::machine::{Flags, MACHINE, indirect};
 
 pub fn call(ret: u32, addr: Cont) -> Cont {
     super::push(ret);
@@ -131,7 +131,7 @@ pub fn ret(n: u16) -> Cont {
     unsafe {
         let ret = super::pop();
         MACHINE.regs.esp += n as u32;
-        (MACHINE.indirect)(ret)
+        indirect(ret)
     }
 }
 

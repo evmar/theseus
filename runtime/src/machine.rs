@@ -5,7 +5,7 @@ use zerocopy::{FromBytes, IntoBytes};
 pub struct Machine {
     pub regs: Regs,
     pub memory: Memory,
-    pub indirect: fn(u32) -> Cont,
+    pub blocks: &'static [(u32, fn() -> Cont)],
 }
 
 pub struct Memory {
@@ -25,8 +25,19 @@ impl Memory {
     }
 }
 
-fn indirect_unimpl(_: u32) -> Cont {
-    unimplemented!()
+pub fn indirect(addr: u32) -> Cont {
+    if addr == 0 {
+        {
+            panic!("null ptr");
+        }
+    }
+    unsafe {
+        let index = MACHINE
+            .blocks
+            .binary_search_by_key(&addr, |(addr, _)| *addr)
+            .unwrap_or_else(|_| panic!("jmp to unknown addr {{addr:#08x}}"));
+        Cont(MACHINE.blocks[index].1)
+    }
 }
 
 pub static mut MACHINE: Machine = Machine {
@@ -46,7 +57,7 @@ pub static mut MACHINE: Machine = Machine {
         fs_base: 0, // set when initializing process
     },
     memory: Memory { bytes: &mut [] },
-    indirect: indirect_unimpl,
+    blocks: &[],
 };
 
 impl Regs {

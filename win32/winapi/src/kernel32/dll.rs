@@ -1,5 +1,5 @@
 use crate::{ABIReturn, stub};
-use runtime::{Cont, MACHINE};
+use runtime::{Cont, MACHINE, indirect};
 
 pub type HMODULE = u32;
 
