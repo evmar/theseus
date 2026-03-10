@@ -24283,6 +24283,6 @@ pub fn indirect(addr: u32) -> Cont {
     }
     let index = BLOCKS
         .binary_search_by_key(&addr, |(addr, _)| *addr)
-        .unwrap();
+        .unwrap_or_else(|_| panic!("jmp to unknown addr {addr:#08x}"));
     Cont(BLOCKS[index].1)
 }

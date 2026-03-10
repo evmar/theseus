@@ -13,7 +13,7 @@ pub fn GetModuleFileNameA(_hModule: HMODULE, _lpFilename: u32, _nSize: u32) -> u
 
 #[win32_derive::dllexport]
 pub fn GetModuleHandleA(_lpModuleName: u32) -> HMODULE {
-    todo!();
+    stub!(0)
     /*
     let state = get_state(sys);
         let Some(name) = lpModuleName else {

@@ -10,7 +10,7 @@ use runtime::{Cont, MACHINE};
 
 #[win32_derive::dllexport]
 pub fn HeapAlloc(_hHeap: HANDLE, _dwFlags: u32 /* HEAP_FLAGS */, _dwBytes: usize) -> u32 {
-    0
+    stub!(0)
     /*
     let mut flags = dwFlags.unwrap_or_else(|_| {
         log::warn!("HeapAlloc invalid flags {dwFlags:x?}");
@@ -63,8 +63,7 @@ pub fn HeapCreate(
 
 #[win32_derive::dllexport]
 pub fn HeapDestroy(hHeap: HANDLE) -> bool {
-    log::warn!("HeapDestroy({hHeap:x})");
-    true // success
+    stub!(true) // success
 }
 
 #[win32_derive::dllexport]
@@ -76,7 +75,7 @@ pub fn HeapFree(_hHeap: HANDLE, dwFlags: u32 /* HEAP_FLAGS */, _lpMem: u32) -> b
     let memory = sys.memory();
     memory.heaps.get(&hHeap).unwrap().free(memory.mem(), lpMem);
     */
-    true
+    stub!(true)
 }
 
 #[win32_derive::dllexport]
@@ -89,7 +88,7 @@ pub fn HeapReAlloc(
     if dwFlags != 0 {
         log::warn!("HeapReAlloc flags: {:x}", dwFlags);
     }
-    0
+    stub!(0)
     /*
     let memory = sys.memory();
     let heap = match memory.heaps.get(&hHeap) {

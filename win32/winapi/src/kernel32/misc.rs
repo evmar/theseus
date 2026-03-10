@@ -1,4 +1,4 @@
-use crate::ABIReturn;
+use crate::{ABIReturn, stub};
 use runtime::{Cont, MACHINE};
 
 #[win32_derive::dllexport]
@@ -37,7 +37,7 @@ pub fn GetVersion() -> u32 {
 
 #[win32_derive::dllexport]
 pub fn GetVersionExA(_lpVersionInformation: u32) -> bool {
-    false
+    stub!(false)
     /*
     let info = lpVersionInformation.unwrap();
     if info.dwOSVersionInfoSize < std::mem::size_of::<OSVERSIONINFO>() as u32 {
