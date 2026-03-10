@@ -43,7 +43,7 @@ pub fn dllexport(_attr: TokenStream, mut tokens: TokenStream) -> TokenStream {
         let fmt_string = {
             let named_args = args
                 .iter()
-                .map(|(arg, _)| format!("{arg}={{{arg}:x}}"))
+                .map(|(arg, _)| format!("{arg}={{{arg}:x?}}"))
                 .collect::<Vec<_>>()
                 .join(", ");
             format!("{{return_addr:08x}} {name}({named_args})")
@@ -53,18 +53,15 @@ pub fn dllexport(_attr: TokenStream, mut tokens: TokenStream) -> TokenStream {
 
     let wrapper_name = format_ident!("stdcall_{}", name);
     let stack_popped = args.len() as u32;
-    let mut stack_args = args.iter().enumerate().map(|(i, _)| {
-        let i = (i as u32) * 4;
-        quote! { MACHINE.memory.read(MACHINE.regs.esp + #i ) }
-    });
-    stack_args.next(); // skip return_addr
+    let mut call_args = args.iter().map(|(arg, _)| arg);
+    call_args.next(); // skip return_addr
 
     let wrapper: TokenStream = quote! {
         pub fn #wrapper_name() -> Cont { unsafe {
             use crate::{ABIReturn, FromABIParam};
             #fetch_args
             #trace
-            let ret: ABIReturn = #name(#(#stack_args),*).into();
+            let ret: ABIReturn = #name(#(#call_args),*).into();
             MACHINE.regs.eax = ret.to_abi_return();
             MACHINE.regs.esp += #stack_popped * 4;
             runtime::indirect(return_addr)

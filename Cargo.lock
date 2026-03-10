@@ -173,6 +173,7 @@ dependencies = [
 name = "winapi"
 version = "0.1.0"
 dependencies = [
+ "bitflags",
  "log",
  "runtime",
  "win32-derive",

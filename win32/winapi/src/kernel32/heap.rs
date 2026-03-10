@@ -1,3 +1,4 @@
+use bitflags::bitflags;
 use std::rc::Rc;
 
 use crate::{
@@ -7,8 +8,22 @@ use crate::{
 };
 use runtime::{Cont, MACHINE};
 
+#[derive(Debug, Default, PartialEq, Eq, zerocopy::FromBytes)]
+pub struct HEAP_FLAGS(u32);
+bitflags! {
+    impl HEAP_FLAGS: u32 {
+    }
+}
+impl TryFrom<u32> for HEAP_FLAGS {
+    type Error = u32;
+    fn try_from(value: u32) -> Result<Self, Self::Error> {
+        HEAP_FLAGS::from_bits(value).ok_or(value)
+    }
+}
+
 #[win32_derive::dllexport]
-pub fn HeapAlloc(_hHeap: HANDLE, _dwFlags: u32 /* HEAP_FLAGS */, _dwBytes: u32) -> u32 {
+pub fn HeapAlloc(_hHeap: HANDLE, dwFlags: Result<HEAP_FLAGS, u32>, _dwBytes: u32) -> u32 {
+    dwFlags.unwrap();
     stub!(0)
     /*
     let mut flags = dwFlags.unwrap_or_else(|_| {
