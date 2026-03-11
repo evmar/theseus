@@ -1,4 +1,4 @@
-use crate::{kernel32::HANDLE, stub};
+use crate::kernel32::HANDLE;
 use runtime::{Cont, HOST, Host, MACHINE};
 
 const STDIN_HFILE: HANDLE = 0xF11E_0001;

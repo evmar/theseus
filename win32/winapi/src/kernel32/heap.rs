@@ -65,15 +65,14 @@ pub fn HeapDestroy(_hHeap: HANDLE) -> bool {
 }
 
 #[win32_derive::dllexport]
-pub fn HeapFree(_hHeap: HANDLE, dwFlags: u32 /* HEAP_FLAGS */, _lpMem: u32) -> bool {
+pub fn HeapFree(hHeap: HANDLE, dwFlags: u32 /* HEAP_FLAGS */, lpMem: u32) -> bool {
     if dwFlags != 0 {
         log::warn!("HeapFree flags {dwFlags:x}");
     }
-    /*
-    let memory = sys.memory();
-    memory.heaps.get(&hHeap).unwrap().free(memory.mem(), lpMem);
-    */
-    stub!(true)
+    let heaps = kernel32::state().heaps.borrow();
+    let heap = heaps.get(&hHeap).unwrap();
+    heap.free(unsafe { &mut MACHINE.memory }, lpMem);
+    true
 }
 
 #[win32_derive::dllexport]

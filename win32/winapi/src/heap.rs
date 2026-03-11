@@ -7,6 +7,7 @@ use std::cell::RefCell;
 use runtime::Memory;
 
 pub struct Heap {
+    #[allow(unused)]
     pub addr: u32,
     pub size: u32,
     freelist: RefCell<FreeList>,
@@ -32,6 +33,7 @@ impl Heap {
             .unwrap_or_else(|| panic!("heap size {:x} oom {:x}", self.size, size))
     }
 
+    #[allow(unused)]
     pub fn size(&self, mem: &mut Memory, addr: u32) -> u32 {
         mem.read::<u32>(addr - 4) - 4
     }
