@@ -37,12 +37,6 @@ static STATE: StaticState = StaticState(OnceCell::new());
 
 pub fn init_state() {
     let state = State::default();
-
-    {
-        let mut mappings = state.mappings.borrow_mut();
-        mappings.alloc("null page".into(), 0, 0x1000);
-    }
-
     STATE.0.set(state).unwrap_or_else(|_| panic!());
 }
 

@@ -9,280 +9,30 @@ use winapi::*;
 pub fn init_mappings() {
     unsafe {
         let mut mappings = kernel32::state().mappings.borrow_mut();
-        let bytes = include_bytes!("../data/00400000.raw").as_slice();
+        mappings.alloc("null page".to_string(), 0x0, 0x1000);
+        mappings.alloc("imported functions".to_string(), 0x1000, 0x1000);
         mappings.alloc("exe header".to_string(), 0x400000, 0x1000);
+        let bytes = include_bytes!("../data/00400000.raw").as_slice();
         let out = &mut MACHINE.memory.bytes[0x400000 as usize..][..bytes.len()];
         out.copy_from_slice(bytes);
-        let bytes = include_bytes!("../data/00401000.raw").as_slice();
         mappings.alloc(".text".to_string(), 0x401000, 0x5000);
+        let bytes = include_bytes!("../data/00401000.raw").as_slice();
         let out = &mut MACHINE.memory.bytes[0x401000 as usize..][..bytes.len()];
         out.copy_from_slice(bytes);
-        let bytes = include_bytes!("../data/00406000.raw").as_slice();
         mappings.alloc(".rdata".to_string(), 0x406000, 0x1000);
+        let bytes = include_bytes!("../data/00406000.raw").as_slice();
         let out = &mut MACHINE.memory.bytes[0x406000 as usize..][..bytes.len()];
         out.copy_from_slice(bytes);
-        let bytes = include_bytes!("../data/00407000.raw").as_slice();
         mappings.alloc(".data".to_string(), 0x407000, 0x3000);
+        let bytes = include_bytes!("../data/00407000.raw").as_slice();
         let out = &mut MACHINE.memory.bytes[0x407000 as usize..][..bytes.len()];
         out.copy_from_slice(bytes);
-        let bytes = include_bytes!("../data/0040a000.raw").as_slice();
         mappings.alloc(".rsrc".to_string(), 0x40a000, 0x67000);
+        let bytes = include_bytes!("../data/0040a000.raw").as_slice();
         let out = &mut MACHINE.memory.bytes[0x40a000 as usize..][..bytes.len()];
         out.copy_from_slice(bytes);
     }
 }
-pub fn x00001004() -> Cont {
-    Cont(ddraw::stdcall_DirectDrawCreateEx)
-}
-
-pub fn x00001008() -> Cont {
-    Cont(gdi32::stdcall_SelectObject)
-}
-
-pub fn x0000100c() -> Cont {
-    Cont(gdi32::stdcall_CreateCompatibleDC)
-}
-
-pub fn x00001010() -> Cont {
-    Cont(gdi32::stdcall_GetObjectA)
-}
-
-pub fn x00001014() -> Cont {
-    Cont(gdi32::stdcall_StretchBlt)
-}
-
-pub fn x00001018() -> Cont {
-    Cont(gdi32::stdcall_DeleteDC)
-}
-
-pub fn x0000101c() -> Cont {
-    Cont(gdi32::stdcall_GetStockObject)
-}
-
-pub fn x00001020() -> Cont {
-    Cont(kernel32::stdcall_OutputDebugStringA)
-}
-
-pub fn x00001024() -> Cont {
-    Cont(kernel32::stdcall_HeapAlloc)
-}
-
-pub fn x00001028() -> Cont {
-    Cont(kernel32::stdcall_GetModuleFileNameA)
-}
-
-pub fn x0000102c() -> Cont {
-    Cont(kernel32::stdcall_UnhandledExceptionFilter)
-}
-
-pub fn x00001030() -> Cont {
-    Cont(kernel32::stdcall_GetStringTypeW)
-}
-
-pub fn x00001034() -> Cont {
-    Cont(kernel32::stdcall_GetStringTypeA)
-}
-
-pub fn x00001038() -> Cont {
-    Cont(kernel32::stdcall_LCMapStringW)
-}
-
-pub fn x0000103c() -> Cont {
-    Cont(kernel32::stdcall_LCMapStringA)
-}
-
-pub fn x00001040() -> Cont {
-    Cont(kernel32::stdcall_MultiByteToWideChar)
-}
-
-pub fn x00001044() -> Cont {
-    Cont(kernel32::stdcall_LoadLibraryA)
-}
-
-pub fn x00001048() -> Cont {
-    Cont(kernel32::stdcall_GetProcAddress)
-}
-
-pub fn x0000104c() -> Cont {
-    Cont(kernel32::stdcall_GetOEMCP)
-}
-
-pub fn x00001050() -> Cont {
-    Cont(kernel32::stdcall_GetACP)
-}
-
-pub fn x00001054() -> Cont {
-    Cont(kernel32::stdcall_GetCPInfo)
-}
-
-pub fn x00001058() -> Cont {
-    Cont(kernel32::stdcall_VirtualAlloc)
-}
-
-pub fn x0000105c() -> Cont {
-    Cont(kernel32::stdcall_WriteFile)
-}
-
-pub fn x00001060() -> Cont {
-    Cont(kernel32::stdcall_RtlUnwind)
-}
-
-pub fn x00001064() -> Cont {
-    Cont(kernel32::stdcall_GetModuleHandleA)
-}
-
-pub fn x00001068() -> Cont {
-    Cont(kernel32::stdcall_GetStartupInfoA)
-}
-
-pub fn x0000106c() -> Cont {
-    Cont(kernel32::stdcall_GetCommandLineA)
-}
-
-pub fn x00001070() -> Cont {
-    Cont(kernel32::stdcall_GetVersion)
-}
-
-pub fn x00001074() -> Cont {
-    Cont(kernel32::stdcall_ExitProcess)
-}
-
-pub fn x00001078() -> Cont {
-    Cont(kernel32::stdcall_HeapReAlloc)
-}
-
-pub fn x0000107c() -> Cont {
-    Cont(kernel32::stdcall_GetTickCount)
-}
-
-pub fn x00001080() -> Cont {
-    Cont(kernel32::stdcall_TerminateProcess)
-}
-
-pub fn x00001084() -> Cont {
-    Cont(kernel32::stdcall_GetCurrentProcess)
-}
-
-pub fn x00001088() -> Cont {
-    Cont(kernel32::stdcall_HeapSize)
-}
-
-pub fn x0000108c() -> Cont {
-    Cont(kernel32::stdcall_HeapFree)
-}
-
-pub fn x00001090() -> Cont {
-    Cont(kernel32::stdcall_HeapCreate)
-}
-
-pub fn x00001094() -> Cont {
-    Cont(kernel32::stdcall_VirtualFree)
-}
-
-pub fn x00001098() -> Cont {
-    Cont(kernel32::stdcall_FreeEnvironmentStringsA)
-}
-
-pub fn x0000109c() -> Cont {
-    Cont(kernel32::stdcall_FreeEnvironmentStringsW)
-}
-
-pub fn x000010a0() -> Cont {
-    Cont(kernel32::stdcall_WideCharToMultiByte)
-}
-
-pub fn x000010a4() -> Cont {
-    Cont(kernel32::stdcall_GetEnvironmentStrings)
-}
-
-pub fn x000010a8() -> Cont {
-    Cont(kernel32::stdcall_GetEnvironmentStringsW)
-}
-
-pub fn x000010ac() -> Cont {
-    Cont(kernel32::stdcall_SetHandleCount)
-}
-
-pub fn x000010b0() -> Cont {
-    Cont(kernel32::stdcall_GetStdHandle)
-}
-
-pub fn x000010b4() -> Cont {
-    Cont(kernel32::stdcall_GetFileType)
-}
-
-pub fn x000010b8() -> Cont {
-    Cont(kernel32::stdcall_GetEnvironmentVariableA)
-}
-
-pub fn x000010bc() -> Cont {
-    Cont(kernel32::stdcall_GetVersionExA)
-}
-
-pub fn x000010c0() -> Cont {
-    Cont(kernel32::stdcall_HeapDestroy)
-}
-
-pub fn x000010c4() -> Cont {
-    Cont(user32::stdcall_DispatchMessageA)
-}
-
-pub fn x000010c8() -> Cont {
-    Cont(user32::stdcall_TranslateMessage)
-}
-
-pub fn x000010cc() -> Cont {
-    Cont(user32::stdcall_PeekMessageA)
-}
-
-pub fn x000010d0() -> Cont {
-    Cont(user32::stdcall_MessageBoxA)
-}
-
-pub fn x000010d4() -> Cont {
-    Cont(user32::stdcall_SetFocus)
-}
-
-pub fn x000010d8() -> Cont {
-    Cont(user32::stdcall_UpdateWindow)
-}
-
-pub fn x000010dc() -> Cont {
-    Cont(user32::stdcall_ShowWindow)
-}
-
-pub fn x000010e0() -> Cont {
-    Cont(user32::stdcall_CreateWindowExA)
-}
-
-pub fn x000010e4() -> Cont {
-    Cont(user32::stdcall_GetSystemMetrics)
-}
-
-pub fn x000010e8() -> Cont {
-    Cont(user32::stdcall_LoadImageA)
-}
-
-pub fn x000010ec() -> Cont {
-    Cont(user32::stdcall_DefWindowProcA)
-}
-
-pub fn x000010f0() -> Cont {
-    Cont(user32::stdcall_PostQuitMessage)
-}
-
-pub fn x000010f4() -> Cont {
-    Cont(user32::stdcall_LoadIconA)
-}
-
-pub fn x000010f8() -> Cont {
-    Cont(user32::stdcall_LoadCursorA)
-}
-
-pub fn x000010fc() -> Cont {
-    Cont(user32::stdcall_RegisterClassA)
-}
-
 pub fn x00401040() -> Cont {
     unsafe {
         // 00401040 mov ecx,[esp+10h]
@@ -23168,69 +22918,69 @@ pub fn x004054ec() -> Cont {
 }
 
 pub const BLOCKS: [(u32, fn() -> Cont); 1421] = [
-    (0x001004, x00001004),
-    (0x001008, x00001008),
-    (0x00100c, x0000100c),
-    (0x001010, x00001010),
-    (0x001014, x00001014),
-    (0x001018, x00001018),
-    (0x00101c, x0000101c),
-    (0x001020, x00001020),
-    (0x001024, x00001024),
-    (0x001028, x00001028),
-    (0x00102c, x0000102c),
-    (0x001030, x00001030),
-    (0x001034, x00001034),
-    (0x001038, x00001038),
-    (0x00103c, x0000103c),
-    (0x001040, x00001040),
-    (0x001044, x00001044),
-    (0x001048, x00001048),
-    (0x00104c, x0000104c),
-    (0x001050, x00001050),
-    (0x001054, x00001054),
-    (0x001058, x00001058),
-    (0x00105c, x0000105c),
-    (0x001060, x00001060),
-    (0x001064, x00001064),
-    (0x001068, x00001068),
-    (0x00106c, x0000106c),
-    (0x001070, x00001070),
-    (0x001074, x00001074),
-    (0x001078, x00001078),
-    (0x00107c, x0000107c),
-    (0x001080, x00001080),
-    (0x001084, x00001084),
-    (0x001088, x00001088),
-    (0x00108c, x0000108c),
-    (0x001090, x00001090),
-    (0x001094, x00001094),
-    (0x001098, x00001098),
-    (0x00109c, x0000109c),
-    (0x0010a0, x000010a0),
-    (0x0010a4, x000010a4),
-    (0x0010a8, x000010a8),
-    (0x0010ac, x000010ac),
-    (0x0010b0, x000010b0),
-    (0x0010b4, x000010b4),
-    (0x0010b8, x000010b8),
-    (0x0010bc, x000010bc),
-    (0x0010c0, x000010c0),
-    (0x0010c4, x000010c4),
-    (0x0010c8, x000010c8),
-    (0x0010cc, x000010cc),
-    (0x0010d0, x000010d0),
-    (0x0010d4, x000010d4),
-    (0x0010d8, x000010d8),
-    (0x0010dc, x000010dc),
-    (0x0010e0, x000010e0),
-    (0x0010e4, x000010e4),
-    (0x0010e8, x000010e8),
-    (0x0010ec, x000010ec),
-    (0x0010f0, x000010f0),
-    (0x0010f4, x000010f4),
-    (0x0010f8, x000010f8),
-    (0x0010fc, x000010fc),
+    (0x001004, ddraw::stdcall_DirectDrawCreateEx),
+    (0x001008, gdi32::stdcall_SelectObject),
+    (0x00100c, gdi32::stdcall_CreateCompatibleDC),
+    (0x001010, gdi32::stdcall_GetObjectA),
+    (0x001014, gdi32::stdcall_StretchBlt),
+    (0x001018, gdi32::stdcall_DeleteDC),
+    (0x00101c, gdi32::stdcall_GetStockObject),
+    (0x001020, kernel32::stdcall_OutputDebugStringA),
+    (0x001024, kernel32::stdcall_HeapAlloc),
+    (0x001028, kernel32::stdcall_GetModuleFileNameA),
+    (0x00102c, kernel32::stdcall_UnhandledExceptionFilter),
+    (0x001030, kernel32::stdcall_GetStringTypeW),
+    (0x001034, kernel32::stdcall_GetStringTypeA),
+    (0x001038, kernel32::stdcall_LCMapStringW),
+    (0x00103c, kernel32::stdcall_LCMapStringA),
+    (0x001040, kernel32::stdcall_MultiByteToWideChar),
+    (0x001044, kernel32::stdcall_LoadLibraryA),
+    (0x001048, kernel32::stdcall_GetProcAddress),
+    (0x00104c, kernel32::stdcall_GetOEMCP),
+    (0x001050, kernel32::stdcall_GetACP),
+    (0x001054, kernel32::stdcall_GetCPInfo),
+    (0x001058, kernel32::stdcall_VirtualAlloc),
+    (0x00105c, kernel32::stdcall_WriteFile),
+    (0x001060, kernel32::stdcall_RtlUnwind),
+    (0x001064, kernel32::stdcall_GetModuleHandleA),
+    (0x001068, kernel32::stdcall_GetStartupInfoA),
+    (0x00106c, kernel32::stdcall_GetCommandLineA),
+    (0x001070, kernel32::stdcall_GetVersion),
+    (0x001074, kernel32::stdcall_ExitProcess),
+    (0x001078, kernel32::stdcall_HeapReAlloc),
+    (0x00107c, kernel32::stdcall_GetTickCount),
+    (0x001080, kernel32::stdcall_TerminateProcess),
+    (0x001084, kernel32::stdcall_GetCurrentProcess),
+    (0x001088, kernel32::stdcall_HeapSize),
+    (0x00108c, kernel32::stdcall_HeapFree),
+    (0x001090, kernel32::stdcall_HeapCreate),
+    (0x001094, kernel32::stdcall_VirtualFree),
+    (0x001098, kernel32::stdcall_FreeEnvironmentStringsA),
+    (0x00109c, kernel32::stdcall_FreeEnvironmentStringsW),
+    (0x0010a0, kernel32::stdcall_WideCharToMultiByte),
+    (0x0010a4, kernel32::stdcall_GetEnvironmentStrings),
+    (0x0010a8, kernel32::stdcall_GetEnvironmentStringsW),
+    (0x0010ac, kernel32::stdcall_SetHandleCount),
+    (0x0010b0, kernel32::stdcall_GetStdHandle),
+    (0x0010b4, kernel32::stdcall_GetFileType),
+    (0x0010b8, kernel32::stdcall_GetEnvironmentVariableA),
+    (0x0010bc, kernel32::stdcall_GetVersionExA),
+    (0x0010c0, kernel32::stdcall_HeapDestroy),
+    (0x0010c4, user32::stdcall_DispatchMessageA),
+    (0x0010c8, user32::stdcall_TranslateMessage),
+    (0x0010cc, user32::stdcall_PeekMessageA),
+    (0x0010d0, user32::stdcall_MessageBoxA),
+    (0x0010d4, user32::stdcall_SetFocus),
+    (0x0010d8, user32::stdcall_UpdateWindow),
+    (0x0010dc, user32::stdcall_ShowWindow),
+    (0x0010e0, user32::stdcall_CreateWindowExA),
+    (0x0010e4, user32::stdcall_GetSystemMetrics),
+    (0x0010e8, user32::stdcall_LoadImageA),
+    (0x0010ec, user32::stdcall_DefWindowProcA),
+    (0x0010f0, user32::stdcall_PostQuitMessage),
+    (0x0010f4, user32::stdcall_LoadIconA),
+    (0x0010f8, user32::stdcall_LoadCursorA),
+    (0x0010fc, user32::stdcall_RegisterClassA),
     (0x401040, x00401040),
     (0x401056, x00401056),
     (0x401062, x00401062),

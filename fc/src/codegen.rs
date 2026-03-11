@@ -157,15 +157,16 @@ fn gen_jmp(state: &State, instr: &iced_x86::Instruction) -> String {
 
 fn gen_block(w: &mut dyn std::fmt::Write, state: &State, ip: AddrAbs, block: &Block) {
     println!("gen block: {:#08x}", ip.0);
-
-    write!(w, "pub fn x{:08x}() -> Cont {{\n", ip.0);
     match block {
-        Block::Instrs(instrs) => gen_instrs(w, state, instrs),
-        Block::Stdcall(func) => {
-            writeln!(w, "Cont({func})\n");
+        Block::Instrs(instrs) => {
+            write!(w, "pub fn x{:08x}() -> Cont {{\n", ip.0);
+            gen_instrs(w, state, instrs);
+            write!(w, "}}\n\n");
+        }
+        Block::Stdcall(_, _) => {
+            // no emit
         }
     }
-    write!(w, "}}\n\n");
 }
 
 fn gen_instrs(w: &mut dyn std::fmt::Write, state: &State, instrs: &[iced_x86::Instruction]) {
@@ -406,18 +407,9 @@ pub fn gen_file(state: &mut State, outdir: &str) -> Result<()> {
     );
     for map in state.mem.mappings.iter() {
         let addr = map.addr;
-        if addr == 0 {
-            continue;
-        }
         let buf = state.mem.slice(AddrAbs(map.addr), map.size);
-        if buf.iter().all(|&b| b == 0) {
-            continue;
-        }
+        let zeroed = buf.iter().all(|&b| b == 0);
 
-        write!(
-            &mut text,
-            "let bytes = include_bytes!(\"../data/{addr:08x}.raw\").as_slice();\n"
-        );
         write!(
             &mut text,
             "mappings.alloc(
@@ -428,11 +420,17 @@ pub fn gen_file(state: &mut State, outdir: &str) -> Result<()> {
             desc = map.desc,
             size = buf.len(),
         );
-        write!(
-            &mut text,
-            "let out = &mut MACHINE.memory.bytes[{addr:#x} as usize..][..bytes.len()];
+        if !zeroed {
+            write!(
+                &mut text,
+                "let bytes = include_bytes!(\"../data/{addr:08x}.raw\").as_slice();\n"
+            );
+            write!(
+                &mut text,
+                "let out = &mut MACHINE.memory.bytes[{addr:#x} as usize..][..bytes.len()];
             out.copy_from_slice(bytes);\n"
-        );
+            );
+        }
     }
 
     write!(&mut text, "}} }}\n");
@@ -450,7 +448,8 @@ pub fn gen_file(state: &mut State, outdir: &str) -> Result<()> {
         ips.len() + 1,
     );
     for &ip in &ips {
-        write!(&mut text, "({ip:#08x}, x{ip:08x}),\n");
+        let block = state.blocks.get(&ip).unwrap();
+        write!(&mut text, "({ip:#08x}, {}),\n", block.name());
     }
     write!(&mut text, "(0xf000_0000, runtime::return_from_main),\n");
     write!(&mut text, "];\n\n");

@@ -28,6 +28,7 @@ pub enum MappingData<'a> {
 
 impl Mappings {
     pub fn alloc(&mut self, desc: String, addr: u32, size: u32) -> u32 {
+        let size = (size + 0x1000 - 1) & !(0x1000 - 1);
         let mut new_mapping = Mapping { desc, addr, size };
 
         let mut prev_end = 0;
