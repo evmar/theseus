@@ -76,3 +76,39 @@ pub fn ShowWindow(_hWnd: HWND, _nCmdShow: u32 /* SHOW_WINDOW_CMD */) -> bool {
 pub fn UpdateWindow(_hWnd: HWND) -> bool {
     todo!()
 }
+
+#[win32_derive::dllexport]
+pub fn DispatchMessageA(_lpMsg: u32) -> u32 {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn TranslateMessage(_lpMsg: u32) -> bool {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn PeekMessageA(
+    _lpMsg: u32,
+    _hWnd: HWND,
+    _wMsgFilterMin: u32,
+    _wMsgFilterMax: u32,
+    _wRemoveMsg: u32, /* PEEK_MESSAGE_REMOVE_TYPE */
+) -> bool {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn GetSystemMetrics(_nIndex: u32 /* SYSTEM_METRICS_INDEX */) -> i32 {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn DefWindowProcA(_hWnd: HWND, _Msg: u32, _wParam: u32, _lParam: u32) -> u32 {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn PostQuitMessage(_nExitCode: i32) {
+    todo!()
+}
