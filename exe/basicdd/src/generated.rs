@@ -22890,23 +22890,53 @@ pub fn x004054ec() -> Cont {
     }
 }
 
-pub fn init_memory() {
-    unsafe {
-        let sections = [
-            (0x400000, include_bytes!("../data/00400000.raw").as_slice()),
-            (0x401000, include_bytes!("../data/00401000.raw").as_slice()),
-            (0x406000, include_bytes!("../data/00406000.raw").as_slice()),
-            (0x407000, include_bytes!("../data/00407000.raw").as_slice()),
-            (0x40a000, include_bytes!("../data/0040a000.raw").as_slice()),
-        ];
-
-        for (addr, data) in sections {
-            let out = &mut MACHINE.memory.bytes[addr..][..data.len()];
-            out.copy_from_slice(data);
-        }
-    }
+pub fn init_mappings() {
+    let bytes = include_bytes!("../data/00400000.raw").as_slice();
+    kernel32::init_mapping(
+        kernel32::Mapping {
+            desc: "pe section".into(),
+            addr: 0x400000,
+            size: bytes.len() as u32,
+        },
+        kernel32::MappingData::Bytes(bytes),
+    );
+    let bytes = include_bytes!("../data/00401000.raw").as_slice();
+    kernel32::init_mapping(
+        kernel32::Mapping {
+            desc: "pe section".into(),
+            addr: 0x401000,
+            size: bytes.len() as u32,
+        },
+        kernel32::MappingData::Bytes(bytes),
+    );
+    let bytes = include_bytes!("../data/00406000.raw").as_slice();
+    kernel32::init_mapping(
+        kernel32::Mapping {
+            desc: "pe section".into(),
+            addr: 0x406000,
+            size: bytes.len() as u32,
+        },
+        kernel32::MappingData::Bytes(bytes),
+    );
+    let bytes = include_bytes!("../data/00407000.raw").as_slice();
+    kernel32::init_mapping(
+        kernel32::Mapping {
+            desc: "pe section".into(),
+            addr: 0x407000,
+            size: bytes.len() as u32,
+        },
+        kernel32::MappingData::Bytes(bytes),
+    );
+    let bytes = include_bytes!("../data/0040a000.raw").as_slice();
+    kernel32::init_mapping(
+        kernel32::Mapping {
+            desc: "pe section".into(),
+            addr: 0x40a000,
+            size: bytes.len() as u32,
+        },
+        kernel32::MappingData::Bytes(bytes),
+    );
 }
-
 pub const BLOCKS: [(u32, fn() -> Cont); 1358] = [
     (0x401040, x00401040),
     (0x401056, x00401056),

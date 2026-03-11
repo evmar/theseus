@@ -1,4 +1,4 @@
-use crate::kernel32::{self, HANDLE, alloc_mapping, dump_mappings};
+use crate::kernel32::{HANDLE, alloc_mapping, dump_mappings};
 use runtime::{Cont, MACHINE};
 use zerocopy::FromBytes;
 
@@ -81,14 +81,12 @@ struct RTL_USER_PROCESS_PARAMETERS {
 
 pub fn init_process() {
     unsafe {
-        kernel32::init_state();
-
         let stack_size = 64 << 10;
-        let addr = alloc_mapping("stack".into(), stack_size);
+        let addr = alloc_mapping("stack".into(), 0, stack_size);
         MACHINE.regs.esp = addr + stack_size;
         MACHINE.regs.ebp = addr + stack_size;
 
-        let addr = alloc_mapping("process data".into(), 0x1000);
+        let addr = alloc_mapping("process data".into(), 0, 0x1000);
         let buf = &mut MACHINE.memory.bytes[addr as usize..][..0x1000];
 
         let (params, buf) = RTL_USER_PROCESS_PARAMETERS::mut_from_prefix(buf).unwrap();

@@ -388,29 +388,24 @@ pub fn gen_file(state: &State, outdir: &str) -> Result<()> {
     // Unfortunately, wasm-lld only supports "relocatable" object files which means it moves
     // the location of such data at link time.  We could do it by postprocessing the wasm
     // file, maybe.
-    write!(&mut text, "pub fn init_memory() {{\n");
-    write!(&mut text, "unsafe {{\n");
-    write!(&mut text, "let sections = [\n");
+    write!(&mut text, "pub fn init_mappings() {{\n");
     for map in &state.mem.mappings {
+        let addr = map.addr.0;
         write!(
             &mut text,
-            "({:#x}, include_bytes!(\"../data/{:08x}.raw\").as_slice()),\n",
-            map.addr.0, map.addr.0
+            "let bytes = include_bytes!(\"../data/{addr:08x}.raw\").as_slice();\n"
         );
+        // write!(
+        //     &mut text,
+        //     "kernel32::init_mapping(
+        //     kernel32::Mapping {{
+        //         desc: \"pe section\".into(),
+        //         addr: {addr:#08x},
+        //         size: bytes.len() as u32
+        //     }}, kernel32::MappingData::Bytes(bytes));\n"
+        // );
     }
-    write!(&mut text, "];\n");
-    write!(
-        &mut text,
-        "
-        for (addr, data) in sections {{
-            let out = &mut MACHINE.memory.bytes[addr..][..data.len()];
-            out.copy_from_slice(data);
-        }}
-        }}
-        }}
-
-    "
-    );
+    write!(&mut text, "}}\n");
 
     write!(
         &mut text,
