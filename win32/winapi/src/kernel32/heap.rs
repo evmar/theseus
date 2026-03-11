@@ -68,6 +68,16 @@ pub fn HeapDestroy(_hHeap: HANDLE) -> bool {
 }
 
 #[win32_derive::dllexport]
+pub fn HeapSize(hHeap: HANDLE, dwFlags: u32 /* HEAP_FLAGS */, lpMem: u32) -> u32 {
+    if dwFlags != 0 {
+        log::warn!("HeapFree flags {dwFlags:x}");
+    }
+    let heaps = kernel32::state().heaps.borrow();
+    let heap = heaps.get(&hHeap).unwrap();
+    heap.size(unsafe { &mut MACHINE.memory }, lpMem)
+}
+
+#[win32_derive::dllexport]
 pub fn HeapFree(hHeap: HANDLE, dwFlags: u32 /* HEAP_FLAGS */, lpMem: u32) -> bool {
     if dwFlags != 0 {
         log::warn!("HeapFree flags {dwFlags:x}");
