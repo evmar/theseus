@@ -8,3 +8,4 @@ anyhow = "1.0.102"
 iced-x86 = "1.21.0"
 pe = { workspace = true }
 winapi = { workspace = true }
+zerocopy = { workspace = true }

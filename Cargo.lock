@@ -51,6 +51,7 @@ dependencies = [
  "iced-x86",
  "pe",
  "winapi 0.1.0",
+ "zerocopy",
 ]
 
 [[package]]

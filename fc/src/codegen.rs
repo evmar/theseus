@@ -362,7 +362,7 @@ fn gen_block(w: &mut dyn std::fmt::Write, state: &State, ip: AddrAbs, block: &Bl
     write!(w, "}}}}\n\n");
 }
 
-pub fn gen_file(state: &State, outdir: &str) -> Result<()> {
+pub fn gen_file(state: &mut State, outdir: &str) -> Result<()> {
     use std::fmt::Write;
     let mut text = String::new();
 
@@ -377,6 +377,20 @@ pub fn gen_file(state: &State, outdir: &str) -> Result<()> {
     let mut iat_entries = state.imports.iter().collect::<Vec<_>>();
     iat_entries.sort();
 
+    // Just need to reserve some fake addresses for imported functions so they can be assigned addresses.
+    let imports_addr =
+        state
+            .mem
+            .mappings
+            .alloc("imported functions".into(), 0, iat_entries.len() as u32 * 4);
+    for (i, _) in iat_entries.iter().enumerate() {
+        state
+            .mem
+            .write::<u32>(imports_addr + ((i + 1) as u32 * 4), 0xffff_ffff);
+    }
+    println!("imports sec {:x}", imports_addr);
+    state.mem.mappings.dump();
+
     // It would be cool if we could just link a wasm object file that contains data sections
     // like
     //   (data (i32.const 0x400000) "....")
@@ -390,6 +404,9 @@ pub fn gen_file(state: &State, outdir: &str) -> Result<()> {
     );
     for map in state.mem.mappings.iter() {
         let addr = map.addr;
+        if addr == 0 {
+            continue;
+        }
         write!(
             &mut text,
             "let bytes = include_bytes!(\"../data/{addr:08x}.raw\").as_slice();\n"
@@ -397,10 +414,11 @@ pub fn gen_file(state: &State, outdir: &str) -> Result<()> {
         write!(
             &mut text,
             "mappings.alloc(
-                \"pe section\".into(),
+                {desc:?}.to_string(),
                 {addr:#x},
                 bytes.len() as u32
-            );\n"
+            );\n",
+            desc = map.desc,
         );
         write!(
             &mut text,
@@ -410,10 +428,11 @@ pub fn gen_file(state: &State, outdir: &str) -> Result<()> {
     }
 
     // IAT is within an existing mapping, so don't allocate one for it.
-    for (addr, (dll, func)) in iat_entries {
+    for (i, (addr, (dll, func))) in iat_entries.iter().enumerate() {
+        let func_addr = imports_addr + ((i as u32 + 1) * 4);
         write!(
             &mut text,
-            "MACHINE.memory.write::<u32>({addr:#08x}, 0); // {dll}::stdcall_{func})\n"
+            "MACHINE.memory.write::<u32>({addr:#08x}, {func_addr:#x}); // {dll}::stdcall_{func}\n"
         );
     }
 

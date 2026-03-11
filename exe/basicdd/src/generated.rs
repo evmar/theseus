@@ -9,89 +9,93 @@ use winapi::*;
 pub fn init_mappings() {
     unsafe {
         let mut mappings = kernel32::state().mappings.borrow_mut();
+        let bytes = include_bytes!("../data/00001000.raw").as_slice();
+        mappings.alloc("imported functions".to_string(), 0x1000, bytes.len() as u32);
+        let out = &mut MACHINE.memory.bytes[0x1000 as usize..][..bytes.len()];
+        out.copy_from_slice(bytes);
         let bytes = include_bytes!("../data/00400000.raw").as_slice();
-        mappings.alloc("pe section".into(), 0x400000, bytes.len() as u32);
+        mappings.alloc("exe header".to_string(), 0x400000, bytes.len() as u32);
         let out = &mut MACHINE.memory.bytes[0x400000 as usize..][..bytes.len()];
         out.copy_from_slice(bytes);
         let bytes = include_bytes!("../data/00401000.raw").as_slice();
-        mappings.alloc("pe section".into(), 0x401000, bytes.len() as u32);
+        mappings.alloc(".text".to_string(), 0x401000, bytes.len() as u32);
         let out = &mut MACHINE.memory.bytes[0x401000 as usize..][..bytes.len()];
         out.copy_from_slice(bytes);
         let bytes = include_bytes!("../data/00406000.raw").as_slice();
-        mappings.alloc("pe section".into(), 0x406000, bytes.len() as u32);
+        mappings.alloc(".rdata".to_string(), 0x406000, bytes.len() as u32);
         let out = &mut MACHINE.memory.bytes[0x406000 as usize..][..bytes.len()];
         out.copy_from_slice(bytes);
         let bytes = include_bytes!("../data/00407000.raw").as_slice();
-        mappings.alloc("pe section".into(), 0x407000, bytes.len() as u32);
+        mappings.alloc(".data".to_string(), 0x407000, bytes.len() as u32);
         let out = &mut MACHINE.memory.bytes[0x407000 as usize..][..bytes.len()];
         out.copy_from_slice(bytes);
         let bytes = include_bytes!("../data/0040a000.raw").as_slice();
-        mappings.alloc("pe section".into(), 0x40a000, bytes.len() as u32);
+        mappings.alloc(".rsrc".to_string(), 0x40a000, bytes.len() as u32);
         let out = &mut MACHINE.memory.bytes[0x40a000 as usize..][..bytes.len()];
         out.copy_from_slice(bytes);
-        MACHINE.memory.write::<u32>(0x406000, 0); // ddraw::stdcall_DirectDrawCreateEx)
-        MACHINE.memory.write::<u32>(0x406008, 0); // gdi32::stdcall_SelectObject)
-        MACHINE.memory.write::<u32>(0x40600c, 0); // gdi32::stdcall_CreateCompatibleDC)
-        MACHINE.memory.write::<u32>(0x406010, 0); // gdi32::stdcall_GetObjectA)
-        MACHINE.memory.write::<u32>(0x406014, 0); // gdi32::stdcall_StretchBlt)
-        MACHINE.memory.write::<u32>(0x406018, 0); // gdi32::stdcall_DeleteDC)
-        MACHINE.memory.write::<u32>(0x40601c, 0); // gdi32::stdcall_GetStockObject)
-        MACHINE.memory.write::<u32>(0x406024, 0); // kernel32::stdcall_OutputDebugStringA)
-        MACHINE.memory.write::<u32>(0x406028, 0); // kernel32::stdcall_HeapAlloc)
-        MACHINE.memory.write::<u32>(0x40602c, 0); // kernel32::stdcall_GetModuleFileNameA)
-        MACHINE.memory.write::<u32>(0x406030, 0); // kernel32::stdcall_UnhandledExceptionFilter)
-        MACHINE.memory.write::<u32>(0x406034, 0); // kernel32::stdcall_GetStringTypeW)
-        MACHINE.memory.write::<u32>(0x406038, 0); // kernel32::stdcall_GetStringTypeA)
-        MACHINE.memory.write::<u32>(0x40603c, 0); // kernel32::stdcall_LCMapStringW)
-        MACHINE.memory.write::<u32>(0x406040, 0); // kernel32::stdcall_LCMapStringA)
-        MACHINE.memory.write::<u32>(0x406044, 0); // kernel32::stdcall_MultiByteToWideChar)
-        MACHINE.memory.write::<u32>(0x406048, 0); // kernel32::stdcall_LoadLibraryA)
-        MACHINE.memory.write::<u32>(0x40604c, 0); // kernel32::stdcall_GetProcAddress)
-        MACHINE.memory.write::<u32>(0x406050, 0); // kernel32::stdcall_GetOEMCP)
-        MACHINE.memory.write::<u32>(0x406054, 0); // kernel32::stdcall_GetACP)
-        MACHINE.memory.write::<u32>(0x406058, 0); // kernel32::stdcall_GetCPInfo)
-        MACHINE.memory.write::<u32>(0x40605c, 0); // kernel32::stdcall_VirtualAlloc)
-        MACHINE.memory.write::<u32>(0x406060, 0); // kernel32::stdcall_WriteFile)
-        MACHINE.memory.write::<u32>(0x406064, 0); // kernel32::stdcall_RtlUnwind)
-        MACHINE.memory.write::<u32>(0x406068, 0); // kernel32::stdcall_GetModuleHandleA)
-        MACHINE.memory.write::<u32>(0x40606c, 0); // kernel32::stdcall_GetStartupInfoA)
-        MACHINE.memory.write::<u32>(0x406070, 0); // kernel32::stdcall_GetCommandLineA)
-        MACHINE.memory.write::<u32>(0x406074, 0); // kernel32::stdcall_GetVersion)
-        MACHINE.memory.write::<u32>(0x406078, 0); // kernel32::stdcall_ExitProcess)
-        MACHINE.memory.write::<u32>(0x40607c, 0); // kernel32::stdcall_HeapReAlloc)
-        MACHINE.memory.write::<u32>(0x406080, 0); // kernel32::stdcall_GetTickCount)
-        MACHINE.memory.write::<u32>(0x406084, 0); // kernel32::stdcall_TerminateProcess)
-        MACHINE.memory.write::<u32>(0x406088, 0); // kernel32::stdcall_GetCurrentProcess)
-        MACHINE.memory.write::<u32>(0x40608c, 0); // kernel32::stdcall_HeapSize)
-        MACHINE.memory.write::<u32>(0x406090, 0); // kernel32::stdcall_HeapFree)
-        MACHINE.memory.write::<u32>(0x406094, 0); // kernel32::stdcall_HeapCreate)
-        MACHINE.memory.write::<u32>(0x406098, 0); // kernel32::stdcall_VirtualFree)
-        MACHINE.memory.write::<u32>(0x40609c, 0); // kernel32::stdcall_FreeEnvironmentStringsA)
-        MACHINE.memory.write::<u32>(0x4060a0, 0); // kernel32::stdcall_FreeEnvironmentStringsW)
-        MACHINE.memory.write::<u32>(0x4060a4, 0); // kernel32::stdcall_WideCharToMultiByte)
-        MACHINE.memory.write::<u32>(0x4060a8, 0); // kernel32::stdcall_GetEnvironmentStrings)
-        MACHINE.memory.write::<u32>(0x4060ac, 0); // kernel32::stdcall_GetEnvironmentStringsW)
-        MACHINE.memory.write::<u32>(0x4060b0, 0); // kernel32::stdcall_SetHandleCount)
-        MACHINE.memory.write::<u32>(0x4060b4, 0); // kernel32::stdcall_GetStdHandle)
-        MACHINE.memory.write::<u32>(0x4060b8, 0); // kernel32::stdcall_GetFileType)
-        MACHINE.memory.write::<u32>(0x4060bc, 0); // kernel32::stdcall_GetEnvironmentVariableA)
-        MACHINE.memory.write::<u32>(0x4060c0, 0); // kernel32::stdcall_GetVersionExA)
-        MACHINE.memory.write::<u32>(0x4060c4, 0); // kernel32::stdcall_HeapDestroy)
-        MACHINE.memory.write::<u32>(0x4060cc, 0); // user32::stdcall_DispatchMessageA)
-        MACHINE.memory.write::<u32>(0x4060d0, 0); // user32::stdcall_TranslateMessage)
-        MACHINE.memory.write::<u32>(0x4060d4, 0); // user32::stdcall_PeekMessageA)
-        MACHINE.memory.write::<u32>(0x4060d8, 0); // user32::stdcall_MessageBoxA)
-        MACHINE.memory.write::<u32>(0x4060dc, 0); // user32::stdcall_SetFocus)
-        MACHINE.memory.write::<u32>(0x4060e0, 0); // user32::stdcall_UpdateWindow)
-        MACHINE.memory.write::<u32>(0x4060e4, 0); // user32::stdcall_ShowWindow)
-        MACHINE.memory.write::<u32>(0x4060e8, 0); // user32::stdcall_CreateWindowExA)
-        MACHINE.memory.write::<u32>(0x4060ec, 0); // user32::stdcall_GetSystemMetrics)
-        MACHINE.memory.write::<u32>(0x4060f0, 0); // user32::stdcall_LoadImageA)
-        MACHINE.memory.write::<u32>(0x4060f4, 0); // user32::stdcall_DefWindowProcA)
-        MACHINE.memory.write::<u32>(0x4060f8, 0); // user32::stdcall_PostQuitMessage)
-        MACHINE.memory.write::<u32>(0x4060fc, 0); // user32::stdcall_LoadIconA)
-        MACHINE.memory.write::<u32>(0x406100, 0); // user32::stdcall_LoadCursorA)
-        MACHINE.memory.write::<u32>(0x406104, 0); // user32::stdcall_RegisterClassA)
+        MACHINE.memory.write::<u32>(0x406000, 0x1004); // ddraw::stdcall_DirectDrawCreateEx)
+        MACHINE.memory.write::<u32>(0x406008, 0x1008); // gdi32::stdcall_SelectObject)
+        MACHINE.memory.write::<u32>(0x40600c, 0x100c); // gdi32::stdcall_CreateCompatibleDC)
+        MACHINE.memory.write::<u32>(0x406010, 0x1010); // gdi32::stdcall_GetObjectA)
+        MACHINE.memory.write::<u32>(0x406014, 0x1014); // gdi32::stdcall_StretchBlt)
+        MACHINE.memory.write::<u32>(0x406018, 0x1018); // gdi32::stdcall_DeleteDC)
+        MACHINE.memory.write::<u32>(0x40601c, 0x101c); // gdi32::stdcall_GetStockObject)
+        MACHINE.memory.write::<u32>(0x406024, 0x1020); // kernel32::stdcall_OutputDebugStringA)
+        MACHINE.memory.write::<u32>(0x406028, 0x1024); // kernel32::stdcall_HeapAlloc)
+        MACHINE.memory.write::<u32>(0x40602c, 0x1028); // kernel32::stdcall_GetModuleFileNameA)
+        MACHINE.memory.write::<u32>(0x406030, 0x102c); // kernel32::stdcall_UnhandledExceptionFilter)
+        MACHINE.memory.write::<u32>(0x406034, 0x1030); // kernel32::stdcall_GetStringTypeW)
+        MACHINE.memory.write::<u32>(0x406038, 0x1034); // kernel32::stdcall_GetStringTypeA)
+        MACHINE.memory.write::<u32>(0x40603c, 0x1038); // kernel32::stdcall_LCMapStringW)
+        MACHINE.memory.write::<u32>(0x406040, 0x103c); // kernel32::stdcall_LCMapStringA)
+        MACHINE.memory.write::<u32>(0x406044, 0x1040); // kernel32::stdcall_MultiByteToWideChar)
+        MACHINE.memory.write::<u32>(0x406048, 0x1044); // kernel32::stdcall_LoadLibraryA)
+        MACHINE.memory.write::<u32>(0x40604c, 0x1048); // kernel32::stdcall_GetProcAddress)
+        MACHINE.memory.write::<u32>(0x406050, 0x104c); // kernel32::stdcall_GetOEMCP)
+        MACHINE.memory.write::<u32>(0x406054, 0x1050); // kernel32::stdcall_GetACP)
+        MACHINE.memory.write::<u32>(0x406058, 0x1054); // kernel32::stdcall_GetCPInfo)
+        MACHINE.memory.write::<u32>(0x40605c, 0x1058); // kernel32::stdcall_VirtualAlloc)
+        MACHINE.memory.write::<u32>(0x406060, 0x105c); // kernel32::stdcall_WriteFile)
+        MACHINE.memory.write::<u32>(0x406064, 0x1060); // kernel32::stdcall_RtlUnwind)
+        MACHINE.memory.write::<u32>(0x406068, 0x1064); // kernel32::stdcall_GetModuleHandleA)
+        MACHINE.memory.write::<u32>(0x40606c, 0x1068); // kernel32::stdcall_GetStartupInfoA)
+        MACHINE.memory.write::<u32>(0x406070, 0x106c); // kernel32::stdcall_GetCommandLineA)
+        MACHINE.memory.write::<u32>(0x406074, 0x1070); // kernel32::stdcall_GetVersion)
+        MACHINE.memory.write::<u32>(0x406078, 0x1074); // kernel32::stdcall_ExitProcess)
+        MACHINE.memory.write::<u32>(0x40607c, 0x1078); // kernel32::stdcall_HeapReAlloc)
+        MACHINE.memory.write::<u32>(0x406080, 0x107c); // kernel32::stdcall_GetTickCount)
+        MACHINE.memory.write::<u32>(0x406084, 0x1080); // kernel32::stdcall_TerminateProcess)
+        MACHINE.memory.write::<u32>(0x406088, 0x1084); // kernel32::stdcall_GetCurrentProcess)
+        MACHINE.memory.write::<u32>(0x40608c, 0x1088); // kernel32::stdcall_HeapSize)
+        MACHINE.memory.write::<u32>(0x406090, 0x108c); // kernel32::stdcall_HeapFree)
+        MACHINE.memory.write::<u32>(0x406094, 0x1090); // kernel32::stdcall_HeapCreate)
+        MACHINE.memory.write::<u32>(0x406098, 0x1094); // kernel32::stdcall_VirtualFree)
+        MACHINE.memory.write::<u32>(0x40609c, 0x1098); // kernel32::stdcall_FreeEnvironmentStringsA)
+        MACHINE.memory.write::<u32>(0x4060a0, 0x109c); // kernel32::stdcall_FreeEnvironmentStringsW)
+        MACHINE.memory.write::<u32>(0x4060a4, 0x10a0); // kernel32::stdcall_WideCharToMultiByte)
+        MACHINE.memory.write::<u32>(0x4060a8, 0x10a4); // kernel32::stdcall_GetEnvironmentStrings)
+        MACHINE.memory.write::<u32>(0x4060ac, 0x10a8); // kernel32::stdcall_GetEnvironmentStringsW)
+        MACHINE.memory.write::<u32>(0x4060b0, 0x10ac); // kernel32::stdcall_SetHandleCount)
+        MACHINE.memory.write::<u32>(0x4060b4, 0x10b0); // kernel32::stdcall_GetStdHandle)
+        MACHINE.memory.write::<u32>(0x4060b8, 0x10b4); // kernel32::stdcall_GetFileType)
+        MACHINE.memory.write::<u32>(0x4060bc, 0x10b8); // kernel32::stdcall_GetEnvironmentVariableA)
+        MACHINE.memory.write::<u32>(0x4060c0, 0x10bc); // kernel32::stdcall_GetVersionExA)
+        MACHINE.memory.write::<u32>(0x4060c4, 0x10c0); // kernel32::stdcall_HeapDestroy)
+        MACHINE.memory.write::<u32>(0x4060cc, 0x10c4); // user32::stdcall_DispatchMessageA)
+        MACHINE.memory.write::<u32>(0x4060d0, 0x10c8); // user32::stdcall_TranslateMessage)
+        MACHINE.memory.write::<u32>(0x4060d4, 0x10cc); // user32::stdcall_PeekMessageA)
+        MACHINE.memory.write::<u32>(0x4060d8, 0x10d0); // user32::stdcall_MessageBoxA)
+        MACHINE.memory.write::<u32>(0x4060dc, 0x10d4); // user32::stdcall_SetFocus)
+        MACHINE.memory.write::<u32>(0x4060e0, 0x10d8); // user32::stdcall_UpdateWindow)
+        MACHINE.memory.write::<u32>(0x4060e4, 0x10dc); // user32::stdcall_ShowWindow)
+        MACHINE.memory.write::<u32>(0x4060e8, 0x10e0); // user32::stdcall_CreateWindowExA)
+        MACHINE.memory.write::<u32>(0x4060ec, 0x10e4); // user32::stdcall_GetSystemMetrics)
+        MACHINE.memory.write::<u32>(0x4060f0, 0x10e8); // user32::stdcall_LoadImageA)
+        MACHINE.memory.write::<u32>(0x4060f4, 0x10ec); // user32::stdcall_DefWindowProcA)
+        MACHINE.memory.write::<u32>(0x4060f8, 0x10f0); // user32::stdcall_PostQuitMessage)
+        MACHINE.memory.write::<u32>(0x4060fc, 0x10f4); // user32::stdcall_LoadIconA)
+        MACHINE.memory.write::<u32>(0x406100, 0x10f8); // user32::stdcall_LoadCursorA)
+        MACHINE.memory.write::<u32>(0x406104, 0x10fc); // user32::stdcall_RegisterClassA)
     }
 }
 pub fn x00401040() -> Cont {

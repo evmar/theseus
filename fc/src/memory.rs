@@ -12,7 +12,6 @@ impl Memory {
     pub fn alloc(&mut self, name: String, addr: AddrAbs, size: u32) {
         let addr = self.mappings.alloc(name, addr.0, size);
         let len = (addr + size) as usize;
-        println!("alloc at {:x}", addr);
         if len > self.data.len() {
             self.data.resize(len, 0);
         }
@@ -21,6 +20,11 @@ impl Memory {
     pub fn put(&mut self, addr: AddrAbs, data: &[u8]) {
         self.slice_mut(addr, data.len() as u32)
             .copy_from_slice(data);
+    }
+
+    pub fn write<T: zerocopy::IntoBytes + zerocopy::Immutable>(&mut self, addr: u32, val: T) {
+        val.write_to_prefix(&mut self.data[addr as usize..])
+            .unwrap();
     }
 
     pub fn slice(&self, addr: AddrAbs, len: u32) -> &[u8] {

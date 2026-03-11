@@ -29,7 +29,6 @@ impl State {
                 ..(sec.PointerToRawData + sec.SizeOfRawData) as usize];
             mem.put(addr, data);
         }
-        println!("{:#x?}", mem.mappings);
 
         State {
             pe_file: f,
@@ -161,13 +160,13 @@ fn run() -> Result<()> {
 
     let buf = std::fs::read(exe_path).unwrap();
     let mut state = State::new(buf);
+    state.mem.mappings.alloc("null page".into(), 0, 0x1000);
     state.read_imports();
-    println!("{:#x?}", state.imports);
 
     let ip = AddrImage(state.pe_file.opt_header.AddressOfEntryPoint).to_abs(state.image_base());
     state.blocks = traverse(&state, ip.0);
 
-    codegen::gen_file(&state, outdir)?;
+    codegen::gen_file(&mut state, outdir)?;
 
     let data_dir = format!("{outdir}/data");
     std::fs::create_dir_all(&data_dir)?;
