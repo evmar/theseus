@@ -1,5 +1,7 @@
 use runtime::{Cont, MACHINE};
 
+use crate::stub;
+
 #[win32_derive::dllexport]
 pub fn GetLastError() -> u32 {
     0
@@ -9,15 +11,44 @@ pub type HANDLE = u32;
 
 #[win32_derive::dllexport]
 pub fn GetCommandLineA() -> u32 {
-    0
+    stub!(0)
     /*
     let mut state = get_state(sys);
     state.cmdline.cmdline8(sys.memory())
     */
 }
 
+#[repr(C)]
+#[derive(Debug)]
+pub struct STARTUPINFOA {
+    cb: u32,
+    lpReserved: u32,
+    lpDesktop: u32,
+    lpTitle: u32,
+    dwX: u32,
+    dwY: u32,
+    dwXSize: u32,
+    dwYSize: u32,
+    dwXCountChars: u32,
+    dwYCountChars: u32,
+    dwFillAttribute: u32,
+    dwFlags: u32,
+    wShowWindow: u16,
+    cbReserved2: u16,
+    lpReserved2: u32,
+    hStdInput: u32,
+    hStdOutput: u32,
+    hStdError: u32,
+}
+
 #[win32_derive::dllexport]
-pub fn GetStartupInfoA(_lpStartupInfo: u32) {
+pub fn GetStartupInfoA(lpStartupInfo: u32) {
+    let size = unsafe { MACHINE.memory.read::<u32>(lpStartupInfo) };
+    if size < std::mem::size_of::<STARTUPINFOA>() as u32 {
+        log::error!("GetStartupInfoA: undersized buffer");
+        return;
+    }
+    stub!(());
     /*
         // MSVC runtime library passes in uninitialized memory for lpStartupInfo, so don't trust info.cb.
         let info = lpStartupInfo.unwrap();
@@ -35,7 +66,7 @@ pub fn GetVersion() -> u32 {
 }
 
 #[repr(C)]
-#[derive(Debug, Default, zerocopy::FromBytes, zerocopy::IntoBytes, zerocopy::Immutable)]
+#[derive(Debug, Default, zerocopy::IntoBytes, zerocopy::Immutable)]
 pub struct OSVERSIONINFO {
     dwOSVersionInfoSize: u32,
     dwMajorVersion: u32,
@@ -47,8 +78,8 @@ pub struct OSVERSIONINFO {
 
 #[win32_derive::dllexport]
 pub fn GetVersionExA(lpVersionInformation: u32) -> bool {
-    let info: OSVERSIONINFO = unsafe { MACHINE.memory.read(lpVersionInformation) };
-    if info.dwOSVersionInfoSize < std::mem::size_of::<OSVERSIONINFO>() as u32 {
+    let size = unsafe { MACHINE.memory.read::<u32>(lpVersionInformation) };
+    if size < std::mem::size_of::<OSVERSIONINFO>() as u32 {
         log::error!("GetVersionExA undersized buffer");
         return false;
     }
