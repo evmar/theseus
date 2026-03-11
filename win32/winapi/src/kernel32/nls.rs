@@ -1,8 +1,15 @@
 use runtime::{Cont, MACHINE};
 
+use crate::stub;
+
+#[win32_derive::dllexport]
+pub fn GetACP() -> u32 {
+    1252 // windows-1252
+}
+
 #[win32_derive::dllexport]
 pub fn GetCPInfo(_CodePage: u32, _lpCPInfo: u32) -> bool {
-    false // fail
+    stub!(false) // fail
 }
 
 #[win32_derive::dllexport]

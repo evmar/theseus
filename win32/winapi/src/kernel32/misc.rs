@@ -204,11 +204,6 @@ pub fn GetOEMCP() -> u32 {
 }
 
 #[win32_derive::dllexport]
-pub fn GetACP() -> u32 {
-    1252 // windows-1252
-}
-
-#[win32_derive::dllexport]
 pub fn OutputDebugStringA(_lpOutputString: u32) {
     todo!()
 }
