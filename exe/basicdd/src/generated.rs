@@ -16760,7 +16760,7 @@ pub fn x00404449() -> Cont {
         // 00404461 and ecx,3
         MACHINE.regs.ecx = and(MACHINE.regs.ecx, 0x3u32);
         // 00404464 rep stosb
-        stosb();
+        rep(Rep::REP, stosb);
         // 00404466 inc edx
         MACHINE.regs.edx = inc(MACHINE.regs.edx);
         // 00404467 inc edx

@@ -254,15 +254,24 @@ fn gen_instrs(w: &mut dyn std::fmt::Write, state: &State, instrs: &[iced_x86::In
                 );
             }
 
+            Stosb => {
+                assert!(!instr.has_repne_prefix());
+                if instr.has_rep_prefix() {
+                    writeln!(w, "rep(Rep::REP, stosb);");
+                } else {
+                    writeln!(w, "stosb();");
+                };
+            }
             Stosd => {
                 writeln!(w, "stosd();");
-            }
-            Scasb => {
-                writeln!(w, "scasb();");
             }
             Cmpsb => {
                 writeln!(w, "cmpsb();");
             }
+            Scasb => {
+                writeln!(w, "scasb();");
+            }
+
             Movzx => {
                 writeln!(w, "movzx();");
             }
@@ -278,9 +287,7 @@ fn gen_instrs(w: &mut dyn std::fmt::Write, state: &State, instrs: &[iced_x86::In
             Cld => {
                 writeln!(w, "cld();");
             }
-            Stosb => {
-                writeln!(w, "stosb();");
-            }
+
             Div => {
                 writeln!(w, "div();");
             }
