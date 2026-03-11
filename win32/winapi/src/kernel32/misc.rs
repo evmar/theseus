@@ -49,6 +49,7 @@ pub fn GetStartupInfoA(lpStartupInfo: u32) {
         return;
     }
     stub!(());
+    panic!("stub");
     /*
         // MSVC runtime library passes in uninitialized memory for lpStartupInfo, so don't trust info.cb.
         let info = lpStartupInfo.unwrap();

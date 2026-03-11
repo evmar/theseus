@@ -12,7 +12,7 @@ pub use dllexport::{ABIReturn, FromABIParam};
 
 macro_rules! stub {
     ($arg:tt) => {{
-        println!("{}:{}: stub: returning {:?}", file!(), line!(), $arg);
+        log::warn!("{}:{}: stub: returning {:?}", file!(), line!(), $arg);
         $arg
     }};
 }

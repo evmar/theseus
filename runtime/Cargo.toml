@@ -8,6 +8,8 @@ bitflags = { workspace = true }
 num-traits = { version = "0.2.19", default-features = false }
 wee_alloc = { version = "0.4.5", optional = true }
 zerocopy = { workspace = true }
+log = { workspace = true }
+colored = "3.1.1"
 
 [features]
 wasm = ["dep:wee_alloc"]

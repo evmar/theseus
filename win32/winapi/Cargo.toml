@@ -8,4 +8,4 @@ bitflags = { workspace = true }
 runtime = { workspace = true }
 zerocopy = { workspace = true }
 win32-derive = { path = "../derive" }
-log = "0.4.29"
+log = { workspace = true }

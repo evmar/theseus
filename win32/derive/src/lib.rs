@@ -48,7 +48,7 @@ pub fn dllexport(_attr: TokenStream, mut tokens: TokenStream) -> TokenStream {
                 .join(", ");
             format!("{{return_addr:08x}} {name}({named_args})")
         };
-        quote![println!(#fmt_string);]
+        quote![log::info!(#fmt_string);]
     };
 
     let wrapper_name = format_ident!("stdcall_{}", name);
