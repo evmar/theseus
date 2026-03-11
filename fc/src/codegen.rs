@@ -389,8 +389,8 @@ pub fn gen_file(state: &State, outdir: &str) -> Result<()> {
     // the location of such data at link time.  We could do it by postprocessing the wasm
     // file, maybe.
     write!(&mut text, "pub fn init_mappings() {{\n");
-    for map in &state.mem.mappings {
-        let addr = map.addr.0;
+    for map in state.mem.mappings.iter() {
+        let addr = map.addr;
         write!(
             &mut text,
             "let bytes = include_bytes!(\"../data/{addr:08x}.raw\").as_slice();\n"

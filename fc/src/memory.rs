@@ -1,45 +1,21 @@
 #![allow(unused)]
 
-pub struct Mapping {
-    pub name: String,
-    pub addr: AddrAbs,
-    pub len: u32,
-}
-
-impl Mapping {
-    pub fn contains(&self, addr: AddrAbs) -> bool {
-        let addr = addr.0;
-        (self.addr.0..self.addr.0 + self.len).contains(&addr)
-    }
-}
-
-impl std::fmt::LowerHex for Mapping {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{} @ {:#x} ({} bytes)", self.name, self.addr, self.len)
-    }
-}
+pub use winapi::kernel32::Mapping;
 
 #[derive(Default)]
 pub struct Memory {
-    pub mappings: Vec<Mapping>,
+    pub mappings: winapi::kernel32::Mappings,
     pub data: Vec<u8>,
 }
 
 impl Memory {
     pub fn alloc(&mut self, name: String, addr: AddrAbs, size: u32) {
-        self.mappings.push(Mapping {
-            name,
-            addr,
-            len: size,
-        });
-        let len = (addr.0 + size) as usize;
+        let addr = self.mappings.alloc(name, addr.0, size);
+        let len = (addr + size) as usize;
+        println!("alloc at {:x}", addr);
         if len > self.data.len() {
             self.data.resize(len, 0);
         }
-    }
-
-    pub fn find(&self, addr: AddrAbs) -> &Mapping {
-        self.mappings.iter().find(|m| m.contains(addr)).unwrap()
     }
 
     pub fn put(&mut self, addr: AddrAbs, data: &[u8]) {
@@ -65,9 +41,7 @@ impl Memory {
 
 impl std::fmt::Debug for Memory {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        for m in &self.mappings {
-            writeln!(f, "{:#x}", m)?;
-        }
+        write!(f, "{:?}", self.mappings);
         Ok(())
     }
 }

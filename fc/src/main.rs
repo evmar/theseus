@@ -169,10 +169,10 @@ fn run() -> Result<()> {
 
     let data_dir = format!("{outdir}/data");
     std::fs::create_dir_all(&data_dir)?;
-    for map in &state.mem.mappings {
+    for map in state.mem.mappings.iter() {
         std::fs::write(
-            format!("{outdir}/data/{:08x}.raw", map.addr.0),
-            state.mem.slice(map.addr, map.len),
+            format!("{outdir}/data/{:08x}.raw", map.addr),
+            state.mem.slice(AddrAbs(map.addr), map.size),
         )?;
     }
     Ok(())

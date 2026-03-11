@@ -7,3 +7,4 @@ edition = "2024"
 anyhow = "1.0.102"
 iced-x86 = "1.21.0"
 pe = { workspace = true }
+winapi = { workspace = true }

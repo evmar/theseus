@@ -1,6 +1,4 @@
-use crate::kernel32::state;
-
-#[derive(Debug, Default, Clone)]
+#[derive(Default, Clone)]
 pub struct Mapping {
     #[allow(unused)]
     pub desc: String,
@@ -8,42 +6,65 @@ pub struct Mapping {
     pub size: u32,
 }
 
-pub fn alloc_mapping(desc: String, addr: u32, size: u32) -> u32 {
-    dump_mappings();
-    let mut new_mapping = Mapping { desc, addr, size };
-
-    let mut mappings = state().mappings.borrow_mut();
-    let mut prev_end = 0;
-    for (i, mapping) in mappings.iter().enumerate() {
-        let space = mapping.addr - prev_end;
-        if new_mapping.addr != 0 {
-            if mapping.addr >= new_mapping.addr + new_mapping.size {
-                if space < new_mapping.size {
-                    panic!("no space for {new_mapping:#x?}");
-                }
-                mappings.insert(i, new_mapping);
-                return prev_end;
-            }
-        } else {
-            if space >= size {
-                new_mapping.addr = prev_end;
-                mappings.insert(i, new_mapping);
-                return prev_end;
-            }
-        }
-        prev_end = mapping.addr + mapping.size;
+impl std::fmt::Debug for Mapping {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{} @ {:#08x} ({:#x} bytes)",
+            self.desc, self.addr, self.size
+        )
     }
-    if new_mapping.addr != 0 {
-        assert!(new_mapping.addr >= prev_end);
-    } else {
-        new_mapping.addr = prev_end;
-    }
-    let addr = new_mapping.addr;
-    mappings.push(new_mapping);
-    return addr;
 }
 
-pub fn dump_mappings() {
-    let mappings = state().mappings.borrow();
-    println!("{:#x?}", mappings);
+#[derive(Debug, Default)]
+pub struct Mappings {
+    mappings: Vec<Mapping>,
+}
+
+pub enum MappingData<'a> {
+    Bytes(&'a [u8]),
+    U32s(&'a [(u32, u32)]),
+}
+
+impl Mappings {
+    pub fn alloc(&mut self, desc: String, addr: u32, size: u32) -> u32 {
+        let mut new_mapping = Mapping { desc, addr, size };
+
+        let mut prev_end = 0;
+        for (i, mapping) in self.mappings.iter().enumerate() {
+            let space = mapping.addr - prev_end;
+            if new_mapping.addr != 0 {
+                if mapping.addr >= new_mapping.addr + new_mapping.size {
+                    if space < new_mapping.size {
+                        panic!("no space for {new_mapping:#x?}");
+                    }
+                    self.mappings.insert(i, new_mapping);
+                    return prev_end;
+                }
+            } else {
+                if space >= size {
+                    new_mapping.addr = prev_end;
+                    self.mappings.insert(i, new_mapping);
+                    return prev_end;
+                }
+            }
+            prev_end = mapping.addr + mapping.size;
+        }
+        if new_mapping.addr != 0 {
+            assert!(new_mapping.addr >= prev_end);
+        } else {
+            new_mapping.addr = prev_end;
+        }
+        let addr = new_mapping.addr;
+        self.mappings.push(new_mapping);
+        return addr;
+    }
+
+    pub fn dump(&self) {
+        println!("{:#x?}", self.mappings);
+    }
+
+    pub fn iter(&self) -> impl Iterator<Item = &Mapping> {
+        self.mappings.iter()
+    }
 }

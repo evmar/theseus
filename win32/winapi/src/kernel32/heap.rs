@@ -48,7 +48,10 @@ pub fn HeapCreate(
     // Currently none of the flags will affect behavior, but we might need to revisit this
     // with exceptions or threads support...
     let size = dwInitialSize.max(20 << 20);
-    let addr = kernel32::alloc_mapping("HeapCreate".into(), 0, size);
+    let addr = kernel32::state()
+        .mappings
+        .borrow_mut()
+        .alloc("HeapCreate".into(), 0, size);
 
     let heap = Heap::new(addr, size);
     kernel32::state()

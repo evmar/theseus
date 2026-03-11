@@ -26,7 +26,7 @@ use crate::heap::Heap;
 
 #[derive(Default)]
 pub struct State {
-    mappings: RefCell<Vec<Mapping>>,
+    mappings: RefCell<Mappings>,
     heaps: RefCell<HashMap<u32, Rc<Heap>>>,
 }
 
@@ -40,11 +40,7 @@ pub fn init_state() {
 
     {
         let mut mappings = state.mappings.borrow_mut();
-        mappings.push(Mapping {
-            desc: "null page".into(),
-            addr: 0,
-            size: 0x1000,
-        });
+        mappings.alloc("null page".into(), 0, 0x1000);
     }
 
     STATE.0.set(state).unwrap_or_else(|_| panic!());
