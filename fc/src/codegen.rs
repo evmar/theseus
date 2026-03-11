@@ -135,8 +135,12 @@ fn gen_jmp(state: &State, instr: &iced_x86::Instruction) -> String {
         iced_x86::OpKind::Memory => {
             // If it's like `call [someaddr]` where someaddr is in the IAT, resolve it directly.
             if let Some(addr) = is_abs_memory_ref(instr) {
-                if let Some((dll, func)) = state.imports.get(&addr) {
-                    format!("Cont({dll}::stdcall_{func})")
+                if let Some(import) = state.imports.get(&addr) {
+                    format!(
+                        "Cont({dll}::stdcall_{func})",
+                        dll = import.dll,
+                        func = import.func
+                    )
                 } else {
                     format!("indirect(MACHINE.memory.read({addr:#x}u32))")
                 }
@@ -155,9 +159,19 @@ fn gen_block(w: &mut dyn std::fmt::Write, state: &State, ip: AddrAbs, block: &Bl
     println!("gen block: {:#08x}", ip.0);
 
     write!(w, "pub fn x{:08x}() -> Cont {{\n", ip.0);
+    match block {
+        Block::Instrs(instrs) => gen_instrs(w, state, instrs),
+        Block::Stdcall(func) => {
+            writeln!(w, "Cont({func})\n");
+        }
+    }
+    write!(w, "}}\n\n");
+}
+
+fn gen_instrs(w: &mut dyn std::fmt::Write, state: &State, instrs: &[iced_x86::Instruction]) {
     write!(w, "unsafe {{\n");
 
-    for instr in &block.instrs {
+    for instr in instrs {
         println!("gen: {}", instr);
         writeln!(w, "// {:08x} {}", AddrAbs(instr.ip32()).0, instr);
         use iced_x86::Mnemonic::*;
@@ -359,7 +373,7 @@ fn gen_block(w: &mut dyn std::fmt::Write, state: &State, ip: AddrAbs, block: &Bl
             }
         }
     }
-    write!(w, "}}}}\n\n");
+    write!(w, "}}\n");
 }
 
 pub fn gen_file(state: &mut State, outdir: &str) -> Result<()> {
@@ -374,21 +388,9 @@ pub fn gen_file(state: &mut State, outdir: &str) -> Result<()> {
     write!(&mut text, "use runtime::*;\n");
     write!(&mut text, "use winapi::*;\n\n");
 
-    let mut iat_entries = state.imports.iter().collect::<Vec<_>>();
-    iat_entries.sort();
+    let mut imports = state.imports.values().collect::<Vec<_>>();
+    imports.sort_by_key(|i| i.iat_addr);
 
-    // Just need to reserve some fake addresses for imported functions so they can be assigned addresses.
-    let imports_addr =
-        state
-            .mem
-            .mappings
-            .alloc("imported functions".into(), 0, iat_entries.len() as u32 * 4);
-    for (i, _) in iat_entries.iter().enumerate() {
-        state
-            .mem
-            .write::<u32>(imports_addr + ((i + 1) as u32 * 4), 0xffff_ffff);
-    }
-    println!("imports sec {:x}", imports_addr);
     state.mem.mappings.dump();
 
     // It would be cool if we could just link a wasm object file that contains data sections
@@ -407,6 +409,11 @@ pub fn gen_file(state: &mut State, outdir: &str) -> Result<()> {
         if addr == 0 {
             continue;
         }
+        let buf = state.mem.slice(AddrAbs(map.addr), map.size);
+        if buf.iter().all(|&b| b == 0) {
+            continue;
+        }
+
         write!(
             &mut text,
             "let bytes = include_bytes!(\"../data/{addr:08x}.raw\").as_slice();\n"
@@ -416,23 +423,15 @@ pub fn gen_file(state: &mut State, outdir: &str) -> Result<()> {
             "mappings.alloc(
                 {desc:?}.to_string(),
                 {addr:#x},
-                bytes.len() as u32
+                {size:#x}
             );\n",
             desc = map.desc,
+            size = buf.len(),
         );
         write!(
             &mut text,
             "let out = &mut MACHINE.memory.bytes[{addr:#x} as usize..][..bytes.len()];
             out.copy_from_slice(bytes);\n"
-        );
-    }
-
-    // IAT is within an existing mapping, so don't allocate one for it.
-    for (i, (addr, (dll, func))) in iat_entries.iter().enumerate() {
-        let func_addr = imports_addr + ((i as u32 + 1) * 4);
-        write!(
-            &mut text,
-            "MACHINE.memory.write::<u32>({addr:#08x}, {func_addr:#x}); // {dll}::stdcall_{func}\n"
         );
     }
 

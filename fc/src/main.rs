@@ -6,10 +6,19 @@ use std::collections::{HashMap, VecDeque};
 
 use memory::*;
 
+struct Import {
+    dll: String,
+    func: String,
+    // address to write func_addr to
+    iat_addr: u32,
+    // address of code
+    func_addr: u32,
+}
+
 struct State {
     pe_file: pe::File,
     mem: Memory,
-    imports: HashMap<u32, (String, String)>,
+    imports: HashMap<u32, Import>,
     blocks: HashMap<u32, Block>,
 }
 
@@ -53,12 +62,33 @@ impl State {
                 .to_lowercase();
             let name = name.trim_end_matches(".dll");
             for (addr, entry) in imp.iat_iter(image) {
-                let addr = AddrImage(addr);
+                let addr = AddrImage(addr).to_abs(image_base);
                 self.imports.insert(
-                    addr.to_abs(image_base).0,
-                    (name.to_string(), entry.as_import_symbol(image).to_string()),
+                    addr.0,
+                    Import {
+                        dll: name.to_string(),
+                        func: entry.as_import_symbol(image).to_string(),
+                        iat_addr: addr.0,
+                        func_addr: 0,
+                    },
                 );
             }
+        }
+
+        // Reserve some fake addresses for imported functions so they can be assigned addresses.
+        // If we never write to the memory it stays zero and doesn't end up in the output.
+        let import_funcs_addr = self.mem.mappings.alloc(
+            "imported functions".into(),
+            0,
+            self.imports.len() as u32 * 4,
+        );
+        for (i, import) in self.imports.values_mut().enumerate() {
+            import.func_addr = import_funcs_addr + ((i + 1) as u32 * 4);
+            self.mem.write::<u32>(import.iat_addr, import.func_addr);
+            self.blocks.insert(
+                import.func_addr,
+                Block::Stdcall(format!("{}::stdcall_{}", import.dll, import.func)),
+            );
         }
     }
 
@@ -80,18 +110,17 @@ fn is_abs_memory_ref(instr: &iced_x86::Instruction) -> Option<u32> {
     Some(instr.memory_displacement32())
 }
 
-struct Block {
-    instrs: Vec<iced_x86::Instruction>,
+enum Block {
+    Instrs(Vec<iced_x86::Instruction>),
+    Stdcall(String),
 }
 
-fn traverse(state: &State, ip: u32) -> HashMap<u32, Block> {
-    let mut blocks = HashMap::<u32, Block>::new();
-
+fn traverse(state: &mut State, ip: u32) {
     let mut queue = VecDeque::<u32>::new();
     queue.push_back(ip);
 
     while let Some(ip) = queue.pop_front() {
-        if blocks.contains_key(&ip) {
+        if state.blocks.contains_key(&ip) {
             continue;
         }
         println!("visit {ip:#08x}");
@@ -144,11 +173,8 @@ fn traverse(state: &State, ip: u32) -> HashMap<u32, Block> {
             break;
         }
 
-        let block = Block { instrs };
-        blocks.insert(ip, block);
+        state.blocks.insert(ip, Block::Instrs(instrs));
     }
-
-    blocks
 }
 
 fn run() -> Result<()> {
@@ -164,17 +190,18 @@ fn run() -> Result<()> {
     state.read_imports();
 
     let ip = AddrImage(state.pe_file.opt_header.AddressOfEntryPoint).to_abs(state.image_base());
-    state.blocks = traverse(&state, ip.0);
+    traverse(&mut state, ip.0);
 
     codegen::gen_file(&mut state, outdir)?;
 
     let data_dir = format!("{outdir}/data");
     std::fs::create_dir_all(&data_dir)?;
     for map in state.mem.mappings.iter() {
-        std::fs::write(
-            format!("{outdir}/data/{:08x}.raw", map.addr),
-            state.mem.slice(AddrAbs(map.addr), map.size),
-        )?;
+        let buf = state.mem.slice(AddrAbs(map.addr), map.size);
+        if buf.iter().all(|&b| b == 0) {
+            continue;
+        }
+        std::fs::write(format!("{outdir}/data/{:08x}.raw", map.addr), buf)?;
     }
     Ok(())
 }
