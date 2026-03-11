@@ -1,9 +1,9 @@
-use crate::kernel32::HANDLE;
+use crate::{kernel32::HANDLE, stub};
 use runtime::{Cont, HOST, Host, MACHINE};
 
 #[win32_derive::dllexport]
 pub fn GetStdHandle(_x: u32) -> u32 {
-    return 0xf11e_0002;
+    stub!(0xf11e_0002u32)
 }
 
 #[win32_derive::dllexport]
