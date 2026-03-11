@@ -10,8 +10,8 @@ impl std::fmt::Debug for Mapping {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(
             f,
-            "{} @ {:#08x} ({:#x} bytes)",
-            self.desc, self.addr, self.size
+            "{:08x} {} ({:#x} bytes)",
+            self.addr, self.desc, self.size
         )
     }
 }

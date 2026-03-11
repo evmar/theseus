@@ -29,7 +29,7 @@ impl State {
                 ..(sec.PointerToRawData + sec.SizeOfRawData) as usize];
             mem.put(addr, data);
         }
-        println!("{:#x?}", mem);
+        println!("{:#x?}", mem.mappings);
 
         State {
             pe_file: f,
@@ -49,13 +49,15 @@ impl State {
         let image_base = self.image_base();
         let image = self.mem.slice_all(image_base);
         for imp in pe::read_imports(imports.as_slice(image).unwrap()) {
-            let name = std::str::from_utf8(imp.image_name(image)).unwrap();
-            println!("{name:?}");
+            let name = std::str::from_utf8(imp.image_name(image))
+                .unwrap()
+                .to_lowercase();
+            let name = name.trim_end_matches(".dll");
             for (addr, entry) in imp.iat_iter(image) {
                 let addr = AddrImage(addr);
                 self.imports.insert(
                     addr.to_abs(image_base).0,
-                    (name.into(), entry.as_import_symbol(image).to_string()),
+                    (name.to_string(), entry.as_import_symbol(image).to_string()),
                 );
             }
         }

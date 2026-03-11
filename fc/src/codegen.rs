@@ -122,7 +122,7 @@ fn gen_abs_jmp(state: &State, addr: u32) -> String {
     if state.blocks.contains_key(&addr) {
         format!("Cont(x{:08x})", addr)
     } else {
-        format!("indirect({:#08x}u32)", addr)
+        format!("/* TODO */ indirect({:#08x}u32)", addr)
     }
 }
 
@@ -133,10 +133,9 @@ fn gen_jmp(state: &State, instr: &iced_x86::Instruction) -> String {
             gen_abs_jmp(state, addr)
         }
         iced_x86::OpKind::Memory => {
+            // If it's like `call [someaddr]` where someaddr is in the IAT, resolve it directly.
             if let Some(addr) = is_abs_memory_ref(instr) {
                 if let Some((dll, func)) = state.imports.get(&addr) {
-                    let dll = dll.to_lowercase();
-                    let dll = dll.trim_end_matches(".dll");
                     format!("Cont({dll}::stdcall_{func})")
                 } else {
                     format!("indirect(MACHINE.memory.read({addr:#x}u32))")
@@ -375,12 +374,8 @@ pub fn gen_file(state: &State, outdir: &str) -> Result<()> {
     write!(&mut text, "use runtime::*;\n");
     write!(&mut text, "use winapi::*;\n\n");
 
-    let mut ips = state.blocks.keys().copied().collect::<Vec<_>>();
-    ips.sort();
-    for &ip in &ips {
-        let block = state.blocks.get(&ip).unwrap();
-        gen_block(&mut text, &state, AddrAbs(ip), &block);
-    }
+    let mut iat_entries = state.imports.iter().collect::<Vec<_>>();
+    iat_entries.sort();
 
     // It would be cool if we could just link a wasm object file that contains data sections
     // like
@@ -388,24 +383,48 @@ pub fn gen_file(state: &State, outdir: &str) -> Result<()> {
     // Unfortunately, wasm-lld only supports "relocatable" object files which means it moves
     // the location of such data at link time.  We could do it by postprocessing the wasm
     // file, maybe.
-    write!(&mut text, "pub fn init_mappings() {{\n");
+    write!(&mut text, "pub fn init_mappings() {{ unsafe {{\n");
+    write!(
+        &mut text,
+        "let mut mappings = kernel32::state().mappings.borrow_mut();\n"
+    );
     for map in state.mem.mappings.iter() {
         let addr = map.addr;
         write!(
             &mut text,
             "let bytes = include_bytes!(\"../data/{addr:08x}.raw\").as_slice();\n"
         );
-        // write!(
-        //     &mut text,
-        //     "kernel32::init_mapping(
-        //     kernel32::Mapping {{
-        //         desc: \"pe section\".into(),
-        //         addr: {addr:#08x},
-        //         size: bytes.len() as u32
-        //     }}, kernel32::MappingData::Bytes(bytes));\n"
-        // );
+        write!(
+            &mut text,
+            "mappings.alloc(
+                \"pe section\".into(),
+                {addr:#x},
+                bytes.len() as u32
+            );\n"
+        );
+        write!(
+            &mut text,
+            "let out = &mut MACHINE.memory.bytes[{addr:#x} as usize..][..bytes.len()];
+            out.copy_from_slice(bytes);\n"
+        );
     }
-    write!(&mut text, "}}\n");
+
+    // IAT is within an existing mapping, so don't allocate one for it.
+    for (addr, (dll, func)) in iat_entries {
+        write!(
+            &mut text,
+            "MACHINE.memory.write::<u32>({addr:#08x}, 0); // {dll}::stdcall_{func})\n"
+        );
+    }
+
+    write!(&mut text, "}} }}\n");
+
+    let mut ips = state.blocks.keys().copied().collect::<Vec<_>>();
+    ips.sort();
+    for &ip in &ips {
+        let block = state.blocks.get(&ip).unwrap();
+        gen_block(&mut text, &state, AddrAbs(ip), &block);
+    }
 
     write!(
         &mut text,

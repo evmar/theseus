@@ -26,8 +26,8 @@ use crate::heap::Heap;
 
 #[derive(Default)]
 pub struct State {
-    mappings: RefCell<Mappings>,
-    heaps: RefCell<HashMap<u32, Rc<Heap>>>,
+    pub mappings: RefCell<Mappings>,
+    pub heaps: RefCell<HashMap<u32, Rc<Heap>>>,
 }
 
 struct StaticState(OnceCell<State>);

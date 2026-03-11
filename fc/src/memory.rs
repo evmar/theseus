@@ -54,6 +54,12 @@ impl std::fmt::LowerHex for AddrAbs {
     }
 }
 
+impl std::fmt::Debug for AddrAbs {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{:#08x}", self.0)
+    }
+}
+
 #[derive(Clone, Copy)]
 pub struct AddrImage(pub u32);
 impl AddrImage {
