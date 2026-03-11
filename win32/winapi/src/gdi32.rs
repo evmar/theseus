@@ -1,5 +1,7 @@
 use runtime::*;
 
+use crate::stub;
+
 pub type HDC = u32;
 pub type HGDIOBJ = u32;
 
@@ -20,7 +22,7 @@ pub fn GetObjectA(_h: HGDIOBJ, _c: i32, _pv: u32) -> i32 {
 
 #[win32_derive::dllexport]
 pub fn GetStockObject(_i: u32 /* GET_STOCK_OBJECT_FLAGS */) -> HGDIOBJ {
-    todo!()
+    stub!(0)
 }
 
 #[win32_derive::dllexport]

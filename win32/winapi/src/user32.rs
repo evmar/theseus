@@ -1,5 +1,7 @@
 use runtime::*;
 
+use crate::stub;
+
 pub type HWND = u32;
 pub type HMENU = u32;
 pub type HINSTANCE = u32;
@@ -27,12 +29,12 @@ pub fn CreateWindowExA(
 
 #[win32_derive::dllexport]
 pub fn LoadCursorA(_hInstance: HINSTANCE, _lpCursorName: u32) -> HCURSOR {
-    todo!()
+    stub!(0)
 }
 
 #[win32_derive::dllexport]
 pub fn LoadIconA(_hInstance: HINSTANCE, _lpIconName: u32) -> HICON {
-    todo!()
+    stub!(0)
 }
 
 #[win32_derive::dllexport]
@@ -44,7 +46,7 @@ pub fn LoadImageA(
     _cy: i32,
     _fuLoad: u32, /* IMAGE_FLAGS */
 ) -> HANDLE {
-    todo!()
+    stub!(0)
 }
 
 #[win32_derive::dllexport]
