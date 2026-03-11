@@ -1,9 +1,21 @@
 use crate::{kernel32::HANDLE, stub};
 use runtime::{Cont, HOST, Host, MACHINE};
 
+const STDIN_HFILE: HANDLE = 0xF11E_0001;
+const STDOUT_HFILE: HANDLE = 0xF11E_0002;
+const STDERR_HFILE: HANDLE = 0xF11E_0003;
+
 #[win32_derive::dllexport]
-pub fn GetStdHandle(_x: u32) -> u32 {
-    stub!(0xf11e_0002u32)
+pub fn GetStdHandle(nStdHandle: u32) -> u32 {
+    match nStdHandle as i32 {
+        -10 => STDIN_HFILE,
+        -11 => STDOUT_HFILE,
+        -12 => STDERR_HFILE,
+        _ => {
+            log::error!("GetStdHandle: invalid handle");
+            0
+        }
+    }
 }
 
 #[win32_derive::dllexport]
@@ -32,10 +44,6 @@ pub fn WriteFile(
     }
     return 1;
 }
-
-const STDIN_HFILE: HANDLE = 0xF11E_0001;
-const STDOUT_HFILE: HANDLE = 0xF11E_0002;
-const STDERR_HFILE: HANDLE = 0xF11E_0003;
 
 #[win32_derive::dllexport]
 pub fn GetFileType(hFile: HANDLE) -> u32 /* FILE_TYPE */ {
