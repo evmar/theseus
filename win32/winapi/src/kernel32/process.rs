@@ -106,7 +106,6 @@ pub fn init_process() {
             (&raw const *teb).byte_offset_from_unsigned(MACHINE.memory.bytes) as u32;
 
         mappings.dump();
-        MACHINE.dump_state();
     }
 }
 
