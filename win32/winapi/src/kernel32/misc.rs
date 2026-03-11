@@ -235,5 +235,5 @@ pub fn HeapSize(_hHeap: HANDLE, _dwFlags: u32 /* HEAP_FLAGS */, _lpMem: u32) -> 
 
 #[win32_derive::dllexport]
 pub fn GetEnvironmentStringsW() -> u32 {
-    todo!()
+    stub!(0)
 }
