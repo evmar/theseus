@@ -6,6 +6,15 @@ pub struct Mapping {
     pub size: u32,
 }
 
+impl Mapping {
+    pub fn range(&self) -> std::ops::Range<u32> {
+        self.addr..self.addr + self.size
+    }
+    pub fn contains(&self, addr: u32) -> bool {
+        self.range().contains(&addr)
+    }
+}
+
 impl std::fmt::Debug for Mapping {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(

@@ -127,6 +127,10 @@ impl Block {
 }
 
 fn traverse(state: &mut State, ip: u32) {
+    if state.blocks.contains_key(&ip) {
+        return;
+    }
+
     let mut queue = VecDeque::<u32>::new();
     queue.push_back(ip);
 
@@ -188,6 +192,32 @@ fn traverse(state: &mut State, ip: u32) {
     }
 }
 
+fn scan_for_pointers(state: &mut State) {
+    let entry_point = AddrImage(state.pe_file.opt_header.AddressOfEntryPoint)
+        .to_abs(state.image_base())
+        .0;
+    let code = state
+        .mem
+        .mappings
+        .iter()
+        .find(|m| m.contains(entry_point))
+        .unwrap()
+        .range();
+    let data_section = state
+        .mem
+        .mappings
+        .iter()
+        .find(|m| m.desc == ".data")
+        .unwrap();
+    let data = state.mem.data[data_section.addr as usize..][..data_section.size as usize].to_vec();
+    for w in data.windows(4) {
+        let addr = u32::from_le_bytes(w.try_into().unwrap());
+        if code.contains(&addr) {
+            traverse(state, addr);
+        }
+    }
+}
+
 fn run() -> Result<()> {
     let args = std::env::args().collect::<Vec<_>>();
     let [_, exe_path, outdir] = args.as_slice() else {
@@ -202,6 +232,7 @@ fn run() -> Result<()> {
 
     let ip = AddrImage(state.pe_file.opt_header.AddressOfEntryPoint).to_abs(state.image_base());
     traverse(&mut state, ip.0);
+    scan_for_pointers(&mut state);
 
     codegen::gen_file(&mut state, outdir)?;
 
