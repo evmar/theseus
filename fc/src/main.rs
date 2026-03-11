@@ -82,7 +82,9 @@ impl State {
             0,
             self.imports.len() as u32 * 4,
         );
-        for (i, import) in self.imports.values_mut().enumerate() {
+        let mut imports = self.imports.values_mut().collect::<Vec<_>>();
+        imports.sort_by_key(|i| i.iat_addr);
+        for (i, import) in imports.into_iter().enumerate() {
             import.func_addr = import_funcs_addr + ((i + 1) as u32 * 4);
             self.mem.write::<u32>(import.iat_addr, import.func_addr);
             self.blocks.insert(

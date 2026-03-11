@@ -32,251 +32,251 @@ pub fn init_mappings() {
     }
 }
 pub fn x00001004() -> Cont {
-    Cont(gdi32::stdcall_SelectObject)
-}
-
-pub fn x00001008() -> Cont {
-    Cont(kernel32::stdcall_HeapCreate)
-}
-
-pub fn x0000100c() -> Cont {
-    Cont(gdi32::stdcall_GetObjectA)
-}
-
-pub fn x00001010() -> Cont {
-    Cont(kernel32::stdcall_GetVersionExA)
-}
-
-pub fn x00001014() -> Cont {
-    Cont(user32::stdcall_LoadImageA)
-}
-
-pub fn x00001018() -> Cont {
-    Cont(kernel32::stdcall_GetACP)
-}
-
-pub fn x0000101c() -> Cont {
     Cont(ddraw::stdcall_DirectDrawCreateEx)
 }
 
-pub fn x00001020() -> Cont {
-    Cont(kernel32::stdcall_VirtualAlloc)
+pub fn x00001008() -> Cont {
+    Cont(gdi32::stdcall_SelectObject)
 }
 
-pub fn x00001024() -> Cont {
-    Cont(kernel32::stdcall_TerminateProcess)
-}
-
-pub fn x00001028() -> Cont {
-    Cont(kernel32::stdcall_GetEnvironmentStringsW)
-}
-
-pub fn x0000102c() -> Cont {
-    Cont(kernel32::stdcall_GetEnvironmentStrings)
-}
-
-pub fn x00001030() -> Cont {
-    Cont(user32::stdcall_DefWindowProcA)
-}
-
-pub fn x00001034() -> Cont {
-    Cont(kernel32::stdcall_GetModuleHandleA)
-}
-
-pub fn x00001038() -> Cont {
-    Cont(kernel32::stdcall_VirtualFree)
-}
-
-pub fn x0000103c() -> Cont {
-    Cont(user32::stdcall_PeekMessageA)
-}
-
-pub fn x00001040() -> Cont {
-    Cont(kernel32::stdcall_GetStartupInfoA)
-}
-
-pub fn x00001044() -> Cont {
-    Cont(kernel32::stdcall_HeapDestroy)
-}
-
-pub fn x00001048() -> Cont {
-    Cont(kernel32::stdcall_GetStringTypeA)
-}
-
-pub fn x0000104c() -> Cont {
-    Cont(user32::stdcall_UpdateWindow)
-}
-
-pub fn x00001050() -> Cont {
-    Cont(user32::stdcall_LoadIconA)
-}
-
-pub fn x00001054() -> Cont {
-    Cont(gdi32::stdcall_GetStockObject)
-}
-
-pub fn x00001058() -> Cont {
-    Cont(kernel32::stdcall_GetFileType)
-}
-
-pub fn x0000105c() -> Cont {
-    Cont(kernel32::stdcall_GetProcAddress)
-}
-
-pub fn x00001060() -> Cont {
-    Cont(kernel32::stdcall_FreeEnvironmentStringsW)
-}
-
-pub fn x00001064() -> Cont {
-    Cont(kernel32::stdcall_OutputDebugStringA)
-}
-
-pub fn x00001068() -> Cont {
-    Cont(kernel32::stdcall_HeapReAlloc)
-}
-
-pub fn x0000106c() -> Cont {
-    Cont(user32::stdcall_CreateWindowExA)
-}
-
-pub fn x00001070() -> Cont {
-    Cont(kernel32::stdcall_ExitProcess)
-}
-
-pub fn x00001074() -> Cont {
-    Cont(kernel32::stdcall_HeapAlloc)
-}
-
-pub fn x00001078() -> Cont {
-    Cont(kernel32::stdcall_GetCPInfo)
-}
-
-pub fn x0000107c() -> Cont {
-    Cont(kernel32::stdcall_GetStdHandle)
-}
-
-pub fn x00001080() -> Cont {
-    Cont(kernel32::stdcall_GetStringTypeW)
-}
-
-pub fn x00001084() -> Cont {
-    Cont(kernel32::stdcall_GetCommandLineA)
-}
-
-pub fn x00001088() -> Cont {
-    Cont(gdi32::stdcall_StretchBlt)
-}
-
-pub fn x0000108c() -> Cont {
-    Cont(kernel32::stdcall_FreeEnvironmentStringsA)
-}
-
-pub fn x00001090() -> Cont {
-    Cont(user32::stdcall_DispatchMessageA)
-}
-
-pub fn x00001094() -> Cont {
-    Cont(gdi32::stdcall_DeleteDC)
-}
-
-pub fn x00001098() -> Cont {
-    Cont(kernel32::stdcall_GetTickCount)
-}
-
-pub fn x0000109c() -> Cont {
-    Cont(kernel32::stdcall_WideCharToMultiByte)
-}
-
-pub fn x000010a0() -> Cont {
-    Cont(kernel32::stdcall_GetCurrentProcess)
-}
-
-pub fn x000010a4() -> Cont {
-    Cont(kernel32::stdcall_SetHandleCount)
-}
-
-pub fn x000010a8() -> Cont {
-    Cont(kernel32::stdcall_LoadLibraryA)
-}
-
-pub fn x000010ac() -> Cont {
-    Cont(kernel32::stdcall_MultiByteToWideChar)
-}
-
-pub fn x000010b0() -> Cont {
-    Cont(kernel32::stdcall_WriteFile)
-}
-
-pub fn x000010b4() -> Cont {
-    Cont(user32::stdcall_SetFocus)
-}
-
-pub fn x000010b8() -> Cont {
-    Cont(kernel32::stdcall_GetOEMCP)
-}
-
-pub fn x000010bc() -> Cont {
-    Cont(user32::stdcall_TranslateMessage)
-}
-
-pub fn x000010c0() -> Cont {
-    Cont(kernel32::stdcall_UnhandledExceptionFilter)
-}
-
-pub fn x000010c4() -> Cont {
-    Cont(user32::stdcall_PostQuitMessage)
-}
-
-pub fn x000010c8() -> Cont {
-    Cont(kernel32::stdcall_HeapSize)
-}
-
-pub fn x000010cc() -> Cont {
-    Cont(user32::stdcall_MessageBoxA)
-}
-
-pub fn x000010d0() -> Cont {
-    Cont(user32::stdcall_ShowWindow)
-}
-
-pub fn x000010d4() -> Cont {
-    Cont(kernel32::stdcall_GetVersion)
-}
-
-pub fn x000010d8() -> Cont {
-    Cont(kernel32::stdcall_RtlUnwind)
-}
-
-pub fn x000010dc() -> Cont {
-    Cont(kernel32::stdcall_GetModuleFileNameA)
-}
-
-pub fn x000010e0() -> Cont {
-    Cont(kernel32::stdcall_HeapFree)
-}
-
-pub fn x000010e4() -> Cont {
-    Cont(kernel32::stdcall_LCMapStringW)
-}
-
-pub fn x000010e8() -> Cont {
-    Cont(kernel32::stdcall_GetEnvironmentVariableA)
-}
-
-pub fn x000010ec() -> Cont {
-    Cont(user32::stdcall_LoadCursorA)
-}
-
-pub fn x000010f0() -> Cont {
+pub fn x0000100c() -> Cont {
     Cont(gdi32::stdcall_CreateCompatibleDC)
 }
 
-pub fn x000010f4() -> Cont {
+pub fn x00001010() -> Cont {
+    Cont(gdi32::stdcall_GetObjectA)
+}
+
+pub fn x00001014() -> Cont {
+    Cont(gdi32::stdcall_StretchBlt)
+}
+
+pub fn x00001018() -> Cont {
+    Cont(gdi32::stdcall_DeleteDC)
+}
+
+pub fn x0000101c() -> Cont {
+    Cont(gdi32::stdcall_GetStockObject)
+}
+
+pub fn x00001020() -> Cont {
+    Cont(kernel32::stdcall_OutputDebugStringA)
+}
+
+pub fn x00001024() -> Cont {
+    Cont(kernel32::stdcall_HeapAlloc)
+}
+
+pub fn x00001028() -> Cont {
+    Cont(kernel32::stdcall_GetModuleFileNameA)
+}
+
+pub fn x0000102c() -> Cont {
+    Cont(kernel32::stdcall_UnhandledExceptionFilter)
+}
+
+pub fn x00001030() -> Cont {
+    Cont(kernel32::stdcall_GetStringTypeW)
+}
+
+pub fn x00001034() -> Cont {
+    Cont(kernel32::stdcall_GetStringTypeA)
+}
+
+pub fn x00001038() -> Cont {
+    Cont(kernel32::stdcall_LCMapStringW)
+}
+
+pub fn x0000103c() -> Cont {
     Cont(kernel32::stdcall_LCMapStringA)
 }
 
-pub fn x000010f8() -> Cont {
+pub fn x00001040() -> Cont {
+    Cont(kernel32::stdcall_MultiByteToWideChar)
+}
+
+pub fn x00001044() -> Cont {
+    Cont(kernel32::stdcall_LoadLibraryA)
+}
+
+pub fn x00001048() -> Cont {
+    Cont(kernel32::stdcall_GetProcAddress)
+}
+
+pub fn x0000104c() -> Cont {
+    Cont(kernel32::stdcall_GetOEMCP)
+}
+
+pub fn x00001050() -> Cont {
+    Cont(kernel32::stdcall_GetACP)
+}
+
+pub fn x00001054() -> Cont {
+    Cont(kernel32::stdcall_GetCPInfo)
+}
+
+pub fn x00001058() -> Cont {
+    Cont(kernel32::stdcall_VirtualAlloc)
+}
+
+pub fn x0000105c() -> Cont {
+    Cont(kernel32::stdcall_WriteFile)
+}
+
+pub fn x00001060() -> Cont {
+    Cont(kernel32::stdcall_RtlUnwind)
+}
+
+pub fn x00001064() -> Cont {
+    Cont(kernel32::stdcall_GetModuleHandleA)
+}
+
+pub fn x00001068() -> Cont {
+    Cont(kernel32::stdcall_GetStartupInfoA)
+}
+
+pub fn x0000106c() -> Cont {
+    Cont(kernel32::stdcall_GetCommandLineA)
+}
+
+pub fn x00001070() -> Cont {
+    Cont(kernel32::stdcall_GetVersion)
+}
+
+pub fn x00001074() -> Cont {
+    Cont(kernel32::stdcall_ExitProcess)
+}
+
+pub fn x00001078() -> Cont {
+    Cont(kernel32::stdcall_HeapReAlloc)
+}
+
+pub fn x0000107c() -> Cont {
+    Cont(kernel32::stdcall_GetTickCount)
+}
+
+pub fn x00001080() -> Cont {
+    Cont(kernel32::stdcall_TerminateProcess)
+}
+
+pub fn x00001084() -> Cont {
+    Cont(kernel32::stdcall_GetCurrentProcess)
+}
+
+pub fn x00001088() -> Cont {
+    Cont(kernel32::stdcall_HeapSize)
+}
+
+pub fn x0000108c() -> Cont {
+    Cont(kernel32::stdcall_HeapFree)
+}
+
+pub fn x00001090() -> Cont {
+    Cont(kernel32::stdcall_HeapCreate)
+}
+
+pub fn x00001094() -> Cont {
+    Cont(kernel32::stdcall_VirtualFree)
+}
+
+pub fn x00001098() -> Cont {
+    Cont(kernel32::stdcall_FreeEnvironmentStringsA)
+}
+
+pub fn x0000109c() -> Cont {
+    Cont(kernel32::stdcall_FreeEnvironmentStringsW)
+}
+
+pub fn x000010a0() -> Cont {
+    Cont(kernel32::stdcall_WideCharToMultiByte)
+}
+
+pub fn x000010a4() -> Cont {
+    Cont(kernel32::stdcall_GetEnvironmentStrings)
+}
+
+pub fn x000010a8() -> Cont {
+    Cont(kernel32::stdcall_GetEnvironmentStringsW)
+}
+
+pub fn x000010ac() -> Cont {
+    Cont(kernel32::stdcall_SetHandleCount)
+}
+
+pub fn x000010b0() -> Cont {
+    Cont(kernel32::stdcall_GetStdHandle)
+}
+
+pub fn x000010b4() -> Cont {
+    Cont(kernel32::stdcall_GetFileType)
+}
+
+pub fn x000010b8() -> Cont {
+    Cont(kernel32::stdcall_GetEnvironmentVariableA)
+}
+
+pub fn x000010bc() -> Cont {
+    Cont(kernel32::stdcall_GetVersionExA)
+}
+
+pub fn x000010c0() -> Cont {
+    Cont(kernel32::stdcall_HeapDestroy)
+}
+
+pub fn x000010c4() -> Cont {
+    Cont(user32::stdcall_DispatchMessageA)
+}
+
+pub fn x000010c8() -> Cont {
+    Cont(user32::stdcall_TranslateMessage)
+}
+
+pub fn x000010cc() -> Cont {
+    Cont(user32::stdcall_PeekMessageA)
+}
+
+pub fn x000010d0() -> Cont {
+    Cont(user32::stdcall_MessageBoxA)
+}
+
+pub fn x000010d4() -> Cont {
+    Cont(user32::stdcall_SetFocus)
+}
+
+pub fn x000010d8() -> Cont {
+    Cont(user32::stdcall_UpdateWindow)
+}
+
+pub fn x000010dc() -> Cont {
+    Cont(user32::stdcall_ShowWindow)
+}
+
+pub fn x000010e0() -> Cont {
+    Cont(user32::stdcall_CreateWindowExA)
+}
+
+pub fn x000010e4() -> Cont {
     Cont(user32::stdcall_GetSystemMetrics)
+}
+
+pub fn x000010e8() -> Cont {
+    Cont(user32::stdcall_LoadImageA)
+}
+
+pub fn x000010ec() -> Cont {
+    Cont(user32::stdcall_DefWindowProcA)
+}
+
+pub fn x000010f0() -> Cont {
+    Cont(user32::stdcall_PostQuitMessage)
+}
+
+pub fn x000010f4() -> Cont {
+    Cont(user32::stdcall_LoadIconA)
+}
+
+pub fn x000010f8() -> Cont {
+    Cont(user32::stdcall_LoadCursorA)
 }
 
 pub fn x000010fc() -> Cont {
