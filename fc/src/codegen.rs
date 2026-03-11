@@ -273,7 +273,11 @@ fn gen_instrs(w: &mut dyn std::fmt::Write, state: &State, instrs: &[iced_x86::In
             }
 
             Movzx => {
-                writeln!(w, "movzx();");
+                writeln!(
+                    w,
+                    "{};",
+                    set_op(instr, 0, format!("{} as _", get_op(instr, 1)))
+                );
             }
             Movsx => {
                 writeln!(w, "movsx();");

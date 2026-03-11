@@ -61,10 +61,6 @@ pub fn cmpsb() {
     todo!("cmpsb");
 }
 
-pub fn movzx() {
-    todo!("movzx");
-}
-
 pub fn movsx() {
     todo!("movsx");
 }
