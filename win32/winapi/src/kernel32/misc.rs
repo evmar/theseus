@@ -19,7 +19,7 @@ pub fn GetCommandLineA() -> u32 {
 }
 
 #[repr(C)]
-#[derive(Debug)]
+#[derive(Debug, Default, zerocopy::IntoBytes, zerocopy::Immutable)]
 pub struct STARTUPINFOA {
     cb: u32,
     lpReserved: u32,
@@ -44,20 +44,15 @@ pub struct STARTUPINFOA {
 #[win32_derive::dllexport]
 pub fn GetStartupInfoA(lpStartupInfo: u32) {
     let size = unsafe { MACHINE.memory.read::<u32>(lpStartupInfo) };
-    if size < std::mem::size_of::<STARTUPINFOA>() as u32 {
+    if size > 0 && size < std::mem::size_of::<STARTUPINFOA>() as u32 {
         log::error!("GetStartupInfoA: undersized buffer");
         return;
     }
-    stub!(());
-    panic!("stub");
-    /*
-        // MSVC runtime library passes in uninitialized memory for lpStartupInfo, so don't trust info.cb.
-        let info = lpStartupInfo.unwrap();
-        let len = std::mem::size_of::<STARTUPINFOA>() as u32;
-        unsafe { info.clear_memory(len) };
 
-        info.cb = len;
-    */
+    let info = STARTUPINFOA {
+        ..Default::default()
+    };
+    unsafe { MACHINE.memory.write(lpStartupInfo, info) };
 }
 
 #[win32_derive::dllexport]
