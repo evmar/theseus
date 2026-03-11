@@ -2,6 +2,7 @@ mod dll;
 mod env;
 mod file;
 mod heap;
+mod mapping;
 mod misc;
 mod nls;
 mod process;
@@ -16,19 +17,12 @@ pub use dll::*;
 pub use env::*;
 pub use file::*;
 pub use heap::*;
+pub use mapping::*;
 pub use misc::*;
 pub use nls::*;
 pub use process::*;
 
 use crate::heap::Heap;
-
-#[derive(Debug, Default)]
-pub struct Mapping {
-    #[allow(unused)]
-    desc: String,
-    addr: u32,
-    size: u32,
-}
 
 #[derive(Default)]
 pub struct State {
@@ -58,32 +52,4 @@ pub fn init_state() {
 
 pub fn state() -> &'static State {
     STATE.0.get_or_init(|| panic!())
-}
-
-pub fn alloc_mapping(desc: String, size: u32) -> u32 {
-    let mut new_mapping = Mapping {
-        desc,
-        addr: 0,
-        size,
-    };
-
-    let mut mappings = state().mappings.borrow_mut();
-    let mut prev_end = 0;
-    for (i, mapping) in mappings.iter().enumerate() {
-        let space = mapping.addr - prev_end;
-        if space >= size {
-            new_mapping.addr = prev_end;
-            mappings.insert(i, new_mapping);
-            return prev_end;
-        }
-        prev_end = mapping.addr + mapping.size;
-    }
-    new_mapping.addr = prev_end;
-    mappings.push(new_mapping);
-    return prev_end;
-}
-
-pub fn dump_mappings() {
-    let mappings = state().mappings.borrow();
-    println!("{:#x?}", mappings);
 }
