@@ -1,6 +1,7 @@
 #![allow(unused_unsafe)]
 #![allow(unreachable_code)]
 #![allow(static_mut_refs)]
+#![allow(unused_parens)]
 
 use runtime::*;
 use winapi::*;
@@ -36,7 +37,7 @@ pub fn x00401008() -> Cont {
 pub fn x0040101a() -> Cont {
     unsafe {
         // 0040101a ret
-        indirect(pop())
+        ret(0)
     }
 }
 
@@ -50,23 +51,15 @@ pub fn init_memory() {
         ];
 
         for (addr, data) in sections {
-            let out = core::slice::from_raw_parts_mut(MACHINE.memory.add(addr), data.len());
+            let out = &mut MACHINE.memory.bytes[addr..][..data.len()];
             out.copy_from_slice(data);
         }
     }
 }
 
-const BLOCKS: [(u32, fn() -> Cont); 5] = [
-    (0, runtime::null_pointer_error),
+pub const BLOCKS: [(u32, fn() -> Cont); 4] = [
     (0x401000, x00401000),
     (0x401008, x00401008),
     (0x40101a, x0040101a),
     (0xf000_0000, runtime::return_from_main),
 ];
-
-pub fn indirect(addr: u32) -> Cont {
-    let index = BLOCKS
-        .binary_search_by_key(&addr, |(addr, _)| *addr)
-        .unwrap();
-    Cont(BLOCKS[index].1)
-}

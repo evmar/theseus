@@ -4,7 +4,7 @@ use runtime::*;
 use winapi::*;
 
 pub fn entry_point() {
-    runtime::HOST.init(generated::indirect);
+    runtime::HOST.init(&generated::BLOCKS);
     kernel32::init_process();
     generated::init_memory();
 

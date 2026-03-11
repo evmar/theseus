@@ -1,6 +1,7 @@
 #![allow(unused_unsafe)]
 #![allow(unreachable_code)]
 #![allow(static_mut_refs)]
+#![allow(unused_parens)]
 
 use runtime::*;
 use winapi::*;
@@ -42,10 +43,7 @@ pub fn x00401015() -> Cont {
         // 00401019 push eax
         push(MACHINE.regs.eax);
         // 0040101a cmp byte ptr ds:[403000h],0
-        sub(
-            *(MACHINE.memory.add((0x403000u32) as usize) as *mut u8),
-            0x0u8,
-        );
+        sub(MACHINE.memory.read::<u8>(0x403000u32), 0x0u8);
         // 00401021 jne short 0040102Ah
         jne(Cont(x00401023), Cont(x0040102a))
     }
@@ -54,24 +52,30 @@ pub fn x00401015() -> Cont {
 pub fn x00401023() -> Cont {
     unsafe {
         // 00401023 mov byte ptr ds:[403000h],1
-        *(MACHINE.memory.add((0x403000u32) as usize) as *mut u8) = 0x1u8;
+        MACHINE.memory.write::<u8>(0x403000u32, 0x1u8);
         // 0040102a mov eax,fs:[18h]
-        MACHINE.regs.eax = *(MACHINE
+        MACHINE.regs.eax = MACHINE
             .memory
-            .add((MACHINE.regs.fs_base + 0x18u32) as usize)
-            as *mut u32);
+            .read::<u32>(MACHINE.regs.fs_base.wrapping_add(0x18u32));
         // 00401030 mov eax,[eax+30h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.eax + 0x30u32) as usize) as *mut u32);
+        MACHINE.regs.eax = MACHINE
+            .memory
+            .read::<u32>(MACHINE.regs.eax.wrapping_add(0x30u32));
         // 00401033 xor edi,edi
         MACHINE.regs.edi ^= MACHINE.regs.edi;
         // 00401035 mov eax,[eax+10h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.eax + 0x10u32) as usize) as *mut u32);
+        MACHINE.regs.eax = MACHINE
+            .memory
+            .read::<u32>(MACHINE.regs.eax.wrapping_add(0x10u32));
         // 00401038 mov esi,[eax+20h]
-        MACHINE.regs.esi = *(MACHINE.memory.add((MACHINE.regs.eax + 0x20u32) as usize) as *mut u32);
+        MACHINE.regs.esi = MACHINE
+            .memory
+            .read::<u32>(MACHINE.regs.eax.wrapping_add(0x20u32));
         // 0040103b push 0Eh
         push(0xeu32);
         // 0040103d pop ebx
-        MACHINE.regs.ebx = pop(); // 0040103e mov ebp,esp
+        MACHINE.regs.ebx = pop();
+        // 0040103e mov ebp,esp
         MACHINE.regs.ebp = MACHINE.regs.esp;
         // 00401040 cmp edi,0Eh
         sub(MACHINE.regs.edi, 0xeu32);
@@ -83,22 +87,28 @@ pub fn x00401023() -> Cont {
 pub fn x0040102a() -> Cont {
     unsafe {
         // 0040102a mov eax,fs:[18h]
-        MACHINE.regs.eax = *(MACHINE
+        MACHINE.regs.eax = MACHINE
             .memory
-            .add((MACHINE.regs.fs_base + 0x18u32) as usize)
-            as *mut u32);
+            .read::<u32>(MACHINE.regs.fs_base.wrapping_add(0x18u32));
         // 00401030 mov eax,[eax+30h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.eax + 0x30u32) as usize) as *mut u32);
+        MACHINE.regs.eax = MACHINE
+            .memory
+            .read::<u32>(MACHINE.regs.eax.wrapping_add(0x30u32));
         // 00401033 xor edi,edi
         MACHINE.regs.edi ^= MACHINE.regs.edi;
         // 00401035 mov eax,[eax+10h]
-        MACHINE.regs.eax = *(MACHINE.memory.add((MACHINE.regs.eax + 0x10u32) as usize) as *mut u32);
+        MACHINE.regs.eax = MACHINE
+            .memory
+            .read::<u32>(MACHINE.regs.eax.wrapping_add(0x10u32));
         // 00401038 mov esi,[eax+20h]
-        MACHINE.regs.esi = *(MACHINE.memory.add((MACHINE.regs.eax + 0x20u32) as usize) as *mut u32);
+        MACHINE.regs.esi = MACHINE
+            .memory
+            .read::<u32>(MACHINE.regs.eax.wrapping_add(0x20u32));
         // 0040103b push 0Eh
         push(0xeu32);
         // 0040103d pop ebx
-        MACHINE.regs.ebx = pop(); // 0040103e mov ebp,esp
+        MACHINE.regs.ebx = pop();
+        // 0040103e mov ebp,esp
         MACHINE.regs.ebp = MACHINE.regs.esp;
         // 00401040 cmp edi,0Eh
         sub(MACHINE.regs.edi, 0xeu32);
@@ -121,7 +131,7 @@ pub fn x00401045() -> Cont {
         // 00401045 mov ecx,ebx
         MACHINE.regs.ecx = MACHINE.regs.ebx;
         // 00401047 lea eax,[edi+402000h]
-        MACHINE.regs.eax = MACHINE.regs.edi + 0x402000u32;
+        MACHINE.regs.eax = MACHINE.regs.edi.wrapping_add(0x402000u32);
         // 0040104d sub ecx,edi
         MACHINE.regs.ecx = sub(MACHINE.regs.ecx, MACHINE.regs.edi);
         // 0040104f push 0
@@ -151,7 +161,12 @@ pub fn x0040105a() -> Cont {
 pub fn x0040105e() -> Cont {
     unsafe {
         // 0040105e add edi,[esp]
-        MACHINE.regs.edi += *(MACHINE.memory.add((MACHINE.regs.esp + 0x0u32) as usize) as *mut u32);
+        MACHINE.regs.edi = add(
+            MACHINE.regs.edi,
+            MACHINE
+                .memory
+                .read::<u32>(MACHINE.regs.esp.wrapping_add(0x0u32)),
+        );
         // 00401061 jmp short 00401040h
         Cont(x00401040)
     }
@@ -167,14 +182,18 @@ pub fn x00401063() -> Cont {
 pub fn x00401068() -> Cont {
     unsafe {
         // 00401068 mov byte ptr ds:[403000h],0
-        *(MACHINE.memory.add((0x403000u32) as usize) as *mut u8) = 0x0u8;
+        MACHINE.memory.write::<u8>(0x403000u32, 0x0u8);
         // 0040106f add esp,4
-        MACHINE.regs.esp += 0x4u32;
+        MACHINE.regs.esp = add(MACHINE.regs.esp, 0x4u32);
         // 00401072 pop esi
-        MACHINE.regs.esi = pop(); // 00401073 pop edi
-        MACHINE.regs.edi = pop(); // 00401074 pop ebx
-        MACHINE.regs.ebx = pop(); // 00401075 pop ebp
-        MACHINE.regs.ebp = pop(); // 00401076 ret
+        MACHINE.regs.esi = pop();
+        // 00401073 pop edi
+        MACHINE.regs.edi = pop();
+        // 00401074 pop ebx
+        MACHINE.regs.ebx = pop();
+        // 00401075 pop ebp
+        MACHINE.regs.ebp = pop();
+        // 00401076 ret
         ret(0)
     }
 }
@@ -211,14 +230,13 @@ pub fn init_memory() {
         ];
 
         for (addr, data) in sections {
-            let out = core::slice::from_raw_parts_mut(MACHINE.memory.add(addr), data.len());
+            let out = &mut MACHINE.memory.bytes[addr..][..data.len()];
             out.copy_from_slice(data);
         }
     }
 }
 
-const BLOCKS: [(u32, fn() -> Cont); 16] = [
-    (0, runtime::null_pointer_error),
+pub const BLOCKS: [(u32, fn() -> Cont); 15] = [
     (0x401000, x00401000),
     (0x40100e, x0040100e),
     (0x401015, x00401015),
@@ -235,10 +253,3 @@ const BLOCKS: [(u32, fn() -> Cont); 16] = [
     (0x401083, x00401083),
     (0xf000_0000, runtime::return_from_main),
 ];
-
-pub fn indirect(addr: u32) -> Cont {
-    let index = BLOCKS
-        .binary_search_by_key(&addr, |(addr, _)| *addr)
-        .unwrap();
-    Cont(BLOCKS[index].1)
-}
