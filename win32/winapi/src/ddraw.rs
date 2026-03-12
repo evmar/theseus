@@ -3,260 +3,264 @@ use runtime::*;
 use crate::{ABIReturn, stub};
 use zerocopy::IntoBytes;
 
-#[derive(Default, zerocopy::IntoBytes, zerocopy::Immutable)]
-#[repr(C)]
-struct IDirectDraw7_VTable {
-    QueryInterface: u32,
-    AddRef: u32,
-    Release: u32,
-    Compact: u32,
-    CreateClipper: u32,
-    CreatePalette: u32,
-    CreateSurface: u32,
-    DuplicateSurface: u32,
-    EnumDisplayModes: u32,
-    EnumSurfaces: u32,
-    FlipToGDISurface: u32,
-    GetCaps: u32,
-    GetDisplayMode: u32,
-    GetFourCCCodes: u32,
-    GetGDISurface: u32,
-    GetMonitorFrequency: u32,
-    GetScanLine: u32,
-    GetVerticalBlankStatus: u32,
-    Initialize: u32,
-    RestoreDisplayMode: u32,
-    SetCooperativeLevel: u32,
-    SetDisplayMode: u32,
-    WaitForVerticalBlank: u32,
-    GetAvailableVidMem: u32,
-    GetSurfaceFromDC: u32,
-    RestoreAllSurfaces: u32,
-    TestCooperativeLevel: u32,
-    GetDeviceIdentifier: u32,
-    StartModeTest: u32,
-    EvaluateMode: u32,
-}
+pub mod IDirectDraw7 {
+    use super::*;
 
-#[win32_derive::dllexport]
-pub fn IDirectDraw7_QueryInterface() {
-    todo!()
-}
+    #[derive(Default, zerocopy::IntoBytes, zerocopy::Immutable)]
+    #[repr(C)]
+    pub struct VTable {
+        QueryInterface: u32,
+        AddRef: u32,
+        Release: u32,
+        Compact: u32,
+        CreateClipper: u32,
+        CreatePalette: u32,
+        CreateSurface: u32,
+        DuplicateSurface: u32,
+        EnumDisplayModes: u32,
+        EnumSurfaces: u32,
+        FlipToGDISurface: u32,
+        GetCaps: u32,
+        GetDisplayMode: u32,
+        GetFourCCCodes: u32,
+        GetGDISurface: u32,
+        GetMonitorFrequency: u32,
+        GetScanLine: u32,
+        GetVerticalBlankStatus: u32,
+        Initialize: u32,
+        RestoreDisplayMode: u32,
+        SetCooperativeLevel: u32,
+        SetDisplayMode: u32,
+        WaitForVerticalBlank: u32,
+        GetAvailableVidMem: u32,
+        GetSurfaceFromDC: u32,
+        RestoreAllSurfaces: u32,
+        TestCooperativeLevel: u32,
+        GetDeviceIdentifier: u32,
+        StartModeTest: u32,
+        EvaluateMode: u32,
+    }
 
-#[win32_derive::dllexport]
-pub fn IDirectDraw7_AddRef() {
-    todo!()
-}
+    #[win32_derive::dllexport]
+    pub fn QueryInterface() {
+        todo!()
+    }
 
-#[win32_derive::dllexport]
-pub fn IDirectDraw7_Release() {
-    todo!()
-}
+    #[win32_derive::dllexport]
+    pub fn AddRef() {
+        todo!()
+    }
 
-#[win32_derive::dllexport]
-pub fn IDirectDraw7_Compact() {
-    todo!()
-}
+    #[win32_derive::dllexport]
+    pub fn Release() {
+        todo!()
+    }
 
-#[win32_derive::dllexport]
-pub fn IDirectDraw7_CreateClipper() {
-    todo!()
-}
+    #[win32_derive::dllexport]
+    pub fn Compact() {
+        todo!()
+    }
 
-#[win32_derive::dllexport]
-pub fn IDirectDraw7_CreatePalette() {
-    todo!()
-}
+    #[win32_derive::dllexport]
+    pub fn CreateClipper() {
+        todo!()
+    }
 
-#[win32_derive::dllexport]
-pub fn IDirectDraw7_CreateSurface() {
-    todo!()
-}
+    #[win32_derive::dllexport]
+    pub fn CreatePalette() {
+        todo!()
+    }
 
-#[win32_derive::dllexport]
-pub fn IDirectDraw7_DuplicateSurface() {
-    todo!()
-}
+    #[win32_derive::dllexport]
+    pub fn CreateSurface() {
+        todo!()
+    }
 
-#[win32_derive::dllexport]
-pub fn IDirectDraw7_EnumDisplayModes() {
-    todo!()
-}
+    #[win32_derive::dllexport]
+    pub fn DuplicateSurface() {
+        todo!()
+    }
 
-#[win32_derive::dllexport]
-pub fn IDirectDraw7_EnumSurfaces() {
-    todo!()
-}
+    #[win32_derive::dllexport]
+    pub fn EnumDisplayModes() {
+        todo!()
+    }
 
-#[win32_derive::dllexport]
-pub fn IDirectDraw7_FlipToGDISurface() {
-    todo!()
-}
+    #[win32_derive::dllexport]
+    pub fn EnumSurfaces() {
+        todo!()
+    }
 
-#[win32_derive::dllexport]
-pub fn IDirectDraw7_GetCaps() {
-    todo!()
-}
+    #[win32_derive::dllexport]
+    pub fn FlipToGDISurface() {
+        todo!()
+    }
 
-#[win32_derive::dllexport]
-pub fn IDirectDraw7_GetDisplayMode() {
-    todo!()
-}
+    #[win32_derive::dllexport]
+    pub fn GetCaps() {
+        todo!()
+    }
 
-#[win32_derive::dllexport]
-pub fn IDirectDraw7_GetFourCCCodes() {
-    todo!()
-}
+    #[win32_derive::dllexport]
+    pub fn GetDisplayMode() {
+        todo!()
+    }
 
-#[win32_derive::dllexport]
-pub fn IDirectDraw7_GetGDISurface() {
-    todo!()
-}
+    #[win32_derive::dllexport]
+    pub fn GetFourCCCodes() {
+        todo!()
+    }
 
-#[win32_derive::dllexport]
-pub fn IDirectDraw7_GetMonitorFrequency() {
-    todo!()
-}
+    #[win32_derive::dllexport]
+    pub fn GetGDISurface() {
+        todo!()
+    }
 
-#[win32_derive::dllexport]
-pub fn IDirectDraw7_GetScanLine() {
-    todo!()
-}
+    #[win32_derive::dllexport]
+    pub fn GetMonitorFrequency() {
+        todo!()
+    }
 
-#[win32_derive::dllexport]
-pub fn IDirectDraw7_GetVerticalBlankStatus() {
-    todo!()
-}
+    #[win32_derive::dllexport]
+    pub fn GetScanLine() {
+        todo!()
+    }
 
-#[win32_derive::dllexport]
-pub fn IDirectDraw7_Initialize() {
-    todo!()
-}
+    #[win32_derive::dllexport]
+    pub fn GetVerticalBlankStatus() {
+        todo!()
+    }
 
-#[win32_derive::dllexport]
-pub fn IDirectDraw7_RestoreDisplayMode() {
-    todo!()
-}
+    #[win32_derive::dllexport]
+    pub fn Initialize() {
+        todo!()
+    }
 
-#[win32_derive::dllexport]
-pub fn IDirectDraw7_SetCooperativeLevel() {
-    todo!()
-}
+    #[win32_derive::dllexport]
+    pub fn RestoreDisplayMode() {
+        todo!()
+    }
 
-#[win32_derive::dllexport]
-pub fn IDirectDraw7_SetDisplayMode() {
-    todo!()
-}
+    #[win32_derive::dllexport]
+    pub fn SetCooperativeLevel() {
+        todo!()
+    }
 
-#[win32_derive::dllexport]
-pub fn IDirectDraw7_WaitForVerticalBlank() {
-    todo!()
-}
+    #[win32_derive::dllexport]
+    pub fn SetDisplayMode() {
+        todo!()
+    }
 
-#[win32_derive::dllexport]
-pub fn IDirectDraw7_GetAvailableVidMem() {
-    todo!()
-}
+    #[win32_derive::dllexport]
+    pub fn WaitForVerticalBlank() {
+        todo!()
+    }
 
-#[win32_derive::dllexport]
-pub fn IDirectDraw7_GetSurfaceFromDC() {
-    todo!()
-}
+    #[win32_derive::dllexport]
+    pub fn GetAvailableVidMem() {
+        todo!()
+    }
 
-#[win32_derive::dllexport]
-pub fn IDirectDraw7_RestoreAllSurfaces() {
-    todo!()
-}
+    #[win32_derive::dllexport]
+    pub fn GetSurfaceFromDC() {
+        todo!()
+    }
 
-#[win32_derive::dllexport]
-pub fn IDirectDraw7_TestCooperativeLevel() {
-    todo!()
-}
+    #[win32_derive::dllexport]
+    pub fn RestoreAllSurfaces() {
+        todo!()
+    }
 
-#[win32_derive::dllexport]
-pub fn IDirectDraw7_GetDeviceIdentifier() {
-    todo!()
-}
+    #[win32_derive::dllexport]
+    pub fn TestCooperativeLevel() {
+        todo!()
+    }
 
-#[win32_derive::dllexport]
-pub fn IDirectDraw7_StartModeTest() {
-    todo!()
-}
+    #[win32_derive::dllexport]
+    pub fn GetDeviceIdentifier() {
+        todo!()
+    }
 
-#[win32_derive::dllexport]
-pub fn IDirectDraw7_EvaluateMode() {
-    todo!()
+    #[win32_derive::dllexport]
+    pub fn StartModeTest() {
+        todo!()
+    }
+
+    #[win32_derive::dllexport]
+    pub fn EvaluateMode() {
+        todo!()
+    }
+
+    pub fn vtable(buf: &mut [u8]) {
+        let addr = runtime::proc_addr(QueryInterface_stdcall);
+        let vtable = VTable {
+            QueryInterface: addr + 0,
+            AddRef: addr + 1,
+            Release: addr + 2,
+            Compact: addr + 3,
+            CreateClipper: addr + 4,
+            CreatePalette: addr + 5,
+            CreateSurface: addr + 6,
+            DuplicateSurface: addr + 7,
+            EnumDisplayModes: addr + 8,
+            EnumSurfaces: addr + 9,
+            FlipToGDISurface: addr + 10,
+            GetCaps: addr + 11,
+            GetDisplayMode: addr + 12,
+            GetFourCCCodes: addr + 13,
+            GetGDISurface: addr + 14,
+            GetMonitorFrequency: addr + 15,
+            GetScanLine: addr + 16,
+            GetVerticalBlankStatus: addr + 17,
+            Initialize: addr + 18,
+            RestoreDisplayMode: addr + 19,
+            SetCooperativeLevel: addr + 20,
+            SetDisplayMode: addr + 21,
+            WaitForVerticalBlank: addr + 22,
+            GetAvailableVidMem: addr + 23,
+            GetSurfaceFromDC: addr + 24,
+            RestoreAllSurfaces: addr + 25,
+            TestCooperativeLevel: addr + 26,
+            GetDeviceIdentifier: addr + 27,
+            StartModeTest: addr + 28,
+            EvaluateMode: addr + 29,
+        };
+        vtable.write_to_prefix(buf).unwrap();
+    }
 }
 
 pub const EXPORTS: [&'static str; 30] = [
-    "IDirectDraw7_QueryInterface",
-    "IDirectDraw7_AddRef",
-    "IDirectDraw7_Release",
-    "IDirectDraw7_Compact",
-    "IDirectDraw7_CreateClipper",
-    "IDirectDraw7_CreatePalette",
-    "IDirectDraw7_CreateSurface",
-    "IDirectDraw7_DuplicateSurface",
-    "IDirectDraw7_EnumDisplayModes",
-    "IDirectDraw7_EnumSurfaces",
-    "IDirectDraw7_FlipToGDISurface",
-    "IDirectDraw7_GetCaps",
-    "IDirectDraw7_GetDisplayMode",
-    "IDirectDraw7_GetFourCCCodes",
-    "IDirectDraw7_GetGDISurface",
-    "IDirectDraw7_GetMonitorFrequency",
-    "IDirectDraw7_GetScanLine",
-    "IDirectDraw7_GetVerticalBlankStatus",
-    "IDirectDraw7_Initialize",
-    "IDirectDraw7_RestoreDisplayMode",
-    "IDirectDraw7_SetCooperativeLevel",
-    "IDirectDraw7_SetDisplayMode",
-    "IDirectDraw7_WaitForVerticalBlank",
-    "IDirectDraw7_GetAvailableVidMem",
-    "IDirectDraw7_GetSurfaceFromDC",
-    "IDirectDraw7_RestoreAllSurfaces",
-    "IDirectDraw7_TestCooperativeLevel",
-    "IDirectDraw7_GetDeviceIdentifier",
-    "IDirectDraw7_StartModeTest",
-    "IDirectDraw7_EvaluateMode",
+    "IDirectDraw7::QueryInterface",
+    "IDirectDraw7::AddRef",
+    "IDirectDraw7::Release",
+    "IDirectDraw7::Compact",
+    "IDirectDraw7::CreateClipper",
+    "IDirectDraw7::CreatePalette",
+    "IDirectDraw7::CreateSurface",
+    "IDirectDraw7::DuplicateSurface",
+    "IDirectDraw7::EnumDisplayModes",
+    "IDirectDraw7::EnumSurfaces",
+    "IDirectDraw7::FlipToGDISurface",
+    "IDirectDraw7::GetCaps",
+    "IDirectDraw7::GetDisplayMode",
+    "IDirectDraw7::GetFourCCCodes",
+    "IDirectDraw7::GetGDISurface",
+    "IDirectDraw7::GetMonitorFrequency",
+    "IDirectDraw7::GetScanLine",
+    "IDirectDraw7::GetVerticalBlankStatus",
+    "IDirectDraw7::Initialize",
+    "IDirectDraw7::RestoreDisplayMode",
+    "IDirectDraw7::SetCooperativeLevel",
+    "IDirectDraw7::SetDisplayMode",
+    "IDirectDraw7::WaitForVerticalBlank",
+    "IDirectDraw7::GetAvailableVidMem",
+    "IDirectDraw7::GetSurfaceFromDC",
+    "IDirectDraw7::RestoreAllSurfaces",
+    "IDirectDraw7::TestCooperativeLevel",
+    "IDirectDraw7::GetDeviceIdentifier",
+    "IDirectDraw7::StartModeTest",
+    "IDirectDraw7::EvaluateMode",
 ];
-
-pub fn vtable(buf: &mut [u8]) {
-    let addr = runtime::proc_addr(IDirectDraw7_QueryInterface_stdcall);
-    let vtable = IDirectDraw7_VTable {
-        QueryInterface: addr + 0,
-        AddRef: addr + 1,
-        Release: addr + 2,
-        Compact: addr + 3,
-        CreateClipper: addr + 4,
-        CreatePalette: addr + 5,
-        CreateSurface: addr + 6,
-        DuplicateSurface: addr + 7,
-        EnumDisplayModes: addr + 8,
-        EnumSurfaces: addr + 9,
-        FlipToGDISurface: addr + 10,
-        GetCaps: addr + 11,
-        GetDisplayMode: addr + 12,
-        GetFourCCCodes: addr + 13,
-        GetGDISurface: addr + 14,
-        GetMonitorFrequency: addr + 15,
-        GetScanLine: addr + 16,
-        GetVerticalBlankStatus: addr + 17,
-        Initialize: addr + 18,
-        RestoreDisplayMode: addr + 19,
-        SetCooperativeLevel: addr + 20,
-        SetDisplayMode: addr + 21,
-        WaitForVerticalBlank: addr + 22,
-        GetAvailableVidMem: addr + 23,
-        GetSurfaceFromDC: addr + 24,
-        RestoreAllSurfaces: addr + 25,
-        TestCooperativeLevel: addr + 26,
-        GetDeviceIdentifier: addr + 27,
-        StartModeTest: addr + 28,
-        EvaluateMode: addr + 29,
-    };
-    vtable.write_to_prefix(buf).unwrap();
-}
 
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
 #[repr(u32)]
@@ -311,7 +315,7 @@ pub fn DirectDrawCreateEx(lpGuid: u32, lplpDD: u32, iid: u32, _pUnkOuter: u32) -
 
     let ddraw: u32 = match iid {
         Some(IID_IDirectDraw7) => {
-            vtable(&mut []);
+            IDirectDraw7::vtable(&mut []);
             stub!(0)
         }
         _ => panic!(),
