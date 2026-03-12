@@ -35,9 +35,13 @@ pub enum MappingData<'a> {
     U32s(&'a [(u32, u32)]),
 }
 
+pub fn round_to_page(size: u32) -> u32 {
+    (size + 0x1000 - 1) & !(0x1000 - 1)
+}
+
 impl Mappings {
     pub fn alloc(&mut self, desc: String, addr: u32, size: u32) -> u32 {
-        let size = (size + 0x1000 - 1) & !(0x1000 - 1);
+        let size = round_to_page(size);
         let mut new_mapping = Mapping { desc, addr, size };
 
         let mut prev_end = 0;
@@ -74,7 +78,7 @@ impl Mappings {
         println!("{:#x?}", self.mappings);
     }
 
-    pub fn iter(&self) -> impl Iterator<Item = &Mapping> {
-        self.mappings.iter()
+    pub fn vec(&self) -> &Vec<Mapping> {
+        &self.mappings
     }
 }

@@ -32,7 +32,7 @@ impl State {
         mem.put(image_base, &buf[..0x1000.min(buf.len())]);
         for sec in &f.sections {
             let addr = AddrImage(sec.VirtualAddress).to_abs(image_base);
-            let size = sec.SizeOfRawData.max(sec.VirtualSize);
+            let size = winapi::kernel32::round_to_page(sec.SizeOfRawData.max(sec.VirtualSize));
             mem.alloc(sec.name().unwrap().into(), addr, size);
             let data = &buf[sec.PointerToRawData as usize
                 ..(sec.PointerToRawData + sec.SizeOfRawData) as usize];
@@ -204,24 +204,26 @@ fn scan_for_pointers(state: &mut State) {
     let entry_point = AddrImage(state.pe_file.opt_header.AddressOfEntryPoint)
         .to_abs(state.image_base())
         .0;
+
     let code = state
         .mem
         .mappings
+        .vec()
         .iter()
-        .find(|m| m.contains(entry_point))
-        .unwrap()
-        .range();
-    let data_section = state
-        .mem
-        .mappings
-        .iter()
-        .find(|m| m.desc == ".data")
+        .position(|m| m.contains(entry_point))
         .unwrap();
-    let data = state.mem.data[data_section.addr as usize..][..data_section.size as usize].to_vec();
-    for w in data.windows(4) {
-        let addr = u32::from_le_bytes(w.try_into().unwrap());
-        if code.contains(&addr) {
-            traverse(state, addr);
+    for i in 0..state.mem.mappings.vec().len() {
+        if i == code {
+            continue;
+        }
+        let mapping = &state.mem.mappings.vec()[i];
+        println!("scanning {:?}", mapping);
+        let data = state.mem.data[mapping.addr as usize..][..mapping.size as usize].to_vec();
+        for w in data.windows(4) {
+            let addr = u32::from_le_bytes(w.try_into().unwrap());
+            if state.mem.mappings.vec()[code].contains(addr) {
+                traverse(state, addr);
+            }
         }
     }
 }
@@ -246,7 +248,7 @@ fn run() -> Result<()> {
 
     let data_dir = format!("{outdir}/data");
     std::fs::create_dir_all(&data_dir)?;
-    for map in state.mem.mappings.iter() {
+    for map in state.mem.mappings.vec().iter() {
         let buf = state.mem.slice(AddrAbs(map.addr), map.size);
         if buf.iter().all(|&b| b == 0) {
             continue;

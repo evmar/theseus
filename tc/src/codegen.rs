@@ -413,7 +413,7 @@ pub fn gen_file(state: &mut State, outdir: &str) -> Result<()> {
         &mut text,
         "let mut mappings = kernel32::state().mappings.borrow_mut();\n"
     );
-    for map in state.mem.mappings.iter() {
+    for map in state.mem.mappings.vec().iter() {
         let addr = map.addr;
         let buf = state.mem.slice(AddrAbs(map.addr), map.size);
         let zeroed = buf.iter().all(|&b| b == 0);
