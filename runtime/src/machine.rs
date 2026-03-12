@@ -40,6 +40,17 @@ pub fn indirect(addr: u32) -> Cont {
     }
 }
 
+pub fn proc_addr(func: fn() -> Cont) -> u32 {
+    unsafe {
+        MACHINE
+            .blocks
+            .iter()
+            .find(|&(_, f)| std::ptr::fn_addr_eq(*f, func))
+            .unwrap()
+            .0
+    }
+}
+
 pub static mut MACHINE: Machine = Machine {
     regs: Regs {
         eax: 0,

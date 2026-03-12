@@ -83,13 +83,22 @@ impl State {
                 .alloc("imported functions".into(), 0, self.imports.len() as u32);
         let mut imports = self.imports.values_mut().collect::<Vec<_>>();
         imports.sort_by_key(|i| i.iat_addr);
-        for (i, import) in imports.into_iter().enumerate() {
-            import.func_addr = import_funcs_addr + ((i + 1) as u32);
+        let mut i = 1;
+        for import in imports.into_iter() {
+            import.func_addr = import_funcs_addr + i;
+            i += 1;
             self.mem.write::<u32>(import.iat_addr, import.func_addr);
             self.blocks.insert(
                 import.func_addr,
                 Block::Stdcall(import.dll.clone(), import.func.clone()),
             );
+        }
+
+        for func in winapi::ddraw::EXPORTS {
+            let addr = import_funcs_addr + i;
+            i += 1;
+            self.blocks
+                .insert(addr, Block::Stdcall("ddraw".to_string(), func.to_string()));
         }
     }
 

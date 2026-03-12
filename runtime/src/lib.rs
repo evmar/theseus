@@ -8,7 +8,7 @@ mod native;
 mod machine;
 mod ops;
 
-pub use machine::{MACHINE, Memory, indirect};
+pub use machine::{MACHINE, Memory, indirect, proc_addr};
 pub use native::HOST;
 pub use ops::*;
 
