@@ -90,7 +90,7 @@ impl State {
             self.mem.write::<u32>(import.iat_addr, import.func_addr);
             self.blocks.insert(
                 import.func_addr,
-                Block::Stdcall(import.dll.clone(), import.func.clone()),
+                Block::Stdcall(format!("{}::{}", import.dll, import.func)),
             );
         }
 
@@ -98,7 +98,7 @@ impl State {
             let addr = import_funcs_addr + i;
             i += 1;
             self.blocks
-                .insert(addr, Block::Stdcall("ddraw".to_string(), func.to_string()));
+                .insert(addr, Block::Stdcall(format!("ddraw::{}", func.to_string())));
         }
     }
 
@@ -122,14 +122,14 @@ fn is_abs_memory_ref(instr: &iced_x86::Instruction) -> Option<u32> {
 
 enum Block {
     Instrs(Vec<iced_x86::Instruction>),
-    Stdcall(String, String),
+    Stdcall(String),
 }
 
 impl Block {
     pub fn name(&self) -> String {
         match self {
             Block::Instrs(instrs) => format!("x{:08x}", instrs[0].ip32()),
-            Block::Stdcall(dll, func) => format!("{}::stdcall_{}", dll, func),
+            Block::Stdcall(func) => format!("{}_stdcall", func),
         }
     }
 }

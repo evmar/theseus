@@ -137,7 +137,7 @@ fn gen_jmp(state: &State, instr: &iced_x86::Instruction) -> String {
             if let Some(addr) = is_abs_memory_ref(instr) {
                 if let Some(import) = state.imports.get(&addr) {
                     format!(
-                        "Cont({dll}::stdcall_{func})",
+                        "Cont({dll}::{func}_stdcall)",
                         dll = import.dll,
                         func = import.func
                     )
@@ -163,7 +163,7 @@ fn gen_block(w: &mut dyn std::fmt::Write, state: &State, ip: AddrAbs, block: &Bl
             gen_instrs(w, state, instrs);
             write!(w, "}}\n\n");
         }
-        Block::Stdcall(_, _) => {
+        Block::Stdcall(_) => {
             // no emit
         }
     }

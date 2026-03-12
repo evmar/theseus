@@ -155,7 +155,7 @@ pub fn x00401079() -> Cont {
         // 0040108b push edx
         push(MACHINE.regs.edx);
         // 0040108c call dword ptr ds:[4060D8h]
-        call(0x401092, Cont(user32::stdcall_MessageBoxA))
+        call(0x401092, Cont(user32::MessageBoxA_stdcall))
     }
 }
 
@@ -572,7 +572,7 @@ pub fn x00401200() -> Cont {
             .memory
             .write::<u32>(MACHINE.regs.esp.wrapping_add(0x1cu32), MACHINE.regs.eax);
         // 00401233 call dword ptr ds:[4060FCh]
-        call(0x401239, Cont(user32::stdcall_LoadIconA))
+        call(0x401239, Cont(user32::LoadIconA_stdcall))
     }
 }
 
@@ -587,7 +587,7 @@ pub fn x00401239() -> Cont {
             .memory
             .write::<u32>(MACHINE.regs.esp.wrapping_add(0x20u32), MACHINE.regs.eax);
         // 00401244 call dword ptr ds:[406100h]
-        call(0x40124a, Cont(user32::stdcall_LoadCursorA))
+        call(0x40124a, Cont(user32::LoadCursorA_stdcall))
     }
 }
 
@@ -600,7 +600,7 @@ pub fn x0040124a() -> Cont {
             .memory
             .write::<u32>(MACHINE.regs.esp.wrapping_add(0x20u32), MACHINE.regs.eax);
         // 00401250 call dword ptr ds:[40601Ch]
-        call(0x401256, Cont(gdi32::stdcall_GetStockObject))
+        call(0x401256, Cont(gdi32::GetStockObject_stdcall))
     }
 }
 
@@ -623,7 +623,7 @@ pub fn x00401256() -> Cont {
             .memory
             .write::<u32>(MACHINE.regs.esp.wrapping_add(0x2cu32), 0x4070a4u32);
         // 0040126f call dword ptr ds:[406104h]
-        call(0x401275, Cont(user32::stdcall_RegisterClassA))
+        call(0x401275, Cont(user32::RegisterClassA_stdcall))
     }
 }
 
@@ -676,7 +676,7 @@ pub fn x00401291() -> Cont {
         // 004012a5 push 8
         push(0x8u32);
         // 004012a7 call dword ptr ds:[4060E8h]
-        call(0x4012ad, Cont(user32::stdcall_CreateWindowExA))
+        call(0x4012ad, Cont(user32::CreateWindowExA_stdcall))
     }
 }
 
@@ -693,7 +693,7 @@ pub fn x004012ad() -> Cont {
         // 004012b4 push esi
         push(MACHINE.regs.esi);
         // 004012b5 call dword ptr ds:[4060E4h]
-        call(0x4012bb, Cont(user32::stdcall_ShowWindow))
+        call(0x4012bb, Cont(user32::ShowWindow_stdcall))
     }
 }
 
@@ -702,7 +702,7 @@ pub fn x004012bb() -> Cont {
         // 004012bb push esi
         push(MACHINE.regs.esi);
         // 004012bc call dword ptr ds:[4060E0h]
-        call(0x4012c2, Cont(user32::stdcall_UpdateWindow))
+        call(0x4012c2, Cont(user32::UpdateWindow_stdcall))
     }
 }
 
@@ -711,7 +711,7 @@ pub fn x004012c2() -> Cont {
         // 004012c2 push esi
         push(MACHINE.regs.esi);
         // 004012c3 call dword ptr ds:[4060DCh]
-        call(0x4012c9, Cont(user32::stdcall_SetFocus))
+        call(0x4012c9, Cont(user32::SetFocus_stdcall))
     }
 }
 
@@ -1132,7 +1132,7 @@ pub fn x004014d0() -> Cont {
         // 00401502 push edx
         push(MACHINE.regs.edx);
         // 00401503 call dword ptr ds:[4060F0h]
-        call(0x401509, Cont(user32::stdcall_LoadImageA))
+        call(0x401509, Cont(user32::LoadImageA_stdcall))
     }
 }
 
@@ -1178,7 +1178,7 @@ pub fn x00401524() -> Cont {
         // 00401524 push 0
         push(0x0u32);
         // 00401526 call dword ptr ds:[40600Ch]
-        call(0x40152c, Cont(gdi32::stdcall_CreateCompatibleDC))
+        call(0x40152c, Cont(gdi32::CreateCompatibleDC_stdcall))
     }
 }
 
@@ -1200,7 +1200,7 @@ pub fn x00401536() -> Cont {
         // 00401537 push edi
         push(MACHINE.regs.edi);
         // 00401538 call dword ptr ds:[406008h]
-        call(0x40153e, Cont(gdi32::stdcall_SelectObject))
+        call(0x40153e, Cont(gdi32::SelectObject_stdcall))
     }
 }
 
@@ -1215,7 +1215,7 @@ pub fn x0040153e() -> Cont {
         // 00401545 push ebp
         push(MACHINE.regs.ebp);
         // 00401546 call dword ptr ds:[406010h]
-        call(0x40154c, Cont(gdi32::stdcall_GetObjectA))
+        call(0x40154c, Cont(gdi32::GetObjectA_stdcall))
     }
 }
 
@@ -1403,7 +1403,7 @@ pub fn x004015a1() -> Cont {
         // 004015cb push ecx
         push(MACHINE.regs.ecx);
         // 004015cc call dword ptr ds:[406014h]
-        call(0x4015d2, Cont(gdi32::stdcall_StretchBlt))
+        call(0x4015d2, Cont(gdi32::StretchBlt_stdcall))
     }
 }
 
@@ -1435,7 +1435,7 @@ pub fn x004015e0() -> Cont {
         // 004015e0 push edi
         push(MACHINE.regs.edi);
         // 004015e1 call dword ptr ds:[406018h]
-        call(0x4015e7, Cont(gdi32::stdcall_DeleteDC))
+        call(0x4015e7, Cont(gdi32::DeleteDC_stdcall))
     }
 }
 
@@ -2149,7 +2149,7 @@ pub fn x004017f9() -> Cont {
 pub fn x00401800() -> Cont {
     unsafe {
         // 00401800 jmp dword ptr ds:[406000h]
-        Cont(ddraw::stdcall_DirectDrawCreateEx)
+        Cont(ddraw::DirectDrawCreateEx_stdcall)
     }
 }
 
@@ -2426,7 +2426,7 @@ pub fn x004018bf() -> Cont {
             MACHINE.regs.esp,
         );
         // 004018e5 call dword ptr ds:[406074h]
-        call(0x4018eb, Cont(kernel32::stdcall_GetVersion))
+        call(0x4018eb, Cont(kernel32::GetVersion_stdcall))
     }
 }
 
@@ -2512,7 +2512,7 @@ pub fn x0040192b() -> Cont {
 pub fn x00401933() -> Cont {
     unsafe {
         // 00401933 call dword ptr ds:[406070h]
-        call(0x401939, Cont(kernel32::stdcall_GetCommandLineA))
+        call(0x401939, Cont(kernel32::GetCommandLineA_stdcall))
     }
 }
 
@@ -2560,7 +2560,7 @@ pub fn x00401957() -> Cont {
         // 0040195d push eax
         push(MACHINE.regs.eax);
         // 0040195e call dword ptr ds:[40606Ch]
-        call(0x401964, Cont(kernel32::stdcall_GetStartupInfoA))
+        call(0x401964, Cont(kernel32::GetStartupInfoA_stdcall))
     }
 }
 
@@ -2621,7 +2621,7 @@ pub fn x00401978() -> Cont {
         // 00401980 push esi
         push(MACHINE.regs.esi);
         // 00401981 call dword ptr ds:[406068h]
-        call(0x401987, Cont(kernel32::stdcall_GetModuleHandleA))
+        call(0x401987, Cont(kernel32::GetModuleHandleA_stdcall))
     }
 }
 
@@ -2640,7 +2640,7 @@ pub fn x0040197b() -> Cont {
         // 00401980 push esi
         push(MACHINE.regs.esi);
         // 00401981 call dword ptr ds:[406068h]
-        call(0x401987, Cont(kernel32::stdcall_GetModuleHandleA))
+        call(0x401987, Cont(kernel32::GetModuleHandleA_stdcall))
     }
 }
 
@@ -2791,7 +2791,7 @@ pub fn x004019f1() -> Cont {
         // 004019f2 push 0FFh
         push(0xffu32);
         // 004019f7 call dword ptr ds:[406078h]
-        call(0x4019fd, Cont(kernel32::stdcall_ExitProcess))
+        call(0x4019fd, Cont(kernel32::ExitProcess_stdcall))
     }
 }
 
@@ -3111,7 +3111,7 @@ pub fn x00401ab2() -> Cont {
         // 00401abe push dword ptr ds:[409984h]
         push(MACHINE.memory.read::<u32>(0x409984u32));
         // 00401ac4 call dword ptr ds:[406028h]
-        call(0x401aca, Cont(kernel32::stdcall_HeapAlloc))
+        call(0x401aca, Cont(kernel32::HeapAlloc_stdcall))
     }
 }
 
@@ -3128,7 +3128,7 @@ pub fn x00401ab5() -> Cont {
         // 00401abe push dword ptr ds:[409984h]
         push(MACHINE.memory.read::<u32>(0x409984u32));
         // 00401ac4 call dword ptr ds:[406028h]
-        call(0x401aca, Cont(kernel32::stdcall_HeapAlloc))
+        call(0x401aca, Cont(kernel32::HeapAlloc_stdcall))
     }
 }
 
@@ -3257,7 +3257,7 @@ pub fn x00401af9() -> Cont {
         // 00401b08 push dword ptr ds:[409984h]
         push(MACHINE.memory.read::<u32>(0x409984u32));
         // 00401b0e call dword ptr ds:[40607Ch]
-        call(0x401b14, Cont(kernel32::stdcall_HeapReAlloc))
+        call(0x401b14, Cont(kernel32::HeapReAlloc_stdcall))
     }
 }
 
@@ -3280,7 +3280,7 @@ pub fn x00401afc() -> Cont {
         // 00401b08 push dword ptr ds:[409984h]
         push(MACHINE.memory.read::<u32>(0x409984u32));
         // 00401b0e call dword ptr ds:[40607Ch]
-        call(0x401b14, Cont(kernel32::stdcall_HeapReAlloc))
+        call(0x401b14, Cont(kernel32::HeapReAlloc_stdcall))
     }
 }
 
@@ -3628,7 +3628,7 @@ pub fn x00401be3() -> Cont {
         // 00401be6 push dword ptr ds:[409984h]
         push(MACHINE.memory.read::<u32>(0x409984u32));
         // 00401bec call dword ptr ds:[406028h]
-        call(0x401bf2, Cont(kernel32::stdcall_HeapAlloc))
+        call(0x401bf2, Cont(kernel32::HeapAlloc_stdcall))
     }
 }
 
@@ -3739,7 +3739,7 @@ pub fn x00401c1f() -> Cont {
         // 00401c25 push dword ptr ds:[409984h]
         push(MACHINE.memory.read::<u32>(0x409984u32));
         // 00401c2b call dword ptr ds:[40607Ch]
-        call(0x401c31, Cont(kernel32::stdcall_HeapReAlloc))
+        call(0x401c31, Cont(kernel32::HeapReAlloc_stdcall))
     }
 }
 
@@ -3842,7 +3842,7 @@ pub fn x00401c64() -> Cont {
         // 00401c73 push dword ptr ds:[409984h]
         push(MACHINE.memory.read::<u32>(0x409984u32));
         // 00401c79 call dword ptr ds:[40607Ch]
-        call(0x401c7f, Cont(kernel32::stdcall_HeapReAlloc))
+        call(0x401c7f, Cont(kernel32::HeapReAlloc_stdcall))
     }
 }
 
@@ -3865,7 +3865,7 @@ pub fn x00401c67() -> Cont {
         // 00401c73 push dword ptr ds:[409984h]
         push(MACHINE.memory.read::<u32>(0x409984u32));
         // 00401c79 call dword ptr ds:[40607Ch]
-        call(0x401c7f, Cont(kernel32::stdcall_HeapReAlloc))
+        call(0x401c7f, Cont(kernel32::HeapReAlloc_stdcall))
     }
 }
 
@@ -4064,7 +4064,7 @@ pub fn x00401cf9() -> Cont {
                 .read::<u32>(MACHINE.regs.esp.wrapping_add(0x8u32)),
         );
         // 00401cfd call dword ptr ds:[406088h]
-        call(0x401d03, Cont(kernel32::stdcall_GetCurrentProcess))
+        call(0x401d03, Cont(kernel32::GetCurrentProcess_stdcall))
     }
 }
 
@@ -4073,7 +4073,7 @@ pub fn x00401d03() -> Cont {
         // 00401d03 push eax
         push(MACHINE.regs.eax);
         // 00401d04 call dword ptr ds:[406084h]
-        call(0x401d0a, Cont(kernel32::stdcall_TerminateProcess))
+        call(0x401d0a, Cont(kernel32::TerminateProcess_stdcall))
     }
 }
 
@@ -4236,7 +4236,7 @@ pub fn x00401d74() -> Cont {
         // 00401d78 mov ds:[4095F0h],edi
         MACHINE.memory.write::<u32>(0x4095f0u32, MACHINE.regs.edi);
         // 00401d7e call dword ptr ds:[406078h]
-        call(0x401d84, Cont(kernel32::stdcall_ExitProcess))
+        call(0x401d84, Cont(kernel32::ExitProcess_stdcall))
     }
 }
 
@@ -4455,7 +4455,7 @@ pub fn x00401ded() -> Cont {
         // 00401df2 push dword ptr ds:[409984h]
         push(MACHINE.memory.read::<u32>(0x409984u32));
         // 00401df8 call dword ptr ds:[40608Ch]
-        call(0x401dfe, Cont(kernel32::stdcall_HeapSize))
+        call(0x401dfe, Cont(kernel32::HeapSize_stdcall))
     }
 }
 
@@ -4466,7 +4466,7 @@ pub fn x00401df0() -> Cont {
         // 00401df2 push dword ptr ds:[409984h]
         push(MACHINE.memory.read::<u32>(0x409984u32));
         // 00401df8 call dword ptr ds:[40608Ch]
-        call(0x401dfe, Cont(kernel32::stdcall_HeapSize))
+        call(0x401dfe, Cont(kernel32::HeapSize_stdcall))
     }
 }
 
@@ -4766,7 +4766,7 @@ pub fn x00401e99() -> Cont {
         // 00401ea5 push dword ptr ds:[409984h]
         push(MACHINE.memory.read::<u32>(0x409984u32));
         // 00401eab call dword ptr ds:[406028h]
-        call(0x401eb1, Cont(kernel32::stdcall_HeapAlloc))
+        call(0x401eb1, Cont(kernel32::HeapAlloc_stdcall))
     }
 }
 
@@ -4783,7 +4783,7 @@ pub fn x00401e9c() -> Cont {
         // 00401ea5 push dword ptr ds:[409984h]
         push(MACHINE.memory.read::<u32>(0x409984u32));
         // 00401eab call dword ptr ds:[406028h]
-        call(0x401eb1, Cont(kernel32::stdcall_HeapAlloc))
+        call(0x401eb1, Cont(kernel32::HeapAlloc_stdcall))
     }
 }
 
@@ -4796,7 +4796,7 @@ pub fn x00401ea2() -> Cont {
         // 00401ea5 push dword ptr ds:[409984h]
         push(MACHINE.memory.read::<u32>(0x409984u32));
         // 00401eab call dword ptr ds:[406028h]
-        call(0x401eb1, Cont(kernel32::stdcall_HeapAlloc))
+        call(0x401eb1, Cont(kernel32::HeapAlloc_stdcall))
     }
 }
 
@@ -4959,7 +4959,7 @@ pub fn x00401f0a() -> Cont {
         // 00401f0d push dword ptr ds:[409984h]
         push(MACHINE.memory.read::<u32>(0x409984u32));
         // 00401f13 call dword ptr ds:[406090h]
-        call(0x401f19, Cont(kernel32::stdcall_HeapFree))
+        call(0x401f19, Cont(kernel32::HeapFree_stdcall))
     }
 }
 
@@ -4970,7 +4970,7 @@ pub fn x00401f0b() -> Cont {
         // 00401f0d push dword ptr ds:[409984h]
         push(MACHINE.memory.read::<u32>(0x409984u32));
         // 00401f13 call dword ptr ds:[406090h]
-        call(0x401f19, Cont(kernel32::stdcall_HeapFree))
+        call(0x401f19, Cont(kernel32::HeapFree_stdcall))
     }
 }
 
@@ -5392,7 +5392,7 @@ pub fn x00402051() -> Cont {
                 .read::<u32>(MACHINE.regs.ebp.wrapping_add(0xcu32)),
         );
         // 00402054 call dword ptr ds:[406030h]
-        call(0x40205a, Cont(kernel32::stdcall_UnhandledExceptionFilter))
+        call(0x40205a, Cont(kernel32::UnhandledExceptionFilter_stdcall))
     }
 }
 
@@ -6094,7 +6094,7 @@ pub fn x004021c8() -> Cont {
         // 004021d3 push ebx
         push(MACHINE.regs.ebx);
         // 004021d4 call dword ptr ds:[40602Ch]
-        call(0x4021da, Cont(kernel32::stdcall_GetModuleFileNameA))
+        call(0x4021da, Cont(kernel32::GetModuleFileNameA_stdcall))
     }
 }
 
@@ -7610,7 +7610,7 @@ pub fn x00402421() -> Cont {
 pub fn x0040242d() -> Cont {
     unsafe {
         // 0040242d call dword ptr ds:[4060A8h]
-        call(0x402433, Cont(kernel32::stdcall_GetEnvironmentStrings))
+        call(0x402433, Cont(kernel32::GetEnvironmentStrings_stdcall))
     }
 }
 
@@ -7856,7 +7856,7 @@ pub fn x004024c2() -> Cont {
         // 004024cb push esi
         push(MACHINE.regs.esi);
         // 004024cc call dword ptr ds:[4060A0h]
-        call(0x4024d2, Cont(kernel32::stdcall_FreeEnvironmentStringsW))
+        call(0x4024d2, Cont(kernel32::FreeEnvironmentStringsW_stdcall))
     }
 }
 
@@ -7869,7 +7869,7 @@ pub fn x004024c7() -> Cont {
         // 004024cb push esi
         push(MACHINE.regs.esi);
         // 004024cc call dword ptr ds:[4060A0h]
-        call(0x4024d2, Cont(kernel32::stdcall_FreeEnvironmentStringsW))
+        call(0x4024d2, Cont(kernel32::FreeEnvironmentStringsW_stdcall))
     }
 }
 
@@ -7878,7 +7878,7 @@ pub fn x004024cb() -> Cont {
         // 004024cb push esi
         push(MACHINE.regs.esi);
         // 004024cc call dword ptr ds:[4060A0h]
-        call(0x4024d2, Cont(kernel32::stdcall_FreeEnvironmentStringsW))
+        call(0x4024d2, Cont(kernel32::FreeEnvironmentStringsW_stdcall))
     }
 }
 
@@ -7912,7 +7912,7 @@ pub fn x004024db() -> Cont {
 pub fn x004024df() -> Cont {
     unsafe {
         // 004024df call dword ptr ds:[4060A8h]
-        call(0x4024e5, Cont(kernel32::stdcall_GetEnvironmentStrings))
+        call(0x4024e5, Cont(kernel32::GetEnvironmentStrings_stdcall))
     }
 }
 
@@ -8032,7 +8032,7 @@ pub fn x00402519() -> Cont {
         // 0040251c push edi
         push(MACHINE.regs.edi);
         // 0040251d call dword ptr ds:[40609Ch]
-        call(0x402523, Cont(kernel32::stdcall_FreeEnvironmentStringsA))
+        call(0x402523, Cont(kernel32::FreeEnvironmentStringsA_stdcall))
     }
 }
 
@@ -8041,7 +8041,7 @@ pub fn x0040251c() -> Cont {
         // 0040251c push edi
         push(MACHINE.regs.edi);
         // 0040251d call dword ptr ds:[40609Ch]
-        call(0x402523, Cont(kernel32::stdcall_FreeEnvironmentStringsA))
+        call(0x402523, Cont(kernel32::FreeEnvironmentStringsA_stdcall))
     }
 }
 
@@ -8220,7 +8220,7 @@ pub fn x00402584() -> Cont {
         // 00402588 push eax
         push(MACHINE.regs.eax);
         // 00402589 call dword ptr ds:[40606Ch]
-        call(0x40258f, Cont(kernel32::stdcall_GetStartupInfoA))
+        call(0x40258f, Cont(kernel32::GetStartupInfoA_stdcall))
     }
 }
 
@@ -8477,7 +8477,7 @@ pub fn x0040262e() -> Cont {
         // 0040262e push eax
         push(MACHINE.regs.eax);
         // 0040262f call dword ptr ds:[4060B8h]
-        call(0x402635, Cont(kernel32::stdcall_GetFileType))
+        call(0x402635, Cont(kernel32::GetFileType_stdcall))
     }
 }
 
@@ -8649,7 +8649,7 @@ pub fn x0040267d() -> Cont {
         // 00402687 push eax
         push(MACHINE.regs.eax);
         // 00402688 call dword ptr ds:[4060B4h]
-        call(0x40268e, Cont(kernel32::stdcall_GetStdHandle))
+        call(0x40268e, Cont(kernel32::GetStdHandle_stdcall))
     }
 }
 
@@ -8658,7 +8658,7 @@ pub fn x00402687() -> Cont {
         // 00402687 push eax
         push(MACHINE.regs.eax);
         // 00402688 call dword ptr ds:[4060B4h]
-        call(0x40268e, Cont(kernel32::stdcall_GetStdHandle))
+        call(0x40268e, Cont(kernel32::GetStdHandle_stdcall))
     }
 }
 
@@ -8678,7 +8678,7 @@ pub fn x00402695() -> Cont {
         // 00402695 push edi
         push(MACHINE.regs.edi);
         // 00402696 call dword ptr ds:[4060B8h]
-        call(0x40269c, Cont(kernel32::stdcall_GetFileType))
+        call(0x40269c, Cont(kernel32::GetFileType_stdcall))
     }
 }
 
@@ -8786,7 +8786,7 @@ pub fn x004026c7() -> Cont {
         // 004026c7 push dword ptr ds:[409AA0h]
         push(MACHINE.memory.read::<u32>(0x409aa0u32));
         // 004026cd call dword ptr ds:[4060B0h]
-        call(0x4026d3, Cont(kernel32::stdcall_SetHandleCount))
+        call(0x4026d3, Cont(kernel32::SetHandleCount_stdcall))
     }
 }
 
@@ -8828,7 +8828,7 @@ pub fn x004026db() -> Cont {
             ),
         );
         // 004026e5 call dword ptr ds:[406068h]
-        call(0x4026eb, Cont(kernel32::stdcall_GetModuleHandleA))
+        call(0x4026eb, Cont(kernel32::GetModuleHandleA_stdcall))
     }
 }
 
@@ -8925,7 +8925,7 @@ pub fn x00402715() -> Cont {
             .memory
             .write::<u32>(MACHINE.regs.ebp.wrapping_add(0xffffff68u32), 0x94u32);
         // 00402727 call dword ptr ds:[4060C0h]
-        call(0x40272d, Cont(kernel32::stdcall_GetVersionExA))
+        call(0x40272d, Cont(kernel32::GetVersionExA_stdcall))
     }
 }
 
@@ -8988,7 +8988,7 @@ pub fn x0040274b() -> Cont {
         // 00402757 push 40614Ch
         push(0x40614cu32);
         // 0040275c call dword ptr ds:[4060BCh]
-        call(0x402762, Cont(kernel32::stdcall_GetEnvironmentVariableA))
+        call(0x402762, Cont(kernel32::GetEnvironmentVariableA_stdcall))
     }
 }
 
@@ -9127,7 +9127,7 @@ pub fn x004027af() -> Cont {
         // 004027bb push ebx
         push(MACHINE.regs.ebx);
         // 004027bc call dword ptr ds:[40602Ch]
-        call(0x4027c2, Cont(kernel32::stdcall_GetModuleFileNameA))
+        call(0x4027c2, Cont(kernel32::GetModuleFileNameA_stdcall))
     }
 }
 
@@ -9451,7 +9451,7 @@ pub fn x00402850() -> Cont {
         // 00402860 push eax
         push(MACHINE.regs.eax);
         // 00402861 call dword ptr ds:[406094h]
-        call(0x402867, Cont(kernel32::stdcall_HeapCreate))
+        call(0x402867, Cont(kernel32::HeapCreate_stdcall))
     }
 }
 
@@ -9532,7 +9532,7 @@ pub fn x0040289a() -> Cont {
         // 0040289a push dword ptr ds:[409984h]
         push(MACHINE.memory.read::<u32>(0x409984u32));
         // 004028a0 call dword ptr ds:[4060C4h]
-        call(0x4028a6, Cont(kernel32::stdcall_HeapDestroy))
+        call(0x4028a6, Cont(kernel32::HeapDestroy_stdcall))
     }
 }
 
@@ -9763,7 +9763,7 @@ pub fn x00402b18() -> Cont {
         // 00402b24 push 0
         push(0x0u32);
         // 00402b26 call dword ptr ds:[40602Ch]
-        call(0x402b2c, Cont(kernel32::stdcall_GetModuleFileNameA))
+        call(0x402b2c, Cont(kernel32::GetModuleFileNameA_stdcall))
     }
 }
 
@@ -10001,7 +10001,7 @@ pub fn x00402bf6() -> Cont {
         // 00402bfa push 0FFFFFFF4h
         push(0xfffffff4u32);
         // 00402bfc call dword ptr ds:[4060B4h]
-        call(0x402c02, Cont(kernel32::stdcall_GetStdHandle))
+        call(0x402c02, Cont(kernel32::GetStdHandle_stdcall))
     }
 }
 
@@ -10010,7 +10010,7 @@ pub fn x00402c02() -> Cont {
         // 00402c02 push eax
         push(MACHINE.regs.eax);
         // 00402c03 call dword ptr ds:[406060h]
-        call(0x402c09, Cont(kernel32::stdcall_WriteFile))
+        call(0x402c09, Cont(kernel32::WriteFile_stdcall))
     }
 }
 
@@ -10034,7 +10034,7 @@ pub fn x00402c0c() -> Cont {
         // 00402c13 push dword ptr ds:[409984h]
         push(MACHINE.memory.read::<u32>(0x409984u32));
         // 00402c19 call dword ptr ds:[406028h]
-        call(0x402c1f, Cont(kernel32::stdcall_HeapAlloc))
+        call(0x402c1f, Cont(kernel32::HeapAlloc_stdcall))
     }
 }
 
@@ -11632,7 +11632,7 @@ pub fn x00402f34() -> Cont {
         // 00402f3e push dword ptr ds:[409984h]
         push(MACHINE.memory.read::<u32>(0x409984u32));
         // 00402f44 call dword ptr ds:[406090h]
-        call(0x402f4a, Cont(kernel32::stdcall_HeapFree))
+        call(0x402f4a, Cont(kernel32::HeapFree_stdcall))
     }
 }
 
@@ -13437,7 +13437,7 @@ pub fn x004032c4() -> Cont {
         // 004032d3 push dword ptr ds:[409984h]
         push(MACHINE.memory.read::<u32>(0x409984u32));
         // 004032d9 call dword ptr ds:[40607Ch]
-        call(0x4032df, Cont(kernel32::stdcall_HeapReAlloc))
+        call(0x4032df, Cont(kernel32::HeapReAlloc_stdcall))
     }
 }
 
@@ -13482,7 +13482,7 @@ pub fn x004032e3() -> Cont {
             .wrapping_add((MACHINE.regs.eax * 4))
             .wrapping_add(0x0u32);
         // 0040330d call dword ptr ds:[406028h]
-        call(0x403313, Cont(kernel32::stdcall_HeapAlloc))
+        call(0x403313, Cont(kernel32::HeapAlloc_stdcall))
     }
 }
 
@@ -13509,7 +13509,7 @@ pub fn x004032f4() -> Cont {
             .wrapping_add((MACHINE.regs.eax * 4))
             .wrapping_add(0x0u32);
         // 0040330d call dword ptr ds:[406028h]
-        call(0x403313, Cont(kernel32::stdcall_HeapAlloc))
+        call(0x403313, Cont(kernel32::HeapAlloc_stdcall))
     }
 }
 
@@ -13537,7 +13537,7 @@ pub fn x0040331a() -> Cont {
         // 00403326 push edi
         push(MACHINE.regs.edi);
         // 00403327 call dword ptr ds:[40605Ch]
-        call(0x40332d, Cont(kernel32::stdcall_VirtualAlloc))
+        call(0x40332d, Cont(kernel32::VirtualAlloc_stdcall))
     }
 }
 
@@ -13567,7 +13567,7 @@ pub fn x00403334() -> Cont {
         // 00403338 push dword ptr ds:[409984h]
         push(MACHINE.memory.read::<u32>(0x409984u32));
         // 0040333e call dword ptr ds:[406090h]
-        call(0x403344, Cont(kernel32::stdcall_HeapFree))
+        call(0x403344, Cont(kernel32::HeapFree_stdcall))
     }
 }
 
@@ -13774,7 +13774,7 @@ pub fn x0040339e() -> Cont {
         // 004033b2 push edi
         push(MACHINE.regs.edi);
         // 004033b3 call dword ptr ds:[40605Ch]
-        call(0x4033b9, Cont(kernel32::stdcall_VirtualAlloc))
+        call(0x4033b9, Cont(kernel32::VirtualAlloc_stdcall))
     }
 }
 
@@ -16037,7 +16037,7 @@ pub fn x00403767() -> Cont {
         // 0040376e push dword ptr ds:[409984h]
         push(MACHINE.memory.read::<u32>(0x409984u32));
         // 00403774 call dword ptr ds:[406028h]
-        call(0x40377a, Cont(kernel32::stdcall_HeapAlloc))
+        call(0x40377a, Cont(kernel32::HeapAlloc_stdcall))
     }
 }
 
@@ -16418,7 +16418,7 @@ pub fn x0040386b() -> Cont {
         // 00403872 push edi
         push(MACHINE.regs.edi);
         // 00403873 call dword ptr ds:[406098h]
-        call(0x403879, Cont(kernel32::stdcall_VirtualFree))
+        call(0x403879, Cont(kernel32::VirtualFree_stdcall))
     }
 }
 
@@ -16440,7 +16440,7 @@ pub fn x00403881() -> Cont {
         // 00403884 push dword ptr ds:[409984h]
         push(MACHINE.memory.read::<u32>(0x409984u32));
         // 0040388a call dword ptr ds:[406090h]
-        call(0x403890, Cont(kernel32::stdcall_HeapFree))
+        call(0x403890, Cont(kernel32::HeapFree_stdcall))
     }
 }
 
@@ -16495,7 +16495,7 @@ pub fn x00403897() -> Cont {
                 .read::<u32>(MACHINE.regs.esi.wrapping_add(0x10u32)),
         );
         // 004038a6 call dword ptr ds:[406098h]
-        call(0x4038ac, Cont(kernel32::stdcall_VirtualFree))
+        call(0x4038ac, Cont(kernel32::VirtualFree_stdcall))
     }
 }
 
@@ -16565,7 +16565,7 @@ pub fn x004038c4() -> Cont {
         // 004038d6 push dword ptr ds:[409984h]
         push(MACHINE.memory.read::<u32>(0x409984u32));
         // 004038dc call dword ptr ds:[406090h]
-        call(0x4038e2, Cont(kernel32::stdcall_HeapFree))
+        call(0x4038e2, Cont(kernel32::HeapFree_stdcall))
     }
 }
 
@@ -16694,7 +16694,7 @@ pub fn x0040391b() -> Cont {
         // 0040392a push eax
         push(MACHINE.regs.eax);
         // 0040392b call dword ptr ds:[406098h]
-        call(0x403931, Cont(kernel32::stdcall_VirtualFree))
+        call(0x403931, Cont(kernel32::VirtualFree_stdcall))
     }
 }
 
@@ -17801,7 +17801,7 @@ pub fn x00403b74() -> Cont {
             MACHINE.regs.eax,
         );
         // 00403b86 call dword ptr ds:[40605Ch]
-        call(0x403b8c, Cont(kernel32::stdcall_VirtualAlloc))
+        call(0x403b8c, Cont(kernel32::VirtualAlloc_stdcall))
     }
 }
 
@@ -19842,7 +19842,7 @@ pub fn x004041fa() -> Cont {
         // 004041fe push esi
         push(MACHINE.regs.esi);
         // 004041ff call dword ptr ds:[406058h]
-        call(0x404205, Cont(kernel32::stdcall_GetCPInfo))
+        call(0x404205, Cont(kernel32::GetCPInfo_stdcall))
     }
 }
 
@@ -20404,7 +20404,7 @@ pub fn x00404360() -> Cont {
         // 00404360 mov dword ptr ds:[409710h],1
         MACHINE.memory.write::<u32>(0x409710u32, 0x1u32);
         // 0040436a jmp dword ptr ds:[406050h]
-        Cont(kernel32::stdcall_GetOEMCP)
+        Cont(kernel32::GetOEMCP_stdcall)
     }
 }
 
@@ -20422,7 +20422,7 @@ pub fn x00404375() -> Cont {
         // 00404375 mov dword ptr ds:[409710h],1
         MACHINE.memory.write::<u32>(0x409710u32, 0x1u32);
         // 0040437f jmp dword ptr ds:[406054h]
-        Cont(kernel32::stdcall_GetACP)
+        Cont(kernel32::GetACP_stdcall)
     }
 }
 
@@ -20594,7 +20594,7 @@ pub fn x004043f6() -> Cont {
         // 00404404 push dword ptr ds:[409748h]
         push(MACHINE.memory.read::<u32>(0x409748u32));
         // 0040440a call dword ptr ds:[406058h]
-        call(0x404410, Cont(kernel32::stdcall_GetCPInfo))
+        call(0x404410, Cont(kernel32::GetCPInfo_stdcall))
     }
 }
 
@@ -23795,7 +23795,7 @@ pub fn x00404afc() -> Cont {
         // 00404afc push 406484h
         push(0x406484u32);
         // 00404b01 call dword ptr ds:[406048h]
-        call(0x404b07, Cont(kernel32::stdcall_LoadLibraryA))
+        call(0x404b07, Cont(kernel32::LoadLibraryA_stdcall))
     }
 }
 
@@ -24886,7 +24886,7 @@ pub fn x00405048() -> Cont {
         // 00405059 push edi
         push(MACHINE.regs.edi);
         // 0040505a call dword ptr ds:[40603Ch]
-        call(0x405060, Cont(kernel32::stdcall_LCMapStringW))
+        call(0x405060, Cont(kernel32::LCMapStringW_stdcall))
     }
 }
 
@@ -24923,7 +24923,7 @@ pub fn x0040506c() -> Cont {
         // 00405075 push edi
         push(MACHINE.regs.edi);
         // 00405076 call dword ptr ds:[406040h]
-        call(0x40507c, Cont(kernel32::stdcall_LCMapStringA))
+        call(0x40507c, Cont(kernel32::LCMapStringA_stdcall))
     }
 }
 
@@ -25054,7 +25054,7 @@ pub fn x004050ad() -> Cont {
                 .read::<u32>(MACHINE.regs.ebp.wrapping_add(0x8u32)),
         );
         // 004050bf call dword ptr ds:[406040h]
-        call(0x4050c5, Cont(kernel32::stdcall_LCMapStringA))
+        call(0x4050c5, Cont(kernel32::LCMapStringA_stdcall))
     }
 }
 
@@ -25133,7 +25133,7 @@ pub fn x004050d8() -> Cont {
                 .read::<u32>(MACHINE.regs.ebp.wrapping_add(0x20u32)),
         );
         // 004050f7 call dword ptr ds:[406044h]
-        call(0x4050fd, Cont(kernel32::stdcall_MultiByteToWideChar))
+        call(0x4050fd, Cont(kernel32::MultiByteToWideChar_stdcall))
     }
 }
 
@@ -25176,7 +25176,7 @@ pub fn x004050e0() -> Cont {
                 .read::<u32>(MACHINE.regs.ebp.wrapping_add(0x20u32)),
         );
         // 004050f7 call dword ptr ds:[406044h]
-        call(0x4050fd, Cont(kernel32::stdcall_MultiByteToWideChar))
+        call(0x4050fd, Cont(kernel32::MultiByteToWideChar_stdcall))
     }
 }
 
@@ -25292,7 +25292,7 @@ pub fn x00405140() -> Cont {
                 .read::<u32>(MACHINE.regs.ebp.wrapping_add(0x20u32)),
         );
         // 0040514f call dword ptr ds:[406044h]
-        call(0x405155, Cont(kernel32::stdcall_MultiByteToWideChar))
+        call(0x405155, Cont(kernel32::MultiByteToWideChar_stdcall))
     }
 }
 
@@ -25332,7 +25332,7 @@ pub fn x00405159() -> Cont {
                 .read::<u32>(MACHINE.regs.ebp.wrapping_add(0x8u32)),
         );
         // 00405165 call dword ptr ds:[40603Ch]
-        call(0x40516b, Cont(kernel32::stdcall_LCMapStringW))
+        call(0x40516b, Cont(kernel32::LCMapStringW_stdcall))
     }
 }
 
@@ -25429,7 +25429,7 @@ pub fn x00405188() -> Cont {
                 .read::<u32>(MACHINE.regs.ebp.wrapping_add(0x8u32)),
         );
         // 00405198 call dword ptr ds:[40603Ch]
-        call(0x40519e, Cont(kernel32::stdcall_LCMapStringW))
+        call(0x40519e, Cont(kernel32::LCMapStringW_stdcall))
     }
 }
 
@@ -25584,7 +25584,7 @@ pub fn x004051f2() -> Cont {
                 .read::<u32>(MACHINE.regs.ebp.wrapping_add(0x8u32)),
         );
         // 00405200 call dword ptr ds:[40603Ch]
-        call(0x405206, Cont(kernel32::stdcall_LCMapStringW))
+        call(0x405206, Cont(kernel32::LCMapStringW_stdcall))
     }
 }
 
@@ -25653,7 +25653,7 @@ pub fn x00405215() -> Cont {
                 .read::<u32>(MACHINE.regs.ebp.wrapping_add(0x20u32)),
         );
         // 00405225 call dword ptr ds:[4060A4h]
-        call(0x40522b, Cont(kernel32::stdcall_WideCharToMultiByte))
+        call(0x40522b, Cont(kernel32::WideCharToMultiByte_stdcall))
     }
 }
 
@@ -25672,7 +25672,7 @@ pub fn x0040521b() -> Cont {
                 .read::<u32>(MACHINE.regs.ebp.wrapping_add(0x20u32)),
         );
         // 00405225 call dword ptr ds:[4060A4h]
-        call(0x40522b, Cont(kernel32::stdcall_WideCharToMultiByte))
+        call(0x40522b, Cont(kernel32::WideCharToMultiByte_stdcall))
     }
 }
 
@@ -25848,7 +25848,7 @@ pub fn x00405298() -> Cont {
         // 004052a5 push esi
         push(MACHINE.regs.esi);
         // 004052a6 call dword ptr ds:[406034h]
-        call(0x4052ac, Cont(kernel32::stdcall_GetStringTypeW))
+        call(0x4052ac, Cont(kernel32::GetStringTypeW_stdcall))
     }
 }
 
@@ -25885,7 +25885,7 @@ pub fn x004052b4() -> Cont {
         // 004052bf push ebx
         push(MACHINE.regs.ebx);
         // 004052c0 call dword ptr ds:[406038h]
-        call(0x4052c6, Cont(kernel32::stdcall_GetStringTypeA))
+        call(0x4052c6, Cont(kernel32::GetStringTypeA_stdcall))
     }
 }
 
@@ -25977,7 +25977,7 @@ pub fn x004052e2() -> Cont {
         // 004052f3 push eax
         push(MACHINE.regs.eax);
         // 004052f4 call dword ptr ds:[406038h]
-        call(0x4052fa, Cont(kernel32::stdcall_GetStringTypeA))
+        call(0x4052fa, Cont(kernel32::GetStringTypeA_stdcall))
     }
 }
 
@@ -26010,7 +26010,7 @@ pub fn x004052e7() -> Cont {
         // 004052f3 push eax
         push(MACHINE.regs.eax);
         // 004052f4 call dword ptr ds:[406038h]
-        call(0x4052fa, Cont(kernel32::stdcall_GetStringTypeA))
+        call(0x4052fa, Cont(kernel32::GetStringTypeA_stdcall))
     }
 }
 
@@ -26089,7 +26089,7 @@ pub fn x0040530d() -> Cont {
                 .read::<u32>(MACHINE.regs.ebp.wrapping_add(0x18u32)),
         );
         // 0040532c call dword ptr ds:[406044h]
-        call(0x405332, Cont(kernel32::stdcall_MultiByteToWideChar))
+        call(0x405332, Cont(kernel32::MultiByteToWideChar_stdcall))
     }
 }
 
@@ -26132,7 +26132,7 @@ pub fn x00405315() -> Cont {
                 .read::<u32>(MACHINE.regs.ebp.wrapping_add(0x18u32)),
         );
         // 0040532c call dword ptr ds:[406044h]
-        call(0x405332, Cont(kernel32::stdcall_MultiByteToWideChar))
+        call(0x405332, Cont(kernel32::MultiByteToWideChar_stdcall))
     }
 }
 
@@ -26258,7 +26258,7 @@ pub fn x00405373() -> Cont {
                 .read::<u32>(MACHINE.regs.ebp.wrapping_add(0x18u32)),
         );
         // 00405382 call dword ptr ds:[406044h]
-        call(0x405388, Cont(kernel32::stdcall_MultiByteToWideChar))
+        call(0x405388, Cont(kernel32::MultiByteToWideChar_stdcall))
     }
 }
 
@@ -26290,7 +26290,7 @@ pub fn x0040538c() -> Cont {
                 .read::<u32>(MACHINE.regs.ebp.wrapping_add(0x8u32)),
         );
         // 00405394 call dword ptr ds:[406034h]
-        call(0x40539a, Cont(kernel32::stdcall_GetStringTypeW))
+        call(0x40539a, Cont(kernel32::GetStringTypeW_stdcall))
     }
 }
 
@@ -26906,99 +26906,99 @@ pub fn x004054ec() -> Cont {
 }
 
 pub const BLOCKS: [(u32, fn() -> Cont); 1646] = [
-    (0x001001, ddraw::stdcall_DirectDrawCreateEx),
-    (0x001002, gdi32::stdcall_SelectObject),
-    (0x001003, gdi32::stdcall_CreateCompatibleDC),
-    (0x001004, gdi32::stdcall_GetObjectA),
-    (0x001005, gdi32::stdcall_StretchBlt),
-    (0x001006, gdi32::stdcall_DeleteDC),
-    (0x001007, gdi32::stdcall_GetStockObject),
-    (0x001008, kernel32::stdcall_OutputDebugStringA),
-    (0x001009, kernel32::stdcall_HeapAlloc),
-    (0x00100a, kernel32::stdcall_GetModuleFileNameA),
-    (0x00100b, kernel32::stdcall_UnhandledExceptionFilter),
-    (0x00100c, kernel32::stdcall_GetStringTypeW),
-    (0x00100d, kernel32::stdcall_GetStringTypeA),
-    (0x00100e, kernel32::stdcall_LCMapStringW),
-    (0x00100f, kernel32::stdcall_LCMapStringA),
-    (0x001010, kernel32::stdcall_MultiByteToWideChar),
-    (0x001011, kernel32::stdcall_LoadLibraryA),
-    (0x001012, kernel32::stdcall_GetProcAddress),
-    (0x001013, kernel32::stdcall_GetOEMCP),
-    (0x001014, kernel32::stdcall_GetACP),
-    (0x001015, kernel32::stdcall_GetCPInfo),
-    (0x001016, kernel32::stdcall_VirtualAlloc),
-    (0x001017, kernel32::stdcall_WriteFile),
-    (0x001018, kernel32::stdcall_RtlUnwind),
-    (0x001019, kernel32::stdcall_GetModuleHandleA),
-    (0x00101a, kernel32::stdcall_GetStartupInfoA),
-    (0x00101b, kernel32::stdcall_GetCommandLineA),
-    (0x00101c, kernel32::stdcall_GetVersion),
-    (0x00101d, kernel32::stdcall_ExitProcess),
-    (0x00101e, kernel32::stdcall_HeapReAlloc),
-    (0x00101f, kernel32::stdcall_GetTickCount),
-    (0x001020, kernel32::stdcall_TerminateProcess),
-    (0x001021, kernel32::stdcall_GetCurrentProcess),
-    (0x001022, kernel32::stdcall_HeapSize),
-    (0x001023, kernel32::stdcall_HeapFree),
-    (0x001024, kernel32::stdcall_HeapCreate),
-    (0x001025, kernel32::stdcall_VirtualFree),
-    (0x001026, kernel32::stdcall_FreeEnvironmentStringsA),
-    (0x001027, kernel32::stdcall_FreeEnvironmentStringsW),
-    (0x001028, kernel32::stdcall_WideCharToMultiByte),
-    (0x001029, kernel32::stdcall_GetEnvironmentStrings),
-    (0x00102a, kernel32::stdcall_GetEnvironmentStringsW),
-    (0x00102b, kernel32::stdcall_SetHandleCount),
-    (0x00102c, kernel32::stdcall_GetStdHandle),
-    (0x00102d, kernel32::stdcall_GetFileType),
-    (0x00102e, kernel32::stdcall_GetEnvironmentVariableA),
-    (0x00102f, kernel32::stdcall_GetVersionExA),
-    (0x001030, kernel32::stdcall_HeapDestroy),
-    (0x001031, user32::stdcall_DispatchMessageA),
-    (0x001032, user32::stdcall_TranslateMessage),
-    (0x001033, user32::stdcall_PeekMessageA),
-    (0x001034, user32::stdcall_MessageBoxA),
-    (0x001035, user32::stdcall_SetFocus),
-    (0x001036, user32::stdcall_UpdateWindow),
-    (0x001037, user32::stdcall_ShowWindow),
-    (0x001038, user32::stdcall_CreateWindowExA),
-    (0x001039, user32::stdcall_GetSystemMetrics),
-    (0x00103a, user32::stdcall_LoadImageA),
-    (0x00103b, user32::stdcall_DefWindowProcA),
-    (0x00103c, user32::stdcall_PostQuitMessage),
-    (0x00103d, user32::stdcall_LoadIconA),
-    (0x00103e, user32::stdcall_LoadCursorA),
-    (0x00103f, user32::stdcall_RegisterClassA),
-    (0x001040, ddraw::stdcall_IDirectDraw7_QueryInterface),
-    (0x001041, ddraw::stdcall_IDirectDraw7_AddRef),
-    (0x001042, ddraw::stdcall_IDirectDraw7_Release),
-    (0x001043, ddraw::stdcall_IDirectDraw7_Compact),
-    (0x001044, ddraw::stdcall_IDirectDraw7_CreateClipper),
-    (0x001045, ddraw::stdcall_IDirectDraw7_CreatePalette),
-    (0x001046, ddraw::stdcall_IDirectDraw7_CreateSurface),
-    (0x001047, ddraw::stdcall_IDirectDraw7_DuplicateSurface),
-    (0x001048, ddraw::stdcall_IDirectDraw7_EnumDisplayModes),
-    (0x001049, ddraw::stdcall_IDirectDraw7_EnumSurfaces),
-    (0x00104a, ddraw::stdcall_IDirectDraw7_FlipToGDISurface),
-    (0x00104b, ddraw::stdcall_IDirectDraw7_GetCaps),
-    (0x00104c, ddraw::stdcall_IDirectDraw7_GetDisplayMode),
-    (0x00104d, ddraw::stdcall_IDirectDraw7_GetFourCCCodes),
-    (0x00104e, ddraw::stdcall_IDirectDraw7_GetGDISurface),
-    (0x00104f, ddraw::stdcall_IDirectDraw7_GetMonitorFrequency),
-    (0x001050, ddraw::stdcall_IDirectDraw7_GetScanLine),
-    (0x001051, ddraw::stdcall_IDirectDraw7_GetVerticalBlankStatus),
-    (0x001052, ddraw::stdcall_IDirectDraw7_Initialize),
-    (0x001053, ddraw::stdcall_IDirectDraw7_RestoreDisplayMode),
-    (0x001054, ddraw::stdcall_IDirectDraw7_SetCooperativeLevel),
-    (0x001055, ddraw::stdcall_IDirectDraw7_SetDisplayMode),
-    (0x001056, ddraw::stdcall_IDirectDraw7_WaitForVerticalBlank),
-    (0x001057, ddraw::stdcall_IDirectDraw7_GetAvailableVidMem),
-    (0x001058, ddraw::stdcall_IDirectDraw7_GetSurfaceFromDC),
-    (0x001059, ddraw::stdcall_IDirectDraw7_RestoreAllSurfaces),
-    (0x00105a, ddraw::stdcall_IDirectDraw7_TestCooperativeLevel),
-    (0x00105b, ddraw::stdcall_IDirectDraw7_GetDeviceIdentifier),
-    (0x00105c, ddraw::stdcall_IDirectDraw7_StartModeTest),
-    (0x00105d, ddraw::stdcall_IDirectDraw7_EvaluateMode),
+    (0x001001, ddraw::DirectDrawCreateEx_stdcall),
+    (0x001002, gdi32::SelectObject_stdcall),
+    (0x001003, gdi32::CreateCompatibleDC_stdcall),
+    (0x001004, gdi32::GetObjectA_stdcall),
+    (0x001005, gdi32::StretchBlt_stdcall),
+    (0x001006, gdi32::DeleteDC_stdcall),
+    (0x001007, gdi32::GetStockObject_stdcall),
+    (0x001008, kernel32::OutputDebugStringA_stdcall),
+    (0x001009, kernel32::HeapAlloc_stdcall),
+    (0x00100a, kernel32::GetModuleFileNameA_stdcall),
+    (0x00100b, kernel32::UnhandledExceptionFilter_stdcall),
+    (0x00100c, kernel32::GetStringTypeW_stdcall),
+    (0x00100d, kernel32::GetStringTypeA_stdcall),
+    (0x00100e, kernel32::LCMapStringW_stdcall),
+    (0x00100f, kernel32::LCMapStringA_stdcall),
+    (0x001010, kernel32::MultiByteToWideChar_stdcall),
+    (0x001011, kernel32::LoadLibraryA_stdcall),
+    (0x001012, kernel32::GetProcAddress_stdcall),
+    (0x001013, kernel32::GetOEMCP_stdcall),
+    (0x001014, kernel32::GetACP_stdcall),
+    (0x001015, kernel32::GetCPInfo_stdcall),
+    (0x001016, kernel32::VirtualAlloc_stdcall),
+    (0x001017, kernel32::WriteFile_stdcall),
+    (0x001018, kernel32::RtlUnwind_stdcall),
+    (0x001019, kernel32::GetModuleHandleA_stdcall),
+    (0x00101a, kernel32::GetStartupInfoA_stdcall),
+    (0x00101b, kernel32::GetCommandLineA_stdcall),
+    (0x00101c, kernel32::GetVersion_stdcall),
+    (0x00101d, kernel32::ExitProcess_stdcall),
+    (0x00101e, kernel32::HeapReAlloc_stdcall),
+    (0x00101f, kernel32::GetTickCount_stdcall),
+    (0x001020, kernel32::TerminateProcess_stdcall),
+    (0x001021, kernel32::GetCurrentProcess_stdcall),
+    (0x001022, kernel32::HeapSize_stdcall),
+    (0x001023, kernel32::HeapFree_stdcall),
+    (0x001024, kernel32::HeapCreate_stdcall),
+    (0x001025, kernel32::VirtualFree_stdcall),
+    (0x001026, kernel32::FreeEnvironmentStringsA_stdcall),
+    (0x001027, kernel32::FreeEnvironmentStringsW_stdcall),
+    (0x001028, kernel32::WideCharToMultiByte_stdcall),
+    (0x001029, kernel32::GetEnvironmentStrings_stdcall),
+    (0x00102a, kernel32::GetEnvironmentStringsW_stdcall),
+    (0x00102b, kernel32::SetHandleCount_stdcall),
+    (0x00102c, kernel32::GetStdHandle_stdcall),
+    (0x00102d, kernel32::GetFileType_stdcall),
+    (0x00102e, kernel32::GetEnvironmentVariableA_stdcall),
+    (0x00102f, kernel32::GetVersionExA_stdcall),
+    (0x001030, kernel32::HeapDestroy_stdcall),
+    (0x001031, user32::DispatchMessageA_stdcall),
+    (0x001032, user32::TranslateMessage_stdcall),
+    (0x001033, user32::PeekMessageA_stdcall),
+    (0x001034, user32::MessageBoxA_stdcall),
+    (0x001035, user32::SetFocus_stdcall),
+    (0x001036, user32::UpdateWindow_stdcall),
+    (0x001037, user32::ShowWindow_stdcall),
+    (0x001038, user32::CreateWindowExA_stdcall),
+    (0x001039, user32::GetSystemMetrics_stdcall),
+    (0x00103a, user32::LoadImageA_stdcall),
+    (0x00103b, user32::DefWindowProcA_stdcall),
+    (0x00103c, user32::PostQuitMessage_stdcall),
+    (0x00103d, user32::LoadIconA_stdcall),
+    (0x00103e, user32::LoadCursorA_stdcall),
+    (0x00103f, user32::RegisterClassA_stdcall),
+    (0x001040, ddraw::IDirectDraw7_QueryInterface_stdcall),
+    (0x001041, ddraw::IDirectDraw7_AddRef_stdcall),
+    (0x001042, ddraw::IDirectDraw7_Release_stdcall),
+    (0x001043, ddraw::IDirectDraw7_Compact_stdcall),
+    (0x001044, ddraw::IDirectDraw7_CreateClipper_stdcall),
+    (0x001045, ddraw::IDirectDraw7_CreatePalette_stdcall),
+    (0x001046, ddraw::IDirectDraw7_CreateSurface_stdcall),
+    (0x001047, ddraw::IDirectDraw7_DuplicateSurface_stdcall),
+    (0x001048, ddraw::IDirectDraw7_EnumDisplayModes_stdcall),
+    (0x001049, ddraw::IDirectDraw7_EnumSurfaces_stdcall),
+    (0x00104a, ddraw::IDirectDraw7_FlipToGDISurface_stdcall),
+    (0x00104b, ddraw::IDirectDraw7_GetCaps_stdcall),
+    (0x00104c, ddraw::IDirectDraw7_GetDisplayMode_stdcall),
+    (0x00104d, ddraw::IDirectDraw7_GetFourCCCodes_stdcall),
+    (0x00104e, ddraw::IDirectDraw7_GetGDISurface_stdcall),
+    (0x00104f, ddraw::IDirectDraw7_GetMonitorFrequency_stdcall),
+    (0x001050, ddraw::IDirectDraw7_GetScanLine_stdcall),
+    (0x001051, ddraw::IDirectDraw7_GetVerticalBlankStatus_stdcall),
+    (0x001052, ddraw::IDirectDraw7_Initialize_stdcall),
+    (0x001053, ddraw::IDirectDraw7_RestoreDisplayMode_stdcall),
+    (0x001054, ddraw::IDirectDraw7_SetCooperativeLevel_stdcall),
+    (0x001055, ddraw::IDirectDraw7_SetDisplayMode_stdcall),
+    (0x001056, ddraw::IDirectDraw7_WaitForVerticalBlank_stdcall),
+    (0x001057, ddraw::IDirectDraw7_GetAvailableVidMem_stdcall),
+    (0x001058, ddraw::IDirectDraw7_GetSurfaceFromDC_stdcall),
+    (0x001059, ddraw::IDirectDraw7_RestoreAllSurfaces_stdcall),
+    (0x00105a, ddraw::IDirectDraw7_TestCooperativeLevel_stdcall),
+    (0x00105b, ddraw::IDirectDraw7_GetDeviceIdentifier_stdcall),
+    (0x00105c, ddraw::IDirectDraw7_StartModeTest_stdcall),
+    (0x00105d, ddraw::IDirectDraw7_EvaluateMode_stdcall),
     (0x401000, x00401000),
     (0x401005, x00401005),
     (0x401010, x00401010),

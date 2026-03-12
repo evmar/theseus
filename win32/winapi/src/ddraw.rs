@@ -222,7 +222,7 @@ pub const EXPORTS: [&'static str; 30] = [
 ];
 
 pub fn vtable(buf: &mut [u8]) {
-    let addr = runtime::proc_addr(stdcall_IDirectDraw7_QueryInterface);
+    let addr = runtime::proc_addr(IDirectDraw7_QueryInterface_stdcall);
     let vtable = IDirectDraw7_VTable {
         QueryInterface: addr + 0,
         AddRef: addr + 1,

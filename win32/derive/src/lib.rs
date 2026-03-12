@@ -51,7 +51,7 @@ pub fn dllexport(_attr: TokenStream, mut tokens: TokenStream) -> TokenStream {
         quote![log::info!(#fmt_string);]
     };
 
-    let wrapper_name = format_ident!("stdcall_{}", name);
+    let wrapper_name = format_ident!("{}_stdcall", name);
     let stack_popped = args.len() as u32;
     let mut call_args = args.iter().map(|(arg, _)| arg);
     call_args.next(); // skip return_addr
