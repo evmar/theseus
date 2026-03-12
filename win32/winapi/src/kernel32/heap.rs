@@ -1,10 +1,10 @@
 use bitflags::bitflags;
-use std::rc::Rc;
+use std::{collections::HashMap, rc::Rc};
 
 use crate::{
     FromABIParam,
     heap::Heap,
-    kernel32::{self, HANDLE},
+    kernel32::{self, HANDLE, Mappings},
     stub,
 };
 use runtime::{Cont, MACHINE};
@@ -39,6 +39,18 @@ pub fn HeapAlloc(hHeap: HANDLE, dwFlags: HEAP_FLAGS, dwBytes: u32) -> u32 {
     */
 }
 
+pub fn heap_create(
+    mappings: &mut Mappings,
+    heaps: &mut HashMap<u32, Rc<Heap>>,
+    name: String,
+    size: u32,
+) -> Rc<Heap> {
+    let addr = mappings.alloc(name, 0, size);
+    let heap = Rc::new(Heap::new(addr, size));
+    heaps.insert(addr, heap.clone());
+    heap
+}
+
 #[win32_derive::dllexport]
 pub fn HeapCreate(
     _flOptions: u32, /* HEAP_FLAGS */
@@ -48,18 +60,13 @@ pub fn HeapCreate(
     // Currently none of the flags will affect behavior, but we might need to revisit this
     // with exceptions or threads support...
     let size = dwInitialSize.max(20 << 20);
-    let addr = kernel32::state()
-        .mappings
-        .borrow_mut()
-        .alloc("HeapCreate".into(), 0, size);
-
-    let heap = Heap::new(addr, size);
-    kernel32::state()
-        .heaps
-        .borrow_mut()
-        .insert(addr, Rc::new(heap));
-
-    addr
+    let heap = heap_create(
+        &mut *kernel32::state().mappings.borrow_mut(),
+        &mut *kernel32::state().heaps.borrow_mut(),
+        "HeapCreate".into(),
+        size,
+    );
+    heap.addr
 }
 
 #[win32_derive::dllexport]

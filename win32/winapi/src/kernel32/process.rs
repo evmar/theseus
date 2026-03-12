@@ -8,7 +8,7 @@ pub fn ExitProcess(uExitCode: u32) -> u32 {
 }
 
 #[repr(C)]
-#[derive(zerocopy::FromBytes, zerocopy::IntoBytes, zerocopy::KnownLayout)]
+#[derive(zerocopy::FromBytes, zerocopy::Immutable, zerocopy::IntoBytes)]
 pub struct NT_TIB {
     ExceptionList: u32,
     StackBase: u32,
@@ -20,7 +20,7 @@ pub struct NT_TIB {
 }
 
 #[repr(C)]
-#[derive(zerocopy::FromBytes, zerocopy::IntoBytes, zerocopy::KnownLayout)]
+#[derive(zerocopy::FromBytes, zerocopy::Immutable, zerocopy::IntoBytes, zerocopy::KnownLayout)]
 pub struct TEB {
     pub Tib: NT_TIB,
     pub EnvironmentPointer: u32,
@@ -97,6 +97,7 @@ pub fn init_process() {
         let (peb, buf) = PEB::mut_from_prefix(buf).unwrap();
         peb.ProcessParameters =
             (&raw const *params).byte_offset_from_unsigned(MACHINE.memory.bytes) as u32;
+        peb.ProcessHeap = state().process_heap.addr;
 
         let (teb, _) = TEB::mut_from_prefix(buf).unwrap();
         teb.Peb = (&raw const *peb).byte_offset_from_unsigned(MACHINE.memory.bytes) as u32;
@@ -115,4 +116,25 @@ pub const CURRENT_PROCESS_HANDLE: HANDLE = -1i32 as u32;
 #[win32_derive::dllexport]
 pub fn GetCurrentProcess() -> HANDLE {
     CURRENT_PROCESS_HANDLE
+}
+
+#[allow(unused)]
+fn teb(memory: &[u8]) -> &TEB {
+    unsafe {
+        let teb_addr = MACHINE.regs.fs_base;
+        let (teb, _) = TEB::ref_from_prefix(&memory[teb_addr as usize..]).unwrap();
+        teb
+    }
+}
+
+#[allow(unused)]
+fn peb_mut(memory: &mut [u8]) -> &mut PEB {
+    let peb_addr = teb(memory).Peb;
+    let (peb, _) = PEB::mut_from_prefix(&mut memory[peb_addr as usize..]).unwrap();
+    peb
+}
+
+#[win32_derive::dllexport]
+pub fn GetProcessHeap() -> HANDLE {
+    state().process_heap.addr
 }
