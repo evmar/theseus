@@ -1,6 +1,51 @@
 use runtime::*;
 
 use crate::{ABIReturn, stub};
+use zerocopy::IntoBytes;
+
+#[derive(Default, zerocopy::IntoBytes, zerocopy::Immutable)]
+#[repr(C)]
+struct DDraw_VTable {
+    QueryInterface: u32,
+    AddRef: u32,
+    Release: u32,
+    Compact: u32,
+    CreateClipper: u32,
+    CreatePalette: u32,
+    CreateSurface: u32,
+    DuplicateSurface: u32,
+    EnumDisplayModes: u32,
+    EnumSurfaces: u32,
+    FlipToGDISurface: u32,
+    GetCaps: u32,
+    GetDisplayMode: u32,
+    GetFourCCCodes: u32,
+    GetGDISurface: u32,
+    GetMonitorFrequency: u32,
+    GetScanLine: u32,
+    GetVerticalBlankStatus: u32,
+    Initialize: u32,
+    RestoreDisplayMode: u32,
+    SetCooperativeLevel: u32,
+    SetDisplayMode: u32,
+    WaitForVerticalBlank: u32,
+    GetAvailableVidMem: u32,
+    GetSurfaceFromDC: u32,
+    RestoreAllSurfaces: u32,
+    TestCooperativeLevel: u32,
+    GetDeviceIdentifier: u32,
+    StartModeTest: u32,
+    EvaluateMode: u32,
+}
+
+pub fn ddraw_init(addr: u32) {
+    unsafe {
+        let vtable = DDraw_VTable::default();
+        vtable
+            .write_to_prefix(&mut MACHINE.memory.bytes[addr as usize..])
+            .unwrap();
+    }
+}
 
 #[derive(Debug, Copy, Clone, Eq, PartialEq)]
 #[repr(u32)]
