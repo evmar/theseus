@@ -400,9 +400,6 @@ pub fn gen_file(state: &mut State, outdir: &str) -> Result<()> {
     write!(&mut text, "use runtime::*;\n");
     write!(&mut text, "use winapi::*;\n\n");
 
-    let mut imports = state.imports.values().collect::<Vec<_>>();
-    imports.sort_by_key(|i| i.iat_addr);
-
     state.mem.mappings.dump();
 
     // It would be cool if we could just link a wasm object file that contains data sections

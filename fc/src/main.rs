@@ -77,15 +77,14 @@ impl State {
 
         // Reserve some fake addresses for imported functions so they can be assigned addresses.
         // If we never write to the memory it stays zero and doesn't end up in the output.
-        let import_funcs_addr = self.mem.mappings.alloc(
-            "imported functions".into(),
-            0,
-            self.imports.len() as u32 * 4,
-        );
+        let import_funcs_addr =
+            self.mem
+                .mappings
+                .alloc("imported functions".into(), 0, self.imports.len() as u32);
         let mut imports = self.imports.values_mut().collect::<Vec<_>>();
         imports.sort_by_key(|i| i.iat_addr);
         for (i, import) in imports.into_iter().enumerate() {
-            import.func_addr = import_funcs_addr + ((i + 1) as u32 * 4);
+            import.func_addr = import_funcs_addr + ((i + 1) as u32);
             self.mem.write::<u32>(import.iat_addr, import.func_addr);
             self.blocks.insert(
                 import.func_addr,
