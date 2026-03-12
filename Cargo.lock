@@ -44,17 +44,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "fc"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "iced-x86",
- "pe",
- "winapi 0.1.0",
- "zerocopy",
-]
-
-[[package]]
 name = "iced-x86"
 version = "1.21.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -152,6 +141,17 @@ dependencies = [
  "proc-macro2",
  "quote",
  "unicode-ident",
+]
+
+[[package]]
+name = "tc"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "iced-x86",
+ "pe",
+ "winapi 0.1.0",
+ "zerocopy",
 ]
 
 [[package]]

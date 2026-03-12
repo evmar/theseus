@@ -4,7 +4,7 @@ members = [
     "exe/basicdd",
     "exe/winapi",
     "exe/zig_hello",
-    "fc",
+    "tc",
     "runtime",
     "win32/derive",
     "win32/winapi",
