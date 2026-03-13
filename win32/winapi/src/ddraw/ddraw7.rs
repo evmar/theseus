@@ -1,11 +1,16 @@
+use crate::ddraw::GUID;
+use crate::{ddraw::DD, gdi32::HDC, kernel32, stub, user32::HWND};
 use runtime::*;
-
-use crate::ABIReturn;
 use zerocopy::IntoBytes;
 
-pub mod IDirectDraw7 {
-    use crate::{gdi32::HDC, kernel32, stub, user32::HWND};
+pub const IID_IDirectDraw7: GUID = GUID((
+    0x15e65ec0,
+    0x3b9c,
+    0x11d2,
+    [0xb9, 0x2f, 0x00, 0x60, 0x97, 0x97, 0xea, 0x5b],
+));
 
+pub mod IDirectDraw7 {
     use super::*;
 
     #[derive(Default, zerocopy::IntoBytes, zerocopy::Immutable)]
@@ -285,8 +290,6 @@ pub mod IDirectDraw7 {
 }
 
 pub mod IDirectDrawSurface7 {
-    use crate::{kernel32, stub};
-
     use super::*;
 
     #[derive(Default, zerocopy::IntoBytes, zerocopy::Immutable)]
@@ -702,148 +705,4 @@ pub mod IDirectDrawSurface7 {
         }
         addr
     }
-}
-
-pub const EXPORTS: [&'static str; 79] = [
-    "IDirectDraw7::QueryInterface",
-    "IDirectDraw7::AddRef",
-    "IDirectDraw7::Release",
-    "IDirectDraw7::Compact",
-    "IDirectDraw7::CreateClipper",
-    "IDirectDraw7::CreatePalette",
-    "IDirectDraw7::CreateSurface",
-    "IDirectDraw7::DuplicateSurface",
-    "IDirectDraw7::EnumDisplayModes",
-    "IDirectDraw7::EnumSurfaces",
-    "IDirectDraw7::FlipToGDISurface",
-    "IDirectDraw7::GetCaps",
-    "IDirectDraw7::GetDisplayMode",
-    "IDirectDraw7::GetFourCCCodes",
-    "IDirectDraw7::GetGDISurface",
-    "IDirectDraw7::GetMonitorFrequency",
-    "IDirectDraw7::GetScanLine",
-    "IDirectDraw7::GetVerticalBlankStatus",
-    "IDirectDraw7::Initialize",
-    "IDirectDraw7::RestoreDisplayMode",
-    "IDirectDraw7::SetCooperativeLevel",
-    "IDirectDraw7::SetDisplayMode",
-    "IDirectDraw7::WaitForVerticalBlank",
-    "IDirectDraw7::GetAvailableVidMem",
-    "IDirectDraw7::GetSurfaceFromDC",
-    "IDirectDraw7::RestoreAllSurfaces",
-    "IDirectDraw7::TestCooperativeLevel",
-    "IDirectDraw7::GetDeviceIdentifier",
-    "IDirectDraw7::StartModeTest",
-    "IDirectDraw7::EvaluateMode",
-    "IDirectDrawSurface7::QueryInterface",
-    "IDirectDrawSurface7::AddRef",
-    "IDirectDrawSurface7::Release",
-    "IDirectDrawSurface7::AddAttachedSurface",
-    "IDirectDrawSurface7::AddOverlayDirtyRect",
-    "IDirectDrawSurface7::Blt",
-    "IDirectDrawSurface7::BltBatch",
-    "IDirectDrawSurface7::BltFast",
-    "IDirectDrawSurface7::DeleteAttachedSurface",
-    "IDirectDrawSurface7::EnumAttachedSurfaces",
-    "IDirectDrawSurface7::EnumOverlayZOrders",
-    "IDirectDrawSurface7::Flip",
-    "IDirectDrawSurface7::GetAttachedSurface",
-    "IDirectDrawSurface7::GetBltStatus",
-    "IDirectDrawSurface7::GetCaps",
-    "IDirectDrawSurface7::GetClipper",
-    "IDirectDrawSurface7::GetColorKey",
-    "IDirectDrawSurface7::GetDC",
-    "IDirectDrawSurface7::GetFlipStatus",
-    "IDirectDrawSurface7::GetOverlayPosition",
-    "IDirectDrawSurface7::GetPalette",
-    "IDirectDrawSurface7::GetPixelFormat",
-    "IDirectDrawSurface7::GetSurfaceDesc",
-    "IDirectDrawSurface7::Initialize",
-    "IDirectDrawSurface7::IsLost",
-    "IDirectDrawSurface7::Lock",
-    "IDirectDrawSurface7::ReleaseDC",
-    "IDirectDrawSurface7::Restore",
-    "IDirectDrawSurface7::SetClipper",
-    "IDirectDrawSurface7::SetColorKey",
-    "IDirectDrawSurface7::SetOverlayPosition",
-    "IDirectDrawSurface7::SetPalette",
-    "IDirectDrawSurface7::Unlock",
-    "IDirectDrawSurface7::UpdateOverlay",
-    "IDirectDrawSurface7::UpdateOverlayDisplay",
-    "IDirectDrawSurface7::UpdateOverlayZOrder",
-    "IDirectDrawSurface7::GetDDInterface",
-    "IDirectDrawSurface7::PageLock",
-    "IDirectDrawSurface7::PageUnlock",
-    "IDirectDrawSurface7::SetSurfaceDesc",
-    "IDirectDrawSurface7::SetPrivateData",
-    "IDirectDrawSurface7::GetPrivateData",
-    "IDirectDrawSurface7::FreePrivateData",
-    "IDirectDrawSurface7::GetUniquenessValue",
-    "IDirectDrawSurface7::ChangeUniquenessValue",
-    "IDirectDrawSurface7::SetPriority",
-    "IDirectDrawSurface7::GetPriority",
-    "IDirectDrawSurface7::SetLOD",
-    "IDirectDrawSurface7::GetLOD",
-];
-
-#[derive(Debug, Copy, Clone, Eq, PartialEq)]
-#[repr(u32)]
-pub enum DD {
-    OK = 0,
-    E_NOINTERFACE = 0x80004002,
-    ERR_GENERIC = 0x80004005,
-}
-
-impl Into<ABIReturn> for DD {
-    fn into(self) -> ABIReturn {
-        (self as u32).into()
-    }
-}
-
-pub const IID_IDirectDraw7: GUID = GUID((
-    0x15e65ec0,
-    0x3b9c,
-    0x11d2,
-    [0xb9, 0x2f, 0x00, 0x60, 0x97, 0x97, 0xea, 0x5b],
-));
-
-#[repr(C)]
-#[derive(PartialEq, zerocopy::FromBytes)]
-pub struct GUID(pub (u32, u16, u16, [u8; 8]));
-
-impl std::fmt::Debug for GUID {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(
-            f,
-            "{:08x}-{:04x}-{:04x}-{:04x}-",
-            self.0.0,
-            self.0.1,
-            self.0.2,
-            u16::from_le_bytes(self.0.3[..2].try_into().unwrap())
-        )?;
-        for b in &self.0.3[2..] {
-            write!(f, "{:02x}", b)?;
-        }
-        Ok(())
-    }
-}
-
-#[win32_derive::dllexport]
-pub fn DirectDrawCreateEx(lpGuid: u32, lplpDD: u32, iid: u32, _pUnkOuter: u32) -> DD {
-    assert!(lpGuid == 0);
-    let iid = if iid == 0 {
-        None
-    } else {
-        Some(unsafe { MACHINE.memory.read::<GUID>(iid) })
-    };
-
-    let ddraw: u32 = match iid {
-        Some(IID_IDirectDraw7) => IDirectDraw7::new(),
-        _ => panic!(),
-    };
-
-    unsafe {
-        MACHINE.memory.write(lplpDD, ddraw);
-    }
-    DD::OK
 }
