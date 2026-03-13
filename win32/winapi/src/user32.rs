@@ -97,7 +97,7 @@ pub fn PeekMessageA(
     _wMsgFilterMax: u32,
     _wRemoveMsg: u32, /* PEEK_MESSAGE_REMOVE_TYPE */
 ) -> bool {
-    todo!()
+    stub!(false)
 }
 
 #[win32_derive::dllexport]

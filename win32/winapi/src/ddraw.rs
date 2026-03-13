@@ -285,7 +285,7 @@ pub mod IDirectDraw7 {
 }
 
 pub mod IDirectDrawSurface7 {
-    use crate::kernel32;
+    use crate::{kernel32, stub};
 
     use super::*;
 
@@ -424,7 +424,7 @@ pub mod IDirectDrawSurface7 {
 
     #[win32_derive::dllexport]
     pub fn GetAttachedSurface(_this: u32, _lpDDSCaps: u32, _lplpDDAttachedSurface: u32) -> DD {
-        todo!()
+        stub!(DD::OK)
     }
 
     #[win32_derive::dllexport]
