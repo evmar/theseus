@@ -4,7 +4,7 @@ use crate::ABIReturn;
 use zerocopy::IntoBytes;
 
 pub mod IDirectDraw7 {
-    use crate::kernel32;
+    use crate::{kernel32, stub, user32::HWND};
 
     use super::*;
 
@@ -144,13 +144,20 @@ pub mod IDirectDraw7 {
     }
 
     #[win32_derive::dllexport]
-    pub fn SetCooperativeLevel() {
-        todo!()
+    pub fn SetCooperativeLevel(_this: u32, _hwnd: HWND, _flags: u32) -> DD {
+        stub!(DD::OK)
     }
 
     #[win32_derive::dllexport]
-    pub fn SetDisplayMode() {
-        todo!()
+    pub fn SetDisplayMode(
+        _this: u32,
+        _width: u32,
+        _height: u32,
+        _bpp: u32,
+        _refresh: u32,
+        _flags: u32,
+    ) -> DD {
+        stub!(DD::OK)
     }
 
     #[win32_derive::dllexport]
