@@ -27,9 +27,7 @@ impl Memory {
 
 pub fn indirect(addr: u32) -> Cont {
     if addr == 0 {
-        {
-            panic!("null ptr");
-        }
+        panic!("jmp to null ptr");
     }
     unsafe {
         let index = MACHINE

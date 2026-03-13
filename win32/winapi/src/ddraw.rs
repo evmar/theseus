@@ -86,7 +86,7 @@ pub mod IDirectDraw7 {
         _lplpDDSurface: u32,
         _pUnkOuter: u32,
     ) -> DD {
-        todo!()
+        stub!(DD::OK)
     }
 
     #[win32_derive::dllexport]
