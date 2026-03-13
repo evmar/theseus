@@ -1,3 +1,9 @@
+use std::{
+    cell::{OnceCell, RefCell},
+    collections::HashMap,
+    rc::Rc,
+};
+
 use runtime::*;
 
 mod ddraw7;
@@ -131,13 +137,48 @@ pub fn DirectDrawCreateEx(lpGuid: u32, lplpDD: u32, iid: u32, _pUnkOuter: u32) -
         Some(unsafe { MACHINE.memory.read::<GUID>(iid) })
     };
 
-    let ddraw: u32 = match iid {
+    let addr: u32 = match iid {
         Some(ddraw7::IID_IDirectDraw7) => ddraw7::IDirectDraw7::new(),
         _ => panic!(),
     };
 
+    let mut ddraw_addr = state().ddraw_addr.borrow_mut();
+    assert!(ddraw_addr.is_none());
+    *ddraw_addr = Some(addr);
+
     unsafe {
-        MACHINE.memory.write(lplpDD, ddraw);
+        MACHINE.memory.write(lplpDD, addr);
     }
     DD::OK
+}
+
+#[derive(Default)]
+pub struct State {
+    ddraw_addr: RefCell<Option<u32>>,
+    ddraw: RefCell<DirectDraw>,
+}
+
+struct StaticState(OnceCell<State>);
+unsafe impl Sync for StaticState {}
+
+static STATE: StaticState = StaticState(OnceCell::new());
+
+pub fn state() -> &'static State {
+    STATE.0.get_or_init(|| Default::default())
+}
+
+#[derive(Default)]
+struct DirectDraw {
+    surf: HashMap<u32, Rc<Surface>>,
+}
+
+impl DirectDraw {
+    fn create_surface(&mut self, addr: u32) {
+        let surf = Surface { addr };
+        self.surf.insert(addr, Rc::new(surf));
+    }
+}
+
+struct Surface {
+    addr: u32,
 }
