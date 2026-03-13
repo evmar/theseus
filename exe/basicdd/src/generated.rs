@@ -27331,7 +27331,7 @@ pub fn x004054ec() -> Cont {
     }
 }
 
-pub const BLOCKS: [(u32, fn() -> Cont); 1665] = [
+pub const BLOCKS: [(u32, fn() -> Cont); 1714] = [
     (0x001001, ddraw::DirectDrawCreateEx_stdcall),
     (0x001002, gdi32::SelectObject_stdcall),
     (0x001003, gdi32::CreateCompatibleDC_stdcall),
@@ -27428,6 +27428,94 @@ pub const BLOCKS: [(u32, fn() -> Cont); 1665] = [
     (0x00105b, ddraw::IDirectDraw7::GetDeviceIdentifier_stdcall),
     (0x00105c, ddraw::IDirectDraw7::StartModeTest_stdcall),
     (0x00105d, ddraw::IDirectDraw7::EvaluateMode_stdcall),
+    (0x00105e, ddraw::IDirectDrawSurface7::QueryInterface_stdcall),
+    (0x00105f, ddraw::IDirectDrawSurface7::AddRef_stdcall),
+    (0x001060, ddraw::IDirectDrawSurface7::Release_stdcall),
+    (
+        0x001061,
+        ddraw::IDirectDrawSurface7::AddAttachedSurface_stdcall,
+    ),
+    (
+        0x001062,
+        ddraw::IDirectDrawSurface7::AddOverlayDirtyRect_stdcall,
+    ),
+    (0x001063, ddraw::IDirectDrawSurface7::Blt_stdcall),
+    (0x001064, ddraw::IDirectDrawSurface7::BltBatch_stdcall),
+    (0x001065, ddraw::IDirectDrawSurface7::BltFast_stdcall),
+    (
+        0x001066,
+        ddraw::IDirectDrawSurface7::DeleteAttachedSurface_stdcall,
+    ),
+    (
+        0x001067,
+        ddraw::IDirectDrawSurface7::EnumAttachedSurfaces_stdcall,
+    ),
+    (
+        0x001068,
+        ddraw::IDirectDrawSurface7::EnumOverlayZOrders_stdcall,
+    ),
+    (0x001069, ddraw::IDirectDrawSurface7::Flip_stdcall),
+    (
+        0x00106a,
+        ddraw::IDirectDrawSurface7::GetAttachedSurface_stdcall,
+    ),
+    (0x00106b, ddraw::IDirectDrawSurface7::GetBltStatus_stdcall),
+    (0x00106c, ddraw::IDirectDrawSurface7::GetCaps_stdcall),
+    (0x00106d, ddraw::IDirectDrawSurface7::GetClipper_stdcall),
+    (0x00106e, ddraw::IDirectDrawSurface7::GetColorKey_stdcall),
+    (0x00106f, ddraw::IDirectDrawSurface7::GetDC_stdcall),
+    (0x001070, ddraw::IDirectDrawSurface7::GetFlipStatus_stdcall),
+    (
+        0x001071,
+        ddraw::IDirectDrawSurface7::GetOverlayPosition_stdcall,
+    ),
+    (0x001072, ddraw::IDirectDrawSurface7::GetPalette_stdcall),
+    (0x001073, ddraw::IDirectDrawSurface7::GetPixelFormat_stdcall),
+    (0x001074, ddraw::IDirectDrawSurface7::GetSurfaceDesc_stdcall),
+    (0x001075, ddraw::IDirectDrawSurface7::Initialize_stdcall),
+    (0x001076, ddraw::IDirectDrawSurface7::IsLost_stdcall),
+    (0x001077, ddraw::IDirectDrawSurface7::Lock_stdcall),
+    (0x001078, ddraw::IDirectDrawSurface7::ReleaseDC_stdcall),
+    (0x001079, ddraw::IDirectDrawSurface7::Restore_stdcall),
+    (0x00107a, ddraw::IDirectDrawSurface7::SetClipper_stdcall),
+    (0x00107b, ddraw::IDirectDrawSurface7::SetColorKey_stdcall),
+    (
+        0x00107c,
+        ddraw::IDirectDrawSurface7::SetOverlayPosition_stdcall,
+    ),
+    (0x00107d, ddraw::IDirectDrawSurface7::SetPalette_stdcall),
+    (0x00107e, ddraw::IDirectDrawSurface7::Unlock_stdcall),
+    (0x00107f, ddraw::IDirectDrawSurface7::UpdateOverlay_stdcall),
+    (
+        0x001080,
+        ddraw::IDirectDrawSurface7::UpdateOverlayDisplay_stdcall,
+    ),
+    (
+        0x001081,
+        ddraw::IDirectDrawSurface7::UpdateOverlayZOrder_stdcall,
+    ),
+    (0x001082, ddraw::IDirectDrawSurface7::GetDDInterface_stdcall),
+    (0x001083, ddraw::IDirectDrawSurface7::PageLock_stdcall),
+    (0x001084, ddraw::IDirectDrawSurface7::PageUnlock_stdcall),
+    (0x001085, ddraw::IDirectDrawSurface7::SetSurfaceDesc_stdcall),
+    (0x001086, ddraw::IDirectDrawSurface7::SetPrivateData_stdcall),
+    (0x001087, ddraw::IDirectDrawSurface7::GetPrivateData_stdcall),
+    (
+        0x001088,
+        ddraw::IDirectDrawSurface7::FreePrivateData_stdcall,
+    ),
+    (
+        0x001089,
+        ddraw::IDirectDrawSurface7::GetUniquenessValue_stdcall,
+    ),
+    (
+        0x00108a,
+        ddraw::IDirectDrawSurface7::ChangeUniquenessValue_stdcall,
+    ),
+    (0x00108b, ddraw::IDirectDrawSurface7::SetPriority_stdcall),
+    (0x00108c, ddraw::IDirectDrawSurface7::GetPriority_stdcall),
+    (0x00108d, ddraw::IDirectDrawSurface7::SetLOD_stdcall),
+    (0x00108e, ddraw::IDirectDrawSurface7::GetLOD_stdcall),
     (0x401000, x00401000),
     (0x401005, x00401005),
     (0x401010, x00401010),
