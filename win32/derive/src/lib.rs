@@ -43,6 +43,7 @@ pub fn dllexport(_attr: TokenStream, mut tokens: TokenStream) -> TokenStream {
         let fmt_string = {
             let named_args = args
                 .iter()
+                .skip(1) // skip return_addr
                 .map(|(arg, _)| format!("{arg}={{{arg}:x?}}"))
                 .collect::<Vec<_>>()
                 .join(", ");
