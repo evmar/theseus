@@ -24,8 +24,8 @@ pub use process::*;
 
 use crate::heap::Heap;
 
-#[derive(Default)]
 pub struct State {
+    pub start: std::time::Instant,
     pub mappings: RefCell<Mappings>,
     pub heaps: RefCell<HashMap<u32, Rc<Heap>>>,
     pub process_heap: RefCell<Rc<Heap>>,
@@ -37,7 +37,12 @@ unsafe impl Sync for StaticState {}
 static STATE: StaticState = StaticState(OnceCell::new());
 
 pub fn init_state() {
-    let state = State::default();
+    let state = State {
+        start: std::time::Instant::now(),
+        mappings: Default::default(),
+        heaps: Default::default(),
+        process_heap: Default::default(),
+    };
     STATE.0.set(state).unwrap_or_else(|_| panic!());
 }
 
