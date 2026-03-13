@@ -136,17 +136,14 @@ fn gen_jmp(state: &State, instr: &iced_x86::Instruction) -> String {
             // If it's like `call [someaddr]` where someaddr is in the IAT, resolve it directly.
             if let Some(addr) = is_abs_memory_ref(instr) {
                 if let Some(import) = state.imports.get(&addr) {
-                    format!(
+                    return format!(
                         "Cont({dll}::{func}_stdcall)",
                         dll = import.dll,
                         func = import.func
-                    )
-                } else {
-                    format!("indirect(MACHINE.memory.read({addr:#x}u32))")
+                    );
                 }
-            } else {
-                format!("indirect({})", gen_addr(instr))
             }
+            format!("indirect(MACHINE.memory.read({}))", gen_addr(instr))
         }
         iced_x86::OpKind::Register => {
             format!("indirect({})", get_reg(instr.op0_register()))

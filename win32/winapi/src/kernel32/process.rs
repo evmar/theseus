@@ -88,7 +88,6 @@ pub fn init_process() {
         MACHINE.regs.ebp = stack_addr + stack_size;
 
         let process_data_addr = mappings.alloc("process data".into(), 0, 0x1000);
-        mappings.dump();
         drop(mappings);
 
         let buf = &mut MACHINE.memory.bytes[process_data_addr as usize..][..0x1000];
@@ -110,6 +109,8 @@ pub fn init_process() {
 
         MACHINE.regs.fs_base =
             (&raw const *teb).byte_offset_from_unsigned(MACHINE.memory.bytes) as u32;
+
+        state().mappings.borrow().dump();
     }
 }
 

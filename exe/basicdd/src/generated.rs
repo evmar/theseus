@@ -418,7 +418,10 @@ pub fn x0040117a() -> Cont {
             .memory
             .read::<u32>(MACHINE.regs.eax.wrapping_add(0x0u32));
         // 00401186 call dword ptr [ecx+2Ch]
-        call(0x401189, indirect(MACHINE.regs.ecx.wrapping_add(0x2cu32)))
+        call(
+            0x401189,
+            indirect(MACHINE.memory.read(MACHINE.regs.ecx.wrapping_add(0x2cu32))),
+        )
     }
 }
 
@@ -467,7 +470,10 @@ pub fn x0040119d() -> Cont {
             .memory
             .read::<u32>(MACHINE.regs.eax.wrapping_add(0x0u32));
         // 004011a5 call dword ptr [edx+6Ch]
-        call(0x4011a8, indirect(MACHINE.regs.edx.wrapping_add(0x6cu32)))
+        call(
+            0x4011a8,
+            indirect(MACHINE.memory.read(MACHINE.regs.edx.wrapping_add(0x6cu32))),
+        )
     }
 }
 
@@ -782,7 +788,10 @@ pub fn x00401337() -> Cont {
         // 00401347 push eax
         push(MACHINE.regs.eax);
         // 00401348 call dword ptr [ecx+50h]
-        call(0x40134b, indirect(MACHINE.regs.ecx.wrapping_add(0x50u32)))
+        call(
+            0x40134b,
+            indirect(MACHINE.memory.read(MACHINE.regs.ecx.wrapping_add(0x50u32))),
+        )
     }
 }
 
@@ -827,7 +836,10 @@ pub fn x0040135b() -> Cont {
         // 00401372 push eax
         push(MACHINE.regs.eax);
         // 00401373 call dword ptr [ecx+54h]
-        call(0x401376, indirect(MACHINE.regs.ecx.wrapping_add(0x54u32)))
+        call(
+            0x401376,
+            indirect(MACHINE.memory.read(MACHINE.regs.ecx.wrapping_add(0x54u32))),
+        )
     }
 }
 
@@ -896,7 +908,10 @@ pub fn x00401386() -> Cont {
         // 004013ca push eax
         push(MACHINE.regs.eax);
         // 004013cb call dword ptr [edx+18h]
-        call(0x4013ce, indirect(MACHINE.regs.edx.wrapping_add(0x18u32)))
+        call(
+            0x4013ce,
+            indirect(MACHINE.memory.read(MACHINE.regs.edx.wrapping_add(0x18u32))),
+        )
     }
 }
 
@@ -961,7 +976,10 @@ pub fn x004013dd() -> Cont {
         // 00401408 push eax
         push(MACHINE.regs.eax);
         // 00401409 call dword ptr [ecx+30h]
-        call(0x40140c, indirect(MACHINE.regs.ecx.wrapping_add(0x30u32)))
+        call(
+            0x40140c,
+            indirect(MACHINE.memory.read(MACHINE.regs.ecx.wrapping_add(0x30u32))),
+        )
     }
 }
 
@@ -1007,7 +1025,10 @@ pub fn x00401433() -> Cont {
         // 00401435 push eax
         push(MACHINE.regs.eax);
         // 00401436 call dword ptr [ecx+8]
-        call(0x401439, indirect(MACHINE.regs.ecx.wrapping_add(0x8u32)))
+        call(
+            0x401439,
+            indirect(MACHINE.memory.read(MACHINE.regs.ecx.wrapping_add(0x8u32))),
+        )
     }
 }
 
@@ -1031,7 +1052,10 @@ pub fn x00401442() -> Cont {
         // 00401444 push eax
         push(MACHINE.regs.eax);
         // 00401445 call dword ptr [edx+8]
-        call(0x401448, indirect(MACHINE.regs.edx.wrapping_add(0x8u32)))
+        call(
+            0x401448,
+            indirect(MACHINE.memory.read(MACHINE.regs.edx.wrapping_add(0x8u32))),
+        )
     }
 }
 
@@ -1055,7 +1079,10 @@ pub fn x00401451() -> Cont {
         // 00401453 push eax
         push(MACHINE.regs.eax);
         // 00401454 call dword ptr [ecx+8]
-        call(0x401457, indirect(MACHINE.regs.ecx.wrapping_add(0x8u32)))
+        call(
+            0x401457,
+            indirect(MACHINE.memory.read(MACHINE.regs.ecx.wrapping_add(0x8u32))),
+        )
     }
 }
 
@@ -1188,7 +1215,10 @@ pub fn x004014bb() -> Cont {
             .memory
             .read::<u32>(MACHINE.regs.eax.wrapping_add(0x0u32));
         // 004014c1 call dword ptr [ecx+8]
-        call(0x4014c4, indirect(MACHINE.regs.ecx.wrapping_add(0x8u32)))
+        call(
+            0x4014c4,
+            indirect(MACHINE.memory.read(MACHINE.regs.ecx.wrapping_add(0x8u32))),
+        )
     }
 }
 
@@ -1296,7 +1326,10 @@ pub fn x0040151e() -> Cont {
         // 00401520 push eax
         push(MACHINE.regs.eax);
         // 00401521 call dword ptr [ecx+6Ch]
-        call(0x401524, indirect(MACHINE.regs.ecx.wrapping_add(0x6cu32)))
+        call(
+            0x401524,
+            indirect(MACHINE.memory.read(MACHINE.regs.ecx.wrapping_add(0x6cu32))),
+        )
     }
 }
 
@@ -1418,7 +1451,10 @@ pub fn x0040155f() -> Cont {
         // 00401584 push eax
         push(MACHINE.regs.eax);
         // 00401585 call dword ptr [ecx+58h]
-        call(0x401588, indirect(MACHINE.regs.ecx.wrapping_add(0x58u32)))
+        call(
+            0x401588,
+            indirect(MACHINE.memory.read(MACHINE.regs.ecx.wrapping_add(0x58u32))),
+        )
     }
 }
 
@@ -1447,7 +1483,10 @@ pub fn x0040156a() -> Cont {
         // 00401584 push eax
         push(MACHINE.regs.eax);
         // 00401585 call dword ptr [ecx+58h]
-        call(0x401588, indirect(MACHINE.regs.ecx.wrapping_add(0x58u32)))
+        call(
+            0x401588,
+            indirect(MACHINE.memory.read(MACHINE.regs.ecx.wrapping_add(0x58u32))),
+        )
     }
 }
 
@@ -1468,7 +1507,10 @@ pub fn x00401588() -> Cont {
             .memory
             .read::<u32>(MACHINE.regs.eax.wrapping_add(0x0u32));
         // 00401593 call dword ptr [ecx+44h]
-        call(0x401596, indirect(MACHINE.regs.ecx.wrapping_add(0x44u32)))
+        call(
+            0x401596,
+            indirect(MACHINE.memory.read(MACHINE.regs.ecx.wrapping_add(0x44u32))),
+        )
     }
 }
 
@@ -1553,7 +1595,10 @@ pub fn x004015d2() -> Cont {
             .memory
             .read::<u32>(MACHINE.regs.eax.wrapping_add(0x0u32));
         // 004015dd call dword ptr [edx+68h]
-        call(0x4015e0, indirect(MACHINE.regs.edx.wrapping_add(0x68u32)))
+        call(
+            0x4015e0,
+            indirect(MACHINE.memory.read(MACHINE.regs.edx.wrapping_add(0x68u32))),
+        )
     }
 }
 
@@ -1715,7 +1760,10 @@ pub fn x00401640() -> Cont {
             .memory
             .write::<u32>(MACHINE.regs.esp.wrapping_add(0x30u32), MACHINE.regs.eax);
         // 0040169f call dword ptr [ecx+18h]
-        call(0x4016a2, indirect(MACHINE.regs.ecx.wrapping_add(0x18u32)))
+        call(
+            0x4016a2,
+            indirect(MACHINE.memory.read(MACHINE.regs.ecx.wrapping_add(0x18u32))),
+        )
     }
 }
 
@@ -1758,7 +1806,10 @@ pub fn x004016ad() -> Cont {
             .memory
             .write::<u32>(MACHINE.regs.esp.wrapping_add(0x90u32), 0x840u32);
         // 004016c3 call dword ptr [eax+18h]
-        call(0x4016c6, indirect(MACHINE.regs.eax.wrapping_add(0x18u32)))
+        call(
+            0x4016c6,
+            indirect(MACHINE.memory.read(MACHINE.regs.eax.wrapping_add(0x18u32))),
+        )
     }
 }
 
@@ -1830,7 +1881,10 @@ pub fn x004016e5() -> Cont {
         // 004016fc push edi
         push(MACHINE.regs.edi);
         // 004016fd call dword ptr [edx+74h]
-        call(0x401700, indirect(MACHINE.regs.edx.wrapping_add(0x74u32)))
+        call(
+            0x401700,
+            indirect(MACHINE.memory.read(MACHINE.regs.edx.wrapping_add(0x74u32))),
+        )
     }
 }
 
@@ -2089,7 +2143,10 @@ pub fn x00401784() -> Cont {
         // 00401791 push esi
         push(MACHINE.regs.esi);
         // 00401792 call dword ptr [eax+1Ch]
-        call(0x401795, indirect(MACHINE.regs.eax.wrapping_add(0x1cu32)))
+        call(
+            0x401795,
+            indirect(MACHINE.memory.read(MACHINE.regs.eax.wrapping_add(0x1cu32))),
+        )
     }
 }
 
@@ -2112,7 +2169,10 @@ pub fn x00401786() -> Cont {
         // 00401791 push esi
         push(MACHINE.regs.esi);
         // 00401792 call dword ptr [eax+1Ch]
-        call(0x401795, indirect(MACHINE.regs.eax.wrapping_add(0x1cu32)))
+        call(
+            0x401795,
+            indirect(MACHINE.memory.read(MACHINE.regs.eax.wrapping_add(0x1cu32))),
+        )
     }
 }
 
@@ -2223,7 +2283,10 @@ pub fn x004017da() -> Cont {
         // 004017dc push eax
         push(MACHINE.regs.eax);
         // 004017dd call dword ptr [ecx+8]
-        call(0x4017e0, indirect(MACHINE.regs.ecx.wrapping_add(0x8u32)))
+        call(
+            0x4017e0,
+            indirect(MACHINE.memory.read(MACHINE.regs.ecx.wrapping_add(0x8u32))),
+        )
     }
 }
 
@@ -2262,7 +2325,10 @@ pub fn x004017f0() -> Cont {
             .memory
             .read::<u32>(MACHINE.regs.eax.wrapping_add(0x0u32));
         // 004017f6 call dword ptr [ecx+6Ch]
-        call(0x4017f9, indirect(MACHINE.regs.ecx.wrapping_add(0x6cu32)))
+        call(
+            0x4017f9,
+            indirect(MACHINE.memory.read(MACHINE.regs.ecx.wrapping_add(0x6cu32))),
+        )
     }
 }
 
@@ -19651,7 +19717,11 @@ pub fn x00403e73() -> Cont {
         // 00403e73 rep movsd
         movsd();
         // 00403e75 jmp dword ptr [edx*4+403F88h]
-        indirect((MACHINE.regs.edx * 4).wrapping_add(0x403f88u32))
+        indirect(
+            MACHINE
+                .memory
+                .read((MACHINE.regs.edx * 4).wrapping_add(0x403f88u32)),
+        )
     }
 }
 
@@ -19675,21 +19745,33 @@ pub fn x00403e88() -> Cont {
         // 00403e8b add ecx,eax
         MACHINE.regs.ecx = add(MACHINE.regs.ecx, MACHINE.regs.eax);
         // 00403e8d jmp dword ptr [eax*4+403EA0h]
-        indirect((MACHINE.regs.eax * 4).wrapping_add(0x403ea0u32))
+        indirect(
+            MACHINE
+                .memory
+                .read((MACHINE.regs.eax * 4).wrapping_add(0x403ea0u32)),
+        )
     }
 }
 
 pub fn x00403e94() -> Cont {
     unsafe {
         // 00403e94 jmp dword ptr [ecx*4+403F98h]
-        indirect((MACHINE.regs.ecx * 4).wrapping_add(0x403f98u32))
+        indirect(
+            MACHINE
+                .memory
+                .read((MACHINE.regs.ecx * 4).wrapping_add(0x403f98u32)),
+        )
     }
 }
 
 pub fn x00403e9c() -> Cont {
     unsafe {
         // 00403e9c jmp dword ptr [ecx*4+403F1Ch]
-        indirect((MACHINE.regs.ecx * 4).wrapping_add(0x403f1cu32))
+        indirect(
+            MACHINE
+                .memory
+                .read((MACHINE.regs.ecx * 4).wrapping_add(0x403f1cu32)),
+        )
     }
 }
 
@@ -19736,7 +19818,11 @@ pub fn x00403ff3() -> Cont {
         // 00403ff6 cld
         cld();
         // 00403ff7 jmp dword ptr [edx*4+404120h]
-        indirect((MACHINE.regs.edx * 4).wrapping_add(0x404120u32))
+        indirect(
+            MACHINE
+                .memory
+                .read((MACHINE.regs.edx * 4).wrapping_add(0x404120u32)),
+        )
     }
 }
 
@@ -19745,7 +19831,11 @@ pub fn x00404000() -> Cont {
         // 00404000 neg ecx
         MACHINE.regs.ecx = neg(MACHINE.regs.ecx);
         // 00404002 jmp dword ptr [ecx*4+4040D0h]
-        indirect((MACHINE.regs.ecx * 4).wrapping_add(0x4040d0u32))
+        indirect(
+            MACHINE
+                .memory
+                .read((MACHINE.regs.ecx * 4).wrapping_add(0x4040d0u32)),
+        )
     }
 }
 
@@ -19769,14 +19859,22 @@ pub fn x00404018() -> Cont {
         // 0040401b sub ecx,eax
         MACHINE.regs.ecx = sub(MACHINE.regs.ecx, MACHINE.regs.eax);
         // 0040401d jmp dword ptr [eax*4+404028h]
-        indirect((MACHINE.regs.eax * 4).wrapping_add(0x404028u32))
+        indirect(
+            MACHINE
+                .memory
+                .read((MACHINE.regs.eax * 4).wrapping_add(0x404028u32)),
+        )
     }
 }
 
 pub fn x00404024() -> Cont {
     unsafe {
         // 00404024 jmp dword ptr [ecx*4+404120h]
-        indirect((MACHINE.regs.ecx * 4).wrapping_add(0x404120u32))
+        indirect(
+            MACHINE
+                .memory
+                .read((MACHINE.regs.ecx * 4).wrapping_add(0x404120u32)),
+        )
     }
 }
 
@@ -24702,7 +24800,11 @@ pub fn x00404cb3() -> Cont {
         // 00404cb3 rep movsd
         movsd();
         // 00404cb5 jmp dword ptr [edx*4+404DC8h]
-        indirect((MACHINE.regs.edx * 4).wrapping_add(0x404dc8u32))
+        indirect(
+            MACHINE
+                .memory
+                .read((MACHINE.regs.edx * 4).wrapping_add(0x404dc8u32)),
+        )
     }
 }
 
@@ -24726,21 +24828,33 @@ pub fn x00404cc8() -> Cont {
         // 00404ccb add ecx,eax
         MACHINE.regs.ecx = add(MACHINE.regs.ecx, MACHINE.regs.eax);
         // 00404ccd jmp dword ptr [eax*4+404CE0h]
-        indirect((MACHINE.regs.eax * 4).wrapping_add(0x404ce0u32))
+        indirect(
+            MACHINE
+                .memory
+                .read((MACHINE.regs.eax * 4).wrapping_add(0x404ce0u32)),
+        )
     }
 }
 
 pub fn x00404cd4() -> Cont {
     unsafe {
         // 00404cd4 jmp dword ptr [ecx*4+404DD8h]
-        indirect((MACHINE.regs.ecx * 4).wrapping_add(0x404dd8u32))
+        indirect(
+            MACHINE
+                .memory
+                .read((MACHINE.regs.ecx * 4).wrapping_add(0x404dd8u32)),
+        )
     }
 }
 
 pub fn x00404cdc() -> Cont {
     unsafe {
         // 00404cdc jmp dword ptr [ecx*4+404D5Ch]
-        indirect((MACHINE.regs.ecx * 4).wrapping_add(0x404d5cu32))
+        indirect(
+            MACHINE
+                .memory
+                .read((MACHINE.regs.ecx * 4).wrapping_add(0x404d5cu32)),
+        )
     }
 }
 
@@ -24787,7 +24901,11 @@ pub fn x00404e33() -> Cont {
         // 00404e36 cld
         cld();
         // 00404e37 jmp dword ptr [edx*4+404F60h]
-        indirect((MACHINE.regs.edx * 4).wrapping_add(0x404f60u32))
+        indirect(
+            MACHINE
+                .memory
+                .read((MACHINE.regs.edx * 4).wrapping_add(0x404f60u32)),
+        )
     }
 }
 
@@ -24796,7 +24914,11 @@ pub fn x00404e40() -> Cont {
         // 00404e40 neg ecx
         MACHINE.regs.ecx = neg(MACHINE.regs.ecx);
         // 00404e42 jmp dword ptr [ecx*4+404F10h]
-        indirect((MACHINE.regs.ecx * 4).wrapping_add(0x404f10u32))
+        indirect(
+            MACHINE
+                .memory
+                .read((MACHINE.regs.ecx * 4).wrapping_add(0x404f10u32)),
+        )
     }
 }
 
@@ -24820,14 +24942,22 @@ pub fn x00404e58() -> Cont {
         // 00404e5b sub ecx,eax
         MACHINE.regs.ecx = sub(MACHINE.regs.ecx, MACHINE.regs.eax);
         // 00404e5d jmp dword ptr [eax*4+404E68h]
-        indirect((MACHINE.regs.eax * 4).wrapping_add(0x404e68u32))
+        indirect(
+            MACHINE
+                .memory
+                .read((MACHINE.regs.eax * 4).wrapping_add(0x404e68u32)),
+        )
     }
 }
 
 pub fn x00404e64() -> Cont {
     unsafe {
         // 00404e64 jmp dword ptr [ecx*4+404F60h]
-        indirect((MACHINE.regs.ecx * 4).wrapping_add(0x404f60u32))
+        indirect(
+            MACHINE
+                .memory
+                .read((MACHINE.regs.ecx * 4).wrapping_add(0x404f60u32)),
+        )
     }
 }
 
