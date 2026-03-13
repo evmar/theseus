@@ -1,4 +1,4 @@
-use crate::kernel32::{HANDLE, state};
+use crate::kernel32::{self, HANDLE, state};
 use runtime::{Cont, MACHINE};
 use zerocopy::FromBytes;
 
@@ -83,12 +83,15 @@ pub fn init_process() {
     unsafe {
         let mut mappings = state().mappings.borrow_mut();
         let stack_size = 64 << 10;
-        let addr = mappings.alloc("stack".into(), 0, stack_size);
-        MACHINE.regs.esp = addr + stack_size;
-        MACHINE.regs.ebp = addr + stack_size;
+        let stack_addr = mappings.alloc("stack".into(), 0, stack_size);
+        MACHINE.regs.esp = stack_addr + stack_size;
+        MACHINE.regs.ebp = stack_addr + stack_size;
 
-        let addr = mappings.alloc("process data".into(), 0, 0x1000);
-        let buf = &mut MACHINE.memory.bytes[addr as usize..][..0x1000];
+        let process_data_addr = mappings.alloc("process data".into(), 0, 0x1000);
+        mappings.dump();
+        drop(mappings);
+
+        let buf = &mut MACHINE.memory.bytes[process_data_addr as usize..][..0x1000];
 
         let (params, buf) = RTL_USER_PROCESS_PARAMETERS::mut_from_prefix(buf).unwrap();
         params.hStdOutput = 0xF11E_0002;
@@ -97,7 +100,9 @@ pub fn init_process() {
         let (peb, buf) = PEB::mut_from_prefix(buf).unwrap();
         peb.ProcessParameters =
             (&raw const *params).byte_offset_from_unsigned(MACHINE.memory.bytes) as u32;
-        peb.ProcessHeap = state().process_heap.addr;
+        let process_heap = kernel32::heap_create("process heap".into(), 1 << 20);
+        peb.ProcessHeap = process_heap.addr;
+        *state().process_heap.borrow_mut() = process_heap;
 
         let (teb, _) = TEB::mut_from_prefix(buf).unwrap();
         teb.Peb = (&raw const *peb).byte_offset_from_unsigned(MACHINE.memory.bytes) as u32;
@@ -105,8 +110,6 @@ pub fn init_process() {
 
         MACHINE.regs.fs_base =
             (&raw const *teb).byte_offset_from_unsigned(MACHINE.memory.bytes) as u32;
-
-        mappings.dump();
     }
 }
 
@@ -136,5 +139,5 @@ fn peb_mut(memory: &mut [u8]) -> &mut PEB {
 
 #[win32_derive::dllexport]
 pub fn GetProcessHeap() -> HANDLE {
-    state().process_heap.addr
+    state().process_heap.borrow().addr
 }

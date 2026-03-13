@@ -1,9 +1,11 @@
 use runtime::*;
 
-use crate::{ABIReturn, stub};
+use crate::ABIReturn;
 use zerocopy::IntoBytes;
 
 pub mod IDirectDraw7 {
+    use crate::kernel32;
+
     use super::*;
 
     #[derive(Default, zerocopy::IntoBytes, zerocopy::Immutable)]
@@ -191,41 +193,59 @@ pub mod IDirectDraw7 {
         todo!()
     }
 
-    pub fn vtable(buf: &mut [u8]) {
-        let addr = runtime::proc_addr(QueryInterface_stdcall);
+    fn vtable() -> u32 {
+        let vtable_addr = kernel32::state().process_heap.borrow().alloc(
+            unsafe { &mut MACHINE.memory },
+            std::mem::size_of::<VTable>() as u32,
+        );
+        let func_addr = runtime::proc_addr(QueryInterface_stdcall);
         let vtable = VTable {
-            QueryInterface: addr + 0,
-            AddRef: addr + 1,
-            Release: addr + 2,
-            Compact: addr + 3,
-            CreateClipper: addr + 4,
-            CreatePalette: addr + 5,
-            CreateSurface: addr + 6,
-            DuplicateSurface: addr + 7,
-            EnumDisplayModes: addr + 8,
-            EnumSurfaces: addr + 9,
-            FlipToGDISurface: addr + 10,
-            GetCaps: addr + 11,
-            GetDisplayMode: addr + 12,
-            GetFourCCCodes: addr + 13,
-            GetGDISurface: addr + 14,
-            GetMonitorFrequency: addr + 15,
-            GetScanLine: addr + 16,
-            GetVerticalBlankStatus: addr + 17,
-            Initialize: addr + 18,
-            RestoreDisplayMode: addr + 19,
-            SetCooperativeLevel: addr + 20,
-            SetDisplayMode: addr + 21,
-            WaitForVerticalBlank: addr + 22,
-            GetAvailableVidMem: addr + 23,
-            GetSurfaceFromDC: addr + 24,
-            RestoreAllSurfaces: addr + 25,
-            TestCooperativeLevel: addr + 26,
-            GetDeviceIdentifier: addr + 27,
-            StartModeTest: addr + 28,
-            EvaluateMode: addr + 29,
+            QueryInterface: func_addr + 0,
+            AddRef: func_addr + 1,
+            Release: func_addr + 2,
+            Compact: func_addr + 3,
+            CreateClipper: func_addr + 4,
+            CreatePalette: func_addr + 5,
+            CreateSurface: func_addr + 6,
+            DuplicateSurface: func_addr + 7,
+            EnumDisplayModes: func_addr + 8,
+            EnumSurfaces: func_addr + 9,
+            FlipToGDISurface: func_addr + 10,
+            GetCaps: func_addr + 11,
+            GetDisplayMode: func_addr + 12,
+            GetFourCCCodes: func_addr + 13,
+            GetGDISurface: func_addr + 14,
+            GetMonitorFrequency: func_addr + 15,
+            GetScanLine: func_addr + 16,
+            GetVerticalBlankStatus: func_addr + 17,
+            Initialize: func_addr + 18,
+            RestoreDisplayMode: func_addr + 19,
+            SetCooperativeLevel: func_addr + 20,
+            SetDisplayMode: func_addr + 21,
+            WaitForVerticalBlank: func_addr + 22,
+            GetAvailableVidMem: func_addr + 23,
+            GetSurfaceFromDC: func_addr + 24,
+            RestoreAllSurfaces: func_addr + 25,
+            TestCooperativeLevel: func_addr + 26,
+            GetDeviceIdentifier: func_addr + 27,
+            StartModeTest: func_addr + 28,
+            EvaluateMode: func_addr + 29,
         };
-        vtable.write_to_prefix(buf).unwrap();
+        vtable
+            .write_to_prefix(unsafe { &mut MACHINE.memory.bytes[vtable_addr as usize..] })
+            .unwrap();
+        vtable_addr
+    }
+
+    pub fn new() -> u32 {
+        let addr = kernel32::state()
+            .process_heap
+            .borrow()
+            .alloc(unsafe { &mut MACHINE.memory }, 4);
+        unsafe {
+            MACHINE.memory.write(addr, vtable());
+        }
+        addr
     }
 }
 
@@ -314,10 +334,7 @@ pub fn DirectDrawCreateEx(lpGuid: u32, lplpDD: u32, iid: u32, _pUnkOuter: u32) -
     };
 
     let ddraw: u32 = match iid {
-        Some(IID_IDirectDraw7) => {
-            IDirectDraw7::vtable(&mut []);
-            stub!(0)
-        }
+        Some(IID_IDirectDraw7) => IDirectDraw7::new(),
         _ => panic!(),
     };
 

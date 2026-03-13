@@ -6,6 +6,7 @@ use std::cell::RefCell;
 
 use runtime::Memory;
 
+#[derive(Default)]
 pub struct Heap {
     #[allow(unused)]
     pub addr: u32,
@@ -47,6 +48,7 @@ impl Heap {
     }
 }
 
+#[derive(Default)]
 struct FreeList {
     nodes: Vec<FreeNode>,
 }
