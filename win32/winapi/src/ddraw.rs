@@ -4,7 +4,7 @@ use crate::ABIReturn;
 use zerocopy::IntoBytes;
 
 pub mod IDirectDraw7 {
-    use crate::{kernel32, stub, user32::HWND};
+    use crate::{gdi32::HDC, kernel32, stub, user32::HWND};
 
     use super::*;
 
@@ -44,102 +44,125 @@ pub mod IDirectDraw7 {
     }
 
     #[win32_derive::dllexport]
-    pub fn QueryInterface() {
+    pub fn QueryInterface(_this: u32, _riid: u32, _ppv: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn AddRef() {
+    pub fn AddRef(_this: u32) -> u32 {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn Release() {
+    pub fn Release(_this: u32) -> u32 {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn Compact() {
+    pub fn Compact(_this: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn CreateClipper() {
+    pub fn CreateClipper(_this: u32, _flags: u32, _lplpClipper: u32, _pUnkOuter: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn CreatePalette() {
+    pub fn CreatePalette(
+        _this: u32,
+        _flags: u32,
+        _lpColorTable: u32,
+        _lplpPalette: u32,
+        _pUnkOuter: u32,
+    ) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn CreateSurface() {
+    pub fn CreateSurface(
+        _this: u32,
+        _lpDDSurfaceDesc2: u32,
+        _lplpDDSurface: u32,
+        _pUnkOuter: u32,
+    ) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn DuplicateSurface() {
+    pub fn DuplicateSurface(_this: u32, _lpDDSurface: u32, _lplpDupDDSurface: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn EnumDisplayModes() {
+    pub fn EnumDisplayModes(
+        _this: u32,
+        _flags: u32,
+        _lpSurfaceDesc2: u32,
+        _lpContext: u32,
+        _lpEnumCallback: u32,
+    ) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn EnumSurfaces() {
+    pub fn EnumSurfaces(
+        _this: u32,
+        _flags: u32,
+        _lpSurfaceDesc2: u32,
+        _lpContext: u32,
+        _lpEnumCallback: u32,
+    ) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn FlipToGDISurface() {
+    pub fn FlipToGDISurface(_this: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn GetCaps() {
+    pub fn GetCaps(_this: u32, _lpDDDriverCaps: u32, _lpDDEmulCaps: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn GetDisplayMode() {
+    pub fn GetDisplayMode(_this: u32, _lpDDSurfaceDesc2: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn GetFourCCCodes() {
+    pub fn GetFourCCCodes(_this: u32, _lpNumCodes: u32, _lpCodes: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn GetGDISurface() {
+    pub fn GetGDISurface(_this: u32, _lplpGDISurface: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn GetMonitorFrequency() {
+    pub fn GetMonitorFrequency(_this: u32, _lpdwFrequency: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn GetScanLine() {
+    pub fn GetScanLine(_this: u32, _lpdwScanLine: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn GetVerticalBlankStatus() {
+    pub fn GetVerticalBlankStatus(_this: u32, _lpbIsInVB: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn Initialize() {
+    pub fn Initialize(_this: u32, _lpGUID: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn RestoreDisplayMode() {
+    pub fn RestoreDisplayMode(_this: u32) -> DD {
         todo!()
     }
 
@@ -161,42 +184,42 @@ pub mod IDirectDraw7 {
     }
 
     #[win32_derive::dllexport]
-    pub fn WaitForVerticalBlank() {
+    pub fn WaitForVerticalBlank(_this: u32, _flags: u32, _hEvent: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn GetAvailableVidMem() {
+    pub fn GetAvailableVidMem(_this: u32, _lpDDSCaps2: u32, _lpdwTotal: u32, _lpdwFree: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn GetSurfaceFromDC() {
+    pub fn GetSurfaceFromDC(_this: u32, _hdc: HDC, _lplpDDSurface: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn RestoreAllSurfaces() {
+    pub fn RestoreAllSurfaces(_this: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn TestCooperativeLevel() {
+    pub fn TestCooperativeLevel(_this: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn GetDeviceIdentifier() {
+    pub fn GetDeviceIdentifier(_this: u32, _lpDDDeviceIdentifier: u32, _flags: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn StartModeTest() {
+    pub fn StartModeTest(_this: u32, _lpModesToTest: u32, _numEntries: u32, _flags: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn EvaluateMode() {
+    pub fn EvaluateMode(_this: u32, _flags: u32, _pSecondsUntilTimeout: u32) -> DD {
         todo!()
     }
 
