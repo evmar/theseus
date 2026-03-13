@@ -394,7 +394,7 @@ pub mod IDirectDrawSurface7 {
         _lpSrcRect: u32,
         _dwTrans: u32,
     ) -> DD {
-        todo!()
+        stub!(DD::OK)
     }
 
     #[win32_derive::dllexport]
@@ -419,11 +419,14 @@ pub mod IDirectDrawSurface7 {
 
     #[win32_derive::dllexport]
     pub fn Flip(_this: u32, _lpDDSurfaceTargetOverride: u32, _dwFlags: u32) -> DD {
-        todo!()
+        stub!(DD::OK)
     }
 
     #[win32_derive::dllexport]
-    pub fn GetAttachedSurface(_this: u32, _lpDDSCaps: u32, _lplpDDAttachedSurface: u32) -> DD {
+    pub fn GetAttachedSurface(_this: u32, _lpDDSCaps: u32, lplpDDAttachedSurface: u32) -> DD {
+        unsafe {
+            MACHINE.memory.write(lplpDDAttachedSurface, new());
+        }
         stub!(DD::OK)
     }
 
