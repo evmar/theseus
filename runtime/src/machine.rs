@@ -23,6 +23,10 @@ impl Memory {
         val.write_to_prefix(&mut self.bytes[addr as usize..])
             .unwrap();
     }
+
+    pub fn slice(&self, r: &std::ops::Range<u32>) -> &[u8] {
+        &self.bytes[r.start as usize..r.end as usize]
+    }
 }
 
 pub fn indirect(addr: u32) -> Cont {

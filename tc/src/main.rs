@@ -20,6 +20,7 @@ struct State {
     mem: Memory,
     imports: HashMap<u32, Import>,
     blocks: HashMap<u32, Block>,
+    resources: Option<(u32, u32)>,
 }
 
 impl State {
@@ -39,11 +40,16 @@ impl State {
             mem.put(addr, data);
         }
 
+        let resource_dir = f
+            .get_data_directory(pe::IMAGE_DIRECTORY_ENTRY::RESOURCE)
+            .map(|dir| (AddrImage(dir.VirtualAddress).to_abs(image_base).0, dir.Size));
+
         State {
             pe_file: f,
             mem,
             imports: Default::default(),
             blocks: Default::default(),
+            resources: resource_dir,
         }
     }
 

@@ -29089,3 +29089,5 @@ pub const BLOCKS: [(u32, fn() -> Cont); 1714] = [
     (0x4054ec, x004054ec),
     (0xf000_0000, runtime::return_from_main),
 ];
+
+pub const RESOURCES: std::ops::Range<u32> = 0x40a000..0x470d28;

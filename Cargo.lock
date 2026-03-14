@@ -188,6 +188,7 @@ version = "0.1.0"
 dependencies = [
  "bitflags",
  "log",
+ "pe",
  "runtime",
  "win32-derive",
  "zerocopy",

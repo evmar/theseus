@@ -1,5 +1,5 @@
 use super::*;
-use crate::{dllexport::win32flags, stub};
+use crate::{dllexport::win32flags, kernel32, stub};
 use runtime::*;
 
 #[win32_derive::dllexport]
@@ -25,16 +25,36 @@ win32flags! {
     }
 }
 
+fn is_intresource(x: u32) -> bool {
+    x >> 16 == 0
+}
+
 #[win32_derive::dllexport]
-pub fn LoadImageA(
-    hInst: HINSTANCE,
-    _name: u32,
-    typ: IMAGE,
-    _cx: i32,
-    _cy: i32,
-    _fuLoad: LR,
-) -> HANDLE {
+pub fn LoadImageA(hInst: HINSTANCE, name: u32, typ: IMAGE, cx: i32, cy: i32, fuLoad: LR) -> HANDLE {
     assert!(hInst == 0);
+
+    assert!(is_intresource(name));
+    let name = pe::ResourceName::Id(name);
+
     assert!(typ == IMAGE::BITMAP);
+    let typ = pe::ResourceName::Id(match typ {
+        IMAGE::CURSOR => pe::RT::CURSOR,
+        IMAGE::BITMAP => pe::RT::BITMAP,
+        IMAGE::ICON => pe::RT::ICON,
+    } as u32);
+
+    assert!(cx == 0);
+    assert!(cy == 0);
+    assert!(fuLoad.is_empty());
+
+    let section = unsafe { MACHINE.memory.slice(&kernel32::state().resources) };
+    let Some(span) = pe::find_resource(section, typ, name) else {
+        log::warn!("LoadImage resource not found");
+        return 0;
+    };
+    let image_base = 0;
+    let span = image_base + span.start..image_base + span.end;
+    log::warn!("found image at {:x?}", span);
+
     stub!(0)
 }

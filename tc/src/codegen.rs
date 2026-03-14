@@ -459,6 +459,15 @@ pub fn gen_file(state: &mut State, outdir: &str) -> Result<()> {
     write!(&mut text, "(0xf000_0000, runtime::return_from_main),\n");
     write!(&mut text, "];\n\n");
 
+    let resources = match state.resources {
+        Some((addr, size)) => format!("{addr:#x}..{end:#x}", end = addr + size),
+        None => "Default::default()".to_string(),
+    };
+    write!(
+        &mut text,
+        "pub const RESOURCES: std::ops::Range<u32> = {resources};\n\n"
+    );
+
     std::fs::create_dir_all(format!("{outdir}/src"))?;
     let path = format!("{outdir}/src/generated.rs");
     let text = rustfmt(&text)?;

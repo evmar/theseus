@@ -9,3 +9,4 @@ runtime = { workspace = true }
 zerocopy = { workspace = true }
 win32-derive = { path = "../derive" }
 log = { workspace = true }
+pe = { workspace = true }
