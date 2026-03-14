@@ -48,7 +48,7 @@ impl<T: TryFrom<u32>> FromABIParam for T {
 
 macro_rules! win32flags {
     (pub struct $name:ident { }) => {
-        bitflags! {
+        bitflags::bitflags! {
             #[derive(Debug, PartialEq, Eq)]
             pub struct $name: u32 {}
         }

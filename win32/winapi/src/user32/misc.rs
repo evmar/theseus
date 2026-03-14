@@ -1,15 +1,6 @@
-use bitflags::bitflags;
-use runtime::*;
-
-use crate::dllexport::win32flags;
+use super::*;
 use crate::stub;
-
-pub type HWND = u32;
-pub type HMENU = u32;
-pub type HINSTANCE = u32;
-pub type HCURSOR = u32;
-pub type HANDLE = u32;
-pub type HICON = u32;
+use runtime::*;
 
 #[win32_derive::dllexport]
 pub fn CreateWindowExA(
@@ -27,42 +18,6 @@ pub fn CreateWindowExA(
     _lpParam: u32,
 ) -> HWND {
     stub!(1)
-}
-
-#[win32_derive::dllexport]
-pub fn LoadCursorA(_hInstance: HINSTANCE, _lpCursorName: u32) -> HCURSOR {
-    stub!(0)
-}
-
-#[win32_derive::dllexport]
-pub fn LoadIconA(_hInstance: HINSTANCE, _lpIconName: u32) -> HICON {
-    stub!(0)
-}
-
-#[derive(Debug, PartialEq, Eq, win32_derive::ABIEnum)]
-pub enum IMAGE {
-    BITMAP = 0,
-    ICON = 1,
-    CURSOR = 2,
-}
-
-win32flags! {
-    pub struct LR {
-        // TODO: add flags
-    }
-}
-
-#[win32_derive::dllexport]
-pub fn LoadImageA(
-    _hInst: HINSTANCE,
-    _name: u32,
-    typ: IMAGE,
-    _cx: i32,
-    _cy: i32,
-    _fuLoad: LR,
-) -> HANDLE {
-    assert!(typ == IMAGE::BITMAP);
-    stub!(0)
 }
 
 #[win32_derive::dllexport]
