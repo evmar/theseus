@@ -45,3 +45,19 @@ impl<T: TryFrom<u32>> FromABIParam for T {
         T::try_from(val).unwrap_or_else(|_| panic!("{val:x}"))
     }
 }
+
+macro_rules! win32flags {
+    (pub struct $name:ident { }) => {
+        bitflags! {
+            #[derive(Debug, PartialEq, Eq)]
+            pub struct $name: u32 {}
+        }
+
+        impl crate::FromABIParam for $name {
+            fn from_abi(val: u32) -> Self {
+                $name::from_bits(val).unwrap()
+            }
+        }
+    };
+}
+pub(crate) use win32flags;

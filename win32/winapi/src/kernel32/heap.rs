@@ -3,22 +3,15 @@ use std::rc::Rc;
 
 use crate::{
     FromABIParam,
+    dllexport::win32flags,
     heap::Heap,
     kernel32::{self, HANDLE},
     stub,
 };
 use runtime::{Cont, MACHINE};
 
-#[derive(Debug, Default, PartialEq, Eq, zerocopy::FromBytes)]
-pub struct HEAP_FLAGS(u32);
-bitflags! {
-    impl HEAP_FLAGS: u32 {
-    }
-}
-
-impl FromABIParam for HEAP_FLAGS {
-    fn from_abi(value: u32) -> Self {
-        HEAP_FLAGS::from_bits(value).unwrap()
+win32flags! {
+    pub struct HEAP_FLAGS {
     }
 }
 

@@ -74,3 +74,49 @@ pub fn dllexport(_attr: TokenStream, mut tokens: TokenStream) -> TokenStream {
     tokens.extend(wrapper);
     tokens
 }
+
+#[proc_macro_derive(ABIEnum)]
+pub fn abi_enum(item: proc_macro::TokenStream) -> proc_macro::TokenStream {
+    let enum_: syn::ItemEnum = syn::parse_macro_input!(item);
+
+    let name = &enum_.ident;
+    // If one of the values is negative, match using i32 instead of u32.
+    let has_negative = enum_.variants.iter().any(|variant| {
+        let num = &variant.discriminant.as_ref().unwrap().1;
+        match num {
+            syn::Expr::Unary(syn::ExprUnary {
+                op: syn::UnOp::Neg(_),
+                ..
+            }) => true,
+            _ => false,
+        }
+    });
+
+    let matches = enum_.variants.iter().map(|variant| {
+        let num = &variant.discriminant.as_ref().unwrap().1;
+        let sym = &variant.ident;
+        quote! {
+            #num => #name::#sym,
+        }
+    });
+
+    let get_value = if has_negative {
+        quote!(let value = value as i32;)
+    } else {
+        quote!()
+    };
+
+    quote! {
+        impl crate::FromABIParam for #name {
+            #[allow(unused)]
+            fn from_abi(value: u32) -> Self {
+                #get_value
+                match value {
+                    #(#matches)*
+                    _ => todo!()
+                }
+            }
+        }
+    }
+    .into()
+}

@@ -1,5 +1,7 @@
+use bitflags::bitflags;
 use runtime::*;
 
+use crate::dllexport::win32flags;
 use crate::stub;
 
 pub type HWND = u32;
@@ -37,15 +39,29 @@ pub fn LoadIconA(_hInstance: HINSTANCE, _lpIconName: u32) -> HICON {
     stub!(0)
 }
 
+#[derive(Debug, PartialEq, Eq, win32_derive::ABIEnum)]
+pub enum IMAGE {
+    BITMAP = 0,
+    ICON = 1,
+    CURSOR = 2,
+}
+
+win32flags! {
+    pub struct LR {
+        // TODO: add flags
+    }
+}
+
 #[win32_derive::dllexport]
 pub fn LoadImageA(
     _hInst: HINSTANCE,
     _name: u32,
-    _type: u32, /* GDI_IMAGE_TYPE */
+    typ: IMAGE,
     _cx: i32,
     _cy: i32,
-    _fuLoad: u32, /* IMAGE_FLAGS */
+    _fuLoad: LR,
 ) -> HANDLE {
+    assert!(typ == IMAGE::BITMAP);
     stub!(0)
 }
 
