@@ -27,13 +27,14 @@ win32flags! {
 
 #[win32_derive::dllexport]
 pub fn LoadImageA(
-    _hInst: HINSTANCE,
+    hInst: HINSTANCE,
     _name: u32,
     typ: IMAGE,
     _cx: i32,
     _cy: i32,
     _fuLoad: LR,
 ) -> HANDLE {
+    assert!(hInst == 0);
     assert!(typ == IMAGE::BITMAP);
     stub!(0)
 }
