@@ -29,6 +29,7 @@ pub struct State {
     pub mappings: RefCell<Mappings>,
     pub heaps: RefCell<HashMap<u32, Rc<Heap>>>,
     pub process_heap: RefCell<Rc<Heap>>,
+    pub image_base: u32,
     pub resources: std::ops::Range<u32>,
 }
 
@@ -37,12 +38,13 @@ unsafe impl Sync for StaticState {}
 
 static STATE: StaticState = StaticState(OnceCell::new());
 
-pub fn init_state(resources: std::ops::Range<u32>) {
+pub fn init_state(image_base: u32, resources: std::ops::Range<u32>) {
     let state = State {
         start: std::time::Instant::now(),
         mappings: Default::default(),
         heaps: Default::default(),
         process_heap: Default::default(),
+        image_base,
         resources,
     };
     STATE.0.set(state).unwrap_or_else(|_| panic!());

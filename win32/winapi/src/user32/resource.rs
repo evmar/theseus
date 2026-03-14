@@ -30,7 +30,14 @@ fn is_intresource(x: u32) -> bool {
 }
 
 #[win32_derive::dllexport]
-pub fn LoadImageA(hInst: HINSTANCE, name: u32, typ: IMAGE, cx: i32, cy: i32, fuLoad: LR) -> HANDLE {
+pub fn LoadImageA(
+    hInst: HINSTANCE,
+    name: u32,
+    typ: IMAGE,
+    _cx: i32,
+    _cy: i32,
+    fuLoad: LR,
+) -> HANDLE {
     assert!(hInst == 0);
 
     assert!(is_intresource(name));
@@ -43,18 +50,20 @@ pub fn LoadImageA(hInst: HINSTANCE, name: u32, typ: IMAGE, cx: i32, cy: i32, fuL
         IMAGE::ICON => pe::RT::ICON,
     } as u32);
 
-    assert!(cx == 0);
-    assert!(cy == 0);
+    // assert!(cx == 0);
+    // assert!(cy == 0);
     assert!(fuLoad.is_empty());
 
-    let section = unsafe { MACHINE.memory.slice(&kernel32::state().resources) };
+    let section = unsafe { MACHINE.memory.slice(kernel32::state().resources.clone()) };
     let Some(span) = pe::find_resource(section, typ, name) else {
-        log::warn!("LoadImage resource not found");
+        log::warn!("LoadImage: resource not found");
         return 0;
     };
-    let image_base = 0;
+    let image_base = kernel32::state().image_base;
     let span = image_base + span.start..image_base + span.end;
     log::warn!("found image at {:x?}", span);
+
+    let buf = unsafe { MACHINE.memory.slice(span) };
 
     stub!(0)
 }

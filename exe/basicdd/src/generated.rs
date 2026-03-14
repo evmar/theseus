@@ -29091,3 +29091,5 @@ pub const BLOCKS: [(u32, fn() -> Cont); 1714] = [
 ];
 
 pub const RESOURCES: std::ops::Range<u32> = 0x40a000..0x470d28;
+
+pub const IMAGE_BASE: u32 = 0x400000;

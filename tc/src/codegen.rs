@@ -468,6 +468,12 @@ pub fn gen_file(state: &mut State, outdir: &str) -> Result<()> {
         "pub const RESOURCES: std::ops::Range<u32> = {resources};\n\n"
     );
 
+    write!(
+        &mut text,
+        "pub const IMAGE_BASE: u32 = {:#x};\n\n",
+        state.image_base().0
+    );
+
     std::fs::create_dir_all(format!("{outdir}/src"))?;
     let path = format!("{outdir}/src/generated.rs");
     let text = rustfmt(&text)?;

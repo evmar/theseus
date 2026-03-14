@@ -24,7 +24,7 @@ impl Memory {
             .unwrap();
     }
 
-    pub fn slice(&self, r: &std::ops::Range<u32>) -> &[u8] {
+    pub fn slice(&self, r: std::ops::Range<u32>) -> &[u8] {
         &self.bytes[r.start as usize..r.end as usize]
     }
 }
