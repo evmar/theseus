@@ -2,7 +2,6 @@ use bitflags::bitflags;
 use std::rc::Rc;
 
 use crate::{
-    FromABIParam,
     dllexport::win32flags,
     heap::Heap,
     kernel32::{self, HANDLE},

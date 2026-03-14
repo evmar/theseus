@@ -180,5 +180,6 @@ impl DirectDraw {
 }
 
 struct Surface {
+    #[allow(unused)]
     addr: u32,
 }
