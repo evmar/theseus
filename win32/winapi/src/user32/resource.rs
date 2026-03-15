@@ -1,5 +1,5 @@
 use super::*;
-use crate::{dllexport::win32flags, kernel32, stub};
+use crate::{bitmap::BitmapInfo, dllexport::win32flags, kernel32, stub};
 use runtime::*;
 
 #[win32_derive::dllexport]
@@ -64,6 +64,8 @@ pub fn LoadImageA(
     log::warn!("found image at {:x?}", span);
 
     let buf = unsafe { MACHINE.memory.slice(span) };
+    let hdr = BitmapInfo::parse(buf);
+    println!("loaded bitmap {:#x?}", hdr);
 
     stub!(0)
 }

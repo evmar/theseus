@@ -10,6 +10,7 @@ mod heap;
 pub mod kernel32;
 pub mod user32;
 pub use dllexport::{ABIReturn, FromABIParam};
+mod bitmap;
 
 macro_rules! stub {
     ($arg:expr) => {{
