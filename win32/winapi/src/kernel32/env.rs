@@ -1,5 +1,4 @@
 use crate::stub;
-use runtime::{Cont, MACHINE};
 
 #[win32_derive::dllexport]
 pub fn GetEnvironmentStrings() -> u32 {

@@ -1,5 +1,3 @@
-use runtime::*;
-
 use crate::stub;
 
 pub type HDC = u32;

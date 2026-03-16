@@ -6,7 +6,7 @@ use crate::{
     kernel32::{self, HANDLE},
     stub,
 };
-use runtime::{Cont, MACHINE};
+use runtime::MACHINE;
 
 win32flags! {
     pub struct HEAP_FLAGS {

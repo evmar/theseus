@@ -1,6 +1,5 @@
 use super::*;
 use crate::stub;
-use runtime::*;
 
 #[win32_derive::dllexport]
 pub fn MessageBoxA(

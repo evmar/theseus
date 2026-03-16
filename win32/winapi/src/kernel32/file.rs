@@ -1,5 +1,5 @@
 use crate::kernel32::HANDLE;
-use runtime::{Cont, HOST, Host, MACHINE};
+use runtime::{HOST, Host, MACHINE};
 
 const STDIN_HFILE: HANDLE = 0xF11E_0001;
 const STDOUT_HFILE: HANDLE = 0xF11E_0002;

@@ -1,4 +1,4 @@
-use runtime::{Cont, MACHINE};
+use runtime::MACHINE;
 
 use crate::{
     kernel32::{HMODULE, state},

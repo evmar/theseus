@@ -1,5 +1,3 @@
-use runtime::*;
-
 use crate::{
     stub,
     user32::{HINSTANCE, HMENU, HWND, state},

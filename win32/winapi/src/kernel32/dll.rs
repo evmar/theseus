@@ -1,5 +1,4 @@
 use crate::stub;
-use runtime::{Cont, MACHINE};
 
 pub type HMODULE = u32;
 

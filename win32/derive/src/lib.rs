@@ -58,8 +58,9 @@ pub fn dllexport(_attr: TokenStream, mut tokens: TokenStream) -> TokenStream {
     call_args.next(); // skip return_addr
 
     let wrapper: TokenStream = quote! {
-        pub fn #wrapper_name() -> Cont { unsafe {
+        pub fn #wrapper_name() -> runtime::Cont { unsafe {
             use crate::{ABIReturn, FromABIParam};
+            use runtime::*;
             #fetch_args
             #trace
             let ret: ABIReturn = #name(#(#call_args),*).into();

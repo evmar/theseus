@@ -1,5 +1,5 @@
 use crate::kernel32::{self, HANDLE, state};
-use runtime::{Cont, MACHINE};
+use runtime::MACHINE;
 use zerocopy::FromBytes;
 
 #[win32_derive::dllexport]
