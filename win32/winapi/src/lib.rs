@@ -19,3 +19,22 @@ macro_rules! stub {
     }};
 }
 pub(crate) use stub;
+
+pub struct EXEData {
+    pub image_base: u32,
+    pub resources: std::ops::Range<u32>,
+    pub blocks: &'static [(u32, fn() -> runtime::Cont)],
+    pub init_mappings: fn(),
+    pub entry_point: runtime::Cont,
+}
+
+pub fn run(exe: &EXEData) {
+    use runtime::Host;
+    runtime::HOST.init(exe.blocks);
+    kernel32::init_state(exe.image_base, exe.resources.clone());
+    (exe.init_mappings)();
+    kernel32::init_process();
+
+    runtime::push(0xf000_0000); // return_from_main
+    runtime::run_loop(exe.entry_point);
+}

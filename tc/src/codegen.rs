@@ -2,7 +2,10 @@
 
 use anyhow::{Result, anyhow, bail};
 
-use crate::{Block, State, is_abs_memory_ref, memory::AddrAbs};
+use crate::{
+    Block, State, is_abs_memory_ref,
+    memory::{AddrAbs, AddrImage},
+};
 
 fn get_reg(r: iced_x86::Register) -> String {
     use iced_x86::Register::*;
@@ -405,7 +408,7 @@ pub fn gen_file(state: &mut State, outdir: &str) -> Result<()> {
     // Unfortunately, wasm-lld only supports "relocatable" object files which means it moves
     // the location of such data at link time.  We could do it by postprocessing the wasm
     // file, maybe.
-    write!(&mut text, "pub fn init_mappings() {{ unsafe {{\n");
+    write!(&mut text, "fn init_mappings() {{ unsafe {{\n");
     write!(
         &mut text,
         "let mut mappings = kernel32::state().mappings.borrow_mut();\n"
@@ -449,7 +452,7 @@ pub fn gen_file(state: &mut State, outdir: &str) -> Result<()> {
 
     write!(
         &mut text,
-        "pub const BLOCKS: [(u32, fn() -> Cont); {}] = [\n",
+        "const BLOCKS: [(u32, fn() -> Cont); {}] = [\n",
         ips.len() + 1,
     );
     for &ip in &ips {
@@ -461,17 +464,22 @@ pub fn gen_file(state: &mut State, outdir: &str) -> Result<()> {
 
     let resources = match state.resources {
         Some((addr, size)) => format!("{addr:#x}..{end:#x}", end = addr + size),
-        None => "Default::default()".to_string(),
+        None => "0..0".to_string(),
     };
-    write!(
-        &mut text,
-        "pub const RESOURCES: std::ops::Range<u32> = {resources};\n\n"
-    );
 
     write!(
         &mut text,
-        "pub const IMAGE_BASE: u32 = {:#x};\n\n",
-        state.image_base().0
+        "pub const EXEDATA: EXEData = EXEData {{
+            image_base: {image_base:#x},
+            resources: {resources},
+            blocks: &BLOCKS,
+            init_mappings,
+            entry_point: Cont(x{entry_point:08x}),
+        }};\n\n",
+        image_base = state.image_base().0,
+        entry_point = AddrImage(state.pe_file.opt_header.AddressOfEntryPoint)
+            .to_abs(state.image_base())
+            .0,
     );
 
     std::fs::create_dir_all(format!("{outdir}/src"))?;

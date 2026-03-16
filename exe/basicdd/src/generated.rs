@@ -6,7 +6,7 @@
 use runtime::*;
 use winapi::*;
 
-pub fn init_mappings() {
+fn init_mappings() {
     unsafe {
         let mut mappings = kernel32::state().mappings.borrow_mut();
         mappings.alloc("null page".to_string(), 0x0, 0x1000);
@@ -27331,7 +27331,7 @@ pub fn x004054ec() -> Cont {
     }
 }
 
-pub const BLOCKS: [(u32, fn() -> Cont); 1714] = [
+const BLOCKS: [(u32, fn() -> Cont); 1714] = [
     (0x001001, ddraw::DirectDrawCreateEx_stdcall),
     (0x001002, gdi32::SelectObject_stdcall),
     (0x001003, gdi32::CreateCompatibleDC_stdcall),
@@ -29090,6 +29090,10 @@ pub const BLOCKS: [(u32, fn() -> Cont); 1714] = [
     (0xf000_0000, runtime::return_from_main),
 ];
 
-pub const RESOURCES: std::ops::Range<u32> = 0x40a000..0x470d28;
-
-pub const IMAGE_BASE: u32 = 0x400000;
+pub const EXEDATA: EXEData = EXEData {
+    image_base: 0x400000,
+    resources: 0x40a000..0x470d28,
+    blocks: &BLOCKS,
+    init_mappings,
+    entry_point: Cont(x004018bf),
+};

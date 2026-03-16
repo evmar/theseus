@@ -18,10 +18,10 @@ pub trait Host {
     fn print(&self, text: &[u8]);
 }
 
+#[derive(Clone, Copy)]
 pub struct Cont(pub fn() -> Cont);
 
 pub fn run_loop(mut f: Cont) {
-    push(0xf000_0000); // return_from_main
     loop {
         f = f.0();
     }
