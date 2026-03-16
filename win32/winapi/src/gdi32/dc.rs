@@ -1,8 +1,13 @@
-use crate::gdi32::HDC;
+use crate::{gdi32::HDC, stub};
 
 #[win32_derive::dllexport]
-pub fn CreateCompatibleDC(_hdc: HDC) -> HDC {
-    todo!()
+pub fn CreateCompatibleDC(hdc: HDC) -> HDC {
+    if hdc.is_null() {
+        // memory DC compatible with screen
+        stub!(HDC::from_raw(1))
+    } else {
+        todo!()
+    }
 }
 
 #[win32_derive::dllexport]

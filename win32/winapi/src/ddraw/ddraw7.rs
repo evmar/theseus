@@ -511,7 +511,7 @@ pub mod IDirectDrawSurface7 {
 
     #[win32_derive::dllexport]
     pub fn Restore(_this: u32) -> DD {
-        todo!()
+        DD::OK
     }
 
     #[win32_derive::dllexport]

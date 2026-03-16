@@ -1,6 +1,6 @@
 use std::cell::{OnceCell, RefCell};
 
-use crate::handle::Handles;
+use crate::{HANDLE, handle::Handles};
 
 mod bitmap;
 mod dc;
@@ -10,7 +10,7 @@ pub use bitmap::*;
 pub use dc::*;
 pub use object::*;
 
-pub type HDC = u32;
+pub type HDC = HANDLE;
 pub type HGDIOBJ = u32;
 
 pub struct State {
