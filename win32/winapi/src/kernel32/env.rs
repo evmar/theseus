@@ -1,4 +1,4 @@
-use crate::stub;
+use crate::{kernel32::state, stub};
 
 #[win32_derive::dllexport]
 pub fn GetEnvironmentStrings() -> u32 {
@@ -16,13 +16,19 @@ pub fn GetEnvironmentStrings() -> u32 {
         encode_env(&mut encoder, &state.env);
         encoder.status().unwrap();
     */
-    let addr = 0;
-    stub!(addr)
+    stub!(state().environ.get())
+}
+
+#[win32_derive::dllexport]
+pub fn GetEnvironmentStringsW() -> u32 {
+    // TODO: if available, this ends up getting parsed with unimplemented nls functions
+    // stub!(state().environ.get())
+    stub!(0)
 }
 
 #[win32_derive::dllexport]
 pub fn GetEnvironmentVariableA(_lpName: u32, _lpBuffer: u32, _nSize: u32) -> u32 {
-    stub!(0)
+    stub!(state().environ.get())
 }
 
 #[win32_derive::dllexport]

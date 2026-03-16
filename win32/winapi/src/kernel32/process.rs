@@ -140,6 +140,14 @@ pub fn init_process() {
                 as u32,
         };
 
+        let env = "\0\0";
+        let len = align_to_4(env.len() * 2);
+        let (env, buf) = buf.split_at_mut(len);
+        env.fill(0);
+        state()
+            .environ
+            .set((&raw const *env).byte_offset_from_unsigned(MACHINE.memory.bytes) as u32);
+
         let (params, buf) = RTL_USER_PROCESS_PARAMETERS::mut_from_prefix(buf).unwrap();
         params.hStdOutput = 0xF11E_0002;
         params.hStdError = 0xF11E_0003;

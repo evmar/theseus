@@ -8,7 +8,7 @@ mod nls;
 mod process;
 
 use std::{
-    cell::{OnceCell, RefCell},
+    cell::{Cell, OnceCell, RefCell},
     collections::HashMap,
     rc::Rc,
 };
@@ -32,6 +32,7 @@ pub struct State {
     pub image_base: u32,
     pub resources: std::ops::Range<u32>,
     pub command_line: RefCell<CommandLine>,
+    pub environ: Cell<u32>,
 }
 
 struct StaticState(OnceCell<State>);
@@ -48,6 +49,7 @@ pub fn init_state(image_base: u32, resources: std::ops::Range<u32>) {
         image_base,
         resources,
         command_line: Default::default(),
+        environ: Default::default(),
     };
     STATE.0.set(state).unwrap_or_else(|_| panic!());
 }

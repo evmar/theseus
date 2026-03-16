@@ -1,9 +1,6 @@
 use runtime::MACHINE;
 
-use crate::{
-    kernel32::{HMODULE, state},
-    stub,
-};
+use crate::kernel32::{HMODULE, state};
 
 #[win32_derive::dllexport]
 pub fn GetLastError() -> u32 {
@@ -215,9 +212,4 @@ pub fn RtlUnwind(_TargetFrame: u32, _TargetIp: u32, _ExceptionRecord: u32, _Retu
 #[win32_derive::dllexport]
 pub fn GetTickCount() -> u32 {
     state().start.elapsed().as_millis() as u32
-}
-
-#[win32_derive::dllexport]
-pub fn GetEnvironmentStringsW() -> u32 {
-    stub!(0)
 }
