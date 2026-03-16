@@ -16,7 +16,9 @@ pub fn GetEnvironmentStrings() -> u32 {
         encode_env(&mut encoder, &state.env);
         encoder.status().unwrap();
     */
-    stub!(state().environ.get())
+    // TODO: if available, this ends up hitting a jmp table when parsing
+    // stub!(state().environ.get())
+    stub!(0)
 }
 
 #[win32_derive::dllexport]

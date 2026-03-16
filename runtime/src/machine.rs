@@ -17,14 +17,14 @@ pub struct Memory {
 impl Memory {
     pub fn read<T: FromBytes>(&self, addr: u32) -> T {
         if addr < 0x1000 {
-            panic!("null read");
+            log::error!("null read");
         }
         T::read_from_prefix(&self.bytes[addr as usize..]).unwrap().0
     }
 
     pub fn write<T: IntoBytes + zerocopy::Immutable>(&mut self, addr: u32, val: T) {
         if addr < 0x1000 {
-            panic!("null write");
+            log::error!("null write");
         }
         val.write_to_prefix(&mut self.bytes[addr as usize..])
             .unwrap();
@@ -32,7 +32,7 @@ impl Memory {
 
     pub fn slice(&self, r: std::ops::Range<u32>) -> &[u8] {
         if r.start < 0x1000 {
-            panic!("null slice");
+            log::error!("null slice");
         }
         &self.bytes[r.start as usize..r.end as usize]
     }
