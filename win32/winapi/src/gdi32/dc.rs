@@ -1,6 +1,9 @@
 use std::rc::Rc;
 
-use crate::gdi32::{Bitmap, HDC, state};
+use crate::{
+    gdi32::{Bitmap, HDC, state},
+    stub,
+};
 
 #[derive(Default)]
 pub struct DC {
@@ -19,5 +22,5 @@ pub fn CreateCompatibleDC(hdc: HDC) -> HDC {
 
 #[win32_derive::dllexport]
 pub fn DeleteDC(_hdc: HDC) -> bool {
-    todo!()
+    stub!(true)
 }

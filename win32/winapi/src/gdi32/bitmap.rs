@@ -4,6 +4,7 @@ use crate::{
     HANDLE,
     bitmap::BitmapInfo,
     gdi32::{HDC, state},
+    stub,
 };
 
 #[win32_derive::dllexport]
@@ -20,7 +21,7 @@ pub fn StretchBlt(
     _hSrc: i32,
     _rop: u32, /* ROP_CODE */
 ) -> bool {
-    todo!()
+    stub!(true)
 }
 
 pub struct Bitmap {

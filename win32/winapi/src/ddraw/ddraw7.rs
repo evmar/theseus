@@ -455,7 +455,7 @@ pub mod IDirectDrawSurface7 {
 
     #[win32_derive::dllexport]
     pub fn GetDC(_this: u32, _lphDC: u32) -> DD {
-        todo!()
+        stub!(DD::OK)
     }
 
     #[win32_derive::dllexport]
@@ -480,7 +480,7 @@ pub mod IDirectDrawSurface7 {
 
     #[win32_derive::dllexport]
     pub fn GetSurfaceDesc(_this: u32, _lpDDSurfaceDesc2: u32) -> DD {
-        todo!()
+        stub!(DD::OK)
     }
 
     #[win32_derive::dllexport]
@@ -506,7 +506,7 @@ pub mod IDirectDrawSurface7 {
 
     #[win32_derive::dllexport]
     pub fn ReleaseDC(_this: u32, _hDC: u32) -> DD {
-        todo!()
+        stub!(DD::OK)
     }
 
     #[win32_derive::dllexport]
