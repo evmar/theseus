@@ -12,15 +12,6 @@ pub fn GetLastError() -> u32 {
 
 pub type HANDLE = u32;
 
-#[win32_derive::dllexport]
-pub fn GetCommandLineA() -> u32 {
-    stub!(0)
-    /*
-    let mut state = get_state(sys);
-    state.cmdline.cmdline8(sys.memory())
-    */
-}
-
 #[repr(C)]
 #[derive(Debug, Default, zerocopy::IntoBytes, zerocopy::Immutable)]
 pub struct STARTUPINFOA {

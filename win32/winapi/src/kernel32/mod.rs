@@ -31,6 +31,7 @@ pub struct State {
     pub process_heap: RefCell<Rc<Heap>>,
     pub image_base: u32,
     pub resources: std::ops::Range<u32>,
+    pub command_line: RefCell<CommandLine>,
 }
 
 struct StaticState(OnceCell<State>);
@@ -46,6 +47,7 @@ pub fn init_state(image_base: u32, resources: std::ops::Range<u32>) {
         process_heap: Default::default(),
         image_base,
         resources,
+        command_line: Default::default(),
     };
     STATE.0.set(state).unwrap_or_else(|_| panic!());
 }

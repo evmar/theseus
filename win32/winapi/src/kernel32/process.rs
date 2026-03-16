@@ -63,6 +63,21 @@ pub struct PEB {
 
 #[repr(C)]
 #[derive(Debug, zerocopy::FromBytes, zerocopy::IntoBytes, zerocopy::KnownLayout)]
+pub struct UNICODE_STRING {
+    pub Length: u16,
+    pub MaximumLength: u16,
+    pub Buffer: u32,
+}
+
+#[repr(C)]
+#[derive(Debug, zerocopy::FromBytes, zerocopy::IntoBytes, zerocopy::KnownLayout)]
+struct CURDIR {
+    DosPath: UNICODE_STRING,
+    Handle: u32,
+}
+
+#[repr(C)]
+#[derive(Debug, zerocopy::FromBytes, zerocopy::IntoBytes, zerocopy::KnownLayout)]
 struct RTL_USER_PROCESS_PARAMETERS {
     AllocationSize: u32,
     Size: u32,
@@ -73,10 +88,25 @@ struct RTL_USER_PROCESS_PARAMETERS {
     hStdInput: u32,
     hStdOutput: u32,
     hStdError: u32,
-    // CurrentDirectory: CURDIR,
-    // DllPath: UNICODE_STRING,
-    // ImagePathName: UNICODE_STRING,
-    // CommandLine: UNICODE_STRING,
+    CurrentDirectory: CURDIR,
+    DllPath: UNICODE_STRING,
+    ImagePathName: UNICODE_STRING,
+    CommandLine: UNICODE_STRING,
+}
+
+#[derive(Default)]
+pub struct CommandLine {
+    pub command_line_8: u32,
+    pub command_line_16: u32,
+}
+
+#[win32_derive::dllexport]
+pub fn GetCommandLineA() -> u32 {
+    state().command_line.borrow().command_line_8
+}
+
+fn align_to_4(x: usize) -> usize {
+    (x + 4 - 1) & !(4 - 1)
 }
 
 pub fn init_process() {
@@ -91,6 +121,24 @@ pub fn init_process() {
         drop(mappings);
 
         let buf = &mut MACHINE.memory.bytes[process_data_addr as usize..][..0x1000];
+
+        let command_line = "TODO\0";
+
+        let len = align_to_4(command_line.len());
+        let (command_line_16, buf) = buf.split_at_mut(len * 2);
+        let (command_line_8, buf) = buf.split_at_mut(len);
+        let command_line_16: &mut [u16] = <[u16]>::mut_from_bytes(command_line_16).unwrap();
+        for (i, c) in command_line.bytes().enumerate() {
+            command_line_8[i] = c;
+            command_line_16[i] = c as u16;
+        }
+        *state().command_line.borrow_mut() = CommandLine {
+            command_line_8: (&raw const *command_line_8)
+                .byte_offset_from_unsigned(MACHINE.memory.bytes) as u32,
+            command_line_16: (&raw const *command_line_16)
+                .byte_offset_from_unsigned(MACHINE.memory.bytes)
+                as u32,
+        };
 
         let (params, buf) = RTL_USER_PROCESS_PARAMETERS::mut_from_prefix(buf).unwrap();
         params.hStdOutput = 0xF11E_0002;
