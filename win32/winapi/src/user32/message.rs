@@ -1,4 +1,4 @@
-use std::collections::VecDeque;
+use std::{collections::VecDeque, time::Duration};
 use winit::platform::pump_events::EventLoopExtPumpEvents as _;
 
 use crate::{
@@ -31,11 +31,22 @@ pub struct MessageQueue {
 }
 
 impl MessageQueue {
+    fn peek(&mut self) -> Option<&MSG> {
+        if self.messages.is_empty() {
+            self.pump();
+        }
+        self.messages.front()
+    }
+
     fn pump(&mut self) {
         let status = state()
             .event_loop
             .borrow_mut()
-            .pump_app_events(None, &mut H {});
+            .pump_app_events(Some(Duration::ZERO), &mut H {});
+        assert!(matches!(
+            status,
+            winit::platform::pump_events::PumpStatus::Continue
+        ));
     }
 }
 
@@ -57,7 +68,7 @@ pub fn PeekMessageA(
     _wMsgFilterMax: u32,
     _wRemoveMsg: u32, /* PEEK_MESSAGE_REMOVE_TYPE */
 ) -> bool {
-    state().message_queue.borrow_mut().pump();
+    state().message_queue.borrow_mut().peek();
     stub!(false)
 }
 

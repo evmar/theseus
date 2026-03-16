@@ -61,7 +61,6 @@ pub fn LoadImageA(
     };
     let image_base = kernel32::state().image_base;
     let span = image_base + span.start..image_base + span.end;
-    log::warn!("found image at {:x?}", span);
 
     let buf = unsafe { MACHINE.memory.slice(span) };
     let hdr = BitmapInfo::parse(buf);
