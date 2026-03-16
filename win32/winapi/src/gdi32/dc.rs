@@ -1,10 +1,17 @@
-use crate::{gdi32::HDC, stub};
+use std::rc::Rc;
+
+use crate::gdi32::{Bitmap, HDC, state};
+
+#[derive(Default)]
+pub struct DC {
+    pub bitmap: Option<Rc<Bitmap>>,
+}
 
 #[win32_derive::dllexport]
 pub fn CreateCompatibleDC(hdc: HDC) -> HDC {
     if hdc.is_null() {
         // memory DC compatible with screen
-        stub!(HDC::from_raw(1))
+        state().dcs.borrow_mut().add(DC::default())
     } else {
         todo!()
     }

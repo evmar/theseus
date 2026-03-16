@@ -1,3 +1,5 @@
+use std::rc::Rc;
+
 use crate::{
     HANDLE,
     bitmap::BitmapInfo,
@@ -32,7 +34,7 @@ pub fn parse_bitmap(buf: &[u8]) -> HANDLE {
 
     let mut objects = state().objects.borrow_mut();
     let handle = objects.reserve();
-    let bitmap = Bitmap { handle, header };
+    let bitmap = Rc::new(Bitmap { handle, header });
     objects.set(handle, bitmap);
     handle
 }
