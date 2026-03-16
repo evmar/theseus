@@ -3,24 +3,6 @@ use crate::stub;
 use runtime::*;
 
 #[win32_derive::dllexport]
-pub fn CreateWindowExA(
-    _dwExStyle: u32, /* WINDOW_EX_STYLE */
-    _lpClassName: u32,
-    _lpWindowName: u32,
-    _dwStyle: u32, /* WINDOW_STYLE */
-    _X: i32,
-    _Y: i32,
-    _nWidth: i32,
-    _nHeight: i32,
-    _hWndParent: HWND,
-    _hMenu: HMENU,
-    _hInstance: HINSTANCE,
-    _lpParam: u32,
-) -> HWND {
-    stub!(1)
-}
-
-#[win32_derive::dllexport]
 pub fn MessageBoxA(
     _hWnd: HWND,
     _lpText: u32,
@@ -41,37 +23,6 @@ pub fn SetFocus(_hWnd: HWND) -> HWND {
 }
 
 #[win32_derive::dllexport]
-pub fn ShowWindow(_hWnd: HWND, _nCmdShow: u32 /* SHOW_WINDOW_CMD */) -> bool {
-    stub!(true)
-}
-
-#[win32_derive::dllexport]
-pub fn UpdateWindow(_hWnd: HWND) -> bool {
-    stub!(true)
-}
-
-#[win32_derive::dllexport]
-pub fn DispatchMessageA(_lpMsg: u32) -> u32 {
-    todo!()
-}
-
-#[win32_derive::dllexport]
-pub fn TranslateMessage(_lpMsg: u32) -> bool {
-    todo!()
-}
-
-#[win32_derive::dllexport]
-pub fn PeekMessageA(
-    _lpMsg: u32,
-    _hWnd: HWND,
-    _wMsgFilterMin: u32,
-    _wMsgFilterMax: u32,
-    _wRemoveMsg: u32, /* PEEK_MESSAGE_REMOVE_TYPE */
-) -> bool {
-    stub!(false)
-}
-
-#[win32_derive::dllexport]
 pub fn GetSystemMetrics(nIndex: u32 /* SYSTEM_METRICS_INDEX */) -> i32 {
     // These were dumped from a win2k VM running at 640x480.
     // See exe/rust/bin/metrics.rs.
@@ -82,14 +33,4 @@ pub fn GetSystemMetrics(nIndex: u32 /* SYSTEM_METRICS_INDEX */) -> i32 {
         0, 1, 0, 0, 640, 480, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     ];
     METRICS[nIndex as usize]
-}
-
-#[win32_derive::dllexport]
-pub fn DefWindowProcA(_hWnd: HWND, _Msg: u32, _wParam: u32, _lParam: u32) -> u32 {
-    todo!()
-}
-
-#[win32_derive::dllexport]
-pub fn PostQuitMessage(_nExitCode: i32) {
-    todo!()
 }

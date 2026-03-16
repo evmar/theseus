@@ -10,3 +10,4 @@ zerocopy = { workspace = true }
 win32-derive = { path = "../derive" }
 log = { workspace = true }
 pe = { workspace = true }
+winit = "0.30.13"
