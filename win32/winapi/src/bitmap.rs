@@ -79,7 +79,7 @@ impl BITMAPINFOHEADER {
 }
 
 /// The parsed header of a bitmap, either v2 (BITMAPCOREHEADER) or v3 (BITMAPINFOHEADER).
-pub struct BitmapInfo<'a> {
+pub struct BitmapInfo {
     pub width: u32,
     pub height: u32,
     pub stride: usize,
@@ -87,12 +87,12 @@ pub struct BitmapInfo<'a> {
     pub bit_count: u8,
     pub compression: BI,
     pub palette_entry_size: usize,
-    pub palette: &'a [u8],
+    pub palette: Box<[u8]>,
     /// The total size in memory of the underlying header+palette.
     pub header_length: usize,
 }
 
-impl<'a> std::fmt::Debug for BitmapInfo<'a> {
+impl std::fmt::Debug for BitmapInfo {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(
             f,
@@ -109,12 +109,12 @@ impl<'a> std::fmt::Debug for BitmapInfo<'a> {
     }
 }
 
-impl<'a> BitmapInfo<'a> {
+impl BitmapInfo {
     // TODO: when parsing a bitmap from memory it's unclear how much memory we'll need
     // to read until we've read the bitmap header.  This means the caller cannot know how
     // big of a slice to provide.
 
-    pub fn parse(buf: &'a [u8]) -> Self {
+    pub fn parse(buf: &[u8]) -> Self {
         use zerocopy::FromBytes;
         let (header_size, _) = <u32>::read_from_prefix(buf).unwrap();
         match header_size {
@@ -131,7 +131,7 @@ impl<'a> BitmapInfo<'a> {
     }
 
     /// buf is the bytes following the header.
-    fn parseBMPv2(header: &BITMAPCOREHEADER, buf: &'a [u8]) -> Self {
+    fn parseBMPv2(header: &BITMAPCOREHEADER, buf: &[u8]) -> Self {
         let palette_len = if header.bcBitCount <= 8 {
             2usize.pow(header.bcBitCount as u32)
         } else {
@@ -139,7 +139,7 @@ impl<'a> BitmapInfo<'a> {
         };
         let palette_entry_size = 3usize;
         let palette_size = palette_len * palette_entry_size;
-        let palette = &buf[..palette_size];
+        let palette = buf[..palette_size].to_owned().into_boxed_slice();
 
         BitmapInfo {
             width: header.bcWidth as u32,
@@ -155,7 +155,7 @@ impl<'a> BitmapInfo<'a> {
     }
 
     /// buf is the bytes following the header.
-    fn parseBMPv3(header: &BITMAPINFOHEADER, buf: &'a [u8]) -> Self {
+    fn parseBMPv3(header: &BITMAPINFOHEADER, buf: &[u8]) -> Self {
         if header.biCompression != BI::RGB as u32 {
             todo!("compression {:?}", header.biCompression);
         }
@@ -168,7 +168,7 @@ impl<'a> BitmapInfo<'a> {
         };
         let palette_entry_size = 4usize;
         let palette_size = palette_len * palette_entry_size;
-        let palette = &buf[..palette_size];
+        let palette = buf[..palette_size].to_owned().into_boxed_slice();
 
         BitmapInfo {
             width: header.biWidth,

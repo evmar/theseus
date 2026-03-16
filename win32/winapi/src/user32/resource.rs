@@ -1,5 +1,5 @@
 use super::*;
-use crate::{bitmap::BitmapInfo, dllexport::win32flags, kernel32, stub};
+use crate::{dllexport::win32flags, gdi32, handle::HANDLE, kernel32, stub};
 use runtime::*;
 
 #[win32_derive::dllexport]
@@ -50,17 +50,20 @@ pub fn LoadImageA(hInst: HINSTANCE, name: u32, typ: IMAGE, cx: u32, cy: u32, fuL
     let section = unsafe { MACHINE.memory.slice(kernel32::state().resources.clone()) };
     let Some(span) = pe::find_resource(section, typ, name) else {
         log::warn!("LoadImage: resource not found");
-        return 0;
+        return HANDLE::null();
     };
     let image_base = kernel32::state().image_base;
     let span = image_base + span.start..image_base + span.end;
 
     let buf = unsafe { MACHINE.memory.slice(span) };
-    let hdr = BitmapInfo::parse(buf);
-    println!("loaded bitmap {:#x?}", hdr);
+    let hbitmap = gdi32::parse_bitmap(buf);
 
-    assert_eq!(hdr.width, cx);
-    assert_eq!(hdr.height, cy);
+    {
+        let objects = gdi32::state().objects.borrow();
+        let bitmap = objects.get(hbitmap).unwrap();
+        assert_eq!(bitmap.header.width, cx);
+        assert_eq!(bitmap.header.height, cy);
+    }
 
-    stub!(0)
+    hbitmap
 }
