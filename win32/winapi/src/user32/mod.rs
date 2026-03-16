@@ -20,6 +20,7 @@ pub type HICON = u32;
 pub struct State {
     event_loop: RefCell<winit::event_loop::EventLoop<()>>,
     window: RefCell<Option<Window>>,
+    message_queue: RefCell<MessageQueue>,
 }
 
 struct StaticState(OnceCell<State>);
@@ -31,5 +32,6 @@ pub fn state() -> &'static State {
     STATE.0.get_or_init(|| State {
         event_loop: RefCell::new(winit::event_loop::EventLoop::new().unwrap()),
         window: Default::default(),
+        message_queue: Default::default(),
     })
 }

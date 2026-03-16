@@ -1,37 +1,25 @@
 use runtime::*;
-use winit::{
-    event_loop, platform::pump_events::EventLoopExtPumpEvents as _, window::WindowAttributes,
-};
 
 use crate::{
     stub,
     user32::{HINSTANCE, HMENU, HWND, state},
 };
 
-struct H {}
-
 pub struct Window {
-    winit_window: winit::window::Window,
+    pub winit_window: winit::window::Window,
 }
 
-impl winit::application::ApplicationHandler for H {
-    fn resumed(&mut self, event_loop: &event_loop::ActiveEventLoop) {
-        let window = event_loop
-            .create_window(WindowAttributes::default())
-            .unwrap();
-        *state().window.borrow_mut() = Some(Window {
-            winit_window: window,
-        });
+pub fn create_pending_windows(event_loop: &winit::event_loop::ActiveEventLoop) {
+    if state().window.borrow().is_some() {
+        return;
     }
 
-    fn window_event(
-        &mut self,
-        event_loop: &event_loop::ActiveEventLoop,
-        window_id: winit::window::WindowId,
-        event: winit::event::WindowEvent,
-    ) {
-        //dbg!(event);
-    }
+    let window = event_loop
+        .create_window(winit::window::WindowAttributes::default())
+        .unwrap();
+    *state().window.borrow_mut() = Some(Window {
+        winit_window: window,
+    });
 }
 
 #[win32_derive::dllexport]
@@ -49,10 +37,6 @@ pub fn CreateWindowExA(
     _hInstance: HINSTANCE,
     _lpParam: u32,
 ) -> HWND {
-    let status = state()
-        .event_loop
-        .borrow_mut()
-        .pump_app_events(None, &mut H {});
     stub!(1)
 }
 
