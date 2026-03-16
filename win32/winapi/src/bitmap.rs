@@ -80,8 +80,8 @@ impl BITMAPINFOHEADER {
 
 /// The parsed header of a bitmap, either v2 (BITMAPCOREHEADER) or v3 (BITMAPINFOHEADER).
 pub struct BitmapInfo<'a> {
-    pub width: usize,
-    pub height: usize,
+    pub width: u32,
+    pub height: u32,
     pub stride: usize,
     pub is_bottom_up: bool,
     pub bit_count: u8,
@@ -142,8 +142,8 @@ impl<'a> BitmapInfo<'a> {
         let palette = &buf[..palette_size];
 
         BitmapInfo {
-            width: header.bcWidth as usize,
-            height: header.bcHeight as usize,
+            width: header.bcWidth as u32,
+            height: header.bcHeight as u32,
             stride: header.stride(),
             is_bottom_up: true, // MSDN: "BITMAPCOREHEADER bitmaps cannot be top-down bitmaps"
             bit_count: header.bcBitCount as u8,
@@ -171,8 +171,8 @@ impl<'a> BitmapInfo<'a> {
         let palette = &buf[..palette_size];
 
         BitmapInfo {
-            width: header.biWidth as usize,
-            height: header.height() as usize,
+            width: header.biWidth,
+            height: header.height(),
             stride: header.stride(),
             is_bottom_up: header.is_bottom_up(),
             bit_count: header.biBitCount as u8,

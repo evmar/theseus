@@ -30,14 +30,7 @@ fn is_intresource(x: u32) -> bool {
 }
 
 #[win32_derive::dllexport]
-pub fn LoadImageA(
-    hInst: HINSTANCE,
-    name: u32,
-    typ: IMAGE,
-    _cx: i32,
-    _cy: i32,
-    fuLoad: LR,
-) -> HANDLE {
+pub fn LoadImageA(hInst: HINSTANCE, name: u32, typ: IMAGE, cx: u32, cy: u32, fuLoad: LR) -> HANDLE {
     assert!(hInst == 0);
 
     assert!(is_intresource(name));
@@ -65,6 +58,9 @@ pub fn LoadImageA(
     let buf = unsafe { MACHINE.memory.slice(span) };
     let hdr = BitmapInfo::parse(buf);
     println!("loaded bitmap {:#x?}", hdr);
+
+    assert_eq!(hdr.width, cx);
+    assert_eq!(hdr.height, cy);
 
     stub!(0)
 }

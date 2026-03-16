@@ -1,7 +1,24 @@
+use std::{cell::OnceCell, collections::HashMap};
+
 use crate::stub;
 
 pub type HDC = u32;
 pub type HGDIOBJ = u32;
+
+pub struct State {
+    pub objects: HashMap<u32, ()>,
+}
+
+struct StaticState(OnceCell<State>);
+unsafe impl Sync for StaticState {}
+
+static STATE: StaticState = StaticState(OnceCell::new());
+
+pub fn state() -> &'static State {
+    STATE.0.get_or_init(|| State {
+        objects: Default::default(),
+    })
+}
 
 #[win32_derive::dllexport]
 pub fn CreateCompatibleDC(_hdc: HDC) -> HDC {
