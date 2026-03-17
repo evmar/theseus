@@ -4,20 +4,7 @@ use crate::{
 };
 
 pub struct Window {
-    pub winit_window: winit::window::Window,
-}
-
-pub fn create_pending_windows(event_loop: &winit::event_loop::ActiveEventLoop) {
-    if state().window.borrow().is_some() {
-        return;
-    }
-
-    let window = event_loop
-        .create_window(winit::window::WindowAttributes::default())
-        .unwrap();
-    *state().window.borrow_mut() = Some(Window {
-        winit_window: window,
-    });
+    pub win: sdl3::video::Window,
 }
 
 #[win32_derive::dllexport]
@@ -35,6 +22,9 @@ pub fn CreateWindowExA(
     _hInstance: HINSTANCE,
     _lpParam: u32,
 ) -> HWND {
+    *state().window.borrow_mut() = Some(Window {
+        win: state().video.window("theseus", 300, 200).build().unwrap(),
+    });
     stub!(1)
 }
 

@@ -1,27 +1,9 @@
-use std::{collections::VecDeque, time::Duration};
-use winit::platform::pump_events::EventLoopExtPumpEvents as _;
+use std::collections::VecDeque;
 
 use crate::{
     stub,
     user32::{HWND, state},
 };
-
-struct H {}
-
-impl winit::application::ApplicationHandler for H {
-    fn resumed(&mut self, event_loop: &winit::event_loop::ActiveEventLoop) {
-        super::create_pending_windows(event_loop);
-    }
-
-    fn window_event(
-        &mut self,
-        _event_loop: &winit::event_loop::ActiveEventLoop,
-        _window_id: winit::window::WindowId,
-        _event: winit::event::WindowEvent,
-    ) {
-        //dbg!(event);
-    }
-}
 
 struct MSG {}
 
@@ -39,14 +21,8 @@ impl MessageQueue {
     }
 
     fn pump(&mut self) {
-        let status = state()
-            .event_loop
-            .borrow_mut()
-            .pump_app_events(Some(Duration::ZERO), &mut H {});
-        assert!(matches!(
-            status,
-            winit::platform::pump_events::PumpStatus::Continue
-        ));
+        let ev = state().event_pump.borrow_mut().poll_event();
+        dbg!(ev);
     }
 }
 

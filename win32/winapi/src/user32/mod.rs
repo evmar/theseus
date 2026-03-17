@@ -17,7 +17,10 @@ pub type HCURSOR = u32;
 pub type HICON = u32;
 
 pub struct State {
-    event_loop: RefCell<winit::event_loop::EventLoop<()>>,
+    #[allow(unused)]
+    sdl: sdl3::Sdl,
+    video: sdl3::VideoSubsystem,
+    event_pump: RefCell<sdl3::EventPump>,
     window: RefCell<Option<Window>>,
     message_queue: RefCell<MessageQueue>,
 }
@@ -28,9 +31,17 @@ unsafe impl Sync for StaticState {}
 static STATE: StaticState = StaticState(OnceCell::new());
 
 pub fn state() -> &'static State {
-    STATE.0.get_or_init(|| State {
-        event_loop: RefCell::new(winit::event_loop::EventLoop::new().unwrap()),
-        window: Default::default(),
-        message_queue: Default::default(),
+    STATE.0.get_or_init(|| {
+        assert!(sdl3::hint::set(sdl3::hint::names::NO_SIGNAL_HANDLERS, "1"));
+        let sdl = sdl3::init().unwrap();
+        let video = sdl.video().unwrap();
+        let event_pump = RefCell::new(sdl.event_pump().unwrap());
+        State {
+            sdl,
+            video,
+            event_pump,
+            window: Default::default(),
+            message_queue: Default::default(),
+        }
     })
 }
