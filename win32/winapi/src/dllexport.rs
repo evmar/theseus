@@ -47,10 +47,10 @@ impl<T: TryFrom<u32>> FromABIParam for T {
 }
 
 macro_rules! win32flags {
-    (pub struct $name:ident { }) => {
+    (pub struct $name:ident $body:tt) => {
         bitflags::bitflags! {
-            #[derive(Debug, PartialEq, Eq)]
-            pub struct $name: u32 {}
+            #[derive(Copy, Clone, Debug, PartialEq, Eq)]
+            pub struct $name: u32 $body
         }
 
         impl crate::FromABIParam for $name {

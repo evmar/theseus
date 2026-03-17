@@ -7,9 +7,10 @@ use std::{
 use runtime::*;
 
 mod ddraw7;
+mod types;
 
-use crate::ABIReturn;
 pub use ddraw7::*;
+pub use types::*;
 
 pub const EXPORTS: [&'static str; 79] = [
     "IDirectDraw7::QueryInterface",
@@ -92,20 +93,6 @@ pub const EXPORTS: [&'static str; 79] = [
     "IDirectDrawSurface7::SetLOD",
     "IDirectDrawSurface7::GetLOD",
 ];
-
-#[derive(Debug, Copy, Clone, Eq, PartialEq)]
-#[repr(u32)]
-pub enum DD {
-    OK = 0,
-    E_NOINTERFACE = 0x80004002,
-    ERR_GENERIC = 0x80004005,
-}
-
-impl Into<ABIReturn> for DD {
-    fn into(self) -> ABIReturn {
-        (self as u32).into()
-    }
-}
 
 #[repr(C)]
 #[derive(PartialEq, zerocopy::FromBytes)]
