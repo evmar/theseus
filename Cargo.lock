@@ -29,6 +29,27 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "843867be96c8daad0d758b57df9392b6d8d271134fce549de6ce169ff98a92af"
 
 [[package]]
+name = "bitflags-derive"
+version = "0.0.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "09648aa9dde04191fe237a510379c9eca42a97733b2065cc337922fba2bd378a"
+dependencies = [
+ "bitflags",
+ "bitflags-derive-macros",
+]
+
+[[package]]
+name = "bitflags-derive-macros"
+version = "0.0.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d242ebf64d65693821c7e73a26d87757e83f795918fd42334da3dafaafddbd64"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+]
+
+[[package]]
 name = "cfg-if"
 version = "0.1.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -205,6 +226,7 @@ name = "winapi"
 version = "0.1.0"
 dependencies = [
  "bitflags",
+ "bitflags-derive",
  "log",
  "pe",
  "runtime",

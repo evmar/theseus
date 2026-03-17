@@ -46,6 +46,13 @@ impl Memory {
         }
         &self.bytes[r.start as usize..r.end as usize]
     }
+
+    pub fn slice_from(&self, start: u32) -> &[u8] {
+        if start < 0x1000 {
+            log::error!("null slice");
+        }
+        &self.bytes[start as usize..]
+    }
 }
 
 pub fn indirect(addr: u32) -> Cont {

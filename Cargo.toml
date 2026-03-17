@@ -12,6 +12,7 @@ members = [
 
 [workspace.dependencies]
 bitflags = "2.11.0"
+bitflags-derive = "0.0.4"
 pe = { path = "../../win/rs/pe" }
 runtime = { path = "runtime" }
 winapi = { path = "win32/winapi" }

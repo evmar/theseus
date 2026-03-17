@@ -1,6 +1,7 @@
-use crate::ddraw::{DD, GUID, state};
+use crate::ddraw::{GUID, state, types::*};
 use crate::{gdi32::HDC, kernel32, stub, user32::HWND};
 use runtime::*;
+use zerocopy::FromBytes as _;
 use zerocopy::IntoBytes;
 
 pub const IID_IDirectDraw7: GUID = GUID((
@@ -11,7 +12,6 @@ pub const IID_IDirectDraw7: GUID = GUID((
 ));
 
 pub mod IDirectDraw7 {
-
     use super::*;
 
     #[derive(Default, zerocopy::IntoBytes, zerocopy::Immutable)]
@@ -88,11 +88,18 @@ pub mod IDirectDraw7 {
     #[win32_derive::dllexport]
     pub fn CreateSurface(
         this: u32,
-        _lpDDSurfaceDesc2: u32,
+        lpDDSurfaceDesc2: u32,
         lplpDDSurface: u32,
         _pUnkOuter: u32,
     ) -> DD {
         assert!(this == state().ddraw_addr.borrow().unwrap());
+        let desc = <DDSURFACEDESC2>::ref_from_prefix(unsafe {
+            MACHINE.memory.slice_from(lpDDSurfaceDesc2)
+        })
+        .unwrap()
+        .0;
+        log::info!("desc {:?}", desc);
+
         let surf_addr = IDirectDrawSurface7::new();
         state().ddraw.borrow_mut().create_surface(surf_addr);
         unsafe { MACHINE.memory.write(lplpDDSurface, surf_addr) };

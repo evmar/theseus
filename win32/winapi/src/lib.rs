@@ -10,7 +10,7 @@ mod heap;
 pub mod kernel32;
 pub mod user32;
 pub use dllexport::{ABIReturn, FromABIParam};
-mod bitmap;
+pub mod bitmap;
 mod handle;
 pub use handle::{HANDLE, Handles};
 
