@@ -13,6 +13,10 @@ pub use dllexport::{ABIReturn, FromABIParam};
 pub mod bitmap;
 mod handle;
 pub use handle::{HANDLE, Handles};
+mod point;
+pub use point::POINT;
+mod rect;
+pub use rect::RECT;
 
 macro_rules! stub {
     ($arg:expr) => {{

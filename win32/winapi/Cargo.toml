@@ -11,4 +11,4 @@ zerocopy = { workspace = true }
 win32-derive = { path = "../derive" }
 log = { workspace = true }
 pe = { workspace = true }
-sdl3 = "0.17.3"
+sdl3 = { version = "0.17.3", features = [ "unsafe_textures" ] }

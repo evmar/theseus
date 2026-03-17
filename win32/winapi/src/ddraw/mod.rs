@@ -133,11 +133,7 @@ pub fn DirectDrawCreateEx(lpGuid: u32, lplpDD: u32, iid: u32, _pUnkOuter: u32) -
 
     let mut ddraw = state().ddraw.borrow_mut();
     assert!(ddraw.is_none());
-    *ddraw = Some(DirectDraw {
-        addr,
-        window: None,
-        surf: Default::default(),
-    });
+    *ddraw = Some(DirectDraw { addr, window: None });
 
     unsafe {
         MACHINE.memory.write(lplpDD, addr);
@@ -148,6 +144,7 @@ pub fn DirectDrawCreateEx(lpGuid: u32, lplpDD: u32, iid: u32, _pUnkOuter: u32) -
 #[derive(Default)]
 pub struct State {
     ddraw: RefCell<Option<DirectDraw>>,
+    surf: RefCell<HashMap<u32, Rc<Surface>>>,
 }
 
 struct StaticState(OnceCell<State>);
@@ -162,34 +159,62 @@ pub fn state() -> &'static State {
 struct DirectDraw {
     addr: u32,
     window: Option<Rc<user32::Window>>,
-    surf: HashMap<u32, Rc<Surface>>,
+}
+
+struct SurfaceParams {
+    is_primary: bool,
+    width: u32,
+    height: u32,
 }
 
 impl DirectDraw {
-    fn create_surface(&mut self, addr: u32, desc: &DDSURFACEDESC2) {
+    fn create_surface(&mut self, addr: u32, params: &SurfaceParams) -> Rc<Surface> {
         let window = self.window.as_ref().unwrap();
-        let width = if desc.dwFlags.contains(DDSD::WIDTH) {
-            desc.dwWidth
+        let target = if params.is_primary {
+            log::info!("primary {addr:x}");
+            Target::Window(window.clone())
         } else {
-            window.width
-        };
-        let height = if desc.dwFlags.contains(DDSD::HEIGHT) {
-            desc.dwHeight
-        } else {
-            window.height
-        };
-
-        let sdl_surf =
-            sdl3::surface::Surface::new(width, height, sdl3::pixels::PixelFormat::ARGB8888)
+            log::info!("back {addr:x}");
+            let texture_creator = window.canvas.borrow_mut().texture_creator();
+            assert_eq!(
+                texture_creator.default_pixel_format(),
+                sdl3::pixels::PixelFormat::ARGB8888
+            );
+            let mut texture = texture_creator
+                .create_texture_static(None, params.width, params.height)
                 .unwrap();
+            let mut pixels = Vec::new();
+            pixels.resize((params.width * params.height * 4) as usize, 0xff);
+            texture
+                .update(None, &pixels, params.width as usize * 4)
+                .unwrap();
+            Target::Texture(texture)
+        };
 
-        let surf = Surface { addr, sdl_surf };
-        self.surf.insert(addr, Rc::new(surf));
+        let surf = Rc::new(Surface {
+            addr,
+            target,
+            primary: Default::default(),
+            attached: Default::default(),
+        });
+        state().surf.borrow_mut().insert(addr, surf.clone());
+        surf
     }
 }
 
+enum Target {
+    Window(Rc<user32::Window>),
+    Texture(sdl3::render::Texture),
+}
+
 struct Surface {
-    #[allow(unused)]
     addr: u32,
-    sdl_surf: sdl3::surface::Surface<'static>,
+    target: Target,
+
+    // How does surface attachment actually work?
+    // Docs are unclear, and wine's comments are also full of speculation and frustration, ha.
+    /// Present on surfaces attached to Target::Window
+    primary: RefCell<Option<Rc<Surface>>>,
+    /// Present on Target::Window, TODO should be vec
+    attached: RefCell<Option<Rc<Surface>>>,
 }

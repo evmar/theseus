@@ -1,4 +1,7 @@
+use crate::RECT;
+use crate::ddraw::Target;
 use crate::ddraw::{GUID, state, types::*};
+use crate::{ddraw::SurfaceParams, user32};
 use crate::{gdi32::HDC, kernel32, stub, user32::HWND};
 use runtime::*;
 use zerocopy::FromBytes as _;
@@ -12,8 +15,6 @@ pub const IID_IDirectDraw7: GUID = GUID((
 ));
 
 pub mod IDirectDraw7 {
-    use crate::user32;
-
     use super::*;
 
     #[derive(Default, zerocopy::IntoBytes, zerocopy::Immutable)]
@@ -102,11 +103,44 @@ pub mod IDirectDraw7 {
         })
         .unwrap()
         .0;
-        log::info!("desc {:?}", desc);
 
-        let surf_addr = IDirectDrawSurface7::new();
-        ddraw.create_surface(surf_addr, desc);
-        unsafe { MACHINE.memory.write(lplpDDSurface, surf_addr) };
+        let window = ddraw.window.as_ref().unwrap();
+        let width = if desc.dwFlags.contains(DDSD::WIDTH) {
+            desc.dwWidth
+        } else {
+            window.width
+        };
+        let height = if desc.dwFlags.contains(DDSD::HEIGHT) {
+            desc.dwHeight
+        } else {
+            window.height
+        };
+
+        let surface = ddraw.create_surface(
+            IDirectDrawSurface7::new(),
+            &SurfaceParams {
+                is_primary: desc.dwFlags.contains(DDSD::CAPS)
+                    && desc.ddsCaps.dwCaps.contains(DDSCAPS::PRIMARYSURFACE),
+                width,
+                height,
+            },
+        );
+        unsafe { MACHINE.memory.write(lplpDDSurface, surface.addr) };
+
+        if let Some(count) = desc.back_buffer_count() {
+            assert_eq!(count, 1);
+            let back = ddraw.create_surface(
+                IDirectDrawSurface7::new(),
+                &SurfaceParams {
+                    is_primary: false,
+                    width,
+                    height,
+                },
+            );
+            back.primary.replace(Some(surface.clone()));
+            surface.attached.replace(Some(back));
+        }
+
         DD::OK
     }
 
@@ -308,6 +342,8 @@ pub mod IDirectDraw7 {
 }
 
 pub mod IDirectDrawSurface7 {
+    use std::rc::Rc;
+
     use super::*;
 
     #[derive(Default, zerocopy::IntoBytes, zerocopy::Immutable)]
@@ -408,13 +444,40 @@ pub mod IDirectDrawSurface7 {
 
     #[win32_derive::dllexport]
     pub fn BltFast(
-        _this: u32,
-        _dwX: u32,
-        _dwY: u32,
+        this: u32,
+        dwX: u32,
+        dwY: u32,
         _lpDDSrcSurface: u32,
-        _lpSrcRect: u32,
+        lpSrcRect: u32,
         _dwTrans: u32,
     ) -> DD {
+        let surfaces = state().surf.borrow_mut();
+        let surface = surfaces.get(&this).unwrap();
+        let src_rect = unsafe {
+            <RECT>::ref_from_prefix(MACHINE.memory.slice_from(lpSrcRect))
+                .unwrap()
+                .0
+        };
+
+        let Target::Texture(texture) = &surface.target else {
+            todo!()
+        };
+
+        // let mut pixels: Vec<u8> = Vec::new();
+        // pixels.resize(width * height, 0xFF);
+        // texture.update(None, &pixels, width).unwrap();
+
+        // let mut sdl = target.borrow_mut();
+        // sdl.set_draw_color(sdl3::pixels::Color::GREEN);
+        // sdl.fill_rect(sdl3::render::FRect::new(
+        //     dwX as f32,
+        //     dwY as f32,
+        //     (src_rect.right - src_rect.left) as f32,
+        //     (src_rect.bottom - src_rect.top) as f32,
+        // ))
+        // .unwrap();
+        // sdl.present();
+
         stub!(DD::OK)
     }
 
@@ -439,16 +502,58 @@ pub mod IDirectDrawSurface7 {
     }
 
     #[win32_derive::dllexport]
-    pub fn Flip(_this: u32, _lpDDSurfaceTargetOverride: u32, _dwFlags: u32) -> DD {
+    pub fn Flip(this: u32, _lpDDSurfaceTargetOverride: u32, _dwFlags: u32) -> DD {
+        let surfaces = state().surf.borrow_mut();
+        let surface = surfaces.get(&this).unwrap();
+
+        // It's unclear whether Flip is given the primary or back surface,
+        // so we first poke around to identify which is which.
+        let (primary, back) = if let Some(primary) = surface.primary.borrow().as_ref() {
+            (primary.clone(), surface.clone())
+        } else {
+            (
+                surface.clone(),
+                surface.attached.borrow().as_ref().unwrap().clone(),
+            )
+        };
+
+        let Target::Window(window) = &primary.target else {
+            unreachable!()
+        };
+        let Target::Texture(texture) = &back.target else {
+            unreachable!()
+        };
+
+        let mut canvas = window.canvas.borrow_mut();
+        canvas.set_draw_color(sdl3::pixels::Color::BLUE);
+        canvas.clear();
+        canvas
+            .copy(
+                texture,
+                None,
+                sdl3::render::FRect::new(100.0, 100.0, 100.0, 100.0),
+            )
+            .unwrap();
+        canvas.set_draw_color(sdl3::pixels::Color::GREEN);
+        canvas
+            .fill_rect(sdl3::render::FRect::new(0.0, 0.0, 100.0, 100.0))
+            .unwrap();
+        canvas.present();
+
         stub!(DD::OK)
     }
 
     #[win32_derive::dllexport]
-    pub fn GetAttachedSurface(_this: u32, _lpDDSCaps: u32, lplpDDAttachedSurface: u32) -> DD {
+    pub fn GetAttachedSurface(this: u32, _lpDDSCaps: u32, lplpDDAttachedSurface: u32) -> DD {
+        let surfaces = state().surf.borrow_mut();
+        let surface = surfaces.get(&this).unwrap();
         unsafe {
-            MACHINE.memory.write(lplpDDAttachedSurface, new());
+            MACHINE.memory.write(
+                lplpDDAttachedSurface,
+                surface.attached.borrow().as_ref().unwrap().addr,
+            );
         }
-        stub!(DD::OK)
+        DD::OK
     }
 
     #[win32_derive::dllexport]

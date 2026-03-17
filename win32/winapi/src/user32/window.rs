@@ -1,4 +1,4 @@
-use std::rc::Rc;
+use std::{cell::RefCell, rc::Rc};
 
 use runtime::MACHINE;
 
@@ -10,7 +10,7 @@ use crate::{
 pub struct Window {
     pub width: u32,
     pub height: u32,
-    pub canvas: sdl3::render::WindowCanvas,
+    pub canvas: RefCell<sdl3::render::WindowCanvas>,
 }
 
 #[win32_derive::dllexport]
@@ -42,23 +42,19 @@ pub fn CreateWindowExA(
         nHeight as u32
     };
 
-    let mut window = Window {
+    let window = Window {
         width,
         height,
-        canvas: state()
-            .video
-            .window(name, width, height)
-            .build()
-            .unwrap()
-            .into_canvas(),
+        canvas: RefCell::new(
+            state()
+                .video
+                .window(name, width, height)
+                .build()
+                .unwrap()
+                .into_canvas(),
+        ),
     };
-    window.canvas.clear();
-    window.canvas.set_draw_color(sdl3::pixels::Color::GREEN);
-    window
-        .canvas
-        .fill_rect(sdl3::render::FRect::new(10.0, 10.0, 100.0, 100.0))
-        .unwrap();
-    window.canvas.present();
+    window.canvas.borrow_mut().clear();
 
     *state().window.borrow_mut() = Some(Rc::new(window));
     stub!(1)
