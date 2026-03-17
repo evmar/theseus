@@ -1,3 +1,5 @@
+use std::rc::Rc;
+
 use runtime::MACHINE;
 
 use crate::{
@@ -6,6 +8,8 @@ use crate::{
 };
 
 pub struct Window {
+    pub width: u32,
+    pub height: u32,
     pub canvas: sdl3::render::WindowCanvas,
 }
 
@@ -39,6 +43,8 @@ pub fn CreateWindowExA(
     };
 
     let mut window = Window {
+        width,
+        height,
         canvas: state()
             .video
             .window(name, width, height)
@@ -54,7 +60,7 @@ pub fn CreateWindowExA(
         .unwrap();
     window.canvas.present();
 
-    *state().window.borrow_mut() = Some(window);
+    *state().window.borrow_mut() = Some(Rc::new(window));
     stub!(1)
 }
 

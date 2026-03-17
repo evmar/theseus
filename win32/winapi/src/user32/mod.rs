@@ -3,7 +3,10 @@ mod misc;
 mod resource;
 mod window;
 
-use std::cell::{OnceCell, RefCell};
+use std::{
+    cell::{OnceCell, RefCell},
+    rc::Rc,
+};
 
 pub use message::*;
 pub use misc::*;
@@ -21,7 +24,7 @@ pub struct State {
     sdl: sdl3::Sdl,
     video: sdl3::VideoSubsystem,
     event_pump: RefCell<sdl3::EventPump>,
-    window: RefCell<Option<Window>>,
+    pub window: RefCell<Option<Rc<Window>>>,
     message_queue: RefCell<MessageQueue>,
 }
 

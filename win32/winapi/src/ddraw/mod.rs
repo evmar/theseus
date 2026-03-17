@@ -12,6 +12,8 @@ mod types;
 pub use ddraw7::*;
 pub use types::*;
 
+use crate::user32;
+
 pub const EXPORTS: [&'static str; 79] = [
     "IDirectDraw7::QueryInterface",
     "IDirectDraw7::AddRef",
@@ -129,9 +131,13 @@ pub fn DirectDrawCreateEx(lpGuid: u32, lplpDD: u32, iid: u32, _pUnkOuter: u32) -
         _ => panic!(),
     };
 
-    let mut ddraw_addr = state().ddraw_addr.borrow_mut();
-    assert!(ddraw_addr.is_none());
-    *ddraw_addr = Some(addr);
+    let mut ddraw = state().ddraw.borrow_mut();
+    assert!(ddraw.is_none());
+    *ddraw = Some(DirectDraw {
+        addr,
+        window: None,
+        surf: Default::default(),
+    });
 
     unsafe {
         MACHINE.memory.write(lplpDD, addr);
@@ -141,8 +147,7 @@ pub fn DirectDrawCreateEx(lpGuid: u32, lplpDD: u32, iid: u32, _pUnkOuter: u32) -
 
 #[derive(Default)]
 pub struct State {
-    ddraw_addr: RefCell<Option<u32>>,
-    ddraw: RefCell<DirectDraw>,
+    ddraw: RefCell<Option<DirectDraw>>,
 }
 
 struct StaticState(OnceCell<State>);
@@ -154,14 +159,31 @@ pub fn state() -> &'static State {
     STATE.0.get_or_init(|| Default::default())
 }
 
-#[derive(Default)]
 struct DirectDraw {
+    addr: u32,
+    window: Option<Rc<user32::Window>>,
     surf: HashMap<u32, Rc<Surface>>,
 }
 
 impl DirectDraw {
-    fn create_surface(&mut self, addr: u32) {
-        let surf = Surface { addr };
+    fn create_surface(&mut self, addr: u32, desc: &DDSURFACEDESC2) {
+        let window = self.window.as_ref().unwrap();
+        let width = if desc.dwFlags.contains(DDSD::WIDTH) {
+            desc.dwWidth
+        } else {
+            window.width
+        };
+        let height = if desc.dwFlags.contains(DDSD::HEIGHT) {
+            desc.dwHeight
+        } else {
+            window.height
+        };
+
+        let sdl_surf =
+            sdl3::surface::Surface::new(width, height, sdl3::pixels::PixelFormat::ARGB8888)
+                .unwrap();
+
+        let surf = Surface { addr, sdl_surf };
         self.surf.insert(addr, Rc::new(surf));
     }
 }
@@ -169,4 +191,5 @@ impl DirectDraw {
 struct Surface {
     #[allow(unused)]
     addr: u32,
+    sdl_surf: sdl3::surface::Surface<'static>,
 }

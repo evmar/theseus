@@ -12,6 +12,8 @@ pub const IID_IDirectDraw7: GUID = GUID((
 ));
 
 pub mod IDirectDraw7 {
+    use crate::user32;
+
     use super::*;
 
     #[derive(Default, zerocopy::IntoBytes, zerocopy::Immutable)]
@@ -92,7 +94,9 @@ pub mod IDirectDraw7 {
         lplpDDSurface: u32,
         _pUnkOuter: u32,
     ) -> DD {
-        assert!(this == state().ddraw_addr.borrow().unwrap());
+        let mut ddraw = state().ddraw.borrow_mut();
+        let ddraw = ddraw.as_mut().unwrap();
+        assert!(this == ddraw.addr);
         let desc = <DDSURFACEDESC2>::ref_from_prefix(unsafe {
             MACHINE.memory.slice_from(lpDDSurfaceDesc2)
         })
@@ -101,9 +105,9 @@ pub mod IDirectDraw7 {
         log::info!("desc {:?}", desc);
 
         let surf_addr = IDirectDrawSurface7::new();
-        state().ddraw.borrow_mut().create_surface(surf_addr);
+        ddraw.create_surface(surf_addr, desc);
         unsafe { MACHINE.memory.write(lplpDDSurface, surf_addr) };
-        stub!(DD::OK)
+        DD::OK
     }
 
     #[win32_derive::dllexport]
@@ -184,8 +188,15 @@ pub mod IDirectDraw7 {
     }
 
     #[win32_derive::dllexport]
-    pub fn SetCooperativeLevel(_this: u32, _hwnd: HWND, _flags: u32) -> DD {
-        stub!(DD::OK)
+    pub fn SetCooperativeLevel(this: u32, _hwnd: HWND, _flags: u32) -> DD {
+        let mut ddraw = state().ddraw.borrow_mut();
+        let ddraw = ddraw.as_mut().unwrap();
+        assert!(this == ddraw.addr);
+
+        let window = user32::state().window.borrow().as_ref().unwrap().clone();
+        ddraw.window = Some(window);
+
+        DD::OK
     }
 
     #[win32_derive::dllexport]
