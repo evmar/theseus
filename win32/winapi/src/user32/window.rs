@@ -1,30 +1,60 @@
+use runtime::MACHINE;
+
 use crate::{
     stub,
     user32::{HINSTANCE, HMENU, HWND, state},
 };
 
 pub struct Window {
-    pub win: sdl3::video::Window,
+    pub canvas: sdl3::render::WindowCanvas,
 }
 
 #[win32_derive::dllexport]
 pub fn CreateWindowExA(
     _dwExStyle: u32, /* WINDOW_EX_STYLE */
     _lpClassName: u32,
-    _lpWindowName: u32,
+    lpWindowName: u32,
     _dwStyle: u32, /* WINDOW_STYLE */
     _X: i32,
     _Y: i32,
-    _nWidth: i32,
-    _nHeight: i32,
+    nWidth: i32,
+    nHeight: i32,
     _hWndParent: HWND,
     _hMenu: HMENU,
     _hInstance: HINSTANCE,
     _lpParam: u32,
 ) -> HWND {
-    *state().window.borrow_mut() = Some(Window {
-        win: state().video.window("theseus", 300, 200).build().unwrap(),
-    });
+    let name = unsafe { MACHINE.memory.read_str(lpWindowName) };
+
+    const CW_USEDEFAULT: i32 = 0x8000_0000u32 as i32;
+    let width = if nWidth == CW_USEDEFAULT {
+        640
+    } else {
+        nWidth as u32
+    };
+    let height = if nHeight == CW_USEDEFAULT {
+        480
+    } else {
+        nHeight as u32
+    };
+
+    let mut window = Window {
+        canvas: state()
+            .video
+            .window(name, width, height)
+            .build()
+            .unwrap()
+            .into_canvas(),
+    };
+    window.canvas.clear();
+    window.canvas.set_draw_color(sdl3::pixels::Color::GREEN);
+    window
+        .canvas
+        .fill_rect(sdl3::render::FRect::new(10.0, 10.0, 100.0, 100.0))
+        .unwrap();
+    window.canvas.present();
+
+    *state().window.borrow_mut() = Some(window);
     stub!(1)
 }
 

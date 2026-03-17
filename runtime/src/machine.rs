@@ -30,6 +30,16 @@ impl Memory {
             .unwrap();
     }
 
+    pub fn read_str(&self, addr: u32) -> &str {
+        if addr < 0x1000 {
+            log::error!("null read");
+        }
+        let buf = &self.bytes[addr as usize..];
+        let nul = buf.iter().position(|&c| c == 0).unwrap();
+        let buf = &buf[..nul];
+        std::str::from_utf8(buf).unwrap()
+    }
+
     pub fn slice(&self, r: std::ops::Range<u32>) -> &[u8] {
         if r.start < 0x1000 {
             log::error!("null slice");
