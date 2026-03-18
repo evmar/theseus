@@ -15,7 +15,7 @@ fn get_reg(r: iced_x86::Register) -> String {
             format!("MACHINE.regs.{reg}")
         }
 
-        AL | AH | AX | CL | CH | CX | DL | DH | DX | BL | BH | BX => {
+        AL | AH | AX | CL | CH | CX | DL | DH | DX | BL | BH | BX | DI | SI => {
             let reg = format!("{r:?}").to_ascii_lowercase();
             format!("MACHINE.regs.get_{reg}()")
         }
@@ -32,7 +32,7 @@ fn set_reg(r: iced_x86::Register, expr: String) -> String {
             format!("MACHINE.regs.{reg} = {expr};")
         }
 
-        AL | AH | AX | CL | CH | CX | DL | DH | DX | BL | BH | BX => {
+        AL | AH | AX | CL | CH | CX | DL | DH | DX | BL | BH | BX | DI | SI => {
             let reg = format!("{r:?}").to_ascii_lowercase();
             format!("MACHINE.regs.set_{reg}({expr});")
         }
@@ -89,6 +89,7 @@ fn get_op(instr: &iced_x86::Instruction, n: u32) -> String {
                 iced_x86::MemorySize::UInt8 => "u8",
                 iced_x86::MemorySize::UInt16 => "u16",
                 iced_x86::MemorySize::UInt32 => "u32",
+                iced_x86::MemorySize::Int32 => "i32",
                 s => todo!("{s:?}"),
             };
             format!("MACHINE.memory.read::<{size}>({addr})")
@@ -110,6 +111,7 @@ fn set_op(instr: &iced_x86::Instruction, n: u32, expr: String) -> String {
                 iced_x86::MemorySize::UInt8 => "u8",
                 iced_x86::MemorySize::UInt16 => "u16",
                 iced_x86::MemorySize::UInt32 => "u32",
+                iced_x86::MemorySize::Int32 => "i32",
                 s => todo!("{s:?}"),
             };
             format!("MACHINE.memory.write::<{size}>({addr}, {expr});")
@@ -180,10 +182,15 @@ fn gen_instrs(w: &mut dyn std::fmt::Write, state: &State, instrs: &[iced_x86::In
             Push => {
                 writeln!(w, "push({});", get_op(instr, 0));
             }
+            Pushad => {
+                writeln!(w, "todo!();");
+            }
             Pop => {
                 writeln!(w, "{};", set_op(instr, 0, "pop()".into()));
             }
-
+            Popad => {
+                writeln!(w, "todo!();");
+            }
             Jmp => {
                 writeln!(w, "{}", gen_jmp(state, instr));
             }
@@ -270,6 +277,15 @@ fn gen_instrs(w: &mut dyn std::fmt::Write, state: &State, instrs: &[iced_x86::In
             }
             Scasb => {
                 writeln!(w, "scasb();");
+            }
+            Lodsb => {
+                writeln!(w, "todo!();");
+            }
+            Lodsd => {
+                writeln!(w, "todo!();");
+            }
+            Loop => {
+                writeln!(w, "todo!();");
             }
 
             Movzx => {
@@ -379,6 +395,19 @@ fn gen_instrs(w: &mut dyn std::fmt::Write, state: &State, instrs: &[iced_x86::In
             }
             Movdqa => {
                 writeln!(w, "movdqa();");
+            }
+
+            Pxor | Movd | Punpcklbw | Pmullw | Psrlw | Packuswb | Emms | Psubusb | Paddusb
+            | Psubw | Psraw | Paddsw | Paddsb => {
+                writeln!(w, "todo!();");
+            }
+            Fld | Fmul | Fistp | Fcomp | Fnstsw | Sahf | Fsub | Fsubp | Fsubrp | Fdivp | Fadd
+            | Fdivrp | Fmulp | Fsubr | Fstp | Fild | Faddp | Fsqrt | Fld1 | Fxch | Fst | Fchs
+            | Fldz | Fpatan | Fdivr | Fsin | Fcos | Fdiv => {
+                writeln!(w, "todo!();");
+            }
+            Cwde | Stc | Clc => {
+                writeln!(w, "todo!();");
             }
 
             c => todo!("{:?} in {}", c, instr),
