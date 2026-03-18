@@ -1,6 +1,7 @@
 //! The bitmap file/memory format and pixel buffers.
 
 use crate::FromABIParam;
+use zerocopy::FromBytes;
 
 #[derive(Debug, Eq, PartialEq, win32_derive::ABIEnum)]
 pub enum BI {
@@ -86,8 +87,7 @@ pub struct DDB {
     pub is_bottom_up: bool,
     pub bit_count: u8,
     pub compression: BI,
-    pub palette_entry_size: usize,
-    pub palette: Box<[u8]>,
+    pub palette: Box<[[u8; 4]]>,
     pub pixels: Box<[u8]>,
 }
 
@@ -95,15 +95,14 @@ impl std::fmt::Debug for DDB {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(
             f,
-            "BitmapInfo {{ {w}x{h} stride:{stride} {bpp}bpp bottom_up:{is_bottom_up} compression:{compression:?} palette:{entries}*{size} }}",
+            "BitmapInfo {{ {w}x{h} stride:{stride} {bpp}bpp bottom_up:{is_bottom_up} compression:{compression:?} palette:{entries} }}",
             w = self.width,
             h = self.height,
             stride = self.stride,
             bpp = self.bit_count,
             is_bottom_up = self.is_bottom_up,
             compression = self.compression,
-            entries = self.palette.len() / self.palette_entry_size,
-            size = self.palette_entry_size,
+            entries = self.palette.len(),
         )
     }
 }
@@ -136,10 +135,13 @@ impl DDB {
         } else {
             todo!();
         };
-        let palette_entry_size = 3usize;
-        let palette_size = palette_len * palette_entry_size;
-        let (palette, buf) = buf.split_at(palette_size);
-        let palette = palette.to_owned().into_boxed_slice();
+        let (palette, buf) = <[[u8; 3]]>::ref_from_prefix_with_elems(buf, palette_len).unwrap();
+        let palette = palette
+            .into_iter()
+            .map(|&[r, g, b]| [0xff, r, g, b]) // RGBQUAD
+            .collect::<Vec<_>>()
+            .into_boxed_slice();
+
         let pixels = buf[..(header.bcHeight as usize * header.stride())]
             .to_owned()
             .into_boxed_slice();
@@ -151,7 +153,6 @@ impl DDB {
             is_bottom_up: true, // MSDN: "BITMAPCOREHEADER bitmaps cannot be top-down bitmaps"
             bit_count: header.bcBitCount as u8,
             compression: BI::RGB,
-            palette_entry_size,
             palette,
             pixels,
         }
@@ -169,10 +170,14 @@ impl DDB {
         } else {
             todo!()
         };
-        let palette_entry_size = 4usize;
-        let palette_size = palette_len * palette_entry_size;
-        let (palette, buf) = buf.split_at(palette_size);
-        let palette = palette.to_owned().into_boxed_slice();
+
+        let (palette, buf) = <[[u8; 4]]>::ref_from_prefix_with_elems(buf, palette_len).unwrap();
+        let palette = palette
+            .into_iter()
+            .map(|&[b, g, r, _]| [0xff, r, g, b]) // RGBQUAD
+            .collect::<Vec<_>>()
+            .into_boxed_slice();
+
         let pixels = buf[..(header.height() as usize * header.stride())]
             .to_owned()
             .into_boxed_slice();
@@ -184,21 +189,8 @@ impl DDB {
             is_bottom_up: header.is_bottom_up(),
             bit_count: header.biBitCount as u8,
             compression: BI::RGB,
-            palette_entry_size,
             palette,
             pixels,
-        }
-    }
-
-    pub fn read_palette(&self, n: u8) -> (u8, u8, u8, u8) {
-        match self.palette_entry_size {
-            4 => {
-                // RGBQUAD
-                let entry = &self.palette[n as usize * 4..];
-                let (b, g, r, a) = (entry[0], entry[1], entry[2], 0xff);
-                (a, r, g, b)
-            }
-            _ => todo!(),
         }
     }
 
@@ -207,7 +199,7 @@ impl DDB {
             8 => {
                 let src = &self.pixels[(y * self.width + x1) as usize..][..(x2 - x1) as usize];
                 for i in 0..(x2 - x1) as usize {
-                    let (a, r, g, b) = self.read_palette(src[i]);
+                    let [a, r, g, b] = self.palette[src[i] as usize];
                     dst[i * 4] = b;
                     dst[i * 4 + 1] = g;
                     dst[i * 4 + 2] = r;
