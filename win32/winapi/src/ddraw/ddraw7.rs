@@ -125,7 +125,7 @@ pub mod IDirectDraw7 {
                 height,
             },
         );
-        unsafe { MACHINE.memory.write(lplpDDSurface, surface.addr) };
+        unsafe { MACHINE.memory.write(lplpDDSurface, surface.borrow().addr) };
 
         if let Some(count) = desc.back_buffer_count() {
             assert_eq!(count, 1);
@@ -137,8 +137,8 @@ pub mod IDirectDraw7 {
                     height,
                 },
             );
-            back.primary.replace(Some(surface.clone()));
-            surface.attached.replace(Some(back));
+            back.borrow_mut().primary.replace(surface.clone());
+            surface.borrow_mut().attached.replace(back);
         }
 
         DD::OK
@@ -342,7 +342,6 @@ pub mod IDirectDraw7 {
 }
 
 pub mod IDirectDrawSurface7 {
-    use std::rc::Rc;
 
     use super::*;
 
@@ -452,31 +451,43 @@ pub mod IDirectDrawSurface7 {
         _dwTrans: u32,
     ) -> DD {
         let surfaces = state().surf.borrow_mut();
-        let surface = surfaces.get(&this).unwrap();
+        let mut surface = surfaces.get(&this).unwrap().borrow_mut();
         let src_rect = unsafe {
             <RECT>::ref_from_prefix(MACHINE.memory.slice_from(lpSrcRect))
                 .unwrap()
                 .0
         };
 
-        let Target::Texture(texture) = &surface.target else {
-            todo!()
+        let Target::Texture(texture) = &mut surface.target else {
+            unreachable!()
         };
 
-        // let mut pixels: Vec<u8> = Vec::new();
-        // pixels.resize(width * height, 0xFF);
-        // texture.update(None, &pixels, width).unwrap();
+        // To render to a texture, we need to start with a canvas, which we can only get from
+        // a window or a surface for some reason.  Use the window in case it has some sort of
+        // GPU context attached.
+        let ddraw = state().ddraw.borrow();
+        let mut canvas = ddraw
+            .as_ref()
+            .unwrap()
+            .window
+            .as_ref()
+            .unwrap()
+            .canvas
+            .borrow_mut();
 
-        // let mut sdl = target.borrow_mut();
-        // sdl.set_draw_color(sdl3::pixels::Color::GREEN);
-        // sdl.fill_rect(sdl3::render::FRect::new(
-        //     dwX as f32,
-        //     dwY as f32,
-        //     (src_rect.right - src_rect.left) as f32,
-        //     (src_rect.bottom - src_rect.top) as f32,
-        // ))
-        // .unwrap();
-        // sdl.present();
+        canvas
+            .with_texture_canvas(texture, |canvas| {
+                canvas.set_draw_color(sdl3::pixels::Color::RED);
+                canvas
+                    .fill_rect(sdl3::render::FRect::new(
+                        dwX as f32,
+                        dwY as f32,
+                        (src_rect.right - src_rect.left) as f32,
+                        (src_rect.bottom - src_rect.top) as f32,
+                    ))
+                    .unwrap();
+            })
+            .unwrap();
 
         stub!(DD::OK)
     }
@@ -504,22 +515,14 @@ pub mod IDirectDrawSurface7 {
     #[win32_derive::dllexport]
     pub fn Flip(this: u32, _lpDDSurfaceTargetOverride: u32, _dwFlags: u32) -> DD {
         let surfaces = state().surf.borrow_mut();
-        let surface = surfaces.get(&this).unwrap();
 
-        // It's unclear whether Flip is given the primary or back surface,
-        // so we first poke around to identify which is which.
-        let (primary, back) = if let Some(primary) = surface.primary.borrow().as_ref() {
-            (primary.clone(), surface.clone())
-        } else {
-            (
-                surface.clone(),
-                surface.attached.borrow().as_ref().unwrap().clone(),
-            )
-        };
-
-        let Target::Window(window) = &primary.target else {
+        let surface = surfaces.get(&this).unwrap().borrow();
+        // "Flip can be called only for a surface that has the DDSCAPS_FLIP and DDSCAPS_FRONTBUFFER capabilities."
+        let Target::Window(window) = &surface.target else {
             unreachable!()
         };
+
+        let back = surface.attached.as_ref().unwrap().borrow();
         let Target::Texture(texture) = &back.target else {
             unreachable!()
         };
@@ -546,11 +549,11 @@ pub mod IDirectDrawSurface7 {
     #[win32_derive::dllexport]
     pub fn GetAttachedSurface(this: u32, _lpDDSCaps: u32, lplpDDAttachedSurface: u32) -> DD {
         let surfaces = state().surf.borrow_mut();
-        let surface = surfaces.get(&this).unwrap();
+        let surface = surfaces.get(&this).unwrap().borrow();
         unsafe {
             MACHINE.memory.write(
                 lplpDDAttachedSurface,
-                surface.attached.borrow().as_ref().unwrap().addr,
+                surface.attached.as_ref().unwrap().borrow().addr,
             );
         }
         DD::OK

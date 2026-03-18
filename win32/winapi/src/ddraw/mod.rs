@@ -144,7 +144,7 @@ pub fn DirectDrawCreateEx(lpGuid: u32, lplpDD: u32, iid: u32, _pUnkOuter: u32) -
 #[derive(Default)]
 pub struct State {
     ddraw: RefCell<Option<DirectDraw>>,
-    surf: RefCell<HashMap<u32, Rc<Surface>>>,
+    surf: RefCell<HashMap<u32, Rc<RefCell<Surface>>>>,
 }
 
 struct StaticState(OnceCell<State>);
@@ -168,7 +168,7 @@ struct SurfaceParams {
 }
 
 impl DirectDraw {
-    fn create_surface(&mut self, addr: u32, params: &SurfaceParams) -> Rc<Surface> {
+    fn create_surface(&mut self, addr: u32, params: &SurfaceParams) -> Rc<RefCell<Surface>> {
         let window = self.window.as_ref().unwrap();
         let target = if params.is_primary {
             log::info!("primary {addr:x}");
@@ -181,7 +181,7 @@ impl DirectDraw {
                 sdl3::pixels::PixelFormat::ARGB8888
             );
             let mut texture = texture_creator
-                .create_texture_static(None, params.width, params.height)
+                .create_texture_target(None, params.width, params.height)
                 .unwrap();
             let mut pixels = Vec::new();
             pixels.resize((params.width * params.height * 4) as usize, 0xff);
@@ -191,12 +191,12 @@ impl DirectDraw {
             Target::Texture(texture)
         };
 
-        let surf = Rc::new(Surface {
+        let surf = Rc::new(RefCell::new(Surface {
             addr,
             target,
             primary: Default::default(),
             attached: Default::default(),
-        });
+        }));
         state().surf.borrow_mut().insert(addr, surf.clone());
         surf
     }
@@ -214,7 +214,7 @@ struct Surface {
     // How does surface attachment actually work?
     // Docs are unclear, and wine's comments are also full of speculation and frustration, ha.
     /// Present on surfaces attached to Target::Window
-    primary: RefCell<Option<Rc<Surface>>>,
+    primary: Option<Rc<RefCell<Surface>>>,
     /// Present on Target::Window, TODO should be vec
-    attached: RefCell<Option<Rc<Surface>>>,
+    attached: Option<Rc<RefCell<Surface>>>,
 }
