@@ -2,6 +2,7 @@
 resolver = "2"
 members = [
     "exe/basicdd",
+    "exe/chillin",
     "exe/winapi",
     "exe/zig_hello",
     "tc",
