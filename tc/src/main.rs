@@ -32,7 +32,6 @@ impl State {
         mem.alloc("exe header".into(), image_base, 0x1000);
         mem.put(image_base, &buf[..0x1000.min(buf.len())]);
         for sec in &f.sections {
-            println!("{:#x?}", sec);
             let addr = AddrImage(sec.VirtualAddress).to_abs(image_base);
             let size = winapi::kernel32::round_to_page(sec.SizeOfRawData.max(sec.VirtualSize));
             mem.alloc(sec.name().unwrap().into(), addr, size);
@@ -146,15 +145,15 @@ impl Block {
     }
 }
 
-fn traverse(state: &mut State, ip: u32) {
-    if state.blocks.contains_key(&ip) {
+fn traverse(state: &mut State, start: u32) {
+    if state.blocks.contains_key(&start) {
         return;
     }
 
     let mut queue = VecDeque::<u32>::new();
-    queue.push_back(ip);
+    queue.push_back(start);
 
-    while let Some(ip) = queue.pop_front() {
+    'queue: while let Some(ip) = queue.pop_front() {
         if state.blocks.contains_key(&ip) {
             continue;
         }
@@ -176,7 +175,7 @@ fn traverse(state: &mut State, ip: u32) {
             use iced_x86::Mnemonic::*;
             match instr.mnemonic() {
                 Call | Jmp | Je | Jne | Jb | Js | Jns | Ja | Jae | Jl | Jge | Jecxz | Jg | Jle
-                | Jbe => {
+                | Jbe | Loop => {
                     match instr.op0_kind() {
                         iced_x86::OpKind::NearBranch32 => queue.push_back(instr.near_branch32()),
                         iced_x86::OpKind::Memory => {
@@ -203,6 +202,10 @@ fn traverse(state: &mut State, ip: u32) {
                 Ret => {}
                 Int => {}  // terminates
                 Int3 => {} // breakpoint
+                INVALID => {
+                    println!("aborting block at {start:x}, invalid code found");
+                    continue 'queue;
+                }
                 _ => todo!("control flow {}", instr),
             }
             break;
@@ -234,6 +237,7 @@ fn scan_for_pointers(state: &mut State) {
         for w in data.windows(4) {
             let addr = u32::from_le_bytes(w.try_into().unwrap());
             if state.mem.mappings.vec()[code].contains(addr) {
+                println!("scan found {addr:x}");
                 traverse(state, addr);
             }
         }
@@ -254,7 +258,7 @@ fn run() -> Result<()> {
 
     let ip = AddrImage(state.pe_file.opt_header.AddressOfEntryPoint).to_abs(state.image_base());
     traverse(&mut state, ip.0);
-    scan_for_pointers(&mut state);
+    //scan_for_pointers(&mut state);
 
     codegen::gen_file(&mut state, outdir)?;
 
