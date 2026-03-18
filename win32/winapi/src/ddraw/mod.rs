@@ -193,6 +193,8 @@ impl DirectDraw {
 
         let surf = Rc::new(RefCell::new(Surface {
             addr,
+            width: params.width,
+            height: params.height,
             target,
             primary: Default::default(),
             attached: Default::default(),
@@ -209,6 +211,8 @@ enum Target {
 
 struct Surface {
     addr: u32,
+    width: u32,
+    height: u32,
     target: Target,
 
     // How does surface attachment actually work?

@@ -51,11 +51,13 @@ macro_rules! win32flags {
         #[derive(
             Copy,
             Clone,
+            Default,
             PartialEq,
             Eq,
             bitflags_derive::FlagsDebug,
             zerocopy::FromBytes,
             zerocopy::Immutable,
+            zerocopy::IntoBytes,
         )]
         pub struct $name(u32);
 

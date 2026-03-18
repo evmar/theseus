@@ -617,8 +617,24 @@ pub mod IDirectDrawSurface7 {
     }
 
     #[win32_derive::dllexport]
-    pub fn GetSurfaceDesc(_this: u32, _lpDDSurfaceDesc2: u32) -> DD {
-        stub!(DD::OK)
+    pub fn GetSurfaceDesc(this: u32, lpDDSurfaceDesc2: u32) -> DD {
+        let surfaces = state().surf.borrow_mut();
+        let surface = surfaces.get(&this).unwrap().borrow();
+        unsafe {
+            let size = MACHINE.memory.read::<u32>(lpDDSurfaceDesc2);
+            assert_eq!(size, std::mem::size_of::<DDSURFACEDESC2>() as u32);
+            MACHINE.memory.write(
+                lpDDSurfaceDesc2,
+                DDSURFACEDESC2 {
+                    dwSize: std::mem::size_of::<DDSURFACEDESC2>() as u32,
+                    dwFlags: DDSD::WIDTH | DDSD::HEIGHT,
+                    dwWidth: surface.width,
+                    dwHeight: surface.height,
+                    ..Default::default()
+                },
+            );
+        }
+        DD::OK
     }
 
     #[win32_derive::dllexport]

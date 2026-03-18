@@ -19,7 +19,14 @@ impl Into<ABIReturn> for DD {
 }
 
 #[repr(C)]
-#[derive(Debug, zerocopy::FromBytes, zerocopy::Immutable, zerocopy::KnownLayout)]
+#[derive(
+    Debug,
+    Default,
+    zerocopy::FromBytes,
+    zerocopy::Immutable,
+    zerocopy::KnownLayout,
+    zerocopy::IntoBytes,
+)]
 pub struct DDSCAPS2 {
     pub dwCaps: DDSCAPS,
     dwCaps2: u32,
@@ -119,7 +126,13 @@ win32flags! {
 
 #[repr(C)]
 #[derive(
-    Clone, Debug, Default, zerocopy::FromBytes, zerocopy::Immutable, zerocopy::KnownLayout,
+    Clone,
+    Debug,
+    Default,
+    zerocopy::FromBytes,
+    zerocopy::Immutable,
+    zerocopy::KnownLayout,
+    zerocopy::IntoBytes,
 )]
 pub struct DDCOLORKEY {
     dwColorSpaceLowValue: u32,
@@ -240,7 +253,9 @@ impl DDSURFACEDESC {
 }
 
 #[repr(C)]
-#[derive(zerocopy::FromBytes, zerocopy::Immutable, zerocopy::KnownLayout)]
+#[derive(
+    Default, zerocopy::FromBytes, zerocopy::Immutable, zerocopy::KnownLayout, zerocopy::IntoBytes,
+)]
 pub struct DDSURFACEDESC2 {
     pub dwSize: u32,
     pub dwFlags: DDSD,
@@ -368,7 +383,13 @@ impl DDSURFACEDESC2 {
 
 #[repr(C)]
 #[derive(
-    Debug, Default, Clone, zerocopy::FromBytes, zerocopy::Immutable, zerocopy::KnownLayout,
+    Debug,
+    Default,
+    Clone,
+    zerocopy::FromBytes,
+    zerocopy::Immutable,
+    zerocopy::KnownLayout,
+    zerocopy::IntoBytes,
 )]
 pub struct DDPIXELFORMAT {
     pub dwSize: u32,
