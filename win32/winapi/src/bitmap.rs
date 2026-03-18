@@ -195,6 +195,11 @@ impl DDB {
     }
 
     pub fn read_pixels(&self, y: u32, x1: u32, x2: u32, dst: &mut [u8]) {
+        let y = if self.is_bottom_up {
+            self.height - y - 1
+        } else {
+            y
+        };
         match self.bit_count {
             8 => {
                 let src = &self.pixels[(y * self.width + x1) as usize..][..(x2 - x1) as usize];
