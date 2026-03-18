@@ -140,7 +140,9 @@ impl DDB {
         let palette_size = palette_len * palette_entry_size;
         let (palette, buf) = buf.split_at(palette_size);
         let palette = palette.to_owned().into_boxed_slice();
-        let pixels = buf[..0].to_owned().into_boxed_slice();
+        let pixels = buf[..(header.bcHeight as usize * header.stride())]
+            .to_owned()
+            .into_boxed_slice();
 
         DDB {
             width: header.bcWidth as u32,
@@ -171,7 +173,9 @@ impl DDB {
         let palette_size = palette_len * palette_entry_size;
         let (palette, buf) = buf.split_at(palette_size);
         let palette = palette.to_owned().into_boxed_slice();
-        let pixels = buf[..0].to_owned().into_boxed_slice();
+        let pixels = buf[..(header.height() as usize * header.stride())]
+            .to_owned()
+            .into_boxed_slice();
 
         DDB {
             width: header.biWidth,
@@ -183,6 +187,32 @@ impl DDB {
             palette_entry_size,
             palette,
             pixels,
+        }
+    }
+
+    fn read_palette(&self, n: u8) -> (u8, u8, u8, u8) {
+        match self.palette_entry_size {
+            4 => {
+                let entry = &self.palette[n as usize * 4..];
+                (entry[0], entry[1], entry[2], entry[3])
+            }
+            _ => todo!(),
+        }
+    }
+
+    pub fn read_pixels(&self, y: u32, x1: u32, x2: u32, out: &mut [u8]) {
+        match self.bit_count {
+            8 => {
+                let src = &self.pixels[(y * self.width + x1) as usize..][..(x2 - x1) as usize];
+                for i in 0..(x2 - x1) as usize {
+                    let (r, g, b, a) = self.read_palette(src[i]);
+                    out[i * 4] = a;
+                    out[i * 4 + 1] = r;
+                    out[i * 4 + 2] = g;
+                    out[i * 4 + 3] = b;
+                }
+            }
+            _ => todo!(),
         }
     }
 }

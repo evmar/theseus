@@ -16,8 +16,8 @@ pub fn StretchBlt(
     wDest: i32,
     hDest: i32,
     hdcSrc: HDC,
-    _xSrc: i32,
-    _ySrc: i32,
+    xSrc: i32,
+    ySrc: i32,
     wSrc: i32,
     hSrc: i32,
     rop: u32, /* ROP_CODE */
@@ -27,6 +27,9 @@ pub fn StretchBlt(
     let dcs = state().dcs.borrow();
     let dc_src = dcs.get(hdcSrc).unwrap();
     let bmp_src = dc_src.bitmap.as_ref().unwrap();
+    let BitmapType::DDB(ddb_src) = &bmp_src.typ else {
+        todo!()
+    };
 
     log::info!("src {:?}", bmp_src);
 
@@ -44,16 +47,15 @@ pub fn StretchBlt(
     assert_eq!(wDest, wSrc);
     assert_eq!(hDest, hSrc);
 
-    let w = wDest as usize;
-    for y in yDest..yDest + hDest {
-        let y = y as usize;
-        for x in xDest..xDest + wDest {
-            let x = x as usize;
-            pixels_dst[(y * w) + x + 0] = 0xff;
-            pixels_dst[(y * w) + x + 1] = 0xff;
-            pixels_dst[(y * w) + x + 2] = 0x7f;
-            pixels_dst[(y * w) + x + 3] = 0x3f;
-        }
+    let w = wDest as u32;
+    for y in 0..hDest as u32 {
+        ddb_src.read_pixels(
+            ySrc as u32 + y,
+            xSrc as u32,
+            (xSrc + wSrc) as u32,
+            &mut pixels_dst[(((yDest as u32 + y) * w + xDest as u32) * 4) as usize..]
+                [..w as usize * 4],
+        );
     }
 
     true
