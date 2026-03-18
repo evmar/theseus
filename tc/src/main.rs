@@ -78,7 +78,12 @@ impl State {
                     addr.0,
                     Import {
                         dll: name.to_string(),
-                        func: entry.as_import_symbol(image).to_string(),
+                        func: match entry.as_import_symbol(image) {
+                            pe::ImportSymbol::Name(name) => {
+                                std::str::from_utf8(name).unwrap().to_string()
+                            }
+                            pe::ImportSymbol::Ordinal(n) => format!("ordinal{n}"),
+                        },
                         iat_addr: addr.0,
                         func_addr: 0,
                     },
