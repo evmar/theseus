@@ -190,26 +190,28 @@ impl DDB {
         }
     }
 
-    fn read_palette(&self, n: u8) -> (u8, u8, u8, u8) {
+    pub fn read_palette(&self, n: u8) -> (u8, u8, u8, u8) {
         match self.palette_entry_size {
             4 => {
+                // RGBQUAD
                 let entry = &self.palette[n as usize * 4..];
-                (entry[0], entry[1], entry[2], entry[3])
+                let (b, g, r, a) = (entry[0], entry[1], entry[2], 0xff);
+                (a, r, g, b)
             }
             _ => todo!(),
         }
     }
 
-    pub fn read_pixels(&self, y: u32, x1: u32, x2: u32, out: &mut [u8]) {
+    pub fn read_pixels(&self, y: u32, x1: u32, x2: u32, dst: &mut [u8]) {
         match self.bit_count {
             8 => {
                 let src = &self.pixels[(y * self.width + x1) as usize..][..(x2 - x1) as usize];
                 for i in 0..(x2 - x1) as usize {
-                    let (r, g, b, a) = self.read_palette(src[i]);
-                    out[i * 4] = a;
-                    out[i * 4 + 1] = r;
-                    out[i * 4 + 2] = g;
-                    out[i * 4 + 3] = b;
+                    let (a, r, g, b) = self.read_palette(src[i]);
+                    dst[i * 4] = b;
+                    dst[i * 4 + 1] = g;
+                    dst[i * 4 + 2] = r;
+                    dst[i * 4 + 3] = a;
                 }
             }
             _ => todo!(),

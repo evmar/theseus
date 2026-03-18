@@ -541,19 +541,10 @@ pub mod IDirectDrawSurface7 {
         };
 
         let mut canvas = window.canvas.borrow_mut();
-        canvas.set_draw_color(sdl3::pixels::Color::BLUE);
-        canvas.clear();
-        canvas
-            .copy(
-                texture,
-                None,
-                sdl3::render::FRect::new(100.0, 100.0, 100.0, 100.0),
-            )
-            .unwrap();
-        canvas.set_draw_color(sdl3::pixels::Color::GREEN);
-        canvas
-            .fill_rect(sdl3::render::FRect::new(0.0, 0.0, 100.0, 100.0))
-            .unwrap();
+        // For debugging, can verify that the flip covers the entire canvas by starting with red:
+        // canvas.set_draw_color(sdl3::pixels::Color::RED);
+        // canvas.clear();
+        canvas.copy(texture, None, None).unwrap();
         canvas.present();
 
         stub!(DD::OK)

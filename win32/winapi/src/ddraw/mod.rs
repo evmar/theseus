@@ -176,17 +176,16 @@ impl DirectDraw {
         } else {
             log::info!("back {addr:x}");
             let texture_creator = window.canvas.borrow_mut().texture_creator();
-            assert_eq!(
-                texture_creator.default_pixel_format(),
-                sdl3::pixels::PixelFormat::ARGB8888
-            );
             let mut texture = texture_creator
                 .create_texture_target(None, params.width, params.height)
                 .unwrap();
+            // FML, this means BGRA in memory order
+            assert_eq!(texture.format(), sdl3::pixels::PixelFormat::ARGB8888);
             let mut pixels = Vec::new();
-            pixels.resize((params.width * params.height * 4) as usize, addr as u8);
+            pixels.resize((params.width * params.height) as usize, 0xff000000u32);
+            use zerocopy::IntoBytes;
             texture
-                .update(None, &pixels, params.width as usize * 4)
+                .update(None, pixels.as_bytes(), params.width as usize * 4)
                 .unwrap();
             Target::Texture(texture)
         };
