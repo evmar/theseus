@@ -32,12 +32,18 @@ impl State {
         mem.alloc("exe header".into(), image_base, 0x1000);
         mem.put(image_base, &buf[..0x1000.min(buf.len())]);
         for sec in &f.sections {
+            println!("{:#x?}", sec);
             let addr = AddrImage(sec.VirtualAddress).to_abs(image_base);
             let size = winapi::kernel32::round_to_page(sec.SizeOfRawData.max(sec.VirtualSize));
             mem.alloc(sec.name().unwrap().into(), addr, size);
-            let data = &buf[sec.PointerToRawData as usize
-                ..(sec.PointerToRawData + sec.SizeOfRawData) as usize];
-            mem.put(addr, data);
+
+            let flags = sec.characteristics().unwrap();
+            let load_data = flags.contains(pe::IMAGE_SCN::CODE)
+                || flags.contains(pe::IMAGE_SCN::INITIALIZED_DATA);
+            if load_data {
+                let data = &buf[sec.PointerToRawData as usize..][..sec.SizeOfRawData as usize];
+                mem.put(addr, data);
+            }
         }
 
         let resource_dir = f
