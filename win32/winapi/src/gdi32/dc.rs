@@ -1,7 +1,8 @@
 use std::rc::Rc;
 
 use crate::{
-    gdi32::{Bitmap, HDC, state},
+    HANDLE,
+    gdi32::{Bitmap, BitmapType, DIB, HDC, state},
     stub,
 };
 
@@ -10,8 +11,13 @@ pub struct DC {
     pub bitmap: Option<Rc<Bitmap>>,
 }
 
-pub fn new_memory_dc() -> DC {
-    DC::default()
+pub fn new_memory_dc(dib: DIB) -> DC {
+    DC {
+        bitmap: Some(Rc::new(Bitmap {
+            handle: HANDLE::null(),
+            typ: BitmapType::DIB(dib),
+        })),
+    }
 }
 
 #[win32_derive::dllexport]

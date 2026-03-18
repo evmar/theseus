@@ -1,5 +1,10 @@
 use super::*;
-use crate::{dllexport::win32flags, gdi32, handle::HANDLE, kernel32, stub};
+use crate::{
+    dllexport::win32flags,
+    gdi32::{self, BitmapType},
+    handle::HANDLE,
+    kernel32, stub,
+};
 use runtime::*;
 
 #[win32_derive::dllexport]
@@ -56,14 +61,13 @@ pub fn LoadImageA(hInst: HINSTANCE, name: u32, typ: IMAGE, cx: u32, cy: u32, fuL
     let span = image_base + span.start..image_base + span.end;
 
     let buf = unsafe { MACHINE.memory.slice(span) };
-    let hbitmap = gdi32::parse_bitmap(buf);
+    let bitmap = gdi32::parse_bitmap(buf);
 
-    {
-        let objects = gdi32::state().objects.borrow();
-        let bitmap = objects.get(hbitmap).unwrap();
-        assert_eq!(bitmap.header.width, cx);
-        assert_eq!(bitmap.header.height, cy);
-    }
+    let BitmapType::DDB(ddb) = &bitmap.typ else {
+        unreachable!()
+    };
+    assert_eq!(ddb.width, cx);
+    assert_eq!(ddb.height, cy);
 
-    hbitmap
+    bitmap.handle
 }

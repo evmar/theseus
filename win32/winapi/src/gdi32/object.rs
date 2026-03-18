@@ -1,7 +1,7 @@
 use runtime::MACHINE;
 
 use crate::{
-    gdi32::{HDC, HGDIOBJ, state},
+    gdi32::{BitmapType, HDC, HGDIOBJ, state},
     stub,
 };
 
@@ -21,19 +21,20 @@ struct BITMAP {
 pub fn GetObjectA(handle: HGDIOBJ, size: u32, lpOut: u32) -> u32 {
     let bitmap = state().objects.borrow().get(handle).unwrap().clone();
     assert!(size == std::mem::size_of::<BITMAP>() as u32);
+    let fields = match &bitmap.typ {
+        BitmapType::DDB(ddb) => BITMAP {
+            bmType: 0,
+            bmWidth: ddb.width,
+            bmHeight: ddb.height,
+            bmWidthBytes: 0,
+            bmPlanes: 0,
+            bmBitsPixel: ddb.bit_count as u16,
+            bmBits: 0,
+        },
+        BitmapType::DIB(_) => todo!(),
+    };
     unsafe {
-        MACHINE.memory.write(
-            lpOut,
-            BITMAP {
-                bmType: 0,
-                bmWidth: bitmap.header.width,
-                bmHeight: bitmap.header.height,
-                bmWidthBytes: 0,
-                bmPlanes: 0,
-                bmBitsPixel: bitmap.header.bit_count as u16,
-                bmBits: 0,
-            },
-        );
+        MACHINE.memory.write(lpOut, fields);
     }
     size
 }

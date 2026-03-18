@@ -2,6 +2,7 @@ use crate::RECT;
 use crate::ddraw::Target;
 use crate::ddraw::{GUID, state, types::*};
 use crate::gdi32;
+use crate::gdi32::DIB;
 use crate::{ddraw::SurfaceParams, user32};
 use crate::{gdi32::HDC, kernel32, stub, user32::HWND};
 use runtime::*;
@@ -595,8 +596,15 @@ pub mod IDirectDrawSurface7 {
     pub fn GetDC(this: u32, lphDC: u32) -> DD {
         let surfaces = state().surf.borrow_mut();
         let mut surface = surfaces.get(&this).unwrap().borrow_mut();
-        surface.lock();
-        let dc = gdi32::state().dcs.borrow_mut().add(gdi32::new_memory_dc());
+        let pixels = surface.lock();
+        let dc = gdi32::state()
+            .dcs
+            .borrow_mut()
+            .add(gdi32::new_memory_dc(DIB {
+                width: surface.width,
+                height: surface.height,
+                pixels,
+            }));
         unsafe {
             MACHINE.memory.write(lphDC, dc.to_raw());
         }

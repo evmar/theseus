@@ -78,8 +78,8 @@ impl BITMAPINFOHEADER {
     }
 }
 
-/// The parsed header of a bitmap, either v2 (BITMAPCOREHEADER) or v3 (BITMAPINFOHEADER).
-pub struct BitmapInfo {
+/// Device dependent bitmap: the result of parsing a bitmap header.
+pub struct DDB {
     pub width: u32,
     pub height: u32,
     pub stride: usize,
@@ -88,11 +88,10 @@ pub struct BitmapInfo {
     pub compression: BI,
     pub palette_entry_size: usize,
     pub palette: Box<[u8]>,
-    /// The total size in memory of the underlying header+palette.
-    pub header_length: usize,
+    pub pixels: Box<[u8]>,
 }
 
-impl std::fmt::Debug for BitmapInfo {
+impl std::fmt::Debug for DDB {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(
             f,
@@ -109,7 +108,7 @@ impl std::fmt::Debug for BitmapInfo {
     }
 }
 
-impl BitmapInfo {
+impl DDB {
     // TODO: when parsing a bitmap from memory it's unclear how much memory we'll need
     // to read until we've read the bitmap header.  This means the caller cannot know how
     // big of a slice to provide.
@@ -139,9 +138,11 @@ impl BitmapInfo {
         };
         let palette_entry_size = 3usize;
         let palette_size = palette_len * palette_entry_size;
-        let palette = buf[..palette_size].to_owned().into_boxed_slice();
+        let (palette, buf) = buf.split_at(palette_size);
+        let palette = palette.to_owned().into_boxed_slice();
+        let pixels = buf[..0].to_owned().into_boxed_slice();
 
-        BitmapInfo {
+        DDB {
             width: header.bcWidth as u32,
             height: header.bcHeight as u32,
             stride: header.stride(),
@@ -150,7 +151,7 @@ impl BitmapInfo {
             compression: BI::RGB,
             palette_entry_size,
             palette,
-            header_length: 12 + palette_size,
+            pixels,
         }
     }
 
@@ -168,9 +169,11 @@ impl BitmapInfo {
         };
         let palette_entry_size = 4usize;
         let palette_size = palette_len * palette_entry_size;
-        let palette = buf[..palette_size].to_owned().into_boxed_slice();
+        let (palette, buf) = buf.split_at(palette_size);
+        let palette = palette.to_owned().into_boxed_slice();
+        let pixels = buf[..0].to_owned().into_boxed_slice();
 
-        BitmapInfo {
+        DDB {
             width: header.biWidth,
             height: header.height(),
             stride: header.stride(),
@@ -179,7 +182,7 @@ impl BitmapInfo {
             compression: BI::RGB,
             palette_entry_size,
             palette,
-            header_length: 40 + palette_size,
+            pixels,
         }
     }
 }
