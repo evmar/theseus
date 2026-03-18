@@ -298,6 +298,11 @@ fn gen_instrs(w: &mut dyn std::fmt::Write, state: &State, instrs: &[iced_x86::In
             Leave => {
                 writeln!(w, "leave();");
             }
+            Enter => {
+                assert!(instr.op1_kind() == iced_x86::OpKind::Immediate8_2nd);
+                let op1 = instr.immediate8_2nd();
+                writeln!(w, "enter({}, {:x});", get_op(instr, 0), op1);
+            }
             Dec => {
                 writeln!(
                     w,
