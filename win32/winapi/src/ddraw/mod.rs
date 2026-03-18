@@ -184,7 +184,7 @@ impl DirectDraw {
                 .create_texture_target(None, params.width, params.height)
                 .unwrap();
             let mut pixels = Vec::new();
-            pixels.resize((params.width * params.height * 4) as usize, 0xff);
+            pixels.resize((params.width * params.height * 4) as usize, addr as u8);
             texture
                 .update(None, &pixels, params.width as usize * 4)
                 .unwrap();

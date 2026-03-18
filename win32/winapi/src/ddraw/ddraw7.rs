@@ -446,19 +446,23 @@ pub mod IDirectDrawSurface7 {
         this: u32,
         dwX: u32,
         dwY: u32,
-        _lpDDSrcSurface: u32,
+        lpDDSrcSurface: u32,
         lpSrcRect: u32,
         _dwTrans: u32,
     ) -> DD {
         let surfaces = state().surf.borrow_mut();
-        let mut surface = surfaces.get(&this).unwrap().borrow_mut();
+        let mut dst_surface = surfaces.get(&this).unwrap().borrow_mut();
         let src_rect = unsafe {
             <RECT>::ref_from_prefix(MACHINE.memory.slice_from(lpSrcRect))
                 .unwrap()
                 .0
         };
+        let src_surface = surfaces.get(&lpDDSrcSurface).unwrap().borrow();
 
-        let Target::Texture(texture) = &mut surface.target else {
+        let Target::Texture(dst_texture) = &mut dst_surface.target else {
+            unreachable!()
+        };
+        let Target::Texture(src_texture) = &src_surface.target else {
             unreachable!()
         };
 
@@ -476,15 +480,23 @@ pub mod IDirectDrawSurface7 {
             .borrow_mut();
 
         canvas
-            .with_texture_canvas(texture, |canvas| {
-                canvas.set_draw_color(sdl3::pixels::Color::RED);
+            .with_texture_canvas(dst_texture, |canvas| {
                 canvas
-                    .fill_rect(sdl3::render::FRect::new(
-                        dwX as f32,
-                        dwY as f32,
-                        (src_rect.right - src_rect.left) as f32,
-                        (src_rect.bottom - src_rect.top) as f32,
-                    ))
+                    .copy(
+                        src_texture,
+                        sdl3::rect::Rect::new(
+                            src_rect.left as i32,
+                            src_rect.top as i32,
+                            (src_rect.right - src_rect.left) as u32,
+                            (src_rect.bottom - src_rect.top) as u32,
+                        ),
+                        sdl3::render::FRect::new(
+                            dwX as f32,
+                            dwY as f32,
+                            (src_rect.right - src_rect.left) as f32,
+                            (src_rect.bottom - src_rect.top) as f32,
+                        ),
+                    )
                     .unwrap();
             })
             .unwrap();
