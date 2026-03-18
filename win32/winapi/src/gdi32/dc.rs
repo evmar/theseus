@@ -10,6 +10,10 @@ pub struct DC {
     pub bitmap: Option<Rc<Bitmap>>,
 }
 
+pub fn new_memory_dc() -> DC {
+    DC::default()
+}
+
 #[win32_derive::dllexport]
 pub fn CreateCompatibleDC(hdc: HDC) -> HDC {
     if hdc.is_null() {

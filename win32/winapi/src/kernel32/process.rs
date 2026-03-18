@@ -155,7 +155,7 @@ pub fn init_process() {
         let (peb, buf) = PEB::mut_from_prefix(buf).unwrap();
         peb.ProcessParameters =
             (&raw const *params).byte_offset_from_unsigned(MACHINE.memory.bytes) as u32;
-        let process_heap = kernel32::heap_create("process heap".into(), 1 << 20);
+        let process_heap = kernel32::heap_create("process heap".into(), 4 << 20);
         peb.ProcessHeap = process_heap.addr;
         *state().process_heap.borrow_mut() = process_heap;
 

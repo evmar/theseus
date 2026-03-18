@@ -12,7 +12,7 @@ mod types;
 pub use ddraw7::*;
 pub use types::*;
 
-use crate::user32;
+use crate::{kernel32, user32};
 
 pub const EXPORTS: [&'static str; 79] = [
     "IDirectDraw7::QueryInterface",
@@ -198,6 +198,7 @@ impl DirectDraw {
             target,
             primary: Default::default(),
             attached: Default::default(),
+            pixels: None,
         }));
         state().surf.borrow_mut().insert(addr, surf.clone());
         surf
@@ -221,4 +222,47 @@ struct Surface {
     primary: Option<Rc<RefCell<Surface>>>,
     /// Present on Target::Window, TODO should be vec
     attached: Option<Rc<RefCell<Surface>>>,
+
+    /// Address of pixel data, when locked.
+    pixels: Option<u32>,
+}
+
+impl Surface {
+    pub fn lock(&mut self) -> u32 {
+        assert_eq!(self.pixels, None);
+        let size = self.width * self.height * 4;
+        let pixels = kernel32::state()
+            .process_heap
+            .borrow()
+            .alloc(unsafe { &mut MACHINE.memory }, size);
+        // scribble on pixels so we can see it
+        unsafe {
+            MACHINE.memory.slice_mut(pixels..pixels + size).fill(0x8F);
+        }
+        self.pixels = Some(pixels);
+        pixels
+    }
+
+    pub fn unlock(&mut self) {
+        let pixels = self.pixels.unwrap();
+        let pixel_data = unsafe {
+            MACHINE
+                .memory
+                .slice(pixels..pixels + (self.width * self.height * 4))
+        };
+        match &mut self.target {
+            Target::Window(_) => unreachable!(),
+            Target::Texture(texture) => {
+                texture
+                    .update(None, pixel_data, self.width as usize * 4)
+                    .unwrap();
+            }
+        }
+
+        kernel32::state()
+            .process_heap
+            .borrow()
+            .free(unsafe { &mut MACHINE.memory }, self.pixels.unwrap());
+        self.pixels = None;
+    }
 }

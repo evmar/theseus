@@ -1,6 +1,7 @@
 use crate::RECT;
 use crate::ddraw::Target;
 use crate::ddraw::{GUID, state, types::*};
+use crate::gdi32;
 use crate::{ddraw::SurfaceParams, user32};
 use crate::{gdi32::HDC, kernel32, stub, user32::HWND};
 use runtime::*;
@@ -342,7 +343,6 @@ pub mod IDirectDraw7 {
 }
 
 pub mod IDirectDrawSurface7 {
-
     use super::*;
 
     #[derive(Default, zerocopy::IntoBytes, zerocopy::Immutable)]
@@ -592,7 +592,14 @@ pub mod IDirectDrawSurface7 {
     }
 
     #[win32_derive::dllexport]
-    pub fn GetDC(_this: u32, _lphDC: u32) -> DD {
+    pub fn GetDC(this: u32, lphDC: u32) -> DD {
+        let surfaces = state().surf.borrow_mut();
+        let mut surface = surfaces.get(&this).unwrap().borrow_mut();
+        surface.lock();
+        let dc = gdi32::state().dcs.borrow_mut().add(gdi32::new_memory_dc());
+        unsafe {
+            MACHINE.memory.write(lphDC, dc.to_raw());
+        }
         stub!(DD::OK)
     }
 
@@ -659,8 +666,12 @@ pub mod IDirectDrawSurface7 {
     }
 
     #[win32_derive::dllexport]
-    pub fn ReleaseDC(_this: u32, _hDC: u32) -> DD {
-        stub!(DD::OK)
+    pub fn ReleaseDC(this: u32, hDC: u32) -> DD {
+        let surfaces = state().surf.borrow_mut();
+        let mut surface = surfaces.get(&this).unwrap().borrow_mut();
+        gdi32::state().dcs.borrow_mut().remove(HDC::from_raw(hDC));
+        surface.unlock();
+        DD::OK
     }
 
     #[win32_derive::dllexport]
