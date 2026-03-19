@@ -13019,11 +13019,11 @@ pub fn x00403911() -> Cont {
             MACHINE.regs.eax,
         );
         // 00403919 neg dword ptr [ebp-2Ch]
-        MACHINE.memory.write::<i32>(
+        MACHINE.memory.write::<u32>(
             MACHINE.regs.ebp.wrapping_add(0xffffffd4u32),
             neg(MACHINE
                 .memory
-                .read::<i32>(MACHINE.regs.ebp.wrapping_add(0xffffffd4u32))),
+                .read::<u32>(MACHINE.regs.ebp.wrapping_add(0xffffffd4u32))),
         );
         // 0040391c cmp ecx,[ebp-28h]
         sub(
@@ -18873,11 +18873,11 @@ pub fn x00404a91() -> Cont {
         // 00404abe mov eax,ebx
         MACHINE.regs.eax = MACHINE.regs.ebx;
         // 00404ac0 neg dword ptr [ebp-20h]
-        MACHINE.memory.write::<i32>(
+        MACHINE.memory.write::<u32>(
             MACHINE.regs.ebp.wrapping_add(0xffffffe0u32),
             neg(MACHINE
                 .memory
-                .read::<i32>(MACHINE.regs.ebp.wrapping_add(0xffffffe0u32))),
+                .read::<u32>(MACHINE.regs.ebp.wrapping_add(0xffffffe0u32))),
         );
         // 00404ac3 cmp eax,0
         sub(MACHINE.regs.eax, 0x0u32);

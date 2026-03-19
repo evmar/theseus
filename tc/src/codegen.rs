@@ -87,7 +87,7 @@ fn get_op(instr: &iced_x86::Instruction, n: u32) -> String {
                 iced_x86::MemorySize::UInt8 => "u8",
                 iced_x86::MemorySize::UInt16 => "u16",
                 iced_x86::MemorySize::UInt32 => "u32",
-                iced_x86::MemorySize::Int32 => "i32",
+                iced_x86::MemorySize::Int32 => "u32",
                 s => todo!("{s:?}"),
             };
             format!("MACHINE.memory.read::<{size}>({addr})")
@@ -109,7 +109,7 @@ fn set_op(instr: &iced_x86::Instruction, n: u32, expr: String) -> String {
                 iced_x86::MemorySize::UInt8 => "u8",
                 iced_x86::MemorySize::UInt16 => "u16",
                 iced_x86::MemorySize::UInt32 => "u32",
-                iced_x86::MemorySize::Int32 => "i32",
+                iced_x86::MemorySize::Int32 => "u32",
                 s => todo!("{s:?}"),
             };
             format!("MACHINE.memory.write::<{size}>({addr}, {expr});")
