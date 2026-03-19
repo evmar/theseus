@@ -263,7 +263,7 @@ fn run() -> Result<()> {
 
     let ip = AddrImage(state.pe_file.opt_header.AddressOfEntryPoint).to_abs(state.image_base());
     traverse(&mut state, ip.0);
-    //scan_for_pointers(&mut state);
+    scan_for_pointers(&mut state);
 
     codegen::gen_file(&mut state, outdir)?;
 

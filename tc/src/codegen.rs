@@ -1,5 +1,3 @@
-#![allow(unused_must_use)]
-
 use anyhow::{Result, anyhow, bail};
 
 use crate::{
@@ -157,13 +155,25 @@ fn gen_jmp(state: &State, instr: &iced_x86::Instruction) -> String {
     }
 }
 
-fn gen_block(w: &mut dyn std::fmt::Write, state: &State, ip: AddrAbs, block: &Block) {
+#[derive(Default)]
+struct Writer {
+    buf: String,
+}
+
+impl Writer {
+    fn write_fmt(&mut self, args: std::fmt::Arguments) {
+        use std::fmt::Write;
+        let _ = write!(&mut self.buf, "{args}");
+    }
+}
+
+fn gen_block(w: &mut Writer, state: &State, ip: AddrAbs, block: &Block) {
     println!("gen block: {:#08x}", ip.0);
     match block {
         Block::Instrs(instrs) => {
-            write!(w, "pub fn x{:08x}() -> Cont {{\n", ip.0);
+            writeln!(w, "pub fn x{:08x}() -> Cont {{", ip.0);
             gen_instrs(w, state, instrs);
-            write!(w, "}}\n\n");
+            writeln!(w, "}}\n");
         }
         Block::Stdcall(_) => {
             // no emit
@@ -171,8 +181,8 @@ fn gen_block(w: &mut dyn std::fmt::Write, state: &State, ip: AddrAbs, block: &Bl
     }
 }
 
-fn gen_instrs(w: &mut dyn std::fmt::Write, state: &State, instrs: &[iced_x86::Instruction]) {
-    write!(w, "unsafe {{\n");
+fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
+    writeln!(w, "unsafe {{");
 
     for instr in instrs {
         println!("gen: {}", instr);
@@ -419,20 +429,23 @@ fn gen_instrs(w: &mut dyn std::fmt::Write, state: &State, instrs: &[iced_x86::In
             }
         }
     }
-    write!(w, "}}\n");
+    writeln!(w, "}}");
 }
 
 pub fn gen_file(state: &mut State, outdir: &str) -> Result<()> {
-    use std::fmt::Write;
-    let mut text = String::new();
+    let mut w = Writer::default();
 
-    write!(&mut text, "#![allow(unused_unsafe)]\n");
-    write!(&mut text, "#![allow(unreachable_code)]\n\n");
-    write!(&mut text, "#![allow(static_mut_refs)]\n\n");
-    write!(&mut text, "#![allow(unused_parens)]\n\n");
+    writeln!(
+        &mut w,
+        "#![allow(unused_unsafe)]
+#![allow(unreachable_code)]
+#![allow(static_mut_refs)]
+#![allow(unused_parens)]
 
-    write!(&mut text, "use runtime::*;\n");
-    write!(&mut text, "use winapi::*;\n\n");
+use runtime::*;
+use winapi::*;
+"
+    );
 
     state.mem.mappings.dump();
 
@@ -442,9 +455,9 @@ pub fn gen_file(state: &mut State, outdir: &str) -> Result<()> {
     // Unfortunately, wasm-lld only supports "relocatable" object files which means it moves
     // the location of such data at link time.  We could do it by postprocessing the wasm
     // file, maybe.
-    write!(&mut text, "fn init_mappings() {{ unsafe {{\n");
+    writeln!(&mut w, "fn init_mappings() {{ unsafe {{");
     write!(
-        &mut text,
+        &mut w,
         "let mut mappings = kernel32::state().mappings.borrow_mut();\n"
     );
     for map in state.mem.mappings.vec().iter() {
@@ -453,7 +466,7 @@ pub fn gen_file(state: &mut State, outdir: &str) -> Result<()> {
         let zeroed = buf.iter().all(|&b| b == 0);
 
         write!(
-            &mut text,
+            &mut w,
             "mappings.alloc(
                 {desc:?}.to_string(),
                 {addr:#x},
@@ -464,37 +477,37 @@ pub fn gen_file(state: &mut State, outdir: &str) -> Result<()> {
         );
         if !zeroed {
             write!(
-                &mut text,
+                &mut w,
                 "let bytes = include_bytes!(\"../data/{addr:08x}.raw\").as_slice();\n"
             );
             write!(
-                &mut text,
+                &mut w,
                 "let out = &mut MACHINE.memory.bytes[{addr:#x} as usize..][..bytes.len()];
             out.copy_from_slice(bytes);\n"
             );
         }
     }
 
-    write!(&mut text, "}} }}\n");
+    writeln!(&mut w, "}} }}");
 
     let mut ips = state.blocks.keys().copied().collect::<Vec<_>>();
     ips.sort();
     for &ip in &ips {
         let block = state.blocks.get(&ip).unwrap();
-        gen_block(&mut text, &state, AddrAbs(ip), &block);
+        gen_block(&mut w, &state, AddrAbs(ip), &block);
     }
 
     write!(
-        &mut text,
+        &mut w,
         "const BLOCKS: [(u32, fn() -> Cont); {}] = [\n",
         ips.len() + 1,
     );
     for &ip in &ips {
         let block = state.blocks.get(&ip).unwrap();
-        write!(&mut text, "({ip:#08x}, {}),\n", block.name());
+        writeln!(&mut w, "({ip:#08x}, {}),", block.name());
     }
-    write!(&mut text, "(0xf000_0000, runtime::return_from_main),\n");
-    write!(&mut text, "];\n\n");
+    writeln!(&mut w, "(0xf000_0000, runtime::return_from_main),");
+    writeln!(&mut w, "];\n");
 
     let resources = match state.resources {
         Some((addr, size)) => format!("{addr:#x}..{end:#x}", end = addr + size),
@@ -502,7 +515,7 @@ pub fn gen_file(state: &mut State, outdir: &str) -> Result<()> {
     };
 
     write!(
-        &mut text,
+        &mut w,
         "pub const EXEDATA: EXEData = EXEData {{
             image_base: {image_base:#x},
             resources: {resources},
@@ -518,7 +531,7 @@ pub fn gen_file(state: &mut State, outdir: &str) -> Result<()> {
 
     std::fs::create_dir_all(format!("{outdir}/src"))?;
     let path = format!("{outdir}/src/generated.rs");
-    let text = rustfmt(&text)?;
+    let text = rustfmt(&w.buf)?;
     std::fs::write(&path, text).map_err(|err| anyhow!("write {path}: {err}"))?;
     Ok(())
 }
