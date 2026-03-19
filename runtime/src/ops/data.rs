@@ -1,4 +1,5 @@
 use crate::{MACHINE, machine::Flags};
+use super::math::sub;
 
 /// Width of an operation, e.g. movsb/w/d.
 #[derive(Clone, Copy)]
@@ -54,11 +55,31 @@ pub fn stosd() {
 }
 
 pub fn scasb() {
-    todo!("scasb");
+    unsafe {
+        let addr = MACHINE.regs.edi;
+        let mem = MACHINE.memory.read::<u8>(addr);
+        let _ = sub(MACHINE.regs.get_al(), mem);
+        if MACHINE.regs.flags.contains(Flags::DF) {
+            MACHINE.regs.edi = addr.wrapping_sub(1);
+        } else {
+            MACHINE.regs.edi = addr.wrapping_add(1);
+        }
+    }
 }
 
 pub fn cmpsb() {
-    todo!("cmpsb");
+    unsafe {
+        let src = MACHINE.memory.read::<u8>(MACHINE.regs.esi);
+        let dst = MACHINE.memory.read::<u8>(MACHINE.regs.edi);
+        let _ = sub(src, dst);
+        if MACHINE.regs.flags.contains(Flags::DF) {
+            MACHINE.regs.esi = MACHINE.regs.esi.wrapping_sub(1);
+            MACHINE.regs.edi = MACHINE.regs.edi.wrapping_sub(1);
+        } else {
+            MACHINE.regs.esi = MACHINE.regs.esi.wrapping_add(1);
+            MACHINE.regs.edi = MACHINE.regs.edi.wrapping_add(1);
+        }
+    }
 }
 
 pub fn movsx() {
