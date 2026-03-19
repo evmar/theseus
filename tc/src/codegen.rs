@@ -383,9 +383,29 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
             Sar => {
                 writeln!(w, "sar();");
             }
-            Imul => {
-                writeln!(w, "imul();");
-            }
+            Imul => match instr.op_count() {
+                2 => {
+                    assert_eq!(op_size(instr, 0), op_size(instr, 1));
+                    let op0 = get_op(instr, 0);
+                    let op1 = get_op(instr, 1);
+                    writeln!(
+                        w,
+                        "{};",
+                        set_op(
+                            instr,
+                            0,
+                            format!(
+                                "imul({op0} as i{size}, {op1} as i{size}) as u{size}",
+                                size = op_size(instr, 0),
+                            )
+                        )
+                    );
+                }
+                3 => {
+                    writeln!(w, "todo!();");
+                }
+                _ => todo!(),
+            },
             Not => {
                 writeln!(w, "not();");
             }

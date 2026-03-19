@@ -215,8 +215,13 @@ pub fn sar() {
     todo!("sar");
 }
 
-pub fn imul() {
-    todo!("imul");
+pub fn imul(x: i32, y: i32) -> i32 {
+    let (res, overflow) = x.overflowing_mul(y);
+    unsafe {
+        MACHINE.regs.flags.set(Flags::CF, overflow);
+        MACHINE.regs.flags.set(Flags::OF, overflow);
+    }
+    res
 }
 
 pub fn not() {
