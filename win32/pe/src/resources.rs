@@ -12,6 +12,7 @@
 
 use std::ops::Range;
 
+use widestring::U16Str;
 use zerocopy::FromBytes;
 
 use crate::iter_pod_n;
@@ -54,7 +55,7 @@ pub enum RT {
 
 #[derive(Debug, Eq)]
 pub enum ResourceName<'a> {
-    Name(&'a Str16),
+    Name(&'a U16Str),
     Id(u32),
 }
 
@@ -63,7 +64,8 @@ impl<'a> PartialEq for ResourceName<'a> {
     fn eq(&self, other: &Self) -> bool {
         match (self, other) {
             (Self::Name(name), Self::Name(name_other)) => {
-                name.to_string().to_ascii_lowercase() == name_other.to_string().to_ascii_lowercase()
+                name.to_string().unwrap().to_ascii_lowercase()
+                    == name_other.to_string().unwrap().to_ascii_lowercase()
             }
             (Self::Id(id), Self::Id(id_other)) => id == id_other,
             _ => false,
@@ -83,8 +85,10 @@ impl IMAGE_RESOURCE_DIRECTORY_ENTRY {
         if is_id {
             ResourceName::Id(val)
         } else {
-            let len = <u16>::read_from_bytes(&section[val as usize..][..2]).unwrap();
-            let name = Str16::from_bytes(section.sub32(val + 2, len as u32 * 2));
+            let buf = &section[val as usize..];
+            let (len, buf) = <u16>::read_from_prefix(buf).unwrap();
+            let buf = <[u16]>::ref_from_bytes(&buf[..len as usize * 2]).unwrap();
+            let name = U16Str::from_slice(buf);
             ResourceName::Name(name)
         }
     }

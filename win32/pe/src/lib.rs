@@ -36,13 +36,17 @@ impl<'m, T: zerocopy::FromBytes> std::iter::Iterator for PodIterator<'m, T> {
     }
 }
 
-pub fn iter_pod<T: zerocopy::FromBytes>(memory: &[u8]) -> PodIterator<T> {
+pub fn iter_pod<'a, T: zerocopy::FromBytes>(memory: &'a [u8]) -> PodIterator<'a, T> {
     PodIterator {
         buf: &memory,
         _marker: std::marker::PhantomData,
     }
 }
 
-pub fn iter_pod_n<T: zerocopy::FromBytes>(memory: &[u8], addr: u32, count: u32) -> PodIterator<T> {
+pub fn iter_pod_n<'a, T: zerocopy::FromBytes>(
+    memory: &'a [u8],
+    addr: u32,
+    count: u32,
+) -> PodIterator<'a, T> {
     iter_pod(&memory[addr as usize..][..(count as usize * size_of::<T>())])
 }

@@ -19,6 +19,7 @@ runtime = { path = "runtime" }
 winapi = { path = "win32/winapi" }
 zerocopy = { version = "0.8.40", features = ["derive"] }
 log = "0.4.29"
+widestring = "1.2.1"
 
 [profile.release]
 debug = true
