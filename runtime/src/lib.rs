@@ -3,6 +3,7 @@
 #[cfg(feature = "wasm")]
 mod wasm;
 
+mod fpu;
 mod machine;
 mod memory;
 mod native;

@@ -1,7 +1,8 @@
-use crate::{Cont, Memory, Regs};
+use crate::{Cont, Memory, Regs, fpu::FPU};
 
 pub struct Machine {
     pub regs: Regs,
+    pub fpu: FPU,
     pub memory: Memory,
     pub blocks: &'static [(u32, fn() -> Cont)],
 }
@@ -32,6 +33,7 @@ pub fn proc_addr(func: fn() -> Cont) -> u32 {
 
 pub static mut MACHINE: Machine = Machine {
     regs: Regs::default(),
+    fpu: FPU::default(),
     memory: Memory::default(),
     blocks: &[],
 };

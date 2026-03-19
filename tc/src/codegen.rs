@@ -472,12 +472,23 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
             | Psubw | Psraw | Paddsw | Paddsb => {
                 writeln!(w, "todo!();");
             }
-            Fld | Fmul | Fistp | Fcomp | Fnstsw | Sahf | Fsub | Fsubp | Fsubrp | Fdivp | Fadd
-            | Fdivrp | Fmulp | Fsubr | Fstp | Fild | Faddp | Fsqrt | Fld1 | Fxch | Fst | Fchs
-            | Fldz | Fpatan | Fdivr | Fsin | Fcos | Fdiv => {
+
+            Fild => {
+                writeln!(
+                    w,
+                    "fild({} as i{size} as f64);",
+                    get_op(instr, 0),
+                    size = op_size(instr, 0)
+                );
+            }
+
+            Fld | Fmul | Fistp | Fcomp | Fnstsw | Fsub | Fsubp | Fsubrp | Fdivp | Fadd | Fdivrp
+            | Fmulp | Fsubr | Fstp | Faddp | Fsqrt | Fld1 | Fxch | Fst | Fchs | Fldz | Fpatan
+            | Fdivr | Fsin | Fcos | Fdiv => {
                 writeln!(w, "todo!();");
             }
-            Cwde | Stc | Clc => {
+
+            Cwde | Stc | Clc | Sahf => {
                 writeln!(w, "todo!();");
             }
 
