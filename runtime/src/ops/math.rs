@@ -191,7 +191,9 @@ pub fn div() {
     todo!("div");
 }
 
-pub fn dec<I: Int + num_traits::ops::overflowing::OverflowingSub + num_traits::WrappingAdd>(x: I) -> I {
+pub fn dec<I: Int + num_traits::ops::overflowing::OverflowingSub + num_traits::WrappingAdd>(
+    x: I,
+) -> I {
     let old_cf = unsafe { MACHINE.regs.flags.contains(Flags::CF) };
     let result = sub(x, I::one());
     unsafe {
@@ -231,4 +233,24 @@ pub fn idiv() {
 
 pub fn bt() {
     todo!("bt");
+}
+
+/// xor: Logical Exclusive OR
+pub fn xor<I: Int>(x: I, y: I) -> I {
+    let result = x ^ y;
+    unsafe {
+        // The OF and CF flags are cleared; the SF, ZF, and PF flags are set according to the result. The state of the AF flag is undefined.
+        MACHINE.regs.flags.remove(Flags::OF);
+        MACHINE.regs.flags.remove(Flags::CF);
+        MACHINE.regs.flags.set(Flags::ZF, result.is_zero());
+        MACHINE
+            .regs
+            .flags
+            .set(Flags::SF, result.high_bit().is_one());
+        MACHINE
+            .regs
+            .flags
+            .set(Flags::PF, result.low_byte().count_ones() % 2 == 0);
+    }
+    result
 }

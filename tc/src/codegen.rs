@@ -225,14 +225,8 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
                 writeln!(w, "ret({n})");
             }
 
-            Xor => {
-                let op0 = get_op(instr, 0);
-                let op1 = get_op(instr, 1);
-                writeln!(w, "{op0} ^= {op1};");
-            }
-
             // Binary operations.
-            And | Or | Add | Sub | Sbb | Shl | Shr => {
+            And | Or | Add | Sub | Sbb | Shl | Shr | Xor => {
                 let op0 = get_op(instr, 0);
                 let op1 = get_op(instr, 1);
                 let func = format!("{:?}", instr.mnemonic()).to_ascii_lowercase();

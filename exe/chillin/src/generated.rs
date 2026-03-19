@@ -686,7 +686,7 @@ pub fn x00401329() -> Cont {
         // 0040132e lea edi,[ebp-12h]
         MACHINE.regs.edi = MACHINE.regs.ebp.wrapping_add(0xffffffeeu32);
         // 00401331 xor eax,eax
-        MACHINE.regs.eax ^= MACHINE.regs.eax;
+        MACHINE.regs.eax = xor(MACHINE.regs.eax, MACHINE.regs.eax);
         // 00401333 rep stosb
         rep(Rep::REP, stosb);
         // 00401335 mov dword ptr [ebp-12h],6Ch
@@ -745,7 +745,7 @@ pub fn x0040136f() -> Cont {
         // 00401374 lea edi,[ebp+7Ah]
         MACHINE.regs.edi = MACHINE.regs.ebp.wrapping_add(0x7au32);
         // 00401377 xor eax,eax
-        MACHINE.regs.eax ^= MACHINE.regs.eax;
+        MACHINE.regs.eax = xor(MACHINE.regs.eax, MACHINE.regs.eax);
         // 00401379 rep stosb
         rep(Rep::REP, stosb);
         // 0040137b push 43302Ch
@@ -790,7 +790,7 @@ pub fn x0040139e() -> Cont {
         // 004013a3 lea edi,[ebp+5Ah]
         MACHINE.regs.edi = MACHINE.regs.ebp.wrapping_add(0x5au32);
         // 004013a6 xor eax,eax
-        MACHINE.regs.eax ^= MACHINE.regs.eax;
+        MACHINE.regs.eax = xor(MACHINE.regs.eax, MACHINE.regs.eax);
         // 004013a8 rep stosb
         rep(Rep::REP, stosb);
         // 004013aa lea ecx,[ebp+5Ah]
@@ -859,7 +859,7 @@ pub fn x004013d8() -> Cont {
 pub fn x004013e8() -> Cont {
     unsafe {
         // 004013e8 xor eax,eax
-        MACHINE.regs.eax ^= MACHINE.regs.eax;
+        MACHINE.regs.eax = xor(MACHINE.regs.eax, MACHINE.regs.eax);
         // 004013ea jmp near ptr 00401304h
         Cont(x00401304)
     }
@@ -1559,7 +1559,7 @@ pub fn x0040161f() -> Cont {
 pub fn x0040162c() -> Cont {
     unsafe {
         // 0040162c xor edx,edx
-        MACHINE.regs.edx ^= MACHINE.regs.edx;
+        MACHINE.regs.edx = xor(MACHINE.regs.edx, MACHINE.regs.edx);
         // 0040162e jmp short 0040167Eh
         Cont(x0040167e)
     }
@@ -1686,7 +1686,7 @@ pub fn x0040167e() -> Cont {
 pub fn x0040168a() -> Cont {
     unsafe {
         // 0040168a xor esi,esi
-        MACHINE.regs.esi ^= MACHINE.regs.esi;
+        MACHINE.regs.esi = xor(MACHINE.regs.esi, MACHINE.regs.esi);
         // 0040168c jmp short 00401667h
         Cont(x00401667)
     }
@@ -1695,7 +1695,7 @@ pub fn x0040168a() -> Cont {
 pub fn x0040168e() -> Cont {
     unsafe {
         // 0040168e xor edx,edx
-        MACHINE.regs.edx ^= MACHINE.regs.edx;
+        MACHINE.regs.edx = xor(MACHINE.regs.edx, MACHINE.regs.edx);
         // 00401690 jmp short 004016E0h
         Cont(x004016e0)
     }
@@ -1822,7 +1822,7 @@ pub fn x004016e0() -> Cont {
 pub fn x004016ec() -> Cont {
     unsafe {
         // 004016ec xor esi,esi
-        MACHINE.regs.esi ^= MACHINE.regs.esi;
+        MACHINE.regs.esi = xor(MACHINE.regs.esi, MACHINE.regs.esi);
         // 004016ee jmp short 004016C9h
         Cont(x004016c9)
     }
@@ -1831,7 +1831,7 @@ pub fn x004016ec() -> Cont {
 pub fn x004016f0() -> Cont {
     unsafe {
         // 004016f0 xor edx,edx
-        MACHINE.regs.edx ^= MACHINE.regs.edx;
+        MACHINE.regs.edx = xor(MACHINE.regs.edx, MACHINE.regs.edx);
         // 004016f2 jmp short 00401737h
         Cont(x00401737)
     }
@@ -1950,7 +1950,7 @@ pub fn x00401737() -> Cont {
 pub fn x00401743() -> Cont {
     unsafe {
         // 00401743 xor esi,esi
-        MACHINE.regs.esi ^= MACHINE.regs.esi;
+        MACHINE.regs.esi = xor(MACHINE.regs.esi, MACHINE.regs.esi);
         // 00401745 jmp short 00401723h
         Cont(x00401723)
     }
@@ -2128,7 +2128,7 @@ pub fn x004017b8() -> Cont {
 pub fn x004017bd() -> Cont {
     unsafe {
         // 004017bd xor edx,edx
-        MACHINE.regs.edx ^= MACHINE.regs.edx;
+        MACHINE.regs.edx = xor(MACHINE.regs.edx, MACHINE.regs.edx);
         // 004017bf jmp short 0040182Bh
         Cont(x0040182b)
     }
@@ -2320,7 +2320,7 @@ pub fn x00401837() -> Cont {
         // 00401845 imul eax,edx
         imul();
         // 00401848 xor esi,esi
-        MACHINE.regs.esi ^= MACHINE.regs.esi;
+        MACHINE.regs.esi = xor(MACHINE.regs.esi, MACHINE.regs.esi);
         // 0040184a add eax,eax
         MACHINE.regs.eax = add(MACHINE.regs.eax, MACHINE.regs.eax);
         // 0040184c jmp short 00401822h
@@ -2331,7 +2331,7 @@ pub fn x00401837() -> Cont {
 pub fn x0040184e() -> Cont {
     unsafe {
         // 0040184e xor edx,edx
-        MACHINE.regs.edx ^= MACHINE.regs.edx;
+        MACHINE.regs.edx = xor(MACHINE.regs.edx, MACHINE.regs.edx);
         // 00401850 jmp short 004018B8h
         Cont(x004018b8)
     }
@@ -2514,7 +2514,7 @@ pub fn x004018c4() -> Cont {
         // 004018d2 imul eax,edx
         imul();
         // 004018d5 xor esi,esi
-        MACHINE.regs.esi ^= MACHINE.regs.esi;
+        MACHINE.regs.esi = xor(MACHINE.regs.esi, MACHINE.regs.esi);
         // 004018d7 add eax,eax
         MACHINE.regs.eax = add(MACHINE.regs.eax, MACHINE.regs.eax);
         // 004018d9 jmp short 004018AFh
@@ -2525,7 +2525,7 @@ pub fn x004018c4() -> Cont {
 pub fn x004018db() -> Cont {
     unsafe {
         // 004018db xor edx,edx
-        MACHINE.regs.edx ^= MACHINE.regs.edx;
+        MACHINE.regs.edx = xor(MACHINE.regs.edx, MACHINE.regs.edx);
         // 004018dd jmp near ptr 0040198Ch
         Cont(x0040198c)
     }
@@ -2832,7 +2832,7 @@ pub fn x00401998() -> Cont {
         // 004019a6 imul eax,edx
         imul();
         // 004019a9 xor esi,esi
-        MACHINE.regs.esi ^= MACHINE.regs.esi;
+        MACHINE.regs.esi = xor(MACHINE.regs.esi, MACHINE.regs.esi);
         // 004019ab add eax,eax
         MACHINE.regs.eax = add(MACHINE.regs.eax, MACHINE.regs.eax);
         // 004019ad jmp short 0040197Fh
@@ -2843,7 +2843,7 @@ pub fn x00401998() -> Cont {
 pub fn x004019af() -> Cont {
     unsafe {
         // 004019af xor edx,edx
-        MACHINE.regs.edx ^= MACHINE.regs.edx;
+        MACHINE.regs.edx = xor(MACHINE.regs.edx, MACHINE.regs.edx);
         // 004019b1 jmp short 004019FBh
         Cont(x004019fb)
     }
@@ -3002,7 +3002,7 @@ pub fn x00401a07() -> Cont {
         // 00401a15 imul eax,edx
         imul();
         // 00401a18 xor esi,esi
-        MACHINE.regs.esi ^= MACHINE.regs.esi;
+        MACHINE.regs.esi = xor(MACHINE.regs.esi, MACHINE.regs.esi);
         // 00401a1a add eax,eax
         MACHINE.regs.eax = add(MACHINE.regs.eax, MACHINE.regs.eax);
         // 00401a1c jmp short 004019F2h
@@ -3431,15 +3431,15 @@ pub fn x00401d1a() -> Cont {
         // 00401d1a mov edx,ds:[433F7Ch]
         MACHINE.regs.edx = MACHINE.memory.read::<u32>(0x433f7cu32);
         // 00401d20 xor ebx,ebx
-        MACHINE.regs.ebx ^= MACHINE.regs.ebx;
+        MACHINE.regs.ebx = xor(MACHINE.regs.ebx, MACHINE.regs.ebx);
         // 00401d22 sub eax,edx
         MACHINE.regs.eax = sub(MACHINE.regs.eax, MACHINE.regs.edx);
         // 00401d24 xor esi,esi
-        MACHINE.regs.esi ^= MACHINE.regs.esi;
+        MACHINE.regs.esi = xor(MACHINE.regs.esi, MACHINE.regs.esi);
         // 00401d26 mov ds:[433F84h],eax
         MACHINE.memory.write::<u32>(0x433f84u32, MACHINE.regs.eax);
         // 00401d2b xor edx,edx
-        MACHINE.regs.edx ^= MACHINE.regs.edx;
+        MACHINE.regs.edx = xor(MACHINE.regs.edx, MACHINE.regs.edx);
         // 00401d2d jmp short 00401D47h
         Cont(x00401d47)
     }
@@ -3734,11 +3734,11 @@ pub fn x00401e39() -> Cont {
         // 00401e39 imul eax,ds:[40C724h]
         imul();
         // 00401e40 xor ebx,ebx
-        MACHINE.regs.ebx ^= MACHINE.regs.ebx;
+        MACHINE.regs.ebx = xor(MACHINE.regs.ebx, MACHINE.regs.ebx);
         // 00401e42 xor edx,edx
-        MACHINE.regs.edx ^= MACHINE.regs.edx;
+        MACHINE.regs.edx = xor(MACHINE.regs.edx, MACHINE.regs.edx);
         // 00401e44 xor ecx,ecx
-        MACHINE.regs.ecx ^= MACHINE.regs.ecx;
+        MACHINE.regs.ecx = xor(MACHINE.regs.ecx, MACHINE.regs.ecx);
         // 00401e46 mov [ebp-4],ebx
         MACHINE.memory.write::<u32>(
             MACHINE.regs.ebp.wrapping_add(0xfffffffcu32),
@@ -3750,7 +3750,7 @@ pub fn x00401e39() -> Cont {
             MACHINE.regs.eax,
         );
         // 00401e4c xor eax,eax
-        MACHINE.regs.eax ^= MACHINE.regs.eax;
+        MACHINE.regs.eax = xor(MACHINE.regs.eax, MACHINE.regs.eax);
         // 00401e4e mov esi,[ebp-4]
         MACHINE.regs.esi = MACHINE
             .memory
@@ -4548,13 +4548,13 @@ pub fn x00402035() -> Cont {
 pub fn x00402044() -> Cont {
     unsafe {
         // 00402044 xor ebx,ebx
-        MACHINE.regs.ebx ^= MACHINE.regs.ebx;
+        MACHINE.regs.ebx = xor(MACHINE.regs.ebx, MACHINE.regs.ebx);
         // 00402046 xor eax,eax
-        MACHINE.regs.eax ^= MACHINE.regs.eax;
+        MACHINE.regs.eax = xor(MACHINE.regs.eax, MACHINE.regs.eax);
         // 00402048 xor edx,edx
-        MACHINE.regs.edx ^= MACHINE.regs.edx;
+        MACHINE.regs.edx = xor(MACHINE.regs.edx, MACHINE.regs.edx);
         // 0040204a xor ecx,ecx
-        MACHINE.regs.ecx ^= MACHINE.regs.ecx;
+        MACHINE.regs.ecx = xor(MACHINE.regs.ecx, MACHINE.regs.ecx);
         // 0040204c mov [ebp-4],ebx
         MACHINE.memory.write::<u32>(
             MACHINE.regs.ebp.wrapping_add(0xfffffffcu32),
@@ -5330,7 +5330,7 @@ pub fn x00402229() -> Cont {
             MACHINE.regs.eax,
         );
         // 00402237 xor ecx,ecx
-        MACHINE.regs.ecx ^= MACHINE.regs.ecx;
+        MACHINE.regs.ecx = xor(MACHINE.regs.ecx, MACHINE.regs.ecx);
         // 00402239 cmp ecx,ds:[40C728h]
         sub(MACHINE.regs.ecx, MACHINE.memory.read::<u32>(0x40c728u32));
         // 0040223f jge near ptr 00402444h
@@ -5354,11 +5354,11 @@ pub fn x00402245() -> Cont {
         // 0040224a imul eax,ecx
         imul();
         // 0040224d xor edx,edx
-        MACHINE.regs.edx ^= MACHINE.regs.edx;
+        MACHINE.regs.edx = xor(MACHINE.regs.edx, MACHINE.regs.edx);
         // 0040224f xor esi,esi
-        MACHINE.regs.esi ^= MACHINE.regs.esi;
+        MACHINE.regs.esi = xor(MACHINE.regs.esi, MACHINE.regs.esi);
         // 00402251 xor ebx,ebx
-        MACHINE.regs.ebx ^= MACHINE.regs.ebx;
+        MACHINE.regs.ebx = xor(MACHINE.regs.ebx, MACHINE.regs.ebx);
         // 00402253 mov [ebp-4],edx
         MACHINE.memory.write::<u32>(
             MACHINE.regs.ebp.wrapping_add(0xfffffffcu32),
@@ -6281,13 +6281,13 @@ pub fn x0040244b() -> Cont {
 pub fn x00402462() -> Cont {
     unsafe {
         // 00402462 xor edx,edx
-        MACHINE.regs.edx ^= MACHINE.regs.edx;
+        MACHINE.regs.edx = xor(MACHINE.regs.edx, MACHINE.regs.edx);
         // 00402464 xor esi,esi
-        MACHINE.regs.esi ^= MACHINE.regs.esi;
+        MACHINE.regs.esi = xor(MACHINE.regs.esi, MACHINE.regs.esi);
         // 00402466 xor ebx,ebx
-        MACHINE.regs.ebx ^= MACHINE.regs.ebx;
+        MACHINE.regs.ebx = xor(MACHINE.regs.ebx, MACHINE.regs.ebx);
         // 00402468 xor ecx,ecx
-        MACHINE.regs.ecx ^= MACHINE.regs.ecx;
+        MACHINE.regs.ecx = xor(MACHINE.regs.ecx, MACHINE.regs.ecx);
         // 0040246a mov [ebp-4],edx
         MACHINE.memory.write::<u32>(
             MACHINE.regs.ebp.wrapping_add(0xfffffffcu32),
@@ -6545,7 +6545,7 @@ pub fn x004024e1() -> Cont {
         // 00402524 add edx,ecx
         MACHINE.regs.edx = add(MACHINE.regs.edx, MACHINE.regs.ecx);
         // 00402526 xor ecx,ecx
-        MACHINE.regs.ecx ^= MACHINE.regs.ecx;
+        MACHINE.regs.ecx = xor(MACHINE.regs.ecx, MACHINE.regs.ecx);
         // 00402528 cmp ecx,ds:[40C728h]
         sub(MACHINE.regs.ecx, MACHINE.memory.read::<u32>(0x40c728u32));
         // 0040252e jge near ptr 00402658h
@@ -7166,13 +7166,13 @@ pub fn x00402666() -> Cont {
 pub fn x00402675() -> Cont {
     unsafe {
         // 00402675 xor edx,edx
-        MACHINE.regs.edx ^= MACHINE.regs.edx;
+        MACHINE.regs.edx = xor(MACHINE.regs.edx, MACHINE.regs.edx);
         // 00402677 xor esi,esi
-        MACHINE.regs.esi ^= MACHINE.regs.esi;
+        MACHINE.regs.esi = xor(MACHINE.regs.esi, MACHINE.regs.esi);
         // 00402679 xor ebx,ebx
-        MACHINE.regs.ebx ^= MACHINE.regs.ebx;
+        MACHINE.regs.ebx = xor(MACHINE.regs.ebx, MACHINE.regs.ebx);
         // 0040267b xor ecx,ecx
-        MACHINE.regs.ecx ^= MACHINE.regs.ecx;
+        MACHINE.regs.ecx = xor(MACHINE.regs.ecx, MACHINE.regs.ecx);
         // 0040267d mov [ebp-4],edx
         MACHINE.memory.write::<u32>(
             MACHINE.regs.ebp.wrapping_add(0xfffffffcu32),
@@ -7435,7 +7435,7 @@ pub fn x004026f6() -> Cont {
         // 00402739 add edx,ecx
         MACHINE.regs.edx = add(MACHINE.regs.edx, MACHINE.regs.ecx);
         // 0040273b xor ecx,ecx
-        MACHINE.regs.ecx ^= MACHINE.regs.ecx;
+        MACHINE.regs.ecx = xor(MACHINE.regs.ecx, MACHINE.regs.ecx);
         // 0040273d mov eax,[ebp-8]
         MACHINE.regs.eax = MACHINE
             .memory
@@ -8168,13 +8168,13 @@ pub fn x004028e1() -> Cont {
         // 004028e1 imul eax,ds:[40C724h]
         imul();
         // 004028e8 xor ecx,ecx
-        MACHINE.regs.ecx ^= MACHINE.regs.ecx;
+        MACHINE.regs.ecx = xor(MACHINE.regs.ecx, MACHINE.regs.ecx);
         // 004028ea xor ebx,ebx
-        MACHINE.regs.ebx ^= MACHINE.regs.ebx;
+        MACHINE.regs.ebx = xor(MACHINE.regs.ebx, MACHINE.regs.ebx);
         // 004028ec xor esi,esi
-        MACHINE.regs.esi ^= MACHINE.regs.esi;
+        MACHINE.regs.esi = xor(MACHINE.regs.esi, MACHINE.regs.esi);
         // 004028ee xor edx,edx
-        MACHINE.regs.edx ^= MACHINE.regs.edx;
+        MACHINE.regs.edx = xor(MACHINE.regs.edx, MACHINE.regs.edx);
         // 004028f0 mov [ebp-4],ecx
         MACHINE.memory.write::<u32>(
             MACHINE.regs.ebp.wrapping_add(0xfffffffcu32),
@@ -8415,7 +8415,7 @@ pub fn x00402947() -> Cont {
         // 0040298a add ecx,edx
         MACHINE.regs.ecx = add(MACHINE.regs.ecx, MACHINE.regs.edx);
         // 0040298c xor edx,edx
-        MACHINE.regs.edx ^= MACHINE.regs.edx;
+        MACHINE.regs.edx = xor(MACHINE.regs.edx, MACHINE.regs.edx);
         // 0040298e mov eax,[ebp-8]
         MACHINE.regs.eax = MACHINE
             .memory
@@ -9002,11 +9002,11 @@ pub fn x00402ab1() -> Cont {
 pub fn x00402abd() -> Cont {
     unsafe {
         // 00402abd xor ecx,ecx
-        MACHINE.regs.ecx ^= MACHINE.regs.ecx;
+        MACHINE.regs.ecx = xor(MACHINE.regs.ecx, MACHINE.regs.ecx);
         // 00402abf xor ebx,ebx
-        MACHINE.regs.ebx ^= MACHINE.regs.ebx;
+        MACHINE.regs.ebx = xor(MACHINE.regs.ebx, MACHINE.regs.ebx);
         // 00402ac1 xor esi,esi
-        MACHINE.regs.esi ^= MACHINE.regs.esi;
+        MACHINE.regs.esi = xor(MACHINE.regs.esi, MACHINE.regs.esi);
         // 00402ac3 mov [ebp-4],ecx
         MACHINE.memory.write::<u32>(
             MACHINE.regs.ebp.wrapping_add(0xfffffffcu32),
@@ -9963,15 +9963,15 @@ pub fn x00402ce1() -> Cont {
         // 00402ce1 imul eax,ds:[40C724h]
         imul();
         // 00402ce8 xor ecx,ecx
-        MACHINE.regs.ecx ^= MACHINE.regs.ecx;
+        MACHINE.regs.ecx = xor(MACHINE.regs.ecx, MACHINE.regs.ecx);
         // 00402cea xor ebx,ebx
-        MACHINE.regs.ebx ^= MACHINE.regs.ebx;
+        MACHINE.regs.ebx = xor(MACHINE.regs.ebx, MACHINE.regs.ebx);
         // 00402cec xor esi,esi
-        MACHINE.regs.esi ^= MACHINE.regs.esi;
+        MACHINE.regs.esi = xor(MACHINE.regs.esi, MACHINE.regs.esi);
         // 00402cee add eax,ds:[40C724h]
         MACHINE.regs.eax = add(MACHINE.regs.eax, MACHINE.memory.read::<u32>(0x40c724u32));
         // 00402cf4 xor edx,edx
-        MACHINE.regs.edx ^= MACHINE.regs.edx;
+        MACHINE.regs.edx = xor(MACHINE.regs.edx, MACHINE.regs.edx);
         // 00402cf6 dec eax
         MACHINE.regs.eax = dec(MACHINE.regs.eax);
         // 00402cf7 mov [ebp-4],ecx
@@ -10220,7 +10220,7 @@ pub fn x00402d61() -> Cont {
         // 00402da4 add ecx,edx
         MACHINE.regs.ecx = add(MACHINE.regs.ecx, MACHINE.regs.edx);
         // 00402da6 xor edx,edx
-        MACHINE.regs.edx ^= MACHINE.regs.edx;
+        MACHINE.regs.edx = xor(MACHINE.regs.edx, MACHINE.regs.edx);
         // 00402da8 mov eax,ds:[40C728h]
         MACHINE.regs.eax = MACHINE.memory.read::<u32>(0x40c728u32);
         // 00402dad sub eax,[ebp-8]
@@ -10892,7 +10892,7 @@ pub fn x00402f03() -> Cont {
 pub fn x00402f12() -> Cont {
     unsafe {
         // 00402f12 xor ecx,ecx
-        MACHINE.regs.ecx ^= MACHINE.regs.ecx;
+        MACHINE.regs.ecx = xor(MACHINE.regs.ecx, MACHINE.regs.ecx);
         // 00402f14 jmp short 00402F23h
         Cont(x00402f23)
     }
@@ -10983,7 +10983,7 @@ pub fn x00402f1e() -> Cont {
         // 00402f6b add ecx,edx
         MACHINE.regs.ecx = add(MACHINE.regs.ecx, MACHINE.regs.edx);
         // 00402f6d xor edx,edx
-        MACHINE.regs.edx ^= MACHINE.regs.edx;
+        MACHINE.regs.edx = xor(MACHINE.regs.edx, MACHINE.regs.edx);
         // 00402f6f mov ebx,ds:[40C724h]
         MACHINE.regs.ebx = MACHINE.memory.read::<u32>(0x40c724u32);
         // 00402f75 imul ebx,ds:[40C728h]
@@ -11069,7 +11069,7 @@ pub fn x00402f23() -> Cont {
         // 00402f6b add ecx,edx
         MACHINE.regs.ecx = add(MACHINE.regs.ecx, MACHINE.regs.edx);
         // 00402f6d xor edx,edx
-        MACHINE.regs.edx ^= MACHINE.regs.edx;
+        MACHINE.regs.edx = xor(MACHINE.regs.edx, MACHINE.regs.edx);
         // 00402f6f mov ebx,ds:[40C724h]
         MACHINE.regs.ebx = MACHINE.memory.read::<u32>(0x40c724u32);
         // 00402f75 imul ebx,ds:[40C728h]
@@ -11196,7 +11196,7 @@ pub fn x00403202() -> Cont {
 pub fn x00403211() -> Cont {
     unsafe {
         // 00403211 xor edx,ecx
-        MACHINE.regs.edx ^= MACHINE.regs.ecx;
+        MACHINE.regs.edx = xor(MACHINE.regs.edx, MACHINE.regs.ecx);
         // 00403213 jmp short 00403222h
         Cont(x00403222)
     }
@@ -11244,7 +11244,7 @@ pub fn x0040321d() -> Cont {
         // 00403243 add ecx,eax
         MACHINE.regs.ecx = add(MACHINE.regs.ecx, MACHINE.regs.eax);
         // 00403245 xor esi,esi
-        MACHINE.regs.esi ^= MACHINE.regs.esi;
+        MACHINE.regs.esi = xor(MACHINE.regs.esi, MACHINE.regs.esi);
         // 00403247 mov eax,ds:[40C724h]
         MACHINE.regs.eax = MACHINE.memory.read::<u32>(0x40c724u32);
         // 0040324c imul eax,ds:[40C728h]
@@ -11287,7 +11287,7 @@ pub fn x00403222() -> Cont {
         // 00403243 add ecx,eax
         MACHINE.regs.ecx = add(MACHINE.regs.ecx, MACHINE.regs.eax);
         // 00403245 xor esi,esi
-        MACHINE.regs.esi ^= MACHINE.regs.esi;
+        MACHINE.regs.esi = xor(MACHINE.regs.esi, MACHINE.regs.esi);
         // 00403247 mov eax,ds:[40C724h]
         MACHINE.regs.eax = MACHINE.memory.read::<u32>(0x40c724u32);
         // 0040324c imul eax,ds:[40C728h]
@@ -11441,7 +11441,7 @@ pub fn x00403340() -> Cont {
         // 00403346 mov esi,edx
         MACHINE.regs.esi = MACHINE.regs.edx;
         // 00403348 xor eax,eax
-        MACHINE.regs.eax ^= MACHINE.regs.eax;
+        MACHINE.regs.eax = xor(MACHINE.regs.eax, MACHINE.regs.eax);
         // 0040334a mov edx,ds:[40C724h]
         MACHINE.regs.edx = MACHINE.memory.read::<u32>(0x40c724u32);
         // 00403350 imul edx,ds:[40C728h]
@@ -11534,7 +11534,7 @@ pub fn x00403377() -> Cont {
         // 0040337d mov esi,edx
         MACHINE.regs.esi = MACHINE.regs.edx;
         // 0040337f xor ecx,ecx
-        MACHINE.regs.ecx ^= MACHINE.regs.ecx;
+        MACHINE.regs.ecx = xor(MACHINE.regs.ecx, MACHINE.regs.ecx);
         // 00403381 mov edx,ds:[40C724h]
         MACHINE.regs.edx = MACHINE.memory.read::<u32>(0x40c724u32);
         // 00403387 imul edx,ds:[40C728h]
@@ -11638,7 +11638,7 @@ pub fn x004033b9() -> Cont {
         // 004033c0 mov esi,edx
         MACHINE.regs.esi = MACHINE.regs.edx;
         // 004033c2 xor ecx,ecx
-        MACHINE.regs.ecx ^= MACHINE.regs.ecx;
+        MACHINE.regs.ecx = xor(MACHINE.regs.ecx, MACHINE.regs.ecx);
         // 004033c4 mov edx,ds:[40C724h]
         MACHINE.regs.edx = MACHINE.memory.read::<u32>(0x40c724u32);
         // 004033ca imul edx,ds:[40C728h]
@@ -11749,7 +11749,7 @@ pub fn x004033fc() -> Cont {
         // 0040340a lea esi,[eax+100h]
         MACHINE.regs.esi = MACHINE.regs.eax.wrapping_add(0x100u32);
         // 00403410 xor ebx,ebx
-        MACHINE.regs.ebx ^= MACHINE.regs.ebx;
+        MACHINE.regs.ebx = xor(MACHINE.regs.ebx, MACHINE.regs.ebx);
         // 00403412 imul esi,esi
         imul();
         // 00403415 cmp ebx,[ebp-8]
@@ -11843,7 +11843,7 @@ pub fn x0040341e() -> Cont {
 pub fn x0040346b() -> Cont {
     unsafe {
         // 0040346b xor ecx,ecx
-        MACHINE.regs.ecx ^= MACHINE.regs.ecx;
+        MACHINE.regs.ecx = xor(MACHINE.regs.ecx, MACHINE.regs.ecx);
         // 0040346d test eax,eax
         and(MACHINE.regs.eax, MACHINE.regs.eax);
         // 0040346f jge short 00403473h
@@ -11863,7 +11863,7 @@ pub fn x0040346d() -> Cont {
 pub fn x00403471() -> Cont {
     unsafe {
         // 00403471 xor eax,eax
-        MACHINE.regs.eax ^= MACHINE.regs.eax;
+        MACHINE.regs.eax = xor(MACHINE.regs.eax, MACHINE.regs.eax);
         // 00403473 test edx,edx
         and(MACHINE.regs.edx, MACHINE.regs.edx);
         // 00403475 jge short 00403479h
@@ -11883,7 +11883,7 @@ pub fn x00403473() -> Cont {
 pub fn x00403477() -> Cont {
     unsafe {
         // 00403477 xor edx,edx
-        MACHINE.regs.edx ^= MACHINE.regs.edx;
+        MACHINE.regs.edx = xor(MACHINE.regs.edx, MACHINE.regs.edx);
         // 00403479 cmp ecx,0FFh
         sub(MACHINE.regs.ecx, 0xffu32);
         // 0040347f jle short 00403486h
@@ -12058,7 +12058,7 @@ pub fn x004034bd() -> Cont {
 pub fn x004034db() -> Cont {
     unsafe {
         // 004034db xor ecx,ecx
-        MACHINE.regs.ecx ^= MACHINE.regs.ecx;
+        MACHINE.regs.ecx = xor(MACHINE.regs.ecx, MACHINE.regs.ecx);
         // 004034dd mov eax,ds:[40C724h]
         MACHINE.regs.eax = MACHINE.memory.read::<u32>(0x40c724u32);
         // 004034e2 imul eax,ds:[40C728h]
@@ -12197,7 +12197,7 @@ pub fn x00403737() -> Cont {
         // 00403744 mov ebx,ecx
         MACHINE.regs.ebx = MACHINE.regs.ecx;
         // 00403746 xor eax,eax
-        MACHINE.regs.eax ^= MACHINE.regs.eax;
+        MACHINE.regs.eax = xor(MACHINE.regs.eax, MACHINE.regs.eax);
         // 00403748 cmp eax,ebx
         sub(MACHINE.regs.eax, MACHINE.regs.ebx);
         // 0040374a jge near ptr 0040380Fh
@@ -13197,7 +13197,7 @@ pub fn x00403965() -> Cont {
         // 00403984 sar eax,10h
         sar();
         // 00403987 xor edi,edi
-        MACHINE.regs.edi ^= MACHINE.regs.edi;
+        MACHINE.regs.edi = xor(MACHINE.regs.edi, MACHINE.regs.edi);
         // 00403989 mov [ebp-10h],eax
         MACHINE.memory.write::<u32>(
             MACHINE.regs.ebp.wrapping_add(0xfffffff0u32),
@@ -13224,7 +13224,7 @@ pub fn x00403982() -> Cont {
         // 00403984 sar eax,10h
         sar();
         // 00403987 xor edi,edi
-        MACHINE.regs.edi ^= MACHINE.regs.edi;
+        MACHINE.regs.edi = xor(MACHINE.regs.edi, MACHINE.regs.edi);
         // 00403989 mov [ebp-10h],eax
         MACHINE.memory.write::<u32>(
             MACHINE.regs.ebp.wrapping_add(0xfffffff0u32),
@@ -14402,7 +14402,7 @@ pub fn x00403d06() -> Cont {
             MACHINE.regs.edx,
         );
         // 00403db9 xor edx,edx
-        MACHINE.regs.edx ^= MACHINE.regs.edx;
+        MACHINE.regs.edx = xor(MACHINE.regs.edx, MACHINE.regs.edx);
         // 00403dbb jmp short 00403E21h
         Cont(x00403e21)
     }
@@ -14803,7 +14803,7 @@ pub fn x00403e7b() -> Cont {
             MACHINE.regs.eax,
         );
         // 00403ef7 xor ebx,ebx
-        MACHINE.regs.ebx ^= MACHINE.regs.ebx;
+        MACHINE.regs.ebx = xor(MACHINE.regs.ebx, MACHINE.regs.ebx);
         // 00403ef9 shl eax,8
         MACHINE.regs.eax = shl(MACHINE.regs.eax, 0x8u8);
         // 00403efc mov edx,eax
@@ -15027,7 +15027,7 @@ pub fn x00403ea3() -> Cont {
             MACHINE.regs.eax,
         );
         // 00403ef7 xor ebx,ebx
-        MACHINE.regs.ebx ^= MACHINE.regs.ebx;
+        MACHINE.regs.ebx = xor(MACHINE.regs.ebx, MACHINE.regs.ebx);
         // 00403ef9 shl eax,8
         MACHINE.regs.eax = shl(MACHINE.regs.eax, 0x8u8);
         // 00403efc mov edx,eax
@@ -15490,7 +15490,7 @@ pub fn x00404028() -> Cont {
             ),
         );
         // 004040ad xor ebx,ebx
-        MACHINE.regs.ebx ^= MACHINE.regs.ebx;
+        MACHINE.regs.ebx = xor(MACHINE.regs.ebx, MACHINE.regs.ebx);
         // 004040af shl eax,8
         MACHINE.regs.eax = shl(MACHINE.regs.eax, 0x8u8);
         // 004040b2 mov edx,eax
@@ -15721,7 +15721,7 @@ pub fn x00404050() -> Cont {
             ),
         );
         // 004040ad xor ebx,ebx
-        MACHINE.regs.ebx ^= MACHINE.regs.ebx;
+        MACHINE.regs.ebx = xor(MACHINE.regs.ebx, MACHINE.regs.ebx);
         // 004040af shl eax,8
         MACHINE.regs.eax = shl(MACHINE.regs.eax, 0x8u8);
         // 004040b2 mov edx,eax
@@ -16180,7 +16180,7 @@ pub fn x004041de() -> Cont {
             MACHINE.regs.eax,
         );
         // 0040425e xor ebx,ebx
-        MACHINE.regs.ebx ^= MACHINE.regs.ebx;
+        MACHINE.regs.ebx = xor(MACHINE.regs.ebx, MACHINE.regs.ebx);
         // 00404260 shl eax,8
         MACHINE.regs.eax = shl(MACHINE.regs.eax, 0x8u8);
         // 00404263 mov edx,eax
@@ -16404,7 +16404,7 @@ pub fn x0040420a() -> Cont {
             MACHINE.regs.eax,
         );
         // 0040425e xor ebx,ebx
-        MACHINE.regs.ebx ^= MACHINE.regs.ebx;
+        MACHINE.regs.ebx = xor(MACHINE.regs.ebx, MACHINE.regs.ebx);
         // 00404260 shl eax,8
         MACHINE.regs.eax = shl(MACHINE.regs.eax, 0x8u8);
         // 00404263 mov edx,eax
@@ -16870,7 +16870,7 @@ pub fn x0040438f() -> Cont {
             ),
         );
         // 00404418 xor ebx,ebx
-        MACHINE.regs.ebx ^= MACHINE.regs.ebx;
+        MACHINE.regs.ebx = xor(MACHINE.regs.ebx, MACHINE.regs.ebx);
         // 0040441a shl eax,8
         MACHINE.regs.eax = shl(MACHINE.regs.eax, 0x8u8);
         // 0040441d mov edx,eax
@@ -17101,7 +17101,7 @@ pub fn x004043bb() -> Cont {
             ),
         );
         // 00404418 xor ebx,ebx
-        MACHINE.regs.ebx ^= MACHINE.regs.ebx;
+        MACHINE.regs.ebx = xor(MACHINE.regs.ebx, MACHINE.regs.ebx);
         // 0040441a shl eax,8
         MACHINE.regs.eax = shl(MACHINE.regs.eax, 0x8u8);
         // 0040441d mov edx,eax
@@ -18108,7 +18108,7 @@ pub fn x004047c9() -> Cont {
             .memory
             .read::<u32>(MACHINE.regs.ebp.wrapping_add(0xfffffff0u32));
         // 004047d0 xor eax,eax
-        MACHINE.regs.eax ^= MACHINE.regs.eax;
+        MACHINE.regs.eax = xor(MACHINE.regs.eax, MACHINE.regs.eax);
         // 004047d2 call 00404A91h
         call(0x4047d7, Cont(x00404a91))
     }
@@ -18308,7 +18308,7 @@ pub fn x004048b8() -> Cont {
         // 004048bb mov ds:[433F5Ch],eax
         MACHINE.memory.write::<u32>(0x433f5cu32, MACHINE.regs.eax);
         // 004048c0 xor ecx,ecx
-        MACHINE.regs.ecx ^= MACHINE.regs.ecx;
+        MACHINE.regs.ecx = xor(MACHINE.regs.ecx, MACHINE.regs.ecx);
         // 004048c2 mov [ebp-4],ecx
         MACHINE.memory.write::<u32>(
             MACHINE.regs.ebp.wrapping_add(0xfffffffcu32),
@@ -18382,7 +18382,7 @@ pub fn x004048db() -> Cont {
 pub fn x004048f4() -> Cont {
     unsafe {
         // 004048f4 xor ebx,ebx
-        MACHINE.regs.ebx ^= MACHINE.regs.ebx;
+        MACHINE.regs.ebx = xor(MACHINE.regs.ebx, MACHINE.regs.ebx);
         // 004048f6 cmp ebx,ds:[40C728h]
         sub(MACHINE.regs.ebx, MACHINE.memory.read::<u32>(0x40c728u32));
         // 004048fc jge near ptr 004049F9h
@@ -18429,7 +18429,7 @@ pub fn x00404902() -> Cont {
         // 00404922 fmul qword ptr [ebp-30h]
         todo!();
         // 00404925 xor ecx,ecx
-        MACHINE.regs.ecx ^= MACHINE.regs.ecx;
+        MACHINE.regs.ecx = xor(MACHINE.regs.ecx, MACHINE.regs.ecx);
         // 00404927 call 00408838h
         call(0x40492c, Cont(x00408838))
     }
@@ -19013,7 +19013,7 @@ pub fn x00404afd() -> Cont {
             ),
         );
         // 00404b04 xor edx,edx
-        MACHINE.regs.edx ^= MACHINE.regs.edx;
+        MACHINE.regs.edx = xor(MACHINE.regs.edx, MACHINE.regs.edx);
         // 00404b06 mov eax,ds:[40C724h]
         MACHINE.regs.eax = MACHINE.memory.read::<u32>(0x40c724u32);
         // 00404b0b add eax,8
@@ -19028,7 +19028,7 @@ pub fn x00404afd() -> Cont {
 pub fn x00404b04() -> Cont {
     unsafe {
         // 00404b04 xor edx,edx
-        MACHINE.regs.edx ^= MACHINE.regs.edx;
+        MACHINE.regs.edx = xor(MACHINE.regs.edx, MACHINE.regs.edx);
         // 00404b06 mov eax,ds:[40C724h]
         MACHINE.regs.eax = MACHINE.memory.read::<u32>(0x40c724u32);
         // 00404b0b add eax,8
@@ -19134,7 +19134,7 @@ pub fn x00404b52() -> Cont {
 pub fn x00404b5d() -> Cont {
     unsafe {
         // 00404b5d xor ecx,ecx
-        MACHINE.regs.ecx ^= MACHINE.regs.ecx;
+        MACHINE.regs.ecx = xor(MACHINE.regs.ecx, MACHINE.regs.ecx);
         // 00404b5f mov eax,ds:[40C728h]
         MACHINE.regs.eax = MACHINE.memory.read::<u32>(0x40c728u32);
         // 00404b64 cdq
@@ -19234,7 +19234,7 @@ pub fn x00404b75() -> Cont {
         // 00404bb7 faddp
         todo!();
         // 00404bb9 xor ebx,ebx
-        MACHINE.regs.ebx ^= MACHINE.regs.ebx;
+        MACHINE.regs.ebx = xor(MACHINE.regs.ebx, MACHINE.regs.ebx);
         // 00404bbb call 00408838h
         call(0x404bc0, Cont(x00408838))
     }
@@ -19718,7 +19718,9 @@ pub fn x00404ceb() -> Cont {
         // 00404cf5 sub ebp,82h
         MACHINE.regs.ebp = sub(MACHINE.regs.ebp, 0x82u32);
         // 00404cfb xor ch,ch
-        MACHINE.regs.get_ch() ^= MACHINE.regs.get_ch();
+        MACHINE
+            .regs
+            .set_ch(xor(MACHINE.regs.get_ch(), MACHINE.regs.get_ch()));
         // 00404cfd mov eax,ds:[40C728h]
         MACHINE.regs.eax = MACHINE.memory.read::<u32>(0x40c728u32);
         // 00404d02 cdq
@@ -19766,7 +19768,9 @@ pub fn x00404cfd() -> Cont {
 pub fn x00404d17() -> Cont {
     unsafe {
         // 00404d17 xor cl,cl
-        MACHINE.regs.get_cl() ^= MACHINE.regs.get_cl();
+        MACHINE
+            .regs
+            .set_cl(xor(MACHINE.regs.get_cl(), MACHINE.regs.get_cl()));
         // 00404d19 jmp short 00404D26h
         Cont(x00404d26)
     }
@@ -21113,7 +21117,7 @@ pub fn x00404fad() -> Cont {
         // 0040509b fadd qword ptr ds:[40C140h]
         todo!();
         // 004050a1 xor ecx,ecx
-        MACHINE.regs.ecx ^= MACHINE.regs.ecx;
+        MACHINE.regs.ecx = xor(MACHINE.regs.ecx, MACHINE.regs.ecx);
         // 004050a3 fstp dword ptr [ebp-0Ch]
         todo!();
         // 004050a6 mov eax,ds:[40C728h]
@@ -21155,7 +21159,7 @@ pub fn x004050a6() -> Cont {
 pub fn x004050bc() -> Cont {
     unsafe {
         // 004050bc xor edx,edx
-        MACHINE.regs.edx ^= MACHINE.regs.edx;
+        MACHINE.regs.edx = xor(MACHINE.regs.edx, MACHINE.regs.edx);
         // 004050be jmp short 00405107h
         Cont(x00405107)
     }
@@ -21452,7 +21456,7 @@ pub fn x0040519f() -> Cont {
 pub fn x004051b4() -> Cont {
     unsafe {
         // 004051b4 xor eax,eax
-        MACHINE.regs.eax ^= MACHINE.regs.eax;
+        MACHINE.regs.eax = xor(MACHINE.regs.eax, MACHINE.regs.eax);
         // 004051b6 jmp near ptr 004050CAh
         Cont(x004050ca)
     }
@@ -21689,7 +21693,7 @@ pub fn x0040526c() -> Cont {
         // 00405275 fsubr dword ptr [ebp-0Ch]
         todo!();
         // 00405278 xor ebx,ebx
-        MACHINE.regs.ebx ^= MACHINE.regs.ebx;
+        MACHINE.regs.ebx = xor(MACHINE.regs.ebx, MACHINE.regs.ebx);
         // 0040527a fstp dword ptr [ebp-0Ch]
         todo!();
         // 0040527d cmp esi,ds:[40C724h]
@@ -22037,7 +22041,7 @@ pub fn x00405366() -> Cont {
         // 00405369 mov ds:[433F48h],eax
         MACHINE.memory.write::<u32>(0x433f48u32, MACHINE.regs.eax);
         // 0040536e xor ecx,ecx
-        MACHINE.regs.ecx ^= MACHINE.regs.ecx;
+        MACHINE.regs.ecx = xor(MACHINE.regs.ecx, MACHINE.regs.ecx);
         // 00405370 jmp short 0040537Fh
         Cont(x0040537f)
     }
@@ -22057,7 +22061,7 @@ pub fn x00405372() -> Cont {
 pub fn x0040537f() -> Cont {
     unsafe {
         // 0040537f xor ebx,ebx
-        MACHINE.regs.ebx ^= MACHINE.regs.ebx;
+        MACHINE.regs.ebx = xor(MACHINE.regs.ebx, MACHINE.regs.ebx);
         // 00405381 jmp short 004053A9h
         Cont(x004053a9)
     }
@@ -22220,7 +22224,7 @@ pub fn x004053d4() -> Cont {
 pub fn x004053f2() -> Cont {
     unsafe {
         // 004053f2 xor eax,edx
-        MACHINE.regs.eax ^= MACHINE.regs.edx;
+        MACHINE.regs.eax = xor(MACHINE.regs.eax, MACHINE.regs.edx);
         // 004053f4 jmp short 00405383h
         Cont(x00405383)
     }
@@ -22272,7 +22276,7 @@ pub fn x004053fc() -> Cont {
         // 00405419 fadd dword ptr [ebp-4Ch]
         todo!();
         // 0040541c xor edi,edi
-        MACHINE.regs.edi ^= MACHINE.regs.edi;
+        MACHINE.regs.edi = xor(MACHINE.regs.edi, MACHINE.regs.edi);
         // 0040541e fst dword ptr [ebp-20h]
         todo!();
         // 00405421 fcomp dword ptr ds:[40C1BCh]
@@ -23253,9 +23257,9 @@ pub fn x00405650() -> Cont {
         // 00405659 push ecx
         push(MACHINE.regs.ecx);
         // 0040565a xor ebx,ebx
-        MACHINE.regs.ebx ^= MACHINE.regs.ebx;
+        MACHINE.regs.ebx = xor(MACHINE.regs.ebx, MACHINE.regs.ebx);
         // 0040565c xor edi,edi
-        MACHINE.regs.edi ^= MACHINE.regs.edi;
+        MACHINE.regs.edi = xor(MACHINE.regs.edi, MACHINE.regs.edi);
         // 0040565e cmp ebx,ds:[40C728h]
         sub(MACHINE.regs.ebx, MACHINE.memory.read::<u32>(0x40c728u32));
         // 00405664 jge near ptr 004056DDh
@@ -23284,7 +23288,7 @@ pub fn x0040566a() -> Cont {
                 .read::<u32>(MACHINE.regs.ebp.wrapping_add(0x18u32)),
         );
         // 0040566f xor esi,esi
-        MACHINE.regs.esi ^= MACHINE.regs.esi;
+        MACHINE.regs.esi = xor(MACHINE.regs.esi, MACHINE.regs.esi);
         // 00405671 mov [ebp-8],eax
         MACHINE.memory.write::<u32>(
             MACHINE.regs.ebp.wrapping_add(0xfffffff8u32),
@@ -23489,7 +23493,7 @@ pub fn x004056e3() -> Cont {
         // 004056fa mov edi,ds:[433F4Ch]
         MACHINE.regs.edi = MACHINE.memory.read::<u32>(0x433f4cu32);
         // 00405700 xor eax,eax
-        MACHINE.regs.eax ^= MACHINE.regs.eax;
+        MACHINE.regs.eax = xor(MACHINE.regs.eax, MACHINE.regs.eax);
         // 00405702 shl ecx,2
         MACHINE.regs.ecx = shl(MACHINE.regs.ecx, 0x2u8);
         // 00405705 mov [ebp-4],edx
@@ -23868,15 +23872,15 @@ pub fn x00405889() -> Cont {
         // 00405893 mov edi,ds:[433F3Ch]
         MACHINE.regs.edi = MACHINE.memory.read::<u32>(0x433f3cu32);
         // 00405899 xor eax,eax
-        MACHINE.regs.eax ^= MACHINE.regs.eax;
+        MACHINE.regs.eax = xor(MACHINE.regs.eax, MACHINE.regs.eax);
         // 0040589b xor ebx,ebx
-        MACHINE.regs.ebx ^= MACHINE.regs.ebx;
+        MACHINE.regs.ebx = xor(MACHINE.regs.ebx, MACHINE.regs.ebx);
         // 0040589d rep stosb
         rep(Rep::REP, stosb);
         // 0040589f mov ds:[433F40h],ebx
         MACHINE.memory.write::<u32>(0x433f40u32, MACHINE.regs.ebx);
         // 004058a5 xor eax,eax
-        MACHINE.regs.eax ^= MACHINE.regs.eax;
+        MACHINE.regs.eax = xor(MACHINE.regs.eax, MACHINE.regs.eax);
         // 004058a7 jmp short 004058B1h
         Cont(x004058b1)
     }
@@ -23979,13 +23983,13 @@ pub fn x004058d8() -> Cont {
         // 004058e6 mov edi,ds:[433F34h]
         MACHINE.regs.edi = MACHINE.memory.read::<u32>(0x433f34u32);
         // 004058ec xor eax,eax
-        MACHINE.regs.eax ^= MACHINE.regs.eax;
+        MACHINE.regs.eax = xor(MACHINE.regs.eax, MACHINE.regs.eax);
         // 004058ee rep stosb
         rep(Rep::REP, stosb);
         // 004058f0 xor edx,edx
-        MACHINE.regs.edx ^= MACHINE.regs.edx;
+        MACHINE.regs.edx = xor(MACHINE.regs.edx, MACHINE.regs.edx);
         // 004058f2 xor ebx,ebx
-        MACHINE.regs.ebx ^= MACHINE.regs.ebx;
+        MACHINE.regs.ebx = xor(MACHINE.regs.ebx, MACHINE.regs.ebx);
         // 004058f4 cmp edx,ds:[433F40h]
         sub(MACHINE.regs.edx, MACHINE.memory.read::<u32>(0x433f40u32));
         // 004058fa jge short 0040593Bh
@@ -24117,7 +24121,7 @@ pub fn x0040593b() -> Cont {
         // 0040593b mov eax,ds:[433F34h]
         MACHINE.regs.eax = MACHINE.memory.read::<u32>(0x433f34u32);
         // 00405940 xor edx,edx
-        MACHINE.regs.edx ^= MACHINE.regs.edx;
+        MACHINE.regs.edx = xor(MACHINE.regs.edx, MACHINE.regs.edx);
         // 00405942 cmp edx,ds:[433F40h]
         sub(MACHINE.regs.edx, MACHINE.memory.read::<u32>(0x433f40u32));
         // 00405948 jge short 00405958h
@@ -24192,9 +24196,9 @@ pub fn x0040595f() -> Cont {
         // 00405968 mov esi,eax
         MACHINE.regs.esi = MACHINE.regs.eax;
         // 0040596a xor eax,eax
-        MACHINE.regs.eax ^= MACHINE.regs.eax;
+        MACHINE.regs.eax = xor(MACHINE.regs.eax, MACHINE.regs.eax);
         // 0040596c xor ecx,ecx
-        MACHINE.regs.ecx ^= MACHINE.regs.ecx;
+        MACHINE.regs.ecx = xor(MACHINE.regs.ecx, MACHINE.regs.ecx);
         // 0040596e mov edx,ds:[433F3Ch]
         MACHINE.regs.edx = MACHINE.memory.read::<u32>(0x433f3cu32);
         // 00405974 lea ebx,[eax+eax]
@@ -24266,7 +24270,7 @@ pub fn x0040596e() -> Cont {
 pub fn x0040598f() -> Cont {
     unsafe {
         // 0040598f xor eax,eax
-        MACHINE.regs.eax ^= MACHINE.regs.eax;
+        MACHINE.regs.eax = xor(MACHINE.regs.eax, MACHINE.regs.eax);
         // 00405991 jmp short 0040599Bh
         Cont(x0040599b)
     }
@@ -24397,7 +24401,7 @@ pub fn x004059e4() -> Cont {
         // 004059e6 mov ds:[433F40h],eax
         MACHINE.memory.write::<u32>(0x433f40u32, MACHINE.regs.eax);
         // 004059eb xor eax,eax
-        MACHINE.regs.eax ^= MACHINE.regs.eax;
+        MACHINE.regs.eax = xor(MACHINE.regs.eax, MACHINE.regs.eax);
         // 004059ed cmp eax,ds:[433F40h]
         sub(MACHINE.regs.eax, MACHINE.memory.read::<u32>(0x433f40u32));
         // 004059f3 jge short 00405A0Eh
@@ -24484,11 +24488,11 @@ pub fn x00405a15() -> Cont {
         // 00405a22 mov edi,ds:[433F24h]
         MACHINE.regs.edi = MACHINE.memory.read::<u32>(0x433f24u32);
         // 00405a28 xor eax,eax
-        MACHINE.regs.eax ^= MACHINE.regs.eax;
+        MACHINE.regs.eax = xor(MACHINE.regs.eax, MACHINE.regs.eax);
         // 00405a2a rep stosb
         rep(Rep::REP, stosb);
         // 00405a2c xor eax,eax
-        MACHINE.regs.eax ^= MACHINE.regs.eax;
+        MACHINE.regs.eax = xor(MACHINE.regs.eax, MACHINE.regs.eax);
         // 00405a2e cmp eax,ds:[433F40h]
         sub(MACHINE.regs.eax, MACHINE.memory.read::<u32>(0x433f40u32));
         // 00405a34 jge short 00405A48h
@@ -24578,7 +24582,7 @@ pub fn x00405a4e() -> Cont {
         // 00405a5b mov eax,ds:[433F2Ch]
         MACHINE.regs.eax = MACHINE.memory.read::<u32>(0x433f2cu32);
         // 00405a60 xor esi,esi
-        MACHINE.regs.esi ^= MACHINE.regs.esi;
+        MACHINE.regs.esi = xor(MACHINE.regs.esi, MACHINE.regs.esi);
         // 00405a62 mov [ebp-4],eax
         MACHINE.memory.write::<u32>(
             MACHINE.regs.ebp.wrapping_add(0xfffffffcu32),
@@ -24843,7 +24847,7 @@ pub fn x00405b0e() -> Cont {
             .memory
             .write::<u32>(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32), 0x0u32);
         // 00405b30 xor ecx,ecx
-        MACHINE.regs.ecx ^= MACHINE.regs.ecx;
+        MACHINE.regs.ecx = xor(MACHINE.regs.ecx, MACHINE.regs.ecx);
         // 00405b32 lea eax,[esi+ecx]
         MACHINE.regs.eax = MACHINE
             .regs
@@ -25019,7 +25023,7 @@ pub fn x00405b9d() -> Cont {
         // 00405ba4 mov edi,ds:[433F24h]
         MACHINE.regs.edi = MACHINE.memory.read::<u32>(0x433f24u32);
         // 00405baa xor eax,eax
-        MACHINE.regs.eax ^= MACHINE.regs.eax;
+        MACHINE.regs.eax = xor(MACHINE.regs.eax, MACHINE.regs.eax);
         // 00405bac lea edx,[esi+ecx]
         MACHINE.regs.edx = MACHINE
             .regs
@@ -25141,7 +25145,7 @@ pub fn x00405bdb() -> Cont {
         // 00405be5 mov esi,edx
         MACHINE.regs.esi = MACHINE.regs.edx;
         // 00405be7 xor ecx,ecx
-        MACHINE.regs.ecx ^= MACHINE.regs.ecx;
+        MACHINE.regs.ecx = xor(MACHINE.regs.ecx, MACHINE.regs.ecx);
         // 00405be9 cmp ecx,[ebx]
         sub(
             MACHINE.regs.ecx,
@@ -25387,7 +25391,7 @@ pub fn x00405c81() -> Cont {
 pub fn x00405c90() -> Cont {
     unsafe {
         // 00405c90 xor ecx,ecx
-        MACHINE.regs.ecx ^= MACHINE.regs.ecx;
+        MACHINE.regs.ecx = xor(MACHINE.regs.ecx, MACHINE.regs.ecx);
         // 00405c92 cmp ecx,[ebx+4]
         sub(
             MACHINE.regs.ecx,
@@ -25481,7 +25485,7 @@ pub fn x00405cc7() -> Cont {
 pub fn x00405cd8() -> Cont {
     unsafe {
         // 00405cd8 xor ecx,ecx
-        MACHINE.regs.ecx ^= MACHINE.regs.ecx;
+        MACHINE.regs.ecx = xor(MACHINE.regs.ecx, MACHINE.regs.ecx);
         // 00405cda cmp ecx,[ebx+4]
         sub(
             MACHINE.regs.ecx,
@@ -25539,7 +25543,7 @@ pub fn x00405cea() -> Cont {
             .memory
             .read::<u32>(MACHINE.regs.ebx.wrapping_add(0x4u32));
         // 00405ced xor eax,eax
-        MACHINE.regs.eax ^= MACHINE.regs.eax;
+        MACHINE.regs.eax = xor(MACHINE.regs.eax, MACHINE.regs.eax);
         // 00405cef dec edx
         MACHINE.regs.edx = dec(MACHINE.regs.edx);
         // 00405cf0 call 004060B3h
@@ -25660,7 +25664,7 @@ pub fn x00405cfb() -> Cont {
             .memory
             .read::<u32>(MACHINE.regs.ebp.wrapping_add(0x14u32));
         // 00405d84 xor edx,edx
-        MACHINE.regs.edx ^= MACHINE.regs.edx;
+        MACHINE.regs.edx = xor(MACHINE.regs.edx, MACHINE.regs.edx);
         // 00405d86 fstp dword ptr [ebp-0Ch]
         todo!();
         // 00405d89 cmp edx,[ebp+1Ch]
@@ -26148,7 +26152,7 @@ pub fn x00405f04() -> Cont {
 pub fn x00405f46() -> Cont {
     unsafe {
         // 00405f46 xor eax,eax
-        MACHINE.regs.eax ^= MACHINE.regs.eax;
+        MACHINE.regs.eax = xor(MACHINE.regs.eax, MACHINE.regs.eax);
         // 00405f48 cmp eax,[edx]
         sub(
             MACHINE.regs.eax,
@@ -26336,7 +26340,7 @@ pub fn x00405f50() -> Cont {
 pub fn x00405fdb() -> Cont {
     unsafe {
         // 00405fdb xor eax,eax
-        MACHINE.regs.eax ^= MACHINE.regs.eax;
+        MACHINE.regs.eax = xor(MACHINE.regs.eax, MACHINE.regs.eax);
         // 00405fdd cmp eax,[edx+4]
         sub(
             MACHINE.regs.eax,
@@ -27250,7 +27254,7 @@ pub fn x004061df() -> Cont {
         // 004061e9 mov esi,edx
         MACHINE.regs.esi = MACHINE.regs.edx;
         // 004061eb xor ebx,ebx
-        MACHINE.regs.ebx ^= MACHINE.regs.ebx;
+        MACHINE.regs.ebx = xor(MACHINE.regs.ebx, MACHINE.regs.ebx);
         // 004061ed cmp ebx,[ecx+4]
         sub(
             MACHINE.regs.ebx,
@@ -27846,7 +27850,7 @@ pub fn x00406305() -> Cont {
             .memory
             .read::<u32>(MACHINE.regs.ebp.wrapping_add(0x28u32));
         // 0040630f xor ecx,ecx
-        MACHINE.regs.ecx ^= MACHINE.regs.ecx;
+        MACHINE.regs.ecx = xor(MACHINE.regs.ecx, MACHINE.regs.ecx);
         // 00406311 cmp ecx,[edx]
         sub(
             MACHINE.regs.ecx,
@@ -28087,7 +28091,7 @@ pub fn x00406452() -> Cont {
         // 00406456 enter 18h,0
         enter(0x18u16, 0);
         // 0040645a xor ecx,ecx
-        MACHINE.regs.ecx ^= MACHINE.regs.ecx;
+        MACHINE.regs.ecx = xor(MACHINE.regs.ecx, MACHINE.regs.ecx);
         // 0040645c jmp short 0040646Bh
         Cont(x0040646b)
     }
@@ -28111,7 +28115,7 @@ pub fn x0040646b() -> Cont {
         // 0040646e imul eax,eax
         imul();
         // 00406471 xor ebx,ebx
-        MACHINE.regs.ebx ^= MACHINE.regs.ebx;
+        MACHINE.regs.ebx = xor(MACHINE.regs.ebx, MACHINE.regs.ebx);
         // 00406473 mov [ebp-0Ch],eax
         MACHINE.memory.write::<u32>(
             MACHINE.regs.ebp.wrapping_add(0xfffffff4u32),
@@ -29067,7 +29071,7 @@ pub fn x00406884() -> Cont {
         // 00406886 push edx
         push(MACHINE.regs.edx);
         // 00406887 xor ebx,ebx
-        MACHINE.regs.ebx ^= MACHINE.regs.ebx;
+        MACHINE.regs.ebx = xor(MACHINE.regs.ebx, MACHINE.regs.ebx);
         // 00406889 push 100h
         push(0x100u32);
         // 0040688e inc ebx
@@ -29306,7 +29310,7 @@ pub fn x00406c2b() -> Cont {
         // 00406c2d push edx
         push(MACHINE.regs.edx);
         // 00406c2e xor ebx,ebx
-        MACHINE.regs.ebx ^= MACHINE.regs.ebx;
+        MACHINE.regs.ebx = xor(MACHINE.regs.ebx, MACHINE.regs.ebx);
         // 00406c30 push 8000h
         push(0x8000u32);
         // 00406c35 push 0
@@ -29384,7 +29388,7 @@ pub fn x00406c53() -> Cont {
         // 00406c5b mov esi,ecx
         MACHINE.regs.esi = MACHINE.regs.ecx;
         // 00406c5d xor edx,edx
-        MACHINE.regs.edx ^= MACHINE.regs.edx;
+        MACHINE.regs.edx = xor(MACHINE.regs.edx, MACHINE.regs.edx);
         // 00406c5f cmp edx,ds:[40C728h]
         sub(MACHINE.regs.edx, MACHINE.memory.read::<u32>(0x40c728u32));
         // 00406c65 jge short 00406C96h
@@ -29404,7 +29408,7 @@ pub fn x00406c5f() -> Cont {
 pub fn x00406c67() -> Cont {
     unsafe {
         // 00406c67 xor eax,eax
-        MACHINE.regs.eax ^= MACHINE.regs.eax;
+        MACHINE.regs.eax = xor(MACHINE.regs.eax, MACHINE.regs.eax);
         // 00406c69 mov ecx,ds:[40C724h]
         MACHINE.regs.ecx = MACHINE.memory.read::<u32>(0x40c724u32);
         // 00406c6f imul ecx,edx
@@ -29546,7 +29550,7 @@ pub fn x00406c9a() -> Cont {
         // 00406c9f enter 14h,0
         enter(0x14u16, 0);
         // 00406ca3 xor edi,edi
-        MACHINE.regs.edi ^= MACHINE.regs.edi;
+        MACHINE.regs.edi = xor(MACHINE.regs.edi, MACHINE.regs.edi);
         // 00406ca5 cmp edi,ds:[40C728h]
         sub(MACHINE.regs.edi, MACHINE.memory.read::<u32>(0x40c728u32));
         // 00406cab jge near ptr 00406E4Dh
@@ -29566,7 +29570,7 @@ pub fn x00406ca5() -> Cont {
 pub fn x00406cb1() -> Cont {
     unsafe {
         // 00406cb1 xor ecx,ecx
-        MACHINE.regs.ecx ^= MACHINE.regs.ecx;
+        MACHINE.regs.ecx = xor(MACHINE.regs.ecx, MACHINE.regs.ecx);
         // 00406cb3 cmp ecx,ds:[40C724h]
         sub(MACHINE.regs.ecx, MACHINE.memory.read::<u32>(0x40c724u32));
         // 00406cb9 jge near ptr 00406E47h
@@ -30165,7 +30169,7 @@ pub fn x00406e4d() -> Cont {
         // 00406e68 rep stosb
         rep(Rep::REP, stosb);
         // 00406e6a xor ecx,ecx
-        MACHINE.regs.ecx ^= MACHINE.regs.ecx;
+        MACHINE.regs.ecx = xor(MACHINE.regs.ecx, MACHINE.regs.ecx);
         // 00406e6c mov [ebp-4],ecx
         MACHINE.memory.write::<u32>(
             MACHINE.regs.ebp.wrapping_add(0xfffffffcu32),
@@ -30492,7 +30496,7 @@ pub fn x00406f4d() -> Cont {
 pub fn x00406f59() -> Cont {
     unsafe {
         // 00406f59 xor ecx,ecx
-        MACHINE.regs.ecx ^= MACHINE.regs.ecx;
+        MACHINE.regs.ecx = xor(MACHINE.regs.ecx, MACHINE.regs.ecx);
         // 00406f5b mov eax,ds:[40C724h]
         MACHINE.regs.eax = MACHINE.memory.read::<u32>(0x40c724u32);
         // 00406f60 imul eax,ds:[40C728h]
@@ -30658,7 +30662,7 @@ pub fn x00406f6f() -> Cont {
 pub fn x0040700a() -> Cont {
     unsafe {
         // 0040700a xor edi,edi
-        MACHINE.regs.edi ^= MACHINE.regs.edi;
+        MACHINE.regs.edi = xor(MACHINE.regs.edi, MACHINE.regs.edi);
         // 0040700c mov [ebp-8],edi
         MACHINE.memory.write::<u32>(
             MACHINE.regs.ebp.wrapping_add(0xfffffff8u32),
@@ -30667,7 +30671,7 @@ pub fn x0040700a() -> Cont {
         // 0040700f imul eax,[ebp-8],140h
         imul();
         // 00407016 xor ecx,ecx
-        MACHINE.regs.ecx ^= MACHINE.regs.ecx;
+        MACHINE.regs.ecx = xor(MACHINE.regs.ecx, MACHINE.regs.ecx);
         // 00407018 mov [ebp-8],eax
         MACHINE.memory.write::<u32>(
             MACHINE.regs.ebp.wrapping_add(0xfffffff8u32),
@@ -30784,7 +30788,7 @@ pub fn x0040700c() -> Cont {
         // 0040700f imul eax,[ebp-8],140h
         imul();
         // 00407016 xor ecx,ecx
-        MACHINE.regs.ecx ^= MACHINE.regs.ecx;
+        MACHINE.regs.ecx = xor(MACHINE.regs.ecx, MACHINE.regs.ecx);
         // 00407018 mov [ebp-8],eax
         MACHINE.memory.write::<u32>(
             MACHINE.regs.ebp.wrapping_add(0xfffffff8u32),
@@ -30896,7 +30900,7 @@ pub fn x0040700f() -> Cont {
         // 0040700f imul eax,[ebp-8],140h
         imul();
         // 00407016 xor ecx,ecx
-        MACHINE.regs.ecx ^= MACHINE.regs.ecx;
+        MACHINE.regs.ecx = xor(MACHINE.regs.ecx, MACHINE.regs.ecx);
         // 00407018 mov [ebp-8],eax
         MACHINE.memory.write::<u32>(
             MACHINE.regs.ebp.wrapping_add(0xfffffff8u32),
@@ -31257,7 +31261,7 @@ pub fn x00407166() -> Cont {
         // 00407171 mov ebx,ds:[433E44h]
         MACHINE.regs.ebx = MACHINE.memory.read::<u32>(0x433e44u32);
         // 00407177 xor eax,eax
-        MACHINE.regs.eax ^= MACHINE.regs.eax;
+        MACHINE.regs.eax = xor(MACHINE.regs.eax, MACHINE.regs.eax);
         // 00407179 call 00406C53h
         call(0x40717e, Cont(x00406c53))
     }
@@ -31270,9 +31274,9 @@ pub fn x0040717e() -> Cont {
         // 00407184 mov ebx,ds:[433E44h]
         MACHINE.regs.ebx = MACHINE.memory.read::<u32>(0x433e44u32);
         // 0040718a xor edx,edx
-        MACHINE.regs.edx ^= MACHINE.regs.edx;
+        MACHINE.regs.edx = xor(MACHINE.regs.edx, MACHINE.regs.edx);
         // 0040718c xor eax,eax
-        MACHINE.regs.eax ^= MACHINE.regs.eax;
+        MACHINE.regs.eax = xor(MACHINE.regs.eax, MACHINE.regs.eax);
         // 0040718e call 00406C53h
         call(0x407193, Cont(x00406c53))
     }
@@ -31302,7 +31306,7 @@ pub fn x004071ab() -> Cont {
         // 004071b6 mov ebx,ds:[433E44h]
         MACHINE.regs.ebx = MACHINE.memory.read::<u32>(0x433e44u32);
         // 004071bc xor edx,edx
-        MACHINE.regs.edx ^= MACHINE.regs.edx;
+        MACHINE.regs.edx = xor(MACHINE.regs.edx, MACHINE.regs.edx);
         // 004071be call 00406C53h
         call(0x4071c3, Cont(x00406c53))
     }
@@ -31721,7 +31725,7 @@ pub fn x0040750b() -> Cont {
         // 00407515 mov edi,edx
         MACHINE.regs.edi = MACHINE.regs.edx;
         // 00407517 xor ecx,ecx
-        MACHINE.regs.ecx ^= MACHINE.regs.ecx;
+        MACHINE.regs.ecx = xor(MACHINE.regs.ecx, MACHINE.regs.ecx);
         // 00407519 mov [ebp-8],esi
         MACHINE.memory.write::<u32>(
             MACHINE.regs.ebp.wrapping_add(0xfffffff8u32),
@@ -33464,7 +33468,7 @@ pub fn x00407bc9() -> Cont {
 pub fn x00407be5() -> Cont {
     unsafe {
         // 00407be5 xor edi,edi
-        MACHINE.regs.edi ^= MACHINE.regs.edi;
+        MACHINE.regs.edi = xor(MACHINE.regs.edi, MACHINE.regs.edi);
         // 00407be7 mov eax,[ebp-0Ch]
         MACHINE.regs.eax = MACHINE
             .memory
@@ -35218,7 +35222,7 @@ pub fn x0040834a() -> Cont {
 pub fn x00408354() -> Cont {
     unsafe {
         // 00408354 xor eax,eax
-        MACHINE.regs.eax ^= MACHINE.regs.eax;
+        MACHINE.regs.eax = xor(MACHINE.regs.eax, MACHINE.regs.eax);
         // 00408356 mov edx,[ebp-48h]
         MACHINE.regs.edx = MACHINE
             .memory
@@ -35471,7 +35475,7 @@ pub fn x0040840b() -> Cont {
             .memory
             .read::<u32>(MACHINE.regs.ebp.wrapping_add(0xffffffb4u32));
         // 0040842b xor eax,eax
-        MACHINE.regs.eax ^= MACHINE.regs.eax;
+        MACHINE.regs.eax = xor(MACHINE.regs.eax, MACHINE.regs.eax);
         // 0040842d shl ecx,2
         MACHINE.regs.ecx = shl(MACHINE.regs.ecx, 0x2u8);
         // 00408430 rep stosb
@@ -35589,7 +35593,7 @@ pub fn x004084a5() -> Cont {
         // 004084b5 push 140h
         push(0x140u32);
         // 004084ba xor ebx,ebx
-        MACHINE.regs.ebx ^= MACHINE.regs.ebx;
+        MACHINE.regs.ebx = xor(MACHINE.regs.ebx, MACHINE.regs.ebx);
         // 004084bc mov ecx,0DCh
         MACHINE.regs.ecx = 0xdcu32;
         // 004084c1 mov eax,[edx*4+4330F8h]
@@ -35627,7 +35631,7 @@ pub fn x004084d9() -> Cont {
         // 004084e8 sub eax,ecx
         MACHINE.regs.eax = sub(MACHINE.regs.eax, MACHINE.regs.ecx);
         // 004084ea xor ebx,ebx
-        MACHINE.regs.ebx ^= MACHINE.regs.ebx;
+        MACHINE.regs.ebx = xor(MACHINE.regs.ebx, MACHINE.regs.ebx);
         // 004084ec mov ecx,eax
         MACHINE.regs.ecx = MACHINE.regs.eax;
         // 004084ee mov eax,edx
@@ -35668,7 +35672,7 @@ pub fn x00408502() -> Cont {
         // 0040851d sub esp,4
         MACHINE.regs.esp = sub(MACHINE.regs.esp, 0x4u32);
         // 00408520 xor eax,eax
-        MACHINE.regs.eax ^= MACHINE.regs.eax;
+        MACHINE.regs.eax = xor(MACHINE.regs.eax, MACHINE.regs.eax);
         // 00408522 fstp dword ptr [esp]
         todo!();
         // 00408525 mov dword ptr [ebp-8],0
@@ -35909,7 +35913,7 @@ pub fn x00408604() -> Cont {
         // 0040861b push eax
         push(MACHINE.regs.eax);
         // 0040861c xor ebx,ebx
-        MACHINE.regs.ebx ^= MACHINE.regs.ebx;
+        MACHINE.regs.ebx = xor(MACHINE.regs.ebx, MACHINE.regs.ebx);
         // 0040861e call 00401A60h
         call(0x408623, Cont(x00401a60))
     }
@@ -35972,7 +35976,7 @@ pub fn x00408641() -> Cont {
 pub fn x00408650() -> Cont {
     unsafe {
         // 00408650 xor ebx,ebx
-        MACHINE.regs.ebx ^= MACHINE.regs.ebx;
+        MACHINE.regs.ebx = xor(MACHINE.regs.ebx, MACHINE.regs.ebx);
         // 00408652 push 40000h
         push(0x40000u32);
         // 00408657 inc ebx
@@ -36162,7 +36166,7 @@ pub fn x004086f8() -> Cont {
         // 00408704 push eax
         push(MACHINE.regs.eax);
         // 00408705 xor ebx,ebx
-        MACHINE.regs.ebx ^= MACHINE.regs.ebx;
+        MACHINE.regs.ebx = xor(MACHINE.regs.ebx, MACHINE.regs.ebx);
         // 00408707 call dword ptr cs:[40B16Ch]
         call(0x40870e, Cont(kernel32::VirtualFree_stdcall))
     }
@@ -36199,7 +36203,7 @@ pub fn x00408725() -> Cont {
 pub fn x0040872a() -> Cont {
     unsafe {
         // 0040872a xor ebx,ebx
-        MACHINE.regs.ebx ^= MACHINE.regs.ebx;
+        MACHINE.regs.ebx = xor(MACHINE.regs.ebx, MACHINE.regs.ebx);
         // 0040872c push 8000h
         push(0x8000u32);
         // 00408731 push 0
@@ -36285,7 +36289,7 @@ pub fn x00408759() -> Cont {
         // 0040875a push dword ptr ds:[40C73Bh]
         push(MACHINE.memory.read::<u32>(0x40c73bu32));
         // 00408760 xor ebx,ebx
-        MACHINE.regs.ebx ^= MACHINE.regs.ebx;
+        MACHINE.regs.ebx = xor(MACHINE.regs.ebx, MACHINE.regs.ebx);
         // 00408762 call 0040A281h
         call(0x408767, Cont(x0040a281))
     }
@@ -36334,7 +36338,7 @@ pub fn x00408793() -> Cont {
 pub fn x00408798() -> Cont {
     unsafe {
         // 00408798 xor eax,eax
-        MACHINE.regs.eax ^= MACHINE.regs.eax;
+        MACHINE.regs.eax = xor(MACHINE.regs.eax, MACHINE.regs.eax);
         // 0040879a mov edx,1
         MACHINE.regs.edx = 0x1u32;
         // 0040879f call 00409EDFh
@@ -36486,7 +36490,7 @@ pub fn x00408823() -> Cont {
 pub fn x0040882c() -> Cont {
     unsafe {
         // 0040882c xor eax,eax
-        MACHINE.regs.eax ^= MACHINE.regs.eax;
+        MACHINE.regs.eax = xor(MACHINE.regs.eax, MACHINE.regs.eax);
         // 0040882e pop edx
         MACHINE.regs.edx = pop();
         // 0040882f pop ecx
@@ -36608,7 +36612,7 @@ pub fn x004089ad() -> Cont {
             .memory
             .write::<u32>(MACHINE.regs.ebp.wrapping_add(0xfffffff4u32), 0x3c490fdbu32);
         // 004089bf xor edx,edx
-        MACHINE.regs.edx ^= MACHINE.regs.edx;
+        MACHINE.regs.edx = xor(MACHINE.regs.edx, MACHINE.regs.edx);
         // 004089c1 jmp short 004089D4h
         Cont(x004089d4)
     }
@@ -36647,7 +36651,7 @@ pub fn x004089d4() -> Cont {
             .memory
             .write::<u32>(MACHINE.regs.ebp.wrapping_add(0xfffffff8u32), 0x0u32);
         // 004089db xor ecx,ecx
-        MACHINE.regs.ecx ^= MACHINE.regs.ecx;
+        MACHINE.regs.ecx = xor(MACHINE.regs.ecx, MACHINE.regs.ecx);
         // 004089dd mov edi,edx
         MACHINE.regs.edi = MACHINE.regs.edx;
         // 004089df imul edi,ecx
@@ -36723,9 +36727,15 @@ pub fn x00408a09() -> Cont {
 pub fn x00408a0e() -> Cont {
     unsafe {
         // 00408a0e xor byte ptr [ebp-5],80h
-        MACHINE
-            .memory
-            .read::<u8>(MACHINE.regs.ebp.wrapping_add(0xfffffffbu32)) ^= 0x80u8;
+        MACHINE.memory.write::<u8>(
+            MACHINE.regs.ebp.wrapping_add(0xfffffffbu32),
+            xor(
+                MACHINE
+                    .memory
+                    .read::<u8>(MACHINE.regs.ebp.wrapping_add(0xfffffffbu32)),
+                0x80u8,
+            ),
+        );
         // 00408a12 jmp short 004089C3h
         Cont(x004089c3)
     }
@@ -36734,7 +36744,7 @@ pub fn x00408a0e() -> Cont {
 pub fn x00408a14() -> Cont {
     unsafe {
         // 00408a14 xor ecx,ecx
-        MACHINE.regs.ecx ^= MACHINE.regs.ecx;
+        MACHINE.regs.ecx = xor(MACHINE.regs.ecx, MACHINE.regs.ecx);
         // 00408a16 jmp short 00408A1Eh
         Cont(x00408a1e)
     }
@@ -36754,7 +36764,7 @@ pub fn x00408a18() -> Cont {
 pub fn x00408a1e() -> Cont {
     unsafe {
         // 00408a1e xor edx,edx
-        MACHINE.regs.edx ^= MACHINE.regs.edx;
+        MACHINE.regs.edx = xor(MACHINE.regs.edx, MACHINE.regs.edx);
         // 00408a20 lea edi,[ecx+ecx]
         MACHINE.regs.edi = MACHINE
             .regs
@@ -36860,7 +36870,7 @@ pub fn x00408a60() -> Cont {
         // 00408a66 mov ecx,800h
         MACHINE.regs.ecx = 0x800u32;
         // 00408a6b xor eax,eax
-        MACHINE.regs.eax ^= MACHINE.regs.eax;
+        MACHINE.regs.eax = xor(MACHINE.regs.eax, MACHINE.regs.eax);
         // 00408a6d rep stosb
         rep(Rep::REP, stosb);
         // 00408a6f leave
@@ -37181,9 +37191,9 @@ pub fn x00408b29() -> Cont {
             .memory
             .write::<u32>(MACHINE.regs.ebp.wrapping_add(0xfffffff8u32), 0x0u32);
         // 00408b35 xor esi,esi
-        MACHINE.regs.esi ^= MACHINE.regs.esi;
+        MACHINE.regs.esi = xor(MACHINE.regs.esi, MACHINE.regs.esi);
         // 00408b37 xor ebx,ebx
-        MACHINE.regs.ebx ^= MACHINE.regs.ebx;
+        MACHINE.regs.ebx = xor(MACHINE.regs.ebx, MACHINE.regs.ebx);
         // 00408b39 cmp ebx,[ebp-2Ch]
         sub(
             MACHINE.regs.ebx,
@@ -37199,9 +37209,9 @@ pub fn x00408b29() -> Cont {
 pub fn x00408b35() -> Cont {
     unsafe {
         // 00408b35 xor esi,esi
-        MACHINE.regs.esi ^= MACHINE.regs.esi;
+        MACHINE.regs.esi = xor(MACHINE.regs.esi, MACHINE.regs.esi);
         // 00408b37 xor ebx,ebx
-        MACHINE.regs.ebx ^= MACHINE.regs.ebx;
+        MACHINE.regs.ebx = xor(MACHINE.regs.ebx, MACHINE.regs.ebx);
         // 00408b39 cmp ebx,[ebp-2Ch]
         sub(
             MACHINE.regs.ebx,
@@ -37478,7 +37488,7 @@ pub fn x00408b4e() -> Cont {
 pub fn x00408bac() -> Cont {
     unsafe {
         // 00408bac xor ebx,ebx
-        MACHINE.regs.ebx ^= MACHINE.regs.ebx;
+        MACHINE.regs.ebx = xor(MACHINE.regs.ebx, MACHINE.regs.ebx);
         // 00408bae cmp ebx,[ebp-2Ch]
         sub(
             MACHINE.regs.ebx,
@@ -37578,7 +37588,7 @@ pub fn x00408bdc() -> Cont {
         // 00408be6 mov edi,edx
         MACHINE.regs.edi = MACHINE.regs.edx;
         // 00408be8 xor edx,edx
-        MACHINE.regs.edx ^= MACHINE.regs.edx;
+        MACHINE.regs.edx = xor(MACHINE.regs.edx, MACHINE.regs.edx);
         // 00408bea jmp short 00408BF2h
         Cont(x00408bf2)
     }
@@ -37602,7 +37612,7 @@ pub fn x00408bf2() -> Cont {
             .memory
             .write::<u32>(MACHINE.regs.ebp.wrapping_add(0xfffffffcu32), 0x0u32);
         // 00408bf9 xor eax,eax
-        MACHINE.regs.eax ^= MACHINE.regs.eax;
+        MACHINE.regs.eax = xor(MACHINE.regs.eax, MACHINE.regs.eax);
         // 00408bfb mov ecx,eax
         MACHINE.regs.ecx = MACHINE.regs.eax;
         // 00408bfd shl ecx,8
@@ -37682,7 +37692,7 @@ pub fn x00408bfb() -> Cont {
 pub fn x00408c24() -> Cont {
     unsafe {
         // 00408c24 xor ecx,ecx
-        MACHINE.regs.ecx ^= MACHINE.regs.ecx;
+        MACHINE.regs.ecx = xor(MACHINE.regs.ecx, MACHINE.regs.ecx);
         // 00408c26 mov eax,ecx
         MACHINE.regs.eax = MACHINE.regs.ecx;
         // 00408c28 shl eax,6
@@ -37891,7 +37901,7 @@ pub fn x00408c9f() -> Cont {
             ),
         );
         // 00408ca2 xor ebx,ebx
-        MACHINE.regs.ebx ^= MACHINE.regs.ebx;
+        MACHINE.regs.ebx = xor(MACHINE.regs.ebx, MACHINE.regs.ebx);
         // 00408ca4 mov eax,ebx
         MACHINE.regs.eax = MACHINE.regs.ebx;
         // 00408ca6 shl eax,7
@@ -37927,7 +37937,7 @@ pub fn x00408ca4() -> Cont {
 pub fn x00408cb8() -> Cont {
     unsafe {
         // 00408cb8 xor edx,edx
-        MACHINE.regs.edx ^= MACHINE.regs.edx;
+        MACHINE.regs.edx = xor(MACHINE.regs.edx, MACHINE.regs.edx);
         // 00408cba jmp short 00408CD4h
         Cont(x00408cd4)
     }
@@ -38085,7 +38095,7 @@ pub fn x00408d0b() -> Cont {
 pub fn x00408d23() -> Cont {
     unsafe {
         // 00408d23 xor edx,edx
-        MACHINE.regs.edx ^= MACHINE.regs.edx;
+        MACHINE.regs.edx = xor(MACHINE.regs.edx, MACHINE.regs.edx);
         // 00408d25 mov eax,edx
         MACHINE.regs.eax = MACHINE.regs.edx;
         // 00408d27 shl eax,2
@@ -38586,7 +38596,7 @@ pub fn x00409178() -> Cont {
             .memory
             .read::<u32>(MACHINE.regs.esi.wrapping_add(0x1cu32));
         // 00409184 xor eax,eax
-        MACHINE.regs.eax ^= MACHINE.regs.eax;
+        MACHINE.regs.eax = xor(MACHINE.regs.eax, MACHINE.regs.eax);
         // 00409186 jecxz 00409191h
         jecxz(Cont(x00409188), Cont(x00409191))
     }
@@ -38628,7 +38638,7 @@ pub fn x00409191() -> Cont {
             .memory
             .read::<u32>(MACHINE.regs.esi.wrapping_add(0x24u32));
         // 00409194 xor eax,eax
-        MACHINE.regs.eax ^= MACHINE.regs.eax;
+        MACHINE.regs.eax = xor(MACHINE.regs.eax, MACHINE.regs.eax);
         // 00409196 jecxz 004091A5h
         jecxz(Cont(x00409198), Cont(x004091a5))
     }
@@ -38692,7 +38702,7 @@ pub fn x004091a5() -> Cont {
 pub fn x004091b7() -> Cont {
     unsafe {
         // 004091b7 xor eax,eax
-        MACHINE.regs.eax ^= MACHINE.regs.eax;
+        MACHINE.regs.eax = xor(MACHINE.regs.eax, MACHINE.regs.eax);
         // 004091b9 inc eax
         MACHINE.regs.eax = inc(MACHINE.regs.eax);
         // 004091ba jmp near ptr 004091C1h
@@ -38703,7 +38713,7 @@ pub fn x004091b7() -> Cont {
 pub fn x004091bf() -> Cont {
     unsafe {
         // 004091bf xor eax,eax
-        MACHINE.regs.eax ^= MACHINE.regs.eax;
+        MACHINE.regs.eax = xor(MACHINE.regs.eax, MACHINE.regs.eax);
         // 004091c1 mov byte ptr [ebp+4B9Fh],0
         MACHINE
             .memory
@@ -38762,7 +38772,7 @@ pub fn x00409eee() -> Cont {
             .memory
             .write::<u32>(MACHINE.regs.ebp.wrapping_add(0x12u32), MACHINE.regs.eax);
         // 00409ef4 xor eax,eax
-        MACHINE.regs.eax ^= MACHINE.regs.eax;
+        MACHINE.regs.eax = xor(MACHINE.regs.eax, MACHINE.regs.eax);
         // 00409ef6 mov [ebp+6],eax
         MACHINE
             .memory
@@ -38772,13 +38782,13 @@ pub fn x00409eee() -> Cont {
         // 00409eff mov ecx,800h
         MACHINE.regs.ecx = 0x800u32;
         // 00409f04 xor eax,eax
-        MACHINE.regs.eax ^= MACHINE.regs.eax;
+        MACHINE.regs.eax = xor(MACHINE.regs.eax, MACHINE.regs.eax);
         // 00409f06 rep stosd
         stosd();
         // 00409f08 lea edi,[ebp+277Bh]
         MACHINE.regs.edi = MACHINE.regs.ebp.wrapping_add(0x277bu32);
         // 00409f0e xor ecx,ecx
-        MACHINE.regs.ecx ^= MACHINE.regs.ecx;
+        MACHINE.regs.ecx = xor(MACHINE.regs.ecx, MACHINE.regs.ecx);
         // 00409f10 mov al,[ebp+ecx+5Bh]
         MACHINE.regs.set_al(
             MACHINE.memory.read::<u8>(
@@ -38836,7 +38846,7 @@ pub fn x00409f10() -> Cont {
 pub fn x00409f23() -> Cont {
     unsafe {
         // 00409f23 xor eax,eax
-        MACHINE.regs.eax ^= MACHINE.regs.eax;
+        MACHINE.regs.eax = xor(MACHINE.regs.eax, MACHINE.regs.eax);
         // 00409f25 mov byte ptr [ebp],40h
         MACHINE
             .memory
@@ -38955,7 +38965,7 @@ pub fn x0040a281() -> Cont {
         // 0040a28c mov edi,ebx
         MACHINE.regs.edi = MACHINE.regs.ebx;
         // 0040a28e xor eax,eax
-        MACHINE.regs.eax ^= MACHINE.regs.eax;
+        MACHINE.regs.eax = xor(MACHINE.regs.eax, MACHINE.regs.eax);
         // 0040a290 rep stosb
         rep(Rep::REP, stosb);
         // 0040a292 lea edi,[ebx+46h]
@@ -39137,7 +39147,7 @@ pub fn x0040a2e8() -> Cont {
 pub fn x0040a300() -> Cont {
     unsafe {
         // 0040a300 xor esi,esi
-        MACHINE.regs.esi ^= MACHINE.regs.esi;
+        MACHINE.regs.esi = xor(MACHINE.regs.esi, MACHINE.regs.esi);
         // 0040a302 push 2
         push(0x2u32);
         // 0040a307 lea edx,[ebx+20h]
@@ -39255,7 +39265,7 @@ pub fn x0040a346() -> Cont {
 pub fn x0040a34a() -> Cont {
     unsafe {
         // 0040a34a xor eax,eax
-        MACHINE.regs.eax ^= MACHINE.regs.eax;
+        MACHINE.regs.eax = xor(MACHINE.regs.eax, MACHINE.regs.eax);
         // 0040a34c inc al
         MACHINE.regs.set_al(inc(MACHINE.regs.get_al()));
         // 0040a34e push eax
