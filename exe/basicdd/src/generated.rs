@@ -19715,7 +19715,7 @@ pub fn x00403e68() -> Cont {
 pub fn x00403e73() -> Cont {
     unsafe {
         // 00403e73 rep movsd
-        movsd();
+        rep(Rep::REP, movsd);
         // 00403e75 jmp dword ptr [edx*4+403F88h]
         indirect(
             MACHINE
@@ -19814,7 +19814,7 @@ pub fn x00403ff3() -> Cont {
         // 00403ff3 std
         std();
         // 00403ff4 rep movsd
-        movsd();
+        rep(Rep::REP, movsd);
         // 00403ff6 cld
         cld();
         // 00403ff7 jmp dword ptr [edx*4+404120h]
@@ -22604,7 +22604,7 @@ pub fn x0040481a() -> Cont {
 pub fn x0040481e() -> Cont {
     unsafe {
         // 0040481e movsx ecx,bl
-        movsx();
+        MACHINE.regs.ecx = MACHINE.regs.get_bl() as i8 as i32 as u32;
         // 00404821 sub ecx,30h
         MACHINE.regs.ecx = sub(MACHINE.regs.ecx, 0x30u32);
         // 00404824 jmp short 00404858h
@@ -22678,7 +22678,7 @@ pub fn x00404845() -> Cont {
 pub fn x00404849() -> Cont {
     unsafe {
         // 00404849 movsx eax,bl
-        movsx();
+        MACHINE.regs.eax = MACHINE.regs.get_bl() as i8 as i32 as u32;
         // 0040484c push eax
         push(MACHINE.regs.eax);
         // 0040484d call 004053B0h
@@ -24798,7 +24798,7 @@ pub fn x00404ca8() -> Cont {
 pub fn x00404cb3() -> Cont {
     unsafe {
         // 00404cb3 rep movsd
-        movsd();
+        rep(Rep::REP, movsd);
         // 00404cb5 jmp dword ptr [edx*4+404DC8h]
         indirect(
             MACHINE
@@ -24897,7 +24897,7 @@ pub fn x00404e33() -> Cont {
         // 00404e33 std
         std();
         // 00404e34 rep movsd
-        movsd();
+        rep(Rep::REP, movsd);
         // 00404e36 cld
         cld();
         // 00404e37 jmp dword ptr [edx*4+404F60h]

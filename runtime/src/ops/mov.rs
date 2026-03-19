@@ -1,15 +1,3 @@
-pub fn movsx() {
-    todo!("movsx");
-}
-
-pub fn movsd() {
-    todo!("movsd");
-}
-
-pub fn movsb() {
-    todo!("movsb");
-}
-
 pub fn movq() {
     todo!("movq");
 }

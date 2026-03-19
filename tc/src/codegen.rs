@@ -83,18 +83,43 @@ fn get_op(instr: &iced_x86::Instruction, n: u32) -> String {
         Register => get_reg(instr.op_register(n)),
         Memory => {
             let addr = gen_addr(instr);
-            let size = match instr.memory_size() {
-                iced_x86::MemorySize::UInt8 => "u8",
-                iced_x86::MemorySize::UInt16 => "u16",
-                iced_x86::MemorySize::UInt32 => "u32",
-                iced_x86::MemorySize::Int32 => "u32",
-                s => todo!("{s:?}"),
-            };
-            format!("MACHINE.memory.read::<{size}>({addr})")
+            let size = mem_size(instr);
+            format!("MACHINE.memory.read::<u{size}>({addr})")
         }
         k => {
             dbg!(instr);
             todo!("{:?}", k);
+        }
+    }
+}
+
+fn reg_size(r: iced_x86::Register) -> usize {
+    use iced_x86::Register::*;
+    match r {
+        AL | AH | BL | BH | CL | CH | DL | DH => 8,
+        AX | BX | CX | DX | SI | DI | BP | SP => 16,
+        EAX | EBX | ECX | EDX | ESI | EDI | ESP | EBP => 32,
+        r => todo!("{r:?}"),
+    }
+}
+
+fn mem_size(instr: &iced_x86::Instruction) -> usize {
+    use iced_x86::MemorySize::*;
+    match instr.memory_size() {
+        UInt8 | Int8 => 8,
+        UInt16 | Int16 => 16,
+        UInt32 | Int32 => 32,
+        s => todo!("{s:?}"),
+    }
+}
+
+fn op_size(instr: &iced_x86::Instruction, n: u32) -> usize {
+    use iced_x86::OpKind::*;
+    match instr.op_kind(n) {
+        Register => reg_size(instr.op_register(n)),
+        Memory => mem_size(instr),
+        k => {
+            todo!("{k:?}");
         }
     }
 }
@@ -105,14 +130,8 @@ fn set_op(instr: &iced_x86::Instruction, n: u32, expr: String) -> String {
         Register => set_reg(instr.op_register(n), expr),
         Memory => {
             let addr = gen_addr(instr);
-            let size = match instr.memory_size() {
-                iced_x86::MemorySize::UInt8 => "u8",
-                iced_x86::MemorySize::UInt16 => "u16",
-                iced_x86::MemorySize::UInt32 => "u32",
-                iced_x86::MemorySize::Int32 => "u32",
-                s => todo!("{s:?}"),
-            };
-            format!("MACHINE.memory.write::<{size}>({addr}, {expr});")
+            let size = mem_size(instr);
+            format!("MACHINE.memory.write::<u{size}>({addr}, {expr});")
         }
         k => {
             dbg!(instr);
@@ -300,11 +319,32 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
                 );
             }
             Movsx => {
-                writeln!(w, "movsx();");
+                let read = format!(
+                    "{read} as i{src} as i{dst} as u{dst}",
+                    read = get_op(instr, 1),
+                    src = op_size(instr, 1),
+                    dst = op_size(instr, 0)
+                );
+                writeln!(w, "{};", set_op(instr, 0, read));
+            }
+
+            Movsb => {
+                assert!(!instr.has_repne_prefix());
+                if instr.has_rep_prefix() {
+                    writeln!(w, "rep(Rep::REP, movsb);");
+                } else {
+                    writeln!(w, "movsb()");
+                }
             }
             Movsd => {
-                writeln!(w, "movsd();");
+                assert!(!instr.has_repne_prefix());
+                if instr.has_rep_prefix() {
+                    writeln!(w, "rep(Rep::REP, movsd);");
+                } else {
+                    writeln!(w, "movsd();");
+                }
             }
+
             Std => {
                 writeln!(w, "std();");
             }
@@ -391,9 +431,7 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
             Bt => {
                 writeln!(w, "bt();");
             }
-            Movsb => {
-                writeln!(w, "movsb();");
-            }
+
             Movq => {
                 writeln!(w, "movq();");
             }

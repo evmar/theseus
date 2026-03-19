@@ -1,5 +1,5 @@
-use crate::{MACHINE, machine::Flags};
 use super::math::sub;
+use crate::{MACHINE, machine::Flags};
 
 /// Width of an operation, e.g. movsb/w/d.
 #[derive(Clone, Copy)]
@@ -72,6 +72,34 @@ pub fn cmpsb() {
         let src = MACHINE.memory.read::<u8>(MACHINE.regs.esi);
         let dst = MACHINE.memory.read::<u8>(MACHINE.regs.edi);
         let _ = sub(src, dst);
+        if MACHINE.regs.flags.contains(Flags::DF) {
+            MACHINE.regs.esi = MACHINE.regs.esi.wrapping_sub(1);
+            MACHINE.regs.edi = MACHINE.regs.edi.wrapping_sub(1);
+        } else {
+            MACHINE.regs.esi = MACHINE.regs.esi.wrapping_add(1);
+            MACHINE.regs.edi = MACHINE.regs.edi.wrapping_add(1);
+        }
+    }
+}
+
+pub fn movsd() {
+    unsafe {
+        let val = MACHINE.memory.read::<u32>(MACHINE.regs.esi);
+        MACHINE.memory.write::<u32>(MACHINE.regs.edi, val);
+        if MACHINE.regs.flags.contains(Flags::DF) {
+            MACHINE.regs.esi = MACHINE.regs.esi.wrapping_sub(4);
+            MACHINE.regs.edi = MACHINE.regs.edi.wrapping_sub(4);
+        } else {
+            MACHINE.regs.esi = MACHINE.regs.esi.wrapping_add(4);
+            MACHINE.regs.edi = MACHINE.regs.edi.wrapping_add(4);
+        }
+    }
+}
+
+pub fn movsb() {
+    unsafe {
+        let val = MACHINE.memory.read::<u8>(MACHINE.regs.esi);
+        MACHINE.memory.write::<u8>(MACHINE.regs.edi, val);
         if MACHINE.regs.flags.contains(Flags::DF) {
             MACHINE.regs.esi = MACHINE.regs.esi.wrapping_sub(1);
             MACHINE.regs.edi = MACHINE.regs.edi.wrapping_sub(1);
