@@ -72,6 +72,10 @@ fn gen_addr(instr: &iced_x86::Instruction) -> String {
         .join("")
 }
 
+fn read_mem(typ: String, addr: String) -> String {
+    format!("MACHINE.memory.read::<{typ}>({addr})")
+}
+
 fn get_op(instr: &iced_x86::Instruction, n: u32) -> String {
     use iced_x86::OpKind::*;
     match instr.op_kind(n) {
@@ -81,11 +85,7 @@ fn get_op(instr: &iced_x86::Instruction, n: u32) -> String {
         Immediate8to32 => format!("{:#x}u32", instr.immediate8to32()),
         Immediate32 => format!("{:#x}u32", instr.immediate32()),
         Register => get_reg(instr.op_register(n)),
-        Memory => {
-            let addr = gen_addr(instr);
-            let size = mem_size(instr);
-            format!("MACHINE.memory.read::<u{size}>({addr})")
-        }
+        Memory => read_mem(format!("u{}", mem_size(instr)), gen_addr(instr)),
         k => {
             dbg!(instr);
             todo!("{:?}", k);
@@ -482,7 +482,17 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
                 );
             }
 
-            Fld | Fmul | Fistp | Fcomp | Fnstsw | Fsub | Fsubp | Fsubrp | Fdivp | Fadd | Fdivrp
+            Fmul => match instr.op_count() {
+                1 => {
+                    writeln!(w, "todo!();");
+                }
+                2 => {
+                    writeln!(w, "todo!();");
+                }
+                _ => todo!(),
+            },
+
+            Fld | Fistp | Fcomp | Fnstsw | Fsub | Fsubp | Fsubrp | Fdivp | Fadd | Fdivrp
             | Fmulp | Fsubr | Fstp | Faddp | Fsqrt | Fld1 | Fxch | Fst | Fchs | Fldz | Fpatan
             | Fdivr | Fsin | Fcos | Fdiv => {
                 writeln!(w, "todo!();");
