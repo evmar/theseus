@@ -5,6 +5,7 @@ edition = "2024"
 
 [dependencies]
 anyhow = "1.0.102"
+argh = { version = "0.1.19", default-features = false, features = ["help"] }
 iced-x86 = "1.21.0"
 pe = { workspace = true }
 winapi = { workspace = true }

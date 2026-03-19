@@ -180,7 +180,7 @@ fn traverse(state: &mut State, start: u32) {
             use iced_x86::Mnemonic::*;
             match instr.mnemonic() {
                 Call | Jmp | Je | Jne | Jb | Js | Jns | Ja | Jae | Jl | Jge | Jecxz | Jg | Jle
-                | Jbe | Loop => {
+                | Jno | Jnp | Jbe | Loop => {
                     match instr.op0_kind() {
                         iced_x86::OpKind::NearBranch32 => queue.push_back(instr.near_branch32()),
                         iced_x86::OpKind::Memory => {
@@ -249,22 +249,37 @@ fn scan_for_pointers(state: &mut State) {
     }
 }
 
-fn run() -> Result<()> {
-    let args = std::env::args().collect::<Vec<_>>();
-    let [_, exe_path, outdir] = args.as_slice() else {
-        println!("usage: {} exe outdir", args[0]);
-        return Ok(());
-    };
+#[derive(argh::FromArgs)]
+/// theseus compiler
+struct Args {
+    /// scan data sections for code-looking pointers
+    #[argh(switch)]
+    scan: bool,
 
-    let buf = std::fs::read(exe_path).unwrap();
+    /// path to input executable
+    #[argh(option)]
+    exe: String,
+
+    /// path to output directory
+    #[argh(option)]
+    out: String,
+}
+
+fn run() -> Result<()> {
+    let args: Args = argh::from_env();
+
+    let buf = std::fs::read(args.exe).unwrap();
     let mut state = State::new(buf);
     state.mem.mappings.alloc("null page".into(), 0, 0x1000);
     state.read_imports();
 
     let ip = AddrImage(state.pe_file.opt_header.AddressOfEntryPoint).to_abs(state.image_base());
     traverse(&mut state, ip.0);
-    scan_for_pointers(&mut state);
+    if args.scan {
+        scan_for_pointers(&mut state);
+    }
 
+    let outdir = &args.out;
     codegen::gen_file(&mut state, outdir)?;
 
     let data_dir = format!("{outdir}/data");
