@@ -3488,7 +3488,7 @@ pub fn x00401d43() -> Cont {
 pub fn x00401d47() -> Cont {
     unsafe {
         // 00401d47 imul eax,edx,0Ch
-        todo!();
+        MACHINE.regs.eax = imul(MACHINE.regs.edx as i32, 0xcu32 as i32) as u32;
         // 00401d4a cmp dword ptr [eax+433C28h],1
         sub(
             MACHINE
@@ -14672,7 +14672,7 @@ pub fn x00403d06() -> Cont {
         // 00403d23 dec edx
         MACHINE.regs.edx = dec(MACHINE.regs.edx);
         // 00403d24 imul edx,140h
-        todo!();
+        MACHINE.regs.edx = imul(MACHINE.regs.edx as i32, 0x140u32 as i32) as u32;
         // 00403d2a mov ecx,[ebp-50h]
         MACHINE.regs.ecx = MACHINE
             .memory
@@ -14714,7 +14714,7 @@ pub fn x00403d06() -> Cont {
         // 00403d4c dec edx
         MACHINE.regs.edx = dec(MACHINE.regs.edx);
         // 00403d4d imul edx,140h
-        todo!();
+        MACHINE.regs.edx = imul(MACHINE.regs.edx as i32, 0x140u32 as i32) as u32;
         // 00403d53 add edx,[ebp-50h]
         MACHINE.regs.edx = add(
             MACHINE.regs.edx,
@@ -14748,7 +14748,12 @@ pub fn x00403d06() -> Cont {
             MACHINE.regs.edx,
         );
         // 00403d70 imul ecx,[ebp-54h],140h
-        todo!();
+        MACHINE.regs.ecx = imul(
+            MACHINE
+                .memory
+                .read::<u32>(MACHINE.regs.ebp.wrapping_add(0xffffffacu32)) as i32,
+            0x140u32 as i32,
+        ) as u32;
         // 00403d77 mov edx,[ebp-50h]
         MACHINE.regs.edx = MACHINE
             .memory
@@ -14778,7 +14783,12 @@ pub fn x00403d06() -> Cont {
             MACHINE.regs.edx,
         );
         // 00403d92 imul edx,[ebp-54h],140h
-        todo!();
+        MACHINE.regs.edx = imul(
+            MACHINE
+                .memory
+                .read::<u32>(MACHINE.regs.ebp.wrapping_add(0xffffffacu32)) as i32,
+            0x140u32 as i32,
+        ) as u32;
         // 00403d99 add edx,[ebp-50h]
         MACHINE.regs.edx = add(
             MACHINE.regs.edx,
@@ -19278,7 +19288,7 @@ pub fn x00404a91() -> Cont {
         // 00404aa4 add eax,0Ah
         MACHINE.regs.eax = add(MACHINE.regs.eax, 0xau32);
         // 00404aa7 imul eax,12Ch
-        todo!();
+        MACHINE.regs.eax = imul(MACHINE.regs.eax as i32, 0x12cu32 as i32) as u32;
         // 00404aad add ecx,8000h
         MACHINE.regs.ecx = add(MACHINE.regs.ecx, 0x8000u32);
         // 00404ab3 add ebx,8000h
@@ -25716,7 +25726,7 @@ pub fn x00405be9() -> Cont {
 pub fn x00405bf1() -> Cont {
     unsafe {
         // 00405bf1 imul edx,ecx,0Ch
-        todo!();
+        MACHINE.regs.edx = imul(MACHINE.regs.ecx as i32, 0xcu32 as i32) as u32;
         // 00405bf4 mov eax,[ebx+38h]
         MACHINE.regs.eax = MACHINE
             .memory
@@ -25759,7 +25769,7 @@ pub fn x00405c14() -> Cont {
             .memory
             .write::<u32>(MACHINE.regs.ebp.wrapping_add(0xfffffff8u32), 0x0u32);
         // 00405c1b imul edi,ecx,0Ch
-        todo!();
+        MACHINE.regs.edi = imul(MACHINE.regs.ecx as i32, 0xcu32 as i32) as u32;
         // 00405c1e mov eax,[ebx+38h]
         MACHINE.regs.eax = MACHINE
             .memory
@@ -25807,7 +25817,7 @@ pub fn x00405c14() -> Cont {
 pub fn x00405c1b() -> Cont {
     unsafe {
         // 00405c1b imul edi,ecx,0Ch
-        todo!();
+        MACHINE.regs.edi = imul(MACHINE.regs.ecx as i32, 0xcu32 as i32) as u32;
         // 00405c1e mov eax,[ebx+38h]
         MACHINE.regs.eax = MACHINE
             .memory
@@ -25972,11 +25982,26 @@ pub fn x00405c97() -> Cont {
         // 00405c9f add eax,edx
         MACHINE.regs.eax = add(MACHINE.regs.eax, MACHINE.regs.edx);
         // 00405ca1 imul edi,[eax+4],0Ch
-        todo!();
+        MACHINE.regs.edi = imul(
+            MACHINE
+                .memory
+                .read::<u32>(MACHINE.regs.eax.wrapping_add(0x4u32)) as i32,
+            0xcu32 as i32,
+        ) as u32;
         // 00405ca5 imul edx,[eax],0Ch
-        todo!();
+        MACHINE.regs.edx = imul(
+            MACHINE
+                .memory
+                .read::<u32>(MACHINE.regs.eax.wrapping_add(0x0u32)) as i32,
+            0xcu32 as i32,
+        ) as u32;
         // 00405ca8 imul eax,[eax+8],0Ch
-        todo!();
+        MACHINE.regs.eax = imul(
+            MACHINE
+                .memory
+                .read::<u32>(MACHINE.regs.eax.wrapping_add(0x8u32)) as i32,
+            0xcu32 as i32,
+        ) as u32;
         // 00405cac mov esi,[ebx+38h]
         MACHINE.regs.esi = MACHINE
             .memory
@@ -26237,7 +26262,7 @@ pub fn x00405d89() -> Cont {
 pub fn x00405d92() -> Cont {
     unsafe {
         // 00405d92 imul eax,edx,0Ch
-        todo!();
+        MACHINE.regs.eax = imul(MACHINE.regs.edx as i32, 0xcu32 as i32) as u32;
         // 00405d95 mov ebx,[esi+eax]
         MACHINE.regs.ebx = MACHINE.memory.read::<u32>(
             MACHINE
@@ -26472,7 +26497,12 @@ pub fn x00405e69() -> Cont {
         // 00405e6c mov ebx,eax
         MACHINE.regs.ebx = MACHINE.regs.eax;
         // 00405e6e imul eax,[eax],0Ch
-        todo!();
+        MACHINE.regs.eax = imul(
+            MACHINE
+                .memory
+                .read::<u32>(MACHINE.regs.eax.wrapping_add(0x0u32)) as i32,
+            0xcu32 as i32,
+        ) as u32;
         // 00405e71 push eax
         push(MACHINE.regs.eax);
         // 00405e72 call 00401A60h
@@ -26487,7 +26517,12 @@ pub fn x00405e77() -> Cont {
             .memory
             .write::<u32>(MACHINE.regs.ebx.wrapping_add(0x30u32), MACHINE.regs.eax);
         // 00405e7a imul eax,[ebx],0Ch
-        todo!();
+        MACHINE.regs.eax = imul(
+            MACHINE
+                .memory
+                .read::<u32>(MACHINE.regs.ebx.wrapping_add(0x0u32)) as i32,
+            0xcu32 as i32,
+        ) as u32;
         // 00405e7d add esp,4
         MACHINE.regs.esp = add(MACHINE.regs.esp, 0x4u32);
         // 00405e80 push eax
@@ -26744,7 +26779,7 @@ pub fn x00405f50() -> Cont {
             MACHINE.regs.ebx,
         );
         // 00405f61 imul ebx,eax,0Ch
-        todo!();
+        MACHINE.regs.ebx = imul(MACHINE.regs.eax as i32, 0xcu32 as i32) as u32;
         // 00405f64 inc ecx
         MACHINE.regs.ecx = inc(MACHINE.regs.ecx);
         // 00405f65 inc ecx
@@ -27869,7 +27904,7 @@ pub fn x004061f6() -> Cont {
             MACHINE.regs.eax,
         );
         // 00406214 imul eax,edx,0Ch
-        todo!();
+        MACHINE.regs.eax = imul(MACHINE.regs.edx as i32, 0xcu32 as i32) as u32;
         // 00406217 mov [ebp-0Ch],edi
         MACHINE.memory.write::<u32>(
             MACHINE.regs.ebp.wrapping_add(0xfffffff4u32),
@@ -27897,7 +27932,12 @@ pub fn x004061f6() -> Cont {
 pub fn x00406229() -> Cont {
     unsafe {
         // 00406229 imul eax,[ebp-0Ch],0Ch
-        todo!();
+        MACHINE.regs.eax = imul(
+            MACHINE
+                .memory
+                .read::<u32>(MACHINE.regs.ebp.wrapping_add(0xfffffff4u32)) as i32,
+            0xcu32 as i32,
+        ) as u32;
         // 0040622d add eax,edi
         MACHINE.regs.eax = add(MACHINE.regs.eax, MACHINE.regs.edi);
         // 0040622f fldz
@@ -27916,7 +27956,12 @@ pub fn x00406229() -> Cont {
 pub fn x00406239() -> Cont {
     unsafe {
         // 00406239 imul eax,[ebp-8],0Ch
-        todo!();
+        MACHINE.regs.eax = imul(
+            MACHINE
+                .memory
+                .read::<u32>(MACHINE.regs.ebp.wrapping_add(0xfffffff8u32)) as i32,
+            0xcu32 as i32,
+        ) as u32;
         // 0040623d fldz
         todo!();
         // 0040623f fcomp dword ptr [edi+eax+8]
@@ -28421,7 +28466,7 @@ pub fn x00406311() -> Cont {
 pub fn x00406319() -> Cont {
     unsafe {
         // 00406319 imul ebx,ecx,0Ch
-        todo!();
+        MACHINE.regs.ebx = imul(MACHINE.regs.ecx as i32, 0xcu32 as i32) as u32;
         // 0040631c mov eax,[edx+38h]
         MACHINE.regs.eax = MACHINE
             .memory
@@ -28489,7 +28534,7 @@ pub fn x00406362() -> Cont {
         // 00406368 fstp dword ptr [ebp-4]
         todo!();
         // 0040636b imul ebx,ecx,0Ch
-        todo!();
+        MACHINE.regs.ebx = imul(MACHINE.regs.ecx as i32, 0xcu32 as i32) as u32;
         // 0040636e fld dword ptr [ebp-4]
         todo!();
         // 00406371 fld dword ptr [ebp-8]
@@ -28548,7 +28593,7 @@ pub fn x00406362() -> Cont {
 pub fn x0040636b() -> Cont {
     unsafe {
         // 0040636b imul ebx,ecx,0Ch
-        todo!();
+        MACHINE.regs.ebx = imul(MACHINE.regs.ecx as i32, 0xcu32 as i32) as u32;
         // 0040636e fld dword ptr [ebp-4]
         todo!();
         // 00406371 fld dword ptr [ebp-8]
@@ -31229,7 +31274,12 @@ pub fn x0040700a() -> Cont {
             MACHINE.regs.edi,
         );
         // 0040700f imul eax,[ebp-8],140h
-        todo!();
+        MACHINE.regs.eax = imul(
+            MACHINE
+                .memory
+                .read::<u32>(MACHINE.regs.ebp.wrapping_add(0xfffffff8u32)) as i32,
+            0x140u32 as i32,
+        ) as u32;
         // 00407016 xor ecx,ecx
         MACHINE.regs.ecx = xor(MACHINE.regs.ecx, MACHINE.regs.ecx);
         // 00407018 mov [ebp-8],eax
@@ -31346,7 +31396,12 @@ pub fn x0040700c() -> Cont {
             MACHINE.regs.edi,
         );
         // 0040700f imul eax,[ebp-8],140h
-        todo!();
+        MACHINE.regs.eax = imul(
+            MACHINE
+                .memory
+                .read::<u32>(MACHINE.regs.ebp.wrapping_add(0xfffffff8u32)) as i32,
+            0x140u32 as i32,
+        ) as u32;
         // 00407016 xor ecx,ecx
         MACHINE.regs.ecx = xor(MACHINE.regs.ecx, MACHINE.regs.ecx);
         // 00407018 mov [ebp-8],eax
@@ -31458,7 +31513,12 @@ pub fn x0040700c() -> Cont {
 pub fn x0040700f() -> Cont {
     unsafe {
         // 0040700f imul eax,[ebp-8],140h
-        todo!();
+        MACHINE.regs.eax = imul(
+            MACHINE
+                .memory
+                .read::<u32>(MACHINE.regs.ebp.wrapping_add(0xfffffff8u32)) as i32,
+            0x140u32 as i32,
+        ) as u32;
         // 00407016 xor ecx,ecx
         MACHINE.regs.ecx = xor(MACHINE.regs.ecx, MACHINE.regs.ecx);
         // 00407018 mov [ebp-8],eax
@@ -32300,7 +32360,7 @@ pub fn x0040750b() -> Cont {
         // 00407528 fsin
         todo!();
         // 0040752a imul eax,ecx,64h
-        todo!();
+        MACHINE.regs.eax = imul(MACHINE.regs.ecx as i32, 0x64u32 as i32) as u32;
         // 0040752d add eax,esi
         MACHINE.regs.eax = add(MACHINE.regs.eax, MACHINE.regs.esi);
         // 0040752f mov [ebp-8],eax
@@ -32357,7 +32417,7 @@ pub fn x00407519() -> Cont {
         // 00407528 fsin
         todo!();
         // 0040752a imul eax,ecx,64h
-        todo!();
+        MACHINE.regs.eax = imul(MACHINE.regs.ecx as i32, 0x64u32 as i32) as u32;
         // 0040752d add eax,esi
         MACHINE.regs.eax = add(MACHINE.regs.eax, MACHINE.regs.esi);
         // 0040752f mov [ebp-8],eax
@@ -32419,7 +32479,7 @@ pub fn x00407568() -> Cont {
         // 0040757a fsin
         todo!();
         // 0040757c imul eax,ecx,0Ah
-        todo!();
+        MACHINE.regs.eax = imul(MACHINE.regs.ecx as i32, 0xau32 as i32) as u32;
         // 0040757f mov [ebp-8],eax
         MACHINE.memory.write::<u32>(
             MACHINE.regs.ebp.wrapping_add(0xfffffff8u32),
@@ -32443,7 +32503,7 @@ pub fn x00407568() -> Cont {
             MACHINE.regs.eax,
         );
         // 00407593 imul eax,ecx,28h
-        todo!();
+        MACHINE.regs.eax = imul(MACHINE.regs.ecx as i32, 0x28u32 as i32) as u32;
         // 00407596 fmul qword ptr ds:[40C558h]
         todo!();
         // 0040759c fadd qword ptr ds:[40C560h]
@@ -33418,7 +33478,10 @@ pub fn x0040784e() -> Cont {
         // 004079e1 add esi,eax
         MACHINE.regs.esi = add(MACHINE.regs.esi, MACHINE.regs.eax);
         // 004079e3 imul eax,ds:[40C724h],3
-        todo!();
+        MACHINE.regs.eax = imul(
+            MACHINE.memory.read::<u32>(0x40c724u32) as i32,
+            0x3u32 as i32,
+        ) as u32;
         // 004079ea mov [ebp-14h],eax
         MACHINE.memory.write::<u32>(
             MACHINE.regs.ebp.wrapping_add(0xffffffecu32),
@@ -36214,7 +36277,10 @@ pub fn x004084d0() -> Cont {
 pub fn x004084d9() -> Cont {
     unsafe {
         // 004084d9 imul ecx,ds:[40C73Fh],5
-        todo!();
+        MACHINE.regs.ecx = imul(
+            MACHINE.memory.read::<u32>(0x40c73fu32) as i32,
+            0x5u32 as i32,
+        ) as u32;
         // 004084e0 mov eax,0FFh
         MACHINE.regs.eax = 0xffu32;
         // 004084e5 mov edx,[ebp-4Ch]

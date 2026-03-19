@@ -118,6 +118,8 @@ fn op_size(instr: &iced_x86::Instruction, n: u32) -> usize {
     match instr.op_kind(n) {
         Register => reg_size(instr.op_register(n)),
         Memory => mem_size(instr),
+        Immediate8to32 => 32,
+        Immediate32 => 32,
         k => {
             todo!("{k:?}");
         }
@@ -383,29 +385,36 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
             Sar => {
                 writeln!(w, "sar();");
             }
-            Imul => match instr.op_count() {
-                2 => {
-                    assert_eq!(op_size(instr, 0), op_size(instr, 1));
-                    let op0 = get_op(instr, 0);
-                    let op1 = get_op(instr, 1);
-                    writeln!(
-                        w,
-                        "{};",
-                        set_op(
-                            instr,
-                            0,
-                            format!(
-                                "imul({op0} as i{size}, {op1} as i{size}) as u{size}",
-                                size = op_size(instr, 0),
-                            )
+            Imul => {
+                let (x, y) = match instr.op_count() {
+                    2 => {
+                        assert_eq!(op_size(instr, 0), op_size(instr, 1));
+                        let op0 = get_op(instr, 0);
+                        let op1 = get_op(instr, 1);
+                        (op0, op1)
+                    }
+                    3 => {
+                        assert_eq!(op_size(instr, 0), op_size(instr, 1));
+                        assert_eq!(op_size(instr, 1), op_size(instr, 2));
+                        let op1 = get_op(instr, 1);
+                        let op2 = get_op(instr, 2);
+                        (op1, op2)
+                    }
+                    _ => todo!(),
+                };
+                writeln!(
+                    w,
+                    "{};",
+                    set_op(
+                        instr,
+                        0,
+                        format!(
+                            "imul({x} as i{size}, {y} as i{size}) as u{size}",
+                            size = op_size(instr, 0),
                         )
-                    );
-                }
-                3 => {
-                    writeln!(w, "todo!();");
-                }
-                _ => todo!(),
-            },
+                    )
+                );
+            }
             Not => {
                 writeln!(w, "not();");
             }
