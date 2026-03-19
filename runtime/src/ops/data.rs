@@ -1,5 +1,5 @@
 use super::math::sub;
-use crate::{MACHINE, machine::Flags};
+use crate::{Flags, MACHINE};
 
 /// Width of an operation, e.g. movsb/w/d.
 #[derive(Clone, Copy)]

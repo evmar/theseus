@@ -1,4 +1,4 @@
-use crate::machine::{Flags, MACHINE};
+use crate::{Flags, MACHINE};
 
 use super::int::Int;
 
