@@ -1,0 +1,108 @@
+#![allow(non_snake_case)]
+#![allow(non_camel_case_types)]
+
+use crate::{c_str, iter_pod};
+
+// http://sandsprite.com/CodeStuff/Understanding_imports.html
+//
+// Code calling a DLL looks like:
+//   call [XXX]
+// where XXX is the address of an entry in the IAT:
+//   IAT: [
+//      AAA,
+//      BBB,  <- XXX might point here
+//   ]
+// On load, each IAT entry points to the function name (as parsed below).
+// The loader overwrites the IAT with the addresses to the loaded DLL.
+
+// The IMAGE_DIRECTORY_ENTRY::IMPORT entry in the PE header points to the
+// Import Directory Table, which contains IMAGE_IMPORT_DESCRIPTOR entries.
+//
+// Each IMAGE_IMPORT_DESCRIPTOR entry corresponds to an imported module,
+// e.g. kernel32.dll.  It contains the address of a Import Lookup Table (ILT)
+// and a Import Address Table (IAT).
+// The ILT contains the names of the imported functions, and the IAT
+// contains the addresses of the imported functions.
+
+/// Import Directory Table (section 6.4.1)
+#[derive(Debug, Default, zerocopy::FromBytes)]
+#[repr(C)]
+pub struct IMAGE_IMPORT_DESCRIPTOR {
+    /// ILT
+    pub OriginalFirstThunk: u32,
+    pub TimeDateStamp: u32,
+    pub ForwarderChain: u32,
+    pub Name: u32,
+    /// IAT
+    pub FirstThunk: u32,
+}
+
+impl IMAGE_IMPORT_DESCRIPTOR {
+    pub fn image_name<'m>(&self, image: &'m [u8]) -> &'m [u8] {
+        c_str(&image[self.Name as usize..])
+    }
+
+    /// Return an iterator over entries in the ILT, which describe imported functions.
+    pub fn ilt<'m>(&self, image: &'m [u8]) -> impl Iterator<Item = ILTEntry> + 'm {
+        // Officially OriginalFirstThunk (ILT) should have all the data, but in one
+        // executable they're all 0, possibly a Borland compiler thing.
+        // Meanwhile, win2k's msvcrt.dll has invalid FirstThunk (IAT) data...
+        let addr = if self.OriginalFirstThunk != 0 {
+            self.OriginalFirstThunk
+        } else {
+            self.FirstThunk
+        };
+
+        // Import Lookup Table (section 6.4.2)
+        iter_pod::<ILTEntry>(&image[addr as usize..]).take_while(|entry| entry.0 != 0)
+    }
+
+    /// Return an iterator over (IAT entry address, ILT entry) pairs.
+    /// IAT addresses are relative to the image base.
+    /// Caller should update IAT address with the address of the function referred to in the entry.
+    pub fn iat_iter<'m>(&self, image: &'m [u8]) -> impl Iterator<Item = (u32, ILTEntry)> {
+        let iat_addr = self.FirstThunk;
+        let iat_iter = (0..).map(move |i| iat_addr + (i * 4));
+        iat_iter.zip(self.ilt(image))
+    }
+}
+
+pub fn read_imports<'m>(buf: &'m [u8]) -> impl Iterator<Item = IMAGE_IMPORT_DESCRIPTOR> {
+    iter_pod::<IMAGE_IMPORT_DESCRIPTOR>(buf).take_while(|desc| desc.Name != 0)
+}
+
+#[repr(transparent)]
+#[derive(zerocopy::FromBytes)]
+pub struct ILTEntry(u32);
+
+#[derive(Debug)]
+pub enum ImportSymbol<'a> {
+    Name(&'a [u8]),
+    Ordinal(u32),
+}
+impl<'a> std::fmt::Display for ImportSymbol<'a> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            ImportSymbol::Name(name) => match std::str::from_utf8(name) {
+                Ok(name) => f.write_str(name),
+                Err(_) => f.write_fmt(format_args!("{:?}", name)),
+            },
+            ImportSymbol::Ordinal(ord) => f.write_fmt(format_args!("{}", ord)),
+        }
+    }
+}
+
+impl ILTEntry {
+    pub fn as_import_symbol(self, image: &[u8]) -> ImportSymbol<'_> {
+        let entry = self.0;
+        if entry & (1 << 31) != 0 {
+            let ordinal = entry & 0xFFFF;
+            ImportSymbol::Ordinal(ordinal)
+        } else {
+            // First two bytes at offset are hint/name table index, used to look up
+            // the name faster in the DLL; we just skip them.
+            let sym_name = c_str(&image[entry as usize + 2..]);
+            ImportSymbol::Name(sym_name)
+        }
+    }
+}
