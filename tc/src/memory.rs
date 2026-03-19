@@ -10,7 +10,7 @@ pub struct Memory {
 
 impl Memory {
     pub fn alloc(&mut self, name: String, addr: AddrAbs, size: u32) {
-        let addr = self.mappings.alloc(name, addr.0, size);
+        let addr = self.mappings.alloc(name, Some(addr.0), size);
         let len = (addr + size) as usize;
         if len > self.data.len() {
             self.data.resize(len, 0);

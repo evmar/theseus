@@ -113,11 +113,11 @@ pub fn init_process() {
     unsafe {
         let mut mappings = state().mappings.borrow_mut();
         let stack_size = 64 << 10;
-        let stack_addr = mappings.alloc("stack".into(), 0, stack_size);
+        let stack_addr = mappings.alloc("stack".into(), None, stack_size);
         MACHINE.regs.esp = stack_addr + stack_size;
         MACHINE.regs.ebp = stack_addr + stack_size;
 
-        let process_data_addr = mappings.alloc("process data".into(), 0, 0x1000);
+        let process_data_addr = mappings.alloc("process data".into(), None, 0x1000);
         drop(mappings);
 
         let buf = &mut MACHINE.memory.bytes[process_data_addr as usize..][..0x1000];

@@ -31,7 +31,10 @@ pub fn HeapAlloc(hHeap: HANDLE, dwFlags: HEAP_FLAGS, dwBytes: u32) -> u32 {
 }
 
 pub fn heap_create(name: String, size: u32) -> Rc<Heap> {
-    let addr = kernel32::state().mappings.borrow_mut().alloc(name, 0, size);
+    let addr = kernel32::state()
+        .mappings
+        .borrow_mut()
+        .alloc(name, None, size);
     let heap = Rc::new(Heap::new(addr, size));
     kernel32::state()
         .heaps

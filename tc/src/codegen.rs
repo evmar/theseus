@@ -463,7 +463,7 @@ use winapi::*;
             &mut w,
             "mappings.alloc(
                 {desc:?}.to_string(),
-                {addr:#x},
+                Some({addr:#x}),
                 {size:#x}
             );\n",
             desc = map.desc,

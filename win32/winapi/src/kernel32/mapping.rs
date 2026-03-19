@@ -40,9 +40,13 @@ pub fn round_to_page(size: u32) -> u32 {
 }
 
 impl Mappings {
-    pub fn alloc(&mut self, desc: String, addr: u32, size: u32) -> u32 {
+    pub fn alloc(&mut self, desc: String, addr: Option<u32>, size: u32) -> u32 {
         let size = round_to_page(size);
-        let mut new_mapping = Mapping { desc, addr, size };
+        let mut new_mapping = Mapping {
+            desc,
+            addr: addr.unwrap_or(0),
+            size,
+        };
 
         let mut prev_end = 0;
         for (i, mapping) in self.mappings.iter().enumerate() {

@@ -96,7 +96,7 @@ impl State {
         let import_funcs_addr =
             self.mem
                 .mappings
-                .alloc("imported functions".into(), 0, self.imports.len() as u32);
+                .alloc("imported functions".into(), None, self.imports.len() as u32);
         let mut imports = self.imports.values_mut().collect::<Vec<_>>();
         imports.sort_by_key(|i| i.iat_addr);
         let mut i = 1;
@@ -270,7 +270,10 @@ fn run() -> Result<()> {
 
     let buf = std::fs::read(args.exe).unwrap();
     let mut state = State::new(buf);
-    state.mem.mappings.alloc("null page".into(), 0, 0x1000);
+    state
+        .mem
+        .mappings
+        .alloc("null page".into(), Some(0), 0x1000);
     state.read_imports();
 
     let ip = AddrImage(state.pe_file.opt_header.AddressOfEntryPoint).to_abs(state.image_base());

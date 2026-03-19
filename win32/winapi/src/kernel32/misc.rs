@@ -94,12 +94,16 @@ pub fn UnhandledExceptionFilter(_ExceptionInfo: u32) -> i32 {
 
 #[win32_derive::dllexport]
 pub fn VirtualAlloc(
-    _lpAddress: u32,
-    _dwSize: u32,
+    lpAddress: u32,
+    dwSize: u32,
     _flAllocationType: u32, /* VIRTUAL_ALLOCATION_TYPE */
     _flProtect: u32,        /* PAGE_PROTECTION_FLAGS */
 ) -> u32 {
-    0
+    assert_eq!(lpAddress, 0);
+    state()
+        .mappings
+        .borrow_mut()
+        .alloc("VirtualAlloc".into(), None, dwSize)
     /*
     let memory = sys.memory_mut();
     if lpAddress != 0 {
