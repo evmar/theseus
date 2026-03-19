@@ -3,19 +3,22 @@
 #![allow(non_upper_case_globals)]
 #![allow(static_mut_refs)]
 
+pub mod bitmap;
 pub mod ddraw;
 mod dllexport;
+pub mod dsound;
 pub mod gdi32;
+mod handle;
 mod heap;
 pub mod kernel32;
-pub mod user32;
-pub use dllexport::{ABIReturn, FromABIParam};
-pub mod bitmap;
-mod handle;
-pub use handle::{HANDLE, Handles};
 mod point;
-pub use point::POINT;
 mod rect;
+pub mod user32;
+pub mod winmm;
+
+pub use dllexport::{ABIReturn, FromABIParam};
+pub use handle::{HANDLE, Handles};
+pub use point::POINT;
 pub use rect::RECT;
 
 macro_rules! stub {
