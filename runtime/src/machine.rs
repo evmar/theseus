@@ -119,6 +119,12 @@ impl Regs {
     pub fn get_bx(&self) -> u16 {
         self.ebx as u16
     }
+    pub fn get_si(&self) -> u16 {
+        self.esi as u16
+    }
+    pub fn get_di(&self) -> u16 {
+        self.edi as u16
+    }
 
     pub fn set_ax(&mut self, val: u16) {
         self.eax = (self.eax & 0xFFFF_0000) | (val as u32);
@@ -131,6 +137,12 @@ impl Regs {
     }
     pub fn set_bx(&mut self, val: u16) {
         self.ebx = (self.ebx & 0xFFFF_0000) | (val as u32);
+    }
+    pub fn set_si(&mut self, val: u16) {
+        self.esi = (self.esi & 0xFFFF_0000) | (val as u32);
+    }
+    pub fn set_di(&mut self, val: u16) {
+        self.edi = (self.edi & 0xFFFF_0000) | (val as u32);
     }
 
     pub fn get_al(&self) -> u8 {
