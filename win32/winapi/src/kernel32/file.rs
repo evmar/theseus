@@ -35,9 +35,11 @@ pub fn WriteFile(
         unsafe {
             let buf = &MACHINE.memory.bytes[lpBuffer as usize..][..nNumberOfBytesToWrite as usize];
             HOST.print(buf);
-            MACHINE
-                .memory
-                .write(lpNumberOfBytesWritten, nNumberOfBytesToWrite);
+            if lpNumberOfBytesWritten != 0 {
+                MACHINE
+                    .memory
+                    .write(lpNumberOfBytesWritten, nNumberOfBytesToWrite);
+            }
         }
     } else {
         todo!("WriteFile(hFile={hFile:x})");

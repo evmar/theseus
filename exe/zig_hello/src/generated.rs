@@ -9,22 +9,22 @@ use winapi::*;
 fn init_mappings() {
     unsafe {
         let mut mappings = kernel32::state().mappings.borrow_mut();
-        mappings.alloc("null page".to_string(), 0x0, 0x1000);
-        mappings.alloc("imported functions".to_string(), 0x1000, 0x1000);
-        mappings.alloc("exe header".to_string(), 0x400000, 0x1000);
+        mappings.alloc("null page".to_string(), Some(0x0), 0x1000);
+        mappings.alloc("imported functions".to_string(), Some(0x1000), 0x1000);
+        mappings.alloc("exe header".to_string(), Some(0x400000), 0x1000);
         let bytes = include_bytes!("../data/00400000.raw").as_slice();
         let out = &mut MACHINE.memory.bytes[0x400000 as usize..][..bytes.len()];
         out.copy_from_slice(bytes);
-        mappings.alloc(".text".to_string(), 0x401000, 0x1000);
+        mappings.alloc(".text".to_string(), Some(0x401000), 0x1000);
         let bytes = include_bytes!("../data/00401000.raw").as_slice();
         let out = &mut MACHINE.memory.bytes[0x401000 as usize..][..bytes.len()];
         out.copy_from_slice(bytes);
-        mappings.alloc(".rdata".to_string(), 0x402000, 0x1000);
+        mappings.alloc(".rdata".to_string(), Some(0x402000), 0x1000);
         let bytes = include_bytes!("../data/00402000.raw").as_slice();
         let out = &mut MACHINE.memory.bytes[0x402000 as usize..][..bytes.len()];
         out.copy_from_slice(bytes);
-        mappings.alloc(".data".to_string(), 0x403000, 0x1000);
-        mappings.alloc(".reloc".to_string(), 0x404000, 0x1000);
+        mappings.alloc(".data".to_string(), Some(0x403000), 0x1000);
+        mappings.alloc(".reloc".to_string(), Some(0x404000), 0x1000);
         let bytes = include_bytes!("../data/00404000.raw").as_slice();
         let out = &mut MACHINE.memory.bytes[0x404000 as usize..][..bytes.len()];
         out.copy_from_slice(bytes);
@@ -86,7 +86,7 @@ pub fn x00401023() -> Cont {
             .memory
             .read::<u32>(MACHINE.regs.eax.wrapping_add(0x30u32));
         // 00401033 xor edi,edi
-        MACHINE.regs.edi ^= MACHINE.regs.edi;
+        MACHINE.regs.edi = xor(MACHINE.regs.edi, MACHINE.regs.edi);
         // 00401035 mov eax,[eax+10h]
         MACHINE.regs.eax = MACHINE
             .memory
@@ -119,7 +119,7 @@ pub fn x0040102a() -> Cont {
             .memory
             .read::<u32>(MACHINE.regs.eax.wrapping_add(0x30u32));
         // 00401033 xor edi,edi
-        MACHINE.regs.edi ^= MACHINE.regs.edi;
+        MACHINE.regs.edi = xor(MACHINE.regs.edi, MACHINE.regs.edi);
         // 00401035 mov eax,[eax+10h]
         MACHINE.regs.eax = MACHINE
             .memory

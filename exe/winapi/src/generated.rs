@@ -9,21 +9,21 @@ use winapi::*;
 fn init_mappings() {
     unsafe {
         let mut mappings = kernel32::state().mappings.borrow_mut();
-        mappings.alloc("null page".to_string(), 0x0, 0x1000);
-        mappings.alloc("imported functions".to_string(), 0x1000, 0x1000);
-        mappings.alloc("exe header".to_string(), 0x400000, 0x1000);
+        mappings.alloc("null page".to_string(), Some(0x0), 0x1000);
+        mappings.alloc("imported functions".to_string(), Some(0x1000), 0x1000);
+        mappings.alloc("exe header".to_string(), Some(0x400000), 0x1000);
         let bytes = include_bytes!("../data/00400000.raw").as_slice();
         let out = &mut MACHINE.memory.bytes[0x400000 as usize..][..bytes.len()];
         out.copy_from_slice(bytes);
-        mappings.alloc(".text".to_string(), 0x401000, 0x1000);
+        mappings.alloc(".text".to_string(), Some(0x401000), 0x1000);
         let bytes = include_bytes!("../data/00401000.raw").as_slice();
         let out = &mut MACHINE.memory.bytes[0x401000 as usize..][..bytes.len()];
         out.copy_from_slice(bytes);
-        mappings.alloc(".rdata".to_string(), 0x402000, 0x1000);
+        mappings.alloc(".rdata".to_string(), Some(0x402000), 0x1000);
         let bytes = include_bytes!("../data/00402000.raw").as_slice();
         let out = &mut MACHINE.memory.bytes[0x402000 as usize..][..bytes.len()];
         out.copy_from_slice(bytes);
-        mappings.alloc(".reloc".to_string(), 0x403000, 0x1000);
+        mappings.alloc(".reloc".to_string(), Some(0x403000), 0x1000);
         let bytes = include_bytes!("../data/00403000.raw").as_slice();
         let out = &mut MACHINE.memory.bytes[0x403000 as usize..][..bytes.len()];
         out.copy_from_slice(bytes);
@@ -41,7 +41,7 @@ pub fn x00401000() -> Cont {
 pub fn x00401008() -> Cont {
     unsafe {
         // 00401008 xor ecx,ecx
-        MACHINE.regs.ecx ^= MACHINE.regs.ecx;
+        MACHINE.regs.ecx = xor(MACHINE.regs.ecx, MACHINE.regs.ecx);
         // 0040100a push ecx
         push(MACHINE.regs.ecx);
         // 0040100b push ecx
