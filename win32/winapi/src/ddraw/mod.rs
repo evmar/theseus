@@ -118,6 +118,11 @@ impl std::fmt::Debug for GUID {
 }
 
 #[win32_derive::dllexport]
+pub fn DirectDrawCreate(_lpGUID: u32, _lplpDD: u32, _pUnkOuter: u32) -> DD {
+    todo!()
+}
+
+#[win32_derive::dllexport]
 pub fn DirectDrawCreateEx(lpGuid: u32, lplpDD: u32, iid: u32, _pUnkOuter: u32) -> DD {
     assert!(lpGuid == 0);
     let iid = if iid == 0 {

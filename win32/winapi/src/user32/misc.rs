@@ -33,3 +33,48 @@ pub fn GetSystemMetrics(nIndex: u32 /* SYSTEM_METRICS_INDEX */) -> i32 {
     ];
     METRICS[nIndex as usize]
 }
+
+#[win32_derive::dllexport]
+pub fn DialogBoxParamA(
+    _hInstance: HINSTANCE,
+    _lpTemplateName: u32,
+    _hWndParent: HWND,
+    _lpDialogFunc: u32, /* DLGPROC */
+    _dwInitParam: u32,
+) -> i32 {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn GetMessageA(_lpMsg: u32, _hWnd: HWND, _wMsgFilterMin: u32, _wMsgFilterMax: u32) -> bool {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn ShowCursor(_bShow: bool) -> i32 {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn CheckDlgButton(
+    _hDlg: HWND,
+    _nIDButton: i32,
+    _uCheck: u32, /* DLG_BUTTON_CHECK_STATE */
+) -> bool {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn EndDialog(_hDlg: HWND, _nResult: i32) -> bool {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn IsDlgButtonChecked(_hDlg: HWND, _nIDButton: i32) -> u32 {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn ValidateRect(_hWnd: HWND, _lpRect: u32) -> bool {
+    todo!()
+}

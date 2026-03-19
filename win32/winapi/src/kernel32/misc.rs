@@ -213,3 +213,30 @@ pub fn RtlUnwind(_TargetFrame: u32, _TargetIp: u32, _ExceptionRecord: u32, _Retu
 pub fn GetTickCount() -> u32 {
     state().start.elapsed().as_millis() as u32
 }
+
+#[win32_derive::dllexport]
+pub fn SetThreadPriority(_hThread: HANDLE, _nPriority: u32 /* THREAD_PRIORITY */) -> bool {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn WaitForSingleObject(_hHandle: HANDLE, _dwMilliseconds: u32) -> u32 /* WAIT_EVENT */ {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn CreateThread(
+    _lpThreadAttributes: u32,
+    _dwStackSize: u32,
+    _lpStartAddress: u32, /* LPTHREAD_START_ROUTINE */
+    _lpParameter: u32,
+    _dwCreationFlags: u32, /* THREAD_CREATION_FLAGS */
+    _lpThreadId: u32,
+) -> HANDLE {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn Sleep(_dwMilliseconds: u32) {
+    todo!()
+}
