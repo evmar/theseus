@@ -135,6 +135,15 @@ pub fn ret(n: u16) -> Cont {
     }
 }
 
+pub fn enter(bytes: u16, nesting: u8) {
+    assert_eq!(nesting, 0);
+    unsafe {
+        super::push(MACHINE.regs.ebp);
+        MACHINE.regs.ebp = MACHINE.regs.esp;
+        MACHINE.regs.esp -= bytes as u32;
+    }
+}
+
 pub fn leave() {
     unsafe {
         MACHINE.regs.esp = MACHINE.regs.ebp;
