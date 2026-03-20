@@ -16,7 +16,7 @@ fn fpu_set_mem(instr: &iced_x86::Instruction, expr: String) -> String {
     // TODO: is this only needed by fst?
     let addr = gen_addr(instr);
     let size = mem_size(instr);
-    format!("MACHINE.memory.write::<f{size}>({addr}, {expr});")
+    format!("m.memory.write::<f{size}>({addr}, {expr});")
 }
 
 fn reg_to_index(register: iced_x86::Register) -> usize {
@@ -35,11 +35,11 @@ fn reg_to_index(register: iced_x86::Register) -> usize {
 }
 
 fn fpu_get_reg(index: usize) -> String {
-    format!("MACHINE.fpu.get({index})")
+    format!("m.fpu.get({index})")
 }
 
 fn fpu_set_reg(index: usize, expr: String) -> String {
-    format!("MACHINE.fpu.set({index}, {expr});")
+    format!("m.fpu.set({index}, {expr});")
 }
 
 fn fpu_get_op(instr: &iced_x86::Instruction, n: u32) -> String {
@@ -73,7 +73,7 @@ pub fn codegen(w: &mut Writer, _state: &State, instr: &iced_x86::Instruction) ->
     match instr.mnemonic() {
         Fld => {
             let expr = fpu_get_op(instr, 0);
-            w.line(format!("MACHINE.fpu.push({expr});"));
+            w.line(format!("m.fpu.push({expr});"));
         }
         Fild => {
             w.line(format!(
@@ -86,7 +86,7 @@ pub fn codegen(w: &mut Writer, _state: &State, instr: &iced_x86::Instruction) ->
         Fst | Fstp => {
             w.line(fpu_set_op(instr, 0, fpu_get_reg(0)));
             if instr.mnemonic() == Fstp {
-                w.line("MACHINE.fpu.pop();");
+                w.line("m.fpu.pop();");
             }
         }
 
@@ -108,7 +108,7 @@ pub fn codegen(w: &mut Writer, _state: &State, instr: &iced_x86::Instruction) ->
                 _ => unreachable!(),
             }
             if instr.mnemonic() == Faddp {
-                w.line("MACHINE.fpu.pop();");
+                w.line("m.fpu.pop();");
             }
         }
 

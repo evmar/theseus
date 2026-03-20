@@ -10,12 +10,12 @@ fn get_reg(r: iced_x86::Register) -> String {
     match r {
         EAX | ECX | EDX | EBX | ESI | EDI | ESP | EBP => {
             let reg = format!("{r:?}").to_ascii_lowercase();
-            format!("MACHINE.regs.{reg}")
+            format!("m.regs.{reg}")
         }
 
         AL | AH | AX | CL | CH | CX | DL | DH | DX | BL | BH | BX | DI | SI => {
             let reg = format!("{r:?}").to_ascii_lowercase();
-            format!("MACHINE.regs.get_{reg}()")
+            format!("m.regs.get_{reg}()")
         }
 
         r => todo!("{r:?}"),
@@ -27,12 +27,12 @@ fn set_reg(r: iced_x86::Register, expr: String) -> String {
     match r {
         EAX | ECX | EDX | EBX | ESI | EDI | ESP | EBP => {
             let reg = format!("{r:?}").to_ascii_lowercase();
-            format!("MACHINE.regs.{reg} = {expr};")
+            format!("m.regs.{reg} = {expr};")
         }
 
         AL | AH | AX | CL | CH | CX | DL | DH | DX | BL | BH | BX | DI | SI => {
             let reg = format!("{r:?}").to_ascii_lowercase();
-            format!("MACHINE.regs.set_{reg}({expr});")
+            format!("m.regs.set_{reg}({expr});")
         }
         r => todo!("{r:?}"),
     }
@@ -42,7 +42,7 @@ pub fn gen_addr(instr: &iced_x86::Instruction) -> String {
     let mut expr = Vec::new();
     match instr.memory_segment() {
         iced_x86::Register::DS | iced_x86::Register::SS => {}
-        iced_x86::Register::FS => expr.push(format!("MACHINE.regs.fs_base")),
+        iced_x86::Register::FS => expr.push(format!("m.regs.fs_base")),
         iced_x86::Register::None => {}
         r => todo!("{r:?}"),
     }
@@ -73,7 +73,7 @@ pub fn gen_addr(instr: &iced_x86::Instruction) -> String {
 }
 
 pub fn read_mem(typ: String, addr: String) -> String {
-    format!("MACHINE.memory.read::<{typ}>({addr})")
+    format!("m.memory.read::<{typ}>({addr})")
 }
 
 pub fn get_op(instr: &iced_x86::Instruction, n: u32) -> String {
@@ -135,7 +135,7 @@ fn set_op(instr: &iced_x86::Instruction, n: u32, expr: String) -> String {
         Memory => {
             let addr = gen_addr(instr);
             let size = mem_size(instr);
-            format!("MACHINE.memory.write::<u{size}>({addr}, {expr});")
+            format!("m.memory.write::<u{size}>({addr}, {expr});")
         }
         k => {
             dbg!(instr);
@@ -169,7 +169,7 @@ fn gen_jmp(state: &State, instr: &iced_x86::Instruction) -> String {
                     );
                 }
             }
-            format!("indirect(MACHINE.memory.read({}))", gen_addr(instr))
+            format!("indirect(m.memory.read({}))", gen_addr(instr))
         }
         iced_x86::OpKind::Register => {
             format!("indirect({})", get_reg(instr.op0_register()))
@@ -205,6 +205,8 @@ fn gen_block(w: &mut Writer, state: &State, ip: AddrAbs, block: &Block) {
     match block {
         Block::Instrs(instrs) => {
             writeln!(w, "pub fn x{:08x}() -> Cont {{", ip.0);
+            w.line("#[allow(unused)]");
+            w.line("let m = unsafe { &mut MACHINE };");
             gen_instrs(w, state, instrs);
             writeln!(w, "}}\n");
         }
@@ -215,8 +217,6 @@ fn gen_block(w: &mut Writer, state: &State, ip: AddrAbs, block: &Block) {
 }
 
 fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
-    writeln!(w, "unsafe {{");
-
     for instr in instrs {
         println!("gen: {}", instr);
         writeln!(w, "// {:08x} {}", AddrAbs(instr.ip32()).0, instr);
@@ -503,7 +503,6 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
             }
         }
     }
-    writeln!(w, "}}");
 }
 
 pub fn gen_file(state: &mut State, outdir: &str) -> Result<()> {
