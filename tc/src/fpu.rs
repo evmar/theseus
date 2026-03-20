@@ -82,6 +82,8 @@ pub fn codegen(w: &mut Writer, _state: &State, instr: &iced_x86::Instruction) ->
                 size = op_size(instr, 0)
             ));
         }
+        Fldz => w.line("m.fpu.push(0.0);"),
+        Fld1 => w.line("m.fpu.push(1.0);"),
 
         Fst | Fstp => {
             w.line(fpu_set_op(instr, 0, fpu_get_reg(0)));
@@ -133,7 +135,7 @@ pub fn codegen(w: &mut Writer, _state: &State, instr: &iced_x86::Instruction) ->
         }
 
         Fistp | Fcomp | Fnstsw | Fsub | Fsubp | Fsubrp | Fdivp | Fdivrp | Fmulp | Fsubr | Fsqrt
-        | Fld1 | Fxch | Fchs | Fldz | Fpatan | Fdivr | Fdiv => {
+        | Fxch | Fchs | Fpatan | Fdivr | Fdiv => {
             w.line("todo!();");
         }
         _ => return false,

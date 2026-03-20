@@ -15296,7 +15296,7 @@ pub fn x00404570() -> Cont {
     // 00404589 fsqrt
     todo!();
     // 0040458b fld1
-    todo!();
+    m.fpu.push(1.0);
     // 0040458d fld dword ptr [edx]
     m.fpu
         .push(m.memory.read::<f32>(m.regs.edx.wrapping_add(0x0u32)) as f64);
@@ -15452,7 +15452,7 @@ pub fn x004045b8() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f32>(0x40c0a8u32) as f64);
     // 0040461e fld1
-    todo!();
+    m.fpu.push(1.0);
     // 00404620 fxch
     todo!();
     // 00404622 fadd qword ptr ds:[40C0B0h]
@@ -15476,7 +15476,7 @@ pub fn x004045b8() -> Cont {
     // 00404637 fmulp
     todo!();
     // 00404639 fldz
-    todo!();
+    m.fpu.push(0.0);
     // 0040463b fxch st(2)
     todo!();
     // 0040463d fstp dword ptr [ebp-0Ch]
@@ -16374,7 +16374,7 @@ pub fn x0040493b() -> Cont {
     // 0040496e fsqrt
     todo!();
     // 00404970 fldz
-    todo!();
+    m.fpu.push(0.0);
     // 00404972 fxch
     todo!();
     // 00404974 call 00408838h
@@ -16453,7 +16453,7 @@ pub fn x004049a1() -> Cont {
     // 004049b2 fdiv qword ptr [ebp-20h]
     todo!();
     // 004049b5 fld1
-    todo!();
+    m.fpu.push(1.0);
     // 004049b7 fpatan
     todo!();
     // 004049b9 fadd qword ptr [ebp-28h]
@@ -16480,7 +16480,7 @@ pub fn x004049af() -> Cont {
     // 004049b2 fdiv qword ptr [ebp-20h]
     todo!();
     // 004049b5 fld1
-    todo!();
+    m.fpu.push(1.0);
     // 004049b7 fpatan
     todo!();
     // 004049b9 fadd qword ptr [ebp-28h]
@@ -24479,7 +24479,7 @@ pub fn x004061f6() -> Cont {
     // 0040621d add eax,edi
     m.regs.eax = add(m.regs.eax, m.regs.edi);
     // 0040621f fldz
-    todo!();
+    m.fpu.push(0.0);
     // 00406221 fcomp dword ptr [eax+8]
     todo!();
     // 00406224 fnstsw ax
@@ -24501,7 +24501,7 @@ pub fn x00406229() -> Cont {
     // 0040622d add eax,edi
     m.regs.eax = add(m.regs.eax, m.regs.edi);
     // 0040622f fldz
-    todo!();
+    m.fpu.push(0.0);
     // 00406231 fcomp dword ptr [eax+8]
     todo!();
     // 00406234 fnstsw ax
@@ -24521,7 +24521,7 @@ pub fn x00406239() -> Cont {
         0xcu32 as i32,
     ) as u32;
     // 0040623d fldz
-    todo!();
+    m.fpu.push(0.0);
     // 0040623f fcomp dword ptr [edi+eax+8]
     todo!();
     // 00406243 fnstsw ax
@@ -26849,7 +26849,7 @@ pub fn x00406d15() -> Cont {
     m.fpu.set(1, m.fpu.get(1) + m.fpu.get(0));
     m.fpu.pop();
     // 00406d4d fld1
-    todo!();
+    m.fpu.push(1.0);
     // 00406d4f faddp
     m.fpu.set(1, m.fpu.get(1) + m.fpu.get(0));
     m.fpu.pop();
@@ -26908,7 +26908,7 @@ pub fn x00406d1c() -> Cont {
     m.fpu.set(1, m.fpu.get(1) + m.fpu.get(0));
     m.fpu.pop();
     // 00406d4d fld1
-    todo!();
+    m.fpu.push(1.0);
     // 00406d4f faddp
     m.fpu.set(1, m.fpu.get(1) + m.fpu.get(0));
     m.fpu.pop();
@@ -35012,7 +35012,7 @@ pub fn x00408cd4() -> Cont {
     m.fpu
         .push(m.memory.read::<f32>(m.regs.eax.wrapping_add(0x2800u32)) as f64);
     // 00408ce6 fld1
-    todo!();
+    m.fpu.push(1.0);
     // 00408ce8 fmulp
     todo!();
     // 00408cea sub esp,4
