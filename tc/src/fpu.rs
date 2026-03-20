@@ -77,7 +77,7 @@ pub fn codegen(w: &mut Writer, _state: &State, instr: &iced_x86::Instruction) ->
         }
         Fild => {
             w.line(format!(
-                "fild({} as i{size} as f64);",
+                "m.fpu.push({} as i{size} as f64);",
                 get_op(instr, 0),
                 size = op_size(instr, 0)
             ));
@@ -116,7 +116,7 @@ pub fn codegen(w: &mut Writer, _state: &State, instr: &iced_x86::Instruction) ->
             1 => {
                 w.line(fpu_set_reg(
                     0,
-                    format!("fmul({}, {})", fpu_get_reg(0), fpu_get_mem(instr)),
+                    format!("{} * {}", fpu_get_reg(0), fpu_get_mem(instr)),
                 ));
             }
             2 => {
