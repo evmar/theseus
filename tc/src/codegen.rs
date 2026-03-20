@@ -440,7 +440,9 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
                 w.line("int3();");
             }
             Xchg => {
-                w.line("xchg();");
+                w.line(format!("let t = {};", get_op(instr, 0)));
+                w.line(set_op(instr, 0, get_op(instr, 1)));
+                w.line(set_op(instr, 1, "t".into()));
             }
             Cmpxchg => {
                 w.line("cmpxchg();");

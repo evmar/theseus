@@ -11545,7 +11545,10 @@ pub fn x00403965() -> Cont {
     // 0040397c mov eax,[esi]
     m.regs.eax = m.memory.read::<u32>(m.regs.esi.wrapping_add(0x0u32));
     // 0040397e xchg eax,[edi]
-    xchg();
+    let t = m.memory.read::<u32>(m.regs.edi.wrapping_add(0x0u32));
+    m.memory
+        .write::<u32>(m.regs.edi.wrapping_add(0x0u32), m.regs.eax);
+    m.regs.eax = t;
     // 00403980 mov [esi],eax
     m.memory
         .write::<u32>(m.regs.esi.wrapping_add(0x0u32), m.regs.eax);
@@ -35800,7 +35803,9 @@ pub fn x0040912a() -> Cont {
     // 0040912b mov ds:[4377B4h],edi
     m.memory.write::<u32>(0x4377b4u32, m.regs.edi);
     // 00409131 xchg ebp,edi
-    xchg();
+    let t = m.regs.edi;
+    m.regs.edi = m.regs.ebp;
+    m.regs.ebp = t;
     // 00409133 mov ebx,4000h
     m.regs.ebx = 0x4000u32;
     // 00409138 dec ebx
@@ -36695,7 +36700,9 @@ pub fn x0040a3a5() -> Cont {
     // 0040a3a5 mov edi,40A3B4h
     m.regs.edi = 0x40a3b4u32;
     // 0040a3aa xchg esi,ebx
-    xchg();
+    let t = m.regs.ebx;
+    m.regs.ebx = m.regs.esi;
+    m.regs.esi = t;
     // 0040a3ac lodsd
     todo!();
     // 0040a3ad call edi
