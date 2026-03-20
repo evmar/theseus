@@ -3,6 +3,48 @@ use crate::{
     codegen::{Writer, gen_addr, get_op, mem_size, op_size, read_mem},
 };
 
+fn fpu_get_mem(instr: &iced_x86::Instruction) -> String {
+    read_mem(format!("f{}", mem_size(instr)), gen_addr(instr))
+}
+
+fn fpu_set_mem(instr: &iced_x86::Instruction, expr: String) -> String {
+    let addr = gen_addr(instr);
+    let size = mem_size(instr);
+    format!("MACHINE.memory.write::<f{size}>({addr}, {expr});")
+}
+
+fn fpu_get_reg(index: usize) -> String {
+    format!("MACHINE.fpu.get({index})")
+}
+
+fn fpu_set_reg(index: usize, expr: String) -> String {
+    format!("MACHINE.fpu.set({index}, {expr});")
+}
+
+fn fpu_get_op(instr: &iced_x86::Instruction, n: u32) -> String {
+    use iced_x86::OpKind::*;
+    match instr.op_kind(n) {
+        Memory => fpu_get_mem(instr),
+        k => todo!("{k:?}"),
+    }
+}
+
+fn fpu_set_op(instr: &iced_x86::Instruction, n: u32, expr: String) -> String {
+    use iced_x86::OpKind::*;
+    match instr.op_kind(n) {
+        Memory => {
+            let size = mem_size(instr);
+            let expr = if size != 64 {
+                format!("{expr} as f{size}")
+            } else {
+                expr
+            };
+            fpu_set_mem(instr, expr)
+        }
+        k => todo!("{k:?}"),
+    }
+}
+
 pub fn codegen(w: &mut Writer, _state: &State, instr: &iced_x86::Instruction) -> bool {
     use iced_x86::Mnemonic::*;
     match instr.mnemonic() {
@@ -15,12 +57,23 @@ pub fn codegen(w: &mut Writer, _state: &State, instr: &iced_x86::Instruction) ->
             );
         }
 
+        Fst => {
+            writeln!(w, "{}", fpu_set_op(instr, 0, fpu_get_reg(0)));
+        }
+        Fstp => {
+            writeln!(w, "{}", fpu_set_op(instr, 0, fpu_get_reg(0)));
+            writeln!(w, "MACHINE.fpu.pop();");
+        }
+
         Fmul => match instr.op_count() {
             1 => {
-                let op1 = read_mem(format!("f{}", mem_size(instr)), gen_addr(instr));
                 writeln!(
                     w,
-                    "MACHINE.fpu.set(0, fmul(MACHINE.fpu.get(0), {op1} as f64));"
+                    "{}",
+                    fpu_set_reg(
+                        0,
+                        format!("fmul({}, {} as f64)", fpu_get_reg(0), fpu_get_mem(instr))
+                    )
                 );
             }
             2 => {
@@ -30,8 +83,8 @@ pub fn codegen(w: &mut Writer, _state: &State, instr: &iced_x86::Instruction) ->
         },
 
         Fld | Fistp | Fcomp | Fnstsw | Fsub | Fsubp | Fsubrp | Fdivp | Fadd | Fdivrp | Fmulp
-        | Fsubr | Fstp | Faddp | Fsqrt | Fld1 | Fxch | Fst | Fchs | Fldz | Fpatan | Fdivr
-        | Fsin | Fcos | Fdiv => {
+        | Fsubr | Faddp | Fsqrt | Fld1 | Fxch | Fchs | Fldz | Fpatan | Fdivr | Fsin | Fcos
+        | Fdiv => {
             writeln!(w, "todo!();");
         }
         _ => return false,
