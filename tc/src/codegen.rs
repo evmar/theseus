@@ -189,6 +189,7 @@ impl Writer {
         self.buf.push('\n');
     }
 
+    #[allow(unused)]
     pub fn todo(&mut self) {
         self.line("todo!();");
     }

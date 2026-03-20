@@ -63,6 +63,7 @@ fn fpu_set_op(instr: &iced_x86::Instruction, n: u32, expr: String) -> String {
             };
             fpu_set_mem(instr, expr)
         }
+        Register => fpu_set_reg(reg_to_index(instr.op_register(n)), expr),
         k => todo!("{k:?}"),
     }
 }
@@ -97,7 +98,14 @@ pub fn codegen(w: &mut Writer, _state: &State, instr: &iced_x86::Instruction) ->
                         format!("{} + {}", fpu_get_reg(0), fpu_get_op(instr, 0)),
                     ));
                 }
-                _ => w.todo(),
+                2 => {
+                    w.line(fpu_set_op(
+                        instr,
+                        0,
+                        format!("{} + {}", fpu_get_op(instr, 0), fpu_get_op(instr, 1)),
+                    ));
+                }
+                _ => unreachable!(),
             }
             if instr.mnemonic() == Faddp {
                 w.line("MACHINE.fpu.pop();");

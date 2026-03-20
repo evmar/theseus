@@ -15353,7 +15353,7 @@ pub fn x00403e21() -> Cont {
             ),
         );
         // 00403e3c faddp
-        todo!();
+        MACHINE.fpu.set(1, MACHINE.fpu.get(1) + MACHINE.fpu.get(0));
         MACHINE.fpu.pop();
         // 00403e3e call 00408838h
         call(0x403e43, Cont(x00408838))
@@ -18273,7 +18273,7 @@ pub fn x00404570() -> Cont {
         // 0040457e fmul st,st(0)
         todo!();
         // 00404580 faddp
-        todo!();
+        MACHINE.fpu.set(1, MACHINE.fpu.get(1) + MACHINE.fpu.get(0));
         MACHINE.fpu.pop();
         // 00404582 fld dword ptr [eax+8]
         MACHINE.fpu.push(
@@ -18284,7 +18284,7 @@ pub fn x00404570() -> Cont {
         // 00404585 fmul st,st(0)
         todo!();
         // 00404587 faddp
-        todo!();
+        MACHINE.fpu.set(1, MACHINE.fpu.get(1) + MACHINE.fpu.get(0));
         MACHINE.fpu.pop();
         // 00404589 fsqrt
         todo!();
@@ -18425,7 +18425,7 @@ pub fn x004045b8() -> Cont {
         // 004045d6 fxch
         todo!();
         // 004045d8 faddp st(4),st
-        todo!();
+        MACHINE.fpu.set(4, MACHINE.fpu.get(4) + MACHINE.fpu.get(0));
         MACHINE.fpu.pop();
         // 004045da fmul dword ptr [ebp+8]
         MACHINE.fpu.set(
@@ -18450,10 +18450,10 @@ pub fn x004045b8() -> Cont {
         // 004045e5 fxch st(3)
         todo!();
         // 004045e7 faddp st(2),st
-        todo!();
+        MACHINE.fpu.set(2, MACHINE.fpu.get(2) + MACHINE.fpu.get(0));
         MACHINE.fpu.pop();
         // 004045e9 faddp st(3),st
-        todo!();
+        MACHINE.fpu.set(3, MACHINE.fpu.get(3) + MACHINE.fpu.get(0));
         MACHINE.fpu.pop();
         // 004045eb fld dword ptr ds:[40C718h]
         MACHINE
@@ -19726,7 +19726,7 @@ pub fn x0040493b() -> Cont {
                 as f64,
         );
         // 00404965 faddp
-        todo!();
+        MACHINE.fpu.set(1, MACHINE.fpu.get(1) + MACHINE.fpu.get(0));
         MACHINE.fpu.pop();
         // 00404967 mov dword ptr [ebp-24h],0
         MACHINE
@@ -20387,7 +20387,7 @@ pub fn x00404b12() -> Cont {
         // 00404b46 shl esi,2
         MACHINE.regs.esi = shl(MACHINE.regs.esi, 0x2u8);
         // 00404b49 faddp
-        todo!();
+        MACHINE.fpu.set(1, MACHINE.fpu.get(1) + MACHINE.fpu.get(0));
         MACHINE.fpu.pop();
         // 00404b4b add esi,eax
         MACHINE.regs.esi = add(MACHINE.regs.esi, MACHINE.regs.eax);
@@ -20536,7 +20536,7 @@ pub fn x00404b75() -> Cont {
         // 00404bb5 fmulp
         todo!();
         // 00404bb7 faddp
-        todo!();
+        MACHINE.fpu.set(1, MACHINE.fpu.get(1) + MACHINE.fpu.get(0));
         MACHINE.fpu.pop();
         // 00404bb9 xor ebx,ebx
         MACHINE.regs.ebx = xor(MACHINE.regs.ebx, MACHINE.regs.ebx);
@@ -24301,7 +24301,7 @@ pub fn x0040548b() -> Cont {
             MACHINE.regs.eax,
         );
         // 004054b5 faddp
-        todo!();
+        MACHINE.fpu.set(1, MACHINE.fpu.get(1) + MACHINE.fpu.get(0));
         MACHINE.fpu.pop();
         // 004054b7 fild dword ptr [ebp-4]
         fild(
@@ -24311,7 +24311,7 @@ pub fn x0040548b() -> Cont {
                 as f64,
         );
         // 004054ba faddp st(2),st
-        todo!();
+        MACHINE.fpu.set(2, MACHINE.fpu.get(2) + MACHINE.fpu.get(0));
         MACHINE.fpu.pop();
         // 004054bc fstp dword ptr [ebp+1Ch]
         MACHINE.memory.write::<f32>(
@@ -24503,7 +24503,7 @@ pub fn x004054f4() -> Cont {
         // 0040551b fxch st(4)
         todo!();
         // 0040551d fadd st,st(3)
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0) + MACHINE.fpu.get(3));
         // 0040551f fxch
         todo!();
         // 00405521 fsub st,st(3)
@@ -24511,7 +24511,7 @@ pub fn x004054f4() -> Cont {
         // 00405523 fxch st(2)
         todo!();
         // 00405525 faddp st(3),st
-        todo!();
+        MACHINE.fpu.set(3, MACHINE.fpu.get(3) + MACHINE.fpu.get(0));
         MACHINE.fpu.pop();
         // 00405527 fxch st(3)
         todo!();
@@ -24567,7 +24567,7 @@ pub fn x004054fb() -> Cont {
         // 0040551b fxch st(4)
         todo!();
         // 0040551d fadd st,st(3)
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0) + MACHINE.fpu.get(3));
         // 0040551f fxch
         todo!();
         // 00405521 fsub st,st(3)
@@ -24575,7 +24575,7 @@ pub fn x004054fb() -> Cont {
         // 00405523 fxch st(2)
         todo!();
         // 00405525 faddp st(3),st
-        todo!();
+        MACHINE.fpu.set(3, MACHINE.fpu.get(3) + MACHINE.fpu.get(0));
         MACHINE.fpu.pop();
         // 00405527 fxch st(3)
         todo!();
@@ -27278,7 +27278,7 @@ pub fn x00405c14() -> Cont {
         // 00405c44 mov eax,ecx
         MACHINE.regs.eax = MACHINE.regs.ecx;
         // 00405c46 faddp
-        todo!();
+        MACHINE.fpu.set(1, MACHINE.fpu.get(1) + MACHINE.fpu.get(0));
         MACHINE.fpu.pop();
         // 00405c48 shl eax,3
         MACHINE.regs.eax = shl(MACHINE.regs.eax, 0x3u8);
@@ -27350,7 +27350,7 @@ pub fn x00405c1b() -> Cont {
         // 00405c44 mov eax,ecx
         MACHINE.regs.eax = MACHINE.regs.ecx;
         // 00405c46 faddp
-        todo!();
+        MACHINE.fpu.set(1, MACHINE.fpu.get(1) + MACHINE.fpu.get(0));
         MACHINE.fpu.pop();
         // 00405c48 shl eax,3
         MACHINE.regs.eax = shl(MACHINE.regs.eax, 0x3u8);
@@ -27421,7 +27421,7 @@ pub fn x00405c50() -> Cont {
                 as f64,
         );
         // 00405c77 faddp
-        todo!();
+        MACHINE.fpu.set(1, MACHINE.fpu.get(1) + MACHINE.fpu.get(0));
         MACHINE.fpu.pop();
         // 00405c79 add edx,[ebp-10h]
         MACHINE.regs.edx = add(
@@ -28010,7 +28010,7 @@ pub fn x00405d92() -> Cont {
         // 00405dd3 fxch st(4)
         todo!();
         // 00405dd5 faddp
-        todo!();
+        MACHINE.fpu.set(1, MACHINE.fpu.get(1) + MACHINE.fpu.get(0));
         MACHINE.fpu.pop();
         // 00405dd7 fxch st(2)
         todo!();
@@ -28112,7 +28112,7 @@ pub fn x00405d92() -> Cont {
         // 00405e0f fxch st(4)
         todo!();
         // 00405e11 faddp st(6),st
-        todo!();
+        MACHINE.fpu.set(6, MACHINE.fpu.get(6) + MACHINE.fpu.get(0));
         MACHINE.fpu.pop();
         // 00405e13 fmul dword ptr [ebp-0Ch]
         MACHINE.fpu.set(
@@ -28137,7 +28137,7 @@ pub fn x00405d92() -> Cont {
         // 00405e1d fxch st(5)
         todo!();
         // 00405e1f faddp st(4),st
-        todo!();
+        MACHINE.fpu.set(4, MACHINE.fpu.get(4) + MACHINE.fpu.get(0));
         MACHINE.fpu.pop();
         // 00405e21 fsubrp st(2),st
         todo!();
@@ -28194,7 +28194,7 @@ pub fn x00405d92() -> Cont {
                 as f64,
         );
         // 00405e44 faddp st(3),st
-        todo!();
+        MACHINE.fpu.set(3, MACHINE.fpu.get(3) + MACHINE.fpu.get(0));
         MACHINE.fpu.pop();
         // 00405e46 mov [ebp-4],ebx
         MACHINE.memory.write::<u32>(
@@ -28224,10 +28224,10 @@ pub fn x00405d92() -> Cont {
                 as f64,
         );
         // 00405e53 faddp st(3),st
-        todo!();
+        MACHINE.fpu.set(3, MACHINE.fpu.get(3) + MACHINE.fpu.get(0));
         MACHINE.fpu.pop();
         // 00405e55 faddp
-        todo!();
+        MACHINE.fpu.set(1, MACHINE.fpu.get(1) + MACHINE.fpu.get(0));
         MACHINE.fpu.pop();
         // 00405e57 fxch
         todo!();
@@ -30498,7 +30498,7 @@ pub fn x00406319() -> Cont {
         // 00406345 fxch
         todo!();
         // 00406347 faddp st(2),st
-        todo!();
+        MACHINE.fpu.set(2, MACHINE.fpu.get(2) + MACHINE.fpu.get(0));
         MACHINE.fpu.pop();
         // 00406349 fst dword ptr [ebp-0Ch]
         MACHINE.memory.write::<f32>(
@@ -30517,7 +30517,7 @@ pub fn x00406319() -> Cont {
             ),
         );
         // 0040634f faddp
-        todo!();
+        MACHINE.fpu.set(1, MACHINE.fpu.get(1) + MACHINE.fpu.get(0));
         MACHINE.fpu.pop();
         // 00406351 fsqrt
         todo!();
@@ -31061,7 +31061,7 @@ pub fn x004064cf() -> Cont {
         // 00406512 shl edx,8
         MACHINE.regs.edx = shl(MACHINE.regs.edx, 0x8u8);
         // 00406515 faddp
-        todo!();
+        MACHINE.fpu.set(1, MACHINE.fpu.get(1) + MACHINE.fpu.get(0));
         MACHINE.fpu.pop();
         // 00406517 add edx,eax
         MACHINE.regs.edx = add(MACHINE.regs.edx, MACHINE.regs.eax);
@@ -31139,7 +31139,7 @@ pub fn x004064d6() -> Cont {
         // 00406512 shl edx,8
         MACHINE.regs.edx = shl(MACHINE.regs.edx, 0x8u8);
         // 00406515 faddp
-        todo!();
+        MACHINE.fpu.set(1, MACHINE.fpu.get(1) + MACHINE.fpu.get(0));
         MACHINE.fpu.pop();
         // 00406517 add edx,eax
         MACHINE.regs.edx = add(MACHINE.regs.edx, MACHINE.regs.eax);
@@ -31248,7 +31248,7 @@ pub fn x00406551() -> Cont {
         // 00406573 fmul st,st(1)
         todo!();
         // 00406575 faddp
-        todo!();
+        MACHINE.fpu.set(1, MACHINE.fpu.get(1) + MACHINE.fpu.get(0));
         MACHINE.fpu.pop();
         // 00406577 mov esi,ecx
         MACHINE.regs.esi = MACHINE.regs.ecx;
@@ -31291,7 +31291,7 @@ pub fn x00406558() -> Cont {
         // 00406573 fmul st,st(1)
         todo!();
         // 00406575 faddp
-        todo!();
+        MACHINE.fpu.set(1, MACHINE.fpu.get(1) + MACHINE.fpu.get(0));
         MACHINE.fpu.pop();
         // 00406577 mov esi,ecx
         MACHINE.regs.esi = MACHINE.regs.ecx;
@@ -32715,12 +32715,12 @@ pub fn x00406d15() -> Cont {
                 as f64,
         );
         // 00406d4b faddp
-        todo!();
+        MACHINE.fpu.set(1, MACHINE.fpu.get(1) + MACHINE.fpu.get(0));
         MACHINE.fpu.pop();
         // 00406d4d fld1
         todo!();
         // 00406d4f faddp
-        todo!();
+        MACHINE.fpu.set(1, MACHINE.fpu.get(1) + MACHINE.fpu.get(0));
         MACHINE.fpu.pop();
         // 00406d51 fsqrt
         todo!();
@@ -32786,12 +32786,12 @@ pub fn x00406d1c() -> Cont {
                 as f64,
         );
         // 00406d4b faddp
-        todo!();
+        MACHINE.fpu.set(1, MACHINE.fpu.get(1) + MACHINE.fpu.get(0));
         MACHINE.fpu.pop();
         // 00406d4d fld1
         todo!();
         // 00406d4f faddp
-        todo!();
+        MACHINE.fpu.set(1, MACHINE.fpu.get(1) + MACHINE.fpu.get(0));
         MACHINE.fpu.pop();
         // 00406d51 fsqrt
         todo!();
@@ -33273,7 +33273,7 @@ pub fn x00406e4d() -> Cont {
                 as f64,
         );
         // 00406eb1 faddp
-        todo!();
+        MACHINE.fpu.set(1, MACHINE.fpu.get(1) + MACHINE.fpu.get(0));
         MACHINE.fpu.pop();
         // 00406eb3 sub esp,4
         MACHINE.regs.esp = sub(MACHINE.regs.esp, 0x4u32);
@@ -33328,7 +33328,7 @@ pub fn x00406e4d() -> Cont {
                 as f64,
         );
         // 00406ee4 faddp
-        todo!();
+        MACHINE.fpu.set(1, MACHINE.fpu.get(1) + MACHINE.fpu.get(0));
         MACHINE.fpu.pop();
         // 00406ee6 sub esp,4
         MACHINE.regs.esp = sub(MACHINE.regs.esp, 0x4u32);
@@ -33383,7 +33383,7 @@ pub fn x00406e4d() -> Cont {
                 as f64,
         );
         // 00406f17 faddp
-        todo!();
+        MACHINE.fpu.set(1, MACHINE.fpu.get(1) + MACHINE.fpu.get(0));
         MACHINE.fpu.pop();
         // 00406f19 sub esp,4
         MACHINE.regs.esp = sub(MACHINE.regs.esp, 0x4u32);
@@ -33425,7 +33425,7 @@ pub fn x00406e4d() -> Cont {
                 as f64,
         );
         // 00406f3f faddp
-        todo!();
+        MACHINE.fpu.set(1, MACHINE.fpu.get(1) + MACHINE.fpu.get(0));
         MACHINE.fpu.pop();
         // 00406f41 sub esp,4
         MACHINE.regs.esp = sub(MACHINE.regs.esp, 0x4u32);
@@ -33515,7 +33515,7 @@ pub fn x00406e6c() -> Cont {
                 as f64,
         );
         // 00406eb1 faddp
-        todo!();
+        MACHINE.fpu.set(1, MACHINE.fpu.get(1) + MACHINE.fpu.get(0));
         MACHINE.fpu.pop();
         // 00406eb3 sub esp,4
         MACHINE.regs.esp = sub(MACHINE.regs.esp, 0x4u32);
@@ -33570,7 +33570,7 @@ pub fn x00406e6c() -> Cont {
                 as f64,
         );
         // 00406ee4 faddp
-        todo!();
+        MACHINE.fpu.set(1, MACHINE.fpu.get(1) + MACHINE.fpu.get(0));
         MACHINE.fpu.pop();
         // 00406ee6 sub esp,4
         MACHINE.regs.esp = sub(MACHINE.regs.esp, 0x4u32);
@@ -33625,7 +33625,7 @@ pub fn x00406e6c() -> Cont {
                 as f64,
         );
         // 00406f17 faddp
-        todo!();
+        MACHINE.fpu.set(1, MACHINE.fpu.get(1) + MACHINE.fpu.get(0));
         MACHINE.fpu.pop();
         // 00406f19 sub esp,4
         MACHINE.regs.esp = sub(MACHINE.regs.esp, 0x4u32);
@@ -33667,7 +33667,7 @@ pub fn x00406e6c() -> Cont {
                 as f64,
         );
         // 00406f3f faddp
-        todo!();
+        MACHINE.fpu.set(1, MACHINE.fpu.get(1) + MACHINE.fpu.get(0));
         MACHINE.fpu.pop();
         // 00406f41 sub esp,4
         MACHINE.regs.esp = sub(MACHINE.regs.esp, 0x4u32);
@@ -35672,7 +35672,7 @@ pub fn x00407568() -> Cont {
                 as f64,
         );
         // 004075a5 faddp
-        todo!();
+        MACHINE.fpu.set(1, MACHINE.fpu.get(1) + MACHINE.fpu.get(0));
         MACHINE.fpu.pop();
         // 004075a7 add eax,esi
         MACHINE.regs.eax = add(MACHINE.regs.eax, MACHINE.regs.esi);
@@ -35689,7 +35689,7 @@ pub fn x00407568() -> Cont {
             MACHINE.regs.eax,
         );
         // 004075af faddp
-        todo!();
+        MACHINE.fpu.set(1, MACHINE.fpu.get(1) + MACHINE.fpu.get(0));
         MACHINE.fpu.pop();
         // 004075b1 fild dword ptr [ebp-4]
         fild(
@@ -35752,7 +35752,7 @@ pub fn x00407568() -> Cont {
             fmul(MACHINE.fpu.get(0), MACHINE.memory.read::<f64>(0x40c578u32)),
         );
         // 004075e8 faddp
-        todo!();
+        MACHINE.fpu.set(1, MACHINE.fpu.get(1) + MACHINE.fpu.get(0));
         MACHINE.fpu.pop();
         // 004075ea fstp dword ptr [ebp-0Ch]
         MACHINE.memory.write::<f32>(
@@ -36179,7 +36179,7 @@ pub fn x004076ea() -> Cont {
                 as f64,
         );
         // 00407727 faddp st(2),st
-        todo!();
+        MACHINE.fpu.set(2, MACHINE.fpu.get(2) + MACHINE.fpu.get(0));
         MACHINE.fpu.pop();
         // 00407729 fmul qword ptr ds:[40C5C8h]
         MACHINE.fpu.set(
@@ -36277,7 +36277,7 @@ pub fn x0040775b() -> Cont {
                 as f64,
         );
         // 00407781 faddp st(2),st
-        todo!();
+        MACHINE.fpu.set(2, MACHINE.fpu.get(2) + MACHINE.fpu.get(0));
         MACHINE.fpu.pop();
         // 00407783 fmul qword ptr ds:[40C5D8h]
         MACHINE.fpu.set(
