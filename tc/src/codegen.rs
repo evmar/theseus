@@ -184,6 +184,11 @@ pub struct Writer {
 }
 
 impl Writer {
+    pub fn line(&mut self, s: impl AsRef<str>) {
+        self.buf.push_str(s.as_ref());
+        self.buf.push('\n');
+    }
+
     pub fn write_fmt(&mut self, args: std::fmt::Arguments) {
         use std::fmt::Write;
         let _ = write!(&mut self.buf, "{args}");

@@ -8,6 +8,7 @@ fn fpu_get_mem(instr: &iced_x86::Instruction) -> String {
 }
 
 fn fpu_set_mem(instr: &iced_x86::Instruction, expr: String) -> String {
+    // TODO: is this only needed by fst?
     let addr = gen_addr(instr);
     let size = mem_size(instr);
     format!("MACHINE.memory.write::<f{size}>({addr}, {expr});")
@@ -49,35 +50,30 @@ pub fn codegen(w: &mut Writer, _state: &State, instr: &iced_x86::Instruction) ->
     use iced_x86::Mnemonic::*;
     match instr.mnemonic() {
         Fild => {
-            writeln!(
-                w,
+            w.line(format!(
                 "fild({} as i{size} as f64);",
                 get_op(instr, 0),
                 size = op_size(instr, 0)
-            );
+            ));
         }
 
         Fst => {
-            writeln!(w, "{}", fpu_set_op(instr, 0, fpu_get_reg(0)));
+            w.line(fpu_set_op(instr, 0, fpu_get_reg(0)));
         }
         Fstp => {
-            writeln!(w, "{}", fpu_set_op(instr, 0, fpu_get_reg(0)));
-            writeln!(w, "MACHINE.fpu.pop();");
+            w.line(fpu_set_op(instr, 0, fpu_get_reg(0)));
+            w.line("MACHINE.fpu.pop();");
         }
 
         Fmul => match instr.op_count() {
             1 => {
-                writeln!(
-                    w,
-                    "{}",
-                    fpu_set_reg(
-                        0,
-                        format!("fmul({}, {} as f64)", fpu_get_reg(0), fpu_get_mem(instr))
-                    )
-                );
+                w.line(fpu_set_reg(
+                    0,
+                    format!("fmul({}, {} as f64)", fpu_get_reg(0), fpu_get_mem(instr)),
+                ));
             }
             2 => {
-                writeln!(w, "todo!();");
+                w.line("todo!();");
             }
             _ => todo!(),
         },
@@ -85,7 +81,7 @@ pub fn codegen(w: &mut Writer, _state: &State, instr: &iced_x86::Instruction) ->
         Fld | Fistp | Fcomp | Fnstsw | Fsub | Fsubp | Fsubrp | Fdivp | Fadd | Fdivrp | Fmulp
         | Fsubr | Faddp | Fsqrt | Fld1 | Fxch | Fchs | Fldz | Fpatan | Fdivr | Fsin | Fcos
         | Fdiv => {
-            writeln!(w, "todo!();");
+            w.line("todo!();");
         }
         _ => return false,
     }
