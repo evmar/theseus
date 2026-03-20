@@ -4,7 +4,12 @@ use crate::{
 };
 
 fn fpu_get_mem(instr: &iced_x86::Instruction) -> String {
-    read_mem(format!("f{}", mem_size(instr)), gen_addr(instr))
+    let size = mem_size(instr);
+    if size != 64 {
+        format!("{} as f64", read_mem(format!("f{size}"), gen_addr(instr)))
+    } else {
+        read_mem(format!("f{}", mem_size(instr)), gen_addr(instr))
+    }
 }
 
 fn fpu_set_mem(instr: &iced_x86::Instruction, expr: String) -> String {
@@ -67,7 +72,7 @@ pub fn codegen(w: &mut Writer, _state: &State, instr: &iced_x86::Instruction) ->
     match instr.mnemonic() {
         Fld => {
             let expr = fpu_get_op(instr, 0);
-            w.line(format!("MACHINE.fpu.push({expr} as f64);"));
+            w.line(format!("MACHINE.fpu.push({expr});"));
         }
         Fild => {
             w.line(format!(
@@ -77,19 +82,33 @@ pub fn codegen(w: &mut Writer, _state: &State, instr: &iced_x86::Instruction) ->
             ));
         }
 
-        Fst => {
+        Fst | Fstp => {
             w.line(fpu_set_op(instr, 0, fpu_get_reg(0)));
+            if instr.mnemonic() == Fstp {
+                w.line("MACHINE.fpu.pop();");
+            }
         }
-        Fstp => {
-            w.line(fpu_set_op(instr, 0, fpu_get_reg(0)));
-            w.line("MACHINE.fpu.pop();");
+
+        Fadd | Faddp => {
+            match instr.op_count() {
+                1 => {
+                    w.line(fpu_set_reg(
+                        0,
+                        format!("{} + {}", fpu_get_reg(0), fpu_get_op(instr, 0)),
+                    ));
+                }
+                _ => w.todo(),
+            }
+            if instr.mnemonic() == Faddp {
+                w.line("MACHINE.fpu.pop();");
+            }
         }
 
         Fmul => match instr.op_count() {
             1 => {
                 w.line(fpu_set_reg(
                     0,
-                    format!("fmul({}, {} as f64)", fpu_get_reg(0), fpu_get_mem(instr)),
+                    format!("fmul({}, {})", fpu_get_reg(0), fpu_get_mem(instr)),
                 ));
             }
             2 => {
@@ -105,8 +124,8 @@ pub fn codegen(w: &mut Writer, _state: &State, instr: &iced_x86::Instruction) ->
             w.line(fpu_set_reg(0, format!("{}.cos()", fpu_get_reg(0))));
         }
 
-        Fistp | Fcomp | Fnstsw | Fsub | Fsubp | Fsubrp | Fdivp | Fadd | Fdivrp | Fmulp | Fsubr
-        | Faddp | Fsqrt | Fld1 | Fxch | Fchs | Fldz | Fpatan | Fdivr | Fdiv => {
+        Fistp | Fcomp | Fnstsw | Fsub | Fsubp | Fsubrp | Fdivp | Fdivrp | Fmulp | Fsubr | Fsqrt
+        | Fld1 | Fxch | Fchs | Fldz | Fpatan | Fdivr | Fdiv => {
             w.line("todo!();");
         }
         _ => return false,

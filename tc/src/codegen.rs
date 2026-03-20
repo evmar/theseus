@@ -189,6 +189,10 @@ impl Writer {
         self.buf.push('\n');
     }
 
+    pub fn todo(&mut self) {
+        self.line("todo!();");
+    }
+
     pub fn write_fmt(&mut self, args: std::fmt::Arguments) {
         use std::fmt::Write;
         let _ = write!(&mut self.buf, "{args}");
