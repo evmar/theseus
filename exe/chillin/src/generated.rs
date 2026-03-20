@@ -19004,7 +19004,7 @@ pub fn x00404718() -> Cont {
         // 00404718 fistp dword ptr [ebp-8]
         todo!();
         // 0040471b fsin
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).sin());
         // 0040471d fmul qword ptr ds:[40C0E8h]
         MACHINE.fpu.set(
             0,
@@ -19043,7 +19043,7 @@ pub fn x00404718() -> Cont {
         );
         MACHINE.fpu.pop();
         // 00404736 fcos
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).cos());
         // 00404738 fmul qword ptr ds:[40C0E8h]
         MACHINE.fpu.set(
             0,
@@ -19081,7 +19081,7 @@ pub fn x00404718() -> Cont {
         );
         MACHINE.fpu.pop();
         // 00404753 fsin
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).sin());
         // 00404755 fmul qword ptr ds:[40C0E8h]
         MACHINE.fpu.set(
             0,
@@ -19122,7 +19122,7 @@ pub fn x00404772() -> Cont {
         // 00404772 fistp dword ptr [ebp-0Ch]
         todo!();
         // 00404775 fcos
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).cos());
         // 00404777 fmul qword ptr ds:[40C0E8h]
         MACHINE.fpu.set(
             0,
@@ -19154,7 +19154,7 @@ pub fn x00404772() -> Cont {
         );
         MACHINE.fpu.pop();
         // 0040478b fsin
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).sin());
         // 0040478d fmul qword ptr ds:[40C0E8h]
         MACHINE.fpu.set(
             0,
@@ -19192,7 +19192,7 @@ pub fn x00404772() -> Cont {
         );
         MACHINE.fpu.pop();
         // 004047a8 fcos
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).cos());
         // 004047aa fmul qword ptr ds:[40C0E8h]
         MACHINE.fpu.set(
             0,
@@ -19465,7 +19465,7 @@ pub fn x004048b8() -> Cont {
             ),
         );
         // 004048ce fsin
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).sin());
         // 004048d0 fmul qword ptr ds:[40C120h]
         MACHINE.fpu.set(
             0,
@@ -19502,7 +19502,7 @@ pub fn x004048c2() -> Cont {
             ),
         );
         // 004048ce fsin
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).sin());
         // 004048d0 fmul qword ptr ds:[40C120h]
         MACHINE.fpu.set(
             0,
@@ -22352,7 +22352,7 @@ pub fn x00404fad() -> Cont {
             ),
         );
         // 00404fc3 fsin
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).sin());
         // 00404fc5 fmul qword ptr ds:[40C140h]
         MACHINE.fpu.set(
             0,
@@ -22384,7 +22384,7 @@ pub fn x00404fad() -> Cont {
         );
         MACHINE.fpu.pop();
         // 00404fd9 fsin
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).sin());
         // 00404fdb mov eax,ds:[40C724h]
         MACHINE.regs.eax = MACHINE.memory.read::<u32>(0x40c724u32);
         // 00404fe0 cdq
@@ -22442,7 +22442,7 @@ pub fn x00404fad() -> Cont {
             MACHINE.regs.eax,
         );
         // 00405009 fsin
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).sin());
         // 0040500b fmul qword ptr ds:[40C140h]
         MACHINE.fpu.set(
             0,
@@ -22474,7 +22474,7 @@ pub fn x00404fad() -> Cont {
         );
         MACHINE.fpu.pop();
         // 0040501f fcos
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).cos());
         // 00405021 fmul qword ptr ds:[40C140h]
         MACHINE.fpu.set(
             0,
@@ -22526,7 +22526,7 @@ pub fn x00404fad() -> Cont {
         );
         MACHINE.fpu.pop();
         // 00405041 fcos
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).cos());
         // 00405043 fmul qword ptr ds:[40C170h]
         MACHINE.fpu.set(
             0,
@@ -22558,7 +22558,7 @@ pub fn x00404fad() -> Cont {
         );
         MACHINE.fpu.pop();
         // 00405057 fsin
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).sin());
         // 00405059 fmul qword ptr ds:[40C170h]
         MACHINE.fpu.set(
             0,
@@ -22598,7 +22598,7 @@ pub fn x00404fad() -> Cont {
         );
         MACHINE.fpu.pop();
         // 0040507a fcos
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).cos());
         // 0040507c fmul qword ptr ds:[40C190h]
         MACHINE.fpu.set(
             0,
@@ -22630,7 +22630,7 @@ pub fn x00404fad() -> Cont {
         );
         MACHINE.fpu.pop();
         // 00405090 fcos
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).cos());
         // 00405092 fmul qword ptr ds:[40C190h]
         MACHINE.fpu.set(
             0,
@@ -22885,7 +22885,7 @@ pub fn x00405107() -> Cont {
         );
         MACHINE.fpu.pop();
         // 0040512d fsin
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).sin());
         // 0040512f fild dword ptr [ebp-4]
         fild(
             MACHINE
@@ -22991,7 +22991,7 @@ pub fn x00405107() -> Cont {
         );
         MACHINE.fpu.pop();
         // 0040516d fcos
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).cos());
         // 0040516f fmul qword ptr [ebp-30h]
         MACHINE.fpu.set(
             0,
@@ -27612,7 +27612,7 @@ pub fn x00405cfb() -> Cont {
             MACHINE.fpu.get(0) as f32,
         );
         // 00405d11 fsin
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).sin());
         // 00405d13 fmul qword ptr ds:[40C1D8h]
         MACHINE.fpu.set(
             0,
@@ -27641,7 +27641,7 @@ pub fn x00405cfb() -> Cont {
         );
         MACHINE.fpu.pop();
         // 00405d24 fcos
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).cos());
         // 00405d26 fmul qword ptr ds:[40C1D8h]
         MACHINE.fpu.set(
             0,
@@ -27679,7 +27679,7 @@ pub fn x00405cfb() -> Cont {
             MACHINE.fpu.get(0) as f32,
         );
         // 00405d3d fsin
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).sin());
         // 00405d3f fmul qword ptr ds:[40C1D8h]
         MACHINE.fpu.set(
             0,
@@ -27708,7 +27708,7 @@ pub fn x00405cfb() -> Cont {
         );
         MACHINE.fpu.pop();
         // 00405d50 fcos
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).cos());
         // 00405d52 fmul qword ptr ds:[40C1D8h]
         MACHINE.fpu.set(
             0,
@@ -27746,7 +27746,7 @@ pub fn x00405cfb() -> Cont {
             MACHINE.fpu.get(0) as f32,
         );
         // 00405d69 fsin
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).sin());
         // 00405d6b fmul qword ptr ds:[40C1D8h]
         MACHINE.fpu.set(
             0,
@@ -27770,7 +27770,7 @@ pub fn x00405cfb() -> Cont {
         );
         MACHINE.fpu.pop();
         // 00405d79 fcos
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).cos());
         // 00405d7b fmul qword ptr ds:[40C1D8h]
         MACHINE.fpu.set(
             0,
@@ -30875,7 +30875,7 @@ pub fn x004064cf() -> Cont {
             ),
         );
         // 004064e5 fcos
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).cos());
         // 004064e7 mov eax,[ebp-8]
         MACHINE.regs.eax = MACHINE
             .memory
@@ -30957,7 +30957,7 @@ pub fn x004064d6() -> Cont {
             ),
         );
         // 004064e5 fcos
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).cos());
         // 004064e7 mov eax,[ebp-8]
         MACHINE.regs.eax = MACHINE
             .memory
@@ -31103,7 +31103,7 @@ pub fn x00406551() -> Cont {
             ),
         );
         // 00406567 fcos
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).cos());
         // 00406569 fchs
         todo!();
         // 0040656b fld qword ptr ds:[40C1F8h]
@@ -31150,7 +31150,7 @@ pub fn x00406558() -> Cont {
             ),
         );
         // 00406567 fcos
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).cos());
         // 00406569 fchs
         todo!();
         // 0040656b fld qword ptr ds:[40C1F8h]
@@ -31254,7 +31254,7 @@ pub fn x004065aa() -> Cont {
             ),
         );
         // 004065c0 fcos
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).cos());
         // 004065c2 fchs
         todo!();
         // 004065c4 fmul qword ptr ds:[40C1F8h]
@@ -31299,7 +31299,7 @@ pub fn x004065b1() -> Cont {
             ),
         );
         // 004065c0 fcos
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).cos());
         // 004065c2 fchs
         todo!();
         // 004065c4 fmul qword ptr ds:[40C1F8h]
@@ -31387,7 +31387,7 @@ pub fn x004065d5() -> Cont {
             ),
         );
         // 0040660d fsin
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).sin());
         // 0040660f mov eax,ecx
         MACHINE.regs.eax = MACHINE.regs.ecx;
         // 00406611 shl eax,2
@@ -31421,7 +31421,7 @@ pub fn x004065d5() -> Cont {
         );
         MACHINE.fpu.pop();
         // 00406625 fsin
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).sin());
         // 00406627 fmul qword ptr [ebp-18h]
         MACHINE.fpu.set(
             0,
@@ -31567,7 +31567,7 @@ pub fn x00406684() -> Cont {
         // 004066de mov dword ptr ds:[433E6Ch],0
         MACHINE.memory.write::<u32>(0x433e6cu32, 0x0u32);
         // 004066e8 fcos
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).cos());
         // 004066ea fmul qword ptr ds:[40C210h]
         MACHINE.fpu.set(
             0,
@@ -31594,7 +31594,7 @@ pub fn x00406684() -> Cont {
             .write::<f32>(0x433e60u32, MACHINE.fpu.get(0) as f32);
         MACHINE.fpu.pop();
         // 00406704 fsin
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).sin());
         // 00406706 fmul qword ptr ds:[40C210h]
         MACHINE.fpu.set(
             0,
@@ -31621,7 +31621,7 @@ pub fn x00406684() -> Cont {
             .write::<f32>(0x433e64u32, MACHINE.fpu.get(0) as f32);
         MACHINE.fpu.pop();
         // 00406720 fcos
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).cos());
         // 00406722 fmul qword ptr ds:[40C210h]
         MACHINE.fpu.set(
             0,
@@ -31655,7 +31655,7 @@ pub fn x00406738() -> Cont {
             ),
         );
         // 00406744 fsin
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).sin());
         // 00406746 fmul qword ptr ds:[40C230h]
         MACHINE.fpu.set(
             0,
@@ -31686,7 +31686,7 @@ pub fn x0040675f() -> Cont {
         // 0040675f fistp dword ptr [ebp-0Ch]
         todo!();
         // 00406762 fsin
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).sin());
         // 00406764 fmul qword ptr ds:[40C230h]
         MACHINE.fpu.set(
             0,
@@ -31717,7 +31717,7 @@ pub fn x0040677d() -> Cont {
         // 0040677d fistp dword ptr [ebp-8]
         todo!();
         // 00406780 fsin
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).sin());
         // 00406782 fmul qword ptr ds:[40C230h]
         MACHINE.fpu.set(
             0,
@@ -32487,7 +32487,7 @@ pub fn x00406cbf() -> Cont {
             MACHINE.regs.edi,
         );
         // 00406cce fsin
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).sin());
         // 00406cd0 fmul qword ptr ds:[40C470h]
         MACHINE.fpu.set(
             0,
@@ -32520,7 +32520,7 @@ pub fn x00406cbf() -> Cont {
         );
         MACHINE.fpu.pop();
         // 00406ce4 fcos
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).cos());
         // 00406ce6 fmul qword ptr ds:[40C470h]
         MACHINE.fpu.set(
             0,
@@ -32767,7 +32767,7 @@ pub fn x00406d58() -> Cont {
             ),
         );
         // 00406d7c fsin
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).sin());
         // 00406d7e fmul qword ptr ds:[40C490h]
         MACHINE.fpu.set(
             0,
@@ -33153,7 +33153,7 @@ pub fn x00406e4d() -> Cont {
         // 00406e81 push 151515h
         push(0x151515u32);
         // 00406e86 fcos
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).cos());
         // 00406e88 mov eax,ds:[40C728h]
         MACHINE.regs.eax = MACHINE.memory.read::<u32>(0x40c728u32);
         // 00406e8d cdq
@@ -33213,7 +33213,7 @@ pub fn x00406e4d() -> Cont {
         );
         MACHINE.fpu.pop();
         // 00406eb9 fsin
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).sin());
         // 00406ebb mov eax,ds:[40C724h]
         MACHINE.regs.eax = MACHINE.memory.read::<u32>(0x40c724u32);
         // 00406ec0 cdq
@@ -33273,7 +33273,7 @@ pub fn x00406e4d() -> Cont {
         );
         MACHINE.fpu.pop();
         // 00406eec fcos
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).cos());
         // 00406eee mov eax,ds:[40C728h]
         MACHINE.regs.eax = MACHINE.memory.read::<u32>(0x40c728u32);
         // 00406ef3 cdq
@@ -33333,7 +33333,7 @@ pub fn x00406e4d() -> Cont {
         );
         MACHINE.fpu.pop();
         // 00406f1f fsin
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).sin());
         // 00406f21 mov eax,ds:[40C724h]
         MACHINE.regs.eax = MACHINE.memory.read::<u32>(0x40c724u32);
         // 00406f26 cdq
@@ -33415,7 +33415,7 @@ pub fn x00406e6c() -> Cont {
         // 00406e81 push 151515h
         push(0x151515u32);
         // 00406e86 fcos
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).cos());
         // 00406e88 mov eax,ds:[40C728h]
         MACHINE.regs.eax = MACHINE.memory.read::<u32>(0x40c728u32);
         // 00406e8d cdq
@@ -33475,7 +33475,7 @@ pub fn x00406e6c() -> Cont {
         );
         MACHINE.fpu.pop();
         // 00406eb9 fsin
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).sin());
         // 00406ebb mov eax,ds:[40C724h]
         MACHINE.regs.eax = MACHINE.memory.read::<u32>(0x40c724u32);
         // 00406ec0 cdq
@@ -33535,7 +33535,7 @@ pub fn x00406e6c() -> Cont {
         );
         MACHINE.fpu.pop();
         // 00406eec fcos
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).cos());
         // 00406eee mov eax,ds:[40C728h]
         MACHINE.regs.eax = MACHINE.memory.read::<u32>(0x40c728u32);
         // 00406ef3 cdq
@@ -33595,7 +33595,7 @@ pub fn x00406e6c() -> Cont {
         );
         MACHINE.fpu.pop();
         // 00406f1f fsin
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).sin());
         // 00406f21 mov eax,ds:[40C724h]
         MACHINE.regs.eax = MACHINE.memory.read::<u32>(0x40c724u32);
         // 00406f26 cdq
@@ -34566,7 +34566,7 @@ pub fn x00407315() -> Cont {
                 .read::<u32>(MACHINE.regs.ebp.wrapping_add(0x14u32)),
         );
         // 00407334 fsin
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).sin());
         // 00407336 fld dword ptr [ebp+0Ch]
         MACHINE.fpu.push(
             MACHINE
@@ -34635,7 +34635,7 @@ pub fn x00407315() -> Cont {
         );
         MACHINE.fpu.pop();
         // 0040735c fcos
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).cos());
         // 0040735e fmul qword ptr [ebp-20h]
         MACHINE.fpu.set(
             0,
@@ -34697,7 +34697,7 @@ pub fn x00407315() -> Cont {
         );
         MACHINE.fpu.pop();
         // 00407381 fsin
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).sin());
         // 00407383 fmul qword ptr [ebp-20h]
         MACHINE.fpu.set(
             0,
@@ -34736,7 +34736,7 @@ pub fn x00407315() -> Cont {
         );
         MACHINE.fpu.pop();
         // 0040739a fcos
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).cos());
         // 0040739c fmul qword ptr [ebp-20h]
         MACHINE.fpu.set(
             0,
@@ -34799,7 +34799,7 @@ pub fn x004073ad() -> Cont {
                 .read::<u32>(MACHINE.regs.ebp.wrapping_add(0x14u32)),
         );
         // 004073c5 fsin
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).sin());
         // 004073c7 fmul qword ptr [ebp-20h]
         MACHINE.fpu.set(
             0,
@@ -34838,7 +34838,7 @@ pub fn x004073ad() -> Cont {
         );
         MACHINE.fpu.pop();
         // 004073de fcos
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).cos());
         // 004073e0 fmul qword ptr [ebp-20h]
         MACHINE.fpu.set(
             0,
@@ -34877,7 +34877,7 @@ pub fn x004073ad() -> Cont {
         );
         MACHINE.fpu.pop();
         // 004073f7 fsin
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).sin());
         // 004073f9 fmul qword ptr [ebp-20h]
         MACHINE.fpu.set(
             0,
@@ -34916,7 +34916,7 @@ pub fn x004073ad() -> Cont {
         );
         MACHINE.fpu.pop();
         // 00407410 fcos
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).cos());
         // 00407412 fmul qword ptr [ebp-20h]
         MACHINE.fpu.set(
             0,
@@ -34979,7 +34979,7 @@ pub fn x00407423() -> Cont {
                 .read::<u32>(MACHINE.regs.ebp.wrapping_add(0x14u32)),
         );
         // 0040743b fsin
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).sin());
         // 0040743d fmul qword ptr [ebp-20h]
         MACHINE.fpu.set(
             0,
@@ -35018,7 +35018,7 @@ pub fn x00407423() -> Cont {
         );
         MACHINE.fpu.pop();
         // 00407454 fcos
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).cos());
         // 00407456 fmul qword ptr [ebp-20h]
         MACHINE.fpu.set(
             0,
@@ -35057,7 +35057,7 @@ pub fn x00407423() -> Cont {
         );
         MACHINE.fpu.pop();
         // 0040746d fsin
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).sin());
         // 0040746f fmul qword ptr [ebp-20h]
         MACHINE.fpu.set(
             0,
@@ -35096,7 +35096,7 @@ pub fn x00407423() -> Cont {
         );
         MACHINE.fpu.pop();
         // 00407486 fcos
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).cos());
         // 00407488 fmul qword ptr [ebp-20h]
         MACHINE.fpu.set(
             0,
@@ -35152,7 +35152,7 @@ pub fn x00407499() -> Cont {
                 .read::<u32>(MACHINE.regs.ebp.wrapping_add(0x14u32)),
         );
         // 004074a8 fsin
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).sin());
         // 004074aa fmul qword ptr [ebp-20h]
         MACHINE.fpu.set(
             0,
@@ -35191,7 +35191,7 @@ pub fn x00407499() -> Cont {
         );
         MACHINE.fpu.pop();
         // 004074c1 fcos
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).cos());
         // 004074c3 fmul qword ptr [ebp-20h]
         MACHINE.fpu.set(
             0,
@@ -35230,7 +35230,7 @@ pub fn x00407499() -> Cont {
         );
         MACHINE.fpu.pop();
         // 004074da fsin
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).sin());
         // 004074dc fmul qword ptr [ebp-20h]
         MACHINE.fpu.set(
             0,
@@ -35269,7 +35269,7 @@ pub fn x00407499() -> Cont {
         );
         MACHINE.fpu.pop();
         // 004074f3 fcos
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).cos());
         // 004074f5 fmul qword ptr [ebp-20h]
         MACHINE.fpu.set(
             0,
@@ -35351,7 +35351,7 @@ pub fn x0040750b() -> Cont {
             ),
         );
         // 00407528 fsin
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).sin());
         // 0040752a imul eax,ecx,64h
         MACHINE.regs.eax = imul(MACHINE.regs.ecx as i32, 0x64u32 as i32) as u32;
         // 0040752d add eax,esi
@@ -35390,7 +35390,7 @@ pub fn x0040750b() -> Cont {
         );
         MACHINE.fpu.pop();
         // 00407543 fcos
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).cos());
         // 00407545 fmul qword ptr [ebp-20h]
         MACHINE.fpu.set(
             0,
@@ -35465,7 +35465,7 @@ pub fn x00407519() -> Cont {
             ),
         );
         // 00407528 fsin
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).sin());
         // 0040752a imul eax,ecx,64h
         MACHINE.regs.eax = imul(MACHINE.regs.ecx as i32, 0x64u32 as i32) as u32;
         // 0040752d add eax,esi
@@ -35504,7 +35504,7 @@ pub fn x00407519() -> Cont {
         );
         MACHINE.fpu.pop();
         // 00407543 fcos
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).cos());
         // 00407545 fmul qword ptr [ebp-20h]
         MACHINE.fpu.set(
             0,
@@ -35570,7 +35570,7 @@ pub fn x00407568() -> Cont {
         // 00407578 add ebx,eax
         MACHINE.regs.ebx = add(MACHINE.regs.ebx, MACHINE.regs.eax);
         // 0040757a fsin
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).sin());
         // 0040757c imul eax,ecx,0Ah
         MACHINE.regs.eax = imul(MACHINE.regs.ecx as i32, 0xau32 as i32) as u32;
         // 0040757f mov [ebp-8],eax
@@ -35656,7 +35656,7 @@ pub fn x00407568() -> Cont {
         );
         MACHINE.fpu.pop();
         // 004075bf fsin
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).sin());
         // 004075c1 mov eax,ds:[40C728h]
         MACHINE.regs.eax = MACHINE.memory.read::<u32>(0x40c728u32);
         // 004075c6 cdq
@@ -35788,7 +35788,7 @@ pub fn x0040760b() -> Cont {
             ),
         );
         // 0040761e fsin
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).sin());
         // 00407620 fmul qword ptr ds:[40C588h]
         MACHINE.fpu.set(
             0,
@@ -35835,7 +35835,7 @@ pub fn x0040760b() -> Cont {
         );
         MACHINE.fpu.pop();
         // 00407643 fcos
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).cos());
         // 00407645 fmul qword ptr ds:[40C590h]
         MACHINE.fpu.set(
             0,
@@ -35870,7 +35870,7 @@ pub fn x0040765b() -> Cont {
         // 0040765b fistp dword ptr [ebp-0Ch]
         todo!();
         // 0040765e fsin
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).sin());
         // 00407660 fmul qword ptr ds:[40C5B0h]
         MACHINE.fpu.set(
             0,
@@ -36098,7 +36098,7 @@ pub fn x004076ea() -> Cont {
             ),
         );
         // 00407704 fcos
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).cos());
         // 00407706 mov eax,ds:[40C724h]
         MACHINE.regs.eax = MACHINE.memory.read::<u32>(0x40c724u32);
         // 0040770b cdq
@@ -36156,7 +36156,7 @@ pub fn x004076ea() -> Cont {
         );
         MACHINE.fpu.pop();
         // 00407734 fsin
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).sin());
         // 00407736 fild dword ptr ds:[40C724h]
         fild(MACHINE.memory.read::<u32>(0x40c724u32) as i32 as f64);
         // 0040773c fmulp
@@ -36201,7 +36201,7 @@ pub fn x0040775b() -> Cont {
         // 0040775b fistp dword ptr [ebp-8]
         todo!();
         // 0040775e fsin
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).sin());
         // 00407760 mov eax,ds:[40C728h]
         MACHINE.regs.eax = MACHINE.memory.read::<u32>(0x40c728u32);
         // 00407765 cdq
@@ -36259,7 +36259,7 @@ pub fn x0040775b() -> Cont {
         );
         MACHINE.fpu.pop();
         // 0040778e fcos
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).cos());
         // 00407790 fild dword ptr ds:[40C728h]
         fild(MACHINE.memory.read::<u32>(0x40c728u32) as i32 as f64);
         // 00407796 fmulp
@@ -36304,7 +36304,7 @@ pub fn x004077b5() -> Cont {
         // 004077b5 fistp dword ptr [ebp-0Ch]
         todo!();
         // 004077b8 fsin
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).sin());
         // 004077ba fmul qword ptr ds:[40C5E8h]
         MACHINE.fpu.set(
             0,
@@ -36342,7 +36342,7 @@ pub fn x004077b5() -> Cont {
         );
         MACHINE.fpu.pop();
         // 004077d8 fcos
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).cos());
         // 004077da fmul qword ptr ds:[40C5E8h]
         MACHINE.fpu.set(
             0,
@@ -36399,7 +36399,7 @@ pub fn x004077fa() -> Cont {
         // 004077fd fistp dword ptr [ebp-18h]
         todo!();
         // 00407800 fcos
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).cos());
         // 00407802 fmul qword ptr ds:[40C608h]
         MACHINE.fpu.set(
             0,
@@ -36440,7 +36440,7 @@ pub fn x00407818() -> Cont {
                 .read::<u32>(MACHINE.regs.ebp.wrapping_add(0xffffffecu32)),
         );
         // 0040781e fsin
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).sin());
         // 00407820 fmul qword ptr ds:[40C608h]
         MACHINE.fpu.set(
             0,
@@ -38133,7 +38133,7 @@ pub fn x00407d52() -> Cont {
             ),
         );
         // 00407d6f fsin
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).sin());
         // 00407d71 mov eax,[ebp-48h]
         MACHINE.regs.eax = MACHINE
             .memory
@@ -38194,7 +38194,7 @@ pub fn x00407d52() -> Cont {
         );
         MACHINE.fpu.pop();
         // 00407d9a fcos
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).cos());
         // 00407d9c fmul qword ptr ds:[40C698h]
         MACHINE.fpu.set(
             0,
@@ -38232,7 +38232,7 @@ pub fn x00407d52() -> Cont {
         );
         MACHINE.fpu.pop();
         // 00407db7 fsin
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).sin());
         // 00407db9 fmul qword ptr ds:[40C698h]
         MACHINE.fpu.set(
             0,
@@ -38275,7 +38275,7 @@ pub fn x00407ddc() -> Cont {
         // 00407ddc fistp dword ptr [ebp-1Ch]
         todo!();
         // 00407ddf fcos
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).cos());
         // 00407de1 fmul qword ptr ds:[40C6C0h]
         MACHINE.fpu.set(
             0,
@@ -38307,7 +38307,7 @@ pub fn x00407ddc() -> Cont {
         );
         MACHINE.fpu.pop();
         // 00407df5 fsin
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).sin());
         // 00407df7 fmul qword ptr ds:[40C6C0h]
         MACHINE.fpu.set(
             0,
@@ -38345,7 +38345,7 @@ pub fn x00407ddc() -> Cont {
         );
         MACHINE.fpu.pop();
         // 00407e12 fcos
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).cos());
         // 00407e14 fmul qword ptr ds:[40C6C0h]
         MACHINE.fpu.set(
             0,
@@ -38431,7 +38431,7 @@ pub fn x00407e5a() -> Cont {
         // 00407e63 mov ebx,ds:[433FACh]
         MACHINE.regs.ebx = MACHINE.memory.read::<u32>(0x433facu32);
         // 00407e69 fsin
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).sin());
         // 00407e6b fmul qword ptr ds:[40C6E8h]
         MACHINE.fpu.set(
             0,
@@ -38503,7 +38503,7 @@ pub fn x00407e96() -> Cont {
         // 00407e9f mov edx,ds:[433FACh]
         MACHINE.regs.edx = MACHINE.memory.read::<u32>(0x433facu32);
         // 00407ea5 fcos
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).cos());
         // 00407ea7 fmul qword ptr ds:[40C6E8h]
         MACHINE.fpu.set(
             0,
@@ -38741,7 +38741,7 @@ pub fn x00407f45() -> Cont {
             ),
         );
         // 00407f5f fsin
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).sin());
         // 00407f61 mov eax,[ebp-48h]
         MACHINE.regs.eax = MACHINE
             .memory
@@ -38802,7 +38802,7 @@ pub fn x00407f45() -> Cont {
         );
         MACHINE.fpu.pop();
         // 00407f8a fcos
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).cos());
         // 00407f8c fmul qword ptr ds:[40C698h]
         MACHINE.fpu.set(
             0,
@@ -38840,7 +38840,7 @@ pub fn x00407f45() -> Cont {
         );
         MACHINE.fpu.pop();
         // 00407fa7 fsin
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).sin());
         // 00407fa9 fmul qword ptr ds:[40C698h]
         MACHINE.fpu.set(
             0,
@@ -38883,7 +38883,7 @@ pub fn x00407fcc() -> Cont {
         // 00407fcc fistp dword ptr [ebp-1Ch]
         todo!();
         // 00407fcf fcos
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).cos());
         // 00407fd1 fmul qword ptr ds:[40C6C0h]
         MACHINE.fpu.set(
             0,
@@ -38915,7 +38915,7 @@ pub fn x00407fcc() -> Cont {
         );
         MACHINE.fpu.pop();
         // 00407fe5 fsin
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).sin());
         // 00407fe7 fmul qword ptr ds:[40C6C0h]
         MACHINE.fpu.set(
             0,
@@ -38953,7 +38953,7 @@ pub fn x00407fcc() -> Cont {
         );
         MACHINE.fpu.pop();
         // 00408002 fcos
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).cos());
         // 00408004 fmul qword ptr ds:[40C6C0h]
         MACHINE.fpu.set(
             0,
@@ -39381,7 +39381,7 @@ pub fn x004081ba() -> Cont {
             ),
         );
         // 004081c9 fsin
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).sin());
         // 004081cb fmul qword ptr ds:[40C670h]
         MACHINE.fpu.set(
             0,
@@ -41272,7 +41272,7 @@ pub fn x004088a6() -> Cont {
                 .read::<f32>(MACHINE.regs.ebp.wrapping_add(0x20u32)) as f64,
         );
         // 004088b6 fcos
-        todo!();
+        MACHINE.fpu.set(0, MACHINE.fpu.get(0).cos());
         // 004088b8 fstp dword ptr [ebp-4]
         MACHINE.memory.write::<f32>(
             MACHINE.regs.ebp.wrapping_add(0xfffffffcu32),
