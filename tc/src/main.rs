@@ -1,4 +1,5 @@
 mod codegen;
+mod fpu;
 mod memory;
 
 use anyhow::Result;
@@ -15,7 +16,7 @@ struct Import {
     func_addr: u32,
 }
 
-struct State {
+pub struct State {
     pe_file: pe::File,
     mem: Memory,
     imports: HashMap<u32, Import>,

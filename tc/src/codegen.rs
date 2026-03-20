@@ -1,7 +1,7 @@
 use anyhow::{Result, anyhow, bail};
 
 use crate::{
-    Block, State, is_abs_memory_ref,
+    Block, State, fpu, is_abs_memory_ref,
     memory::{AddrAbs, AddrImage},
 };
 
@@ -38,7 +38,7 @@ fn set_reg(r: iced_x86::Register, expr: String) -> String {
     }
 }
 
-fn gen_addr(instr: &iced_x86::Instruction) -> String {
+pub fn gen_addr(instr: &iced_x86::Instruction) -> String {
     let mut expr = Vec::new();
     match instr.memory_segment() {
         iced_x86::Register::DS | iced_x86::Register::SS => {}
@@ -72,11 +72,11 @@ fn gen_addr(instr: &iced_x86::Instruction) -> String {
         .join("")
 }
 
-fn read_mem(typ: String, addr: String) -> String {
+pub fn read_mem(typ: String, addr: String) -> String {
     format!("MACHINE.memory.read::<{typ}>({addr})")
 }
 
-fn get_op(instr: &iced_x86::Instruction, n: u32) -> String {
+pub fn get_op(instr: &iced_x86::Instruction, n: u32) -> String {
     use iced_x86::OpKind::*;
     match instr.op_kind(n) {
         Immediate8 => format!("{:#x}u8", instr.immediate8()),
@@ -93,7 +93,7 @@ fn get_op(instr: &iced_x86::Instruction, n: u32) -> String {
     }
 }
 
-fn reg_size(r: iced_x86::Register) -> usize {
+pub fn reg_size(r: iced_x86::Register) -> usize {
     use iced_x86::Register::*;
     match r {
         AL | AH | BL | BH | CL | CH | DL | DH => 8,
@@ -103,7 +103,7 @@ fn reg_size(r: iced_x86::Register) -> usize {
     }
 }
 
-fn mem_size(instr: &iced_x86::Instruction) -> usize {
+pub fn mem_size(instr: &iced_x86::Instruction) -> usize {
     use iced_x86::MemorySize::*;
     match instr.memory_size() {
         UInt8 | Int8 => 8,
@@ -115,7 +115,7 @@ fn mem_size(instr: &iced_x86::Instruction) -> usize {
     }
 }
 
-fn op_size(instr: &iced_x86::Instruction, n: u32) -> usize {
+pub fn op_size(instr: &iced_x86::Instruction, n: u32) -> usize {
     use iced_x86::OpKind::*;
     match instr.op_kind(n) {
         Register => reg_size(instr.op_register(n)),
@@ -179,12 +179,12 @@ fn gen_jmp(state: &State, instr: &iced_x86::Instruction) -> String {
 }
 
 #[derive(Default)]
-struct Writer {
+pub struct Writer {
     buf: String,
 }
 
 impl Writer {
-    fn write_fmt(&mut self, args: std::fmt::Arguments) {
+    pub fn write_fmt(&mut self, args: std::fmt::Arguments) {
         use std::fmt::Write;
         let _ = write!(&mut self.buf, "{args}");
     }
@@ -475,40 +475,16 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
                 writeln!(w, "todo!();");
             }
 
-            Fild => {
-                writeln!(
-                    w,
-                    "fild({} as i{size} as f64);",
-                    get_op(instr, 0),
-                    size = op_size(instr, 0)
-                );
-            }
-
-            Fmul => match instr.op_count() {
-                1 => {
-                    let op1 = read_mem(format!("f{}", mem_size(instr)), gen_addr(instr));
-                    writeln!(
-                        w,
-                        "MACHINE.fpu.set(0, fmul(MACHINE.fpu.get(0), {op1} as f64));"
-                    );
-                }
-                2 => {
-                    writeln!(w, "todo!();");
-                }
-                _ => todo!(),
-            },
-
-            Fld | Fistp | Fcomp | Fnstsw | Fsub | Fsubp | Fsubrp | Fdivp | Fadd | Fdivrp
-            | Fmulp | Fsubr | Fstp | Faddp | Fsqrt | Fld1 | Fxch | Fst | Fchs | Fldz | Fpatan
-            | Fdivr | Fsin | Fcos | Fdiv => {
-                writeln!(w, "todo!();");
-            }
-
             Cwde | Stc | Clc | Sahf => {
                 writeln!(w, "todo!();");
             }
 
-            c => todo!("{:?} in {}", c, instr),
+            c => {
+                if fpu::codegen(w, state, instr) {
+                } else {
+                    todo!("{:?} in {}", c, instr);
+                }
+            }
         }
         if instr.flow_control() != iced_x86::FlowControl::Next {
             match instr.mnemonic() {
