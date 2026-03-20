@@ -198,22 +198,17 @@ impl Writer {
     pub fn todo(&mut self) {
         self.line("todo!();");
     }
-
-    pub fn write_fmt(&mut self, args: std::fmt::Arguments) {
-        use std::fmt::Write;
-        let _ = write!(&mut self.buf, "{args}");
-    }
 }
 
 fn gen_block(w: &mut Writer, state: &State, ip: AddrAbs, block: &Block) {
     println!("gen block: {:#08x}", ip.0);
     match block {
         Block::Instrs(instrs) => {
-            writeln!(w, "pub fn x{:08x}() -> Cont {{", ip.0);
+            w.line(format!("pub fn x{:08x}() -> Cont {{", ip.0));
             w.line("#[allow(unused)]");
             w.line("let m = unsafe { &mut MACHINE };");
             gen_instrs(w, state, instrs);
-            writeln!(w, "}}\n");
+            w.line("}\n");
         }
         Block::Stdcall(_) => {
             // no emit
@@ -224,32 +219,31 @@ fn gen_block(w: &mut Writer, state: &State, ip: AddrAbs, block: &Block) {
 fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
     for instr in instrs {
         println!("gen: {}", instr);
-        writeln!(w, "// {:08x} {}", AddrAbs(instr.ip32()).0, instr);
+        w.line(format!("// {:08x} {}", AddrAbs(instr.ip32()).0, instr));
         use iced_x86::Mnemonic::*;
         match instr.mnemonic() {
             Push => {
-                writeln!(w, "push({});", get_op(instr, 0));
+                w.line(format!("push({});", get_op(instr, 0)));
             }
             Pushad => {
-                writeln!(w, "todo!();");
+                w.line("todo!();");
             }
             Pop => {
-                writeln!(w, "{};", set_op(instr, 0, "pop()".into()));
+                w.line(format!("{};", set_op(instr, 0, "pop()".into())));
             }
             Popad => {
-                writeln!(w, "todo!();");
+                w.line("todo!();");
             }
             Jmp => {
-                writeln!(w, "{}", gen_jmp(state, instr));
+                w.line(format!("{}", gen_jmp(state, instr)));
             }
 
             Call => {
-                writeln!(
-                    w,
+                w.line(format!(
                     "call({:#08x}, {})",
                     instr.next_ip32(),
                     gen_jmp(state, instr)
-                );
+                ));
             }
             Ret => {
                 let n = match instr.op_count() {
@@ -260,7 +254,7 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
                     }
                     _ => todo!(),
                 };
-                writeln!(w, "ret({n})");
+                w.line(format!("ret({n})"));
             }
 
             // Binary operations.
@@ -268,20 +262,20 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
                 let op0 = get_op(instr, 0);
                 let op1 = get_op(instr, 1);
                 let func = format!("{:?}", instr.mnemonic()).to_ascii_lowercase();
-                let _ = writeln!(w, "{};", set_op(instr, 0, format!("{func}({op0}, {op1})")));
+                w.line(set_op(instr, 0, format!("{func}({op0}, {op1})")));
             }
 
             Cmp => {
                 let op0 = get_op(instr, 0);
                 let op1 = get_op(instr, 1);
-                writeln!(w, "sub({op0}, {op1});");
+                w.line(format!("sub({op0}, {op1});"));
             }
             Test => {
-                writeln!(w, "and({}, {});", get_op(instr, 0), get_op(instr, 1));
+                w.line(format!("and({}, {});", get_op(instr, 0), get_op(instr, 1)));
             }
 
             Mov => {
-                writeln!(w, "{};", set_op(instr, 0, get_op(instr, 1)));
+                w.line(set_op(instr, 0, get_op(instr, 1)));
             }
 
             // Conditional jumps.
@@ -289,53 +283,45 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
                 let next = gen_abs_jmp(state, instr.next_ip32());
                 let dst = gen_jmp(state, instr);
                 let func = format!("{:?}", instr.mnemonic()).to_ascii_lowercase();
-                writeln!(w, "{func}({next}, {dst})");
+                w.line(format!("{func}({next}, {dst})"));
             }
 
             Lea => {
-                writeln!(w, "{} = {};", get_op(instr, 0), gen_addr(instr));
+                w.line(format!("{} = {};", get_op(instr, 0), gen_addr(instr)));
             }
             Neg => {
-                writeln!(
-                    w,
-                    "{};",
-                    set_op(instr, 0, format!("neg({})", get_op(instr, 0)))
-                );
+                w.line(set_op(instr, 0, format!("neg({})", get_op(instr, 0))));
             }
 
             Stosb => {
                 assert!(!instr.has_repne_prefix());
                 if instr.has_rep_prefix() {
-                    writeln!(w, "rep(Rep::REP, stosb);");
+                    w.line("rep(Rep::REP, stosb);");
                 } else {
-                    writeln!(w, "stosb();");
+                    w.line("stosb();");
                 };
             }
             Stosd => {
-                writeln!(w, "stosd();");
+                w.line("stosd();");
             }
             Cmpsb => {
-                writeln!(w, "cmpsb();");
+                w.line("cmpsb();");
             }
             Scasb => {
-                writeln!(w, "scasb();");
+                w.line("scasb();");
             }
             Lodsb => {
-                writeln!(w, "todo!();");
+                w.line("todo!();");
             }
             Lodsd => {
-                writeln!(w, "todo!();");
+                w.line("todo!();");
             }
             Loop => {
-                writeln!(w, "todo!();");
+                w.line("todo!();");
             }
 
             Movzx => {
-                writeln!(
-                    w,
-                    "{};",
-                    set_op(instr, 0, format!("{} as _", get_op(instr, 1)))
-                );
+                w.line(set_op(instr, 0, format!("{} as _", get_op(instr, 1))));
             }
             Movsx => {
                 let read = format!(
@@ -344,63 +330,55 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
                     src = op_size(instr, 1),
                     dst = op_size(instr, 0)
                 );
-                writeln!(w, "{};", set_op(instr, 0, read));
+                w.line(set_op(instr, 0, read));
             }
 
             Movsb => {
                 assert!(!instr.has_repne_prefix());
                 if instr.has_rep_prefix() {
-                    writeln!(w, "rep(Rep::REP, movsb);");
+                    w.line("rep(Rep::REP, movsb);");
                 } else {
-                    writeln!(w, "movsb()");
+                    w.line("movsb()");
                 }
             }
             Movsd => {
                 assert!(!instr.has_repne_prefix());
                 if instr.has_rep_prefix() {
-                    writeln!(w, "rep(Rep::REP, movsd);");
+                    w.line("rep(Rep::REP, movsd);");
                 } else {
-                    writeln!(w, "movsd();");
+                    w.line("movsd();");
                 }
             }
 
             Std => {
-                writeln!(w, "std();");
+                w.line("std();");
             }
             Cld => {
-                writeln!(w, "cld();");
+                w.line("cld();");
             }
 
             Div => {
-                writeln!(w, "div();");
+                w.line("div();");
             }
             Leave => {
-                writeln!(w, "leave();");
+                w.line("leave();");
             }
             Enter => {
                 assert!(instr.op1_kind() == iced_x86::OpKind::Immediate8_2nd);
                 let op1 = instr.immediate8_2nd();
-                writeln!(w, "enter({}, {:x});", get_op(instr, 0), op1);
+                w.line(format!("enter({}, {:x});", get_op(instr, 0), op1));
             }
             Dec => {
-                writeln!(
-                    w,
-                    "{};",
-                    set_op(instr, 0, format!("dec({})", get_op(instr, 0)))
-                );
+                w.line(set_op(instr, 0, format!("dec({})", get_op(instr, 0))));
             }
             Inc => {
-                writeln!(
-                    w,
-                    "{};",
-                    set_op(instr, 0, format!("inc({})", get_op(instr, 0)))
-                );
+                w.line(set_op(instr, 0, format!("inc({})", get_op(instr, 0))));
             }
             Sete => {
-                writeln!(w, "{};", set_op(instr, 0, "sete()".into()));
+                w.line(set_op(instr, 0, "sete()".into()));
             }
             Sar => {
-                writeln!(w, "sar();");
+                w.line("sar();");
             }
             Imul => {
                 let (x, y) = match instr.op_count() {
@@ -419,79 +397,75 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
                     }
                     _ => todo!(),
                 };
-                writeln!(
-                    w,
-                    "{};",
-                    set_op(
-                        instr,
-                        0,
-                        format!(
-                            "imul({x} as i{size}, {y} as i{size}) as u{size}",
-                            size = op_size(instr, 0),
-                        )
-                    )
-                );
+                w.line(set_op(
+                    instr,
+                    0,
+                    format!(
+                        "imul({x} as i{size}, {y} as i{size}) as u{size}",
+                        size = op_size(instr, 0),
+                    ),
+                ));
             }
             Not => {
-                writeln!(w, "not();");
+                w.line("not();");
             }
             Setge => {
-                writeln!(w, "setge();");
+                w.line("setge();");
             }
             Int => {
-                writeln!(w, "int();");
+                w.line("int();");
             }
             Cdq => {
-                writeln!(w, "cdq();");
+                w.line("cdq();");
             }
             Idiv => {
-                writeln!(w, "idiv();");
+                w.line("idiv();");
             }
             Int3 => {
-                writeln!(w, "int3();");
+                w.line("int3();");
             }
             Xchg => {
-                writeln!(w, "xchg();");
+                w.line("xchg();");
             }
             Cmpxchg => {
-                writeln!(w, "cmpxchg();");
+                w.line("cmpxchg();");
             }
             Pushfd => {
-                writeln!(w, "pushfd();");
+                w.line("pushfd();");
             }
             Setne => {
-                writeln!(w, "setne();");
+                w.line("setne();");
             }
             Cpuid => {
-                writeln!(w, "cpuid();");
+                w.line("cpuid();");
             }
             Nop => {
-                writeln!(w, "nop();");
+                w.line("nop();");
             }
             Xgetbv => {
-                writeln!(w, "xgetbv();");
+                w.line("xgetbv();");
             }
             Setg => {
-                writeln!(w, "setg();");
+                w.line("setg();");
             }
             Bt => {
-                writeln!(w, "bt();");
+                w.line("bt();");
             }
 
             Movq => {
-                writeln!(w, "movq();");
+                w.line("movq();");
             }
             Movdqa => {
-                writeln!(w, "movdqa();");
+                w.line("movdqa();");
             }
 
             Pxor | Movd | Punpcklbw | Pmullw | Psrlw | Packuswb | Emms | Psubusb | Paddusb
             | Psubw | Psraw | Paddsw | Paddsb => {
-                writeln!(w, "todo!();");
+                w.line("todo!();");
             }
 
             Cwde | Stc | Clc | Sahf => {
-                writeln!(w, "todo!();");
+                w.line("todo!();");
             }
 
             c => {
@@ -513,8 +487,7 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
 pub fn gen_file(state: &mut State, outdir: &str) -> Result<()> {
     let mut w = Writer::default();
 
-    writeln!(
-        &mut w,
+    w.line(
         "#![allow(unused_unsafe)]
 #![allow(unreachable_code)]
 #![allow(static_mut_refs)]
@@ -522,7 +495,7 @@ pub fn gen_file(state: &mut State, outdir: &str) -> Result<()> {
 
 use runtime::*;
 use winapi::*;
-"
+",
     );
 
     state.mem.mappings.dump();
@@ -533,40 +506,35 @@ use winapi::*;
     // Unfortunately, wasm-lld only supports "relocatable" object files which means it moves
     // the location of such data at link time.  We could do it by postprocessing the wasm
     // file, maybe.
-    writeln!(&mut w, "fn init_mappings() {{ unsafe {{");
-    write!(
-        &mut w,
-        "let mut mappings = kernel32::state().mappings.borrow_mut();\n"
+    w.line(
+        "fn init_mappings() {
+unsafe {
+let mut mappings = kernel32::state().mappings.borrow_mut();",
     );
     for map in state.mem.mappings.vec().iter() {
         let addr = map.addr;
         let buf = state.mem.slice(AddrAbs(map.addr), map.size);
         let zeroed = buf.iter().all(|&b| b == 0);
 
-        write!(
-            &mut w,
+        w.line(format!(
             "mappings.alloc(
                 {desc:?}.to_string(),
                 Some({addr:#x}),
                 {size:#x}
-            );\n",
+            );",
             desc = map.desc,
             size = buf.len(),
-        );
+        ));
         if !zeroed {
-            write!(
-                &mut w,
-                "let bytes = include_bytes!(\"../data/{addr:08x}.raw\").as_slice();\n"
-            );
-            write!(
-                &mut w,
-                "let out = &mut MACHINE.memory.bytes[{addr:#x} as usize..][..bytes.len()];
-            out.copy_from_slice(bytes);\n"
-            );
+            w.line(format!(
+                "let bytes = include_bytes!(\"../data/{addr:08x}.raw\").as_slice();
+let out = &mut MACHINE.memory.bytes[{addr:#x} as usize..][..bytes.len()];
+out.copy_from_slice(bytes);",
+            ));
         }
     }
 
-    writeln!(&mut w, "}} }}");
+    w.line("}}");
 
     let mut ips = state.blocks.keys().copied().collect::<Vec<_>>();
     ips.sort();
@@ -575,25 +543,23 @@ use winapi::*;
         gen_block(&mut w, &state, AddrAbs(ip), &block);
     }
 
-    write!(
-        &mut w,
+    w.line(format!(
         "const BLOCKS: [(u32, fn() -> Cont); {}] = [\n",
         ips.len() + 1,
-    );
+    ));
     for &ip in &ips {
         let block = state.blocks.get(&ip).unwrap();
-        writeln!(&mut w, "({ip:#08x}, {}),", block.name());
+        w.line(format!("({ip:#08x}, {}),", block.name()));
     }
-    writeln!(&mut w, "(0xf000_0000, runtime::return_from_main),");
-    writeln!(&mut w, "];\n");
+    w.line("(0xf000_0000, runtime::return_from_main),");
+    w.line("];\n");
 
     let resources = match state.resources {
         Some((addr, size)) => format!("{addr:#x}..{end:#x}", end = addr + size),
         None => "0..0".to_string(),
     };
 
-    write!(
-        &mut w,
+    w.line(format!(
         "pub const EXEDATA: EXEData = EXEData {{
             image_base: {image_base:#x},
             resources: {resources},
@@ -605,7 +571,7 @@ use winapi::*;
         entry_point = AddrImage(state.pe_file.opt_header.AddressOfEntryPoint)
             .to_abs(state.image_base())
             .0,
-    );
+    ));
 
     std::fs::create_dir_all(format!("{outdir}/src"))?;
     let path = format!("{outdir}/src/generated.rs");
