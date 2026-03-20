@@ -51,14 +51,20 @@ pub fn gen_addr(instr: &iced_x86::Instruction) -> String {
         r => expr.push(get_reg(r)),
     }
     if instr.memory_index() != iced_x86::Register::None {
-        expr.push(format!(
-            "({}*{})",
-            get_reg(instr.memory_index()),
-            instr.memory_index_scale()
-        ));
+        if instr.memory_index_scale() != 1 {
+            expr.push(format!(
+                "({}*{})",
+                get_reg(instr.memory_index()),
+                instr.memory_index_scale()
+            ));
+        } else {
+            expr.push(format!("{}", get_reg(instr.memory_index()),));
+        }
     }
-    let addr = instr.memory_displacement32();
-    expr.push(format!("{addr:#x}u32"));
+    let offset = instr.memory_displacement32();
+    if offset != 0 {
+        expr.push(format!("{offset:#x}u32"));
+    }
     expr.into_iter()
         .enumerate()
         .map(|(i, e)| {
