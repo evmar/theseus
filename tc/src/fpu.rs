@@ -1,6 +1,6 @@
 use crate::{
     State,
-    codegen::{Writer, gen_addr, get_op, mem_size, op_size, read_mem},
+    codegen::{Writer, gen_addr, get_op, mem_size, op_size, read_mem, set_op},
 };
 
 fn fpu_get_mem(instr: &iced_x86::Instruction) -> String {
@@ -92,6 +92,18 @@ pub fn codegen(w: &mut Writer, _state: &State, instr: &iced_x86::Instruction) ->
             }
         }
 
+        Fist | Fistp => {
+            let size = op_size(instr, 0);
+            w.line(set_op(
+                instr,
+                0,
+                format!("{}.round() as u{size}", fpu_get_reg(0)),
+            ));
+            if instr.mnemonic() == Fistp {
+                w.line("m.fpu.pop();");
+            }
+        }
+
         Fadd | Faddp => {
             match instr.op_count() {
                 1 => {
@@ -143,8 +155,8 @@ pub fn codegen(w: &mut Writer, _state: &State, instr: &iced_x86::Instruction) ->
             w.line(fpu_set_reg(0, format!("{}.cos()", fpu_get_reg(0))));
         }
 
-        Fistp | Fcomp | Fnstsw | Fsub | Fsubp | Fsubrp | Fdivp | Fdivrp | Fsubr | Fsqrt | Fxch
-        | Fchs | Fpatan | Fdivr | Fdiv => {
+        Fcomp | Fnstsw | Fsub | Fsubp | Fsubrp | Fdivp | Fdivrp | Fsubr | Fsqrt | Fxch | Fchs
+        | Fpatan | Fdivr | Fdiv => {
             w.line("todo!();");
         }
         _ => return false,

@@ -109,6 +109,7 @@ pub fn mem_size(instr: &iced_x86::Instruction) -> usize {
         UInt8 | Int8 => 8,
         UInt16 | Int16 => 16,
         UInt32 | Int32 => 32,
+        UInt64 | Int64 => 64,
         Float32 => 32,
         Float64 => 64,
         s => todo!("{s:?}"),
@@ -128,7 +129,7 @@ pub fn op_size(instr: &iced_x86::Instruction, n: u32) -> usize {
     }
 }
 
-fn set_op(instr: &iced_x86::Instruction, n: u32, expr: String) -> String {
+pub fn set_op(instr: &iced_x86::Instruction, n: u32, expr: String) -> String {
     use iced_x86::OpKind::*;
     match instr.op_kind(n) {
         Register => set_reg(instr.op_register(n), expr),
