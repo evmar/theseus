@@ -11130,8 +11130,10 @@ pub fn x00403837() -> Cont {
     // 0040384d push eax
     push(m.regs.eax);
     // 0040384e fistp dword ptr [esp]
-    m.memory
-        .write::<u32>(m.regs.esp.wrapping_add(0x0u32), m.fpu.get(0).round() as u32);
+    m.memory.write::<u32>(
+        m.regs.esp.wrapping_add(0x0u32),
+        m.fpu.get(0).round() as i32 as u32,
+    );
     m.fpu.pop();
     // 00403851 pop eax
     m.regs.eax = pop();
@@ -11151,8 +11153,10 @@ pub fn x00403837() -> Cont {
     // 00403866 push eax
     push(m.regs.eax);
     // 00403867 fistp dword ptr [esp]
-    m.memory
-        .write::<u32>(m.regs.esp.wrapping_add(0x0u32), m.fpu.get(0).round() as u32);
+    m.memory.write::<u32>(
+        m.regs.esp.wrapping_add(0x0u32),
+        m.fpu.get(0).round() as i32 as u32,
+    );
     m.fpu.pop();
     // 0040386a pop eax
     m.regs.eax = pop();
@@ -11172,8 +11176,10 @@ pub fn x00403837() -> Cont {
     // 0040387f push eax
     push(m.regs.eax);
     // 00403880 fistp dword ptr [esp]
-    m.memory
-        .write::<u32>(m.regs.esp.wrapping_add(0x0u32), m.fpu.get(0).round() as u32);
+    m.memory.write::<u32>(
+        m.regs.esp.wrapping_add(0x0u32),
+        m.fpu.get(0).round() as i32 as u32,
+    );
     m.fpu.pop();
     // 00403883 pop eax
     m.regs.eax = pop();
@@ -11194,8 +11200,10 @@ pub fn x00403837() -> Cont {
     // 00403899 push eax
     push(m.regs.eax);
     // 0040389a fistp dword ptr [esp]
-    m.memory
-        .write::<u32>(m.regs.esp.wrapping_add(0x0u32), m.fpu.get(0).round() as u32);
+    m.memory.write::<u32>(
+        m.regs.esp.wrapping_add(0x0u32),
+        m.fpu.get(0).round() as i32 as u32,
+    );
     m.fpu.pop();
     // 0040389d pop eax
     m.regs.eax = pop();
@@ -12774,7 +12782,7 @@ pub fn x00403dec() -> Cont {
     // 00403dec fistp dword ptr [ebp-8]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffff8u32),
-        m.fpu.get(0).round() as u32,
+        m.fpu.get(0).round() as i32 as u32,
     );
     m.fpu.pop();
     // 00403def cmp dword ptr [ebp-8],0
@@ -12902,7 +12910,7 @@ pub fn x00403e43() -> Cont {
     // 00403e43 fistp dword ptr [ebp-8]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffff8u32),
-        m.fpu.get(0).round() as u32,
+        m.fpu.get(0).round() as i32 as u32,
     );
     m.fpu.pop();
     // 00403e46 cmp dword ptr [ebp-8],0
@@ -15689,7 +15697,7 @@ pub fn x00404690() -> Cont {
     // 00404690 fistp dword ptr [ebp-14h]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xffffffecu32),
-        m.fpu.get(0).round() as u32,
+        m.fpu.get(0).round() as i32 as u32,
     );
     m.fpu.pop();
     // 00404693 mov eax,[ebp-14h]
@@ -15762,7 +15770,7 @@ pub fn x004046c0() -> Cont {
     // 004046c0 fistp dword ptr [ebp-14h]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xffffffecu32),
-        m.fpu.get(0).round() as u32,
+        m.fpu.get(0).round() as i32 as u32,
     );
     m.fpu.pop();
     // 004046c3 mov eax,[ebp-14h]
@@ -15808,7 +15816,7 @@ pub fn x004046e0() -> Cont {
     let m = unsafe { &mut MACHINE };
     // 004046e0 fistp dword ptr ds:[433F74h]
     m.memory
-        .write::<u32>(0x433f74u32, m.fpu.get(0).round() as u32);
+        .write::<u32>(0x433f74u32, m.fpu.get(0).round() as i32 as u32);
     m.fpu.pop();
     // 004046e6 leave
     leave();
@@ -15855,7 +15863,7 @@ pub fn x0040470e() -> Cont {
     // 0040470e fistp dword ptr [ebp-4]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffffcu32),
-        m.fpu.get(0).round() as u32,
+        m.fpu.get(0).round() as i32 as u32,
     );
     m.fpu.pop();
     // 00404711 fxch
@@ -15870,7 +15878,7 @@ pub fn x00404718() -> Cont {
     // 00404718 fistp dword ptr [ebp-8]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffff8u32),
-        m.fpu.get(0).round() as u32,
+        m.fpu.get(0).round() as i32 as u32,
     );
     m.fpu.pop();
     // 0040471b fsin
@@ -15953,7 +15961,7 @@ pub fn x00404772() -> Cont {
     // 00404772 fistp dword ptr [ebp-0Ch]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffff4u32),
-        m.fpu.get(0).round() as u32,
+        m.fpu.get(0).round() as i32 as u32,
     );
     m.fpu.pop();
     // 00404775 fcos
@@ -16029,7 +16037,7 @@ pub fn x004047c9() -> Cont {
     // 004047c9 fistp dword ptr [ebp-10h]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffff0u32),
-        m.fpu.get(0).round() as u32,
+        m.fpu.get(0).round() as i32 as u32,
     );
     m.fpu.pop();
     // 004047cc push eax
@@ -16279,7 +16287,7 @@ pub fn x004048db() -> Cont {
     // 004048db fistp dword ptr [ebp-4]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffffcu32),
-        m.fpu.get(0).round() as u32,
+        m.fpu.get(0).round() as i32 as u32,
     );
     m.fpu.pop();
     // 004048de mov al,[ebp-4]
@@ -16370,7 +16378,7 @@ pub fn x0040492c() -> Cont {
     // 0040492c fistp dword ptr [ebp-8]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffff8u32),
-        m.fpu.get(0).round() as u32,
+        m.fpu.get(0).round() as i32 as u32,
     );
     m.fpu.pop();
     // 0040492f cmp ecx,ds:[40C724h]
@@ -16450,7 +16458,7 @@ pub fn x00404979() -> Cont {
     // 00404979 fistp dword ptr [ebp-0Ch]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffff4u32),
-        m.fpu.get(0).round() as u32,
+        m.fpu.get(0).round() as i32 as u32,
     );
     m.fpu.pop();
     // 0040497c fcomp qword ptr [ebp-20h]
@@ -16571,7 +16579,7 @@ pub fn x004049ca() -> Cont {
     // 004049ca fistp qword ptr [ebp-18h]
     m.memory.write::<u64>(
         m.regs.ebp.wrapping_add(0xffffffe8u32),
-        m.fpu.get(0).round() as u64,
+        m.fpu.get(0).round() as i64 as u64,
     );
     m.fpu.pop();
     // 004049cd mov eax,[ebp-18h]
@@ -17026,7 +17034,7 @@ pub fn x00404b52() -> Cont {
     // 00404b52 fistp dword ptr [ebp-18h]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xffffffe8u32),
-        m.fpu.get(0).round() as u32,
+        m.fpu.get(0).round() as i32 as u32,
     );
     m.fpu.pop();
     // 00404b55 mov eax,[ebp-18h]
@@ -17154,7 +17162,7 @@ pub fn x00404bc0() -> Cont {
     // 00404bc3 fistp dword ptr [ebp-28h]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xffffffd8u32),
-        m.fpu.get(0).round() as u32,
+        m.fpu.get(0).round() as i32 as u32,
     );
     m.fpu.pop();
     // 00404bc6 jmp near ptr 00404C98h
@@ -19199,7 +19207,7 @@ pub fn x00405200() -> Cont {
     // 00405200 fistp qword ptr [ebp-38h]
     m.memory.write::<u64>(
         m.regs.ebp.wrapping_add(0xffffffc8u32),
-        m.fpu.get(0).round() as u64,
+        m.fpu.get(0).round() as i64 as u64,
     );
     m.fpu.pop();
     // 00405203 mov esi,[ebp-38h]
@@ -19252,7 +19260,7 @@ pub fn x00405232() -> Cont {
     // 00405233 fistp dword ptr [ebp-10h]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffff0u32),
-        m.fpu.get(0).round() as u32,
+        m.fpu.get(0).round() as i32 as u32,
     );
     m.fpu.pop();
     // 00405236 mov [ebp-20h],ecx
@@ -19458,13 +19466,13 @@ pub fn x004052bc() -> Cont {
     // 004052bc fistp dword ptr [ebp-2Ch]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xffffffd4u32),
-        m.fpu.get(0).round() as u32,
+        m.fpu.get(0).round() as i32 as u32,
     );
     m.fpu.pop();
     // 004052bf fistp dword ptr [ebp-18h]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xffffffe8u32),
-        m.fpu.get(0).round() as u32,
+        m.fpu.get(0).round() as i32 as u32,
     );
     m.fpu.pop();
     // 004052c2 cmp ecx,[ebp-20h]
@@ -19824,7 +19832,7 @@ pub fn x004053d4() -> Cont {
     // 004053d4 fistp dword ptr [ebp-8]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffff8u32),
-        m.fpu.get(0).round() as u32,
+        m.fpu.get(0).round() as i32 as u32,
     );
     m.fpu.pop();
     // 004053d7 mov eax,[ebp-8]
@@ -20034,7 +20042,7 @@ pub fn x00405479() -> Cont {
     // 00405479 fistp dword ptr [ebp-28h]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xffffffd8u32),
-        m.fpu.get(0).round() as u32,
+        m.fpu.get(0).round() as i32 as u32,
     );
     m.fpu.pop();
     // 0040547c jmp short 00405485h
@@ -20201,7 +20209,7 @@ pub fn x004054eb() -> Cont {
     // 004054eb fistp dword ptr [ebp-14h]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xffffffecu32),
-        m.fpu.get(0).round() as u32,
+        m.fpu.get(0).round() as i32 as u32,
     );
     m.fpu.pop();
     // 004054ee cmp dword ptr [ebp-14h],2
@@ -20363,19 +20371,19 @@ pub fn x00405543() -> Cont {
     // 00405545 fistp dword ptr [ebp-8]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffff8u32),
-        m.fpu.get(0).round() as u32,
+        m.fpu.get(0).round() as i32 as u32,
     );
     m.fpu.pop();
     // 00405548 fistp dword ptr [ebp-10h]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffff0u32),
-        m.fpu.get(0).round() as u32,
+        m.fpu.get(0).round() as i32 as u32,
     );
     m.fpu.pop();
     // 0040554b fistp dword ptr [ebp-0Ch]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffff4u32),
-        m.fpu.get(0).round() as u32,
+        m.fpu.get(0).round() as i32 as u32,
     );
     m.fpu.pop();
     // 0040554e mov edx,eax
@@ -20385,7 +20393,7 @@ pub fn x00405543() -> Cont {
     // 00405553 fistp dword ptr [ebp-18h]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xffffffe8u32),
-        m.fpu.get(0).round() as u32,
+        m.fpu.get(0).round() as i32 as u32,
     );
     m.fpu.pop();
     // 00405556 cmp eax,ds:[40C724h]
@@ -22752,7 +22760,7 @@ pub fn x00405c50() -> Cont {
     // 00405c50 fistp dword ptr [ebp-4]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffffcu32),
-        m.fpu.get(0).round() as u32,
+        m.fpu.get(0).round() as i32 as u32,
     );
     m.fpu.pop();
     // 00405c53 add edx,eax
@@ -22812,7 +22820,7 @@ pub fn x00405c81() -> Cont {
     // 00405c81 fistp dword ptr [ebp-4]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffffcu32),
-        m.fpu.get(0).round() as u32,
+        m.fpu.get(0).round() as i32 as u32,
     );
     m.fpu.pop();
     // 00405c84 mov eax,[ebp-4]
@@ -22929,7 +22937,7 @@ pub fn x00405cc7() -> Cont {
     // 00405cca fistp dword ptr [ebp-4]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffffcu32),
-        m.fpu.get(0).round() as u32,
+        m.fpu.get(0).round() as i32 as u32,
     );
     m.fpu.pop();
     // 00405ccd add edx,eax
@@ -24500,7 +24508,7 @@ pub fn x004061a3() -> Cont {
     // 004061a7 fistp dword ptr [ebp-18h]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xffffffe8u32),
-        m.fpu.get(0).round() as u32,
+        m.fpu.get(0).round() as i32 as u32,
     );
     m.fpu.pop();
     // 004061aa fxch st(2)
@@ -24508,19 +24516,19 @@ pub fn x004061a3() -> Cont {
     // 004061ac fistp dword ptr [ebp-14h]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xffffffecu32),
-        m.fpu.get(0).round() as u32,
+        m.fpu.get(0).round() as i32 as u32,
     );
     m.fpu.pop();
     // 004061af fistp dword ptr [ebp-10h]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffff0u32),
-        m.fpu.get(0).round() as u32,
+        m.fpu.get(0).round() as i32 as u32,
     );
     m.fpu.pop();
     // 004061b2 fistp dword ptr [ebp-0Ch]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffff4u32),
-        m.fpu.get(0).round() as u32,
+        m.fpu.get(0).round() as i32 as u32,
     );
     m.fpu.pop();
     // 004061b5 fxch
@@ -24528,13 +24536,13 @@ pub fn x004061a3() -> Cont {
     // 004061b7 fistp dword ptr [ebp-8]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffff8u32),
-        m.fpu.get(0).round() as u32,
+        m.fpu.get(0).round() as i32 as u32,
     );
     m.fpu.pop();
     // 004061ba fistp dword ptr [ebp-4]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffffcu32),
-        m.fpu.get(0).round() as u32,
+        m.fpu.get(0).round() as i32 as u32,
     );
     m.fpu.pop();
     // 004061bd push dword ptr [eax+38h]
@@ -25554,7 +25562,7 @@ pub fn x004064c6() -> Cont {
     // 004064c6 fistp dword ptr [ebp-8]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffff8u32),
-        m.fpu.get(0).round() as u32,
+        m.fpu.get(0).round() as i32 as u32,
     );
     m.fpu.pop();
     // 004064c9 cmp dword ptr [ebp-8],0
@@ -25707,7 +25715,7 @@ pub fn x00406521() -> Cont {
     // 00406529 fistp dword ptr [ebp-10h]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffff0u32),
-        m.fpu.get(0).round() as u32,
+        m.fpu.get(0).round() as i32 as u32,
     );
     m.fpu.pop();
     // 0040652c mov [edx+esi],eax
@@ -25826,7 +25834,7 @@ pub fn x0040657e() -> Cont {
     // 0040657e fistp dword ptr [ebp-10h]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffff0u32),
-        m.fpu.get(0).round() as u32,
+        m.fpu.get(0).round() as i32 as u32,
     );
     m.fpu.pop();
     // 00406581 mov eax,[ebp-10h]
@@ -25933,7 +25941,7 @@ pub fn x004065d5() -> Cont {
     // 004065d5 fistp dword ptr [ebp-10h]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffff0u32),
-        m.fpu.get(0).round() as u32,
+        m.fpu.get(0).round() as i32 as u32,
     );
     m.fpu.pop();
     // 004065d8 mov eax,[ebp-10h]
@@ -26024,7 +26032,7 @@ pub fn x00406635() -> Cont {
     // 00406635 fistp dword ptr [ebp-8]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffff8u32),
-        m.fpu.get(0).round() as u32,
+        m.fpu.get(0).round() as i32 as u32,
     );
     m.fpu.pop();
     // 00406638 cmp dword ptr [ebp-8],0
@@ -26209,7 +26217,7 @@ pub fn x0040675f() -> Cont {
     // 0040675f fistp dword ptr [ebp-0Ch]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffff4u32),
-        m.fpu.get(0).round() as u32,
+        m.fpu.get(0).round() as i32 as u32,
     );
     m.fpu.pop();
     // 00406762 fsin
@@ -26234,7 +26242,7 @@ pub fn x0040677d() -> Cont {
     // 0040677d fistp dword ptr [ebp-8]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffff8u32),
-        m.fpu.get(0).round() as u32,
+        m.fpu.get(0).round() as i32 as u32,
     );
     m.fpu.pop();
     // 00406780 fsin
@@ -26252,7 +26260,7 @@ pub fn x0040678d() -> Cont {
     // 0040678d fistp dword ptr [ebp-10h]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffff0u32),
-        m.fpu.get(0).round() as u32,
+        m.fpu.get(0).round() as i32 as u32,
     );
     m.fpu.pop();
     // 00406790 mov eax,[ebp-10h]
@@ -26976,7 +26984,7 @@ pub fn x00406cfa() -> Cont {
     // 00406cfa fistp dword ptr [ebp-8]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffff8u32),
-        m.fpu.get(0).round() as u32,
+        m.fpu.get(0).round() as i32 as u32,
     );
     m.fpu.pop();
     // 00406cfd cmp dword ptr [ebp-8],0FFh
@@ -27137,7 +27145,7 @@ pub fn x00406d58() -> Cont {
     // 00406d58 fistp dword ptr [ebp-4]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffffcu32),
-        m.fpu.get(0).round() as u32,
+        m.fpu.get(0).round() as i32 as u32,
     );
     m.fpu.pop();
     // 00406d5b mov eax,[ebp-4]
@@ -27189,7 +27197,7 @@ pub fn x00406d8f() -> Cont {
     // 00406d8f fistp dword ptr [ebp-0Ch]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffff4u32),
-        m.fpu.get(0).round() as u32,
+        m.fpu.get(0).round() as i32 as u32,
     );
     m.fpu.pop();
     // 00406d92 cmp dword ptr [ebp-0Ch],0FFh
@@ -28491,7 +28499,7 @@ pub fn x004070cd() -> Cont {
     // 004070cd fistp dword ptr [ebp-8]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffff8u32),
-        m.fpu.get(0).round() as u32,
+        m.fpu.get(0).round() as i32 as u32,
     );
     m.fpu.pop();
     // 004070d0 jmp near ptr 0040700Fh
@@ -29338,7 +29346,7 @@ pub fn x00407568() -> Cont {
     // 00407568 fistp qword ptr [ebp-18h]
     m.memory.write::<u64>(
         m.regs.ebp.wrapping_add(0xffffffe8u32),
-        m.fpu.get(0).round() as u64,
+        m.fpu.get(0).round() as i64 as u64,
     );
     m.fpu.pop();
     // 0040756b mov ebx,[ebp-18h]
@@ -29561,7 +29569,7 @@ pub fn x0040765b() -> Cont {
     // 0040765b fistp dword ptr [ebp-0Ch]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffff4u32),
-        m.fpu.get(0).round() as u32,
+        m.fpu.get(0).round() as i32 as u32,
     );
     m.fpu.pop();
     // 0040765e fsin
@@ -29593,7 +29601,7 @@ pub fn x00407677() -> Cont {
     // 0040767c fistp dword ptr [ebp-8]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffff8u32),
-        m.fpu.get(0).round() as u32,
+        m.fpu.get(0).round() as i32 as u32,
     );
     m.fpu.pop();
     // 0040767f mov eax,ds:[40C724h]
@@ -29615,7 +29623,7 @@ pub fn x0040768f() -> Cont {
     // 0040768f fistp dword ptr [ebp-1Ch]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xffffffe4u32),
-        m.fpu.get(0).round() as u32,
+        m.fpu.get(0).round() as i32 as u32,
     );
     m.fpu.pop();
     // 00407692 mov [ebp-4],eax
@@ -29651,7 +29659,7 @@ pub fn x004076ab() -> Cont {
     // 004076b0 fistp dword ptr [ebp-14h]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xffffffecu32),
-        m.fpu.get(0).round() as u32,
+        m.fpu.get(0).round() as i32 as u32,
     );
     m.fpu.pop();
     // 004076b3 mov ebx,[ebp-14h]
@@ -29676,7 +29684,7 @@ pub fn x004076c1() -> Cont {
     // 004076c4 fistp dword ptr [ebp-18h]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xffffffe8u32),
-        m.fpu.get(0).round() as u32,
+        m.fpu.get(0).round() as i32 as u32,
     );
     m.fpu.pop();
     // 004076c7 fild dword ptr [ebp-4]
@@ -29701,7 +29709,7 @@ pub fn x004076d8() -> Cont {
     // 004076d8 fistp dword ptr [ebp-10h]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffff0u32),
-        m.fpu.get(0).round() as u32,
+        m.fpu.get(0).round() as i32 as u32,
     );
     m.fpu.pop();
     // 004076db mov ecx,[ebp-10h]
@@ -29829,7 +29837,7 @@ pub fn x0040775b() -> Cont {
     // 0040775b fistp dword ptr [ebp-8]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffff8u32),
-        m.fpu.get(0).round() as u32,
+        m.fpu.get(0).round() as i32 as u32,
     );
     m.fpu.pop();
     // 0040775e fsin
@@ -29908,7 +29916,7 @@ pub fn x004077b5() -> Cont {
     // 004077b5 fistp dword ptr [ebp-0Ch]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffff4u32),
-        m.fpu.get(0).round() as u32,
+        m.fpu.get(0).round() as i32 as u32,
     );
     m.fpu.pop();
     // 004077b8 fsin
@@ -29971,7 +29979,7 @@ pub fn x004077fa() -> Cont {
     // 004077fd fistp dword ptr [ebp-18h]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xffffffe8u32),
-        m.fpu.get(0).round() as u32,
+        m.fpu.get(0).round() as i32 as u32,
     );
     m.fpu.pop();
     // 00407800 fcos
@@ -29997,7 +30005,7 @@ pub fn x00407818() -> Cont {
     // 00407818 fistp dword ptr [ebp-14h]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xffffffecu32),
-        m.fpu.get(0).round() as u32,
+        m.fpu.get(0).round() as i32 as u32,
     );
     m.fpu.pop();
     // 0040781b push dword ptr [ebp-14h]
@@ -30024,7 +30032,7 @@ pub fn x00407831() -> Cont {
     // 00407834 fistp dword ptr [ebp-14h]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xffffffecu32),
-        m.fpu.get(0).round() as u32,
+        m.fpu.get(0).round() as i32 as u32,
     );
     m.fpu.pop();
     // 00407837 push dword ptr [ebp-14h]
@@ -31425,7 +31433,7 @@ pub fn x00407ddc() -> Cont {
     // 00407ddc fistp dword ptr [ebp-1Ch]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xffffffe4u32),
-        m.fpu.get(0).round() as u32,
+        m.fpu.get(0).round() as i32 as u32,
     );
     m.fpu.pop();
     // 00407ddf fcos
@@ -31502,7 +31510,7 @@ pub fn x00407e35() -> Cont {
     // 00407e35 fistp dword ptr [ebp-8]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffff8u32),
-        m.fpu.get(0).round() as u32,
+        m.fpu.get(0).round() as i32 as u32,
     );
     m.fpu.pop();
     // 00407e38 mov edx,[ebp-8]
@@ -31579,7 +31587,7 @@ pub fn x00407e8b() -> Cont {
     // 00407e8b fistp dword ptr [ebp-4]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffffcu32),
-        m.fpu.get(0).round() as u32,
+        m.fpu.get(0).round() as i32 as u32,
     );
     m.fpu.pop();
     // 00407e8e mov eax,[ebp-4]
@@ -31624,7 +31632,7 @@ pub fn x00407ebe() -> Cont {
     // 00407ebe fistp dword ptr [ebp-4]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffffcu32),
-        m.fpu.get(0).round() as u32,
+        m.fpu.get(0).round() as i32 as u32,
     );
     m.fpu.pop();
     // 00407ec1 mov eax,[ebp-4]
@@ -31871,7 +31879,7 @@ pub fn x00407fcc() -> Cont {
     // 00407fcc fistp dword ptr [ebp-1Ch]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xffffffe4u32),
-        m.fpu.get(0).round() as u32,
+        m.fpu.get(0).round() as i32 as u32,
     );
     m.fpu.pop();
     // 00407fcf fcos
@@ -31948,7 +31956,7 @@ pub fn x00408028() -> Cont {
     // 00408028 fistp dword ptr [ebp-8]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffff8u32),
-        m.fpu.get(0).round() as u32,
+        m.fpu.get(0).round() as i32 as u32,
     );
     m.fpu.pop();
     // 0040802b mov edx,[ebp-8]
@@ -32299,7 +32307,7 @@ pub fn x004081e6() -> Cont {
     // 004081e6 fistp dword ptr [ebp-4]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffffcu32),
-        m.fpu.get(0).round() as u32,
+        m.fpu.get(0).round() as i32 as u32,
     );
     m.fpu.pop();
     // 004081e9 mov ecx,[ebp-4]
@@ -32409,7 +32417,7 @@ pub fn x00408267() -> Cont {
     // 00408267 fistp dword ptr [ebp-4]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffffcu32),
-        m.fpu.get(0).round() as u32,
+        m.fpu.get(0).round() as i32 as u32,
     );
     m.fpu.pop();
     // 0040826a mov eax,[ebp-4]
@@ -32477,7 +32485,7 @@ pub fn x004082b2() -> Cont {
     // 004082b2 fistp dword ptr [ebp-4]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffffcu32),
-        m.fpu.get(0).round() as u32,
+        m.fpu.get(0).round() as i32 as u32,
     );
     m.fpu.pop();
     // 004082b5 mov eax,[ebp-4]
@@ -32881,7 +32889,7 @@ pub fn x00408449() -> Cont {
     // 00408449 fistp dword ptr [ebp-4]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffffcu32),
-        m.fpu.get(0).round() as u32,
+        m.fpu.get(0).round() as i32 as u32,
     );
     m.fpu.pop();
     // 0040844c mov eax,[ebp-4]
@@ -33889,7 +33897,7 @@ pub fn x00408860() -> Cont {
     // 0040886f fistp dword ptr [ebp-4]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffffcu32),
-        m.fpu.get(0).round() as u32,
+        m.fpu.get(0).round() as i32 as u32,
     );
     m.fpu.pop();
     // 00408875 mov eax,[ebp-4]

@@ -97,7 +97,7 @@ pub fn codegen(w: &mut Writer, _state: &State, instr: &iced_x86::Instruction) ->
             w.line(set_op(
                 instr,
                 0,
-                format!("{}.round() as u{size}", fpu_get_reg(0)),
+                format!("{}.round() as i{size} as u{size}", fpu_get_reg(0)),
             ));
             if instr.mnemonic() == Fistp {
                 w.line("m.fpu.pop();");
