@@ -72,8 +72,12 @@ pub fn gen_addr(instr: &iced_x86::Instruction) -> String {
         .join("")
 }
 
-pub fn read_mem(typ: String, addr: String) -> String {
+pub fn get_mem(typ: String, addr: String) -> String {
     format!("m.memory.read::<{typ}>({addr})")
+}
+
+pub fn set_mem(typ: String, addr: String, expr: String) -> String {
+    format!("m.memory.write::<{typ}>({addr}, {expr});")
 }
 
 pub fn get_op(instr: &iced_x86::Instruction, n: u32) -> String {
@@ -85,7 +89,7 @@ pub fn get_op(instr: &iced_x86::Instruction, n: u32) -> String {
         Immediate8to32 => format!("{:#x}u32", instr.immediate8to32()),
         Immediate32 => format!("{:#x}u32", instr.immediate32()),
         Register => get_reg(instr.op_register(n)),
-        Memory => read_mem(format!("u{}", mem_size(instr)), gen_addr(instr)),
+        Memory => get_mem(format!("u{}", mem_size(instr)), gen_addr(instr)),
         k => {
             dbg!(instr);
             todo!("{:?}", k);
@@ -136,7 +140,7 @@ pub fn set_op(instr: &iced_x86::Instruction, n: u32, expr: String) -> String {
         Memory => {
             let addr = gen_addr(instr);
             let size = mem_size(instr);
-            format!("m.memory.write::<u{size}>({addr}, {expr});")
+            set_mem(format!("u{size}"), addr, expr)
         }
         k => {
             dbg!(instr);

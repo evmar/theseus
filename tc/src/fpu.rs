@@ -1,14 +1,14 @@
 use crate::{
     State,
-    codegen::{Writer, gen_addr, get_op, mem_size, op_size, read_mem, set_op},
+    codegen::{Writer, gen_addr, get_mem, get_op, mem_size, op_size, set_op},
 };
 
 fn fpu_get_mem(instr: &iced_x86::Instruction) -> String {
     let size = mem_size(instr);
     if size != 64 {
-        format!("{} as f64", read_mem(format!("f{size}"), gen_addr(instr)))
+        format!("{} as f64", get_mem(format!("f{size}"), gen_addr(instr)))
     } else {
-        read_mem(format!("f{}", mem_size(instr)), gen_addr(instr))
+        get_mem(format!("f{}", mem_size(instr)), gen_addr(instr))
     }
 }
 
