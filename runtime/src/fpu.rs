@@ -77,8 +77,12 @@ impl FPU {
         self.st.swap(o1, o2);
     }
 
-    pub fn get(&mut self, ofs: usize) -> &mut f64 {
-        &mut self.st[self.st_offset(ofs)]
+    pub fn get(&self, ofs: usize) -> f64 {
+        self.st[self.st_offset(ofs)]
+    }
+
+    pub fn set(&mut self, ofs: usize, val: f64) {
+        self.st[self.st_offset(ofs)] = val;
     }
 
     pub fn status(&self) -> u16 {

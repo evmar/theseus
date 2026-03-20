@@ -109,6 +109,8 @@ fn mem_size(instr: &iced_x86::Instruction) -> usize {
         UInt8 | Int8 => 8,
         UInt16 | Int16 => 16,
         UInt32 | Int32 => 32,
+        Float32 => 32,
+        Float64 => 64,
         s => todo!("{s:?}"),
     }
 }
@@ -484,7 +486,11 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
 
             Fmul => match instr.op_count() {
                 1 => {
-                    writeln!(w, "todo!();");
+                    let op1 = read_mem(format!("f{}", mem_size(instr)), gen_addr(instr));
+                    writeln!(
+                        w,
+                        "MACHINE.fpu.set(0, fmul(MACHINE.fpu.get(0), {op1} as f64));"
+                    );
                 }
                 2 => {
                     writeln!(w, "todo!();");
