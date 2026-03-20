@@ -12,8 +12,7 @@ elif [[ $1 == "zig" ]]; then
     ./target/debug/zig-hello-exe
 elif [[ $1 == "chillin" ]]; then
     cargo run -p tc -- --exe ~/win/rs/scratch/demo/chillin-unpacked.exe --out exe/chillin
-    cargo build -p chillin-exe
-    ./target/debug/chillin-exe
+    cargo run --release -p chillin-exe
 else
     cargo run -p tc -- --scan --exe ~/win/rs/deploy/archive/BasicDD.exe --out exe/basicdd
     cargo build -p basicdd-exe

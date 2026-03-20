@@ -225,14 +225,29 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
             Push => {
                 w.line(format!("push({});", get_op(instr, 0)));
             }
-            Pushad => {
-                w.line("todo!();");
-            }
             Pop => {
                 w.line(format!("{};", set_op(instr, 0, "pop()".into())));
             }
+            Pushad => {
+                w.line("let esp = m.regs.esp;");
+                w.line("push(m.regs.eax);");
+                w.line("push(m.regs.ecx);");
+                w.line("push(m.regs.edx);");
+                w.line("push(m.regs.ebx);");
+                w.line("push(esp);");
+                w.line("push(m.regs.ebp);");
+                w.line("push(m.regs.esi);");
+                w.line("push(m.regs.edi);");
+            }
             Popad => {
-                w.line("todo!();");
+                w.line("m.regs.edi = pop();");
+                w.line("m.regs.esi = pop();");
+                w.line("m.regs.ebp = pop();");
+                w.line("pop();");
+                w.line("m.regs.ebx = pop();");
+                w.line("m.regs.edx = pop();");
+                w.line("m.regs.ecx = pop();");
+                w.line("m.regs.eax = pop();");
             }
             Jmp => {
                 w.line(format!("{}", gen_jmp(state, instr)));
