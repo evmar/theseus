@@ -11645,7 +11645,7 @@ pub fn x00403a5e() -> Cont {
         .get(0)
         .total_cmp(&(m.memory.read::<f32>(0x40c080u32) as f64));
     // 00403a6b fnstsw ax
-    todo!();
+    m.regs.set_ax(m.fpu.status());
     // 00403a6d sahf
     sahf(m);
     // 00403a6e jb short 00403A82h
@@ -11664,7 +11664,7 @@ pub fn x00403a70() -> Cont {
         .get(0)
         .total_cmp(&(m.memory.read::<f32>(0x40c080u32) as f64));
     // 00403a79 fnstsw ax
-    todo!();
+    m.regs.set_ax(m.fpu.status());
     // 00403a7b sahf
     sahf(m);
     // 00403a7c jae near ptr 00403CD1h
@@ -11707,7 +11707,7 @@ pub fn x00403a98() -> Cont {
         .get(0)
         .total_cmp(&(m.memory.read::<f32>(0x40c084u32) as f64));
     // 00403aa1 fnstsw ax
-    todo!();
+    m.regs.set_ax(m.fpu.status());
     // 00403aa3 sahf
     sahf(m);
     // 00403aa4 jb short 00403AB8h
@@ -11726,7 +11726,7 @@ pub fn x00403aa6() -> Cont {
         .get(0)
         .total_cmp(&(m.memory.read::<f32>(0x40c084u32) as f64));
     // 00403aaf fnstsw ax
-    todo!();
+    m.regs.set_ax(m.fpu.status());
     // 00403ab1 sahf
     sahf(m);
     // 00403ab2 jae near ptr 00403CD1h
@@ -11769,7 +11769,7 @@ pub fn x00403ace() -> Cont {
         .get(0)
         .total_cmp(&(m.memory.read::<f32>(0x40c080u32) as f64));
     // 00403ad7 fnstsw ax
-    todo!();
+    m.regs.set_ax(m.fpu.status());
     // 00403ad9 sahf
     sahf(m);
     // 00403ada jb short 00403B02h
@@ -11828,7 +11828,7 @@ pub fn x00403adc() -> Cont {
         .get(0)
         .total_cmp(&(m.memory.read::<f32>(0x40c080u32) as f64));
     // 00403b0b fnstsw ax
-    todo!();
+    m.regs.set_ax(m.fpu.status());
     // 00403b0d sahf
     sahf(m);
     // 00403b0e jb short 00403B36h
@@ -11847,7 +11847,7 @@ pub fn x00403b02() -> Cont {
         .get(0)
         .total_cmp(&(m.memory.read::<f32>(0x40c080u32) as f64));
     // 00403b0b fnstsw ax
-    todo!();
+    m.regs.set_ax(m.fpu.status());
     // 00403b0d sahf
     sahf(m);
     // 00403b0e jb short 00403B36h
@@ -12034,7 +12034,7 @@ pub fn x00403b6e() -> Cont {
         .get(0)
         .total_cmp(&(m.memory.read::<f32>(0x40c084u32) as f64));
     // 00403b9d fnstsw ax
-    todo!();
+    m.regs.set_ax(m.fpu.status());
     // 00403b9f sahf
     sahf(m);
     // 00403ba0 jb short 00403BC8h
@@ -12053,7 +12053,7 @@ pub fn x00403b94() -> Cont {
         .get(0)
         .total_cmp(&(m.memory.read::<f32>(0x40c084u32) as f64));
     // 00403b9d fnstsw ax
-    todo!();
+    m.regs.set_ax(m.fpu.status());
     // 00403b9f sahf
     sahf(m);
     // 00403ba0 jb short 00403BC8h
@@ -12112,7 +12112,7 @@ pub fn x00403ba2() -> Cont {
         .get(0)
         .total_cmp(&(m.memory.read::<f32>(0x40c084u32) as f64));
     // 00403bd1 fnstsw ax
-    todo!();
+    m.regs.set_ax(m.fpu.status());
     // 00403bd3 sahf
     sahf(m);
     // 00403bd4 jb short 00403BFCh
@@ -12131,7 +12131,7 @@ pub fn x00403bc8() -> Cont {
         .get(0)
         .total_cmp(&(m.memory.read::<f32>(0x40c084u32) as f64));
     // 00403bd1 fnstsw ax
-    todo!();
+    m.regs.set_ax(m.fpu.status());
     // 00403bd3 sahf
     sahf(m);
     // 00403bd4 jb short 00403BFCh
@@ -12318,7 +12318,7 @@ pub fn x00403c34() -> Cont {
         .get(0)
         .total_cmp(&(m.memory.read::<f32>(0x40c080u32) as f64));
     // 00403c63 fnstsw ax
-    todo!();
+    m.regs.set_ax(m.fpu.status());
     // 00403c65 sahf
     sahf(m);
     // 00403c66 jae near ptr 00403CD1h
@@ -12337,7 +12337,7 @@ pub fn x00403c5a() -> Cont {
         .get(0)
         .total_cmp(&(m.memory.read::<f32>(0x40c080u32) as f64));
     // 00403c63 fnstsw ax
-    todo!();
+    m.regs.set_ax(m.fpu.status());
     // 00403c65 sahf
     sahf(m);
     // 00403c66 jae near ptr 00403CD1h
@@ -12356,7 +12356,7 @@ pub fn x00403c6c() -> Cont {
         .get(0)
         .total_cmp(&(m.memory.read::<f32>(0x40c080u32) as f64));
     // 00403c75 fnstsw ax
-    todo!();
+    m.regs.set_ax(m.fpu.status());
     // 00403c77 sahf
     sahf(m);
     // 00403c78 jae short 00403CD1h
@@ -12399,7 +12399,7 @@ pub fn x00403c8c() -> Cont {
         .get(0)
         .total_cmp(&(m.memory.read::<f32>(0x40c084u32) as f64));
     // 00403c95 fnstsw ax
-    todo!();
+    m.regs.set_ax(m.fpu.status());
     // 00403c97 sahf
     sahf(m);
     // 00403c98 jae short 00403CD1h
@@ -12418,7 +12418,7 @@ pub fn x00403c9a() -> Cont {
         .get(0)
         .total_cmp(&(m.memory.read::<f32>(0x40c084u32) as f64));
     // 00403ca3 fnstsw ax
-    todo!();
+    m.regs.set_ax(m.fpu.status());
     // 00403ca5 sahf
     sahf(m);
     // 00403ca6 jae short 00403CD1h
@@ -15469,7 +15469,7 @@ pub fn x004045b8() -> Cont {
         .get(0)
         .total_cmp(&(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0xfffffff4u32)) as f64));
     // 00404646 fnstsw ax
-    todo!();
+    m.regs.set_ax(m.fpu.status());
     // 00404648 sahf
     sahf(m);
     // 00404649 jae short 00404650h
@@ -16474,7 +16474,7 @@ pub fn x00404979() -> Cont {
         .get(0)
         .total_cmp(&(m.memory.read::<f64>(m.regs.ebp.wrapping_add(0xffffffe0u32))));
     // 0040497f fnstsw ax
-    todo!();
+    m.regs.set_ax(m.fpu.status());
     // 00404981 sahf
     sahf(m);
     // 00404982 jbe short 00404992h
@@ -19916,7 +19916,7 @@ pub fn x004053fc() -> Cont {
         .get(0)
         .total_cmp(&(m.memory.read::<f32>(0x40c1bcu32) as f64));
     // 00405427 fnstsw ax
-    todo!();
+    m.regs.set_ax(m.fpu.status());
     // 00405429 sahf
     sahf(m);
     // 0040542a jbe near ptr 00405647h
@@ -24531,7 +24531,7 @@ pub fn x004061f6() -> Cont {
         .get(0)
         .total_cmp(&(m.memory.read::<f32>(m.regs.eax.wrapping_add(0x8u32)) as f64));
     // 00406224 fnstsw ax
-    todo!();
+    m.regs.set_ax(m.fpu.status());
     // 00406226 sahf
     sahf(m);
     // 00406227 ja short 00406246h
@@ -24556,7 +24556,7 @@ pub fn x00406229() -> Cont {
         .get(0)
         .total_cmp(&(m.memory.read::<f32>(m.regs.eax.wrapping_add(0x8u32)) as f64));
     // 00406234 fnstsw ax
-    todo!();
+    m.regs.set_ax(m.fpu.status());
     // 00406236 sahf
     sahf(m);
     // 00406237 ja short 00406246h
@@ -24580,7 +24580,7 @@ pub fn x00406239() -> Cont {
             as f64),
     );
     // 00406243 fnstsw ax
-    todo!();
+    m.regs.set_ax(m.fpu.status());
     // 00406245 sahf
     sahf(m);
     // 00406246 mov eax,[ebp-10h]
@@ -30771,7 +30771,7 @@ pub fn x00407be5() -> Cont {
         .get(0)
         .total_cmp(&(m.memory.read::<f32>(0x40c628u32) as f64));
     // 00407c1f fnstsw ax
-    todo!();
+    m.regs.set_ax(m.fpu.status());
     // 00407c21 sahf
     sahf(m);
     // 00407c22 jae short 00407C2Eh
@@ -30820,7 +30820,7 @@ pub fn x00407be7() -> Cont {
         .get(0)
         .total_cmp(&(m.memory.read::<f32>(0x40c628u32) as f64));
     // 00407c1f fnstsw ax
-    todo!();
+    m.regs.set_ax(m.fpu.status());
     // 00407c21 sahf
     sahf(m);
     // 00407c22 jae short 00407C2Eh
@@ -30894,7 +30894,7 @@ pub fn x00407c24() -> Cont {
         .get(0)
         .total_cmp(&(m.memory.read::<f32>(0x40c640u32) as f64));
     // 00407c8a fnstsw ax
-    todo!();
+    m.regs.set_ax(m.fpu.status());
     // 00407c8c sahf
     sahf(m);
     // 00407c8d jae short 00407C99h
@@ -30966,7 +30966,7 @@ pub fn x00407c2e() -> Cont {
         .get(0)
         .total_cmp(&(m.memory.read::<f32>(0x40c640u32) as f64));
     // 00407c8a fnstsw ax
-    todo!();
+    m.regs.set_ax(m.fpu.status());
     // 00407c8c sahf
     sahf(m);
     // 00407c8d jae short 00407C99h
