@@ -59,9 +59,10 @@ pub fn codegen(w: &mut Writer, state: &State, instr: &iced_x86::Instruction) -> 
 
         // XXX: cmps/scas use repe, not rep
         Cmpsb => {
-            assert!(!instr.has_repne_prefix());
             if instr.has_repe_prefix() {
                 w.line("rep(m, Rep::REPE, cmpsb);");
+            } else if instr.has_repne_prefix() {
+                w.line("rep(m, Rep::REPNE, cmpsb);");
             } else {
                 w.line("cmpsb(m);");
             };
@@ -69,9 +70,10 @@ pub fn codegen(w: &mut Writer, state: &State, instr: &iced_x86::Instruction) -> 
 
         // XXX: cmps/scas use repe, not rep
         Scasb => {
-            assert!(!instr.has_repne_prefix());
             if instr.has_repe_prefix() {
                 w.line("rep(m, Rep::REPE, scasb);");
+            } else if instr.has_repne_prefix() {
+                w.line("rep(m, Rep::REPNE, scasb);");
             } else {
                 w.line("scasb(m);");
             };

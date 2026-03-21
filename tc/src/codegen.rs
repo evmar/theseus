@@ -340,13 +340,6 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
                 w.line(set_op(instr, 0, read));
             }
 
-            Std => {
-                w.line("std();");
-            }
-            Cld => {
-                w.line("cld();");
-            }
-
             Div => {
                 w.line("div();");
             }
@@ -453,7 +446,7 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
                 w.line("todo!();");
             }
 
-            Cwde | Stc | Clc | Sahf => {
+            Cwde | Stc | Clc | Std | Cld | Sahf => {
                 w.line(format!(
                     "{}(m);",
                     format!("{:?}", instr.mnemonic()).to_ascii_lowercase()

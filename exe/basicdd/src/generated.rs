@@ -849,7 +849,7 @@ pub fn x00401386() -> Cont {
     // 0040138e lea edi,[esp+14h]
     m.regs.edi = m.regs.esp.wrapping_add(0x14u32);
     // 00401392 rep stosd
-    stosd();
+    rep(m, Rep::REP, stosd);
     // 00401394 mov eax,ds:[409584h]
     m.regs.eax = m.memory.read::<u32>(0x409584u32);
     // 00401399 push 0
@@ -1581,7 +1581,7 @@ pub fn x00401640() -> Cont {
     // 00401661 lea edi,[esp+18h]
     m.regs.edi = m.regs.esp.wrapping_add(0x18u32);
     // 00401665 rep stosd
-    stosd();
+    rep(m, Rep::REP, stosd);
     // 00401667 mov eax,[esp+0A0h]
     m.regs.eax = m.memory.read::<u32>(m.regs.esp.wrapping_add(0xa0u32));
     // 0040166e mov ecx,[esi]
@@ -2204,7 +2204,7 @@ pub fn x00401848() -> Cont {
     // 00401854 mov ds:[409AB0h],eax
     m.memory.write::<u32>(0x409ab0u32, m.regs.eax);
     // 00401859 sar ecx,2
-    sar();
+    m.regs.ecx = sar(m.regs.ecx, 0x2u8, &mut m.flags);
     // 0040185c lea ecx,[eax+ecx*4]
     m.regs.ecx = m.regs.eax.wrapping_add((m.regs.ecx * 4));
     // 0040185f mov ds:[409AACh],ecx
@@ -2391,13 +2391,13 @@ pub fn x004018eb() -> Cont {
     // 004018fd mov ds:[4095BCh],ecx
     m.memory.write::<u32>(0x4095bcu32, m.regs.ecx);
     // 00401903 shl ecx,8
-    m.regs.ecx = shl(m.regs.ecx, 0x8u8);
+    m.regs.ecx = shl(m.regs.ecx, 0x8u8, &mut m.flags);
     // 00401906 add ecx,edx
     m.regs.ecx = add(m.regs.ecx, m.regs.edx);
     // 00401908 mov ds:[4095B8h],ecx
     m.memory.write::<u32>(0x4095b8u32, m.regs.ecx);
     // 0040190e shr eax,10h
-    m.regs.eax = shr(m.regs.eax, 0x10u8);
+    m.regs.eax = shr(m.regs.eax, 0x10u8, &mut m.flags);
     // 00401911 mov ds:[4095B4h],eax
     m.memory.write::<u32>(0x4095b4u32, m.regs.eax);
     // 00401916 xor esi,esi
@@ -3333,7 +3333,7 @@ pub fn x00401b8b() -> Cont {
     // 00401b8b mov edi,esi
     m.regs.edi = m.regs.esi;
     // 00401b8d shr edi,4
-    m.regs.edi = shr(m.regs.edi, 0x4u8);
+    m.regs.edi = shr(m.regs.edi, 0x4u8, &mut m.flags);
     // 00401b90 push edi
     push(m.regs.edi);
     // 00401b91 push ebx
@@ -3394,7 +3394,7 @@ pub fn x00401bb6() -> Cont {
     // 00401bb6 movzx eax,byte ptr [ebx]
     m.regs.eax = m.memory.read::<u8>(m.regs.ebx) as _;
     // 00401bb9 shl eax,4
-    m.regs.eax = shl(m.regs.eax, 0x4u8);
+    m.regs.eax = shl(m.regs.eax, 0x4u8, &mut m.flags);
     // 00401bbc cmp eax,esi
     sub(m.regs.eax, m.regs.esi);
     // 00401bbe jb short 00401BC2h
@@ -3492,7 +3492,7 @@ pub fn x00401bf8() -> Cont {
     // 00401bf8 movzx eax,byte ptr [ebx]
     m.regs.eax = m.memory.read::<u8>(m.regs.ebx) as _;
     // 00401bfb shl eax,4
-    m.regs.eax = shl(m.regs.eax, 0x4u8);
+    m.regs.eax = shl(m.regs.eax, 0x4u8, &mut m.flags);
     // 00401bfe cmp eax,esi
     sub(m.regs.eax, m.regs.esi);
     // 00401c00 jb short 00401C04h
@@ -4208,7 +4208,7 @@ pub fn x00401de5() -> Cont {
     // 00401de5 movzx eax,byte ptr [eax]
     m.regs.eax = m.memory.read::<u8>(m.regs.eax) as _;
     // 00401de8 shl eax,4
-    m.regs.eax = shl(m.regs.eax, 0x4u8);
+    m.regs.eax = shl(m.regs.eax, 0x4u8, &mut m.flags);
     // 00401deb jmp short 00401DFEh
     Cont(x00401dfe)
 }
@@ -4462,7 +4462,7 @@ pub fn x00401e83() -> Cont {
     // 00401e83 mov eax,esi
     m.regs.eax = m.regs.esi;
     // 00401e85 shr eax,4
-    m.regs.eax = shr(m.regs.eax, 0x4u8);
+    m.regs.eax = shr(m.regs.eax, 0x4u8, &mut m.flags);
     // 00401e88 push eax
     push(m.regs.eax);
     // 00401e89 call 00403A4Bh
@@ -6470,7 +6470,7 @@ pub fn x00402366() -> Cont {
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0x18u32), m.regs.edx);
     // 00402377 shr ebx,1
-    m.regs.ebx = shr(m.regs.ebx, 0x1u8);
+    m.regs.ebx = shr(m.regs.ebx, 0x1u8, &mut m.flags);
     // 00402379 mov edx,ebx
     m.regs.edx = m.regs.ebx;
     // 0040237b dec ebx
@@ -6499,7 +6499,7 @@ pub fn x00402369() -> Cont {
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0x18u32), m.regs.edx);
     // 00402377 shr ebx,1
-    m.regs.ebx = shr(m.regs.ebx, 0x1u8);
+    m.regs.ebx = shr(m.regs.ebx, 0x1u8, &mut m.flags);
     // 00402379 mov edx,ebx
     m.regs.edx = m.regs.ebx;
     // 0040237b dec ebx
@@ -6514,7 +6514,7 @@ pub fn x00402377() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00402377 shr ebx,1
-    m.regs.ebx = shr(m.regs.ebx, 0x1u8);
+    m.regs.ebx = shr(m.regs.ebx, 0x1u8, &mut m.flags);
     // 00402379 mov edx,ebx
     m.regs.edx = m.regs.ebx;
     // 0040237b dec ebx
@@ -7001,7 +7001,7 @@ pub fn x0040247a() -> Cont {
     // 0040247c mov edi,ds:[4060A4h]
     m.regs.edi = m.memory.read::<u32>(0x4060a4u32);
     // 00402482 sar eax,1
-    sar();
+    m.regs.eax = sar(m.regs.eax, 0x1u8, &mut m.flags);
     // 00402484 push ebx
     push(m.regs.ebx);
     // 00402485 push ebx
@@ -7693,7 +7693,7 @@ pub fn x00402639() -> Cont {
     // 0040263b mov ecx,edi
     m.regs.ecx = m.regs.edi;
     // 0040263d sar eax,5
-    sar();
+    m.regs.eax = sar(m.regs.eax, 0x5u8, &mut m.flags);
     // 00402640 and ecx,1Fh
     m.regs.ecx = and(m.regs.ecx, 0x1fu32);
     // 00402643 mov eax,[eax*4+4099A0h]
@@ -8744,7 +8744,7 @@ pub fn x00402adb() -> Cont {
     // 00402adc mov esi,ecx
     m.regs.esi = m.regs.ecx;
     // 00402ade shl esi,3
-    m.regs.esi = shl(m.regs.esi, 0x3u8);
+    m.regs.esi = shl(m.regs.esi, 0x3u8, &mut m.flags);
     // 00402ae1 cmp edx,[esi+407178h]
     sub(
         m.regs.edx,
@@ -9207,7 +9207,7 @@ pub fn x00402c7f() -> Cont {
         m.memory.read::<u32>(m.regs.ecx.wrapping_add(0xcu32)),
     );
     // 00402c99 shr edi,0Fh
-    m.regs.edi = shr(m.regs.edi, 0xfu8);
+    m.regs.edi = shr(m.regs.edi, 0xfu8, &mut m.flags);
     // 00402c9c mov ecx,edi
     m.regs.ecx = m.regs.edi;
     // 00402c9e imul ecx,204h
@@ -9260,7 +9260,7 @@ pub fn x00402cd7() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00402cd7 sar edx,4
-    sar();
+    m.regs.edx = sar(m.regs.edx, 0x4u8, &mut m.flags);
     // 00402cda dec edx
     m.regs.edx = dec(m.regs.edx);
     // 00402cdb cmp edx,3Fh
@@ -9318,7 +9318,7 @@ pub fn x00402cf0() -> Cont {
     // 00402cf5 mov ecx,edx
     m.regs.ecx = m.regs.edx;
     // 00402cf7 shr ebx,cl
-    m.regs.ebx = shr(m.regs.ebx, m.regs.get_cl());
+    m.regs.ebx = shr(m.regs.ebx, m.regs.get_cl(), &mut m.flags);
     // 00402cf9 lea ecx,[edx+eax+4]
     m.regs.ecx = m.regs.edx.wrapping_add(m.regs.eax).wrapping_add(0x4u32);
     // 00402cfd not ebx
@@ -9368,7 +9368,7 @@ pub fn x00402d0e() -> Cont {
     // 00402d11 mov ebx,80000000h
     m.regs.ebx = 0x80000000u32;
     // 00402d16 shr ebx,cl
-    m.regs.ebx = shr(m.regs.ebx, m.regs.get_cl());
+    m.regs.ebx = shr(m.regs.ebx, m.regs.get_cl(), &mut m.flags);
     // 00402d18 lea ecx,[edx+eax+4]
     m.regs.ecx = m.regs.edx.wrapping_add(m.regs.eax).wrapping_add(0x4u32);
     // 00402d1c not ebx
@@ -9460,7 +9460,7 @@ pub fn x00402d37() -> Cont {
     // 00402d55 mov edx,ecx
     m.regs.edx = m.regs.ecx;
     // 00402d57 sar edx,4
-    sar();
+    m.regs.edx = sar(m.regs.edx, 0x4u8, &mut m.flags);
     // 00402d5a dec edx
     m.regs.edx = dec(m.regs.edx);
     // 00402d5b cmp edx,3Fh
@@ -9499,7 +9499,7 @@ pub fn x00402d3a() -> Cont {
     // 00402d55 mov edx,ecx
     m.regs.edx = m.regs.ecx;
     // 00402d57 sar edx,4
-    sar();
+    m.regs.edx = sar(m.regs.edx, 0x4u8, &mut m.flags);
     // 00402d5a dec edx
     m.regs.edx = dec(m.regs.edx);
     // 00402d5b cmp edx,3Fh
@@ -9514,7 +9514,7 @@ pub fn x00402d55() -> Cont {
     // 00402d55 mov edx,ecx
     m.regs.edx = m.regs.ecx;
     // 00402d57 sar edx,4
-    sar();
+    m.regs.edx = sar(m.regs.edx, 0x4u8, &mut m.flags);
     // 00402d5a dec edx
     m.regs.edx = dec(m.regs.edx);
     // 00402d5b cmp edx,3Fh
@@ -9566,7 +9566,7 @@ pub fn x00402d72() -> Cont {
     // 00402d75 mov ebx,[ebp-8]
     m.regs.ebx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32));
     // 00402d78 sar ebx,4
-    sar();
+    m.regs.ebx = sar(m.regs.ebx, 0x4u8, &mut m.flags);
     // 00402d7b push 3Fh
     push(0x3fu32);
     // 00402d7d mov [ebp+0Ch],esi
@@ -9598,7 +9598,7 @@ pub fn x00402d86() -> Cont {
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32), m.regs.ecx);
     // 00402d90 sar edx,4
-    sar();
+    m.regs.edx = sar(m.regs.edx, 0x4u8, &mut m.flags);
     // 00402d93 dec edx
     m.regs.edx = dec(m.regs.edx);
     // 00402d94 cmp edx,esi
@@ -9621,7 +9621,7 @@ pub fn x00402d88() -> Cont {
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32), m.regs.ecx);
     // 00402d90 sar edx,4
-    sar();
+    m.regs.edx = sar(m.regs.edx, 0x4u8, &mut m.flags);
     // 00402d93 dec edx
     m.regs.edx = dec(m.regs.edx);
     // 00402d94 cmp edx,esi
@@ -9683,7 +9683,7 @@ pub fn x00402dae() -> Cont {
     // 00402db3 mov ecx,ebx
     m.regs.ecx = m.regs.ebx;
     // 00402db5 shr esi,cl
-    m.regs.esi = shr(m.regs.esi, m.regs.get_cl());
+    m.regs.esi = shr(m.regs.esi, m.regs.get_cl(), &mut m.flags);
     // 00402db7 not esi
     not();
     // 00402db9 and [eax+edi*4+44h],esi
@@ -9735,7 +9735,7 @@ pub fn x00402dca() -> Cont {
     // 00402dcd mov esi,80000000h
     m.regs.esi = 0x80000000u32;
     // 00402dd2 shr esi,cl
-    m.regs.esi = shr(m.regs.esi, m.regs.get_cl());
+    m.regs.esi = shr(m.regs.esi, m.regs.get_cl(), &mut m.flags);
     // 00402dd4 not esi
     not();
     // 00402dd6 and [eax+edi*4+0C4h],esi
@@ -9953,7 +9953,7 @@ pub fn x00402e50() -> Cont {
     // 00402e55 mov ecx,edx
     m.regs.ecx = m.regs.edx;
     // 00402e57 shr ebx,cl
-    m.regs.ebx = shr(m.regs.ebx, m.regs.get_cl());
+    m.regs.ebx = shr(m.regs.ebx, m.regs.get_cl(), &mut m.flags);
     // 00402e59 mov ecx,[ebp+8]
     m.regs.ecx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x8u32));
     // 00402e5c or [ecx],ebx
@@ -9964,7 +9964,7 @@ pub fn x00402e50() -> Cont {
     // 00402e63 mov ecx,edx
     m.regs.ecx = m.regs.edx;
     // 00402e65 shr ebx,cl
-    m.regs.ebx = shr(m.regs.ebx, m.regs.get_cl());
+    m.regs.ebx = shr(m.regs.ebx, m.regs.get_cl(), &mut m.flags);
     // 00402e67 lea eax,[eax+edi*4+44h]
     m.regs.eax = m
         .regs
@@ -9986,7 +9986,7 @@ pub fn x00402e5e() -> Cont {
     // 00402e63 mov ecx,edx
     m.regs.ecx = m.regs.edx;
     // 00402e65 shr ebx,cl
-    m.regs.ebx = shr(m.regs.ebx, m.regs.get_cl());
+    m.regs.ebx = shr(m.regs.ebx, m.regs.get_cl(), &mut m.flags);
     // 00402e67 lea eax,[eax+edi*4+44h]
     m.regs.eax = m
         .regs
@@ -10017,7 +10017,7 @@ pub fn x00402e75() -> Cont {
     // 00402e78 mov ebx,80000000h
     m.regs.ebx = 0x80000000u32;
     // 00402e7d shr ebx,cl
-    m.regs.ebx = shr(m.regs.ebx, m.regs.get_cl());
+    m.regs.ebx = shr(m.regs.ebx, m.regs.get_cl(), &mut m.flags);
     // 00402e7f mov ecx,[ebp+8]
     m.regs.ecx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x8u32));
     // 00402e82 or [ecx+4],ebx
@@ -10033,7 +10033,7 @@ pub fn x00402e75() -> Cont {
     // 00402e88 mov edx,80000000h
     m.regs.edx = 0x80000000u32;
     // 00402e8d shr edx,cl
-    m.regs.edx = shr(m.regs.edx, m.regs.get_cl());
+    m.regs.edx = shr(m.regs.edx, m.regs.get_cl(), &mut m.flags);
     // 00402e8f lea eax,[eax+edi*4+0C4h]
     m.regs.eax = m
         .regs
@@ -10072,7 +10072,7 @@ pub fn x00402e85() -> Cont {
     // 00402e88 mov edx,80000000h
     m.regs.edx = 0x80000000u32;
     // 00402e8d shr edx,cl
-    m.regs.edx = shr(m.regs.edx, m.regs.get_cl());
+    m.regs.edx = shr(m.regs.edx, m.regs.get_cl(), &mut m.flags);
     // 00402e8f lea eax,[eax+edi*4+0C4h]
     m.regs.eax = m
         .regs
@@ -10146,7 +10146,7 @@ pub fn x00402eb9() -> Cont {
     // 00402ebf mov esi,ds:[406098h]
     m.regs.esi = m.memory.read::<u32>(0x406098u32);
     // 00402ec5 shl ecx,0Fh
-    m.regs.ecx = shl(m.regs.ecx, 0xfu8);
+    m.regs.ecx = shl(m.regs.ecx, 0xfu8, &mut m.flags);
     // 00402ec8 add ecx,[eax+0Ch]
     m.regs.ecx = add(
         m.regs.ecx,
@@ -10174,7 +10174,7 @@ pub fn x00402ed9() -> Cont {
     // 00402ee4 mov edx,80000000h
     m.regs.edx = 0x80000000u32;
     // 00402ee9 shr edx,cl
-    m.regs.edx = shr(m.regs.edx, m.regs.get_cl());
+    m.regs.edx = shr(m.regs.edx, m.regs.get_cl(), &mut m.flags);
     // 00402eeb or [eax+8],edx
     m.memory.write::<u32>(
         m.regs.eax.wrapping_add(0x8u32),
@@ -10296,7 +10296,7 @@ pub fn x00402f4a() -> Cont {
     // 00402f55 lea eax,[eax+eax*4]
     m.regs.eax = m.regs.eax.wrapping_add((m.regs.eax * 4));
     // 00402f58 shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    m.regs.eax = shl(m.regs.eax, 0x2u8, &mut m.flags);
     // 00402f5b mov ecx,eax
     m.regs.ecx = m.regs.eax;
     // 00402f5d mov eax,ds:[409974h]
@@ -10467,7 +10467,7 @@ pub fn x00402fa8() -> Cont {
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffff0u32), m.regs.ecx);
     // 00402fd1 sar ecx,4
-    sar();
+    m.regs.ecx = sar(m.regs.ecx, 0x4u8, &mut m.flags);
     // 00402fd4 dec ecx
     m.regs.ecx = dec(m.regs.ecx);
     // 00402fd5 cmp ecx,20h
@@ -10482,7 +10482,7 @@ pub fn x00402fda() -> Cont {
     // 00402fda or esi,0FFFFFFFFh
     m.regs.esi = or(m.regs.esi, 0xffffffffu32);
     // 00402fdd shr esi,cl
-    m.regs.esi = shr(m.regs.esi, m.regs.get_cl());
+    m.regs.esi = shr(m.regs.esi, m.regs.get_cl(), &mut m.flags);
     // 00402fdf or dword ptr [ebp-8],0FFFFFFFFh
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffff8u32),
@@ -10508,7 +10508,7 @@ pub fn x00402fe8() -> Cont {
     // 00402fee xor esi,esi
     m.regs.esi = xor(m.regs.esi, m.regs.esi);
     // 00402ff0 shr eax,cl
-    m.regs.eax = shr(m.regs.eax, m.regs.get_cl());
+    m.regs.eax = shr(m.regs.eax, m.regs.get_cl(), &mut m.flags);
     // 00402ff2 mov [ebp-0Ch],esi
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffff4u32), m.regs.esi);
@@ -11042,7 +11042,7 @@ pub fn x00403128() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00403128 shl ecx,1
-    m.regs.ecx = shl(m.regs.ecx, 0x1u8);
+    m.regs.ecx = shl(m.regs.ecx, 0x1u8, &mut m.flags);
     // 0040312a inc edi
     m.regs.edi = inc(m.regs.edi);
     // 0040312b jmp short 00403124h
@@ -11074,7 +11074,7 @@ pub fn x0040312d() -> Cont {
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32), m.regs.ecx);
     // 0040313e sar esi,4
-    sar();
+    m.regs.esi = sar(m.regs.esi, 0x4u8, &mut m.flags);
     // 00403141 dec esi
     m.regs.esi = dec(m.regs.esi);
     // 00403142 cmp esi,3Fh
@@ -11136,7 +11136,7 @@ pub fn x0040315f() -> Cont {
     // 00403164 mov ecx,edi
     m.regs.ecx = m.regs.edi;
     // 00403166 shr ebx,cl
-    m.regs.ebx = shr(m.regs.ebx, m.regs.get_cl());
+    m.regs.ebx = shr(m.regs.ebx, m.regs.get_cl(), &mut m.flags);
     // 00403168 mov ecx,[ebp-4]
     m.regs.ecx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32));
     // 0040316b lea edi,[eax+edi+4]
@@ -11195,7 +11195,7 @@ pub fn x0040318a() -> Cont {
     // 0040318d mov ebx,80000000h
     m.regs.ebx = 0x80000000u32;
     // 00403192 shr ebx,cl
-    m.regs.ebx = shr(m.regs.ebx, m.regs.get_cl());
+    m.regs.ebx = shr(m.regs.ebx, m.regs.get_cl(), &mut m.flags);
     // 00403194 mov ecx,[ebp-4]
     m.regs.ecx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32));
     // 00403197 lea edi,[eax+edi+4]
@@ -11376,7 +11376,7 @@ pub fn x00403210() -> Cont {
     // 00403215 mov ecx,esi
     m.regs.ecx = m.regs.esi;
     // 00403217 shr edi,cl
-    m.regs.edi = shr(m.regs.edi, m.regs.get_cl());
+    m.regs.edi = shr(m.regs.edi, m.regs.get_cl(), &mut m.flags);
     // 00403219 or [ebx],edi
     m.memory
         .write::<u32>(m.regs.ebx, or(m.memory.read::<u32>(m.regs.ebx), m.regs.edi));
@@ -11385,7 +11385,7 @@ pub fn x00403210() -> Cont {
     // 00403220 mov ecx,esi
     m.regs.ecx = m.regs.esi;
     // 00403222 shr edi,cl
-    m.regs.edi = shr(m.regs.edi, m.regs.get_cl());
+    m.regs.edi = shr(m.regs.edi, m.regs.get_cl(), &mut m.flags);
     // 00403224 mov ecx,[ebp-4]
     m.regs.ecx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32));
     // 00403227 or [eax+ecx*4+44h],edi
@@ -11416,7 +11416,7 @@ pub fn x0040321b() -> Cont {
     // 00403220 mov ecx,esi
     m.regs.ecx = m.regs.esi;
     // 00403222 shr edi,cl
-    m.regs.edi = shr(m.regs.edi, m.regs.get_cl());
+    m.regs.edi = shr(m.regs.edi, m.regs.get_cl(), &mut m.flags);
     // 00403224 mov ecx,[ebp-4]
     m.regs.ecx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32));
     // 00403227 or [eax+ecx*4+44h],edi
@@ -11463,7 +11463,7 @@ pub fn x00403239() -> Cont {
     // 0040323c mov edi,80000000h
     m.regs.edi = 0x80000000u32;
     // 00403241 shr edi,cl
-    m.regs.edi = shr(m.regs.edi, m.regs.get_cl());
+    m.regs.edi = shr(m.regs.edi, m.regs.get_cl(), &mut m.flags);
     // 00403243 or [ebx+4],edi
     m.memory.write::<u32>(
         m.regs.ebx.wrapping_add(0x4u32),
@@ -11485,7 +11485,7 @@ pub fn x00403239() -> Cont {
     // 00403253 mov esi,80000000h
     m.regs.esi = 0x80000000u32;
     // 00403258 shr esi,cl
-    m.regs.esi = shr(m.regs.esi, m.regs.get_cl());
+    m.regs.esi = shr(m.regs.esi, m.regs.get_cl(), &mut m.flags);
     // 0040325a or [edi],esi
     m.memory
         .write::<u32>(m.regs.edi, or(m.memory.read::<u32>(m.regs.edi), m.regs.esi));
@@ -11513,7 +11513,7 @@ pub fn x00403246() -> Cont {
     // 00403253 mov esi,80000000h
     m.regs.esi = 0x80000000u32;
     // 00403258 shr esi,cl
-    m.regs.esi = shr(m.regs.esi, m.regs.get_cl());
+    m.regs.esi = shr(m.regs.esi, m.regs.get_cl(), &mut m.flags);
     // 0040325a or [edi],esi
     m.memory
         .write::<u32>(m.regs.edi, or(m.memory.read::<u32>(m.regs.edi), m.regs.esi));
@@ -11739,7 +11739,7 @@ pub fn x004032c4() -> Cont {
         .wrapping_add((m.regs.ecx * 4))
         .wrapping_add(0x50u32);
     // 004032c8 shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    m.regs.eax = shl(m.regs.eax, 0x2u8, &mut m.flags);
     // 004032cb push eax
     push(m.regs.eax);
     // 004032cc push dword ptr ds:[40997Ch]
@@ -11956,7 +11956,7 @@ pub fn x00403378() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00403378 shl eax,1
-    m.regs.eax = shl(m.regs.eax, 0x1u8);
+    m.regs.eax = shl(m.regs.eax, 0x1u8, &mut m.flags);
     // 0040337a inc ebx
     m.regs.ebx = inc(m.regs.ebx);
     // 0040337b jmp short 00403374h
@@ -12018,7 +12018,7 @@ pub fn x0040339e() -> Cont {
     // 004033a0 push 4
     push(0x4u32);
     // 004033a2 shl edi,0Fh
-    m.regs.edi = shl(m.regs.edi, 0xfu8);
+    m.regs.edi = shl(m.regs.edi, 0xfu8, &mut m.flags);
     // 004033a5 add edi,[ecx+0Ch]
     m.regs.edi = add(
         m.regs.edi,
@@ -12238,7 +12238,7 @@ pub fn x00403445() -> Cont {
     // 0040344d mov ecx,ebx
     m.regs.ecx = m.regs.ebx;
     // 0040344f shr edx,cl
-    m.regs.edx = shr(m.regs.edx, m.regs.get_cl());
+    m.regs.edx = shr(m.regs.edx, m.regs.get_cl(), &mut m.flags);
     // 00403451 not edx
     not();
     // 00403453 and [eax+8],edx
@@ -12271,7 +12271,7 @@ pub fn x00403448() -> Cont {
     // 0040344d mov ecx,ebx
     m.regs.ecx = m.regs.ebx;
     // 0040344f shr edx,cl
-    m.regs.edx = shr(m.regs.edx, m.regs.get_cl());
+    m.regs.edx = shr(m.regs.edx, m.regs.get_cl(), &mut m.flags);
     // 00403451 not edx
     not();
     // 00403453 and [eax+8],edx
@@ -12346,7 +12346,7 @@ pub fn x0040345d() -> Cont {
     // 0040347a and esi,0FFFFFFF0h
     m.regs.esi = and(m.regs.esi, 0xfffffff0u32);
     // 0040347d shr edx,0Fh
-    m.regs.edx = shr(m.regs.edx, 0xfu8);
+    m.regs.edx = shr(m.regs.edx, 0xfu8, &mut m.flags);
     // 00403480 mov ecx,edx
     m.regs.ecx = m.regs.edx;
     // 00403482 imul ecx,204h
@@ -12411,7 +12411,7 @@ pub fn x004034bf() -> Cont {
     // 004034bf mov ecx,[ebp-4]
     m.regs.ecx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32));
     // 004034c2 sar ecx,4
-    sar();
+    m.regs.ecx = sar(m.regs.ecx, 0x4u8, &mut m.flags);
     // 004034c5 dec ecx
     m.regs.ecx = dec(m.regs.ecx);
     // 004034c6 cmp ecx,3Fh
@@ -12473,7 +12473,7 @@ pub fn x004034e1() -> Cont {
     // 004034e1 mov ebx,80000000h
     m.regs.ebx = 0x80000000u32;
     // 004034e6 shr ebx,cl
-    m.regs.ebx = shr(m.regs.ebx, m.regs.get_cl());
+    m.regs.ebx = shr(m.regs.ebx, m.regs.get_cl(), &mut m.flags);
     // 004034e8 mov ecx,[ebp-8]
     m.regs.ecx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32));
     // 004034eb lea ecx,[ecx+eax+4]
@@ -12525,7 +12525,7 @@ pub fn x00403500() -> Cont {
     // 00403503 mov ebx,80000000h
     m.regs.ebx = 0x80000000u32;
     // 00403508 shr ebx,cl
-    m.regs.ebx = shr(m.regs.ebx, m.regs.get_cl());
+    m.regs.ebx = shr(m.regs.ebx, m.regs.get_cl(), &mut m.flags);
     // 0040350a mov ecx,[ebp-8]
     m.regs.ecx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32));
     // 0040350d lea ecx,[ecx+eax+4]
@@ -12649,7 +12649,7 @@ pub fn x00403548() -> Cont {
     // 0040354b mov ecx,[ebp+0Ch]
     m.regs.ecx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xcu32));
     // 0040354e sar edi,4
-    sar();
+    m.regs.edi = sar(m.regs.edi, 0x4u8, &mut m.flags);
     // 00403551 dec edi
     m.regs.edi = dec(m.regs.edi);
     // 00403552 lea ecx,[ecx+esi-4]
@@ -12787,7 +12787,7 @@ pub fn x0040359c() -> Cont {
     // 004035a1 mov ecx,edi
     m.regs.ecx = m.regs.edi;
     // 004035a3 shr ebx,cl
-    m.regs.ebx = shr(m.regs.ebx, m.regs.get_cl());
+    m.regs.ebx = shr(m.regs.ebx, m.regs.get_cl(), &mut m.flags);
     // 004035a5 mov ecx,[ebp+8]
     m.regs.ecx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x8u32));
     // 004035a8 or [ecx],ebx
@@ -12841,7 +12841,7 @@ pub fn x004035bd() -> Cont {
     // 004035c0 mov ebx,80000000h
     m.regs.ebx = 0x80000000u32;
     // 004035c5 shr ebx,cl
-    m.regs.ebx = shr(m.regs.ebx, m.regs.get_cl());
+    m.regs.ebx = shr(m.regs.ebx, m.regs.get_cl(), &mut m.flags);
     // 004035c7 mov ecx,[ebp+8]
     m.regs.ecx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x8u32));
     // 004035ca or [ecx+4],ebx
@@ -12863,7 +12863,7 @@ pub fn x004035bd() -> Cont {
     // 004035d7 mov edx,80000000h
     m.regs.edx = 0x80000000u32;
     // 004035dc shr edx,cl
-    m.regs.edx = shr(m.regs.edx, m.regs.get_cl());
+    m.regs.edx = shr(m.regs.edx, m.regs.get_cl(), &mut m.flags);
     // 004035de or [eax],edx
     m.memory
         .write::<u32>(m.regs.eax, or(m.memory.read::<u32>(m.regs.eax), m.regs.edx));
@@ -12905,7 +12905,7 @@ pub fn x004035cd() -> Cont {
     // 004035d7 mov edx,80000000h
     m.regs.edx = 0x80000000u32;
     // 004035dc shr edx,cl
-    m.regs.edx = shr(m.regs.edx, m.regs.get_cl());
+    m.regs.edx = shr(m.regs.edx, m.regs.get_cl(), &mut m.flags);
     // 004035de or [eax],edx
     m.memory
         .write::<u32>(m.regs.eax, or(m.memory.read::<u32>(m.regs.eax), m.regs.edx));
@@ -12937,7 +12937,7 @@ pub fn x004035dc() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004035dc shr edx,cl
-    m.regs.edx = shr(m.regs.edx, m.regs.get_cl());
+    m.regs.edx = shr(m.regs.edx, m.regs.get_cl(), &mut m.flags);
     // 004035de or [eax],edx
     m.memory
         .write::<u32>(m.regs.eax, or(m.memory.read::<u32>(m.regs.eax), m.regs.edx));
@@ -13080,7 +13080,7 @@ pub fn x00403611() -> Cont {
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xcu32), m.regs.ebx);
     // 00403627 sar esi,4
-    sar();
+    m.regs.esi = sar(m.regs.esi, 0x4u8, &mut m.flags);
     // 0040362a dec esi
     m.regs.esi = dec(m.regs.esi);
     // 0040362b mov [ebx-4],ecx
@@ -13126,7 +13126,7 @@ pub fn x00403640() -> Cont {
     // 00403640 mov esi,[ebp-4]
     m.regs.esi = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32));
     // 00403643 sar esi,4
-    sar();
+    m.regs.esi = sar(m.regs.esi, 0x4u8, &mut m.flags);
     // 00403646 dec esi
     m.regs.esi = dec(m.regs.esi);
     // 00403647 cmp esi,3Fh
@@ -13184,7 +13184,7 @@ pub fn x0040365c() -> Cont {
     // 00403661 mov ecx,esi
     m.regs.ecx = m.regs.esi;
     // 00403663 shr ebx,cl
-    m.regs.ebx = shr(m.regs.ebx, m.regs.get_cl());
+    m.regs.ebx = shr(m.regs.ebx, m.regs.get_cl(), &mut m.flags);
     // 00403665 lea esi,[esi+eax+4]
     m.regs.esi = m.regs.esi.wrapping_add(m.regs.eax).wrapping_add(0x4u32);
     // 00403669 not ebx
@@ -13234,7 +13234,7 @@ pub fn x0040367a() -> Cont {
     // 0040367d mov ebx,80000000h
     m.regs.ebx = 0x80000000u32;
     // 00403682 shr ebx,cl
-    m.regs.ebx = shr(m.regs.ebx, m.regs.get_cl());
+    m.regs.ebx = shr(m.regs.ebx, m.regs.get_cl(), &mut m.flags);
     // 00403684 lea ecx,[esi+eax+4]
     m.regs.ecx = m.regs.esi.wrapping_add(m.regs.eax).wrapping_add(0x4u32);
     // 00403688 not ebx
@@ -13302,7 +13302,7 @@ pub fn x00403695() -> Cont {
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0x10u32), m.regs.esi);
     // 004036b9 sar esi,4
-    sar();
+    m.regs.esi = sar(m.regs.esi, 0x4u8, &mut m.flags);
     // 004036bc dec esi
     m.regs.esi = dec(m.regs.esi);
     // 004036bd cmp esi,3Fh
@@ -13341,7 +13341,7 @@ pub fn x0040369b() -> Cont {
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0x10u32), m.regs.esi);
     // 004036b9 sar esi,4
-    sar();
+    m.regs.esi = sar(m.regs.esi, 0x4u8, &mut m.flags);
     // 004036bc dec esi
     m.regs.esi = dec(m.regs.esi);
     // 004036bd cmp esi,3Fh
@@ -13378,7 +13378,7 @@ pub fn x0040369e() -> Cont {
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0x10u32), m.regs.esi);
     // 004036b9 sar esi,4
-    sar();
+    m.regs.esi = sar(m.regs.esi, 0x4u8, &mut m.flags);
     // 004036bc dec esi
     m.regs.esi = dec(m.regs.esi);
     // 004036bd cmp esi,3Fh
@@ -13510,7 +13510,7 @@ pub fn x004036fe() -> Cont {
     // 00403703 mov ecx,esi
     m.regs.ecx = m.regs.esi;
     // 00403705 shr edi,cl
-    m.regs.edi = shr(m.regs.edi, m.regs.get_cl());
+    m.regs.edi = shr(m.regs.edi, m.regs.get_cl(), &mut m.flags);
     // 00403707 mov ecx,[ebp+8]
     m.regs.ecx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x8u32));
     // 0040370a or [ecx],edi
@@ -13564,7 +13564,7 @@ pub fn x0040371f() -> Cont {
     // 00403722 mov edi,80000000h
     m.regs.edi = 0x80000000u32;
     // 00403727 shr edi,cl
-    m.regs.edi = shr(m.regs.edi, m.regs.get_cl());
+    m.regs.edi = shr(m.regs.edi, m.regs.get_cl(), &mut m.flags);
     // 00403729 mov ecx,[ebp+8]
     m.regs.ecx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x8u32));
     // 0040372c or [ecx+4],edi
@@ -13586,7 +13586,7 @@ pub fn x0040371f() -> Cont {
     // 00403739 mov edx,80000000h
     m.regs.edx = 0x80000000u32;
     // 0040373e shr edx,cl
-    m.regs.edx = shr(m.regs.edx, m.regs.get_cl());
+    m.regs.edx = shr(m.regs.edx, m.regs.get_cl(), &mut m.flags);
     // 00403740 or [eax],edx
     m.memory
         .write::<u32>(m.regs.eax, or(m.memory.read::<u32>(m.regs.eax), m.regs.edx));
@@ -13632,7 +13632,7 @@ pub fn x0040372f() -> Cont {
     // 00403739 mov edx,80000000h
     m.regs.edx = 0x80000000u32;
     // 0040373e shr edx,cl
-    m.regs.edx = shr(m.regs.edx, m.regs.get_cl());
+    m.regs.edx = shr(m.regs.edx, m.regs.get_cl(), &mut m.flags);
     // 00403740 or [eax],edx
     m.memory
         .write::<u32>(m.regs.eax, or(m.memory.read::<u32>(m.regs.eax), m.regs.edx));
@@ -13668,7 +13668,7 @@ pub fn x0040373e() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 0040373e shr edx,cl
-    m.regs.edx = shr(m.regs.edx, m.regs.get_cl());
+    m.regs.edx = shr(m.regs.edx, m.regs.get_cl(), &mut m.flags);
     // 00403740 or [eax],edx
     m.memory
         .write::<u32>(m.regs.eax, or(m.memory.read::<u32>(m.regs.eax), m.regs.edx));
@@ -14716,7 +14716,7 @@ pub fn x004039e2() -> Cont {
     // 004039f9 pop esi
     m.regs.esi = pop();
     // 004039fa sar eax,4
-    sar();
+    m.regs.eax = sar(m.regs.eax, 0x4u8, &mut m.flags);
     // 004039fd lea eax,[eax+ecx+8]
     m.regs.eax = m.regs.eax.wrapping_add(m.regs.ecx).wrapping_add(0x8u32);
     // 00403a01 ret
@@ -14747,7 +14747,7 @@ pub fn x00403a06() -> Cont {
         m.memory.read::<u32>(m.regs.eax.wrapping_add(0x10u32)),
     );
     // 00403a11 sar ecx,0Ch
-    sar();
+    m.regs.ecx = sar(m.regs.ecx, 0xcu8, &mut m.flags);
     // 00403a14 lea eax,[eax+ecx*8+18h]
     m.regs.eax = m
         .regs
@@ -14864,9 +14864,9 @@ pub fn x00403a65() -> Cont {
     // 00403a72 sub eax,18h
     m.regs.eax = sub(m.regs.eax, 0x18u32);
     // 00403a75 sar eax,3
-    sar();
+    m.regs.eax = sar(m.regs.eax, 0x3u8, &mut m.flags);
     // 00403a78 shl eax,0Ch
-    m.regs.eax = shl(m.regs.eax, 0xcu8);
+    m.regs.eax = shl(m.regs.eax, 0xcu8, &mut m.flags);
     // 00403a7b add eax,edx
     m.regs.eax = add(m.regs.eax, m.regs.edx);
     // 00403a7d cmp edi,ecx
@@ -15248,9 +15248,9 @@ pub fn x00403b45() -> Cont {
     // 00403b52 sub esi,18h
     m.regs.esi = sub(m.regs.esi, 0x18u32);
     // 00403b55 sar esi,3
-    sar();
+    m.regs.esi = sar(m.regs.esi, 0x3u8, &mut m.flags);
     // 00403b58 shl esi,0Ch
-    m.regs.esi = shl(m.regs.esi, 0xcu8);
+    m.regs.esi = shl(m.regs.esi, 0xcu8, &mut m.flags);
     // 00403b5b add esi,[edi+10h]
     m.regs.esi = add(
         m.regs.esi,
@@ -15298,7 +15298,7 @@ pub fn x00403b74() -> Cont {
     // 00403b77 push 4
     push(0x4u32);
     // 00403b79 shl eax,0Ch
-    m.regs.eax = shl(m.regs.eax, 0xcu8);
+    m.regs.eax = shl(m.regs.eax, 0xcu8, &mut m.flags);
     // 00403b7c push 1000h
     push(0x1000u32);
     // 00403b81 push eax
@@ -16157,7 +16157,7 @@ pub fn x00403d58() -> Cont {
     // 00403d66 imul ecx,0Fh
     m.regs.ecx = imul(m.regs.ecx as i32, 0xfu32 as i32) as u32;
     // 00403d69 shl eax,4
-    m.regs.eax = shl(m.regs.eax, 0x4u8);
+    m.regs.eax = shl(m.regs.eax, 0x4u8, &mut m.flags);
     // 00403d6c sub eax,ecx
     m.regs.eax = sub(m.regs.eax, m.regs.ecx);
     // 00403d6e jmp short 00403D72h
@@ -16174,7 +16174,7 @@ pub fn x00403d61() -> Cont {
     // 00403d66 imul ecx,0Fh
     m.regs.ecx = imul(m.regs.ecx as i32, 0xfu32 as i32) as u32;
     // 00403d69 shl eax,4
-    m.regs.eax = shl(m.regs.eax, 0x4u8);
+    m.regs.eax = shl(m.regs.eax, 0x4u8, &mut m.flags);
     // 00403d6c sub eax,ecx
     m.regs.eax = sub(m.regs.eax, m.regs.ecx);
     // 00403d6e jmp short 00403D72h
@@ -16187,7 +16187,7 @@ pub fn x00403d66() -> Cont {
     // 00403d66 imul ecx,0Fh
     m.regs.ecx = imul(m.regs.ecx as i32, 0xfu32 as i32) as u32;
     // 00403d69 shl eax,4
-    m.regs.eax = shl(m.regs.eax, 0x4u8);
+    m.regs.eax = shl(m.regs.eax, 0x4u8, &mut m.flags);
     // 00403d6c sub eax,ecx
     m.regs.eax = sub(m.regs.eax, m.regs.ecx);
     // 00403d6e jmp short 00403D72h
@@ -16265,7 +16265,7 @@ pub fn x00403d77() -> Cont {
         m.memory.read::<u32>(m.regs.edi.wrapping_add(0x10u32)),
     );
     // 00403d93 sar eax,0Ch
-    sar();
+    m.regs.eax = sar(m.regs.eax, 0xcu8, &mut m.flags);
     // 00403d96 cmp ecx,[ebp+14h]
     sub(
         m.regs.ecx,
@@ -16662,7 +16662,7 @@ pub fn x00403e68() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00403e68 shr ecx,2
-    m.regs.ecx = shr(m.regs.ecx, 0x2u8);
+    m.regs.ecx = shr(m.regs.ecx, 0x2u8, &mut m.flags);
     // 00403e6b and edx,3
     m.regs.edx = and(m.regs.edx, 0x3u32);
     // 00403e6e cmp ecx,8
@@ -16675,7 +16675,7 @@ pub fn x00403e73() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00403e73 rep movsd
-    rep(Rep::REP, movsd);
+    rep(m, Rep::REP, movsd);
     // 00403e75 jmp dword ptr [edx*4+403F88h]
     indirect(m.memory.read((m.regs.edx * 4).wrapping_add(0x403f88u32)))
 }
@@ -16743,7 +16743,7 @@ pub fn x00403fe8() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00403fe8 shr ecx,2
-    m.regs.ecx = shr(m.regs.ecx, 0x2u8);
+    m.regs.ecx = shr(m.regs.ecx, 0x2u8, &mut m.flags);
     // 00403feb and edx,3
     m.regs.edx = and(m.regs.edx, 0x3u32);
     // 00403fee cmp ecx,8
@@ -16756,11 +16756,11 @@ pub fn x00403ff3() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00403ff3 std
-    std();
+    std(m);
     // 00403ff4 rep movsd
-    rep(Rep::REP, movsd);
+    rep(m, Rep::REP, movsd);
     // 00403ff6 cld
-    cld();
+    cld(m);
     // 00403ff7 jmp dword ptr [edx*4+404120h]
     indirect(m.memory.read((m.regs.edx * 4).wrapping_add(0x404120u32)))
 }
@@ -17034,9 +17034,9 @@ pub fn x0040420e() -> Cont {
     // 0040421c mov ds:[409748h],esi
     m.memory.write::<u32>(0x409748u32, m.regs.esi);
     // 00404222 rep stosd
-    stosd();
+    rep(m, Rep::REP, stosd);
     // 00404224 stosb
-    stosb();
+    stosb(m);
     // 00404225 mov ds:[409964h],ebx
     m.memory.write::<u32>(0x409964u32, m.regs.ebx);
     // 0040422b jbe near ptr 00404320h
@@ -17130,16 +17130,16 @@ pub fn x00404261() -> Cont {
     // 00404266 mov edi,409860h
     m.regs.edi = 0x409860u32;
     // 0040426b rep stosd
-    stosd();
+    rep(m, Rep::REP, stosd);
     // 0040426d lea esi,[edx+edx*2]
     m.regs.esi = m.regs.edx.wrapping_add((m.regs.edx * 2));
     // 00404270 mov [ebp-4],ebx
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32), m.regs.ebx);
     // 00404273 shl esi,4
-    m.regs.esi = shl(m.regs.esi, 0x4u8);
+    m.regs.esi = shl(m.regs.esi, 0x4u8, &mut m.flags);
     // 00404276 stosb
-    stosb();
+    stosb(m);
     // 00404277 lea ebx,[esi+409248h]
     m.regs.ebx = m.regs.esi.wrapping_add(0x409248u32);
     // 0040427d cmp byte ptr [ebx],0
@@ -17284,15 +17284,15 @@ pub fn x004042d4() -> Cont {
     // 004042da mov edi,409750h
     m.regs.edi = 0x409750u32;
     // 004042df movsd
-    movsd();
+    movsd(m);
     // 004042e0 movsd
-    movsd();
+    movsd(m);
     // 004042e1 pop ecx
     m.regs.ecx = pop();
     // 004042e2 mov ds:[409964h],eax
     m.memory.write::<u32>(0x409964u32, m.regs.eax);
     // 004042e7 movsd
-    movsd();
+    movsd(m);
     // 004042e8 jmp short 0040433Fh
     Cont(x0040433f)
 }
@@ -17387,11 +17387,11 @@ pub fn x00404320() -> Cont {
     // 00404328 mov edi,409750h
     m.regs.edi = 0x409750u32;
     // 0040432d stosd
-    stosd();
+    stosd(m);
     // 0040432e stosd
-    stosd();
+    stosd(m);
     // 0040432f stosd
-    stosd();
+    stosd(m);
     // 00404330 jmp short 0040433Fh
     Cont(x0040433f)
 }
@@ -17404,11 +17404,11 @@ pub fn x00404326() -> Cont {
     // 00404328 mov edi,409750h
     m.regs.edi = 0x409750u32;
     // 0040432d stosd
-    stosd();
+    stosd(m);
     // 0040432e stosd
-    stosd();
+    stosd(m);
     // 0040432f stosd
-    stosd();
+    stosd(m);
     // 00404330 jmp short 0040433Fh
     Cont(x0040433f)
 }
@@ -17642,9 +17642,9 @@ pub fn x004043cd() -> Cont {
     // 004043d3 mov edi,409860h
     m.regs.edi = 0x409860u32;
     // 004043d8 rep stosd
-    stosd();
+    rep(m, Rep::REP, stosd);
     // 004043da stosb
-    stosb();
+    stosb(m);
     // 004043db xor eax,eax
     m.regs.eax = xor(m.regs.eax, m.regs.eax);
     // 004043dd mov edi,409750h
@@ -17656,11 +17656,11 @@ pub fn x004043cd() -> Cont {
     // 004043ec mov ds:[409964h],eax
     m.memory.write::<u32>(0x409964u32, m.regs.eax);
     // 004043f1 stosd
-    stosd();
+    stosd(m);
     // 004043f2 stosd
-    stosd();
+    stosd(m);
     // 004043f3 stosd
-    stosd();
+    stosd(m);
     // 004043f4 pop edi
     m.regs.edi = pop();
     // 004043f5 ret
@@ -17804,15 +17804,15 @@ pub fn x00404449() -> Cont {
     // 00404458 mov ebx,ecx
     m.regs.ebx = m.regs.ecx;
     // 0040445a shr ecx,2
-    m.regs.ecx = shr(m.regs.ecx, 0x2u8);
+    m.regs.ecx = shr(m.regs.ecx, 0x2u8, &mut m.flags);
     // 0040445d rep stosd
-    stosd();
+    rep(m, Rep::REP, stosd);
     // 0040445f mov ecx,ebx
     m.regs.ecx = m.regs.ebx;
     // 00404461 and ecx,3
     m.regs.ecx = and(m.regs.ecx, 0x3u32);
     // 00404464 rep stosb
-    rep(Rep::REP, stosb);
+    rep(m, Rep::REP, stosb);
     // 00404466 inc edx
     m.regs.edx = inc(m.regs.edx);
     // 00404467 inc edx
@@ -19764,7 +19764,7 @@ pub fn x00404940() -> Cont {
     // 00404947 mov ebx,eax
     m.regs.ebx = m.regs.eax;
     // 00404949 shl eax,8
-    m.regs.eax = shl(m.regs.eax, 0x8u8);
+    m.regs.eax = shl(m.regs.eax, 0x8u8, &mut m.flags);
     // 0040494c mov edx,[esp+8]
     m.regs.edx = m.memory.read::<u32>(m.regs.esp.wrapping_add(0x8u32));
     // 00404950 test edx,3
@@ -19781,7 +19781,7 @@ pub fn x00404946() -> Cont {
     // 00404947 mov ebx,eax
     m.regs.ebx = m.regs.eax;
     // 00404949 shl eax,8
-    m.regs.eax = shl(m.regs.eax, 0x8u8);
+    m.regs.eax = shl(m.regs.eax, 0x8u8, &mut m.flags);
     // 0040494c mov edx,[esp+8]
     m.regs.edx = m.memory.read::<u32>(m.regs.esp.wrapping_add(0x8u32));
     // 00404950 test edx,3
@@ -19831,7 +19831,7 @@ pub fn x0040496b() -> Cont {
     // 0040496e mov eax,ebx
     m.regs.eax = m.regs.ebx;
     // 00404970 shl ebx,10h
-    m.regs.ebx = shl(m.regs.ebx, 0x10u8);
+    m.regs.ebx = shl(m.regs.ebx, 0x10u8, &mut m.flags);
     // 00404973 push esi
     push(m.regs.esi);
     // 00404974 or ebx,eax
@@ -19994,7 +19994,7 @@ pub fn x004049cb() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004049cb shr eax,10h
-    m.regs.eax = shr(m.regs.eax, 0x10u8);
+    m.regs.eax = shr(m.regs.eax, 0x10u8, &mut m.flags);
     // 004049ce cmp al,bl
     sub(m.regs.get_al(), m.regs.get_bl());
     // 004049d0 je short 004049E7h
@@ -20363,7 +20363,7 @@ pub fn x00404a8b() -> Cont {
     // 00404a92 xor eax,eax
     m.regs.eax = xor(m.regs.eax, m.regs.eax);
     // 00404a94 repne scasb
-    scasb();
+    rep(m, Rep::REPNE, scasb);
     // 00404a96 neg ecx
     m.regs.ecx = neg(m.regs.ecx);
     // 00404a98 add ecx,ebx
@@ -20373,7 +20373,7 @@ pub fn x00404a8b() -> Cont {
     // 00404a9c mov esi,[ebp+0Ch]
     m.regs.esi = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xcu32));
     // 00404a9f repe cmpsb
-    cmpsb();
+    rep(m, Rep::REPE, cmpsb);
     // 00404aa1 mov al,[esi-1]
     m.regs
         .set_al(m.memory.read::<u8>(m.regs.esi.wrapping_add(0xffffffffu32)));
@@ -20740,7 +20740,7 @@ pub fn x00404b9d() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00404b9d shr ecx,2
-    m.regs.ecx = shr(m.regs.ecx, 0x2u8);
+    m.regs.ecx = shr(m.regs.ecx, 0x2u8, &mut m.flags);
     // 00404ba0 jne short 00404C11h
     jne(Cont(x00404ba2), Cont(x00404c11))
 }
@@ -20793,7 +20793,7 @@ pub fn x00404bb9() -> Cont {
     // 00404bb9 mov ebx,ecx
     m.regs.ebx = m.regs.ecx;
     // 00404bbb shr ecx,2
-    m.regs.ecx = shr(m.regs.ecx, 0x2u8);
+    m.regs.ecx = shr(m.regs.ecx, 0x2u8, &mut m.flags);
     // 00404bbe jne short 00404C11h
     jne(Cont(x00404bc0), Cont(x00404c11))
 }
@@ -20885,7 +20885,7 @@ pub fn x00404bf4() -> Cont {
     // 00404bf4 mov ebx,ecx
     m.regs.ebx = m.regs.ecx;
     // 00404bf6 shr ecx,2
-    m.regs.ecx = shr(m.regs.ecx, 0x2u8);
+    m.regs.ecx = shr(m.regs.ecx, 0x2u8, &mut m.flags);
     // 00404bf9 jne short 00404C67h
     jne(Cont(x00404bfb), Cont(x00404c67))
 }
@@ -21174,7 +21174,7 @@ pub fn x00404ca8() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00404ca8 shr ecx,2
-    m.regs.ecx = shr(m.regs.ecx, 0x2u8);
+    m.regs.ecx = shr(m.regs.ecx, 0x2u8, &mut m.flags);
     // 00404cab and edx,3
     m.regs.edx = and(m.regs.edx, 0x3u32);
     // 00404cae cmp ecx,8
@@ -21187,7 +21187,7 @@ pub fn x00404cb3() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00404cb3 rep movsd
-    rep(Rep::REP, movsd);
+    rep(m, Rep::REP, movsd);
     // 00404cb5 jmp dword ptr [edx*4+404DC8h]
     indirect(m.memory.read((m.regs.edx * 4).wrapping_add(0x404dc8u32)))
 }
@@ -21255,7 +21255,7 @@ pub fn x00404e28() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00404e28 shr ecx,2
-    m.regs.ecx = shr(m.regs.ecx, 0x2u8);
+    m.regs.ecx = shr(m.regs.ecx, 0x2u8, &mut m.flags);
     // 00404e2b and edx,3
     m.regs.edx = and(m.regs.edx, 0x3u32);
     // 00404e2e cmp ecx,8
@@ -21268,11 +21268,11 @@ pub fn x00404e33() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00404e33 std
-    std();
+    std(m);
     // 00404e34 rep movsd
-    rep(Rep::REP, movsd);
+    rep(m, Rep::REP, movsd);
     // 00404e36 cld
-    cld();
+    cld(m);
     // 00404e37 jmp dword ptr [edx*4+404F60h]
     indirect(m.memory.read((m.regs.edx * 4).wrapping_add(0x404f60u32)))
 }
@@ -21393,13 +21393,13 @@ pub fn x00404fe9() -> Cont {
     // 00404fe9 mov ecx,eax
     m.regs.ecx = m.regs.eax;
     // 00404feb shl eax,8
-    m.regs.eax = shl(m.regs.eax, 0x8u8);
+    m.regs.eax = shl(m.regs.eax, 0x8u8, &mut m.flags);
     // 00404fee add eax,ecx
     m.regs.eax = add(m.regs.eax, m.regs.ecx);
     // 00404ff0 mov ecx,eax
     m.regs.ecx = m.regs.eax;
     // 00404ff2 shl eax,10h
-    m.regs.eax = shl(m.regs.eax, 0x10u8);
+    m.regs.eax = shl(m.regs.eax, 0x10u8, &mut m.flags);
     // 00404ff5 add eax,ecx
     m.regs.eax = add(m.regs.eax, m.regs.ecx);
     // 00404ff7 mov ecx,edx
@@ -21407,7 +21407,7 @@ pub fn x00404fe9() -> Cont {
     // 00404ff9 and edx,3
     m.regs.edx = and(m.regs.edx, 0x3u32);
     // 00404ffc shr ecx,2
-    m.regs.ecx = shr(m.regs.ecx, 0x2u8);
+    m.regs.ecx = shr(m.regs.ecx, 0x2u8, &mut m.flags);
     // 00404fff je short 00405007h
     je(Cont(x00405001), Cont(x00405007))
 }
@@ -21416,7 +21416,7 @@ pub fn x00405001() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00405001 rep stosd
-    stosd();
+    rep(m, Rep::REP, stosd);
     // 00405003 test edx,edx
     and(m.regs.edx, m.regs.edx);
     // 00405005 je short 0040500Dh
@@ -22895,7 +22895,7 @@ pub fn x0040540e() -> Cont {
     // 00405414 mov eax,ebx
     m.regs.eax = m.regs.ebx;
     // 00405416 sar eax,8
-    sar();
+    m.regs.eax = sar(m.regs.eax, 0x8u8, &mut m.flags);
     // 00405419 movzx ecx,al
     m.regs.ecx = m.regs.get_al() as _;
     // 0040541c test byte ptr [edx+ecx*2+1],80h
@@ -23037,7 +23037,7 @@ pub fn x0040546c() -> Cont {
     // 00405470 movzx ecx,byte ptr [ebp-4]
     m.regs.ecx = m.memory.read::<u8>(m.regs.ebp.wrapping_add(0xfffffffcu32)) as _;
     // 00405474 shl eax,8
-    m.regs.eax = shl(m.regs.eax, 0x8u8);
+    m.regs.eax = shl(m.regs.eax, 0x8u8, &mut m.flags);
     // 00405477 or eax,ecx
     m.regs.eax = or(m.regs.eax, m.regs.ecx);
     // 00405479 pop ebx
@@ -23101,7 +23101,7 @@ pub fn x0040549a() -> Cont {
     // 0040549d mov esi,ds:[409330h]
     m.regs.esi = m.memory.read::<u32>(0x409330u32);
     // 004054a3 sar ecx,8
-    sar();
+    m.regs.ecx = sar(m.regs.ecx, 0x8u8, &mut m.flags);
     // 004054a6 movzx edx,cl
     m.regs.edx = m.regs.get_cl() as _;
     // 004054a9 test byte ptr [esi+edx*2+1],80h
@@ -23260,7 +23260,7 @@ pub fn x004054ec() -> Cont {
     ret(0)
 }
 
-const BLOCKS: [(u32, fn() -> Cont); 1714] = [
+const BLOCKS: [(u32, fn() -> Cont); 1773] = [
     (0x001001, ddraw::DirectDrawCreateEx_stdcall),
     (0x001002, gdi32::SelectObject_stdcall),
     (0x001003, gdi32::CreateCompatibleDC_stdcall),
@@ -23324,127 +23324,216 @@ const BLOCKS: [(u32, fn() -> Cont); 1714] = [
     (0x00103d, user32::LoadIconA_stdcall),
     (0x00103e, user32::LoadCursorA_stdcall),
     (0x00103f, user32::RegisterClassA_stdcall),
-    (0x001040, ddraw::IDirectDraw7::QueryInterface_stdcall),
-    (0x001041, ddraw::IDirectDraw7::AddRef_stdcall),
-    (0x001042, ddraw::IDirectDraw7::Release_stdcall),
-    (0x001043, ddraw::IDirectDraw7::Compact_stdcall),
-    (0x001044, ddraw::IDirectDraw7::CreateClipper_stdcall),
-    (0x001045, ddraw::IDirectDraw7::CreatePalette_stdcall),
-    (0x001046, ddraw::IDirectDraw7::CreateSurface_stdcall),
-    (0x001047, ddraw::IDirectDraw7::DuplicateSurface_stdcall),
-    (0x001048, ddraw::IDirectDraw7::EnumDisplayModes_stdcall),
-    (0x001049, ddraw::IDirectDraw7::EnumSurfaces_stdcall),
-    (0x00104a, ddraw::IDirectDraw7::FlipToGDISurface_stdcall),
-    (0x00104b, ddraw::IDirectDraw7::GetCaps_stdcall),
-    (0x00104c, ddraw::IDirectDraw7::GetDisplayMode_stdcall),
-    (0x00104d, ddraw::IDirectDraw7::GetFourCCCodes_stdcall),
-    (0x00104e, ddraw::IDirectDraw7::GetGDISurface_stdcall),
-    (0x00104f, ddraw::IDirectDraw7::GetMonitorFrequency_stdcall),
-    (0x001050, ddraw::IDirectDraw7::GetScanLine_stdcall),
+    (0x001040, ddraw::IDirectDraw::QueryInterface_stdcall),
+    (0x001041, ddraw::IDirectDraw::AddRef_stdcall),
+    (0x001042, ddraw::IDirectDraw::Release_stdcall),
+    (0x001043, ddraw::IDirectDraw::Compact_stdcall),
+    (0x001044, ddraw::IDirectDraw::CreateClipper_stdcall),
+    (0x001045, ddraw::IDirectDraw::CreatePalette_stdcall),
+    (0x001046, ddraw::IDirectDraw::CreateSurface_stdcall),
+    (0x001047, ddraw::IDirectDraw::DuplicateSurface_stdcall),
+    (0x001048, ddraw::IDirectDraw::EnumDisplayModes_stdcall),
+    (0x001049, ddraw::IDirectDraw::EnumSurfaces_stdcall),
+    (0x00104a, ddraw::IDirectDraw::FlipToGDISurface_stdcall),
+    (0x00104b, ddraw::IDirectDraw::GetCaps_stdcall),
+    (0x00104c, ddraw::IDirectDraw::GetDisplayMode_stdcall),
+    (0x00104d, ddraw::IDirectDraw::GetFourCCCodes_stdcall),
+    (0x00104e, ddraw::IDirectDraw::GetGDISurface_stdcall),
+    (0x00104f, ddraw::IDirectDraw::GetMonitorFrequency_stdcall),
+    (0x001050, ddraw::IDirectDraw::GetScanLine_stdcall),
+    (0x001051, ddraw::IDirectDraw::GetVerticalBlankStatus_stdcall),
+    (0x001052, ddraw::IDirectDraw::Initialize_stdcall),
+    (0x001053, ddraw::IDirectDraw::RestoreDisplayMode_stdcall),
+    (0x001054, ddraw::IDirectDraw::SetCooperativeLevel_stdcall),
+    (0x001055, ddraw::IDirectDraw::SetDisplayMode_stdcall),
+    (0x001056, ddraw::IDirectDraw::WaitForVerticalBlank_stdcall),
+    (0x001057, ddraw::IDirectDrawSurface::QueryInterface_stdcall),
+    (0x001058, ddraw::IDirectDrawSurface::AddRef_stdcall),
+    (0x001059, ddraw::IDirectDrawSurface::Release_stdcall),
     (
-        0x001051,
-        ddraw::IDirectDraw7::GetVerticalBlankStatus_stdcall,
+        0x00105a,
+        ddraw::IDirectDrawSurface::AddAttachedSurface_stdcall,
     ),
-    (0x001052, ddraw::IDirectDraw7::Initialize_stdcall),
-    (0x001053, ddraw::IDirectDraw7::RestoreDisplayMode_stdcall),
-    (0x001054, ddraw::IDirectDraw7::SetCooperativeLevel_stdcall),
-    (0x001055, ddraw::IDirectDraw7::SetDisplayMode_stdcall),
-    (0x001056, ddraw::IDirectDraw7::WaitForVerticalBlank_stdcall),
-    (0x001057, ddraw::IDirectDraw7::GetAvailableVidMem_stdcall),
-    (0x001058, ddraw::IDirectDraw7::GetSurfaceFromDC_stdcall),
-    (0x001059, ddraw::IDirectDraw7::RestoreAllSurfaces_stdcall),
-    (0x00105a, ddraw::IDirectDraw7::TestCooperativeLevel_stdcall),
-    (0x00105b, ddraw::IDirectDraw7::GetDeviceIdentifier_stdcall),
-    (0x00105c, ddraw::IDirectDraw7::StartModeTest_stdcall),
-    (0x00105d, ddraw::IDirectDraw7::EvaluateMode_stdcall),
-    (0x00105e, ddraw::IDirectDrawSurface7::QueryInterface_stdcall),
-    (0x00105f, ddraw::IDirectDrawSurface7::AddRef_stdcall),
-    (0x001060, ddraw::IDirectDrawSurface7::Release_stdcall),
+    (
+        0x00105b,
+        ddraw::IDirectDrawSurface::AddOverlayDirtyRect_stdcall,
+    ),
+    (0x00105c, ddraw::IDirectDrawSurface::Blt_stdcall),
+    (0x00105d, ddraw::IDirectDrawSurface::BltBatch_stdcall),
+    (0x00105e, ddraw::IDirectDrawSurface::BltFast_stdcall),
+    (
+        0x00105f,
+        ddraw::IDirectDrawSurface::DeleteAttachedSurface_stdcall,
+    ),
+    (
+        0x001060,
+        ddraw::IDirectDrawSurface::EnumAttachedSurfaces_stdcall,
+    ),
     (
         0x001061,
+        ddraw::IDirectDrawSurface::EnumOverlayZOrders_stdcall,
+    ),
+    (0x001062, ddraw::IDirectDrawSurface::Flip_stdcall),
+    (
+        0x001063,
+        ddraw::IDirectDrawSurface::GetAttachedSurface_stdcall,
+    ),
+    (0x001064, ddraw::IDirectDrawSurface::GetBltStatus_stdcall),
+    (0x001065, ddraw::IDirectDrawSurface::GetCaps_stdcall),
+    (0x001066, ddraw::IDirectDrawSurface::GetClipper_stdcall),
+    (0x001067, ddraw::IDirectDrawSurface::GetColorKey_stdcall),
+    (0x001068, ddraw::IDirectDrawSurface::GetDC_stdcall),
+    (0x001069, ddraw::IDirectDrawSurface::GetFlipStatus_stdcall),
+    (
+        0x00106a,
+        ddraw::IDirectDrawSurface::GetOverlayPosition_stdcall,
+    ),
+    (0x00106b, ddraw::IDirectDrawSurface::GetPalette_stdcall),
+    (0x00106c, ddraw::IDirectDrawSurface::GetPixelFormat_stdcall),
+    (0x00106d, ddraw::IDirectDrawSurface::GetSurfaceDesc_stdcall),
+    (0x00106e, ddraw::IDirectDrawSurface::Initialize_stdcall),
+    (0x00106f, ddraw::IDirectDrawSurface::IsLost_stdcall),
+    (0x001070, ddraw::IDirectDrawSurface::Lock_stdcall),
+    (0x001071, ddraw::IDirectDrawSurface::ReleaseDC_stdcall),
+    (0x001072, ddraw::IDirectDrawSurface::Restore_stdcall),
+    (0x001073, ddraw::IDirectDrawSurface::SetClipper_stdcall),
+    (0x001074, ddraw::IDirectDrawSurface::SetColorKey_stdcall),
+    (
+        0x001075,
+        ddraw::IDirectDrawSurface::SetOverlayPosition_stdcall,
+    ),
+    (0x001076, ddraw::IDirectDrawSurface::SetPalette_stdcall),
+    (0x001077, ddraw::IDirectDrawSurface::Unlock_stdcall),
+    (0x001078, ddraw::IDirectDrawSurface::UpdateOverlay_stdcall),
+    (
+        0x001079,
+        ddraw::IDirectDrawSurface::UpdateOverlayDisplay_stdcall,
+    ),
+    (
+        0x00107a,
+        ddraw::IDirectDrawSurface::UpdateOverlayZOrder_stdcall,
+    ),
+    (0x00107b, ddraw::IDirectDraw7::QueryInterface_stdcall),
+    (0x00107c, ddraw::IDirectDraw7::AddRef_stdcall),
+    (0x00107d, ddraw::IDirectDraw7::Release_stdcall),
+    (0x00107e, ddraw::IDirectDraw7::Compact_stdcall),
+    (0x00107f, ddraw::IDirectDraw7::CreateClipper_stdcall),
+    (0x001080, ddraw::IDirectDraw7::CreatePalette_stdcall),
+    (0x001081, ddraw::IDirectDraw7::CreateSurface_stdcall),
+    (0x001082, ddraw::IDirectDraw7::DuplicateSurface_stdcall),
+    (0x001083, ddraw::IDirectDraw7::EnumDisplayModes_stdcall),
+    (0x001084, ddraw::IDirectDraw7::EnumSurfaces_stdcall),
+    (0x001085, ddraw::IDirectDraw7::FlipToGDISurface_stdcall),
+    (0x001086, ddraw::IDirectDraw7::GetCaps_stdcall),
+    (0x001087, ddraw::IDirectDraw7::GetDisplayMode_stdcall),
+    (0x001088, ddraw::IDirectDraw7::GetFourCCCodes_stdcall),
+    (0x001089, ddraw::IDirectDraw7::GetGDISurface_stdcall),
+    (0x00108a, ddraw::IDirectDraw7::GetMonitorFrequency_stdcall),
+    (0x00108b, ddraw::IDirectDraw7::GetScanLine_stdcall),
+    (
+        0x00108c,
+        ddraw::IDirectDraw7::GetVerticalBlankStatus_stdcall,
+    ),
+    (0x00108d, ddraw::IDirectDraw7::Initialize_stdcall),
+    (0x00108e, ddraw::IDirectDraw7::RestoreDisplayMode_stdcall),
+    (0x00108f, ddraw::IDirectDraw7::SetCooperativeLevel_stdcall),
+    (0x001090, ddraw::IDirectDraw7::SetDisplayMode_stdcall),
+    (0x001091, ddraw::IDirectDraw7::WaitForVerticalBlank_stdcall),
+    (0x001092, ddraw::IDirectDraw7::GetAvailableVidMem_stdcall),
+    (0x001093, ddraw::IDirectDraw7::GetSurfaceFromDC_stdcall),
+    (0x001094, ddraw::IDirectDraw7::RestoreAllSurfaces_stdcall),
+    (0x001095, ddraw::IDirectDraw7::TestCooperativeLevel_stdcall),
+    (0x001096, ddraw::IDirectDraw7::GetDeviceIdentifier_stdcall),
+    (0x001097, ddraw::IDirectDraw7::StartModeTest_stdcall),
+    (0x001098, ddraw::IDirectDraw7::EvaluateMode_stdcall),
+    (0x001099, ddraw::IDirectDrawSurface7::QueryInterface_stdcall),
+    (0x00109a, ddraw::IDirectDrawSurface7::AddRef_stdcall),
+    (0x00109b, ddraw::IDirectDrawSurface7::Release_stdcall),
+    (
+        0x00109c,
         ddraw::IDirectDrawSurface7::AddAttachedSurface_stdcall,
     ),
     (
-        0x001062,
+        0x00109d,
         ddraw::IDirectDrawSurface7::AddOverlayDirtyRect_stdcall,
     ),
-    (0x001063, ddraw::IDirectDrawSurface7::Blt_stdcall),
-    (0x001064, ddraw::IDirectDrawSurface7::BltBatch_stdcall),
-    (0x001065, ddraw::IDirectDrawSurface7::BltFast_stdcall),
+    (0x00109e, ddraw::IDirectDrawSurface7::Blt_stdcall),
+    (0x00109f, ddraw::IDirectDrawSurface7::BltBatch_stdcall),
+    (0x0010a0, ddraw::IDirectDrawSurface7::BltFast_stdcall),
     (
-        0x001066,
+        0x0010a1,
         ddraw::IDirectDrawSurface7::DeleteAttachedSurface_stdcall,
     ),
     (
-        0x001067,
+        0x0010a2,
         ddraw::IDirectDrawSurface7::EnumAttachedSurfaces_stdcall,
     ),
     (
-        0x001068,
+        0x0010a3,
         ddraw::IDirectDrawSurface7::EnumOverlayZOrders_stdcall,
     ),
-    (0x001069, ddraw::IDirectDrawSurface7::Flip_stdcall),
+    (0x0010a4, ddraw::IDirectDrawSurface7::Flip_stdcall),
     (
-        0x00106a,
+        0x0010a5,
         ddraw::IDirectDrawSurface7::GetAttachedSurface_stdcall,
     ),
-    (0x00106b, ddraw::IDirectDrawSurface7::GetBltStatus_stdcall),
-    (0x00106c, ddraw::IDirectDrawSurface7::GetCaps_stdcall),
-    (0x00106d, ddraw::IDirectDrawSurface7::GetClipper_stdcall),
-    (0x00106e, ddraw::IDirectDrawSurface7::GetColorKey_stdcall),
-    (0x00106f, ddraw::IDirectDrawSurface7::GetDC_stdcall),
-    (0x001070, ddraw::IDirectDrawSurface7::GetFlipStatus_stdcall),
+    (0x0010a6, ddraw::IDirectDrawSurface7::GetBltStatus_stdcall),
+    (0x0010a7, ddraw::IDirectDrawSurface7::GetCaps_stdcall),
+    (0x0010a8, ddraw::IDirectDrawSurface7::GetClipper_stdcall),
+    (0x0010a9, ddraw::IDirectDrawSurface7::GetColorKey_stdcall),
+    (0x0010aa, ddraw::IDirectDrawSurface7::GetDC_stdcall),
+    (0x0010ab, ddraw::IDirectDrawSurface7::GetFlipStatus_stdcall),
     (
-        0x001071,
+        0x0010ac,
         ddraw::IDirectDrawSurface7::GetOverlayPosition_stdcall,
     ),
-    (0x001072, ddraw::IDirectDrawSurface7::GetPalette_stdcall),
-    (0x001073, ddraw::IDirectDrawSurface7::GetPixelFormat_stdcall),
-    (0x001074, ddraw::IDirectDrawSurface7::GetSurfaceDesc_stdcall),
-    (0x001075, ddraw::IDirectDrawSurface7::Initialize_stdcall),
-    (0x001076, ddraw::IDirectDrawSurface7::IsLost_stdcall),
-    (0x001077, ddraw::IDirectDrawSurface7::Lock_stdcall),
-    (0x001078, ddraw::IDirectDrawSurface7::ReleaseDC_stdcall),
-    (0x001079, ddraw::IDirectDrawSurface7::Restore_stdcall),
-    (0x00107a, ddraw::IDirectDrawSurface7::SetClipper_stdcall),
-    (0x00107b, ddraw::IDirectDrawSurface7::SetColorKey_stdcall),
+    (0x0010ad, ddraw::IDirectDrawSurface7::GetPalette_stdcall),
+    (0x0010ae, ddraw::IDirectDrawSurface7::GetPixelFormat_stdcall),
+    (0x0010af, ddraw::IDirectDrawSurface7::GetSurfaceDesc_stdcall),
+    (0x0010b0, ddraw::IDirectDrawSurface7::Initialize_stdcall),
+    (0x0010b1, ddraw::IDirectDrawSurface7::IsLost_stdcall),
+    (0x0010b2, ddraw::IDirectDrawSurface7::Lock_stdcall),
+    (0x0010b3, ddraw::IDirectDrawSurface7::ReleaseDC_stdcall),
+    (0x0010b4, ddraw::IDirectDrawSurface7::Restore_stdcall),
+    (0x0010b5, ddraw::IDirectDrawSurface7::SetClipper_stdcall),
+    (0x0010b6, ddraw::IDirectDrawSurface7::SetColorKey_stdcall),
     (
-        0x00107c,
+        0x0010b7,
         ddraw::IDirectDrawSurface7::SetOverlayPosition_stdcall,
     ),
-    (0x00107d, ddraw::IDirectDrawSurface7::SetPalette_stdcall),
-    (0x00107e, ddraw::IDirectDrawSurface7::Unlock_stdcall),
-    (0x00107f, ddraw::IDirectDrawSurface7::UpdateOverlay_stdcall),
+    (0x0010b8, ddraw::IDirectDrawSurface7::SetPalette_stdcall),
+    (0x0010b9, ddraw::IDirectDrawSurface7::Unlock_stdcall),
+    (0x0010ba, ddraw::IDirectDrawSurface7::UpdateOverlay_stdcall),
     (
-        0x001080,
+        0x0010bb,
         ddraw::IDirectDrawSurface7::UpdateOverlayDisplay_stdcall,
     ),
     (
-        0x001081,
+        0x0010bc,
         ddraw::IDirectDrawSurface7::UpdateOverlayZOrder_stdcall,
     ),
-    (0x001082, ddraw::IDirectDrawSurface7::GetDDInterface_stdcall),
-    (0x001083, ddraw::IDirectDrawSurface7::PageLock_stdcall),
-    (0x001084, ddraw::IDirectDrawSurface7::PageUnlock_stdcall),
-    (0x001085, ddraw::IDirectDrawSurface7::SetSurfaceDesc_stdcall),
-    (0x001086, ddraw::IDirectDrawSurface7::SetPrivateData_stdcall),
-    (0x001087, ddraw::IDirectDrawSurface7::GetPrivateData_stdcall),
+    (0x0010bd, ddraw::IDirectDrawSurface7::GetDDInterface_stdcall),
+    (0x0010be, ddraw::IDirectDrawSurface7::PageLock_stdcall),
+    (0x0010bf, ddraw::IDirectDrawSurface7::PageUnlock_stdcall),
+    (0x0010c0, ddraw::IDirectDrawSurface7::SetSurfaceDesc_stdcall),
+    (0x0010c1, ddraw::IDirectDrawSurface7::SetPrivateData_stdcall),
+    (0x0010c2, ddraw::IDirectDrawSurface7::GetPrivateData_stdcall),
     (
-        0x001088,
+        0x0010c3,
         ddraw::IDirectDrawSurface7::FreePrivateData_stdcall,
     ),
     (
-        0x001089,
+        0x0010c4,
         ddraw::IDirectDrawSurface7::GetUniquenessValue_stdcall,
     ),
     (
-        0x00108a,
+        0x0010c5,
         ddraw::IDirectDrawSurface7::ChangeUniquenessValue_stdcall,
     ),
-    (0x00108b, ddraw::IDirectDrawSurface7::SetPriority_stdcall),
-    (0x00108c, ddraw::IDirectDrawSurface7::GetPriority_stdcall),
-    (0x00108d, ddraw::IDirectDrawSurface7::SetLOD_stdcall),
-    (0x00108e, ddraw::IDirectDrawSurface7::GetLOD_stdcall),
+    (0x0010c6, ddraw::IDirectDrawSurface7::SetPriority_stdcall),
+    (0x0010c7, ddraw::IDirectDrawSurface7::GetPriority_stdcall),
+    (0x0010c8, ddraw::IDirectDrawSurface7::SetLOD_stdcall),
+    (0x0010c9, ddraw::IDirectDrawSurface7::GetLOD_stdcall),
     (0x401000, x00401000),
     (0x401005, x00401005),
     (0x401010, x00401010),
