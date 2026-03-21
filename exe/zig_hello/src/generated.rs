@@ -31,343 +31,201 @@ fn init_mappings() {
     }
 }
 pub fn x00401000() -> Cont {
-    unsafe {
-        // 00401000 push ebp
-        push(MACHINE.regs.ebp);
-        // 00401001 mov ebp,esp
-        MACHINE.regs.ebp = MACHINE.regs.esp;
-        // 00401003 and esp,0FFFFFFF0h
-        MACHINE.regs.esp = and(MACHINE.regs.esp, 0xfffffff0u32);
-        // 00401006 sub esp,10h
-        MACHINE.regs.esp = sub(MACHINE.regs.esp, 0x10u32);
-        // 00401009 call 00401015h
-        call(0x40100e, Cont(x00401015))
-    }
+    #[allow(unused)]
+    let m = unsafe { &mut MACHINE };
+    // 00401000 push ebp
+    push(m.regs.ebp);
+    // 00401001 mov ebp,esp
+    m.regs.ebp = m.regs.esp;
+    // 00401003 and esp,0FFFFFFF0h
+    m.regs.esp = and(m.regs.esp, 0xfffffff0u32);
+    // 00401006 sub esp,10h
+    m.regs.esp = sub(m.regs.esp, 0x10u32);
+    // 00401009 call 00401015h
+    call(0x40100e, Cont(x00401015))
 }
 
 pub fn x0040100e() -> Cont {
-    unsafe {
-        // 0040100e push 0
-        push(0x0u32);
-        // 00401010 call 00401077h
-        call(0x401015, Cont(x00401077))
-    }
+    #[allow(unused)]
+    let m = unsafe { &mut MACHINE };
+    // 0040100e push 0
+    push(0x0u32);
+    // 00401010 call 00401077h
+    call(0x401015, Cont(x00401077))
 }
 
 pub fn x00401015() -> Cont {
-    unsafe {
-        // 00401015 push ebp
-        push(MACHINE.regs.ebp);
-        // 00401016 push ebx
-        push(MACHINE.regs.ebx);
-        // 00401017 push edi
-        push(MACHINE.regs.edi);
-        // 00401018 push esi
-        push(MACHINE.regs.esi);
-        // 00401019 push eax
-        push(MACHINE.regs.eax);
-        // 0040101a cmp byte ptr ds:[403000h],0
-        sub(MACHINE.memory.read::<u8>(0x403000u32), 0x0u8);
-        // 00401021 jne short 0040102Ah
-        jne(Cont(x00401023), Cont(x0040102a))
-    }
+    #[allow(unused)]
+    let m = unsafe { &mut MACHINE };
+    // 00401015 push ebp
+    push(m.regs.ebp);
+    // 00401016 push ebx
+    push(m.regs.ebx);
+    // 00401017 push edi
+    push(m.regs.edi);
+    // 00401018 push esi
+    push(m.regs.esi);
+    // 00401019 push eax
+    push(m.regs.eax);
+    // 0040101a cmp byte ptr ds:[403000h],0
+    sub(m.memory.read::<u8>(0x403000u32), 0x0u8);
+    // 00401021 jne short 0040102Ah
+    jne(Cont(x00401023), Cont(x0040102a))
 }
 
 pub fn x00401023() -> Cont {
-    unsafe {
-        // 00401023 mov byte ptr ds:[403000h],1
-        MACHINE.memory.write::<u8>(0x403000u32, 0x1u8);
-        // 0040102a mov eax,fs:[18h]
-        MACHINE.regs.eax = MACHINE
-            .memory
-            .read::<u32>(MACHINE.regs.fs_base.wrapping_add(0x18u32));
-        // 00401030 mov eax,[eax+30h]
-        MACHINE.regs.eax = MACHINE
-            .memory
-            .read::<u32>(MACHINE.regs.eax.wrapping_add(0x30u32));
-        // 00401033 xor edi,edi
-        MACHINE.regs.edi = xor(MACHINE.regs.edi, MACHINE.regs.edi);
-        // 00401035 mov eax,[eax+10h]
-        MACHINE.regs.eax = MACHINE
-            .memory
-            .read::<u32>(MACHINE.regs.eax.wrapping_add(0x10u32));
-        // 00401038 mov esi,[eax+20h]
-        MACHINE.regs.esi = MACHINE
-            .memory
-            .read::<u32>(MACHINE.regs.eax.wrapping_add(0x20u32));
-        // 0040103b push 0Eh
-        push(0xeu32);
-        // 0040103d pop ebx
-        MACHINE.regs.ebx = pop();
-        // 0040103e mov ebp,esp
-        MACHINE.regs.ebp = MACHINE.regs.esp;
-        // 00401040 cmp edi,0Eh
-        sub(MACHINE.regs.edi, 0xeu32);
-        // 00401043 je short 00401068h
-        je(Cont(x00401045), Cont(x00401068))
-    }
+    #[allow(unused)]
+    let m = unsafe { &mut MACHINE };
+    // 00401023 mov byte ptr ds:[403000h],1
+    m.memory.write::<u8>(0x403000u32, 0x1u8);
+    // 0040102a mov eax,fs:[18h]
+    m.regs.eax = m.memory.read::<u32>(m.regs.fs_base.wrapping_add(0x18u32));
+    // 00401030 mov eax,[eax+30h]
+    m.regs.eax = m.memory.read::<u32>(m.regs.eax.wrapping_add(0x30u32));
+    // 00401033 xor edi,edi
+    m.regs.edi = xor(m.regs.edi, m.regs.edi);
+    // 00401035 mov eax,[eax+10h]
+    m.regs.eax = m.memory.read::<u32>(m.regs.eax.wrapping_add(0x10u32));
+    // 00401038 mov esi,[eax+20h]
+    m.regs.esi = m.memory.read::<u32>(m.regs.eax.wrapping_add(0x20u32));
+    // 0040103b push 0Eh
+    push(0xeu32);
+    // 0040103d pop ebx
+    m.regs.ebx = pop();
+    // 0040103e mov ebp,esp
+    m.regs.ebp = m.regs.esp;
+    // 00401040 cmp edi,0Eh
+    sub(m.regs.edi, 0xeu32);
+    // 00401043 je short 00401068h
+    je(Cont(x00401045), Cont(x00401068))
 }
 
 pub fn x0040102a() -> Cont {
-    unsafe {
-        // 0040102a mov eax,fs:[18h]
-        MACHINE.regs.eax = MACHINE
-            .memory
-            .read::<u32>(MACHINE.regs.fs_base.wrapping_add(0x18u32));
-        // 00401030 mov eax,[eax+30h]
-        MACHINE.regs.eax = MACHINE
-            .memory
-            .read::<u32>(MACHINE.regs.eax.wrapping_add(0x30u32));
-        // 00401033 xor edi,edi
-        MACHINE.regs.edi = xor(MACHINE.regs.edi, MACHINE.regs.edi);
-        // 00401035 mov eax,[eax+10h]
-        MACHINE.regs.eax = MACHINE
-            .memory
-            .read::<u32>(MACHINE.regs.eax.wrapping_add(0x10u32));
-        // 00401038 mov esi,[eax+20h]
-        MACHINE.regs.esi = MACHINE
-            .memory
-            .read::<u32>(MACHINE.regs.eax.wrapping_add(0x20u32));
-        // 0040103b push 0Eh
-        push(0xeu32);
-        // 0040103d pop ebx
-        MACHINE.regs.ebx = pop();
-        // 0040103e mov ebp,esp
-        MACHINE.regs.ebp = MACHINE.regs.esp;
-        // 00401040 cmp edi,0Eh
-        sub(MACHINE.regs.edi, 0xeu32);
-        // 00401043 je short 00401068h
-        je(Cont(x00401045), Cont(x00401068))
-    }
+    #[allow(unused)]
+    let m = unsafe { &mut MACHINE };
+    // 0040102a mov eax,fs:[18h]
+    m.regs.eax = m.memory.read::<u32>(m.regs.fs_base.wrapping_add(0x18u32));
+    // 00401030 mov eax,[eax+30h]
+    m.regs.eax = m.memory.read::<u32>(m.regs.eax.wrapping_add(0x30u32));
+    // 00401033 xor edi,edi
+    m.regs.edi = xor(m.regs.edi, m.regs.edi);
+    // 00401035 mov eax,[eax+10h]
+    m.regs.eax = m.memory.read::<u32>(m.regs.eax.wrapping_add(0x10u32));
+    // 00401038 mov esi,[eax+20h]
+    m.regs.esi = m.memory.read::<u32>(m.regs.eax.wrapping_add(0x20u32));
+    // 0040103b push 0Eh
+    push(0xeu32);
+    // 0040103d pop ebx
+    m.regs.ebx = pop();
+    // 0040103e mov ebp,esp
+    m.regs.ebp = m.regs.esp;
+    // 00401040 cmp edi,0Eh
+    sub(m.regs.edi, 0xeu32);
+    // 00401043 je short 00401068h
+    je(Cont(x00401045), Cont(x00401068))
 }
 
 pub fn x00401040() -> Cont {
-    unsafe {
-        // 00401040 cmp edi,0Eh
-        sub(MACHINE.regs.edi, 0xeu32);
-        // 00401043 je short 00401068h
-        je(Cont(x00401045), Cont(x00401068))
-    }
+    #[allow(unused)]
+    let m = unsafe { &mut MACHINE };
+    // 00401040 cmp edi,0Eh
+    sub(m.regs.edi, 0xeu32);
+    // 00401043 je short 00401068h
+    je(Cont(x00401045), Cont(x00401068))
 }
 
 pub fn x00401045() -> Cont {
-    unsafe {
-        // 00401045 mov ecx,ebx
-        MACHINE.regs.ecx = MACHINE.regs.ebx;
-        // 00401047 lea eax,[edi+402000h]
-        MACHINE.regs.eax = MACHINE.regs.edi.wrapping_add(0x402000u32);
-        // 0040104d sub ecx,edi
-        MACHINE.regs.ecx = sub(MACHINE.regs.ecx, MACHINE.regs.edi);
-        // 0040104f push 0
-        push(0x0u32);
-        // 00401051 push ebp
-        push(MACHINE.regs.ebp);
-        // 00401052 push ecx
-        push(MACHINE.regs.ecx);
-        // 00401053 push eax
-        push(MACHINE.regs.eax);
-        // 00401054 push esi
-        push(MACHINE.regs.esi);
-        // 00401055 call 00401083h
-        call(0x40105a, Cont(x00401083))
-    }
+    #[allow(unused)]
+    let m = unsafe { &mut MACHINE };
+    // 00401045 mov ecx,ebx
+    m.regs.ecx = m.regs.ebx;
+    // 00401047 lea eax,[edi+402000h]
+    m.regs.eax = m.regs.edi.wrapping_add(0x402000u32);
+    // 0040104d sub ecx,edi
+    m.regs.ecx = sub(m.regs.ecx, m.regs.edi);
+    // 0040104f push 0
+    push(0x0u32);
+    // 00401051 push ebp
+    push(m.regs.ebp);
+    // 00401052 push ecx
+    push(m.regs.ecx);
+    // 00401053 push eax
+    push(m.regs.eax);
+    // 00401054 push esi
+    push(m.regs.esi);
+    // 00401055 call 00401083h
+    call(0x40105a, Cont(x00401083))
 }
 
 pub fn x0040105a() -> Cont {
-    unsafe {
-        // 0040105a test eax,eax
-        and(MACHINE.regs.eax, MACHINE.regs.eax);
-        // 0040105c je short 00401063h
-        je(Cont(x0040105e), Cont(x00401063))
-    }
+    #[allow(unused)]
+    let m = unsafe { &mut MACHINE };
+    // 0040105a test eax,eax
+    and(m.regs.eax, m.regs.eax);
+    // 0040105c je short 00401063h
+    je(Cont(x0040105e), Cont(x00401063))
 }
 
 pub fn x0040105e() -> Cont {
-    unsafe {
-        // 0040105e add edi,[esp]
-        MACHINE.regs.edi = add(
-            MACHINE.regs.edi,
-            MACHINE
-                .memory
-                .read::<u32>(MACHINE.regs.esp.wrapping_add(0x0u32)),
-        );
-        // 00401061 jmp short 00401040h
-        Cont(x00401040)
-    }
+    #[allow(unused)]
+    let m = unsafe { &mut MACHINE };
+    // 0040105e add edi,[esp]
+    m.regs.edi = add(m.regs.edi, m.memory.read::<u32>(m.regs.esp));
+    // 00401061 jmp short 00401040h
+    Cont(x00401040)
 }
 
 pub fn x00401063() -> Cont {
-    unsafe {
-        // 00401063 call 0040107Dh
-        call(0x401068, Cont(x0040107d))
-    }
+    #[allow(unused)]
+    let m = unsafe { &mut MACHINE };
+    // 00401063 call 0040107Dh
+    call(0x401068, Cont(x0040107d))
 }
 
 pub fn x00401068() -> Cont {
-    unsafe {
-        // 00401068 mov byte ptr ds:[403000h],0
-        MACHINE.memory.write::<u8>(0x403000u32, 0x0u8);
-        // 0040106f add esp,4
-        MACHINE.regs.esp = add(MACHINE.regs.esp, 0x4u32);
-        // 00401072 pop esi
-        MACHINE.regs.esi = pop();
-        // 00401073 pop edi
-        MACHINE.regs.edi = pop();
-        // 00401074 pop ebx
-        MACHINE.regs.ebx = pop();
-        // 00401075 pop ebp
-        MACHINE.regs.ebp = pop();
-        // 00401076 ret
-        ret(0)
-    }
+    #[allow(unused)]
+    let m = unsafe { &mut MACHINE };
+    // 00401068 mov byte ptr ds:[403000h],0
+    m.memory.write::<u8>(0x403000u32, 0x0u8);
+    // 0040106f add esp,4
+    m.regs.esp = add(m.regs.esp, 0x4u32);
+    // 00401072 pop esi
+    m.regs.esi = pop();
+    // 00401073 pop edi
+    m.regs.edi = pop();
+    // 00401074 pop ebx
+    m.regs.ebx = pop();
+    // 00401075 pop ebp
+    m.regs.ebp = pop();
+    // 00401076 ret
+    ret(0)
 }
 
 pub fn x00401077() -> Cont {
-    unsafe {
-        // 00401077 jmp dword ptr ds:[402048h]
-        Cont(kernel32::ExitProcess_stdcall)
-    }
+    #[allow(unused)]
+    let m = unsafe { &mut MACHINE };
+    // 00401077 jmp dword ptr ds:[402048h]
+    Cont(kernel32::ExitProcess_stdcall)
 }
 
 pub fn x0040107d() -> Cont {
-    unsafe {
-        // 0040107d jmp dword ptr ds:[40204Ch]
-        Cont(kernel32::GetLastError_stdcall)
-    }
+    #[allow(unused)]
+    let m = unsafe { &mut MACHINE };
+    // 0040107d jmp dword ptr ds:[40204Ch]
+    Cont(kernel32::GetLastError_stdcall)
 }
 
 pub fn x00401083() -> Cont {
-    unsafe {
-        // 00401083 jmp dword ptr ds:[402050h]
-        Cont(kernel32::WriteFile_stdcall)
-    }
+    #[allow(unused)]
+    let m = unsafe { &mut MACHINE };
+    // 00401083 jmp dword ptr ds:[402050h]
+    Cont(kernel32::WriteFile_stdcall)
 }
 
-const BLOCKS: [(u32, fn() -> Cont); 97] = [
+const BLOCKS: [(u32, fn() -> Cont); 18] = [
     (0x001001, kernel32::ExitProcess_stdcall),
     (0x001002, kernel32::GetLastError_stdcall),
     (0x001003, kernel32::WriteFile_stdcall),
-    (0x001004, ddraw::IDirectDraw7::QueryInterface_stdcall),
-    (0x001005, ddraw::IDirectDraw7::AddRef_stdcall),
-    (0x001006, ddraw::IDirectDraw7::Release_stdcall),
-    (0x001007, ddraw::IDirectDraw7::Compact_stdcall),
-    (0x001008, ddraw::IDirectDraw7::CreateClipper_stdcall),
-    (0x001009, ddraw::IDirectDraw7::CreatePalette_stdcall),
-    (0x00100a, ddraw::IDirectDraw7::CreateSurface_stdcall),
-    (0x00100b, ddraw::IDirectDraw7::DuplicateSurface_stdcall),
-    (0x00100c, ddraw::IDirectDraw7::EnumDisplayModes_stdcall),
-    (0x00100d, ddraw::IDirectDraw7::EnumSurfaces_stdcall),
-    (0x00100e, ddraw::IDirectDraw7::FlipToGDISurface_stdcall),
-    (0x00100f, ddraw::IDirectDraw7::GetCaps_stdcall),
-    (0x001010, ddraw::IDirectDraw7::GetDisplayMode_stdcall),
-    (0x001011, ddraw::IDirectDraw7::GetFourCCCodes_stdcall),
-    (0x001012, ddraw::IDirectDraw7::GetGDISurface_stdcall),
-    (0x001013, ddraw::IDirectDraw7::GetMonitorFrequency_stdcall),
-    (0x001014, ddraw::IDirectDraw7::GetScanLine_stdcall),
-    (
-        0x001015,
-        ddraw::IDirectDraw7::GetVerticalBlankStatus_stdcall,
-    ),
-    (0x001016, ddraw::IDirectDraw7::Initialize_stdcall),
-    (0x001017, ddraw::IDirectDraw7::RestoreDisplayMode_stdcall),
-    (0x001018, ddraw::IDirectDraw7::SetCooperativeLevel_stdcall),
-    (0x001019, ddraw::IDirectDraw7::SetDisplayMode_stdcall),
-    (0x00101a, ddraw::IDirectDraw7::WaitForVerticalBlank_stdcall),
-    (0x00101b, ddraw::IDirectDraw7::GetAvailableVidMem_stdcall),
-    (0x00101c, ddraw::IDirectDraw7::GetSurfaceFromDC_stdcall),
-    (0x00101d, ddraw::IDirectDraw7::RestoreAllSurfaces_stdcall),
-    (0x00101e, ddraw::IDirectDraw7::TestCooperativeLevel_stdcall),
-    (0x00101f, ddraw::IDirectDraw7::GetDeviceIdentifier_stdcall),
-    (0x001020, ddraw::IDirectDraw7::StartModeTest_stdcall),
-    (0x001021, ddraw::IDirectDraw7::EvaluateMode_stdcall),
-    (0x001022, ddraw::IDirectDrawSurface7::QueryInterface_stdcall),
-    (0x001023, ddraw::IDirectDrawSurface7::AddRef_stdcall),
-    (0x001024, ddraw::IDirectDrawSurface7::Release_stdcall),
-    (
-        0x001025,
-        ddraw::IDirectDrawSurface7::AddAttachedSurface_stdcall,
-    ),
-    (
-        0x001026,
-        ddraw::IDirectDrawSurface7::AddOverlayDirtyRect_stdcall,
-    ),
-    (0x001027, ddraw::IDirectDrawSurface7::Blt_stdcall),
-    (0x001028, ddraw::IDirectDrawSurface7::BltBatch_stdcall),
-    (0x001029, ddraw::IDirectDrawSurface7::BltFast_stdcall),
-    (
-        0x00102a,
-        ddraw::IDirectDrawSurface7::DeleteAttachedSurface_stdcall,
-    ),
-    (
-        0x00102b,
-        ddraw::IDirectDrawSurface7::EnumAttachedSurfaces_stdcall,
-    ),
-    (
-        0x00102c,
-        ddraw::IDirectDrawSurface7::EnumOverlayZOrders_stdcall,
-    ),
-    (0x00102d, ddraw::IDirectDrawSurface7::Flip_stdcall),
-    (
-        0x00102e,
-        ddraw::IDirectDrawSurface7::GetAttachedSurface_stdcall,
-    ),
-    (0x00102f, ddraw::IDirectDrawSurface7::GetBltStatus_stdcall),
-    (0x001030, ddraw::IDirectDrawSurface7::GetCaps_stdcall),
-    (0x001031, ddraw::IDirectDrawSurface7::GetClipper_stdcall),
-    (0x001032, ddraw::IDirectDrawSurface7::GetColorKey_stdcall),
-    (0x001033, ddraw::IDirectDrawSurface7::GetDC_stdcall),
-    (0x001034, ddraw::IDirectDrawSurface7::GetFlipStatus_stdcall),
-    (
-        0x001035,
-        ddraw::IDirectDrawSurface7::GetOverlayPosition_stdcall,
-    ),
-    (0x001036, ddraw::IDirectDrawSurface7::GetPalette_stdcall),
-    (0x001037, ddraw::IDirectDrawSurface7::GetPixelFormat_stdcall),
-    (0x001038, ddraw::IDirectDrawSurface7::GetSurfaceDesc_stdcall),
-    (0x001039, ddraw::IDirectDrawSurface7::Initialize_stdcall),
-    (0x00103a, ddraw::IDirectDrawSurface7::IsLost_stdcall),
-    (0x00103b, ddraw::IDirectDrawSurface7::Lock_stdcall),
-    (0x00103c, ddraw::IDirectDrawSurface7::ReleaseDC_stdcall),
-    (0x00103d, ddraw::IDirectDrawSurface7::Restore_stdcall),
-    (0x00103e, ddraw::IDirectDrawSurface7::SetClipper_stdcall),
-    (0x00103f, ddraw::IDirectDrawSurface7::SetColorKey_stdcall),
-    (
-        0x001040,
-        ddraw::IDirectDrawSurface7::SetOverlayPosition_stdcall,
-    ),
-    (0x001041, ddraw::IDirectDrawSurface7::SetPalette_stdcall),
-    (0x001042, ddraw::IDirectDrawSurface7::Unlock_stdcall),
-    (0x001043, ddraw::IDirectDrawSurface7::UpdateOverlay_stdcall),
-    (
-        0x001044,
-        ddraw::IDirectDrawSurface7::UpdateOverlayDisplay_stdcall,
-    ),
-    (
-        0x001045,
-        ddraw::IDirectDrawSurface7::UpdateOverlayZOrder_stdcall,
-    ),
-    (0x001046, ddraw::IDirectDrawSurface7::GetDDInterface_stdcall),
-    (0x001047, ddraw::IDirectDrawSurface7::PageLock_stdcall),
-    (0x001048, ddraw::IDirectDrawSurface7::PageUnlock_stdcall),
-    (0x001049, ddraw::IDirectDrawSurface7::SetSurfaceDesc_stdcall),
-    (0x00104a, ddraw::IDirectDrawSurface7::SetPrivateData_stdcall),
-    (0x00104b, ddraw::IDirectDrawSurface7::GetPrivateData_stdcall),
-    (
-        0x00104c,
-        ddraw::IDirectDrawSurface7::FreePrivateData_stdcall,
-    ),
-    (
-        0x00104d,
-        ddraw::IDirectDrawSurface7::GetUniquenessValue_stdcall,
-    ),
-    (
-        0x00104e,
-        ddraw::IDirectDrawSurface7::ChangeUniquenessValue_stdcall,
-    ),
-    (0x00104f, ddraw::IDirectDrawSurface7::SetPriority_stdcall),
-    (0x001050, ddraw::IDirectDrawSurface7::GetPriority_stdcall),
-    (0x001051, ddraw::IDirectDrawSurface7::SetLOD_stdcall),
-    (0x001052, ddraw::IDirectDrawSurface7::GetLOD_stdcall),
     (0x401000, x00401000),
     (0x40100e, x0040100e),
     (0x401015, x00401015),

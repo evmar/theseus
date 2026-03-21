@@ -101,7 +101,7 @@ impl State {
         let mut imports = self.imports.values_mut().collect::<Vec<_>>();
         imports.sort_by_key(|i| i.iat_addr);
         let mut i = 1;
-        for import in imports.into_iter() {
+        for import in imports.iter_mut() {
             import.func_addr = import_funcs_addr + i;
             i += 1;
             self.mem.write::<u32>(import.iat_addr, import.func_addr);
@@ -111,11 +111,13 @@ impl State {
             );
         }
 
-        for func in winapi::ddraw::EXPORTS {
-            let addr = import_funcs_addr + i;
-            i += 1;
-            self.blocks
-                .insert(addr, Block::Stdcall(format!("ddraw::{}", func.to_string())));
+        if imports.iter().find(|i| i.dll == "ddraw").is_some() {
+            for func in winapi::ddraw::EXPORTS {
+                let addr = import_funcs_addr + i;
+                i += 1;
+                self.blocks
+                    .insert(addr, Block::Stdcall(format!("ddraw::{}", func.to_string())));
+            }
         }
     }
 
