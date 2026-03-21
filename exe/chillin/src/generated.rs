@@ -629,7 +629,7 @@ pub fn x00401329() -> Cont {
     // 00401331 xor eax,eax
     m.regs.eax = xor(m.regs.eax, m.regs.eax);
     // 00401333 rep stosb
-    rep(Rep::REP, stosb);
+    rep(m, Rep::REP, stosb);
     // 00401335 mov dword ptr [ebp-12h],6Ch
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xffffffeeu32), 0x6cu32);
@@ -682,7 +682,7 @@ pub fn x0040136f() -> Cont {
     // 00401377 xor eax,eax
     m.regs.eax = xor(m.regs.eax, m.regs.eax);
     // 00401379 rep stosb
-    rep(Rep::REP, stosb);
+    rep(m, Rep::REP, stosb);
     // 0040137b push 43302Ch
     push(0x43302cu32);
     // 00401380 lea ecx,[ebp+7Ah]
@@ -724,7 +724,7 @@ pub fn x0040139e() -> Cont {
     // 004013a6 xor eax,eax
     m.regs.eax = xor(m.regs.eax, m.regs.eax);
     // 004013a8 rep stosb
-    rep(Rep::REP, stosb);
+    rep(m, Rep::REP, stosb);
     // 004013aa lea ecx,[ebp+5Ah]
     m.regs.ecx = m.regs.ebp.wrapping_add(0x5au32);
     // 004013ad mov eax,ds:[433028h]
@@ -3226,7 +3226,7 @@ pub fn x00401dfa() -> Cont {
     // 00401e0b shl ecx,2
     m.regs.ecx = shl(m.regs.ecx, 0x2u8);
     // 00401e0e rep movsb
-    rep(Rep::REP, movsb);
+    rep(m, Rep::REP, movsb);
     // 00401e10 leave
     leave();
     // 00401e11 pop edi
@@ -3908,7 +3908,7 @@ pub fn x00402005() -> Cont {
     // 00402016 shl ecx,2
     m.regs.ecx = shl(m.regs.ecx, 0x2u8);
     // 00402019 rep movsb
-    rep(Rep::REP, movsb);
+    rep(m, Rep::REP, movsb);
     // 0040201b leave
     leave();
     // 0040201c pop edi
@@ -4588,7 +4588,7 @@ pub fn x0040220e() -> Cont {
     // 0040221f shl ecx,2
     m.regs.ecx = shl(m.regs.ecx, 0x2u8);
     // 00402222 rep movsb
-    rep(Rep::REP, movsb);
+    rep(m, Rep::REP, movsb);
     // 00402224 leave
     leave();
     // 00402225 pop edi
@@ -6964,7 +6964,7 @@ pub fn x004028a2() -> Cont {
     // 004028b3 shl ecx,2
     m.regs.ecx = shl(m.regs.ecx, 0x2u8);
     // 004028b6 rep movsb
-    rep(Rep::REP, movsb);
+    rep(m, Rep::REP, movsb);
     // 004028b8 leave
     leave();
     // 004028b9 pop edi
@@ -20721,7 +20721,7 @@ pub fn x004056e3() -> Cont {
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32), m.regs.edx);
     // 00405708 rep stosb
-    rep(Rep::REP, stosb);
+    rep(m, Rep::REP, stosb);
     // 0040570a push 1
     push(0x1u32);
     // 0040570c fild dword ptr [ebp-4]
@@ -20898,7 +20898,7 @@ pub fn x004057d4() -> Cont {
     // 004057e2 mov ds:[433F20h],eax
     m.memory.write::<u32>(0x433f20u32, m.regs.eax);
     // 004057e7 rep movsb
-    rep(Rep::REP, movsb);
+    rep(m, Rep::REP, movsb);
     // 004057e9 call 00405889h
     call(0x4057ee, Cont(x00405889))
 }
@@ -21055,7 +21055,7 @@ pub fn x00405889() -> Cont {
     // 0040589b xor ebx,ebx
     m.regs.ebx = xor(m.regs.ebx, m.regs.ebx);
     // 0040589d rep stosb
-    rep(Rep::REP, stosb);
+    rep(m, Rep::REP, stosb);
     // 0040589f mov ds:[433F40h],ebx
     m.memory.write::<u32>(0x433f40u32, m.regs.ebx);
     // 004058a5 xor eax,eax
@@ -21151,7 +21151,7 @@ pub fn x004058d8() -> Cont {
     // 004058ec xor eax,eax
     m.regs.eax = xor(m.regs.eax, m.regs.eax);
     // 004058ee rep stosb
-    rep(Rep::REP, stosb);
+    rep(m, Rep::REP, stosb);
     // 004058f0 xor edx,edx
     m.regs.edx = xor(m.regs.edx, m.regs.edx);
     // 004058f2 xor ebx,ebx
@@ -21571,7 +21571,7 @@ pub fn x00405a15() -> Cont {
     // 00405a28 xor eax,eax
     m.regs.eax = xor(m.regs.eax, m.regs.eax);
     // 00405a2a rep stosb
-    rep(Rep::REP, stosb);
+    rep(m, Rep::REP, stosb);
     // 00405a2c xor eax,eax
     m.regs.eax = xor(m.regs.eax, m.regs.eax);
     // 00405a2e cmp eax,ds:[433F40h]
@@ -26732,7 +26732,7 @@ pub fn x00406e4d() -> Cont {
     // 00406e65 shl ecx,2
     m.regs.ecx = shl(m.regs.ecx, 0x2u8);
     // 00406e68 rep stosb
-    rep(Rep::REP, stosb);
+    rep(m, Rep::REP, stosb);
     // 00406e6a xor ecx,ecx
     m.regs.ecx = xor(m.regs.ecx, m.regs.ecx);
     // 00406e6c mov [ebp-4],ecx
@@ -31122,7 +31122,7 @@ pub fn x00408045() -> Cont {
     // 0040805e shl ecx,2
     m.regs.ecx = shl(m.regs.ecx, 0x2u8);
     // 00408061 rep movsb
-    rep(Rep::REP, movsb);
+    rep(m, Rep::REP, movsb);
     // 00408063 cmp dword ptr [ebp-14h],0
     sub(
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffecu32)),
@@ -31292,7 +31292,7 @@ pub fn x00408133() -> Cont {
     // 0040813f mov ecx,eax
     m.regs.ecx = m.regs.eax;
     // 00408141 rep movsb
-    rep(Rep::REP, movsb);
+    rep(m, Rep::REP, movsb);
     // 00408143 cmp dword ptr [ebp-14h],0
     sub(
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffecu32)),
@@ -31665,7 +31665,7 @@ pub fn x004082d9() -> Cont {
     // 004082ef shl ecx,2
     m.regs.ecx = shl(m.regs.ecx, 0x2u8);
     // 004082f2 rep movsb
-    rep(Rep::REP, movsb);
+    rep(m, Rep::REP, movsb);
     // 004082f4 cmp dword ptr ds:[424FF6h],31h
     sub(m.memory.read::<u32>(0x424ff6u32), 0x31u32);
     // 004082fb jle short 00408307h
@@ -31983,7 +31983,7 @@ pub fn x0040840b() -> Cont {
     // 00408417 mov ecx,eax
     m.regs.ecx = m.regs.eax;
     // 00408419 rep movsb
-    rep(Rep::REP, movsb);
+    rep(m, Rep::REP, movsb);
     // 0040841b mov ecx,ds:[40C724h]
     m.regs.ecx = m.memory.read::<u32>(0x40c724u32);
     // 00408421 imul ecx,ds:[40C728h]
@@ -31995,7 +31995,7 @@ pub fn x0040840b() -> Cont {
     // 0040842d shl ecx,2
     m.regs.ecx = shl(m.regs.ecx, 0x2u8);
     // 00408430 rep stosb
-    rep(Rep::REP, stosb);
+    rep(m, Rep::REP, stosb);
     // 00408432 fld dword ptr ds:[425002h]
     m.fpu.push(m.memory.read::<f32>(0x425002u32) as f64);
     // 00408438 fmul qword ptr ds:[40C650h]
@@ -33370,7 +33370,7 @@ pub fn x00408a60() -> Cont {
     // 00408a6b xor eax,eax
     m.regs.eax = xor(m.regs.eax, m.regs.eax);
     // 00408a6d rep stosb
-    rep(Rep::REP, stosb);
+    rep(m, Rep::REP, stosb);
     // 00408a6f leave
     leave();
     // 00408a70 pop edi
@@ -34582,7 +34582,7 @@ pub fn x00408d43() -> Cont {
     // 00408d50 mov edi,[ebp-10h]
     m.regs.edi = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff0u32));
     // 00408d53 rep movsb
-    rep(Rep::REP, movsb);
+    rep(m, Rep::REP, movsb);
     // 00408d55 push dword ptr [ebp-4]
     push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32)));
     // 00408d58 call 00401A78h
@@ -34642,7 +34642,7 @@ pub fn x00408d78() -> Cont {
     // 00408d88 mov edi,eax
     m.regs.edi = m.regs.eax;
     // 00408d8a rep movsb
-    rep(Rep::REP, movsb);
+    rep(m, Rep::REP, movsb);
     // 00408d8c mov ebx,[ebp-4]
     m.regs.ebx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32));
     // 00408d8f add ebx,5319h
@@ -34713,11 +34713,11 @@ pub fn x004090d9() -> Cont {
     // 004090e6 mov ecx,10h
     m.regs.ecx = 0x10u32;
     // 004090eb rep movsd
-    rep(Rep::REP, movsd);
+    rep(m, Rep::REP, movsd);
     // 004090ed mov al,40h
     m.regs.set_al(0x40u8);
     // 004090ef stosb
-    stosb();
+    stosb(m);
     // 004090f0 mov cl,3Fh
     m.regs.set_cl(0x3fu8);
     // 004090f2 dec esi
@@ -34725,7 +34725,7 @@ pub fn x004090d9() -> Cont {
     // 004090f3 mov al,[esi]
     m.regs.set_al(m.memory.read::<u8>(m.regs.esi));
     // 004090f5 stosb
-    stosb();
+    stosb(m);
     // 004090f6 dec cl
     m.regs.set_cl(dec(m.regs.get_cl()));
     // 004090f8 jne short 004090F2h
@@ -34740,7 +34740,7 @@ pub fn x004090f2() -> Cont {
     // 004090f3 mov al,[esi]
     m.regs.set_al(m.memory.read::<u8>(m.regs.esi));
     // 004090f5 stosb
-    stosb();
+    stosb(m);
     // 004090f6 dec cl
     m.regs.set_cl(dec(m.regs.get_cl()));
     // 004090f8 jne short 004090F2h
@@ -34755,11 +34755,11 @@ pub fn x004090fa() -> Cont {
     // 00409100 mov cl,80h
     m.regs.set_cl(0x80u8);
     // 00409102 lodsb
-    lodsb();
+    lodsb(m);
     // 00409103 neg al
     m.regs.set_al(neg(m.regs.get_al()));
     // 00409105 stosb
-    stosb();
+    stosb(m);
     // 00409106 dec cl
     m.regs.set_cl(dec(m.regs.get_cl()));
     // 00409108 jne short 00409102h
@@ -34770,11 +34770,11 @@ pub fn x00409102() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00409102 lodsb
-    lodsb();
+    lodsb(m);
     // 00409103 neg al
     m.regs.set_al(neg(m.regs.get_al()));
     // 00409105 stosb
-    stosb();
+    stosb(m);
     // 00409106 dec cl
     m.regs.set_cl(dec(m.regs.get_cl()));
     // 00409108 jne short 00409102h
@@ -34791,7 +34791,7 @@ pub fn x0040910a() -> Cont {
     // 0040910e neg al
     m.regs.set_al(neg(m.regs.get_al()));
     // 00409110 stosb
-    stosb();
+    stosb(m);
     // 00409111 dec cl
     m.regs.set_cl(dec(m.regs.get_cl()));
     // 00409113 jne short 0040910Ah
@@ -34808,7 +34808,7 @@ pub fn x00409115() -> Cont {
     // 00409119 sub al,40h
     m.regs.set_al(sub(m.regs.get_al(), 0x40u8));
     // 0040911b stosb
-    stosb();
+    stosb(m);
     // 0040911c dec cl
     m.regs.set_cl(dec(m.regs.get_cl()));
     // 0040911e jne short 00409115h
@@ -34823,7 +34823,7 @@ pub fn x00409120() -> Cont {
     // 00409122 sar al,1
     sar();
     // 00409124 stosb
-    stosb();
+    stosb(m);
     // 00409125 dec cl
     m.regs.set_cl(dec(m.regs.get_cl()));
     // 00409127 jne short 00409120h
@@ -34899,7 +34899,7 @@ pub fn x00409150() -> Cont {
     // 00409153 mov ecx,9D4h
     m.regs.ecx = 0x9d4u32;
     // 00409158 rep movsd
-    rep(Rep::REP, movsd);
+    rep(m, Rep::REP, movsd);
     // 0040915a sub esi,2750h
     m.regs.esi = sub(m.regs.esi, 0x2750u32);
     // 00409160 sub edi,2600h
@@ -35139,7 +35139,7 @@ pub fn x00409eee() -> Cont {
     // 00409f04 xor eax,eax
     m.regs.eax = xor(m.regs.eax, m.regs.eax);
     // 00409f06 rep stosd
-    rep(Rep::REP, stosd);
+    rep(m, Rep::REP, stosd);
     // 00409f08 lea edi,[ebp+277Bh]
     m.regs.edi = m.regs.ebp.wrapping_add(0x277bu32);
     // 00409f0e xor ecx,ecx
@@ -35298,7 +35298,7 @@ pub fn x0040a281() -> Cont {
     // 0040a28e xor eax,eax
     m.regs.eax = xor(m.regs.eax, m.regs.eax);
     // 0040a290 rep stosb
-    rep(Rep::REP, stosb);
+    rep(m, Rep::REP, stosb);
     // 0040a292 lea edi,[ebx+46h]
     m.regs.edi = m.regs.ebx.wrapping_add(0x46u32);
     // 0040a295 mov esi,[esp+28h]
@@ -35446,7 +35446,7 @@ pub fn x0040a2e8() -> Cont {
     // 0040a2f2 lea ecx,[eax+12h]
     m.regs.ecx = m.regs.eax.wrapping_add(0x12u32);
     // 0040a2f5 rep movsb
-    rep(Rep::REP, movsb);
+    rep(m, Rep::REP, movsb);
     // 0040a2f7 mov esi,[ebp]
     m.regs.esi = m.memory.read::<u32>(m.regs.ebp);
     // 0040a2fa push esi
@@ -35517,13 +35517,13 @@ pub fn x0040a326() -> Cont {
     // 0040a329 mov edi,[ebx+14h]
     m.regs.edi = m.memory.read::<u32>(m.regs.ebx.wrapping_add(0x14u32));
     // 0040a32c rep stosb
-    rep(Rep::REP, stosb);
+    rep(m, Rep::REP, stosb);
     // 0040a32e mov ecx,[ebx+20h]
     m.regs.ecx = m.memory.read::<u32>(m.regs.ebx.wrapping_add(0x20u32));
     // 0040a331 mov edi,[ebx+1Ch]
     m.regs.edi = m.memory.read::<u32>(m.regs.ebx.wrapping_add(0x1cu32));
     // 0040a334 rep stosb
-    rep(Rep::REP, stosb);
+    rep(m, Rep::REP, stosb);
     // 0040a336 push dword ptr [ebx+20h]
     push(m.memory.read::<u32>(m.regs.ebx.wrapping_add(0x20u32)));
     // 0040a339 push dword ptr [ebx+1Ch]
@@ -35724,7 +35724,7 @@ pub fn x0040a3a5() -> Cont {
     m.regs.ebx = m.regs.esi;
     m.regs.esi = t;
     // 0040a3ac lodsd
-    lodsd();
+    lodsd(m);
     // 0040a3ad call edi
     call(0x40a3af, indirect(m.regs.edi))
 }
@@ -35733,7 +35733,7 @@ pub fn x0040a3af() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 0040a3af lodsd
-    lodsd();
+    lodsd(m);
     // 0040a3b0 call edi
     call(0x40a3b2, indirect(m.regs.edi))
 }
@@ -35742,7 +35742,7 @@ pub fn x0040a3b2() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 0040a3b2 lodsd
-    lodsd();
+    lodsd(m);
     // 0040a3b3 mov cl,60h
     m.regs.set_cl(0x60u8);
     // 0040a3b5 or eax,eax

@@ -328,23 +328,6 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
                 w.line(set_op(instr, 0, read));
             }
 
-            Movsb => {
-                assert!(!instr.has_repne_prefix());
-                if instr.has_rep_prefix() {
-                    w.line("rep(Rep::REP, movsb);");
-                } else {
-                    w.line("movsb()");
-                }
-            }
-            Movsd => {
-                assert!(!instr.has_repne_prefix());
-                if instr.has_rep_prefix() {
-                    w.line("rep(Rep::REP, movsd);");
-                } else {
-                    w.line("movsd();");
-                }
-            }
-
             Std => {
                 w.line("std();");
             }

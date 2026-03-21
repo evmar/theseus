@@ -10,7 +10,7 @@ mod native;
 mod ops;
 mod registers;
 
-pub use machine::{MACHINE, indirect, proc_addr};
+pub use machine::{MACHINE, Machine, indirect, proc_addr};
 pub use memory::Memory;
 pub use native::HOST;
 pub use ops::*;
