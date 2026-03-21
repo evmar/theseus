@@ -51,8 +51,8 @@ pub fn GetMessageA(_lpMsg: u32, _hWnd: HWND, _wMsgFilterMin: u32, _wMsgFilterMax
 }
 
 #[win32_derive::dllexport]
-pub fn ShowCursor(_bShow: bool) -> i32 {
-    todo!()
+pub fn ShowCursor(bShow: bool) -> i32 {
+    if bShow { stub!(1) } else { stub!(0) }
 }
 
 #[win32_derive::dllexport]
