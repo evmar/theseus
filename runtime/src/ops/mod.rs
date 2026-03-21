@@ -1,6 +1,5 @@
 mod control_flow;
 mod flags;
-mod fpu;
 mod int;
 mod math;
 mod misc;
