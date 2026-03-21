@@ -1189,7 +1189,9 @@ pub fn x00401565() -> Cont {
     // 00401565 mov eax,[ebp+2]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x2u32));
     // 00401568 cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 00401569 sub eax,edx
     m.regs.eax = sub(m.regs.eax, m.regs.edx);
     // 0040156b sar eax,1
@@ -1218,7 +1220,9 @@ pub fn x00401579() -> Cont {
     // 00401579 mov eax,[ebp+2]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x2u32));
     // 0040157c cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 0040157d sub eax,edx
     m.regs.eax = sub(m.regs.eax, m.regs.edx);
     // 0040157f sar eax,1
@@ -1249,7 +1253,9 @@ pub fn x0040158d() -> Cont {
     // 00401590 mov ecx,3
     m.regs.ecx = 0x3u32;
     // 00401595 cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 00401596 idiv ecx
     idiv();
     // 00401598 mov [ebp+6Ah],eax
@@ -1276,7 +1282,9 @@ pub fn x004015a8() -> Cont {
     // 004015a8 mov eax,[ebp+2]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x2u32));
     // 004015ab cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 004015ac shl edx,2
     m.regs.edx = shl(m.regs.edx, 0x2u8, &mut m.flags);
     // 004015af sbb eax,edx
@@ -3248,7 +3256,9 @@ pub fn x00401e15() -> Cont {
     // 00401e18 mov eax,10000h
     m.regs.eax = 0x10000u32;
     // 00401e1d cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 00401e1e idiv ecx
     idiv();
     // 00401e20 mov dword ptr [ebp-0Ch],0
@@ -3930,7 +3940,9 @@ pub fn x00402020() -> Cont {
     // 00402023 mov eax,10000h
     m.regs.eax = 0x10000u32;
     // 00402028 cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 00402029 idiv ecx
     idiv();
     // 0040202b mov dword ptr [ebp-8],0
@@ -4610,7 +4622,9 @@ pub fn x00402229() -> Cont {
     // 0040222c mov eax,10000h
     m.regs.eax = 0x10000u32;
     // 00402231 cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 00402232 idiv ecx
     idiv();
     // 00402234 mov [ebp-0Ch],eax
@@ -6986,7 +7000,9 @@ pub fn x004028bd() -> Cont {
     // 004028c0 mov eax,10000h
     m.regs.eax = 0x10000u32;
     // 004028c5 cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 004028c6 idiv ecx
     idiv();
     // 004028c8 mov dword ptr [ebp-8],0
@@ -11146,7 +11162,9 @@ pub fn x004038dc() -> Cont {
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffd8u32)),
     );
     // 004038e8 cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 004038e9 idiv dword ptr [ebp-4]
     idiv();
     // 004038ec shl dword ptr [ebp-24h],10h
@@ -11171,7 +11189,9 @@ pub fn x004038dc() -> Cont {
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffdcu32)),
     );
     // 004038fb cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 004038fc idiv dword ptr [ebp-4]
     idiv();
     // 004038ff mov [ebp-1Ch],eax
@@ -15997,7 +16017,9 @@ pub fn x0040484c() -> Cont {
     // 00404851 mov eax,ds:[40C728h]
     m.regs.eax = m.memory.read::<u32>(0x40c728u32);
     // 00404856 cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 00404857 shl edx,3
     m.regs.edx = shl(m.regs.edx, 0x3u8, &mut m.flags);
     // 0040485a sbb eax,edx
@@ -16024,7 +16046,9 @@ pub fn x00404870() -> Cont {
     // 00404875 mov eax,ds:[40C728h]
     m.regs.eax = m.memory.read::<u32>(0x40c728u32);
     // 0040487a cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 0040487b shl edx,3
     m.regs.edx = shl(m.regs.edx, 0x3u8, &mut m.flags);
     // 0040487e sbb eax,edx
@@ -16051,7 +16075,9 @@ pub fn x00404894() -> Cont {
     // 00404899 mov eax,ds:[40C728h]
     m.regs.eax = m.memory.read::<u32>(0x40c728u32);
     // 0040489e cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 0040489f shl edx,3
     m.regs.edx = shl(m.regs.edx, 0x3u8, &mut m.flags);
     // 004048a2 sbb eax,edx
@@ -16171,7 +16197,9 @@ pub fn x00404902() -> Cont {
     // 00404902 mov eax,ds:[40C728h]
     m.regs.eax = m.memory.read::<u32>(0x40c728u32);
     // 00404907 cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 00404908 sub eax,edx
     m.regs.eax = sub(m.regs.eax, m.regs.edx);
     // 0040490a sar eax,1
@@ -16234,7 +16262,9 @@ pub fn x0040493b() -> Cont {
     // 0040493b mov eax,ds:[40C724h]
     m.regs.eax = m.memory.read::<u32>(0x40c724u32);
     // 00404940 cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 00404941 sub eax,edx
     m.regs.eax = sub(m.regs.eax, m.regs.edx);
     // 00404943 sar eax,1
@@ -16609,7 +16639,9 @@ pub fn x00404a91() -> Cont {
     // 00404a9c mov esi,1F4h
     m.regs.esi = 0x1f4u32;
     // 00404aa1 cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 00404aa2 idiv esi
     idiv();
     // 00404aa4 add eax,0Ah
@@ -16873,7 +16905,9 @@ pub fn x00404b5d() -> Cont {
     // 00404b5f mov eax,ds:[40C728h]
     m.regs.eax = m.memory.read::<u32>(0x40c728u32);
     // 00404b64 cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 00404b65 shl edx,3
     m.regs.edx = shl(m.regs.edx, 0x3u8, &mut m.flags);
     // 00404b68 sbb eax,edx
@@ -16892,7 +16926,9 @@ pub fn x00404b5f() -> Cont {
     // 00404b5f mov eax,ds:[40C728h]
     m.regs.eax = m.memory.read::<u32>(0x40c728u32);
     // 00404b64 cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 00404b65 shl edx,3
     m.regs.edx = shl(m.regs.edx, 0x3u8, &mut m.flags);
     // 00404b68 sbb eax,edx
@@ -17010,7 +17046,9 @@ pub fn x00404bd3() -> Cont {
     // 00404bde imul eax,edi
     m.regs.eax = imul(m.regs.eax as i32, m.regs.edi as i32) as u32;
     // 00404be1 cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 00404be2 idiv esi
     idiv();
     // 00404be4 mov edx,ds:[433F58h]
@@ -17371,7 +17409,9 @@ pub fn x00404ceb() -> Cont {
     // 00404cfd mov eax,ds:[40C728h]
     m.regs.eax = m.memory.read::<u32>(0x40c728u32);
     // 00404d02 cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 00404d03 shl edx,3
     m.regs.edx = shl(m.regs.edx, 0x3u8, &mut m.flags);
     // 00404d06 sbb eax,edx
@@ -17394,7 +17434,9 @@ pub fn x00404cfd() -> Cont {
     // 00404cfd mov eax,ds:[40C728h]
     m.regs.eax = m.memory.read::<u32>(0x40c728u32);
     // 00404d02 cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 00404d03 shl edx,3
     m.regs.edx = shl(m.regs.edx, 0x3u8, &mut m.flags);
     // 00404d06 sbb eax,edx
@@ -18394,7 +18436,9 @@ pub fn x00404fad() -> Cont {
     // 00404fdb mov eax,ds:[40C724h]
     m.regs.eax = m.memory.read::<u32>(0x40c724u32);
     // 00404fe0 cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 00404fe1 sub eax,edx
     m.regs.eax = sub(m.regs.eax, m.regs.edx);
     // 00404fe3 sar eax,1
@@ -18405,7 +18449,9 @@ pub fn x00404fad() -> Cont {
     // 00404fe8 mov eax,ds:[40C728h]
     m.regs.eax = m.memory.read::<u32>(0x40c728u32);
     // 00404fed cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 00404fee sub eax,edx
     m.regs.eax = sub(m.regs.eax, m.regs.edx);
     // 00404ff0 sar eax,1
@@ -18557,7 +18603,9 @@ pub fn x00404fad() -> Cont {
     // 004050a6 mov eax,ds:[40C728h]
     m.regs.eax = m.memory.read::<u32>(0x40c728u32);
     // 004050ab cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 004050ac shl edx,3
     m.regs.edx = shl(m.regs.edx, 0x3u8, &mut m.flags);
     // 004050af sbb eax,edx
@@ -18576,7 +18624,9 @@ pub fn x004050a6() -> Cont {
     // 004050a6 mov eax,ds:[40C728h]
     m.regs.eax = m.memory.read::<u32>(0x40c728u32);
     // 004050ab cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 004050ac shl edx,3
     m.regs.edx = shl(m.regs.edx, 0x3u8, &mut m.flags);
     // 004050af sbb eax,edx
@@ -19457,7 +19507,9 @@ pub fn x00405383() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00405383 cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 00405384 shl edx,2
     m.regs.edx = shl(m.regs.edx, 0x2u8, &mut m.flags);
     // 00405387 sbb eax,edx
@@ -19586,7 +19638,9 @@ pub fn x004053d4() -> Cont {
     // 004053dd mov esi,3Ch
     m.regs.esi = 0x3cu32;
     // 004053e2 cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 004053e3 idiv esi
     idiv();
     // 004053e5 mov edx,0FFh
@@ -19826,7 +19880,9 @@ pub fn x0040548b() -> Cont {
     // 0040548b mov eax,ds:[40C724h]
     m.regs.eax = m.memory.read::<u32>(0x40c724u32);
     // 00405490 cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 00405491 sub eax,edx
     m.regs.eax = sub(m.regs.eax, m.regs.edx);
     // 00405493 sar eax,1
@@ -19837,7 +19893,9 @@ pub fn x0040548b() -> Cont {
     // 00405498 mov eax,ds:[40C728h]
     m.regs.eax = m.memory.read::<u32>(0x40c728u32);
     // 0040549d cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 0040549e sub eax,edx
     m.regs.eax = sub(m.regs.eax, m.regs.edx);
     // 004054a0 sar eax,1
@@ -19991,7 +20049,9 @@ pub fn x004054f4() -> Cont {
     // 00405501 mov eax,800000h
     m.regs.eax = 0x800000u32;
     // 00405506 cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 00405507 idiv dword ptr [ebp-14h]
     idiv();
     // 0040550a fld dword ptr [ebp+1Ch]
@@ -20041,7 +20101,9 @@ pub fn x004054fb() -> Cont {
     // 00405501 mov eax,800000h
     m.regs.eax = 0x800000u32;
     // 00405506 cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 00405507 idiv dword ptr [ebp-14h]
     idiv();
     // 0040550a fld dword ptr [ebp+1Ch]
@@ -20680,7 +20742,9 @@ pub fn x00405697() -> Cont {
     // 00405697 mov eax,10000h
     m.regs.eax = 0x10000u32;
     // 0040569c cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 0040569d idiv ecx
     idiv();
     // 0040569f mov ecx,eax
@@ -22280,7 +22344,9 @@ pub fn x00405c14() -> Cont {
     // 00405c29 mov eax,ds:[40C724h]
     m.regs.eax = m.memory.read::<u32>(0x40c724u32);
     // 00405c2e cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 00405c2f sub eax,edx
     m.regs.eax = sub(m.regs.eax, m.regs.edx);
     // 00405c31 sar eax,1
@@ -22329,7 +22395,9 @@ pub fn x00405c1b() -> Cont {
     // 00405c29 mov eax,ds:[40C724h]
     m.regs.eax = m.memory.read::<u32>(0x40c724u32);
     // 00405c2e cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 00405c2f sub eax,edx
     m.regs.eax = sub(m.regs.eax, m.regs.edx);
     // 00405c31 sar eax,1
@@ -22389,7 +22457,9 @@ pub fn x00405c50() -> Cont {
     // 00405c64 mov eax,ds:[40C728h]
     m.regs.eax = m.memory.read::<u32>(0x40c728u32);
     // 00405c69 cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 00405c6a sub eax,edx
     m.regs.eax = sub(m.regs.eax, m.regs.edx);
     // 00405c6c sar eax,1
@@ -23601,7 +23671,9 @@ pub fn x004060b3() -> Cont {
     // 004060c4 lea eax,[esi+edi]
     m.regs.eax = m.regs.esi.wrapping_add(m.regs.edi);
     // 004060c7 cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 004060c8 sub eax,edx
     m.regs.eax = sub(m.regs.eax, m.regs.edx);
     // 004060ca sar eax,1
@@ -23656,7 +23728,9 @@ pub fn x004060be() -> Cont {
     // 004060c4 lea eax,[esi+edi]
     m.regs.eax = m.regs.esi.wrapping_add(m.regs.edi);
     // 004060c7 cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 004060c8 sub eax,edx
     m.regs.eax = sub(m.regs.eax, m.regs.edx);
     // 004060ca sar eax,1
@@ -25007,7 +25081,9 @@ pub fn x004064cf() -> Cont {
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32)) as i32,
     ) as u32;
     // 004064f1 cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 004064f2 shl edx,10h
     m.regs.edx = shl(m.regs.edx, 0x10u8, &mut m.flags);
     // 004064f5 sbb eax,edx
@@ -25071,7 +25147,9 @@ pub fn x004064d6() -> Cont {
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32)) as i32,
     ) as u32;
     // 004064f1 cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 004064f2 shl edx,10h
     m.regs.edx = shl(m.regs.edx, 0x10u8, &mut m.flags);
     // 004064f5 sbb eax,edx
@@ -26394,7 +26472,9 @@ pub fn x00406d15() -> Cont {
     // 00406d1c mov eax,ds:[40C724h]
     m.regs.eax = m.memory.read::<u32>(0x40c724u32);
     // 00406d21 cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 00406d22 sub eax,edx
     m.regs.eax = sub(m.regs.eax, m.regs.edx);
     // 00406d24 sar eax,1
@@ -26409,7 +26489,9 @@ pub fn x00406d15() -> Cont {
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32), m.regs.edx);
     // 00406d32 cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 00406d33 sub eax,edx
     m.regs.eax = sub(m.regs.eax, m.regs.edx);
     // 00406d35 sar eax,1
@@ -26453,7 +26535,9 @@ pub fn x00406d1c() -> Cont {
     // 00406d1c mov eax,ds:[40C724h]
     m.regs.eax = m.memory.read::<u32>(0x40c724u32);
     // 00406d21 cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 00406d22 sub eax,edx
     m.regs.eax = sub(m.regs.eax, m.regs.edx);
     // 00406d24 sar eax,1
@@ -26468,7 +26552,9 @@ pub fn x00406d1c() -> Cont {
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32), m.regs.edx);
     // 00406d32 cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 00406d33 sub eax,edx
     m.regs.eax = sub(m.regs.eax, m.regs.edx);
     // 00406d35 sar eax,1
@@ -26858,7 +26944,9 @@ pub fn x00406e4d() -> Cont {
     // 00406e88 mov eax,ds:[40C728h]
     m.regs.eax = m.memory.read::<u32>(0x40c728u32);
     // 00406e8d cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 00406e8e sub eax,edx
     m.regs.eax = sub(m.regs.eax, m.regs.edx);
     // 00406e90 sar eax,1
@@ -26898,7 +26986,9 @@ pub fn x00406e4d() -> Cont {
     // 00406ebb mov eax,ds:[40C724h]
     m.regs.eax = m.memory.read::<u32>(0x40c724u32);
     // 00406ec0 cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 00406ec1 sub eax,edx
     m.regs.eax = sub(m.regs.eax, m.regs.edx);
     // 00406ec3 sar eax,1
@@ -26938,7 +27028,9 @@ pub fn x00406e4d() -> Cont {
     // 00406eee mov eax,ds:[40C728h]
     m.regs.eax = m.memory.read::<u32>(0x40c728u32);
     // 00406ef3 cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 00406ef4 sub eax,edx
     m.regs.eax = sub(m.regs.eax, m.regs.edx);
     // 00406ef6 sar eax,1
@@ -26978,7 +27070,9 @@ pub fn x00406e4d() -> Cont {
     // 00406f21 mov eax,ds:[40C724h]
     m.regs.eax = m.memory.read::<u32>(0x40c724u32);
     // 00406f26 cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 00406f27 sub eax,edx
     m.regs.eax = sub(m.regs.eax, m.regs.edx);
     // 00406f29 sar eax,1
@@ -27035,7 +27129,9 @@ pub fn x00406e6c() -> Cont {
     // 00406e88 mov eax,ds:[40C728h]
     m.regs.eax = m.memory.read::<u32>(0x40c728u32);
     // 00406e8d cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 00406e8e sub eax,edx
     m.regs.eax = sub(m.regs.eax, m.regs.edx);
     // 00406e90 sar eax,1
@@ -27075,7 +27171,9 @@ pub fn x00406e6c() -> Cont {
     // 00406ebb mov eax,ds:[40C724h]
     m.regs.eax = m.memory.read::<u32>(0x40c724u32);
     // 00406ec0 cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 00406ec1 sub eax,edx
     m.regs.eax = sub(m.regs.eax, m.regs.edx);
     // 00406ec3 sar eax,1
@@ -27115,7 +27213,9 @@ pub fn x00406e6c() -> Cont {
     // 00406eee mov eax,ds:[40C728h]
     m.regs.eax = m.memory.read::<u32>(0x40c728u32);
     // 00406ef3 cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 00406ef4 sub eax,edx
     m.regs.eax = sub(m.regs.eax, m.regs.edx);
     // 00406ef6 sar eax,1
@@ -27155,7 +27255,9 @@ pub fn x00406e6c() -> Cont {
     // 00406f21 mov eax,ds:[40C724h]
     m.regs.eax = m.memory.read::<u32>(0x40c724u32);
     // 00406f26 cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 00406f27 sub eax,edx
     m.regs.eax = sub(m.regs.eax, m.regs.edx);
     // 00406f29 sar eax,1
@@ -28629,7 +28731,9 @@ pub fn x00407568() -> Cont {
     // 00407584 imul eax,ecx
     m.regs.eax = imul(m.regs.eax as i32, m.regs.ecx as i32) as u32;
     // 00407587 cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 00407588 shl edx,2
     m.regs.edx = shl(m.regs.edx, 0x2u8, &mut m.flags);
     // 0040758b sbb eax,edx
@@ -28681,7 +28785,9 @@ pub fn x00407568() -> Cont {
     // 004075c1 mov eax,ds:[40C728h]
     m.regs.eax = m.memory.read::<u32>(0x40c728u32);
     // 004075c6 cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 004075c7 sub eax,edx
     m.regs.eax = sub(m.regs.eax, m.regs.edx);
     // 004075c9 sar eax,1
@@ -28695,7 +28801,9 @@ pub fn x00407568() -> Cont {
     // 004075cf mov eax,ds:[40C724h]
     m.regs.eax = m.memory.read::<u32>(0x40c724u32);
     // 004075d4 cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 004075d5 sub eax,edx
     m.regs.eax = sub(m.regs.eax, m.regs.edx);
     // 004075d7 sar eax,1
@@ -29028,7 +29136,9 @@ pub fn x004076ea() -> Cont {
     // 00407706 mov eax,ds:[40C724h]
     m.regs.eax = m.memory.read::<u32>(0x40c724u32);
     // 0040770b cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 0040770c sub eax,edx
     m.regs.eax = sub(m.regs.eax, m.regs.edx);
     // 0040770e sar eax,1
@@ -29107,7 +29217,9 @@ pub fn x0040775b() -> Cont {
     // 00407760 mov eax,ds:[40C728h]
     m.regs.eax = m.memory.read::<u32>(0x40c728u32);
     // 00407765 cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 00407766 sub eax,edx
     m.regs.eax = sub(m.regs.eax, m.regs.edx);
     // 00407768 sar eax,1
@@ -29950,7 +30062,9 @@ pub fn x00407b4d() -> Cont {
     // 00407b60 mov ecx,3
     m.regs.ecx = 0x3u32;
     // 00407b65 cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 00407b66 idiv ecx
     idiv();
     // 00407b68 mov edx,0FFh
@@ -29976,7 +30090,9 @@ pub fn x00407b57() -> Cont {
     // 00407b60 mov ecx,3
     m.regs.ecx = 0x3u32;
     // 00407b65 cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 00407b66 idiv ecx
     idiv();
     // 00407b68 mov edx,0FFh
@@ -30005,7 +30121,9 @@ pub fn x00407b76() -> Cont {
     // 00407b86 mov ecx,3
     m.regs.ecx = 0x3u32;
     // 00407b8b cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 00407b8c idiv ecx
     idiv();
     // 00407b8e mov edx,0FFh
@@ -30031,7 +30149,9 @@ pub fn x00407b7d() -> Cont {
     // 00407b86 mov ecx,3
     m.regs.ecx = 0x3u32;
     // 00407b8b cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 00407b8c idiv ecx
     idiv();
     // 00407b8e mov edx,0FFh
@@ -30060,7 +30180,9 @@ pub fn x00407b9c() -> Cont {
     // 00407bac mov ecx,0Ah
     m.regs.ecx = 0xau32;
     // 00407bb1 cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 00407bb2 idiv ecx
     idiv();
     // 00407bb4 mov edx,0FFh
@@ -30086,7 +30208,9 @@ pub fn x00407ba3() -> Cont {
     // 00407bac mov ecx,0Ah
     m.regs.ecx = 0xau32;
     // 00407bb1 cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 00407bb2 idiv ecx
     idiv();
     // 00407bb4 mov edx,0FFh
@@ -30115,7 +30239,9 @@ pub fn x00407bc2() -> Cont {
     // 00407bd2 mov ecx,190h
     m.regs.ecx = 0x190u32;
     // 00407bd7 cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 00407bd8 idiv ecx
     idiv();
     // 00407bda mov edi,20h
@@ -30138,7 +30264,9 @@ pub fn x00407bc9() -> Cont {
     // 00407bd2 mov ecx,190h
     m.regs.ecx = 0x190u32;
     // 00407bd7 cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 00407bd8 idiv ecx
     idiv();
     // 00407bda mov edi,20h
@@ -30161,7 +30289,9 @@ pub fn x00407be5() -> Cont {
     // 00407bea mov ecx,3
     m.regs.ecx = 0x3u32;
     // 00407bef cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 00407bf0 idiv ecx
     idiv();
     // 00407bf2 sub eax,1Eh
@@ -30205,7 +30335,9 @@ pub fn x00407be7() -> Cont {
     // 00407bea mov ecx,3
     m.regs.ecx = 0x3u32;
     // 00407bef cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 00407bf0 idiv ecx
     idiv();
     // 00407bf2 sub eax,1Eh
@@ -31806,7 +31938,9 @@ pub fn x004082fd() -> Cont {
     // 0040830c mov ecx,32h
     m.regs.ecx = 0x32u32;
     // 00408311 cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 00408312 idiv ecx
     idiv();
     // 00408314 push 140h
@@ -31833,7 +31967,9 @@ pub fn x00408307() -> Cont {
     // 0040830c mov ecx,32h
     m.regs.ecx = 0x32u32;
     // 00408311 cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 00408312 idiv ecx
     idiv();
     // 00408314 push 140h
@@ -32181,7 +32317,9 @@ pub fn x00408489() -> Cont {
     // 00408498 mov ecx,2
     m.regs.ecx = 0x2u32;
     // 0040849d cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 0040849e idiv ecx
     idiv();
     // 004084a0 cmp edx,1
@@ -32198,7 +32336,9 @@ pub fn x00408493() -> Cont {
     // 00408498 mov ecx,2
     m.regs.ecx = 0x2u32;
     // 0040849d cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 0040849e idiv ecx
     idiv();
     // 004084a0 cmp edx,1
@@ -32213,13 +32353,17 @@ pub fn x004084a5() -> Cont {
     // 004084a5 mov eax,ds:[424FF6h]
     m.regs.eax = m.memory.read::<u32>(0x424ff6u32);
     // 004084aa cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 004084ab idiv ecx
     idiv();
     // 004084ad mov ecx,28h
     m.regs.ecx = 0x28u32;
     // 004084b2 cdq
-    cdq();
+    let t = m.regs.eax as i32 as i64 as u64;
+    m.regs.edx = (t >> 32) as u32;
+    m.regs.eax = t as u32;
     // 004084b3 idiv ecx
     idiv();
     // 004084b5 push 140h

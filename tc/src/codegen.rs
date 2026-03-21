@@ -396,7 +396,9 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
                 w.line("int();");
             }
             Cdq => {
-                w.line("cdq();");
+                w.line("let t = m.regs.eax as i32 as i64 as u64;");
+                w.line("m.regs.edx = (t >> 32) as u32;");
+                w.line("m.regs.eax = t as u32;");
             }
             Idiv => {
                 w.line("idiv();");
