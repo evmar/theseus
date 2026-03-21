@@ -104,46 +104,38 @@ pub fn codegen(w: &mut Writer, _state: &State, instr: &iced_x86::Instruction) ->
             }
         }
 
-        Fadd | Faddp => {
-            match instr.op_count() {
-                1 => {
-                    w.line(fpu_set_reg(
-                        0,
-                        format!("{} + {}", fpu_get_reg(0), fpu_get_op(instr, 0)),
-                    ));
-                }
-                2 => {
-                    w.line(fpu_set_op(
-                        instr,
-                        0,
-                        format!("{} + {}", fpu_get_op(instr, 0), fpu_get_op(instr, 1)),
-                    ));
-                }
-                _ => unreachable!(),
-            }
-            if instr.mnemonic() == Faddp {
-                w.line("m.fpu.pop();");
-            }
-        }
+        // Binary ops
+        Fadd | Faddp | Fsub | Fsubp | Fsubr | Fsubrp | Fmul | Fmulp => {
+            assert!(matches!(instr.op_count(), 1 | 2));
 
-        Fmul | Fmulp => {
-            match instr.op_count() {
-                1 => {
-                    w.line(fpu_set_reg(
-                        0,
-                        format!("{} * {}", fpu_get_reg(0), fpu_get_mem(instr)),
-                    ));
-                }
-                2 => {
-                    w.line(fpu_set_op(
-                        instr,
-                        0,
-                        format!("{} * {}", fpu_get_op(instr, 0), fpu_get_op(instr, 1)),
-                    ));
-                }
-                _ => todo!(),
+            let (arg0, arg1) = if instr.op_count() == 1 {
+                (fpu_get_reg(0), fpu_get_op(instr, 0))
+            } else {
+                (fpu_get_op(instr, 0), fpu_get_op(instr, 1))
+            };
+
+            let (arg0, arg1) = if matches!(instr.mnemonic(), Fsubr | Fsubrp) {
+                (arg1, arg0)
+            } else {
+                (arg0, arg1)
+            };
+
+            let binop = match instr.mnemonic() {
+                Fadd | Faddp => "+",
+                Fsub | Fsubp | Fsubr | Fsubrp => "-",
+                Fmul | Fmulp => "*",
+                _ => unreachable!(),
+            };
+
+            let expr = format!("{arg0} {binop} {arg1}");
+
+            if instr.op_count() == 1 {
+                w.line(fpu_set_reg(0, expr));
+            } else {
+                w.line(fpu_set_op(instr, 0, expr));
             }
-            if instr.mnemonic() == Fmulp {
+
+            if matches!(instr.mnemonic(), Faddp | Fsubp | Fsubrp | Fmulp) {
                 w.line("m.fpu.pop();");
             }
         }
@@ -162,7 +154,6 @@ pub fn codegen(w: &mut Writer, _state: &State, instr: &iced_x86::Instruction) ->
             w.line(fpu_set_reg(0, format!("{}.sqrt()", fpu_get_reg(0))));
         }
 
-        Fsub | Fsubp | Fsubrp | Fsubr => w.line("todo!();"),
         Fdivp | Fdivrp | Fdivr | Fdiv => w.line("todo!();"),
         Fcomp | Fnstsw | Fxch | Fpatan => {
             w.line("todo!();");
