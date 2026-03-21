@@ -338,7 +338,11 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
                 w.line("todo!();");
             }
             Loop => {
-                w.line("todo!();");
+                let next = gen_abs_jmp(state, instr.next_ip32());
+                let dst = gen_jmp(state, instr);
+                w.line("m.regs.ecx = m.regs.ecx.wrapping_sub(1);");
+                w.line(format!("if m.regs.ecx == 0 {{ {next} }}"));
+                w.line(format!("else {{ {dst} }}"));
             }
 
             Movzx => {
@@ -499,10 +503,7 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
             }
         }
         if instr.flow_control() != iced_x86::FlowControl::Next {
-            match instr.mnemonic() {
-                // iced_x86::Mnemonic::Call => {}
-                _ => break,
-            }
+            break;
         }
     }
 }

@@ -34914,7 +34914,12 @@ pub fn x00409150() -> Cont {
     // 0040916d lea edi,[edi+4]
     m.regs.edi = m.regs.edi.wrapping_add(0x4u32);
     // 00409170 loop 0040916Bh
-    todo!();
+    m.regs.ecx = m.regs.ecx.wrapping_sub(1);
+    if m.regs.ecx == 0 {
+        Cont(x00409172)
+    } else {
+        Cont(x0040916b)
+    }
 }
 
 pub fn x0040916b() -> Cont {
@@ -34928,7 +34933,12 @@ pub fn x0040916b() -> Cont {
     // 0040916d lea edi,[edi+4]
     m.regs.edi = m.regs.edi.wrapping_add(0x4u32);
     // 00409170 loop 0040916Bh
-    todo!();
+    m.regs.ecx = m.regs.ecx.wrapping_sub(1);
+    if m.regs.ecx == 0 {
+        Cont(x00409172)
+    } else {
+        Cont(x0040916b)
+    }
 }
 
 pub fn x00409172() -> Cont {
@@ -34975,7 +34985,12 @@ pub fn x00409188() -> Cont {
     // 0040918e inc ebx
     m.regs.ebx = inc(m.regs.ebx);
     // 0040918f loop 00409188h
-    todo!();
+    m.regs.ecx = m.regs.ecx.wrapping_sub(1);
+    if m.regs.ecx == 0 {
+        Cont(x00409191)
+    } else {
+        Cont(x00409188)
+    }
 }
 
 pub fn x00409191() -> Cont {
@@ -35003,7 +35018,12 @@ pub fn x00409198() -> Cont {
     // 004091a0 lea ebx,[ebx+2]
     m.regs.ebx = m.regs.ebx.wrapping_add(0x2u32);
     // 004091a3 loop 00409198h
-    todo!();
+    m.regs.ecx = m.regs.ecx.wrapping_sub(1);
+    if m.regs.ecx == 0 {
+        Cont(x004091a5)
+    } else {
+        Cont(x00409198)
+    }
 }
 
 pub fn x004091a5() -> Cont {
