@@ -23071,7 +23071,7 @@ pub fn x00405f04() -> Cont {
     // 00405f1a add eax,ebx
     m.regs.eax = add(m.regs.eax, m.regs.ebx);
     // 00405f1c cwde
-    cwde(m);
+    m.regs.eax = m.regs.get_ax() as i16 as i32 as u32;
     // 00405f1d inc ecx
     m.regs.ecx = inc(m.regs.ecx);
     // 00405f1e inc ecx
@@ -23088,7 +23088,7 @@ pub fn x00405f04() -> Cont {
     // 00405f2d add eax,ebx
     m.regs.eax = add(m.regs.eax, m.regs.ebx);
     // 00405f2f cwde
-    cwde(m);
+    m.regs.eax = m.regs.get_ax() as i16 as i32 as u32;
     // 00405f30 mov dword ptr ds:[423234h],0
     m.memory.write::<u32>(0x423234u32, 0x0u32);
     // 00405f3a mov [edx+4],eax
