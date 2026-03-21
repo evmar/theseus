@@ -105,7 +105,8 @@ pub fn codegen(w: &mut Writer, _state: &State, instr: &iced_x86::Instruction) ->
         }
 
         // Binary ops
-        Fadd | Faddp | Fsub | Fsubp | Fsubr | Fsubrp | Fmul | Fmulp => {
+        Fadd | Faddp | Fsub | Fsubp | Fsubr | Fsubrp | Fmul | Fmulp | Fdivp | Fdivrp | Fdivr
+        | Fdiv => {
             assert!(matches!(instr.op_count(), 1 | 2));
 
             let (arg0, arg1) = if instr.op_count() == 1 {
@@ -114,7 +115,7 @@ pub fn codegen(w: &mut Writer, _state: &State, instr: &iced_x86::Instruction) ->
                 (fpu_get_op(instr, 0), fpu_get_op(instr, 1))
             };
 
-            let (arg0, arg1) = if matches!(instr.mnemonic(), Fsubr | Fsubrp) {
+            let (arg0, arg1) = if matches!(instr.mnemonic(), Fsubr | Fsubrp | Fdivr | Fdivrp) {
                 (arg1, arg0)
             } else {
                 (arg0, arg1)
@@ -124,6 +125,7 @@ pub fn codegen(w: &mut Writer, _state: &State, instr: &iced_x86::Instruction) ->
                 Fadd | Faddp => "+",
                 Fsub | Fsubp | Fsubr | Fsubrp => "-",
                 Fmul | Fmulp => "*",
+                Fdiv | Fdivp | Fdivr | Fdivrp => "/",
                 _ => unreachable!(),
             };
 
@@ -135,7 +137,10 @@ pub fn codegen(w: &mut Writer, _state: &State, instr: &iced_x86::Instruction) ->
                 w.line(fpu_set_op(instr, 0, expr));
             }
 
-            if matches!(instr.mnemonic(), Faddp | Fsubp | Fsubrp | Fmulp) {
+            if matches!(
+                instr.mnemonic(),
+                Faddp | Fsubp | Fsubrp | Fmulp | Fdivp | Fdivrp
+            ) {
                 w.line("m.fpu.pop();");
             }
         }
@@ -154,8 +159,14 @@ pub fn codegen(w: &mut Writer, _state: &State, instr: &iced_x86::Instruction) ->
             w.line(fpu_set_reg(0, format!("{}.sqrt()", fpu_get_reg(0))));
         }
 
-        Fdivp | Fdivrp | Fdivr | Fdiv => w.line("todo!();"),
-        Fcomp | Fnstsw | Fxch | Fpatan => {
+        Fxch => {
+            assert_eq!(instr.op_count(), 2);
+            w.line(format!("let t = {};", fpu_get_op(instr, 0)));
+            w.line(fpu_set_op(instr, 0, fpu_get_op(instr, 1)));
+            w.line(fpu_set_op(instr, 1, "t".into()));
+        }
+
+        Fcomp | Fnstsw | Fpatan => {
             w.line("todo!();");
         }
         _ => return false,

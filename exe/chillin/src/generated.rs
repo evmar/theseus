@@ -11779,7 +11779,8 @@ pub fn x00403adc() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) + m.memory.read::<f32>(0x40c088u32) as f64);
     // 00403aeb fdivrp
-    todo!();
+    m.fpu.set(1, m.fpu.get(0) / m.fpu.get(1));
+    m.fpu.pop();
     // 00403aed fld dword ptr [ebp+10h]
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0x10u32)) as f64);
@@ -11850,7 +11851,8 @@ pub fn x00403b10() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) + m.memory.read::<f32>(0x40c088u32) as f64);
     // 00403b1f fdivrp
-    todo!();
+    m.fpu.set(1, m.fpu.get(0) / m.fpu.get(1));
+    m.fpu.pop();
     // 00403b21 fld dword ptr [ebp+18h]
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0x18u32)) as f64);
@@ -11913,7 +11915,8 @@ pub fn x00403b3f() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) + m.memory.read::<f32>(0x40c08cu32) as f64);
     // 00403b4e fdivrp
-    todo!();
+    m.fpu.set(1, m.fpu.get(0) / m.fpu.get(1));
+    m.fpu.pop();
     // 00403b50 fld dword ptr [ebp+10h]
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0x10u32)) as f64);
@@ -11976,7 +11979,8 @@ pub fn x00403b6e() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) + m.memory.read::<f32>(0x40c08cu32) as f64);
     // 00403b7d fdivrp
-    todo!();
+    m.fpu.set(1, m.fpu.get(0) / m.fpu.get(1));
+    m.fpu.pop();
     // 00403b7f fld dword ptr [ebp+18h]
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0x18u32)) as f64);
@@ -12047,7 +12051,8 @@ pub fn x00403ba2() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) + m.memory.read::<f32>(0x40c090u32) as f64);
     // 00403bb1 fdivrp
-    todo!();
+    m.fpu.set(1, m.fpu.get(0) / m.fpu.get(1));
+    m.fpu.pop();
     // 00403bb3 fld dword ptr [ebp+0Ch]
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0xcu32)) as f64);
@@ -12118,7 +12123,8 @@ pub fn x00403bd6() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) + m.memory.read::<f32>(0x40c090u32) as f64);
     // 00403be5 fdivrp
-    todo!();
+    m.fpu.set(1, m.fpu.get(0) / m.fpu.get(1));
+    m.fpu.pop();
     // 00403be7 fld dword ptr [ebp+14h]
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0x14u32)) as f64);
@@ -12181,7 +12187,8 @@ pub fn x00403c05() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) + m.memory.read::<f32>(0x40c08cu32) as f64);
     // 00403c14 fdivrp
-    todo!();
+    m.fpu.set(1, m.fpu.get(0) / m.fpu.get(1));
+    m.fpu.pop();
     // 00403c16 fld dword ptr [ebp+0Ch]
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0xcu32)) as f64);
@@ -12244,7 +12251,8 @@ pub fn x00403c34() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) + m.memory.read::<f32>(0x40c08cu32) as f64);
     // 00403c43 fdivrp
-    todo!();
+    m.fpu.set(1, m.fpu.get(0) / m.fpu.get(1));
+    m.fpu.pop();
     // 00403c45 fld dword ptr [ebp+14h]
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0x14u32)) as f64);
@@ -15187,9 +15195,12 @@ pub fn x00404570() -> Cont {
     // 0040458d fld dword ptr [edx]
     m.fpu.push(m.memory.read::<f32>(m.regs.edx) as f64);
     // 0040458f fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00404591 fdivrp st(2),st
-    todo!();
+    m.fpu.set(2, m.fpu.get(0) / m.fpu.get(2));
+    m.fpu.pop();
     // 00404593 fmul st,st(1)
     m.fpu.set(0, m.fpu.get(0) * m.fpu.get(1));
     // 00404595 fld dword ptr [edx+4]
@@ -15204,7 +15215,9 @@ pub fn x00404570() -> Cont {
     m.fpu.set(3, m.fpu.get(3) * m.fpu.get(0));
     m.fpu.pop();
     // 0040459f fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 004045a1 fstp dword ptr [edx]
     m.memory.write::<f32>(m.regs.edx, m.fpu.get(0) as f32);
     m.fpu.pop();
@@ -15273,7 +15286,9 @@ pub fn x004045b8() -> Cont {
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0x8u32)) as f64);
     // 004045d6 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 004045d8 faddp st(4),st
     m.fpu.set(4, m.fpu.get(4) + m.fpu.get(0));
     m.fpu.pop();
@@ -15283,12 +15298,16 @@ pub fn x004045b8() -> Cont {
         m.fpu.get(0) * m.memory.read::<f32>(m.regs.ebp.wrapping_add(0x8u32)) as f64,
     );
     // 004045dd fxch st(3)
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(3));
+    m.fpu.set(3, t);
     // 004045df fmul dword ptr ds:[40C0A8h]
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f32>(0x40c0a8u32) as f64);
     // 004045e5 fxch st(3)
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(3));
+    m.fpu.set(3, t);
     // 004045e7 faddp st(2),st
     m.fpu.set(2, m.fpu.get(2) + m.fpu.get(0));
     m.fpu.pop();
@@ -15300,7 +15319,9 @@ pub fn x004045b8() -> Cont {
     // 004045f1 fmul st(0),st
     m.fpu.set(0, m.fpu.get(0) * m.fpu.get(0));
     // 004045f3 fxch st(3)
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(3));
+    m.fpu.set(3, t);
     // 004045f5 fst dword ptr [ebp-4]
     m.memory
         .write::<f32>(m.regs.ebp.wrapping_add(0xfffffffcu32), m.fpu.get(0) as f32);
@@ -15308,7 +15329,9 @@ pub fn x004045b8() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f32>(0x40c0acu32) as f64);
     // 004045fe fxch st(3)
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(3));
+    m.fpu.set(3, t);
     // 00404600 fsubp
     m.fpu.set(1, m.fpu.get(1) - m.fpu.get(0));
     m.fpu.pop();
@@ -15339,19 +15362,24 @@ pub fn x004045b8() -> Cont {
         m.fpu.get(0) - m.memory.read::<f32>(m.regs.ebp.wrapping_add(0xffffffe0u32)) as f64,
     );
     // 00404616 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00404618 fmul dword ptr ds:[40C0A8h]
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f32>(0x40c0a8u32) as f64);
     // 0040461e fld1
     m.fpu.push(1.0);
     // 00404620 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00404622 fadd qword ptr ds:[40C0B0h]
     m.fpu
         .set(0, m.fpu.get(0) + m.memory.read::<f64>(0x40c0b0u32));
     // 00404628 fdivp
-    todo!();
+    m.fpu.set(1, m.fpu.get(1) / m.fpu.get(0));
+    m.fpu.pop();
     // 0040462a fld dword ptr [ebp-20h]
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0xffffffe0u32)) as f64);
@@ -15361,18 +15389,24 @@ pub fn x004045b8() -> Cont {
     m.fpu.set(3, m.fpu.get(0) - m.fpu.get(3));
     m.fpu.pop();
     // 00404631 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00404633 fmul st,st(1)
     m.fpu.set(0, m.fpu.get(0) * m.fpu.get(1));
     // 00404635 fxch st(2)
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(2));
+    m.fpu.set(2, t);
     // 00404637 fmulp
     m.fpu.set(1, m.fpu.get(1) * m.fpu.get(0));
     m.fpu.pop();
     // 00404639 fldz
     m.fpu.push(0.0);
     // 0040463b fxch st(2)
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(2));
+    m.fpu.set(2, t);
     // 0040463d fstp dword ptr [ebp-0Ch]
     m.memory
         .write::<f32>(m.regs.ebp.wrapping_add(0xfffffff4u32), m.fpu.get(0) as f32);
@@ -15428,21 +15462,27 @@ pub fn x00404650() -> Cont {
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0x18u32)) as f64);
     // 00404665 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00404667 fadd dword ptr [ebp+10h]
     m.fpu.set(
         0,
         m.fpu.get(0) + m.memory.read::<f32>(m.regs.ebp.wrapping_add(0x10u32)) as f64,
     );
     // 0040466a fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 0040466c fmul dword ptr [ebp-8]
     m.fpu.set(
         0,
         m.fpu.get(0) * m.memory.read::<f32>(m.regs.ebp.wrapping_add(0xfffffff8u32)) as f64,
     );
     // 0040466f fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00404671 fst dword ptr [ebp-2Ch]
     m.memory
         .write::<f32>(m.regs.ebp.wrapping_add(0xffffffd4u32), m.fpu.get(0) as f32);
@@ -15450,27 +15490,35 @@ pub fn x00404650() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c0b8u32));
     // 0040467a fxch st(2)
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(2));
+    m.fpu.set(2, t);
     // 0040467c fadd dword ptr [ebp+8]
     m.fpu.set(
         0,
         m.fpu.get(0) + m.memory.read::<f32>(m.regs.ebp.wrapping_add(0x8u32)) as f64,
     );
     // 0040467f fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00404681 fadd dword ptr [ebp+0Ch]
     m.fpu.set(
         0,
         m.fpu.get(0) + m.memory.read::<f32>(m.regs.ebp.wrapping_add(0xcu32)) as f64,
     );
     // 00404684 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00404686 fstp dword ptr [ebp-34h]
     m.memory
         .write::<f32>(m.regs.ebp.wrapping_add(0xffffffccu32), m.fpu.get(0) as f32);
     m.fpu.pop();
     // 00404689 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 0040468b call 00408838h
     call(0x404690, Cont(x00408838))
 }
@@ -15501,21 +15549,27 @@ pub fn x00404653() -> Cont {
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0x18u32)) as f64);
     // 00404665 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00404667 fadd dword ptr [ebp+10h]
     m.fpu.set(
         0,
         m.fpu.get(0) + m.memory.read::<f32>(m.regs.ebp.wrapping_add(0x10u32)) as f64,
     );
     // 0040466a fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 0040466c fmul dword ptr [ebp-8]
     m.fpu.set(
         0,
         m.fpu.get(0) * m.memory.read::<f32>(m.regs.ebp.wrapping_add(0xfffffff8u32)) as f64,
     );
     // 0040466f fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00404671 fst dword ptr [ebp-2Ch]
     m.memory
         .write::<f32>(m.regs.ebp.wrapping_add(0xffffffd4u32), m.fpu.get(0) as f32);
@@ -15523,27 +15577,35 @@ pub fn x00404653() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c0b8u32));
     // 0040467a fxch st(2)
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(2));
+    m.fpu.set(2, t);
     // 0040467c fadd dword ptr [ebp+8]
     m.fpu.set(
         0,
         m.fpu.get(0) + m.memory.read::<f32>(m.regs.ebp.wrapping_add(0x8u32)) as f64,
     );
     // 0040467f fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00404681 fadd dword ptr [ebp+0Ch]
     m.fpu.set(
         0,
         m.fpu.get(0) + m.memory.read::<f32>(m.regs.ebp.wrapping_add(0xcu32)) as f64,
     );
     // 00404684 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00404686 fstp dword ptr [ebp-34h]
     m.memory
         .write::<f32>(m.regs.ebp.wrapping_add(0xffffffccu32), m.fpu.get(0) as f32);
     m.fpu.pop();
     // 00404689 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 0040468b call 00408838h
     call(0x404690, Cont(x00408838))
 }
@@ -15583,7 +15645,9 @@ pub fn x0040469e() -> Cont {
     // 004046a6 mov ds:[433F6Ch],eax
     m.memory.write::<u32>(0x433f6cu32, m.regs.eax);
     // 004046ab fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 004046ad fpatan
     todo!();
     // 004046af fmul qword ptr ds:[40C0C0h]
@@ -15608,7 +15672,9 @@ pub fn x004046a0() -> Cont {
     // 004046a6 mov ds:[433F6Ch],eax
     m.memory.write::<u32>(0x433f6cu32, m.regs.eax);
     // 004046ab fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 004046ad fpatan
     todo!();
     // 004046af fmul qword ptr ds:[40C0C0h]
@@ -15647,7 +15713,8 @@ pub fn x004046cb() -> Cont {
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0xfffffff8u32)) as f64);
     // 004046d0 fdivr qword ptr ds:[40C0D0h]
-    todo!();
+    m.fpu
+        .set(0, m.memory.read::<f64>(0x40c0d0u32) / m.fpu.get(0));
     // 004046d6 mov ds:[433F70h],eax
     m.memory.write::<u32>(0x433f70u32, m.regs.eax);
     // 004046db call 00408838h
@@ -15661,7 +15728,8 @@ pub fn x004046cd() -> Cont {
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0xfffffff8u32)) as f64);
     // 004046d0 fdivr qword ptr ds:[40C0D0h]
-    todo!();
+    m.fpu
+        .set(0, m.memory.read::<f64>(0x40c0d0u32) / m.fpu.get(0));
     // 004046d6 mov ds:[433F70h],eax
     m.memory.write::<u32>(0x433f70u32, m.regs.eax);
     // 004046db call 00408838h
@@ -15724,7 +15792,9 @@ pub fn x0040470e() -> Cont {
     );
     m.fpu.pop();
     // 00404711 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00404713 call 00408838h
     call(0x404718, Cont(x00408838))
 }
@@ -15755,7 +15825,9 @@ pub fn x00404718() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c0f0u32));
     // 00404731 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00404733 fstp qword ptr [ebp-18h]
     m.memory
         .write::<f64>(m.regs.ebp.wrapping_add(0xffffffe8u32), m.fpu.get(0));
@@ -15769,19 +15841,25 @@ pub fn x00404718() -> Cont {
     m.fpu
         .push(m.memory.read::<f64>(m.regs.ebp.wrapping_add(0xffffffe0u32)));
     // 00404741 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00404743 fadd qword ptr [ebp-18h]
     m.fpu.set(
         0,
         m.fpu.get(0) + m.memory.read::<f64>(m.regs.ebp.wrapping_add(0xffffffe8u32)),
     );
     // 00404746 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00404748 fmul qword ptr ds:[40C0F8h]
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c0f8u32));
     // 0040474e fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00404750 fstp qword ptr [ebp-18h]
     m.memory
         .write::<f64>(m.regs.ebp.wrapping_add(0xffffffe8u32), m.fpu.get(0));
@@ -15795,19 +15873,25 @@ pub fn x00404718() -> Cont {
     m.fpu
         .push(m.memory.read::<f64>(m.regs.ebp.wrapping_add(0xffffffd8u32)));
     // 0040475e fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00404760 fadd qword ptr [ebp-18h]
     m.fpu.set(
         0,
         m.fpu.get(0) + m.memory.read::<f64>(m.regs.ebp.wrapping_add(0xffffffe8u32)),
     );
     // 00404763 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00404765 fmul qword ptr ds:[40C100h]
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c100u32));
     // 0040476b fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 0040476d call 00408838h
     call(0x404772, Cont(x00408838))
 }
@@ -15833,7 +15917,9 @@ pub fn x00404772() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c108u32));
     // 00404786 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00404788 fstp qword ptr [ebp-28h]
     m.memory
         .write::<f64>(m.regs.ebp.wrapping_add(0xffffffd8u32), m.fpu.get(0));
@@ -15847,19 +15933,25 @@ pub fn x00404772() -> Cont {
     m.fpu
         .push(m.memory.read::<f64>(m.regs.ebp.wrapping_add(0xffffffe0u32)));
     // 00404796 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00404798 fadd qword ptr [ebp-28h]
     m.fpu.set(
         0,
         m.fpu.get(0) + m.memory.read::<f64>(m.regs.ebp.wrapping_add(0xffffffd8u32)),
     );
     // 0040479b fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 0040479d fmul qword ptr ds:[40C110h]
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c110u32));
     // 004047a3 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 004047a5 fstp qword ptr [ebp-28h]
     m.memory
         .write::<f64>(m.regs.ebp.wrapping_add(0xffffffd8u32), m.fpu.get(0));
@@ -16309,7 +16401,9 @@ pub fn x0040493b() -> Cont {
     // 00404970 fldz
     m.fpu.push(0.0);
     // 00404972 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00404974 call 00408838h
     call(0x404979, Cont(x00408838))
 }
@@ -16388,7 +16482,10 @@ pub fn x004049a1() -> Cont {
     m.fpu
         .push(m.memory.read::<f64>(m.regs.ebp.wrapping_add(0xffffffd0u32)));
     // 004049b2 fdiv qword ptr [ebp-20h]
-    todo!();
+    m.fpu.set(
+        0,
+        m.fpu.get(0) / m.memory.read::<f64>(m.regs.ebp.wrapping_add(0xffffffe0u32)),
+    );
     // 004049b5 fld1
     m.fpu.push(1.0);
     // 004049b7 fpatan
@@ -16415,7 +16512,10 @@ pub fn x004049af() -> Cont {
     m.fpu
         .push(m.memory.read::<f64>(m.regs.ebp.wrapping_add(0xffffffd0u32)));
     // 004049b2 fdiv qword ptr [ebp-20h]
-    todo!();
+    m.fpu.set(
+        0,
+        m.fpu.get(0) / m.memory.read::<f64>(m.regs.ebp.wrapping_add(0xffffffe0u32)),
+    );
     // 004049b5 fld1
     m.fpu.push(1.0);
     // 004049b7 fpatan
@@ -18426,7 +18526,9 @@ pub fn x00404fad() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c148u32));
     // 00404fd4 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00404fd6 fstp dword ptr [ebp-20h]
     m.memory
         .write::<f32>(m.regs.ebp.wrapping_add(0xffffffe0u32), m.fpu.get(0) as f32);
@@ -18466,7 +18568,9 @@ pub fn x00404fad() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c150u32));
     // 00405001 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00405003 fstp dword ptr [ebp-18h]
     m.memory
         .write::<f32>(m.regs.ebp.wrapping_add(0xffffffe8u32), m.fpu.get(0) as f32);
@@ -18486,7 +18590,9 @@ pub fn x00404fad() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c158u32));
     // 0040501a fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 0040501c fstp dword ptr [ebp-3Ch]
     m.memory
         .write::<f32>(m.regs.ebp.wrapping_add(0xffffffc4u32), m.fpu.get(0) as f32);
@@ -18509,7 +18615,9 @@ pub fn x00404fad() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c168u32));
     // 00405039 fxch st(2)
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(2));
+    m.fpu.set(2, t);
     // 0040503b fstp dword ptr [ebp-38h]
     m.memory
         .write::<f32>(m.regs.ebp.wrapping_add(0xffffffc8u32), m.fpu.get(0) as f32);
@@ -18530,7 +18638,9 @@ pub fn x00404fad() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c178u32));
     // 00405052 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00405054 fstp qword ptr [ebp-28h]
     m.memory
         .write::<f64>(m.regs.ebp.wrapping_add(0xffffffd8u32), m.fpu.get(0));
@@ -18549,17 +18659,23 @@ pub fn x00404fad() -> Cont {
     m.fpu
         .push(m.memory.read::<f64>(m.regs.ebp.wrapping_add(0xffffffd0u32)));
     // 00405065 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00405067 fadd qword ptr ds:[40C180h]
     m.fpu
         .set(0, m.fpu.get(0) + m.memory.read::<f64>(0x40c180u32));
     // 0040506d fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 0040506f fmul qword ptr ds:[40C188h]
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c188u32));
     // 00405075 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00405077 fstp dword ptr [ebp-10h]
     m.memory
         .write::<f32>(m.regs.ebp.wrapping_add(0xfffffff0u32), m.fpu.get(0) as f32);
@@ -18576,7 +18692,9 @@ pub fn x00404fad() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c198u32));
     // 0040508b fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 0040508d fstp qword ptr [ebp-30h]
     m.memory
         .write::<f64>(m.regs.ebp.wrapping_add(0xffffffd0u32), m.fpu.get(0));
@@ -18793,14 +18911,18 @@ pub fn x00405107() -> Cont {
         .write::<f64>(m.regs.ebp.wrapping_add(0xffffffd0u32), m.fpu.get(0));
     m.fpu.pop();
     // 0040513b fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 0040513d fmul qword ptr [ebp-30h]
     m.fpu.set(
         0,
         m.fpu.get(0) * m.memory.read::<f64>(m.regs.ebp.wrapping_add(0xffffffd0u32)),
     );
     // 00405140 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00405142 fadd dword ptr [ebp+1Ch]
     m.fpu.set(
         0,
@@ -18814,7 +18936,9 @@ pub fn x00405107() -> Cont {
     // 0040514d shl eax,3
     m.regs.eax = shl(m.regs.eax, 0x3u8, &mut m.flags);
     // 00405150 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00405152 fadd qword ptr [ebp-28h]
     m.fpu.set(
         0,
@@ -18988,9 +19112,12 @@ pub fn x004051d5() -> Cont {
     // 004051f5 fmul st,st(1)
     m.fpu.set(0, m.fpu.get(0) * m.fpu.get(1));
     // 004051f7 fdivrp st(2),st
-    todo!();
+    m.fpu.set(2, m.fpu.get(0) / m.fpu.get(2));
+    m.fpu.pop();
     // 004051f9 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 004051fb call 00408838h
     call(0x405200, Cont(x00408838))
 }
@@ -19022,9 +19149,12 @@ pub fn x00405200() -> Cont {
     // 00405213 fild dword ptr ds:[40C728h]
     m.fpu.push(m.memory.read::<u32>(0x40c728u32) as i32 as f64);
     // 00405219 fdivrp
-    todo!();
+    m.fpu.set(1, m.fpu.get(0) / m.fpu.get(1));
+    m.fpu.pop();
     // 0040521b fxch st(2)
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(2));
+    m.fpu.set(2, t);
     // 0040521d fmulp
     m.fpu.set(1, m.fpu.get(1) * m.fpu.get(0));
     m.fpu.pop();
@@ -19041,7 +19171,9 @@ pub fn x00405200() -> Cont {
     m.memory
         .write::<f32>(m.regs.ebp.wrapping_add(0xfffffff4u32), m.fpu.get(0) as f32);
     // 0040522b fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 0040522d call 00408838h
     call(0x405232, Cont(x00408838))
 }
@@ -19067,7 +19199,9 @@ pub fn x00405232() -> Cont {
     // 0040523e mov ebx,edx
     m.regs.ebx = m.regs.edx;
     // 00405240 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00405242 fstp dword ptr [ebp-24h]
     m.memory
         .write::<f32>(m.regs.ebp.wrapping_add(0xffffffdcu32), m.fpu.get(0) as f32);
@@ -19255,7 +19389,9 @@ pub fn x004052b5() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004052b5 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 004052b7 call 00408838h
     call(0x4052bc, Cont(x00408838))
 }
@@ -19748,7 +19884,10 @@ pub fn x00405439() -> Cont {
     // 00405439 fld dword ptr ds:[40C1C0h]
     m.fpu.push(m.memory.read::<f32>(0x40c1c0u32) as f64);
     // 0040543f fdiv dword ptr [ebp-20h]
-    todo!();
+    m.fpu.set(
+        0,
+        m.fpu.get(0) / m.memory.read::<f32>(m.regs.ebp.wrapping_add(0xffffffe0u32)) as f64,
+    );
     // 00405442 fstp dword ptr [ebp-24h]
     m.memory
         .write::<f32>(m.regs.ebp.wrapping_add(0xffffffdcu32), m.fpu.get(0) as f32);
@@ -19826,7 +19965,10 @@ pub fn x00405465() -> Cont {
     // 00405465 fld dword ptr ds:[40C1C4h]
     m.fpu.push(m.memory.read::<f32>(0x40c1c4u32) as f64);
     // 0040546b fdiv dword ptr [ebp-34h]
-    todo!();
+    m.fpu.set(
+        0,
+        m.fpu.get(0) / m.memory.read::<f32>(m.regs.ebp.wrapping_add(0xffffffccu32)) as f64,
+    );
     // 0040546e fadd dword ptr ds:[40C1C8h]
     m.fpu
         .set(0, m.fpu.get(0) + m.memory.read::<f32>(0x40c1c8u32) as f64);
@@ -20000,7 +20142,10 @@ pub fn x004054dd() -> Cont {
     // 004054dd fld dword ptr ds:[40C1CCh]
     m.fpu.push(m.memory.read::<f32>(0x40c1ccu32) as f64);
     // 004054e3 fdiv dword ptr [ebp-2Ch]
-    todo!();
+    m.fpu.set(
+        0,
+        m.fpu.get(0) / m.memory.read::<f32>(m.regs.ebp.wrapping_add(0xffffffd4u32)) as f64,
+    );
     // 004054e6 call 00408838h
     call(0x4054eb, Cont(x00408838))
 }
@@ -20068,24 +20213,34 @@ pub fn x004054f4() -> Cont {
     m.fpu
         .push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32)) as i32 as f64);
     // 00405517 fxch st(3)
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(3));
+    m.fpu.set(3, t);
     // 00405519 fsub st,st(3)
     m.fpu.set(0, m.fpu.get(0) - m.fpu.get(3));
     // 0040551b fxch st(4)
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(4));
+    m.fpu.set(4, t);
     // 0040551d fadd st,st(3)
     m.fpu.set(0, m.fpu.get(0) + m.fpu.get(3));
     // 0040551f fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00405521 fsub st,st(3)
     m.fpu.set(0, m.fpu.get(0) - m.fpu.get(3));
     // 00405523 fxch st(2)
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(2));
+    m.fpu.set(2, t);
     // 00405525 faddp st(3),st
     m.fpu.set(3, m.fpu.get(3) + m.fpu.get(0));
     m.fpu.pop();
     // 00405527 fxch st(3)
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(3));
+    m.fpu.set(3, t);
     // 00405529 call 00408838h
     call(0x40552e, Cont(x00408838))
 }
@@ -20120,24 +20275,34 @@ pub fn x004054fb() -> Cont {
     m.fpu
         .push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32)) as i32 as f64);
     // 00405517 fxch st(3)
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(3));
+    m.fpu.set(3, t);
     // 00405519 fsub st,st(3)
     m.fpu.set(0, m.fpu.get(0) - m.fpu.get(3));
     // 0040551b fxch st(4)
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(4));
+    m.fpu.set(4, t);
     // 0040551d fadd st,st(3)
     m.fpu.set(0, m.fpu.get(0) + m.fpu.get(3));
     // 0040551f fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00405521 fsub st,st(3)
     m.fpu.set(0, m.fpu.get(0) - m.fpu.get(3));
     // 00405523 fxch st(2)
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(2));
+    m.fpu.set(2, t);
     // 00405525 faddp st(3),st
     m.fpu.set(3, m.fpu.get(3) + m.fpu.get(0));
     m.fpu.pop();
     // 00405527 fxch st(3)
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(3));
+    m.fpu.set(3, t);
     // 00405529 call 00408838h
     call(0x40552e, Cont(x00408838))
 }
@@ -20146,7 +20311,9 @@ pub fn x0040552e() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 0040552e fxch st(3)
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(3));
+    m.fpu.set(3, t);
     // 00405530 call 00408838h
     call(0x405535, Cont(x00408838))
 }
@@ -20155,7 +20322,9 @@ pub fn x00405535() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00405535 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00405537 call 00408838h
     call(0x40553c, Cont(x00408838))
 }
@@ -20164,7 +20333,9 @@ pub fn x0040553c() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 0040553c fxch st(2)
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(2));
+    m.fpu.set(2, t);
     // 0040553e call 00408838h
     call(0x405543, Cont(x00408838))
 }
@@ -20173,7 +20344,9 @@ pub fn x00405543() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00405543 fxch st(3)
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(3));
+    m.fpu.set(3, t);
     // 00405545 fistp dword ptr [ebp-8]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffff8u32),
@@ -22312,7 +22485,10 @@ pub fn x00405c0a() -> Cont {
     // 00405c0a fld dword ptr [esi]
     m.fpu.push(m.memory.read::<f32>(m.regs.esi) as f64);
     // 00405c0c fdiv dword ptr [ebp-0Ch]
-    todo!();
+    m.fpu.set(
+        0,
+        m.fpu.get(0) / m.memory.read::<f32>(m.regs.ebp.wrapping_add(0xfffffff4u32)) as f64,
+    );
     // 00405c0f fstp dword ptr [ebp-8]
     m.memory
         .write::<f32>(m.regs.ebp.wrapping_add(0xfffffff8u32), m.fpu.get(0) as f32);
@@ -22715,7 +22891,9 @@ pub fn x00405cfb() -> Cont {
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0xfffffffcu32)) as f64);
     // 00405d1f fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00405d21 fstp dword ptr [ebp-20h]
     m.memory
         .write::<f32>(m.regs.ebp.wrapping_add(0xffffffe0u32), m.fpu.get(0) as f32);
@@ -22732,7 +22910,9 @@ pub fn x00405cfb() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f32>(0x40c1d0u32) as f64);
     // 00405d35 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00405d37 fstp dword ptr [ebp-1Ch]
     m.memory
         .write::<f32>(m.regs.ebp.wrapping_add(0xffffffe4u32), m.fpu.get(0) as f32);
@@ -22752,7 +22932,9 @@ pub fn x00405cfb() -> Cont {
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0xfffffffcu32)) as f64);
     // 00405d4b fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00405d4d fstp dword ptr [ebp-18h]
     m.memory
         .write::<f32>(m.regs.ebp.wrapping_add(0xffffffe8u32), m.fpu.get(0) as f32);
@@ -22769,7 +22951,9 @@ pub fn x00405cfb() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f32>(0x40c1d0u32) as f64);
     // 00405d61 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00405d63 fstp dword ptr [ebp-14h]
     m.memory
         .write::<f32>(m.regs.ebp.wrapping_add(0xffffffecu32), m.fpu.get(0) as f32);
@@ -22786,7 +22970,9 @@ pub fn x00405cfb() -> Cont {
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0xfffffff8u32)) as f64);
     // 00405d74 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00405d76 fstp dword ptr [ebp-10h]
     m.memory
         .write::<f32>(m.regs.ebp.wrapping_add(0xfffffff0u32), m.fpu.get(0) as f32);
@@ -22854,7 +23040,9 @@ pub fn x00405d92() -> Cont {
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0xffffffe0u32)) as f64);
     // 00405dad fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00405daf fmul st,st(1)
     m.fpu.set(0, m.fpu.get(0) * m.fpu.get(1));
     // 00405db1 mov [ebp-38h],ebx
@@ -22874,7 +23062,9 @@ pub fn x00405d92() -> Cont {
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0xffffffecu32)) as f64);
     // 00405dc1 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00405dc3 fmul st,st(1)
     m.fpu.set(0, m.fpu.get(0) * m.fpu.get(1));
     // 00405dc5 fld dword ptr [ebp-34h]
@@ -22890,25 +23080,35 @@ pub fn x00405d92() -> Cont {
     m.fpu.set(6, m.fpu.get(6) * m.fpu.get(0));
     m.fpu.pop();
     // 00405dcf fxch st(3)
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(3));
+    m.fpu.set(3, t);
     // 00405dd1 fsubp st(4),st
     m.fpu.set(4, m.fpu.get(4) - m.fpu.get(0));
     m.fpu.pop();
     // 00405dd3 fxch st(4)
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(4));
+    m.fpu.set(4, t);
     // 00405dd5 faddp
     m.fpu.set(1, m.fpu.get(1) + m.fpu.get(0));
     m.fpu.pop();
     // 00405dd7 fxch st(2)
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(2));
+    m.fpu.set(2, t);
     // 00405dd9 fld dword ptr ds:[40C1D0h]
     m.fpu.push(m.memory.read::<f32>(0x40c1d0u32) as f64);
     // 00405ddf fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00405de1 fmul st,st(1)
     m.fpu.set(0, m.fpu.get(0) * m.fpu.get(1));
     // 00405de3 fxch st(3)
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(3));
+    m.fpu.set(3, t);
     // 00405de5 fmul st,st(1)
     m.fpu.set(0, m.fpu.get(0) * m.fpu.get(1));
     // 00405de7 fld st(3)
@@ -22919,7 +23119,9 @@ pub fn x00405d92() -> Cont {
         m.fpu.get(0) * m.memory.read::<f32>(m.regs.ebp.wrapping_add(0xffffffe8u32)) as f64,
     );
     // 00405dec fxch st(4)
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(4));
+    m.fpu.set(4, t);
     // 00405dee fmulp st(5),st
     m.fpu.set(5, m.fpu.get(5) * m.fpu.get(0));
     m.fpu.pop();
@@ -22931,7 +23133,9 @@ pub fn x00405d92() -> Cont {
         m.fpu.get(0) * m.memory.read::<f32>(m.regs.ebp.wrapping_add(0xfffffff4u32)) as f64,
     );
     // 00405df5 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00405df7 fmul dword ptr [ebp-10h]
     m.fpu.set(
         0,
@@ -22941,19 +23145,25 @@ pub fn x00405d92() -> Cont {
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0xffffffc8u32)) as f64);
     // 00405dfd fxch st(5)
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(5));
+    m.fpu.set(5, t);
     // 00405dff fsubp st(4),st
     m.fpu.set(4, m.fpu.get(4) - m.fpu.get(0));
     m.fpu.pop();
     // 00405e01 fxch st(4)
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(4));
+    m.fpu.set(4, t);
     // 00405e03 fmul dword ptr [ebp-18h]
     m.fpu.set(
         0,
         m.fpu.get(0) * m.memory.read::<f32>(m.regs.ebp.wrapping_add(0xffffffe8u32)) as f64,
     );
     // 00405e06 fxch st(3)
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(3));
+    m.fpu.set(3, t);
     // 00405e08 fmul st,st(2)
     m.fpu.set(0, m.fpu.get(0) * m.fpu.get(2));
     // 00405e0a fld st(0)
@@ -22964,7 +23174,9 @@ pub fn x00405d92() -> Cont {
         m.fpu.get(0) * m.memory.read::<f32>(m.regs.ebp.wrapping_add(0xfffffff0u32)) as f64,
     );
     // 00405e0f fxch st(4)
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(4));
+    m.fpu.set(4, t);
     // 00405e11 faddp st(6),st
     m.fpu.set(6, m.fpu.get(6) + m.fpu.get(0));
     m.fpu.pop();
@@ -22974,14 +23186,18 @@ pub fn x00405d92() -> Cont {
         m.fpu.get(0) * m.memory.read::<f32>(m.regs.ebp.wrapping_add(0xfffffff4u32)) as f64,
     );
     // 00405e16 fxch st(5)
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(5));
+    m.fpu.set(5, t);
     // 00405e18 fst dword ptr [ebp-24h]
     m.memory
         .write::<f32>(m.regs.ebp.wrapping_add(0xffffffdcu32), m.fpu.get(0) as f32);
     // 00405e1b fmul st,st(2)
     m.fpu.set(0, m.fpu.get(0) * m.fpu.get(2));
     // 00405e1d fxch st(5)
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(5));
+    m.fpu.set(5, t);
     // 00405e1f faddp st(4),st
     m.fpu.set(4, m.fpu.get(4) + m.fpu.get(0));
     m.fpu.pop();
@@ -22989,14 +23205,18 @@ pub fn x00405d92() -> Cont {
     m.fpu.set(2, m.fpu.get(0) - m.fpu.get(2));
     m.fpu.pop();
     // 00405e23 fxch st(2)
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(2));
+    m.fpu.set(2, t);
     // 00405e25 fst dword ptr [ebp-38h]
     m.memory
         .write::<f32>(m.regs.ebp.wrapping_add(0xffffffc8u32), m.fpu.get(0) as f32);
     // 00405e28 fmul st,st(2)
     m.fpu.set(0, m.fpu.get(0) * m.fpu.get(2));
     // 00405e2a fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00405e2c fst dword ptr [ebp-34h]
     m.memory
         .write::<f32>(m.regs.ebp.wrapping_add(0xffffffccu32), m.fpu.get(0) as f32);
@@ -23030,7 +23250,9 @@ pub fn x00405d92() -> Cont {
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32), m.regs.ebx);
     // 00405e49 fxch st(2)
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(2));
+    m.fpu.set(2, t);
     // 00405e4b fstp dword ptr [eax]
     m.memory.write::<f32>(m.regs.eax, m.fpu.get(0) as f32);
     m.fpu.pop();
@@ -23047,7 +23269,9 @@ pub fn x00405d92() -> Cont {
     m.fpu.set(1, m.fpu.get(1) + m.fpu.get(0));
     m.fpu.pop();
     // 00405e57 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00405e59 fstp dword ptr [eax+4]
     m.memory
         .write::<f32>(m.regs.eax.wrapping_add(0x4u32), m.fpu.get(0) as f32);
@@ -24014,7 +24238,9 @@ pub fn x00406160() -> Cont {
     m.fpu
         .push(m.memory.read::<f32>(m.regs.eax.wrapping_add(0xcu32)) as f64);
     // 00406179 fxch st(5)
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(5));
+    m.fpu.set(5, t);
     // 0040617b call 00408838h
     call(0x406180, Cont(x00408838))
 }
@@ -24023,7 +24249,9 @@ pub fn x00406180() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00406180 fxch st(4)
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(4));
+    m.fpu.set(4, t);
     // 00406182 call 00408838h
     call(0x406187, Cont(x00408838))
 }
@@ -24032,7 +24260,9 @@ pub fn x00406187() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00406187 fxch st(3)
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(3));
+    m.fpu.set(3, t);
     // 00406189 call 00408838h
     call(0x40618e, Cont(x00408838))
 }
@@ -24041,7 +24271,9 @@ pub fn x0040618e() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 0040618e fxch st(2)
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(2));
+    m.fpu.set(2, t);
     // 00406190 call 00408838h
     call(0x406195, Cont(x00408838))
 }
@@ -24050,7 +24282,9 @@ pub fn x00406195() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00406195 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00406197 call 00408838h
     call(0x40619c, Cont(x00408838))
 }
@@ -24059,7 +24293,9 @@ pub fn x0040619c() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 0040619c fxch st(5)
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(5));
+    m.fpu.set(5, t);
     // 0040619e call 00408838h
     call(0x4061a3, Cont(x00408838))
 }
@@ -24070,7 +24306,9 @@ pub fn x004061a3() -> Cont {
     // 004061a3 push dword ptr [eax]
     push(m.memory.read::<u32>(m.regs.eax));
     // 004061a5 fxch st(4)
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(4));
+    m.fpu.set(4, t);
     // 004061a7 fistp dword ptr [ebp-18h]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xffffffe8u32),
@@ -24078,7 +24316,9 @@ pub fn x004061a3() -> Cont {
     );
     m.fpu.pop();
     // 004061aa fxch st(2)
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(2));
+    m.fpu.set(2, t);
     // 004061ac fistp dword ptr [ebp-14h]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xffffffecu32),
@@ -24098,7 +24338,9 @@ pub fn x004061a3() -> Cont {
     );
     m.fpu.pop();
     // 004061b5 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 004061b7 fistp dword ptr [ebp-8]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffff8u32),
@@ -24657,14 +24899,18 @@ pub fn x00406319() -> Cont {
         m.fpu.get(0) - m.memory.read::<f32>(m.regs.ebp.wrapping_add(0x1cu32)) as f64,
     );
     // 00406329 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 0040632b fsub dword ptr [ebp+20h]
     m.fpu.set(
         0,
         m.fpu.get(0) - m.memory.read::<f32>(m.regs.ebp.wrapping_add(0x20u32)) as f64,
     );
     // 0040632e fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00406330 fst dword ptr [ebp-8]
     m.memory
         .write::<f32>(m.regs.ebp.wrapping_add(0xfffffff8u32), m.fpu.get(0) as f32);
@@ -24674,7 +24920,9 @@ pub fn x00406319() -> Cont {
         m.fpu.get(0) * m.memory.read::<f32>(m.regs.ebp.wrapping_add(0xfffffff8u32)) as f64,
     );
     // 00406336 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00406338 fst dword ptr [ebp-10h]
     m.memory
         .write::<f32>(m.regs.ebp.wrapping_add(0xfffffff0u32), m.fpu.get(0) as f32);
@@ -24694,7 +24942,9 @@ pub fn x00406319() -> Cont {
         m.fpu.get(0) - m.memory.read::<f32>(m.regs.ebp.wrapping_add(0x24u32)) as f64,
     );
     // 00406345 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00406347 faddp st(2),st
     m.fpu.set(2, m.fpu.get(2) + m.fpu.get(0));
     m.fpu.pop();
@@ -24736,7 +24986,10 @@ pub fn x00406362() -> Cont {
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0x14u32)) as f64);
     // 00406365 fdiv dword ptr [ebp-4]
-    todo!();
+    m.fpu.set(
+        0,
+        m.fpu.get(0) / m.memory.read::<f32>(m.regs.ebp.wrapping_add(0xfffffffcu32)) as f64,
+    );
     // 00406368 fstp dword ptr [ebp-4]
     m.memory
         .write::<f32>(m.regs.ebp.wrapping_add(0xfffffffcu32), m.fpu.get(0) as f32);
@@ -24757,18 +25010,24 @@ pub fn x00406362() -> Cont {
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0xfffffff0u32)) as f64);
     // 0040637c fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 0040637e fadd dword ptr [ebx+eax]
     m.fpu.set(
         0,
         m.fpu.get(0) + m.memory.read::<f32>(m.regs.ebx.wrapping_add(m.regs.eax)) as f64,
     );
     // 00406381 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00406383 fmul st,st(2)
     m.fpu.set(0, m.fpu.get(0) * m.fpu.get(2));
     // 00406385 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00406387 fstp dword ptr [ebx+eax]
     m.memory
         .write::<f32>(m.regs.ebx.wrapping_add(m.regs.eax), m.fpu.get(0) as f32);
@@ -24779,7 +25038,9 @@ pub fn x00406362() -> Cont {
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0xfffffff4u32)) as f64);
     // 00406390 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00406392 fadd dword ptr [ebx+eax+4]
     m.fpu.set(
         0,
@@ -24789,7 +25050,9 @@ pub fn x00406362() -> Cont {
                 as f64,
     );
     // 00406396 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00406398 fmulp st(2),st
     m.fpu.set(2, m.fpu.get(2) * m.fpu.get(0));
     m.fpu.pop();
@@ -24840,18 +25103,24 @@ pub fn x0040636b() -> Cont {
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0xfffffff0u32)) as f64);
     // 0040637c fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 0040637e fadd dword ptr [ebx+eax]
     m.fpu.set(
         0,
         m.fpu.get(0) + m.memory.read::<f32>(m.regs.ebx.wrapping_add(m.regs.eax)) as f64,
     );
     // 00406381 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00406383 fmul st,st(2)
     m.fpu.set(0, m.fpu.get(0) * m.fpu.get(2));
     // 00406385 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00406387 fstp dword ptr [ebx+eax]
     m.memory
         .write::<f32>(m.regs.ebx.wrapping_add(m.regs.eax), m.fpu.get(0) as f32);
@@ -24862,7 +25131,9 @@ pub fn x0040636b() -> Cont {
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0xfffffff4u32)) as f64);
     // 00406390 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00406392 fadd dword ptr [ebx+eax+4]
     m.fpu.set(
         0,
@@ -24872,7 +25143,9 @@ pub fn x0040636b() -> Cont {
                 as f64,
     );
     // 00406396 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00406398 fmulp st(2),st
     m.fpu.set(2, m.fpu.get(2) * m.fpu.get(0));
     m.fpu.pop();
@@ -25099,7 +25372,9 @@ pub fn x004064cf() -> Cont {
     // 00406501 fld qword ptr ds:[40C1F8h]
     m.fpu.push(m.memory.read::<f64>(0x40c1f8u32));
     // 00406507 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00406509 fmul st,st(1)
     m.fpu.set(0, m.fpu.get(0) * m.fpu.get(1));
     // 0040650b add esi,ebx
@@ -25165,7 +25440,9 @@ pub fn x004064d6() -> Cont {
     // 00406501 fld qword ptr ds:[40C1F8h]
     m.fpu.push(m.memory.read::<f64>(0x40c1f8u32));
     // 00406507 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00406509 fmul st,st(1)
     m.fpu.set(0, m.fpu.get(0) * m.fpu.get(1));
     // 0040650b add esi,ebx
@@ -25255,7 +25532,9 @@ pub fn x00406551() -> Cont {
     // 0040656b fld qword ptr ds:[40C1F8h]
     m.fpu.push(m.memory.read::<f64>(0x40c1f8u32));
     // 00406571 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00406573 fmul st,st(1)
     m.fpu.set(0, m.fpu.get(0) * m.fpu.get(1));
     // 00406575 faddp
@@ -25288,7 +25567,9 @@ pub fn x00406558() -> Cont {
     // 0040656b fld qword ptr ds:[40C1F8h]
     m.fpu.push(m.memory.read::<f64>(0x40c1f8u32));
     // 00406571 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00406573 fmul st,st(1)
     m.fpu.set(0, m.fpu.get(0) * m.fpu.get(1));
     // 00406575 faddp
@@ -25465,7 +25746,9 @@ pub fn x004065d5() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c200u32));
     // 00406620 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00406622 fstp qword ptr [ebp-18h]
     m.memory
         .write::<f64>(m.regs.ebp.wrapping_add(0xffffffe8u32), m.fpu.get(0));
@@ -25612,7 +25895,9 @@ pub fn x00406684() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c218u32));
     // 004066fc fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 004066fe fstp dword ptr ds:[433E60h]
     m.memory.write::<f32>(0x433e60u32, m.fpu.get(0) as f32);
     m.fpu.pop();
@@ -25627,7 +25912,9 @@ pub fn x00406684() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c220u32));
     // 00406718 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 0040671a fstp dword ptr ds:[433E64h]
     m.memory.write::<f32>(0x433e64u32, m.fpu.get(0) as f32);
     m.fpu.pop();
@@ -25664,7 +25951,9 @@ pub fn x00406738() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c238u32));
     // 00406758 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 0040675a call 00408838h
     call(0x40675f, Cont(x00408838))
 }
@@ -25689,7 +25978,9 @@ pub fn x0040675f() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c240u32));
     // 00406776 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00406778 call 00408838h
     call(0x40677d, Cont(x00408838))
 }
@@ -26401,7 +26692,9 @@ pub fn x00406cbf() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c478u32));
     // 00406cdf fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00406ce1 fstp qword ptr [ebp-14h]
     m.memory
         .write::<f64>(m.regs.ebp.wrapping_add(0xffffffecu32), m.fpu.get(0));
@@ -26963,7 +27256,9 @@ pub fn x00406e4d() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c450u32));
     // 00406ea3 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00406ea5 fmul qword ptr ds:[40C448h]
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c448u32));
@@ -27005,7 +27300,9 @@ pub fn x00406e4d() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c458u32));
     // 00406ed6 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00406ed8 fmul qword ptr ds:[40C448h]
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c448u32));
@@ -27047,7 +27344,9 @@ pub fn x00406e4d() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c460u32));
     // 00406f09 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00406f0b fmul qword ptr ds:[40C448h]
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c448u32));
@@ -27148,7 +27447,9 @@ pub fn x00406e6c() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c450u32));
     // 00406ea3 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00406ea5 fmul qword ptr ds:[40C448h]
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c448u32));
@@ -27190,7 +27491,9 @@ pub fn x00406e6c() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c458u32));
     // 00406ed6 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00406ed8 fmul qword ptr ds:[40C448h]
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c448u32));
@@ -27232,7 +27535,9 @@ pub fn x00406e6c() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c460u32));
     // 00406f09 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00406f0b fmul qword ptr ds:[40C448h]
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c448u32));
@@ -28101,7 +28406,9 @@ pub fn x00407315() -> Cont {
         .write::<f64>(m.regs.ebp.wrapping_add(0xffffffd8u32), m.fpu.get(0));
     m.fpu.pop();
     // 00407351 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00407353 fadd qword ptr [ebp-28h]
     m.fpu.set(
         0,
@@ -28139,7 +28446,9 @@ pub fn x00407315() -> Cont {
         .write::<f64>(m.regs.ebp.wrapping_add(0xffffffd0u32), m.fpu.get(0));
     m.fpu.pop();
     // 00407376 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00407378 fadd qword ptr [ebp-30h]
     m.fpu.set(
         0,
@@ -28164,7 +28473,9 @@ pub fn x00407315() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c520u32));
     // 0040738f fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00407391 fadd qword ptr [ebp-28h]
     m.fpu.set(
         0,
@@ -28229,7 +28540,9 @@ pub fn x004073ad() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c520u32));
     // 004073d3 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 004073d5 fadd qword ptr [ebp-28h]
     m.fpu.set(
         0,
@@ -28254,7 +28567,9 @@ pub fn x004073ad() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c520u32));
     // 004073ec fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 004073ee fadd qword ptr [ebp-30h]
     m.fpu.set(
         0,
@@ -28279,7 +28594,9 @@ pub fn x004073ad() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c520u32));
     // 00407405 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00407407 fadd qword ptr [ebp-28h]
     m.fpu.set(
         0,
@@ -28344,7 +28661,9 @@ pub fn x00407423() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c520u32));
     // 00407449 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 0040744b fadd qword ptr [ebp-28h]
     m.fpu.set(
         0,
@@ -28369,7 +28688,9 @@ pub fn x00407423() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c520u32));
     // 00407462 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00407464 fadd qword ptr [ebp-30h]
     m.fpu.set(
         0,
@@ -28394,7 +28715,9 @@ pub fn x00407423() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c520u32));
     // 0040747b fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 0040747d fadd qword ptr [ebp-28h]
     m.fpu.set(
         0,
@@ -28453,7 +28776,9 @@ pub fn x00407499() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c520u32));
     // 004074b6 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 004074b8 fadd qword ptr [ebp-28h]
     m.fpu.set(
         0,
@@ -28478,7 +28803,9 @@ pub fn x00407499() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c520u32));
     // 004074cf fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 004074d1 fadd qword ptr [ebp-30h]
     m.fpu.set(
         0,
@@ -28503,7 +28830,9 @@ pub fn x00407499() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c520u32));
     // 004074e8 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 004074ea fadd qword ptr [ebp-28h]
     m.fpu.set(
         0,
@@ -28596,7 +28925,9 @@ pub fn x0040750b() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c538u32));
     // 0040753e fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00407540 fstp qword ptr [ebp-20h]
     m.memory
         .write::<f64>(m.regs.ebp.wrapping_add(0xffffffe0u32), m.fpu.get(0));
@@ -28615,17 +28946,23 @@ pub fn x0040750b() -> Cont {
     m.fpu
         .push(m.memory.read::<f64>(m.regs.ebp.wrapping_add(0xffffffe8u32)));
     // 00407551 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00407553 fadd qword ptr ds:[40C548h]
     m.fpu
         .set(0, m.fpu.get(0) + m.memory.read::<f64>(0x40c548u32));
     // 00407559 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 0040755b fmul qword ptr ds:[40C550h]
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c550u32));
     // 00407561 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00407563 call 00408838h
     call(0x407568, Cont(x00408838))
 }
@@ -28664,7 +29001,9 @@ pub fn x00407519() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c538u32));
     // 0040753e fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00407540 fstp qword ptr [ebp-20h]
     m.memory
         .write::<f64>(m.regs.ebp.wrapping_add(0xffffffe0u32), m.fpu.get(0));
@@ -28683,17 +29022,23 @@ pub fn x00407519() -> Cont {
     m.fpu
         .push(m.memory.read::<f64>(m.regs.ebp.wrapping_add(0xffffffe8u32)));
     // 00407551 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00407553 fadd qword ptr ds:[40C548h]
     m.fpu
         .set(0, m.fpu.get(0) + m.memory.read::<f64>(0x40c548u32));
     // 00407559 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 0040755b fmul qword ptr ds:[40C550h]
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c550u32));
     // 00407561 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00407563 call 00408838h
     call(0x407568, Cont(x00408838))
 }
@@ -28775,7 +29120,9 @@ pub fn x00407568() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c568u32));
     // 004075ba fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 004075bc fstp dword ptr [ebp-10h]
     m.memory
         .write::<f32>(m.regs.ebp.wrapping_add(0xfffffff0u32), m.fpu.get(0) as f32);
@@ -28905,7 +29252,9 @@ pub fn x0040760b() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c5a0u32));
     // 0040763e fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00407640 fstp dword ptr [ebp-24h]
     m.memory
         .write::<f32>(m.regs.ebp.wrapping_add(0xffffffdcu32), m.fpu.get(0) as f32);
@@ -28922,7 +29271,9 @@ pub fn x0040760b() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c5a8u32));
     // 00407654 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00407656 call 00408838h
     call(0x40765b, Cont(x00408838))
 }
@@ -28961,7 +29312,9 @@ pub fn x00407677() -> Cont {
     m.fpu
         .push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32)) as i32 as f64);
     // 0040767a fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 0040767c fistp dword ptr [ebp-8]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffff8u32),
@@ -29013,7 +29366,9 @@ pub fn x0040768f() -> Cont {
     m.fpu
         .push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32)) as i32 as f64);
     // 004076a4 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 004076a6 call 00408838h
     call(0x4076ab, Cont(x00408838))
 }
@@ -29167,7 +29522,9 @@ pub fn x004076ea() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c5c8u32));
     // 0040772f fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00407731 fstp qword ptr [ebp-20h]
     m.memory
         .write::<f64>(m.regs.ebp.wrapping_add(0xffffffe0u32), m.fpu.get(0));
@@ -29186,19 +29543,25 @@ pub fn x004076ea() -> Cont {
     m.fpu
         .push(m.memory.read::<f64>(m.regs.ebp.wrapping_add(0xffffffd8u32)));
     // 00407747 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00407749 fadd qword ptr [ebp-20h]
     m.fpu.set(
         0,
         m.fpu.get(0) + m.memory.read::<f64>(m.regs.ebp.wrapping_add(0xffffffe0u32)),
     );
     // 0040774c fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 0040774e fmul qword ptr ds:[40C5D0h]
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c5d0u32));
     // 00407754 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00407756 call 00408838h
     call(0x40775b, Cont(x00408838))
 }
@@ -29248,7 +29611,9 @@ pub fn x0040775b() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c5d8u32));
     // 00407789 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 0040778b fstp qword ptr [ebp-20h]
     m.memory
         .write::<f64>(m.regs.ebp.wrapping_add(0xffffffe0u32), m.fpu.get(0));
@@ -29267,19 +29632,25 @@ pub fn x0040775b() -> Cont {
     m.fpu
         .push(m.memory.read::<f64>(m.regs.ebp.wrapping_add(0xffffffd8u32)));
     // 004077a1 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 004077a3 fadd qword ptr [ebp-20h]
     m.fpu.set(
         0,
         m.fpu.get(0) + m.memory.read::<f64>(m.regs.ebp.wrapping_add(0xffffffe0u32)),
     );
     // 004077a6 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 004077a8 fmul qword ptr ds:[40C5E0h]
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c5e0u32));
     // 004077ae fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 004077b0 call 00408838h
     call(0x4077b5, Cont(x00408838))
 }
@@ -29302,17 +29673,23 @@ pub fn x004077b5() -> Cont {
     m.fpu
         .push(m.memory.read::<f64>(m.regs.ebp.wrapping_add(0xffffffd8u32)));
     // 004077c3 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 004077c5 fadd qword ptr ds:[40C5F0h]
     m.fpu
         .set(0, m.fpu.get(0) + m.memory.read::<f64>(0x40c5f0u32));
     // 004077cb fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 004077cd fmul qword ptr ds:[40C5F8h]
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c5f8u32));
     // 004077d3 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 004077d5 fstp qword ptr [ebp-20h]
     m.memory
         .write::<f64>(m.regs.ebp.wrapping_add(0xffffffe0u32), m.fpu.get(0));
@@ -29333,7 +29710,9 @@ pub fn x004077b5() -> Cont {
     // 004077ec push edi
     push(m.regs.edi);
     // 004077ed fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 004077ef fadd qword ptr [ebp-20h]
     m.fpu.set(
         0,
@@ -29368,7 +29747,9 @@ pub fn x004077fa() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c610u32));
     // 00407811 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00407813 call 00408838h
     call(0x407818, Cont(x00408838))
 }
@@ -30412,17 +30793,23 @@ pub fn x00407c24() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c630u32));
     // 00407c66 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00407c68 fadd dword ptr ds:[425002h]
     m.fpu
         .set(0, m.fpu.get(0) + m.memory.read::<f32>(0x425002u32) as f64);
     // 00407c6e fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00407c70 fsubr qword ptr ds:[40C638h]
     m.fpu
         .set(0, m.memory.read::<f64>(0x40c638u32) - m.fpu.get(0));
     // 00407c76 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00407c78 fstp dword ptr ds:[425002h]
     m.memory.write::<f32>(0x425002u32, m.fpu.get(0) as f32);
     m.fpu.pop();
@@ -30475,17 +30862,23 @@ pub fn x00407c2e() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c630u32));
     // 00407c66 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00407c68 fadd dword ptr ds:[425002h]
     m.fpu
         .set(0, m.fpu.get(0) + m.memory.read::<f32>(0x425002u32) as f64);
     // 00407c6e fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00407c70 fsubr qword ptr ds:[40C638h]
     m.fpu
         .set(0, m.memory.read::<f64>(0x40c638u32) - m.fpu.get(0));
     // 00407c76 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00407c78 fstp dword ptr ds:[425002h]
     m.memory.write::<f32>(0x425002u32, m.fpu.get(0) as f32);
     m.fpu.pop();
@@ -30525,7 +30918,9 @@ pub fn x00407c8f() -> Cont {
     m.fpu
         .push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32)) as i32 as f64);
     // 00407cba fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00407cbc fstp dword ptr ds:[433E50h]
     m.memory.write::<f32>(0x433e50u32, m.fpu.get(0) as f32);
     m.fpu.pop();
@@ -30566,7 +30961,9 @@ pub fn x00407c99() -> Cont {
     m.fpu
         .push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32)) as i32 as f64);
     // 00407cba fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00407cbc fstp dword ptr ds:[433E50h]
     m.memory.write::<f32>(0x433e50u32, m.fpu.get(0) as f32);
     m.fpu.pop();
@@ -30732,12 +31129,16 @@ pub fn x00407d52() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c688u32));
     // 00407d82 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00407d84 fmul qword ptr ds:[40C698h]
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c698u32));
     // 00407d8a fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00407d8c fst qword ptr [ebp-44h]
     m.memory
         .write::<f64>(m.regs.ebp.wrapping_add(0xffffffbcu32), m.fpu.get(0));
@@ -30745,7 +31146,9 @@ pub fn x00407d52() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c6a0u32));
     // 00407d95 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00407d97 fstp qword ptr [ebp-2Ch]
     m.memory
         .write::<f64>(m.regs.ebp.wrapping_add(0xffffffd4u32), m.fpu.get(0));
@@ -30759,19 +31162,25 @@ pub fn x00407d52() -> Cont {
     m.fpu
         .push(m.memory.read::<f64>(m.regs.ebp.wrapping_add(0xffffffbcu32)));
     // 00407da5 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00407da7 fadd qword ptr [ebp-2Ch]
     m.fpu.set(
         0,
         m.fpu.get(0) + m.memory.read::<f64>(m.regs.ebp.wrapping_add(0xffffffd4u32)),
     );
     // 00407daa fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00407dac fmul qword ptr ds:[40C6A8h]
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c6a8u32));
     // 00407db2 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00407db4 fstp qword ptr [ebp-2Ch]
     m.memory
         .write::<f64>(m.regs.ebp.wrapping_add(0xffffffd4u32), m.fpu.get(0));
@@ -30790,17 +31199,23 @@ pub fn x00407d52() -> Cont {
     m.fpu
         .push(m.memory.read::<f64>(m.regs.ebp.wrapping_add(0xffffffccu32)));
     // 00407dc5 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00407dc7 fsubr qword ptr ds:[40C6B0h]
     m.fpu
         .set(0, m.memory.read::<f64>(0x40c6b0u32) - m.fpu.get(0));
     // 00407dcd fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00407dcf fmul qword ptr ds:[40C6B8h]
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c6b8u32));
     // 00407dd5 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00407dd7 call 00408838h
     call(0x407ddc, Cont(x00408838))
 }
@@ -30826,7 +31241,9 @@ pub fn x00407ddc() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c6c8u32));
     // 00407df0 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00407df2 fstp qword ptr [ebp-2Ch]
     m.memory
         .write::<f64>(m.regs.ebp.wrapping_add(0xffffffd4u32), m.fpu.get(0));
@@ -30840,19 +31257,25 @@ pub fn x00407ddc() -> Cont {
     m.fpu
         .push(m.memory.read::<f64>(m.regs.ebp.wrapping_add(0xffffffbcu32)));
     // 00407e00 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00407e02 fadd qword ptr [ebp-2Ch]
     m.fpu.set(
         0,
         m.fpu.get(0) + m.memory.read::<f64>(m.regs.ebp.wrapping_add(0xffffffd4u32)),
     );
     // 00407e05 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00407e07 fmul qword ptr ds:[40C6D0h]
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c6d0u32));
     // 00407e0d fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00407e0f fstp qword ptr [ebp-2Ch]
     m.memory
         .write::<f64>(m.regs.ebp.wrapping_add(0xffffffd4u32), m.fpu.get(0));
@@ -31177,12 +31600,16 @@ pub fn x00407f45() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c688u32));
     // 00407f72 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00407f74 fmul qword ptr ds:[40C698h]
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c698u32));
     // 00407f7a fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00407f7c fst qword ptr [ebp-3Ch]
     m.memory
         .write::<f64>(m.regs.ebp.wrapping_add(0xffffffc4u32), m.fpu.get(0));
@@ -31190,7 +31617,9 @@ pub fn x00407f45() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c6a0u32));
     // 00407f85 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00407f87 fstp qword ptr [ebp-34h]
     m.memory
         .write::<f64>(m.regs.ebp.wrapping_add(0xffffffccu32), m.fpu.get(0));
@@ -31204,19 +31633,25 @@ pub fn x00407f45() -> Cont {
     m.fpu
         .push(m.memory.read::<f64>(m.regs.ebp.wrapping_add(0xffffffc4u32)));
     // 00407f95 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00407f97 fadd qword ptr [ebp-34h]
     m.fpu.set(
         0,
         m.fpu.get(0) + m.memory.read::<f64>(m.regs.ebp.wrapping_add(0xffffffccu32)),
     );
     // 00407f9a fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00407f9c fmul qword ptr ds:[40C6A8h]
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c6a8u32));
     // 00407fa2 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00407fa4 fstp qword ptr [ebp-2Ch]
     m.memory
         .write::<f64>(m.regs.ebp.wrapping_add(0xffffffd4u32), m.fpu.get(0));
@@ -31235,17 +31670,23 @@ pub fn x00407f45() -> Cont {
     m.fpu
         .push(m.memory.read::<f64>(m.regs.ebp.wrapping_add(0xffffffbcu32)));
     // 00407fb5 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00407fb7 fsubr qword ptr ds:[40C6B0h]
     m.fpu
         .set(0, m.memory.read::<f64>(0x40c6b0u32) - m.fpu.get(0));
     // 00407fbd fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00407fbf fmul qword ptr ds:[40C6B8h]
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c6b8u32));
     // 00407fc5 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00407fc7 call 00408838h
     call(0x407fcc, Cont(x00408838))
 }
@@ -31271,7 +31712,9 @@ pub fn x00407fcc() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c6c8u32));
     // 00407fe0 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00407fe2 fstp qword ptr [ebp-34h]
     m.memory
         .write::<f64>(m.regs.ebp.wrapping_add(0xffffffccu32), m.fpu.get(0));
@@ -31285,19 +31728,25 @@ pub fn x00407fcc() -> Cont {
     m.fpu
         .push(m.memory.read::<f64>(m.regs.ebp.wrapping_add(0xffffffc4u32)));
     // 00407ff0 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00407ff2 fadd qword ptr [ebp-34h]
     m.fpu.set(
         0,
         m.fpu.get(0) + m.memory.read::<f64>(m.regs.ebp.wrapping_add(0xffffffccu32)),
     );
     // 00407ff5 fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00407ff7 fmul qword ptr ds:[40C6D0h]
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c6d0u32));
     // 00407ffd fxch
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.set(0, m.fpu.get(1));
+    m.fpu.set(1, t);
     // 00407fff fstp qword ptr [ebp-2Ch]
     m.memory
         .write::<f64>(m.regs.ebp.wrapping_add(0xffffffd4u32), m.fpu.get(0));
