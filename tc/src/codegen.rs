@@ -3,6 +3,7 @@ use anyhow::{Result, anyhow, bail};
 use crate::{
     Block, State, fpu, is_abs_memory_ref,
     memory::{AddrAbs, AddrImage},
+    string,
 };
 
 fn get_reg(r: iced_x86::Register) -> String {
@@ -155,7 +156,7 @@ pub fn set_op(instr: &iced_x86::Instruction, n: u32, expr: String) -> String {
     }
 }
 
-fn gen_abs_jmp(state: &State, addr: u32) -> String {
+pub fn gen_abs_jmp(state: &State, addr: u32) -> String {
     if state.blocks.contains_key(&addr) {
         format!("Cont(x{:08x})", addr)
     } else {
@@ -163,7 +164,7 @@ fn gen_abs_jmp(state: &State, addr: u32) -> String {
     }
 }
 
-fn gen_jmp(state: &State, instr: &iced_x86::Instruction) -> String {
+pub fn gen_jmp(state: &State, instr: &iced_x86::Instruction) -> String {
     match instr.op_kind(0) {
         iced_x86::OpKind::NearBranch32 => {
             let addr = instr.near_branch32();
@@ -312,37 +313,6 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
             }
             Neg => {
                 w.line(set_op(instr, 0, format!("neg({})", get_op(instr, 0))));
-            }
-
-            Stosb => {
-                assert!(!instr.has_repne_prefix());
-                if instr.has_rep_prefix() {
-                    w.line("rep(Rep::REP, stosb);");
-                } else {
-                    w.line("stosb();");
-                };
-            }
-            Stosd => {
-                w.line("stosd();");
-            }
-            Cmpsb => {
-                w.line("cmpsb();");
-            }
-            Scasb => {
-                w.line("scasb();");
-            }
-            Lodsb => {
-                w.line("todo!();");
-            }
-            Lodsd => {
-                w.line("todo!();");
-            }
-            Loop => {
-                let next = gen_abs_jmp(state, instr.next_ip32());
-                let dst = gen_jmp(state, instr);
-                w.line("m.regs.ecx = m.regs.ecx.wrapping_sub(1);");
-                w.line(format!("if m.regs.ecx == 0 {{ {next} }}"));
-                w.line(format!("else {{ {dst} }}"));
             }
 
             Movzx => {
@@ -497,6 +467,7 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
 
             c => {
                 if fpu::codegen(w, state, instr) {
+                } else if string::codegen(w, state, instr) {
                 } else {
                     todo!("{:?} in {}", c, instr);
                 }

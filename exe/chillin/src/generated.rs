@@ -34755,7 +34755,7 @@ pub fn x004090fa() -> Cont {
     // 00409100 mov cl,80h
     m.regs.set_cl(0x80u8);
     // 00409102 lodsb
-    todo!();
+    lodsb();
     // 00409103 neg al
     m.regs.set_al(neg(m.regs.get_al()));
     // 00409105 stosb
@@ -34770,7 +34770,7 @@ pub fn x00409102() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00409102 lodsb
-    todo!();
+    lodsb();
     // 00409103 neg al
     m.regs.set_al(neg(m.regs.get_al()));
     // 00409105 stosb
@@ -35139,7 +35139,7 @@ pub fn x00409eee() -> Cont {
     // 00409f04 xor eax,eax
     m.regs.eax = xor(m.regs.eax, m.regs.eax);
     // 00409f06 rep stosd
-    stosd();
+    rep(Rep::REP, stosd);
     // 00409f08 lea edi,[ebp+277Bh]
     m.regs.edi = m.regs.ebp.wrapping_add(0x277bu32);
     // 00409f0e xor ecx,ecx
@@ -35724,7 +35724,7 @@ pub fn x0040a3a5() -> Cont {
     m.regs.ebx = m.regs.esi;
     m.regs.esi = t;
     // 0040a3ac lodsd
-    todo!();
+    lodsd();
     // 0040a3ad call edi
     call(0x40a3af, indirect(m.regs.edi))
 }
@@ -35733,7 +35733,7 @@ pub fn x0040a3af() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 0040a3af lodsd
-    todo!();
+    lodsd();
     // 0040a3b0 call edi
     call(0x40a3b2, indirect(m.regs.edi))
 }
@@ -35742,7 +35742,7 @@ pub fn x0040a3b2() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 0040a3b2 lodsd
-    todo!();
+    lodsd();
     // 0040a3b3 mov cl,60h
     m.regs.set_cl(0x60u8);
     // 0040a3b5 or eax,eax

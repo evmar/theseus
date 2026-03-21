@@ -30,6 +30,30 @@ pub fn rep(rep: Rep, func: impl Fn()) {
     }
 }
 
+pub fn lodsb() {
+    unsafe {
+        let addr = MACHINE.regs.esi;
+        MACHINE.regs.set_al(MACHINE.memory.read::<u8>(addr));
+        if MACHINE.regs.flags.contains(Flags::DF) {
+            MACHINE.regs.esi = addr.wrapping_sub(1);
+        } else {
+            MACHINE.regs.esi = addr.wrapping_add(1);
+        }
+    }
+}
+
+pub fn lodsd() {
+    unsafe {
+        let addr = MACHINE.regs.esi;
+        MACHINE.regs.eax = MACHINE.memory.read::<u32>(addr);
+        if MACHINE.regs.flags.contains(Flags::DF) {
+            MACHINE.regs.esi = addr.wrapping_sub(4);
+        } else {
+            MACHINE.regs.esi = addr.wrapping_add(4);
+        }
+    }
+}
+
 pub fn stosb() {
     unsafe {
         let addr = MACHINE.regs.edi;

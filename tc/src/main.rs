@@ -1,6 +1,7 @@
 mod codegen;
 mod fpu;
 mod memory;
+mod string;
 
 use anyhow::Result;
 use std::collections::{HashMap, VecDeque};
