@@ -6,15 +6,42 @@ use std::{
 
 use runtime::*;
 
+mod ddraw1;
 mod ddraw7;
 mod types;
 
+pub use ddraw1::*;
 pub use ddraw7::*;
 pub use types::*;
 
 use crate::{kernel32, user32};
 
-pub const EXPORTS: [&'static str; 79] = [
+pub const EXPORTS: [&'static str; 102] = [
+    // IDirectDraw
+    "IDirectDraw::QueryInterface",
+    "IDirectDraw::AddRef",
+    "IDirectDraw::Release",
+    "IDirectDraw::Compact",
+    "IDirectDraw::CreateClipper",
+    "IDirectDraw::CreatePalette",
+    "IDirectDraw::CreateSurface",
+    "IDirectDraw::DuplicateSurface",
+    "IDirectDraw::EnumDisplayModes",
+    "IDirectDraw::EnumSurfaces",
+    "IDirectDraw::FlipToGDISurface",
+    "IDirectDraw::GetCaps",
+    "IDirectDraw::GetDisplayMode",
+    "IDirectDraw::GetFourCCCodes",
+    "IDirectDraw::GetGDISurface",
+    "IDirectDraw::GetMonitorFrequency",
+    "IDirectDraw::GetScanLine",
+    "IDirectDraw::GetVerticalBlankStatus",
+    "IDirectDraw::Initialize",
+    "IDirectDraw::RestoreDisplayMode",
+    "IDirectDraw::SetCooperativeLevel",
+    "IDirectDraw::SetDisplayMode",
+    "IDirectDraw::WaitForVerticalBlank",
+    // IDirectDraw7
     "IDirectDraw7::QueryInterface",
     "IDirectDraw7::AddRef",
     "IDirectDraw7::Release",
@@ -118,8 +145,8 @@ impl std::fmt::Debug for GUID {
 }
 
 #[win32_derive::dllexport]
-pub fn DirectDrawCreate(_lpGUID: u32, _lplpDD: u32, _pUnkOuter: u32) -> DD {
-    todo!()
+pub fn DirectDrawCreate(lpGUID: u32, lplpDD: u32, pUnkOuter: u32) -> DD {
+    DirectDrawCreateEx(lpGUID, lplpDD, 0, pUnkOuter)
 }
 
 #[win32_derive::dllexport]
@@ -132,6 +159,7 @@ pub fn DirectDrawCreateEx(lpGuid: u32, lplpDD: u32, iid: u32, _pUnkOuter: u32) -
     };
 
     let addr: u32 = match iid {
+        None => ddraw1::IDirectDraw::new(),
         Some(ddraw7::IID_IDirectDraw7) => ddraw7::IDirectDraw7::new(),
         _ => panic!(),
     };
