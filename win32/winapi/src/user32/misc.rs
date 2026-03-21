@@ -42,7 +42,7 @@ pub fn DialogBoxParamA(
     _lpDialogFunc: u32, /* DLGPROC */
     _dwInitParam: u32,
 ) -> i32 {
-    todo!()
+    stub!(1) // return value from dialog proc
 }
 
 #[win32_derive::dllexport]
