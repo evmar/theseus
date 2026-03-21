@@ -16,8 +16,8 @@ pub struct FPU {
     pub st: [f64; 8],
     /// Index of top of FPU stack; 8 when stack empty.
     pub st_top: usize,
-    /// FPU status word, without st_top included.
-    pub status: Status,
+    /// The result of the last fcmp, used to generate status word.
+    pub cmp: std::cmp::Ordering,
 }
 
 impl FPU {
@@ -25,7 +25,7 @@ impl FPU {
         Self {
             st: [0.; 8],
             st_top: 8,
-            status: Status::empty(),
+            cmp: std::cmp::Ordering::Equal,
         }
     }
 
@@ -87,7 +87,13 @@ impl FPU {
 
     pub fn status(&self) -> u16 {
         // Our status register impl doesn't include st_top so include it here.
-        let mut status = self.status.bits();
+        let mut status = Status::empty();
+        match self.cmp {
+            std::cmp::Ordering::Less => status |= Status::C0,
+            std::cmp::Ordering::Equal => status |= Status::C3,
+            std::cmp::Ordering::Greater => {}
+        }
+        let mut status = status.bits();
         status |= (self.st_top as u16 & 0b111) << 11;
         status
     }

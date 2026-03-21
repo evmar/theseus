@@ -11640,7 +11640,10 @@ pub fn x00403a5e() -> Cont {
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0xcu32)) as f64);
     // 00403a65 fcomp dword ptr ds:[40C080h]
-    todo!();
+    m.fpu.cmp = m
+        .fpu
+        .get(0)
+        .total_cmp(&(m.memory.read::<f32>(0x40c080u32) as f64));
     // 00403a6b fnstsw ax
     todo!();
     // 00403a6d sahf
@@ -11656,7 +11659,10 @@ pub fn x00403a70() -> Cont {
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0x14u32)) as f64);
     // 00403a73 fcomp dword ptr ds:[40C080h]
-    todo!();
+    m.fpu.cmp = m
+        .fpu
+        .get(0)
+        .total_cmp(&(m.memory.read::<f32>(0x40c080u32) as f64));
     // 00403a79 fnstsw ax
     todo!();
     // 00403a7b sahf
@@ -11696,7 +11702,10 @@ pub fn x00403a98() -> Cont {
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0x10u32)) as f64);
     // 00403a9b fcomp dword ptr ds:[40C084h]
-    todo!();
+    m.fpu.cmp = m
+        .fpu
+        .get(0)
+        .total_cmp(&(m.memory.read::<f32>(0x40c084u32) as f64));
     // 00403aa1 fnstsw ax
     todo!();
     // 00403aa3 sahf
@@ -11712,7 +11721,10 @@ pub fn x00403aa6() -> Cont {
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0x18u32)) as f64);
     // 00403aa9 fcomp dword ptr ds:[40C084h]
-    todo!();
+    m.fpu.cmp = m
+        .fpu
+        .get(0)
+        .total_cmp(&(m.memory.read::<f32>(0x40c084u32) as f64));
     // 00403aaf fnstsw ax
     todo!();
     // 00403ab1 sahf
@@ -11752,7 +11764,10 @@ pub fn x00403ace() -> Cont {
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0xcu32)) as f64);
     // 00403ad1 fcomp dword ptr ds:[40C080h]
-    todo!();
+    m.fpu.cmp = m
+        .fpu
+        .get(0)
+        .total_cmp(&(m.memory.read::<f32>(0x40c080u32) as f64));
     // 00403ad7 fnstsw ax
     todo!();
     // 00403ad9 sahf
@@ -11808,7 +11823,10 @@ pub fn x00403adc() -> Cont {
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0x14u32)) as f64);
     // 00403b05 fcomp dword ptr ds:[40C080h]
-    todo!();
+    m.fpu.cmp = m
+        .fpu
+        .get(0)
+        .total_cmp(&(m.memory.read::<f32>(0x40c080u32) as f64));
     // 00403b0b fnstsw ax
     todo!();
     // 00403b0d sahf
@@ -11824,7 +11842,10 @@ pub fn x00403b02() -> Cont {
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0x14u32)) as f64);
     // 00403b05 fcomp dword ptr ds:[40C080h]
-    todo!();
+    m.fpu.cmp = m
+        .fpu
+        .get(0)
+        .total_cmp(&(m.memory.read::<f32>(0x40c080u32) as f64));
     // 00403b0b fnstsw ax
     todo!();
     // 00403b0d sahf
@@ -12008,7 +12029,10 @@ pub fn x00403b6e() -> Cont {
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0x10u32)) as f64);
     // 00403b97 fcomp dword ptr ds:[40C084h]
-    todo!();
+    m.fpu.cmp = m
+        .fpu
+        .get(0)
+        .total_cmp(&(m.memory.read::<f32>(0x40c084u32) as f64));
     // 00403b9d fnstsw ax
     todo!();
     // 00403b9f sahf
@@ -12024,7 +12048,10 @@ pub fn x00403b94() -> Cont {
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0x10u32)) as f64);
     // 00403b97 fcomp dword ptr ds:[40C084h]
-    todo!();
+    m.fpu.cmp = m
+        .fpu
+        .get(0)
+        .total_cmp(&(m.memory.read::<f32>(0x40c084u32) as f64));
     // 00403b9d fnstsw ax
     todo!();
     // 00403b9f sahf
@@ -12080,7 +12107,10 @@ pub fn x00403ba2() -> Cont {
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0x18u32)) as f64);
     // 00403bcb fcomp dword ptr ds:[40C084h]
-    todo!();
+    m.fpu.cmp = m
+        .fpu
+        .get(0)
+        .total_cmp(&(m.memory.read::<f32>(0x40c084u32) as f64));
     // 00403bd1 fnstsw ax
     todo!();
     // 00403bd3 sahf
@@ -12096,7 +12126,10 @@ pub fn x00403bc8() -> Cont {
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0x18u32)) as f64);
     // 00403bcb fcomp dword ptr ds:[40C084h]
-    todo!();
+    m.fpu.cmp = m
+        .fpu
+        .get(0)
+        .total_cmp(&(m.memory.read::<f32>(0x40c084u32) as f64));
     // 00403bd1 fnstsw ax
     todo!();
     // 00403bd3 sahf
@@ -12280,7 +12313,10 @@ pub fn x00403c34() -> Cont {
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0xcu32)) as f64);
     // 00403c5d fcomp dword ptr ds:[40C080h]
-    todo!();
+    m.fpu.cmp = m
+        .fpu
+        .get(0)
+        .total_cmp(&(m.memory.read::<f32>(0x40c080u32) as f64));
     // 00403c63 fnstsw ax
     todo!();
     // 00403c65 sahf
@@ -12296,7 +12332,10 @@ pub fn x00403c5a() -> Cont {
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0xcu32)) as f64);
     // 00403c5d fcomp dword ptr ds:[40C080h]
-    todo!();
+    m.fpu.cmp = m
+        .fpu
+        .get(0)
+        .total_cmp(&(m.memory.read::<f32>(0x40c080u32) as f64));
     // 00403c63 fnstsw ax
     todo!();
     // 00403c65 sahf
@@ -12312,7 +12351,10 @@ pub fn x00403c6c() -> Cont {
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0x14u32)) as f64);
     // 00403c6f fcomp dword ptr ds:[40C080h]
-    todo!();
+    m.fpu.cmp = m
+        .fpu
+        .get(0)
+        .total_cmp(&(m.memory.read::<f32>(0x40c080u32) as f64));
     // 00403c75 fnstsw ax
     todo!();
     // 00403c77 sahf
@@ -12352,7 +12394,10 @@ pub fn x00403c8c() -> Cont {
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0x10u32)) as f64);
     // 00403c8f fcomp dword ptr ds:[40C084h]
-    todo!();
+    m.fpu.cmp = m
+        .fpu
+        .get(0)
+        .total_cmp(&(m.memory.read::<f32>(0x40c084u32) as f64));
     // 00403c95 fnstsw ax
     todo!();
     // 00403c97 sahf
@@ -12368,7 +12413,10 @@ pub fn x00403c9a() -> Cont {
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0x18u32)) as f64);
     // 00403c9d fcomp dword ptr ds:[40C084h]
-    todo!();
+    m.fpu.cmp = m
+        .fpu
+        .get(0)
+        .total_cmp(&(m.memory.read::<f32>(0x40c084u32) as f64));
     // 00403ca3 fnstsw ax
     todo!();
     // 00403ca5 sahf
@@ -15416,7 +15464,10 @@ pub fn x004045b8() -> Cont {
         .write::<f32>(m.regs.ebp.wrapping_add(0xfffffff0u32), m.fpu.get(0) as f32);
     m.fpu.pop();
     // 00404643 fcomp dword ptr [ebp-0Ch]
-    todo!();
+    m.fpu.cmp = m
+        .fpu
+        .get(0)
+        .total_cmp(&(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0xfffffff4u32)) as f64));
     // 00404646 fnstsw ax
     todo!();
     // 00404648 sahf
@@ -16418,7 +16469,10 @@ pub fn x00404979() -> Cont {
     );
     m.fpu.pop();
     // 0040497c fcomp qword ptr [ebp-20h]
-    todo!();
+    m.fpu.cmp = m
+        .fpu
+        .get(0)
+        .total_cmp(&(m.memory.read::<f64>(m.regs.ebp.wrapping_add(0xffffffe0u32))));
     // 0040497f fnstsw ax
     todo!();
     // 00404981 sahf
@@ -19857,7 +19911,10 @@ pub fn x004053fc() -> Cont {
     m.memory
         .write::<f32>(m.regs.ebp.wrapping_add(0xffffffe0u32), m.fpu.get(0) as f32);
     // 00405421 fcomp dword ptr ds:[40C1BCh]
-    todo!();
+    m.fpu.cmp = m
+        .fpu
+        .get(0)
+        .total_cmp(&(m.memory.read::<f32>(0x40c1bcu32) as f64));
     // 00405427 fnstsw ax
     todo!();
     // 00405429 sahf
@@ -24469,7 +24526,10 @@ pub fn x004061f6() -> Cont {
     // 0040621f fldz
     m.fpu.push(0.0);
     // 00406221 fcomp dword ptr [eax+8]
-    todo!();
+    m.fpu.cmp = m
+        .fpu
+        .get(0)
+        .total_cmp(&(m.memory.read::<f32>(m.regs.eax.wrapping_add(0x8u32)) as f64));
     // 00406224 fnstsw ax
     todo!();
     // 00406226 sahf
@@ -24491,7 +24551,10 @@ pub fn x00406229() -> Cont {
     // 0040622f fldz
     m.fpu.push(0.0);
     // 00406231 fcomp dword ptr [eax+8]
-    todo!();
+    m.fpu.cmp = m
+        .fpu
+        .get(0)
+        .total_cmp(&(m.memory.read::<f32>(m.regs.eax.wrapping_add(0x8u32)) as f64));
     // 00406234 fnstsw ax
     todo!();
     // 00406236 sahf
@@ -24511,7 +24574,11 @@ pub fn x00406239() -> Cont {
     // 0040623d fldz
     m.fpu.push(0.0);
     // 0040623f fcomp dword ptr [edi+eax+8]
-    todo!();
+    m.fpu.cmp = m.fpu.get(0).total_cmp(
+        &(m.memory
+            .read::<f32>(m.regs.edi.wrapping_add(m.regs.eax).wrapping_add(0x8u32))
+            as f64),
+    );
     // 00406243 fnstsw ax
     todo!();
     // 00406245 sahf
@@ -30699,7 +30766,10 @@ pub fn x00407be5() -> Cont {
     // 00407c13 fst dword ptr ds:[433E50h]
     m.memory.write::<f32>(0x433e50u32, m.fpu.get(0) as f32);
     // 00407c19 fcomp dword ptr ds:[40C628h]
-    todo!();
+    m.fpu.cmp = m
+        .fpu
+        .get(0)
+        .total_cmp(&(m.memory.read::<f32>(0x40c628u32) as f64));
     // 00407c1f fnstsw ax
     todo!();
     // 00407c21 sahf
@@ -30745,7 +30815,10 @@ pub fn x00407be7() -> Cont {
     // 00407c13 fst dword ptr ds:[433E50h]
     m.memory.write::<f32>(0x433e50u32, m.fpu.get(0) as f32);
     // 00407c19 fcomp dword ptr ds:[40C628h]
-    todo!();
+    m.fpu.cmp = m
+        .fpu
+        .get(0)
+        .total_cmp(&(m.memory.read::<f32>(0x40c628u32) as f64));
     // 00407c1f fnstsw ax
     todo!();
     // 00407c21 sahf
@@ -30816,7 +30889,10 @@ pub fn x00407c24() -> Cont {
     // 00407c7e fst dword ptr ds:[433E50h]
     m.memory.write::<f32>(0x433e50u32, m.fpu.get(0) as f32);
     // 00407c84 fcomp dword ptr ds:[40C640h]
-    todo!();
+    m.fpu.cmp = m
+        .fpu
+        .get(0)
+        .total_cmp(&(m.memory.read::<f32>(0x40c640u32) as f64));
     // 00407c8a fnstsw ax
     todo!();
     // 00407c8c sahf
@@ -30885,7 +30961,10 @@ pub fn x00407c2e() -> Cont {
     // 00407c7e fst dword ptr ds:[433E50h]
     m.memory.write::<f32>(0x433e50u32, m.fpu.get(0) as f32);
     // 00407c84 fcomp dword ptr ds:[40C640h]
-    todo!();
+    m.fpu.cmp = m
+        .fpu
+        .get(0)
+        .total_cmp(&(m.memory.read::<f32>(0x40c640u32) as f64));
     // 00407c8a fnstsw ax
     todo!();
     // 00407c8c sahf

@@ -166,7 +166,16 @@ pub fn codegen(w: &mut Writer, _state: &State, instr: &iced_x86::Instruction) ->
             w.line(fpu_set_op(instr, 1, "t".into()));
         }
 
-        Fcomp | Fnstsw | Fpatan => {
+        Fcomp => {
+            assert_eq!(instr.op_count(), 1);
+            w.line(format!(
+                "m.fpu.cmp = {}.total_cmp(&({}));",
+                fpu_get_reg(0),
+                fpu_get_op(instr, 0)
+            ));
+        }
+
+        Fnstsw | Fpatan => {
             w.line("todo!();");
         }
         _ => return false,
