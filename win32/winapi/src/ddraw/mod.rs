@@ -399,3 +399,16 @@ impl Surface {
         self.pixels = None;
     }
 }
+
+pub fn get_pixel_format() -> DDPIXELFORMAT {
+    DDPIXELFORMAT {
+        dwSize: std::mem::size_of::<DDPIXELFORMAT>() as u32,
+        dwFlags: 0x00000040,
+        dwFourCC: 0,
+        dwRGBBitCount: 32,
+        dwRBitMask: 0x0000_00FF,
+        dwGBitMask: 0x0000_FF00,
+        dwBBitMask: 0x00FF_0000,
+        dwRGBAlphaBitMask: 0xFF00_0000,
+    }
+}

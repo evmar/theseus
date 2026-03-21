@@ -1,3 +1,4 @@
+use crate::ddraw::get_pixel_format;
 use crate::ddraw::state;
 use crate::ddraw::{DDSURFACEDESC, DDSURFACEDESC2};
 use crate::user32::HWND;
@@ -320,8 +321,16 @@ pub mod IDirectDrawSurface {
     }
 
     #[win32_derive::dllexport]
-    pub fn GetAttachedSurface(_this: u32) -> DD {
-        todo!()
+    pub fn GetAttachedSurface(this: u32, _lpDDSCaps: u32, lplpDDAttachedSurface: u32) -> DD {
+        let surfaces = state().surf.borrow_mut();
+        let surface = surfaces.get(&this).unwrap().borrow();
+        unsafe {
+            MACHINE.memory.write(
+                lplpDDAttachedSurface,
+                surface.attached.as_ref().unwrap().borrow().addr,
+            );
+        }
+        DD::OK
     }
 
     #[win32_derive::dllexport]
@@ -365,8 +374,11 @@ pub mod IDirectDrawSurface {
     }
 
     #[win32_derive::dllexport]
-    pub fn GetPixelFormat(_this: u32) -> DD {
-        todo!()
+    pub fn GetPixelFormat(_this: u32, lpDDPixelFormat: u32) -> DD {
+        unsafe {
+            MACHINE.memory.write(lpDDPixelFormat, get_pixel_format());
+        }
+        DD::OK
     }
 
     #[win32_derive::dllexport]
