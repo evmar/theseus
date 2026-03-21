@@ -219,7 +219,51 @@ struct SurfaceParams {
 }
 
 impl DirectDraw {
-    fn create_surface(&mut self, addr: u32, params: &SurfaceParams) -> Rc<RefCell<Surface>> {
+    pub fn create_surface(
+        &mut self,
+        desc: &DDSURFACEDESC2,
+        new_pointer: &mut dyn FnMut() -> u32,
+    ) -> Rc<RefCell<Surface>> {
+        let window = self.window.as_ref().unwrap();
+        let width = if desc.dwFlags.contains(DDSD::WIDTH) {
+            desc.dwWidth
+        } else {
+            window.width
+        };
+        let height = if desc.dwFlags.contains(DDSD::HEIGHT) {
+            desc.dwHeight
+        } else {
+            window.height
+        };
+
+        let surface = self.create_one_surface(
+            new_pointer(),
+            &SurfaceParams {
+                is_primary: desc.dwFlags.contains(DDSD::CAPS)
+                    && desc.ddsCaps.dwCaps.contains(DDSCAPS::PRIMARYSURFACE),
+                width,
+                height,
+            },
+        );
+
+        if let Some(count) = desc.back_buffer_count() {
+            assert_eq!(count, 1);
+            let back = self.create_one_surface(
+                new_pointer(),
+                &SurfaceParams {
+                    is_primary: false,
+                    width,
+                    height,
+                },
+            );
+            back.borrow_mut().primary.replace(surface.clone());
+            surface.borrow_mut().attached.replace(back);
+        }
+
+        surface
+    }
+
+    fn create_one_surface(&mut self, addr: u32, params: &SurfaceParams) -> Rc<RefCell<Surface>> {
         let window = self.window.as_ref().unwrap();
         let target = if params.is_primary {
             log::info!("primary {addr:x}");
@@ -250,6 +294,7 @@ impl DirectDraw {
             attached: Default::default(),
             pixels: None,
         }));
+        // TODO: move surf to ddraw
         state().surf.borrow_mut().insert(addr, surf.clone());
         surf
     }
@@ -260,7 +305,7 @@ enum Target {
     Texture(sdl3::render::Texture),
 }
 
-struct Surface {
+pub struct Surface {
     addr: u32,
     width: u32,
     height: u32,

@@ -76,7 +76,9 @@ macro_rules! win32flags {
             zerocopy::FromBytes,
             zerocopy::Immutable,
             zerocopy::IntoBytes,
+            zerocopy::KnownLayout,
         )]
+        #[repr(transparent)]
         pub struct $name(u32);
 
         bitflags::bitflags! {

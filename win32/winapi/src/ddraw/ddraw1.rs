@@ -1,8 +1,9 @@
 use crate::ddraw::state;
+use crate::ddraw::{DDSURFACEDESC, DDSURFACEDESC2};
 use crate::user32::HWND;
 use crate::{ddraw::DD, kernel32, stub};
 use runtime::MACHINE;
-use zerocopy::IntoBytes;
+use zerocopy::{FromBytes, IntoBytes};
 
 pub mod IDirectDraw {
     use super::*;
@@ -65,8 +66,16 @@ pub mod IDirectDraw {
     }
 
     #[win32_derive::dllexport]
-    pub fn CreateSurface(_this: u32, _desc: u32, _lplpDDSurface: u32, _pUnkOuter: u32) -> DD {
-        todo!()
+    pub fn CreateSurface(this: u32, desc: u32, lplpDDSurface: u32, _pUnkOuter: u32) -> DD {
+        let mut ddraw = state().get_ddraw(this);
+        let desc = <DDSURFACEDESC>::ref_from_prefix(unsafe { MACHINE.memory.slice_from(desc) })
+            .unwrap()
+            .0;
+        let desc2 = DDSURFACEDESC2::from_desc(&desc);
+        let surface = ddraw.create_surface(&desc2, &mut || 0);
+        unsafe { MACHINE.memory.write(lplpDDSurface, surface.borrow().addr) };
+
+        DD::OK
     }
 
     #[win32_derive::dllexport]

@@ -140,6 +140,9 @@ pub struct DDCOLORKEY {
 }
 
 #[repr(C)]
+#[derive(
+    Default, zerocopy::FromBytes, zerocopy::Immutable, zerocopy::KnownLayout, zerocopy::IntoBytes,
+)]
 pub struct DDSURFACEDESC {
     pub dwSize: u32,
     pub dwFlags: DDSD,

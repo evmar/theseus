@@ -1,5 +1,4 @@
 use crate::RECT;
-use crate::ddraw::SurfaceParams;
 use crate::ddraw::Target;
 use crate::ddraw::{GUID, state, types::*};
 use crate::gdi32;
@@ -97,51 +96,15 @@ pub mod IDirectDraw7 {
         lplpDDSurface: u32,
         _pUnkOuter: u32,
     ) -> DD {
-        let mut ddraw = state().ddraw.borrow_mut();
-        let ddraw = ddraw.as_mut().unwrap();
-        assert!(this == ddraw.addr);
+        let mut ddraw = state().get_ddraw(this);
         let desc = <DDSURFACEDESC2>::ref_from_prefix(unsafe {
             MACHINE.memory.slice_from(lpDDSurfaceDesc2)
         })
         .unwrap()
         .0;
 
-        let window = ddraw.window.as_ref().unwrap();
-        let width = if desc.dwFlags.contains(DDSD::WIDTH) {
-            desc.dwWidth
-        } else {
-            window.width
-        };
-        let height = if desc.dwFlags.contains(DDSD::HEIGHT) {
-            desc.dwHeight
-        } else {
-            window.height
-        };
-
-        let surface = ddraw.create_surface(
-            IDirectDrawSurface7::new(),
-            &SurfaceParams {
-                is_primary: desc.dwFlags.contains(DDSD::CAPS)
-                    && desc.ddsCaps.dwCaps.contains(DDSCAPS::PRIMARYSURFACE),
-                width,
-                height,
-            },
-        );
+        let surface = ddraw.create_surface(desc, &mut || IDirectDrawSurface7::new());
         unsafe { MACHINE.memory.write(lplpDDSurface, surface.borrow().addr) };
-
-        if let Some(count) = desc.back_buffer_count() {
-            assert_eq!(count, 1);
-            let back = ddraw.create_surface(
-                IDirectDrawSurface7::new(),
-                &SurfaceParams {
-                    is_primary: false,
-                    width,
-                    height,
-                },
-            );
-            back.borrow_mut().primary.replace(surface.clone());
-            surface.borrow_mut().attached.replace(back);
-        }
 
         DD::OK
     }
