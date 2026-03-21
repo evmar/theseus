@@ -143,6 +143,7 @@ fn is_abs_memory_ref(instr: &iced_x86::Instruction) -> Option<u32> {
 enum Block {
     Instrs(Vec<iced_x86::Instruction>),
     Stdcall(String),
+    Extern(u32),
 }
 
 impl Block {
@@ -150,6 +151,7 @@ impl Block {
         match self {
             Block::Instrs(instrs) => format!("x{:08x}", instrs[0].ip32()),
             Block::Stdcall(func) => format!("{}_stdcall", func),
+            Block::Extern(ip) => format!("x{:08x}", ip),
         }
     }
 }
@@ -253,6 +255,13 @@ fn scan_for_pointers(state: &mut State) {
     }
 }
 
+fn hex(val: &str) -> Result<u32, String> {
+    if !val.starts_with("0x") {
+        return Err("hex value must start with 0x".into());
+    }
+    u32::from_str_radix(&val[2..], 16).map_err(|err| err.to_string())
+}
+
 #[derive(argh::FromArgs)]
 /// theseus compiler
 struct Args {
@@ -267,6 +276,10 @@ struct Args {
     /// path to output directory
     #[argh(option)]
     out: String,
+
+    /// blocks written by hand
+    #[argh(option, long = "extern", from_str_fn(hex))]
+    externs: Vec<u32>,
 }
 
 fn run() -> Result<()> {
@@ -274,6 +287,12 @@ fn run() -> Result<()> {
 
     let buf = std::fs::read(args.exe).unwrap();
     let mut state = State::new(buf);
+
+    for addr in args.externs {
+        println!("extern: {addr:#x}");
+        state.blocks.insert(addr, Block::Extern(addr));
+    }
+
     state
         .mem
         .mappings

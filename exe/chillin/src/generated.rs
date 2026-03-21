@@ -6,6 +6,7 @@
 use runtime::*;
 use winapi::*;
 
+use crate::externs::*;
 fn init_mappings() {
     unsafe {
         let mut mappings = kernel32::state().mappings.borrow_mut();
@@ -35820,7 +35821,7 @@ pub fn x0040a56e() -> Cont {
     Cont(ddraw::DirectDrawCreate_stdcall)
 }
 
-const BLOCKS: [(u32, fn() -> Cont); 1416] = [
+const BLOCKS: [(u32, fn() -> Cont); 1417] = [
     (0x001001, winmm::timeKillEvent_stdcall),
     (0x001002, winmm::timeSetEvent_stdcall),
     (0x001003, user32::CheckDlgButton_stdcall),
@@ -37271,6 +37272,7 @@ const BLOCKS: [(u32, fn() -> Cont); 1416] = [
     (0x40a3a5, x0040a3a5),
     (0x40a3af, x0040a3af),
     (0x40a3b2, x0040a3b2),
+    (0x40a3b4, x0040a3b4),
     (0x40a3b9, x0040a3b9),
     (0x40a3bf, x0040a3bf),
     (0x40a550, x0040a550),

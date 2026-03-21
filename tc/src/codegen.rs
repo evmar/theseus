@@ -217,7 +217,7 @@ fn gen_block(w: &mut Writer, state: &State, ip: AddrAbs, block: &Block) {
             gen_instrs(w, state, instrs);
             w.line("}\n");
         }
-        Block::Stdcall(_) => {
+        Block::Stdcall(_) | Block::Extern(_) => {
             // no emit
         }
     }
@@ -484,6 +484,10 @@ use runtime::*;
 use winapi::*;
 ",
     );
+
+    if state.blocks.values().any(|b| matches!(b, Block::Extern(_))) {
+        w.line("use crate::externs::*;");
+    }
 
     state.mem.mappings.dump();
 

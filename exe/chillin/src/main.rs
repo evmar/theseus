@@ -1,3 +1,4 @@
+mod externs;
 mod generated;
 
 pub fn entry_point() {
