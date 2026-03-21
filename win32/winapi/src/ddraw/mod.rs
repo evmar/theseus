@@ -1,5 +1,5 @@
 use std::{
-    cell::{OnceCell, RefCell},
+    cell::{OnceCell, RefCell, RefMut},
     collections::HashMap,
     rc::Rc,
 };
@@ -14,7 +14,10 @@ pub use ddraw1::*;
 pub use ddraw7::*;
 pub use types::*;
 
-use crate::{kernel32, user32};
+use crate::{
+    kernel32,
+    user32::{self, HWND},
+};
 
 pub const EXPORTS: [&'static str; 102] = [
     // IDirectDraw
@@ -180,6 +183,14 @@ pub struct State {
     surf: RefCell<HashMap<u32, Rc<RefCell<Surface>>>>,
 }
 
+impl State {
+    pub fn get_ddraw(&self, ptr: u32) -> RefMut<'_, DirectDraw> {
+        let ddraw = RefMut::map(self.ddraw.borrow_mut(), |ddraw| ddraw.as_mut().unwrap());
+        assert!(ptr == ddraw.addr);
+        ddraw
+    }
+}
+
 struct StaticState(OnceCell<State>);
 unsafe impl Sync for StaticState {}
 
@@ -189,9 +200,16 @@ pub fn state() -> &'static State {
     STATE.0.get_or_init(|| Default::default())
 }
 
-struct DirectDraw {
+pub struct DirectDraw {
     addr: u32,
     window: Option<Rc<user32::Window>>,
+}
+
+impl DirectDraw {
+    pub fn set_cooperative_level(&mut self, _hwnd: HWND, _flags: u32) {
+        let window = user32::state().window.borrow().as_ref().unwrap().clone();
+        self.window = Some(window);
+    }
 }
 
 struct SurfaceParams {

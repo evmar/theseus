@@ -1,9 +1,9 @@
 use crate::RECT;
+use crate::ddraw::SurfaceParams;
 use crate::ddraw::Target;
 use crate::ddraw::{GUID, state, types::*};
 use crate::gdi32;
 use crate::gdi32::DIB;
-use crate::{ddraw::SurfaceParams, user32};
 use crate::{gdi32::HDC, kernel32, stub, user32::HWND};
 use runtime::*;
 use zerocopy::FromBytes as _;
@@ -224,14 +224,8 @@ pub mod IDirectDraw7 {
     }
 
     #[win32_derive::dllexport]
-    pub fn SetCooperativeLevel(this: u32, _hwnd: HWND, _flags: u32) -> DD {
-        let mut ddraw = state().ddraw.borrow_mut();
-        let ddraw = ddraw.as_mut().unwrap();
-        assert!(this == ddraw.addr);
-
-        let window = user32::state().window.borrow().as_ref().unwrap().clone();
-        ddraw.window = Some(window);
-
+    pub fn SetCooperativeLevel(this: u32, hwnd: HWND, flags: u32) -> DD {
+        state().get_ddraw(this).set_cooperative_level(hwnd, flags);
         DD::OK
     }
 

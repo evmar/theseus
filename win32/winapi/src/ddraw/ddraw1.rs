@@ -1,3 +1,5 @@
+use crate::ddraw::state;
+use crate::user32::HWND;
 use crate::{ddraw::DD, kernel32, stub};
 use runtime::MACHINE;
 use zerocopy::IntoBytes;
@@ -133,8 +135,9 @@ pub mod IDirectDraw {
     }
 
     #[win32_derive::dllexport]
-    pub fn SetCooperativeLevel(_this: u32) -> DD {
-        todo!()
+    pub fn SetCooperativeLevel(this: u32, hwnd: HWND, flags: u32) -> DD {
+        state().get_ddraw(this).set_cooperative_level(hwnd, flags);
+        DD::OK
     }
 
     #[win32_derive::dllexport]
