@@ -11,8 +11,6 @@ pub struct Regs {
     pub esp: u32,
     pub ebp: u32,
 
-    pub flags: Flags,
-
     pub fs_base: u32,
 }
 
@@ -28,8 +26,6 @@ impl Regs {
             edi: 0,
             esp: 0,
             ebp: 0,
-
-            flags: Flags::empty(),
 
             fs_base: 0, // set when initializing process
         }
@@ -130,28 +126,5 @@ impl Regs {
             "eax={:08x} ecx={:08x} edx={:08x} ebx={:08x}\nesi={:08x} edi={:08x} esp={:08x} ebp={:08x}",
             self.eax, self.ecx, self.edx, self.ebx, self.esi, self.edi, self.esp, self.ebp
         );
-    }
-}
-
-bitflags::bitflags! {
-    #[derive(Debug, Default, PartialEq, Eq)]
-    pub struct Flags: u32 {
-        /// carry
-        const CF = 1 << 0;
-        /// parity
-        const PF = 1 << 2;
-        /// zero
-        const ZF = 1 << 6;
-        /// sign
-        const SF = 1 << 7;
-        /// direction
-        const DF = 1 << 10;
-        /// overflow
-        const OF = 1 << 11;
-        /// cpuid
-        const ID = 1 << 21;
-
-        // any flag may be set by operations like SAHF
-        const ALL = !0;
     }
 }

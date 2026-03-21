@@ -3,6 +3,7 @@
 #[cfg(feature = "wasm")]
 mod wasm;
 
+mod flags;
 mod fpu;
 mod machine;
 mod memory;
@@ -10,11 +11,12 @@ mod native;
 mod ops;
 mod registers;
 
+pub use flags::Flags;
 pub use machine::{MACHINE, Machine, indirect, proc_addr};
 pub use memory::Memory;
 pub use native::HOST;
 pub use ops::*;
-pub use registers::{Flags, Regs};
+pub use registers::Regs;
 
 pub trait Host {
     fn init(&self, blocks: &'static [(u32, fn() -> Cont)]);

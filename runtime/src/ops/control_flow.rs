@@ -8,7 +8,7 @@ pub fn call(ret: u32, addr: Cont) -> Cont {
 
 pub fn je(from: Cont, x: Cont) -> Cont {
     unsafe {
-        if MACHINE.regs.flags.contains(Flags::ZF) {
+        if MACHINE.flags.contains(Flags::ZF) {
             return x;
         }
         from
@@ -17,7 +17,7 @@ pub fn je(from: Cont, x: Cont) -> Cont {
 
 pub fn jne(from: Cont, x: Cont) -> Cont {
     unsafe {
-        if !MACHINE.regs.flags.contains(Flags::ZF) {
+        if !MACHINE.flags.contains(Flags::ZF) {
             return x;
         }
         from
@@ -26,7 +26,7 @@ pub fn jne(from: Cont, x: Cont) -> Cont {
 
 pub fn jb(from: Cont, x: Cont) -> Cont {
     unsafe {
-        if MACHINE.regs.flags.contains(Flags::CF) {
+        if MACHINE.flags.contains(Flags::CF) {
             return x;
         }
         from
@@ -35,7 +35,7 @@ pub fn jb(from: Cont, x: Cont) -> Cont {
 
 pub fn js(from: Cont, x: Cont) -> Cont {
     unsafe {
-        if MACHINE.regs.flags.contains(Flags::SF) {
+        if MACHINE.flags.contains(Flags::SF) {
             return x;
         }
         from
@@ -44,7 +44,7 @@ pub fn js(from: Cont, x: Cont) -> Cont {
 
 pub fn jns(from: Cont, x: Cont) -> Cont {
     unsafe {
-        if !MACHINE.regs.flags.contains(Flags::SF) {
+        if !MACHINE.flags.contains(Flags::SF) {
             return x;
         }
         from
@@ -53,7 +53,7 @@ pub fn jns(from: Cont, x: Cont) -> Cont {
 
 pub fn ja(from: Cont, x: Cont) -> Cont {
     unsafe {
-        if !MACHINE.regs.flags.contains(Flags::CF) && !MACHINE.regs.flags.contains(Flags::ZF) {
+        if !MACHINE.flags.contains(Flags::CF) && !MACHINE.flags.contains(Flags::ZF) {
             return x;
         }
         from
@@ -62,7 +62,7 @@ pub fn ja(from: Cont, x: Cont) -> Cont {
 
 pub fn jae(from: Cont, x: Cont) -> Cont {
     unsafe {
-        if !MACHINE.regs.flags.contains(Flags::CF) {
+        if !MACHINE.flags.contains(Flags::CF) {
             return x;
         }
         from
@@ -71,7 +71,7 @@ pub fn jae(from: Cont, x: Cont) -> Cont {
 
 pub fn jl(from: Cont, x: Cont) -> Cont {
     unsafe {
-        if MACHINE.regs.flags.contains(Flags::SF) != MACHINE.regs.flags.contains(Flags::OF) {
+        if MACHINE.flags.contains(Flags::SF) != MACHINE.flags.contains(Flags::OF) {
             return x;
         }
         from
@@ -80,7 +80,7 @@ pub fn jl(from: Cont, x: Cont) -> Cont {
 
 pub fn jge(from: Cont, x: Cont) -> Cont {
     unsafe {
-        if MACHINE.regs.flags.contains(Flags::SF) == MACHINE.regs.flags.contains(Flags::OF) {
+        if MACHINE.flags.contains(Flags::SF) == MACHINE.flags.contains(Flags::OF) {
             return x;
         }
         from
@@ -98,8 +98,8 @@ pub fn jecxz(from: Cont, x: Cont) -> Cont {
 
 pub fn jg(from: Cont, x: Cont) -> Cont {
     unsafe {
-        if !MACHINE.regs.flags.contains(Flags::ZF)
-            && MACHINE.regs.flags.contains(Flags::SF) == MACHINE.regs.flags.contains(Flags::OF)
+        if !MACHINE.flags.contains(Flags::ZF)
+            && MACHINE.flags.contains(Flags::SF) == MACHINE.flags.contains(Flags::OF)
         {
             return x;
         }
@@ -109,8 +109,8 @@ pub fn jg(from: Cont, x: Cont) -> Cont {
 
 pub fn jle(from: Cont, x: Cont) -> Cont {
     unsafe {
-        if MACHINE.regs.flags.contains(Flags::ZF)
-            || MACHINE.regs.flags.contains(Flags::SF) != MACHINE.regs.flags.contains(Flags::OF)
+        if MACHINE.flags.contains(Flags::ZF)
+            || MACHINE.flags.contains(Flags::SF) != MACHINE.flags.contains(Flags::OF)
         {
             return x;
         }
@@ -120,7 +120,7 @@ pub fn jle(from: Cont, x: Cont) -> Cont {
 
 pub fn jbe(from: Cont, x: Cont) -> Cont {
     unsafe {
-        if MACHINE.regs.flags.contains(Flags::CF) || MACHINE.regs.flags.contains(Flags::ZF) {
+        if MACHINE.flags.contains(Flags::CF) || MACHINE.flags.contains(Flags::ZF) {
             return x;
         }
         from
@@ -152,7 +152,7 @@ pub fn leave() {
 }
 
 pub fn sete() -> u8 {
-    unsafe { MACHINE.regs.flags.contains(Flags::ZF) as u8 }
+    unsafe { MACHINE.flags.contains(Flags::ZF) as u8 }
 }
 
 pub fn setge() {
