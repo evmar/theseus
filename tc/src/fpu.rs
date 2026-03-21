@@ -148,15 +148,23 @@ pub fn codegen(w: &mut Writer, _state: &State, instr: &iced_x86::Instruction) ->
             }
         }
 
+        Fchs => {
+            w.line(fpu_set_reg(0, format!("-{}", fpu_get_reg(0))));
+        }
+
         Fsin => {
             w.line(fpu_set_reg(0, format!("{}.sin()", fpu_get_reg(0))));
         }
         Fcos => {
             w.line(fpu_set_reg(0, format!("{}.cos()", fpu_get_reg(0))));
         }
+        Fsqrt => {
+            w.line(fpu_set_reg(0, format!("{}.sqrt()", fpu_get_reg(0))));
+        }
 
-        Fcomp | Fnstsw | Fsub | Fsubp | Fsubrp | Fdivp | Fdivrp | Fsubr | Fsqrt | Fxch | Fchs
-        | Fpatan | Fdivr | Fdiv => {
+        Fsub | Fsubp | Fsubrp | Fsubr => w.line("todo!();"),
+        Fdivp | Fdivrp | Fdivr | Fdiv => w.line("todo!();"),
+        Fcomp | Fnstsw | Fxch | Fpatan => {
             w.line("todo!();");
         }
         _ => return false,
