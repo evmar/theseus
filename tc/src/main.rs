@@ -283,13 +283,14 @@ struct Args {
 }
 
 fn run() -> Result<()> {
+    logger::init();
     let args: Args = argh::from_env();
 
     let buf = std::fs::read(args.exe).unwrap();
     let mut state = State::new(buf);
 
     for addr in args.externs {
-        println!("extern: {addr:#x}");
+        log::info!("extern: {addr:#x}");
         state.blocks.insert(addr, Block::Extern(addr));
     }
 

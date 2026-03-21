@@ -9,6 +9,7 @@ members = [
     "runtime",
     "win32/derive",
     "win32/winapi",
+    "logger",
 ]
 
 [workspace.dependencies]
@@ -16,6 +17,7 @@ bitflags = "2.11.0"
 bitflags-derive = "0.0.4"
 pe = { path = "win32/pe" }
 runtime = { path = "runtime" }
+logger = { path = "logger" }
 winapi = { path = "win32/winapi" }
 zerocopy = { version = "0.8.40", features = ["derive"] }
 log = "0.4.29"
