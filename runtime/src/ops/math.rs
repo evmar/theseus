@@ -151,10 +151,6 @@ pub fn cdq() {
     todo!("cdq");
 }
 
-pub fn idiv() {
-    todo!("idiv");
-}
-
 pub fn bt() {
     todo!("bt");
 }

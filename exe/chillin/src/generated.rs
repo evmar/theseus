@@ -1257,7 +1257,10 @@ pub fn x0040158d() -> Cont {
     m.regs.edx = (t >> 32) as u32;
     m.regs.eax = t as u32;
     // 00401596 idiv ecx
-    idiv();
+    let x = ((m.regs.edx as u64) << 32) | (m.regs.eax as u64);
+    let y = m.regs.ecx as u64;
+    m.regs.eax = (x / y) as u32;
+    m.regs.edx = (x % y) as u32;
     // 00401598 mov [ebp+6Ah],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0x6au32), m.regs.eax);
@@ -3260,7 +3263,10 @@ pub fn x00401e15() -> Cont {
     m.regs.edx = (t >> 32) as u32;
     m.regs.eax = t as u32;
     // 00401e1e idiv ecx
-    idiv();
+    let x = ((m.regs.edx as u64) << 32) | (m.regs.eax as u64);
+    let y = m.regs.ecx as u64;
+    m.regs.eax = (x / y) as u32;
+    m.regs.edx = (x % y) as u32;
     // 00401e20 mov dword ptr [ebp-0Ch],0
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffff4u32), 0x0u32);
@@ -3944,7 +3950,10 @@ pub fn x00402020() -> Cont {
     m.regs.edx = (t >> 32) as u32;
     m.regs.eax = t as u32;
     // 00402029 idiv ecx
-    idiv();
+    let x = ((m.regs.edx as u64) << 32) | (m.regs.eax as u64);
+    let y = m.regs.ecx as u64;
+    m.regs.eax = (x / y) as u32;
+    m.regs.edx = (x % y) as u32;
     // 0040202b mov dword ptr [ebp-8],0
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32), 0x0u32);
@@ -4626,7 +4635,10 @@ pub fn x00402229() -> Cont {
     m.regs.edx = (t >> 32) as u32;
     m.regs.eax = t as u32;
     // 00402232 idiv ecx
-    idiv();
+    let x = ((m.regs.edx as u64) << 32) | (m.regs.eax as u64);
+    let y = m.regs.ecx as u64;
+    m.regs.eax = (x / y) as u32;
+    m.regs.edx = (x % y) as u32;
     // 00402234 mov [ebp-0Ch],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffff4u32), m.regs.eax);
@@ -7004,7 +7016,10 @@ pub fn x004028bd() -> Cont {
     m.regs.edx = (t >> 32) as u32;
     m.regs.eax = t as u32;
     // 004028c6 idiv ecx
-    idiv();
+    let x = ((m.regs.edx as u64) << 32) | (m.regs.eax as u64);
+    let y = m.regs.ecx as u64;
+    m.regs.eax = (x / y) as u32;
+    m.regs.edx = (x % y) as u32;
     // 004028c8 mov dword ptr [ebp-8],0
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32), 0x0u32);
@@ -11166,7 +11181,10 @@ pub fn x004038dc() -> Cont {
     m.regs.edx = (t >> 32) as u32;
     m.regs.eax = t as u32;
     // 004038e9 idiv dword ptr [ebp-4]
-    idiv();
+    let x = ((m.regs.edx as u64) << 32) | (m.regs.eax as u64);
+    let y = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32)) as u64;
+    m.regs.eax = (x / y) as u32;
+    m.regs.edx = (x % y) as u32;
     // 004038ec shl dword ptr [ebp-24h],10h
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xffffffdcu32),
@@ -11193,7 +11211,10 @@ pub fn x004038dc() -> Cont {
     m.regs.edx = (t >> 32) as u32;
     m.regs.eax = t as u32;
     // 004038fc idiv dword ptr [ebp-4]
-    idiv();
+    let x = ((m.regs.edx as u64) << 32) | (m.regs.eax as u64);
+    let y = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32)) as u64;
+    m.regs.eax = (x / y) as u32;
+    m.regs.edx = (x % y) as u32;
     // 004038ff mov [ebp-1Ch],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xffffffe4u32), m.regs.eax);
@@ -16805,7 +16826,10 @@ pub fn x00404a91() -> Cont {
     m.regs.edx = (t >> 32) as u32;
     m.regs.eax = t as u32;
     // 00404aa2 idiv esi
-    idiv();
+    let x = ((m.regs.edx as u64) << 32) | (m.regs.eax as u64);
+    let y = m.regs.esi as u64;
+    m.regs.eax = (x / y) as u32;
+    m.regs.edx = (x % y) as u32;
     // 00404aa4 add eax,0Ah
     m.regs.eax = add(m.regs.eax, 0xau32);
     // 00404aa7 imul eax,12Ch
@@ -17212,7 +17236,10 @@ pub fn x00404bd3() -> Cont {
     m.regs.edx = (t >> 32) as u32;
     m.regs.eax = t as u32;
     // 00404be2 idiv esi
-    idiv();
+    let x = ((m.regs.edx as u64) << 32) | (m.regs.eax as u64);
+    let y = m.regs.esi as u64;
+    m.regs.eax = (x / y) as u32;
+    m.regs.edx = (x % y) as u32;
     // 00404be4 mov edx,ds:[433F58h]
     m.regs.edx = m.memory.read::<u32>(0x433f58u32);
     // 00404bea mov [ebp-30h],eax
@@ -19840,7 +19867,10 @@ pub fn x004053d4() -> Cont {
     m.regs.edx = (t >> 32) as u32;
     m.regs.eax = t as u32;
     // 004053e3 idiv esi
-    idiv();
+    let x = ((m.regs.edx as u64) << 32) | (m.regs.eax as u64);
+    let y = m.regs.esi as u64;
+    m.regs.eax = (x / y) as u32;
+    m.regs.edx = (x % y) as u32;
     // 004053e5 mov edx,0FFh
     m.regs.edx = 0xffu32;
     // 004053ea sub edx,eax
@@ -20263,7 +20293,10 @@ pub fn x004054f4() -> Cont {
     m.regs.edx = (t >> 32) as u32;
     m.regs.eax = t as u32;
     // 00405507 idiv dword ptr [ebp-14h]
-    idiv();
+    let x = ((m.regs.edx as u64) << 32) | (m.regs.eax as u64);
+    let y = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffecu32)) as u64;
+    m.regs.eax = (x / y) as u32;
+    m.regs.edx = (x % y) as u32;
     // 0040550a fld dword ptr [ebp+1Ch]
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0x1cu32)) as f64);
@@ -20325,7 +20358,10 @@ pub fn x004054fb() -> Cont {
     m.regs.edx = (t >> 32) as u32;
     m.regs.eax = t as u32;
     // 00405507 idiv dword ptr [ebp-14h]
-    idiv();
+    let x = ((m.regs.edx as u64) << 32) | (m.regs.eax as u64);
+    let y = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffecu32)) as u64;
+    m.regs.eax = (x / y) as u32;
+    m.regs.edx = (x % y) as u32;
     // 0040550a fld dword ptr [ebp+1Ch]
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0x1cu32)) as f64);
@@ -20984,7 +21020,10 @@ pub fn x00405697() -> Cont {
     m.regs.edx = (t >> 32) as u32;
     m.regs.eax = t as u32;
     // 0040569d idiv ecx
-    idiv();
+    let x = ((m.regs.edx as u64) << 32) | (m.regs.eax as u64);
+    let y = m.regs.ecx as u64;
+    m.regs.eax = (x / y) as u32;
+    m.regs.edx = (x % y) as u32;
     // 0040569f mov ecx,eax
     m.regs.ecx = m.regs.eax;
     // 004056a1 mov eax,[ebp-0Ch]
@@ -30522,7 +30561,10 @@ pub fn x00407b4d() -> Cont {
     m.regs.edx = (t >> 32) as u32;
     m.regs.eax = t as u32;
     // 00407b66 idiv ecx
-    idiv();
+    let x = ((m.regs.edx as u64) << 32) | (m.regs.eax as u64);
+    let y = m.regs.ecx as u64;
+    m.regs.eax = (x / y) as u32;
+    m.regs.edx = (x % y) as u32;
     // 00407b68 mov edx,0FFh
     m.regs.edx = 0xffu32;
     // 00407b6d sub edx,eax
@@ -30550,7 +30592,10 @@ pub fn x00407b57() -> Cont {
     m.regs.edx = (t >> 32) as u32;
     m.regs.eax = t as u32;
     // 00407b66 idiv ecx
-    idiv();
+    let x = ((m.regs.edx as u64) << 32) | (m.regs.eax as u64);
+    let y = m.regs.ecx as u64;
+    m.regs.eax = (x / y) as u32;
+    m.regs.edx = (x % y) as u32;
     // 00407b68 mov edx,0FFh
     m.regs.edx = 0xffu32;
     // 00407b6d sub edx,eax
@@ -30581,7 +30626,10 @@ pub fn x00407b76() -> Cont {
     m.regs.edx = (t >> 32) as u32;
     m.regs.eax = t as u32;
     // 00407b8c idiv ecx
-    idiv();
+    let x = ((m.regs.edx as u64) << 32) | (m.regs.eax as u64);
+    let y = m.regs.ecx as u64;
+    m.regs.eax = (x / y) as u32;
+    m.regs.edx = (x % y) as u32;
     // 00407b8e mov edx,0FFh
     m.regs.edx = 0xffu32;
     // 00407b93 sub edx,eax
@@ -30609,7 +30657,10 @@ pub fn x00407b7d() -> Cont {
     m.regs.edx = (t >> 32) as u32;
     m.regs.eax = t as u32;
     // 00407b8c idiv ecx
-    idiv();
+    let x = ((m.regs.edx as u64) << 32) | (m.regs.eax as u64);
+    let y = m.regs.ecx as u64;
+    m.regs.eax = (x / y) as u32;
+    m.regs.edx = (x % y) as u32;
     // 00407b8e mov edx,0FFh
     m.regs.edx = 0xffu32;
     // 00407b93 sub edx,eax
@@ -30640,7 +30691,10 @@ pub fn x00407b9c() -> Cont {
     m.regs.edx = (t >> 32) as u32;
     m.regs.eax = t as u32;
     // 00407bb2 idiv ecx
-    idiv();
+    let x = ((m.regs.edx as u64) << 32) | (m.regs.eax as u64);
+    let y = m.regs.ecx as u64;
+    m.regs.eax = (x / y) as u32;
+    m.regs.edx = (x % y) as u32;
     // 00407bb4 mov edx,0FFh
     m.regs.edx = 0xffu32;
     // 00407bb9 sub edx,eax
@@ -30668,7 +30722,10 @@ pub fn x00407ba3() -> Cont {
     m.regs.edx = (t >> 32) as u32;
     m.regs.eax = t as u32;
     // 00407bb2 idiv ecx
-    idiv();
+    let x = ((m.regs.edx as u64) << 32) | (m.regs.eax as u64);
+    let y = m.regs.ecx as u64;
+    m.regs.eax = (x / y) as u32;
+    m.regs.edx = (x % y) as u32;
     // 00407bb4 mov edx,0FFh
     m.regs.edx = 0xffu32;
     // 00407bb9 sub edx,eax
@@ -30699,7 +30756,10 @@ pub fn x00407bc2() -> Cont {
     m.regs.edx = (t >> 32) as u32;
     m.regs.eax = t as u32;
     // 00407bd8 idiv ecx
-    idiv();
+    let x = ((m.regs.edx as u64) << 32) | (m.regs.eax as u64);
+    let y = m.regs.ecx as u64;
+    m.regs.eax = (x / y) as u32;
+    m.regs.edx = (x % y) as u32;
     // 00407bda mov edi,20h
     m.regs.edi = 0x20u32;
     // 00407bdf sub edi,eax
@@ -30724,7 +30784,10 @@ pub fn x00407bc9() -> Cont {
     m.regs.edx = (t >> 32) as u32;
     m.regs.eax = t as u32;
     // 00407bd8 idiv ecx
-    idiv();
+    let x = ((m.regs.edx as u64) << 32) | (m.regs.eax as u64);
+    let y = m.regs.ecx as u64;
+    m.regs.eax = (x / y) as u32;
+    m.regs.edx = (x % y) as u32;
     // 00407bda mov edi,20h
     m.regs.edi = 0x20u32;
     // 00407bdf sub edi,eax
@@ -30749,7 +30812,10 @@ pub fn x00407be5() -> Cont {
     m.regs.edx = (t >> 32) as u32;
     m.regs.eax = t as u32;
     // 00407bf0 idiv ecx
-    idiv();
+    let x = ((m.regs.edx as u64) << 32) | (m.regs.eax as u64);
+    let y = m.regs.ecx as u64;
+    m.regs.eax = (x / y) as u32;
+    m.regs.edx = (x % y) as u32;
     // 00407bf2 sub eax,1Eh
     m.regs.eax = sub(m.regs.eax, 0x1eu32);
     // 00407bf5 mov [ebp-18h],eax
@@ -30798,7 +30864,10 @@ pub fn x00407be7() -> Cont {
     m.regs.edx = (t >> 32) as u32;
     m.regs.eax = t as u32;
     // 00407bf0 idiv ecx
-    idiv();
+    let x = ((m.regs.edx as u64) << 32) | (m.regs.eax as u64);
+    let y = m.regs.ecx as u64;
+    m.regs.eax = (x / y) as u32;
+    m.regs.edx = (x % y) as u32;
     // 00407bf2 sub eax,1Eh
     m.regs.eax = sub(m.regs.eax, 0x1eu32);
     // 00407bf5 mov [ebp-18h],eax
@@ -32478,7 +32547,10 @@ pub fn x004082fd() -> Cont {
     m.regs.edx = (t >> 32) as u32;
     m.regs.eax = t as u32;
     // 00408312 idiv ecx
-    idiv();
+    let x = ((m.regs.edx as u64) << 32) | (m.regs.eax as u64);
+    let y = m.regs.ecx as u64;
+    m.regs.eax = (x / y) as u32;
+    m.regs.edx = (x % y) as u32;
     // 00408314 push 140h
     push(0x140u32);
     // 00408319 mov ecx,5
@@ -32507,7 +32579,10 @@ pub fn x00408307() -> Cont {
     m.regs.edx = (t >> 32) as u32;
     m.regs.eax = t as u32;
     // 00408312 idiv ecx
-    idiv();
+    let x = ((m.regs.edx as u64) << 32) | (m.regs.eax as u64);
+    let y = m.regs.ecx as u64;
+    m.regs.eax = (x / y) as u32;
+    m.regs.edx = (x % y) as u32;
     // 00408314 push 140h
     push(0x140u32);
     // 00408319 mov ecx,5
@@ -32857,7 +32932,10 @@ pub fn x00408489() -> Cont {
     m.regs.edx = (t >> 32) as u32;
     m.regs.eax = t as u32;
     // 0040849e idiv ecx
-    idiv();
+    let x = ((m.regs.edx as u64) << 32) | (m.regs.eax as u64);
+    let y = m.regs.ecx as u64;
+    m.regs.eax = (x / y) as u32;
+    m.regs.edx = (x % y) as u32;
     // 004084a0 cmp edx,1
     sub(m.regs.edx, 0x1u32);
     // 004084a3 jne short 004084D0h
@@ -32876,7 +32954,10 @@ pub fn x00408493() -> Cont {
     m.regs.edx = (t >> 32) as u32;
     m.regs.eax = t as u32;
     // 0040849e idiv ecx
-    idiv();
+    let x = ((m.regs.edx as u64) << 32) | (m.regs.eax as u64);
+    let y = m.regs.ecx as u64;
+    m.regs.eax = (x / y) as u32;
+    m.regs.edx = (x % y) as u32;
     // 004084a0 cmp edx,1
     sub(m.regs.edx, 0x1u32);
     // 004084a3 jne short 004084D0h
@@ -32893,7 +32974,10 @@ pub fn x004084a5() -> Cont {
     m.regs.edx = (t >> 32) as u32;
     m.regs.eax = t as u32;
     // 004084ab idiv ecx
-    idiv();
+    let x = ((m.regs.edx as u64) << 32) | (m.regs.eax as u64);
+    let y = m.regs.ecx as u64;
+    m.regs.eax = (x / y) as u32;
+    m.regs.edx = (x % y) as u32;
     // 004084ad mov ecx,28h
     m.regs.ecx = 0x28u32;
     // 004084b2 cdq
@@ -32901,7 +32985,10 @@ pub fn x004084a5() -> Cont {
     m.regs.edx = (t >> 32) as u32;
     m.regs.eax = t as u32;
     // 004084b3 idiv ecx
-    idiv();
+    let x = ((m.regs.edx as u64) << 32) | (m.regs.eax as u64);
+    let y = m.regs.ecx as u64;
+    m.regs.eax = (x / y) as u32;
+    m.regs.edx = (x % y) as u32;
     // 004084b5 push 140h
     push(0x140u32);
     // 004084ba xor ebx,ebx
