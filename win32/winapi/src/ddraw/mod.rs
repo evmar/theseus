@@ -202,7 +202,7 @@ pub fn state() -> &'static State {
 
 pub struct DirectDraw {
     addr: u32,
-    window: Option<Rc<user32::Window>>,
+    window: Option<Rc<RefCell<user32::Window>>>,
 }
 
 impl DirectDraw {
@@ -224,7 +224,7 @@ impl DirectDraw {
         desc: &DDSURFACEDESC2,
         new_pointer: &mut dyn FnMut() -> u32,
     ) -> Rc<RefCell<Surface>> {
-        let window = self.window.as_ref().unwrap();
+        let window = self.window.as_ref().unwrap().borrow();
         let width = if desc.dwFlags.contains(DDSD::WIDTH) {
             desc.dwWidth
         } else {
@@ -235,6 +235,7 @@ impl DirectDraw {
         } else {
             window.height
         };
+        drop(window);
 
         let surface = self.create_one_surface(
             new_pointer(),
@@ -270,7 +271,7 @@ impl DirectDraw {
             Target::Window(window.clone())
         } else {
             log::info!("back {addr:x}");
-            let texture_creator = window.canvas.borrow_mut().texture_creator();
+            let texture_creator = window.borrow().canvas.texture_creator();
             let mut texture = texture_creator
                 .create_texture_target(None, params.width, params.height)
                 .unwrap();
@@ -301,7 +302,7 @@ impl DirectDraw {
 }
 
 enum Target {
-    Window(Rc<user32::Window>),
+    Window(Rc<RefCell<user32::Window>>),
     Texture(sdl3::render::Texture),
 }
 

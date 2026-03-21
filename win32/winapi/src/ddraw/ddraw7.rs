@@ -5,6 +5,7 @@ use crate::gdi32;
 use crate::gdi32::DIB;
 use crate::{gdi32::HDC, kernel32, stub, user32::HWND};
 use runtime::*;
+use std::cell::RefMut;
 use zerocopy::FromBytes as _;
 use zerocopy::IntoBytes;
 
@@ -428,14 +429,16 @@ pub mod IDirectDrawSurface7 {
         // a window or a surface for some reason.  Use the window in case it has some sort of
         // GPU context attached.
         let ddraw = state().ddraw.borrow();
-        let mut canvas = ddraw
-            .as_ref()
-            .unwrap()
-            .window
-            .as_ref()
-            .unwrap()
-            .canvas
-            .borrow_mut();
+        let mut canvas = RefMut::map(
+            ddraw
+                .as_ref()
+                .unwrap()
+                .window
+                .as_ref()
+                .unwrap()
+                .borrow_mut(),
+            |w| &mut w.canvas,
+        );
 
         canvas
             .with_texture_canvas(dst_texture, |canvas| {
@@ -497,7 +500,7 @@ pub mod IDirectDrawSurface7 {
             unreachable!()
         };
 
-        let mut canvas = window.canvas.borrow_mut();
+        let mut canvas = RefMut::map(window.borrow_mut(), |w| &mut w.canvas);
         // For debugging, can verify that the flip covers the entire canvas by starting with red:
         // canvas.set_draw_color(sdl3::pixels::Color::RED);
         // canvas.clear();

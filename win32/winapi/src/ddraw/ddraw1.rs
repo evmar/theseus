@@ -150,7 +150,14 @@ pub mod IDirectDraw {
     }
 
     #[win32_derive::dllexport]
-    pub fn SetDisplayMode(_this: u32, _width: u32, _height: u32, _bpp: u32) -> DD {
+    pub fn SetDisplayMode(this: u32, width: u32, height: u32, _bpp: u32) -> DD {
+        let ddraw = state().get_ddraw(this);
+        ddraw
+            .window
+            .as_ref()
+            .unwrap()
+            .borrow_mut()
+            .resize(width, height);
         stub!(DD::OK)
     }
 

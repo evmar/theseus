@@ -24,7 +24,7 @@ pub struct State {
     sdl: sdl3::Sdl,
     video: sdl3::VideoSubsystem,
     event_pump: RefCell<sdl3::EventPump>,
-    pub window: RefCell<Option<Rc<Window>>>,
+    pub window: RefCell<Option<Rc<RefCell<Window>>>>,
     message_queue: RefCell<MessageQueue>,
 }
 

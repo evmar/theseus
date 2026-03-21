@@ -10,7 +10,15 @@ use crate::{
 pub struct Window {
     pub width: u32,
     pub height: u32,
-    pub canvas: RefCell<sdl3::render::WindowCanvas>,
+    pub canvas: sdl3::render::WindowCanvas,
+}
+
+impl Window {
+    pub fn resize(&mut self, width: u32, height: u32) {
+        self.width = width;
+        self.height = height;
+        self.canvas.window_mut().set_size(width, height).unwrap();
+    }
 }
 
 #[win32_derive::dllexport]
@@ -42,21 +50,19 @@ pub fn CreateWindowExA(
         nHeight as u32
     };
 
-    let window = Window {
+    let mut window = Window {
         width,
         height,
-        canvas: RefCell::new(
-            state()
-                .video
-                .window(name, width, height)
-                .build()
-                .unwrap()
-                .into_canvas(),
-        ),
+        canvas: state()
+            .video
+            .window(name, width, height)
+            .build()
+            .unwrap()
+            .into_canvas(),
     };
-    window.canvas.borrow_mut().clear();
+    window.canvas.clear();
 
-    *state().window.borrow_mut() = Some(Rc::new(window));
+    *state().window.borrow_mut() = Some(Rc::new(RefCell::new(window)));
     stub!(1)
 }
 
