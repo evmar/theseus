@@ -11624,7 +11624,7 @@ pub fn x00403a5e() -> Cont {
     // 00403a6b fnstsw ax
     todo!();
     // 00403a6d sahf
-    todo!();
+    sahf(m);
     // 00403a6e jb short 00403A82h
     jb(Cont(x00403a70), Cont(x00403a82))
 }
@@ -11640,7 +11640,7 @@ pub fn x00403a70() -> Cont {
     // 00403a79 fnstsw ax
     todo!();
     // 00403a7b sahf
-    todo!();
+    sahf(m);
     // 00403a7c jae near ptr 00403CD1h
     jae(Cont(x00403a82), Cont(x00403cd1))
 }
@@ -11680,7 +11680,7 @@ pub fn x00403a98() -> Cont {
     // 00403aa1 fnstsw ax
     todo!();
     // 00403aa3 sahf
-    todo!();
+    sahf(m);
     // 00403aa4 jb short 00403AB8h
     jb(Cont(x00403aa6), Cont(x00403ab8))
 }
@@ -11696,7 +11696,7 @@ pub fn x00403aa6() -> Cont {
     // 00403aaf fnstsw ax
     todo!();
     // 00403ab1 sahf
-    todo!();
+    sahf(m);
     // 00403ab2 jae near ptr 00403CD1h
     jae(Cont(x00403ab8), Cont(x00403cd1))
 }
@@ -11736,7 +11736,7 @@ pub fn x00403ace() -> Cont {
     // 00403ad7 fnstsw ax
     todo!();
     // 00403ad9 sahf
-    todo!();
+    sahf(m);
     // 00403ada jb short 00403B02h
     jb(Cont(x00403adc), Cont(x00403b02))
 }
@@ -11782,7 +11782,7 @@ pub fn x00403adc() -> Cont {
     // 00403b0b fnstsw ax
     todo!();
     // 00403b0d sahf
-    todo!();
+    sahf(m);
     // 00403b0e jb short 00403B36h
     jb(Cont(x00403b10), Cont(x00403b36))
 }
@@ -11798,7 +11798,7 @@ pub fn x00403b02() -> Cont {
     // 00403b0b fnstsw ax
     todo!();
     // 00403b0d sahf
-    todo!();
+    sahf(m);
     // 00403b0e jb short 00403B36h
     jb(Cont(x00403b10), Cont(x00403b36))
 }
@@ -11952,7 +11952,7 @@ pub fn x00403b6e() -> Cont {
     // 00403b9d fnstsw ax
     todo!();
     // 00403b9f sahf
-    todo!();
+    sahf(m);
     // 00403ba0 jb short 00403BC8h
     jb(Cont(x00403ba2), Cont(x00403bc8))
 }
@@ -11968,7 +11968,7 @@ pub fn x00403b94() -> Cont {
     // 00403b9d fnstsw ax
     todo!();
     // 00403b9f sahf
-    todo!();
+    sahf(m);
     // 00403ba0 jb short 00403BC8h
     jb(Cont(x00403ba2), Cont(x00403bc8))
 }
@@ -12014,7 +12014,7 @@ pub fn x00403ba2() -> Cont {
     // 00403bd1 fnstsw ax
     todo!();
     // 00403bd3 sahf
-    todo!();
+    sahf(m);
     // 00403bd4 jb short 00403BFCh
     jb(Cont(x00403bd6), Cont(x00403bfc))
 }
@@ -12030,7 +12030,7 @@ pub fn x00403bc8() -> Cont {
     // 00403bd1 fnstsw ax
     todo!();
     // 00403bd3 sahf
-    todo!();
+    sahf(m);
     // 00403bd4 jb short 00403BFCh
     jb(Cont(x00403bd6), Cont(x00403bfc))
 }
@@ -12184,7 +12184,7 @@ pub fn x00403c34() -> Cont {
     // 00403c63 fnstsw ax
     todo!();
     // 00403c65 sahf
-    todo!();
+    sahf(m);
     // 00403c66 jae near ptr 00403CD1h
     jae(Cont(x00403c6c), Cont(x00403cd1))
 }
@@ -12200,7 +12200,7 @@ pub fn x00403c5a() -> Cont {
     // 00403c63 fnstsw ax
     todo!();
     // 00403c65 sahf
-    todo!();
+    sahf(m);
     // 00403c66 jae near ptr 00403CD1h
     jae(Cont(x00403c6c), Cont(x00403cd1))
 }
@@ -12216,7 +12216,7 @@ pub fn x00403c6c() -> Cont {
     // 00403c75 fnstsw ax
     todo!();
     // 00403c77 sahf
-    todo!();
+    sahf(m);
     // 00403c78 jae short 00403CD1h
     jae(Cont(x00403c7a), Cont(x00403cd1))
 }
@@ -12256,7 +12256,7 @@ pub fn x00403c8c() -> Cont {
     // 00403c95 fnstsw ax
     todo!();
     // 00403c97 sahf
-    todo!();
+    sahf(m);
     // 00403c98 jae short 00403CD1h
     jae(Cont(x00403c9a), Cont(x00403cd1))
 }
@@ -12272,7 +12272,7 @@ pub fn x00403c9a() -> Cont {
     // 00403ca3 fnstsw ax
     todo!();
     // 00403ca5 sahf
-    todo!();
+    sahf(m);
     // 00403ca6 jae short 00403CD1h
     jae(Cont(x00403ca8), Cont(x00403cd1))
 }
@@ -15286,7 +15286,7 @@ pub fn x004045b8() -> Cont {
     // 00404646 fnstsw ax
     todo!();
     // 00404648 sahf
-    todo!();
+    sahf(m);
     // 00404649 jae short 00404650h
     jae(Cont(x0040464b), Cont(x00404650))
 }
@@ -16218,7 +16218,7 @@ pub fn x00404979() -> Cont {
     // 0040497f fnstsw ax
     todo!();
     // 00404981 sahf
-    todo!();
+    sahf(m);
     // 00404982 jbe short 00404992h
     jbe(Cont(x00404984), Cont(x00404992))
 }
@@ -19585,7 +19585,7 @@ pub fn x004053fc() -> Cont {
     // 00405427 fnstsw ax
     todo!();
     // 00405429 sahf
-    todo!();
+    sahf(m);
     // 0040542a jbe near ptr 00405647h
     jbe(Cont(x00405430), Cont(x00405647))
 }
@@ -23071,7 +23071,7 @@ pub fn x00405f04() -> Cont {
     // 00405f1a add eax,ebx
     m.regs.eax = add(m.regs.eax, m.regs.ebx);
     // 00405f1c cwde
-    todo!();
+    cwde(m);
     // 00405f1d inc ecx
     m.regs.ecx = inc(m.regs.ecx);
     // 00405f1e inc ecx
@@ -23088,7 +23088,7 @@ pub fn x00405f04() -> Cont {
     // 00405f2d add eax,ebx
     m.regs.eax = add(m.regs.eax, m.regs.ebx);
     // 00405f2f cwde
-    todo!();
+    cwde(m);
     // 00405f30 mov dword ptr ds:[423234h],0
     m.memory.write::<u32>(0x423234u32, 0x0u32);
     // 00405f3a mov [edx+4],eax
@@ -24068,7 +24068,7 @@ pub fn x004061f6() -> Cont {
     // 00406224 fnstsw ax
     todo!();
     // 00406226 sahf
-    todo!();
+    sahf(m);
     // 00406227 ja short 00406246h
     ja(Cont(x00406229), Cont(x00406246))
 }
@@ -24090,7 +24090,7 @@ pub fn x00406229() -> Cont {
     // 00406234 fnstsw ax
     todo!();
     // 00406236 sahf
-    todo!();
+    sahf(m);
     // 00406237 ja short 00406246h
     ja(Cont(x00406239), Cont(x00406246))
 }
@@ -24110,7 +24110,7 @@ pub fn x00406239() -> Cont {
     // 00406243 fnstsw ax
     todo!();
     // 00406245 sahf
-    todo!();
+    sahf(m);
     // 00406246 mov eax,[ebp-10h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff0u32));
     // 00406249 mov edi,[ecx+34h]
@@ -30085,7 +30085,7 @@ pub fn x00407be5() -> Cont {
     // 00407c1f fnstsw ax
     todo!();
     // 00407c21 sahf
-    todo!();
+    sahf(m);
     // 00407c22 jae short 00407C2Eh
     jae(Cont(x00407c24), Cont(x00407c2e))
 }
@@ -30128,7 +30128,7 @@ pub fn x00407be7() -> Cont {
     // 00407c1f fnstsw ax
     todo!();
     // 00407c21 sahf
-    todo!();
+    sahf(m);
     // 00407c22 jae short 00407C2Eh
     jae(Cont(x00407c24), Cont(x00407c2e))
 }
@@ -30192,7 +30192,7 @@ pub fn x00407c24() -> Cont {
     // 00407c8a fnstsw ax
     todo!();
     // 00407c8c sahf
-    todo!();
+    sahf(m);
     // 00407c8d jae short 00407C99h
     jae(Cont(x00407c8f), Cont(x00407c99))
 }
@@ -30254,7 +30254,7 @@ pub fn x00407c2e() -> Cont {
     // 00407c8a fnstsw ax
     todo!();
     // 00407c8c sahf
-    todo!();
+    sahf(m);
     // 00407c8d jae short 00407C99h
     jae(Cont(x00407c8f), Cont(x00407c99))
 }
@@ -35639,7 +35639,7 @@ pub fn x0040a37a() -> Cont {
     m.regs.ecx = pop();
     m.regs.eax = pop();
     // 0040a37b stc
-    todo!();
+    stc(m);
     // 0040a37c jmp short 0040A385h
     Cont(x0040a385)
 }
@@ -35664,7 +35664,7 @@ pub fn x0040a383() -> Cont {
     m.regs.ecx = pop();
     m.regs.eax = pop();
     // 0040a384 clc
-    todo!();
+    clc(m);
     // 0040a385 sbb eax,eax
     m.regs.eax = sbb(m.regs.eax, m.regs.eax);
     // 0040a387 ret 8

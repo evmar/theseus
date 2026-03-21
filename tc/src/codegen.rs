@@ -454,7 +454,10 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
             }
 
             Cwde | Stc | Clc | Sahf => {
-                w.line("todo!();");
+                w.line(format!(
+                    "{}(m);",
+                    format!("{:?}", instr.mnemonic()).to_ascii_lowercase()
+                ));
             }
 
             c => {

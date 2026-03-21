@@ -1,4 +1,4 @@
-use crate::machine::MACHINE;
+use crate::{Machine, machine::MACHINE};
 
 pub fn push(x: u32) {
     unsafe {
@@ -15,14 +15,10 @@ pub fn pop() -> u32 {
     }
 }
 
-pub fn std() {
-    todo!("std");
-}
-
-pub fn cld() {
-    todo!("cld");
-}
-
 pub fn pushfd() {
     todo!("pushfd");
+}
+
+pub fn cwde(_m: &mut Machine) {
+    todo!("cwde");
 }
