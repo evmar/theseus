@@ -765,7 +765,8 @@ pub fn x004013c8() -> Cont {
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffe6u32)) as i32,
     ) as u32;
     // 004013cf shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004013d2 push eax
     push(m.regs.eax);
     // 004013d3 call 00401A60h
@@ -1192,7 +1193,8 @@ pub fn x00401565() -> Cont {
     // 00401569 sub eax,edx
     m.regs.eax = sub(m.regs.eax, m.regs.edx);
     // 0040156b sar eax,1
-    sar();
+    let t = sar(m.regs.eax, 0x1u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 0040156d mov [ebp+6Ah],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0x6au32), m.regs.eax);
@@ -1221,7 +1223,8 @@ pub fn x00401579() -> Cont {
     // 0040157d sub eax,edx
     m.regs.eax = sub(m.regs.eax, m.regs.edx);
     // 0040157f sar eax,1
-    sar();
+    let t = sar(m.regs.eax, 0x1u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00401581 mov [ebp+6Ah],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0x6au32), m.regs.eax);
@@ -1277,11 +1280,13 @@ pub fn x004015a8() -> Cont {
     // 004015ab cdq
     cdq();
     // 004015ac shl edx,2
-    m.regs.edx = shl(m.regs.edx, 0x2u8);
+    let t = shl(m.regs.edx, 0x2u8, &mut m.regs.flags);
+    m.regs.edx = t;
     // 004015af sbb eax,edx
     m.regs.eax = sbb(m.regs.eax, m.regs.edx);
     // 004015b1 sar eax,2
-    sar();
+    let t = sar(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004015b4 mov [ebp+6Ah],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0x6au32), m.regs.eax);
@@ -1459,11 +1464,14 @@ pub fn x00401630() -> Cont {
     // 00401637 mov ecx,eax
     m.regs.ecx = m.regs.eax;
     // 00401639 shr edi,9
-    m.regs.edi = shr(m.regs.edi, 0x9u8);
+    let t = shr(m.regs.edi, 0x9u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 0040163c shr ecx,6
-    m.regs.ecx = shr(m.regs.ecx, 0x6u8);
+    let t = shr(m.regs.ecx, 0x6u8, &mut m.regs.flags);
+    m.regs.ecx = t;
     // 0040163f shr eax,3
-    m.regs.eax = shr(m.regs.eax, 0x3u8);
+    let t = shr(m.regs.eax, 0x3u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00401642 and edi,7C00h
     m.regs.edi = and(m.regs.edi, 0x7c00u32);
     // 00401648 and ecx,3E0h
@@ -1577,11 +1585,14 @@ pub fn x00401692() -> Cont {
     // 00401699 mov ecx,eax
     m.regs.ecx = m.regs.eax;
     // 0040169b shr edi,8
-    m.regs.edi = shr(m.regs.edi, 0x8u8);
+    let t = shr(m.regs.edi, 0x8u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 0040169e shr ecx,5
-    m.regs.ecx = shr(m.regs.ecx, 0x5u8);
+    let t = shr(m.regs.ecx, 0x5u8, &mut m.regs.flags);
+    m.regs.ecx = t;
     // 004016a1 shr eax,3
-    m.regs.eax = shr(m.regs.eax, 0x3u8);
+    let t = shr(m.regs.eax, 0x3u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004016a4 and edi,0F800h
     m.regs.edi = and(m.regs.edi, 0xf800u32);
     // 004016aa and ecx,7E0h
@@ -1694,7 +1705,8 @@ pub fn x004016f4() -> Cont {
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0x66u32), m.regs.eax);
     // 004016fc shr eax,10h
-    m.regs.eax = shr(m.regs.eax, 0x10u8);
+    let t = shr(m.regs.eax, 0x10u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004016ff and eax,0FFh
     m.regs.eax = and(m.regs.eax, 0xffu32);
     // 00401704 mov [ecx],al
@@ -1702,7 +1714,8 @@ pub fn x004016f4() -> Cont {
     // 00401706 mov eax,[ebp+66h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x66u32));
     // 00401709 shr eax,8
-    m.regs.eax = shr(m.regs.eax, 0x8u8);
+    let t = shr(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 0040170c inc ecx
     m.regs.ecx = inc(m.regs.ecx);
     // 0040170d and eax,0FFh
@@ -1788,7 +1801,8 @@ pub fn x00401747() -> Cont {
     // 0040174d sub edx,ds:[433014h]
     m.regs.edx = sub(m.regs.edx, m.memory.read::<u32>(0x433014u32));
     // 00401753 shl edx,4
-    m.regs.edx = shl(m.regs.edx, 0x4u8);
+    let t = shl(m.regs.edx, 0x4u8, &mut m.regs.flags);
+    m.regs.edx = t;
     // 00401756 mov edi,[ebp+5Eh]
     m.regs.edi = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x5eu32));
     // 0040175c mov esi,[ebp+62h]
@@ -1946,7 +1960,8 @@ pub fn x004017c1() -> Cont {
     // 004017c1 mov ecx,[ebp+72h]
     m.regs.ecx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x72u32));
     // 004017c4 shl ecx,2
-    m.regs.ecx = shl(m.regs.ecx, 0x2u8);
+    let t = shl(m.regs.ecx, 0x2u8, &mut m.regs.flags);
+    m.regs.ecx = t;
     // 004017c7 add ecx,[ebp+62h]
     m.regs.ecx = add(
         m.regs.ecx,
@@ -1957,7 +1972,8 @@ pub fn x004017c1() -> Cont {
     // 004017cc mov edi,ecx
     m.regs.edi = m.regs.ecx;
     // 004017ce shr edi,9
-    m.regs.edi = shr(m.regs.edi, 0x9u8);
+    let t = shr(m.regs.edi, 0x9u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 004017d1 and edi,7C00h
     m.regs.edi = and(m.regs.edi, 0x7c00u32);
     // 004017d7 mov [ebp+6Eh],edi
@@ -1966,9 +1982,11 @@ pub fn x004017c1() -> Cont {
     // 004017da mov edi,ecx
     m.regs.edi = m.regs.ecx;
     // 004017dc shr edi,6
-    m.regs.edi = shr(m.regs.edi, 0x6u8);
+    let t = shr(m.regs.edi, 0x6u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 004017df shr ecx,3
-    m.regs.ecx = shr(m.regs.ecx, 0x3u8);
+    let t = shr(m.regs.ecx, 0x3u8, &mut m.regs.flags);
+    m.regs.ecx = t;
     // 004017e2 and edi,3E0h
     m.regs.edi = and(m.regs.edi, 0x3e0u32);
     // 004017e8 and ecx,1Fh
@@ -2107,7 +2125,8 @@ pub fn x00401852() -> Cont {
     // 00401852 mov ecx,[ebp+72h]
     m.regs.ecx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x72u32));
     // 00401855 shl ecx,2
-    m.regs.ecx = shl(m.regs.ecx, 0x2u8);
+    let t = shl(m.regs.ecx, 0x2u8, &mut m.regs.flags);
+    m.regs.ecx = t;
     // 00401858 add ecx,[ebp+62h]
     m.regs.ecx = add(
         m.regs.ecx,
@@ -2120,11 +2139,14 @@ pub fn x00401852() -> Cont {
     // 0040185f mov ebx,ecx
     m.regs.ebx = m.regs.ecx;
     // 00401861 shr edi,8
-    m.regs.edi = shr(m.regs.edi, 0x8u8);
+    let t = shr(m.regs.edi, 0x8u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00401864 shr ebx,5
-    m.regs.ebx = shr(m.regs.ebx, 0x5u8);
+    let t = shr(m.regs.ebx, 0x5u8, &mut m.regs.flags);
+    m.regs.ebx = t;
     // 00401867 shr ecx,3
-    m.regs.ecx = shr(m.regs.ecx, 0x3u8);
+    let t = shr(m.regs.ecx, 0x3u8, &mut m.regs.flags);
+    m.regs.ecx = t;
     // 0040186a and edi,0F800h
     m.regs.edi = and(m.regs.edi, 0xf800u32);
     // 00401870 and ebx,7E0h
@@ -2262,7 +2284,8 @@ pub fn x004018e2() -> Cont {
     // 004018e2 mov edi,[ebp+72h]
     m.regs.edi = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x72u32));
     // 004018e5 shl edi,2
-    m.regs.edi = shl(m.regs.edi, 0x2u8);
+    let t = shl(m.regs.edi, 0x2u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 004018e8 add edi,[ebp+62h]
     m.regs.edi = add(
         m.regs.edi,
@@ -2274,7 +2297,8 @@ pub fn x004018e2() -> Cont {
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0x66u32), m.regs.edi);
     // 004018f0 shr edi,10h
-    m.regs.edi = shr(m.regs.edi, 0x10u8);
+    let t = shr(m.regs.edi, 0x10u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 004018f3 and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 004018f9 mov [ebp+6Eh],edi
@@ -2283,7 +2307,8 @@ pub fn x004018e2() -> Cont {
     // 004018fc mov edi,[ebp+66h]
     m.regs.edi = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x66u32));
     // 004018ff shr edi,8
-    m.regs.edi = shr(m.regs.edi, 0x8u8);
+    let t = shr(m.regs.edi, 0x8u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00401902 and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 00401908 mov bl,[ebp+6Eh]
@@ -2474,7 +2499,8 @@ pub fn x004019b3() -> Cont {
     // 004019b3 mov ecx,[ebp+72h]
     m.regs.ecx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x72u32));
     // 004019b6 shl ecx,2
-    m.regs.ecx = shl(m.regs.ecx, 0x2u8);
+    let t = shl(m.regs.ecx, 0x2u8, &mut m.regs.flags);
+    m.regs.ecx = t;
     // 004019b9 add ecx,[ebp+62h]
     m.regs.ecx = add(
         m.regs.ecx,
@@ -2485,7 +2511,8 @@ pub fn x004019b3() -> Cont {
     // 004019be mov ecx,[ecx]
     m.regs.ecx = m.memory.read::<u32>(m.regs.ecx);
     // 004019c0 shl edi,2
-    m.regs.edi = shl(m.regs.edi, 0x2u8);
+    let t = shl(m.regs.edi, 0x2u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 004019c3 add edi,[ebp+5Eh]
     m.regs.edi = add(
         m.regs.edi,
@@ -2498,7 +2525,8 @@ pub fn x004019b3() -> Cont {
     // 004019cb add edi,eax
     m.regs.edi = add(m.regs.edi, m.regs.eax);
     // 004019cd shl edi,2
-    m.regs.edi = shl(m.regs.edi, 0x2u8);
+    let t = shl(m.regs.edi, 0x2u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 004019d0 add edi,[ebp+5Eh]
     m.regs.edi = add(
         m.regs.edi,
@@ -2511,7 +2539,8 @@ pub fn x004019b3() -> Cont {
     // 004019d6 mov edi,eax
     m.regs.edi = m.regs.eax;
     // 004019d8 shl edi,2
-    m.regs.edi = shl(m.regs.edi, 0x2u8);
+    let t = shl(m.regs.edi, 0x2u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 004019db add edi,[ebp+5Eh]
     m.regs.edi = add(
         m.regs.edi,
@@ -2524,7 +2553,8 @@ pub fn x004019b3() -> Cont {
     // 004019e3 add edi,eax
     m.regs.edi = add(m.regs.edi, m.regs.eax);
     // 004019e5 shl edi,2
-    m.regs.edi = shl(m.regs.edi, 0x2u8);
+    let t = shl(m.regs.edi, 0x2u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 004019e8 add edi,[ebp+5Eh]
     m.regs.edi = add(
         m.regs.edi,
@@ -2959,7 +2989,8 @@ pub fn x00401cd7() -> Cont {
     // 00401cdc mov eax,ebx
     m.regs.eax = m.regs.ebx;
     // 00401cde shl eax,10h
-    m.regs.eax = shl(m.regs.eax, 0x10u8);
+    let t = shl(m.regs.eax, 0x10u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00401ce1 push 1
     push(0x1u32);
     // 00401ce3 or eax,esi
@@ -3103,7 +3134,8 @@ pub fn x00401d67() -> Cont {
     // 00401d8b mov eax,edx
     m.regs.eax = m.regs.edx;
     // 00401d8d shl eax,4
-    m.regs.eax = shl(m.regs.eax, 0x4u8);
+    let t = shl(m.regs.eax, 0x4u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00401d90 cmp dword ptr [eax+4339ACh],1
     sub(
         m.memory.read::<u32>(m.regs.eax.wrapping_add(0x4339acu32)),
@@ -3119,7 +3151,8 @@ pub fn x00401d8b() -> Cont {
     // 00401d8b mov eax,edx
     m.regs.eax = m.regs.edx;
     // 00401d8d shl eax,4
-    m.regs.eax = shl(m.regs.eax, 0x4u8);
+    let t = shl(m.regs.eax, 0x4u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00401d90 cmp dword ptr [eax+4339ACh],1
     sub(
         m.memory.read::<u32>(m.regs.eax.wrapping_add(0x4339acu32)),
@@ -3224,7 +3257,8 @@ pub fn x00401dfa() -> Cont {
     // 00401e09 mov edi,ebx
     m.regs.edi = m.regs.ebx;
     // 00401e0b shl ecx,2
-    m.regs.ecx = shl(m.regs.ecx, 0x2u8);
+    let t = shl(m.regs.ecx, 0x2u8, &mut m.regs.flags);
+    m.regs.ecx = t;
     // 00401e0e rep movsb
     rep(m, Rep::REP, movsb);
     // 00401e10 leave
@@ -3328,7 +3362,8 @@ pub fn x00401e56() -> Cont {
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32)),
     );
     // 00401e59 shl esi,2
-    m.regs.esi = shl(m.regs.esi, 0x2u8);
+    let t = shl(m.regs.esi, 0x2u8, &mut m.regs.flags);
+    m.regs.esi = t;
     // 00401e5c add esi,[ebp-28h]
     m.regs.esi = add(
         m.regs.esi,
@@ -3345,7 +3380,8 @@ pub fn x00401e56() -> Cont {
     // 00401e6b mov edi,esi
     m.regs.edi = m.regs.esi;
     // 00401e6d shr edi,8
-    m.regs.edi = shr(m.regs.edi, 0x8u8);
+    let t = shr(m.regs.edi, 0x8u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00401e70 and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 00401e76 add eax,edi
@@ -3358,9 +3394,11 @@ pub fn x00401e56() -> Cont {
         inc(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32))),
     );
     // 00401e7d shr edi,10h
-    m.regs.edi = shr(m.regs.edi, 0x10u8);
+    let t = shr(m.regs.edi, 0x10u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00401e80 shr esi,18h
-    m.regs.esi = shr(m.regs.esi, 0x18u8);
+    let t = shr(m.regs.esi, 0x18u8, &mut m.regs.flags);
+    m.regs.esi = t;
     // 00401e83 and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 00401e89 add ecx,esi
@@ -3377,7 +3415,8 @@ pub fn x00401e8f() -> Cont {
     // 00401e8f mov esi,[ebp-8]
     m.regs.esi = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32));
     // 00401e92 shl esi,2
-    m.regs.esi = shl(m.regs.esi, 0x2u8);
+    let t = shl(m.regs.esi, 0x2u8, &mut m.regs.flags);
+    m.regs.esi = t;
     // 00401e95 add esi,[ebp-28h]
     m.regs.esi = add(
         m.regs.esi,
@@ -3399,7 +3438,8 @@ pub fn x00401e8f() -> Cont {
     // 00401ea8 mov edi,esi
     m.regs.edi = m.regs.esi;
     // 00401eaa shr edi,8
-    m.regs.edi = shr(m.regs.edi, 0x8u8);
+    let t = shr(m.regs.edi, 0x8u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00401ead and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 00401eb3 imul edi,[ebp-24h]
@@ -3412,14 +3452,16 @@ pub fn x00401e8f() -> Cont {
     // 00401eb9 mov edi,esi
     m.regs.edi = m.regs.esi;
     // 00401ebb shr esi,18h
-    m.regs.esi = shr(m.regs.esi, 0x18u8);
+    let t = shr(m.regs.esi, 0x18u8, &mut m.regs.flags);
+    m.regs.esi = t;
     // 00401ebe imul esi,[ebp-24h]
     m.regs.esi = imul(
         m.regs.esi as i32,
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffdcu32)) as i32,
     ) as u32;
     // 00401ec2 shr edi,10h
-    m.regs.edi = shr(m.regs.edi, 0x10u8);
+    let t = shr(m.regs.edi, 0x10u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00401ec5 and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 00401ecb imul edi,[ebp-24h]
@@ -3485,7 +3527,8 @@ pub fn x00401ef5() -> Cont {
     // 00401ef5 mov esi,[ebp-8]
     m.regs.esi = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32));
     // 00401ef8 shl esi,2
-    m.regs.esi = shl(m.regs.esi, 0x2u8);
+    let t = shl(m.regs.esi, 0x2u8, &mut m.regs.flags);
+    m.regs.esi = t;
     // 00401efb add esi,[ebp-28h]
     m.regs.esi = add(
         m.regs.esi,
@@ -3502,7 +3545,8 @@ pub fn x00401ef5() -> Cont {
     // 00401f0a mov edi,esi
     m.regs.edi = m.regs.esi;
     // 00401f0c shr edi,8
-    m.regs.edi = shr(m.regs.edi, 0x8u8);
+    let t = shr(m.regs.edi, 0x8u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00401f0f and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 00401f15 sub eax,edi
@@ -3510,9 +3554,11 @@ pub fn x00401ef5() -> Cont {
     // 00401f17 mov edi,esi
     m.regs.edi = m.regs.esi;
     // 00401f19 shr edi,10h
-    m.regs.edi = shr(m.regs.edi, 0x10u8);
+    let t = shr(m.regs.edi, 0x10u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00401f1c shr esi,18h
-    m.regs.esi = shr(m.regs.esi, 0x18u8);
+    let t = shr(m.regs.esi, 0x18u8, &mut m.regs.flags);
+    m.regs.esi = t;
     // 00401f1f and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 00401f25 sub ecx,esi
@@ -3536,7 +3582,8 @@ pub fn x00401ef8() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00401ef8 shl esi,2
-    m.regs.esi = shl(m.regs.esi, 0x2u8);
+    let t = shl(m.regs.esi, 0x2u8, &mut m.regs.flags);
+    m.regs.esi = t;
     // 00401efb add esi,[ebp-28h]
     m.regs.esi = add(
         m.regs.esi,
@@ -3553,7 +3600,8 @@ pub fn x00401ef8() -> Cont {
     // 00401f0a mov edi,esi
     m.regs.edi = m.regs.esi;
     // 00401f0c shr edi,8
-    m.regs.edi = shr(m.regs.edi, 0x8u8);
+    let t = shr(m.regs.edi, 0x8u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00401f0f and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 00401f15 sub eax,edi
@@ -3561,9 +3609,11 @@ pub fn x00401ef8() -> Cont {
     // 00401f17 mov edi,esi
     m.regs.edi = m.regs.esi;
     // 00401f19 shr edi,10h
-    m.regs.edi = shr(m.regs.edi, 0x10u8);
+    let t = shr(m.regs.edi, 0x10u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00401f1c shr esi,18h
-    m.regs.esi = shr(m.regs.esi, 0x18u8);
+    let t = shr(m.regs.esi, 0x18u8, &mut m.regs.flags);
+    m.regs.esi = t;
     // 00401f1f and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 00401f25 sub ecx,esi
@@ -3592,7 +3642,8 @@ pub fn x00401f37() -> Cont {
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32)),
     );
     // 00401f3a shl esi,2
-    m.regs.esi = shl(m.regs.esi, 0x2u8);
+    let t = shl(m.regs.esi, 0x2u8, &mut m.regs.flags);
+    m.regs.esi = t;
     // 00401f3d add esi,[ebp-28h]
     m.regs.esi = add(
         m.regs.esi,
@@ -3615,7 +3666,8 @@ pub fn x00401f44() -> Cont {
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32)),
     );
     // 00401f4d shl esi,2
-    m.regs.esi = shl(m.regs.esi, 0x2u8);
+    let t = shl(m.regs.esi, 0x2u8, &mut m.regs.flags);
+    m.regs.esi = t;
     // 00401f50 add esi,[ebp-28h]
     m.regs.esi = add(
         m.regs.esi,
@@ -3632,7 +3684,8 @@ pub fn x00401f44() -> Cont {
     // 00401f60 mov edi,esi
     m.regs.edi = m.regs.esi;
     // 00401f62 shr edi,8
-    m.regs.edi = shr(m.regs.edi, 0x8u8);
+    let t = shr(m.regs.edi, 0x8u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00401f65 and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 00401f6b add eax,edi
@@ -3640,9 +3693,11 @@ pub fn x00401f44() -> Cont {
     // 00401f6d mov edi,esi
     m.regs.edi = m.regs.esi;
     // 00401f6f shr edi,10h
-    m.regs.edi = shr(m.regs.edi, 0x10u8);
+    let t = shr(m.regs.edi, 0x10u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00401f72 shr esi,18h
-    m.regs.esi = shr(m.regs.esi, 0x18u8);
+    let t = shr(m.regs.esi, 0x18u8, &mut m.regs.flags);
+    m.regs.esi = t;
     // 00401f75 and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 00401f7b add ecx,esi
@@ -3654,7 +3709,8 @@ pub fn x00401f44() -> Cont {
     // 00401f82 imul esi,edx
     m.regs.esi = imul(m.regs.esi as i32, m.regs.edx as i32) as u32;
     // 00401f85 sar esi,10h
-    sar();
+    let t = sar(m.regs.esi, 0x10u8, &mut m.regs.flags);
+    m.regs.esi = t;
     // 00401f88 mov [ebp-18h],esi
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xffffffe8u32), m.regs.esi);
@@ -3663,7 +3719,8 @@ pub fn x00401f44() -> Cont {
     // 00401f8e imul esi,eax
     m.regs.esi = imul(m.regs.esi as i32, m.regs.eax as i32) as u32;
     // 00401f91 sar esi,8
-    sar();
+    let t = sar(m.regs.esi, 0x8u8, &mut m.regs.flags);
+    m.regs.esi = t;
     // 00401f94 and esi,0FF00h
     m.regs.esi = and(m.regs.esi, 0xff00u32);
     // 00401f9a mov [ebp-1Ch],esi
@@ -3683,7 +3740,8 @@ pub fn x00401f44() -> Cont {
     // 00401faf imul esi,ecx
     m.regs.esi = imul(m.regs.esi as i32, m.regs.ecx as i32) as u32;
     // 00401fb2 shl esi,8
-    m.regs.esi = shl(m.regs.esi, 0x8u8);
+    let t = shl(m.regs.esi, 0x8u8, &mut m.regs.flags);
+    m.regs.esi = t;
     // 00401fb5 and esi,0FF000000h
     m.regs.esi = and(m.regs.esi, 0xff000000u32);
     // 00401fbb mov [ebp-14h],esi
@@ -3715,7 +3773,8 @@ pub fn x00401f44() -> Cont {
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32)),
     );
     // 00401fd9 shl esi,2
-    m.regs.esi = shl(m.regs.esi, 0x2u8);
+    let t = shl(m.regs.esi, 0x2u8, &mut m.regs.flags);
+    m.regs.esi = t;
     // 00401fdc add esi,[ebp-2Ch]
     m.regs.esi = add(
         m.regs.esi,
@@ -3744,7 +3803,8 @@ pub fn x00401f56() -> Cont {
     // 00401f60 mov edi,esi
     m.regs.edi = m.regs.esi;
     // 00401f62 shr edi,8
-    m.regs.edi = shr(m.regs.edi, 0x8u8);
+    let t = shr(m.regs.edi, 0x8u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00401f65 and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 00401f6b add eax,edi
@@ -3752,9 +3812,11 @@ pub fn x00401f56() -> Cont {
     // 00401f6d mov edi,esi
     m.regs.edi = m.regs.esi;
     // 00401f6f shr edi,10h
-    m.regs.edi = shr(m.regs.edi, 0x10u8);
+    let t = shr(m.regs.edi, 0x10u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00401f72 shr esi,18h
-    m.regs.esi = shr(m.regs.esi, 0x18u8);
+    let t = shr(m.regs.esi, 0x18u8, &mut m.regs.flags);
+    m.regs.esi = t;
     // 00401f75 and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 00401f7b add ecx,esi
@@ -3766,7 +3828,8 @@ pub fn x00401f56() -> Cont {
     // 00401f82 imul esi,edx
     m.regs.esi = imul(m.regs.esi as i32, m.regs.edx as i32) as u32;
     // 00401f85 sar esi,10h
-    sar();
+    let t = sar(m.regs.esi, 0x10u8, &mut m.regs.flags);
+    m.regs.esi = t;
     // 00401f88 mov [ebp-18h],esi
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xffffffe8u32), m.regs.esi);
@@ -3775,7 +3838,8 @@ pub fn x00401f56() -> Cont {
     // 00401f8e imul esi,eax
     m.regs.esi = imul(m.regs.esi as i32, m.regs.eax as i32) as u32;
     // 00401f91 sar esi,8
-    sar();
+    let t = sar(m.regs.esi, 0x8u8, &mut m.regs.flags);
+    m.regs.esi = t;
     // 00401f94 and esi,0FF00h
     m.regs.esi = and(m.regs.esi, 0xff00u32);
     // 00401f9a mov [ebp-1Ch],esi
@@ -3795,7 +3859,8 @@ pub fn x00401f56() -> Cont {
     // 00401faf imul esi,ecx
     m.regs.esi = imul(m.regs.esi as i32, m.regs.ecx as i32) as u32;
     // 00401fb2 shl esi,8
-    m.regs.esi = shl(m.regs.esi, 0x8u8);
+    let t = shl(m.regs.esi, 0x8u8, &mut m.regs.flags);
+    m.regs.esi = t;
     // 00401fb5 and esi,0FF000000h
     m.regs.esi = and(m.regs.esi, 0xff000000u32);
     // 00401fbb mov [ebp-14h],esi
@@ -3827,7 +3892,8 @@ pub fn x00401f56() -> Cont {
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32)),
     );
     // 00401fd9 shl esi,2
-    m.regs.esi = shl(m.regs.esi, 0x2u8);
+    let t = shl(m.regs.esi, 0x2u8, &mut m.regs.flags);
+    m.regs.esi = t;
     // 00401fdc add esi,[ebp-2Ch]
     m.regs.esi = add(
         m.regs.esi,
@@ -3906,7 +3972,8 @@ pub fn x00402005() -> Cont {
     // 00402014 mov edi,ebx
     m.regs.edi = m.regs.ebx;
     // 00402016 shl ecx,2
-    m.regs.ecx = shl(m.regs.ecx, 0x2u8);
+    let t = shl(m.regs.ecx, 0x2u8, &mut m.regs.flags);
+    m.regs.ecx = t;
     // 00402019 rep movsb
     rep(m, Rep::REP, movsb);
     // 0040201b leave
@@ -4007,7 +4074,8 @@ pub fn x00402057() -> Cont {
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32)),
     );
     // 00402061 shl esi,2
-    m.regs.esi = shl(m.regs.esi, 0x2u8);
+    let t = shl(m.regs.esi, 0x2u8, &mut m.regs.flags);
+    m.regs.esi = t;
     // 00402064 add esi,[ebp-24h]
     m.regs.esi = add(
         m.regs.esi,
@@ -4024,7 +4092,8 @@ pub fn x00402057() -> Cont {
     // 00402073 mov edi,esi
     m.regs.edi = m.regs.esi;
     // 00402075 shr edi,8
-    m.regs.edi = shr(m.regs.edi, 0x8u8);
+    let t = shr(m.regs.edi, 0x8u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00402078 and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 0040207e add eax,edi
@@ -4037,9 +4106,11 @@ pub fn x00402057() -> Cont {
         inc(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32))),
     );
     // 00402085 shr edi,10h
-    m.regs.edi = shr(m.regs.edi, 0x10u8);
+    let t = shr(m.regs.edi, 0x10u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00402088 shr esi,18h
-    m.regs.esi = shr(m.regs.esi, 0x18u8);
+    let t = shr(m.regs.esi, 0x18u8, &mut m.regs.flags);
+    m.regs.esi = t;
     // 0040208b and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 00402091 add ecx,esi
@@ -4056,7 +4127,8 @@ pub fn x00402097() -> Cont {
     // 00402097 mov esi,[ebp-8]
     m.regs.esi = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32));
     // 0040209a shl esi,2
-    m.regs.esi = shl(m.regs.esi, 0x2u8);
+    let t = shl(m.regs.esi, 0x2u8, &mut m.regs.flags);
+    m.regs.esi = t;
     // 0040209d add esi,[ebp-24h]
     m.regs.esi = add(
         m.regs.esi,
@@ -4078,7 +4150,8 @@ pub fn x00402097() -> Cont {
     // 004020b0 mov edi,esi
     m.regs.edi = m.regs.esi;
     // 004020b2 shr edi,8
-    m.regs.edi = shr(m.regs.edi, 0x8u8);
+    let t = shr(m.regs.edi, 0x8u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 004020b5 and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 004020bb imul edi,[ebp-20h]
@@ -4091,14 +4164,16 @@ pub fn x00402097() -> Cont {
     // 004020c1 mov edi,esi
     m.regs.edi = m.regs.esi;
     // 004020c3 shr esi,18h
-    m.regs.esi = shr(m.regs.esi, 0x18u8);
+    let t = shr(m.regs.esi, 0x18u8, &mut m.regs.flags);
+    m.regs.esi = t;
     // 004020c6 imul esi,[ebp-20h]
     m.regs.esi = imul(
         m.regs.esi as i32,
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffe0u32)) as i32,
     ) as u32;
     // 004020ca shr edi,10h
-    m.regs.edi = shr(m.regs.edi, 0x10u8);
+    let t = shr(m.regs.edi, 0x10u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 004020cd and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 004020d3 imul edi,[ebp-20h]
@@ -4166,7 +4241,8 @@ pub fn x00402104() -> Cont {
     // 00402104 mov esi,[ebp-8]
     m.regs.esi = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32));
     // 00402107 shl esi,2
-    m.regs.esi = shl(m.regs.esi, 0x2u8);
+    let t = shl(m.regs.esi, 0x2u8, &mut m.regs.flags);
+    m.regs.esi = t;
     // 0040210a add esi,[ebp-24h]
     m.regs.esi = add(
         m.regs.esi,
@@ -4183,7 +4259,8 @@ pub fn x00402104() -> Cont {
     // 00402119 mov edi,esi
     m.regs.edi = m.regs.esi;
     // 0040211b shr edi,8
-    m.regs.edi = shr(m.regs.edi, 0x8u8);
+    let t = shr(m.regs.edi, 0x8u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 0040211e and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 00402124 sub eax,edi
@@ -4191,9 +4268,11 @@ pub fn x00402104() -> Cont {
     // 00402126 mov edi,esi
     m.regs.edi = m.regs.esi;
     // 00402128 shr edi,10h
-    m.regs.edi = shr(m.regs.edi, 0x10u8);
+    let t = shr(m.regs.edi, 0x10u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 0040212b shr esi,18h
-    m.regs.esi = shr(m.regs.esi, 0x18u8);
+    let t = shr(m.regs.esi, 0x18u8, &mut m.regs.flags);
+    m.regs.esi = t;
     // 0040212e and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 00402134 sub ecx,esi
@@ -4217,7 +4296,8 @@ pub fn x00402107() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00402107 shl esi,2
-    m.regs.esi = shl(m.regs.esi, 0x2u8);
+    let t = shl(m.regs.esi, 0x2u8, &mut m.regs.flags);
+    m.regs.esi = t;
     // 0040210a add esi,[ebp-24h]
     m.regs.esi = add(
         m.regs.esi,
@@ -4234,7 +4314,8 @@ pub fn x00402107() -> Cont {
     // 00402119 mov edi,esi
     m.regs.edi = m.regs.esi;
     // 0040211b shr edi,8
-    m.regs.edi = shr(m.regs.edi, 0x8u8);
+    let t = shr(m.regs.edi, 0x8u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 0040211e and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 00402124 sub eax,edi
@@ -4242,9 +4323,11 @@ pub fn x00402107() -> Cont {
     // 00402126 mov edi,esi
     m.regs.edi = m.regs.esi;
     // 00402128 shr edi,10h
-    m.regs.edi = shr(m.regs.edi, 0x10u8);
+    let t = shr(m.regs.edi, 0x10u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 0040212b shr esi,18h
-    m.regs.esi = shr(m.regs.esi, 0x18u8);
+    let t = shr(m.regs.esi, 0x18u8, &mut m.regs.flags);
+    m.regs.esi = t;
     // 0040212e and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 00402134 sub ecx,esi
@@ -4279,7 +4362,8 @@ pub fn x00402146() -> Cont {
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32)),
     );
     // 00402157 shl esi,2
-    m.regs.esi = shl(m.regs.esi, 0x2u8);
+    let t = shl(m.regs.esi, 0x2u8, &mut m.regs.flags);
+    m.regs.esi = t;
     // 0040215a add esi,[ebp-24h]
     m.regs.esi = add(
         m.regs.esi,
@@ -4296,7 +4380,8 @@ pub fn x00402146() -> Cont {
     // 00402169 mov edi,esi
     m.regs.edi = m.regs.esi;
     // 0040216b shr edi,8
-    m.regs.edi = shr(m.regs.edi, 0x8u8);
+    let t = shr(m.regs.edi, 0x8u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 0040216e and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 00402174 add eax,edi
@@ -4304,9 +4389,11 @@ pub fn x00402146() -> Cont {
     // 00402176 mov edi,esi
     m.regs.edi = m.regs.esi;
     // 00402178 shr edi,10h
-    m.regs.edi = shr(m.regs.edi, 0x10u8);
+    let t = shr(m.regs.edi, 0x10u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 0040217b shr esi,18h
-    m.regs.esi = shr(m.regs.esi, 0x18u8);
+    let t = shr(m.regs.esi, 0x18u8, &mut m.regs.flags);
+    m.regs.esi = t;
     // 0040217e and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 00402184 add ecx,esi
@@ -4318,7 +4405,8 @@ pub fn x00402146() -> Cont {
     // 0040218b imul esi,edx
     m.regs.esi = imul(m.regs.esi as i32, m.regs.edx as i32) as u32;
     // 0040218e sar esi,10h
-    sar();
+    let t = sar(m.regs.esi, 0x10u8, &mut m.regs.flags);
+    m.regs.esi = t;
     // 00402191 mov [ebp-18h],esi
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xffffffe8u32), m.regs.esi);
@@ -4327,7 +4415,8 @@ pub fn x00402146() -> Cont {
     // 00402197 imul esi,eax
     m.regs.esi = imul(m.regs.esi as i32, m.regs.eax as i32) as u32;
     // 0040219a sar esi,8
-    sar();
+    let t = sar(m.regs.esi, 0x8u8, &mut m.regs.flags);
+    m.regs.esi = t;
     // 0040219d and esi,0FF00h
     m.regs.esi = and(m.regs.esi, 0xff00u32);
     // 004021a3 mov [ebp-14h],esi
@@ -4347,7 +4436,8 @@ pub fn x00402146() -> Cont {
     // 004021b8 imul esi,ecx
     m.regs.esi = imul(m.regs.esi as i32, m.regs.ecx as i32) as u32;
     // 004021bb shl esi,8
-    m.regs.esi = shl(m.regs.esi, 0x8u8);
+    let t = shl(m.regs.esi, 0x8u8, &mut m.regs.flags);
+    m.regs.esi = t;
     // 004021be and esi,0FF000000h
     m.regs.esi = and(m.regs.esi, 0xff000000u32);
     // 004021c4 mov [ebp-10h],esi
@@ -4379,7 +4469,8 @@ pub fn x00402146() -> Cont {
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32)),
     );
     // 004021e2 shl esi,2
-    m.regs.esi = shl(m.regs.esi, 0x2u8);
+    let t = shl(m.regs.esi, 0x2u8, &mut m.regs.flags);
+    m.regs.esi = t;
     // 004021e5 add esi,[ebp-28h]
     m.regs.esi = add(
         m.regs.esi,
@@ -4407,7 +4498,8 @@ pub fn x0040214d() -> Cont {
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32)),
     );
     // 00402157 shl esi,2
-    m.regs.esi = shl(m.regs.esi, 0x2u8);
+    let t = shl(m.regs.esi, 0x2u8, &mut m.regs.flags);
+    m.regs.esi = t;
     // 0040215a add esi,[ebp-24h]
     m.regs.esi = add(
         m.regs.esi,
@@ -4424,7 +4516,8 @@ pub fn x0040214d() -> Cont {
     // 00402169 mov edi,esi
     m.regs.edi = m.regs.esi;
     // 0040216b shr edi,8
-    m.regs.edi = shr(m.regs.edi, 0x8u8);
+    let t = shr(m.regs.edi, 0x8u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 0040216e and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 00402174 add eax,edi
@@ -4432,9 +4525,11 @@ pub fn x0040214d() -> Cont {
     // 00402176 mov edi,esi
     m.regs.edi = m.regs.esi;
     // 00402178 shr edi,10h
-    m.regs.edi = shr(m.regs.edi, 0x10u8);
+    let t = shr(m.regs.edi, 0x10u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 0040217b shr esi,18h
-    m.regs.esi = shr(m.regs.esi, 0x18u8);
+    let t = shr(m.regs.esi, 0x18u8, &mut m.regs.flags);
+    m.regs.esi = t;
     // 0040217e and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 00402184 add ecx,esi
@@ -4446,7 +4541,8 @@ pub fn x0040214d() -> Cont {
     // 0040218b imul esi,edx
     m.regs.esi = imul(m.regs.esi as i32, m.regs.edx as i32) as u32;
     // 0040218e sar esi,10h
-    sar();
+    let t = sar(m.regs.esi, 0x10u8, &mut m.regs.flags);
+    m.regs.esi = t;
     // 00402191 mov [ebp-18h],esi
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xffffffe8u32), m.regs.esi);
@@ -4455,7 +4551,8 @@ pub fn x0040214d() -> Cont {
     // 00402197 imul esi,eax
     m.regs.esi = imul(m.regs.esi as i32, m.regs.eax as i32) as u32;
     // 0040219a sar esi,8
-    sar();
+    let t = sar(m.regs.esi, 0x8u8, &mut m.regs.flags);
+    m.regs.esi = t;
     // 0040219d and esi,0FF00h
     m.regs.esi = and(m.regs.esi, 0xff00u32);
     // 004021a3 mov [ebp-14h],esi
@@ -4475,7 +4572,8 @@ pub fn x0040214d() -> Cont {
     // 004021b8 imul esi,ecx
     m.regs.esi = imul(m.regs.esi as i32, m.regs.ecx as i32) as u32;
     // 004021bb shl esi,8
-    m.regs.esi = shl(m.regs.esi, 0x8u8);
+    let t = shl(m.regs.esi, 0x8u8, &mut m.regs.flags);
+    m.regs.esi = t;
     // 004021be and esi,0FF000000h
     m.regs.esi = and(m.regs.esi, 0xff000000u32);
     // 004021c4 mov [ebp-10h],esi
@@ -4507,7 +4605,8 @@ pub fn x0040214d() -> Cont {
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32)),
     );
     // 004021e2 shl esi,2
-    m.regs.esi = shl(m.regs.esi, 0x2u8);
+    let t = shl(m.regs.esi, 0x2u8, &mut m.regs.flags);
+    m.regs.esi = t;
     // 004021e5 add esi,[ebp-28h]
     m.regs.esi = add(
         m.regs.esi,
@@ -4586,7 +4685,8 @@ pub fn x0040220e() -> Cont {
     // 0040221d mov edi,ebx
     m.regs.edi = m.regs.ebx;
     // 0040221f shl ecx,2
-    m.regs.ecx = shl(m.regs.ecx, 0x2u8);
+    let t = shl(m.regs.ecx, 0x2u8, &mut m.regs.flags);
+    m.regs.ecx = t;
     // 00402222 rep movsb
     rep(m, Rep::REP, movsb);
     // 00402224 leave
@@ -4720,7 +4820,8 @@ pub fn x0040227a() -> Cont {
     // 0040228b add eax,edi
     m.regs.eax = add(m.regs.eax, m.regs.edi);
     // 0040228d shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402290 add eax,[ebp-2Ch]
     m.regs.eax = add(
         m.regs.eax,
@@ -4737,7 +4838,8 @@ pub fn x0040227a() -> Cont {
     // 0040229f mov edi,eax
     m.regs.edi = m.regs.eax;
     // 004022a1 shr edi,8
-    m.regs.edi = shr(m.regs.edi, 0x8u8);
+    let t = shr(m.regs.edi, 0x8u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 004022a4 and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 004022aa add [ebp-4],edi
@@ -4756,9 +4858,11 @@ pub fn x0040227a() -> Cont {
         inc(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32))),
     );
     // 004022b2 shr edi,10h
-    m.regs.edi = shr(m.regs.edi, 0x10u8);
+    let t = shr(m.regs.edi, 0x10u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 004022b5 shr eax,18h
-    m.regs.eax = shr(m.regs.eax, 0x18u8);
+    let t = shr(m.regs.eax, 0x18u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004022b8 and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 004022be add ebx,eax
@@ -4773,7 +4877,8 @@ pub fn x0040228d() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 0040228d shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402290 add eax,[ebp-2Ch]
     m.regs.eax = add(
         m.regs.eax,
@@ -4790,7 +4895,8 @@ pub fn x0040228d() -> Cont {
     // 0040229f mov edi,eax
     m.regs.edi = m.regs.eax;
     // 004022a1 shr edi,8
-    m.regs.edi = shr(m.regs.edi, 0x8u8);
+    let t = shr(m.regs.edi, 0x8u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 004022a4 and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 004022aa add [ebp-4],edi
@@ -4809,9 +4915,11 @@ pub fn x0040228d() -> Cont {
         inc(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32))),
     );
     // 004022b2 shr edi,10h
-    m.regs.edi = shr(m.regs.edi, 0x10u8);
+    let t = shr(m.regs.edi, 0x10u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 004022b5 shr eax,18h
-    m.regs.eax = shr(m.regs.eax, 0x18u8);
+    let t = shr(m.regs.eax, 0x18u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004022b8 and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 004022be add ebx,eax
@@ -4828,7 +4936,8 @@ pub fn x004022c4() -> Cont {
     // 004022c4 mov eax,[ebp-10h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff0u32));
     // 004022c7 shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004022ca add eax,[ebp-2Ch]
     m.regs.eax = add(
         m.regs.eax,
@@ -4850,7 +4959,8 @@ pub fn x004022c4() -> Cont {
     // 004022dd mov edi,eax
     m.regs.edi = m.regs.eax;
     // 004022df shr edi,8
-    m.regs.edi = shr(m.regs.edi, 0x8u8);
+    let t = shr(m.regs.edi, 0x8u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 004022e2 and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 004022e8 imul edi,[ebp-28h]
@@ -4869,14 +4979,16 @@ pub fn x004022c4() -> Cont {
     // 004022ef mov edi,eax
     m.regs.edi = m.regs.eax;
     // 004022f1 shr eax,18h
-    m.regs.eax = shr(m.regs.eax, 0x18u8);
+    let t = shr(m.regs.eax, 0x18u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004022f4 imul eax,[ebp-28h]
     m.regs.eax = imul(
         m.regs.eax as i32,
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffd8u32)) as i32,
     ) as u32;
     // 004022f8 shr edi,10h
-    m.regs.edi = shr(m.regs.edi, 0x10u8);
+    let t = shr(m.regs.edi, 0x10u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 004022fb and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 00402301 imul edi,[ebp-28h]
@@ -4955,7 +5067,8 @@ pub fn x00402338() -> Cont {
     // 00402338 mov eax,[ebp-10h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff0u32));
     // 0040233b shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 0040233e add eax,[ebp-2Ch]
     m.regs.eax = add(
         m.regs.eax,
@@ -4972,7 +5085,8 @@ pub fn x00402338() -> Cont {
     // 0040234d mov edi,eax
     m.regs.edi = m.regs.eax;
     // 0040234f shr edi,8
-    m.regs.edi = shr(m.regs.edi, 0x8u8);
+    let t = shr(m.regs.edi, 0x8u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00402352 and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 00402358 sub [ebp-4],edi
@@ -4986,9 +5100,11 @@ pub fn x00402338() -> Cont {
     // 0040235b mov edi,eax
     m.regs.edi = m.regs.eax;
     // 0040235d shr edi,10h
-    m.regs.edi = shr(m.regs.edi, 0x10u8);
+    let t = shr(m.regs.edi, 0x10u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00402360 shr eax,18h
-    m.regs.eax = shr(m.regs.eax, 0x18u8);
+    let t = shr(m.regs.eax, 0x18u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402363 and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 00402369 sub ebx,eax
@@ -5014,7 +5130,8 @@ pub fn x0040233b() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 0040233b shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 0040233e add eax,[ebp-2Ch]
     m.regs.eax = add(
         m.regs.eax,
@@ -5031,7 +5148,8 @@ pub fn x0040233b() -> Cont {
     // 0040234d mov edi,eax
     m.regs.edi = m.regs.eax;
     // 0040234f shr edi,8
-    m.regs.edi = shr(m.regs.edi, 0x8u8);
+    let t = shr(m.regs.edi, 0x8u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00402352 and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 00402358 sub [ebp-4],edi
@@ -5045,9 +5163,11 @@ pub fn x0040233b() -> Cont {
     // 0040235b mov edi,eax
     m.regs.edi = m.regs.eax;
     // 0040235d shr edi,10h
-    m.regs.edi = shr(m.regs.edi, 0x10u8);
+    let t = shr(m.regs.edi, 0x10u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00402360 shr eax,18h
-    m.regs.eax = shr(m.regs.eax, 0x18u8);
+    let t = shr(m.regs.eax, 0x18u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402363 and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 00402369 sub ebx,eax
@@ -5103,7 +5223,8 @@ pub fn x0040238f() -> Cont {
     // 004023a0 add eax,edi
     m.regs.eax = add(m.regs.eax, m.regs.edi);
     // 004023a2 shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004023a5 add eax,[ebp-2Ch]
     m.regs.eax = add(
         m.regs.eax,
@@ -5120,7 +5241,8 @@ pub fn x0040238f() -> Cont {
     // 004023b4 mov edi,eax
     m.regs.edi = m.regs.eax;
     // 004023b6 shr edi,8
-    m.regs.edi = shr(m.regs.edi, 0x8u8);
+    let t = shr(m.regs.edi, 0x8u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 004023b9 and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 004023bf add [ebp-4],edi
@@ -5134,9 +5256,11 @@ pub fn x0040238f() -> Cont {
     // 004023c2 mov edi,eax
     m.regs.edi = m.regs.eax;
     // 004023c4 shr edi,10h
-    m.regs.edi = shr(m.regs.edi, 0x10u8);
+    let t = shr(m.regs.edi, 0x10u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 004023c7 shr eax,18h
-    m.regs.eax = shr(m.regs.eax, 0x18u8);
+    let t = shr(m.regs.eax, 0x18u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004023ca and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 004023d0 add ebx,eax
@@ -5148,7 +5272,8 @@ pub fn x0040238f() -> Cont {
     // 004023d7 imul eax,esi
     m.regs.eax = imul(m.regs.eax as i32, m.regs.esi as i32) as u32;
     // 004023da sar eax,10h
-    sar();
+    let t = sar(m.regs.eax, 0x10u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004023dd mov [ebp-1Ch],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xffffffe4u32), m.regs.eax);
@@ -5160,7 +5285,8 @@ pub fn x0040238f() -> Cont {
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff4u32)) as i32,
     ) as u32;
     // 004023e7 sar eax,8
-    sar();
+    let t = sar(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004023ea and eax,0FF00h
     m.regs.eax = and(m.regs.eax, 0xff00u32);
     // 004023ef mov [ebp-20h],eax
@@ -5180,7 +5306,8 @@ pub fn x0040238f() -> Cont {
     // 00402403 imul eax,ebx
     m.regs.eax = imul(m.regs.eax as i32, m.regs.ebx as i32) as u32;
     // 00402406 shl eax,8
-    m.regs.eax = shl(m.regs.eax, 0x8u8);
+    let t = shl(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402409 and eax,0FF000000h
     m.regs.eax = and(m.regs.eax, 0xff000000u32);
     // 0040240e mov [ebp-18h],eax
@@ -5214,7 +5341,8 @@ pub fn x0040238f() -> Cont {
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32)),
     );
     // 0040242e shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402431 add eax,[ebp-30h]
     m.regs.eax = add(
         m.regs.eax,
@@ -5237,7 +5365,8 @@ pub fn x004023a0() -> Cont {
     // 004023a0 add eax,edi
     m.regs.eax = add(m.regs.eax, m.regs.edi);
     // 004023a2 shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004023a5 add eax,[ebp-2Ch]
     m.regs.eax = add(
         m.regs.eax,
@@ -5254,7 +5383,8 @@ pub fn x004023a0() -> Cont {
     // 004023b4 mov edi,eax
     m.regs.edi = m.regs.eax;
     // 004023b6 shr edi,8
-    m.regs.edi = shr(m.regs.edi, 0x8u8);
+    let t = shr(m.regs.edi, 0x8u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 004023b9 and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 004023bf add [ebp-4],edi
@@ -5268,9 +5398,11 @@ pub fn x004023a0() -> Cont {
     // 004023c2 mov edi,eax
     m.regs.edi = m.regs.eax;
     // 004023c4 shr edi,10h
-    m.regs.edi = shr(m.regs.edi, 0x10u8);
+    let t = shr(m.regs.edi, 0x10u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 004023c7 shr eax,18h
-    m.regs.eax = shr(m.regs.eax, 0x18u8);
+    let t = shr(m.regs.eax, 0x18u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004023ca and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 004023d0 add ebx,eax
@@ -5282,7 +5414,8 @@ pub fn x004023a0() -> Cont {
     // 004023d7 imul eax,esi
     m.regs.eax = imul(m.regs.eax as i32, m.regs.esi as i32) as u32;
     // 004023da sar eax,10h
-    sar();
+    let t = sar(m.regs.eax, 0x10u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004023dd mov [ebp-1Ch],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xffffffe4u32), m.regs.eax);
@@ -5294,7 +5427,8 @@ pub fn x004023a0() -> Cont {
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff4u32)) as i32,
     ) as u32;
     // 004023e7 sar eax,8
-    sar();
+    let t = sar(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004023ea and eax,0FF00h
     m.regs.eax = and(m.regs.eax, 0xff00u32);
     // 004023ef mov [ebp-20h],eax
@@ -5314,7 +5448,8 @@ pub fn x004023a0() -> Cont {
     // 00402403 imul eax,ebx
     m.regs.eax = imul(m.regs.eax as i32, m.regs.ebx as i32) as u32;
     // 00402406 shl eax,8
-    m.regs.eax = shl(m.regs.eax, 0x8u8);
+    let t = shl(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402409 and eax,0FF000000h
     m.regs.eax = and(m.regs.eax, 0xff000000u32);
     // 0040240e mov [ebp-18h],eax
@@ -5348,7 +5483,8 @@ pub fn x004023a0() -> Cont {
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32)),
     );
     // 0040242e shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402431 add eax,[ebp-30h]
     m.regs.eax = add(
         m.regs.eax,
@@ -5477,7 +5613,8 @@ pub fn x0040247a() -> Cont {
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffecu32)),
     );
     // 0040248d shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402490 add eax,[ebp-2Ch]
     m.regs.eax = add(
         m.regs.eax,
@@ -5505,7 +5642,8 @@ pub fn x00402497() -> Cont {
     // 004024a9 add eax,edi
     m.regs.eax = add(m.regs.eax, m.regs.edi);
     // 004024ab shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004024ae add eax,[ebp-2Ch]
     m.regs.eax = add(
         m.regs.eax,
@@ -5522,7 +5660,8 @@ pub fn x00402497() -> Cont {
     // 004024be mov edi,eax
     m.regs.edi = m.regs.eax;
     // 004024c0 shr edi,8
-    m.regs.edi = shr(m.regs.edi, 0x8u8);
+    let t = shr(m.regs.edi, 0x8u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 004024c3 and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 004024c9 add [ebp-4],edi
@@ -5538,9 +5677,11 @@ pub fn x00402497() -> Cont {
     // 004024ce inc ecx
     m.regs.ecx = inc(m.regs.ecx);
     // 004024cf shr edi,10h
-    m.regs.edi = shr(m.regs.edi, 0x10u8);
+    let t = shr(m.regs.edi, 0x10u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 004024d2 shr eax,18h
-    m.regs.eax = shr(m.regs.eax, 0x18u8);
+    let t = shr(m.regs.eax, 0x18u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004024d5 and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 004024db add ebx,eax
@@ -5563,7 +5704,8 @@ pub fn x004024b4() -> Cont {
     // 004024be mov edi,eax
     m.regs.edi = m.regs.eax;
     // 004024c0 shr edi,8
-    m.regs.edi = shr(m.regs.edi, 0x8u8);
+    let t = shr(m.regs.edi, 0x8u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 004024c3 and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 004024c9 add [ebp-4],edi
@@ -5579,9 +5721,11 @@ pub fn x004024b4() -> Cont {
     // 004024ce inc ecx
     m.regs.ecx = inc(m.regs.ecx);
     // 004024cf shr edi,10h
-    m.regs.edi = shr(m.regs.edi, 0x10u8);
+    let t = shr(m.regs.edi, 0x10u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 004024d2 shr eax,18h
-    m.regs.eax = shr(m.regs.eax, 0x18u8);
+    let t = shr(m.regs.eax, 0x18u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004024d5 and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 004024db add ebx,eax
@@ -5598,7 +5742,8 @@ pub fn x004024e1() -> Cont {
     // 004024e1 mov eax,[ebp-8]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32));
     // 004024e4 shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004024e7 add eax,[ebp-2Ch]
     m.regs.eax = add(
         m.regs.eax,
@@ -5620,7 +5765,8 @@ pub fn x004024e1() -> Cont {
     // 004024fa mov ecx,eax
     m.regs.ecx = m.regs.eax;
     // 004024fc shr ecx,8
-    m.regs.ecx = shr(m.regs.ecx, 0x8u8);
+    let t = shr(m.regs.ecx, 0x8u8, &mut m.regs.flags);
+    m.regs.ecx = t;
     // 004024ff and ecx,0FFh
     m.regs.ecx = and(m.regs.ecx, 0xffu32);
     // 00402505 imul ecx,[ebp-28h]
@@ -5639,14 +5785,16 @@ pub fn x004024e1() -> Cont {
     // 0040250c mov ecx,eax
     m.regs.ecx = m.regs.eax;
     // 0040250e shr eax,18h
-    m.regs.eax = shr(m.regs.eax, 0x18u8);
+    let t = shr(m.regs.eax, 0x18u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402511 imul eax,[ebp-28h]
     m.regs.eax = imul(
         m.regs.eax as i32,
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffd8u32)) as i32,
     ) as u32;
     // 00402515 shr ecx,10h
-    m.regs.ecx = shr(m.regs.ecx, 0x10u8);
+    let t = shr(m.regs.ecx, 0x10u8, &mut m.regs.flags);
+    m.regs.ecx = t;
     // 00402518 and ecx,0FFh
     m.regs.ecx = and(m.regs.ecx, 0xffu32);
     // 0040251e imul ecx,[ebp-28h]
@@ -5717,7 +5865,8 @@ pub fn x00402550() -> Cont {
     // 00402550 mov eax,[ebp-8]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32));
     // 00402553 shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402556 add eax,[ebp-2Ch]
     m.regs.eax = add(
         m.regs.eax,
@@ -5734,7 +5883,8 @@ pub fn x00402550() -> Cont {
     // 00402565 mov edi,eax
     m.regs.edi = m.regs.eax;
     // 00402567 shr edi,8
-    m.regs.edi = shr(m.regs.edi, 0x8u8);
+    let t = shr(m.regs.edi, 0x8u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 0040256a and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 00402570 sub [ebp-4],edi
@@ -5748,9 +5898,11 @@ pub fn x00402550() -> Cont {
     // 00402573 mov edi,eax
     m.regs.edi = m.regs.eax;
     // 00402575 shr edi,10h
-    m.regs.edi = shr(m.regs.edi, 0x10u8);
+    let t = shr(m.regs.edi, 0x10u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00402578 shr eax,18h
-    m.regs.eax = shr(m.regs.eax, 0x18u8);
+    let t = shr(m.regs.eax, 0x18u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 0040257b and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 00402581 sub ebx,eax
@@ -5771,7 +5923,8 @@ pub fn x00402553() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00402553 shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402556 add eax,[ebp-2Ch]
     m.regs.eax = add(
         m.regs.eax,
@@ -5788,7 +5941,8 @@ pub fn x00402553() -> Cont {
     // 00402565 mov edi,eax
     m.regs.edi = m.regs.eax;
     // 00402567 shr edi,8
-    m.regs.edi = shr(m.regs.edi, 0x8u8);
+    let t = shr(m.regs.edi, 0x8u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 0040256a and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 00402570 sub [ebp-4],edi
@@ -5802,9 +5956,11 @@ pub fn x00402553() -> Cont {
     // 00402573 mov edi,eax
     m.regs.edi = m.regs.eax;
     // 00402575 shr edi,10h
-    m.regs.edi = shr(m.regs.edi, 0x10u8);
+    let t = shr(m.regs.edi, 0x10u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00402578 shr eax,18h
-    m.regs.eax = shr(m.regs.eax, 0x18u8);
+    let t = shr(m.regs.eax, 0x18u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 0040257b and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 00402581 sub ebx,eax
@@ -5858,7 +6014,8 @@ pub fn x004025a3() -> Cont {
     // 004025b5 add eax,edi
     m.regs.eax = add(m.regs.eax, m.regs.edi);
     // 004025b7 shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004025ba add eax,[ebp-2Ch]
     m.regs.eax = add(
         m.regs.eax,
@@ -5875,7 +6032,8 @@ pub fn x004025a3() -> Cont {
     // 004025c9 mov edi,eax
     m.regs.edi = m.regs.eax;
     // 004025cb shr edi,8
-    m.regs.edi = shr(m.regs.edi, 0x8u8);
+    let t = shr(m.regs.edi, 0x8u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 004025ce and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 004025d4 add [ebp-4],edi
@@ -5889,9 +6047,11 @@ pub fn x004025a3() -> Cont {
     // 004025d7 mov edi,eax
     m.regs.edi = m.regs.eax;
     // 004025d9 shr edi,10h
-    m.regs.edi = shr(m.regs.edi, 0x10u8);
+    let t = shr(m.regs.edi, 0x10u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 004025dc shr eax,18h
-    m.regs.eax = shr(m.regs.eax, 0x18u8);
+    let t = shr(m.regs.eax, 0x18u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004025df and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 004025e5 add ebx,eax
@@ -5903,7 +6063,8 @@ pub fn x004025a3() -> Cont {
     // 004025ec imul eax,esi
     m.regs.eax = imul(m.regs.eax as i32, m.regs.esi as i32) as u32;
     // 004025ef sar eax,10h
-    sar();
+    let t = sar(m.regs.eax, 0x10u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004025f2 mov [ebp-1Ch],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xffffffe4u32), m.regs.eax);
@@ -5915,7 +6076,8 @@ pub fn x004025a3() -> Cont {
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff4u32)) as i32,
     ) as u32;
     // 004025fc sar eax,8
-    sar();
+    let t = sar(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004025ff and eax,0FF00h
     m.regs.eax = and(m.regs.eax, 0xff00u32);
     // 00402604 mov [ebp-20h],eax
@@ -5935,7 +6097,8 @@ pub fn x004025a3() -> Cont {
     // 00402618 imul eax,ebx
     m.regs.eax = imul(m.regs.eax as i32, m.regs.ebx as i32) as u32;
     // 0040261b shl eax,8
-    m.regs.eax = shl(m.regs.eax, 0x8u8);
+    let t = shl(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 0040261e and eax,0FF000000h
     m.regs.eax = and(m.regs.eax, 0xff000000u32);
     // 00402623 mov [ebp-18h],eax
@@ -5971,7 +6134,8 @@ pub fn x004025a3() -> Cont {
     // 00402645 add eax,edi
     m.regs.eax = add(m.regs.eax, m.regs.edi);
     // 00402647 shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 0040264a add eax,[ebp-30h]
     m.regs.eax = add(
         m.regs.eax,
@@ -5993,7 +6157,8 @@ pub fn x004025b5() -> Cont {
     // 004025b5 add eax,edi
     m.regs.eax = add(m.regs.eax, m.regs.edi);
     // 004025b7 shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004025ba add eax,[ebp-2Ch]
     m.regs.eax = add(
         m.regs.eax,
@@ -6010,7 +6175,8 @@ pub fn x004025b5() -> Cont {
     // 004025c9 mov edi,eax
     m.regs.edi = m.regs.eax;
     // 004025cb shr edi,8
-    m.regs.edi = shr(m.regs.edi, 0x8u8);
+    let t = shr(m.regs.edi, 0x8u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 004025ce and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 004025d4 add [ebp-4],edi
@@ -6024,9 +6190,11 @@ pub fn x004025b5() -> Cont {
     // 004025d7 mov edi,eax
     m.regs.edi = m.regs.eax;
     // 004025d9 shr edi,10h
-    m.regs.edi = shr(m.regs.edi, 0x10u8);
+    let t = shr(m.regs.edi, 0x10u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 004025dc shr eax,18h
-    m.regs.eax = shr(m.regs.eax, 0x18u8);
+    let t = shr(m.regs.eax, 0x18u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004025df and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 004025e5 add ebx,eax
@@ -6038,7 +6206,8 @@ pub fn x004025b5() -> Cont {
     // 004025ec imul eax,esi
     m.regs.eax = imul(m.regs.eax as i32, m.regs.esi as i32) as u32;
     // 004025ef sar eax,10h
-    sar();
+    let t = sar(m.regs.eax, 0x10u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004025f2 mov [ebp-1Ch],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xffffffe4u32), m.regs.eax);
@@ -6050,7 +6219,8 @@ pub fn x004025b5() -> Cont {
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff4u32)) as i32,
     ) as u32;
     // 004025fc sar eax,8
-    sar();
+    let t = sar(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004025ff and eax,0FF00h
     m.regs.eax = and(m.regs.eax, 0xff00u32);
     // 00402604 mov [ebp-20h],eax
@@ -6070,7 +6240,8 @@ pub fn x004025b5() -> Cont {
     // 00402618 imul eax,ebx
     m.regs.eax = imul(m.regs.eax as i32, m.regs.ebx as i32) as u32;
     // 0040261b shl eax,8
-    m.regs.eax = shl(m.regs.eax, 0x8u8);
+    let t = shl(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 0040261e and eax,0FF000000h
     m.regs.eax = and(m.regs.eax, 0xff000000u32);
     // 00402623 mov [ebp-18h],eax
@@ -6106,7 +6277,8 @@ pub fn x004025b5() -> Cont {
     // 00402645 add eax,edi
     m.regs.eax = add(m.regs.eax, m.regs.edi);
     // 00402647 shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 0040264a add eax,[ebp-30h]
     m.regs.eax = add(
         m.regs.eax,
@@ -6226,7 +6398,8 @@ pub fn x0040268d() -> Cont {
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffecu32)),
     );
     // 004026a0 shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004026a3 add eax,[ebp-2Ch]
     m.regs.eax = add(
         m.regs.eax,
@@ -6257,7 +6430,8 @@ pub fn x004026aa() -> Cont {
     // 004026be add eax,edi
     m.regs.eax = add(m.regs.eax, m.regs.edi);
     // 004026c0 shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004026c3 add eax,[ebp-2Ch]
     m.regs.eax = add(
         m.regs.eax,
@@ -6274,7 +6448,8 @@ pub fn x004026aa() -> Cont {
     // 004026d3 mov edi,eax
     m.regs.edi = m.regs.eax;
     // 004026d5 shr edi,8
-    m.regs.edi = shr(m.regs.edi, 0x8u8);
+    let t = shr(m.regs.edi, 0x8u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 004026d8 and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 004026de add [ebp-4],edi
@@ -6290,9 +6465,11 @@ pub fn x004026aa() -> Cont {
     // 004026e3 inc ecx
     m.regs.ecx = inc(m.regs.ecx);
     // 004026e4 shr edi,10h
-    m.regs.edi = shr(m.regs.edi, 0x10u8);
+    let t = shr(m.regs.edi, 0x10u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 004026e7 shr eax,18h
-    m.regs.eax = shr(m.regs.eax, 0x18u8);
+    let t = shr(m.regs.eax, 0x18u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004026ea and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 004026f0 add ebx,eax
@@ -6315,7 +6492,8 @@ pub fn x004026c9() -> Cont {
     // 004026d3 mov edi,eax
     m.regs.edi = m.regs.eax;
     // 004026d5 shr edi,8
-    m.regs.edi = shr(m.regs.edi, 0x8u8);
+    let t = shr(m.regs.edi, 0x8u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 004026d8 and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 004026de add [ebp-4],edi
@@ -6331,9 +6509,11 @@ pub fn x004026c9() -> Cont {
     // 004026e3 inc ecx
     m.regs.ecx = inc(m.regs.ecx);
     // 004026e4 shr edi,10h
-    m.regs.edi = shr(m.regs.edi, 0x10u8);
+    let t = shr(m.regs.edi, 0x10u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 004026e7 shr eax,18h
-    m.regs.eax = shr(m.regs.eax, 0x18u8);
+    let t = shr(m.regs.eax, 0x18u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004026ea and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 004026f0 add ebx,eax
@@ -6350,7 +6530,8 @@ pub fn x004026f6() -> Cont {
     // 004026f6 mov eax,[ebp-8]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32));
     // 004026f9 shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004026fc add eax,[ebp-2Ch]
     m.regs.eax = add(
         m.regs.eax,
@@ -6372,7 +6553,8 @@ pub fn x004026f6() -> Cont {
     // 0040270f mov ecx,eax
     m.regs.ecx = m.regs.eax;
     // 00402711 shr ecx,8
-    m.regs.ecx = shr(m.regs.ecx, 0x8u8);
+    let t = shr(m.regs.ecx, 0x8u8, &mut m.regs.flags);
+    m.regs.ecx = t;
     // 00402714 and ecx,0FFh
     m.regs.ecx = and(m.regs.ecx, 0xffu32);
     // 0040271a imul ecx,[ebp-28h]
@@ -6391,14 +6573,16 @@ pub fn x004026f6() -> Cont {
     // 00402721 mov ecx,eax
     m.regs.ecx = m.regs.eax;
     // 00402723 shr eax,18h
-    m.regs.eax = shr(m.regs.eax, 0x18u8);
+    let t = shr(m.regs.eax, 0x18u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402726 imul eax,[ebp-28h]
     m.regs.eax = imul(
         m.regs.eax as i32,
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffd8u32)) as i32,
     ) as u32;
     // 0040272a shr ecx,10h
-    m.regs.ecx = shr(m.regs.ecx, 0x10u8);
+    let t = shr(m.regs.ecx, 0x10u8, &mut m.regs.flags);
+    m.regs.ecx = t;
     // 0040272d and ecx,0FFh
     m.regs.ecx = and(m.regs.ecx, 0xffu32);
     // 00402733 imul ecx,[ebp-28h]
@@ -6491,7 +6675,8 @@ pub fn x0040276f() -> Cont {
     // 0040276f mov eax,[ebp-8]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32));
     // 00402772 shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402775 add eax,[ebp-2Ch]
     m.regs.eax = add(
         m.regs.eax,
@@ -6508,7 +6693,8 @@ pub fn x0040276f() -> Cont {
     // 00402784 mov edi,eax
     m.regs.edi = m.regs.eax;
     // 00402786 shr edi,8
-    m.regs.edi = shr(m.regs.edi, 0x8u8);
+    let t = shr(m.regs.edi, 0x8u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00402789 and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 0040278f sub [ebp-4],edi
@@ -6522,9 +6708,11 @@ pub fn x0040276f() -> Cont {
     // 00402792 mov edi,eax
     m.regs.edi = m.regs.eax;
     // 00402794 shr edi,10h
-    m.regs.edi = shr(m.regs.edi, 0x10u8);
+    let t = shr(m.regs.edi, 0x10u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00402797 shr eax,18h
-    m.regs.eax = shr(m.regs.eax, 0x18u8);
+    let t = shr(m.regs.eax, 0x18u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 0040279a and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 004027a0 sub ebx,eax
@@ -6550,7 +6738,8 @@ pub fn x00402772() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00402772 shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402775 add eax,[ebp-2Ch]
     m.regs.eax = add(
         m.regs.eax,
@@ -6567,7 +6756,8 @@ pub fn x00402772() -> Cont {
     // 00402784 mov edi,eax
     m.regs.edi = m.regs.eax;
     // 00402786 shr edi,8
-    m.regs.edi = shr(m.regs.edi, 0x8u8);
+    let t = shr(m.regs.edi, 0x8u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00402789 and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 0040278f sub [ebp-4],edi
@@ -6581,9 +6771,11 @@ pub fn x00402772() -> Cont {
     // 00402792 mov edi,eax
     m.regs.edi = m.regs.eax;
     // 00402794 shr edi,10h
-    m.regs.edi = shr(m.regs.edi, 0x10u8);
+    let t = shr(m.regs.edi, 0x10u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00402797 shr eax,18h
-    m.regs.eax = shr(m.regs.eax, 0x18u8);
+    let t = shr(m.regs.eax, 0x18u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 0040279a and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 004027a0 sub ebx,eax
@@ -6626,7 +6818,8 @@ pub fn x004027b4() -> Cont {
     // 004027c8 add eax,edi
     m.regs.eax = add(m.regs.eax, m.regs.edi);
     // 004027ca shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004027cd add eax,[ebp-2Ch]
     m.regs.eax = add(
         m.regs.eax,
@@ -6657,7 +6850,8 @@ pub fn x004027d4() -> Cont {
     // 004027e8 add eax,edi
     m.regs.eax = add(m.regs.eax, m.regs.edi);
     // 004027ea shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004027ed add eax,[ebp-2Ch]
     m.regs.eax = add(
         m.regs.eax,
@@ -6674,7 +6868,8 @@ pub fn x004027d4() -> Cont {
     // 004027fd mov edi,eax
     m.regs.edi = m.regs.eax;
     // 004027ff shr edi,8
-    m.regs.edi = shr(m.regs.edi, 0x8u8);
+    let t = shr(m.regs.edi, 0x8u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00402802 and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 00402808 add [ebp-4],edi
@@ -6688,9 +6883,11 @@ pub fn x004027d4() -> Cont {
     // 0040280b mov edi,eax
     m.regs.edi = m.regs.eax;
     // 0040280d shr edi,10h
-    m.regs.edi = shr(m.regs.edi, 0x10u8);
+    let t = shr(m.regs.edi, 0x10u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00402810 shr eax,18h
-    m.regs.eax = shr(m.regs.eax, 0x18u8);
+    let t = shr(m.regs.eax, 0x18u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402813 and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 00402819 add ebx,eax
@@ -6706,7 +6903,8 @@ pub fn x004027d4() -> Cont {
     // 00402826 imul edi,ebx
     m.regs.edi = imul(m.regs.edi as i32, m.regs.ebx as i32) as u32;
     // 00402829 sar eax,10h
-    sar();
+    let t = sar(m.regs.eax, 0x10u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 0040282c mov [ebp-1Ch],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xffffffe4u32), m.regs.eax);
@@ -6718,7 +6916,8 @@ pub fn x004027d4() -> Cont {
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff4u32)) as i32,
     ) as u32;
     // 00402836 sar eax,8
-    sar();
+    let t = sar(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402839 and eax,0FF00h
     m.regs.eax = and(m.regs.eax, 0xff00u32);
     // 0040283e mov [ebp-20h],eax
@@ -6729,7 +6928,8 @@ pub fn x004027d4() -> Cont {
     // 00402844 imul eax,edx
     m.regs.eax = imul(m.regs.eax as i32, m.regs.edx as i32) as u32;
     // 00402847 shl edi,8
-    m.regs.edi = shl(m.regs.edi, 0x8u8);
+    let t = shl(m.regs.edi, 0x8u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 0040284a and edi,0FF000000h
     m.regs.edi = and(m.regs.edi, 0xff000000u32);
     // 00402850 mov [ebp-18h],edi
@@ -6767,7 +6967,8 @@ pub fn x004027d4() -> Cont {
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffecu32)),
     );
     // 00402878 shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 0040287b add eax,[ebp-30h]
     m.regs.eax = add(
         m.regs.eax,
@@ -6793,7 +6994,8 @@ pub fn x004027f3() -> Cont {
     // 004027fd mov edi,eax
     m.regs.edi = m.regs.eax;
     // 004027ff shr edi,8
-    m.regs.edi = shr(m.regs.edi, 0x8u8);
+    let t = shr(m.regs.edi, 0x8u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00402802 and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 00402808 add [ebp-4],edi
@@ -6807,9 +7009,11 @@ pub fn x004027f3() -> Cont {
     // 0040280b mov edi,eax
     m.regs.edi = m.regs.eax;
     // 0040280d shr edi,10h
-    m.regs.edi = shr(m.regs.edi, 0x10u8);
+    let t = shr(m.regs.edi, 0x10u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00402810 shr eax,18h
-    m.regs.eax = shr(m.regs.eax, 0x18u8);
+    let t = shr(m.regs.eax, 0x18u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402813 and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 00402819 add ebx,eax
@@ -6825,7 +7029,8 @@ pub fn x004027f3() -> Cont {
     // 00402826 imul edi,ebx
     m.regs.edi = imul(m.regs.edi as i32, m.regs.ebx as i32) as u32;
     // 00402829 sar eax,10h
-    sar();
+    let t = sar(m.regs.eax, 0x10u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 0040282c mov [ebp-1Ch],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xffffffe4u32), m.regs.eax);
@@ -6837,7 +7042,8 @@ pub fn x004027f3() -> Cont {
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff4u32)) as i32,
     ) as u32;
     // 00402836 sar eax,8
-    sar();
+    let t = sar(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402839 and eax,0FF00h
     m.regs.eax = and(m.regs.eax, 0xff00u32);
     // 0040283e mov [ebp-20h],eax
@@ -6848,7 +7054,8 @@ pub fn x004027f3() -> Cont {
     // 00402844 imul eax,edx
     m.regs.eax = imul(m.regs.eax as i32, m.regs.edx as i32) as u32;
     // 00402847 shl edi,8
-    m.regs.edi = shl(m.regs.edi, 0x8u8);
+    let t = shl(m.regs.edi, 0x8u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 0040284a and edi,0FF000000h
     m.regs.edi = and(m.regs.edi, 0xff000000u32);
     // 00402850 mov [ebp-18h],edi
@@ -6886,7 +7093,8 @@ pub fn x004027f3() -> Cont {
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffecu32)),
     );
     // 00402878 shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 0040287b add eax,[ebp-30h]
     m.regs.eax = add(
         m.regs.eax,
@@ -6962,7 +7170,8 @@ pub fn x004028a2() -> Cont {
     // 004028b1 mov edi,ebx
     m.regs.edi = m.regs.ebx;
     // 004028b3 shl ecx,2
-    m.regs.ecx = shl(m.regs.ecx, 0x2u8);
+    let t = shl(m.regs.ecx, 0x2u8, &mut m.regs.flags);
+    m.regs.ecx = t;
     // 004028b6 rep movsb
     rep(m, Rep::REP, movsb);
     // 004028b8 leave
@@ -7083,7 +7292,8 @@ pub fn x0040290f() -> Cont {
     // 0040290f mov eax,[ebp-8]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32));
     // 00402912 shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402915 add eax,[ebp-2Ch]
     m.regs.eax = add(
         m.regs.eax,
@@ -7100,7 +7310,8 @@ pub fn x0040290f() -> Cont {
     // 00402924 mov edi,eax
     m.regs.edi = m.regs.eax;
     // 00402926 shr edi,8
-    m.regs.edi = shr(m.regs.edi, 0x8u8);
+    let t = shr(m.regs.edi, 0x8u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00402929 and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 0040292f add [ebp-4],edi
@@ -7116,9 +7327,11 @@ pub fn x0040290f() -> Cont {
     // 00402934 inc edx
     m.regs.edx = inc(m.regs.edx);
     // 00402935 shr edi,10h
-    m.regs.edi = shr(m.regs.edi, 0x10u8);
+    let t = shr(m.regs.edi, 0x10u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00402938 shr eax,18h
-    m.regs.eax = shr(m.regs.eax, 0x18u8);
+    let t = shr(m.regs.eax, 0x18u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 0040293b and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 00402941 add esi,eax
@@ -7133,7 +7346,8 @@ pub fn x00402912() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00402912 shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402915 add eax,[ebp-2Ch]
     m.regs.eax = add(
         m.regs.eax,
@@ -7150,7 +7364,8 @@ pub fn x00402912() -> Cont {
     // 00402924 mov edi,eax
     m.regs.edi = m.regs.eax;
     // 00402926 shr edi,8
-    m.regs.edi = shr(m.regs.edi, 0x8u8);
+    let t = shr(m.regs.edi, 0x8u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00402929 and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 0040292f add [ebp-4],edi
@@ -7166,9 +7381,11 @@ pub fn x00402912() -> Cont {
     // 00402934 inc edx
     m.regs.edx = inc(m.regs.edx);
     // 00402935 shr edi,10h
-    m.regs.edi = shr(m.regs.edi, 0x10u8);
+    let t = shr(m.regs.edi, 0x10u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00402938 shr eax,18h
-    m.regs.eax = shr(m.regs.eax, 0x18u8);
+    let t = shr(m.regs.eax, 0x18u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 0040293b and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 00402941 add esi,eax
@@ -7185,7 +7402,8 @@ pub fn x00402947() -> Cont {
     // 00402947 mov eax,[ebp-10h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff0u32));
     // 0040294a shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 0040294d add eax,[ebp-2Ch]
     m.regs.eax = add(
         m.regs.eax,
@@ -7207,7 +7425,8 @@ pub fn x00402947() -> Cont {
     // 00402960 mov edx,eax
     m.regs.edx = m.regs.eax;
     // 00402962 shr edx,8
-    m.regs.edx = shr(m.regs.edx, 0x8u8);
+    let t = shr(m.regs.edx, 0x8u8, &mut m.regs.flags);
+    m.regs.edx = t;
     // 00402965 and edx,0FFh
     m.regs.edx = and(m.regs.edx, 0xffu32);
     // 0040296b imul edx,[ebp-28h]
@@ -7226,14 +7445,16 @@ pub fn x00402947() -> Cont {
     // 00402972 mov edx,eax
     m.regs.edx = m.regs.eax;
     // 00402974 shr eax,18h
-    m.regs.eax = shr(m.regs.eax, 0x18u8);
+    let t = shr(m.regs.eax, 0x18u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402977 imul eax,[ebp-28h]
     m.regs.eax = imul(
         m.regs.eax as i32,
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffd8u32)) as i32,
     ) as u32;
     // 0040297b shr edx,10h
-    m.regs.edx = shr(m.regs.edx, 0x10u8);
+    let t = shr(m.regs.edx, 0x10u8, &mut m.regs.flags);
+    m.regs.edx = t;
     // 0040297e and edx,0FFh
     m.regs.edx = and(m.regs.edx, 0xffu32);
     // 00402984 imul edx,[ebp-28h]
@@ -7312,7 +7533,8 @@ pub fn x004029b6() -> Cont {
     // 004029b6 mov eax,[ebp-10h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff0u32));
     // 004029b9 shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004029bc add eax,[ebp-2Ch]
     m.regs.eax = add(
         m.regs.eax,
@@ -7329,7 +7551,8 @@ pub fn x004029b6() -> Cont {
     // 004029cb mov edi,eax
     m.regs.edi = m.regs.eax;
     // 004029cd shr edi,8
-    m.regs.edi = shr(m.regs.edi, 0x8u8);
+    let t = shr(m.regs.edi, 0x8u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 004029d0 and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 004029d6 sub [ebp-4],edi
@@ -7343,9 +7566,11 @@ pub fn x004029b6() -> Cont {
     // 004029d9 mov edi,eax
     m.regs.edi = m.regs.eax;
     // 004029db shr edi,10h
-    m.regs.edi = shr(m.regs.edi, 0x10u8);
+    let t = shr(m.regs.edi, 0x10u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 004029de shr eax,18h
-    m.regs.eax = shr(m.regs.eax, 0x18u8);
+    let t = shr(m.regs.eax, 0x18u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004029e1 and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 004029e7 sub esi,eax
@@ -7371,7 +7596,8 @@ pub fn x004029b9() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004029b9 shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004029bc add eax,[ebp-2Ch]
     m.regs.eax = add(
         m.regs.eax,
@@ -7388,7 +7614,8 @@ pub fn x004029b9() -> Cont {
     // 004029cb mov edi,eax
     m.regs.edi = m.regs.eax;
     // 004029cd shr edi,8
-    m.regs.edi = shr(m.regs.edi, 0x8u8);
+    let t = shr(m.regs.edi, 0x8u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 004029d0 and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 004029d6 sub [ebp-4],edi
@@ -7402,9 +7629,11 @@ pub fn x004029b9() -> Cont {
     // 004029d9 mov edi,eax
     m.regs.edi = m.regs.eax;
     // 004029db shr edi,10h
-    m.regs.edi = shr(m.regs.edi, 0x10u8);
+    let t = shr(m.regs.edi, 0x10u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 004029de shr eax,18h
-    m.regs.eax = shr(m.regs.eax, 0x18u8);
+    let t = shr(m.regs.eax, 0x18u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004029e1 and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 004029e7 sub esi,eax
@@ -7447,7 +7676,8 @@ pub fn x00402a07() -> Cont {
     // 00402a07 mov eax,[ebp-8]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32));
     // 00402a0a shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402a0d add eax,[ebp-2Ch]
     m.regs.eax = add(
         m.regs.eax,
@@ -7464,7 +7694,8 @@ pub fn x00402a07() -> Cont {
     // 00402a1c mov edi,eax
     m.regs.edi = m.regs.eax;
     // 00402a1e shr edi,8
-    m.regs.edi = shr(m.regs.edi, 0x8u8);
+    let t = shr(m.regs.edi, 0x8u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00402a21 and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 00402a27 add [ebp-4],edi
@@ -7478,9 +7709,11 @@ pub fn x00402a07() -> Cont {
     // 00402a2a mov edi,eax
     m.regs.edi = m.regs.eax;
     // 00402a2c shr edi,10h
-    m.regs.edi = shr(m.regs.edi, 0x10u8);
+    let t = shr(m.regs.edi, 0x10u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00402a2f shr eax,18h
-    m.regs.eax = shr(m.regs.eax, 0x18u8);
+    let t = shr(m.regs.eax, 0x18u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402a32 and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 00402a38 add esi,eax
@@ -7492,7 +7725,8 @@ pub fn x00402a07() -> Cont {
     // 00402a3f imul eax,ebx
     m.regs.eax = imul(m.regs.eax as i32, m.regs.ebx as i32) as u32;
     // 00402a42 sar eax,10h
-    sar();
+    let t = sar(m.regs.eax, 0x10u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402a45 mov [ebp-1Ch],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xffffffe4u32), m.regs.eax);
@@ -7504,7 +7738,8 @@ pub fn x00402a07() -> Cont {
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff4u32)) as i32,
     ) as u32;
     // 00402a4f sar eax,8
-    sar();
+    let t = sar(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402a52 and eax,0FF00h
     m.regs.eax = and(m.regs.eax, 0xff00u32);
     // 00402a57 mov [ebp-20h],eax
@@ -7524,7 +7759,8 @@ pub fn x00402a07() -> Cont {
     // 00402a6b imul eax,esi
     m.regs.eax = imul(m.regs.eax as i32, m.regs.esi as i32) as u32;
     // 00402a6e shl eax,8
-    m.regs.eax = shl(m.regs.eax, 0x8u8);
+    let t = shl(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402a71 and eax,0FF000000h
     m.regs.eax = and(m.regs.eax, 0xff000000u32);
     // 00402a76 mov [ebp-18h],eax
@@ -7555,7 +7791,8 @@ pub fn x00402a07() -> Cont {
     // 00402a93 add eax,edx
     m.regs.eax = add(m.regs.eax, m.regs.edx);
     // 00402a95 shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402a98 add eax,[ebp-30h]
     m.regs.eax = add(
         m.regs.eax,
@@ -7573,7 +7810,8 @@ pub fn x00402a0a() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00402a0a shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402a0d add eax,[ebp-2Ch]
     m.regs.eax = add(
         m.regs.eax,
@@ -7590,7 +7828,8 @@ pub fn x00402a0a() -> Cont {
     // 00402a1c mov edi,eax
     m.regs.edi = m.regs.eax;
     // 00402a1e shr edi,8
-    m.regs.edi = shr(m.regs.edi, 0x8u8);
+    let t = shr(m.regs.edi, 0x8u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00402a21 and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 00402a27 add [ebp-4],edi
@@ -7604,9 +7843,11 @@ pub fn x00402a0a() -> Cont {
     // 00402a2a mov edi,eax
     m.regs.edi = m.regs.eax;
     // 00402a2c shr edi,10h
-    m.regs.edi = shr(m.regs.edi, 0x10u8);
+    let t = shr(m.regs.edi, 0x10u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00402a2f shr eax,18h
-    m.regs.eax = shr(m.regs.eax, 0x18u8);
+    let t = shr(m.regs.eax, 0x18u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402a32 and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 00402a38 add esi,eax
@@ -7618,7 +7859,8 @@ pub fn x00402a0a() -> Cont {
     // 00402a3f imul eax,ebx
     m.regs.eax = imul(m.regs.eax as i32, m.regs.ebx as i32) as u32;
     // 00402a42 sar eax,10h
-    sar();
+    let t = sar(m.regs.eax, 0x10u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402a45 mov [ebp-1Ch],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xffffffe4u32), m.regs.eax);
@@ -7630,7 +7872,8 @@ pub fn x00402a0a() -> Cont {
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff4u32)) as i32,
     ) as u32;
     // 00402a4f sar eax,8
-    sar();
+    let t = sar(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402a52 and eax,0FF00h
     m.regs.eax = and(m.regs.eax, 0xff00u32);
     // 00402a57 mov [ebp-20h],eax
@@ -7650,7 +7893,8 @@ pub fn x00402a0a() -> Cont {
     // 00402a6b imul eax,esi
     m.regs.eax = imul(m.regs.eax as i32, m.regs.esi as i32) as u32;
     // 00402a6e shl eax,8
-    m.regs.eax = shl(m.regs.eax, 0x8u8);
+    let t = shl(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402a71 and eax,0FF000000h
     m.regs.eax = and(m.regs.eax, 0xff000000u32);
     // 00402a76 mov [ebp-18h],eax
@@ -7681,7 +7925,8 @@ pub fn x00402a0a() -> Cont {
     // 00402a93 add eax,edx
     m.regs.eax = add(m.regs.eax, m.regs.edx);
     // 00402a95 shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402a98 add eax,[ebp-30h]
     m.regs.eax = add(
         m.regs.eax,
@@ -7819,7 +8064,8 @@ pub fn x00402aed() -> Cont {
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffecu32)),
     );
     // 00402b08 shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402b0b add eax,[ebp-2Ch]
     m.regs.eax = add(
         m.regs.eax,
@@ -7836,7 +8082,8 @@ pub fn x00402aed() -> Cont {
     // 00402b1a mov edi,eax
     m.regs.edi = m.regs.eax;
     // 00402b1c shr edi,8
-    m.regs.edi = shr(m.regs.edi, 0x8u8);
+    let t = shr(m.regs.edi, 0x8u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00402b1f and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 00402b25 add [ebp-4],edi
@@ -7855,9 +8102,11 @@ pub fn x00402aed() -> Cont {
         inc(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32))),
     );
     // 00402b2d shr edi,10h
-    m.regs.edi = shr(m.regs.edi, 0x10u8);
+    let t = shr(m.regs.edi, 0x10u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00402b30 shr eax,18h
-    m.regs.eax = shr(m.regs.eax, 0x18u8);
+    let t = shr(m.regs.eax, 0x18u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402b33 and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 00402b39 add esi,eax
@@ -7877,7 +8126,8 @@ pub fn x00402b05() -> Cont {
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffecu32)),
     );
     // 00402b08 shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402b0b add eax,[ebp-2Ch]
     m.regs.eax = add(
         m.regs.eax,
@@ -7894,7 +8144,8 @@ pub fn x00402b05() -> Cont {
     // 00402b1a mov edi,eax
     m.regs.edi = m.regs.eax;
     // 00402b1c shr edi,8
-    m.regs.edi = shr(m.regs.edi, 0x8u8);
+    let t = shr(m.regs.edi, 0x8u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00402b1f and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 00402b25 add [ebp-4],edi
@@ -7913,9 +8164,11 @@ pub fn x00402b05() -> Cont {
         inc(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32))),
     );
     // 00402b2d shr edi,10h
-    m.regs.edi = shr(m.regs.edi, 0x10u8);
+    let t = shr(m.regs.edi, 0x10u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00402b30 shr eax,18h
-    m.regs.eax = shr(m.regs.eax, 0x18u8);
+    let t = shr(m.regs.eax, 0x18u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402b33 and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 00402b39 add esi,eax
@@ -7932,7 +8185,8 @@ pub fn x00402b3f() -> Cont {
     // 00402b3f mov eax,edx
     m.regs.eax = m.regs.edx;
     // 00402b41 shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402b44 add eax,[ebp-2Ch]
     m.regs.eax = add(
         m.regs.eax,
@@ -7954,7 +8208,8 @@ pub fn x00402b3f() -> Cont {
     // 00402b57 mov edi,eax
     m.regs.edi = m.regs.eax;
     // 00402b59 shr edi,8
-    m.regs.edi = shr(m.regs.edi, 0x8u8);
+    let t = shr(m.regs.edi, 0x8u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00402b5c and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 00402b62 imul edi,[ebp-28h]
@@ -7973,14 +8228,16 @@ pub fn x00402b3f() -> Cont {
     // 00402b69 mov edi,eax
     m.regs.edi = m.regs.eax;
     // 00402b6b shr eax,18h
-    m.regs.eax = shr(m.regs.eax, 0x18u8);
+    let t = shr(m.regs.eax, 0x18u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402b6e imul eax,[ebp-28h]
     m.regs.eax = imul(
         m.regs.eax as i32,
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffd8u32)) as i32,
     ) as u32;
     // 00402b72 shr edi,10h
-    m.regs.edi = shr(m.regs.edi, 0x10u8);
+    let t = shr(m.regs.edi, 0x10u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00402b75 and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 00402b7b imul edi,[ebp-28h]
@@ -8057,7 +8314,8 @@ pub fn x00402bb3() -> Cont {
     // 00402bb3 mov eax,edx
     m.regs.eax = m.regs.edx;
     // 00402bb5 shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402bb8 add eax,[ebp-2Ch]
     m.regs.eax = add(
         m.regs.eax,
@@ -8074,7 +8332,8 @@ pub fn x00402bb3() -> Cont {
     // 00402bc7 mov edi,eax
     m.regs.edi = m.regs.eax;
     // 00402bc9 shr edi,8
-    m.regs.edi = shr(m.regs.edi, 0x8u8);
+    let t = shr(m.regs.edi, 0x8u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00402bcc and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 00402bd2 sub [ebp-4],edi
@@ -8088,9 +8347,11 @@ pub fn x00402bb3() -> Cont {
     // 00402bd5 mov edi,eax
     m.regs.edi = m.regs.eax;
     // 00402bd7 shr edi,10h
-    m.regs.edi = shr(m.regs.edi, 0x10u8);
+    let t = shr(m.regs.edi, 0x10u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00402bda shr eax,18h
-    m.regs.eax = shr(m.regs.eax, 0x18u8);
+    let t = shr(m.regs.eax, 0x18u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402bdd and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 00402be3 sub esi,eax
@@ -8114,7 +8375,8 @@ pub fn x00402bb5() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00402bb5 shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402bb8 add eax,[ebp-2Ch]
     m.regs.eax = add(
         m.regs.eax,
@@ -8131,7 +8393,8 @@ pub fn x00402bb5() -> Cont {
     // 00402bc7 mov edi,eax
     m.regs.edi = m.regs.eax;
     // 00402bc9 shr edi,8
-    m.regs.edi = shr(m.regs.edi, 0x8u8);
+    let t = shr(m.regs.edi, 0x8u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00402bcc and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 00402bd2 sub [ebp-4],edi
@@ -8145,9 +8408,11 @@ pub fn x00402bb5() -> Cont {
     // 00402bd5 mov edi,eax
     m.regs.edi = m.regs.eax;
     // 00402bd7 shr edi,10h
-    m.regs.edi = shr(m.regs.edi, 0x10u8);
+    let t = shr(m.regs.edi, 0x10u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00402bda shr eax,18h
-    m.regs.eax = shr(m.regs.eax, 0x18u8);
+    let t = shr(m.regs.eax, 0x18u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402bdd and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 00402be3 sub esi,eax
@@ -8214,7 +8479,8 @@ pub fn x00402c08() -> Cont {
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffecu32)),
     );
     // 00402c23 shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402c26 add eax,[ebp-2Ch]
     m.regs.eax = add(
         m.regs.eax,
@@ -8231,7 +8497,8 @@ pub fn x00402c08() -> Cont {
     // 00402c35 mov edi,eax
     m.regs.edi = m.regs.eax;
     // 00402c37 shr edi,8
-    m.regs.edi = shr(m.regs.edi, 0x8u8);
+    let t = shr(m.regs.edi, 0x8u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00402c3a and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 00402c40 add [ebp-4],edi
@@ -8245,9 +8512,11 @@ pub fn x00402c08() -> Cont {
     // 00402c43 mov edi,eax
     m.regs.edi = m.regs.eax;
     // 00402c45 shr edi,10h
-    m.regs.edi = shr(m.regs.edi, 0x10u8);
+    let t = shr(m.regs.edi, 0x10u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00402c48 shr eax,18h
-    m.regs.eax = shr(m.regs.eax, 0x18u8);
+    let t = shr(m.regs.eax, 0x18u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402c4b and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 00402c51 add esi,eax
@@ -8259,7 +8528,8 @@ pub fn x00402c08() -> Cont {
     // 00402c58 imul eax,ebx
     m.regs.eax = imul(m.regs.eax as i32, m.regs.ebx as i32) as u32;
     // 00402c5b sar eax,10h
-    sar();
+    let t = sar(m.regs.eax, 0x10u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402c5e mov [ebp-1Ch],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xffffffe4u32), m.regs.eax);
@@ -8271,7 +8541,8 @@ pub fn x00402c08() -> Cont {
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff4u32)) as i32,
     ) as u32;
     // 00402c68 sar eax,8
-    sar();
+    let t = sar(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402c6b and eax,0FF00h
     m.regs.eax = and(m.regs.eax, 0xff00u32);
     // 00402c70 mov [ebp-20h],eax
@@ -8291,7 +8562,8 @@ pub fn x00402c08() -> Cont {
     // 00402c84 imul eax,esi
     m.regs.eax = imul(m.regs.eax as i32, m.regs.esi as i32) as u32;
     // 00402c87 shl eax,8
-    m.regs.eax = shl(m.regs.eax, 0x8u8);
+    let t = shl(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402c8a and eax,0FF000000h
     m.regs.eax = and(m.regs.eax, 0xff000000u32);
     // 00402c8f mov [ebp-18h],eax
@@ -8333,7 +8605,8 @@ pub fn x00402c08() -> Cont {
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffecu32)),
     );
     // 00402cb5 shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402cb8 add eax,[ebp-30h]
     m.regs.eax = add(
         m.regs.eax,
@@ -8354,7 +8627,8 @@ pub fn x00402c23() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00402c23 shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402c26 add eax,[ebp-2Ch]
     m.regs.eax = add(
         m.regs.eax,
@@ -8371,7 +8645,8 @@ pub fn x00402c23() -> Cont {
     // 00402c35 mov edi,eax
     m.regs.edi = m.regs.eax;
     // 00402c37 shr edi,8
-    m.regs.edi = shr(m.regs.edi, 0x8u8);
+    let t = shr(m.regs.edi, 0x8u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00402c3a and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 00402c40 add [ebp-4],edi
@@ -8385,9 +8660,11 @@ pub fn x00402c23() -> Cont {
     // 00402c43 mov edi,eax
     m.regs.edi = m.regs.eax;
     // 00402c45 shr edi,10h
-    m.regs.edi = shr(m.regs.edi, 0x10u8);
+    let t = shr(m.regs.edi, 0x10u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00402c48 shr eax,18h
-    m.regs.eax = shr(m.regs.eax, 0x18u8);
+    let t = shr(m.regs.eax, 0x18u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402c4b and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 00402c51 add esi,eax
@@ -8399,7 +8676,8 @@ pub fn x00402c23() -> Cont {
     // 00402c58 imul eax,ebx
     m.regs.eax = imul(m.regs.eax as i32, m.regs.ebx as i32) as u32;
     // 00402c5b sar eax,10h
-    sar();
+    let t = sar(m.regs.eax, 0x10u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402c5e mov [ebp-1Ch],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xffffffe4u32), m.regs.eax);
@@ -8411,7 +8689,8 @@ pub fn x00402c23() -> Cont {
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff4u32)) as i32,
     ) as u32;
     // 00402c68 sar eax,8
-    sar();
+    let t = sar(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402c6b and eax,0FF00h
     m.regs.eax = and(m.regs.eax, 0xff00u32);
     // 00402c70 mov [ebp-20h],eax
@@ -8431,7 +8710,8 @@ pub fn x00402c23() -> Cont {
     // 00402c84 imul eax,esi
     m.regs.eax = imul(m.regs.eax as i32, m.regs.esi as i32) as u32;
     // 00402c87 shl eax,8
-    m.regs.eax = shl(m.regs.eax, 0x8u8);
+    let t = shl(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402c8a and eax,0FF000000h
     m.regs.eax = and(m.regs.eax, 0xff000000u32);
     // 00402c8f mov [ebp-18h],eax
@@ -8473,7 +8753,8 @@ pub fn x00402c23() -> Cont {
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffecu32)),
     );
     // 00402cb5 shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402cb8 add eax,[ebp-30h]
     m.regs.eax = add(
         m.regs.eax,
@@ -8604,7 +8885,8 @@ pub fn x00402d22() -> Cont {
     // 00402d25 add eax,ds:[40C724h]
     m.regs.eax = add(m.regs.eax, m.memory.read::<u32>(0x40c724u32));
     // 00402d2b shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402d2e add eax,[ebp-2Ch]
     m.regs.eax = add(
         m.regs.eax,
@@ -8621,7 +8903,8 @@ pub fn x00402d22() -> Cont {
     // 00402d3e mov edi,eax
     m.regs.edi = m.regs.eax;
     // 00402d40 shr edi,8
-    m.regs.edi = shr(m.regs.edi, 0x8u8);
+    let t = shr(m.regs.edi, 0x8u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00402d43 and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 00402d49 add [ebp-4],edi
@@ -8637,9 +8920,11 @@ pub fn x00402d22() -> Cont {
     // 00402d4e inc edx
     m.regs.edx = inc(m.regs.edx);
     // 00402d4f shr edi,10h
-    m.regs.edi = shr(m.regs.edi, 0x10u8);
+    let t = shr(m.regs.edi, 0x10u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00402d52 shr eax,18h
-    m.regs.eax = shr(m.regs.eax, 0x18u8);
+    let t = shr(m.regs.eax, 0x18u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402d55 and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 00402d5b add esi,eax
@@ -8654,7 +8939,8 @@ pub fn x00402d2b() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00402d2b shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402d2e add eax,[ebp-2Ch]
     m.regs.eax = add(
         m.regs.eax,
@@ -8671,7 +8957,8 @@ pub fn x00402d2b() -> Cont {
     // 00402d3e mov edi,eax
     m.regs.edi = m.regs.eax;
     // 00402d40 shr edi,8
-    m.regs.edi = shr(m.regs.edi, 0x8u8);
+    let t = shr(m.regs.edi, 0x8u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00402d43 and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 00402d49 add [ebp-4],edi
@@ -8687,9 +8974,11 @@ pub fn x00402d2b() -> Cont {
     // 00402d4e inc edx
     m.regs.edx = inc(m.regs.edx);
     // 00402d4f shr edi,10h
-    m.regs.edi = shr(m.regs.edi, 0x10u8);
+    let t = shr(m.regs.edi, 0x10u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00402d52 shr eax,18h
-    m.regs.eax = shr(m.regs.eax, 0x18u8);
+    let t = shr(m.regs.eax, 0x18u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402d55 and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 00402d5b add esi,eax
@@ -8706,7 +8995,8 @@ pub fn x00402d61() -> Cont {
     // 00402d61 mov eax,[ebp-10h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff0u32));
     // 00402d64 shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402d67 add eax,[ebp-2Ch]
     m.regs.eax = add(
         m.regs.eax,
@@ -8728,7 +9018,8 @@ pub fn x00402d61() -> Cont {
     // 00402d7a mov edx,eax
     m.regs.edx = m.regs.eax;
     // 00402d7c shr edx,8
-    m.regs.edx = shr(m.regs.edx, 0x8u8);
+    let t = shr(m.regs.edx, 0x8u8, &mut m.regs.flags);
+    m.regs.edx = t;
     // 00402d7f and edx,0FFh
     m.regs.edx = and(m.regs.edx, 0xffu32);
     // 00402d85 imul edx,[ebp-28h]
@@ -8747,14 +9038,16 @@ pub fn x00402d61() -> Cont {
     // 00402d8c mov edx,eax
     m.regs.edx = m.regs.eax;
     // 00402d8e shr eax,18h
-    m.regs.eax = shr(m.regs.eax, 0x18u8);
+    let t = shr(m.regs.eax, 0x18u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402d91 imul eax,[ebp-28h]
     m.regs.eax = imul(
         m.regs.eax as i32,
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffd8u32)) as i32,
     ) as u32;
     // 00402d95 shr edx,10h
-    m.regs.edx = shr(m.regs.edx, 0x10u8);
+    let t = shr(m.regs.edx, 0x10u8, &mut m.regs.flags);
+    m.regs.edx = t;
     // 00402d98 and edx,0FFh
     m.regs.edx = and(m.regs.edx, 0xffu32);
     // 00402d9e imul edx,[ebp-28h]
@@ -8852,7 +9145,8 @@ pub fn x00402de1() -> Cont {
     // 00402de1 mov eax,[ebp-10h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff0u32));
     // 00402de4 shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402de7 add eax,[ebp-2Ch]
     m.regs.eax = add(
         m.regs.eax,
@@ -8869,7 +9163,8 @@ pub fn x00402de1() -> Cont {
     // 00402df6 mov edi,eax
     m.regs.edi = m.regs.eax;
     // 00402df8 shr edi,8
-    m.regs.edi = shr(m.regs.edi, 0x8u8);
+    let t = shr(m.regs.edi, 0x8u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00402dfb and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 00402e01 sub [ebp-4],edi
@@ -8883,9 +9178,11 @@ pub fn x00402de1() -> Cont {
     // 00402e04 mov edi,eax
     m.regs.edi = m.regs.eax;
     // 00402e06 shr edi,10h
-    m.regs.edi = shr(m.regs.edi, 0x10u8);
+    let t = shr(m.regs.edi, 0x10u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00402e09 shr eax,18h
-    m.regs.eax = shr(m.regs.eax, 0x18u8);
+    let t = shr(m.regs.eax, 0x18u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402e0c and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 00402e12 sub esi,eax
@@ -8911,7 +9208,8 @@ pub fn x00402de4() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00402de4 shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402de7 add eax,[ebp-2Ch]
     m.regs.eax = add(
         m.regs.eax,
@@ -8928,7 +9226,8 @@ pub fn x00402de4() -> Cont {
     // 00402df6 mov edi,eax
     m.regs.edi = m.regs.eax;
     // 00402df8 shr edi,8
-    m.regs.edi = shr(m.regs.edi, 0x8u8);
+    let t = shr(m.regs.edi, 0x8u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00402dfb and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 00402e01 sub [ebp-4],edi
@@ -8942,9 +9241,11 @@ pub fn x00402de4() -> Cont {
     // 00402e04 mov edi,eax
     m.regs.edi = m.regs.eax;
     // 00402e06 shr edi,10h
-    m.regs.edi = shr(m.regs.edi, 0x10u8);
+    let t = shr(m.regs.edi, 0x10u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00402e09 shr eax,18h
-    m.regs.eax = shr(m.regs.eax, 0x18u8);
+    let t = shr(m.regs.eax, 0x18u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402e0c and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 00402e12 sub esi,eax
@@ -9005,7 +9306,8 @@ pub fn x00402e3e() -> Cont {
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32)),
     );
     // 00402e4e shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402e51 add eax,[ebp-2Ch]
     m.regs.eax = add(
         m.regs.eax,
@@ -9022,7 +9324,8 @@ pub fn x00402e3e() -> Cont {
     // 00402e60 mov edi,eax
     m.regs.edi = m.regs.eax;
     // 00402e62 shr edi,8
-    m.regs.edi = shr(m.regs.edi, 0x8u8);
+    let t = shr(m.regs.edi, 0x8u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00402e65 and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 00402e6b add [ebp-4],edi
@@ -9036,9 +9339,11 @@ pub fn x00402e3e() -> Cont {
     // 00402e6e mov edi,eax
     m.regs.edi = m.regs.eax;
     // 00402e70 shr edi,10h
-    m.regs.edi = shr(m.regs.edi, 0x10u8);
+    let t = shr(m.regs.edi, 0x10u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00402e73 shr eax,18h
-    m.regs.eax = shr(m.regs.eax, 0x18u8);
+    let t = shr(m.regs.eax, 0x18u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402e76 and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 00402e7c add esi,eax
@@ -9050,7 +9355,8 @@ pub fn x00402e3e() -> Cont {
     // 00402e83 imul eax,ebx
     m.regs.eax = imul(m.regs.eax as i32, m.regs.ebx as i32) as u32;
     // 00402e86 sar eax,10h
-    sar();
+    let t = sar(m.regs.eax, 0x10u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402e89 mov [ebp-1Ch],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xffffffe4u32), m.regs.eax);
@@ -9062,7 +9368,8 @@ pub fn x00402e3e() -> Cont {
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff4u32)) as i32,
     ) as u32;
     // 00402e93 sar eax,8
-    sar();
+    let t = sar(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402e96 and eax,0FF00h
     m.regs.eax = and(m.regs.eax, 0xff00u32);
     // 00402e9b mov [ebp-20h],eax
@@ -9082,7 +9389,8 @@ pub fn x00402e3e() -> Cont {
     // 00402eaf imul eax,esi
     m.regs.eax = imul(m.regs.eax as i32, m.regs.esi as i32) as u32;
     // 00402eb2 shl eax,8
-    m.regs.eax = shl(m.regs.eax, 0x8u8);
+    let t = shl(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402eb5 and eax,0FF000000h
     m.regs.eax = and(m.regs.eax, 0xff000000u32);
     // 00402eba mov [ebp-18h],eax
@@ -9120,7 +9428,8 @@ pub fn x00402e3e() -> Cont {
     // 00402ee2 add eax,edi
     m.regs.eax = add(m.regs.eax, m.regs.edi);
     // 00402ee4 shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402ee7 add eax,[ebp-30h]
     m.regs.eax = add(
         m.regs.eax,
@@ -9141,7 +9450,8 @@ pub fn x00402e4e() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00402e4e shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402e51 add eax,[ebp-2Ch]
     m.regs.eax = add(
         m.regs.eax,
@@ -9158,7 +9468,8 @@ pub fn x00402e4e() -> Cont {
     // 00402e60 mov edi,eax
     m.regs.edi = m.regs.eax;
     // 00402e62 shr edi,8
-    m.regs.edi = shr(m.regs.edi, 0x8u8);
+    let t = shr(m.regs.edi, 0x8u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00402e65 and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 00402e6b add [ebp-4],edi
@@ -9172,9 +9483,11 @@ pub fn x00402e4e() -> Cont {
     // 00402e6e mov edi,eax
     m.regs.edi = m.regs.eax;
     // 00402e70 shr edi,10h
-    m.regs.edi = shr(m.regs.edi, 0x10u8);
+    let t = shr(m.regs.edi, 0x10u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00402e73 shr eax,18h
-    m.regs.eax = shr(m.regs.eax, 0x18u8);
+    let t = shr(m.regs.eax, 0x18u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402e76 and edi,0FFh
     m.regs.edi = and(m.regs.edi, 0xffu32);
     // 00402e7c add esi,eax
@@ -9186,7 +9499,8 @@ pub fn x00402e4e() -> Cont {
     // 00402e83 imul eax,ebx
     m.regs.eax = imul(m.regs.eax as i32, m.regs.ebx as i32) as u32;
     // 00402e86 sar eax,10h
-    sar();
+    let t = sar(m.regs.eax, 0x10u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402e89 mov [ebp-1Ch],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xffffffe4u32), m.regs.eax);
@@ -9198,7 +9512,8 @@ pub fn x00402e4e() -> Cont {
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff4u32)) as i32,
     ) as u32;
     // 00402e93 sar eax,8
-    sar();
+    let t = sar(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402e96 and eax,0FF00h
     m.regs.eax = and(m.regs.eax, 0xff00u32);
     // 00402e9b mov [ebp-20h],eax
@@ -9218,7 +9533,8 @@ pub fn x00402e4e() -> Cont {
     // 00402eaf imul eax,esi
     m.regs.eax = imul(m.regs.eax as i32, m.regs.esi as i32) as u32;
     // 00402eb2 shl eax,8
-    m.regs.eax = shl(m.regs.eax, 0x8u8);
+    let t = shl(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402eb5 and eax,0FF000000h
     m.regs.eax = and(m.regs.eax, 0xff000000u32);
     // 00402eba mov [ebp-18h],eax
@@ -9256,7 +9572,8 @@ pub fn x00402e4e() -> Cont {
     // 00402ee2 add eax,edi
     m.regs.eax = add(m.regs.eax, m.regs.edi);
     // 00402ee4 shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00402ee7 add eax,[ebp-30h]
     m.regs.eax = add(
         m.regs.eax,
@@ -9351,14 +9668,16 @@ pub fn x00402f1e() -> Cont {
     // 00402f2a mov edx,ebx
     m.regs.edx = m.regs.ebx;
     // 00402f2c shl edx,10h
-    m.regs.edx = shl(m.regs.edx, 0x10u8);
+    let t = shl(m.regs.edx, 0x10u8, &mut m.regs.flags);
+    m.regs.edx = t;
     // 00402f2f mov [ebp-8],edx
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32), m.regs.edx);
     // 00402f32 mov edx,ebx
     m.regs.edx = m.regs.ebx;
     // 00402f34 shl edx,8
-    m.regs.edx = shl(m.regs.edx, 0x8u8);
+    let t = shl(m.regs.edx, 0x8u8, &mut m.regs.flags);
+    m.regs.edx = t;
     // 00402f37 add edx,[ebp-8]
     m.regs.edx = add(
         m.regs.edx,
@@ -9369,14 +9688,16 @@ pub fn x00402f1e() -> Cont {
     // 00402f3c mov edx,ecx
     m.regs.edx = m.regs.ecx;
     // 00402f3e shl edx,10h
-    m.regs.edx = shl(m.regs.edx, 0x10u8);
+    let t = shl(m.regs.edx, 0x10u8, &mut m.regs.flags);
+    m.regs.edx = t;
     // 00402f41 mov [ebp-8],edx
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32), m.regs.edx);
     // 00402f44 mov edx,ecx
     m.regs.edx = m.regs.ecx;
     // 00402f46 shl edx,8
-    m.regs.edx = shl(m.regs.edx, 0x8u8);
+    let t = shl(m.regs.edx, 0x8u8, &mut m.regs.flags);
+    m.regs.edx = t;
     // 00402f49 pxor mm3,mm3
     todo!();
     // 00402f4c movd mm0,eax
@@ -9427,14 +9748,16 @@ pub fn x00402f23() -> Cont {
     // 00402f2a mov edx,ebx
     m.regs.edx = m.regs.ebx;
     // 00402f2c shl edx,10h
-    m.regs.edx = shl(m.regs.edx, 0x10u8);
+    let t = shl(m.regs.edx, 0x10u8, &mut m.regs.flags);
+    m.regs.edx = t;
     // 00402f2f mov [ebp-8],edx
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32), m.regs.edx);
     // 00402f32 mov edx,ebx
     m.regs.edx = m.regs.ebx;
     // 00402f34 shl edx,8
-    m.regs.edx = shl(m.regs.edx, 0x8u8);
+    let t = shl(m.regs.edx, 0x8u8, &mut m.regs.flags);
+    m.regs.edx = t;
     // 00402f37 add edx,[ebp-8]
     m.regs.edx = add(
         m.regs.edx,
@@ -9445,14 +9768,16 @@ pub fn x00402f23() -> Cont {
     // 00402f3c mov edx,ecx
     m.regs.edx = m.regs.ecx;
     // 00402f3e shl edx,10h
-    m.regs.edx = shl(m.regs.edx, 0x10u8);
+    let t = shl(m.regs.edx, 0x10u8, &mut m.regs.flags);
+    m.regs.edx = t;
     // 00402f41 mov [ebp-8],edx
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32), m.regs.edx);
     // 00402f44 mov edx,ecx
     m.regs.edx = m.regs.ecx;
     // 00402f46 shl edx,8
-    m.regs.edx = shl(m.regs.edx, 0x8u8);
+    let t = shl(m.regs.edx, 0x8u8, &mut m.regs.flags);
+    m.regs.edx = t;
     // 00402f49 pxor mm3,mm3
     todo!();
     // 00402f4c movd mm0,eax
@@ -9514,7 +9839,8 @@ pub fn x00402f80() -> Cont {
     // 00402f82 mov ebx,[ebp-0Ch]
     m.regs.ebx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff4u32));
     // 00402f85 shl edi,2
-    m.regs.edi = shl(m.regs.edi, 0x2u8);
+    let t = shl(m.regs.edi, 0x2u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00402f88 mov eax,[edi+ebx]
     m.regs.eax = m.memory.read::<u32>(m.regs.edi.wrapping_add(m.regs.ebx));
     // 00402f8b mov ebx,ecx
@@ -9619,9 +9945,11 @@ pub fn x0040321d() -> Cont {
     // 00403229 mov eax,edx
     m.regs.eax = m.regs.edx;
     // 0040322b shl esi,10h
-    m.regs.esi = shl(m.regs.esi, 0x10u8);
+    let t = shl(m.regs.esi, 0x10u8, &mut m.regs.flags);
+    m.regs.esi = t;
     // 0040322e shl eax,8
-    m.regs.eax = shl(m.regs.eax, 0x8u8);
+    let t = shl(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00403231 sub ecx,edx
     m.regs.ecx = sub(m.regs.ecx, m.regs.edx);
     // 00403233 add eax,esi
@@ -9633,9 +9961,11 @@ pub fn x0040321d() -> Cont {
     // 00403239 mov eax,ecx
     m.regs.eax = m.regs.ecx;
     // 0040323b shl esi,10h
-    m.regs.esi = shl(m.regs.esi, 0x10u8);
+    let t = shl(m.regs.esi, 0x10u8, &mut m.regs.flags);
+    m.regs.esi = t;
     // 0040323e shl eax,8
-    m.regs.eax = shl(m.regs.eax, 0x8u8);
+    let t = shl(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00403241 add eax,esi
     m.regs.eax = add(m.regs.eax, m.regs.esi);
     // 00403243 add ecx,eax
@@ -9662,9 +9992,11 @@ pub fn x00403222() -> Cont {
     // 00403229 mov eax,edx
     m.regs.eax = m.regs.edx;
     // 0040322b shl esi,10h
-    m.regs.esi = shl(m.regs.esi, 0x10u8);
+    let t = shl(m.regs.esi, 0x10u8, &mut m.regs.flags);
+    m.regs.esi = t;
     // 0040322e shl eax,8
-    m.regs.eax = shl(m.regs.eax, 0x8u8);
+    let t = shl(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00403231 sub ecx,edx
     m.regs.ecx = sub(m.regs.ecx, m.regs.edx);
     // 00403233 add eax,esi
@@ -9676,9 +10008,11 @@ pub fn x00403222() -> Cont {
     // 00403239 mov eax,ecx
     m.regs.eax = m.regs.ecx;
     // 0040323b shl esi,10h
-    m.regs.esi = shl(m.regs.esi, 0x10u8);
+    let t = shl(m.regs.esi, 0x10u8, &mut m.regs.flags);
+    m.regs.esi = t;
     // 0040323e shl eax,8
-    m.regs.eax = shl(m.regs.eax, 0x8u8);
+    let t = shl(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00403241 add eax,esi
     m.regs.eax = add(m.regs.eax, m.regs.esi);
     // 00403243 add ecx,eax
@@ -9844,7 +10178,8 @@ pub fn x0040335b() -> Cont {
     // 0040335b mov ebx,eax
     m.regs.ebx = m.regs.eax;
     // 0040335d shl ebx,2
-    m.regs.ebx = shl(m.regs.ebx, 0x2u8);
+    let t = shl(m.regs.ebx, 0x2u8, &mut m.regs.flags);
+    m.regs.ebx = t;
     // 00403360 lea edx,[ecx+ebx]
     m.regs.edx = m.regs.ecx.wrapping_add(m.regs.ebx);
     // 00403363 mov edi,0FFFFFFFFh
@@ -9922,7 +10257,8 @@ pub fn x00403392() -> Cont {
     // 00403392 mov eax,ecx
     m.regs.eax = m.regs.ecx;
     // 00403394 shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00403397 lea edx,[edi+eax]
     m.regs.edx = m.regs.edi.wrapping_add(m.regs.eax);
     // 0040339a mov ebx,[edx]
@@ -10012,7 +10348,8 @@ pub fn x004033d5() -> Cont {
     // 004033d5 mov eax,ecx
     m.regs.eax = m.regs.ecx;
     // 004033d7 shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004033da lea edx,[esi+eax]
     m.regs.edx = m.regs.esi.wrapping_add(m.regs.eax);
     // 004033dd add eax,[ebp-4]
@@ -10107,7 +10444,8 @@ pub fn x0040341e() -> Cont {
     // 0040341e mov eax,ebx
     m.regs.eax = m.regs.ebx;
     // 00403420 shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00403423 add eax,[ebp-4]
     m.regs.eax = add(
         m.regs.eax,
@@ -10126,7 +10464,8 @@ pub fn x0040341e() -> Cont {
     // 00403435 imul edx,esi
     m.regs.edx = imul(m.regs.edx as i32, m.regs.esi as i32) as u32;
     // 00403438 sar ecx,10h
-    sar();
+    let t = sar(m.regs.ecx, 0x10u8, &mut m.regs.flags);
+    m.regs.ecx = t;
     // 0040343b and ecx,0FFh
     m.regs.ecx = and(m.regs.ecx, 0xffu32);
     // 00403441 sub ecx,7Fh
@@ -10134,7 +10473,8 @@ pub fn x0040341e() -> Cont {
     // 00403444 imul ecx,esi
     m.regs.ecx = imul(m.regs.ecx as i32, m.regs.esi as i32) as u32;
     // 00403447 sar eax,8
-    sar();
+    let t = sar(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 0040344a and eax,0FFh
     m.regs.eax = and(m.regs.eax, 0xffu32);
     // 0040344f sub eax,7Fh
@@ -10142,11 +10482,14 @@ pub fn x0040341e() -> Cont {
     // 00403452 imul eax,esi
     m.regs.eax = imul(m.regs.eax as i32, m.regs.esi as i32) as u32;
     // 00403455 sar edx,10h
-    sar();
+    let t = sar(m.regs.edx, 0x10u8, &mut m.regs.flags);
+    m.regs.edx = t;
     // 00403458 sar ecx,10h
-    sar();
+    let t = sar(m.regs.ecx, 0x10u8, &mut m.regs.flags);
+    m.regs.ecx = t;
     // 0040345b sar eax,10h
-    sar();
+    let t = sar(m.regs.eax, 0x10u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 0040345e add edx,7Fh
     m.regs.edx = add(m.regs.edx, 0x7fu32);
     // 00403461 add ecx,7Fh
@@ -10265,15 +10608,18 @@ pub fn x0040349a() -> Cont {
     // 0040349a mov edx,0FFh
     m.regs.edx = 0xffu32;
     // 0040349f shl eax,8
-    m.regs.eax = shl(m.regs.eax, 0x8u8);
+    let t = shl(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004034a2 add edx,eax
     m.regs.edx = add(m.regs.edx, m.regs.eax);
     // 004034a4 mov eax,ebx
     m.regs.eax = m.regs.ebx;
     // 004034a6 shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004034a9 shl ecx,10h
-    m.regs.ecx = shl(m.regs.ecx, 0x10u8);
+    let t = shl(m.regs.ecx, 0x10u8, &mut m.regs.flags);
+    m.regs.ecx = t;
     // 004034ac add eax,[ebp-4]
     m.regs.eax = add(
         m.regs.eax,
@@ -10293,15 +10639,18 @@ pub fn x0040349f() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 0040349f shl eax,8
-    m.regs.eax = shl(m.regs.eax, 0x8u8);
+    let t = shl(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004034a2 add edx,eax
     m.regs.edx = add(m.regs.edx, m.regs.eax);
     // 004034a4 mov eax,ebx
     m.regs.eax = m.regs.ebx;
     // 004034a6 shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004034a9 shl ecx,10h
-    m.regs.ecx = shl(m.regs.ecx, 0x10u8);
+    let t = shl(m.regs.ecx, 0x10u8, &mut m.regs.flags);
+    m.regs.ecx = t;
     // 004034ac add eax,[ebp-4]
     m.regs.eax = add(
         m.regs.eax,
@@ -10351,9 +10700,11 @@ pub fn x004034bd() -> Cont {
     // 004034cb mov esi,eax
     m.regs.esi = m.regs.eax;
     // 004034cd shl edx,8
-    m.regs.edx = shl(m.regs.edx, 0x8u8);
+    let t = shl(m.regs.edx, 0x8u8, &mut m.regs.flags);
+    m.regs.edx = t;
     // 004034d0 shl esi,10h
-    m.regs.esi = shl(m.regs.esi, 0x10u8);
+    let t = shl(m.regs.esi, 0x10u8, &mut m.regs.flags);
+    m.regs.esi = t;
     // 004034d3 add edx,eax
     m.regs.edx = add(m.regs.edx, m.regs.eax);
     // 004034d5 add esi,edx
@@ -10398,7 +10749,8 @@ pub fn x004034ed() -> Cont {
     // 004034ed mov edx,ecx
     m.regs.edx = m.regs.ecx;
     // 004034ef shl edx,2
-    m.regs.edx = shl(m.regs.edx, 0x2u8);
+    let t = shl(m.regs.edx, 0x2u8, &mut m.regs.flags);
+    m.regs.edx = t;
     // 004034f2 lea eax,[edi+edx]
     m.regs.eax = m.regs.edi.wrapping_add(m.regs.edx);
     // 004034f5 mov ebx,esi
@@ -10511,7 +10863,8 @@ pub fn x00403750() -> Cont {
     // 00403750 mov edx,eax
     m.regs.edx = m.regs.eax;
     // 00403752 sar edx,3
-    sar();
+    let t = sar(m.regs.edx, 0x3u8, &mut m.regs.flags);
+    m.regs.edx = t;
     // 00403755 add edx,[ebp-4]
     m.regs.edx = add(
         m.regs.edx,
@@ -10531,14 +10884,16 @@ pub fn x0040375f() -> Cont {
     // 0040375f mov ecx,eax
     m.regs.ecx = m.regs.eax;
     // 00403761 shl ecx,2
-    m.regs.ecx = shl(m.regs.ecx, 0x2u8);
+    let t = shl(m.regs.ecx, 0x2u8, &mut m.regs.flags);
+    m.regs.ecx = t;
     // 00403764 mov [ecx+esi],edi
     m.memory
         .write::<u32>(m.regs.ecx.wrapping_add(m.regs.esi), m.regs.edi);
     // 00403767 movzx ecx,dl
     m.regs.ecx = m.regs.get_dl() as _;
     // 0040376a sar ecx,1
-    sar();
+    let t = sar(m.regs.ecx, 0x1u8, &mut m.regs.flags);
+    m.regs.ecx = t;
     // 0040376c mov [ebp-8],ecx
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32), m.regs.ecx);
@@ -10557,7 +10912,8 @@ pub fn x00403767() -> Cont {
     // 00403767 movzx ecx,dl
     m.regs.ecx = m.regs.get_dl() as _;
     // 0040376a sar ecx,1
-    sar();
+    let t = sar(m.regs.ecx, 0x1u8, &mut m.regs.flags);
+    m.regs.ecx = t;
     // 0040376c mov [ebp-8],ecx
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32), m.regs.ecx);
@@ -10576,7 +10932,8 @@ pub fn x00403775() -> Cont {
     // 00403775 mov ecx,eax
     m.regs.ecx = m.regs.eax;
     // 00403777 shl ecx,2
-    m.regs.ecx = shl(m.regs.ecx, 0x2u8);
+    let t = shl(m.regs.ecx, 0x2u8, &mut m.regs.flags);
+    m.regs.ecx = t;
     // 0040377a mov [ecx+esi+4],edi
     m.memory.write::<u32>(
         m.regs.ecx.wrapping_add(m.regs.esi).wrapping_add(0x4u32),
@@ -10585,7 +10942,8 @@ pub fn x00403775() -> Cont {
     // 0040377e movzx ecx,dl
     m.regs.ecx = m.regs.get_dl() as _;
     // 00403781 sar ecx,2
-    sar();
+    let t = sar(m.regs.ecx, 0x2u8, &mut m.regs.flags);
+    m.regs.ecx = t;
     // 00403784 mov [ebp-8],ecx
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32), m.regs.ecx);
@@ -10604,7 +10962,8 @@ pub fn x0040377e() -> Cont {
     // 0040377e movzx ecx,dl
     m.regs.ecx = m.regs.get_dl() as _;
     // 00403781 sar ecx,2
-    sar();
+    let t = sar(m.regs.ecx, 0x2u8, &mut m.regs.flags);
+    m.regs.ecx = t;
     // 00403784 mov [ebp-8],ecx
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32), m.regs.ecx);
@@ -10623,7 +10982,8 @@ pub fn x0040378d() -> Cont {
     // 0040378d mov ecx,eax
     m.regs.ecx = m.regs.eax;
     // 0040378f shl ecx,2
-    m.regs.ecx = shl(m.regs.ecx, 0x2u8);
+    let t = shl(m.regs.ecx, 0x2u8, &mut m.regs.flags);
+    m.regs.ecx = t;
     // 00403792 mov [ecx+esi+8],edi
     m.memory.write::<u32>(
         m.regs.ecx.wrapping_add(m.regs.esi).wrapping_add(0x8u32),
@@ -10632,7 +10992,8 @@ pub fn x0040378d() -> Cont {
     // 00403796 movzx ecx,dl
     m.regs.ecx = m.regs.get_dl() as _;
     // 00403799 sar ecx,3
-    sar();
+    let t = sar(m.regs.ecx, 0x3u8, &mut m.regs.flags);
+    m.regs.ecx = t;
     // 0040379c mov [ebp-8],ecx
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32), m.regs.ecx);
@@ -10651,7 +11012,8 @@ pub fn x00403796() -> Cont {
     // 00403796 movzx ecx,dl
     m.regs.ecx = m.regs.get_dl() as _;
     // 00403799 sar ecx,3
-    sar();
+    let t = sar(m.regs.ecx, 0x3u8, &mut m.regs.flags);
+    m.regs.ecx = t;
     // 0040379c mov [ebp-8],ecx
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32), m.regs.ecx);
@@ -10670,7 +11032,8 @@ pub fn x004037a5() -> Cont {
     // 004037a5 mov ecx,eax
     m.regs.ecx = m.regs.eax;
     // 004037a7 shl ecx,2
-    m.regs.ecx = shl(m.regs.ecx, 0x2u8);
+    let t = shl(m.regs.ecx, 0x2u8, &mut m.regs.flags);
+    m.regs.ecx = t;
     // 004037aa mov [ecx+esi+0Ch],edi
     m.memory.write::<u32>(
         m.regs.ecx.wrapping_add(m.regs.esi).wrapping_add(0xcu32),
@@ -10679,7 +11042,8 @@ pub fn x004037a5() -> Cont {
     // 004037ae movzx ecx,dl
     m.regs.ecx = m.regs.get_dl() as _;
     // 004037b1 sar ecx,4
-    sar();
+    let t = sar(m.regs.ecx, 0x4u8, &mut m.regs.flags);
+    m.regs.ecx = t;
     // 004037b4 mov [ebp-8],ecx
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32), m.regs.ecx);
@@ -10698,7 +11062,8 @@ pub fn x004037ae() -> Cont {
     // 004037ae movzx ecx,dl
     m.regs.ecx = m.regs.get_dl() as _;
     // 004037b1 sar ecx,4
-    sar();
+    let t = sar(m.regs.ecx, 0x4u8, &mut m.regs.flags);
+    m.regs.ecx = t;
     // 004037b4 mov [ebp-8],ecx
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32), m.regs.ecx);
@@ -10717,7 +11082,8 @@ pub fn x004037bd() -> Cont {
     // 004037bd mov ecx,eax
     m.regs.ecx = m.regs.eax;
     // 004037bf shl ecx,2
-    m.regs.ecx = shl(m.regs.ecx, 0x2u8);
+    let t = shl(m.regs.ecx, 0x2u8, &mut m.regs.flags);
+    m.regs.ecx = t;
     // 004037c2 mov [ecx+esi+10h],edi
     m.memory.write::<u32>(
         m.regs.ecx.wrapping_add(m.regs.esi).wrapping_add(0x10u32),
@@ -10726,7 +11092,8 @@ pub fn x004037bd() -> Cont {
     // 004037c6 movzx ecx,dl
     m.regs.ecx = m.regs.get_dl() as _;
     // 004037c9 sar ecx,5
-    sar();
+    let t = sar(m.regs.ecx, 0x5u8, &mut m.regs.flags);
+    m.regs.ecx = t;
     // 004037cc mov [ebp-8],ecx
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32), m.regs.ecx);
@@ -10745,7 +11112,8 @@ pub fn x004037c6() -> Cont {
     // 004037c6 movzx ecx,dl
     m.regs.ecx = m.regs.get_dl() as _;
     // 004037c9 sar ecx,5
-    sar();
+    let t = sar(m.regs.ecx, 0x5u8, &mut m.regs.flags);
+    m.regs.ecx = t;
     // 004037cc mov [ebp-8],ecx
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32), m.regs.ecx);
@@ -10764,7 +11132,8 @@ pub fn x004037d5() -> Cont {
     // 004037d5 mov ecx,eax
     m.regs.ecx = m.regs.eax;
     // 004037d7 shl ecx,2
-    m.regs.ecx = shl(m.regs.ecx, 0x2u8);
+    let t = shl(m.regs.ecx, 0x2u8, &mut m.regs.flags);
+    m.regs.ecx = t;
     // 004037da mov [ecx+esi+14h],edi
     m.memory.write::<u32>(
         m.regs.ecx.wrapping_add(m.regs.esi).wrapping_add(0x14u32),
@@ -10773,7 +11142,8 @@ pub fn x004037d5() -> Cont {
     // 004037de movzx ecx,dl
     m.regs.ecx = m.regs.get_dl() as _;
     // 004037e1 sar ecx,6
-    sar();
+    let t = sar(m.regs.ecx, 0x6u8, &mut m.regs.flags);
+    m.regs.ecx = t;
     // 004037e4 mov [ebp-8],ecx
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32), m.regs.ecx);
@@ -10792,7 +11162,8 @@ pub fn x004037de() -> Cont {
     // 004037de movzx ecx,dl
     m.regs.ecx = m.regs.get_dl() as _;
     // 004037e1 sar ecx,6
-    sar();
+    let t = sar(m.regs.ecx, 0x6u8, &mut m.regs.flags);
+    m.regs.ecx = t;
     // 004037e4 mov [ebp-8],ecx
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32), m.regs.ecx);
@@ -10811,7 +11182,8 @@ pub fn x004037ed() -> Cont {
     // 004037ed mov ecx,eax
     m.regs.ecx = m.regs.eax;
     // 004037ef shl ecx,2
-    m.regs.ecx = shl(m.regs.ecx, 0x2u8);
+    let t = shl(m.regs.ecx, 0x2u8, &mut m.regs.flags);
+    m.regs.ecx = t;
     // 004037f2 mov [ecx+esi+18h],edi
     m.memory.write::<u32>(
         m.regs.ecx.wrapping_add(m.regs.esi).wrapping_add(0x18u32),
@@ -10820,7 +11192,8 @@ pub fn x004037ed() -> Cont {
     // 004037f6 movzx edx,dl
     m.regs.edx = m.regs.get_dl() as _;
     // 004037f9 sar edx,7
-    sar();
+    let t = sar(m.regs.edx, 0x7u8, &mut m.regs.flags);
+    m.regs.edx = t;
     // 004037fc test dl,1
     and(m.regs.get_dl(), 0x1u8);
     // 004037ff je short 00403807h
@@ -10833,7 +11206,8 @@ pub fn x004037f6() -> Cont {
     // 004037f6 movzx edx,dl
     m.regs.edx = m.regs.get_dl() as _;
     // 004037f9 sar edx,7
-    sar();
+    let t = sar(m.regs.edx, 0x7u8, &mut m.regs.flags);
+    m.regs.edx = t;
     // 004037fc test dl,1
     and(m.regs.get_dl(), 0x1u8);
     // 004037ff je short 00403807h
@@ -10942,7 +11316,8 @@ pub fn x00403837() -> Cont {
     // 00403852 add eax,0FFFFh
     m.regs.eax = add(m.regs.eax, 0xffffu32);
     // 00403857 shr eax,10h
-    m.regs.eax = shr(m.regs.eax, 0x10u8);
+    let t = shr(m.regs.eax, 0x10u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 0040385a fld dword ptr [ebp+1Ch]
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0x1cu32)) as f64);
@@ -10963,7 +11338,8 @@ pub fn x00403837() -> Cont {
     // 0040386b add eax,0FFFFh
     m.regs.eax = add(m.regs.eax, 0xffffu32);
     // 00403870 shr eax,10h
-    m.regs.eax = shr(m.regs.eax, 0x10u8);
+    let t = shr(m.regs.eax, 0x10u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00403873 fld dword ptr [ebp+20h]
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0x20u32)) as f64);
@@ -10984,7 +11360,8 @@ pub fn x00403837() -> Cont {
     // 00403884 add eax,0FFFFh
     m.regs.eax = add(m.regs.eax, 0xffffu32);
     // 00403889 shr eax,10h
-    m.regs.eax = shr(m.regs.eax, 0x10u8);
+    let t = shr(m.regs.eax, 0x10u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 0040388c fld dword ptr [ebp+24h]
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0x24u32)) as f64);
@@ -11006,7 +11383,8 @@ pub fn x00403837() -> Cont {
     // 0040389e add eax,0FFFFh
     m.regs.eax = add(m.regs.eax, 0xffffu32);
     // 004038a3 shr eax,10h
-    m.regs.eax = shr(m.regs.eax, 0x10u8);
+    let t = shr(m.regs.eax, 0x10u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004038a6 mov edi,eax
     m.regs.edi = m.regs.eax;
     // 004038a8 mov esi,eax
@@ -11127,15 +11505,16 @@ pub fn x004038dc() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004038dc shl ecx,10h
-    m.regs.ecx = shl(m.regs.ecx, 0x10u8);
+    let t = shl(m.regs.ecx, 0x10u8, &mut m.regs.flags);
+    m.regs.ecx = t;
     // 004038df shl dword ptr [ebp-28h],10h
-    m.memory.write::<u32>(
-        m.regs.ebp.wrapping_add(0xffffffd8u32),
-        shl(
-            m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffd8u32)),
-            0x10u8,
-        ),
+    let t = shl(
+        m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffd8u32)),
+        0x10u8,
+        &mut m.regs.flags,
     );
+    m.memory
+        .write::<u32>(m.regs.ebp.wrapping_add(0xffffffd8u32), t);
     // 004038e3 mov eax,ecx
     m.regs.eax = m.regs.ecx;
     // 004038e5 sub eax,[ebp-28h]
@@ -11148,15 +11527,16 @@ pub fn x004038dc() -> Cont {
     // 004038e9 idiv dword ptr [ebp-4]
     idiv();
     // 004038ec shl dword ptr [ebp-24h],10h
-    m.memory.write::<u32>(
-        m.regs.ebp.wrapping_add(0xffffffdcu32),
-        shl(
-            m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffdcu32)),
-            0x10u8,
-        ),
+    let t = shl(
+        m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffdcu32)),
+        0x10u8,
+        &mut m.regs.flags,
     );
+    m.memory
+        .write::<u32>(m.regs.ebp.wrapping_add(0xffffffdcu32), t);
     // 004038f0 shl esi,10h
-    m.regs.esi = shl(m.regs.esi, 0x10u8);
+    let t = shl(m.regs.esi, 0x10u8, &mut m.regs.flags);
+    m.regs.esi = t;
     // 004038f3 mov [ebp-20h],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xffffffe0u32), m.regs.eax);
@@ -11248,17 +11628,21 @@ pub fn x0040392a() -> Cont {
     // 00403931 mov eax,[ebp-24h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffdcu32));
     // 00403934 sar eax,10h
-    sar();
+    let t = sar(m.regs.eax, 0x10u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00403937 imul eax,ds:[40C724h]
     m.regs.eax = imul(m.regs.eax as i32, m.memory.read::<u32>(0x40c724u32) as i32) as u32;
     // 0040393e mov ecx,[ebp-28h]
     m.regs.ecx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffd8u32));
     // 00403941 sar ecx,10h
-    sar();
+    let t = sar(m.regs.ecx, 0x10u8, &mut m.regs.flags);
+    m.regs.ecx = t;
     // 00403944 shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00403947 shl ecx,2
-    m.regs.ecx = shl(m.regs.ecx, 0x2u8);
+    let t = shl(m.regs.ecx, 0x2u8, &mut m.regs.flags);
+    m.regs.ecx = t;
     // 0040394a add ebx,eax
     m.regs.ebx = add(m.regs.ebx, m.regs.eax);
     // 0040394c add ecx,ebx
@@ -11278,17 +11662,21 @@ pub fn x00403931() -> Cont {
     // 00403931 mov eax,[ebp-24h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffdcu32));
     // 00403934 sar eax,10h
-    sar();
+    let t = sar(m.regs.eax, 0x10u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00403937 imul eax,ds:[40C724h]
     m.regs.eax = imul(m.regs.eax as i32, m.memory.read::<u32>(0x40c724u32) as i32) as u32;
     // 0040393e mov ecx,[ebp-28h]
     m.regs.ecx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffd8u32));
     // 00403941 sar ecx,10h
-    sar();
+    let t = sar(m.regs.ecx, 0x10u8, &mut m.regs.flags);
+    m.regs.ecx = t;
     // 00403944 shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00403947 shl ecx,2
-    m.regs.ecx = shl(m.regs.ecx, 0x2u8);
+    let t = shl(m.regs.ecx, 0x2u8, &mut m.regs.flags);
+    m.regs.ecx = t;
     // 0040394a add ebx,eax
     m.regs.ebx = add(m.regs.ebx, m.regs.eax);
     // 0040394c add ecx,ebx
@@ -11349,7 +11737,8 @@ pub fn x00403965() -> Cont {
     // 00403982 mov eax,[edx]
     m.regs.eax = m.memory.read::<u32>(m.regs.edx);
     // 00403984 sar eax,10h
-    sar();
+    let t = sar(m.regs.eax, 0x10u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00403987 xor edi,edi
     m.regs.edi = xor(m.regs.edi, m.regs.edi);
     // 00403989 mov [ebp-10h],eax
@@ -11370,7 +11759,8 @@ pub fn x00403982() -> Cont {
     // 00403982 mov eax,[edx]
     m.regs.eax = m.memory.read::<u32>(m.regs.edx);
     // 00403984 sar eax,10h
-    sar();
+    let t = sar(m.regs.eax, 0x10u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00403987 xor edi,edi
     m.regs.edi = xor(m.regs.edi, m.regs.edi);
     // 00403989 mov [ebp-10h],eax
@@ -11403,7 +11793,8 @@ pub fn x00403995() -> Cont {
     // 00403995 mov esi,[edx]
     m.regs.esi = m.memory.read::<u32>(m.regs.edx);
     // 00403997 sar esi,8
-    sar();
+    let t = sar(m.regs.esi, 0x8u8, &mut m.regs.flags);
+    m.regs.esi = t;
     // 0040399a and esi,0FFh
     m.regs.esi = and(m.regs.esi, 0xffu32);
     // 004039a0 mov eax,esi
@@ -11411,9 +11802,11 @@ pub fn x00403995() -> Cont {
     // 004039a2 mov ebx,esi
     m.regs.ebx = m.regs.esi;
     // 004039a4 shl eax,10h
-    m.regs.eax = shl(m.regs.eax, 0x10u8);
+    let t = shl(m.regs.eax, 0x10u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004039a7 shl ebx,8
-    m.regs.ebx = shl(m.regs.ebx, 0x8u8);
+    let t = shl(m.regs.ebx, 0x8u8, &mut m.regs.flags);
+    m.regs.ebx = t;
     // 004039aa add eax,ebx
     m.regs.eax = add(m.regs.eax, m.regs.ebx);
     // 004039ac add esi,eax
@@ -11519,7 +11912,8 @@ pub fn x00403995() -> Cont {
     // 00403a31 mov eax,[edx]
     m.regs.eax = m.memory.read::<u32>(m.regs.edx);
     // 00403a33 sar eax,10h
-    sar();
+    let t = sar(m.regs.eax, 0x10u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00403a36 cmp eax,[ebp-10h]
     sub(
         m.regs.eax,
@@ -11538,13 +11932,15 @@ pub fn x00403a3b() -> Cont {
     // 00403a3e mov eax,[ebp-30h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffd0u32));
     // 00403a41 shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00403a44 add ecx,eax
     m.regs.ecx = add(m.regs.ecx, m.regs.eax);
     // 00403a46 mov eax,[ebp-2Ch]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffd4u32));
     // 00403a49 shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00403a4c inc edi
     m.regs.edi = inc(m.regs.edi);
     // 00403a4d add ecx,eax
@@ -11559,7 +11955,8 @@ pub fn x00403a46() -> Cont {
     // 00403a46 mov eax,[ebp-2Ch]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffd4u32));
     // 00403a49 shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00403a4c inc edi
     m.regs.edi = inc(m.regs.edi);
     // 00403a4d add ecx,eax
@@ -12365,7 +12762,8 @@ pub fn x00403d06() -> Cont {
     // 00403d2e add edx,ecx
     m.regs.edx = add(m.regs.edx, m.regs.ecx);
     // 00403d30 shl edx,2
-    m.regs.edx = shl(m.regs.edx, 0x2u8);
+    let t = shl(m.regs.edx, 0x2u8, &mut m.regs.flags);
+    m.regs.edx = t;
     // 00403d33 mov [ebp-10h],edx
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffff0u32), m.regs.edx);
@@ -12380,7 +12778,8 @@ pub fn x00403d06() -> Cont {
     // 00403d41 mov edx,ecx
     m.regs.edx = m.regs.ecx;
     // 00403d43 shl edx,2
-    m.regs.edx = shl(m.regs.edx, 0x2u8);
+    let t = shl(m.regs.edx, 0x2u8, &mut m.regs.flags);
+    m.regs.edx = t;
     // 00403d46 mov [ebp-14h],edx
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xffffffecu32), m.regs.edx);
@@ -12396,7 +12795,8 @@ pub fn x00403d06() -> Cont {
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffb0u32)),
     );
     // 00403d56 shl edx,2
-    m.regs.edx = shl(m.regs.edx, 0x2u8);
+    let t = shl(m.regs.edx, 0x2u8, &mut m.regs.flags);
+    m.regs.edx = t;
     // 00403d59 mov [ebp-28h],edx
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xffffffd8u32), m.regs.edx);
@@ -12408,7 +12808,8 @@ pub fn x00403d06() -> Cont {
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffb0u32)),
     );
     // 00403d64 shl edx,2
-    m.regs.edx = shl(m.regs.edx, 0x2u8);
+    let t = shl(m.regs.edx, 0x2u8, &mut m.regs.flags);
+    m.regs.edx = t;
     // 00403d67 add edx,500h
     m.regs.edx = add(m.regs.edx, 0x500u32);
     // 00403d6d mov [ebp-0Ch],edx
@@ -12426,14 +12827,16 @@ pub fn x00403d06() -> Cont {
     // 00403d7b add edx,ecx
     m.regs.edx = add(m.regs.edx, m.regs.ecx);
     // 00403d7d shl edx,2
-    m.regs.edx = shl(m.regs.edx, 0x2u8);
+    let t = shl(m.regs.edx, 0x2u8, &mut m.regs.flags);
+    m.regs.edx = t;
     // 00403d80 mov [ebp-38h],edx
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xffffffc8u32), m.regs.edx);
     // 00403d83 mov edx,[ebp-50h]
     m.regs.edx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffb0u32));
     // 00403d86 shl edx,2
-    m.regs.edx = shl(m.regs.edx, 0x2u8);
+    let t = shl(m.regs.edx, 0x2u8, &mut m.regs.flags);
+    m.regs.edx = t;
     // 00403d89 add edx,4FCh
     m.regs.edx = add(m.regs.edx, 0x4fcu32);
     // 00403d8f mov [ebp-24h],edx
@@ -12450,7 +12853,8 @@ pub fn x00403d06() -> Cont {
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffb0u32)),
     );
     // 00403d9c shl edx,2
-    m.regs.edx = shl(m.regs.edx, 0x2u8);
+    let t = shl(m.regs.edx, 0x2u8, &mut m.regs.flags);
+    m.regs.edx = t;
     // 00403d9f mov [ebp-30h],edx
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xffffffd0u32), m.regs.edx);
@@ -12468,7 +12872,8 @@ pub fn x00403d06() -> Cont {
     // 00403db1 mov edx,ecx
     m.regs.edx = m.regs.ecx;
     // 00403db3 shl edx,2
-    m.regs.edx = shl(m.regs.edx, 0x2u8);
+    let t = shl(m.regs.edx, 0x2u8, &mut m.regs.flags);
+    m.regs.edx = t;
     // 00403db6 mov [ebp-34h],edx
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xffffffccu32), m.regs.edx);
@@ -12766,7 +13171,8 @@ pub fn x00403e7b() -> Cont {
         inc(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffe0u32))),
     );
     // 00403e9a shl eax,8
-    m.regs.eax = shl(m.regs.eax, 0x8u8);
+    let t = shl(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00403e9d mov [ebp-18h],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xffffffe8u32), m.regs.eax);
@@ -12791,15 +13197,18 @@ pub fn x00403e7b() -> Cont {
     // 00403ed0 mov eax,[ebp-18h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffe8u32));
     // 00403ed6 shr eax,8
-    m.regs.eax = shr(m.regs.eax, 0x8u8);
+    let t = shr(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00403ed9 and eax,0FFFFh
     m.regs.eax = and(m.regs.eax, 0xffffu32);
     // 00403ede mov ebx,eax
     m.regs.ebx = m.regs.eax;
     // 00403ee0 shl eax,8
-    m.regs.eax = shl(m.regs.eax, 0x8u8);
+    let t = shl(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00403ee3 shl ebx,0Ah
-    m.regs.ebx = shl(m.regs.ebx, 0xau8);
+    let t = shl(m.regs.ebx, 0xau8, &mut m.regs.flags);
+    m.regs.ebx = t;
     // 00403ee6 add eax,ebx
     m.regs.eax = add(m.regs.eax, m.regs.ebx);
     // 00403ee8 add esi,eax
@@ -12814,13 +13223,15 @@ pub fn x00403e7b() -> Cont {
     // 00403ef7 xor ebx,ebx
     m.regs.ebx = xor(m.regs.ebx, m.regs.ebx);
     // 00403ef9 shl eax,8
-    m.regs.eax = shl(m.regs.eax, 0x8u8);
+    let t = shl(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00403efc mov edx,eax
     m.regs.edx = m.regs.eax;
     // 00403efe mov ebx,edx
     m.regs.ebx = m.regs.edx;
     // 00403f00 shr ebx,8
-    m.regs.ebx = shr(m.regs.ebx, 0x8u8);
+    let t = shr(m.regs.ebx, 0x8u8, &mut m.regs.flags);
+    m.regs.ebx = t;
     // 00403f03 and ebx,0FFFFh
     m.regs.ebx = and(m.regs.ebx, 0xffffu32);
     // 00403f09 mov eax,edx
@@ -12917,7 +13328,8 @@ pub fn x00403e7b() -> Cont {
     m.memory
         .write::<u8>(m.regs.edi.wrapping_add(0x1u32), m.regs.get_cl());
     // 00403fcb shr eax,10h
-    m.regs.eax = shr(m.regs.eax, 0x10u8);
+    let t = shr(m.regs.eax, 0x10u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00403fce movzx ecx,al
     m.regs.ecx = m.regs.get_al() as _;
     // 00403fd1 mov ebx,ds:[433F78h]
@@ -12975,15 +13387,18 @@ pub fn x00403ea3() -> Cont {
     // 00403ed0 mov eax,[ebp-18h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffe8u32));
     // 00403ed6 shr eax,8
-    m.regs.eax = shr(m.regs.eax, 0x8u8);
+    let t = shr(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00403ed9 and eax,0FFFFh
     m.regs.eax = and(m.regs.eax, 0xffffu32);
     // 00403ede mov ebx,eax
     m.regs.ebx = m.regs.eax;
     // 00403ee0 shl eax,8
-    m.regs.eax = shl(m.regs.eax, 0x8u8);
+    let t = shl(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00403ee3 shl ebx,0Ah
-    m.regs.ebx = shl(m.regs.ebx, 0xau8);
+    let t = shl(m.regs.ebx, 0xau8, &mut m.regs.flags);
+    m.regs.ebx = t;
     // 00403ee6 add eax,ebx
     m.regs.eax = add(m.regs.eax, m.regs.ebx);
     // 00403ee8 add esi,eax
@@ -12998,13 +13413,15 @@ pub fn x00403ea3() -> Cont {
     // 00403ef7 xor ebx,ebx
     m.regs.ebx = xor(m.regs.ebx, m.regs.ebx);
     // 00403ef9 shl eax,8
-    m.regs.eax = shl(m.regs.eax, 0x8u8);
+    let t = shl(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00403efc mov edx,eax
     m.regs.edx = m.regs.eax;
     // 00403efe mov ebx,edx
     m.regs.ebx = m.regs.edx;
     // 00403f00 shr ebx,8
-    m.regs.ebx = shr(m.regs.ebx, 0x8u8);
+    let t = shr(m.regs.ebx, 0x8u8, &mut m.regs.flags);
+    m.regs.ebx = t;
     // 00403f03 and ebx,0FFFFh
     m.regs.ebx = and(m.regs.ebx, 0xffffu32);
     // 00403f09 mov eax,edx
@@ -13101,7 +13518,8 @@ pub fn x00403ea3() -> Cont {
     m.memory
         .write::<u8>(m.regs.edi.wrapping_add(0x1u32), m.regs.get_cl());
     // 00403fcb shr eax,10h
-    m.regs.eax = shr(m.regs.eax, 0x10u8);
+    let t = shr(m.regs.eax, 0x10u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00403fce movzx ecx,al
     m.regs.ecx = m.regs.get_al() as _;
     // 00403fd1 mov ebx,ds:[433F78h]
@@ -13141,7 +13559,8 @@ pub fn x00403efe() -> Cont {
     // 00403efe mov ebx,edx
     m.regs.ebx = m.regs.edx;
     // 00403f00 shr ebx,8
-    m.regs.ebx = shr(m.regs.ebx, 0x8u8);
+    let t = shr(m.regs.ebx, 0x8u8, &mut m.regs.flags);
+    m.regs.ebx = t;
     // 00403f03 and ebx,0FFFFh
     m.regs.ebx = and(m.regs.ebx, 0xffffu32);
     // 00403f09 mov eax,edx
@@ -13238,7 +13657,8 @@ pub fn x00403efe() -> Cont {
     m.memory
         .write::<u8>(m.regs.edi.wrapping_add(0x1u32), m.regs.get_cl());
     // 00403fcb shr eax,10h
-    m.regs.eax = shr(m.regs.eax, 0x10u8);
+    let t = shr(m.regs.eax, 0x10u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00403fce movzx ecx,al
     m.regs.ecx = m.regs.get_al() as _;
     // 00403fd1 mov ebx,ds:[433F78h]
@@ -13322,7 +13742,8 @@ pub fn x00404028() -> Cont {
         inc(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffe0u32))),
     );
     // 00404047 shl eax,8
-    m.regs.eax = shl(m.regs.eax, 0x8u8);
+    let t = shl(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 0040404a mov [ebp-18h],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xffffffe8u32), m.regs.eax);
@@ -13347,15 +13768,18 @@ pub fn x00404028() -> Cont {
     // 0040407d mov eax,[ebp-18h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffe8u32));
     // 00404083 shr eax,8
-    m.regs.eax = shr(m.regs.eax, 0x8u8);
+    let t = shr(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404086 and eax,0FFFFh
     m.regs.eax = and(m.regs.eax, 0xffffu32);
     // 0040408b mov ebx,eax
     m.regs.ebx = m.regs.eax;
     // 0040408d shl eax,8
-    m.regs.eax = shl(m.regs.eax, 0x8u8);
+    let t = shl(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404090 shl ebx,0Ah
-    m.regs.ebx = shl(m.regs.ebx, 0xau8);
+    let t = shl(m.regs.ebx, 0xau8, &mut m.regs.flags);
+    m.regs.ebx = t;
     // 00404093 add eax,ebx
     m.regs.eax = add(m.regs.eax, m.regs.ebx);
     // 00404095 add esi,eax
@@ -13376,13 +13800,15 @@ pub fn x00404028() -> Cont {
     // 004040ad xor ebx,ebx
     m.regs.ebx = xor(m.regs.ebx, m.regs.ebx);
     // 004040af shl eax,8
-    m.regs.eax = shl(m.regs.eax, 0x8u8);
+    let t = shl(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004040b2 mov edx,eax
     m.regs.edx = m.regs.eax;
     // 004040b4 mov ebx,edx
     m.regs.ebx = m.regs.edx;
     // 004040b6 shr ebx,8
-    m.regs.ebx = shr(m.regs.ebx, 0x8u8);
+    let t = shr(m.regs.ebx, 0x8u8, &mut m.regs.flags);
+    m.regs.ebx = t;
     // 004040b9 and ebx,0FFFFh
     m.regs.ebx = and(m.regs.ebx, 0xffffu32);
     // 004040bf mov eax,edx
@@ -13479,7 +13905,8 @@ pub fn x00404028() -> Cont {
     m.memory
         .write::<u8>(m.regs.edi.wrapping_add(0x1u32), m.regs.get_cl());
     // 00404181 shr eax,10h
-    m.regs.eax = shr(m.regs.eax, 0x10u8);
+    let t = shr(m.regs.eax, 0x10u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404184 movzx ecx,al
     m.regs.ecx = m.regs.get_al() as _;
     // 00404187 mov ebx,ds:[433F78h]
@@ -13537,15 +13964,18 @@ pub fn x00404050() -> Cont {
     // 0040407d mov eax,[ebp-18h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffe8u32));
     // 00404083 shr eax,8
-    m.regs.eax = shr(m.regs.eax, 0x8u8);
+    let t = shr(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404086 and eax,0FFFFh
     m.regs.eax = and(m.regs.eax, 0xffffu32);
     // 0040408b mov ebx,eax
     m.regs.ebx = m.regs.eax;
     // 0040408d shl eax,8
-    m.regs.eax = shl(m.regs.eax, 0x8u8);
+    let t = shl(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404090 shl ebx,0Ah
-    m.regs.ebx = shl(m.regs.ebx, 0xau8);
+    let t = shl(m.regs.ebx, 0xau8, &mut m.regs.flags);
+    m.regs.ebx = t;
     // 00404093 add eax,ebx
     m.regs.eax = add(m.regs.eax, m.regs.ebx);
     // 00404095 add esi,eax
@@ -13566,13 +13996,15 @@ pub fn x00404050() -> Cont {
     // 004040ad xor ebx,ebx
     m.regs.ebx = xor(m.regs.ebx, m.regs.ebx);
     // 004040af shl eax,8
-    m.regs.eax = shl(m.regs.eax, 0x8u8);
+    let t = shl(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004040b2 mov edx,eax
     m.regs.edx = m.regs.eax;
     // 004040b4 mov ebx,edx
     m.regs.ebx = m.regs.edx;
     // 004040b6 shr ebx,8
-    m.regs.ebx = shr(m.regs.ebx, 0x8u8);
+    let t = shr(m.regs.ebx, 0x8u8, &mut m.regs.flags);
+    m.regs.ebx = t;
     // 004040b9 and ebx,0FFFFh
     m.regs.ebx = and(m.regs.ebx, 0xffffu32);
     // 004040bf mov eax,edx
@@ -13669,7 +14101,8 @@ pub fn x00404050() -> Cont {
     m.memory
         .write::<u8>(m.regs.edi.wrapping_add(0x1u32), m.regs.get_cl());
     // 00404181 shr eax,10h
-    m.regs.eax = shr(m.regs.eax, 0x10u8);
+    let t = shr(m.regs.eax, 0x10u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404184 movzx ecx,al
     m.regs.ecx = m.regs.get_al() as _;
     // 00404187 mov ebx,ds:[433F78h]
@@ -13709,7 +14142,8 @@ pub fn x004040b4() -> Cont {
     // 004040b4 mov ebx,edx
     m.regs.ebx = m.regs.edx;
     // 004040b6 shr ebx,8
-    m.regs.ebx = shr(m.regs.ebx, 0x8u8);
+    let t = shr(m.regs.ebx, 0x8u8, &mut m.regs.flags);
+    m.regs.ebx = t;
     // 004040b9 and ebx,0FFFFh
     m.regs.ebx = and(m.regs.ebx, 0xffffu32);
     // 004040bf mov eax,edx
@@ -13806,7 +14240,8 @@ pub fn x004040b4() -> Cont {
     m.memory
         .write::<u8>(m.regs.edi.wrapping_add(0x1u32), m.regs.get_cl());
     // 00404181 shr eax,10h
-    m.regs.eax = shr(m.regs.eax, 0x10u8);
+    let t = shr(m.regs.eax, 0x10u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404184 movzx ecx,al
     m.regs.ecx = m.regs.get_al() as _;
     // 00404187 mov ebx,ds:[433F78h]
@@ -13893,7 +14328,8 @@ pub fn x004041de() -> Cont {
         ),
     );
     // 00404201 shl eax,8
-    m.regs.eax = shl(m.regs.eax, 0x8u8);
+    let t = shl(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404204 mov [ebp-18h],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xffffffe8u32), m.regs.eax);
@@ -13918,15 +14354,18 @@ pub fn x004041de() -> Cont {
     // 00404237 mov eax,[ebp-18h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffe8u32));
     // 0040423d shr eax,8
-    m.regs.eax = shr(m.regs.eax, 0x8u8);
+    let t = shr(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404240 and eax,0FFFFh
     m.regs.eax = and(m.regs.eax, 0xffffu32);
     // 00404245 mov ebx,eax
     m.regs.ebx = m.regs.eax;
     // 00404247 shl eax,8
-    m.regs.eax = shl(m.regs.eax, 0x8u8);
+    let t = shl(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 0040424a shl ebx,0Ah
-    m.regs.ebx = shl(m.regs.ebx, 0xau8);
+    let t = shl(m.regs.ebx, 0xau8, &mut m.regs.flags);
+    m.regs.ebx = t;
     // 0040424d add eax,ebx
     m.regs.eax = add(m.regs.eax, m.regs.ebx);
     // 0040424f add esi,eax
@@ -13941,13 +14380,15 @@ pub fn x004041de() -> Cont {
     // 0040425e xor ebx,ebx
     m.regs.ebx = xor(m.regs.ebx, m.regs.ebx);
     // 00404260 shl eax,8
-    m.regs.eax = shl(m.regs.eax, 0x8u8);
+    let t = shl(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404263 mov edx,eax
     m.regs.edx = m.regs.eax;
     // 00404265 mov ebx,edx
     m.regs.ebx = m.regs.edx;
     // 00404267 shr ebx,8
-    m.regs.ebx = shr(m.regs.ebx, 0x8u8);
+    let t = shr(m.regs.ebx, 0x8u8, &mut m.regs.flags);
+    m.regs.ebx = t;
     // 0040426a and ebx,0FFFFh
     m.regs.ebx = and(m.regs.ebx, 0xffffu32);
     // 00404270 mov eax,edx
@@ -14044,7 +14485,8 @@ pub fn x004041de() -> Cont {
     m.memory
         .write::<u8>(m.regs.edi.wrapping_add(0x1u32), m.regs.get_cl());
     // 00404332 shr eax,10h
-    m.regs.eax = shr(m.regs.eax, 0x10u8);
+    let t = shr(m.regs.eax, 0x10u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404335 movzx ecx,al
     m.regs.ecx = m.regs.get_al() as _;
     // 00404338 mov ebx,ds:[433F78h]
@@ -14102,15 +14544,18 @@ pub fn x0040420a() -> Cont {
     // 00404237 mov eax,[ebp-18h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffe8u32));
     // 0040423d shr eax,8
-    m.regs.eax = shr(m.regs.eax, 0x8u8);
+    let t = shr(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404240 and eax,0FFFFh
     m.regs.eax = and(m.regs.eax, 0xffffu32);
     // 00404245 mov ebx,eax
     m.regs.ebx = m.regs.eax;
     // 00404247 shl eax,8
-    m.regs.eax = shl(m.regs.eax, 0x8u8);
+    let t = shl(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 0040424a shl ebx,0Ah
-    m.regs.ebx = shl(m.regs.ebx, 0xau8);
+    let t = shl(m.regs.ebx, 0xau8, &mut m.regs.flags);
+    m.regs.ebx = t;
     // 0040424d add eax,ebx
     m.regs.eax = add(m.regs.eax, m.regs.ebx);
     // 0040424f add esi,eax
@@ -14125,13 +14570,15 @@ pub fn x0040420a() -> Cont {
     // 0040425e xor ebx,ebx
     m.regs.ebx = xor(m.regs.ebx, m.regs.ebx);
     // 00404260 shl eax,8
-    m.regs.eax = shl(m.regs.eax, 0x8u8);
+    let t = shl(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404263 mov edx,eax
     m.regs.edx = m.regs.eax;
     // 00404265 mov ebx,edx
     m.regs.ebx = m.regs.edx;
     // 00404267 shr ebx,8
-    m.regs.ebx = shr(m.regs.ebx, 0x8u8);
+    let t = shr(m.regs.ebx, 0x8u8, &mut m.regs.flags);
+    m.regs.ebx = t;
     // 0040426a and ebx,0FFFFh
     m.regs.ebx = and(m.regs.ebx, 0xffffu32);
     // 00404270 mov eax,edx
@@ -14228,7 +14675,8 @@ pub fn x0040420a() -> Cont {
     m.memory
         .write::<u8>(m.regs.edi.wrapping_add(0x1u32), m.regs.get_cl());
     // 00404332 shr eax,10h
-    m.regs.eax = shr(m.regs.eax, 0x10u8);
+    let t = shr(m.regs.eax, 0x10u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404335 movzx ecx,al
     m.regs.ecx = m.regs.get_al() as _;
     // 00404338 mov ebx,ds:[433F78h]
@@ -14268,7 +14716,8 @@ pub fn x00404265() -> Cont {
     // 00404265 mov ebx,edx
     m.regs.ebx = m.regs.edx;
     // 00404267 shr ebx,8
-    m.regs.ebx = shr(m.regs.ebx, 0x8u8);
+    let t = shr(m.regs.ebx, 0x8u8, &mut m.regs.flags);
+    m.regs.ebx = t;
     // 0040426a and ebx,0FFFFh
     m.regs.ebx = and(m.regs.ebx, 0xffffu32);
     // 00404270 mov eax,edx
@@ -14365,7 +14814,8 @@ pub fn x00404265() -> Cont {
     m.memory
         .write::<u8>(m.regs.edi.wrapping_add(0x1u32), m.regs.get_cl());
     // 00404332 shr eax,10h
-    m.regs.eax = shr(m.regs.eax, 0x10u8);
+    let t = shr(m.regs.eax, 0x10u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404335 movzx ecx,al
     m.regs.ecx = m.regs.get_al() as _;
     // 00404338 mov ebx,ds:[433F78h]
@@ -14452,7 +14902,8 @@ pub fn x0040438f() -> Cont {
         ),
     );
     // 004043b2 shl eax,8
-    m.regs.eax = shl(m.regs.eax, 0x8u8);
+    let t = shl(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004043b5 mov [ebp-18h],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xffffffe8u32), m.regs.eax);
@@ -14477,15 +14928,18 @@ pub fn x0040438f() -> Cont {
     // 004043e8 mov eax,[ebp-18h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffe8u32));
     // 004043ee shr eax,8
-    m.regs.eax = shr(m.regs.eax, 0x8u8);
+    let t = shr(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004043f1 and eax,0FFFFh
     m.regs.eax = and(m.regs.eax, 0xffffu32);
     // 004043f6 mov ebx,eax
     m.regs.ebx = m.regs.eax;
     // 004043f8 shl eax,8
-    m.regs.eax = shl(m.regs.eax, 0x8u8);
+    let t = shl(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004043fb shl ebx,0Ah
-    m.regs.ebx = shl(m.regs.ebx, 0xau8);
+    let t = shl(m.regs.ebx, 0xau8, &mut m.regs.flags);
+    m.regs.ebx = t;
     // 004043fe add eax,ebx
     m.regs.eax = add(m.regs.eax, m.regs.ebx);
     // 00404400 add esi,eax
@@ -14506,13 +14960,15 @@ pub fn x0040438f() -> Cont {
     // 00404418 xor ebx,ebx
     m.regs.ebx = xor(m.regs.ebx, m.regs.ebx);
     // 0040441a shl eax,8
-    m.regs.eax = shl(m.regs.eax, 0x8u8);
+    let t = shl(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 0040441d mov edx,eax
     m.regs.edx = m.regs.eax;
     // 0040441f mov ebx,edx
     m.regs.ebx = m.regs.edx;
     // 00404421 shr ebx,8
-    m.regs.ebx = shr(m.regs.ebx, 0x8u8);
+    let t = shr(m.regs.ebx, 0x8u8, &mut m.regs.flags);
+    m.regs.ebx = t;
     // 00404424 and ebx,0FFFFh
     m.regs.ebx = and(m.regs.ebx, 0xffffu32);
     // 0040442a mov eax,edx
@@ -14609,7 +15065,8 @@ pub fn x0040438f() -> Cont {
     m.memory
         .write::<u8>(m.regs.edi.wrapping_add(0x1u32), m.regs.get_cl());
     // 004044ec shr eax,10h
-    m.regs.eax = shr(m.regs.eax, 0x10u8);
+    let t = shr(m.regs.eax, 0x10u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004044ef movzx ecx,al
     m.regs.ecx = m.regs.get_al() as _;
     // 004044f2 mov ebx,ds:[433F78h]
@@ -14667,15 +15124,18 @@ pub fn x004043bb() -> Cont {
     // 004043e8 mov eax,[ebp-18h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffe8u32));
     // 004043ee shr eax,8
-    m.regs.eax = shr(m.regs.eax, 0x8u8);
+    let t = shr(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004043f1 and eax,0FFFFh
     m.regs.eax = and(m.regs.eax, 0xffffu32);
     // 004043f6 mov ebx,eax
     m.regs.ebx = m.regs.eax;
     // 004043f8 shl eax,8
-    m.regs.eax = shl(m.regs.eax, 0x8u8);
+    let t = shl(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004043fb shl ebx,0Ah
-    m.regs.ebx = shl(m.regs.ebx, 0xau8);
+    let t = shl(m.regs.ebx, 0xau8, &mut m.regs.flags);
+    m.regs.ebx = t;
     // 004043fe add eax,ebx
     m.regs.eax = add(m.regs.eax, m.regs.ebx);
     // 00404400 add esi,eax
@@ -14696,13 +15156,15 @@ pub fn x004043bb() -> Cont {
     // 00404418 xor ebx,ebx
     m.regs.ebx = xor(m.regs.ebx, m.regs.ebx);
     // 0040441a shl eax,8
-    m.regs.eax = shl(m.regs.eax, 0x8u8);
+    let t = shl(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 0040441d mov edx,eax
     m.regs.edx = m.regs.eax;
     // 0040441f mov ebx,edx
     m.regs.ebx = m.regs.edx;
     // 00404421 shr ebx,8
-    m.regs.ebx = shr(m.regs.ebx, 0x8u8);
+    let t = shr(m.regs.ebx, 0x8u8, &mut m.regs.flags);
+    m.regs.ebx = t;
     // 00404424 and ebx,0FFFFh
     m.regs.ebx = and(m.regs.ebx, 0xffffu32);
     // 0040442a mov eax,edx
@@ -14799,7 +15261,8 @@ pub fn x004043bb() -> Cont {
     m.memory
         .write::<u8>(m.regs.edi.wrapping_add(0x1u32), m.regs.get_cl());
     // 004044ec shr eax,10h
-    m.regs.eax = shr(m.regs.eax, 0x10u8);
+    let t = shr(m.regs.eax, 0x10u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004044ef movzx ecx,al
     m.regs.ecx = m.regs.get_al() as _;
     // 004044f2 mov ebx,ds:[433F78h]
@@ -14839,7 +15302,8 @@ pub fn x0040441f() -> Cont {
     // 0040441f mov ebx,edx
     m.regs.ebx = m.regs.edx;
     // 00404421 shr ebx,8
-    m.regs.ebx = shr(m.regs.ebx, 0x8u8);
+    let t = shr(m.regs.ebx, 0x8u8, &mut m.regs.flags);
+    m.regs.ebx = t;
     // 00404424 and ebx,0FFFFh
     m.regs.ebx = and(m.regs.ebx, 0xffffu32);
     // 0040442a mov eax,edx
@@ -14936,7 +15400,8 @@ pub fn x0040441f() -> Cont {
     m.memory
         .write::<u8>(m.regs.edi.wrapping_add(0x1u32), m.regs.get_cl());
     // 004044ec shr eax,10h
-    m.regs.eax = shr(m.regs.eax, 0x10u8);
+    let t = shr(m.regs.eax, 0x10u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004044ef movzx ecx,al
     m.regs.ecx = m.regs.get_al() as _;
     // 004044f2 mov ebx,ds:[433F78h]
@@ -15863,7 +16328,8 @@ pub fn x004047fc() -> Cont {
     // 0040480d add esp,4
     m.regs.esp = add(m.regs.esp, 0x4u32);
     // 00404810 shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404813 push eax
     push(m.regs.eax);
     // 00404814 call 00401A60h
@@ -15899,7 +16365,8 @@ pub fn x00404833() -> Cont {
     // 00404840 add esp,4
     m.regs.esp = add(m.regs.esp, 0x4u32);
     // 00404843 shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404846 push eax
     push(m.regs.eax);
     // 00404847 call 00401A60h
@@ -15916,13 +16383,16 @@ pub fn x0040484c() -> Cont {
     // 00404856 cdq
     cdq();
     // 00404857 shl edx,3
-    m.regs.edx = shl(m.regs.edx, 0x3u8);
+    let t = shl(m.regs.edx, 0x3u8, &mut m.regs.flags);
+    m.regs.edx = t;
     // 0040485a sbb eax,edx
     m.regs.eax = sbb(m.regs.eax, m.regs.edx);
     // 0040485c sar eax,3
-    sar();
+    let t = sar(m.regs.eax, 0x3u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 0040485f shl eax,8
-    m.regs.eax = shl(m.regs.eax, 0x8u8);
+    let t = shl(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404862 add esp,4
     m.regs.esp = add(m.regs.esp, 0x4u32);
     // 00404865 add eax,100h
@@ -15943,13 +16413,16 @@ pub fn x00404870() -> Cont {
     // 0040487a cdq
     cdq();
     // 0040487b shl edx,3
-    m.regs.edx = shl(m.regs.edx, 0x3u8);
+    let t = shl(m.regs.edx, 0x3u8, &mut m.regs.flags);
+    m.regs.edx = t;
     // 0040487e sbb eax,edx
     m.regs.eax = sbb(m.regs.eax, m.regs.edx);
     // 00404880 sar eax,3
-    sar();
+    let t = sar(m.regs.eax, 0x3u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404883 shl eax,8
-    m.regs.eax = shl(m.regs.eax, 0x8u8);
+    let t = shl(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404886 add esp,4
     m.regs.esp = add(m.regs.esp, 0x4u32);
     // 00404889 add eax,100h
@@ -15970,13 +16443,16 @@ pub fn x00404894() -> Cont {
     // 0040489e cdq
     cdq();
     // 0040489f shl edx,3
-    m.regs.edx = shl(m.regs.edx, 0x3u8);
+    let t = shl(m.regs.edx, 0x3u8, &mut m.regs.flags);
+    m.regs.edx = t;
     // 004048a2 sbb eax,edx
     m.regs.eax = sbb(m.regs.eax, m.regs.edx);
     // 004048a4 sar eax,3
-    sar();
+    let t = sar(m.regs.eax, 0x3u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004048a7 shl eax,8
-    m.regs.eax = shl(m.regs.eax, 0x8u8);
+    let t = shl(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004048aa add esp,4
     m.regs.esp = add(m.regs.esp, 0x4u32);
     // 004048ad add eax,100h
@@ -16092,7 +16568,8 @@ pub fn x00404902() -> Cont {
     // 00404908 sub eax,edx
     m.regs.eax = sub(m.regs.eax, m.regs.edx);
     // 0040490a sar eax,1
-    sar();
+    let t = sar(m.regs.eax, 0x1u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 0040490c mov edi,ds:[40C724h]
     m.regs.edi = m.memory.read::<u32>(0x40c724u32);
     // 00404912 imul edi,ebx
@@ -16155,7 +16632,8 @@ pub fn x0040493b() -> Cont {
     // 00404941 sub eax,edx
     m.regs.eax = sub(m.regs.eax, m.regs.edx);
     // 00404943 sar eax,1
-    sar();
+    let t = sar(m.regs.eax, 0x1u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404945 mov edx,ecx
     m.regs.edx = m.regs.ecx;
     // 00404947 sub edx,eax
@@ -16753,7 +17231,8 @@ pub fn x00404b12() -> Cont {
     // 00404b41 mov eax,ds:[433F50h]
     m.regs.eax = m.memory.read::<u32>(0x433f50u32);
     // 00404b46 shl esi,2
-    m.regs.esi = shl(m.regs.esi, 0x2u8);
+    let t = shl(m.regs.esi, 0x2u8, &mut m.regs.flags);
+    m.regs.esi = t;
     // 00404b49 faddp
     m.fpu.set(1, m.fpu.get(1) + m.fpu.get(0));
     m.fpu.pop();
@@ -16792,11 +17271,13 @@ pub fn x00404b5d() -> Cont {
     // 00404b64 cdq
     cdq();
     // 00404b65 shl edx,3
-    m.regs.edx = shl(m.regs.edx, 0x3u8);
+    let t = shl(m.regs.edx, 0x3u8, &mut m.regs.flags);
+    m.regs.edx = t;
     // 00404b68 sbb eax,edx
     m.regs.eax = sbb(m.regs.eax, m.regs.edx);
     // 00404b6a sar eax,3
-    sar();
+    let t = sar(m.regs.eax, 0x3u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404b6d cmp ecx,eax
     sub(m.regs.ecx, m.regs.eax);
     // 00404b6f jge near ptr 00404CE5h
@@ -16811,11 +17292,13 @@ pub fn x00404b5f() -> Cont {
     // 00404b64 cdq
     cdq();
     // 00404b65 shl edx,3
-    m.regs.edx = shl(m.regs.edx, 0x3u8);
+    let t = shl(m.regs.edx, 0x3u8, &mut m.regs.flags);
+    m.regs.edx = t;
     // 00404b68 sbb eax,edx
     m.regs.eax = sbb(m.regs.eax, m.regs.edx);
     // 00404b6a sar eax,3
-    sar();
+    let t = sar(m.regs.eax, 0x3u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404b6d cmp ecx,eax
     sub(m.regs.ecx, m.regs.eax);
     // 00404b6f jge near ptr 00404CE5h
@@ -16830,7 +17313,8 @@ pub fn x00404b75() -> Cont {
     // 00404b77 mov edx,ds:[40C728h]
     m.regs.edx = m.memory.read::<u32>(0x40c728u32);
     // 00404b7d shl eax,3
-    m.regs.eax = shl(m.regs.eax, 0x3u8);
+    let t = shl(m.regs.eax, 0x3u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404b80 sub edx,eax
     m.regs.edx = sub(m.regs.edx, m.regs.eax);
     // 00404b82 mov [ebp-18h],edx
@@ -16947,7 +17431,8 @@ pub fn x00404bd3() -> Cont {
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffd0u32)) as i32,
     ) as u32;
     // 00404bfa sar eax,7
-    sar();
+    let t = sar(m.regs.eax, 0x7u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404bfd mov [ebp-18h],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xffffffe8u32), m.regs.eax);
@@ -16978,7 +17463,8 @@ pub fn x00404bd3() -> Cont {
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffd0u32)) as i32,
     ) as u32;
     // 00404c1b sar eax,7
-    sar();
+    let t = sar(m.regs.eax, 0x7u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404c1e mov [ebp-18h],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xffffffe8u32), m.regs.eax);
@@ -16995,7 +17481,8 @@ pub fn x00404bd3() -> Cont {
     // 00404c2b mov eax,ecx
     m.regs.eax = m.regs.ecx;
     // 00404c2d shl eax,6
-    m.regs.eax = shl(m.regs.eax, 0x6u8);
+    let t = shl(m.regs.eax, 0x6u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404c30 add eax,ebx
     m.regs.eax = add(m.regs.eax, m.regs.ebx);
     // 00404c32 add eax,eax
@@ -17039,7 +17526,8 @@ pub fn x00404c5a() -> Cont {
     // 00404c5a neg eax
     m.regs.eax = neg(m.regs.eax);
     // 00404c5c sar eax,7
-    sar();
+    let t = sar(m.regs.eax, 0x7u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404c5f cmp eax,7Fh
     sub(m.regs.eax, 0x7fu32);
     // 00404c62 jle short 00404C69h
@@ -17050,7 +17538,8 @@ pub fn x00404c5c() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00404c5c sar eax,7
-    sar();
+    let t = sar(m.regs.eax, 0x7u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404c5f cmp eax,7Fh
     sub(m.regs.eax, 0x7fu32);
     // 00404c62 jle short 00404C69h
@@ -17065,7 +17554,8 @@ pub fn x00404c64() -> Cont {
     // 00404c69 mov edx,ecx
     m.regs.edx = m.regs.ecx;
     // 00404c6b shl edx,6
-    m.regs.edx = shl(m.regs.edx, 0x6u8);
+    let t = shl(m.regs.edx, 0x6u8, &mut m.regs.flags);
+    m.regs.edx = t;
     // 00404c6e add edx,ebx
     m.regs.edx = add(m.regs.edx, m.regs.ebx);
     // 00404c70 mov esi,ds:[433F5Ch]
@@ -17086,7 +17576,8 @@ pub fn x00404c69() -> Cont {
     // 00404c69 mov edx,ecx
     m.regs.edx = m.regs.ecx;
     // 00404c6b shl edx,6
-    m.regs.edx = shl(m.regs.edx, 0x6u8);
+    let t = shl(m.regs.edx, 0x6u8, &mut m.regs.flags);
+    m.regs.edx = t;
     // 00404c6e add edx,ebx
     m.regs.edx = add(m.regs.edx, m.regs.ebx);
     // 00404c70 mov esi,ds:[433F5Ch]
@@ -17107,7 +17598,8 @@ pub fn x00404c7f() -> Cont {
     // 00404c7f mov eax,ecx
     m.regs.eax = m.regs.ecx;
     // 00404c81 shl eax,6
-    m.regs.eax = shl(m.regs.eax, 0x6u8);
+    let t = shl(m.regs.eax, 0x6u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404c84 mov edx,ds:[433F5Ch]
     m.regs.edx = m.memory.read::<u32>(0x433f5cu32);
     // 00404c8a add eax,ebx
@@ -17144,7 +17636,8 @@ pub fn x00404c98() -> Cont {
     // 00404c9f dec eax
     m.regs.eax = dec(m.regs.eax);
     // 00404ca0 shl edx,3
-    m.regs.edx = shl(m.regs.edx, 0x3u8);
+    let t = shl(m.regs.edx, 0x3u8, &mut m.regs.flags);
+    m.regs.edx = t;
     // 00404ca3 cmp edx,eax
     sub(m.regs.edx, m.regs.eax);
     // 00404ca5 jle short 00404CA9h
@@ -17290,11 +17783,13 @@ pub fn x00404ceb() -> Cont {
     // 00404d02 cdq
     cdq();
     // 00404d03 shl edx,3
-    m.regs.edx = shl(m.regs.edx, 0x3u8);
+    let t = shl(m.regs.edx, 0x3u8, &mut m.regs.flags);
+    m.regs.edx = t;
     // 00404d06 sbb eax,edx
     m.regs.eax = sbb(m.regs.eax, m.regs.edx);
     // 00404d08 sar eax,3
-    sar();
+    let t = sar(m.regs.eax, 0x3u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404d0b movzx edx,ch
     m.regs.edx = m.regs.get_ch() as _;
     // 00404d0e dec eax
@@ -17313,11 +17808,13 @@ pub fn x00404cfd() -> Cont {
     // 00404d02 cdq
     cdq();
     // 00404d03 shl edx,3
-    m.regs.edx = shl(m.regs.edx, 0x3u8);
+    let t = shl(m.regs.edx, 0x3u8, &mut m.regs.flags);
+    m.regs.edx = t;
     // 00404d06 sbb eax,edx
     m.regs.eax = sbb(m.regs.eax, m.regs.edx);
     // 00404d08 sar eax,3
-    sar();
+    let t = sar(m.regs.eax, 0x3u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404d0b movzx edx,ch
     m.regs.edx = m.regs.get_ch() as _;
     // 00404d0e dec eax
@@ -17356,7 +17853,8 @@ pub fn x00404d26() -> Cont {
     // 00404d29 movzx edx,cl
     m.regs.edx = m.regs.get_cl() as _;
     // 00404d2c shl ebx,6
-    m.regs.ebx = shl(m.regs.ebx, 0x6u8);
+    let t = shl(m.regs.ebx, 0x6u8, &mut m.regs.flags);
+    m.regs.ebx = t;
     // 00404d2f add ebx,edx
     m.regs.ebx = add(m.regs.ebx, m.regs.edx);
     // 00404d31 mov edx,ds:[433F64h]
@@ -17538,46 +18036,53 @@ pub fn x00404de3() -> Cont {
     // 00404ded mov edx,ds:[40C724h]
     m.regs.edx = m.memory.read::<u32>(0x40c724u32);
     // 00404df3 shl eax,3
-    m.regs.eax = shl(m.regs.eax, 0x3u8);
+    let t = shl(m.regs.eax, 0x3u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404df6 imul edx,eax
     m.regs.edx = imul(m.regs.edx as i32, m.regs.eax as i32) as u32;
     // 00404df9 movzx eax,cl
     m.regs.eax = m.regs.get_cl() as _;
     // 00404dfc shl eax,3
-    m.regs.eax = shl(m.regs.eax, 0x3u8);
+    let t = shl(m.regs.eax, 0x3u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404dff add eax,edx
     m.regs.eax = add(m.regs.eax, m.regs.edx);
     // 00404e01 mov edx,ds:[40C724h]
     m.regs.edx = m.memory.read::<u32>(0x40c724u32);
     // 00404e07 shl edx,2
-    m.regs.edx = shl(m.regs.edx, 0x2u8);
+    let t = shl(m.regs.edx, 0x2u8, &mut m.regs.flags);
+    m.regs.edx = t;
     // 00404e0a add edx,eax
     m.regs.edx = add(m.regs.edx, m.regs.eax);
     // 00404e0c mov eax,[ebp+4Eh]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x4eu32));
     // 00404e0f shl eax,8
-    m.regs.eax = shl(m.regs.eax, 0x8u8);
+    let t = shl(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404e12 mov [ebp+52h],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0x52u32), m.regs.eax);
     // 00404e15 mov eax,[ebp+4Ah]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x4au32));
     // 00404e18 shl eax,8
-    m.regs.eax = shl(m.regs.eax, 0x8u8);
+    let t = shl(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404e1b mov [ebp+6Eh],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0x6eu32), m.regs.eax);
     // 00404e1e mov eax,[ebp+42h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x42u32));
     // 00404e21 shl eax,8
-    m.regs.eax = shl(m.regs.eax, 0x8u8);
+    let t = shl(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404e24 mov [ebp+5Ah],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0x5au32), m.regs.eax);
     // 00404e27 mov eax,ebx
     m.regs.eax = m.regs.ebx;
     // 00404e29 shl eax,8
-    m.regs.eax = shl(m.regs.eax, 0x8u8);
+    let t = shl(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404e2c mov [ebp-2],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffffeu32), m.regs.eax);
@@ -17589,7 +18094,8 @@ pub fn x00404de3() -> Cont {
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x46u32)),
     );
     // 00404e35 shl eax,5
-    m.regs.eax = shl(m.regs.eax, 0x5u8);
+    let t = shl(m.regs.eax, 0x5u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404e38 mov [ebp+36h],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0x36u32), m.regs.eax);
@@ -17601,7 +18107,8 @@ pub fn x00404de3() -> Cont {
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x4eu32)),
     );
     // 00404e41 shl eax,5
-    m.regs.eax = shl(m.regs.eax, 0x5u8);
+    let t = shl(m.regs.eax, 0x5u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404e44 mov [ebp+0Eh],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xeu32), m.regs.eax);
@@ -17613,7 +18120,8 @@ pub fn x00404de3() -> Cont {
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x4au32)),
     );
     // 00404e4d shl eax,5
-    m.regs.eax = shl(m.regs.eax, 0x5u8);
+    let t = shl(m.regs.eax, 0x5u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404e50 mov [ebp+3Ah],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0x3au32), m.regs.eax);
@@ -17625,7 +18133,8 @@ pub fn x00404de3() -> Cont {
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x42u32)),
     );
     // 00404e59 shl eax,5
-    m.regs.eax = shl(m.regs.eax, 0x5u8);
+    let t = shl(m.regs.eax, 0x5u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404e5c mov [ebp+1Eh],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0x1eu32), m.regs.eax);
@@ -17637,7 +18146,8 @@ pub fn x00404de3() -> Cont {
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x6au32)),
     );
     // 00404e65 shl eax,5
-    m.regs.eax = shl(m.regs.eax, 0x5u8);
+    let t = shl(m.regs.eax, 0x5u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404e68 mov edi,[ebp+46h]
     m.regs.edi = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x46u32));
     // 00404e6b mov [ebp+32h],eax
@@ -17655,11 +18165,14 @@ pub fn x00404de3() -> Cont {
     // 00404e7a mov ebx,eax
     m.regs.ebx = m.regs.eax;
     // 00404e7c shl edi,8
-    m.regs.edi = shl(m.regs.edi, 0x8u8);
+    let t = shl(m.regs.edi, 0x8u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00404e7f shl ebx,5
-    m.regs.ebx = shl(m.regs.ebx, 0x5u8);
+    let t = shl(m.regs.ebx, 0x5u8, &mut m.regs.flags);
+    m.regs.ebx = t;
     // 00404e82 shl esi,8
-    m.regs.esi = shl(m.regs.esi, 0x8u8);
+    let t = shl(m.regs.esi, 0x8u8, &mut m.regs.flags);
+    m.regs.esi = t;
     // 00404e85 mov [ebp+26h],ebx
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0x26u32), m.regs.ebx);
@@ -17675,46 +18188,53 @@ pub fn x00404dea() -> Cont {
     // 00404ded mov edx,ds:[40C724h]
     m.regs.edx = m.memory.read::<u32>(0x40c724u32);
     // 00404df3 shl eax,3
-    m.regs.eax = shl(m.regs.eax, 0x3u8);
+    let t = shl(m.regs.eax, 0x3u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404df6 imul edx,eax
     m.regs.edx = imul(m.regs.edx as i32, m.regs.eax as i32) as u32;
     // 00404df9 movzx eax,cl
     m.regs.eax = m.regs.get_cl() as _;
     // 00404dfc shl eax,3
-    m.regs.eax = shl(m.regs.eax, 0x3u8);
+    let t = shl(m.regs.eax, 0x3u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404dff add eax,edx
     m.regs.eax = add(m.regs.eax, m.regs.edx);
     // 00404e01 mov edx,ds:[40C724h]
     m.regs.edx = m.memory.read::<u32>(0x40c724u32);
     // 00404e07 shl edx,2
-    m.regs.edx = shl(m.regs.edx, 0x2u8);
+    let t = shl(m.regs.edx, 0x2u8, &mut m.regs.flags);
+    m.regs.edx = t;
     // 00404e0a add edx,eax
     m.regs.edx = add(m.regs.edx, m.regs.eax);
     // 00404e0c mov eax,[ebp+4Eh]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x4eu32));
     // 00404e0f shl eax,8
-    m.regs.eax = shl(m.regs.eax, 0x8u8);
+    let t = shl(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404e12 mov [ebp+52h],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0x52u32), m.regs.eax);
     // 00404e15 mov eax,[ebp+4Ah]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x4au32));
     // 00404e18 shl eax,8
-    m.regs.eax = shl(m.regs.eax, 0x8u8);
+    let t = shl(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404e1b mov [ebp+6Eh],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0x6eu32), m.regs.eax);
     // 00404e1e mov eax,[ebp+42h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x42u32));
     // 00404e21 shl eax,8
-    m.regs.eax = shl(m.regs.eax, 0x8u8);
+    let t = shl(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404e24 mov [ebp+5Ah],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0x5au32), m.regs.eax);
     // 00404e27 mov eax,ebx
     m.regs.eax = m.regs.ebx;
     // 00404e29 shl eax,8
-    m.regs.eax = shl(m.regs.eax, 0x8u8);
+    let t = shl(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404e2c mov [ebp-2],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffffeu32), m.regs.eax);
@@ -17726,7 +18246,8 @@ pub fn x00404dea() -> Cont {
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x46u32)),
     );
     // 00404e35 shl eax,5
-    m.regs.eax = shl(m.regs.eax, 0x5u8);
+    let t = shl(m.regs.eax, 0x5u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404e38 mov [ebp+36h],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0x36u32), m.regs.eax);
@@ -17738,7 +18259,8 @@ pub fn x00404dea() -> Cont {
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x4eu32)),
     );
     // 00404e41 shl eax,5
-    m.regs.eax = shl(m.regs.eax, 0x5u8);
+    let t = shl(m.regs.eax, 0x5u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404e44 mov [ebp+0Eh],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xeu32), m.regs.eax);
@@ -17750,7 +18272,8 @@ pub fn x00404dea() -> Cont {
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x4au32)),
     );
     // 00404e4d shl eax,5
-    m.regs.eax = shl(m.regs.eax, 0x5u8);
+    let t = shl(m.regs.eax, 0x5u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404e50 mov [ebp+3Ah],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0x3au32), m.regs.eax);
@@ -17762,7 +18285,8 @@ pub fn x00404dea() -> Cont {
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x42u32)),
     );
     // 00404e59 shl eax,5
-    m.regs.eax = shl(m.regs.eax, 0x5u8);
+    let t = shl(m.regs.eax, 0x5u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404e5c mov [ebp+1Eh],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0x1eu32), m.regs.eax);
@@ -17774,7 +18298,8 @@ pub fn x00404dea() -> Cont {
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x6au32)),
     );
     // 00404e65 shl eax,5
-    m.regs.eax = shl(m.regs.eax, 0x5u8);
+    let t = shl(m.regs.eax, 0x5u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404e68 mov edi,[ebp+46h]
     m.regs.edi = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x46u32));
     // 00404e6b mov [ebp+32h],eax
@@ -17792,11 +18317,14 @@ pub fn x00404dea() -> Cont {
     // 00404e7a mov ebx,eax
     m.regs.ebx = m.regs.eax;
     // 00404e7c shl edi,8
-    m.regs.edi = shl(m.regs.edi, 0x8u8);
+    let t = shl(m.regs.edi, 0x8u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00404e7f shl ebx,5
-    m.regs.ebx = shl(m.regs.ebx, 0x5u8);
+    let t = shl(m.regs.ebx, 0x5u8, &mut m.regs.flags);
+    m.regs.ebx = t;
     // 00404e82 shl esi,8
-    m.regs.esi = shl(m.regs.esi, 0x8u8);
+    let t = shl(m.regs.esi, 0x8u8, &mut m.regs.flags);
+    m.regs.esi = t;
     // 00404e85 mov [ebp+26h],ebx
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0x26u32), m.regs.ebx);
@@ -17877,7 +18405,8 @@ pub fn x00404ea1() -> Cont {
     // 00404ebf sub eax,edi
     m.regs.eax = sub(m.regs.eax, m.regs.edi);
     // 00404ec1 sar eax,3
-    sar();
+    let t = sar(m.regs.eax, 0x3u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404ec4 mov [ebp+3Eh],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0x3eu32), m.regs.eax);
@@ -17889,7 +18418,8 @@ pub fn x00404ea1() -> Cont {
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x6eu32)),
     );
     // 00404ecd sar eax,3
-    sar();
+    let t = sar(m.regs.eax, 0x3u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404ed0 mov [ebp+1Ah],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0x1au32), m.regs.eax);
@@ -17914,7 +18444,8 @@ pub fn x00404ea1() -> Cont {
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0x5eu32), m.regs.edi);
     // 00404ee8 sar eax,3
-    sar();
+    let t = sar(m.regs.eax, 0x3u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404eeb mov [ebp+62h],esi
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0x62u32), m.regs.esi);
@@ -17954,21 +18485,24 @@ pub fn x00404ea1() -> Cont {
     // 00404f03 mov eax,[ebp+5Eh]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x5eu32));
     // 00404f06 sar eax,8
-    sar();
+    let t = sar(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404f09 mov [ebp+76h],al
     m.memory
         .write::<u8>(m.regs.ebp.wrapping_add(0x76u32), m.regs.get_al());
     // 00404f0c mov eax,[ebp+66h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x66u32));
     // 00404f0f sar eax,8
-    sar();
+    let t = sar(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404f12 mov [ebp+72h],al
     m.memory
         .write::<u8>(m.regs.ebp.wrapping_add(0x72u32), m.regs.get_al());
     // 00404f15 mov eax,[ebp+62h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x62u32));
     // 00404f18 sar eax,7
-    sar();
+    let t = sar(m.regs.eax, 0x7u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404f1b and eax,0FFh
     m.regs.eax = and(m.regs.eax, 0xffu32);
     // 00404f20 mov [ebp-6],eax
@@ -17979,9 +18513,11 @@ pub fn x00404ea1() -> Cont {
     // 00404f27 mov ebx,[ebp-6]
     m.regs.ebx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffffau32));
     // 00404f2a shl eax,8
-    m.regs.eax = shl(m.regs.eax, 0x8u8);
+    let t = shl(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404f2d shl ebx,10h
-    m.regs.ebx = shl(m.regs.ebx, 0x10u8);
+    let t = shl(m.regs.ebx, 0x10u8, &mut m.regs.flags);
+    m.regs.ebx = t;
     // 00404f30 mov [ebp+0Ah],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xau32), m.regs.eax);
@@ -17993,7 +18529,8 @@ pub fn x00404ea1() -> Cont {
     // 00404f39 movzx eax,byte ptr [ebp+76h]
     m.regs.eax = m.memory.read::<u8>(m.regs.ebp.wrapping_add(0x76u32)) as _;
     // 00404f3d shl ebx,8
-    m.regs.ebx = shl(m.regs.ebx, 0x8u8);
+    let t = shl(m.regs.ebx, 0x8u8, &mut m.regs.flags);
+    m.regs.ebx = t;
     // 00404f40 add eax,[ebp+0Ah]
     m.regs.eax = add(
         m.regs.eax,
@@ -18005,7 +18542,8 @@ pub fn x00404ea1() -> Cont {
     // 00404f46 mov ebx,[ebp+6]
     m.regs.ebx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x6u32));
     // 00404f49 shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404f4c add ebx,[ebp+0Ah]
     m.regs.ebx = add(
         m.regs.ebx,
@@ -18046,7 +18584,8 @@ pub fn x00404ea1() -> Cont {
     // 00404f75 mov eax,edx
     m.regs.eax = m.regs.edx;
     // 00404f77 shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404f7a mov [ebp+0Ah],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xau32), m.regs.eax);
@@ -18108,21 +18647,24 @@ pub fn x00404ef1() -> Cont {
     // 00404f03 mov eax,[ebp+5Eh]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x5eu32));
     // 00404f06 sar eax,8
-    sar();
+    let t = sar(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404f09 mov [ebp+76h],al
     m.memory
         .write::<u8>(m.regs.ebp.wrapping_add(0x76u32), m.regs.get_al());
     // 00404f0c mov eax,[ebp+66h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x66u32));
     // 00404f0f sar eax,8
-    sar();
+    let t = sar(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404f12 mov [ebp+72h],al
     m.memory
         .write::<u8>(m.regs.ebp.wrapping_add(0x72u32), m.regs.get_al());
     // 00404f15 mov eax,[ebp+62h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x62u32));
     // 00404f18 sar eax,7
-    sar();
+    let t = sar(m.regs.eax, 0x7u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404f1b and eax,0FFh
     m.regs.eax = and(m.regs.eax, 0xffu32);
     // 00404f20 mov [ebp-6],eax
@@ -18133,9 +18675,11 @@ pub fn x00404ef1() -> Cont {
     // 00404f27 mov ebx,[ebp-6]
     m.regs.ebx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffffau32));
     // 00404f2a shl eax,8
-    m.regs.eax = shl(m.regs.eax, 0x8u8);
+    let t = shl(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404f2d shl ebx,10h
-    m.regs.ebx = shl(m.regs.ebx, 0x10u8);
+    let t = shl(m.regs.ebx, 0x10u8, &mut m.regs.flags);
+    m.regs.ebx = t;
     // 00404f30 mov [ebp+0Ah],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xau32), m.regs.eax);
@@ -18147,7 +18691,8 @@ pub fn x00404ef1() -> Cont {
     // 00404f39 movzx eax,byte ptr [ebp+76h]
     m.regs.eax = m.memory.read::<u8>(m.regs.ebp.wrapping_add(0x76u32)) as _;
     // 00404f3d shl ebx,8
-    m.regs.ebx = shl(m.regs.ebx, 0x8u8);
+    let t = shl(m.regs.ebx, 0x8u8, &mut m.regs.flags);
+    m.regs.ebx = t;
     // 00404f40 add eax,[ebp+0Ah]
     m.regs.eax = add(
         m.regs.eax,
@@ -18159,7 +18704,8 @@ pub fn x00404ef1() -> Cont {
     // 00404f46 mov ebx,[ebp+6]
     m.regs.ebx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x6u32));
     // 00404f49 shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404f4c add ebx,[ebp+0Ah]
     m.regs.ebx = add(
         m.regs.ebx,
@@ -18200,7 +18746,8 @@ pub fn x00404ef1() -> Cont {
     // 00404f75 mov eax,edx
     m.regs.eax = m.regs.edx;
     // 00404f77 shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404f7a mov [ebp+0Ah],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xau32), m.regs.eax);
@@ -18315,7 +18862,8 @@ pub fn x00404fad() -> Cont {
     // 00404fe1 sub eax,edx
     m.regs.eax = sub(m.regs.eax, m.regs.edx);
     // 00404fe3 sar eax,1
-    sar();
+    let t = sar(m.regs.eax, 0x1u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404fe5 mov [ebp-14h],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xffffffecu32), m.regs.eax);
@@ -18326,7 +18874,8 @@ pub fn x00404fad() -> Cont {
     // 00404fee sub eax,edx
     m.regs.eax = sub(m.regs.eax, m.regs.edx);
     // 00404ff0 sar eax,1
-    sar();
+    let t = sar(m.regs.eax, 0x1u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00404ff2 fmul qword ptr ds:[40C140h]
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c140u32));
@@ -18476,11 +19025,13 @@ pub fn x00404fad() -> Cont {
     // 004050ab cdq
     cdq();
     // 004050ac shl edx,3
-    m.regs.edx = shl(m.regs.edx, 0x3u8);
+    let t = shl(m.regs.edx, 0x3u8, &mut m.regs.flags);
+    m.regs.edx = t;
     // 004050af sbb eax,edx
     m.regs.eax = sbb(m.regs.eax, m.regs.edx);
     // 004050b1 sar eax,3
-    sar();
+    let t = sar(m.regs.eax, 0x3u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004050b4 cmp ecx,eax
     sub(m.regs.ecx, m.regs.eax);
     // 004050b6 jge near ptr 004051C1h
@@ -18495,11 +19046,13 @@ pub fn x004050a6() -> Cont {
     // 004050ab cdq
     cdq();
     // 004050ac shl edx,3
-    m.regs.edx = shl(m.regs.edx, 0x3u8);
+    let t = shl(m.regs.edx, 0x3u8, &mut m.regs.flags);
+    m.regs.edx = t;
     // 004050af sbb eax,edx
     m.regs.eax = sbb(m.regs.eax, m.regs.edx);
     // 004050b1 sar eax,3
-    sar();
+    let t = sar(m.regs.eax, 0x3u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004050b4 cmp ecx,eax
     sub(m.regs.ecx, m.regs.eax);
     // 004050b6 jge near ptr 004051C1h
@@ -18532,7 +19085,8 @@ pub fn x004050c5() -> Cont {
     // 004050ca mov esi,ecx
     m.regs.esi = m.regs.ecx;
     // 004050cc shl esi,6
-    m.regs.esi = shl(m.regs.esi, 0x6u8);
+    let t = shl(m.regs.esi, 0x6u8, &mut m.regs.flags);
+    m.regs.esi = t;
     // 004050cf mov ebx,ds:[433F64h]
     m.regs.ebx = m.memory.read::<u32>(0x433f64u32);
     // 004050d5 add esi,edx
@@ -18568,7 +19122,8 @@ pub fn x004050ca() -> Cont {
     // 004050ca mov esi,ecx
     m.regs.esi = m.regs.ecx;
     // 004050cc shl esi,6
-    m.regs.esi = shl(m.regs.esi, 0x6u8);
+    let t = shl(m.regs.esi, 0x6u8, &mut m.regs.flags);
+    m.regs.esi = t;
     // 004050cf mov ebx,ds:[433F64h]
     m.regs.ebx = m.memory.read::<u32>(0x433f64u32);
     // 004050d5 add esi,edx
@@ -18615,7 +19170,8 @@ pub fn x00405107() -> Cont {
         m.fpu.get(0) * m.memory.read::<f32>(m.regs.ebp.wrapping_add(0xfffffff0u32)) as f64,
     );
     // 00405112 shl eax,3
-    m.regs.eax = shl(m.regs.eax, 0x3u8);
+    let t = shl(m.regs.eax, 0x3u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00405115 fadd dword ptr [ebp+1Ch]
     m.fpu.set(
         0,
@@ -18679,7 +19235,8 @@ pub fn x00405107() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c1b0u32));
     // 0040514d shl eax,3
-    m.regs.eax = shl(m.regs.eax, 0x3u8);
+    let t = shl(m.regs.eax, 0x3u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00405150 fxch
     todo!();
     // 00405152 fadd qword ptr [ebp-28h]
@@ -18945,7 +19502,8 @@ pub fn x00405232() -> Cont {
         m.fpu.get(0) + m.memory.read::<f32>(m.regs.ebp.wrapping_add(0xffffffdcu32)) as f64,
     );
     // 00405248 shl ecx,10h
-    m.regs.ecx = shl(m.regs.ecx, 0x10u8);
+    let t = shl(m.regs.ecx, 0x10u8, &mut m.regs.flags);
+    m.regs.ecx = t;
     // 0040524b fsubr dword ptr [ebp-0Ch]
     todo!();
     // 0040524e sub [ebp-10h],ecx
@@ -19175,7 +19733,8 @@ pub fn x004052c7() -> Cont {
     // 004052d0 mov edx,ds:[40C724h]
     m.regs.edx = m.memory.read::<u32>(0x40c724u32);
     // 004052d6 sar eax,10h
-    sar();
+    let t = sar(m.regs.eax, 0x10u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004052d9 imul edx,eax
     m.regs.edx = imul(m.regs.edx as i32, m.regs.eax as i32) as u32;
     // 004052dc mov eax,[ebp-10h]
@@ -19198,7 +19757,8 @@ pub fn x004052c7() -> Cont {
     // 004052f0 mov edx,[ebp+14h]
     m.regs.edx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x14u32));
     // 004052f3 shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004052f6 mov edi,[ebp-1Ch]
     m.regs.edi = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffe4u32));
     // 004052f9 add edx,eax
@@ -19234,14 +19794,16 @@ pub fn x004052ff() -> Cont {
     // 00405305 mov eax,[ebp-14h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffecu32));
     // 00405308 shr eax,10h
-    m.regs.eax = shr(m.regs.eax, 0x10u8);
+    let t = shr(m.regs.eax, 0x10u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 0040530b add eax,[ebp-30h]
     m.regs.eax = add(
         m.regs.eax,
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffd0u32)),
     );
     // 0040530e shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00405311 add eax,[ebp+10h]
     m.regs.eax = add(
         m.regs.eax,
@@ -19311,7 +19873,8 @@ pub fn x00405337() -> Cont {
     // 00405344 imul eax,ds:[40C728h]
     m.regs.eax = imul(m.regs.eax as i32, m.memory.read::<u32>(0x40c728u32) as i32) as u32;
     // 0040534b shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 0040534e push eax
     push(m.regs.eax);
     // 0040534f call 00401A60h
@@ -19370,15 +19933,18 @@ pub fn x00405383() -> Cont {
     // 00405383 cdq
     cdq();
     // 00405384 shl edx,2
-    m.regs.edx = shl(m.regs.edx, 0x2u8);
+    let t = shl(m.regs.edx, 0x2u8, &mut m.regs.flags);
+    m.regs.edx = t;
     // 00405387 sbb eax,edx
     m.regs.eax = sbb(m.regs.eax, m.regs.edx);
     // 00405389 sar eax,2
-    sar();
+    let t = sar(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 0040538c mov esi,ecx
     m.regs.esi = m.regs.ecx;
     // 0040538e shl esi,8
-    m.regs.esi = shl(m.regs.esi, 0x8u8);
+    let t = shl(m.regs.esi, 0x8u8, &mut m.regs.flags);
+    m.regs.esi = t;
     // 00405391 add esi,ebx
     m.regs.esi = add(m.regs.esi, m.regs.ebx);
     // 00405393 mov edx,eax
@@ -19386,7 +19952,8 @@ pub fn x00405383() -> Cont {
     // 00405395 mov eax,ds:[433F48h]
     m.regs.eax = m.memory.read::<u32>(0x433f48u32);
     // 0040539a shl esi,2
-    m.regs.esi = shl(m.regs.esi, 0x2u8);
+    let t = shl(m.regs.esi, 0x2u8, &mut m.regs.flags);
+    m.regs.esi = t;
     // 0040539d inc ebx
     m.regs.ebx = inc(m.regs.ebx);
     // 0040539e mov [esi+eax],edx
@@ -19741,7 +20308,8 @@ pub fn x0040548b() -> Cont {
     // 00405491 sub eax,edx
     m.regs.eax = sub(m.regs.eax, m.regs.edx);
     // 00405493 sar eax,1
-    sar();
+    let t = sar(m.regs.eax, 0x1u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00405495 mov [ebp-4],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32), m.regs.eax);
@@ -19752,7 +20320,8 @@ pub fn x0040548b() -> Cont {
     // 0040549e sub eax,edx
     m.regs.eax = sub(m.regs.eax, m.regs.edx);
     // 004054a0 sar eax,1
-    sar();
+    let t = sar(m.regs.eax, 0x1u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004054a2 fld dword ptr [ebp-24h]
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0xffffffdcu32)) as f64);
@@ -20336,9 +20905,11 @@ pub fn x004055e4() -> Cont {
     // 004055f5 mov eax,edi
     m.regs.eax = m.regs.edi;
     // 004055f7 sar eax,10h
-    sar();
+    let t = sar(m.regs.eax, 0x10u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004055fa shl eax,8
-    m.regs.eax = shl(m.regs.eax, 0x8u8);
+    let t = shl(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004055fd mov esi,[ebp-8]
     m.regs.esi = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32));
     // 00405600 mov [ebp-38h],eax
@@ -20371,7 +20942,8 @@ pub fn x00405608() -> Cont {
     // 00405608 mov eax,[ebp-1Ch]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffe4u32));
     // 0040560b sar eax,10h
-    sar();
+    let t = sar(m.regs.eax, 0x10u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 0040560e add eax,[ebp-38h]
     m.regs.eax = add(
         m.regs.eax,
@@ -20380,7 +20952,8 @@ pub fn x00405608() -> Cont {
     // 00405611 mov ecx,ds:[433F48h]
     m.regs.ecx = m.memory.read::<u32>(0x433f48u32);
     // 00405617 shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 0040561a add ecx,eax
     m.regs.ecx = add(m.regs.ecx, m.regs.eax);
     // 0040561c mov ecx,[ecx]
@@ -20399,7 +20972,8 @@ pub fn x00405622() -> Cont {
     // 00405625 add eax,esi
     m.regs.eax = add(m.regs.eax, m.regs.esi);
     // 00405627 shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 0040562a mov [ebp-3Ch],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xffffffc4u32), m.regs.eax);
@@ -20571,7 +21145,8 @@ pub fn x0040567c() -> Cont {
     // 00405686 mov ecx,[ebp-14h]
     m.regs.ecx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffecu32));
     // 00405689 shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 0040568c add ecx,eax
     m.regs.ecx = add(m.regs.ecx, m.regs.eax);
     // 0040568e mov ecx,[ecx]
@@ -20606,9 +21181,11 @@ pub fn x00405697() -> Cont {
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32)) as i32,
     ) as u32;
     // 004056ab sar eax,9
-    sar();
+    let t = sar(m.regs.eax, 0x9u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004056ae sar ecx,9
-    sar();
+    let t = sar(m.regs.ecx, 0x9u8, &mut m.regs.flags);
+    m.regs.ecx = t;
     // 004056b1 add eax,[ebp-1Ch]
     m.regs.eax = add(
         m.regs.eax,
@@ -20628,11 +21205,13 @@ pub fn x00405697() -> Cont {
     // 004056be movzx edx,dl
     m.regs.edx = m.regs.get_dl() as _;
     // 004056c1 shl ecx,8
-    m.regs.ecx = shl(m.regs.ecx, 0x8u8);
+    let t = shl(m.regs.ecx, 0x8u8, &mut m.regs.flags);
+    m.regs.ecx = t;
     // 004056c4 add ecx,edx
     m.regs.ecx = add(m.regs.ecx, m.regs.edx);
     // 004056c6 shl ecx,2
-    m.regs.ecx = shl(m.regs.ecx, 0x2u8);
+    let t = shl(m.regs.ecx, 0x2u8, &mut m.regs.flags);
+    m.regs.ecx = t;
     // 004056c9 mov eax,[ebp-10h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff0u32));
     // 004056cc add ecx,[ebp-18h]
@@ -20716,7 +21295,8 @@ pub fn x004056e3() -> Cont {
     // 00405700 xor eax,eax
     m.regs.eax = xor(m.regs.eax, m.regs.eax);
     // 00405702 shl ecx,2
-    m.regs.ecx = shl(m.regs.ecx, 0x2u8);
+    let t = shl(m.regs.ecx, 0x2u8, &mut m.regs.flags);
+    m.regs.ecx = t;
     // 00405705 mov [ebp-4],edx
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32), m.regs.edx);
@@ -21681,7 +22261,8 @@ pub fn x00405a73() -> Cont {
     // 00405a79 mov eax,[ebp-4]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32));
     // 00405a7c shl eax,3
-    m.regs.eax = shl(m.regs.eax, 0x3u8);
+    let t = shl(m.regs.eax, 0x3u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00405a7f mov edx,ds:[433F30h]
     m.regs.edx = m.memory.read::<u32>(0x433f30u32);
     // 00405a85 add edx,[eax+4331A4h]
@@ -21701,7 +22282,8 @@ pub fn x00405a79() -> Cont {
     // 00405a79 mov eax,[ebp-4]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32));
     // 00405a7c shl eax,3
-    m.regs.eax = shl(m.regs.eax, 0x3u8);
+    let t = shl(m.regs.eax, 0x3u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00405a7f mov edx,ds:[433F30h]
     m.regs.edx = m.memory.read::<u32>(0x433f30u32);
     // 00405a85 add edx,[eax+4331A4h]
@@ -21738,16 +22320,19 @@ pub fn x00405aaa() -> Cont {
     // 00405aaa mov eax,ebx
     m.regs.eax = m.regs.ebx;
     // 00405aac shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00405aaf mov [ebp-0Ch],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffff4u32), m.regs.eax);
     // 00405ab2 mov eax,ebx
     m.regs.eax = m.regs.ebx;
     // 00405ab4 shl eax,0Ah
-    m.regs.eax = shl(m.regs.eax, 0xau8);
+    let t = shl(m.regs.eax, 0xau8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00405ab7 shl ebx,12h
-    m.regs.ebx = shl(m.regs.ebx, 0x12u8);
+    let t = shl(m.regs.ebx, 0x12u8, &mut m.regs.flags);
+    m.regs.ebx = t;
     // 00405aba add eax,[ebp-0Ch]
     m.regs.eax = add(
         m.regs.eax,
@@ -22195,7 +22780,8 @@ pub fn x00405c14() -> Cont {
     // 00405c2f sub eax,edx
     m.regs.eax = sub(m.regs.eax, m.regs.edx);
     // 00405c31 sar eax,1
-    sar();
+    let t = sar(m.regs.eax, 0x1u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00405c33 fld dword ptr ds:[423220h]
     m.fpu.push(m.memory.read::<f32>(0x423220u32) as f64);
     // 00405c39 fmulp st(2),st
@@ -22215,7 +22801,8 @@ pub fn x00405c14() -> Cont {
     m.fpu.set(1, m.fpu.get(1) + m.fpu.get(0));
     m.fpu.pop();
     // 00405c48 shl eax,3
-    m.regs.eax = shl(m.regs.eax, 0x3u8);
+    let t = shl(m.regs.eax, 0x3u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00405c4b call 00408838h
     call(0x405c50, Cont(x00408838))
 }
@@ -22244,7 +22831,8 @@ pub fn x00405c1b() -> Cont {
     // 00405c2f sub eax,edx
     m.regs.eax = sub(m.regs.eax, m.regs.edx);
     // 00405c31 sar eax,1
-    sar();
+    let t = sar(m.regs.eax, 0x1u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00405c33 fld dword ptr ds:[423220h]
     m.fpu.push(m.memory.read::<f32>(0x423220u32) as f64);
     // 00405c39 fmulp st(2),st
@@ -22264,7 +22852,8 @@ pub fn x00405c1b() -> Cont {
     m.fpu.set(1, m.fpu.get(1) + m.fpu.get(0));
     m.fpu.pop();
     // 00405c48 shl eax,3
-    m.regs.eax = shl(m.regs.eax, 0x3u8);
+    let t = shl(m.regs.eax, 0x3u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00405c4b call 00408838h
     call(0x405c50, Cont(x00408838))
 }
@@ -22304,7 +22893,8 @@ pub fn x00405c50() -> Cont {
     // 00405c6a sub eax,edx
     m.regs.eax = sub(m.regs.eax, m.regs.edx);
     // 00405c6c sar eax,1
-    sar();
+    let t = sar(m.regs.eax, 0x1u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00405c6e mov [ebp-4],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32), m.regs.eax);
@@ -22379,7 +22969,8 @@ pub fn x00405c97() -> Cont {
     // 00405c99 mov edx,[ebx+34h]
     m.regs.edx = m.memory.read::<u32>(m.regs.ebx.wrapping_add(0x34u32));
     // 00405c9c shl eax,5
-    m.regs.eax = shl(m.regs.eax, 0x5u8);
+    let t = shl(m.regs.eax, 0x5u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00405c9f add eax,edx
     m.regs.eax = add(m.regs.eax, m.regs.edx);
     // 00405ca1 imul edi,[eax+4],0Ch
@@ -22420,7 +23011,8 @@ pub fn x00405c97() -> Cont {
                 as f64,
     );
     // 00405cbd shl edx,3
-    m.regs.edx = shl(m.regs.edx, 0x3u8);
+    let t = shl(m.regs.edx, 0x3u8, &mut m.regs.flags);
+    m.regs.edx = t;
     // 00405cc0 fchs
     todo!();
     // 00405cc2 call 00408838h
@@ -22955,7 +23547,8 @@ pub fn x00405e86() -> Cont {
     // 00405e8c add esp,4
     m.regs.esp = add(m.regs.esp, 0x4u32);
     // 00405e8f shl eax,5
-    m.regs.eax = shl(m.regs.eax, 0x5u8);
+    let t = shl(m.regs.eax, 0x5u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00405e92 push eax
     push(m.regs.eax);
     // 00405e93 call 00401A60h
@@ -22973,7 +23566,8 @@ pub fn x00405e98() -> Cont {
     // 00405e9d add esp,4
     m.regs.esp = add(m.regs.esp, 0x4u32);
     // 00405ea0 shl eax,3
-    m.regs.eax = shl(m.regs.eax, 0x3u8);
+    let t = shl(m.regs.eax, 0x3u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00405ea3 push eax
     push(m.regs.eax);
     // 00405ea4 call 00401A60h
@@ -22991,7 +23585,8 @@ pub fn x00405ea9() -> Cont {
     // 00405eaf add esp,4
     m.regs.esp = add(m.regs.esp, 0x4u32);
     // 00405eb2 shl eax,3
-    m.regs.eax = shl(m.regs.eax, 0x3u8);
+    let t = shl(m.regs.eax, 0x3u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00405eb5 push eax
     push(m.regs.eax);
     // 00405eb6 call 00401A60h
@@ -23064,7 +23659,8 @@ pub fn x00405f04() -> Cont {
     // 00405f13 movzx bx,byte ptr [ecx]
     m.regs.set_bx(m.memory.read::<u8>(m.regs.ecx) as _);
     // 00405f17 shl eax,8
-    m.regs.eax = shl(m.regs.eax, 0x8u8);
+    let t = shl(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00405f1a add eax,ebx
     m.regs.eax = add(m.regs.eax, m.regs.ebx);
     // 00405f1c cwde
@@ -23081,7 +23677,8 @@ pub fn x00405f04() -> Cont {
     // 00405f26 movzx bx,byte ptr [ecx]
     m.regs.set_bx(m.memory.read::<u8>(m.regs.ecx) as _);
     // 00405f2a shl eax,8
-    m.regs.eax = shl(m.regs.eax, 0x8u8);
+    let t = shl(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00405f2d add eax,ebx
     m.regs.eax = add(m.regs.eax, m.regs.ebx);
     // 00405f2f cwde
@@ -23130,7 +23727,8 @@ pub fn x00405f50() -> Cont {
     // 00405f55 movzx bx,byte ptr [ecx]
     m.regs.set_bx(m.memory.read::<u8>(m.regs.ecx) as _);
     // 00405f59 shl esi,8
-    m.regs.esi = shl(m.regs.esi, 0x8u8);
+    let t = shl(m.regs.esi, 0x8u8, &mut m.regs.flags);
+    m.regs.esi = t;
     // 00405f5c add ebx,esi
     m.regs.ebx = add(m.regs.ebx, m.regs.esi);
     // 00405f5e mov [ebp-4],ebx
@@ -23171,7 +23769,8 @@ pub fn x00405f50() -> Cont {
     // 00405f82 movzx di,byte ptr [ecx]
     m.regs.set_di(m.memory.read::<u8>(m.regs.ecx) as _);
     // 00405f86 shl esi,8
-    m.regs.esi = shl(m.regs.esi, 0x8u8);
+    let t = shl(m.regs.esi, 0x8u8, &mut m.regs.flags);
+    m.regs.esi = t;
     // 00405f89 add esi,edi
     m.regs.esi = add(m.regs.esi, m.regs.edi);
     // 00405f8b inc ecx
@@ -23213,7 +23812,8 @@ pub fn x00405f50() -> Cont {
     // 00405fae movzx di,byte ptr [ecx]
     m.regs.set_di(m.memory.read::<u8>(m.regs.ecx) as _);
     // 00405fb2 shl esi,8
-    m.regs.esi = shl(m.regs.esi, 0x8u8);
+    let t = shl(m.regs.esi, 0x8u8, &mut m.regs.flags);
+    m.regs.esi = t;
     // 00405fb5 add esi,edi
     m.regs.esi = add(m.regs.esi, m.regs.edi);
     // 00405fb7 inc ecx
@@ -23293,7 +23893,8 @@ pub fn x00405fe2() -> Cont {
     // 00405fef movzx si,byte ptr [ecx]
     m.regs.set_si(m.memory.read::<u8>(m.regs.ecx) as _);
     // 00405ff3 shl ebx,8
-    m.regs.ebx = shl(m.regs.ebx, 0x8u8);
+    let t = shl(m.regs.ebx, 0x8u8, &mut m.regs.flags);
+    m.regs.ebx = t;
     // 00405ff6 add ebx,esi
     m.regs.ebx = add(m.regs.ebx, m.regs.esi);
     // 00405ff8 movsx edi,bx
@@ -23303,7 +23904,8 @@ pub fn x00405fe2() -> Cont {
     // 00405ffd mov esi,[edx+34h]
     m.regs.esi = m.memory.read::<u32>(m.regs.edx.wrapping_add(0x34u32));
     // 00406000 shl ebx,5
-    m.regs.ebx = shl(m.regs.ebx, 0x5u8);
+    let t = shl(m.regs.ebx, 0x5u8, &mut m.regs.flags);
+    m.regs.ebx = t;
     // 00406003 inc ecx
     m.regs.ecx = inc(m.regs.ecx);
     // 00406004 inc ecx
@@ -23317,7 +23919,8 @@ pub fn x00405fe2() -> Cont {
     // 0040600d movzx di,byte ptr [ecx]
     m.regs.set_di(m.memory.read::<u8>(m.regs.ecx) as _);
     // 00406011 shl esi,8
-    m.regs.esi = shl(m.regs.esi, 0x8u8);
+    let t = shl(m.regs.esi, 0x8u8, &mut m.regs.flags);
+    m.regs.esi = t;
     // 00406014 add esi,edi
     m.regs.esi = add(m.regs.esi, m.regs.edi);
     // 00406016 movsx edi,si
@@ -23333,7 +23936,8 @@ pub fn x00405fe2() -> Cont {
     m.regs
         .set_si(m.memory.read::<u8>(m.regs.ecx.wrapping_add(0x3u32)) as _);
     // 00406025 shl esi,8
-    m.regs.esi = shl(m.regs.esi, 0x8u8);
+    let t = shl(m.regs.esi, 0x8u8, &mut m.regs.flags);
+    m.regs.esi = t;
     // 00406028 inc ecx
     m.regs.ecx = inc(m.regs.ecx);
     // 00406029 inc ecx
@@ -23513,7 +24117,8 @@ pub fn x004060b3() -> Cont {
     // 004060c8 sub eax,edx
     m.regs.eax = sub(m.regs.eax, m.regs.edx);
     // 004060ca sar eax,1
-    sar();
+    let t = sar(m.regs.eax, 0x1u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004060cc mov edx,[ecx+40h]
     m.regs.edx = m.memory.read::<u32>(m.regs.ecx.wrapping_add(0x40u32));
     // 004060cf mov eax,[edx+eax*8]
@@ -23568,7 +24173,8 @@ pub fn x004060be() -> Cont {
     // 004060c8 sub eax,edx
     m.regs.eax = sub(m.regs.eax, m.regs.edx);
     // 004060ca sar eax,1
-    sar();
+    let t = sar(m.regs.eax, 0x1u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004060cc mov edx,[ecx+40h]
     m.regs.edx = m.memory.read::<u32>(m.regs.ecx.wrapping_add(0x40u32));
     // 004060cf mov eax,[edx+eax*8]
@@ -23651,7 +24257,8 @@ pub fn x004060ed() -> Cont {
     // 004060ed mov eax,edi
     m.regs.eax = m.regs.edi;
     // 004060ef shl eax,3
-    m.regs.eax = shl(m.regs.eax, 0x3u8);
+    let t = shl(m.regs.eax, 0x3u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004060f2 mov [ebp-8],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32), m.regs.eax);
@@ -23670,7 +24277,8 @@ pub fn x004060ed() -> Cont {
     // 00406100 mov eax,[edx]
     m.regs.eax = m.memory.read::<u32>(m.regs.edx);
     // 00406102 shl eax,3
-    m.regs.eax = shl(m.regs.eax, 0x3u8);
+    let t = shl(m.regs.eax, 0x3u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00406105 lea ebx,[edi-1]
     m.regs.ebx = m.regs.edi.wrapping_add(0xffffffffu32);
     // 00406108 add eax,[ebp-4]
@@ -23716,7 +24324,8 @@ pub fn x0040611f() -> Cont {
     // 0040611f mov eax,esi
     m.regs.eax = m.regs.esi;
     // 00406121 shl eax,3
-    m.regs.eax = shl(m.regs.eax, 0x3u8);
+    let t = shl(m.regs.eax, 0x3u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00406124 add eax,[ebp-4]
     m.regs.eax = add(
         m.regs.eax,
@@ -24037,7 +24646,8 @@ pub fn x004061f6() -> Cont {
     // 00406201 mov edx,[ecx+34h]
     m.regs.edx = m.memory.read::<u32>(m.regs.ecx.wrapping_add(0x34u32));
     // 00406204 shl eax,5
-    m.regs.eax = shl(m.regs.eax, 0x5u8);
+    let t = shl(m.regs.eax, 0x5u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00406207 add eax,edx
     m.regs.eax = add(m.regs.eax, m.regs.edx);
     // 00406209 mov edx,[eax]
@@ -24113,7 +24723,8 @@ pub fn x00406239() -> Cont {
     // 00406249 mov edi,[ecx+34h]
     m.regs.edi = m.memory.read::<u32>(m.regs.ecx.wrapping_add(0x34u32));
     // 0040624c shl eax,5
-    m.regs.eax = shl(m.regs.eax, 0x5u8);
+    let t = shl(m.regs.eax, 0x5u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 0040624f add eax,edi
     m.regs.eax = add(m.regs.eax, m.regs.edi);
     // 00406251 mov edi,[eax+4]
@@ -24249,7 +24860,8 @@ pub fn x00406246() -> Cont {
     // 00406249 mov edi,[ecx+34h]
     m.regs.edi = m.memory.read::<u32>(m.regs.ecx.wrapping_add(0x34u32));
     // 0040624c shl eax,5
-    m.regs.eax = shl(m.regs.eax, 0x5u8);
+    let t = shl(m.regs.eax, 0x5u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 0040624f add eax,edi
     m.regs.eax = add(m.regs.eax, m.regs.edi);
     // 00406251 mov edi,[eax+4]
@@ -24800,11 +25412,14 @@ pub fn x00406478() -> Cont {
     // 0040647e mov esi,ecx
     m.regs.esi = m.regs.ecx;
     // 00406480 shl edx,8
-    m.regs.edx = shl(m.regs.edx, 0x8u8);
+    let t = shl(m.regs.edx, 0x8u8, &mut m.regs.flags);
+    m.regs.edx = t;
     // 00406483 shl eax,10h
-    m.regs.eax = shl(m.regs.eax, 0x10u8);
+    let t = shl(m.regs.eax, 0x10u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00406486 shl esi,8
-    m.regs.esi = shl(m.regs.esi, 0x8u8);
+    let t = shl(m.regs.esi, 0x8u8, &mut m.regs.flags);
+    m.regs.esi = t;
     // 00406489 add edx,[ebp-8]
     m.regs.edx = add(
         m.regs.edx,
@@ -24817,7 +25432,8 @@ pub fn x00406478() -> Cont {
     // 00406490 mov eax,ds:[433FA4h]
     m.regs.eax = m.memory.read::<u32>(0x433fa4u32);
     // 00406495 shl esi,2
-    m.regs.esi = shl(m.regs.esi, 0x2u8);
+    let t = shl(m.regs.esi, 0x2u8, &mut m.regs.flags);
+    m.regs.esi = t;
     // 00406498 inc ebx
     m.regs.ebx = inc(m.regs.ebx);
     // 00406499 mov [esi+eax],edx
@@ -24907,15 +25523,18 @@ pub fn x004064cf() -> Cont {
     // 004064f1 cdq
     cdq();
     // 004064f2 shl edx,10h
-    m.regs.edx = shl(m.regs.edx, 0x10u8);
+    let t = shl(m.regs.edx, 0x10u8, &mut m.regs.flags);
+    m.regs.edx = t;
     // 004064f5 sbb eax,edx
     m.regs.eax = sbb(m.regs.eax, m.regs.edx);
     // 004064f7 sar eax,10h
-    sar();
+    let t = sar(m.regs.eax, 0x10u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004064fa mov esi,ecx
     m.regs.esi = m.regs.ecx;
     // 004064fc shl esi,8
-    m.regs.esi = shl(m.regs.esi, 0x8u8);
+    let t = shl(m.regs.esi, 0x8u8, &mut m.regs.flags);
+    m.regs.esi = t;
     // 004064ff fchs
     todo!();
     // 00406501 fld qword ptr ds:[40C1F8h]
@@ -24929,16 +25548,19 @@ pub fn x004064cf() -> Cont {
     // 0040650d mov edx,eax
     m.regs.edx = m.regs.eax;
     // 0040650f shl esi,2
-    m.regs.esi = shl(m.regs.esi, 0x2u8);
+    let t = shl(m.regs.esi, 0x2u8, &mut m.regs.flags);
+    m.regs.esi = t;
     // 00406512 shl edx,8
-    m.regs.edx = shl(m.regs.edx, 0x8u8);
+    let t = shl(m.regs.edx, 0x8u8, &mut m.regs.flags);
+    m.regs.edx = t;
     // 00406515 faddp
     m.fpu.set(1, m.fpu.get(1) + m.fpu.get(0));
     m.fpu.pop();
     // 00406517 add edx,eax
     m.regs.edx = add(m.regs.edx, m.regs.eax);
     // 00406519 shl eax,10h
-    m.regs.eax = shl(m.regs.eax, 0x10u8);
+    let t = shl(m.regs.eax, 0x10u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 0040651c call 00408838h
     call(0x406521, Cont(x00408838))
 }
@@ -24971,15 +25593,18 @@ pub fn x004064d6() -> Cont {
     // 004064f1 cdq
     cdq();
     // 004064f2 shl edx,10h
-    m.regs.edx = shl(m.regs.edx, 0x10u8);
+    let t = shl(m.regs.edx, 0x10u8, &mut m.regs.flags);
+    m.regs.edx = t;
     // 004064f5 sbb eax,edx
     m.regs.eax = sbb(m.regs.eax, m.regs.edx);
     // 004064f7 sar eax,10h
-    sar();
+    let t = sar(m.regs.eax, 0x10u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004064fa mov esi,ecx
     m.regs.esi = m.regs.ecx;
     // 004064fc shl esi,8
-    m.regs.esi = shl(m.regs.esi, 0x8u8);
+    let t = shl(m.regs.esi, 0x8u8, &mut m.regs.flags);
+    m.regs.esi = t;
     // 004064ff fchs
     todo!();
     // 00406501 fld qword ptr ds:[40C1F8h]
@@ -24993,16 +25618,19 @@ pub fn x004064d6() -> Cont {
     // 0040650d mov edx,eax
     m.regs.edx = m.regs.eax;
     // 0040650f shl esi,2
-    m.regs.esi = shl(m.regs.esi, 0x2u8);
+    let t = shl(m.regs.esi, 0x2u8, &mut m.regs.flags);
+    m.regs.esi = t;
     // 00406512 shl edx,8
-    m.regs.edx = shl(m.regs.edx, 0x8u8);
+    let t = shl(m.regs.edx, 0x8u8, &mut m.regs.flags);
+    m.regs.edx = t;
     // 00406515 faddp
     m.fpu.set(1, m.fpu.get(1) + m.fpu.get(0));
     m.fpu.pop();
     // 00406517 add edx,eax
     m.regs.edx = add(m.regs.edx, m.regs.eax);
     // 00406519 shl eax,10h
-    m.regs.eax = shl(m.regs.eax, 0x10u8);
+    let t = shl(m.regs.eax, 0x10u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 0040651c call 00408838h
     call(0x406521, Cont(x00408838))
 }
@@ -25028,13 +25656,15 @@ pub fn x00406521() -> Cont {
     // 00406532 mov edx,[ebp-10h]
     m.regs.edx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff0u32));
     // 00406535 shl eax,8
-    m.regs.eax = shl(m.regs.eax, 0x8u8);
+    let t = shl(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00406538 add edx,eax
     m.regs.edx = add(m.regs.edx, m.regs.eax);
     // 0040653a mov eax,[ebp-10h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff0u32));
     // 0040653d shl eax,10h
-    m.regs.eax = shl(m.regs.eax, 0x10u8);
+    let t = shl(m.regs.eax, 0x10u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00406540 add eax,edx
     m.regs.eax = add(m.regs.eax, m.regs.edx);
     // 00406542 mov edx,ds:[433F94h]
@@ -25134,9 +25764,11 @@ pub fn x0040657e() -> Cont {
     // 00406584 mov edx,[ebp-10h]
     m.regs.edx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff0u32));
     // 00406587 shl eax,8
-    m.regs.eax = shl(m.regs.eax, 0x8u8);
+    let t = shl(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 0040658a shl esi,8
-    m.regs.esi = shl(m.regs.esi, 0x8u8);
+    let t = shl(m.regs.esi, 0x8u8, &mut m.regs.flags);
+    m.regs.esi = t;
     // 0040658d add edx,eax
     m.regs.edx = add(m.regs.edx, m.regs.eax);
     // 0040658f mov eax,[ebp-10h]
@@ -25144,9 +25776,11 @@ pub fn x0040657e() -> Cont {
     // 00406592 add esi,ebx
     m.regs.esi = add(m.regs.esi, m.regs.ebx);
     // 00406594 shl eax,10h
-    m.regs.eax = shl(m.regs.eax, 0x10u8);
+    let t = shl(m.regs.eax, 0x10u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00406597 shl esi,2
-    m.regs.esi = shl(m.regs.esi, 0x2u8);
+    let t = shl(m.regs.esi, 0x2u8, &mut m.regs.flags);
+    m.regs.esi = t;
     // 0040659a add edx,eax
     m.regs.edx = add(m.regs.edx, m.regs.eax);
     // 0040659c mov eax,ds:[433F98h]
@@ -25236,19 +25870,22 @@ pub fn x004065d5() -> Cont {
     // 004065db mov edx,[ebp-10h]
     m.regs.edx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff0u32));
     // 004065de shl eax,8
-    m.regs.eax = shl(m.regs.eax, 0x8u8);
+    let t = shl(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004065e1 add edx,eax
     m.regs.edx = add(m.regs.edx, m.regs.eax);
     // 004065e3 mov eax,[ebp-10h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff0u32));
     // 004065e6 shl eax,10h
-    m.regs.eax = shl(m.regs.eax, 0x10u8);
+    let t = shl(m.regs.eax, 0x10u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004065e9 lea esi,[edx+eax]
     m.regs.esi = m.regs.edx.wrapping_add(m.regs.eax);
     // 004065ec mov eax,ecx
     m.regs.eax = m.regs.ecx;
     // 004065ee shl eax,8
-    m.regs.eax = shl(m.regs.eax, 0x8u8);
+    let t = shl(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004065f1 mov edx,ds:[433F9Ch]
     m.regs.edx = m.memory.read::<u32>(0x433f9cu32);
     // 004065f7 add eax,ebx
@@ -25259,7 +25896,8 @@ pub fn x004065d5() -> Cont {
     // 004065fc mov eax,ebx
     m.regs.eax = m.regs.ebx;
     // 004065fe shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00406601 mov [ebp-4],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32), m.regs.eax);
@@ -25274,7 +25912,8 @@ pub fn x004065d5() -> Cont {
     // 0040660f mov eax,ecx
     m.regs.eax = m.regs.ecx;
     // 00406611 shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00406614 mov [ebp-4],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32), m.regs.eax);
@@ -26058,7 +26697,8 @@ pub fn x00406c67() -> Cont {
     // 00406c79 mov edi,[ebp-8]
     m.regs.edi = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32));
     // 00406c7c shl ebx,2
-    m.regs.ebx = shl(m.regs.ebx, 0x2u8);
+    let t = shl(m.regs.ebx, 0x2u8, &mut m.regs.flags);
+    m.regs.ebx = t;
     // 00406c7f add edi,eax
     m.regs.edi = add(m.regs.edi, m.regs.eax);
     // 00406c81 add ebx,[ebp-0Ch]
@@ -26097,7 +26737,8 @@ pub fn x00406c69() -> Cont {
     // 00406c79 mov edi,[ebp-8]
     m.regs.edi = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32));
     // 00406c7c shl ebx,2
-    m.regs.ebx = shl(m.regs.ebx, 0x2u8);
+    let t = shl(m.regs.ebx, 0x2u8, &mut m.regs.flags);
+    m.regs.ebx = t;
     // 00406c7f add edi,eax
     m.regs.edi = add(m.regs.edi, m.regs.eax);
     // 00406c81 add ebx,[ebp-0Ch]
@@ -26296,7 +26937,8 @@ pub fn x00406d15() -> Cont {
     // 00406d22 sub eax,edx
     m.regs.eax = sub(m.regs.eax, m.regs.edx);
     // 00406d24 sar eax,1
-    sar();
+    let t = sar(m.regs.eax, 0x1u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00406d26 mov edx,ecx
     m.regs.edx = m.regs.ecx;
     // 00406d28 sub edx,eax
@@ -26311,7 +26953,8 @@ pub fn x00406d15() -> Cont {
     // 00406d33 sub eax,edx
     m.regs.eax = sub(m.regs.eax, m.regs.edx);
     // 00406d35 sar eax,1
-    sar();
+    let t = sar(m.regs.eax, 0x1u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00406d37 mov edx,edi
     m.regs.edx = m.regs.edi;
     // 00406d39 sub edx,eax
@@ -26355,7 +26998,8 @@ pub fn x00406d1c() -> Cont {
     // 00406d22 sub eax,edx
     m.regs.eax = sub(m.regs.eax, m.regs.edx);
     // 00406d24 sar eax,1
-    sar();
+    let t = sar(m.regs.eax, 0x1u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00406d26 mov edx,ecx
     m.regs.edx = m.regs.ecx;
     // 00406d28 sub edx,eax
@@ -26370,7 +27014,8 @@ pub fn x00406d1c() -> Cont {
     // 00406d33 sub eax,edx
     m.regs.eax = sub(m.regs.eax, m.regs.edx);
     // 00406d35 sar eax,1
-    sar();
+    let t = sar(m.regs.eax, 0x1u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00406d37 mov edx,edi
     m.regs.edx = m.regs.edi;
     // 00406d39 sub edx,eax
@@ -26503,9 +27148,11 @@ pub fn x00406daa() -> Cont {
     // 00406db4 mov eax,[ebp-8]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32));
     // 00406db7 shl edx,10h
-    m.regs.edx = shl(m.regs.edx, 0x10u8);
+    let t = shl(m.regs.edx, 0x10u8, &mut m.regs.flags);
+    m.regs.edx = t;
     // 00406dba shl eax,8
-    m.regs.eax = shl(m.regs.eax, 0x8u8);
+    let t = shl(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00406dbd add eax,edx
     m.regs.eax = add(m.regs.eax, m.regs.edx);
     // 00406dbf mov ebx,0FF7F86h
@@ -26551,9 +27198,11 @@ pub fn x00406daa() -> Cont {
     // 00406dfb mov eax,[ebp-0Ch]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff4u32));
     // 00406dfe shl edx,10h
-    m.regs.edx = shl(m.regs.edx, 0x10u8);
+    let t = shl(m.regs.edx, 0x10u8, &mut m.regs.flags);
+    m.regs.edx = t;
     // 00406e01 shl eax,8
-    m.regs.eax = shl(m.regs.eax, 0x8u8);
+    let t = shl(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00406e04 add eax,edx
     m.regs.eax = add(m.regs.eax, m.regs.edx);
     // 00406e06 mov ebx,0CC7FFFh
@@ -26610,9 +27259,11 @@ pub fn x00406db1() -> Cont {
     // 00406db4 mov eax,[ebp-8]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32));
     // 00406db7 shl edx,10h
-    m.regs.edx = shl(m.regs.edx, 0x10u8);
+    let t = shl(m.regs.edx, 0x10u8, &mut m.regs.flags);
+    m.regs.edx = t;
     // 00406dba shl eax,8
-    m.regs.eax = shl(m.regs.eax, 0x8u8);
+    let t = shl(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00406dbd add eax,edx
     m.regs.eax = add(m.regs.eax, m.regs.edx);
     // 00406dbf mov ebx,0FF7F86h
@@ -26658,9 +27309,11 @@ pub fn x00406db1() -> Cont {
     // 00406dfb mov eax,[ebp-0Ch]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff4u32));
     // 00406dfe shl edx,10h
-    m.regs.edx = shl(m.regs.edx, 0x10u8);
+    let t = shl(m.regs.edx, 0x10u8, &mut m.regs.flags);
+    m.regs.edx = t;
     // 00406e01 shl eax,8
-    m.regs.eax = shl(m.regs.eax, 0x8u8);
+    let t = shl(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00406e04 add eax,edx
     m.regs.eax = add(m.regs.eax, m.regs.edx);
     // 00406e06 mov ebx,0CC7FFFh
@@ -26730,7 +27383,8 @@ pub fn x00406e4d() -> Cont {
     // 00406e5f mov edi,ds:[433E30h]
     m.regs.edi = m.memory.read::<u32>(0x433e30u32);
     // 00406e65 shl ecx,2
-    m.regs.ecx = shl(m.regs.ecx, 0x2u8);
+    let t = shl(m.regs.ecx, 0x2u8, &mut m.regs.flags);
+    m.regs.ecx = t;
     // 00406e68 rep stosb
     rep(m, Rep::REP, stosb);
     // 00406e6a xor ecx,ecx
@@ -26760,7 +27414,8 @@ pub fn x00406e4d() -> Cont {
     // 00406e8e sub eax,edx
     m.regs.eax = sub(m.regs.eax, m.regs.edx);
     // 00406e90 sar eax,1
-    sar();
+    let t = sar(m.regs.eax, 0x1u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00406e92 fild dword ptr ds:[40C728h]
     m.fpu.push(m.memory.read::<u32>(0x40c728u32) as i32 as f64);
     // 00406e98 fmulp
@@ -26800,7 +27455,8 @@ pub fn x00406e4d() -> Cont {
     // 00406ec1 sub eax,edx
     m.regs.eax = sub(m.regs.eax, m.regs.edx);
     // 00406ec3 sar eax,1
-    sar();
+    let t = sar(m.regs.eax, 0x1u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00406ec5 fild dword ptr ds:[40C724h]
     m.fpu.push(m.memory.read::<u32>(0x40c724u32) as i32 as f64);
     // 00406ecb fmulp
@@ -26840,7 +27496,8 @@ pub fn x00406e4d() -> Cont {
     // 00406ef4 sub eax,edx
     m.regs.eax = sub(m.regs.eax, m.regs.edx);
     // 00406ef6 sar eax,1
-    sar();
+    let t = sar(m.regs.eax, 0x1u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00406ef8 fild dword ptr ds:[40C728h]
     m.fpu.push(m.memory.read::<u32>(0x40c728u32) as i32 as f64);
     // 00406efe fmulp
@@ -26880,7 +27537,8 @@ pub fn x00406e4d() -> Cont {
     // 00406f27 sub eax,edx
     m.regs.eax = sub(m.regs.eax, m.regs.edx);
     // 00406f29 sar eax,1
-    sar();
+    let t = sar(m.regs.eax, 0x1u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00406f2b fild dword ptr ds:[40C724h]
     m.fpu.push(m.memory.read::<u32>(0x40c724u32) as i32 as f64);
     // 00406f31 fmulp
@@ -26937,7 +27595,8 @@ pub fn x00406e6c() -> Cont {
     // 00406e8e sub eax,edx
     m.regs.eax = sub(m.regs.eax, m.regs.edx);
     // 00406e90 sar eax,1
-    sar();
+    let t = sar(m.regs.eax, 0x1u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00406e92 fild dword ptr ds:[40C728h]
     m.fpu.push(m.memory.read::<u32>(0x40c728u32) as i32 as f64);
     // 00406e98 fmulp
@@ -26977,7 +27636,8 @@ pub fn x00406e6c() -> Cont {
     // 00406ec1 sub eax,edx
     m.regs.eax = sub(m.regs.eax, m.regs.edx);
     // 00406ec3 sar eax,1
-    sar();
+    let t = sar(m.regs.eax, 0x1u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00406ec5 fild dword ptr ds:[40C724h]
     m.fpu.push(m.memory.read::<u32>(0x40c724u32) as i32 as f64);
     // 00406ecb fmulp
@@ -27017,7 +27677,8 @@ pub fn x00406e6c() -> Cont {
     // 00406ef4 sub eax,edx
     m.regs.eax = sub(m.regs.eax, m.regs.edx);
     // 00406ef6 sar eax,1
-    sar();
+    let t = sar(m.regs.eax, 0x1u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00406ef8 fild dword ptr ds:[40C728h]
     m.fpu.push(m.memory.read::<u32>(0x40c728u32) as i32 as f64);
     // 00406efe fmulp
@@ -27057,7 +27718,8 @@ pub fn x00406e6c() -> Cont {
     // 00406f27 sub eax,edx
     m.regs.eax = sub(m.regs.eax, m.regs.edx);
     // 00406f29 sar eax,1
-    sar();
+    let t = sar(m.regs.eax, 0x1u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00406f2b fild dword ptr ds:[40C724h]
     m.fpu.push(m.memory.read::<u32>(0x40c724u32) as i32 as f64);
     // 00406f31 fmulp
@@ -27252,13 +27914,15 @@ pub fn x0040700a() -> Cont {
     // 0040701b mov edx,edi
     m.regs.edx = m.regs.edi;
     // 0040701d shl edx,8
-    m.regs.edx = shl(m.regs.edx, 0x8u8);
+    let t = shl(m.regs.edx, 0x8u8, &mut m.regs.flags);
+    m.regs.edx = t;
     // 00407020 add edx,ecx
     m.regs.edx = add(m.regs.edx, m.regs.ecx);
     // 00407022 mov eax,ds:[433FA4h]
     m.regs.eax = m.memory.read::<u32>(0x433fa4u32);
     // 00407027 shl edx,2
-    m.regs.edx = shl(m.regs.edx, 0x2u8);
+    let t = shl(m.regs.edx, 0x2u8, &mut m.regs.flags);
+    m.regs.edx = t;
     // 0040702a mov ebx,0FFFFFFFFh
     m.regs.ebx = 0xffffffffu32;
     // 0040702f sub ebx,[edx+eax]
@@ -27273,7 +27937,8 @@ pub fn x0040700a() -> Cont {
     // 00407037 mov esi,ds:[433E3Ch]
     m.regs.esi = m.memory.read::<u32>(0x433e3cu32);
     // 0040703d shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00407040 add eax,esi
     m.regs.eax = add(m.regs.eax, m.regs.esi);
     // 00407042 mov eax,[eax]
@@ -27352,13 +28017,15 @@ pub fn x0040700c() -> Cont {
     // 0040701b mov edx,edi
     m.regs.edx = m.regs.edi;
     // 0040701d shl edx,8
-    m.regs.edx = shl(m.regs.edx, 0x8u8);
+    let t = shl(m.regs.edx, 0x8u8, &mut m.regs.flags);
+    m.regs.edx = t;
     // 00407020 add edx,ecx
     m.regs.edx = add(m.regs.edx, m.regs.ecx);
     // 00407022 mov eax,ds:[433FA4h]
     m.regs.eax = m.memory.read::<u32>(0x433fa4u32);
     // 00407027 shl edx,2
-    m.regs.edx = shl(m.regs.edx, 0x2u8);
+    let t = shl(m.regs.edx, 0x2u8, &mut m.regs.flags);
+    m.regs.edx = t;
     // 0040702a mov ebx,0FFFFFFFFh
     m.regs.ebx = 0xffffffffu32;
     // 0040702f sub ebx,[edx+eax]
@@ -27373,7 +28040,8 @@ pub fn x0040700c() -> Cont {
     // 00407037 mov esi,ds:[433E3Ch]
     m.regs.esi = m.memory.read::<u32>(0x433e3cu32);
     // 0040703d shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00407040 add eax,esi
     m.regs.eax = add(m.regs.eax, m.regs.esi);
     // 00407042 mov eax,[eax]
@@ -27449,13 +28117,15 @@ pub fn x0040700f() -> Cont {
     // 0040701b mov edx,edi
     m.regs.edx = m.regs.edi;
     // 0040701d shl edx,8
-    m.regs.edx = shl(m.regs.edx, 0x8u8);
+    let t = shl(m.regs.edx, 0x8u8, &mut m.regs.flags);
+    m.regs.edx = t;
     // 00407020 add edx,ecx
     m.regs.edx = add(m.regs.edx, m.regs.ecx);
     // 00407022 mov eax,ds:[433FA4h]
     m.regs.eax = m.memory.read::<u32>(0x433fa4u32);
     // 00407027 shl edx,2
-    m.regs.edx = shl(m.regs.edx, 0x2u8);
+    let t = shl(m.regs.edx, 0x2u8, &mut m.regs.flags);
+    m.regs.edx = t;
     // 0040702a mov ebx,0FFFFFFFFh
     m.regs.ebx = 0xffffffffu32;
     // 0040702f sub ebx,[edx+eax]
@@ -27470,7 +28140,8 @@ pub fn x0040700f() -> Cont {
     // 00407037 mov esi,ds:[433E3Ch]
     m.regs.esi = m.memory.read::<u32>(0x433e3cu32);
     // 0040703d shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00407040 add eax,esi
     m.regs.eax = add(m.regs.eax, m.regs.esi);
     // 00407042 mov eax,[eax]
@@ -27536,13 +28207,15 @@ pub fn x0040701b() -> Cont {
     // 0040701b mov edx,edi
     m.regs.edx = m.regs.edi;
     // 0040701d shl edx,8
-    m.regs.edx = shl(m.regs.edx, 0x8u8);
+    let t = shl(m.regs.edx, 0x8u8, &mut m.regs.flags);
+    m.regs.edx = t;
     // 00407020 add edx,ecx
     m.regs.edx = add(m.regs.edx, m.regs.ecx);
     // 00407022 mov eax,ds:[433FA4h]
     m.regs.eax = m.memory.read::<u32>(0x433fa4u32);
     // 00407027 shl edx,2
-    m.regs.edx = shl(m.regs.edx, 0x2u8);
+    let t = shl(m.regs.edx, 0x2u8, &mut m.regs.flags);
+    m.regs.edx = t;
     // 0040702a mov ebx,0FFFFFFFFh
     m.regs.ebx = 0xffffffffu32;
     // 0040702f sub ebx,[edx+eax]
@@ -27557,7 +28230,8 @@ pub fn x0040701b() -> Cont {
     // 00407037 mov esi,ds:[433E3Ch]
     m.regs.esi = m.memory.read::<u32>(0x433e3cu32);
     // 0040703d shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00407040 add eax,esi
     m.regs.eax = add(m.regs.eax, m.regs.esi);
     // 00407042 mov eax,[eax]
@@ -28507,11 +29181,13 @@ pub fn x00407568() -> Cont {
     // 0040756e mov eax,ebx
     m.regs.eax = m.regs.ebx;
     // 00407570 shl eax,8
-    m.regs.eax = shl(m.regs.eax, 0x8u8);
+    let t = shl(m.regs.eax, 0x8u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00407573 add eax,ebx
     m.regs.eax = add(m.regs.eax, m.regs.ebx);
     // 00407575 shl ebx,10h
-    m.regs.ebx = shl(m.regs.ebx, 0x10u8);
+    let t = shl(m.regs.ebx, 0x10u8, &mut m.regs.flags);
+    m.regs.ebx = t;
     // 00407578 add ebx,eax
     m.regs.ebx = add(m.regs.ebx, m.regs.eax);
     // 0040757a fsin
@@ -28528,11 +29204,13 @@ pub fn x00407568() -> Cont {
     // 00407587 cdq
     cdq();
     // 00407588 shl edx,2
-    m.regs.edx = shl(m.regs.edx, 0x2u8);
+    let t = shl(m.regs.edx, 0x2u8, &mut m.regs.flags);
+    m.regs.edx = t;
     // 0040758b sbb eax,edx
     m.regs.eax = sbb(m.regs.eax, m.regs.edx);
     // 0040758d sar eax,2
-    sar();
+    let t = sar(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00407590 mov [ebp-4],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32), m.regs.eax);
@@ -28582,7 +29260,8 @@ pub fn x00407568() -> Cont {
     // 004075c7 sub eax,edx
     m.regs.eax = sub(m.regs.eax, m.regs.edx);
     // 004075c9 sar eax,1
-    sar();
+    let t = sar(m.regs.eax, 0x1u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004075cb push edi
     push(m.regs.edi);
     // 004075cc push ebx
@@ -28596,7 +29275,8 @@ pub fn x00407568() -> Cont {
     // 004075d5 sub eax,edx
     m.regs.eax = sub(m.regs.eax, m.regs.edx);
     // 004075d7 sar eax,1
-    sar();
+    let t = sar(m.regs.eax, 0x1u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004075d9 fmul qword ptr ds:[40C570h]
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c570u32));
@@ -28923,7 +29603,8 @@ pub fn x004076ea() -> Cont {
     // 0040770c sub eax,edx
     m.regs.eax = sub(m.regs.eax, m.regs.edx);
     // 0040770e sar eax,1
-    sar();
+    let t = sar(m.regs.eax, 0x1u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00407710 fild dword ptr ds:[40C724h]
     m.fpu.push(m.memory.read::<u32>(0x40c724u32) as i32 as f64);
     // 00407716 fmulp
@@ -29002,7 +29683,8 @@ pub fn x0040775b() -> Cont {
     // 00407766 sub eax,edx
     m.regs.eax = sub(m.regs.eax, m.regs.edx);
     // 00407768 sar eax,1
-    sar();
+    let t = sar(m.regs.eax, 0x1u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 0040776a fild dword ptr ds:[40C728h]
     m.fpu.push(m.memory.read::<u32>(0x40c728u32) as i32 as f64);
     // 00407770 fmulp
@@ -29219,7 +29901,8 @@ pub fn x0040784e() -> Cont {
     // 00407858 mov edx,ecx
     m.regs.edx = m.regs.ecx;
     // 0040785a shl edx,2
-    m.regs.edx = shl(m.regs.edx, 0x2u8);
+    let t = shl(m.regs.edx, 0x2u8, &mut m.regs.flags);
+    m.regs.edx = t;
     // 0040785d add edx,edi
     m.regs.edx = add(m.regs.edx, m.regs.edi);
     // 0040785f mov eax,[edx]
@@ -29229,11 +29912,13 @@ pub fn x0040784e() -> Cont {
     // 00407863 mov esi,eax
     m.regs.esi = m.regs.eax;
     // 00407865 shl ebx,8
-    m.regs.ebx = shl(m.regs.ebx, 0x8u8);
+    let t = shl(m.regs.ebx, 0x8u8, &mut m.regs.flags);
+    m.regs.ebx = t;
     // 00407868 and esi,0FFh
     m.regs.esi = and(m.regs.esi, 0xffu32);
     // 0040786e shl eax,10h
-    m.regs.eax = shl(m.regs.eax, 0x10u8);
+    let t = shl(m.regs.eax, 0x10u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00407871 and ebx,0FFh
     m.regs.ebx = and(m.regs.ebx, 0xffu32);
     // 00407877 and eax,0FFh
@@ -29253,7 +29938,8 @@ pub fn x0040784e() -> Cont {
     // 0040788b mov ebx,eax
     m.regs.ebx = m.regs.eax;
     // 0040788d shl ebx,8
-    m.regs.ebx = shl(m.regs.ebx, 0x8u8);
+    let t = shl(m.regs.ebx, 0x8u8, &mut m.regs.flags);
+    m.regs.ebx = t;
     // 00407890 and ebx,0FFh
     m.regs.ebx = and(m.regs.ebx, 0xffu32);
     // 00407896 mov [ebp-14h],ebx
@@ -29264,7 +29950,8 @@ pub fn x0040784e() -> Cont {
     // 0040789b and ebx,0FFh
     m.regs.ebx = and(m.regs.ebx, 0xffu32);
     // 004078a1 shl eax,10h
-    m.regs.eax = shl(m.regs.eax, 0x10u8);
+    let t = shl(m.regs.eax, 0x10u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004078a4 and eax,0FFh
     m.regs.eax = and(m.regs.eax, 0xffu32);
     // 004078a9 add ebx,[ebp-14h]
@@ -29287,7 +29974,8 @@ pub fn x0040784e() -> Cont {
     // 004078ba mov ebx,eax
     m.regs.ebx = m.regs.eax;
     // 004078bc shl ebx,8
-    m.regs.ebx = shl(m.regs.ebx, 0x8u8);
+    let t = shl(m.regs.ebx, 0x8u8, &mut m.regs.flags);
+    m.regs.ebx = t;
     // 004078bf and ebx,0FFh
     m.regs.ebx = and(m.regs.ebx, 0xffu32);
     // 004078c5 mov [ebp-14h],ebx
@@ -29298,7 +29986,8 @@ pub fn x0040784e() -> Cont {
     // 004078ca and ebx,0FFh
     m.regs.ebx = and(m.regs.ebx, 0xffu32);
     // 004078d0 shl eax,10h
-    m.regs.eax = shl(m.regs.eax, 0x10u8);
+    let t = shl(m.regs.eax, 0x10u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004078d3 and eax,0FFh
     m.regs.eax = and(m.regs.eax, 0xffu32);
     // 004078d8 add ebx,[ebp-14h]
@@ -29315,7 +30004,8 @@ pub fn x0040784e() -> Cont {
     // 004078e2 mov ebx,eax
     m.regs.ebx = m.regs.eax;
     // 004078e4 shl ebx,8
-    m.regs.ebx = shl(m.regs.ebx, 0x8u8);
+    let t = shl(m.regs.ebx, 0x8u8, &mut m.regs.flags);
+    m.regs.ebx = t;
     // 004078e7 and ebx,0FFh
     m.regs.ebx = and(m.regs.ebx, 0xffu32);
     // 004078ed mov [ebp-14h],ebx
@@ -29326,7 +30016,8 @@ pub fn x0040784e() -> Cont {
     // 004078f2 and ebx,0FFh
     m.regs.ebx = and(m.regs.ebx, 0xffu32);
     // 004078f8 shl eax,10h
-    m.regs.eax = shl(m.regs.eax, 0x10u8);
+    let t = shl(m.regs.eax, 0x10u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004078fb and eax,0FFh
     m.regs.eax = and(m.regs.eax, 0xffu32);
     // 00407900 add ebx,[ebp-14h]
@@ -29343,7 +30034,8 @@ pub fn x0040784e() -> Cont {
     // 0040790a mov ebx,eax
     m.regs.ebx = m.regs.eax;
     // 0040790c shl ebx,8
-    m.regs.ebx = shl(m.regs.ebx, 0x8u8);
+    let t = shl(m.regs.ebx, 0x8u8, &mut m.regs.flags);
+    m.regs.ebx = t;
     // 0040790f and ebx,0FFh
     m.regs.ebx = and(m.regs.ebx, 0xffu32);
     // 00407915 mov [ebp-14h],ebx
@@ -29354,7 +30046,8 @@ pub fn x0040784e() -> Cont {
     // 0040791a and ebx,0FFh
     m.regs.ebx = and(m.regs.ebx, 0xffu32);
     // 00407920 shl eax,10h
-    m.regs.eax = shl(m.regs.eax, 0x10u8);
+    let t = shl(m.regs.eax, 0x10u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00407923 and eax,0FFh
     m.regs.eax = and(m.regs.eax, 0xffu32);
     // 00407928 add ebx,[ebp-14h]
@@ -29387,7 +30080,8 @@ pub fn x0040784e() -> Cont {
     // 00407941 mov ebx,eax
     m.regs.ebx = m.regs.eax;
     // 00407943 shl ebx,8
-    m.regs.ebx = shl(m.regs.ebx, 0x8u8);
+    let t = shl(m.regs.ebx, 0x8u8, &mut m.regs.flags);
+    m.regs.ebx = t;
     // 00407946 and ebx,0FFh
     m.regs.ebx = and(m.regs.ebx, 0xffu32);
     // 0040794c mov [ebp-14h],ebx
@@ -29398,7 +30092,8 @@ pub fn x0040784e() -> Cont {
     // 00407951 and ebx,0FFh
     m.regs.ebx = and(m.regs.ebx, 0xffu32);
     // 00407957 shl eax,10h
-    m.regs.eax = shl(m.regs.eax, 0x10u8);
+    let t = shl(m.regs.eax, 0x10u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 0040795a and eax,0FFh
     m.regs.eax = and(m.regs.eax, 0xffu32);
     // 0040795f add ebx,[ebp-14h]
@@ -29421,7 +30116,8 @@ pub fn x0040784e() -> Cont {
     // 0040796e mov ebx,eax
     m.regs.ebx = m.regs.eax;
     // 00407970 shl ebx,8
-    m.regs.ebx = shl(m.regs.ebx, 0x8u8);
+    let t = shl(m.regs.ebx, 0x8u8, &mut m.regs.flags);
+    m.regs.ebx = t;
     // 00407973 and ebx,0FFh
     m.regs.ebx = and(m.regs.ebx, 0xffu32);
     // 00407979 mov [ebp-14h],ebx
@@ -29432,7 +30128,8 @@ pub fn x0040784e() -> Cont {
     // 0040797e and ebx,0FFh
     m.regs.ebx = and(m.regs.ebx, 0xffu32);
     // 00407984 shl eax,10h
-    m.regs.eax = shl(m.regs.eax, 0x10u8);
+    let t = shl(m.regs.eax, 0x10u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00407987 and eax,0FFh
     m.regs.eax = and(m.regs.eax, 0xffu32);
     // 0040798c add ebx,[ebp-14h]
@@ -29449,7 +30146,8 @@ pub fn x0040784e() -> Cont {
     // 00407996 mov ebx,eax
     m.regs.ebx = m.regs.eax;
     // 00407998 shl ebx,8
-    m.regs.ebx = shl(m.regs.ebx, 0x8u8);
+    let t = shl(m.regs.ebx, 0x8u8, &mut m.regs.flags);
+    m.regs.ebx = t;
     // 0040799b and ebx,0FFh
     m.regs.ebx = and(m.regs.ebx, 0xffu32);
     // 004079a1 mov [ebp-14h],ebx
@@ -29460,7 +30158,8 @@ pub fn x0040784e() -> Cont {
     // 004079a6 and ebx,0FFh
     m.regs.ebx = and(m.regs.ebx, 0xffu32);
     // 004079ac shl eax,10h
-    m.regs.eax = shl(m.regs.eax, 0x10u8);
+    let t = shl(m.regs.eax, 0x10u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004079af and eax,0FFh
     m.regs.eax = and(m.regs.eax, 0xffu32);
     // 004079b4 add ebx,[ebp-14h]
@@ -29477,7 +30176,8 @@ pub fn x0040784e() -> Cont {
     // 004079be mov ebx,eax
     m.regs.ebx = m.regs.eax;
     // 004079c0 shl ebx,8
-    m.regs.ebx = shl(m.regs.ebx, 0x8u8);
+    let t = shl(m.regs.ebx, 0x8u8, &mut m.regs.flags);
+    m.regs.ebx = t;
     // 004079c3 and ebx,0FFh
     m.regs.ebx = and(m.regs.ebx, 0xffu32);
     // 004079c9 mov [ebp-14h],ebx
@@ -29488,7 +30188,8 @@ pub fn x0040784e() -> Cont {
     // 004079ce and ebx,0FFh
     m.regs.ebx = and(m.regs.ebx, 0xffu32);
     // 004079d4 shl eax,10h
-    m.regs.eax = shl(m.regs.eax, 0x10u8);
+    let t = shl(m.regs.eax, 0x10u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004079d7 and eax,0FFh
     m.regs.eax = and(m.regs.eax, 0xffu32);
     // 004079dc add ebx,[ebp-14h]
@@ -29519,7 +30220,8 @@ pub fn x0040784e() -> Cont {
     // 004079f5 mov ebx,eax
     m.regs.ebx = m.regs.eax;
     // 004079f7 shl ebx,8
-    m.regs.ebx = shl(m.regs.ebx, 0x8u8);
+    let t = shl(m.regs.ebx, 0x8u8, &mut m.regs.flags);
+    m.regs.ebx = t;
     // 004079fa and ebx,0FFh
     m.regs.ebx = and(m.regs.ebx, 0xffu32);
     // 00407a00 mov [ebp-4],ebx
@@ -29530,7 +30232,8 @@ pub fn x0040784e() -> Cont {
     // 00407a05 and ebx,0FFh
     m.regs.ebx = and(m.regs.ebx, 0xffu32);
     // 00407a0b shl eax,10h
-    m.regs.eax = shl(m.regs.eax, 0x10u8);
+    let t = shl(m.regs.eax, 0x10u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00407a0e and eax,0FFh
     m.regs.eax = and(m.regs.eax, 0xffu32);
     // 00407a13 add ebx,[ebp-4]
@@ -29558,11 +30261,13 @@ pub fn x0040784e() -> Cont {
     // 00407a24 mov ebx,eax
     m.regs.ebx = m.regs.eax;
     // 00407a26 shl ecx,8
-    m.regs.ecx = shl(m.regs.ecx, 0x8u8);
+    let t = shl(m.regs.ecx, 0x8u8, &mut m.regs.flags);
+    m.regs.ecx = t;
     // 00407a29 and ebx,0FFh
     m.regs.ebx = and(m.regs.ebx, 0xffu32);
     // 00407a2f shl eax,10h
-    m.regs.eax = shl(m.regs.eax, 0x10u8);
+    let t = shl(m.regs.eax, 0x10u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00407a32 and ecx,0FFh
     m.regs.ecx = and(m.regs.ecx, 0xffu32);
     // 00407a38 and eax,0FFh
@@ -29582,11 +30287,13 @@ pub fn x0040784e() -> Cont {
     // 00407a4d mov ebx,eax
     m.regs.ebx = m.regs.eax;
     // 00407a4f shl ecx,8
-    m.regs.ecx = shl(m.regs.ecx, 0x8u8);
+    let t = shl(m.regs.ecx, 0x8u8, &mut m.regs.flags);
+    m.regs.ecx = t;
     // 00407a52 and ebx,0FFh
     m.regs.ebx = and(m.regs.ebx, 0xffu32);
     // 00407a58 shl eax,10h
-    m.regs.eax = shl(m.regs.eax, 0x10u8);
+    let t = shl(m.regs.eax, 0x10u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00407a5b and ecx,0FFh
     m.regs.ecx = and(m.regs.ecx, 0xffu32);
     // 00407a61 and eax,0FFh
@@ -29606,11 +30313,13 @@ pub fn x0040784e() -> Cont {
     // 00407a74 mov edx,eax
     m.regs.edx = m.regs.eax;
     // 00407a76 shl ecx,8
-    m.regs.ecx = shl(m.regs.ecx, 0x8u8);
+    let t = shl(m.regs.ecx, 0x8u8, &mut m.regs.flags);
+    m.regs.ecx = t;
     // 00407a79 and edx,0FFh
     m.regs.edx = and(m.regs.edx, 0xffu32);
     // 00407a7f shl eax,10h
-    m.regs.eax = shl(m.regs.eax, 0x10u8);
+    let t = shl(m.regs.eax, 0x10u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00407a82 and ecx,0FFh
     m.regs.ecx = and(m.regs.ecx, 0xffu32);
     // 00407a88 and eax,0FFh
@@ -31120,7 +31829,8 @@ pub fn x00408045() -> Cont {
     // 00408058 mov edi,ds:[433FACh]
     m.regs.edi = m.memory.read::<u32>(0x433facu32);
     // 0040805e shl ecx,2
-    m.regs.ecx = shl(m.regs.ecx, 0x2u8);
+    let t = shl(m.regs.ecx, 0x2u8, &mut m.regs.flags);
+    m.regs.ecx = t;
     // 00408061 rep movsb
     rep(m, Rep::REP, movsb);
     // 00408063 cmp dword ptr [ebp-14h],0
@@ -31253,7 +31963,8 @@ pub fn x004080f2() -> Cont {
     // 004080fe mov eax,ebx
     m.regs.eax = m.regs.ebx;
     // 00408100 shl ecx,2
-    m.regs.ecx = shl(m.regs.ecx, 0x2u8);
+    let t = shl(m.regs.ecx, 0x2u8, &mut m.regs.flags);
+    m.regs.ecx = t;
     // 00408103 call 00403202h
     call(0x408108, Cont(x00403202))
 }
@@ -31275,7 +31986,8 @@ pub fn x00408117() -> Cont {
     // 0040811c imul eax,ds:[40C728h]
     m.regs.eax = imul(m.regs.eax as i32, m.memory.read::<u32>(0x40c728u32) as i32) as u32;
     // 00408123 shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00408126 cmp dword ptr ds:[40C743h],17h
     sub(m.memory.read::<u32>(0x40c743u32), 0x17u32);
     // 0040812d jge near ptr 00408334h
@@ -31663,7 +32375,8 @@ pub fn x004082d9() -> Cont {
     // 004082e9 mov esi,ds:[433FACh]
     m.regs.esi = m.memory.read::<u32>(0x433facu32);
     // 004082ef shl ecx,2
-    m.regs.ecx = shl(m.regs.ecx, 0x2u8);
+    let t = shl(m.regs.ecx, 0x2u8, &mut m.regs.flags);
+    m.regs.ecx = t;
     // 004082f2 rep movsb
     rep(m, Rep::REP, movsb);
     // 004082f4 cmp dword ptr ds:[424FF6h],31h
@@ -31768,7 +32481,8 @@ pub fn x0040834a() -> Cont {
     // 0040834a mov eax,ds:[40C73Fh]
     m.regs.eax = m.memory.read::<u32>(0x40c73fu32);
     // 0040834f shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00408352 jmp short 00408356h
     Cont(x00408356)
 }
@@ -31993,7 +32707,8 @@ pub fn x0040840b() -> Cont {
     // 0040842b xor eax,eax
     m.regs.eax = xor(m.regs.eax, m.regs.eax);
     // 0040842d shl ecx,2
-    m.regs.ecx = shl(m.regs.ecx, 0x2u8);
+    let t = shl(m.regs.ecx, 0x2u8, &mut m.regs.flags);
+    m.regs.ecx = t;
     // 00408430 rep stosb
     rep(m, Rep::REP, stosb);
     // 00408432 fld dword ptr ds:[425002h]
@@ -32326,7 +33041,8 @@ pub fn x004085b9() -> Cont {
     // 004085c5 mov eax,ebx
     m.regs.eax = m.regs.ebx;
     // 004085c7 shl ecx,2
-    m.regs.ecx = shl(m.regs.ecx, 0x2u8);
+    let t = shl(m.regs.ecx, 0x2u8, &mut m.regs.flags);
+    m.regs.ecx = t;
     // 004085ca call 00403202h
     call(0x4085cf, Cont(x00403202))
 }
@@ -32382,7 +33098,8 @@ pub fn x004085ea() -> Cont {
     // 004085f4 imul eax,ds:[40C728h]
     m.regs.eax = imul(m.regs.eax as i32, m.memory.read::<u32>(0x40c728u32) as i32) as u32;
     // 004085fb shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 004085fe push eax
     push(m.regs.eax);
     // 004085ff call 00401A60h
@@ -32401,7 +33118,8 @@ pub fn x00408604() -> Cont {
     // 00408615 add esp,4
     m.regs.esp = add(m.regs.esp, 0x4u32);
     // 00408618 shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 0040861b push eax
     push(m.regs.eax);
     // 0040861c xor ebx,ebx
@@ -32422,7 +33140,8 @@ pub fn x00408623() -> Cont {
     // 00408630 imul eax,ds:[40C728h]
     m.regs.eax = imul(m.regs.eax as i32, m.memory.read::<u32>(0x40c728u32) as i32) as u32;
     // 00408637 shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 0040863a push eax
     push(m.regs.eax);
     // 0040863b inc ebx
@@ -32439,7 +33158,8 @@ pub fn x0040862b() -> Cont {
     // 00408630 imul eax,ds:[40C728h]
     m.regs.eax = imul(m.regs.eax as i32, m.memory.read::<u32>(0x40c728u32) as i32) as u32;
     // 00408637 shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 0040863a push eax
     push(m.regs.eax);
     // 0040863b inc ebx
@@ -33331,7 +34051,8 @@ pub fn x00408a47() -> Cont {
     // 00408a47 mov esi,ecx
     m.regs.esi = m.regs.ecx;
     // 00408a49 shl esi,8
-    m.regs.esi = shl(m.regs.esi, 0x8u8);
+    let t = shl(m.regs.esi, 0x8u8, &mut m.regs.flags);
+    m.regs.esi = t;
     // 00408a4c lea edi,[ebx+esi]
     m.regs.edi = m.regs.ebx.wrapping_add(m.regs.esi);
     // 00408a4f mov esi,edx
@@ -33459,7 +34180,8 @@ pub fn x00408ab0() -> Cont {
     // 00408ab3 mov eax,1
     m.regs.eax = 0x1u32;
     // 00408ab8 shl eax,cl
-    m.regs.eax = shl(m.regs.eax, m.regs.get_cl());
+    let t = shl(m.regs.eax, m.regs.get_cl(), &mut m.regs.flags);
+    m.regs.eax = t;
     // 00408aba test [ebp-10h],eax
     and(
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff0u32)),
@@ -33709,7 +34431,8 @@ pub fn x00408b46() -> Cont {
     // 00408b56 mov cl,al
     m.regs.set_cl(m.regs.get_al());
     // 00408b58 shl edi,cl
-    m.regs.edi = shl(m.regs.edi, m.regs.get_cl());
+    let t = shl(m.regs.edi, m.regs.get_cl(), &mut m.regs.flags);
+    m.regs.edi = t;
     // 00408b5a and di,0FF00h
     m.regs.set_di(and(m.regs.get_di(), 0xff00u16));
     // 00408b5f or di,80h
@@ -33718,7 +34441,8 @@ pub fn x00408b46() -> Cont {
     m.regs
         .set_cl(m.memory.read::<u8>(m.regs.ebp.wrapping_add(0xfffffff8u32)));
     // 00408b67 shl edi,cl
-    m.regs.edi = shl(m.regs.edi, m.regs.get_cl());
+    let t = shl(m.regs.edi, m.regs.get_cl(), &mut m.regs.flags);
+    m.regs.edi = t;
     // 00408b69 mov [ebp-24h],edi
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xffffffdcu32), m.regs.edi);
@@ -33734,7 +34458,8 @@ pub fn x00408b46() -> Cont {
     // 00408b78 mov edi,ebx
     m.regs.edi = m.regs.ebx;
     // 00408b7a shl edi,7
-    m.regs.edi = shl(m.regs.edi, 0x7u8);
+    let t = shl(m.regs.edi, 0x7u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00408b7d mov [ebp-20h],edi
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xffffffe0u32), m.regs.edi);
@@ -33751,7 +34476,8 @@ pub fn x00408b46() -> Cont {
     // 00408b89 mov edi,[ebp-0Ch]
     m.regs.edi = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff4u32));
     // 00408b8c shl edi,2
-    m.regs.edi = shl(m.regs.edi, 0x2u8);
+    let t = shl(m.regs.edi, 0x2u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00408b8f mov [ebp-4],edi
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32), m.regs.edi);
@@ -33775,7 +34501,8 @@ pub fn x00408b46() -> Cont {
     m.regs
         .set_cl(m.memory.read::<u8>(m.regs.ebp.wrapping_add(0xfffffffcu32)));
     // 00408ba7 shl ch,cl
-    m.regs.set_ch(shl(m.regs.get_ch(), m.regs.get_cl()));
+    let t = shl(m.regs.get_ch(), m.regs.get_cl(), &mut m.regs.flags);
+    m.regs.set_ch(t);
     // 00408ba9 inc ebx
     m.regs.ebx = inc(m.regs.ebx);
     // 00408baa jmp short 00408B39h
@@ -33795,7 +34522,8 @@ pub fn x00408b4e() -> Cont {
     // 00408b56 mov cl,al
     m.regs.set_cl(m.regs.get_al());
     // 00408b58 shl edi,cl
-    m.regs.edi = shl(m.regs.edi, m.regs.get_cl());
+    let t = shl(m.regs.edi, m.regs.get_cl(), &mut m.regs.flags);
+    m.regs.edi = t;
     // 00408b5a and di,0FF00h
     m.regs.set_di(and(m.regs.get_di(), 0xff00u16));
     // 00408b5f or di,80h
@@ -33804,7 +34532,8 @@ pub fn x00408b4e() -> Cont {
     m.regs
         .set_cl(m.memory.read::<u8>(m.regs.ebp.wrapping_add(0xfffffff8u32)));
     // 00408b67 shl edi,cl
-    m.regs.edi = shl(m.regs.edi, m.regs.get_cl());
+    let t = shl(m.regs.edi, m.regs.get_cl(), &mut m.regs.flags);
+    m.regs.edi = t;
     // 00408b69 mov [ebp-24h],edi
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xffffffdcu32), m.regs.edi);
@@ -33820,7 +34549,8 @@ pub fn x00408b4e() -> Cont {
     // 00408b78 mov edi,ebx
     m.regs.edi = m.regs.ebx;
     // 00408b7a shl edi,7
-    m.regs.edi = shl(m.regs.edi, 0x7u8);
+    let t = shl(m.regs.edi, 0x7u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00408b7d mov [ebp-20h],edi
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xffffffe0u32), m.regs.edi);
@@ -33837,7 +34567,8 @@ pub fn x00408b4e() -> Cont {
     // 00408b89 mov edi,[ebp-0Ch]
     m.regs.edi = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff4u32));
     // 00408b8c shl edi,2
-    m.regs.edi = shl(m.regs.edi, 0x2u8);
+    let t = shl(m.regs.edi, 0x2u8, &mut m.regs.flags);
+    m.regs.edi = t;
     // 00408b8f mov [ebp-4],edi
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32), m.regs.edi);
@@ -33861,7 +34592,8 @@ pub fn x00408b4e() -> Cont {
     m.regs
         .set_cl(m.memory.read::<u8>(m.regs.ebp.wrapping_add(0xfffffffcu32)));
     // 00408ba7 shl ch,cl
-    m.regs.set_ch(shl(m.regs.get_ch(), m.regs.get_cl()));
+    let t = shl(m.regs.get_ch(), m.regs.get_cl(), &mut m.regs.flags);
+    m.regs.set_ch(t);
     // 00408ba9 inc ebx
     m.regs.ebx = inc(m.regs.ebx);
     // 00408baa jmp short 00408B39h
@@ -33900,7 +34632,8 @@ pub fn x00408bb7() -> Cont {
     // 00408bb7 mov eax,ebx
     m.regs.eax = m.regs.ebx;
     // 00408bb9 shl eax,7
-    m.regs.eax = shl(m.regs.eax, 0x7u8);
+    let t = shl(m.regs.eax, 0x7u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00408bbc mov esi,[ebp-28h]
     m.regs.esi = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffd8u32));
     // 00408bbf add esi,eax
@@ -33988,19 +34721,22 @@ pub fn x00408bf2() -> Cont {
     // 00408bfb mov ecx,eax
     m.regs.ecx = m.regs.eax;
     // 00408bfd shl ecx,8
-    m.regs.ecx = shl(m.regs.ecx, 0x8u8);
+    let t = shl(m.regs.ecx, 0x8u8, &mut m.regs.flags);
+    m.regs.ecx = t;
     // 00408c00 lea esi,[ebx+ecx]
     m.regs.esi = m.regs.ebx.wrapping_add(m.regs.ecx);
     // 00408c03 mov ecx,edx
     m.regs.ecx = m.regs.edx;
     // 00408c05 shl ecx,2
-    m.regs.ecx = shl(m.regs.ecx, 0x2u8);
+    let t = shl(m.regs.ecx, 0x2u8, &mut m.regs.flags);
+    m.regs.ecx = t;
     // 00408c08 add ecx,esi
     m.regs.ecx = add(m.regs.ecx, m.regs.esi);
     // 00408c0a mov esi,eax
     m.regs.esi = m.regs.eax;
     // 00408c0c shl esi,2
-    m.regs.esi = shl(m.regs.esi, 0x2u8);
+    let t = shl(m.regs.esi, 0x2u8, &mut m.regs.flags);
+    m.regs.esi = t;
     // 00408c0f fld dword ptr [edi+esi]
     m.fpu
         .push(m.memory.read::<f32>(m.regs.edi.wrapping_add(m.regs.esi)) as f64);
@@ -34032,19 +34768,22 @@ pub fn x00408bfb() -> Cont {
     // 00408bfb mov ecx,eax
     m.regs.ecx = m.regs.eax;
     // 00408bfd shl ecx,8
-    m.regs.ecx = shl(m.regs.ecx, 0x8u8);
+    let t = shl(m.regs.ecx, 0x8u8, &mut m.regs.flags);
+    m.regs.ecx = t;
     // 00408c00 lea esi,[ebx+ecx]
     m.regs.esi = m.regs.ebx.wrapping_add(m.regs.ecx);
     // 00408c03 mov ecx,edx
     m.regs.ecx = m.regs.edx;
     // 00408c05 shl ecx,2
-    m.regs.ecx = shl(m.regs.ecx, 0x2u8);
+    let t = shl(m.regs.ecx, 0x2u8, &mut m.regs.flags);
+    m.regs.ecx = t;
     // 00408c08 add ecx,esi
     m.regs.ecx = add(m.regs.ecx, m.regs.esi);
     // 00408c0a mov esi,eax
     m.regs.esi = m.regs.eax;
     // 00408c0c shl esi,2
-    m.regs.esi = shl(m.regs.esi, 0x2u8);
+    let t = shl(m.regs.esi, 0x2u8, &mut m.regs.flags);
+    m.regs.esi = t;
     // 00408c0f fld dword ptr [edi+esi]
     m.fpu
         .push(m.memory.read::<f32>(m.regs.edi.wrapping_add(m.regs.esi)) as f64);
@@ -34078,7 +34817,8 @@ pub fn x00408c24() -> Cont {
     // 00408c26 mov eax,ecx
     m.regs.eax = m.regs.ecx;
     // 00408c28 shl eax,6
-    m.regs.eax = shl(m.regs.eax, 0x6u8);
+    let t = shl(m.regs.eax, 0x6u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00408c2b add eax,edx
     m.regs.eax = add(m.regs.eax, m.regs.edx);
     // 00408c2d fld dword ptr [ebx+eax*4]
@@ -34125,7 +34865,8 @@ pub fn x00408c26() -> Cont {
     // 00408c26 mov eax,ecx
     m.regs.eax = m.regs.ecx;
     // 00408c28 shl eax,6
-    m.regs.eax = shl(m.regs.eax, 0x6u8);
+    let t = shl(m.regs.eax, 0x6u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00408c2b add eax,edx
     m.regs.eax = add(m.regs.eax, m.regs.edx);
     // 00408c2d fld dword ptr [ebx+eax*4]
@@ -34216,7 +34957,8 @@ pub fn x00408c4f() -> Cont {
     // 00408c63 mov eax,edi
     m.regs.eax = m.regs.edi;
     // 00408c65 shl eax,5
-    m.regs.eax = shl(m.regs.eax, 0x5u8);
+    let t = shl(m.regs.eax, 0x5u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00408c68 push eax
     push(m.regs.eax);
     // 00408c69 call 00401A60h
@@ -34317,7 +35059,8 @@ pub fn x00408c9f() -> Cont {
     // 00408ca4 mov eax,ebx
     m.regs.eax = m.regs.ebx;
     // 00408ca6 shl eax,7
-    m.regs.eax = shl(m.regs.eax, 0x7u8);
+    let t = shl(m.regs.eax, 0x7u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00408ca9 lea edx,[esi+3000h]
     m.regs.edx = m.regs.esi.wrapping_add(0x3000u32);
     // 00408caf add edx,eax
@@ -34334,7 +35077,8 @@ pub fn x00408ca4() -> Cont {
     // 00408ca4 mov eax,ebx
     m.regs.eax = m.regs.ebx;
     // 00408ca6 shl eax,7
-    m.regs.eax = shl(m.regs.eax, 0x7u8);
+    let t = shl(m.regs.eax, 0x7u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00408ca9 lea edx,[esi+3000h]
     m.regs.edx = m.regs.esi.wrapping_add(0x3000u32);
     // 00408caf add edx,eax
@@ -34410,7 +35154,8 @@ pub fn x00408cd4() -> Cont {
     // 00408cd9 sub eax,edx
     m.regs.eax = sub(m.regs.eax, m.regs.edx);
     // 00408cdb shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00408cde add eax,esi
     m.regs.eax = add(m.regs.eax, m.regs.esi);
     // 00408ce0 fld dword ptr [eax+2800h]
@@ -34460,7 +35205,8 @@ pub fn x00408d06() -> Cont {
     // 00408d0b mov eax,edx
     m.regs.eax = m.regs.edx;
     // 00408d0d shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00408d10 fld dword ptr [esi+eax+2800h]
     m.fpu.push(
         m.memory
@@ -34487,7 +35233,8 @@ pub fn x00408d0b() -> Cont {
     // 00408d0b mov eax,edx
     m.regs.eax = m.regs.edx;
     // 00408d0d shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00408d10 fld dword ptr [esi+eax+2800h]
     m.fpu.push(
         m.memory
@@ -34516,7 +35263,8 @@ pub fn x00408d23() -> Cont {
     // 00408d25 mov eax,edx
     m.regs.eax = m.regs.edx;
     // 00408d27 shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00408d2a add eax,esi
     m.regs.eax = add(m.regs.eax, m.regs.esi);
     // 00408d2c mov dword ptr [eax+2800h],0
@@ -34536,7 +35284,8 @@ pub fn x00408d25() -> Cont {
     // 00408d25 mov eax,edx
     m.regs.eax = m.regs.edx;
     // 00408d27 shl eax,2
-    m.regs.eax = shl(m.regs.eax, 0x2u8);
+    let t = shl(m.regs.eax, 0x2u8, &mut m.regs.flags);
+    m.regs.eax = t;
     // 00408d2a add eax,esi
     m.regs.eax = add(m.regs.eax, m.regs.esi);
     // 00408d2c mov dword ptr [eax+2800h],0
@@ -34787,7 +35536,8 @@ pub fn x0040910a() -> Cont {
     // 0040910a mov al,cl
     m.regs.set_al(m.regs.get_cl());
     // 0040910c sar al,1
-    sar();
+    let t = sar(m.regs.get_al(), 0x1u8, &mut m.regs.flags);
+    m.regs.set_al(t);
     // 0040910e neg al
     m.regs.set_al(neg(m.regs.get_al()));
     // 00409110 stosb
@@ -34821,7 +35571,8 @@ pub fn x00409120() -> Cont {
     // 00409120 mov al,cl
     m.regs.set_al(m.regs.get_cl());
     // 00409122 sar al,1
-    sar();
+    let t = sar(m.regs.get_al(), 0x1u8, &mut m.regs.flags);
+    m.regs.set_al(t);
     // 00409124 stosb
     stosb(m);
     // 00409125 dec cl
@@ -35032,7 +35783,8 @@ pub fn x004091a5() -> Cont {
     // 004091a5 mov ecx,[esi+24h]
     m.regs.ecx = m.memory.read::<u32>(m.regs.esi.wrapping_add(0x24u32));
     // 004091a8 shl ecx,1
-    m.regs.ecx = shl(m.regs.ecx, 0x1u8);
+    let t = shl(m.regs.ecx, 0x1u8, &mut m.regs.flags);
+    m.regs.ecx = t;
     // 004091aa add ecx,[esi+20h]
     m.regs.ecx = add(
         m.regs.ecx,

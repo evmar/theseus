@@ -280,11 +280,20 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
             }
 
             // Binary operations.
-            And | Or | Add | Sub | Sbb | Shl | Shr | Xor => {
+            And | Or | Add | Sub | Sbb | Xor => {
+                assert_eq!(instr.op_count(), 2);
                 let op0 = get_op(instr, 0);
                 let op1 = get_op(instr, 1);
                 let func = format!("{:?}", instr.mnemonic()).to_ascii_lowercase();
                 w.line(set_op(instr, 0, format!("{func}({op0}, {op1})")));
+            }
+            Shl | Shr | Sar => {
+                assert_eq!(instr.op_count(), 2);
+                let op0 = get_op(instr, 0);
+                let op1 = get_op(instr, 1);
+                let func = format!("{:?}", instr.mnemonic()).to_ascii_lowercase();
+                w.line(format!("let t = {func}({op0}, {op1}, &mut m.regs.flags);"));
+                w.line(set_op(instr, 0, "t".into()));
             }
 
             Cmp => {
@@ -354,9 +363,6 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
             }
             Sete => {
                 w.line(set_op(instr, 0, "sete()".into()));
-            }
-            Sar => {
-                w.line("sar();");
             }
             Imul => {
                 let (x, y) = match instr.op_count() {

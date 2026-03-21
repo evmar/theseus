@@ -129,64 +129,6 @@ pub fn neg<I: Int + num_traits::ops::overflowing::OverflowingSub>(x: I) -> I {
     result
 }
 
-pub fn shl<I: Int + num_traits::WrappingShl>(x: I, y: u8) -> I {
-    let y = y % 32;
-    if y == 0 {
-        return x;
-    }
-
-    // Carry is the highest bit that will be shifted out.
-    let cf = (x >> (I::bits() - y as usize) & I::one()).is_one();
-    let val = x.wrapping_shl(y as u32);
-    unsafe {
-        MACHINE.regs.flags.set(Flags::CF, cf);
-        let msb = val.high_bit().is_one();
-        MACHINE.regs.flags.set(Flags::SF, msb);
-        // Note: OF only defined for 1-bit rotates.
-        // "For left shifts, the OF flag is set to 0 if the mostsignificant bit of the result is the
-        // same as the CF flag (that is, the top two bits of the original operand were the same) [...]"
-        MACHINE.regs.flags.set(
-            Flags::OF,
-            x.shr(I::bits() - 1).is_one() ^ (x.shr(I::bits() - 2) & I::one()).is_one(),
-        );
-        MACHINE.regs.flags.set(Flags::ZF, val.is_zero());
-        MACHINE
-            .regs
-            .flags
-            .set(Flags::PF, val.low_byte().count_ones() % 2 == 0);
-    }
-    val
-}
-
-/// shr: Shift
-pub fn shr<I: Int>(x: I, y: u8) -> I {
-    // In all modes but 64 it is correct to mask to 32 bits.
-    assert!(I::bits() < 64); // 64 not implemented
-    let y = y % 32;
-
-    if y == 0 {
-        return x; // Don't affect flags.
-    }
-
-    let val = x >> y as usize;
-    unsafe {
-        MACHINE
-            .regs
-            .flags
-            .set(Flags::CF, ((x >> (y - 1) as usize) & I::one()).is_one());
-        MACHINE.regs.flags.set(Flags::SF, false); // ?
-        MACHINE.regs.flags.set(Flags::ZF, val.is_zero());
-
-        // Note: OF state undefined for shifts > 1 bit.
-        MACHINE.regs.flags.set(Flags::OF, x.high_bit().is_one());
-        MACHINE
-            .regs
-            .flags
-            .set(Flags::PF, val.low_byte().count_ones() % 2 == 0);
-    }
-    val
-}
-
 pub fn div() {
     todo!("div");
 }
@@ -209,10 +151,6 @@ pub fn inc<I: Int + num_traits::ops::wrapping::WrappingAdd>(x: I) -> I {
         MACHINE.regs.flags.set(Flags::CF, old_cf);
     }
     result
-}
-
-pub fn sar() {
-    todo!("sar");
 }
 
 pub fn imul(x: i32, y: i32) -> i32 {

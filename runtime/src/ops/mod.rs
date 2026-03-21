@@ -4,6 +4,7 @@ mod int;
 mod math;
 mod misc;
 mod mov;
+mod shift;
 mod string;
 mod system;
 
@@ -11,5 +12,6 @@ pub use control_flow::*;
 pub use math::*;
 pub use misc::*;
 pub use mov::*;
+pub use shift::*;
 pub use string::*;
 pub use system::*;
