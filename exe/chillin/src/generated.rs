@@ -15700,7 +15700,9 @@ pub fn x0040469e() -> Cont {
     m.fpu.set(0, m.fpu.get(1));
     m.fpu.set(1, t);
     // 004046ad fpatan
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.pop();
+    m.fpu.set(0, m.fpu.get(0).atan2(t));
     // 004046af fmul qword ptr ds:[40C0C0h]
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c0c0u32));
@@ -15727,7 +15729,9 @@ pub fn x004046a0() -> Cont {
     m.fpu.set(0, m.fpu.get(1));
     m.fpu.set(1, t);
     // 004046ad fpatan
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.pop();
+    m.fpu.set(0, m.fpu.get(0).atan2(t));
     // 004046af fmul qword ptr ds:[40C0C0h]
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c0c0u32));
@@ -16543,7 +16547,9 @@ pub fn x004049a1() -> Cont {
     // 004049b5 fld1
     m.fpu.push(1.0);
     // 004049b7 fpatan
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.pop();
+    m.fpu.set(0, m.fpu.get(0).atan2(t));
     // 004049b9 fadd qword ptr [ebp-28h]
     m.fpu.set(
         0,
@@ -16573,7 +16579,9 @@ pub fn x004049af() -> Cont {
     // 004049b5 fld1
     m.fpu.push(1.0);
     // 004049b7 fpatan
-    todo!();
+    let t = m.fpu.get(0);
+    m.fpu.pop();
+    m.fpu.set(0, m.fpu.get(0).atan2(t));
     // 004049b9 fadd qword ptr [ebp-28h]
     m.fpu.set(
         0,

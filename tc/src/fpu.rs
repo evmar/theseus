@@ -179,8 +179,11 @@ pub fn codegen(w: &mut Writer, _state: &State, instr: &iced_x86::Instruction) ->
             assert_eq!(instr.op_count(), 1);
             w.line(set_op(instr, 0, "m.fpu.status()".into()));
         }
+
         Fpatan => {
-            w.line("todo!();");
+            w.line("let t = m.fpu.get(0);");
+            w.line("m.fpu.pop();");
+            w.line("m.fpu.set(0, m.fpu.get(0).atan2(t));");
         }
         _ => return false,
     }
