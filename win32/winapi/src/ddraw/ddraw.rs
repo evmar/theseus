@@ -79,10 +79,10 @@ impl DirectDraw {
     fn create_one_surface(&mut self, addr: u32, params: &SurfaceParams) -> Rc<RefCell<Surface>> {
         let window = self.window.as_ref().unwrap();
         let target = if params.is_primary {
-            log::info!("primary {addr:x}");
+            log::info!("primary {addr:x} {:x}x{:x}", params.width, params.height);
             Target::Window(window.clone())
         } else {
-            log::info!("back {addr:x}");
+            log::info!("back {addr:x} {:x}x{:x}", params.width, params.height);
             let texture_creator = window.borrow().canvas.texture_creator();
             let mut texture = texture_creator
                 .create_texture_target(None, params.width, params.height)
