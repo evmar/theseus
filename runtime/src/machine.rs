@@ -1,9 +1,10 @@
-use crate::{Cont, Flags, Memory, Regs, fpu::FPU};
+use crate::{Cont, Flags, Memory, Regs, fpu::FPU, mmx::MMX};
 
 pub struct Machine {
     pub regs: Regs,
     pub flags: Flags,
     pub fpu: FPU,
+    pub mmx: MMX,
     pub memory: Memory,
     pub blocks: &'static [(u32, fn() -> Cont)],
 }
@@ -36,6 +37,7 @@ pub static mut MACHINE: Machine = Machine {
     regs: Regs::default(),
     flags: Flags::empty(),
     fpu: FPU::default(),
+    mmx: MMX::default(),
     memory: Memory::default(),
     blocks: &[],
 };

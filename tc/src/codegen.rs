@@ -3,10 +3,10 @@ use anyhow::{Result, anyhow, bail};
 use crate::{
     Block, State, fpu, is_abs_memory_ref,
     memory::{AddrAbs, AddrImage},
-    string,
+    mmx, string,
 };
 
-fn get_reg(r: iced_x86::Register) -> String {
+pub fn get_reg(r: iced_x86::Register) -> String {
     use iced_x86::Register::*;
     match r {
         EAX | ECX | EDX | EBX | ESI | EDI | ESP | EBP => {
@@ -454,11 +454,6 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
                 w.line("movdqa();");
             }
 
-            Pxor | Movd | Punpcklbw | Pmullw | Psrlw | Packuswb | Emms | Psubusb | Paddusb
-            | Psubw | Psraw | Paddsw | Paddsb => {
-                w.line("todo!();");
-            }
-
             Cbw => {
                 w.line("m.regs.set_ax(m.regs.get_al() as i8 as i16 as u16);");
             }
@@ -476,6 +471,7 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
             c => {
                 if fpu::codegen(w, state, instr) {
                 } else if string::codegen(w, state, instr) {
+                } else if mmx::codegen(w, state, instr) {
                 } else {
                     todo!("{:?} in {}", c, instr);
                 }

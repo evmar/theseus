@@ -7,6 +7,7 @@ mod flags;
 mod fpu;
 mod machine;
 mod memory;
+mod mmx;
 mod native;
 mod ops;
 mod registers;

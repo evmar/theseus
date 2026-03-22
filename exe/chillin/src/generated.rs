@@ -9410,7 +9410,7 @@ pub fn x00402f1e() -> Cont {
     // 00402f46 shl edx,8
     m.regs.edx = shl(m.regs.edx, 0x8u8, &mut m.flags);
     // 00402f49 pxor mm3,mm3
-    todo!();
+    m.mmx.mm3 = m.mmx.mm3 ^ m.mmx.mm3;
     // 00402f4c movd mm0,eax
     todo!();
     // 00402f4f movd mm1,ebx
@@ -9486,7 +9486,7 @@ pub fn x00402f23() -> Cont {
     // 00402f46 shl edx,8
     m.regs.edx = shl(m.regs.edx, 0x8u8, &mut m.flags);
     // 00402f49 pxor mm3,mm3
-    todo!();
+    m.mmx.mm3 = m.mmx.mm3 ^ m.mmx.mm3;
     // 00402f4c movd mm0,eax
     todo!();
     // 00402f4f movd mm1,ebx
@@ -9552,7 +9552,7 @@ pub fn x00402f80() -> Cont {
     // 00402f8b mov ebx,ecx
     m.regs.ebx = m.regs.ecx;
     // 00402f8d pxor mm3,mm3
-    todo!();
+    m.mmx.mm3 = m.mmx.mm3 ^ m.mmx.mm3;
     // 00402f90 movd mm0,eax
     todo!();
     // 00402f93 movd mm1,ebx
@@ -9754,7 +9754,7 @@ pub fn x00403257() -> Cont {
         .memory
         .read::<u32>(m.regs.eax.wrapping_add((m.regs.edi * 4)));
     // 00403261 pxor mm3,mm3
-    todo!();
+    m.mmx.mm3 = m.mmx.mm3 ^ m.mmx.mm3;
     // 00403264 movd mm0,eax
     todo!();
     // 00403267 movd mm1,ebx
@@ -9783,7 +9783,7 @@ pub fn x00403257() -> Cont {
         .memory
         .read::<u32>(m.regs.eax.wrapping_add((m.regs.edi * 4)));
     // 00403288 pxor mm3,mm3
-    todo!();
+    m.mmx.mm3 = m.mmx.mm3 ^ m.mmx.mm3;
     // 0040328b movd mm0,eax
     todo!();
     // 0040328e movd mm1,ebx
@@ -10443,7 +10443,7 @@ pub fn x004034ed() -> Cont {
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32)),
     );
     // 004034fc pxor mm3,mm3
-    todo!();
+    m.mmx.mm3 = m.mmx.mm3 ^ m.mmx.mm3;
     // 004034ff movd mm0,eax
     todo!();
     // 00403502 movd mm1,ebx
@@ -11469,7 +11469,7 @@ pub fn x00403995() -> Cont {
     // 004039b6 sub eax,esi
     m.regs.eax = sub(m.regs.eax, m.regs.esi);
     // 004039b8 pxor mm3,mm3
-    todo!();
+    m.mmx.mm3 = m.mmx.mm3 ^ m.mmx.mm3;
     // 004039bb movd mm0,eax
     todo!();
     // 004039be movd mm1,ebx
@@ -11512,7 +11512,7 @@ pub fn x00403995() -> Cont {
     // 004039f1 mov esi,[ebp-0Ch]
     m.regs.esi = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff4u32));
     // 004039f4 pxor mm3,mm3
-    todo!();
+    m.mmx.mm3 = m.mmx.mm3 ^ m.mmx.mm3;
     // 004039f7 movd mm0,eax
     todo!();
     // 004039fa movd mm1,ebx
@@ -18338,7 +18338,7 @@ pub fn x00404ea1() -> Cont {
     // 00404f55 mov eax,[eax]
     m.regs.eax = m.memory.read::<u32>(m.regs.eax);
     // 00404f57 pxor mm3,mm3
-    todo!();
+    m.mmx.mm3 = m.mmx.mm3 ^ m.mmx.mm3;
     // 00404f5a movd mm0,eax
     todo!();
     // 00404f5d movd mm1,ebx
@@ -18492,7 +18492,7 @@ pub fn x00404ef1() -> Cont {
     // 00404f55 mov eax,[eax]
     m.regs.eax = m.memory.read::<u32>(m.regs.eax);
     // 00404f57 pxor mm3,mm3
-    todo!();
+    m.mmx.mm3 = m.mmx.mm3 ^ m.mmx.mm3;
     // 00404f5a movd mm0,eax
     todo!();
     // 00404f5d movd mm1,ebx
@@ -27111,7 +27111,7 @@ pub fn x00406daa() -> Cont {
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32)),
     );
     // 00406dc7 pxor mm3,mm3
-    todo!();
+    m.mmx.mm3 = m.mmx.mm3 ^ m.mmx.mm3;
     // 00406dca movd mm0,eax
     todo!();
     // 00406dcd movd mm1,ebx
@@ -27159,7 +27159,7 @@ pub fn x00406daa() -> Cont {
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff4u32)),
     );
     // 00406e0e pxor mm3,mm3
-    todo!();
+    m.mmx.mm3 = m.mmx.mm3 ^ m.mmx.mm3;
     // 00406e11 movd mm0,eax
     todo!();
     // 00406e14 movd mm1,ebx
@@ -27218,7 +27218,7 @@ pub fn x00406db1() -> Cont {
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32)),
     );
     // 00406dc7 pxor mm3,mm3
-    todo!();
+    m.mmx.mm3 = m.mmx.mm3 ^ m.mmx.mm3;
     // 00406dca movd mm0,eax
     todo!();
     // 00406dcd movd mm1,ebx
@@ -27266,7 +27266,7 @@ pub fn x00406db1() -> Cont {
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff4u32)),
     );
     // 00406e0e pxor mm3,mm3
-    todo!();
+    m.mmx.mm3 = m.mmx.mm3 ^ m.mmx.mm3;
     // 00406e11 movd mm0,eax
     todo!();
     // 00406e14 movd mm1,ebx
@@ -27760,7 +27760,7 @@ pub fn x00406f6f() -> Cont {
         .memory
         .read::<u32>(m.regs.eax.wrapping_add((m.regs.edi * 4)));
     // 00406f7e pxor mm3,mm3
-    todo!();
+    m.mmx.mm3 = m.mmx.mm3 ^ m.mmx.mm3;
     // 00406f81 movd mm0,eax
     todo!();
     // 00406f84 movd mm1,ebx
@@ -27826,7 +27826,7 @@ pub fn x00406f6f() -> Cont {
     // 00406fdd mov eax,edx
     m.regs.eax = m.regs.edx;
     // 00406fdf pxor mm3,mm3
-    todo!();
+    m.mmx.mm3 = m.mmx.mm3 ^ m.mmx.mm3;
     // 00406fe2 movd mm0,eax
     todo!();
     // 00406fe5 movd mm1,ebx
@@ -27902,7 +27902,7 @@ pub fn x0040700a() -> Cont {
     // 00407042 mov eax,[eax]
     m.regs.eax = m.memory.read::<u32>(m.regs.eax);
     // 00407044 pxor mm3,mm3
-    todo!();
+    m.mmx.mm3 = m.mmx.mm3 ^ m.mmx.mm3;
     // 00407047 movd mm0,eax
     todo!();
     // 0040704a movd mm1,ebx
@@ -27924,7 +27924,7 @@ pub fn x0040700a() -> Cont {
     // 00407062 mov eax,88CCFFh
     m.regs.eax = 0x88ccffu32;
     // 00407067 pxor mm3,mm3
-    todo!();
+    m.mmx.mm3 = m.mmx.mm3 ^ m.mmx.mm3;
     // 0040706a movd mm0,eax
     todo!();
     // 0040706d movd mm1,ebx
@@ -28002,7 +28002,7 @@ pub fn x0040700c() -> Cont {
     // 00407042 mov eax,[eax]
     m.regs.eax = m.memory.read::<u32>(m.regs.eax);
     // 00407044 pxor mm3,mm3
-    todo!();
+    m.mmx.mm3 = m.mmx.mm3 ^ m.mmx.mm3;
     // 00407047 movd mm0,eax
     todo!();
     // 0040704a movd mm1,ebx
@@ -28024,7 +28024,7 @@ pub fn x0040700c() -> Cont {
     // 00407062 mov eax,88CCFFh
     m.regs.eax = 0x88ccffu32;
     // 00407067 pxor mm3,mm3
-    todo!();
+    m.mmx.mm3 = m.mmx.mm3 ^ m.mmx.mm3;
     // 0040706a movd mm0,eax
     todo!();
     // 0040706d movd mm1,ebx
@@ -28099,7 +28099,7 @@ pub fn x0040700f() -> Cont {
     // 00407042 mov eax,[eax]
     m.regs.eax = m.memory.read::<u32>(m.regs.eax);
     // 00407044 pxor mm3,mm3
-    todo!();
+    m.mmx.mm3 = m.mmx.mm3 ^ m.mmx.mm3;
     // 00407047 movd mm0,eax
     todo!();
     // 0040704a movd mm1,ebx
@@ -28121,7 +28121,7 @@ pub fn x0040700f() -> Cont {
     // 00407062 mov eax,88CCFFh
     m.regs.eax = 0x88ccffu32;
     // 00407067 pxor mm3,mm3
-    todo!();
+    m.mmx.mm3 = m.mmx.mm3 ^ m.mmx.mm3;
     // 0040706a movd mm0,eax
     todo!();
     // 0040706d movd mm1,ebx
@@ -28186,7 +28186,7 @@ pub fn x0040701b() -> Cont {
     // 00407042 mov eax,[eax]
     m.regs.eax = m.memory.read::<u32>(m.regs.eax);
     // 00407044 pxor mm3,mm3
-    todo!();
+    m.mmx.mm3 = m.mmx.mm3 ^ m.mmx.mm3;
     // 00407047 movd mm0,eax
     todo!();
     // 0040704a movd mm1,ebx
@@ -28208,7 +28208,7 @@ pub fn x0040701b() -> Cont {
     // 00407062 mov eax,88CCFFh
     m.regs.eax = 0x88ccffu32;
     // 00407067 pxor mm3,mm3
-    todo!();
+    m.mmx.mm3 = m.mmx.mm3 ^ m.mmx.mm3;
     // 0040706a movd mm0,eax
     todo!();
     // 0040706d movd mm1,ebx
@@ -31217,7 +31217,7 @@ pub fn x00407d25() -> Cont {
         inc(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32))),
     );
     // 00407d2c pxor mm3,mm3
-    todo!();
+    m.mmx.mm3 = m.mmx.mm3 ^ m.mmx.mm3;
     // 00407d2f movd mm0,eax
     todo!();
     // 00407d32 movd mm1,ebx
@@ -31691,7 +31691,7 @@ pub fn x00407f18() -> Cont {
         inc(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32))),
     );
     // 00407f1f pxor mm3,mm3
-    todo!();
+    m.mmx.mm3 = m.mmx.mm3 ^ m.mmx.mm3;
     // 00407f22 movd mm0,eax
     todo!();
     // 00407f25 movd mm1,ebx
@@ -32748,7 +32748,7 @@ pub fn x0040839a() -> Cont {
         inc(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32))),
     );
     // 004083a1 pxor mm3,mm3
-    todo!();
+    m.mmx.mm3 = m.mmx.mm3 ^ m.mmx.mm3;
     // 004083a4 movd mm0,eax
     todo!();
     // 004083a7 movd mm1,ebx
@@ -33125,7 +33125,7 @@ pub fn x0040854e() -> Cont {
         inc(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32))),
     );
     // 00408555 pxor mm3,mm3
-    todo!();
+    m.mmx.mm3 = m.mmx.mm3 ^ m.mmx.mm3;
     // 00408558 movd mm0,eax
     todo!();
     // 0040855b movd mm1,ebx

@@ -1,6 +1,7 @@
 mod codegen;
 mod fpu;
 mod memory;
+mod mmx;
 mod string;
 
 use anyhow::Result;
