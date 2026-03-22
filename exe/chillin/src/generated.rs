@@ -13068,7 +13068,7 @@ pub fn x00403e7b() -> Cont {
     // 00403f45 movq mm4,mm1
     m.mmx.mm4 = m.mmx.mm1;
     // 00403f48 psubw mm4,mm0
-    todo!();
+    m.mmx.mm4 = psubw(m.mmx.mm4, m.mmx.mm0);
     // 00403f4b psraw mm4,8
     todo!();
     // 00403f4f pmullw mm4,[ebp-40h]
@@ -13081,7 +13081,7 @@ pub fn x00403e7b() -> Cont {
     // 00403f59 movq mm5,mm3
     m.mmx.mm5 = m.mmx.mm3;
     // 00403f5c psubw mm5,mm2
-    todo!();
+    m.mmx.mm5 = psubw(m.mmx.mm5, m.mmx.mm2);
     // 00403f5f psraw mm5,8
     todo!();
     // 00403f63 pmullw mm5,[ebp-40h]
@@ -13094,7 +13094,7 @@ pub fn x00403e7b() -> Cont {
     // 00403f6d movq mm6,mm5
     m.mmx.mm6 = m.mmx.mm5;
     // 00403f70 psubw mm6,mm4
-    todo!();
+    m.mmx.mm6 = psubw(m.mmx.mm6, m.mmx.mm4);
     // 00403f73 psraw mm6,8
     todo!();
     // 00403f77 pmullw mm6,[ebp-48h]
@@ -13304,7 +13304,7 @@ pub fn x00403ea3() -> Cont {
     // 00403f45 movq mm4,mm1
     m.mmx.mm4 = m.mmx.mm1;
     // 00403f48 psubw mm4,mm0
-    todo!();
+    m.mmx.mm4 = psubw(m.mmx.mm4, m.mmx.mm0);
     // 00403f4b psraw mm4,8
     todo!();
     // 00403f4f pmullw mm4,[ebp-40h]
@@ -13317,7 +13317,7 @@ pub fn x00403ea3() -> Cont {
     // 00403f59 movq mm5,mm3
     m.mmx.mm5 = m.mmx.mm3;
     // 00403f5c psubw mm5,mm2
-    todo!();
+    m.mmx.mm5 = psubw(m.mmx.mm5, m.mmx.mm2);
     // 00403f5f psraw mm5,8
     todo!();
     // 00403f63 pmullw mm5,[ebp-40h]
@@ -13330,7 +13330,7 @@ pub fn x00403ea3() -> Cont {
     // 00403f6d movq mm6,mm5
     m.mmx.mm6 = m.mmx.mm5;
     // 00403f70 psubw mm6,mm4
-    todo!();
+    m.mmx.mm6 = psubw(m.mmx.mm6, m.mmx.mm4);
     // 00403f73 psraw mm6,8
     todo!();
     // 00403f77 pmullw mm6,[ebp-48h]
@@ -13493,7 +13493,7 @@ pub fn x00403efe() -> Cont {
     // 00403f45 movq mm4,mm1
     m.mmx.mm4 = m.mmx.mm1;
     // 00403f48 psubw mm4,mm0
-    todo!();
+    m.mmx.mm4 = psubw(m.mmx.mm4, m.mmx.mm0);
     // 00403f4b psraw mm4,8
     todo!();
     // 00403f4f pmullw mm4,[ebp-40h]
@@ -13506,7 +13506,7 @@ pub fn x00403efe() -> Cont {
     // 00403f59 movq mm5,mm3
     m.mmx.mm5 = m.mmx.mm3;
     // 00403f5c psubw mm5,mm2
-    todo!();
+    m.mmx.mm5 = psubw(m.mmx.mm5, m.mmx.mm2);
     // 00403f5f psraw mm5,8
     todo!();
     // 00403f63 pmullw mm5,[ebp-40h]
@@ -13519,7 +13519,7 @@ pub fn x00403efe() -> Cont {
     // 00403f6d movq mm6,mm5
     m.mmx.mm6 = m.mmx.mm5;
     // 00403f70 psubw mm6,mm4
-    todo!();
+    m.mmx.mm6 = psubw(m.mmx.mm6, m.mmx.mm4);
     // 00403f73 psraw mm6,8
     todo!();
     // 00403f77 pmullw mm6,[ebp-48h]
@@ -13786,7 +13786,7 @@ pub fn x00404028() -> Cont {
     // 004040fb movq mm4,mm1
     m.mmx.mm4 = m.mmx.mm1;
     // 004040fe psubw mm4,mm0
-    todo!();
+    m.mmx.mm4 = psubw(m.mmx.mm4, m.mmx.mm0);
     // 00404101 psraw mm4,8
     todo!();
     // 00404105 pmullw mm4,[ebp-40h]
@@ -13799,7 +13799,7 @@ pub fn x00404028() -> Cont {
     // 0040410f movq mm5,mm3
     m.mmx.mm5 = m.mmx.mm3;
     // 00404112 psubw mm5,mm2
-    todo!();
+    m.mmx.mm5 = psubw(m.mmx.mm5, m.mmx.mm2);
     // 00404115 psraw mm5,8
     todo!();
     // 00404119 pmullw mm5,[ebp-40h]
@@ -13812,7 +13812,7 @@ pub fn x00404028() -> Cont {
     // 00404123 movq mm6,mm5
     m.mmx.mm6 = m.mmx.mm5;
     // 00404126 psubw mm6,mm4
-    todo!();
+    m.mmx.mm6 = psubw(m.mmx.mm6, m.mmx.mm4);
     // 00404129 psraw mm6,8
     todo!();
     // 0040412d pmullw mm6,[ebp-48h]
@@ -14028,7 +14028,7 @@ pub fn x00404050() -> Cont {
     // 004040fb movq mm4,mm1
     m.mmx.mm4 = m.mmx.mm1;
     // 004040fe psubw mm4,mm0
-    todo!();
+    m.mmx.mm4 = psubw(m.mmx.mm4, m.mmx.mm0);
     // 00404101 psraw mm4,8
     todo!();
     // 00404105 pmullw mm4,[ebp-40h]
@@ -14041,7 +14041,7 @@ pub fn x00404050() -> Cont {
     // 0040410f movq mm5,mm3
     m.mmx.mm5 = m.mmx.mm3;
     // 00404112 psubw mm5,mm2
-    todo!();
+    m.mmx.mm5 = psubw(m.mmx.mm5, m.mmx.mm2);
     // 00404115 psraw mm5,8
     todo!();
     // 00404119 pmullw mm5,[ebp-40h]
@@ -14054,7 +14054,7 @@ pub fn x00404050() -> Cont {
     // 00404123 movq mm6,mm5
     m.mmx.mm6 = m.mmx.mm5;
     // 00404126 psubw mm6,mm4
-    todo!();
+    m.mmx.mm6 = psubw(m.mmx.mm6, m.mmx.mm4);
     // 00404129 psraw mm6,8
     todo!();
     // 0040412d pmullw mm6,[ebp-48h]
@@ -14217,7 +14217,7 @@ pub fn x004040b4() -> Cont {
     // 004040fb movq mm4,mm1
     m.mmx.mm4 = m.mmx.mm1;
     // 004040fe psubw mm4,mm0
-    todo!();
+    m.mmx.mm4 = psubw(m.mmx.mm4, m.mmx.mm0);
     // 00404101 psraw mm4,8
     todo!();
     // 00404105 pmullw mm4,[ebp-40h]
@@ -14230,7 +14230,7 @@ pub fn x004040b4() -> Cont {
     // 0040410f movq mm5,mm3
     m.mmx.mm5 = m.mmx.mm3;
     // 00404112 psubw mm5,mm2
-    todo!();
+    m.mmx.mm5 = psubw(m.mmx.mm5, m.mmx.mm2);
     // 00404115 psraw mm5,8
     todo!();
     // 00404119 pmullw mm5,[ebp-40h]
@@ -14243,7 +14243,7 @@ pub fn x004040b4() -> Cont {
     // 00404123 movq mm6,mm5
     m.mmx.mm6 = m.mmx.mm5;
     // 00404126 psubw mm6,mm4
-    todo!();
+    m.mmx.mm6 = psubw(m.mmx.mm6, m.mmx.mm4);
     // 00404129 psraw mm6,8
     todo!();
     // 0040412d pmullw mm6,[ebp-48h]
@@ -14507,7 +14507,7 @@ pub fn x004041de() -> Cont {
     // 004042ac movq mm4,mm1
     m.mmx.mm4 = m.mmx.mm1;
     // 004042af psubw mm4,mm0
-    todo!();
+    m.mmx.mm4 = psubw(m.mmx.mm4, m.mmx.mm0);
     // 004042b2 psraw mm4,8
     todo!();
     // 004042b6 pmullw mm4,[ebp-40h]
@@ -14520,7 +14520,7 @@ pub fn x004041de() -> Cont {
     // 004042c0 movq mm5,mm3
     m.mmx.mm5 = m.mmx.mm3;
     // 004042c3 psubw mm5,mm2
-    todo!();
+    m.mmx.mm5 = psubw(m.mmx.mm5, m.mmx.mm2);
     // 004042c6 psraw mm5,8
     todo!();
     // 004042ca pmullw mm5,[ebp-40h]
@@ -14533,7 +14533,7 @@ pub fn x004041de() -> Cont {
     // 004042d4 movq mm6,mm5
     m.mmx.mm6 = m.mmx.mm5;
     // 004042d7 psubw mm6,mm4
-    todo!();
+    m.mmx.mm6 = psubw(m.mmx.mm6, m.mmx.mm4);
     // 004042da psraw mm6,8
     todo!();
     // 004042de pmullw mm6,[ebp-48h]
@@ -14743,7 +14743,7 @@ pub fn x0040420a() -> Cont {
     // 004042ac movq mm4,mm1
     m.mmx.mm4 = m.mmx.mm1;
     // 004042af psubw mm4,mm0
-    todo!();
+    m.mmx.mm4 = psubw(m.mmx.mm4, m.mmx.mm0);
     // 004042b2 psraw mm4,8
     todo!();
     // 004042b6 pmullw mm4,[ebp-40h]
@@ -14756,7 +14756,7 @@ pub fn x0040420a() -> Cont {
     // 004042c0 movq mm5,mm3
     m.mmx.mm5 = m.mmx.mm3;
     // 004042c3 psubw mm5,mm2
-    todo!();
+    m.mmx.mm5 = psubw(m.mmx.mm5, m.mmx.mm2);
     // 004042c6 psraw mm5,8
     todo!();
     // 004042ca pmullw mm5,[ebp-40h]
@@ -14769,7 +14769,7 @@ pub fn x0040420a() -> Cont {
     // 004042d4 movq mm6,mm5
     m.mmx.mm6 = m.mmx.mm5;
     // 004042d7 psubw mm6,mm4
-    todo!();
+    m.mmx.mm6 = psubw(m.mmx.mm6, m.mmx.mm4);
     // 004042da psraw mm6,8
     todo!();
     // 004042de pmullw mm6,[ebp-48h]
@@ -14932,7 +14932,7 @@ pub fn x00404265() -> Cont {
     // 004042ac movq mm4,mm1
     m.mmx.mm4 = m.mmx.mm1;
     // 004042af psubw mm4,mm0
-    todo!();
+    m.mmx.mm4 = psubw(m.mmx.mm4, m.mmx.mm0);
     // 004042b2 psraw mm4,8
     todo!();
     // 004042b6 pmullw mm4,[ebp-40h]
@@ -14945,7 +14945,7 @@ pub fn x00404265() -> Cont {
     // 004042c0 movq mm5,mm3
     m.mmx.mm5 = m.mmx.mm3;
     // 004042c3 psubw mm5,mm2
-    todo!();
+    m.mmx.mm5 = psubw(m.mmx.mm5, m.mmx.mm2);
     // 004042c6 psraw mm5,8
     todo!();
     // 004042ca pmullw mm5,[ebp-40h]
@@ -14958,7 +14958,7 @@ pub fn x00404265() -> Cont {
     // 004042d4 movq mm6,mm5
     m.mmx.mm6 = m.mmx.mm5;
     // 004042d7 psubw mm6,mm4
-    todo!();
+    m.mmx.mm6 = psubw(m.mmx.mm6, m.mmx.mm4);
     // 004042da psraw mm6,8
     todo!();
     // 004042de pmullw mm6,[ebp-48h]
@@ -15228,7 +15228,7 @@ pub fn x0040438f() -> Cont {
     // 00404466 movq mm4,mm1
     m.mmx.mm4 = m.mmx.mm1;
     // 00404469 psubw mm4,mm0
-    todo!();
+    m.mmx.mm4 = psubw(m.mmx.mm4, m.mmx.mm0);
     // 0040446c psraw mm4,8
     todo!();
     // 00404470 pmullw mm4,[ebp-40h]
@@ -15241,7 +15241,7 @@ pub fn x0040438f() -> Cont {
     // 0040447a movq mm5,mm3
     m.mmx.mm5 = m.mmx.mm3;
     // 0040447d psubw mm5,mm2
-    todo!();
+    m.mmx.mm5 = psubw(m.mmx.mm5, m.mmx.mm2);
     // 00404480 psraw mm5,8
     todo!();
     // 00404484 pmullw mm5,[ebp-40h]
@@ -15254,7 +15254,7 @@ pub fn x0040438f() -> Cont {
     // 0040448e movq mm6,mm5
     m.mmx.mm6 = m.mmx.mm5;
     // 00404491 psubw mm6,mm4
-    todo!();
+    m.mmx.mm6 = psubw(m.mmx.mm6, m.mmx.mm4);
     // 00404494 psraw mm6,8
     todo!();
     // 00404498 pmullw mm6,[ebp-48h]
@@ -15470,7 +15470,7 @@ pub fn x004043bb() -> Cont {
     // 00404466 movq mm4,mm1
     m.mmx.mm4 = m.mmx.mm1;
     // 00404469 psubw mm4,mm0
-    todo!();
+    m.mmx.mm4 = psubw(m.mmx.mm4, m.mmx.mm0);
     // 0040446c psraw mm4,8
     todo!();
     // 00404470 pmullw mm4,[ebp-40h]
@@ -15483,7 +15483,7 @@ pub fn x004043bb() -> Cont {
     // 0040447a movq mm5,mm3
     m.mmx.mm5 = m.mmx.mm3;
     // 0040447d psubw mm5,mm2
-    todo!();
+    m.mmx.mm5 = psubw(m.mmx.mm5, m.mmx.mm2);
     // 00404480 psraw mm5,8
     todo!();
     // 00404484 pmullw mm5,[ebp-40h]
@@ -15496,7 +15496,7 @@ pub fn x004043bb() -> Cont {
     // 0040448e movq mm6,mm5
     m.mmx.mm6 = m.mmx.mm5;
     // 00404491 psubw mm6,mm4
-    todo!();
+    m.mmx.mm6 = psubw(m.mmx.mm6, m.mmx.mm4);
     // 00404494 psraw mm6,8
     todo!();
     // 00404498 pmullw mm6,[ebp-48h]
@@ -15659,7 +15659,7 @@ pub fn x0040441f() -> Cont {
     // 00404466 movq mm4,mm1
     m.mmx.mm4 = m.mmx.mm1;
     // 00404469 psubw mm4,mm0
-    todo!();
+    m.mmx.mm4 = psubw(m.mmx.mm4, m.mmx.mm0);
     // 0040446c psraw mm4,8
     todo!();
     // 00404470 pmullw mm4,[ebp-40h]
@@ -15672,7 +15672,7 @@ pub fn x0040441f() -> Cont {
     // 0040447a movq mm5,mm3
     m.mmx.mm5 = m.mmx.mm3;
     // 0040447d psubw mm5,mm2
-    todo!();
+    m.mmx.mm5 = psubw(m.mmx.mm5, m.mmx.mm2);
     // 00404480 psraw mm5,8
     todo!();
     // 00404484 pmullw mm5,[ebp-40h]
@@ -15685,7 +15685,7 @@ pub fn x0040441f() -> Cont {
     // 0040448e movq mm6,mm5
     m.mmx.mm6 = m.mmx.mm5;
     // 00404491 psubw mm6,mm4
-    todo!();
+    m.mmx.mm6 = psubw(m.mmx.mm6, m.mmx.mm4);
     // 00404494 psraw mm6,8
     todo!();
     // 00404498 pmullw mm6,[ebp-48h]

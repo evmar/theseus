@@ -155,7 +155,15 @@ pub fn codegen(w: &mut Writer, _state: &State, instr: &iced_x86::Instruction) ->
             ));
         }
 
-        Psubw | Psraw | Movdqa => {
+        Psubw => {
+            w.line(mmx_set(
+                instr,
+                0,
+                format!("psubw({}, {})", mmx_get(instr, 0), mmx_get(instr, 1)),
+            ));
+        }
+
+        Psraw | Movdqa => {
             w.todo();
         }
         _ => return false,
