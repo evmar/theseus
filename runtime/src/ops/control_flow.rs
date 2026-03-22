@@ -99,7 +99,7 @@ pub fn jbe(m: &mut Machine, from: Cont, x: Cont) -> Cont {
 pub fn ret(m: &mut Machine, n: u16) -> Cont {
     let ret = super::pop(m);
     m.regs.esp += n as u32;
-    indirect(ret)
+    indirect(m, ret)
 }
 
 pub fn enter(m: &mut Machine, bytes: u16, nesting: u8) {

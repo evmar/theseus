@@ -37,7 +37,8 @@ pub fn x00401000(m: &mut Machine) -> Cont {
     // 00401006 sub esp,10h
     m.regs.esp = sub(m.regs.esp, 0x10u32, &mut m.flags);
     // 00401009 call 00401015h
-    call(m, 0x40100e, Cont(x00401015))
+    let dst = Cont(x00401015);
+    call(m, 0x40100e, dst)
 }
 
 #[allow(unused_variables)]
@@ -45,7 +46,8 @@ pub fn x0040100e(m: &mut Machine) -> Cont {
     // 0040100e push 0
     push(m, 0x0u32);
     // 00401010 call 00401077h
-    call(m, 0x401015, Cont(x00401077))
+    let dst = Cont(x00401077);
+    call(m, 0x401015, dst)
 }
 
 #[allow(unused_variables)]
@@ -143,7 +145,8 @@ pub fn x00401045(m: &mut Machine) -> Cont {
     // 00401054 push esi
     push(m, m.regs.esi);
     // 00401055 call 00401083h
-    call(m, 0x40105a, Cont(x00401083))
+    let dst = Cont(x00401083);
+    call(m, 0x40105a, dst)
 }
 
 #[allow(unused_variables)]
@@ -165,7 +168,8 @@ pub fn x0040105e(m: &mut Machine) -> Cont {
 #[allow(unused_variables)]
 pub fn x00401063(m: &mut Machine) -> Cont {
     // 00401063 call 0040107Dh
-    call(m, 0x401068, Cont(x0040107d))
+    let dst = Cont(x0040107d);
+    call(m, 0x401068, dst)
 }
 
 #[allow(unused_variables)]

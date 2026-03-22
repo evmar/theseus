@@ -163,7 +163,7 @@ pub fn gen_abs_jmp(state: &State, addr: u32) -> String {
     if state.blocks.contains_key(&addr) {
         format!("Cont(x{:08x})", addr)
     } else {
-        format!("/* TODO */ indirect({:#08x}u32)", addr)
+        format!("/* TODO */ indirect(m, {:#08x}u32)", addr)
     }
 }
 
@@ -184,10 +184,10 @@ pub fn gen_jmp(state: &State, instr: &iced_x86::Instruction) -> String {
                     );
                 }
             }
-            format!("indirect(m.memory.read({}))", gen_addr(instr))
+            format!("indirect(m, m.memory.read({}))", gen_addr(instr))
         }
         iced_x86::OpKind::Register => {
-            format!("indirect({})", get_reg(instr.op0_register()))
+            format!("indirect(m, {})", get_reg(instr.op0_register()))
         }
         k => todo!("{:?}", k),
     }
@@ -239,11 +239,9 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
             Mov => w.line(set_op(instr, 0, get_op(instr, 1))),
 
             Call => {
-                w.line(format!(
-                    "call(m, {:#08x}, {})",
-                    instr.next_ip32(),
-                    gen_jmp(state, instr)
-                ));
+                // Create a temporary here in case gen_jmp needs to borrow m.
+                w.line(format!("let dst = {};", gen_jmp(state, instr)));
+                w.line(format!("call(m, {:#08x}, dst)", instr.next_ip32(),));
             }
 
             Ret => {

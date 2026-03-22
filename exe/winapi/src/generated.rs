@@ -30,7 +30,8 @@ pub fn x00401000(m: &mut Machine) -> Cont {
     // 00401000 push 0FFFFFFF5h
     push(m, 0xfffffff5u32);
     // 00401002 call dword ptr ds:[402058h]
-    call(m, 0x401008, Cont(kernel32::GetStdHandle_stdcall))
+    let dst = Cont(kernel32::GetStdHandle_stdcall);
+    call(m, 0x401008, dst)
 }
 
 #[allow(unused_variables)]
@@ -48,7 +49,8 @@ pub fn x00401008(m: &mut Machine) -> Cont {
     // 00401013 push eax
     push(m, m.regs.eax);
     // 00401014 call dword ptr ds:[40205Ch]
-    call(m, 0x40101a, Cont(kernel32::WriteFile_stdcall))
+    let dst = Cont(kernel32::WriteFile_stdcall);
+    call(m, 0x40101a, dst)
 }
 
 #[allow(unused_variables)]

@@ -9,17 +9,15 @@ pub struct Machine {
     pub blocks: &'static [(u32, fn(&mut Machine) -> Cont)],
 }
 
-pub fn indirect(addr: u32) -> Cont {
+pub fn indirect(m: &mut Machine, addr: u32) -> Cont {
     if addr == 0 {
         panic!("jmp to null ptr");
     }
-    unsafe {
-        let index = MACHINE
-            .blocks
-            .binary_search_by_key(&addr, |(addr, _)| *addr)
-            .unwrap_or_else(|_| panic!("jmp to unknown addr {addr:#08x}"));
-        Cont(MACHINE.blocks[index].1)
-    }
+    let index = m
+        .blocks
+        .binary_search_by_key(&addr, |(addr, _)| *addr)
+        .unwrap_or_else(|_| panic!("jmp to unknown addr {addr:#08x}"));
+    Cont(m.blocks[index].1)
 }
 
 pub fn proc_addr(func: fn(&mut Machine) -> Cont) -> u32 {
