@@ -42,7 +42,7 @@ pub fn x00401008() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00401008 xor ecx,ecx
-    m.regs.ecx = xor(m.regs.ecx, m.regs.ecx);
+    m.regs.ecx = xor(m.regs.ecx, m.regs.ecx, &mut m.flags);
     // 0040100a push ecx
     push(m.regs.ecx);
     // 0040100b push ecx
