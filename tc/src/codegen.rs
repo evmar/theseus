@@ -408,9 +408,11 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
                 assert_eq!(instr.op_count(), 1);
                 match op_size(instr, 0) {
                     32 => {
-                        w.line("let x = ((m.regs.edx as u64) << 32) | (m.regs.eax as u64);");
-                        w.line(format!("let y = {} as u64;", get_op(instr, 0)));
-                        w.line("m.regs.eax = (x / y) as u32;");
+                        w.line(
+                            "let x = (((m.regs.edx as u64) << 32) | (m.regs.eax as u64)) as i64;",
+                        );
+                        w.line(format!("let y = {} as i64;", get_op(instr, 0)));
+                        w.line("m.regs.eax = (x / y) as i32 as u32;");
                         w.line("m.regs.edx = (x % y) as u32;");
                     }
                     _ => todo!(),
