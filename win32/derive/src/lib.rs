@@ -58,7 +58,7 @@ pub fn dllexport(_attr: TokenStream, mut tokens: TokenStream) -> TokenStream {
     call_args.next(); // skip return_addr
 
     let wrapper: TokenStream = quote! {
-        pub fn #wrapper_name(m: &mut crate::Machine) -> runtime::Cont { unsafe {
+        pub fn #wrapper_name(m: &mut crate::Machine) -> runtime::Cont {
             use crate::{ABIReturn, FromABIParam};
             use runtime::*;
             #fetch_args
@@ -67,7 +67,7 @@ pub fn dllexport(_attr: TokenStream, mut tokens: TokenStream) -> TokenStream {
             m.regs.eax = ret.to_abi_return();
             m.regs.esp += #stack_popped * 4;
             runtime::indirect(return_addr)
-        } }
+        }
     }
     .into();
     //eprintln!("wrapper {}", wrapper);

@@ -436,9 +436,7 @@ pub fn gen_file(state: &mut State, outdir: &str) -> Result<()> {
     let mut w = Writer::default();
 
     w.line(
-        "#![allow(unused_unsafe)]
-#![allow(unreachable_code)]
-#![allow(static_mut_refs)]
+        "#![allow(unreachable_code)]
 #![allow(unused_parens)]
 
 use runtime::*;
@@ -459,8 +457,7 @@ use winapi::*;
     // the location of such data at link time.  We could do it by postprocessing the wasm
     // file, maybe.
     w.line(
-        "fn init_mappings() {
-unsafe {
+        "fn init_mappings(m: &mut Machine) {
 let mut mappings = kernel32::state().mappings.borrow_mut();",
     );
     for map in state.mem.mappings.vec().iter() {
@@ -480,13 +477,13 @@ let mut mappings = kernel32::state().mappings.borrow_mut();",
         if !zeroed {
             w.line(format!(
                 "let bytes = include_bytes!(\"../data/{addr:08x}.raw\").as_slice();
-let out = &mut MACHINE.memory.bytes[{addr:#x} as usize..][..bytes.len()];
+let out = &mut m.memory.bytes[{addr:#x} as usize..][..bytes.len()];
 out.copy_from_slice(bytes);",
             ));
         }
     }
 
-    w.line("}}");
+    w.line("}");
 
     let mut ips = state.blocks.keys().copied().collect::<Vec<_>>();
     ips.sort();

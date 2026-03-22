@@ -34,18 +34,18 @@ pub struct EXEData {
     pub image_base: u32,
     pub resources: std::ops::Range<u32>,
     pub blocks: &'static [(u32, fn(&mut Machine) -> runtime::Cont)],
-    pub init_mappings: fn(),
+    pub init_mappings: fn(&mut Machine),
     pub entry_point: runtime::Cont,
 }
 
 pub fn run(exe: &EXEData) {
+    let m = unsafe { &mut MACHINE };
     use runtime::Host;
     runtime::HOST.init(exe.blocks);
     kernel32::init_state(exe.image_base, exe.resources.clone());
-    (exe.init_mappings)();
+    (exe.init_mappings)(m);
     kernel32::init_process();
 
-    let m = unsafe { &mut MACHINE };
     runtime::push(m, 0xf000_0000); // return_from_main
     runtime::run_loop(m, exe.entry_point);
 }

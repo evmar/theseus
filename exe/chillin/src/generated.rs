@@ -1,40 +1,36 @@
-#![allow(unused_unsafe)]
 #![allow(unreachable_code)]
-#![allow(static_mut_refs)]
 #![allow(unused_parens)]
 
 use runtime::*;
 use winapi::*;
 
 use crate::externs::*;
-fn init_mappings() {
-    unsafe {
-        let mut mappings = kernel32::state().mappings.borrow_mut();
-        mappings.alloc("null page".to_string(), Some(0x0), 0x1000);
-        mappings.alloc("imported functions".to_string(), Some(0x1000), 0x1000);
-        mappings.alloc("exe header".to_string(), Some(0x400000), 0x1000);
-        let bytes = include_bytes!("../data/00400000.raw").as_slice();
-        let out = &mut MACHINE.memory.bytes[0x400000 as usize..][..bytes.len()];
-        out.copy_from_slice(bytes);
-        mappings.alloc("AUTO".to_string(), Some(0x401000), 0xa000);
-        let bytes = include_bytes!("../data/00401000.raw").as_slice();
-        let out = &mut MACHINE.memory.bytes[0x401000 as usize..][..bytes.len()];
-        out.copy_from_slice(bytes);
-        mappings.alloc(".idata".to_string(), Some(0x40b000), 0x1000);
-        let bytes = include_bytes!("../data/0040b000.raw").as_slice();
-        let out = &mut MACHINE.memory.bytes[0x40b000 as usize..][..bytes.len()];
-        out.copy_from_slice(bytes);
-        mappings.alloc("DGROUP".to_string(), Some(0x40c000), 0x27000);
-        let bytes = include_bytes!("../data/0040c000.raw").as_slice();
-        let out = &mut MACHINE.memory.bytes[0x40c000 as usize..][..bytes.len()];
-        out.copy_from_slice(bytes);
-        mappings.alloc(".bss".to_string(), Some(0x433000), 0x95000);
-        mappings.alloc(".reloc".to_string(), Some(0x4c8000), 0x1000);
-        mappings.alloc(".rsrc".to_string(), Some(0x4c9000), 0x1000);
-        let bytes = include_bytes!("../data/004c9000.raw").as_slice();
-        let out = &mut MACHINE.memory.bytes[0x4c9000 as usize..][..bytes.len()];
-        out.copy_from_slice(bytes);
-    }
+fn init_mappings(m: &mut Machine) {
+    let mut mappings = kernel32::state().mappings.borrow_mut();
+    mappings.alloc("null page".to_string(), Some(0x0), 0x1000);
+    mappings.alloc("imported functions".to_string(), Some(0x1000), 0x1000);
+    mappings.alloc("exe header".to_string(), Some(0x400000), 0x1000);
+    let bytes = include_bytes!("../data/00400000.raw").as_slice();
+    let out = &mut m.memory.bytes[0x400000 as usize..][..bytes.len()];
+    out.copy_from_slice(bytes);
+    mappings.alloc("AUTO".to_string(), Some(0x401000), 0xa000);
+    let bytes = include_bytes!("../data/00401000.raw").as_slice();
+    let out = &mut m.memory.bytes[0x401000 as usize..][..bytes.len()];
+    out.copy_from_slice(bytes);
+    mappings.alloc(".idata".to_string(), Some(0x40b000), 0x1000);
+    let bytes = include_bytes!("../data/0040b000.raw").as_slice();
+    let out = &mut m.memory.bytes[0x40b000 as usize..][..bytes.len()];
+    out.copy_from_slice(bytes);
+    mappings.alloc("DGROUP".to_string(), Some(0x40c000), 0x27000);
+    let bytes = include_bytes!("../data/0040c000.raw").as_slice();
+    let out = &mut m.memory.bytes[0x40c000 as usize..][..bytes.len()];
+    out.copy_from_slice(bytes);
+    mappings.alloc(".bss".to_string(), Some(0x433000), 0x95000);
+    mappings.alloc(".reloc".to_string(), Some(0x4c8000), 0x1000);
+    mappings.alloc(".rsrc".to_string(), Some(0x4c9000), 0x1000);
+    let bytes = include_bytes!("../data/004c9000.raw").as_slice();
+    let out = &mut m.memory.bytes[0x4c9000 as usize..][..bytes.len()];
+    out.copy_from_slice(bytes);
 }
 #[allow(unused_variables)]
 pub fn x00401156(m: &mut Machine) -> Cont {
