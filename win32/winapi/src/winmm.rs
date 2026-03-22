@@ -1,3 +1,5 @@
+use crate::stub;
+
 #[win32_derive::dllexport]
 pub fn timeSetEvent(
     _uDelay: u32,
@@ -6,7 +8,7 @@ pub fn timeSetEvent(
     _dwUser: u32,
     _fuEvent: u32,
 ) -> u32 {
-    todo!()
+    stub!(1)
 }
 
 #[win32_derive::dllexport]
