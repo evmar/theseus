@@ -27,13 +27,13 @@ macro_rules! stub {
         $arg
     }};
 }
-use runtime::MACHINE;
+use runtime::{MACHINE, Machine};
 pub(crate) use stub;
 
 pub struct EXEData {
     pub image_base: u32,
     pub resources: std::ops::Range<u32>,
-    pub blocks: &'static [(u32, fn() -> runtime::Cont)],
+    pub blocks: &'static [(u32, fn(&mut Machine) -> runtime::Cont)],
     pub init_mappings: fn(),
     pub entry_point: runtime::Cont,
 }
@@ -45,6 +45,7 @@ pub fn run(exe: &EXEData) {
     (exe.init_mappings)();
     kernel32::init_process();
 
-    runtime::push(unsafe { &mut MACHINE }, 0xf000_0000); // return_from_main
-    runtime::run_loop(exe.entry_point);
+    let m = unsafe { &mut MACHINE };
+    runtime::push(m, 0xf000_0000); // return_from_main
+    runtime::run_loop(m, exe.entry_point);
 }

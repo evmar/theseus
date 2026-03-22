@@ -36,9 +36,8 @@ fn init_mappings() {
         out.copy_from_slice(bytes);
     }
 }
-pub fn x00401156() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401156(m: &mut Machine) -> Cont {
     // 00401156 push esi
     push(m, m.regs.esi);
     // 00401157 push edi
@@ -71,9 +70,8 @@ pub fn x00401156() -> Cont {
     call(m, 0x401188, Cont(user32::DialogBoxParamA_stdcall))
 }
 
-pub fn x00401188() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401188(m: &mut Machine) -> Cont {
     // 00401188 push 0
     push(m, 0x0u32);
     // 0040118a push 433024h
@@ -84,18 +82,16 @@ pub fn x00401188() -> Cont {
     call(m, 0x401196, Cont(x0040a56e))
 }
 
-pub fn x00401196() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401196(m: &mut Machine) -> Cont {
     // 00401196 test eax,eax
     and(m.regs.eax, m.regs.eax, &mut m.flags);
     // 00401198 jl near ptr 004012FFh
     jl(m, Cont(x0040119e), Cont(x004012ff))
 }
 
-pub fn x0040119e() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040119e(m: &mut Machine) -> Cont {
     // 0040119e push 11h
     push(m, 0x11u32);
     // 004011a0 mov eax,ds:[433024h]
@@ -114,18 +110,16 @@ pub fn x0040119e() -> Cont {
     )
 }
 
-pub fn x004011ac() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004011ac(m: &mut Machine) -> Cont {
     // 004011ac test eax,eax
     and(m.regs.eax, m.regs.eax, &mut m.flags);
     // 004011ae jl near ptr 0040125Fh
     jl(m, Cont(x004011b4), Cont(x0040125f))
 }
 
-pub fn x004011b4() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004011b4(m: &mut Machine) -> Cont {
     // 004011b4 mov eax,ds:[40C720h]
     m.regs.eax = m.memory.read::<u32>(0x40c720u32);
     // 004011b9 cmp eax,1
@@ -134,32 +128,28 @@ pub fn x004011b4() -> Cont {
     jb(m, Cont(x004011c2), Cont(x0040125f))
 }
 
-pub fn x004011c2() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004011c2(m: &mut Machine) -> Cont {
     // 004011c2 jbe short 0040122Bh
     jbe(m, Cont(x004011c4), Cont(x0040122b))
 }
 
-pub fn x004011c4() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004011c4(m: &mut Machine) -> Cont {
     // 004011c4 cmp eax,2
     sub(m.regs.eax, 0x2u32, &mut m.flags);
     // 004011c7 je near ptr 0040142Ch
     je(m, Cont(x004011cd), Cont(x0040142c))
 }
 
-pub fn x004011cd() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004011cd(m: &mut Machine) -> Cont {
     // 004011cd jmp near ptr 0040125Fh
     Cont(x0040125f)
 }
 
-pub fn x004011d2() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004011d2(m: &mut Machine) -> Cont {
     // 004011d2 push 0Fh
     push(m, 0xfu32);
     // 004011d4 mov ds:[433010h],eax
@@ -188,9 +178,8 @@ pub fn x004011d2() -> Cont {
     )
 }
 
-pub fn x004011d4() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004011d4(m: &mut Machine) -> Cont {
     // 004011d4 mov ds:[433010h],eax
     m.memory.write::<u32>(0x433010u32, m.regs.eax);
     // 004011d9 push dword ptr [ebp-1Ah]
@@ -217,9 +206,8 @@ pub fn x004011d4() -> Cont {
     )
 }
 
-pub fn x004011e7() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004011e7(m: &mut Machine) -> Cont {
     // 004011e7 call dword ptr [edx+54h]
     call(
         m,
@@ -228,16 +216,14 @@ pub fn x004011e7() -> Cont {
     )
 }
 
-pub fn x004011ea() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004011ea(m: &mut Machine) -> Cont {
     // 004011ea jmp near ptr 00401321h
     Cont(x00401321)
 }
 
-pub fn x004011ef() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004011ef(m: &mut Machine) -> Cont {
     // 004011ef push 10h
     push(m, 0x10u32);
     // 004011f1 push dword ptr [ebp-1Ah]
@@ -262,9 +248,8 @@ pub fn x004011ef() -> Cont {
     Cont(x004011e7)
 }
 
-pub fn x0040120b() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040120b(m: &mut Machine) -> Cont {
     // 0040120b push 18h
     push(m, 0x18u32);
     // 0040120d push dword ptr [ebp-1Ah]
@@ -289,18 +274,16 @@ pub fn x0040120b() -> Cont {
     Cont(x004011e7)
 }
 
-pub fn x00401227() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401227(m: &mut Machine) -> Cont {
     // 00401227 push 20h
     push(m, 0x20u32);
     // 00401229 jmp short 004011D4h
     Cont(x004011d4)
 }
 
-pub fn x0040122b() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040122b(m: &mut Machine) -> Cont {
     // 0040122b mov eax,ds:[40C71Ch]
     m.regs.eax = m.memory.read::<u32>(0x40c71cu32);
     // 00401230 mov dword ptr ds:[43301Ch],0
@@ -311,75 +294,66 @@ pub fn x0040122b() -> Cont {
     jb(m, Cont(x0040123f), Cont(x00401256))
 }
 
-pub fn x0040123f() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040123f(m: &mut Machine) -> Cont {
     // 0040123f jbe short 004011EFh
     jbe(m, Cont(x00401241), Cont(x004011ef))
 }
 
-pub fn x00401241() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401241(m: &mut Machine) -> Cont {
     // 00401241 cmp eax,18h
     sub(m.regs.eax, 0x18u32, &mut m.flags);
     // 00401244 jb near ptr 0040125Fh
     jb(m, Cont(x0040124a), Cont(x0040125f))
 }
 
-pub fn x0040124a() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040124a(m: &mut Machine) -> Cont {
     // 0040124a jbe short 0040120Bh
     jbe(m, Cont(x0040124c), Cont(x0040120b))
 }
 
-pub fn x0040124c() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040124c(m: &mut Machine) -> Cont {
     // 0040124c cmp eax,20h
     sub(m.regs.eax, 0x20u32, &mut m.flags);
     // 0040124f je short 00401227h
     je(m, Cont(x00401251), Cont(x00401227))
 }
 
-pub fn x00401251() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401251(m: &mut Machine) -> Cont {
     // 00401251 jmp near ptr 0040125Fh
     Cont(x0040125f)
 }
 
-pub fn x00401256() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401256(m: &mut Machine) -> Cont {
     // 00401256 cmp eax,0Fh
     sub(m.regs.eax, 0xfu32, &mut m.flags);
     // 00401259 je near ptr 004011D2h
     je(m, Cont(x0040125f), Cont(x004011d2))
 }
 
-pub fn x0040125f() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040125f(m: &mut Machine) -> Cont {
     // 0040125f push 40C00Ah
     push(m, 0x40c00au32);
     // 00401264 call dword ptr cs:[40B15Ch]
     call(m, 0x40126b, Cont(kernel32::OutputDebugStringA_stdcall))
 }
 
-pub fn x0040126b() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040126b(m: &mut Machine) -> Cont {
     // 0040126b cmp dword ptr ds:[43302Ch],0
     sub(m.memory.read::<u32>(0x43302cu32), 0x0u32, &mut m.flags);
     // 00401272 je short 00401289h
     je(m, Cont(x00401274), Cont(x00401289))
 }
 
-pub fn x00401274() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401274(m: &mut Machine) -> Cont {
     // 00401274 mov eax,ds:[43302Ch]
     m.regs.eax = m.memory.read::<u32>(0x43302cu32);
     // 00401279 push eax
@@ -394,9 +368,8 @@ pub fn x00401274() -> Cont {
     )
 }
 
-pub fn x0040127f() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040127f(m: &mut Machine) -> Cont {
     // 0040127f mov dword ptr ds:[43302Ch],0
     m.memory.write::<u32>(0x43302cu32, 0x0u32);
     // 00401289 cmp dword ptr ds:[433028h],0
@@ -405,18 +378,16 @@ pub fn x0040127f() -> Cont {
     je(m, Cont(x00401292), Cont(x004012a7))
 }
 
-pub fn x00401289() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401289(m: &mut Machine) -> Cont {
     // 00401289 cmp dword ptr ds:[433028h],0
     sub(m.memory.read::<u32>(0x433028u32), 0x0u32, &mut m.flags);
     // 00401290 je short 004012A7h
     je(m, Cont(x00401292), Cont(x004012a7))
 }
 
-pub fn x00401292() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401292(m: &mut Machine) -> Cont {
     // 00401292 mov eax,ds:[433028h]
     m.regs.eax = m.memory.read::<u32>(0x433028u32);
     // 00401297 push eax
@@ -431,9 +402,8 @@ pub fn x00401292() -> Cont {
     )
 }
 
-pub fn x0040129d() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040129d(m: &mut Machine) -> Cont {
     // 0040129d mov dword ptr ds:[433028h],0
     m.memory.write::<u32>(0x433028u32, 0x0u32);
     // 004012a7 cmp dword ptr ds:[433024h],0
@@ -442,18 +412,16 @@ pub fn x0040129d() -> Cont {
     je(m, Cont(x004012b0), Cont(x004012de))
 }
 
-pub fn x004012a7() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004012a7(m: &mut Machine) -> Cont {
     // 004012a7 cmp dword ptr ds:[433024h],0
     sub(m.memory.read::<u32>(0x433024u32), 0x0u32, &mut m.flags);
     // 004012ae je short 004012DEh
     je(m, Cont(x004012b0), Cont(x004012de))
 }
 
-pub fn x004012b0() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004012b0(m: &mut Machine) -> Cont {
     // 004012b0 push 8
     push(m, 0x8u32);
     // 004012b2 mov eax,ds:[433024h]
@@ -472,9 +440,8 @@ pub fn x004012b0() -> Cont {
     )
 }
 
-pub fn x004012be() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004012be(m: &mut Machine) -> Cont {
     // 004012be mov eax,ds:[433024h]
     m.regs.eax = m.memory.read::<u32>(0x433024u32);
     // 004012c3 push eax
@@ -489,9 +456,8 @@ pub fn x004012be() -> Cont {
     )
 }
 
-pub fn x004012c9() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004012c9(m: &mut Machine) -> Cont {
     // 004012c9 mov eax,ds:[433024h]
     m.regs.eax = m.memory.read::<u32>(0x433024u32);
     // 004012ce push eax
@@ -506,9 +472,8 @@ pub fn x004012c9() -> Cont {
     )
 }
 
-pub fn x004012d4() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004012d4(m: &mut Machine) -> Cont {
     // 004012d4 mov dword ptr ds:[433024h],0
     m.memory.write::<u32>(0x433024u32, 0x0u32);
     // 004012de cmp dword ptr ds:[433020h],0
@@ -517,27 +482,24 @@ pub fn x004012d4() -> Cont {
     je(m, Cont(x004012e7), Cont(x004012ff))
 }
 
-pub fn x004012de() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004012de(m: &mut Machine) -> Cont {
     // 004012de cmp dword ptr ds:[433020h],0
     sub(m.memory.read::<u32>(0x433020u32), 0x0u32, &mut m.flags);
     // 004012e5 je short 004012FFh
     je(m, Cont(x004012e7), Cont(x004012ff))
 }
 
-pub fn x004012e7() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004012e7(m: &mut Machine) -> Cont {
     // 004012e7 push dword ptr ds:[433020h]
     push(m, m.memory.read::<u32>(0x433020u32));
     // 004012ed call 00401A78h
     call(m, 0x4012f2, Cont(x00401a78))
 }
 
-pub fn x004012f2() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004012f2(m: &mut Machine) -> Cont {
     // 004012f2 mov dword ptr ds:[433020h],0
     m.memory.write::<u32>(0x433020u32, 0x0u32);
     // 004012fc add esp,4
@@ -556,9 +518,8 @@ pub fn x004012f2() -> Cont {
     ret(m, 4)
 }
 
-pub fn x004012ff() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004012ff(m: &mut Machine) -> Cont {
     // 004012ff mov eax,1
     m.regs.eax = 0x1u32;
     // 00401304 lea esp,[ebp+7Eh]
@@ -573,9 +534,8 @@ pub fn x004012ff() -> Cont {
     ret(m, 4)
 }
 
-pub fn x00401304() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401304(m: &mut Machine) -> Cont {
     // 00401304 lea esp,[ebp+7Eh]
     m.regs.esp = m.regs.ebp.wrapping_add(0x7eu32);
     // 00401307 pop ebp
@@ -588,9 +548,8 @@ pub fn x00401304() -> Cont {
     ret(m, 4)
 }
 
-pub fn x0040130d() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040130d(m: &mut Machine) -> Cont {
     // 0040130d push 0Fh
     push(m, 0xfu32);
     // 0040130f push ecx
@@ -613,9 +572,8 @@ pub fn x0040130d() -> Cont {
     )
 }
 
-pub fn x0040130f() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040130f(m: &mut Machine) -> Cont {
     // 0040130f push ecx
     push(m, m.regs.ecx);
     // 00401310 mov ds:[433010h],eax
@@ -636,9 +594,8 @@ pub fn x0040130f() -> Cont {
     )
 }
 
-pub fn x0040131e() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040131e(m: &mut Machine) -> Cont {
     // 0040131e call dword ptr [esi+54h]
     call(
         m,
@@ -647,18 +604,16 @@ pub fn x0040131e() -> Cont {
     )
 }
 
-pub fn x00401321() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401321(m: &mut Machine) -> Cont {
     // 00401321 test eax,eax
     and(m.regs.eax, m.regs.eax, &mut m.flags);
     // 00401323 jl near ptr 0040125Fh
     jl(m, Cont(x00401329), Cont(x0040125f))
 }
 
-pub fn x00401329() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401329(m: &mut Machine) -> Cont {
     // 00401329 mov ecx,6Ch
     m.regs.ecx = 0x6cu32;
     // 0040132e lea edi,[ebp-12h]
@@ -701,18 +656,16 @@ pub fn x00401329() -> Cont {
     )
 }
 
-pub fn x00401367() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401367(m: &mut Machine) -> Cont {
     // 00401367 test eax,eax
     and(m.regs.eax, m.regs.eax, &mut m.flags);
     // 00401369 jl near ptr 0040125Fh
     jl(m, Cont(x0040136f), Cont(x0040125f))
 }
 
-pub fn x0040136f() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040136f(m: &mut Machine) -> Cont {
     // 0040136f mov ecx,4
     m.regs.ecx = 0x4u32;
     // 00401374 lea edi,[ebp+7Ah]
@@ -744,18 +697,16 @@ pub fn x0040136f() -> Cont {
     )
 }
 
-pub fn x00401396() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401396(m: &mut Machine) -> Cont {
     // 00401396 test eax,eax
     and(m.regs.eax, m.regs.eax, &mut m.flags);
     // 00401398 jl near ptr 0040125Fh
     jl(m, Cont(x0040139e), Cont(x0040125f))
 }
 
-pub fn x0040139e() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040139e(m: &mut Machine) -> Cont {
     // 0040139e mov ecx,20h
     m.regs.ecx = 0x20u32;
     // 004013a3 lea edi,[ebp+5Ah]
@@ -785,18 +736,16 @@ pub fn x0040139e() -> Cont {
     )
 }
 
-pub fn x004013c0() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004013c0(m: &mut Machine) -> Cont {
     // 004013c0 test eax,eax
     and(m.regs.eax, m.regs.eax, &mut m.flags);
     // 004013c2 jl near ptr 0040125Fh
     jl(m, Cont(x004013c8), Cont(x0040125f))
 }
 
-pub fn x004013c8() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004013c8(m: &mut Machine) -> Cont {
     // 004013c8 mov eax,[ebp-16h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffeau32));
     // 004013cb imul eax,[ebp-1Ah]
@@ -813,9 +762,8 @@ pub fn x004013c8() -> Cont {
     call(m, 0x4013d8, Cont(x00401a60))
 }
 
-pub fn x004013d8() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004013d8(m: &mut Machine) -> Cont {
     // 004013d8 add esp,4
     m.regs.esp = add(m.regs.esp, 0x4u32, &mut m.flags);
     // 004013db mov ds:[433020h],eax
@@ -826,18 +774,16 @@ pub fn x004013d8() -> Cont {
     je(m, Cont(x004013e8), Cont(x0040125f))
 }
 
-pub fn x004013e8() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004013e8(m: &mut Machine) -> Cont {
     // 004013e8 xor eax,eax
     m.regs.eax = xor(m.regs.eax, m.regs.eax, &mut m.flags);
     // 004013ea jmp near ptr 00401304h
     Cont(x00401304)
 }
 
-pub fn x004013ef() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004013ef(m: &mut Machine) -> Cont {
     // 004013ef push 10h
     push(m, 0x10u32);
     // 004013f1 push ecx
@@ -856,9 +802,8 @@ pub fn x004013ef() -> Cont {
     Cont(x0040131e)
 }
 
-pub fn x0040140a() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040140a(m: &mut Machine) -> Cont {
     // 0040140a push 18h
     push(m, 0x18u32);
     // 0040140c push ecx
@@ -877,18 +822,16 @@ pub fn x0040140a() -> Cont {
     Cont(x0040131e)
 }
 
-pub fn x00401425() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401425(m: &mut Machine) -> Cont {
     // 00401425 push 20h
     push(m, 0x20u32);
     // 00401427 jmp near ptr 0040130Fh
     Cont(x0040130f)
 }
 
-pub fn x0040142c() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040142c(m: &mut Machine) -> Cont {
     // 0040142c mov dword ptr ds:[43301Ch],1
     m.memory.write::<u32>(0x43301cu32, 0x1u32);
     // 00401436 mov edx,[ebp-16h]
@@ -907,64 +850,56 @@ pub fn x0040142c() -> Cont {
     jb(m, Cont(x0040144a), Cont(x00401461))
 }
 
-pub fn x0040144a() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040144a(m: &mut Machine) -> Cont {
     // 0040144a jbe short 004013EFh
     jbe(m, Cont(x0040144c), Cont(x004013ef))
 }
 
-pub fn x0040144c() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040144c(m: &mut Machine) -> Cont {
     // 0040144c cmp eax,18h
     sub(m.regs.eax, 0x18u32, &mut m.flags);
     // 0040144f jb near ptr 0040125Fh
     jb(m, Cont(x00401455), Cont(x0040125f))
 }
 
-pub fn x00401455() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401455(m: &mut Machine) -> Cont {
     // 00401455 jbe short 0040140Ah
     jbe(m, Cont(x00401457), Cont(x0040140a))
 }
 
-pub fn x00401457() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401457(m: &mut Machine) -> Cont {
     // 00401457 cmp eax,20h
     sub(m.regs.eax, 0x20u32, &mut m.flags);
     // 0040145a je short 00401425h
     je(m, Cont(x0040145c), Cont(x00401425))
 }
 
-pub fn x0040145c() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040145c(m: &mut Machine) -> Cont {
     // 0040145c jmp near ptr 0040125Fh
     Cont(x0040125f)
 }
 
-pub fn x00401461() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401461(m: &mut Machine) -> Cont {
     // 00401461 cmp eax,0Fh
     sub(m.regs.eax, 0xfu32, &mut m.flags);
     // 00401464 je near ptr 0040130Dh
     je(m, Cont(x0040146a), Cont(x0040130d))
 }
 
-pub fn x0040146a() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040146a(m: &mut Machine) -> Cont {
     // 0040146a jmp near ptr 0040125Fh
     Cont(x0040125f)
 }
 
-pub fn x0040148c() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040148c(m: &mut Machine) -> Cont {
     // 0040148c push ebx
     push(m, m.regs.ebx);
     // 0040148d push ecx
@@ -979,9 +914,8 @@ pub fn x0040148c() -> Cont {
     je(m, Cont(x0040149a), Cont(x004014af))
 }
 
-pub fn x0040149a() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040149a(m: &mut Machine) -> Cont {
     // 0040149a mov eax,ds:[43302Ch]
     m.regs.eax = m.memory.read::<u32>(0x43302cu32);
     // 0040149f push eax
@@ -996,9 +930,8 @@ pub fn x0040149a() -> Cont {
     )
 }
 
-pub fn x004014a5() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004014a5(m: &mut Machine) -> Cont {
     // 004014a5 mov dword ptr ds:[43302Ch],0
     m.memory.write::<u32>(0x43302cu32, 0x0u32);
     // 004014af cmp dword ptr ds:[433028h],0
@@ -1007,18 +940,16 @@ pub fn x004014a5() -> Cont {
     je(m, Cont(x004014b8), Cont(x004014cd))
 }
 
-pub fn x004014af() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004014af(m: &mut Machine) -> Cont {
     // 004014af cmp dword ptr ds:[433028h],0
     sub(m.memory.read::<u32>(0x433028u32), 0x0u32, &mut m.flags);
     // 004014b6 je short 004014CDh
     je(m, Cont(x004014b8), Cont(x004014cd))
 }
 
-pub fn x004014b8() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004014b8(m: &mut Machine) -> Cont {
     // 004014b8 mov eax,ds:[433028h]
     m.regs.eax = m.memory.read::<u32>(0x433028u32);
     // 004014bd push eax
@@ -1033,9 +964,8 @@ pub fn x004014b8() -> Cont {
     )
 }
 
-pub fn x004014c3() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004014c3(m: &mut Machine) -> Cont {
     // 004014c3 mov dword ptr ds:[433028h],0
     m.memory.write::<u32>(0x433028u32, 0x0u32);
     // 004014cd cmp dword ptr ds:[433024h],0
@@ -1044,18 +974,16 @@ pub fn x004014c3() -> Cont {
     je(m, Cont(x004014d6), Cont(x00401504))
 }
 
-pub fn x004014cd() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004014cd(m: &mut Machine) -> Cont {
     // 004014cd cmp dword ptr ds:[433024h],0
     sub(m.memory.read::<u32>(0x433024u32), 0x0u32, &mut m.flags);
     // 004014d4 je short 00401504h
     je(m, Cont(x004014d6), Cont(x00401504))
 }
 
-pub fn x004014d6() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004014d6(m: &mut Machine) -> Cont {
     // 004014d6 push 8
     push(m, 0x8u32);
     // 004014d8 mov eax,ds:[433024h]
@@ -1074,9 +1002,8 @@ pub fn x004014d6() -> Cont {
     )
 }
 
-pub fn x004014e4() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004014e4(m: &mut Machine) -> Cont {
     // 004014e4 mov eax,ds:[433024h]
     m.regs.eax = m.memory.read::<u32>(0x433024u32);
     // 004014e9 push eax
@@ -1091,9 +1018,8 @@ pub fn x004014e4() -> Cont {
     )
 }
 
-pub fn x004014ef() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004014ef(m: &mut Machine) -> Cont {
     // 004014ef mov eax,ds:[433024h]
     m.regs.eax = m.memory.read::<u32>(0x433024u32);
     // 004014f4 push eax
@@ -1108,9 +1034,8 @@ pub fn x004014ef() -> Cont {
     )
 }
 
-pub fn x004014fa() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004014fa(m: &mut Machine) -> Cont {
     // 004014fa mov dword ptr ds:[433024h],0
     m.memory.write::<u32>(0x433024u32, 0x0u32);
     // 00401504 cmp dword ptr ds:[433020h],0
@@ -1119,27 +1044,24 @@ pub fn x004014fa() -> Cont {
     je(m, Cont(x0040150d), Cont(x00401525))
 }
 
-pub fn x00401504() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401504(m: &mut Machine) -> Cont {
     // 00401504 cmp dword ptr ds:[433020h],0
     sub(m.memory.read::<u32>(0x433020u32), 0x0u32, &mut m.flags);
     // 0040150b je short 00401525h
     je(m, Cont(x0040150d), Cont(x00401525))
 }
 
-pub fn x0040150d() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040150d(m: &mut Machine) -> Cont {
     // 0040150d push dword ptr ds:[433020h]
     push(m, m.memory.read::<u32>(0x433020u32));
     // 00401513 call 00401A78h
     call(m, 0x401518, Cont(x00401a78))
 }
 
-pub fn x00401518() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401518(m: &mut Machine) -> Cont {
     // 00401518 mov dword ptr ds:[433020h],0
     m.memory.write::<u32>(0x433020u32, 0x0u32);
     // 00401522 add esp,4
@@ -1154,9 +1076,8 @@ pub fn x00401518() -> Cont {
     ret(m, 0)
 }
 
-pub fn x00401525() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401525(m: &mut Machine) -> Cont {
     // 00401525 pop edx
     m.regs.edx = pop(m);
     // 00401526 pop ecx
@@ -1167,9 +1088,8 @@ pub fn x00401525() -> Cont {
     ret(m, 0)
 }
 
-pub fn x00401529() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401529(m: &mut Machine) -> Cont {
     // 00401529 push ebx
     push(m, m.regs.ebx);
     // 0040152a push ecx
@@ -1211,27 +1131,24 @@ pub fn x00401529() -> Cont {
     )
 }
 
-pub fn x00401554() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401554(m: &mut Machine) -> Cont {
     // 00401554 test eax,eax
     and(m.regs.eax, m.regs.eax, &mut m.flags);
     // 00401556 jl near ptr 00401600h
     jl(m, Cont(x0040155c), Cont(x00401600))
 }
 
-pub fn x0040155c() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040155c(m: &mut Machine) -> Cont {
     // 0040155c cmp dword ptr ds:[433010h],0Fh
     sub(m.memory.read::<u32>(0x433010u32), 0xfu32, &mut m.flags);
     // 00401563 jne short 00401570h
     jne(m, Cont(x00401565), Cont(x00401570))
 }
 
-pub fn x00401565() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401565(m: &mut Machine) -> Cont {
     // 00401565 mov eax,[ebp+2]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x2u32));
     // 00401568 cdq
@@ -1251,18 +1168,16 @@ pub fn x00401565() -> Cont {
     jne(m, Cont(x00401579), Cont(x00401584))
 }
 
-pub fn x00401570() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401570(m: &mut Machine) -> Cont {
     // 00401570 cmp dword ptr ds:[433010h],10h
     sub(m.memory.read::<u32>(0x433010u32), 0x10u32, &mut m.flags);
     // 00401577 jne short 00401584h
     jne(m, Cont(x00401579), Cont(x00401584))
 }
 
-pub fn x00401579() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401579(m: &mut Machine) -> Cont {
     // 00401579 mov eax,[ebp+2]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x2u32));
     // 0040157c cdq
@@ -1282,18 +1197,16 @@ pub fn x00401579() -> Cont {
     jne(m, Cont(x0040158d), Cont(x0040159b))
 }
 
-pub fn x00401584() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401584(m: &mut Machine) -> Cont {
     // 00401584 cmp dword ptr ds:[433010h],18h
     sub(m.memory.read::<u32>(0x433010u32), 0x18u32, &mut m.flags);
     // 0040158b jne short 0040159Bh
     jne(m, Cont(x0040158d), Cont(x0040159b))
 }
 
-pub fn x0040158d() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040158d(m: &mut Machine) -> Cont {
     // 0040158d mov eax,[ebp+2]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x2u32));
     // 00401590 mov ecx,3
@@ -1316,18 +1229,16 @@ pub fn x0040158d() -> Cont {
     jne(m, Cont(x004015a8), Cont(x004015b7))
 }
 
-pub fn x0040159b() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040159b(m: &mut Machine) -> Cont {
     // 0040159b cmp dword ptr ds:[433010h],20h
     sub(m.memory.read::<u32>(0x433010u32), 0x20u32, &mut m.flags);
     // 004015a2 jne near ptr 004015B7h
     jne(m, Cont(x004015a8), Cont(x004015b7))
 }
 
-pub fn x004015a8() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004015a8(m: &mut Machine) -> Cont {
     // 004015a8 mov eax,[ebp+2]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x2u32));
     // 004015ab cdq
@@ -1366,9 +1277,8 @@ pub fn x004015a8() -> Cont {
     jbe(m, Cont(x004015d7), Cont(x00401785))
 }
 
-pub fn x004015b7() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004015b7(m: &mut Machine) -> Cont {
     // 004015b7 mov eax,ds:[433020h]
     m.regs.eax = m.memory.read::<u32>(0x433020u32);
     // 004015bc mov [ebp+62h],eax
@@ -1392,18 +1302,16 @@ pub fn x004015b7() -> Cont {
     jbe(m, Cont(x004015d7), Cont(x00401785))
 }
 
-pub fn x004015d7() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004015d7(m: &mut Machine) -> Cont {
     // 004015d7 cmp eax,1
     sub(m.regs.eax, 0x1u32, &mut m.flags);
     // 004015da je near ptr 00401A1Eh
     je(m, Cont(x004015e0), Cont(x00401a1e))
 }
 
-pub fn x004015e0() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004015e0(m: &mut Machine) -> Cont {
     // 004015e0 push 0
     push(m, 0x0u32);
     // 004015e2 mov eax,ds:[43302Ch]
@@ -1420,27 +1328,24 @@ pub fn x004015e0() -> Cont {
     )
 }
 
-pub fn x004015f0() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004015f0(m: &mut Machine) -> Cont {
     // 004015f0 test eax,eax
     and(m.regs.eax, m.regs.eax, &mut m.flags);
     // 004015f2 jge short 00401600h
     jge(m, Cont(x004015f4), Cont(x00401600))
 }
 
-pub fn x004015f4() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004015f4(m: &mut Machine) -> Cont {
     // 004015f4 push 40C016h
     push(m, 0x40c016u32);
     // 004015f9 call dword ptr cs:[40B15Ch]
     call(m, 0x401600, Cont(kernel32::OutputDebugStringA_stdcall))
 }
 
-pub fn x00401600() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401600(m: &mut Machine) -> Cont {
     // 00401600 push 1
     push(m, 0x1u32);
     // 00401602 mov eax,ds:[433028h]
@@ -1459,27 +1364,24 @@ pub fn x00401600() -> Cont {
     )
 }
 
-pub fn x0040160f() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040160f(m: &mut Machine) -> Cont {
     // 0040160f test eax,eax
     and(m.regs.eax, m.regs.eax, &mut m.flags);
     // 00401611 jge short 0040161Fh
     jge(m, Cont(x00401613), Cont(x0040161f))
 }
 
-pub fn x00401613() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401613(m: &mut Machine) -> Cont {
     // 00401613 push 40C033h
     push(m, 0x40c033u32);
     // 00401618 call dword ptr cs:[40B15Ch]
     call(m, 0x40161f, Cont(kernel32::OutputDebugStringA_stdcall))
 }
 
-pub fn x0040161f() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040161f(m: &mut Machine) -> Cont {
     // 0040161f lea esp,[ebp+82h]
     m.regs.esp = m.regs.ebp.wrapping_add(0x82u32);
     // 00401625 pop ebp
@@ -1498,18 +1400,16 @@ pub fn x0040161f() -> Cont {
     ret(m, 0)
 }
 
-pub fn x0040162c() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040162c(m: &mut Machine) -> Cont {
     // 0040162c xor edx,edx
     m.regs.edx = xor(m.regs.edx, m.regs.edx, &mut m.flags);
     // 0040162e jmp short 0040167Eh
     Cont(x0040167e)
 }
 
-pub fn x00401630() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401630(m: &mut Machine) -> Cont {
     // 00401630 mov eax,[ebp+62h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x62u32));
     // 00401633 mov eax,[eax]
@@ -1566,18 +1466,16 @@ pub fn x00401630() -> Cont {
     jl(m, Cont(x0040166f), Cont(x00401630))
 }
 
-pub fn x00401667() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401667(m: &mut Machine) -> Cont {
     // 00401667 cmp esi,ds:[433014h]
     sub(m.regs.esi, m.memory.read::<u32>(0x433014u32), &mut m.flags);
     // 0040166d jl short 00401630h
     jl(m, Cont(x0040166f), Cont(x00401630))
 }
 
-pub fn x0040166f() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040166f(m: &mut Machine) -> Cont {
     // 0040166f mov eax,[ebp+6Ah]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x6au32));
     // 00401672 sub eax,ds:[433014h]
@@ -1601,36 +1499,32 @@ pub fn x0040166f() -> Cont {
     jge(m, Cont(x0040168a), Cont(x004015e0))
 }
 
-pub fn x0040167e() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040167e(m: &mut Machine) -> Cont {
     // 0040167e cmp edx,ds:[433018h]
     sub(m.regs.edx, m.memory.read::<u32>(0x433018u32), &mut m.flags);
     // 00401684 jge near ptr 004015E0h
     jge(m, Cont(x0040168a), Cont(x004015e0))
 }
 
-pub fn x0040168a() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040168a(m: &mut Machine) -> Cont {
     // 0040168a xor esi,esi
     m.regs.esi = xor(m.regs.esi, m.regs.esi, &mut m.flags);
     // 0040168c jmp short 00401667h
     Cont(x00401667)
 }
 
-pub fn x0040168e() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040168e(m: &mut Machine) -> Cont {
     // 0040168e xor edx,edx
     m.regs.edx = xor(m.regs.edx, m.regs.edx, &mut m.flags);
     // 00401690 jmp short 004016E0h
     Cont(x004016e0)
 }
 
-pub fn x00401692() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401692(m: &mut Machine) -> Cont {
     // 00401692 mov eax,[ebp+62h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x62u32));
     // 00401695 mov eax,[eax]
@@ -1687,18 +1581,16 @@ pub fn x00401692() -> Cont {
     jl(m, Cont(x004016d1), Cont(x00401692))
 }
 
-pub fn x004016c9() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004016c9(m: &mut Machine) -> Cont {
     // 004016c9 cmp esi,ds:[433014h]
     sub(m.regs.esi, m.memory.read::<u32>(0x433014u32), &mut m.flags);
     // 004016cf jl short 00401692h
     jl(m, Cont(x004016d1), Cont(x00401692))
 }
 
-pub fn x004016d1() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004016d1(m: &mut Machine) -> Cont {
     // 004016d1 mov eax,[ebp+6Ah]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x6au32));
     // 004016d4 sub eax,ds:[433014h]
@@ -1722,36 +1614,32 @@ pub fn x004016d1() -> Cont {
     jge(m, Cont(x004016ec), Cont(x004015e0))
 }
 
-pub fn x004016e0() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004016e0(m: &mut Machine) -> Cont {
     // 004016e0 cmp edx,ds:[433018h]
     sub(m.regs.edx, m.memory.read::<u32>(0x433018u32), &mut m.flags);
     // 004016e6 jge near ptr 004015E0h
     jge(m, Cont(x004016ec), Cont(x004015e0))
 }
 
-pub fn x004016ec() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004016ec(m: &mut Machine) -> Cont {
     // 004016ec xor esi,esi
     m.regs.esi = xor(m.regs.esi, m.regs.esi, &mut m.flags);
     // 004016ee jmp short 004016C9h
     Cont(x004016c9)
 }
 
-pub fn x004016f0() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004016f0(m: &mut Machine) -> Cont {
     // 004016f0 xor edx,edx
     m.regs.edx = xor(m.regs.edx, m.regs.edx, &mut m.flags);
     // 004016f2 jmp short 00401737h
     Cont(x00401737)
 }
 
-pub fn x004016f4() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004016f4(m: &mut Machine) -> Cont {
     // 004016f4 mov eax,[ebp+62h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x62u32));
     // 004016f7 mov eax,[eax]
@@ -1803,18 +1691,16 @@ pub fn x004016f4() -> Cont {
     jl(m, Cont(x0040172b), Cont(x004016f4))
 }
 
-pub fn x00401723() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401723(m: &mut Machine) -> Cont {
     // 00401723 cmp esi,ds:[433014h]
     sub(m.regs.esi, m.memory.read::<u32>(0x433014u32), &mut m.flags);
     // 00401729 jl short 004016F4h
     jl(m, Cont(x0040172b), Cont(x004016f4))
 }
 
-pub fn x0040172b() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040172b(m: &mut Machine) -> Cont {
     // 0040172b mov eax,[ebp+6Ah]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x6au32));
     // 0040172e sub eax,ds:[433014h]
@@ -1829,27 +1715,24 @@ pub fn x0040172b() -> Cont {
     jge(m, Cont(x00401743), Cont(x004015e0))
 }
 
-pub fn x00401737() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401737(m: &mut Machine) -> Cont {
     // 00401737 cmp edx,ds:[433018h]
     sub(m.regs.edx, m.memory.read::<u32>(0x433018u32), &mut m.flags);
     // 0040173d jge near ptr 004015E0h
     jge(m, Cont(x00401743), Cont(x004015e0))
 }
 
-pub fn x00401743() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401743(m: &mut Machine) -> Cont {
     // 00401743 xor esi,esi
     m.regs.esi = xor(m.regs.esi, m.regs.esi, &mut m.flags);
     // 00401745 jmp short 00401723h
     Cont(x00401723)
 }
 
-pub fn x00401747() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401747(m: &mut Machine) -> Cont {
     // 00401747 mov edx,[ebp+6Ah]
     m.regs.edx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x6au32));
     // 0040174d sub edx,ds:[433014h]
@@ -1878,9 +1761,8 @@ pub fn x00401747() -> Cont {
     jne(m, Cont(x0040177b), Cont(x0040176e))
 }
 
-pub fn x00401768() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401768(m: &mut Machine) -> Cont {
     // 00401768 mov ecx,ds:[433014h]
     m.regs.ecx = m.memory.read::<u32>(0x433014u32);
     // 0040176e mov eax,[esi]
@@ -1897,9 +1779,8 @@ pub fn x00401768() -> Cont {
     jne(m, Cont(x0040177b), Cont(x0040176e))
 }
 
-pub fn x0040176e() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040176e(m: &mut Machine) -> Cont {
     // 0040176e mov eax,[esi]
     m.regs.eax = m.memory.read::<u32>(m.regs.esi);
     // 00401770 mov [edi],eax
@@ -1914,9 +1795,8 @@ pub fn x0040176e() -> Cont {
     jne(m, Cont(x0040177b), Cont(x0040176e))
 }
 
-pub fn x0040177b() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040177b(m: &mut Machine) -> Cont {
     // 0040177b add edi,edx
     m.regs.edi = add(m.regs.edi, m.regs.edx, &mut m.flags);
     // 0040177d dec ebx
@@ -1925,16 +1805,14 @@ pub fn x0040177b() -> Cont {
     jne(m, Cont(x00401780), Cont(x00401768))
 }
 
-pub fn x00401780() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401780(m: &mut Machine) -> Cont {
     // 00401780 jmp near ptr 004015E0h
     Cont(x004015e0)
 }
 
-pub fn x00401785() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401785(m: &mut Machine) -> Cont {
     // 00401785 mov edx,ds:[433010h]
     m.regs.edx = m.memory.read::<u32>(0x433010u32);
     // 0040178b cmp edx,10h
@@ -1943,73 +1821,64 @@ pub fn x00401785() -> Cont {
     jb(m, Cont(x00401790), Cont(x004017af))
 }
 
-pub fn x00401790() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401790(m: &mut Machine) -> Cont {
     // 00401790 jbe near ptr 0040168Eh
     jbe(m, Cont(x00401796), Cont(x0040168e))
 }
 
-pub fn x00401796() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401796(m: &mut Machine) -> Cont {
     // 00401796 cmp edx,18h
     sub(m.regs.edx, 0x18u32, &mut m.flags);
     // 00401799 jb near ptr 004015E0h
     jb(m, Cont(x0040179f), Cont(x004015e0))
 }
 
-pub fn x0040179f() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040179f(m: &mut Machine) -> Cont {
     // 0040179f jbe near ptr 004016F0h
     jbe(m, Cont(x004017a5), Cont(x004016f0))
 }
 
-pub fn x004017a5() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004017a5(m: &mut Machine) -> Cont {
     // 004017a5 cmp edx,20h
     sub(m.regs.edx, 0x20u32, &mut m.flags);
     // 004017a8 je short 00401747h
     je(m, Cont(x004017aa), Cont(x00401747))
 }
 
-pub fn x004017aa() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004017aa(m: &mut Machine) -> Cont {
     // 004017aa jmp near ptr 004015E0h
     Cont(x004015e0)
 }
 
-pub fn x004017af() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004017af(m: &mut Machine) -> Cont {
     // 004017af cmp edx,0Fh
     sub(m.regs.edx, 0xfu32, &mut m.flags);
     // 004017b2 je near ptr 0040162Ch
     je(m, Cont(x004017b8), Cont(x0040162c))
 }
 
-pub fn x004017b8() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004017b8(m: &mut Machine) -> Cont {
     // 004017b8 jmp near ptr 004015E0h
     Cont(x004015e0)
 }
 
-pub fn x004017bd() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004017bd(m: &mut Machine) -> Cont {
     // 004017bd xor edx,edx
     m.regs.edx = xor(m.regs.edx, m.regs.edx, &mut m.flags);
     // 004017bf jmp short 0040182Bh
     Cont(x0040182b)
 }
 
-pub fn x004017c1() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004017c1(m: &mut Machine) -> Cont {
     // 004017c1 mov ecx,[ebp+72h]
     m.regs.ecx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x72u32));
     // 004017c4 shl ecx,2
@@ -2117,18 +1986,16 @@ pub fn x004017c1() -> Cont {
     jl(m, Cont(x0040182a), Cont(x004017c1))
 }
 
-pub fn x00401822() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401822(m: &mut Machine) -> Cont {
     // 00401822 cmp esi,ds:[433014h]
     sub(m.regs.esi, m.memory.read::<u32>(0x433014u32), &mut m.flags);
     // 00401828 jl short 004017C1h
     jl(m, Cont(x0040182a), Cont(x004017c1))
 }
 
-pub fn x0040182a() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040182a(m: &mut Machine) -> Cont {
     // 0040182a inc edx
     m.regs.edx = inc(m.regs.edx, &mut m.flags);
     // 0040182b cmp edx,ds:[433018h]
@@ -2137,18 +2004,16 @@ pub fn x0040182a() -> Cont {
     jge(m, Cont(x00401837), Cont(x004015e0))
 }
 
-pub fn x0040182b() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040182b(m: &mut Machine) -> Cont {
     // 0040182b cmp edx,ds:[433018h]
     sub(m.regs.edx, m.memory.read::<u32>(0x433018u32), &mut m.flags);
     // 00401831 jge near ptr 004015E0h
     jge(m, Cont(x00401837), Cont(x004015e0))
 }
 
-pub fn x00401837() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401837(m: &mut Machine) -> Cont {
     // 00401837 mov eax,ds:[433014h]
     m.regs.eax = m.memory.read::<u32>(0x433014u32);
     // 0040183c imul eax,edx
@@ -2168,18 +2033,16 @@ pub fn x00401837() -> Cont {
     Cont(x00401822)
 }
 
-pub fn x0040184e() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040184e(m: &mut Machine) -> Cont {
     // 0040184e xor edx,edx
     m.regs.edx = xor(m.regs.edx, m.regs.edx, &mut m.flags);
     // 00401850 jmp short 004018B8h
     Cont(x004018b8)
 }
 
-pub fn x00401852() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401852(m: &mut Machine) -> Cont {
     // 00401852 mov ecx,[ebp+72h]
     m.regs.ecx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x72u32));
     // 00401855 shl ecx,2
@@ -2280,18 +2143,16 @@ pub fn x00401852() -> Cont {
     jl(m, Cont(x004018b7), Cont(x00401852))
 }
 
-pub fn x004018af() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004018af(m: &mut Machine) -> Cont {
     // 004018af cmp esi,ds:[433014h]
     sub(m.regs.esi, m.memory.read::<u32>(0x433014u32), &mut m.flags);
     // 004018b5 jl short 00401852h
     jl(m, Cont(x004018b7), Cont(x00401852))
 }
 
-pub fn x004018b7() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004018b7(m: &mut Machine) -> Cont {
     // 004018b7 inc edx
     m.regs.edx = inc(m.regs.edx, &mut m.flags);
     // 004018b8 cmp edx,ds:[433018h]
@@ -2300,18 +2161,16 @@ pub fn x004018b7() -> Cont {
     jge(m, Cont(x004018c4), Cont(x004015e0))
 }
 
-pub fn x004018b8() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004018b8(m: &mut Machine) -> Cont {
     // 004018b8 cmp edx,ds:[433018h]
     sub(m.regs.edx, m.memory.read::<u32>(0x433018u32), &mut m.flags);
     // 004018be jge near ptr 004015E0h
     jge(m, Cont(x004018c4), Cont(x004015e0))
 }
 
-pub fn x004018c4() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004018c4(m: &mut Machine) -> Cont {
     // 004018c4 mov eax,ds:[433014h]
     m.regs.eax = m.memory.read::<u32>(0x433014u32);
     // 004018c9 imul eax,edx
@@ -2331,18 +2190,16 @@ pub fn x004018c4() -> Cont {
     Cont(x004018af)
 }
 
-pub fn x004018db() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004018db(m: &mut Machine) -> Cont {
     // 004018db xor edx,edx
     m.regs.edx = xor(m.regs.edx, m.regs.edx, &mut m.flags);
     // 004018dd jmp near ptr 0040198Ch
     Cont(x0040198c)
 }
 
-pub fn x004018e2() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004018e2(m: &mut Machine) -> Cont {
     // 004018e2 mov edi,[ebp+72h]
     m.regs.edi = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x72u32));
     // 004018e5 shl edi,2
@@ -2496,18 +2353,16 @@ pub fn x004018e2() -> Cont {
     jl(m, Cont(x0040198b), Cont(x004018e2))
 }
 
-pub fn x0040197f() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040197f(m: &mut Machine) -> Cont {
     // 0040197f cmp esi,ds:[433014h]
     sub(m.regs.esi, m.memory.read::<u32>(0x433014u32), &mut m.flags);
     // 00401985 jl near ptr 004018E2h
     jl(m, Cont(x0040198b), Cont(x004018e2))
 }
 
-pub fn x0040198b() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040198b(m: &mut Machine) -> Cont {
     // 0040198b inc edx
     m.regs.edx = inc(m.regs.edx, &mut m.flags);
     // 0040198c cmp edx,ds:[433018h]
@@ -2516,18 +2371,16 @@ pub fn x0040198b() -> Cont {
     jge(m, Cont(x00401998), Cont(x004015e0))
 }
 
-pub fn x0040198c() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040198c(m: &mut Machine) -> Cont {
     // 0040198c cmp edx,ds:[433018h]
     sub(m.regs.edx, m.memory.read::<u32>(0x433018u32), &mut m.flags);
     // 00401992 jge near ptr 004015E0h
     jge(m, Cont(x00401998), Cont(x004015e0))
 }
 
-pub fn x00401998() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401998(m: &mut Machine) -> Cont {
     // 00401998 mov eax,ds:[433014h]
     m.regs.eax = m.memory.read::<u32>(0x433014u32);
     // 0040199d imul eax,edx
@@ -2547,18 +2400,16 @@ pub fn x00401998() -> Cont {
     Cont(x0040197f)
 }
 
-pub fn x004019af() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004019af(m: &mut Machine) -> Cont {
     // 004019af xor edx,edx
     m.regs.edx = xor(m.regs.edx, m.regs.edx, &mut m.flags);
     // 004019b1 jmp short 004019FBh
     Cont(x004019fb)
 }
 
-pub fn x004019b3() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004019b3(m: &mut Machine) -> Cont {
     // 004019b3 mov ecx,[ebp+72h]
     m.regs.ecx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x72u32));
     // 004019b6 shl ecx,2
@@ -2643,18 +2494,16 @@ pub fn x004019b3() -> Cont {
     jl(m, Cont(x004019fa), Cont(x004019b3))
 }
 
-pub fn x004019f2() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004019f2(m: &mut Machine) -> Cont {
     // 004019f2 cmp esi,ds:[433014h]
     sub(m.regs.esi, m.memory.read::<u32>(0x433014u32), &mut m.flags);
     // 004019f8 jl short 004019B3h
     jl(m, Cont(x004019fa), Cont(x004019b3))
 }
 
-pub fn x004019fa() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004019fa(m: &mut Machine) -> Cont {
     // 004019fa inc edx
     m.regs.edx = inc(m.regs.edx, &mut m.flags);
     // 004019fb cmp edx,ds:[433018h]
@@ -2663,18 +2512,16 @@ pub fn x004019fa() -> Cont {
     jge(m, Cont(x00401a07), Cont(x004015e0))
 }
 
-pub fn x004019fb() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004019fb(m: &mut Machine) -> Cont {
     // 004019fb cmp edx,ds:[433018h]
     sub(m.regs.edx, m.memory.read::<u32>(0x433018u32), &mut m.flags);
     // 00401a01 jge near ptr 004015E0h
     jge(m, Cont(x00401a07), Cont(x004015e0))
 }
 
-pub fn x00401a07() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401a07(m: &mut Machine) -> Cont {
     // 00401a07 mov eax,ds:[433014h]
     m.regs.eax = m.memory.read::<u32>(0x433014u32);
     // 00401a0c imul eax,edx
@@ -2694,9 +2541,8 @@ pub fn x00401a07() -> Cont {
     Cont(x004019f2)
 }
 
-pub fn x00401a1e() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401a1e(m: &mut Machine) -> Cont {
     // 00401a1e mov edx,ds:[433010h]
     m.regs.edx = m.memory.read::<u32>(0x433010u32);
     // 00401a24 cmp edx,10h
@@ -2705,73 +2551,64 @@ pub fn x00401a1e() -> Cont {
     jb(m, Cont(x00401a29), Cont(x00401a4c))
 }
 
-pub fn x00401a29() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401a29(m: &mut Machine) -> Cont {
     // 00401a29 jbe near ptr 0040184Eh
     jbe(m, Cont(x00401a2f), Cont(x0040184e))
 }
 
-pub fn x00401a2f() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401a2f(m: &mut Machine) -> Cont {
     // 00401a2f cmp edx,18h
     sub(m.regs.edx, 0x18u32, &mut m.flags);
     // 00401a32 jb near ptr 004015E0h
     jb(m, Cont(x00401a38), Cont(x004015e0))
 }
 
-pub fn x00401a38() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401a38(m: &mut Machine) -> Cont {
     // 00401a38 jbe near ptr 004018DBh
     jbe(m, Cont(x00401a3e), Cont(x004018db))
 }
 
-pub fn x00401a3e() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401a3e(m: &mut Machine) -> Cont {
     // 00401a3e cmp edx,20h
     sub(m.regs.edx, 0x20u32, &mut m.flags);
     // 00401a41 je near ptr 004019AFh
     je(m, Cont(x00401a47), Cont(x004019af))
 }
 
-pub fn x00401a47() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401a47(m: &mut Machine) -> Cont {
     // 00401a47 jmp near ptr 004015E0h
     Cont(x004015e0)
 }
 
-pub fn x00401a4c() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401a4c(m: &mut Machine) -> Cont {
     // 00401a4c cmp edx,0Fh
     sub(m.regs.edx, 0xfu32, &mut m.flags);
     // 00401a4f je near ptr 004017BDh
     je(m, Cont(x00401a55), Cont(x004017bd))
 }
 
-pub fn x00401a55() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401a55(m: &mut Machine) -> Cont {
     // 00401a55 jmp near ptr 004015E0h
     Cont(x004015e0)
 }
 
-pub fn x00401a5a() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401a5a(m: &mut Machine) -> Cont {
     // 00401a5a mov eax,ds:[433020h]
     m.regs.eax = m.memory.read::<u32>(0x433020u32);
     // 00401a5f ret
     ret(m, 0)
 }
 
-pub fn x00401a60() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401a60(m: &mut Machine) -> Cont {
     // 00401a60 push ebp
     push(m, m.regs.ebp);
     // 00401a61 mov ebp,esp
@@ -2788,18 +2625,16 @@ pub fn x00401a60() -> Cont {
     call(m, 0x401a76, Cont(kernel32::VirtualAlloc_stdcall))
 }
 
-pub fn x00401a76() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401a76(m: &mut Machine) -> Cont {
     // 00401a76 pop ebp
     m.regs.ebp = pop(m);
     // 00401a77 ret
     ret(m, 0)
 }
 
-pub fn x00401a78() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401a78(m: &mut Machine) -> Cont {
     // 00401a78 push ebp
     push(m, m.regs.ebp);
     // 00401a79 mov ebp,esp
@@ -2814,18 +2649,16 @@ pub fn x00401a78() -> Cont {
     call(m, 0x401a8c, Cont(kernel32::VirtualFree_stdcall))
 }
 
-pub fn x00401a8c() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401a8c(m: &mut Machine) -> Cont {
     // 00401a8c pop ebp
     m.regs.ebp = pop(m);
     // 00401a8d ret
     ret(m, 0)
 }
 
-pub fn x00401af2() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401af2(m: &mut Machine) -> Cont {
     // 00401af2 push ecx
     push(m, m.regs.ecx);
     // 00401af3 push edx
@@ -2862,9 +2695,8 @@ pub fn x00401af2() -> Cont {
     call(m, 0x401b25, Cont(user32::CreateWindowExA_stdcall))
 }
 
-pub fn x00401b25() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401b25(m: &mut Machine) -> Cont {
     // 00401b25 push eax
     push(m, m.regs.eax);
     // 00401b26 mov ds:[40C73Bh],eax
@@ -2873,9 +2705,8 @@ pub fn x00401b25() -> Cont {
     call(m, 0x401b32, Cont(user32::UpdateWindow_stdcall))
 }
 
-pub fn x00401b32() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401b32(m: &mut Machine) -> Cont {
     // 00401b32 pop edx
     m.regs.edx = pop(m);
     // 00401b33 pop ecx
@@ -2884,9 +2715,8 @@ pub fn x00401b32() -> Cont {
     ret(m, 0)
 }
 
-pub fn x00401b35() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401b35(m: &mut Machine) -> Cont {
     // 00401b35 push ecx
     push(m, m.regs.ecx);
     // 00401b36 push edx
@@ -2905,9 +2735,8 @@ pub fn x00401b35() -> Cont {
     call(m, 0x401b68, Cont(kernel32::GetModuleHandleA_stdcall))
 }
 
-pub fn x00401b68() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401b68(m: &mut Machine) -> Cont {
     // 00401b68 mov dword ptr ds:[433E14h],0
     m.memory.write::<u32>(0x433e14u32, 0x0u32);
     // 00401b72 mov dword ptr ds:[433E18h],0
@@ -2926,16 +2755,14 @@ pub fn x00401b68() -> Cont {
     call(m, 0x401bab, Cont(user32::RegisterClassA_stdcall))
 }
 
-pub fn x00401bab() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401bab(m: &mut Machine) -> Cont {
     // 00401bab call 00401AF2h
     call(m, 0x401bb0, Cont(x00401af2))
 }
 
-pub fn x00401bb0() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401bb0(m: &mut Machine) -> Cont {
     // 00401bb0 pop edx
     m.regs.edx = pop(m);
     // 00401bb1 pop ecx
@@ -2944,9 +2771,8 @@ pub fn x00401bb0() -> Cont {
     ret(m, 0)
 }
 
-pub fn x00401bb3() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401bb3(m: &mut Machine) -> Cont {
     // 00401bb3 push ecx
     push(m, m.regs.ecx);
     // 00401bb4 push edx
@@ -2969,18 +2795,16 @@ pub fn x00401bb3() -> Cont {
     call(m, 0x401bcc, Cont(user32::PeekMessageA_stdcall))
 }
 
-pub fn x00401bcc() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401bcc(m: &mut Machine) -> Cont {
     // 00401bcc test eax,eax
     and(m.regs.eax, m.regs.eax, &mut m.flags);
     // 00401bce je short 00401BFBh
     je(m, Cont(x00401bd0), Cont(x00401bfb))
 }
 
-pub fn x00401bd0() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401bd0(m: &mut Machine) -> Cont {
     // 00401bd0 push 0
     push(m, 0x0u32);
     // 00401bd2 push 0
@@ -2995,9 +2819,8 @@ pub fn x00401bd0() -> Cont {
     call(m, 0x401be5, Cont(user32::GetMessageA_stdcall))
 }
 
-pub fn x00401be5() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401be5(m: &mut Machine) -> Cont {
     // 00401be5 lea eax,[ebp-1Ch]
     m.regs.eax = m.regs.ebp.wrapping_add(0xffffffe4u32);
     // 00401be8 push eax
@@ -3006,9 +2829,8 @@ pub fn x00401be5() -> Cont {
     call(m, 0x401bf0, Cont(user32::TranslateMessage_stdcall))
 }
 
-pub fn x00401bf0() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401bf0(m: &mut Machine) -> Cont {
     // 00401bf0 lea eax,[ebp-1Ch]
     m.regs.eax = m.regs.ebp.wrapping_add(0xffffffe4u32);
     // 00401bf3 push eax
@@ -3017,9 +2839,8 @@ pub fn x00401bf0() -> Cont {
     call(m, 0x401bfb, Cont(user32::DispatchMessageA_stdcall))
 }
 
-pub fn x00401bfb() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401bfb(m: &mut Machine) -> Cont {
     // 00401bfb leave
     leave(m);
     // 00401bfc pop edx
@@ -3030,9 +2851,8 @@ pub fn x00401bfb() -> Cont {
     ret(m, 0)
 }
 
-pub fn x00401cc9() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401cc9(m: &mut Machine) -> Cont {
     // 00401cc9 push ebx
     push(m, m.regs.ebx);
     // 00401cca push ecx
@@ -3047,9 +2867,8 @@ pub fn x00401cc9() -> Cont {
     call(m, 0x401cd7, Cont(kernel32::GetTickCount_stdcall))
 }
 
-pub fn x00401cd7() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401cd7(m: &mut Machine) -> Cont {
     // 00401cd7 mov ds:[433F7Ch],eax
     m.memory.write::<u32>(0x433f7cu32, m.regs.eax);
     // 00401cdc mov eax,ebx
@@ -3072,9 +2891,8 @@ pub fn x00401cd7() -> Cont {
     call(m, 0x401cf4, Cont(winmm::timeSetEvent_stdcall))
 }
 
-pub fn x00401cf4() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401cf4(m: &mut Machine) -> Cont {
     // 00401cf4 mov ds:[433F80h],eax
     m.memory.write::<u32>(0x433f80u32, m.regs.eax);
     // 00401cf9 pop esi
@@ -3087,9 +2905,8 @@ pub fn x00401cf4() -> Cont {
     ret(m, 0)
 }
 
-pub fn x00401d0f() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401d0f(m: &mut Machine) -> Cont {
     // 00401d0f push ebx
     push(m, m.regs.ebx);
     // 00401d10 push ecx
@@ -3102,9 +2919,8 @@ pub fn x00401d0f() -> Cont {
     call(m, 0x401d1a, Cont(kernel32::GetTickCount_stdcall))
 }
 
-pub fn x00401d1a() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401d1a(m: &mut Machine) -> Cont {
     // 00401d1a mov edx,ds:[433F7Ch]
     m.regs.edx = m.memory.read::<u32>(0x433f7cu32);
     // 00401d20 xor ebx,ebx
@@ -3121,9 +2937,8 @@ pub fn x00401d1a() -> Cont {
     Cont(x00401d47)
 }
 
-pub fn x00401d2f() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401d2f(m: &mut Machine) -> Cont {
     // 00401d2f mov dword ptr [eax+4339ACh],0
     m.memory
         .write::<u32>(m.regs.eax.wrapping_add(0x4339acu32), 0x0u32);
@@ -3135,9 +2950,8 @@ pub fn x00401d2f() -> Cont {
     jge(m, Cont(x00401d43), Cont(x00401de6))
 }
 
-pub fn x00401d39() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401d39(m: &mut Machine) -> Cont {
     // 00401d39 inc edx
     m.regs.edx = inc(m.regs.edx, &mut m.flags);
     // 00401d3a cmp edx,28h
@@ -3146,18 +2960,16 @@ pub fn x00401d39() -> Cont {
     jge(m, Cont(x00401d43), Cont(x00401de6))
 }
 
-pub fn x00401d43() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401d43(m: &mut Machine) -> Cont {
     // 00401d43 test esi,esi
     and(m.regs.esi, m.regs.esi, &mut m.flags);
     // 00401d45 jne short 00401D8Bh
     jne(m, Cont(x00401d47), Cont(x00401d8b))
 }
 
-pub fn x00401d47() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401d47(m: &mut Machine) -> Cont {
     // 00401d47 imul eax,edx,0Ch
     m.regs.eax = imul(m.regs.edx as i32, 0xcu32 as i32, &mut m.flags) as u32;
     // 00401d4a cmp dword ptr [eax+433C28h],1
@@ -3170,9 +2982,8 @@ pub fn x00401d47() -> Cont {
     jne(m, Cont(x00401d53), Cont(x00401d8b))
 }
 
-pub fn x00401d53() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401d53(m: &mut Machine) -> Cont {
     // 00401d53 mov ecx,[eax+433C24h]
     m.regs.ecx = m.memory.read::<u32>(m.regs.eax.wrapping_add(0x433c24u32));
     // 00401d59 add ecx,0FAh
@@ -3183,9 +2994,8 @@ pub fn x00401d53() -> Cont {
     jge(m, Cont(x00401d67), Cont(x00401d8b))
 }
 
-pub fn x00401d67() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401d67(m: &mut Machine) -> Cont {
     // 00401d67 mov dword ptr [eax+433C28h],0
     m.memory
         .write::<u32>(m.regs.eax.wrapping_add(0x433c28u32), 0x0u32);
@@ -3211,9 +3021,8 @@ pub fn x00401d67() -> Cont {
     jne(m, Cont(x00401d99), Cont(x00401d39))
 }
 
-pub fn x00401d8b() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401d8b(m: &mut Machine) -> Cont {
     // 00401d8b mov eax,edx
     m.regs.eax = m.regs.edx;
     // 00401d8d shl eax,4
@@ -3228,9 +3037,8 @@ pub fn x00401d8b() -> Cont {
     jne(m, Cont(x00401d99), Cont(x00401d39))
 }
 
-pub fn x00401d99() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401d99(m: &mut Machine) -> Cont {
     // 00401d99 mov ecx,[eax+4339A8h]
     m.regs.ecx = m.memory.read::<u32>(m.regs.eax.wrapping_add(0x4339a8u32));
     // 00401d9f add ecx,0FAh
@@ -3241,9 +3049,8 @@ pub fn x00401d99() -> Cont {
     jge(m, Cont(x00401dad), Cont(x00401d39))
 }
 
-pub fn x00401dad() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401dad(m: &mut Machine) -> Cont {
     // 00401dad cmp ebx,[eax+4339A8h]
     sub(
         m.regs.ebx,
@@ -3254,9 +3061,8 @@ pub fn x00401dad() -> Cont {
     jge(m, Cont(x00401db9), Cont(x00401d2f))
 }
 
-pub fn x00401db9() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401db9(m: &mut Machine) -> Cont {
     // 00401db9 mov ecx,[eax+4339A0h]
     m.regs.ecx = m.memory.read::<u32>(m.regs.eax.wrapping_add(0x4339a0u32));
     // 00401dbf mov ebx,[eax+4339A8h]
@@ -3274,9 +3080,8 @@ pub fn x00401db9() -> Cont {
     Cont(x00401d39)
 }
 
-pub fn x00401de6() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401de6(m: &mut Machine) -> Cont {
     // 00401de6 pop esi
     m.regs.esi = pop(m);
     // 00401de7 pop edx
@@ -3289,9 +3094,8 @@ pub fn x00401de6() -> Cont {
     ret(m, 0)
 }
 
-pub fn x00401deb() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401deb(m: &mut Machine) -> Cont {
     // 00401deb push ecx
     push(m, m.regs.ecx);
     // 00401dec push esi
@@ -3312,9 +3116,8 @@ pub fn x00401deb() -> Cont {
     jge(m, Cont(x00401dfa), Cont(x00401e15))
 }
 
-pub fn x00401dfa() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401dfa(m: &mut Machine) -> Cont {
     // 00401dfa mov ecx,ds:[40C724h]
     m.regs.ecx = m.memory.read::<u32>(0x40c724u32);
     // 00401e00 imul ecx,ds:[40C728h]
@@ -3343,9 +3146,8 @@ pub fn x00401dfa() -> Cont {
     ret(m, 0)
 }
 
-pub fn x00401e15() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401e15(m: &mut Machine) -> Cont {
     // 00401e15 lea ecx,[eax+eax]
     m.regs.ecx = m.regs.eax.wrapping_add(m.regs.eax);
     // 00401e18 mov eax,10000h
@@ -3373,9 +3175,8 @@ pub fn x00401e15() -> Cont {
     jge(m, Cont(x00401e39), Cont(x00401ff1))
 }
 
-pub fn x00401e2a() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401e2a(m: &mut Machine) -> Cont {
     // 00401e2a mov eax,[ebp-0Ch]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff4u32));
     // 00401e2d cmp eax,ds:[40C728h]
@@ -3384,9 +3185,8 @@ pub fn x00401e2a() -> Cont {
     jge(m, Cont(x00401e39), Cont(x00401ff1))
 }
 
-pub fn x00401e39() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401e39(m: &mut Machine) -> Cont {
     // 00401e39 imul eax,ds:[40C724h]
     m.regs.eax = imul(
         m.regs.eax as i32,
@@ -3419,9 +3219,8 @@ pub fn x00401e39() -> Cont {
     jge(m, Cont(x00401e56), Cont(x00401e8f))
 }
 
-pub fn x00401e4e() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401e4e(m: &mut Machine) -> Cont {
     // 00401e4e mov esi,[ebp-4]
     m.regs.esi = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32));
     // 00401e51 cmp esi,[ebp-24h]
@@ -3434,9 +3233,8 @@ pub fn x00401e4e() -> Cont {
     jge(m, Cont(x00401e56), Cont(x00401e8f))
 }
 
-pub fn x00401e56() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401e56(m: &mut Machine) -> Cont {
     // 00401e56 add esi,[ebp-8]
     m.regs.esi = add(
         m.regs.esi,
@@ -3491,9 +3289,8 @@ pub fn x00401e56() -> Cont {
     Cont(x00401e4e)
 }
 
-pub fn x00401e8f() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401e8f(m: &mut Machine) -> Cont {
     // 00401e8f mov esi,[ebp-8]
     m.regs.esi = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32));
     // 00401e92 shl esi,2
@@ -3567,9 +3364,8 @@ pub fn x00401e8f() -> Cont {
     jge(m, Cont(x00401ee9), Cont(x00401fe9))
 }
 
-pub fn x00401eda() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401eda(m: &mut Machine) -> Cont {
     // 00401eda mov esi,[ebp-4]
     m.regs.esi = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32));
     // 00401edd cmp esi,ds:[40C724h]
@@ -3578,9 +3374,8 @@ pub fn x00401eda() -> Cont {
     jge(m, Cont(x00401ee9), Cont(x00401fe9))
 }
 
-pub fn x00401ee9() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401ee9(m: &mut Machine) -> Cont {
     // 00401ee9 sub esi,[ebp-24h]
     m.regs.esi = sub(
         m.regs.esi,
@@ -3593,9 +3388,8 @@ pub fn x00401ee9() -> Cont {
     jl(m, Cont(x00401ef0), Cont(x00401ef5))
 }
 
-pub fn x00401ef0() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401ef0(m: &mut Machine) -> Cont {
     // 00401ef0 add esi,[ebp-8]
     m.regs.esi = add(
         m.regs.esi,
@@ -3606,9 +3400,8 @@ pub fn x00401ef0() -> Cont {
     Cont(x00401ef8)
 }
 
-pub fn x00401ef5() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401ef5(m: &mut Machine) -> Cont {
     // 00401ef5 mov esi,[ebp-8]
     m.regs.esi = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32));
     // 00401ef8 shl esi,2
@@ -3661,9 +3454,8 @@ pub fn x00401ef5() -> Cont {
     jge(m, Cont(x00401f37), Cont(x00401f44))
 }
 
-pub fn x00401ef8() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401ef8(m: &mut Machine) -> Cont {
     // 00401ef8 shl esi,2
     m.regs.esi = shl(m.regs.esi, 0x2u8, &mut m.flags);
     // 00401efb add esi,[ebp-28h]
@@ -3714,9 +3506,8 @@ pub fn x00401ef8() -> Cont {
     jge(m, Cont(x00401f37), Cont(x00401f44))
 }
 
-pub fn x00401f37() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401f37(m: &mut Machine) -> Cont {
     // 00401f37 add esi,[ebp-8]
     m.regs.esi = add(
         m.regs.esi,
@@ -3737,9 +3528,8 @@ pub fn x00401f37() -> Cont {
     Cont(x00401f56)
 }
 
-pub fn x00401f44() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401f44(m: &mut Machine) -> Cont {
     // 00401f44 mov esi,ds:[40C724h]
     m.regs.esi = m.memory.read::<u32>(0x40c724u32);
     // 00401f4a add esi,[ebp-8]
@@ -3878,9 +3668,8 @@ pub fn x00401f44() -> Cont {
     Cont(x00401eda)
 }
 
-pub fn x00401f56() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401f56(m: &mut Machine) -> Cont {
     // 00401f56 mov edi,esi
     m.regs.edi = m.regs.esi;
     // 00401f58 and edi,0FFh
@@ -4001,9 +3790,8 @@ pub fn x00401f56() -> Cont {
     Cont(x00401eda)
 }
 
-pub fn x00401fe9() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401fe9(m: &mut Machine) -> Cont {
     // 00401fe9 inc dword ptr [ebp-0Ch]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffff4u32),
@@ -4016,9 +3804,8 @@ pub fn x00401fe9() -> Cont {
     Cont(x00401e2a)
 }
 
-pub fn x00401ff1() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401ff1(m: &mut Machine) -> Cont {
     // 00401ff1 leave
     leave(m);
     // 00401ff2 pop edi
@@ -4031,9 +3818,8 @@ pub fn x00401ff1() -> Cont {
     ret(m, 0)
 }
 
-pub fn x00401ff6() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401ff6(m: &mut Machine) -> Cont {
     // 00401ff6 push ecx
     push(m, m.regs.ecx);
     // 00401ff7 push esi
@@ -4054,9 +3840,8 @@ pub fn x00401ff6() -> Cont {
     jge(m, Cont(x00402005), Cont(x00402020))
 }
 
-pub fn x00402005() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402005(m: &mut Machine) -> Cont {
     // 00402005 mov ecx,ds:[40C724h]
     m.regs.ecx = m.memory.read::<u32>(0x40c724u32);
     // 0040200b imul ecx,ds:[40C728h]
@@ -4085,9 +3870,8 @@ pub fn x00402005() -> Cont {
     ret(m, 0)
 }
 
-pub fn x00402020() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402020(m: &mut Machine) -> Cont {
     // 00402020 lea ecx,[eax+eax]
     m.regs.ecx = m.regs.eax.wrapping_add(m.regs.eax);
     // 00402023 mov eax,10000h
@@ -4115,9 +3899,8 @@ pub fn x00402020() -> Cont {
     jge(m, Cont(x00402044), Cont(x004021fa))
 }
 
-pub fn x00402035() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402035(m: &mut Machine) -> Cont {
     // 00402035 mov eax,[ebp-8]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32));
     // 00402038 cmp eax,ds:[40C724h]
@@ -4126,9 +3909,8 @@ pub fn x00402035() -> Cont {
     jge(m, Cont(x00402044), Cont(x004021fa))
 }
 
-pub fn x00402044() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402044(m: &mut Machine) -> Cont {
     // 00402044 xor ebx,ebx
     m.regs.ebx = xor(m.regs.ebx, m.regs.ebx, &mut m.flags);
     // 00402046 xor eax,eax
@@ -4152,9 +3934,8 @@ pub fn x00402044() -> Cont {
     jge(m, Cont(x00402057), Cont(x00402097))
 }
 
-pub fn x0040204f() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040204f(m: &mut Machine) -> Cont {
     // 0040204f mov esi,[ebp-4]
     m.regs.esi = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32));
     // 00402052 cmp esi,[ebp-20h]
@@ -4167,9 +3948,8 @@ pub fn x0040204f() -> Cont {
     jge(m, Cont(x00402057), Cont(x00402097))
 }
 
-pub fn x00402057() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402057(m: &mut Machine) -> Cont {
     // 00402057 imul esi,ds:[40C724h]
     m.regs.esi = imul(
         m.regs.esi as i32,
@@ -4230,9 +4010,8 @@ pub fn x00402057() -> Cont {
     Cont(x0040204f)
 }
 
-pub fn x00402097() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402097(m: &mut Machine) -> Cont {
     // 00402097 mov esi,[ebp-8]
     m.regs.esi = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32));
     // 0040209a shl esi,2
@@ -4306,9 +4085,8 @@ pub fn x00402097() -> Cont {
     jge(m, Cont(x004020f1), Cont(x004021f2))
 }
 
-pub fn x004020e2() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004020e2(m: &mut Machine) -> Cont {
     // 004020e2 mov esi,[ebp-4]
     m.regs.esi = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32));
     // 004020e5 cmp esi,ds:[40C728h]
@@ -4317,9 +4095,8 @@ pub fn x004020e2() -> Cont {
     jge(m, Cont(x004020f1), Cont(x004021f2))
 }
 
-pub fn x004020f1() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004020f1(m: &mut Machine) -> Cont {
     // 004020f1 sub esi,[ebp-20h]
     m.regs.esi = sub(
         m.regs.esi,
@@ -4332,9 +4109,8 @@ pub fn x004020f1() -> Cont {
     jl(m, Cont(x004020f8), Cont(x00402104))
 }
 
-pub fn x004020f8() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004020f8(m: &mut Machine) -> Cont {
     // 004020f8 imul esi,ds:[40C724h]
     m.regs.esi = imul(
         m.regs.esi as i32,
@@ -4351,9 +4127,8 @@ pub fn x004020f8() -> Cont {
     Cont(x00402107)
 }
 
-pub fn x00402104() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402104(m: &mut Machine) -> Cont {
     // 00402104 mov esi,[ebp-8]
     m.regs.esi = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32));
     // 00402107 shl esi,2
@@ -4406,9 +4181,8 @@ pub fn x00402104() -> Cont {
     jl(m, Cont(x00402146), Cont(x0040214d))
 }
 
-pub fn x00402107() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402107(m: &mut Machine) -> Cont {
     // 00402107 shl esi,2
     m.regs.esi = shl(m.regs.esi, 0x2u8, &mut m.flags);
     // 0040210a add esi,[ebp-24h]
@@ -4459,9 +4233,8 @@ pub fn x00402107() -> Cont {
     jl(m, Cont(x00402146), Cont(x0040214d))
 }
 
-pub fn x00402146() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402146(m: &mut Machine) -> Cont {
     // 00402146 mov esi,ds:[40C728h]
     m.regs.esi = m.memory.read::<u32>(0x40c728u32);
     // 0040214c dec esi
@@ -4608,9 +4381,8 @@ pub fn x00402146() -> Cont {
     Cont(x004020e2)
 }
 
-pub fn x0040214d() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040214d(m: &mut Machine) -> Cont {
     // 0040214d imul esi,ds:[40C724h]
     m.regs.esi = imul(
         m.regs.esi as i32,
@@ -4753,9 +4525,8 @@ pub fn x0040214d() -> Cont {
     Cont(x004020e2)
 }
 
-pub fn x004021f2() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004021f2(m: &mut Machine) -> Cont {
     // 004021f2 inc dword ptr [ebp-8]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffff8u32),
@@ -4768,9 +4539,8 @@ pub fn x004021f2() -> Cont {
     Cont(x00402035)
 }
 
-pub fn x004021fa() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004021fa(m: &mut Machine) -> Cont {
     // 004021fa leave
     leave(m);
     // 004021fb pop edi
@@ -4783,9 +4553,8 @@ pub fn x004021fa() -> Cont {
     ret(m, 0)
 }
 
-pub fn x004021ff() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004021ff(m: &mut Machine) -> Cont {
     // 004021ff push ecx
     push(m, m.regs.ecx);
     // 00402200 push esi
@@ -4806,9 +4575,8 @@ pub fn x004021ff() -> Cont {
     jge(m, Cont(x0040220e), Cont(x00402229))
 }
 
-pub fn x0040220e() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040220e(m: &mut Machine) -> Cont {
     // 0040220e mov ecx,ds:[40C724h]
     m.regs.ecx = m.memory.read::<u32>(0x40c724u32);
     // 00402214 imul ecx,ds:[40C728h]
@@ -4837,9 +4605,8 @@ pub fn x0040220e() -> Cont {
     ret(m, 0)
 }
 
-pub fn x00402229() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402229(m: &mut Machine) -> Cont {
     // 00402229 lea ecx,[eax+eax]
     m.regs.ecx = m.regs.eax.wrapping_add(m.regs.eax);
     // 0040222c mov eax,10000h
@@ -4864,18 +4631,16 @@ pub fn x00402229() -> Cont {
     jge(m, Cont(x00402245), Cont(x00402444))
 }
 
-pub fn x00402239() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402239(m: &mut Machine) -> Cont {
     // 00402239 cmp ecx,ds:[40C728h]
     sub(m.regs.ecx, m.memory.read::<u32>(0x40c728u32), &mut m.flags);
     // 0040223f jge near ptr 00402444h
     jge(m, Cont(x00402245), Cont(x00402444))
 }
 
-pub fn x00402245() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402245(m: &mut Machine) -> Cont {
     // 00402245 mov eax,ds:[40C724h]
     m.regs.eax = m.memory.read::<u32>(0x40c724u32);
     // 0040224a imul eax,ecx
@@ -4907,9 +4672,8 @@ pub fn x00402245() -> Cont {
     jge(m, Cont(x00402264), Cont(x004022c4))
 }
 
-pub fn x0040225c() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040225c(m: &mut Machine) -> Cont {
     // 0040225c mov eax,[ebp-8]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32));
     // 0040225f cmp eax,[ebp-28h]
@@ -4922,9 +4686,8 @@ pub fn x0040225c() -> Cont {
     jge(m, Cont(x00402264), Cont(x004022c4))
 }
 
-pub fn x00402264() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402264(m: &mut Machine) -> Cont {
     // 00402264 add eax,ecx
     m.regs.eax = add(m.regs.eax, m.regs.ecx, &mut m.flags);
     // 00402266 cmp eax,ds:[40C728h]
@@ -4933,9 +4696,8 @@ pub fn x00402264() -> Cont {
     jge(m, Cont(x0040226e), Cont(x0040227a))
 }
 
-pub fn x0040226e() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040226e(m: &mut Machine) -> Cont {
     // 0040226e imul eax,ds:[40C724h]
     m.regs.eax = imul(
         m.regs.eax as i32,
@@ -4952,9 +4714,8 @@ pub fn x0040226e() -> Cont {
     Cont(x0040228d)
 }
 
-pub fn x0040227a() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040227a(m: &mut Machine) -> Cont {
     // 0040227a mov eax,ds:[40C728h]
     m.regs.eax = m.memory.read::<u32>(0x40c728u32);
     // 0040227f dec eax
@@ -5026,9 +4787,8 @@ pub fn x0040227a() -> Cont {
     Cont(x0040225c)
 }
 
-pub fn x0040228d() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040228d(m: &mut Machine) -> Cont {
     // 0040228d shl eax,2
     m.regs.eax = shl(m.regs.eax, 0x2u8, &mut m.flags);
     // 00402290 add eax,[ebp-2Ch]
@@ -5084,9 +4844,8 @@ pub fn x0040228d() -> Cont {
     Cont(x0040225c)
 }
 
-pub fn x004022c4() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004022c4(m: &mut Machine) -> Cont {
     // 004022c4 mov eax,[ebp-10h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff0u32));
     // 004022c7 shl eax,2
@@ -5173,9 +4932,8 @@ pub fn x004022c4() -> Cont {
     jle(m, Cont(x00402320), Cont(x0040243e))
 }
 
-pub fn x00402310() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402310(m: &mut Machine) -> Cont {
     // 00402310 mov eax,ds:[40C728h]
     m.regs.eax = m.memory.read::<u32>(0x40c728u32);
     // 00402315 sub eax,ecx
@@ -5190,9 +4948,8 @@ pub fn x00402310() -> Cont {
     jle(m, Cont(x00402320), Cont(x0040243e))
 }
 
-pub fn x00402320() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402320(m: &mut Machine) -> Cont {
     // 00402320 mov eax,[ebp-8]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32));
     // 00402323 sub eax,[ebp-28h]
@@ -5207,9 +4964,8 @@ pub fn x00402320() -> Cont {
     jl(m, Cont(x0040232a), Cont(x00402338))
 }
 
-pub fn x0040232a() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040232a(m: &mut Machine) -> Cont {
     // 0040232a lea edi,[eax+ecx]
     m.regs.edi = m.regs.eax.wrapping_add(m.regs.ecx);
     // 0040232d imul edi,ds:[40C724h]
@@ -5224,9 +4980,8 @@ pub fn x0040232a() -> Cont {
     Cont(x0040233b)
 }
 
-pub fn x00402338() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402338(m: &mut Machine) -> Cont {
     // 00402338 mov eax,[ebp-10h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff0u32));
     // 0040233b shl eax,2
@@ -5288,9 +5043,8 @@ pub fn x00402338() -> Cont {
     jge(m, Cont(x0040237d), Cont(x0040238f))
 }
 
-pub fn x0040233b() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040233b(m: &mut Machine) -> Cont {
     // 0040233b shl eax,2
     m.regs.eax = shl(m.regs.eax, 0x2u8, &mut m.flags);
     // 0040233e add eax,[ebp-2Ch]
@@ -5350,9 +5104,8 @@ pub fn x0040233b() -> Cont {
     jge(m, Cont(x0040237d), Cont(x0040238f))
 }
 
-pub fn x0040237d() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040237d(m: &mut Machine) -> Cont {
     // 0040237d mov eax,[ebp-8]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32));
     // 00402380 add eax,[ebp-28h]
@@ -5373,9 +5126,8 @@ pub fn x0040237d() -> Cont {
     Cont(x004023a0)
 }
 
-pub fn x0040238f() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040238f(m: &mut Machine) -> Cont {
     // 0040238f mov eax,ds:[40C728h]
     m.regs.eax = m.memory.read::<u32>(0x40c728u32);
     // 00402394 dec eax
@@ -5535,9 +5287,8 @@ pub fn x0040238f() -> Cont {
     Cont(x00402310)
 }
 
-pub fn x004023a0() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004023a0(m: &mut Machine) -> Cont {
     // 004023a0 add eax,edi
     m.regs.eax = add(m.regs.eax, m.regs.edi, &mut m.flags);
     // 004023a2 shl eax,2
@@ -5683,18 +5434,16 @@ pub fn x004023a0() -> Cont {
     Cont(x00402310)
 }
 
-pub fn x0040243e() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040243e(m: &mut Machine) -> Cont {
     // 0040243e inc ecx
     m.regs.ecx = inc(m.regs.ecx, &mut m.flags);
     // 0040243f jmp near ptr 00402239h
     Cont(x00402239)
 }
 
-pub fn x00402444() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402444(m: &mut Machine) -> Cont {
     // 00402444 mov dword ptr [ebp-8],0
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32), 0x0u32);
@@ -5714,9 +5463,8 @@ pub fn x00402444() -> Cont {
     jle(m, Cont(x00402462), Cont(x00402660))
 }
 
-pub fn x0040244b() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040244b(m: &mut Machine) -> Cont {
     // 0040244b mov eax,ds:[40C724h]
     m.regs.eax = m.memory.read::<u32>(0x40c724u32);
     // 00402450 sub eax,ds:[40C728h]
@@ -5733,9 +5481,8 @@ pub fn x0040244b() -> Cont {
     jle(m, Cont(x00402462), Cont(x00402660))
 }
 
-pub fn x00402462() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402462(m: &mut Machine) -> Cont {
     // 00402462 xor edx,edx
     m.regs.edx = xor(m.regs.edx, m.regs.edx, &mut m.flags);
     // 00402464 xor esi,esi
@@ -5757,9 +5504,8 @@ pub fn x00402462() -> Cont {
     jge(m, Cont(x00402472), Cont(x004024e1))
 }
 
-pub fn x0040246d() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040246d(m: &mut Machine) -> Cont {
     // 0040246d cmp ecx,[ebp-28h]
     sub(
         m.regs.ecx,
@@ -5770,18 +5516,16 @@ pub fn x0040246d() -> Cont {
     jge(m, Cont(x00402472), Cont(x004024e1))
 }
 
-pub fn x00402472() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402472(m: &mut Machine) -> Cont {
     // 00402472 cmp ecx,ds:[40C728h]
     sub(m.regs.ecx, m.memory.read::<u32>(0x40c728u32), &mut m.flags);
     // 00402478 jge short 00402497h
     jge(m, Cont(x0040247a), Cont(x00402497))
 }
 
-pub fn x0040247a() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040247a(m: &mut Machine) -> Cont {
     // 0040247a mov eax,[ebp-8]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32));
     // 0040247d add eax,ecx
@@ -5813,9 +5557,8 @@ pub fn x0040247a() -> Cont {
     Cont(x004024b4)
 }
 
-pub fn x00402497() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402497(m: &mut Machine) -> Cont {
     // 00402497 mov edi,[ebp-8]
     m.regs.edi = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32));
     // 0040249a mov eax,ds:[40C728h]
@@ -5881,9 +5624,8 @@ pub fn x00402497() -> Cont {
     Cont(x0040246d)
 }
 
-pub fn x004024b4() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004024b4(m: &mut Machine) -> Cont {
     // 004024b4 mov edi,eax
     m.regs.edi = m.regs.eax;
     // 004024b6 and edi,0FFh
@@ -5923,9 +5665,8 @@ pub fn x004024b4() -> Cont {
     Cont(x0040246d)
 }
 
-pub fn x004024e1() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004024e1(m: &mut Machine) -> Cont {
     // 004024e1 mov eax,[ebp-8]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32));
     // 004024e4 shl eax,2
@@ -6003,18 +5744,16 @@ pub fn x004024e1() -> Cont {
     jge(m, Cont(x00402534), Cont(x00402658))
 }
 
-pub fn x00402528() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402528(m: &mut Machine) -> Cont {
     // 00402528 cmp ecx,ds:[40C728h]
     sub(m.regs.ecx, m.memory.read::<u32>(0x40c728u32), &mut m.flags);
     // 0040252e jge near ptr 00402658h
     jge(m, Cont(x00402534), Cont(x00402658))
 }
 
-pub fn x00402534() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402534(m: &mut Machine) -> Cont {
     // 00402534 mov eax,ecx
     m.regs.eax = m.regs.ecx;
     // 00402536 sub eax,[ebp-28h]
@@ -6029,9 +5768,8 @@ pub fn x00402534() -> Cont {
     jl(m, Cont(x0040253d), Cont(x00402550))
 }
 
-pub fn x0040253d() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040253d(m: &mut Machine) -> Cont {
     // 0040253d imul eax,ds:[40C724h]
     m.regs.eax = imul(
         m.regs.eax as i32,
@@ -6054,9 +5792,8 @@ pub fn x0040253d() -> Cont {
     Cont(x00402553)
 }
 
-pub fn x00402550() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402550(m: &mut Machine) -> Cont {
     // 00402550 mov eax,[ebp-8]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32));
     // 00402553 shl eax,2
@@ -6112,9 +5849,8 @@ pub fn x00402550() -> Cont {
     jge(m, Cont(x00402592), Cont(x004025a3))
 }
 
-pub fn x00402553() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402553(m: &mut Machine) -> Cont {
     // 00402553 shl eax,2
     m.regs.eax = shl(m.regs.eax, 0x2u8, &mut m.flags);
     // 00402556 add eax,[ebp-2Ch]
@@ -6168,9 +5904,8 @@ pub fn x00402553() -> Cont {
     jge(m, Cont(x00402592), Cont(x004025a3))
 }
 
-pub fn x00402592() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402592(m: &mut Machine) -> Cont {
     // 00402592 imul eax,ds:[40C724h]
     m.regs.eax = imul(
         m.regs.eax as i32,
@@ -6191,9 +5926,8 @@ pub fn x00402592() -> Cont {
     Cont(x004025b5)
 }
 
-pub fn x004025a3() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004025a3(m: &mut Machine) -> Cont {
     // 004025a3 mov eax,ds:[40C728h]
     m.regs.eax = m.memory.read::<u32>(0x40c728u32);
     // 004025a8 dec eax
@@ -6350,9 +6084,8 @@ pub fn x004025a3() -> Cont {
     Cont(x00402528)
 }
 
-pub fn x004025b5() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004025b5(m: &mut Machine) -> Cont {
     // 004025b5 add eax,edi
     m.regs.eax = add(m.regs.eax, m.regs.edi, &mut m.flags);
     // 004025b7 shl eax,2
@@ -6491,9 +6224,8 @@ pub fn x004025b5() -> Cont {
     Cont(x00402528)
 }
 
-pub fn x00402658() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402658(m: &mut Machine) -> Cont {
     // 00402658 inc dword ptr [ebp-8]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffff8u32),
@@ -6506,9 +6238,8 @@ pub fn x00402658() -> Cont {
     Cont(x0040244b)
 }
 
-pub fn x00402660() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402660(m: &mut Machine) -> Cont {
     // 00402660 mov [ebp-8],edx
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32), m.regs.edx);
@@ -6523,9 +6254,8 @@ pub fn x00402660() -> Cont {
     jge(m, Cont(x00402675), Cont(x0040288e))
 }
 
-pub fn x00402666() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402666(m: &mut Machine) -> Cont {
     // 00402666 mov eax,[ebp-8]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32));
     // 00402669 cmp eax,ds:[40C724h]
@@ -6534,9 +6264,8 @@ pub fn x00402666() -> Cont {
     jge(m, Cont(x00402675), Cont(x0040288e))
 }
 
-pub fn x00402675() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402675(m: &mut Machine) -> Cont {
     // 00402675 xor edx,edx
     m.regs.edx = xor(m.regs.edx, m.regs.edx, &mut m.flags);
     // 00402677 xor esi,esi
@@ -6558,9 +6287,8 @@ pub fn x00402675() -> Cont {
     jge(m, Cont(x00402685), Cont(x004026f6))
 }
 
-pub fn x00402680() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402680(m: &mut Machine) -> Cont {
     // 00402680 cmp ecx,[ebp-28h]
     sub(
         m.regs.ecx,
@@ -6571,18 +6299,16 @@ pub fn x00402680() -> Cont {
     jge(m, Cont(x00402685), Cont(x004026f6))
 }
 
-pub fn x00402685() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402685(m: &mut Machine) -> Cont {
     // 00402685 cmp ecx,ds:[40C728h]
     sub(m.regs.ecx, m.memory.read::<u32>(0x40c728u32), &mut m.flags);
     // 0040268b jge short 004026AAh
     jge(m, Cont(x0040268d), Cont(x004026aa))
 }
 
-pub fn x0040268d() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040268d(m: &mut Machine) -> Cont {
     // 0040268d mov eax,[ebp-8]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32));
     // 00402690 add eax,ecx
@@ -6614,9 +6340,8 @@ pub fn x0040268d() -> Cont {
     Cont(x004026c9)
 }
 
-pub fn x004026aa() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004026aa(m: &mut Machine) -> Cont {
     // 004026aa mov eax,[ebp-8]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32));
     // 004026ad sub eax,[ebp-10h]
@@ -6686,9 +6411,8 @@ pub fn x004026aa() -> Cont {
     Cont(x00402680)
 }
 
-pub fn x004026c9() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004026c9(m: &mut Machine) -> Cont {
     // 004026c9 mov edi,eax
     m.regs.edi = m.regs.eax;
     // 004026cb and edi,0FFh
@@ -6728,9 +6452,8 @@ pub fn x004026c9() -> Cont {
     Cont(x00402680)
 }
 
-pub fn x004026f6() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004026f6(m: &mut Machine) -> Cont {
     // 004026f6 mov eax,[ebp-8]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32));
     // 004026f9 shl eax,2
@@ -6820,9 +6543,8 @@ pub fn x004026f6() -> Cont {
     jge(m, Cont(x00402753), Cont(x00402886))
 }
 
-pub fn x0040273d() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040273d(m: &mut Machine) -> Cont {
     // 0040273d mov eax,[ebp-8]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32));
     // 00402740 mov edi,ds:[40C728h]
@@ -6841,9 +6563,8 @@ pub fn x0040273d() -> Cont {
     jge(m, Cont(x00402753), Cont(x00402886))
 }
 
-pub fn x00402753() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402753(m: &mut Machine) -> Cont {
     // 00402753 mov eax,ecx
     m.regs.eax = m.regs.ecx;
     // 00402755 sub eax,[ebp-28h]
@@ -6858,9 +6579,8 @@ pub fn x00402753() -> Cont {
     jl(m, Cont(x0040275c), Cont(x0040276f))
 }
 
-pub fn x0040275c() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040275c(m: &mut Machine) -> Cont {
     // 0040275c imul eax,ds:[40C724h]
     m.regs.eax = imul(
         m.regs.eax as i32,
@@ -6883,9 +6603,8 @@ pub fn x0040275c() -> Cont {
     Cont(x00402772)
 }
 
-pub fn x0040276f() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040276f(m: &mut Machine) -> Cont {
     // 0040276f mov eax,[ebp-8]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32));
     // 00402772 shl eax,2
@@ -6947,9 +6666,8 @@ pub fn x0040276f() -> Cont {
     jge(m, Cont(x004027b4), Cont(x004027d4))
 }
 
-pub fn x00402772() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402772(m: &mut Machine) -> Cont {
     // 00402772 shl eax,2
     m.regs.eax = shl(m.regs.eax, 0x2u8, &mut m.flags);
     // 00402775 add eax,[ebp-2Ch]
@@ -7009,9 +6727,8 @@ pub fn x00402772() -> Cont {
     jge(m, Cont(x004027b4), Cont(x004027d4))
 }
 
-pub fn x004027b4() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004027b4(m: &mut Machine) -> Cont {
     // 004027b4 mov edi,[ebp-28h]
     m.regs.edi = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffd8u32));
     // 004027b7 add edi,ecx
@@ -7048,9 +6765,8 @@ pub fn x004027b4() -> Cont {
     Cont(x004027f3)
 }
 
-pub fn x004027d4() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004027d4(m: &mut Machine) -> Cont {
     // 004027d4 mov eax,[ebp-8]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32));
     // 004027d7 sub eax,[ebp-10h]
@@ -7202,9 +6918,8 @@ pub fn x004027d4() -> Cont {
     Cont(x0040273d)
 }
 
-pub fn x004027f3() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004027f3(m: &mut Machine) -> Cont {
     // 004027f3 mov edi,eax
     m.regs.edi = m.regs.eax;
     // 004027f5 and edi,0FFh
@@ -7326,9 +7041,8 @@ pub fn x004027f3() -> Cont {
     Cont(x0040273d)
 }
 
-pub fn x00402886() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402886(m: &mut Machine) -> Cont {
     // 00402886 inc dword ptr [ebp-8]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffff8u32),
@@ -7341,9 +7055,8 @@ pub fn x00402886() -> Cont {
     Cont(x00402666)
 }
 
-pub fn x0040288e() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040288e(m: &mut Machine) -> Cont {
     // 0040288e leave
     leave(m);
     // 0040288f pop edi
@@ -7356,9 +7069,8 @@ pub fn x0040288e() -> Cont {
     ret(m, 0)
 }
 
-pub fn x00402893() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402893(m: &mut Machine) -> Cont {
     // 00402893 push ecx
     push(m, m.regs.ecx);
     // 00402894 push esi
@@ -7379,9 +7091,8 @@ pub fn x00402893() -> Cont {
     jge(m, Cont(x004028a2), Cont(x004028bd))
 }
 
-pub fn x004028a2() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004028a2(m: &mut Machine) -> Cont {
     // 004028a2 mov ecx,ds:[40C724h]
     m.regs.ecx = m.memory.read::<u32>(0x40c724u32);
     // 004028a8 imul ecx,ds:[40C728h]
@@ -7410,9 +7121,8 @@ pub fn x004028a2() -> Cont {
     ret(m, 0)
 }
 
-pub fn x004028bd() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004028bd(m: &mut Machine) -> Cont {
     // 004028bd lea ecx,[eax+eax]
     m.regs.ecx = m.regs.eax.wrapping_add(m.regs.eax);
     // 004028c0 mov eax,10000h
@@ -7440,9 +7150,8 @@ pub fn x004028bd() -> Cont {
     jge(m, Cont(x004028e1), Cont(x00402aab))
 }
 
-pub fn x004028d2() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004028d2(m: &mut Machine) -> Cont {
     // 004028d2 mov eax,[ebp-8]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32));
     // 004028d5 cmp eax,ds:[40C728h]
@@ -7451,9 +7160,8 @@ pub fn x004028d2() -> Cont {
     jge(m, Cont(x004028e1), Cont(x00402aab))
 }
 
-pub fn x004028e1() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004028e1(m: &mut Machine) -> Cont {
     // 004028e1 imul eax,ds:[40C724h]
     m.regs.eax = imul(
         m.regs.eax as i32,
@@ -7484,9 +7192,8 @@ pub fn x004028e1() -> Cont {
     jge(m, Cont(x004028fb), Cont(x00402947))
 }
 
-pub fn x004028f6() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004028f6(m: &mut Machine) -> Cont {
     // 004028f6 cmp edx,[ebp-28h]
     sub(
         m.regs.edx,
@@ -7497,9 +7204,8 @@ pub fn x004028f6() -> Cont {
     jge(m, Cont(x004028fb), Cont(x00402947))
 }
 
-pub fn x004028fb() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004028fb(m: &mut Machine) -> Cont {
     // 004028fb mov eax,[ebp-8]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32));
     // 004028fe sub eax,edx
@@ -7510,9 +7216,8 @@ pub fn x004028fb() -> Cont {
     jl(m, Cont(x00402904), Cont(x0040290f))
 }
 
-pub fn x00402904() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402904(m: &mut Machine) -> Cont {
     // 00402904 imul eax,ds:[40C724h]
     m.regs.eax = imul(
         m.regs.eax as i32,
@@ -7525,9 +7230,8 @@ pub fn x00402904() -> Cont {
     Cont(x00402912)
 }
 
-pub fn x0040290f() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040290f(m: &mut Machine) -> Cont {
     // 0040290f mov eax,[ebp-8]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32));
     // 00402912 shl eax,2
@@ -7579,9 +7283,8 @@ pub fn x0040290f() -> Cont {
     Cont(x004028f6)
 }
 
-pub fn x00402912() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402912(m: &mut Machine) -> Cont {
     // 00402912 shl eax,2
     m.regs.eax = shl(m.regs.eax, 0x2u8, &mut m.flags);
     // 00402915 add eax,[ebp-2Ch]
@@ -7631,9 +7334,8 @@ pub fn x00402912() -> Cont {
     Cont(x004028f6)
 }
 
-pub fn x00402947() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402947(m: &mut Machine) -> Cont {
     // 00402947 mov eax,[ebp-10h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff0u32));
     // 0040294a shl eax,2
@@ -7715,9 +7417,8 @@ pub fn x00402947() -> Cont {
     jge(m, Cont(x0040299a), Cont(x00402aa3))
 }
 
-pub fn x0040298e() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040298e(m: &mut Machine) -> Cont {
     // 0040298e mov eax,[ebp-8]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32));
     // 00402991 inc eax
@@ -7728,9 +7429,8 @@ pub fn x0040298e() -> Cont {
     jge(m, Cont(x0040299a), Cont(x00402aa3))
 }
 
-pub fn x0040299a() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040299a(m: &mut Machine) -> Cont {
     // 0040299a mov eax,edx
     m.regs.eax = m.regs.edx;
     // 0040299c sub eax,[ebp-28h]
@@ -7745,9 +7445,8 @@ pub fn x0040299a() -> Cont {
     jl(m, Cont(x004029a3), Cont(x004029b6))
 }
 
-pub fn x004029a3() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004029a3(m: &mut Machine) -> Cont {
     // 004029a3 mov edi,[ebp-8]
     m.regs.edi = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32));
     // 004029a6 sub edi,edx
@@ -7770,9 +7469,8 @@ pub fn x004029a3() -> Cont {
     Cont(x004029b9)
 }
 
-pub fn x004029b6() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004029b6(m: &mut Machine) -> Cont {
     // 004029b6 mov eax,[ebp-10h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff0u32));
     // 004029b9 shl eax,2
@@ -7834,9 +7532,8 @@ pub fn x004029b6() -> Cont {
     jl(m, Cont(x004029f7), Cont(x00402a07))
 }
 
-pub fn x004029b9() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004029b9(m: &mut Machine) -> Cont {
     // 004029b9 shl eax,2
     m.regs.eax = shl(m.regs.eax, 0x2u8, &mut m.flags);
     // 004029bc add eax,[ebp-2Ch]
@@ -7896,9 +7593,8 @@ pub fn x004029b9() -> Cont {
     jl(m, Cont(x004029f7), Cont(x00402a07))
 }
 
-pub fn x004029f7() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004029f7(m: &mut Machine) -> Cont {
     // 004029f7 imul eax,ds:[40C724h]
     m.regs.eax = imul(
         m.regs.eax as i32,
@@ -7915,9 +7611,8 @@ pub fn x004029f7() -> Cont {
     Cont(x00402a0a)
 }
 
-pub fn x00402a07() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402a07(m: &mut Machine) -> Cont {
     // 00402a07 mov eax,[ebp-8]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32));
     // 00402a0a shl eax,2
@@ -8053,9 +7748,8 @@ pub fn x00402a07() -> Cont {
     Cont(x0040298e)
 }
 
-pub fn x00402a0a() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402a0a(m: &mut Machine) -> Cont {
     // 00402a0a shl eax,2
     m.regs.eax = shl(m.regs.eax, 0x2u8, &mut m.flags);
     // 00402a0d add eax,[ebp-2Ch]
@@ -8189,9 +7883,8 @@ pub fn x00402a0a() -> Cont {
     Cont(x0040298e)
 }
 
-pub fn x00402aa3() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402aa3(m: &mut Machine) -> Cont {
     // 00402aa3 mov [ebp-8],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32), m.regs.eax);
@@ -8199,9 +7892,8 @@ pub fn x00402aa3() -> Cont {
     Cont(x004028d2)
 }
 
-pub fn x00402aab() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402aab(m: &mut Machine) -> Cont {
     // 00402aab mov edx,ds:[40C728h]
     m.regs.edx = m.memory.read::<u32>(0x40c728u32);
     // 00402ab1 cmp edx,ds:[40C724h]
@@ -8210,18 +7902,16 @@ pub fn x00402aab() -> Cont {
     jge(m, Cont(x00402abd), Cont(x00402ccb))
 }
 
-pub fn x00402ab1() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402ab1(m: &mut Machine) -> Cont {
     // 00402ab1 cmp edx,ds:[40C724h]
     sub(m.regs.edx, m.memory.read::<u32>(0x40c724u32), &mut m.flags);
     // 00402ab7 jge near ptr 00402CCBh
     jge(m, Cont(x00402abd), Cont(x00402ccb))
 }
 
-pub fn x00402abd() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402abd(m: &mut Machine) -> Cont {
     // 00402abd xor ecx,ecx
     m.regs.ecx = xor(m.regs.ecx, m.regs.ecx, &mut m.flags);
     // 00402abf xor ebx,ebx
@@ -8246,9 +7936,8 @@ pub fn x00402abd() -> Cont {
     jge(m, Cont(x00402ad1), Cont(x00402b3f))
 }
 
-pub fn x00402ac9() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402ac9(m: &mut Machine) -> Cont {
     // 00402ac9 mov eax,[ebp-8]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32));
     // 00402acc cmp eax,[ebp-28h]
@@ -8261,18 +7950,16 @@ pub fn x00402ac9() -> Cont {
     jge(m, Cont(x00402ad1), Cont(x00402b3f))
 }
 
-pub fn x00402ad1() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402ad1(m: &mut Machine) -> Cont {
     // 00402ad1 cmp eax,ds:[40C728h]
     sub(m.regs.eax, m.memory.read::<u32>(0x40c728u32), &mut m.flags);
     // 00402ad7 jge short 00402AEDh
     jge(m, Cont(x00402ad9), Cont(x00402aed))
 }
 
-pub fn x00402ad9() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402ad9(m: &mut Machine) -> Cont {
     // 00402ad9 mov eax,edx
     m.regs.eax = m.regs.edx;
     // 00402adb sub eax,[ebp-8]
@@ -8296,9 +7983,8 @@ pub fn x00402ad9() -> Cont {
     Cont(x00402b05)
 }
 
-pub fn x00402aed() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402aed(m: &mut Machine) -> Cont {
     // 00402aed mov eax,ds:[40C728h]
     m.regs.eax = m.memory.read::<u32>(0x40c728u32);
     // 00402af2 lea edi,[eax-1]
@@ -8379,9 +8065,8 @@ pub fn x00402aed() -> Cont {
     Cont(x00402ac9)
 }
 
-pub fn x00402b05() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402b05(m: &mut Machine) -> Cont {
     // 00402b05 add eax,[ebp-14h]
     m.regs.eax = add(
         m.regs.eax,
@@ -8443,9 +8128,8 @@ pub fn x00402b05() -> Cont {
     Cont(x00402ac9)
 }
 
-pub fn x00402b3f() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402b3f(m: &mut Machine) -> Cont {
     // 00402b3f mov eax,edx
     m.regs.eax = m.regs.edx;
     // 00402b41 shl eax,2
@@ -8526,9 +8210,8 @@ pub fn x00402b3f() -> Cont {
     jge(m, Cont(x00402b99), Cont(x00402cc5))
 }
 
-pub fn x00402b8a() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402b8a(m: &mut Machine) -> Cont {
     // 00402b8a mov eax,[ebp-8]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32));
     // 00402b8d cmp eax,ds:[40C728h]
@@ -8537,9 +8220,8 @@ pub fn x00402b8a() -> Cont {
     jge(m, Cont(x00402b99), Cont(x00402cc5))
 }
 
-pub fn x00402b99() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402b99(m: &mut Machine) -> Cont {
     // 00402b99 sub eax,[ebp-28h]
     m.regs.eax = sub(
         m.regs.eax,
@@ -8552,9 +8234,8 @@ pub fn x00402b99() -> Cont {
     jl(m, Cont(x00402ba0), Cont(x00402bb3))
 }
 
-pub fn x00402ba0() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402ba0(m: &mut Machine) -> Cont {
     // 00402ba0 imul eax,ds:[40C724h]
     m.regs.eax = imul(
         m.regs.eax as i32,
@@ -8581,9 +8262,8 @@ pub fn x00402ba0() -> Cont {
     Cont(x00402bb5)
 }
 
-pub fn x00402bb3() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402bb3(m: &mut Machine) -> Cont {
     // 00402bb3 mov eax,edx
     m.regs.eax = m.regs.edx;
     // 00402bb5 shl eax,2
@@ -8643,9 +8323,8 @@ pub fn x00402bb3() -> Cont {
     jge(m, Cont(x00402bf5), Cont(x00402c08))
 }
 
-pub fn x00402bb5() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402bb5(m: &mut Machine) -> Cont {
     // 00402bb5 shl eax,2
     m.regs.eax = shl(m.regs.eax, 0x2u8, &mut m.flags);
     // 00402bb8 add eax,[ebp-2Ch]
@@ -8703,9 +8382,8 @@ pub fn x00402bb5() -> Cont {
     jge(m, Cont(x00402bf5), Cont(x00402c08))
 }
 
-pub fn x00402bf5() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402bf5(m: &mut Machine) -> Cont {
     // 00402bf5 imul eax,ds:[40C724h]
     m.regs.eax = imul(
         m.regs.eax as i32,
@@ -8732,9 +8410,8 @@ pub fn x00402bf5() -> Cont {
     Cont(x00402c23)
 }
 
-pub fn x00402c08() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402c08(m: &mut Machine) -> Cont {
     // 00402c08 mov eax,ds:[40C728h]
     m.regs.eax = m.memory.read::<u32>(0x40c728u32);
     // 00402c0d lea edi,[eax-1]
@@ -8912,9 +8589,8 @@ pub fn x00402c08() -> Cont {
     Cont(x00402b8a)
 }
 
-pub fn x00402c23() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402c23(m: &mut Machine) -> Cont {
     // 00402c23 shl eax,2
     m.regs.eax = shl(m.regs.eax, 0x2u8, &mut m.flags);
     // 00402c26 add eax,[ebp-2Ch]
@@ -9067,18 +8743,16 @@ pub fn x00402c23() -> Cont {
     Cont(x00402b8a)
 }
 
-pub fn x00402cc5() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402cc5(m: &mut Machine) -> Cont {
     // 00402cc5 inc edx
     m.regs.edx = inc(m.regs.edx, &mut m.flags);
     // 00402cc6 jmp near ptr 00402AB1h
     Cont(x00402ab1)
 }
 
-pub fn x00402ccb() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402ccb(m: &mut Machine) -> Cont {
     // 00402ccb mov dword ptr [ebp-8],0
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32), 0x0u32);
@@ -9090,9 +8764,8 @@ pub fn x00402ccb() -> Cont {
     jge(m, Cont(x00402ce1), Cont(x00402efe))
 }
 
-pub fn x00402cd2() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402cd2(m: &mut Machine) -> Cont {
     // 00402cd2 mov eax,[ebp-8]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32));
     // 00402cd5 cmp eax,ds:[40C728h]
@@ -9101,9 +8774,8 @@ pub fn x00402cd2() -> Cont {
     jge(m, Cont(x00402ce1), Cont(x00402efe))
 }
 
-pub fn x00402ce1() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402ce1(m: &mut Machine) -> Cont {
     // 00402ce1 imul eax,ds:[40C724h]
     m.regs.eax = imul(
         m.regs.eax as i32,
@@ -9138,9 +8810,8 @@ pub fn x00402ce1() -> Cont {
     jge(m, Cont(x00402d02), Cont(x00402d61))
 }
 
-pub fn x00402cfd() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402cfd(m: &mut Machine) -> Cont {
     // 00402cfd cmp edx,[ebp-28h]
     sub(
         m.regs.edx,
@@ -9151,9 +8822,8 @@ pub fn x00402cfd() -> Cont {
     jge(m, Cont(x00402d02), Cont(x00402d61))
 }
 
-pub fn x00402d02() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402d02(m: &mut Machine) -> Cont {
     // 00402d02 mov eax,[ebp-8]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32));
     // 00402d05 add eax,edx
@@ -9164,9 +8834,8 @@ pub fn x00402d02() -> Cont {
     jge(m, Cont(x00402d0f), Cont(x00402d22))
 }
 
-pub fn x00402d0f() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402d0f(m: &mut Machine) -> Cont {
     // 00402d0f imul eax,ds:[40C724h]
     m.regs.eax = imul(
         m.regs.eax as i32,
@@ -9183,9 +8852,8 @@ pub fn x00402d0f() -> Cont {
     Cont(x00402d2b)
 }
 
-pub fn x00402d22() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402d22(m: &mut Machine) -> Cont {
     // 00402d22 mov eax,[ebp-8]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32));
     // 00402d25 add eax,ds:[40C724h]
@@ -9239,9 +8907,8 @@ pub fn x00402d22() -> Cont {
     Cont(x00402cfd)
 }
 
-pub fn x00402d2b() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402d2b(m: &mut Machine) -> Cont {
     // 00402d2b shl eax,2
     m.regs.eax = shl(m.regs.eax, 0x2u8, &mut m.flags);
     // 00402d2e add eax,[ebp-2Ch]
@@ -9291,9 +8958,8 @@ pub fn x00402d2b() -> Cont {
     Cont(x00402cfd)
 }
 
-pub fn x00402d61() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402d61(m: &mut Machine) -> Cont {
     // 00402d61 mov eax,[ebp-10h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff0u32));
     // 00402d64 shl eax,2
@@ -9379,9 +9045,8 @@ pub fn x00402d61() -> Cont {
     jge(m, Cont(x00402db8), Cont(x00402ef6))
 }
 
-pub fn x00402da8() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402da8(m: &mut Machine) -> Cont {
     // 00402da8 mov eax,ds:[40C728h]
     m.regs.eax = m.memory.read::<u32>(0x40c728u32);
     // 00402dad sub eax,[ebp-8]
@@ -9396,9 +9061,8 @@ pub fn x00402da8() -> Cont {
     jge(m, Cont(x00402db8), Cont(x00402ef6))
 }
 
-pub fn x00402db8() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402db8(m: &mut Machine) -> Cont {
     // 00402db8 mov eax,edx
     m.regs.eax = m.regs.edx;
     // 00402dba sub eax,[ebp-28h]
@@ -9413,9 +9077,8 @@ pub fn x00402db8() -> Cont {
     jl(m, Cont(x00402dc1), Cont(x00402de1))
 }
 
-pub fn x00402dc1() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402dc1(m: &mut Machine) -> Cont {
     // 00402dc1 mov eax,[ebp-8]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32));
     // 00402dc4 add eax,edx
@@ -9448,9 +9111,8 @@ pub fn x00402dc1() -> Cont {
     Cont(x00402de4)
 }
 
-pub fn x00402de1() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402de1(m: &mut Machine) -> Cont {
     // 00402de1 mov eax,[ebp-10h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff0u32));
     // 00402de4 shl eax,2
@@ -9512,9 +9174,8 @@ pub fn x00402de1() -> Cont {
     jge(m, Cont(x00402e26), Cont(x00402e3e))
 }
 
-pub fn x00402de4() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402de4(m: &mut Machine) -> Cont {
     // 00402de4 shl eax,2
     m.regs.eax = shl(m.regs.eax, 0x2u8, &mut m.flags);
     // 00402de7 add eax,[ebp-2Ch]
@@ -9574,9 +9235,8 @@ pub fn x00402de4() -> Cont {
     jge(m, Cont(x00402e26), Cont(x00402e3e))
 }
 
-pub fn x00402e26() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402e26(m: &mut Machine) -> Cont {
     // 00402e26 mov edi,ds:[40C724h]
     m.regs.edi = m.memory.read::<u32>(0x40c724u32);
     // 00402e2c imul edi,eax
@@ -9599,9 +9259,8 @@ pub fn x00402e26() -> Cont {
     Cont(x00402e4e)
 }
 
-pub fn x00402e3e() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402e3e(m: &mut Machine) -> Cont {
     // 00402e3e mov eax,ds:[40C728h]
     m.regs.eax = m.memory.read::<u32>(0x40c728u32);
     // 00402e43 dec eax
@@ -9761,9 +9420,8 @@ pub fn x00402e3e() -> Cont {
     Cont(x00402da8)
 }
 
-pub fn x00402e4e() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402e4e(m: &mut Machine) -> Cont {
     // 00402e4e shl eax,2
     m.regs.eax = shl(m.regs.eax, 0x2u8, &mut m.flags);
     // 00402e51 add eax,[ebp-2Ch]
@@ -9907,9 +9565,8 @@ pub fn x00402e4e() -> Cont {
     Cont(x00402da8)
 }
 
-pub fn x00402ef6() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402ef6(m: &mut Machine) -> Cont {
     // 00402ef6 inc dword ptr [ebp-8]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffff8u32),
@@ -9922,9 +9579,8 @@ pub fn x00402ef6() -> Cont {
     Cont(x00402cd2)
 }
 
-pub fn x00402efe() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402efe(m: &mut Machine) -> Cont {
     // 00402efe leave
     leave(m);
     // 00402eff pop edi
@@ -9937,9 +9593,8 @@ pub fn x00402efe() -> Cont {
     ret(m, 0)
 }
 
-pub fn x00402f03() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402f03(m: &mut Machine) -> Cont {
     // 00402f03 push esi
     push(m, m.regs.esi);
     // 00402f04 push edi
@@ -9958,27 +9613,24 @@ pub fn x00402f03() -> Cont {
     jge(m, Cont(x00402f12), Cont(x00402f16))
 }
 
-pub fn x00402f12() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402f12(m: &mut Machine) -> Cont {
     // 00402f12 xor ecx,ecx
     m.regs.ecx = xor(m.regs.ecx, m.regs.ecx, &mut m.flags);
     // 00402f14 jmp short 00402F23h
     Cont(x00402f23)
 }
 
-pub fn x00402f16() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402f16(m: &mut Machine) -> Cont {
     // 00402f16 cmp ecx,0FFh
     sub(m.regs.ecx, 0xffu32, &mut m.flags);
     // 00402f1c jle short 00402F23h
     jle(m, Cont(x00402f1e), Cont(x00402f23))
 }
 
-pub fn x00402f1e() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402f1e(m: &mut Machine) -> Cont {
     // 00402f1e mov ecx,0FFh
     m.regs.ecx = 0xffu32;
     // 00402f23 mov ebx,0FFh
@@ -10060,9 +9712,8 @@ pub fn x00402f1e() -> Cont {
     jge(m, Cont(x00402f80), Cont(x00402fb6))
 }
 
-pub fn x00402f23() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402f23(m: &mut Machine) -> Cont {
     // 00402f23 mov ebx,0FFh
     m.regs.ebx = 0xffu32;
     // 00402f28 sub ebx,ecx
@@ -10142,9 +9793,8 @@ pub fn x00402f23() -> Cont {
     jge(m, Cont(x00402f80), Cont(x00402fb6))
 }
 
-pub fn x00402f6f() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402f6f(m: &mut Machine) -> Cont {
     // 00402f6f mov ebx,ds:[40C724h]
     m.regs.ebx = m.memory.read::<u32>(0x40c724u32);
     // 00402f75 imul ebx,ds:[40C728h]
@@ -10159,9 +9809,8 @@ pub fn x00402f6f() -> Cont {
     jge(m, Cont(x00402f80), Cont(x00402fb6))
 }
 
-pub fn x00402f80() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402f80(m: &mut Machine) -> Cont {
     // 00402f80 mov edi,edx
     m.regs.edi = m.regs.edx;
     // 00402f82 mov ebx,[ebp-0Ch]
@@ -10204,9 +9853,8 @@ pub fn x00402f80() -> Cont {
     Cont(x00402f6f)
 }
 
-pub fn x00402fb6() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00402fb6(m: &mut Machine) -> Cont {
     // 00402fb6 emms
     // no-op
     // 00402fb8 leave
@@ -10219,9 +9867,8 @@ pub fn x00402fb6() -> Cont {
     ret(m, 0)
 }
 
-pub fn x00403202() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403202(m: &mut Machine) -> Cont {
     // 00403202 push esi
     push(m, m.regs.esi);
     // 00403203 push edi
@@ -10242,27 +9889,24 @@ pub fn x00403202() -> Cont {
     jge(m, Cont(x00403211), Cont(x00403215))
 }
 
-pub fn x00403211() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403211(m: &mut Machine) -> Cont {
     // 00403211 xor edx,ecx
     m.regs.edx = xor(m.regs.edx, m.regs.ecx, &mut m.flags);
     // 00403213 jmp short 00403222h
     Cont(x00403222)
 }
 
-pub fn x00403215() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403215(m: &mut Machine) -> Cont {
     // 00403215 cmp ecx,0FFh
     sub(m.regs.ecx, 0xffu32, &mut m.flags);
     // 0040321b jle short 00403222h
     jle(m, Cont(x0040321d), Cont(x00403222))
 }
 
-pub fn x0040321d() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040321d(m: &mut Machine) -> Cont {
     // 0040321d mov edx,0FFh
     m.regs.edx = 0xffu32;
     // 00403222 mov ecx,0FFh
@@ -10309,9 +9953,8 @@ pub fn x0040321d() -> Cont {
     jge(m, Cont(x00403257), Cont(x004032b2))
 }
 
-pub fn x00403222() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403222(m: &mut Machine) -> Cont {
     // 00403222 mov ecx,0FFh
     m.regs.ecx = 0xffu32;
     // 00403227 mov esi,edx
@@ -10356,9 +9999,8 @@ pub fn x00403222() -> Cont {
     jge(m, Cont(x00403257), Cont(x004032b2))
 }
 
-pub fn x00403247() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403247(m: &mut Machine) -> Cont {
     // 00403247 mov eax,ds:[40C724h]
     m.regs.eax = m.memory.read::<u32>(0x40c724u32);
     // 0040324c imul eax,ds:[40C728h]
@@ -10373,9 +10015,8 @@ pub fn x00403247() -> Cont {
     jge(m, Cont(x00403257), Cont(x004032b2))
 }
 
-pub fn x00403257() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403257(m: &mut Machine) -> Cont {
     // 00403257 mov eax,[ebp-8]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32));
     // 0040325a mov edi,esi
@@ -10448,9 +10089,8 @@ pub fn x00403257() -> Cont {
     Cont(x00403247)
 }
 
-pub fn x004032b2() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004032b2(m: &mut Machine) -> Cont {
     // 004032b2 emms
     // no-op
     // 004032b4 leave
@@ -10463,9 +10103,8 @@ pub fn x004032b2() -> Cont {
     ret(m, 0)
 }
 
-pub fn x00403340() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403340(m: &mut Machine) -> Cont {
     // 00403340 push ebx
     push(m, m.regs.ebx);
     // 00403341 push ecx
@@ -10494,9 +10133,8 @@ pub fn x00403340() -> Cont {
     jge(m, Cont(x0040335b), Cont(x00403372))
 }
 
-pub fn x0040334a() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040334a(m: &mut Machine) -> Cont {
     // 0040334a mov edx,ds:[40C724h]
     m.regs.edx = m.memory.read::<u32>(0x40c724u32);
     // 00403350 imul edx,ds:[40C728h]
@@ -10511,9 +10149,8 @@ pub fn x0040334a() -> Cont {
     jge(m, Cont(x0040335b), Cont(x00403372))
 }
 
-pub fn x0040335b() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040335b(m: &mut Machine) -> Cont {
     // 0040335b mov ebx,eax
     m.regs.ebx = m.regs.eax;
     // 0040335d shl ebx,2
@@ -10534,9 +10171,8 @@ pub fn x0040335b() -> Cont {
     Cont(x0040334a)
 }
 
-pub fn x00403372() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403372(m: &mut Machine) -> Cont {
     // 00403372 pop edi
     m.regs.edi = pop(m);
     // 00403373 pop esi
@@ -10549,9 +10185,8 @@ pub fn x00403372() -> Cont {
     ret(m, 0)
 }
 
-pub fn x00403377() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403377(m: &mut Machine) -> Cont {
     // 00403377 push ebx
     push(m, m.regs.ebx);
     // 00403378 push ecx
@@ -10580,9 +10215,8 @@ pub fn x00403377() -> Cont {
     jge(m, Cont(x00403392), Cont(x004033b2))
 }
 
-pub fn x00403381() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403381(m: &mut Machine) -> Cont {
     // 00403381 mov edx,ds:[40C724h]
     m.regs.edx = m.memory.read::<u32>(0x40c724u32);
     // 00403387 imul edx,ds:[40C728h]
@@ -10597,9 +10231,8 @@ pub fn x00403381() -> Cont {
     jge(m, Cont(x00403392), Cont(x004033b2))
 }
 
-pub fn x00403392() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403392(m: &mut Machine) -> Cont {
     // 00403392 mov eax,ecx
     m.regs.eax = m.regs.ecx;
     // 00403394 shl eax,2
@@ -10628,9 +10261,8 @@ pub fn x00403392() -> Cont {
     Cont(x00403381)
 }
 
-pub fn x004033b2() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004033b2(m: &mut Machine) -> Cont {
     // 004033b2 emms
     // no-op
     // 004033b4 pop edi
@@ -10645,9 +10277,8 @@ pub fn x004033b2() -> Cont {
     ret(m, 0)
 }
 
-pub fn x004033b9() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004033b9(m: &mut Machine) -> Cont {
     // 004033b9 push ebx
     push(m, m.regs.ebx);
     // 004033ba push ecx
@@ -10678,9 +10309,8 @@ pub fn x004033b9() -> Cont {
     jge(m, Cont(x004033d5), Cont(x004033f5))
 }
 
-pub fn x004033c4() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004033c4(m: &mut Machine) -> Cont {
     // 004033c4 mov edx,ds:[40C724h]
     m.regs.edx = m.memory.read::<u32>(0x40c724u32);
     // 004033ca imul edx,ds:[40C728h]
@@ -10695,9 +10325,8 @@ pub fn x004033c4() -> Cont {
     jge(m, Cont(x004033d5), Cont(x004033f5))
 }
 
-pub fn x004033d5() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004033d5(m: &mut Machine) -> Cont {
     // 004033d5 mov eax,ecx
     m.regs.eax = m.regs.ecx;
     // 004033d7 shl eax,2
@@ -10730,9 +10359,8 @@ pub fn x004033d5() -> Cont {
     Cont(x004033c4)
 }
 
-pub fn x004033f5() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004033f5(m: &mut Machine) -> Cont {
     // 004033f5 emms
     // no-op
     // 004033f7 leave
@@ -10747,9 +10375,8 @@ pub fn x004033f5() -> Cont {
     ret(m, 0)
 }
 
-pub fn x004033fc() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004033fc(m: &mut Machine) -> Cont {
     // 004033fc push ecx
     push(m, m.regs.ecx);
     // 004033fd push esi
@@ -10780,9 +10407,8 @@ pub fn x004033fc() -> Cont {
     jge(m, Cont(x0040341e), Cont(x004034b9))
 }
 
-pub fn x00403415() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403415(m: &mut Machine) -> Cont {
     // 00403415 cmp ebx,[ebp-8]
     sub(
         m.regs.ebx,
@@ -10793,9 +10419,8 @@ pub fn x00403415() -> Cont {
     jge(m, Cont(x0040341e), Cont(x004034b9))
 }
 
-pub fn x0040341e() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040341e(m: &mut Machine) -> Cont {
     // 0040341e mov eax,ebx
     m.regs.eax = m.regs.ebx;
     // 00403420 shl eax,2
@@ -10852,9 +10477,8 @@ pub fn x0040341e() -> Cont {
     jge(m, Cont(x0040346b), Cont(x0040346d))
 }
 
-pub fn x0040346b() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040346b(m: &mut Machine) -> Cont {
     // 0040346b xor ecx,ecx
     m.regs.ecx = xor(m.regs.ecx, m.regs.ecx, &mut m.flags);
     // 0040346d test eax,eax
@@ -10863,18 +10487,16 @@ pub fn x0040346b() -> Cont {
     jge(m, Cont(x00403471), Cont(x00403473))
 }
 
-pub fn x0040346d() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040346d(m: &mut Machine) -> Cont {
     // 0040346d test eax,eax
     and(m.regs.eax, m.regs.eax, &mut m.flags);
     // 0040346f jge short 00403473h
     jge(m, Cont(x00403471), Cont(x00403473))
 }
 
-pub fn x00403471() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403471(m: &mut Machine) -> Cont {
     // 00403471 xor eax,eax
     m.regs.eax = xor(m.regs.eax, m.regs.eax, &mut m.flags);
     // 00403473 test edx,edx
@@ -10883,18 +10505,16 @@ pub fn x00403471() -> Cont {
     jge(m, Cont(x00403477), Cont(x00403479))
 }
 
-pub fn x00403473() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403473(m: &mut Machine) -> Cont {
     // 00403473 test edx,edx
     and(m.regs.edx, m.regs.edx, &mut m.flags);
     // 00403475 jge short 00403479h
     jge(m, Cont(x00403477), Cont(x00403479))
 }
 
-pub fn x00403477() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403477(m: &mut Machine) -> Cont {
     // 00403477 xor edx,edx
     m.regs.edx = xor(m.regs.edx, m.regs.edx, &mut m.flags);
     // 00403479 cmp ecx,0FFh
@@ -10903,18 +10523,16 @@ pub fn x00403477() -> Cont {
     jle(m, Cont(x00403481), Cont(x00403486))
 }
 
-pub fn x00403479() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403479(m: &mut Machine) -> Cont {
     // 00403479 cmp ecx,0FFh
     sub(m.regs.ecx, 0xffu32, &mut m.flags);
     // 0040347f jle short 00403486h
     jle(m, Cont(x00403481), Cont(x00403486))
 }
 
-pub fn x00403481() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403481(m: &mut Machine) -> Cont {
     // 00403481 mov ecx,0FFh
     m.regs.ecx = 0xffu32;
     // 00403486 cmp eax,0FFh
@@ -10923,18 +10541,16 @@ pub fn x00403481() -> Cont {
     jle(m, Cont(x0040348d), Cont(x00403492))
 }
 
-pub fn x00403486() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403486(m: &mut Machine) -> Cont {
     // 00403486 cmp eax,0FFh
     sub(m.regs.eax, 0xffu32, &mut m.flags);
     // 0040348b jle short 00403492h
     jle(m, Cont(x0040348d), Cont(x00403492))
 }
 
-pub fn x0040348d() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040348d(m: &mut Machine) -> Cont {
     // 0040348d mov eax,0FFh
     m.regs.eax = 0xffu32;
     // 00403492 cmp edx,0FFh
@@ -10943,18 +10559,16 @@ pub fn x0040348d() -> Cont {
     jle(m, Cont(x0040349a), Cont(x0040349f))
 }
 
-pub fn x00403492() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403492(m: &mut Machine) -> Cont {
     // 00403492 cmp edx,0FFh
     sub(m.regs.edx, 0xffu32, &mut m.flags);
     // 00403498 jle short 0040349Fh
     jle(m, Cont(x0040349a), Cont(x0040349f))
 }
 
-pub fn x0040349a() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040349a(m: &mut Machine) -> Cont {
     // 0040349a mov edx,0FFh
     m.regs.edx = 0xffu32;
     // 0040349f shl eax,8
@@ -10983,9 +10597,8 @@ pub fn x0040349a() -> Cont {
     Cont(x00403415)
 }
 
-pub fn x0040349f() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040349f(m: &mut Machine) -> Cont {
     // 0040349f shl eax,8
     m.regs.eax = shl(m.regs.eax, 0x8u8, &mut m.flags);
     // 004034a2 add edx,eax
@@ -11012,9 +10625,8 @@ pub fn x0040349f() -> Cont {
     Cont(x00403415)
 }
 
-pub fn x004034b9() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004034b9(m: &mut Machine) -> Cont {
     // 004034b9 leave
     leave(m);
     // 004034ba pop esi
@@ -11025,9 +10637,8 @@ pub fn x004034b9() -> Cont {
     ret(m, 0)
 }
 
-pub fn x004034bd() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004034bd(m: &mut Machine) -> Cont {
     // 004034bd push ecx
     push(m, m.regs.ecx);
     // 004034be push esi
@@ -11059,9 +10670,8 @@ pub fn x004034bd() -> Cont {
     jle(m, Cont(x004034db), Cont(x00403533))
 }
 
-pub fn x004034db() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004034db(m: &mut Machine) -> Cont {
     // 004034db xor ecx,ecx
     m.regs.ecx = xor(m.regs.ecx, m.regs.ecx, &mut m.flags);
     // 004034dd mov eax,ds:[40C724h]
@@ -11078,9 +10688,8 @@ pub fn x004034db() -> Cont {
     jge(m, Cont(x004034ed), Cont(x00403533))
 }
 
-pub fn x004034dd() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004034dd(m: &mut Machine) -> Cont {
     // 004034dd mov eax,ds:[40C724h]
     m.regs.eax = m.memory.read::<u32>(0x40c724u32);
     // 004034e2 imul eax,ds:[40C728h]
@@ -11095,9 +10704,8 @@ pub fn x004034dd() -> Cont {
     jge(m, Cont(x004034ed), Cont(x00403533))
 }
 
-pub fn x004034ed() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004034ed(m: &mut Machine) -> Cont {
     // 004034ed mov edx,ecx
     m.regs.edx = m.regs.ecx;
     // 004034ef shl edx,2
@@ -11157,9 +10765,8 @@ pub fn x004034ed() -> Cont {
     Cont(x004034dd)
 }
 
-pub fn x00403533() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403533(m: &mut Machine) -> Cont {
     // 00403533 emms
     // no-op
     // 00403535 leave
@@ -11174,9 +10781,8 @@ pub fn x00403533() -> Cont {
     ret(m, 0)
 }
 
-pub fn x00403737() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403737(m: &mut Machine) -> Cont {
     // 00403737 push esi
     push(m, m.regs.esi);
     // 00403738 push edi
@@ -11200,18 +10806,16 @@ pub fn x00403737() -> Cont {
     jge(m, Cont(x00403750), Cont(x0040380f))
 }
 
-pub fn x00403748() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403748(m: &mut Machine) -> Cont {
     // 00403748 cmp eax,ebx
     sub(m.regs.eax, m.regs.ebx, &mut m.flags);
     // 0040374a jge near ptr 0040380Fh
     jge(m, Cont(x00403750), Cont(x0040380f))
 }
 
-pub fn x00403750() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403750(m: &mut Machine) -> Cont {
     // 00403750 mov edx,eax
     m.regs.edx = m.regs.eax;
     // 00403752 sar edx,3
@@ -11230,9 +10834,8 @@ pub fn x00403750() -> Cont {
     je(m, Cont(x0040375f), Cont(x00403767))
 }
 
-pub fn x0040375f() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040375f(m: &mut Machine) -> Cont {
     // 0040375f mov ecx,eax
     m.regs.ecx = m.regs.eax;
     // 00403761 shl ecx,2
@@ -11257,9 +10860,8 @@ pub fn x0040375f() -> Cont {
     je(m, Cont(x00403775), Cont(x0040377e))
 }
 
-pub fn x00403767() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403767(m: &mut Machine) -> Cont {
     // 00403767 movzx ecx,dl
     m.regs.ecx = m.regs.get_dl() as _;
     // 0040376a sar ecx,1
@@ -11277,9 +10879,8 @@ pub fn x00403767() -> Cont {
     je(m, Cont(x00403775), Cont(x0040377e))
 }
 
-pub fn x00403775() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403775(m: &mut Machine) -> Cont {
     // 00403775 mov ecx,eax
     m.regs.ecx = m.regs.eax;
     // 00403777 shl ecx,2
@@ -11306,9 +10907,8 @@ pub fn x00403775() -> Cont {
     je(m, Cont(x0040378d), Cont(x00403796))
 }
 
-pub fn x0040377e() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040377e(m: &mut Machine) -> Cont {
     // 0040377e movzx ecx,dl
     m.regs.ecx = m.regs.get_dl() as _;
     // 00403781 sar ecx,2
@@ -11326,9 +10926,8 @@ pub fn x0040377e() -> Cont {
     je(m, Cont(x0040378d), Cont(x00403796))
 }
 
-pub fn x0040378d() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040378d(m: &mut Machine) -> Cont {
     // 0040378d mov ecx,eax
     m.regs.ecx = m.regs.eax;
     // 0040378f shl ecx,2
@@ -11355,9 +10954,8 @@ pub fn x0040378d() -> Cont {
     je(m, Cont(x004037a5), Cont(x004037ae))
 }
 
-pub fn x00403796() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403796(m: &mut Machine) -> Cont {
     // 00403796 movzx ecx,dl
     m.regs.ecx = m.regs.get_dl() as _;
     // 00403799 sar ecx,3
@@ -11375,9 +10973,8 @@ pub fn x00403796() -> Cont {
     je(m, Cont(x004037a5), Cont(x004037ae))
 }
 
-pub fn x004037a5() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004037a5(m: &mut Machine) -> Cont {
     // 004037a5 mov ecx,eax
     m.regs.ecx = m.regs.eax;
     // 004037a7 shl ecx,2
@@ -11404,9 +11001,8 @@ pub fn x004037a5() -> Cont {
     je(m, Cont(x004037bd), Cont(x004037c6))
 }
 
-pub fn x004037ae() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004037ae(m: &mut Machine) -> Cont {
     // 004037ae movzx ecx,dl
     m.regs.ecx = m.regs.get_dl() as _;
     // 004037b1 sar ecx,4
@@ -11424,9 +11020,8 @@ pub fn x004037ae() -> Cont {
     je(m, Cont(x004037bd), Cont(x004037c6))
 }
 
-pub fn x004037bd() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004037bd(m: &mut Machine) -> Cont {
     // 004037bd mov ecx,eax
     m.regs.ecx = m.regs.eax;
     // 004037bf shl ecx,2
@@ -11453,9 +11048,8 @@ pub fn x004037bd() -> Cont {
     je(m, Cont(x004037d5), Cont(x004037de))
 }
 
-pub fn x004037c6() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004037c6(m: &mut Machine) -> Cont {
     // 004037c6 movzx ecx,dl
     m.regs.ecx = m.regs.get_dl() as _;
     // 004037c9 sar ecx,5
@@ -11473,9 +11067,8 @@ pub fn x004037c6() -> Cont {
     je(m, Cont(x004037d5), Cont(x004037de))
 }
 
-pub fn x004037d5() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004037d5(m: &mut Machine) -> Cont {
     // 004037d5 mov ecx,eax
     m.regs.ecx = m.regs.eax;
     // 004037d7 shl ecx,2
@@ -11502,9 +11095,8 @@ pub fn x004037d5() -> Cont {
     je(m, Cont(x004037ed), Cont(x004037f6))
 }
 
-pub fn x004037de() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004037de(m: &mut Machine) -> Cont {
     // 004037de movzx ecx,dl
     m.regs.ecx = m.regs.get_dl() as _;
     // 004037e1 sar ecx,6
@@ -11522,9 +11114,8 @@ pub fn x004037de() -> Cont {
     je(m, Cont(x004037ed), Cont(x004037f6))
 }
 
-pub fn x004037ed() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004037ed(m: &mut Machine) -> Cont {
     // 004037ed mov ecx,eax
     m.regs.ecx = m.regs.eax;
     // 004037ef shl ecx,2
@@ -11544,9 +11135,8 @@ pub fn x004037ed() -> Cont {
     je(m, Cont(x00403801), Cont(x00403807))
 }
 
-pub fn x004037f6() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004037f6(m: &mut Machine) -> Cont {
     // 004037f6 movzx edx,dl
     m.regs.edx = m.regs.get_dl() as _;
     // 004037f9 sar edx,7
@@ -11557,9 +11147,8 @@ pub fn x004037f6() -> Cont {
     je(m, Cont(x00403801), Cont(x00403807))
 }
 
-pub fn x00403801() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403801(m: &mut Machine) -> Cont {
     // 00403801 mov edx,eax
     m.regs.edx = m.regs.eax;
     // 00403803 mov [esi+edx*4+1Ch],edi
@@ -11576,18 +11165,16 @@ pub fn x00403801() -> Cont {
     Cont(x00403748)
 }
 
-pub fn x00403807() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403807(m: &mut Machine) -> Cont {
     // 00403807 add eax,8
     m.regs.eax = add(m.regs.eax, 0x8u32, &mut m.flags);
     // 0040380a jmp near ptr 00403748h
     Cont(x00403748)
 }
 
-pub fn x0040380f() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040380f(m: &mut Machine) -> Cont {
     // 0040380f mov eax,1
     m.regs.eax = 0x1u32;
     // 00403814 mov ebx,ds:[433FACh]
@@ -11598,9 +11185,8 @@ pub fn x0040380f() -> Cont {
     call(m, 0x403821, Cont(x00401deb))
 }
 
-pub fn x00403821() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403821(m: &mut Machine) -> Cont {
     // 00403821 mov eax,1
     m.regs.eax = 0x1u32;
     // 00403826 mov edx,ds:[433FACh]
@@ -11611,9 +11197,8 @@ pub fn x00403821() -> Cont {
     call(m, 0x403833, Cont(x00401ff6))
 }
 
-pub fn x00403833() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403833(m: &mut Machine) -> Cont {
     // 00403833 leave
     leave(m);
     // 00403834 pop edi
@@ -11624,9 +11209,8 @@ pub fn x00403833() -> Cont {
     ret(m, 0)
 }
 
-pub fn x00403837() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403837(m: &mut Machine) -> Cont {
     // 00403837 push ebx
     push(m, m.regs.ebx);
     // 00403838 push ecx
@@ -11742,9 +11326,8 @@ pub fn x00403837() -> Cont {
     jns(m, Cont(x004038b4), Cont(x004038b6))
 }
 
-pub fn x004038b4() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004038b4(m: &mut Machine) -> Cont {
     // 004038b4 neg eax
     m.regs.eax = neg(m.regs.eax, &mut m.flags);
     // 004038b6 mov edx,eax
@@ -11763,9 +11346,8 @@ pub fn x004038b4() -> Cont {
     jns(m, Cont(x004038c2), Cont(x004038c4))
 }
 
-pub fn x004038b6() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004038b6(m: &mut Machine) -> Cont {
     // 004038b6 mov edx,eax
     m.regs.edx = m.regs.eax;
     // 004038b8 mov eax,edi
@@ -11782,9 +11364,8 @@ pub fn x004038b6() -> Cont {
     jns(m, Cont(x004038c2), Cont(x004038c4))
 }
 
-pub fn x004038c2() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004038c2(m: &mut Machine) -> Cont {
     // 004038c2 neg eax
     m.regs.eax = neg(m.regs.eax, &mut m.flags);
     // 004038c4 mov edi,eax
@@ -11795,9 +11376,8 @@ pub fn x004038c2() -> Cont {
     jle(m, Cont(x004038ca), Cont(x004038cf))
 }
 
-pub fn x004038c4() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004038c4(m: &mut Machine) -> Cont {
     // 004038c4 mov edi,eax
     m.regs.edi = m.regs.eax;
     // 004038c6 cmp eax,edx
@@ -11806,9 +11386,8 @@ pub fn x004038c4() -> Cont {
     jle(m, Cont(x004038ca), Cont(x004038cf))
 }
 
-pub fn x004038ca() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004038ca(m: &mut Machine) -> Cont {
     // 004038ca mov [ebp-4],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32), m.regs.eax);
@@ -11816,9 +11395,8 @@ pub fn x004038ca() -> Cont {
     Cont(x004038d2)
 }
 
-pub fn x004038cf() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004038cf(m: &mut Machine) -> Cont {
     // 004038cf mov [ebp-4],edx
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32), m.regs.edx);
@@ -11832,9 +11410,8 @@ pub fn x004038cf() -> Cont {
     jl(m, Cont(x004038dc), Cont(x00403a56))
 }
 
-pub fn x004038d2() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004038d2(m: &mut Machine) -> Cont {
     // 004038d2 cmp dword ptr [ebp-4],2
     sub(
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32)),
@@ -11845,9 +11422,8 @@ pub fn x004038d2() -> Cont {
     jl(m, Cont(x004038dc), Cont(x00403a56))
 }
 
-pub fn x004038dc() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004038dc(m: &mut Machine) -> Cont {
     // 004038dc shl ecx,10h
     m.regs.ecx = shl(m.regs.ecx, 0x10u8, &mut m.flags);
     // 004038df shl dword ptr [ebp-28h],10h
@@ -11920,9 +11496,8 @@ pub fn x004038dc() -> Cont {
     jle(m, Cont(x00403907), Cont(x00403911))
 }
 
-pub fn x00403907() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403907(m: &mut Machine) -> Cont {
     // 00403907 mov eax,ds:[40C724h]
     m.regs.eax = m.memory.read::<u32>(0x40c724u32);
     // 0040390c mov [ebp-2Ch],eax
@@ -11932,9 +11507,8 @@ pub fn x00403907() -> Cont {
     Cont(x0040391c)
 }
 
-pub fn x00403911() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403911(m: &mut Machine) -> Cont {
     // 00403911 mov eax,ds:[40C724h]
     m.regs.eax = m.memory.read::<u32>(0x40c724u32);
     // 00403916 mov [ebp-2Ch],eax
@@ -11958,9 +11532,8 @@ pub fn x00403911() -> Cont {
     jle(m, Cont(x00403921), Cont(x0040392a))
 }
 
-pub fn x0040391c() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040391c(m: &mut Machine) -> Cont {
     // 0040391c cmp ecx,[ebp-28h]
     sub(
         m.regs.ecx,
@@ -11971,9 +11544,8 @@ pub fn x0040391c() -> Cont {
     jle(m, Cont(x00403921), Cont(x0040392a))
 }
 
-pub fn x00403921() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403921(m: &mut Machine) -> Cont {
     // 00403921 mov dword ptr [ebp-30h],1
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xffffffd0u32), 0x1u32);
@@ -11981,9 +11553,8 @@ pub fn x00403921() -> Cont {
     Cont(x00403931)
 }
 
-pub fn x0040392a() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040392a(m: &mut Machine) -> Cont {
     // 0040392a mov dword ptr [ebp-30h],0FFFFFFFFh
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xffffffd0u32), 0xffffffffu32);
@@ -12019,9 +11590,8 @@ pub fn x0040392a() -> Cont {
     jne(m, Cont(x00403953), Cont(x00403965))
 }
 
-pub fn x00403931() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403931(m: &mut Machine) -> Cont {
     // 00403931 mov eax,[ebp-24h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffdcu32));
     // 00403934 sar eax,10h
@@ -12054,9 +11624,8 @@ pub fn x00403931() -> Cont {
     jne(m, Cont(x00403953), Cont(x00403965))
 }
 
-pub fn x00403953() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403953(m: &mut Machine) -> Cont {
     // 00403953 lea edx,[ebp-28h]
     m.regs.edx = m.regs.ebp.wrapping_add(0xffffffd8u32);
     // 00403956 lea eax,[ebp-20h]
@@ -12071,9 +11640,8 @@ pub fn x00403953() -> Cont {
     Cont(x00403982)
 }
 
-pub fn x00403965() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403965(m: &mut Machine) -> Cont {
     // 00403965 lea edx,[ebp-24h]
     m.regs.edx = m.regs.ebp.wrapping_add(0xffffffdcu32);
     // 00403968 lea eax,[ebp-1Ch]
@@ -12117,9 +11685,8 @@ pub fn x00403965() -> Cont {
     jge(m, Cont(x00403995), Cont(x00403a54))
 }
 
-pub fn x00403982() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403982(m: &mut Machine) -> Cont {
     // 00403982 mov eax,[edx]
     m.regs.eax = m.memory.read::<u32>(m.regs.edx);
     // 00403984 sar eax,10h
@@ -12139,9 +11706,8 @@ pub fn x00403982() -> Cont {
     jge(m, Cont(x00403995), Cont(x00403a54))
 }
 
-pub fn x0040398c() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040398c(m: &mut Machine) -> Cont {
     // 0040398c cmp edi,[ebp-4]
     sub(
         m.regs.edi,
@@ -12152,9 +11718,8 @@ pub fn x0040398c() -> Cont {
     jge(m, Cont(x00403995), Cont(x00403a54))
 }
 
-pub fn x00403995() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403995(m: &mut Machine) -> Cont {
     // 00403995 mov esi,[edx]
     m.regs.esi = m.memory.read::<u32>(m.regs.edx);
     // 00403997 sar esi,8
@@ -12285,9 +11850,8 @@ pub fn x00403995() -> Cont {
     je(m, Cont(x00403a3b), Cont(x00403a46))
 }
 
-pub fn x00403a3b() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403a3b(m: &mut Machine) -> Cont {
     // 00403a3b mov [ebp-10h],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffff0u32), m.regs.eax);
@@ -12309,9 +11873,8 @@ pub fn x00403a3b() -> Cont {
     Cont(x0040398c)
 }
 
-pub fn x00403a46() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403a46(m: &mut Machine) -> Cont {
     // 00403a46 mov eax,[ebp-2Ch]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffd4u32));
     // 00403a49 shl eax,2
@@ -12324,9 +11887,8 @@ pub fn x00403a46() -> Cont {
     Cont(x0040398c)
 }
 
-pub fn x00403a54() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403a54(m: &mut Machine) -> Cont {
     // 00403a54 emms
     // no-op
     // 00403a56 leave
@@ -12343,9 +11905,8 @@ pub fn x00403a54() -> Cont {
     ret(m, 16)
 }
 
-pub fn x00403a56() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403a56(m: &mut Machine) -> Cont {
     // 00403a56 leave
     leave(m);
     // 00403a57 pop edi
@@ -12360,9 +11921,8 @@ pub fn x00403a56() -> Cont {
     ret(m, 16)
 }
 
-pub fn x00403a5e() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403a5e(m: &mut Machine) -> Cont {
     // 00403a5e push edx
     push(m, m.regs.edx);
     // 00403a5f push ebp
@@ -12386,9 +11946,8 @@ pub fn x00403a5e() -> Cont {
     jb(m, Cont(x00403a70), Cont(x00403a82))
 }
 
-pub fn x00403a70() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403a70(m: &mut Machine) -> Cont {
     // 00403a70 fld dword ptr [ebp+14h]
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0x14u32)) as f64);
@@ -12406,9 +11965,8 @@ pub fn x00403a70() -> Cont {
     jae(m, Cont(x00403a82), Cont(x00403cd1))
 }
 
-pub fn x00403a82() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403a82(m: &mut Machine) -> Cont {
     // 00403a82 cmp dword ptr [ebp+0Ch],3F800000h
     sub(
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xcu32)),
@@ -12419,9 +11977,8 @@ pub fn x00403a82() -> Cont {
     jge(m, Cont(x00403a8b), Cont(x00403a98))
 }
 
-pub fn x00403a8b() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403a8b(m: &mut Machine) -> Cont {
     // 00403a8b cmp dword ptr [ebp+14h],3F800000h
     sub(
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x14u32)),
@@ -12432,9 +11989,8 @@ pub fn x00403a8b() -> Cont {
     jl(m, Cont(x00403a98), Cont(x00403cd1))
 }
 
-pub fn x00403a98() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403a98(m: &mut Machine) -> Cont {
     // 00403a98 fld dword ptr [ebp+10h]
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0x10u32)) as f64);
@@ -12452,9 +12008,8 @@ pub fn x00403a98() -> Cont {
     jb(m, Cont(x00403aa6), Cont(x00403ab8))
 }
 
-pub fn x00403aa6() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403aa6(m: &mut Machine) -> Cont {
     // 00403aa6 fld dword ptr [ebp+18h]
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0x18u32)) as f64);
@@ -12472,9 +12027,8 @@ pub fn x00403aa6() -> Cont {
     jae(m, Cont(x00403ab8), Cont(x00403cd1))
 }
 
-pub fn x00403ab8() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403ab8(m: &mut Machine) -> Cont {
     // 00403ab8 cmp dword ptr [ebp+10h],3F800000h
     sub(
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x10u32)),
@@ -12485,9 +12039,8 @@ pub fn x00403ab8() -> Cont {
     jge(m, Cont(x00403ac1), Cont(x00403ace))
 }
 
-pub fn x00403ac1() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403ac1(m: &mut Machine) -> Cont {
     // 00403ac1 cmp dword ptr [ebp+18h],3F800000h
     sub(
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x18u32)),
@@ -12498,9 +12051,8 @@ pub fn x00403ac1() -> Cont {
     jl(m, Cont(x00403ace), Cont(x00403cd1))
 }
 
-pub fn x00403ace() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403ace(m: &mut Machine) -> Cont {
     // 00403ace fld dword ptr [ebp+0Ch]
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0xcu32)) as f64);
@@ -12518,9 +12070,8 @@ pub fn x00403ace() -> Cont {
     jb(m, Cont(x00403adc), Cont(x00403b02))
 }
 
-pub fn x00403adc() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403adc(m: &mut Machine) -> Cont {
     // 00403adc fld dword ptr [ebp+0Ch]
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0xcu32)) as f64);
@@ -12578,9 +12129,8 @@ pub fn x00403adc() -> Cont {
     jb(m, Cont(x00403b10), Cont(x00403b36))
 }
 
-pub fn x00403b02() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403b02(m: &mut Machine) -> Cont {
     // 00403b02 fld dword ptr [ebp+14h]
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0x14u32)) as f64);
@@ -12598,9 +12148,8 @@ pub fn x00403b02() -> Cont {
     jb(m, Cont(x00403b10), Cont(x00403b36))
 }
 
-pub fn x00403b10() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403b10(m: &mut Machine) -> Cont {
     // 00403b10 fld dword ptr [ebp+14h]
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0x14u32)) as f64);
@@ -12651,9 +12200,8 @@ pub fn x00403b10() -> Cont {
     jge(m, Cont(x00403b3f), Cont(x00403b65))
 }
 
-pub fn x00403b36() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403b36(m: &mut Machine) -> Cont {
     // 00403b36 cmp dword ptr [ebp+0Ch],3F800000h
     sub(
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xcu32)),
@@ -12664,9 +12212,8 @@ pub fn x00403b36() -> Cont {
     jge(m, Cont(x00403b3f), Cont(x00403b65))
 }
 
-pub fn x00403b3f() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403b3f(m: &mut Machine) -> Cont {
     // 00403b3f fld dword ptr [ebp+0Ch]
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0xcu32)) as f64);
@@ -12717,9 +12264,8 @@ pub fn x00403b3f() -> Cont {
     jge(m, Cont(x00403b6e), Cont(x00403b94))
 }
 
-pub fn x00403b65() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403b65(m: &mut Machine) -> Cont {
     // 00403b65 cmp dword ptr [ebp+14h],3F800000h
     sub(
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x14u32)),
@@ -12730,9 +12276,8 @@ pub fn x00403b65() -> Cont {
     jge(m, Cont(x00403b6e), Cont(x00403b94))
 }
 
-pub fn x00403b6e() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403b6e(m: &mut Machine) -> Cont {
     // 00403b6e fld dword ptr [ebp+14h]
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0x14u32)) as f64);
@@ -12790,9 +12335,8 @@ pub fn x00403b6e() -> Cont {
     jb(m, Cont(x00403ba2), Cont(x00403bc8))
 }
 
-pub fn x00403b94() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403b94(m: &mut Machine) -> Cont {
     // 00403b94 fld dword ptr [ebp+10h]
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0x10u32)) as f64);
@@ -12810,9 +12354,8 @@ pub fn x00403b94() -> Cont {
     jb(m, Cont(x00403ba2), Cont(x00403bc8))
 }
 
-pub fn x00403ba2() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403ba2(m: &mut Machine) -> Cont {
     // 00403ba2 fld dword ptr [ebp+10h]
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0x10u32)) as f64);
@@ -12870,9 +12413,8 @@ pub fn x00403ba2() -> Cont {
     jb(m, Cont(x00403bd6), Cont(x00403bfc))
 }
 
-pub fn x00403bc8() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403bc8(m: &mut Machine) -> Cont {
     // 00403bc8 fld dword ptr [ebp+18h]
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0x18u32)) as f64);
@@ -12890,9 +12432,8 @@ pub fn x00403bc8() -> Cont {
     jb(m, Cont(x00403bd6), Cont(x00403bfc))
 }
 
-pub fn x00403bd6() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403bd6(m: &mut Machine) -> Cont {
     // 00403bd6 fld dword ptr [ebp+18h]
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0x18u32)) as f64);
@@ -12943,9 +12484,8 @@ pub fn x00403bd6() -> Cont {
     jge(m, Cont(x00403c05), Cont(x00403c2b))
 }
 
-pub fn x00403bfc() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403bfc(m: &mut Machine) -> Cont {
     // 00403bfc cmp dword ptr [ebp+10h],3F800000h
     sub(
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x10u32)),
@@ -12956,9 +12496,8 @@ pub fn x00403bfc() -> Cont {
     jge(m, Cont(x00403c05), Cont(x00403c2b))
 }
 
-pub fn x00403c05() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403c05(m: &mut Machine) -> Cont {
     // 00403c05 fld dword ptr [ebp+10h]
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0x10u32)) as f64);
@@ -13009,9 +12548,8 @@ pub fn x00403c05() -> Cont {
     jge(m, Cont(x00403c34), Cont(x00403c5a))
 }
 
-pub fn x00403c2b() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403c2b(m: &mut Machine) -> Cont {
     // 00403c2b cmp dword ptr [ebp+18h],3F800000h
     sub(
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x18u32)),
@@ -13022,9 +12560,8 @@ pub fn x00403c2b() -> Cont {
     jge(m, Cont(x00403c34), Cont(x00403c5a))
 }
 
-pub fn x00403c34() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403c34(m: &mut Machine) -> Cont {
     // 00403c34 fld dword ptr [ebp+18h]
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0x18u32)) as f64);
@@ -13082,9 +12619,8 @@ pub fn x00403c34() -> Cont {
     jae(m, Cont(x00403c6c), Cont(x00403cd1))
 }
 
-pub fn x00403c5a() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403c5a(m: &mut Machine) -> Cont {
     // 00403c5a fld dword ptr [ebp+0Ch]
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0xcu32)) as f64);
@@ -13102,9 +12638,8 @@ pub fn x00403c5a() -> Cont {
     jae(m, Cont(x00403c6c), Cont(x00403cd1))
 }
 
-pub fn x00403c6c() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403c6c(m: &mut Machine) -> Cont {
     // 00403c6c fld dword ptr [ebp+14h]
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0x14u32)) as f64);
@@ -13122,9 +12657,8 @@ pub fn x00403c6c() -> Cont {
     jae(m, Cont(x00403c7a), Cont(x00403cd1))
 }
 
-pub fn x00403c7a() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403c7a(m: &mut Machine) -> Cont {
     // 00403c7a cmp dword ptr [ebp+0Ch],3F800000h
     sub(
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xcu32)),
@@ -13135,9 +12669,8 @@ pub fn x00403c7a() -> Cont {
     jl(m, Cont(x00403c83), Cont(x00403cd1))
 }
 
-pub fn x00403c83() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403c83(m: &mut Machine) -> Cont {
     // 00403c83 cmp dword ptr [ebp+14h],3F800000h
     sub(
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x14u32)),
@@ -13148,9 +12681,8 @@ pub fn x00403c83() -> Cont {
     jl(m, Cont(x00403c8c), Cont(x00403cd1))
 }
 
-pub fn x00403c8c() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403c8c(m: &mut Machine) -> Cont {
     // 00403c8c fld dword ptr [ebp+10h]
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0x10u32)) as f64);
@@ -13168,9 +12700,8 @@ pub fn x00403c8c() -> Cont {
     jae(m, Cont(x00403c9a), Cont(x00403cd1))
 }
 
-pub fn x00403c9a() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403c9a(m: &mut Machine) -> Cont {
     // 00403c9a fld dword ptr [ebp+18h]
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0x18u32)) as f64);
@@ -13188,9 +12719,8 @@ pub fn x00403c9a() -> Cont {
     jae(m, Cont(x00403ca8), Cont(x00403cd1))
 }
 
-pub fn x00403ca8() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403ca8(m: &mut Machine) -> Cont {
     // 00403ca8 cmp dword ptr [ebp+10h],3F800000h
     sub(
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x10u32)),
@@ -13201,9 +12731,8 @@ pub fn x00403ca8() -> Cont {
     jl(m, Cont(x00403cb1), Cont(x00403cd1))
 }
 
-pub fn x00403cb1() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403cb1(m: &mut Machine) -> Cont {
     // 00403cb1 cmp dword ptr [ebp+18h],3F800000h
     sub(
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x18u32)),
@@ -13214,9 +12743,8 @@ pub fn x00403cb1() -> Cont {
     jl(m, Cont(x00403cba), Cont(x00403cd1))
 }
 
-pub fn x00403cba() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403cba(m: &mut Machine) -> Cont {
     // 00403cba push dword ptr [ebp+18h]
     push(m, m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x18u32)));
     // 00403cbd push dword ptr [ebp+14h]
@@ -13233,9 +12761,8 @@ pub fn x00403cba() -> Cont {
     call(m, 0x403cd1, Cont(x00403837))
 }
 
-pub fn x00403cd1() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403cd1(m: &mut Machine) -> Cont {
     // 00403cd1 pop ebp
     m.regs.ebp = pop(m);
     // 00403cd2 pop edx
@@ -13244,9 +12771,8 @@ pub fn x00403cd1() -> Cont {
     ret(m, 24)
 }
 
-pub fn x00403d06() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403d06(m: &mut Machine) -> Cont {
     // 00403d06 push esi
     push(m, m.regs.esi);
     // 00403d07 push edi
@@ -13404,9 +12930,8 @@ pub fn x00403d06() -> Cont {
     Cont(x00403e21)
 }
 
-pub fn x00403dbd() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403dbd(m: &mut Machine) -> Cont {
     // 00403dbd cmp dword ptr [ebp-8],7Fh
     sub(
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32)),
@@ -13417,9 +12942,8 @@ pub fn x00403dbd() -> Cont {
     jle(m, Cont(x00403dc3), Cont(x00403dca))
 }
 
-pub fn x00403dc3() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403dc3(m: &mut Machine) -> Cont {
     // 00403dc3 mov dword ptr [ebp-8],7Fh
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32), 0x7fu32);
@@ -13450,9 +12974,8 @@ pub fn x00403dc3() -> Cont {
     call(m, 0x403dec, Cont(x00408838))
 }
 
-pub fn x00403dca() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403dca(m: &mut Machine) -> Cont {
     // 00403dca fld dword ptr [ebp+10h]
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0x10u32)) as f64);
@@ -13480,9 +13003,8 @@ pub fn x00403dca() -> Cont {
     call(m, 0x403dec, Cont(x00408838))
 }
 
-pub fn x00403dec() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403dec(m: &mut Machine) -> Cont {
     // 00403dec fistp dword ptr [ebp-8]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffff8u32),
@@ -13499,9 +13021,8 @@ pub fn x00403dec() -> Cont {
     jge(m, Cont(x00403df5), Cont(x00403dfe))
 }
 
-pub fn x00403df5() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403df5(m: &mut Machine) -> Cont {
     // 00403df5 mov dword ptr [ebp-8],0
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32), 0x0u32);
@@ -13509,9 +13030,8 @@ pub fn x00403df5() -> Cont {
     Cont(x00403e0b)
 }
 
-pub fn x00403dfe() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403dfe(m: &mut Machine) -> Cont {
     // 00403dfe cmp dword ptr [ebp-8],7Fh
     sub(
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32)),
@@ -13522,9 +13042,8 @@ pub fn x00403dfe() -> Cont {
     jle(m, Cont(x00403e04), Cont(x00403e0b))
 }
 
-pub fn x00403e04() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403e04(m: &mut Machine) -> Cont {
     // 00403e04 mov dword ptr [ebp-8],7Fh
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32), 0x7fu32);
@@ -13546,9 +13065,8 @@ pub fn x00403e04() -> Cont {
     jge(m, Cont(x00403e21), Cont(x00403e5c))
 }
 
-pub fn x00403e0b() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403e0b(m: &mut Machine) -> Cont {
     // 00403e0b mov ecx,ds:[433F78h]
     m.regs.ecx = m.memory.read::<u32>(0x433f78u32);
     // 00403e11 inc edx
@@ -13567,9 +13085,8 @@ pub fn x00403e0b() -> Cont {
     jge(m, Cont(x00403e21), Cont(x00403e5c))
 }
 
-pub fn x00403e21() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403e21(m: &mut Machine) -> Cont {
     // 00403e21 lea ecx,[edx+8]
     m.regs.ecx = m.regs.edx.wrapping_add(0x8u32);
     // 00403e24 mov [ebp-4],ecx
@@ -13604,9 +13121,8 @@ pub fn x00403e21() -> Cont {
     call(m, 0x403e43, Cont(x00408838))
 }
 
-pub fn x00403e43() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403e43(m: &mut Machine) -> Cont {
     // 00403e43 fistp dword ptr [ebp-8]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffff8u32),
@@ -13623,9 +13139,8 @@ pub fn x00403e43() -> Cont {
     jge(m, Cont(x00403e50), Cont(x00403dbd))
 }
 
-pub fn x00403e50() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403e50(m: &mut Machine) -> Cont {
     // 00403e50 mov dword ptr [ebp-8],0
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32), 0x0u32);
@@ -13633,9 +13148,8 @@ pub fn x00403e50() -> Cont {
     Cont(x00403dca)
 }
 
-pub fn x00403e5c() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403e5c(m: &mut Machine) -> Cont {
     // 00403e5c mov esi,[ebp-4Ch]
     m.regs.esi = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffb4u32));
     // 00403e62 mov ecx,[ebp-1Ch]
@@ -13656,9 +13170,8 @@ pub fn x00403e5c() -> Cont {
     jne(m, Cont(x00403e7b), Cont(x00403e68))
 }
 
-pub fn x00403e68() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403e68(m: &mut Machine) -> Cont {
     // 00403e68 punpcklbw mm0,[esi]
     m.mmx.mm0 = punpcklbw(m.mmx.mm0 as u32, m.memory.read::<u32>(m.regs.esi));
     // 00403e6b psrlw mm0,9
@@ -13675,9 +13188,8 @@ pub fn x00403e68() -> Cont {
     jne(m, Cont(x00403e7b), Cont(x00403e68))
 }
 
-pub fn x00403e7b() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403e7b(m: &mut Machine) -> Cont {
     // 00403e7b mov edi,[ebp-4Ch]
     m.regs.edi = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffb4u32));
     // 00403e81 add edi,[ebp-10h]
@@ -13943,9 +13455,8 @@ pub fn x00403e7b() -> Cont {
     jne(m, Cont(x00404004), Cont(x00403efe))
 }
 
-pub fn x00403ea3() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403ea3(m: &mut Machine) -> Cont {
     // 00403ea3 mov eax,[ebp-18h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffe8u32));
     // 00403ea9 and eax,0FFh
@@ -14183,9 +13694,8 @@ pub fn x00403ea3() -> Cont {
     jne(m, Cont(x00404004), Cont(x00403efe))
 }
 
-pub fn x00403efe() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00403efe(m: &mut Machine) -> Cont {
     // 00403efe mov ebx,edx
     m.regs.ebx = m.regs.edx;
     // 00403f00 shr ebx,8
@@ -14376,9 +13886,8 @@ pub fn x00403efe() -> Cont {
     jne(m, Cont(x00404004), Cont(x00403efe))
 }
 
-pub fn x00404004() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404004(m: &mut Machine) -> Cont {
     // 00404004 sub edi,[ebp-14h]
     m.regs.edi = sub(
         m.regs.edi,
@@ -14408,9 +13917,8 @@ pub fn x00404004() -> Cont {
     jne(m, Cont(x00404028), Cont(x00403ea3))
 }
 
-pub fn x00404028() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404028(m: &mut Machine) -> Cont {
     // 00404028 mov edi,[ebp-4Ch]
     m.regs.edi = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffb4u32));
     // 0040402e add edi,[ebp-28h]
@@ -14683,9 +14191,8 @@ pub fn x00404028() -> Cont {
     jne(m, Cont(x004041ba), Cont(x004040b4))
 }
 
-pub fn x00404050() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404050(m: &mut Machine) -> Cont {
     // 00404050 mov eax,[ebp-18h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffe8u32));
     // 00404056 and eax,0FFh
@@ -14930,9 +14437,8 @@ pub fn x00404050() -> Cont {
     jne(m, Cont(x004041ba), Cont(x004040b4))
 }
 
-pub fn x004040b4() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004040b4(m: &mut Machine) -> Cont {
     // 004040b4 mov ebx,edx
     m.regs.ebx = m.regs.edx;
     // 004040b6 shr ebx,8
@@ -15123,9 +14629,8 @@ pub fn x004040b4() -> Cont {
     jne(m, Cont(x004041ba), Cont(x004040b4))
 }
 
-pub fn x004041ba() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004041ba(m: &mut Machine) -> Cont {
     // 004041ba sub edi,[ebp-0Ch]
     m.regs.edi = sub(
         m.regs.edi,
@@ -15155,9 +14660,8 @@ pub fn x004041ba() -> Cont {
     jne(m, Cont(x004041de), Cont(x00404050))
 }
 
-pub fn x004041de() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004041de(m: &mut Machine) -> Cont {
     // 004041de mov edi,[ebp-4Ch]
     m.regs.edi = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffb4u32));
     // 004041e4 add edi,[ebp-38h]
@@ -15424,9 +14928,8 @@ pub fn x004041de() -> Cont {
     jne(m, Cont(x0040436b), Cont(x00404265))
 }
 
-pub fn x0040420a() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040420a(m: &mut Machine) -> Cont {
     // 0040420a mov eax,[ebp-18h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffe8u32));
     // 00404210 and eax,0FFh
@@ -15664,9 +15167,8 @@ pub fn x0040420a() -> Cont {
     jne(m, Cont(x0040436b), Cont(x00404265))
 }
 
-pub fn x00404265() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404265(m: &mut Machine) -> Cont {
     // 00404265 mov ebx,edx
     m.regs.ebx = m.regs.edx;
     // 00404267 shr ebx,8
@@ -15857,9 +15359,8 @@ pub fn x00404265() -> Cont {
     jne(m, Cont(x0040436b), Cont(x00404265))
 }
 
-pub fn x0040436b() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040436b(m: &mut Machine) -> Cont {
     // 0040436b add edi,[ebp-24h]
     m.regs.edi = add(
         m.regs.edi,
@@ -15889,9 +15390,8 @@ pub fn x0040436b() -> Cont {
     jne(m, Cont(x0040438f), Cont(x0040420a))
 }
 
-pub fn x0040438f() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040438f(m: &mut Machine) -> Cont {
     // 0040438f mov edi,[ebp-4Ch]
     m.regs.edi = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffb4u32));
     // 00404395 add edi,[ebp-30h]
@@ -16165,9 +15665,8 @@ pub fn x0040438f() -> Cont {
     jne(m, Cont(x00404525), Cont(x0040441f))
 }
 
-pub fn x004043bb() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004043bb(m: &mut Machine) -> Cont {
     // 004043bb mov eax,[ebp-18h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffe8u32));
     // 004043c1 and eax,0FFh
@@ -16412,9 +15911,8 @@ pub fn x004043bb() -> Cont {
     jne(m, Cont(x00404525), Cont(x0040441f))
 }
 
-pub fn x0040441f() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040441f(m: &mut Machine) -> Cont {
     // 0040441f mov ebx,edx
     m.regs.ebx = m.regs.edx;
     // 00404421 shr ebx,8
@@ -16605,9 +16103,8 @@ pub fn x0040441f() -> Cont {
     jne(m, Cont(x00404525), Cont(x0040441f))
 }
 
-pub fn x00404525() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404525(m: &mut Machine) -> Cont {
     // 00404525 add edi,[ebp-34h]
     m.regs.edi = add(
         m.regs.edi,
@@ -16637,9 +16134,8 @@ pub fn x00404525() -> Cont {
     jne(m, Cont(x00404549), Cont(x004043bb))
 }
 
-pub fn x00404549() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404549(m: &mut Machine) -> Cont {
     // 00404549 mov esi,[ebp-4Ch]
     m.regs.esi = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffb4u32));
     // 0040454f mov ecx,[ebp-1Ch]
@@ -16660,9 +16156,8 @@ pub fn x00404549() -> Cont {
     jne(m, Cont(x00404568), Cont(x00404555))
 }
 
-pub fn x00404555() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404555(m: &mut Machine) -> Cont {
     // 00404555 punpcklbw mm0,[esi]
     m.mmx.mm0 = punpcklbw(m.mmx.mm0 as u32, m.memory.read::<u32>(m.regs.esi));
     // 00404558 psrlw mm0,7
@@ -16679,9 +16174,8 @@ pub fn x00404555() -> Cont {
     jne(m, Cont(x00404568), Cont(x00404555))
 }
 
-pub fn x00404568() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404568(m: &mut Machine) -> Cont {
     // 00404568 emms
     // no-op
     // 0040456a leave
@@ -16694,9 +16188,8 @@ pub fn x00404568() -> Cont {
     ret(m, 8)
 }
 
-pub fn x00404570() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404570(m: &mut Machine) -> Cont {
     // 00404570 push edx
     push(m, m.regs.edx);
     // 00404571 enter 4,0
@@ -16772,9 +16265,8 @@ pub fn x00404570() -> Cont {
     ret(m, 0)
 }
 
-pub fn x004045ac() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004045ac(m: &mut Machine) -> Cont {
     // 004045ac enter 34h,0
     enter(m, 0x34u16, 0);
     // 004045b0 lea eax,[ebp+14h]
@@ -16783,9 +16275,8 @@ pub fn x004045ac() -> Cont {
     call(m, 0x4045b8, Cont(x00404570))
 }
 
-pub fn x004045b8() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004045b8(m: &mut Machine) -> Cont {
     // 004045b8 fld dword ptr [ebp+18h]
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0x18u32)) as f64);
@@ -16964,18 +16455,16 @@ pub fn x004045b8() -> Cont {
     jae(m, Cont(x0040464b), Cont(x00404650))
 }
 
-pub fn x0040464b() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040464b(m: &mut Machine) -> Cont {
     // 0040464b mov eax,[ebp-0Ch]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff4u32));
     // 0040464e jmp short 00404653h
     Cont(x00404653)
 }
 
-pub fn x00404650() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404650(m: &mut Machine) -> Cont {
     // 00404650 mov eax,[ebp-10h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff0u32));
     // 00404653 mov [ebp-8],eax
@@ -17062,9 +16551,8 @@ pub fn x00404650() -> Cont {
     call(m, 0x404690, Cont(x00408838))
 }
 
-pub fn x00404653() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404653(m: &mut Machine) -> Cont {
     // 00404653 mov [ebp-8],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32), m.regs.eax);
@@ -17149,9 +16637,8 @@ pub fn x00404653() -> Cont {
     call(m, 0x404690, Cont(x00408838))
 }
 
-pub fn x00404690() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404690(m: &mut Machine) -> Cont {
     // 00404690 fistp dword ptr [ebp-14h]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xffffffecu32),
@@ -17170,9 +16657,8 @@ pub fn x00404690() -> Cont {
     jns(m, Cont(x0040469e), Cont(x004046a0))
 }
 
-pub fn x0040469e() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040469e(m: &mut Machine) -> Cont {
     // 0040469e neg eax
     m.regs.eax = neg(m.regs.eax, &mut m.flags);
     // 004046a0 fld dword ptr [ebp-34h]
@@ -17201,9 +16687,8 @@ pub fn x0040469e() -> Cont {
     call(m, 0x4046c0, Cont(x00408838))
 }
 
-pub fn x004046a0() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004046a0(m: &mut Machine) -> Cont {
     // 004046a0 fld dword ptr [ebp-34h]
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0xffffffccu32)) as f64);
@@ -17230,9 +16715,8 @@ pub fn x004046a0() -> Cont {
     call(m, 0x4046c0, Cont(x00408838))
 }
 
-pub fn x004046c0() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004046c0(m: &mut Machine) -> Cont {
     // 004046c0 fistp dword ptr [ebp-14h]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xffffffecu32),
@@ -17247,9 +16731,8 @@ pub fn x004046c0() -> Cont {
     jns(m, Cont(x004046cb), Cont(x004046cd))
 }
 
-pub fn x004046cb() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004046cb(m: &mut Machine) -> Cont {
     // 004046cb neg eax
     m.regs.eax = neg(m.regs.eax, &mut m.flags);
     // 004046cd fld dword ptr [ebp-8]
@@ -17264,9 +16747,8 @@ pub fn x004046cb() -> Cont {
     call(m, 0x4046e0, Cont(x00408838))
 }
 
-pub fn x004046cd() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004046cd(m: &mut Machine) -> Cont {
     // 004046cd fld dword ptr [ebp-8]
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0xfffffff8u32)) as f64);
@@ -17279,9 +16761,8 @@ pub fn x004046cd() -> Cont {
     call(m, 0x4046e0, Cont(x00408838))
 }
 
-pub fn x004046e0() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004046e0(m: &mut Machine) -> Cont {
     // 004046e0 fistp dword ptr ds:[433F74h]
     m.memory
         .write::<u32>(0x433f74u32, m.fpu.get(0).round() as i32 as u32);
@@ -17292,9 +16773,8 @@ pub fn x004046e0() -> Cont {
     ret(m, 24)
 }
 
-pub fn x004046ea() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004046ea(m: &mut Machine) -> Cont {
     // 004046ea push ebx
     push(m, m.regs.ebx);
     // 004046eb push ecx
@@ -17325,9 +16805,8 @@ pub fn x004046ea() -> Cont {
     call(m, 0x40470e, Cont(x00408838))
 }
 
-pub fn x0040470e() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040470e(m: &mut Machine) -> Cont {
     // 0040470e fistp dword ptr [ebp-4]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffffcu32),
@@ -17342,9 +16821,8 @@ pub fn x0040470e() -> Cont {
     call(m, 0x404718, Cont(x00408838))
 }
 
-pub fn x00404718() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404718(m: &mut Machine) -> Cont {
     // 00404718 fistp dword ptr [ebp-8]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffff8u32),
@@ -17439,9 +16917,8 @@ pub fn x00404718() -> Cont {
     call(m, 0x404772, Cont(x00408838))
 }
 
-pub fn x00404772() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404772(m: &mut Machine) -> Cont {
     // 00404772 fistp dword ptr [ebp-0Ch]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffff4u32),
@@ -17523,9 +17000,8 @@ pub fn x00404772() -> Cont {
     call(m, 0x4047c9, Cont(x00408838))
 }
 
-pub fn x004047c9() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004047c9(m: &mut Machine) -> Cont {
     // 004047c9 fistp dword ptr [ebp-10h]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffff0u32),
@@ -17542,9 +17018,8 @@ pub fn x004047c9() -> Cont {
     call(m, 0x4047d7, Cont(x00404a91))
 }
 
-pub fn x004047d7() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004047d7(m: &mut Machine) -> Cont {
     // 004047d7 mov edx,[ebp+1Ch]
     m.regs.edx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x1cu32));
     // 004047da mov eax,[ebp+18h]
@@ -17553,9 +17028,8 @@ pub fn x004047d7() -> Cont {
     call(m, 0x4047e2, Cont(x00404ceb))
 }
 
-pub fn x004047e2() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004047e2(m: &mut Machine) -> Cont {
     // 004047e2 leave
     leave(m);
     // 004047e3 pop edx
@@ -17568,9 +17042,8 @@ pub fn x004047e2() -> Cont {
     ret(m, 12)
 }
 
-pub fn x004047e9() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004047e9(m: &mut Machine) -> Cont {
     // 004047e9 push ebx
     push(m, m.regs.ebx);
     // 004047ea push ecx
@@ -17589,9 +17062,8 @@ pub fn x004047e9() -> Cont {
     call(m, 0x4047fc, Cont(x00401a60))
 }
 
-pub fn x004047fc() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004047fc(m: &mut Machine) -> Cont {
     // 004047fc mov ds:[433F58h],eax
     m.memory.write::<u32>(0x433f58u32, m.regs.eax);
     // 00404801 mov eax,ds:[40C724h]
@@ -17612,9 +17084,8 @@ pub fn x004047fc() -> Cont {
     call(m, 0x404819, Cont(x00401a60))
 }
 
-pub fn x00404819() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404819(m: &mut Machine) -> Cont {
     // 00404819 mov ds:[433F54h],eax
     m.memory.write::<u32>(0x433f54u32, m.regs.eax);
     // 0040481e mov eax,ds:[40C724h]
@@ -17633,9 +17104,8 @@ pub fn x00404819() -> Cont {
     call(m, 0x404833, Cont(x00401a60))
 }
 
-pub fn x00404833() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404833(m: &mut Machine) -> Cont {
     // 00404833 mov ds:[433F68h],eax
     m.memory.write::<u32>(0x433f68u32, m.regs.eax);
     // 00404838 mov eax,ds:[40C724h]
@@ -17652,9 +17122,8 @@ pub fn x00404833() -> Cont {
     call(m, 0x40484c, Cont(x00401a60))
 }
 
-pub fn x0040484c() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040484c(m: &mut Machine) -> Cont {
     // 0040484c mov ds:[433F50h],eax
     m.memory.write::<u32>(0x433f50u32, m.regs.eax);
     // 00404851 mov eax,ds:[40C728h]
@@ -17681,9 +17150,8 @@ pub fn x0040484c() -> Cont {
     call(m, 0x404870, Cont(x00401a60))
 }
 
-pub fn x00404870() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404870(m: &mut Machine) -> Cont {
     // 00404870 mov ds:[433F64h],eax
     m.memory.write::<u32>(0x433f64u32, m.regs.eax);
     // 00404875 mov eax,ds:[40C728h]
@@ -17710,9 +17178,8 @@ pub fn x00404870() -> Cont {
     call(m, 0x404894, Cont(x00401a60))
 }
 
-pub fn x00404894() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404894(m: &mut Machine) -> Cont {
     // 00404894 mov ds:[433F60h],eax
     m.memory.write::<u32>(0x433f60u32, m.regs.eax);
     // 00404899 mov eax,ds:[40C728h]
@@ -17739,9 +17206,8 @@ pub fn x00404894() -> Cont {
     call(m, 0x4048b8, Cont(x00401a60))
 }
 
-pub fn x004048b8() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004048b8(m: &mut Machine) -> Cont {
     // 004048b8 add esp,4
     m.regs.esp = add(m.regs.esp, 0x4u32, &mut m.flags);
     // 004048bb mov ds:[433F5Ch],eax
@@ -17766,9 +17232,8 @@ pub fn x004048b8() -> Cont {
     call(m, 0x4048db, Cont(x00408838))
 }
 
-pub fn x004048c2() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004048c2(m: &mut Machine) -> Cont {
     // 004048c2 mov [ebp-4],ecx
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32), m.regs.ecx);
@@ -17787,9 +17252,8 @@ pub fn x004048c2() -> Cont {
     call(m, 0x4048db, Cont(x00408838))
 }
 
-pub fn x004048db() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004048db(m: &mut Machine) -> Cont {
     // 004048db fistp dword ptr [ebp-4]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffffcu32),
@@ -17814,9 +17278,8 @@ pub fn x004048db() -> Cont {
     jl(m, Cont(x004048f4), Cont(x004048c2))
 }
 
-pub fn x004048f4() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004048f4(m: &mut Machine) -> Cont {
     // 004048f4 xor ebx,ebx
     m.regs.ebx = xor(m.regs.ebx, m.regs.ebx, &mut m.flags);
     // 004048f6 cmp ebx,ds:[40C728h]
@@ -17825,18 +17288,16 @@ pub fn x004048f4() -> Cont {
     jge(m, Cont(x00404902), Cont(x004049f9))
 }
 
-pub fn x004048f6() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004048f6(m: &mut Machine) -> Cont {
     // 004048f6 cmp ebx,ds:[40C728h]
     sub(m.regs.ebx, m.memory.read::<u32>(0x40c728u32), &mut m.flags);
     // 004048fc jge near ptr 004049F9h
     jge(m, Cont(x00404902), Cont(x004049f9))
 }
 
-pub fn x00404902() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404902(m: &mut Machine) -> Cont {
     // 00404902 mov eax,ds:[40C728h]
     m.regs.eax = m.memory.read::<u32>(0x40c728u32);
     // 00404907 cdq
@@ -17875,9 +17336,8 @@ pub fn x00404902() -> Cont {
     call(m, 0x40492c, Cont(x00408838))
 }
 
-pub fn x0040492c() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040492c(m: &mut Machine) -> Cont {
     // 0040492c fistp dword ptr [ebp-8]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffff8u32),
@@ -17890,18 +17350,16 @@ pub fn x0040492c() -> Cont {
     jge(m, Cont(x0040493b), Cont(x004049f3))
 }
 
-pub fn x0040492f() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040492f(m: &mut Machine) -> Cont {
     // 0040492f cmp ecx,ds:[40C724h]
     sub(m.regs.ecx, m.memory.read::<u32>(0x40c724u32), &mut m.flags);
     // 00404935 jge near ptr 004049F3h
     jge(m, Cont(x0040493b), Cont(x004049f3))
 }
 
-pub fn x0040493b() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040493b(m: &mut Machine) -> Cont {
     // 0040493b mov eax,ds:[40C724h]
     m.regs.eax = m.memory.read::<u32>(0x40c724u32);
     // 00404940 cdq
@@ -17959,9 +17417,8 @@ pub fn x0040493b() -> Cont {
     call(m, 0x404979, Cont(x00408838))
 }
 
-pub fn x00404979() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404979(m: &mut Machine) -> Cont {
     // 00404979 fistp dword ptr [ebp-0Ch]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffff4u32),
@@ -17982,9 +17439,8 @@ pub fn x00404979() -> Cont {
     jbe(m, Cont(x00404984), Cont(x00404992))
 }
 
-pub fn x00404984() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404984(m: &mut Machine) -> Cont {
     // 00404984 mov dword ptr [ebp-28h],54524550h
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xffffffd8u32), 0x54524550u32);
@@ -18001,9 +17457,8 @@ pub fn x00404984() -> Cont {
     jne(m, Cont(x0040499b), Cont(x004049af))
 }
 
-pub fn x00404992() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404992(m: &mut Machine) -> Cont {
     // 00404992 test dword ptr [ebp-1Ch],7FFFFFFFh
     and(
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffe4u32)),
@@ -18014,9 +17469,8 @@ pub fn x00404992() -> Cont {
     jne(m, Cont(x0040499b), Cont(x004049af))
 }
 
-pub fn x0040499b() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040499b(m: &mut Machine) -> Cont {
     // 0040499b cmp dword ptr [ebp-20h],0
     sub(
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffe0u32)),
@@ -18027,9 +17481,8 @@ pub fn x0040499b() -> Cont {
     jne(m, Cont(x004049a1), Cont(x004049af))
 }
 
-pub fn x004049a1() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004049a1(m: &mut Machine) -> Cont {
     // 004049a1 mov dword ptr [ebp-20h],9999999Ah
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xffffffe0u32), 0x9999999au32);
@@ -18065,9 +17518,8 @@ pub fn x004049a1() -> Cont {
     call(m, 0x4049ca, Cont(x00408838))
 }
 
-pub fn x004049af() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004049af(m: &mut Machine) -> Cont {
     // 004049af fld qword ptr [ebp-30h]
     m.fpu
         .push(m.memory.read::<f64>(m.regs.ebp.wrapping_add(0xffffffd0u32)));
@@ -18097,9 +17549,8 @@ pub fn x004049af() -> Cont {
     call(m, 0x4049ca, Cont(x00408838))
 }
 
-pub fn x004049ca() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004049ca(m: &mut Machine) -> Cont {
     // 004049ca fistp qword ptr [ebp-18h]
     m.memory.write::<u64>(
         m.regs.ebp.wrapping_add(0xffffffe8u32),
@@ -18135,18 +17586,16 @@ pub fn x004049ca() -> Cont {
     Cont(x0040492f)
 }
 
-pub fn x004049f3() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004049f3(m: &mut Machine) -> Cont {
     // 004049f3 inc ebx
     m.regs.ebx = inc(m.regs.ebx, &mut m.flags);
     // 004049f4 jmp near ptr 004048F6h
     Cont(x004048f6)
 }
 
-pub fn x004049f9() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004049f9(m: &mut Machine) -> Cont {
     // 004049f9 leave
     leave(m);
     // 004049fa pop edi
@@ -18163,9 +17612,8 @@ pub fn x004049f9() -> Cont {
     ret(m, 0)
 }
 
-pub fn x00404a00() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404a00(m: &mut Machine) -> Cont {
     // 00404a00 push ecx
     push(m, m.regs.ecx);
     // 00404a01 push edx
@@ -18182,9 +17630,8 @@ pub fn x00404a00() -> Cont {
     call(m, 0x404a16, Cont(kernel32::VirtualFree_stdcall))
 }
 
-pub fn x00404a16() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404a16(m: &mut Machine) -> Cont {
     // 00404a16 push 8000h
     push(m, 0x8000u32);
     // 00404a1b push 0
@@ -18197,9 +17644,8 @@ pub fn x00404a16() -> Cont {
     call(m, 0x404a2a, Cont(kernel32::VirtualFree_stdcall))
 }
 
-pub fn x00404a2a() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404a2a(m: &mut Machine) -> Cont {
     // 00404a2a push 8000h
     push(m, 0x8000u32);
     // 00404a2f push 0
@@ -18212,9 +17658,8 @@ pub fn x00404a2a() -> Cont {
     call(m, 0x404a3e, Cont(kernel32::VirtualFree_stdcall))
 }
 
-pub fn x00404a3e() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404a3e(m: &mut Machine) -> Cont {
     // 00404a3e push 8000h
     push(m, 0x8000u32);
     // 00404a43 push 0
@@ -18227,9 +17672,8 @@ pub fn x00404a3e() -> Cont {
     call(m, 0x404a52, Cont(kernel32::VirtualFree_stdcall))
 }
 
-pub fn x00404a52() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404a52(m: &mut Machine) -> Cont {
     // 00404a52 push 8000h
     push(m, 0x8000u32);
     // 00404a57 push 0
@@ -18242,9 +17686,8 @@ pub fn x00404a52() -> Cont {
     call(m, 0x404a66, Cont(kernel32::VirtualFree_stdcall))
 }
 
-pub fn x00404a66() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404a66(m: &mut Machine) -> Cont {
     // 00404a66 push 8000h
     push(m, 0x8000u32);
     // 00404a6b push 0
@@ -18257,9 +17700,8 @@ pub fn x00404a66() -> Cont {
     call(m, 0x404a7a, Cont(kernel32::VirtualFree_stdcall))
 }
 
-pub fn x00404a7a() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404a7a(m: &mut Machine) -> Cont {
     // 00404a7a push 8000h
     push(m, 0x8000u32);
     // 00404a7f push 0
@@ -18272,9 +17714,8 @@ pub fn x00404a7a() -> Cont {
     call(m, 0x404a8e, Cont(kernel32::VirtualFree_stdcall))
 }
 
-pub fn x00404a8e() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404a8e(m: &mut Machine) -> Cont {
     // 00404a8e pop edx
     m.regs.edx = pop(m);
     // 00404a8f pop ecx
@@ -18283,9 +17724,8 @@ pub fn x00404a8e() -> Cont {
     ret(m, 0)
 }
 
-pub fn x00404a91() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404a91(m: &mut Machine) -> Cont {
     // 00404a91 push esi
     push(m, m.regs.esi);
     // 00404a92 push edi
@@ -18338,9 +17778,8 @@ pub fn x00404a91() -> Cont {
     jns(m, Cont(x00404ac8), Cont(x00404aca))
 }
 
-pub fn x00404ac8() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404ac8(m: &mut Machine) -> Cont {
     // 00404ac8 neg eax
     m.regs.eax = neg(m.regs.eax, &mut m.flags);
     // 00404aca mov eax,[ebp-20h]
@@ -18351,9 +17790,8 @@ pub fn x00404ac8() -> Cont {
     jns(m, Cont(x00404ad2), Cont(x00404ad4))
 }
 
-pub fn x00404aca() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404aca(m: &mut Machine) -> Cont {
     // 00404aca mov eax,[ebp-20h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffe0u32));
     // 00404acd cmp eax,0
@@ -18362,9 +17800,8 @@ pub fn x00404aca() -> Cont {
     jns(m, Cont(x00404ad2), Cont(x00404ad4))
 }
 
-pub fn x00404ad2() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404ad2(m: &mut Machine) -> Cont {
     // 00404ad2 neg eax
     m.regs.eax = neg(m.regs.eax, &mut m.flags);
     // 00404ad4 mov eax,10000h
@@ -18388,9 +17825,8 @@ pub fn x00404ad2() -> Cont {
     jle(m, Cont(x00404aee), Cont(x00404af4))
 }
 
-pub fn x00404ad4() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404ad4(m: &mut Machine) -> Cont {
     // 00404ad4 mov eax,10000h
     m.regs.eax = 0x10000u32;
     // 00404ad9 mov ecx,10000h
@@ -18412,9 +17848,8 @@ pub fn x00404ad4() -> Cont {
     jle(m, Cont(x00404aee), Cont(x00404af4))
 }
 
-pub fn x00404aee() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404aee(m: &mut Machine) -> Cont {
     // 00404aee sub ecx,20000h
     m.regs.ecx = sub(m.regs.ecx, 0x20000u32, &mut m.flags);
     // 00404af4 cmp dword ptr [ebp-1Ch],10000h
@@ -18427,9 +17862,8 @@ pub fn x00404aee() -> Cont {
     jle(m, Cont(x00404afd), Cont(x00404b04))
 }
 
-pub fn x00404af4() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404af4(m: &mut Machine) -> Cont {
     // 00404af4 cmp dword ptr [ebp-1Ch],10000h
     sub(
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffe4u32)),
@@ -18440,9 +17874,8 @@ pub fn x00404af4() -> Cont {
     jle(m, Cont(x00404afd), Cont(x00404b04))
 }
 
-pub fn x00404afd() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404afd(m: &mut Machine) -> Cont {
     // 00404afd sub dword ptr [ebp-1Ch],20000h
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xffffffe4u32),
@@ -18464,9 +17897,8 @@ pub fn x00404afd() -> Cont {
     jge(m, Cont(x00404b12), Cont(x00404b5d))
 }
 
-pub fn x00404b04() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404b04(m: &mut Machine) -> Cont {
     // 00404b04 xor edx,edx
     m.regs.edx = xor(m.regs.edx, m.regs.edx, &mut m.flags);
     // 00404b06 mov eax,ds:[40C724h]
@@ -18479,9 +17911,8 @@ pub fn x00404b04() -> Cont {
     jge(m, Cont(x00404b12), Cont(x00404b5d))
 }
 
-pub fn x00404b06() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404b06(m: &mut Machine) -> Cont {
     // 00404b06 mov eax,ds:[40C724h]
     m.regs.eax = m.memory.read::<u32>(0x40c724u32);
     // 00404b0b add eax,8
@@ -18492,9 +17923,8 @@ pub fn x00404b06() -> Cont {
     jge(m, Cont(x00404b12), Cont(x00404b5d))
 }
 
-pub fn x00404b12() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404b12(m: &mut Machine) -> Cont {
     // 00404b12 mov eax,ds:[40C724h]
     m.regs.eax = m.memory.read::<u32>(0x40c724u32);
     // 00404b17 sub eax,edx
@@ -18551,9 +17981,8 @@ pub fn x00404b12() -> Cont {
     call(m, 0x404b52, Cont(x00408838))
 }
 
-pub fn x00404b52() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404b52(m: &mut Machine) -> Cont {
     // 00404b52 fistp dword ptr [ebp-18h]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xffffffe8u32),
@@ -18570,9 +17999,8 @@ pub fn x00404b52() -> Cont {
     Cont(x00404b06)
 }
 
-pub fn x00404b5d() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404b5d(m: &mut Machine) -> Cont {
     // 00404b5d xor ecx,ecx
     m.regs.ecx = xor(m.regs.ecx, m.regs.ecx, &mut m.flags);
     // 00404b5f mov eax,ds:[40C728h]
@@ -18593,9 +18021,8 @@ pub fn x00404b5d() -> Cont {
     jge(m, Cont(x00404b75), Cont(x00404ce5))
 }
 
-pub fn x00404b5f() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404b5f(m: &mut Machine) -> Cont {
     // 00404b5f mov eax,ds:[40C728h]
     m.regs.eax = m.memory.read::<u32>(0x40c728u32);
     // 00404b64 cdq
@@ -18614,9 +18041,8 @@ pub fn x00404b5f() -> Cont {
     jge(m, Cont(x00404b75), Cont(x00404ce5))
 }
 
-pub fn x00404b75() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404b75(m: &mut Machine) -> Cont {
     // 00404b75 mov eax,ecx
     m.regs.eax = m.regs.ecx;
     // 00404b77 mov edx,ds:[40C728h]
@@ -18679,9 +18105,8 @@ pub fn x00404b75() -> Cont {
     call(m, 0x404bc0, Cont(x00408838))
 }
 
-pub fn x00404bc0() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404bc0(m: &mut Machine) -> Cont {
     // 00404bc0 mov [ebp-2Ch],edx
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xffffffd4u32), m.regs.edx);
@@ -18695,18 +18120,16 @@ pub fn x00404bc0() -> Cont {
     Cont(x00404c98)
 }
 
-pub fn x00404bcb() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404bcb(m: &mut Machine) -> Cont {
     // 00404bcb test esi,esi
     and(m.regs.esi, m.regs.esi, &mut m.flags);
     // 00404bcd jle near ptr 00404C7Fh
     jle(m, Cont(x00404bd3), Cont(x00404c7f))
 }
 
-pub fn x00404bd3() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404bd3(m: &mut Machine) -> Cont {
     // 00404bd3 mov eax,ds:[433F68h]
     m.regs.eax = m.memory.read::<u32>(0x433f68u32);
     // 00404bd8 add eax,[ebp-24h]
@@ -18837,9 +18260,8 @@ pub fn x00404bd3() -> Cont {
     jns(m, Cont(x00404c5a), Cont(x00404c5c))
 }
 
-pub fn x00404c5a() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404c5a(m: &mut Machine) -> Cont {
     // 00404c5a neg eax
     m.regs.eax = neg(m.regs.eax, &mut m.flags);
     // 00404c5c sar eax,7
@@ -18850,9 +18272,8 @@ pub fn x00404c5a() -> Cont {
     jle(m, Cont(x00404c64), Cont(x00404c69))
 }
 
-pub fn x00404c5c() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404c5c(m: &mut Machine) -> Cont {
     // 00404c5c sar eax,7
     m.regs.eax = sar(m.regs.eax, 0x7u8, &mut m.flags);
     // 00404c5f cmp eax,7Fh
@@ -18861,9 +18282,8 @@ pub fn x00404c5c() -> Cont {
     jle(m, Cont(x00404c64), Cont(x00404c69))
 }
 
-pub fn x00404c64() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404c64(m: &mut Machine) -> Cont {
     // 00404c64 mov eax,7Fh
     m.regs.eax = 0x7fu32;
     // 00404c69 mov edx,ecx
@@ -18884,9 +18304,8 @@ pub fn x00404c64() -> Cont {
     Cont(x00404c92)
 }
 
-pub fn x00404c69() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404c69(m: &mut Machine) -> Cont {
     // 00404c69 mov edx,ecx
     m.regs.edx = m.regs.ecx;
     // 00404c6b shl edx,6
@@ -18905,9 +18324,8 @@ pub fn x00404c69() -> Cont {
     Cont(x00404c92)
 }
 
-pub fn x00404c7f() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404c7f(m: &mut Machine) -> Cont {
     // 00404c7f mov eax,ecx
     m.regs.eax = m.regs.ecx;
     // 00404c81 shl eax,6
@@ -18927,9 +18345,8 @@ pub fn x00404c7f() -> Cont {
     jge(m, Cont(x00404c98), Cont(x00404cdf))
 }
 
-pub fn x00404c92() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404c92(m: &mut Machine) -> Cont {
     // 00404c92 inc ebx
     m.regs.ebx = inc(m.regs.ebx, &mut m.flags);
     // 00404c93 cmp ebx,29h
@@ -18938,9 +18355,8 @@ pub fn x00404c92() -> Cont {
     jge(m, Cont(x00404c98), Cont(x00404cdf))
 }
 
-pub fn x00404c98() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404c98(m: &mut Machine) -> Cont {
     // 00404c98 mov eax,ds:[40C724h]
     m.regs.eax = m.memory.read::<u32>(0x40c724u32);
     // 00404c9d mov edx,ebx
@@ -18955,9 +18371,8 @@ pub fn x00404c98() -> Cont {
     jle(m, Cont(x00404ca7), Cont(x00404ca9))
 }
 
-pub fn x00404ca7() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404ca7(m: &mut Machine) -> Cont {
     // 00404ca7 mov edx,eax
     m.regs.edx = m.regs.eax;
     // 00404ca9 mov eax,[ebp-2Ch]
@@ -18999,9 +18414,8 @@ pub fn x00404ca7() -> Cont {
     jne(m, Cont(x00404cd5), Cont(x00404bcb))
 }
 
-pub fn x00404ca9() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404ca9(m: &mut Machine) -> Cont {
     // 00404ca9 mov eax,[ebp-2Ch]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffd4u32));
     // 00404cac mov esi,ds:[433F54h]
@@ -19041,27 +18455,24 @@ pub fn x00404ca9() -> Cont {
     jne(m, Cont(x00404cd5), Cont(x00404bcb))
 }
 
-pub fn x00404cd5() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404cd5(m: &mut Machine) -> Cont {
     // 00404cd5 mov esi,1
     m.regs.esi = 0x1u32;
     // 00404cda jmp near ptr 00404BD3h
     Cont(x00404bd3)
 }
 
-pub fn x00404cdf() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404cdf(m: &mut Machine) -> Cont {
     // 00404cdf inc ecx
     m.regs.ecx = inc(m.regs.ecx, &mut m.flags);
     // 00404ce0 jmp near ptr 00404B5Fh
     Cont(x00404b5f)
 }
 
-pub fn x00404ce5() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404ce5(m: &mut Machine) -> Cont {
     // 00404ce5 leave
     leave(m);
     // 00404ce6 pop edi
@@ -19072,9 +18483,8 @@ pub fn x00404ce5() -> Cont {
     ret(m, 8)
 }
 
-pub fn x00404ceb() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404ceb(m: &mut Machine) -> Cont {
     // 00404ceb push ebx
     push(m, m.regs.ebx);
     // 00404cec push ecx
@@ -19116,9 +18526,8 @@ pub fn x00404ceb() -> Cont {
     jge(m, Cont(x00404d17), Cont(x00404f9f))
 }
 
-pub fn x00404cfd() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404cfd(m: &mut Machine) -> Cont {
     // 00404cfd mov eax,ds:[40C728h]
     m.regs.eax = m.memory.read::<u32>(0x40c728u32);
     // 00404d02 cdq
@@ -19141,9 +18550,8 @@ pub fn x00404cfd() -> Cont {
     jge(m, Cont(x00404d17), Cont(x00404f9f))
 }
 
-pub fn x00404d17() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404d17(m: &mut Machine) -> Cont {
     // 00404d17 xor cl,cl
     m.regs
         .set_cl(xor(m.regs.get_cl(), m.regs.get_cl(), &mut m.flags));
@@ -19151,9 +18559,8 @@ pub fn x00404d17() -> Cont {
     Cont(x00404d26)
 }
 
-pub fn x00404d1b() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404d1b(m: &mut Machine) -> Cont {
     // 00404d1b inc cl
     m.regs.set_cl(inc(m.regs.get_cl(), &mut m.flags));
     // 00404d1d cmp cl,28h
@@ -19162,9 +18569,8 @@ pub fn x00404d1b() -> Cont {
     jae(m, Cont(x00404d26), Cont(x00404f98))
 }
 
-pub fn x00404d26() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404d26(m: &mut Machine) -> Cont {
     // 00404d26 movzx ebx,ch
     m.regs.ebx = m.regs.get_ch() as _;
     // 00404d29 movzx edx,cl
@@ -19268,9 +18674,8 @@ pub fn x00404d26() -> Cont {
     jle(m, Cont(x00404db6), Cont(x00404dbd))
 }
 
-pub fn x00404db6() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404db6(m: &mut Machine) -> Cont {
     // 00404db6 mov dword ptr [ebp+6Ah],0FFh
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0x6au32), 0xffu32);
@@ -19280,18 +18685,16 @@ pub fn x00404db6() -> Cont {
     jle(m, Cont(x00404dc5), Cont(x00404dca))
 }
 
-pub fn x00404dbd() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404dbd(m: &mut Machine) -> Cont {
     // 00404dbd cmp ebx,0FFh
     sub(m.regs.ebx, 0xffu32, &mut m.flags);
     // 00404dc3 jle short 00404DCAh
     jle(m, Cont(x00404dc5), Cont(x00404dca))
 }
 
-pub fn x00404dc5() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404dc5(m: &mut Machine) -> Cont {
     // 00404dc5 mov ebx,0FFh
     m.regs.ebx = 0xffu32;
     // 00404dca cmp dword ptr [ebp+2],0FFh
@@ -19304,9 +18707,8 @@ pub fn x00404dc5() -> Cont {
     jle(m, Cont(x00404dd3), Cont(x00404dda))
 }
 
-pub fn x00404dca() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404dca(m: &mut Machine) -> Cont {
     // 00404dca cmp dword ptr [ebp+2],0FFh
     sub(
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x2u32)),
@@ -19317,9 +18719,8 @@ pub fn x00404dca() -> Cont {
     jle(m, Cont(x00404dd3), Cont(x00404dda))
 }
 
-pub fn x00404dd3() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404dd3(m: &mut Machine) -> Cont {
     // 00404dd3 mov dword ptr [ebp+2],0FFh
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0x2u32), 0xffu32);
@@ -19333,9 +18734,8 @@ pub fn x00404dd3() -> Cont {
     jle(m, Cont(x00404de3), Cont(x00404dea))
 }
 
-pub fn x00404dda() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404dda(m: &mut Machine) -> Cont {
     // 00404dda cmp dword ptr [ebp+56h],0FFh
     sub(
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x56u32)),
@@ -19346,9 +18746,8 @@ pub fn x00404dda() -> Cont {
     jle(m, Cont(x00404de3), Cont(x00404dea))
 }
 
-pub fn x00404de3() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404de3(m: &mut Machine) -> Cont {
     // 00404de3 mov dword ptr [ebp+56h],0FFh
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0x56u32), 0xffu32);
@@ -19491,9 +18890,8 @@ pub fn x00404de3() -> Cont {
     Cont(x00404ea1)
 }
 
-pub fn x00404dea() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404dea(m: &mut Machine) -> Cont {
     // 00404dea movzx eax,ch
     m.regs.eax = m.regs.get_ch() as _;
     // 00404ded mov edx,ds:[40C724h]
@@ -19633,9 +19031,8 @@ pub fn x00404dea() -> Cont {
     Cont(x00404ea1)
 }
 
-pub fn x00404e8a() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404e8a(m: &mut Machine) -> Cont {
     // 00404e8a mov eax,ds:[40C724h]
     m.regs.eax = m.memory.read::<u32>(0x40c724u32);
     // 00404e8f sub eax,8
@@ -19660,9 +19057,8 @@ pub fn x00404e8a() -> Cont {
     jae(m, Cont(x00404ea1), Cont(x00404d1b))
 }
 
-pub fn x00404ea1() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404ea1(m: &mut Machine) -> Cont {
     // 00404ea1 mov eax,[ebp+0Eh]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xeu32));
     // 00404ea4 add [ebp+52h],eax
@@ -19930,9 +19326,8 @@ pub fn x00404ea1() -> Cont {
     jb(m, Cont(x00404f93), Cont(x00404ef1))
 }
 
-pub fn x00404ef1() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404ef1(m: &mut Machine) -> Cont {
     // 00404ef1 mov eax,[ebp+3Eh]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x3eu32));
     // 00404ef4 add [ebp+5Eh],eax
@@ -20099,25 +19494,22 @@ pub fn x00404ef1() -> Cont {
     jb(m, Cont(x00404f93), Cont(x00404ef1))
 }
 
-pub fn x00404f93() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404f93(m: &mut Machine) -> Cont {
     // 00404f93 jmp near ptr 00404E8Ah
     Cont(x00404e8a)
 }
 
-pub fn x00404f98() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404f98(m: &mut Machine) -> Cont {
     // 00404f98 inc ch
     m.regs.set_ch(inc(m.regs.get_ch(), &mut m.flags));
     // 00404f9a jmp near ptr 00404CFDh
     Cont(x00404cfd)
 }
 
-pub fn x00404f9f() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404f9f(m: &mut Machine) -> Cont {
     // 00404f9f emms
     // no-op
     // 00404fa1 lea esp,[ebp+82h]
@@ -20136,9 +19528,8 @@ pub fn x00404f9f() -> Cont {
     ret(m, 0)
 }
 
-pub fn x00404fad() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00404fad(m: &mut Machine) -> Cont {
     // 00404fad push ebx
     push(m, m.regs.ebx);
     // 00404fae push ecx
@@ -20384,9 +19775,8 @@ pub fn x00404fad() -> Cont {
     jge(m, Cont(x004050bc), Cont(x004051c1))
 }
 
-pub fn x004050a6() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004050a6(m: &mut Machine) -> Cont {
     // 004050a6 mov eax,ds:[40C728h]
     m.regs.eax = m.memory.read::<u32>(0x40c728u32);
     // 004050ab cdq
@@ -20405,27 +19795,24 @@ pub fn x004050a6() -> Cont {
     jge(m, Cont(x004050bc), Cont(x004051c1))
 }
 
-pub fn x004050bc() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004050bc(m: &mut Machine) -> Cont {
     // 004050bc xor edx,edx
     m.regs.edx = xor(m.regs.edx, m.regs.edx, &mut m.flags);
     // 004050be jmp short 00405107h
     Cont(x00405107)
 }
 
-pub fn x004050c0() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004050c0(m: &mut Machine) -> Cont {
     // 004050c0 cmp eax,7Fh
     sub(m.regs.eax, 0x7fu32, &mut m.flags);
     // 004050c3 jle short 004050CAh
     jle(m, Cont(x004050c5), Cont(x004050ca))
 }
 
-pub fn x004050c5() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004050c5(m: &mut Machine) -> Cont {
     // 004050c5 mov eax,7Fh
     m.regs.eax = 0x7fu32;
     // 004050ca mov esi,ecx
@@ -20461,9 +19848,8 @@ pub fn x004050c5() -> Cont {
     jge(m, Cont(x00405107), Cont(x004051bb))
 }
 
-pub fn x004050ca() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004050ca(m: &mut Machine) -> Cont {
     // 004050ca mov esi,ecx
     m.regs.esi = m.regs.ecx;
     // 004050cc shl esi,6
@@ -20497,9 +19883,8 @@ pub fn x004050ca() -> Cont {
     jge(m, Cont(x00405107), Cont(x004051bb))
 }
 
-pub fn x00405107() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405107(m: &mut Machine) -> Cont {
     // 00405107 mov [ebp-4],edx
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32), m.regs.edx);
@@ -20682,9 +20067,8 @@ pub fn x00405107() -> Cont {
     call(m, 0x40519f, Cont(x004045ac))
 }
 
-pub fn x0040519f() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040519f(m: &mut Machine) -> Cont {
     // 0040519f mov eax,ds:[433F74h]
     m.regs.eax = m.memory.read::<u32>(0x433f74u32);
     // 004051a4 add eax,eax
@@ -20703,27 +20087,24 @@ pub fn x0040519f() -> Cont {
     jge(m, Cont(x004051b4), Cont(x004050c0))
 }
 
-pub fn x004051b4() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004051b4(m: &mut Machine) -> Cont {
     // 004051b4 xor eax,eax
     m.regs.eax = xor(m.regs.eax, m.regs.eax, &mut m.flags);
     // 004051b6 jmp near ptr 004050CAh
     Cont(x004050ca)
 }
 
-pub fn x004051bb() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004051bb(m: &mut Machine) -> Cont {
     // 004051bb inc ecx
     m.regs.ecx = inc(m.regs.ecx, &mut m.flags);
     // 004051bc jmp near ptr 004050A6h
     Cont(x004050a6)
 }
 
-pub fn x004051c1() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004051c1(m: &mut Machine) -> Cont {
     // 004051c1 mov edx,[ebp+24h]
     m.regs.edx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x24u32));
     // 004051c4 mov eax,[ebp+20h]
@@ -20732,9 +20113,8 @@ pub fn x004051c1() -> Cont {
     call(m, 0x4051cc, Cont(x00404ceb))
 }
 
-pub fn x004051cc() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004051cc(m: &mut Machine) -> Cont {
     // 004051cc leave
     leave(m);
     // 004051cd pop edi
@@ -20751,9 +20131,8 @@ pub fn x004051cc() -> Cont {
     ret(m, 12)
 }
 
-pub fn x004051d5() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004051d5(m: &mut Machine) -> Cont {
     // 004051d5 push esi
     push(m, m.regs.esi);
     // 004051d6 push edi
@@ -20791,9 +20170,8 @@ pub fn x004051d5() -> Cont {
     call(m, 0x405200, Cont(x00408838))
 }
 
-pub fn x00405200() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405200(m: &mut Machine) -> Cont {
     // 00405200 fistp qword ptr [ebp-38h]
     m.memory.write::<u64>(
         m.regs.ebp.wrapping_add(0xffffffc8u32),
@@ -20847,9 +20225,8 @@ pub fn x00405200() -> Cont {
     call(m, 0x405232, Cont(x00408838))
 }
 
-pub fn x00405232() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405232(m: &mut Machine) -> Cont {
     // 00405232 dec ecx
     m.regs.ecx = dec(m.regs.ecx, &mut m.flags);
     // 00405233 fistp dword ptr [ebp-10h]
@@ -20906,9 +20283,8 @@ pub fn x00405232() -> Cont {
     jge(m, Cont(x00405258), Cont(x00405268))
 }
 
-pub fn x00405258() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405258(m: &mut Machine) -> Cont {
     // 00405258 neg eax
     m.regs.eax = neg(m.regs.eax, &mut m.flags);
     // 0040525a imul eax,[ebp-28h]
@@ -20935,18 +20311,16 @@ pub fn x00405258() -> Cont {
     jge(m, Cont(x0040526c), Cont(x0040527d))
 }
 
-pub fn x00405268() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405268(m: &mut Machine) -> Cont {
     // 00405268 test ebx,ebx
     and(m.regs.ebx, m.regs.ebx, &mut m.flags);
     // 0040526a jge short 0040527Dh
     jge(m, Cont(x0040526c), Cont(x0040527d))
 }
 
-pub fn x0040526c() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040526c(m: &mut Machine) -> Cont {
     // 0040526c mov [ebp-4],edx
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32), m.regs.edx);
@@ -20975,18 +20349,16 @@ pub fn x0040526c() -> Cont {
     jle(m, Cont(x00405285), Cont(x0040528b))
 }
 
-pub fn x0040527d() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040527d(m: &mut Machine) -> Cont {
     // 0040527d cmp esi,ds:[40C724h]
     sub(m.regs.esi, m.memory.read::<u32>(0x40c724u32), &mut m.flags);
     // 00405283 jle short 0040528Bh
     jle(m, Cont(x00405285), Cont(x0040528b))
 }
 
-pub fn x00405285() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405285(m: &mut Machine) -> Cont {
     // 00405285 mov esi,ds:[40C724h]
     m.regs.esi = m.memory.read::<u32>(0x40c724u32);
     // 0040528b mov eax,[ebp-20h]
@@ -20997,9 +20369,8 @@ pub fn x00405285() -> Cont {
     jle(m, Cont(x00405296), Cont(x0040529e))
 }
 
-pub fn x0040528b() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040528b(m: &mut Machine) -> Cont {
     // 0040528b mov eax,[ebp-20h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffe0u32));
     // 0040528e cmp eax,ds:[40C728h]
@@ -21008,9 +20379,8 @@ pub fn x0040528b() -> Cont {
     jle(m, Cont(x00405296), Cont(x0040529e))
 }
 
-pub fn x00405296() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405296(m: &mut Machine) -> Cont {
     // 00405296 mov eax,ds:[40C728h]
     m.regs.eax = m.memory.read::<u32>(0x40c728u32);
     // 0040529b mov [ebp-20h],eax
@@ -21035,9 +20405,8 @@ pub fn x00405296() -> Cont {
     call(m, 0x4052b5, Cont(x00408838))
 }
 
-pub fn x0040529e() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040529e(m: &mut Machine) -> Cont {
     // 0040529e fld dword ptr ds:[40C1B8h]
     m.fpu.push(m.memory.read::<f32>(0x40c1b8u32) as f64);
     // 004052a4 fld dword ptr [ebp-0Ch]
@@ -21057,9 +20426,8 @@ pub fn x0040529e() -> Cont {
     call(m, 0x4052b5, Cont(x00408838))
 }
 
-pub fn x004052b5() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004052b5(m: &mut Machine) -> Cont {
     // 004052b5 fxch
     let t = m.fpu.get(0);
     m.fpu.set(0, m.fpu.get(1));
@@ -21068,9 +20436,8 @@ pub fn x004052b5() -> Cont {
     call(m, 0x4052bc, Cont(x00408838))
 }
 
-pub fn x004052bc() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004052bc(m: &mut Machine) -> Cont {
     // 004052bc fistp dword ptr [ebp-2Ch]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xffffffd4u32),
@@ -21093,9 +20460,8 @@ pub fn x004052bc() -> Cont {
     jae(m, Cont(x004052c7), Cont(x0040532f))
 }
 
-pub fn x004052c2() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004052c2(m: &mut Machine) -> Cont {
     // 004052c2 cmp ecx,[ebp-20h]
     sub(
         m.regs.ecx,
@@ -21106,9 +20472,8 @@ pub fn x004052c2() -> Cont {
     jae(m, Cont(x004052c7), Cont(x0040532f))
 }
 
-pub fn x004052c7() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004052c7(m: &mut Machine) -> Cont {
     // 004052c7 mov eax,[ebp-2Ch]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffd4u32));
     // 004052ca add [ebp-18h],eax
@@ -21160,18 +20525,16 @@ pub fn x004052c7() -> Cont {
     jae(m, Cont(x004052ff), Cont(x0040532c))
 }
 
-pub fn x004052fb() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004052fb(m: &mut Machine) -> Cont {
     // 004052fb cmp edi,esi
     sub(m.regs.edi, m.regs.esi, &mut m.flags);
     // 004052fd jae short 0040532Ch
     jae(m, Cont(x004052ff), Cont(x0040532c))
 }
 
-pub fn x004052ff() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004052ff(m: &mut Machine) -> Cont {
     // 004052ff mov eax,[ebp-28h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffd8u32));
     // 00405302 add [ebp-14h],eax
@@ -21223,18 +20586,16 @@ pub fn x004052ff() -> Cont {
     Cont(x004052fb)
 }
 
-pub fn x0040532c() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040532c(m: &mut Machine) -> Cont {
     // 0040532c inc ecx
     m.regs.ecx = inc(m.regs.ecx, &mut m.flags);
     // 0040532d jmp short 004052C2h
     Cont(x004052c2)
 }
 
-pub fn x0040532f() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040532f(m: &mut Machine) -> Cont {
     // 0040532f emms
     // no-op
     // 00405331 leave
@@ -21247,9 +20608,8 @@ pub fn x0040532f() -> Cont {
     ret(m, 8)
 }
 
-pub fn x00405337() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405337(m: &mut Machine) -> Cont {
     // 00405337 push ebx
     push(m, m.regs.ebx);
     // 00405338 push ecx
@@ -21276,9 +20636,8 @@ pub fn x00405337() -> Cont {
     call(m, 0x405354, Cont(x00401a60))
 }
 
-pub fn x00405354() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405354(m: &mut Machine) -> Cont {
     // 00405354 add esp,4
     m.regs.esp = add(m.regs.esp, 0x4u32, &mut m.flags);
     // 00405357 push 40000h
@@ -21289,9 +20648,8 @@ pub fn x00405354() -> Cont {
     call(m, 0x405366, Cont(x00401a60))
 }
 
-pub fn x00405366() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405366(m: &mut Machine) -> Cont {
     // 00405366 add esp,4
     m.regs.esp = add(m.regs.esp, 0x4u32, &mut m.flags);
     // 00405369 mov ds:[433F48h],eax
@@ -21302,9 +20660,8 @@ pub fn x00405366() -> Cont {
     Cont(x0040537f)
 }
 
-pub fn x00405372() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405372(m: &mut Machine) -> Cont {
     // 00405372 inc ecx
     m.regs.ecx = inc(m.regs.ecx, &mut m.flags);
     // 00405373 cmp ecx,100h
@@ -21313,18 +20670,16 @@ pub fn x00405372() -> Cont {
     jge(m, Cont(x0040537f), Cont(x004053f6))
 }
 
-pub fn x0040537f() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040537f(m: &mut Machine) -> Cont {
     // 0040537f xor ebx,ebx
     m.regs.ebx = xor(m.regs.ebx, m.regs.ebx, &mut m.flags);
     // 00405381 jmp short 004053A9h
     Cont(x004053a9)
 }
 
-pub fn x00405383() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405383(m: &mut Machine) -> Cont {
     // 00405383 cdq
     let t = m.regs.eax as i32 as i64 as u64;
     m.regs.edx = (t >> 32) as u32;
@@ -21358,9 +20713,8 @@ pub fn x00405383() -> Cont {
     jge(m, Cont(x004053a9), Cont(x00405372))
 }
 
-pub fn x004053a9() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004053a9(m: &mut Machine) -> Cont {
     // 004053a9 lea eax,[ebx-80h]
     m.regs.eax = m.regs.ebx.wrapping_add(0xffffff80u32);
     // 004053ac cmp eax,0
@@ -21369,9 +20723,8 @@ pub fn x004053a9() -> Cont {
     jns(m, Cont(x004053b1), Cont(x004053b3))
 }
 
-pub fn x004053b1() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004053b1(m: &mut Machine) -> Cont {
     // 004053b1 neg eax
     m.regs.eax = neg(m.regs.eax, &mut m.flags);
     // 004053b3 mov edx,eax
@@ -21386,9 +20739,8 @@ pub fn x004053b1() -> Cont {
     jns(m, Cont(x004053c0), Cont(x004053c2))
 }
 
-pub fn x004053b3() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004053b3(m: &mut Machine) -> Cont {
     // 004053b3 mov edx,eax
     m.regs.edx = m.regs.eax;
     // 004053b5 imul edx,edx
@@ -21401,9 +20753,8 @@ pub fn x004053b3() -> Cont {
     jns(m, Cont(x004053c0), Cont(x004053c2))
 }
 
-pub fn x004053c0() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004053c0(m: &mut Machine) -> Cont {
     // 004053c0 neg eax
     m.regs.eax = neg(m.regs.eax, &mut m.flags);
     // 004053c2 imul eax,eax
@@ -21422,9 +20773,8 @@ pub fn x004053c0() -> Cont {
     call(m, 0x4053d4, Cont(x00408838))
 }
 
-pub fn x004053c2() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004053c2(m: &mut Machine) -> Cont {
     // 004053c2 imul eax,eax
     m.regs.eax = imul(m.regs.eax as i32, m.regs.eax as i32, &mut m.flags) as u32;
     // 004053c5 add eax,edx
@@ -21441,9 +20791,8 @@ pub fn x004053c2() -> Cont {
     call(m, 0x4053d4, Cont(x00408838))
 }
 
-pub fn x004053d4() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004053d4(m: &mut Machine) -> Cont {
     // 004053d4 fistp dword ptr [ebp-8]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffff8u32),
@@ -21477,18 +20826,16 @@ pub fn x004053d4() -> Cont {
     jge(m, Cont(x004053f2), Cont(x00405383))
 }
 
-pub fn x004053f2() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004053f2(m: &mut Machine) -> Cont {
     // 004053f2 xor eax,edx
     m.regs.eax = xor(m.regs.eax, m.regs.edx, &mut m.flags);
     // 004053f4 jmp short 00405383h
     Cont(x00405383)
 }
 
-pub fn x004053f6() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004053f6(m: &mut Machine) -> Cont {
     // 004053f6 leave
     leave(m);
     // 004053f7 pop esi
@@ -21503,9 +20850,8 @@ pub fn x004053f6() -> Cont {
     ret(m, 0)
 }
 
-pub fn x004053fc() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004053fc(m: &mut Machine) -> Cont {
     // 004053fc push ebx
     push(m, m.regs.ebx);
     // 004053fd push ecx
@@ -21556,9 +20902,8 @@ pub fn x004053fc() -> Cont {
     jbe(m, Cont(x00405430), Cont(x00405647))
 }
 
-pub fn x00405430() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405430(m: &mut Machine) -> Cont {
     // 00405430 test dword ptr [ebp-20h],7FFFFFFFh
     and(
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffe0u32)),
@@ -21569,9 +20914,8 @@ pub fn x00405430() -> Cont {
     je(m, Cont(x00405439), Cont(x00405447))
 }
 
-pub fn x00405439() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405439(m: &mut Machine) -> Cont {
     // 00405439 fld dword ptr ds:[40C1C0h]
     m.fpu.push(m.memory.read::<f32>(0x40c1c0u32) as f64);
     // 0040543f fdiv dword ptr [ebp-20h]
@@ -21587,9 +20931,8 @@ pub fn x00405439() -> Cont {
     Cont(x0040544a)
 }
 
-pub fn x00405447() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405447(m: &mut Machine) -> Cont {
     // 00405447 mov [ebp-24h],edi
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xffffffdcu32), m.regs.edi);
@@ -21621,9 +20964,8 @@ pub fn x00405447() -> Cont {
     je(m, Cont(x00405465), Cont(x0040547e))
 }
 
-pub fn x0040544a() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040544a(m: &mut Machine) -> Cont {
     // 0040544a fld dword ptr [ebp+24h]
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0x24u32)) as f64);
@@ -21652,9 +20994,8 @@ pub fn x0040544a() -> Cont {
     je(m, Cont(x00405465), Cont(x0040547e))
 }
 
-pub fn x00405465() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405465(m: &mut Machine) -> Cont {
     // 00405465 fld dword ptr ds:[40C1C4h]
     m.fpu.push(m.memory.read::<f32>(0x40c1c4u32) as f64);
     // 0040546b fdiv dword ptr [ebp-34h]
@@ -21669,9 +21010,8 @@ pub fn x00405465() -> Cont {
     call(m, 0x405479, Cont(x00408838))
 }
 
-pub fn x00405479() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405479(m: &mut Machine) -> Cont {
     // 00405479 fistp dword ptr [ebp-28h]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xffffffd8u32),
@@ -21682,9 +21022,8 @@ pub fn x00405479() -> Cont {
     Cont(x00405485)
 }
 
-pub fn x0040547e() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040547e(m: &mut Machine) -> Cont {
     // 0040547e mov dword ptr [ebp-28h],28h
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xffffffd8u32), 0x28u32);
@@ -21698,9 +21037,8 @@ pub fn x0040547e() -> Cont {
     jne(m, Cont(x0040548b), Cont(x004054c2))
 }
 
-pub fn x00405485() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405485(m: &mut Machine) -> Cont {
     // 00405485 cmp dword ptr [ebp+28h],0
     sub(
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x28u32)),
@@ -21711,9 +21049,8 @@ pub fn x00405485() -> Cont {
     jne(m, Cont(x0040548b), Cont(x004054c2))
 }
 
-pub fn x0040548b() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040548b(m: &mut Machine) -> Cont {
     // 0040548b mov eax,ds:[40C724h]
     m.regs.eax = m.memory.read::<u32>(0x40c724u32);
     // 00405490 cdq
@@ -21802,9 +21139,8 @@ pub fn x0040548b() -> Cont {
     je(m, Cont(x004054dd), Cont(x004054ee))
 }
 
-pub fn x004054c2() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004054c2(m: &mut Machine) -> Cont {
     // 004054c2 fld dword ptr [ebp+24h]
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0x24u32)) as f64);
@@ -21833,9 +21169,8 @@ pub fn x004054c2() -> Cont {
     je(m, Cont(x004054dd), Cont(x004054ee))
 }
 
-pub fn x004054dd() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004054dd(m: &mut Machine) -> Cont {
     // 004054dd fld dword ptr ds:[40C1CCh]
     m.fpu.push(m.memory.read::<f32>(0x40c1ccu32) as f64);
     // 004054e3 fdiv dword ptr [ebp-2Ch]
@@ -21847,9 +21182,8 @@ pub fn x004054dd() -> Cont {
     call(m, 0x4054eb, Cont(x00408838))
 }
 
-pub fn x004054eb() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004054eb(m: &mut Machine) -> Cont {
     // 004054eb fistp dword ptr [ebp-14h]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xffffffecu32),
@@ -21866,9 +21200,8 @@ pub fn x004054eb() -> Cont {
     jge(m, Cont(x004054f4), Cont(x004054fb))
 }
 
-pub fn x004054ee() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004054ee(m: &mut Machine) -> Cont {
     // 004054ee cmp dword ptr [ebp-14h],2
     sub(
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffecu32)),
@@ -21879,9 +21212,8 @@ pub fn x004054ee() -> Cont {
     jge(m, Cont(x004054f4), Cont(x004054fb))
 }
 
-pub fn x004054f4() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004054f4(m: &mut Machine) -> Cont {
     // 004054f4 mov dword ptr [ebp-14h],2
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xffffffecu32), 0x2u32);
@@ -21947,9 +21279,8 @@ pub fn x004054f4() -> Cont {
     call(m, 0x40552e, Cont(x00408838))
 }
 
-pub fn x004054fb() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004054fb(m: &mut Machine) -> Cont {
     // 004054fb mov eax,[ebp-14h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffecu32));
     // 004054fe mov [ebp-4],eax
@@ -22012,9 +21343,8 @@ pub fn x004054fb() -> Cont {
     call(m, 0x40552e, Cont(x00408838))
 }
 
-pub fn x0040552e() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040552e(m: &mut Machine) -> Cont {
     // 0040552e fxch st(3)
     let t = m.fpu.get(0);
     m.fpu.set(0, m.fpu.get(3));
@@ -22023,9 +21353,8 @@ pub fn x0040552e() -> Cont {
     call(m, 0x405535, Cont(x00408838))
 }
 
-pub fn x00405535() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405535(m: &mut Machine) -> Cont {
     // 00405535 fxch
     let t = m.fpu.get(0);
     m.fpu.set(0, m.fpu.get(1));
@@ -22034,9 +21363,8 @@ pub fn x00405535() -> Cont {
     call(m, 0x40553c, Cont(x00408838))
 }
 
-pub fn x0040553c() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040553c(m: &mut Machine) -> Cont {
     // 0040553c fxch st(2)
     let t = m.fpu.get(0);
     m.fpu.set(0, m.fpu.get(2));
@@ -22045,9 +21373,8 @@ pub fn x0040553c() -> Cont {
     call(m, 0x405543, Cont(x00408838))
 }
 
-pub fn x00405543() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405543(m: &mut Machine) -> Cont {
     // 00405543 fxch st(3)
     let t = m.fpu.get(0);
     m.fpu.set(0, m.fpu.get(3));
@@ -22086,9 +21413,8 @@ pub fn x00405543() -> Cont {
     jge(m, Cont(x00405562), Cont(x00405647))
 }
 
-pub fn x00405562() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405562(m: &mut Machine) -> Cont {
     // 00405562 mov eax,[ebp-0Ch]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff4u32));
     // 00405565 cmp eax,ds:[40C728h]
@@ -22097,9 +21423,8 @@ pub fn x00405562() -> Cont {
     jge(m, Cont(x00405571), Cont(x00405647))
 }
 
-pub fn x00405571() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405571(m: &mut Machine) -> Cont {
     // 00405571 cmp dword ptr [ebp-10h],0
     sub(
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff0u32)),
@@ -22110,9 +21435,8 @@ pub fn x00405571() -> Cont {
     jl(m, Cont(x0040557b), Cont(x00405647))
 }
 
-pub fn x0040557b() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040557b(m: &mut Machine) -> Cont {
     // 0040557b cmp dword ptr [ebp-18h],0
     sub(
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffe8u32)),
@@ -22123,9 +21447,8 @@ pub fn x0040557b() -> Cont {
     jl(m, Cont(x00405585), Cont(x00405647))
 }
 
-pub fn x00405585() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405585(m: &mut Machine) -> Cont {
     // 00405585 mov eax,ds:[40C724h]
     m.regs.eax = m.memory.read::<u32>(0x40c724u32);
     // 0040558a dec eax
@@ -22140,9 +21463,8 @@ pub fn x00405585() -> Cont {
     jge(m, Cont(x00405590), Cont(x00405593))
 }
 
-pub fn x00405590() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405590(m: &mut Machine) -> Cont {
     // 00405590 mov [ebp-10h],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffff0u32), m.regs.eax);
@@ -22160,9 +21482,8 @@ pub fn x00405590() -> Cont {
     jge(m, Cont(x0040559e), Cont(x004055a1))
 }
 
-pub fn x00405593() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405593(m: &mut Machine) -> Cont {
     // 00405593 mov eax,ds:[40C728h]
     m.regs.eax = m.memory.read::<u32>(0x40c728u32);
     // 00405598 dec eax
@@ -22177,9 +21498,8 @@ pub fn x00405593() -> Cont {
     jge(m, Cont(x0040559e), Cont(x004055a1))
 }
 
-pub fn x0040559e() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040559e(m: &mut Machine) -> Cont {
     // 0040559e mov [ebp-18h],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xffffffe8u32), m.regs.eax);
@@ -22193,9 +21513,8 @@ pub fn x0040559e() -> Cont {
     jge(m, Cont(x004055a7), Cont(x004055c0))
 }
 
-pub fn x004055a1() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004055a1(m: &mut Machine) -> Cont {
     // 004055a1 cmp dword ptr [ebp-8],0
     sub(
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32)),
@@ -22206,9 +21525,8 @@ pub fn x004055a1() -> Cont {
     jge(m, Cont(x004055a7), Cont(x004055c0))
 }
 
-pub fn x004055a7() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004055a7(m: &mut Machine) -> Cont {
     // 004055a7 mov eax,[ebp-8]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32));
     // 004055aa mov ecx,edx
@@ -22219,9 +21537,8 @@ pub fn x004055a7() -> Cont {
     jns(m, Cont(x004055b1), Cont(x004055b3))
 }
 
-pub fn x004055b1() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004055b1(m: &mut Machine) -> Cont {
     // 004055b1 neg eax
     m.regs.eax = neg(m.regs.eax, &mut m.flags);
     // 004055b3 imul ecx,eax
@@ -22242,9 +21559,8 @@ pub fn x004055b1() -> Cont {
     jge(m, Cont(x004055c6), Cont(x004055dc))
 }
 
-pub fn x004055b3() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004055b3(m: &mut Machine) -> Cont {
     // 004055b3 imul ecx,eax
     m.regs.ecx = imul(m.regs.ecx as i32, m.regs.eax as i32, &mut m.flags) as u32;
     // 004055b6 mov dword ptr [ebp-8],0
@@ -22263,9 +21579,8 @@ pub fn x004055b3() -> Cont {
     jge(m, Cont(x004055c6), Cont(x004055dc))
 }
 
-pub fn x004055c0() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004055c0(m: &mut Machine) -> Cont {
     // 004055c0 cmp dword ptr [ebp-0Ch],0
     sub(
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff4u32)),
@@ -22276,9 +21591,8 @@ pub fn x004055c0() -> Cont {
     jge(m, Cont(x004055c6), Cont(x004055dc))
 }
 
-pub fn x004055c6() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004055c6(m: &mut Machine) -> Cont {
     // 004055c6 mov eax,[ebp-0Ch]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff4u32));
     // 004055c9 cmp eax,0
@@ -22287,9 +21601,8 @@ pub fn x004055c6() -> Cont {
     jns(m, Cont(x004055ce), Cont(x004055d0))
 }
 
-pub fn x004055ce() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004055ce(m: &mut Machine) -> Cont {
     // 004055ce neg eax
     m.regs.eax = neg(m.regs.eax, &mut m.flags);
     // 004055d0 mov edi,edx
@@ -22311,9 +21624,8 @@ pub fn x004055ce() -> Cont {
     jge(m, Cont(x004055e4), Cont(x00405647))
 }
 
-pub fn x004055d0() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004055d0(m: &mut Machine) -> Cont {
     // 004055d0 mov edi,edx
     m.regs.edi = m.regs.edx;
     // 004055d2 mov dword ptr [ebp-0Ch],0
@@ -22333,9 +21645,8 @@ pub fn x004055d0() -> Cont {
     jge(m, Cont(x004055e4), Cont(x00405647))
 }
 
-pub fn x004055dc() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004055dc(m: &mut Machine) -> Cont {
     // 004055dc mov ebx,[ebp-0Ch]
     m.regs.ebx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff4u32));
     // 004055df cmp ebx,[ebp-18h]
@@ -22348,9 +21659,8 @@ pub fn x004055dc() -> Cont {
     jge(m, Cont(x004055e4), Cont(x00405647))
 }
 
-pub fn x004055df() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004055df(m: &mut Machine) -> Cont {
     // 004055df cmp ebx,[ebp-18h]
     sub(
         m.regs.ebx,
@@ -22361,9 +21671,8 @@ pub fn x004055df() -> Cont {
     jge(m, Cont(x004055e4), Cont(x00405647))
 }
 
-pub fn x004055e4() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004055e4(m: &mut Machine) -> Cont {
     // 004055e4 mov eax,ds:[40C724h]
     m.regs.eax = m.memory.read::<u32>(0x40c724u32);
     // 004055e9 imul eax,ebx
@@ -22397,9 +21706,8 @@ pub fn x004055e4() -> Cont {
     jge(m, Cont(x00405608), Cont(x00405642))
 }
 
-pub fn x00405603() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405603(m: &mut Machine) -> Cont {
     // 00405603 cmp esi,[ebp-10h]
     sub(
         m.regs.esi,
@@ -22410,9 +21718,8 @@ pub fn x00405603() -> Cont {
     jge(m, Cont(x00405608), Cont(x00405642))
 }
 
-pub fn x00405608() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405608(m: &mut Machine) -> Cont {
     // 00405608 mov eax,[ebp-1Ch]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffe4u32));
     // 0040560b sar eax,10h
@@ -22437,9 +21744,8 @@ pub fn x00405608() -> Cont {
     jle(m, Cont(x00405622), Cont(x0040563c))
 }
 
-pub fn x00405622() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405622(m: &mut Machine) -> Cont {
     // 00405622 mov eax,[ebp-40h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffc0u32));
     // 00405625 add eax,esi
@@ -22469,9 +21775,8 @@ pub fn x00405622() -> Cont {
     jle(m, Cont(x0040563a), Cont(x0040563c))
 }
 
-pub fn x0040563a() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040563a(m: &mut Machine) -> Cont {
     // 0040563a mov [eax],ecx
     m.memory.write::<u32>(m.regs.eax, m.regs.ecx);
     // 0040563c inc esi
@@ -22489,9 +21794,8 @@ pub fn x0040563a() -> Cont {
     Cont(x00405603)
 }
 
-pub fn x0040563c() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040563c(m: &mut Machine) -> Cont {
     // 0040563c inc esi
     m.regs.esi = inc(m.regs.esi, &mut m.flags);
     // 0040563d add [ebp-1Ch],edx
@@ -22507,9 +21811,8 @@ pub fn x0040563c() -> Cont {
     Cont(x00405603)
 }
 
-pub fn x00405642() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405642(m: &mut Machine) -> Cont {
     // 00405642 inc ebx
     m.regs.ebx = inc(m.regs.ebx, &mut m.flags);
     // 00405643 add edi,edx
@@ -22518,9 +21821,8 @@ pub fn x00405642() -> Cont {
     Cont(x004055df)
 }
 
-pub fn x00405647() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405647(m: &mut Machine) -> Cont {
     // 00405647 leave
     leave(m);
     // 00405648 pop edi
@@ -22537,9 +21839,8 @@ pub fn x00405647() -> Cont {
     ret(m, 16)
 }
 
-pub fn x00405650() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405650(m: &mut Machine) -> Cont {
     // 00405650 push esi
     push(m, m.regs.esi);
     // 00405651 push edi
@@ -22564,18 +21865,16 @@ pub fn x00405650() -> Cont {
     jge(m, Cont(x0040566a), Cont(x004056dd))
 }
 
-pub fn x0040565e() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040565e(m: &mut Machine) -> Cont {
     // 0040565e cmp ebx,ds:[40C728h]
     sub(m.regs.ebx, m.memory.read::<u32>(0x40c728u32), &mut m.flags);
     // 00405664 jge near ptr 004056DDh
     jge(m, Cont(x0040566a), Cont(x004056dd))
 }
 
-pub fn x0040566a() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040566a(m: &mut Machine) -> Cont {
     // 0040566a mov eax,ebx
     m.regs.eax = m.regs.ebx;
     // 0040566c sub eax,[ebp+18h]
@@ -22595,18 +21894,16 @@ pub fn x0040566a() -> Cont {
     jge(m, Cont(x0040567c), Cont(x004056da))
 }
 
-pub fn x00405674() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405674(m: &mut Machine) -> Cont {
     // 00405674 cmp esi,ds:[40C724h]
     sub(m.regs.esi, m.memory.read::<u32>(0x40c724u32), &mut m.flags);
     // 0040567a jge short 004056DAh
     jge(m, Cont(x0040567c), Cont(x004056da))
 }
 
-pub fn x0040567c() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040567c(m: &mut Machine) -> Cont {
     // 0040567c mov eax,esi
     m.regs.eax = m.regs.esi;
     // 0040567e sub eax,[ebp+14h]
@@ -22637,9 +21934,8 @@ pub fn x0040567c() -> Cont {
     je(m, Cont(x00405697), Cont(x004056d6))
 }
 
-pub fn x00405697() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405697(m: &mut Machine) -> Cont {
     // 00405697 mov eax,10000h
     m.regs.eax = 0x10000u32;
     // 0040569c cdq
@@ -22719,9 +22015,8 @@ pub fn x00405697() -> Cont {
     Cont(x00405674)
 }
 
-pub fn x004056d6() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004056d6(m: &mut Machine) -> Cont {
     // 004056d6 inc esi
     m.regs.esi = inc(m.regs.esi, &mut m.flags);
     // 004056d7 inc edi
@@ -22730,18 +22025,16 @@ pub fn x004056d6() -> Cont {
     Cont(x00405674)
 }
 
-pub fn x004056da() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004056da(m: &mut Machine) -> Cont {
     // 004056da inc ebx
     m.regs.ebx = inc(m.regs.ebx, &mut m.flags);
     // 004056db jmp short 0040565Eh
     Cont(x0040565e)
 }
 
-pub fn x004056dd() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004056dd(m: &mut Machine) -> Cont {
     // 004056dd leave
     leave(m);
     // 004056de pop edi
@@ -22752,9 +22045,8 @@ pub fn x004056dd() -> Cont {
     ret(m, 12)
 }
 
-pub fn x004056e3() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004056e3(m: &mut Machine) -> Cont {
     // 004056e3 push ebx
     push(m, m.regs.ebx);
     // 004056e4 push ecx
@@ -22819,9 +22111,8 @@ pub fn x004056e3() -> Cont {
     call(m, 0x405731, Cont(x004053fc))
 }
 
-pub fn x00405731() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405731(m: &mut Machine) -> Cont {
     // 00405731 push edx
     push(m, m.regs.edx);
     // 00405732 mov ebx,[ebp+24h]
@@ -22843,9 +22134,8 @@ pub fn x00405731() -> Cont {
     call(m, 0x40574c, Cont(x00405650))
 }
 
-pub fn x0040574c() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040574c(m: &mut Machine) -> Cont {
     // 0040574c push dword ptr [ebp-0Ch]
     push(
         m,
@@ -22870,9 +22160,8 @@ pub fn x0040574c() -> Cont {
     call(m, 0x405769, Cont(x00405650))
 }
 
-pub fn x00405769() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405769(m: &mut Machine) -> Cont {
     // 00405769 leave
     leave(m);
     // 0040576a pop edi
@@ -22887,9 +22176,8 @@ pub fn x00405769() -> Cont {
     ret(m, 28)
 }
 
-pub fn x00405771() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405771(m: &mut Machine) -> Cont {
     // 00405771 push esi
     push(m, m.regs.esi);
     // 00405772 push edi
@@ -22909,9 +22197,8 @@ pub fn x00405771() -> Cont {
     call(m, 0x40578c, Cont(x00401a60))
 }
 
-pub fn x0040578c() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040578c(m: &mut Machine) -> Cont {
     // 0040578c add esp,4
     m.regs.esp = add(m.regs.esp, 0x4u32, &mut m.flags);
     // 0040578f push 100h
@@ -22922,9 +22209,8 @@ pub fn x0040578c() -> Cont {
     call(m, 0x40579e, Cont(x00401a60))
 }
 
-pub fn x0040579e() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040579e(m: &mut Machine) -> Cont {
     // 0040579e add esp,4
     m.regs.esp = add(m.regs.esp, 0x4u32, &mut m.flags);
     // 004057a1 push 0FA00h
@@ -22935,9 +22221,8 @@ pub fn x0040579e() -> Cont {
     call(m, 0x4057b0, Cont(x00401a60))
 }
 
-pub fn x004057b0() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004057b0(m: &mut Machine) -> Cont {
     // 004057b0 add esp,4
     m.regs.esp = add(m.regs.esp, 0x4u32, &mut m.flags);
     // 004057b3 push 100h
@@ -22948,9 +22233,8 @@ pub fn x004057b0() -> Cont {
     call(m, 0x4057c2, Cont(x00401a60))
 }
 
-pub fn x004057c2() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004057c2(m: &mut Machine) -> Cont {
     // 004057c2 add esp,4
     m.regs.esp = add(m.regs.esp, 0x4u32, &mut m.flags);
     // 004057c5 push 200h
@@ -22961,9 +22245,8 @@ pub fn x004057c2() -> Cont {
     call(m, 0x4057d4, Cont(x00401a60))
 }
 
-pub fn x004057d4() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004057d4(m: &mut Machine) -> Cont {
     // 004057d4 mov ecx,0FA00h
     m.regs.ecx = 0xfa00u32;
     // 004057d9 add esp,4
@@ -22978,36 +22261,32 @@ pub fn x004057d4() -> Cont {
     call(m, 0x4057ee, Cont(x00405889))
 }
 
-pub fn x004057ee() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004057ee(m: &mut Machine) -> Cont {
     // 004057ee mov eax,ebx
     m.regs.eax = m.regs.ebx;
     // 004057f0 call 004058D8h
     call(m, 0x4057f5, Cont(x004058d8))
 }
 
-pub fn x004057f5() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004057f5(m: &mut Machine) -> Cont {
     // 004057f5 mov eax,ebx
     m.regs.eax = m.regs.ebx;
     // 004057f7 call 0040595Fh
     call(m, 0x4057fc, Cont(x0040595f))
 }
 
-pub fn x004057fc() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004057fc(m: &mut Machine) -> Cont {
     // 004057fc mov eax,[ebp-4]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32));
     // 004057ff call 00405A15h
     call(m, 0x405804, Cont(x00405a15))
 }
 
-pub fn x00405804() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405804(m: &mut Machine) -> Cont {
     // 00405804 leave
     leave(m);
     // 00405805 pop edi
@@ -23018,9 +22297,8 @@ pub fn x00405804() -> Cont {
     ret(m, 0)
 }
 
-pub fn x00405808() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405808(m: &mut Machine) -> Cont {
     // 00405808 push ecx
     push(m, m.regs.ecx);
     // 00405809 push edx
@@ -23037,9 +22315,8 @@ pub fn x00405808() -> Cont {
     call(m, 0x40581e, Cont(kernel32::VirtualFree_stdcall))
 }
 
-pub fn x0040581e() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040581e(m: &mut Machine) -> Cont {
     // 0040581e push 8000h
     push(m, 0x8000u32);
     // 00405823 push 0
@@ -23052,9 +22329,8 @@ pub fn x0040581e() -> Cont {
     call(m, 0x405832, Cont(kernel32::VirtualFree_stdcall))
 }
 
-pub fn x00405832() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405832(m: &mut Machine) -> Cont {
     // 00405832 push 8000h
     push(m, 0x8000u32);
     // 00405837 push 0
@@ -23067,9 +22343,8 @@ pub fn x00405832() -> Cont {
     call(m, 0x405846, Cont(kernel32::VirtualFree_stdcall))
 }
 
-pub fn x00405846() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405846(m: &mut Machine) -> Cont {
     // 00405846 push 8000h
     push(m, 0x8000u32);
     // 0040584b push 0
@@ -23082,9 +22357,8 @@ pub fn x00405846() -> Cont {
     call(m, 0x40585a, Cont(kernel32::VirtualFree_stdcall))
 }
 
-pub fn x0040585a() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040585a(m: &mut Machine) -> Cont {
     // 0040585a push 8000h
     push(m, 0x8000u32);
     // 0040585f push 0
@@ -23097,9 +22371,8 @@ pub fn x0040585a() -> Cont {
     call(m, 0x40586e, Cont(kernel32::VirtualFree_stdcall))
 }
 
-pub fn x0040586e() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040586e(m: &mut Machine) -> Cont {
     // 0040586e pop edx
     m.regs.edx = pop(m);
     // 0040586f pop ecx
@@ -23108,9 +22381,8 @@ pub fn x0040586e() -> Cont {
     ret(m, 0)
 }
 
-pub fn x00405889() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405889(m: &mut Machine) -> Cont {
     // 00405889 push ebx
     push(m, m.regs.ebx);
     // 0040588a push ecx
@@ -23139,9 +22411,8 @@ pub fn x00405889() -> Cont {
     Cont(x004058b1)
 }
 
-pub fn x004058a9() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004058a9(m: &mut Machine) -> Cont {
     // 004058a9 inc eax
     m.regs.eax = inc(m.regs.eax, &mut m.flags);
     // 004058aa cmp eax,0FA00h
@@ -23150,9 +22421,8 @@ pub fn x004058a9() -> Cont {
     jge(m, Cont(x004058b1), Cont(x004058d2))
 }
 
-pub fn x004058b1() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004058b1(m: &mut Machine) -> Cont {
     // 004058b1 mov edx,ds:[433F38h]
     m.regs.edx = m.memory.read::<u32>(0x433f38u32);
     // 004058b7 cmp byte ptr [edx+eax],0FFh
@@ -23165,9 +22435,8 @@ pub fn x004058b1() -> Cont {
     jne(m, Cont(x004058bd), Cont(x004058a9))
 }
 
-pub fn x004058bd() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004058bd(m: &mut Machine) -> Cont {
     // 004058bd mov edx,ds:[433F3Ch]
     m.regs.edx = m.memory.read::<u32>(0x433f3cu32);
     // 004058c3 mov edi,ebx
@@ -23186,9 +22455,8 @@ pub fn x004058bd() -> Cont {
     Cont(x004058a9)
 }
 
-pub fn x004058d2() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004058d2(m: &mut Machine) -> Cont {
     // 004058d2 pop edi
     m.regs.edi = pop(m);
     // 004058d3 pop esi
@@ -23203,9 +22471,8 @@ pub fn x004058d2() -> Cont {
     ret(m, 0)
 }
 
-pub fn x004058d8() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004058d8(m: &mut Machine) -> Cont {
     // 004058d8 push ebx
     push(m, m.regs.ebx);
     // 004058d9 push ecx
@@ -23240,18 +22507,16 @@ pub fn x004058d8() -> Cont {
     jge(m, Cont(x004058fc), Cont(x0040593b))
 }
 
-pub fn x004058f4() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004058f4(m: &mut Machine) -> Cont {
     // 004058f4 cmp edx,ds:[433F40h]
     sub(m.regs.edx, m.memory.read::<u32>(0x433f40u32), &mut m.flags);
     // 004058fa jge short 0040593Bh
     jge(m, Cont(x004058fc), Cont(x0040593b))
 }
 
-pub fn x004058fc() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004058fc(m: &mut Machine) -> Cont {
     // 004058fc mov esi,ds:[433F3Ch]
     m.regs.esi = m.memory.read::<u32>(0x433f3cu32);
     // 00405902 lea eax,[edx+edx]
@@ -23268,9 +22533,8 @@ pub fn x004058fc() -> Cont {
     jne(m, Cont(x0040590e), Cont(x0040591a))
 }
 
-pub fn x0040590e() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040590e(m: &mut Machine) -> Cont {
     // 0040590e mov eax,ds:[433F34h]
     m.regs.eax = m.memory.read::<u32>(0x433f34u32);
     // 00405913 mov byte ptr [ebx+eax+1],0
@@ -23282,9 +22546,8 @@ pub fn x0040590e() -> Cont {
     Cont(x0040593b)
 }
 
-pub fn x0040591a() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040591a(m: &mut Machine) -> Cont {
     // 0040591a mov cl,[eax+2]
     m.regs
         .set_cl(m.memory.read::<u8>(m.regs.eax.wrapping_add(0x2u32)));
@@ -23315,9 +22578,8 @@ pub fn x0040591a() -> Cont {
     jl(m, Cont(x00405936), Cont(x00405937))
 }
 
-pub fn x00405936() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405936(m: &mut Machine) -> Cont {
     // 00405936 dec ebx
     m.regs.ebx = dec(m.regs.ebx, &mut m.flags);
     // 00405937 inc edx
@@ -23328,9 +22590,8 @@ pub fn x00405936() -> Cont {
     Cont(x004058f4)
 }
 
-pub fn x00405937() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405937(m: &mut Machine) -> Cont {
     // 00405937 inc edx
     m.regs.edx = inc(m.regs.edx, &mut m.flags);
     // 00405938 inc ebx
@@ -23339,9 +22600,8 @@ pub fn x00405937() -> Cont {
     Cont(x004058f4)
 }
 
-pub fn x0040593b() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040593b(m: &mut Machine) -> Cont {
     // 0040593b mov eax,ds:[433F34h]
     m.regs.eax = m.memory.read::<u32>(0x433f34u32);
     // 00405940 xor edx,edx
@@ -23352,18 +22612,16 @@ pub fn x0040593b() -> Cont {
     jge(m, Cont(x0040594a), Cont(x00405958))
 }
 
-pub fn x00405942() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405942(m: &mut Machine) -> Cont {
     // 00405942 cmp edx,ds:[433F40h]
     sub(m.regs.edx, m.memory.read::<u32>(0x433f40u32), &mut m.flags);
     // 00405948 jge short 00405958h
     jge(m, Cont(x0040594a), Cont(x00405958))
 }
 
-pub fn x0040594a() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040594a(m: &mut Machine) -> Cont {
     // 0040594a movzx ebx,byte ptr [edx+eax]
     m.regs.ebx = m.memory.read::<u8>(m.regs.edx.wrapping_add(m.regs.eax)) as _;
     // 0040594e inc edx
@@ -23375,9 +22633,8 @@ pub fn x0040594a() -> Cont {
     Cont(x00405942)
 }
 
-pub fn x00405958() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405958(m: &mut Machine) -> Cont {
     // 00405958 leave
     leave(m);
     // 00405959 pop edi
@@ -23394,9 +22651,8 @@ pub fn x00405958() -> Cont {
     ret(m, 0)
 }
 
-pub fn x0040595f() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040595f(m: &mut Machine) -> Cont {
     // 0040595f push ebx
     push(m, m.regs.ebx);
     // 00405960 push ecx
@@ -23437,9 +22693,8 @@ pub fn x0040595f() -> Cont {
     jl(m, Cont(x0040598f), Cont(x0040596e))
 }
 
-pub fn x0040596e() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040596e(m: &mut Machine) -> Cont {
     // 0040596e mov edx,ds:[433F3Ch]
     m.regs.edx = m.memory.read::<u32>(0x433f3cu32);
     // 00405974 lea ebx,[eax+eax]
@@ -23462,18 +22717,16 @@ pub fn x0040596e() -> Cont {
     jl(m, Cont(x0040598f), Cont(x0040596e))
 }
 
-pub fn x0040598f() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040598f(m: &mut Machine) -> Cont {
     // 0040598f xor eax,eax
     m.regs.eax = xor(m.regs.eax, m.regs.eax, &mut m.flags);
     // 00405991 jmp short 0040599Bh
     Cont(x0040599b)
 }
 
-pub fn x00405993() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405993(m: &mut Machine) -> Cont {
     // 00405993 inc eax
     m.regs.eax = inc(m.regs.eax, &mut m.flags);
     // 00405994 cmp eax,100h
@@ -23482,9 +22735,8 @@ pub fn x00405993() -> Cont {
     jge(m, Cont(x0040599b), Cont(x004059e4))
 }
 
-pub fn x0040599b() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040599b(m: &mut Machine) -> Cont {
     // 0040599b mov ebx,ds:[433F20h]
     m.regs.ebx = m.memory.read::<u32>(0x433f20u32);
     // 004059a1 lea edx,[eax+eax]
@@ -23524,9 +22776,8 @@ pub fn x0040599b() -> Cont {
     jle(m, Cont(x004059cb), Cont(x004059cc))
 }
 
-pub fn x004059cb() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004059cb(m: &mut Machine) -> Cont {
     // 004059cb inc ecx
     m.regs.ecx = inc(m.regs.ecx, &mut m.flags);
     // 004059cc mov edx,ds:[433F20h]
@@ -23547,9 +22798,8 @@ pub fn x004059cb() -> Cont {
     jg(m, Cont(x004059e4), Cont(x00405993))
 }
 
-pub fn x004059cc() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004059cc(m: &mut Machine) -> Cont {
     // 004059cc mov edx,ds:[433F20h]
     m.regs.edx = m.memory.read::<u32>(0x433f20u32);
     // 004059d2 lea ebx,[eax+eax]
@@ -23568,9 +22818,8 @@ pub fn x004059cc() -> Cont {
     jg(m, Cont(x004059e4), Cont(x00405993))
 }
 
-pub fn x004059e4() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004059e4(m: &mut Machine) -> Cont {
     // 004059e4 sub eax,ecx
     m.regs.eax = sub(m.regs.eax, m.regs.ecx, &mut m.flags);
     // 004059e6 mov ds:[433F40h],eax
@@ -23583,18 +22832,16 @@ pub fn x004059e4() -> Cont {
     jge(m, Cont(x004059f5), Cont(x00405a0e))
 }
 
-pub fn x004059ed() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004059ed(m: &mut Machine) -> Cont {
     // 004059ed cmp eax,ds:[433F40h]
     sub(m.regs.eax, m.memory.read::<u32>(0x433f40u32), &mut m.flags);
     // 004059f3 jge short 00405A0Eh
     jge(m, Cont(x004059f5), Cont(x00405a0e))
 }
 
-pub fn x004059f5() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004059f5(m: &mut Machine) -> Cont {
     // 004059f5 mov edx,ds:[433F3Ch]
     m.regs.edx = m.memory.read::<u32>(0x433f3cu32);
     // 004059fb lea ecx,[eax+eax]
@@ -23612,9 +22859,8 @@ pub fn x004059f5() -> Cont {
     Cont(x004059ed)
 }
 
-pub fn x00405a0e() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405a0e(m: &mut Machine) -> Cont {
     // 00405a0e leave
     leave(m);
     // 00405a0f pop edi
@@ -23631,9 +22877,8 @@ pub fn x00405a0e() -> Cont {
     ret(m, 0)
 }
 
-pub fn x00405a15() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405a15(m: &mut Machine) -> Cont {
     // 00405a15 push ecx
     push(m, m.regs.ecx);
     // 00405a16 push edx
@@ -23664,18 +22909,16 @@ pub fn x00405a15() -> Cont {
     jge(m, Cont(x00405a36), Cont(x00405a48))
 }
 
-pub fn x00405a2e() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405a2e(m: &mut Machine) -> Cont {
     // 00405a2e cmp eax,ds:[433F40h]
     sub(m.regs.eax, m.memory.read::<u32>(0x433f40u32), &mut m.flags);
     // 00405a34 jge short 00405A48h
     jge(m, Cont(x00405a36), Cont(x00405a48))
 }
 
-pub fn x00405a36() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405a36(m: &mut Machine) -> Cont {
     // 00405a36 mov edx,[ebp-4]
     m.regs.edx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32));
     // 00405a39 mov ecx,ds:[433F24h]
@@ -23692,9 +22935,8 @@ pub fn x00405a36() -> Cont {
     Cont(x00405a2e)
 }
 
-pub fn x00405a48() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405a48(m: &mut Machine) -> Cont {
     // 00405a48 leave
     leave(m);
     // 00405a49 pop edi
@@ -23709,9 +22951,8 @@ pub fn x00405a48() -> Cont {
     ret(m, 0)
 }
 
-pub fn x00405a4e() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405a4e(m: &mut Machine) -> Cont {
     // 00405a4e push ebx
     push(m, m.regs.ebx);
     // 00405a4f push ecx
@@ -23744,9 +22985,8 @@ pub fn x00405a4e() -> Cont {
     jge(m, Cont(x00405a73), Cont(x00405afc))
 }
 
-pub fn x00405a65() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405a65(m: &mut Machine) -> Cont {
     // 00405a65 mov eax,ds:[433F44h]
     m.regs.eax = m.memory.read::<u32>(0x433f44u32);
     // 00405a6a dec eax
@@ -23757,9 +22997,8 @@ pub fn x00405a65() -> Cont {
     jge(m, Cont(x00405a73), Cont(x00405afc))
 }
 
-pub fn x00405a73() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405a73(m: &mut Machine) -> Cont {
     // 00405a73 mov ecx,ds:[433F30h]
     m.regs.ecx = m.memory.read::<u32>(0x433f30u32);
     // 00405a79 mov eax,[ebp-4]
@@ -23780,9 +23019,8 @@ pub fn x00405a73() -> Cont {
     jge(m, Cont(x00405a8f), Cont(x00405adc))
 }
 
-pub fn x00405a79() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405a79(m: &mut Machine) -> Cont {
     // 00405a79 mov eax,[ebp-4]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32));
     // 00405a7c shl eax,3
@@ -23801,9 +23039,8 @@ pub fn x00405a79() -> Cont {
     jge(m, Cont(x00405a8f), Cont(x00405adc))
 }
 
-pub fn x00405a8f() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405a8f(m: &mut Machine) -> Cont {
     // 00405a8f movsx eax,word ptr [eax+4331A0h]
     m.regs.eax = m.memory.read::<u16>(m.regs.eax.wrapping_add(0x4331a0u32)) as i16 as i32 as u32;
     // 00405a96 mov ebx,ds:[433F38h]
@@ -23818,9 +23055,8 @@ pub fn x00405a8f() -> Cont {
     je(m, Cont(x00405aaa), Cont(x00405ad3))
 }
 
-pub fn x00405aaa() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405aaa(m: &mut Machine) -> Cont {
     // 00405aaa mov eax,ebx
     m.regs.eax = m.regs.ebx;
     // 00405aac shl eax,2
@@ -23870,9 +23106,8 @@ pub fn x00405aaa() -> Cont {
     Cont(x00405a79)
 }
 
-pub fn x00405ad3() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405ad3(m: &mut Machine) -> Cont {
     // 00405ad3 inc dword ptr ds:[433F28h]
     m.memory.write::<u32>(
         0x433f28u32,
@@ -23884,9 +23119,8 @@ pub fn x00405ad3() -> Cont {
     Cont(x00405a79)
 }
 
-pub fn x00405adc() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405adc(m: &mut Machine) -> Cont {
     // 00405adc mov edx,140h
     m.regs.edx = 0x140u32;
     // 00405ae1 inc esi
@@ -23913,9 +23147,8 @@ pub fn x00405adc() -> Cont {
     Cont(x00405a65)
 }
 
-pub fn x00405afc() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405afc(m: &mut Machine) -> Cont {
     // 00405afc mov dword ptr ds:[433F28h],140h
     m.memory.write::<u32>(0x433f28u32, 0x140u32);
     // 00405b06 emms
@@ -23934,9 +23167,8 @@ pub fn x00405afc() -> Cont {
     ret(m, 0)
 }
 
-pub fn x00405b0e() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405b0e(m: &mut Machine) -> Cont {
     // 00405b0e push esi
     push(m, m.regs.esi);
     // 00405b0f push edi
@@ -23969,9 +23201,8 @@ pub fn x00405b0e() -> Cont {
     je(m, Cont(x00405b3e), Cont(x00405bd5))
 }
 
-pub fn x00405b32() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405b32(m: &mut Machine) -> Cont {
     // 00405b32 lea eax,[esi+ecx]
     m.regs.eax = m.regs.esi.wrapping_add(m.regs.ecx);
     // 00405b35 cmp byte ptr [eax],0
@@ -23980,9 +23211,8 @@ pub fn x00405b32() -> Cont {
     je(m, Cont(x00405b3e), Cont(x00405bd5))
 }
 
-pub fn x00405b3e() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405b3e(m: &mut Machine) -> Cont {
     // 00405b3e mov dword ptr ds:[433F2Ch],0
     m.memory.write::<u32>(0x433f2cu32, 0x0u32);
     // 00405b48 mov eax,ds:[433F2Ch]
@@ -23993,9 +23223,8 @@ pub fn x00405b3e() -> Cont {
     jge(m, Cont(x00405b55), Cont(x00405b9d))
 }
 
-pub fn x00405b48() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405b48(m: &mut Machine) -> Cont {
     // 00405b48 mov eax,ds:[433F2Ch]
     m.regs.eax = m.memory.read::<u32>(0x433f2cu32);
     // 00405b4d cmp eax,ds:[433F40h]
@@ -24004,9 +23233,8 @@ pub fn x00405b48() -> Cont {
     jge(m, Cont(x00405b55), Cont(x00405b9d))
 }
 
-pub fn x00405b55() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405b55(m: &mut Machine) -> Cont {
     // 00405b55 mov edx,ds:[433F24h]
     m.regs.edx = m.memory.read::<u32>(0x433f24u32);
     // 00405b5b add edx,eax
@@ -24025,9 +23253,8 @@ pub fn x00405b55() -> Cont {
     jne(m, Cont(x00405b66), Cont(x00405b95))
 }
 
-pub fn x00405b66() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405b66(m: &mut Machine) -> Cont {
     // 00405b66 mov eax,[ebp-10h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff0u32));
     // 00405b69 imul eax,[ebp+10h]
@@ -24056,9 +23283,8 @@ pub fn x00405b66() -> Cont {
     call(m, 0x405b86, Cont(x00405a4e))
 }
 
-pub fn x00405b86() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405b86(m: &mut Machine) -> Cont {
     // 00405b86 mov eax,ds:[433F2Ch]
     m.regs.eax = m.memory.read::<u32>(0x433f2cu32);
     // 00405b8b mov eax,[eax*8+4331A4h]
@@ -24083,9 +23309,8 @@ pub fn x00405b86() -> Cont {
     Cont(x00405b48)
 }
 
-pub fn x00405b95() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405b95(m: &mut Machine) -> Cont {
     // 00405b95 inc dword ptr ds:[433F2Ch]
     m.memory.write::<u32>(
         0x433f2cu32,
@@ -24095,9 +23320,8 @@ pub fn x00405b95() -> Cont {
     Cont(x00405b48)
 }
 
-pub fn x00405b9d() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405b9d(m: &mut Machine) -> Cont {
     // 00405b9d mov dword ptr [ebp-8],0
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32), 0x0u32);
@@ -24113,18 +23337,16 @@ pub fn x00405b9d() -> Cont {
     jge(m, Cont(x00405bb7), Cont(x00405bc9))
 }
 
-pub fn x00405baf() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405baf(m: &mut Machine) -> Cont {
     // 00405baf cmp eax,ds:[433F40h]
     sub(m.regs.eax, m.memory.read::<u32>(0x433f40u32), &mut m.flags);
     // 00405bb5 jge short 00405BC9h
     jge(m, Cont(x00405bb7), Cont(x00405bc9))
 }
 
-pub fn x00405bb7() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405bb7(m: &mut Machine) -> Cont {
     // 00405bb7 mov bl,[edi+eax]
     m.regs
         .set_bl(m.memory.read::<u8>(m.regs.edi.wrapping_add(m.regs.eax)));
@@ -24138,9 +23360,8 @@ pub fn x00405bb7() -> Cont {
     jne(m, Cont(x00405bbf), Cont(x00405bc6))
 }
 
-pub fn x00405bbf() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405bbf(m: &mut Machine) -> Cont {
     // 00405bbf mov dword ptr [ebp-8],1
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32), 0x1u32);
@@ -24150,18 +23371,16 @@ pub fn x00405bbf() -> Cont {
     Cont(x00405baf)
 }
 
-pub fn x00405bc6() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405bc6(m: &mut Machine) -> Cont {
     // 00405bc6 inc eax
     m.regs.eax = inc(m.regs.eax, &mut m.flags);
     // 00405bc7 jmp short 00405BAFh
     Cont(x00405baf)
 }
 
-pub fn x00405bc9() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405bc9(m: &mut Machine) -> Cont {
     // 00405bc9 cmp dword ptr [ebp-8],0
     sub(
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32)),
@@ -24172,18 +23391,16 @@ pub fn x00405bc9() -> Cont {
     je(m, Cont(x00405bcf), Cont(x00405bd5))
 }
 
-pub fn x00405bcf() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405bcf(m: &mut Machine) -> Cont {
     // 00405bcf inc ecx
     m.regs.ecx = inc(m.regs.ecx, &mut m.flags);
     // 00405bd0 jmp near ptr 00405B32h
     Cont(x00405b32)
 }
 
-pub fn x00405bd5() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405bd5(m: &mut Machine) -> Cont {
     // 00405bd5 leave
     leave(m);
     // 00405bd6 pop edi
@@ -24194,9 +23411,8 @@ pub fn x00405bd5() -> Cont {
     ret(m, 4)
 }
 
-pub fn x00405bdb() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405bdb(m: &mut Machine) -> Cont {
     // 00405bdb push ebx
     push(m, m.regs.ebx);
     // 00405bdc push ecx
@@ -24219,18 +23435,16 @@ pub fn x00405bdb() -> Cont {
     jge(m, Cont(x00405bf1), Cont(x00405c90))
 }
 
-pub fn x00405be9() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405be9(m: &mut Machine) -> Cont {
     // 00405be9 cmp ecx,[ebx]
     sub(m.regs.ecx, m.memory.read::<u32>(m.regs.ebx), &mut m.flags);
     // 00405beb jge near ptr 00405C90h
     jge(m, Cont(x00405bf1), Cont(x00405c90))
 }
 
-pub fn x00405bf1() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405bf1(m: &mut Machine) -> Cont {
     // 00405bf1 imul edx,ecx,0Ch
     m.regs.edx = imul(m.regs.ecx as i32, 0xcu32 as i32, &mut m.flags) as u32;
     // 00405bf4 mov eax,[ebx+38h]
@@ -24259,9 +23473,8 @@ pub fn x00405bf1() -> Cont {
     je(m, Cont(x00405c0a), Cont(x00405c14))
 }
 
-pub fn x00405c0a() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405c0a(m: &mut Machine) -> Cont {
     // 00405c0a fld dword ptr [esi]
     m.fpu.push(m.memory.read::<f32>(m.regs.esi) as f64);
     // 00405c0c fdiv dword ptr [ebp-0Ch]
@@ -24277,9 +23490,8 @@ pub fn x00405c0a() -> Cont {
     Cont(x00405c1b)
 }
 
-pub fn x00405c14() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405c14(m: &mut Machine) -> Cont {
     // 00405c14 mov dword ptr [ebp-8],0
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32), 0x0u32);
@@ -24331,9 +23543,8 @@ pub fn x00405c14() -> Cont {
     call(m, 0x405c50, Cont(x00408838))
 }
 
-pub fn x00405c1b() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405c1b(m: &mut Machine) -> Cont {
     // 00405c1b imul edi,ecx,0Ch
     m.regs.edi = imul(m.regs.ecx as i32, 0xcu32 as i32, &mut m.flags) as u32;
     // 00405c1e mov eax,[ebx+38h]
@@ -24382,9 +23593,8 @@ pub fn x00405c1b() -> Cont {
     call(m, 0x405c50, Cont(x00408838))
 }
 
-pub fn x00405c50() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405c50(m: &mut Machine) -> Cont {
     // 00405c50 fistp dword ptr [ebp-4]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffffcu32),
@@ -24441,9 +23651,8 @@ pub fn x00405c50() -> Cont {
     call(m, 0x405c81, Cont(x00408838))
 }
 
-pub fn x00405c81() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405c81(m: &mut Machine) -> Cont {
     // 00405c81 fistp dword ptr [ebp-4]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffffcu32),
@@ -24461,9 +23670,8 @@ pub fn x00405c81() -> Cont {
     Cont(x00405be9)
 }
 
-pub fn x00405c90() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405c90(m: &mut Machine) -> Cont {
     // 00405c90 xor ecx,ecx
     m.regs.ecx = xor(m.regs.ecx, m.regs.ecx, &mut m.flags);
     // 00405c92 cmp ecx,[ebx+4]
@@ -24476,9 +23684,8 @@ pub fn x00405c90() -> Cont {
     jge(m, Cont(x00405c97), Cont(x00405cd8))
 }
 
-pub fn x00405c92() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405c92(m: &mut Machine) -> Cont {
     // 00405c92 cmp ecx,[ebx+4]
     sub(
         m.regs.ecx,
@@ -24489,9 +23696,8 @@ pub fn x00405c92() -> Cont {
     jge(m, Cont(x00405c97), Cont(x00405cd8))
 }
 
-pub fn x00405c97() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405c97(m: &mut Machine) -> Cont {
     // 00405c97 mov eax,ecx
     m.regs.eax = m.regs.ecx;
     // 00405c99 mov edx,[ebx+34h]
@@ -24551,9 +23757,8 @@ pub fn x00405c97() -> Cont {
     call(m, 0x405cc7, Cont(x00408838))
 }
 
-pub fn x00405cc7() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405cc7(m: &mut Machine) -> Cont {
     // 00405cc7 mov eax,[ebx+40h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebx.wrapping_add(0x40u32));
     // 00405cca fistp dword ptr [ebp-4]
@@ -24575,9 +23780,8 @@ pub fn x00405cc7() -> Cont {
     Cont(x00405c92)
 }
 
-pub fn x00405cd8() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405cd8(m: &mut Machine) -> Cont {
     // 00405cd8 xor ecx,ecx
     m.regs.ecx = xor(m.regs.ecx, m.regs.ecx, &mut m.flags);
     // 00405cda cmp ecx,[ebx+4]
@@ -24590,9 +23794,8 @@ pub fn x00405cd8() -> Cont {
     jge(m, Cont(x00405cdf), Cont(x00405cea))
 }
 
-pub fn x00405cda() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405cda(m: &mut Machine) -> Cont {
     // 00405cda cmp ecx,[ebx+4]
     sub(
         m.regs.ecx,
@@ -24603,9 +23806,8 @@ pub fn x00405cda() -> Cont {
     jge(m, Cont(x00405cdf), Cont(x00405cea))
 }
 
-pub fn x00405cdf() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405cdf(m: &mut Machine) -> Cont {
     // 00405cdf mov eax,ecx
     m.regs.eax = m.regs.ecx;
     // 00405ce1 mov edx,[ebx+40h]
@@ -24619,9 +23821,8 @@ pub fn x00405cdf() -> Cont {
     Cont(x00405cda)
 }
 
-pub fn x00405cea() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405cea(m: &mut Machine) -> Cont {
     // 00405cea mov edx,[ebx+4]
     m.regs.edx = m.memory.read::<u32>(m.regs.ebx.wrapping_add(0x4u32));
     // 00405ced xor eax,eax
@@ -24632,9 +23833,8 @@ pub fn x00405cea() -> Cont {
     call(m, 0x405cf5, Cont(x004060b3))
 }
 
-pub fn x00405cf5() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405cf5(m: &mut Machine) -> Cont {
     // 00405cf5 leave
     leave(m);
     // 00405cf6 pop edi
@@ -24649,9 +23849,8 @@ pub fn x00405cf5() -> Cont {
     ret(m, 0)
 }
 
-pub fn x00405cfb() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405cfb(m: &mut Machine) -> Cont {
     // 00405cfb push esi
     push(m, m.regs.esi);
     // 00405cfc enter 38h,0
@@ -24791,9 +23990,8 @@ pub fn x00405cfb() -> Cont {
     jge(m, Cont(x00405d92), Cont(x00405e64))
 }
 
-pub fn x00405d89() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405d89(m: &mut Machine) -> Cont {
     // 00405d89 cmp edx,[ebp+1Ch]
     sub(
         m.regs.edx,
@@ -24804,9 +24002,8 @@ pub fn x00405d89() -> Cont {
     jge(m, Cont(x00405d92), Cont(x00405e64))
 }
 
-pub fn x00405d92() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405d92(m: &mut Machine) -> Cont {
     // 00405d92 imul eax,edx,0Ch
     m.regs.eax = imul(m.regs.edx as i32, 0xcu32 as i32, &mut m.flags) as u32;
     // 00405d95 mov ebx,[esi+eax]
@@ -25078,9 +24275,8 @@ pub fn x00405d92() -> Cont {
     Cont(x00405d89)
 }
 
-pub fn x00405e64() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405e64(m: &mut Machine) -> Cont {
     // 00405e64 leave
     leave(m);
     // 00405e65 pop esi
@@ -25089,9 +24285,8 @@ pub fn x00405e64() -> Cont {
     ret(m, 20)
 }
 
-pub fn x00405e69() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405e69(m: &mut Machine) -> Cont {
     // 00405e69 push ebx
     push(m, m.regs.ebx);
     // 00405e6a push ecx
@@ -25112,9 +24307,8 @@ pub fn x00405e69() -> Cont {
     call(m, 0x405e77, Cont(x00401a60))
 }
 
-pub fn x00405e77() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405e77(m: &mut Machine) -> Cont {
     // 00405e77 mov [ebx+30h],eax
     m.memory
         .write::<u32>(m.regs.ebx.wrapping_add(0x30u32), m.regs.eax);
@@ -25132,9 +24326,8 @@ pub fn x00405e77() -> Cont {
     call(m, 0x405e86, Cont(x00401a60))
 }
 
-pub fn x00405e86() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405e86(m: &mut Machine) -> Cont {
     // 00405e86 mov [ebx+38h],eax
     m.memory
         .write::<u32>(m.regs.ebx.wrapping_add(0x38u32), m.regs.eax);
@@ -25150,9 +24343,8 @@ pub fn x00405e86() -> Cont {
     call(m, 0x405e98, Cont(x00401a60))
 }
 
-pub fn x00405e98() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405e98(m: &mut Machine) -> Cont {
     // 00405e98 mov [ebx+34h],eax
     m.memory
         .write::<u32>(m.regs.ebx.wrapping_add(0x34u32), m.regs.eax);
@@ -25168,9 +24360,8 @@ pub fn x00405e98() -> Cont {
     call(m, 0x405ea9, Cont(x00401a60))
 }
 
-pub fn x00405ea9() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405ea9(m: &mut Machine) -> Cont {
     // 00405ea9 mov [ebx+3Ch],eax
     m.memory
         .write::<u32>(m.regs.ebx.wrapping_add(0x3cu32), m.regs.eax);
@@ -25186,9 +24377,8 @@ pub fn x00405ea9() -> Cont {
     call(m, 0x405ebb, Cont(x00401a60))
 }
 
-pub fn x00405ebb() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405ebb(m: &mut Machine) -> Cont {
     // 00405ebb mov dword ptr [ebx+0Ch],0
     m.memory
         .write::<u32>(m.regs.ebx.wrapping_add(0xcu32), 0x0u32);
@@ -25231,9 +24421,8 @@ pub fn x00405ebb() -> Cont {
     ret(m, 0)
 }
 
-pub fn x00405f04() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405f04(m: &mut Machine) -> Cont {
     // 00405f04 push ebx
     push(m, m.regs.ebx);
     // 00405f05 push ecx
@@ -25289,9 +24478,8 @@ pub fn x00405f04() -> Cont {
     call(m, 0x405f46, Cont(x00405e69))
 }
 
-pub fn x00405f46() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405f46(m: &mut Machine) -> Cont {
     // 00405f46 xor eax,eax
     m.regs.eax = xor(m.regs.eax, m.regs.eax, &mut m.flags);
     // 00405f48 cmp eax,[edx]
@@ -25300,18 +24488,16 @@ pub fn x00405f46() -> Cont {
     jge(m, Cont(x00405f50), Cont(x00405fdb))
 }
 
-pub fn x00405f48() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405f48(m: &mut Machine) -> Cont {
     // 00405f48 cmp eax,[edx]
     sub(m.regs.eax, m.memory.read::<u32>(m.regs.edx), &mut m.flags);
     // 00405f4a jge near ptr 00405FDBh
     jge(m, Cont(x00405f50), Cont(x00405fdb))
 }
 
-pub fn x00405f50() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405f50(m: &mut Machine) -> Cont {
     // 00405f50 movzx si,byte ptr [ecx+1]
     m.regs
         .set_si(m.memory.read::<u8>(m.regs.ecx.wrapping_add(0x1u32)) as _);
@@ -25439,9 +24625,8 @@ pub fn x00405f50() -> Cont {
     Cont(x00405f48)
 }
 
-pub fn x00405fdb() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405fdb(m: &mut Machine) -> Cont {
     // 00405fdb xor eax,eax
     m.regs.eax = xor(m.regs.eax, m.regs.eax, &mut m.flags);
     // 00405fdd cmp eax,[edx+4]
@@ -25454,9 +24639,8 @@ pub fn x00405fdb() -> Cont {
     jge(m, Cont(x00405fe2), Cont(x0040604a))
 }
 
-pub fn x00405fdd() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405fdd(m: &mut Machine) -> Cont {
     // 00405fdd cmp eax,[edx+4]
     sub(
         m.regs.eax,
@@ -25467,9 +24651,8 @@ pub fn x00405fdd() -> Cont {
     jge(m, Cont(x00405fe2), Cont(x0040604a))
 }
 
-pub fn x00405fe2() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00405fe2(m: &mut Machine) -> Cont {
     // 00405fe2 mov esi,eax
     m.regs.esi = m.regs.eax;
     // 00405fe4 mov ebx,[edx+40h]
@@ -25563,9 +24746,8 @@ pub fn x00405fe2() -> Cont {
     Cont(x00405fdd)
 }
 
-pub fn x0040604a() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040604a(m: &mut Machine) -> Cont {
     // 0040604a leave
     leave(m);
     // 0040604b pop edi
@@ -25580,9 +24762,8 @@ pub fn x0040604a() -> Cont {
     ret(m, 0)
 }
 
-pub fn x00406050() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00406050(m: &mut Machine) -> Cont {
     // 00406050 push ebx
     push(m, m.regs.ebx);
     // 00406051 push ecx
@@ -25603,9 +24784,8 @@ pub fn x00406050() -> Cont {
     call(m, 0x406067, Cont(kernel32::VirtualFree_stdcall))
 }
 
-pub fn x00406067() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00406067(m: &mut Machine) -> Cont {
     // 00406067 push 8000h
     push(m, 0x8000u32);
     // 0040606c push 0
@@ -25618,9 +24798,8 @@ pub fn x00406067() -> Cont {
     call(m, 0x406079, Cont(kernel32::VirtualFree_stdcall))
 }
 
-pub fn x00406079() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00406079(m: &mut Machine) -> Cont {
     // 00406079 push 8000h
     push(m, 0x8000u32);
     // 0040607e push 0
@@ -25633,9 +24812,8 @@ pub fn x00406079() -> Cont {
     call(m, 0x40608b, Cont(kernel32::VirtualFree_stdcall))
 }
 
-pub fn x0040608b() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040608b(m: &mut Machine) -> Cont {
     // 0040608b push 8000h
     push(m, 0x8000u32);
     // 00406090 push 0
@@ -25648,9 +24826,8 @@ pub fn x0040608b() -> Cont {
     call(m, 0x40609d, Cont(kernel32::VirtualFree_stdcall))
 }
 
-pub fn x0040609d() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040609d(m: &mut Machine) -> Cont {
     // 0040609d push 8000h
     push(m, 0x8000u32);
     // 004060a2 push 0
@@ -25663,9 +24840,8 @@ pub fn x0040609d() -> Cont {
     call(m, 0x4060af, Cont(kernel32::VirtualFree_stdcall))
 }
 
-pub fn x004060af() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004060af(m: &mut Machine) -> Cont {
     // 004060af pop edx
     m.regs.edx = pop(m);
     // 004060b0 pop ecx
@@ -25676,9 +24852,8 @@ pub fn x004060af() -> Cont {
     ret(m, 0)
 }
 
-pub fn x004060b3() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004060b3(m: &mut Machine) -> Cont {
     // 004060b3 push ecx
     push(m, m.regs.ecx);
     // 004060b4 push esi
@@ -25748,9 +24923,8 @@ pub fn x004060b3() -> Cont {
     jge(m, Cont(x004060ea), Cont(x004060ed))
 }
 
-pub fn x004060be() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004060be(m: &mut Machine) -> Cont {
     // 004060be mov edi,[ebp-18h]
     m.regs.edi = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffe8u32));
     // 004060c1 mov esi,[ebp-14h]
@@ -25806,9 +24980,8 @@ pub fn x004060be() -> Cont {
     jge(m, Cont(x004060ea), Cont(x004060ed))
 }
 
-pub fn x004060d9() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004060d9(m: &mut Machine) -> Cont {
     // 004060d9 mov eax,esi
     m.regs.eax = m.regs.esi;
     // 004060db mov edx,[ecx+40h]
@@ -25834,18 +25007,16 @@ pub fn x004060d9() -> Cont {
     jge(m, Cont(x004060ea), Cont(x004060ed))
 }
 
-pub fn x004060ea() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004060ea(m: &mut Machine) -> Cont {
     // 004060ea inc esi
     m.regs.esi = inc(m.regs.esi, &mut m.flags);
     // 004060eb jmp short 004060D9h
     Cont(x004060d9)
 }
 
-pub fn x004060ed() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004060ed(m: &mut Machine) -> Cont {
     // 004060ed mov eax,edi
     m.regs.eax = m.regs.edi;
     // 004060ef shl eax,3
@@ -25893,27 +25064,24 @@ pub fn x004060ed() -> Cont {
     jge(m, Cont(x00406116), Cont(x0040611b))
 }
 
-pub fn x00406116() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00406116(m: &mut Machine) -> Cont {
     // 00406116 mov edi,[ebp-10h]
     m.regs.edi = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff0u32));
     // 00406119 jmp short 004060EDh
     Cont(x004060ed)
 }
 
-pub fn x0040611b() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040611b(m: &mut Machine) -> Cont {
     // 0040611b cmp esi,edi
     sub(m.regs.esi, m.regs.edi, &mut m.flags);
     // 0040611d jg short 00406139h
     jg(m, Cont(x0040611f), Cont(x00406139))
 }
 
-pub fn x0040611f() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040611f(m: &mut Machine) -> Cont {
     // 0040611f mov eax,esi
     m.regs.eax = m.regs.esi;
     // 00406121 shl eax,3
@@ -25950,18 +25118,16 @@ pub fn x0040611f() -> Cont {
     jle(m, Cont(x0040613d), Cont(x004060d9))
 }
 
-pub fn x00406139() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00406139(m: &mut Machine) -> Cont {
     // 00406139 cmp esi,edi
     sub(m.regs.esi, m.regs.edi, &mut m.flags);
     // 0040613b jle short 004060D9h
     jle(m, Cont(x0040613d), Cont(x004060d9))
 }
 
-pub fn x0040613d() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040613d(m: &mut Machine) -> Cont {
     // 0040613d cmp edi,[ebp-14h]
     sub(
         m.regs.edi,
@@ -25972,9 +25138,8 @@ pub fn x0040613d() -> Cont {
     jle(m, Cont(x00406142), Cont(x0040614e))
 }
 
-pub fn x00406142() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00406142(m: &mut Machine) -> Cont {
     // 00406142 mov eax,[ebp-14h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffecu32));
     // 00406145 mov ebx,ecx
@@ -25985,9 +25150,8 @@ pub fn x00406142() -> Cont {
     call(m, 0x40614e, Cont(x004060b3))
 }
 
-pub fn x0040614e() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040614e(m: &mut Machine) -> Cont {
     // 0040614e cmp esi,[ebp-18h]
     sub(
         m.regs.esi,
@@ -25998,9 +25162,8 @@ pub fn x0040614e() -> Cont {
     jge(m, Cont(x00406153), Cont(x0040615b))
 }
 
-pub fn x00406153() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00406153(m: &mut Machine) -> Cont {
     // 00406153 mov [ebp-14h],esi
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xffffffecu32), m.regs.esi);
@@ -26008,9 +25171,8 @@ pub fn x00406153() -> Cont {
     Cont(x004060be)
 }
 
-pub fn x0040615b() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040615b(m: &mut Machine) -> Cont {
     // 0040615b leave
     leave(m);
     // 0040615c pop edi
@@ -26023,9 +25185,8 @@ pub fn x0040615b() -> Cont {
     ret(m, 0)
 }
 
-pub fn x00406160() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00406160(m: &mut Machine) -> Cont {
     // 00406160 push ebx
     push(m, m.regs.ebx);
     // 00406161 push ecx
@@ -26060,9 +25221,8 @@ pub fn x00406160() -> Cont {
     call(m, 0x406180, Cont(x00408838))
 }
 
-pub fn x00406180() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00406180(m: &mut Machine) -> Cont {
     // 00406180 fxch st(4)
     let t = m.fpu.get(0);
     m.fpu.set(0, m.fpu.get(4));
@@ -26071,9 +25231,8 @@ pub fn x00406180() -> Cont {
     call(m, 0x406187, Cont(x00408838))
 }
 
-pub fn x00406187() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00406187(m: &mut Machine) -> Cont {
     // 00406187 fxch st(3)
     let t = m.fpu.get(0);
     m.fpu.set(0, m.fpu.get(3));
@@ -26082,9 +25241,8 @@ pub fn x00406187() -> Cont {
     call(m, 0x40618e, Cont(x00408838))
 }
 
-pub fn x0040618e() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040618e(m: &mut Machine) -> Cont {
     // 0040618e fxch st(2)
     let t = m.fpu.get(0);
     m.fpu.set(0, m.fpu.get(2));
@@ -26093,9 +25251,8 @@ pub fn x0040618e() -> Cont {
     call(m, 0x406195, Cont(x00408838))
 }
 
-pub fn x00406195() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00406195(m: &mut Machine) -> Cont {
     // 00406195 fxch
     let t = m.fpu.get(0);
     m.fpu.set(0, m.fpu.get(1));
@@ -26104,9 +25261,8 @@ pub fn x00406195() -> Cont {
     call(m, 0x40619c, Cont(x00408838))
 }
 
-pub fn x0040619c() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040619c(m: &mut Machine) -> Cont {
     // 0040619c fxch st(5)
     let t = m.fpu.get(0);
     m.fpu.set(0, m.fpu.get(5));
@@ -26115,9 +25271,8 @@ pub fn x0040619c() -> Cont {
     call(m, 0x4061a3, Cont(x00408838))
 }
 
-pub fn x004061a3() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004061a3(m: &mut Machine) -> Cont {
     // 004061a3 push dword ptr [eax]
     push(m, m.memory.read::<u32>(m.regs.eax));
     // 004061a5 fxch st(4)
@@ -26194,9 +25349,8 @@ pub fn x004061a3() -> Cont {
     call(m, 0x4061da, Cont(x00405cfb))
 }
 
-pub fn x004061da() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004061da(m: &mut Machine) -> Cont {
     // 004061da leave
     leave(m);
     // 004061db pop edx
@@ -26209,9 +25363,8 @@ pub fn x004061da() -> Cont {
     ret(m, 0)
 }
 
-pub fn x004061df() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004061df(m: &mut Machine) -> Cont {
     // 004061df push ebx
     push(m, m.regs.ebx);
     // 004061e0 push ecx
@@ -26238,9 +25391,8 @@ pub fn x004061df() -> Cont {
     jge(m, Cont(x004061f6), Cont(x004062ff))
 }
 
-pub fn x004061ed() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004061ed(m: &mut Machine) -> Cont {
     // 004061ed cmp ebx,[ecx+4]
     sub(
         m.regs.ebx,
@@ -26251,9 +25403,8 @@ pub fn x004061ed() -> Cont {
     jge(m, Cont(x004061f6), Cont(x004062ff))
 }
 
-pub fn x004061f6() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004061f6(m: &mut Machine) -> Cont {
     // 004061f6 mov eax,ebx
     m.regs.eax = m.regs.ebx;
     // 004061f8 mov edx,[ecx+40h]
@@ -26305,9 +25456,8 @@ pub fn x004061f6() -> Cont {
     ja(m, Cont(x00406229), Cont(x00406246))
 }
 
-pub fn x00406229() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00406229(m: &mut Machine) -> Cont {
     // 00406229 imul eax,[ebp-0Ch],0Ch
     m.regs.eax = imul(
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff4u32)) as i32,
@@ -26332,9 +25482,8 @@ pub fn x00406229() -> Cont {
     ja(m, Cont(x00406239), Cont(x00406246))
 }
 
-pub fn x00406239() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00406239(m: &mut Machine) -> Cont {
     // 00406239 imul eax,[ebp-8],0Ch
     m.regs.eax = imul(
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32)) as i32,
@@ -26493,9 +25642,8 @@ pub fn x00406239() -> Cont {
     call(m, 0x4062d0, Cont(x00403a5e))
 }
 
-pub fn x00406246() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00406246(m: &mut Machine) -> Cont {
     // 00406246 mov eax,[ebp-10h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff0u32));
     // 00406249 mov edi,[ecx+34h]
@@ -26635,9 +25783,8 @@ pub fn x00406246() -> Cont {
     call(m, 0x4062d0, Cont(x00403a5e))
 }
 
-pub fn x004062d0() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004062d0(m: &mut Machine) -> Cont {
     // 004062d0 push esi
     push(m, m.regs.esi);
     // 004062d1 push 111111h
@@ -26680,16 +25827,14 @@ pub fn x004062d0() -> Cont {
     call(m, 0x4062fa, Cont(x00403a5e))
 }
 
-pub fn x004062fa() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004062fa(m: &mut Machine) -> Cont {
     // 004062fa jmp near ptr 004061EDh
     Cont(x004061ed)
 }
 
-pub fn x004062ff() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004062ff(m: &mut Machine) -> Cont {
     // 004062ff leave
     leave(m);
     // 00406300 pop edi
@@ -26704,9 +25849,8 @@ pub fn x004062ff() -> Cont {
     ret(m, 0)
 }
 
-pub fn x00406305() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00406305(m: &mut Machine) -> Cont {
     // 00406305 push ebx
     push(m, m.regs.ebx);
     // 00406306 push ecx
@@ -26725,18 +25869,16 @@ pub fn x00406305() -> Cont {
     jge(m, Cont(x00406319), Cont(x004063af))
 }
 
-pub fn x00406311() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00406311(m: &mut Machine) -> Cont {
     // 00406311 cmp ecx,[edx]
     sub(m.regs.ecx, m.memory.read::<u32>(m.regs.edx), &mut m.flags);
     // 00406313 jge near ptr 004063AFh
     jge(m, Cont(x00406319), Cont(x004063af))
 }
 
-pub fn x00406319() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00406319(m: &mut Machine) -> Cont {
     // 00406319 imul ebx,ecx,0Ch
     m.regs.ebx = imul(m.regs.ecx as i32, 0xcu32 as i32, &mut m.flags) as u32;
     // 0040631c mov eax,[edx+38h]
@@ -26836,9 +25978,8 @@ pub fn x00406319() -> Cont {
     je(m, Cont(x00406362), Cont(x0040636b))
 }
 
-pub fn x00406362() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00406362(m: &mut Machine) -> Cont {
     // 00406362 fld dword ptr [ebp+14h]
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0x14u32)) as f64);
@@ -26941,9 +26082,8 @@ pub fn x00406362() -> Cont {
     Cont(x00406311)
 }
 
-pub fn x0040636b() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040636b(m: &mut Machine) -> Cont {
     // 0040636b imul ebx,ecx,0Ch
     m.regs.ebx = imul(m.regs.ecx as i32, 0xcu32 as i32, &mut m.flags) as u32;
     // 0040636e fld dword ptr [ebp-4]
@@ -27034,9 +26174,8 @@ pub fn x0040636b() -> Cont {
     Cont(x00406311)
 }
 
-pub fn x004063af() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004063af(m: &mut Machine) -> Cont {
     // 004063af leave
     leave(m);
     // 004063b0 pop edx
@@ -27049,9 +26188,8 @@ pub fn x004063af() -> Cont {
     ret(m, 24)
 }
 
-pub fn x00406452() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00406452(m: &mut Machine) -> Cont {
     // 00406452 push ebx
     push(m, m.regs.ebx);
     // 00406453 push ecx
@@ -27068,9 +26206,8 @@ pub fn x00406452() -> Cont {
     Cont(x0040646b)
 }
 
-pub fn x0040645e() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040645e(m: &mut Machine) -> Cont {
     // 0040645e inc ecx
     m.regs.ecx = inc(m.regs.ecx, &mut m.flags);
     // 0040645f cmp ecx,100h
@@ -27079,9 +26216,8 @@ pub fn x0040645e() -> Cont {
     jge(m, Cont(x0040646b), Cont(x0040664e))
 }
 
-pub fn x0040646b() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040646b(m: &mut Machine) -> Cont {
     // 0040646b lea eax,[ecx-7Fh]
     m.regs.eax = m.regs.ecx.wrapping_add(0xffffff81u32);
     // 0040646e imul eax,eax
@@ -27095,9 +26231,8 @@ pub fn x0040646b() -> Cont {
     Cont(x004064a4)
 }
 
-pub fn x00406478() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00406478(m: &mut Machine) -> Cont {
     // 00406478 mov edx,[ebp-8]
     m.regs.edx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32));
     // 0040647b mov eax,[ebp-8]
@@ -27135,9 +26270,8 @@ pub fn x00406478() -> Cont {
     jge(m, Cont(x004064a4), Cont(x0040645e))
 }
 
-pub fn x004064a4() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004064a4(m: &mut Machine) -> Cont {
     // 004064a4 lea eax,[ebx-7Fh]
     m.regs.eax = m.regs.ebx.wrapping_add(0xffffff81u32);
     // 004064a7 imul eax,eax
@@ -27166,9 +26300,8 @@ pub fn x004064a4() -> Cont {
     call(m, 0x4064c6, Cont(x00408838))
 }
 
-pub fn x004064c6() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004064c6(m: &mut Machine) -> Cont {
     // 004064c6 fistp dword ptr [ebp-8]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffff8u32),
@@ -27185,9 +26318,8 @@ pub fn x004064c6() -> Cont {
     jge(m, Cont(x004064cf), Cont(x004064d6))
 }
 
-pub fn x004064cf() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004064cf(m: &mut Machine) -> Cont {
     // 004064cf mov dword ptr [ebp-8],0
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32), 0x0u32);
@@ -27257,9 +26389,8 @@ pub fn x004064cf() -> Cont {
     call(m, 0x406521, Cont(x00408838))
 }
 
-pub fn x004064d6() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004064d6(m: &mut Machine) -> Cont {
     // 004064d6 mov eax,[ebp-8]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32));
     // 004064d9 mov [ebp-4],eax
@@ -27326,9 +26457,8 @@ pub fn x004064d6() -> Cont {
     call(m, 0x406521, Cont(x00408838))
 }
 
-pub fn x00406521() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00406521(m: &mut Machine) -> Cont {
     // 00406521 add eax,edx
     m.regs.eax = add(m.regs.eax, m.regs.edx, &mut m.flags);
     // 00406523 mov edx,ds:[433F90h]
@@ -27371,9 +26501,8 @@ pub fn x00406521() -> Cont {
     jle(m, Cont(x00406551), Cont(x00406558))
 }
 
-pub fn x00406551() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00406551(m: &mut Machine) -> Cont {
     // 00406551 mov dword ptr [ebp-8],7Fh
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32), 0x7fu32);
@@ -27409,9 +26538,8 @@ pub fn x00406551() -> Cont {
     call(m, 0x40657e, Cont(x00408838))
 }
 
-pub fn x00406558() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00406558(m: &mut Machine) -> Cont {
     // 00406558 mov eax,[ebp-8]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32));
     // 0040655b mov [ebp-4],eax
@@ -27444,9 +26572,8 @@ pub fn x00406558() -> Cont {
     call(m, 0x40657e, Cont(x00408838))
 }
 
-pub fn x0040657e() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040657e(m: &mut Machine) -> Cont {
     // 0040657e fistp dword ptr [ebp-10h]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffff0u32),
@@ -27488,9 +26615,8 @@ pub fn x0040657e() -> Cont {
     jle(m, Cont(x004065aa), Cont(x004065b1))
 }
 
-pub fn x004065aa() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004065aa(m: &mut Machine) -> Cont {
     // 004065aa mov dword ptr [ebp-8],3Fh
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32), 0x3fu32);
@@ -27519,9 +26645,8 @@ pub fn x004065aa() -> Cont {
     call(m, 0x4065d5, Cont(x00408838))
 }
 
-pub fn x004065b1() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004065b1(m: &mut Machine) -> Cont {
     // 004065b1 mov eax,[ebp-8]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32));
     // 004065b4 mov [ebp-4],eax
@@ -27547,9 +26672,8 @@ pub fn x004065b1() -> Cont {
     call(m, 0x4065d5, Cont(x00408838))
 }
 
-pub fn x004065d5() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004065d5(m: &mut Machine) -> Cont {
     // 004065d5 fistp dword ptr [ebp-10h]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffff0u32),
@@ -27631,9 +26755,8 @@ pub fn x004065d5() -> Cont {
     call(m, 0x406635, Cont(x00408838))
 }
 
-pub fn x00406635() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00406635(m: &mut Machine) -> Cont {
     // 00406635 fistp dword ptr [ebp-8]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffff8u32),
@@ -27650,9 +26773,8 @@ pub fn x00406635() -> Cont {
     jge(m, Cont(x00406642), Cont(x00406478))
 }
 
-pub fn x00406642() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00406642(m: &mut Machine) -> Cont {
     // 00406642 mov dword ptr [ebp-8],0
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32), 0x0u32);
@@ -27660,9 +26782,8 @@ pub fn x00406642() -> Cont {
     Cont(x00406478)
 }
 
-pub fn x0040664e() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040664e(m: &mut Machine) -> Cont {
     // 0040664e leave
     leave(m);
     // 0040664f pop esi
@@ -27677,9 +26798,8 @@ pub fn x0040664e() -> Cont {
     ret(m, 0)
 }
 
-pub fn x00406654() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00406654(m: &mut Machine) -> Cont {
     // 00406654 push edx
     push(m, m.regs.edx);
     // 00406655 mov edx,433E54h
@@ -27690,9 +26810,8 @@ pub fn x00406654() -> Cont {
     call(m, 0x406664, Cont(x00405f04))
 }
 
-pub fn x00406664() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00406664(m: &mut Machine) -> Cont {
     // 00406664 mov edx,433E98h
     m.regs.edx = 0x433e98u32;
     // 00406669 mov eax,424A55h
@@ -27701,25 +26820,22 @@ pub fn x00406664() -> Cont {
     call(m, 0x406673, Cont(x00405f04))
 }
 
-pub fn x00406673() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00406673(m: &mut Machine) -> Cont {
     // 00406673 call 00406452h
     call(m, 0x406678, Cont(x00406452))
 }
 
-pub fn x00406678() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00406678(m: &mut Machine) -> Cont {
     // 00406678 pop edx
     m.regs.edx = pop(m);
     // 00406679 ret
     ret(m, 0)
 }
 
-pub fn x00406684() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00406684(m: &mut Machine) -> Cont {
     // 00406684 push ecx
     push(m, m.regs.ecx);
     // 00406685 push edx
@@ -27797,9 +26913,8 @@ pub fn x00406684() -> Cont {
     call(m, 0x406738, Cont(x00406160))
 }
 
-pub fn x00406738() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00406738(m: &mut Machine) -> Cont {
     // 00406738 fild dword ptr ds:[433F84h]
     m.fpu.push(m.memory.read::<u32>(0x433f84u32) as i32 as f64);
     // 0040673e fmul qword ptr ds:[40C228h]
@@ -27823,9 +26938,8 @@ pub fn x00406738() -> Cont {
     call(m, 0x40675f, Cont(x00408838))
 }
 
-pub fn x0040675f() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040675f(m: &mut Machine) -> Cont {
     // 0040675f fistp dword ptr [ebp-0Ch]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffff4u32),
@@ -27850,9 +26964,8 @@ pub fn x0040675f() -> Cont {
     call(m, 0x40677d, Cont(x00408838))
 }
 
-pub fn x0040677d() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040677d(m: &mut Machine) -> Cont {
     // 0040677d fistp dword ptr [ebp-8]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffff8u32),
@@ -27868,9 +26981,8 @@ pub fn x0040677d() -> Cont {
     call(m, 0x40678d, Cont(x00408838))
 }
 
-pub fn x0040678d() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040678d(m: &mut Machine) -> Cont {
     // 0040678d fistp dword ptr [ebp-10h]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffff0u32),
@@ -27928,18 +27040,16 @@ pub fn x0040678d() -> Cont {
     call(m, 0x4067d6, Cont(x00406305))
 }
 
-pub fn x004067d6() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004067d6(m: &mut Machine) -> Cont {
     // 004067d6 mov eax,433E54h
     m.regs.eax = 0x433e54u32;
     // 004067db call 00405BDBh
     call(m, 0x4067e0, Cont(x00405bdb))
 }
 
-pub fn x004067e0() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004067e0(m: &mut Machine) -> Cont {
     // 004067e0 mov eax,433E54h
     m.regs.eax = 0x433e54u32;
     // 004067e5 mov edx,ecx
@@ -27948,9 +27058,8 @@ pub fn x004067e0() -> Cont {
     call(m, 0x4067ec, Cont(x004061df))
 }
 
-pub fn x004067ec() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004067ec(m: &mut Machine) -> Cont {
     // 004067ec leave
     leave(m);
     // 004067ed pop edx
@@ -27961,9 +27070,8 @@ pub fn x004067ec() -> Cont {
     ret(m, 0)
 }
 
-pub fn x004067f0() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004067f0(m: &mut Machine) -> Cont {
     // 004067f0 push edx
     push(m, m.regs.edx);
     // 004067f1 push ebp
@@ -28004,18 +27112,16 @@ pub fn x004067f0() -> Cont {
     call(m, 0x406868, Cont(x00406160))
 }
 
-pub fn x00406868() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00406868(m: &mut Machine) -> Cont {
     // 00406868 mov eax,433E98h
     m.regs.eax = 0x433e98u32;
     // 0040686d call 00405BDBh
     call(m, 0x406872, Cont(x00405bdb))
 }
 
-pub fn x00406872() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00406872(m: &mut Machine) -> Cont {
     // 00406872 mov edx,[ebp+10h]
     m.regs.edx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x10u32));
     // 00406875 mov eax,433E98h
@@ -28024,9 +27130,8 @@ pub fn x00406872() -> Cont {
     call(m, 0x40687f, Cont(x004061df))
 }
 
-pub fn x0040687f() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040687f(m: &mut Machine) -> Cont {
     // 0040687f pop ebp
     m.regs.ebp = pop(m);
     // 00406880 pop edx
@@ -28035,9 +27140,8 @@ pub fn x0040687f() -> Cont {
     ret(m, 8)
 }
 
-pub fn x00406884() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00406884(m: &mut Machine) -> Cont {
     // 00406884 push ebx
     push(m, m.regs.ebx);
     // 00406885 push ecx
@@ -28054,9 +27158,8 @@ pub fn x00406884() -> Cont {
     call(m, 0x406894, Cont(x00401a60))
 }
 
-pub fn x00406889() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00406889(m: &mut Machine) -> Cont {
     // 00406889 push 100h
     push(m, 0x100u32);
     // 0040688e inc ebx
@@ -28065,9 +27168,8 @@ pub fn x00406889() -> Cont {
     call(m, 0x406894, Cont(x00401a60))
 }
 
-pub fn x00406894() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00406894(m: &mut Machine) -> Cont {
     // 00406894 add esp,4
     m.regs.esp = add(m.regs.esp, 0x4u32, &mut m.flags);
     // 00406897 mov [ebx*4+43302Ch],eax
@@ -28079,9 +27181,8 @@ pub fn x00406894() -> Cont {
     jl(m, Cont(x004068a3), Cont(x00406889))
 }
 
-pub fn x004068a3() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004068a3(m: &mut Machine) -> Cont {
     // 004068a3 mov dword ptr ds:[433034h],40C249h
     m.memory.write::<u32>(0x433034u32, 0x40c249u32);
     // 004068ad mov dword ptr ds:[433038h],40C248h
@@ -28272,9 +27373,8 @@ pub fn x004068a3() -> Cont {
     ret(m, 0)
 }
 
-pub fn x00406c2b() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00406c2b(m: &mut Machine) -> Cont {
     // 00406c2b push ebx
     push(m, m.regs.ebx);
     // 00406c2c push ecx
@@ -28299,9 +27399,8 @@ pub fn x00406c2b() -> Cont {
     call(m, 0x406c47, Cont(kernel32::VirtualFree_stdcall))
 }
 
-pub fn x00406c30() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00406c30(m: &mut Machine) -> Cont {
     // 00406c30 push 8000h
     push(m, 0x8000u32);
     // 00406c35 push 0
@@ -28318,18 +27417,16 @@ pub fn x00406c30() -> Cont {
     call(m, 0x406c47, Cont(kernel32::VirtualFree_stdcall))
 }
 
-pub fn x00406c47() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00406c47(m: &mut Machine) -> Cont {
     // 00406c47 cmp ebx,0B4h
     sub(m.regs.ebx, 0xb4u32, &mut m.flags);
     // 00406c4d jl short 00406C30h
     jl(m, Cont(x00406c4f), Cont(x00406c30))
 }
 
-pub fn x00406c4f() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00406c4f(m: &mut Machine) -> Cont {
     // 00406c4f pop edx
     m.regs.edx = pop(m);
     // 00406c50 pop ecx
@@ -28340,9 +27437,8 @@ pub fn x00406c4f() -> Cont {
     ret(m, 0)
 }
 
-pub fn x00406c53() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00406c53(m: &mut Machine) -> Cont {
     // 00406c53 push esi
     push(m, m.regs.esi);
     // 00406c54 push edi
@@ -28367,18 +27463,16 @@ pub fn x00406c53() -> Cont {
     jge(m, Cont(x00406c67), Cont(x00406c96))
 }
 
-pub fn x00406c5f() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00406c5f(m: &mut Machine) -> Cont {
     // 00406c5f cmp edx,ds:[40C728h]
     sub(m.regs.edx, m.memory.read::<u32>(0x40c728u32), &mut m.flags);
     // 00406c65 jge short 00406C96h
     jge(m, Cont(x00406c67), Cont(x00406c96))
 }
 
-pub fn x00406c67() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00406c67(m: &mut Machine) -> Cont {
     // 00406c67 xor eax,eax
     m.regs.eax = xor(m.regs.eax, m.regs.eax, &mut m.flags);
     // 00406c69 mov ecx,ds:[40C724h]
@@ -28418,9 +27512,8 @@ pub fn x00406c67() -> Cont {
     jl(m, Cont(x00406c93), Cont(x00406c69))
 }
 
-pub fn x00406c69() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00406c69(m: &mut Machine) -> Cont {
     // 00406c69 mov ecx,ds:[40C724h]
     m.regs.ecx = m.memory.read::<u32>(0x40c724u32);
     // 00406c6f imul ecx,edx
@@ -28458,18 +27551,16 @@ pub fn x00406c69() -> Cont {
     jl(m, Cont(x00406c93), Cont(x00406c69))
 }
 
-pub fn x00406c93() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00406c93(m: &mut Machine) -> Cont {
     // 00406c93 inc edx
     m.regs.edx = inc(m.regs.edx, &mut m.flags);
     // 00406c94 jmp short 00406C5Fh
     Cont(x00406c5f)
 }
 
-pub fn x00406c96() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00406c96(m: &mut Machine) -> Cont {
     // 00406c96 leave
     leave(m);
     // 00406c97 pop edi
@@ -28480,9 +27571,8 @@ pub fn x00406c96() -> Cont {
     ret(m, 0)
 }
 
-pub fn x00406c9a() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00406c9a(m: &mut Machine) -> Cont {
     // 00406c9a push ebx
     push(m, m.regs.ebx);
     // 00406c9b push ecx
@@ -28503,18 +27593,16 @@ pub fn x00406c9a() -> Cont {
     jge(m, Cont(x00406cb1), Cont(x00406e4d))
 }
 
-pub fn x00406ca5() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00406ca5(m: &mut Machine) -> Cont {
     // 00406ca5 cmp edi,ds:[40C728h]
     sub(m.regs.edi, m.memory.read::<u32>(0x40c728u32), &mut m.flags);
     // 00406cab jge near ptr 00406E4Dh
     jge(m, Cont(x00406cb1), Cont(x00406e4d))
 }
 
-pub fn x00406cb1() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00406cb1(m: &mut Machine) -> Cont {
     // 00406cb1 xor ecx,ecx
     m.regs.ecx = xor(m.regs.ecx, m.regs.ecx, &mut m.flags);
     // 00406cb3 cmp ecx,ds:[40C724h]
@@ -28523,18 +27611,16 @@ pub fn x00406cb1() -> Cont {
     jge(m, Cont(x00406cbf), Cont(x00406e47))
 }
 
-pub fn x00406cb3() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00406cb3(m: &mut Machine) -> Cont {
     // 00406cb3 cmp ecx,ds:[40C724h]
     sub(m.regs.ecx, m.memory.read::<u32>(0x40c724u32), &mut m.flags);
     // 00406cb9 jge near ptr 00406E47h
     jge(m, Cont(x00406cbf), Cont(x00406e47))
 }
 
-pub fn x00406cbf() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00406cbf(m: &mut Machine) -> Cont {
     // 00406cbf mov [ebp-4],ecx
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32), m.regs.ecx);
@@ -28583,9 +27669,8 @@ pub fn x00406cbf() -> Cont {
     call(m, 0x406cfa, Cont(x00408838))
 }
 
-pub fn x00406cfa() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00406cfa(m: &mut Machine) -> Cont {
     // 00406cfa fistp dword ptr [ebp-8]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffff8u32),
@@ -28602,9 +27687,8 @@ pub fn x00406cfa() -> Cont {
     jle(m, Cont(x00406d06), Cont(x00406d0f))
 }
 
-pub fn x00406d06() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00406d06(m: &mut Machine) -> Cont {
     // 00406d06 mov dword ptr [ebp-8],0FFh
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32), 0xffu32);
@@ -28612,9 +27696,8 @@ pub fn x00406d06() -> Cont {
     Cont(x00406d1c)
 }
 
-pub fn x00406d0f() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00406d0f(m: &mut Machine) -> Cont {
     // 00406d0f cmp dword ptr [ebp-8],0
     sub(
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32)),
@@ -28625,9 +27708,8 @@ pub fn x00406d0f() -> Cont {
     jge(m, Cont(x00406d15), Cont(x00406d1c))
 }
 
-pub fn x00406d15() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00406d15(m: &mut Machine) -> Cont {
     // 00406d15 mov dword ptr [ebp-8],0
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32), 0x0u32);
@@ -28691,9 +27773,8 @@ pub fn x00406d15() -> Cont {
     call(m, 0x406d58, Cont(x00408838))
 }
 
-pub fn x00406d1c() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00406d1c(m: &mut Machine) -> Cont {
     // 00406d1c mov eax,ds:[40C724h]
     m.regs.eax = m.memory.read::<u32>(0x40c724u32);
     // 00406d21 cdq
@@ -28754,9 +27835,8 @@ pub fn x00406d1c() -> Cont {
     call(m, 0x406d58, Cont(x00408838))
 }
 
-pub fn x00406d58() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00406d58(m: &mut Machine) -> Cont {
     // 00406d58 fistp dword ptr [ebp-4]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffffcu32),
@@ -28802,9 +27882,8 @@ pub fn x00406d58() -> Cont {
     call(m, 0x406d8f, Cont(x00408838))
 }
 
-pub fn x00406d8f() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00406d8f(m: &mut Machine) -> Cont {
     // 00406d8f fistp dword ptr [ebp-0Ch]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffff4u32),
@@ -28821,9 +27900,8 @@ pub fn x00406d8f() -> Cont {
     jle(m, Cont(x00406d9b), Cont(x00406da4))
 }
 
-pub fn x00406d9b() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00406d9b(m: &mut Machine) -> Cont {
     // 00406d9b mov dword ptr [ebp-0Ch],0FFh
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffff4u32), 0xffu32);
@@ -28831,9 +27909,8 @@ pub fn x00406d9b() -> Cont {
     Cont(x00406db1)
 }
 
-pub fn x00406da4() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00406da4(m: &mut Machine) -> Cont {
     // 00406da4 cmp dword ptr [ebp-0Ch],0
     sub(
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff4u32)),
@@ -28844,9 +27921,8 @@ pub fn x00406da4() -> Cont {
     jge(m, Cont(x00406daa), Cont(x00406db1))
 }
 
-pub fn x00406daa() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00406daa(m: &mut Machine) -> Cont {
     // 00406daa mov dword ptr [ebp-0Ch],0
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffff4u32), 0x0u32);
@@ -28956,9 +28032,8 @@ pub fn x00406daa() -> Cont {
     Cont(x00406cb3)
 }
 
-pub fn x00406db1() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00406db1(m: &mut Machine) -> Cont {
     // 00406db1 mov edx,[ebp-8]
     m.regs.edx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32));
     // 00406db4 mov eax,[ebp-8]
@@ -29065,18 +28140,16 @@ pub fn x00406db1() -> Cont {
     Cont(x00406cb3)
 }
 
-pub fn x00406e47() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00406e47(m: &mut Machine) -> Cont {
     // 00406e47 inc edi
     m.regs.edi = inc(m.regs.edi, &mut m.flags);
     // 00406e48 jmp near ptr 00406CA5h
     Cont(x00406ca5)
 }
 
-pub fn x00406e4d() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00406e4d(m: &mut Machine) -> Cont {
     // 00406e4d mov ecx,ds:[40C724h]
     m.regs.ecx = m.memory.read::<u32>(0x40c724u32);
     // 00406e53 imul ecx,ds:[40C728h]
@@ -29283,9 +28356,8 @@ pub fn x00406e4d() -> Cont {
     call(m, 0x406f4d, Cont(x00403a5e))
 }
 
-pub fn x00406e6c() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00406e6c(m: &mut Machine) -> Cont {
     // 00406e6c mov [ebp-4],ecx
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32), m.regs.ecx);
@@ -29474,18 +28546,16 @@ pub fn x00406e6c() -> Cont {
     call(m, 0x406f4d, Cont(x00403a5e))
 }
 
-pub fn x00406f4d() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00406f4d(m: &mut Machine) -> Cont {
     // 00406f4d cmp ecx,1388h
     sub(m.regs.ecx, 0x1388u32, &mut m.flags);
     // 00406f53 jl near ptr 00406E6Ch
     jl(m, Cont(x00406f59), Cont(x00406e6c))
 }
 
-pub fn x00406f59() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00406f59(m: &mut Machine) -> Cont {
     // 00406f59 xor ecx,ecx
     m.regs.ecx = xor(m.regs.ecx, m.regs.ecx, &mut m.flags);
     // 00406f5b mov eax,ds:[40C724h]
@@ -29502,9 +28572,8 @@ pub fn x00406f59() -> Cont {
     jge(m, Cont(x00406f6f), Cont(x0040700a))
 }
 
-pub fn x00406f5b() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00406f5b(m: &mut Machine) -> Cont {
     // 00406f5b mov eax,ds:[40C724h]
     m.regs.eax = m.memory.read::<u32>(0x40c724u32);
     // 00406f60 imul eax,ds:[40C728h]
@@ -29519,9 +28588,8 @@ pub fn x00406f5b() -> Cont {
     jge(m, Cont(x00406f6f), Cont(x0040700a))
 }
 
-pub fn x00406f6f() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00406f6f(m: &mut Machine) -> Cont {
     // 00406f6f mov eax,ds:[433E30h]
     m.regs.eax = m.memory.read::<u32>(0x433e30u32);
     // 00406f74 mov edi,ecx
@@ -29627,9 +28695,8 @@ pub fn x00406f6f() -> Cont {
     Cont(x00406f5b)
 }
 
-pub fn x0040700a() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040700a(m: &mut Machine) -> Cont {
     // 0040700a xor edi,edi
     m.regs.edi = xor(m.regs.edi, m.regs.edi, &mut m.flags);
     // 0040700c mov [ebp-8],edi
@@ -29731,9 +28798,8 @@ pub fn x0040700a() -> Cont {
     jl(m, Cont(x00407096), Cont(x0040701b))
 }
 
-pub fn x0040700c() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040700c(m: &mut Machine) -> Cont {
     // 0040700c mov [ebp-8],edi
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32), m.regs.edi);
@@ -29833,9 +28899,8 @@ pub fn x0040700c() -> Cont {
     jl(m, Cont(x00407096), Cont(x0040701b))
 }
 
-pub fn x0040700f() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040700f(m: &mut Machine) -> Cont {
     // 0040700f imul eax,[ebp-8],140h
     m.regs.eax = imul(
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32)) as i32,
@@ -29932,9 +28997,8 @@ pub fn x0040700f() -> Cont {
     jl(m, Cont(x00407096), Cont(x0040701b))
 }
 
-pub fn x0040701b() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040701b(m: &mut Machine) -> Cont {
     // 0040701b mov edx,edi
     m.regs.edx = m.regs.edi;
     // 0040701d shl edx,8
@@ -30020,9 +29084,8 @@ pub fn x0040701b() -> Cont {
     jl(m, Cont(x00407096), Cont(x0040701b))
 }
 
-pub fn x00407096() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00407096(m: &mut Machine) -> Cont {
     // 00407096 inc edi
     m.regs.edi = inc(m.regs.edi, &mut m.flags);
     // 00407097 cmp edi,100h
@@ -30031,18 +29094,16 @@ pub fn x00407096() -> Cont {
     jge(m, Cont(x0040709f), Cont(x004070d5))
 }
 
-pub fn x0040709f() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040709f(m: &mut Machine) -> Cont {
     // 0040709f cmp edi,0C8h
     sub(m.regs.edi, 0xc8u32, &mut m.flags);
     // 004070a5 jl near ptr 0040700Ch
     jl(m, Cont(x004070ab), Cont(x0040700c))
 }
 
-pub fn x004070ab() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004070ab(m: &mut Machine) -> Cont {
     // 004070ab emms
     // no-op
     // 004070ad lea eax,[edi-0C8h]
@@ -30066,9 +29127,8 @@ pub fn x004070ab() -> Cont {
     call(m, 0x4070cd, Cont(x00408838))
 }
 
-pub fn x004070cd() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004070cd(m: &mut Machine) -> Cont {
     // 004070cd fistp dword ptr [ebp-8]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffff8u32),
@@ -30079,9 +29139,8 @@ pub fn x004070cd() -> Cont {
     Cont(x0040700f)
 }
 
-pub fn x004070d5() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004070d5(m: &mut Machine) -> Cont {
     // 004070d5 emms
     // no-op
     // 004070d7 mov ebx,10000h
@@ -30094,9 +29153,8 @@ pub fn x004070d5() -> Cont {
     call(m, 0x4070ec, Cont(x004033fc))
 }
 
-pub fn x004070ec() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004070ec(m: &mut Machine) -> Cont {
     // 004070ec mov eax,3
     m.regs.eax = 0x3u32;
     // 004070f1 mov ebx,ds:[433FACh]
@@ -30107,9 +29165,8 @@ pub fn x004070ec() -> Cont {
     call(m, 0x407102, Cont(x00401deb))
 }
 
-pub fn x00407102() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00407102(m: &mut Machine) -> Cont {
     // 00407102 mov eax,3
     m.regs.eax = 0x3u32;
     // 00407107 mov ebx,ds:[433E30h]
@@ -30122,9 +29179,8 @@ pub fn x00407102() -> Cont {
     call(m, 0x40711d, Cont(x00401deb))
 }
 
-pub fn x0040711d() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040711d(m: &mut Machine) -> Cont {
     // 0040711d mov edx,41C191h
     m.regs.edx = 0x41c191u32;
     // 00407122 mov eax,303030h
@@ -30135,9 +29191,8 @@ pub fn x0040711d() -> Cont {
     call(m, 0x407132, Cont(x00403737))
 }
 
-pub fn x00407132() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00407132(m: &mut Machine) -> Cont {
     // 00407132 mov ecx,12C00h
     m.regs.ecx = 0x12c00u32;
     // 00407137 mov edx,41E712h
@@ -30150,9 +29205,8 @@ pub fn x00407132() -> Cont {
     call(m, 0x40714c, Cont(x00403737))
 }
 
-pub fn x0040714c() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040714c(m: &mut Machine) -> Cont {
     // 0040714c mov ecx,12C00h
     m.regs.ecx = 0x12c00u32;
     // 00407151 mov edx,420C93h
@@ -30165,9 +29219,8 @@ pub fn x0040714c() -> Cont {
     call(m, 0x407166, Cont(x00403737))
 }
 
-pub fn x00407166() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00407166(m: &mut Machine) -> Cont {
     // 00407166 mov edx,0A0h
     m.regs.edx = 0xa0u32;
     // 0040716b mov ecx,ds:[433E48h]
@@ -30180,9 +29233,8 @@ pub fn x00407166() -> Cont {
     call(m, 0x40717e, Cont(x00406c53))
 }
 
-pub fn x0040717e() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040717e(m: &mut Machine) -> Cont {
     // 0040717e mov ecx,ds:[433E4Ch]
     m.regs.ecx = m.memory.read::<u32>(0x433e4cu32);
     // 00407184 mov ebx,ds:[433E44h]
@@ -30195,9 +29247,8 @@ pub fn x0040717e() -> Cont {
     call(m, 0x407193, Cont(x00406c53))
 }
 
-pub fn x00407193() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00407193(m: &mut Machine) -> Cont {
     // 00407193 mov edx,0A0h
     m.regs.edx = 0xa0u32;
     // 00407198 mov ecx,ds:[433E4Ch]
@@ -30210,9 +29261,8 @@ pub fn x00407193() -> Cont {
     call(m, 0x4071ab, Cont(x00406c53))
 }
 
-pub fn x004071ab() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004071ab(m: &mut Machine) -> Cont {
     // 004071ab mov eax,0A0h
     m.regs.eax = 0xa0u32;
     // 004071b0 mov ecx,ds:[433E48h]
@@ -30225,9 +29275,8 @@ pub fn x004071ab() -> Cont {
     call(m, 0x4071c3, Cont(x00406c53))
 }
 
-pub fn x004071c3() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004071c3(m: &mut Machine) -> Cont {
     // 004071c3 leave
     leave(m);
     // 004071c4 pop edi
@@ -30244,9 +29293,8 @@ pub fn x004071c3() -> Cont {
     ret(m, 0)
 }
 
-pub fn x00407315() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00407315(m: &mut Machine) -> Cont {
     // 00407315 push ecx
     push(m, m.regs.ecx);
     // 00407316 enter 38h,0
@@ -30401,9 +29449,8 @@ pub fn x00407315() -> Cont {
     call(m, 0x4073ad, Cont(x00403a5e))
 }
 
-pub fn x004073ad() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004073ad(m: &mut Machine) -> Cont {
     // 004073ad fld dword ptr [ebp+10h]
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0x10u32)) as f64);
@@ -30522,9 +29569,8 @@ pub fn x004073ad() -> Cont {
     call(m, 0x407423, Cont(x00403a5e))
 }
 
-pub fn x00407423() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00407423(m: &mut Machine) -> Cont {
     // 00407423 fld dword ptr [ebp+10h]
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0x10u32)) as f64);
@@ -30643,9 +29689,8 @@ pub fn x00407423() -> Cont {
     call(m, 0x407499, Cont(x00403a5e))
 }
 
-pub fn x00407499() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00407499(m: &mut Machine) -> Cont {
     // 00407499 fld qword ptr [ebp-38h]
     m.fpu
         .push(m.memory.read::<f64>(m.regs.ebp.wrapping_add(0xffffffc8u32)));
@@ -30758,9 +29803,8 @@ pub fn x00407499() -> Cont {
     call(m, 0x407506, Cont(x00403a5e))
 }
 
-pub fn x00407506() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00407506(m: &mut Machine) -> Cont {
     // 00407506 leave
     leave(m);
     // 00407507 pop ecx
@@ -30769,9 +29813,8 @@ pub fn x00407506() -> Cont {
     ret(m, 16)
 }
 
-pub fn x0040750b() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040750b(m: &mut Machine) -> Cont {
     // 0040750b push ebx
     push(m, m.regs.ebx);
     // 0040750c push ecx
@@ -30861,9 +29904,8 @@ pub fn x0040750b() -> Cont {
     call(m, 0x407568, Cont(x00408838))
 }
 
-pub fn x00407519() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00407519(m: &mut Machine) -> Cont {
     // 00407519 mov [ebp-8],esi
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32), m.regs.esi);
@@ -30937,9 +29979,8 @@ pub fn x00407519() -> Cont {
     call(m, 0x407568, Cont(x00408838))
 }
 
-pub fn x00407568() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00407568(m: &mut Machine) -> Cont {
     // 00407568 fistp qword ptr [ebp-18h]
     m.memory.write::<u64>(
         m.regs.ebp.wrapping_add(0xffffffe8u32),
@@ -31085,18 +30126,16 @@ pub fn x00407568() -> Cont {
     call(m, 0x4075fc, Cont(x00407315))
 }
 
-pub fn x004075fc() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004075fc(m: &mut Machine) -> Cont {
     // 004075fc cmp ecx,14h
     sub(m.regs.ecx, 0x14u32, &mut m.flags);
     // 004075ff jl near ptr 00407519h
     jl(m, Cont(x00407605), Cont(x00407519))
 }
 
-pub fn x00407605() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00407605(m: &mut Machine) -> Cont {
     // 00407605 leave
     leave(m);
     // 00407606 pop edi
@@ -31111,9 +30150,8 @@ pub fn x00407605() -> Cont {
     ret(m, 0)
 }
 
-pub fn x0040760b() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040760b(m: &mut Machine) -> Cont {
     // 0040760b push ebx
     push(m, m.regs.ebx);
     // 0040760c push ecx
@@ -31178,9 +30216,8 @@ pub fn x0040760b() -> Cont {
     call(m, 0x40765b, Cont(x00408838))
 }
 
-pub fn x0040765b() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040765b(m: &mut Machine) -> Cont {
     // 0040765b fistp dword ptr [ebp-0Ch]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffff4u32),
@@ -31205,9 +30242,8 @@ pub fn x0040765b() -> Cont {
     call(m, 0x407677, Cont(x00408838))
 }
 
-pub fn x00407677() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00407677(m: &mut Machine) -> Cont {
     // 00407677 fild dword ptr [ebp-4]
     m.fpu
         .push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32)) as i32 as f64);
@@ -31238,9 +30274,8 @@ pub fn x00407677() -> Cont {
     call(m, 0x40768f, Cont(x00408838))
 }
 
-pub fn x0040768f() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040768f(m: &mut Machine) -> Cont {
     // 0040768f fistp dword ptr [ebp-1Ch]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xffffffe4u32),
@@ -31274,9 +30309,8 @@ pub fn x0040768f() -> Cont {
     call(m, 0x4076ab, Cont(x00408838))
 }
 
-pub fn x004076ab() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004076ab(m: &mut Machine) -> Cont {
     // 004076ab mov eax,ds:[40C728h]
     m.regs.eax = m.memory.read::<u32>(0x40c728u32);
     // 004076b0 fistp dword ptr [ebp-14h]
@@ -31302,9 +30336,8 @@ pub fn x004076ab() -> Cont {
     call(m, 0x4076c1, Cont(x00408838))
 }
 
-pub fn x004076c1() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004076c1(m: &mut Machine) -> Cont {
     // 004076c1 mov [ebp-4],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32), m.regs.eax);
@@ -31330,9 +30363,8 @@ pub fn x004076c1() -> Cont {
     call(m, 0x4076d8, Cont(x00408838))
 }
 
-pub fn x004076d8() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004076d8(m: &mut Machine) -> Cont {
     // 004076d8 fistp dword ptr [ebp-10h]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffff0u32),
@@ -31345,9 +30377,8 @@ pub fn x004076d8() -> Cont {
     call(m, 0x4076e3, Cont(x004051d5))
 }
 
-pub fn x004076e3() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004076e3(m: &mut Machine) -> Cont {
     // 004076e3 leave
     leave(m);
     // 004076e4 pop edx
@@ -31360,9 +30391,8 @@ pub fn x004076e3() -> Cont {
     ret(m, 12)
 }
 
-pub fn x004076ea() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004076ea(m: &mut Machine) -> Cont {
     // 004076ea push ebx
     push(m, m.regs.ebx);
     // 004076eb push ecx
@@ -31468,9 +30498,8 @@ pub fn x004076ea() -> Cont {
     call(m, 0x40775b, Cont(x00408838))
 }
 
-pub fn x0040775b() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040775b(m: &mut Machine) -> Cont {
     // 0040775b fistp dword ptr [ebp-8]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffff8u32),
@@ -31557,9 +30586,8 @@ pub fn x0040775b() -> Cont {
     call(m, 0x4077b5, Cont(x00408838))
 }
 
-pub fn x004077b5() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004077b5(m: &mut Machine) -> Cont {
     // 004077b5 fistp dword ptr [ebp-0Ch]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffff4u32),
@@ -31626,9 +30654,8 @@ pub fn x004077b5() -> Cont {
     call(m, 0x4077fa, Cont(x00408838))
 }
 
-pub fn x004077fa() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004077fa(m: &mut Machine) -> Cont {
     // 004077fa push dword ptr [ebp+20h]
     push(m, m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x20u32)));
     // 004077fd fistp dword ptr [ebp-18h]
@@ -31656,9 +30683,8 @@ pub fn x004077fa() -> Cont {
     call(m, 0x407818, Cont(x00408838))
 }
 
-pub fn x00407818() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00407818(m: &mut Machine) -> Cont {
     // 00407818 fistp dword ptr [ebp-14h]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xffffffecu32),
@@ -31683,9 +30709,8 @@ pub fn x00407818() -> Cont {
     call(m, 0x407831, Cont(x00408838))
 }
 
-pub fn x00407831() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00407831(m: &mut Machine) -> Cont {
     // 00407831 mov [ebp-4],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32), m.regs.eax);
@@ -31716,9 +30741,8 @@ pub fn x00407831() -> Cont {
     call(m, 0x40784e, Cont(x004056e3))
 }
 
-pub fn x0040784e() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040784e(m: &mut Machine) -> Cont {
     // 0040784e imul ecx,ds:[40C724h]
     m.regs.ecx = imul(
         m.regs.ecx as i32,
@@ -32164,9 +31188,8 @@ pub fn x0040784e() -> Cont {
     call(m, 0x407aa7, Cont(x00403d06))
 }
 
-pub fn x00407aa7() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00407aa7(m: &mut Machine) -> Cont {
     // 00407aa7 mov eax,[ebp+28h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x28u32));
     // 00407aaa mov edx,edi
@@ -32175,18 +31198,16 @@ pub fn x00407aa7() -> Cont {
     call(m, 0x407ab1, Cont(x004033b9))
 }
 
-pub fn x00407ab1() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00407ab1(m: &mut Machine) -> Cont {
     // 00407ab1 cmp esi,5
     sub(m.regs.esi, 0x5u32, &mut m.flags);
     // 00407ab4 jle short 00407ACBh
     jle(m, Cont(x00407ab6), Cont(x00407acb))
 }
 
-pub fn x00407ab6() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00407ab6(m: &mut Machine) -> Cont {
     // 00407ab6 mov ecx,100h
     m.regs.ecx = 0x100u32;
     // 00407abb mov ebx,0FFFFFFh
@@ -32201,9 +31222,8 @@ pub fn x00407ab6() -> Cont {
     call(m, 0x407acb, Cont(x00402f03))
 }
 
-pub fn x00407acb() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00407acb(m: &mut Machine) -> Cont {
     // 00407acb leave
     leave(m);
     // 00407acc pop edi
@@ -32220,9 +31240,8 @@ pub fn x00407acb() -> Cont {
     ret(m, 20)
 }
 
-pub fn x00407ad4() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00407ad4(m: &mut Machine) -> Cont {
     // 00407ad4 push ebx
     push(m, m.regs.ebx);
     // 00407ad5 push ecx
@@ -32243,18 +31262,16 @@ pub fn x00407ad4() -> Cont {
     jne(m, Cont(x00407ae7), Cont(x00407b44))
 }
 
-pub fn x00407ae7() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00407ae7(m: &mut Machine) -> Cont {
     // 00407ae7 cmp dword ptr ds:[40C757h],1
     sub(m.memory.read::<u32>(0x40c757u32), 0x1u32, &mut m.flags);
     // 00407aee jne short 00407AFBh
     jne(m, Cont(x00407af0), Cont(x00407afb))
 }
 
-pub fn x00407af0() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00407af0(m: &mut Machine) -> Cont {
     // 00407af0 inc dword ptr ds:[424FFEh]
     m.memory.write::<u32>(
         0x424ffeu32,
@@ -32268,18 +31285,16 @@ pub fn x00407af0() -> Cont {
     jne(m, Cont(x00407b04), Cont(x00407b18))
 }
 
-pub fn x00407afb() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00407afb(m: &mut Machine) -> Cont {
     // 00407afb cmp dword ptr ds:[40C757h],2
     sub(m.memory.read::<u32>(0x40c757u32), 0x2u32, &mut m.flags);
     // 00407b02 jne short 00407B18h
     jne(m, Cont(x00407b04), Cont(x00407b18))
 }
 
-pub fn x00407b04() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00407b04(m: &mut Machine) -> Cont {
     // 00407b04 mov eax,[ebp-48h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffb8u32));
     // 00407b07 inc dword ptr ds:[424FF2h]
@@ -32300,18 +31315,16 @@ pub fn x00407b04() -> Cont {
     jne(m, Cont(x00407b21), Cont(x00407b29))
 }
 
-pub fn x00407b18() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00407b18(m: &mut Machine) -> Cont {
     // 00407b18 cmp dword ptr ds:[40C757h],3
     sub(m.memory.read::<u32>(0x40c757u32), 0x3u32, &mut m.flags);
     // 00407b1f jne short 00407B29h
     jne(m, Cont(x00407b21), Cont(x00407b29))
 }
 
-pub fn x00407b21() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00407b21(m: &mut Machine) -> Cont {
     // 00407b21 mov eax,[ebp-48h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffb8u32));
     // 00407b24 mov ds:[424FEAh],eax
@@ -32322,18 +31335,16 @@ pub fn x00407b21() -> Cont {
     jne(m, Cont(x00407b32), Cont(x00407b3a))
 }
 
-pub fn x00407b29() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00407b29(m: &mut Machine) -> Cont {
     // 00407b29 cmp dword ptr ds:[40C757h],4
     sub(m.memory.read::<u32>(0x40c757u32), 0x4u32, &mut m.flags);
     // 00407b30 jne short 00407B3Ah
     jne(m, Cont(x00407b32), Cont(x00407b3a))
 }
 
-pub fn x00407b32() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00407b32(m: &mut Machine) -> Cont {
     // 00407b32 mov eax,[ebp-48h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffb8u32));
     // 00407b35 mov ds:[424FEEh],eax
@@ -32346,9 +31357,8 @@ pub fn x00407b32() -> Cont {
     jle(m, Cont(x00407b4d), Cont(x00407b57))
 }
 
-pub fn x00407b3a() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00407b3a(m: &mut Machine) -> Cont {
     // 00407b3a mov dword ptr ds:[40C753h],0
     m.memory.write::<u32>(0x40c753u32, 0x0u32);
     // 00407b44 cmp dword ptr ds:[424FF2h],3
@@ -32357,18 +31367,16 @@ pub fn x00407b3a() -> Cont {
     jle(m, Cont(x00407b4d), Cont(x00407b57))
 }
 
-pub fn x00407b44() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00407b44(m: &mut Machine) -> Cont {
     // 00407b44 cmp dword ptr ds:[424FF2h],3
     sub(m.memory.read::<u32>(0x424ff2u32), 0x3u32, &mut m.flags);
     // 00407b4b jle short 00407B57h
     jle(m, Cont(x00407b4d), Cont(x00407b57))
 }
 
-pub fn x00407b4d() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00407b4d(m: &mut Machine) -> Cont {
     // 00407b4d mov dword ptr ds:[424FF2h],0
     m.memory.write::<u32>(0x424ff2u32, 0x0u32);
     // 00407b57 mov eax,[ebp-48h]
@@ -32399,9 +31407,8 @@ pub fn x00407b4d() -> Cont {
     jge(m, Cont(x00407b76), Cont(x00407b7d))
 }
 
-pub fn x00407b57() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00407b57(m: &mut Machine) -> Cont {
     // 00407b57 mov eax,[ebp-48h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffb8u32));
     // 00407b5a sub eax,ds:[424FE2h]
@@ -32430,9 +31437,8 @@ pub fn x00407b57() -> Cont {
     jge(m, Cont(x00407b76), Cont(x00407b7d))
 }
 
-pub fn x00407b76() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00407b76(m: &mut Machine) -> Cont {
     // 00407b76 mov dword ptr [ebp-14h],0
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xffffffecu32), 0x0u32);
@@ -32464,9 +31470,8 @@ pub fn x00407b76() -> Cont {
     jge(m, Cont(x00407b9c), Cont(x00407ba3))
 }
 
-pub fn x00407b7d() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00407b7d(m: &mut Machine) -> Cont {
     // 00407b7d mov eax,[ebp-48h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffb8u32));
     // 00407b80 sub eax,ds:[424FE6h]
@@ -32495,9 +31500,8 @@ pub fn x00407b7d() -> Cont {
     jge(m, Cont(x00407b9c), Cont(x00407ba3))
 }
 
-pub fn x00407b9c() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00407b9c(m: &mut Machine) -> Cont {
     // 00407b9c mov dword ptr [ebp-0Ch],0
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffff4u32), 0x0u32);
@@ -32529,9 +31533,8 @@ pub fn x00407b9c() -> Cont {
     jge(m, Cont(x00407bc2), Cont(x00407bc9))
 }
 
-pub fn x00407ba3() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00407ba3(m: &mut Machine) -> Cont {
     // 00407ba3 mov eax,[ebp-48h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffb8u32));
     // 00407ba6 sub eax,ds:[424FEAh]
@@ -32560,9 +31563,8 @@ pub fn x00407ba3() -> Cont {
     jge(m, Cont(x00407bc2), Cont(x00407bc9))
 }
 
-pub fn x00407bc2() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00407bc2(m: &mut Machine) -> Cont {
     // 00407bc2 mov dword ptr [ebp-10h],0
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffff0u32), 0x0u32);
@@ -32591,9 +31593,8 @@ pub fn x00407bc2() -> Cont {
     jge(m, Cont(x00407be5), Cont(x00407be7))
 }
 
-pub fn x00407bc9() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00407bc9(m: &mut Machine) -> Cont {
     // 00407bc9 mov eax,[ebp-48h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffb8u32));
     // 00407bcc sub eax,ds:[424FEEh]
@@ -32619,9 +31620,8 @@ pub fn x00407bc9() -> Cont {
     jge(m, Cont(x00407be5), Cont(x00407be7))
 }
 
-pub fn x00407be5() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00407be5(m: &mut Machine) -> Cont {
     // 00407be5 xor edi,edi
     m.regs.edi = xor(m.regs.edi, m.regs.edi, &mut m.flags);
     // 00407be7 mov eax,[ebp-0Ch]
@@ -32674,9 +31674,8 @@ pub fn x00407be5() -> Cont {
     jae(m, Cont(x00407c24), Cont(x00407c2e))
 }
 
-pub fn x00407be7() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00407be7(m: &mut Machine) -> Cont {
     // 00407be7 mov eax,[ebp-0Ch]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff4u32));
     // 00407bea mov ecx,3
@@ -32727,9 +31726,8 @@ pub fn x00407be7() -> Cont {
     jae(m, Cont(x00407c24), Cont(x00407c2e))
 }
 
-pub fn x00407c24() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00407c24(m: &mut Machine) -> Cont {
     // 00407c24 mov dword ptr ds:[433E50h],40E00000h
     m.memory.write::<u32>(0x433e50u32, 0x40e00000u32);
     // 00407c2e mov eax,[ebp-48h]
@@ -32802,9 +31800,8 @@ pub fn x00407c24() -> Cont {
     jae(m, Cont(x00407c8f), Cont(x00407c99))
 }
 
-pub fn x00407c2e() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00407c2e(m: &mut Machine) -> Cont {
     // 00407c2e mov eax,[ebp-48h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffb8u32));
     // 00407c31 fld dword ptr ds:[433E50h]
@@ -32875,9 +31872,8 @@ pub fn x00407c2e() -> Cont {
     jae(m, Cont(x00407c8f), Cont(x00407c99))
 }
 
-pub fn x00407c8f() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00407c8f(m: &mut Machine) -> Cont {
     // 00407c8f mov dword ptr ds:[433E50h],40C00000h
     m.memory.write::<u32>(0x433e50u32, 0x40c00000u32);
     // 00407c99 mov eax,[ebp-48h]
@@ -32920,9 +31916,8 @@ pub fn x00407c8f() -> Cont {
     jge(m, Cont(x00407ce1), Cont(x00407ece))
 }
 
-pub fn x00407c99() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00407c99(m: &mut Machine) -> Cont {
     // 00407c99 mov eax,[ebp-48h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffb8u32));
     // 00407c9c fld dword ptr ds:[433E50h]
@@ -32963,9 +31958,8 @@ pub fn x00407c99() -> Cont {
     jge(m, Cont(x00407ce1), Cont(x00407ece))
 }
 
-pub fn x00407ce1() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00407ce1(m: &mut Machine) -> Cont {
     // 00407ce1 mov eax,[ebp-48h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffb8u32));
     // 00407ce4 push dword ptr [ebp-4Ch]
@@ -32998,9 +31992,8 @@ pub fn x00407ce1() -> Cont {
     call(m, 0x407d0e, Cont(x004046ea))
 }
 
-pub fn x00407d0e() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00407d0e(m: &mut Machine) -> Cont {
     // 00407d0e mov ecx,ds:[433E3Ch]
     m.regs.ecx = m.memory.read::<u32>(0x433e3cu32);
     // 00407d14 mov eax,ds:[40C724h]
@@ -33021,9 +32014,8 @@ pub fn x00407d0e() -> Cont {
     jle(m, Cont(x00407d25), Cont(x00407d52))
 }
 
-pub fn x00407d14() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00407d14(m: &mut Machine) -> Cont {
     // 00407d14 mov eax,ds:[40C724h]
     m.regs.eax = m.memory.read::<u32>(0x40c724u32);
     // 00407d19 imul eax,ds:[40C728h]
@@ -33042,9 +32034,8 @@ pub fn x00407d14() -> Cont {
     jle(m, Cont(x00407d25), Cont(x00407d52))
 }
 
-pub fn x00407d25() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00407d25(m: &mut Machine) -> Cont {
     // 00407d25 mov ebx,[ecx]
     m.regs.ebx = m.memory.read::<u32>(m.regs.ecx);
     // 00407d27 mov eax,[edx]
@@ -33085,9 +32076,8 @@ pub fn x00407d25() -> Cont {
     Cont(x00407d14)
 }
 
-pub fn x00407d52() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00407d52(m: &mut Machine) -> Cont {
     // 00407d52 emms
     // no-op
     // 00407d54 mov eax,[ebp-48h]
@@ -33217,9 +32207,8 @@ pub fn x00407d52() -> Cont {
     call(m, 0x407ddc, Cont(x00408838))
 }
 
-pub fn x00407ddc() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00407ddc(m: &mut Machine) -> Cont {
     // 00407ddc fistp dword ptr [ebp-1Ch]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xffffffe4u32),
@@ -33302,9 +32291,8 @@ pub fn x00407ddc() -> Cont {
     call(m, 0x407e35, Cont(x00408838))
 }
 
-pub fn x00407e35() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00407e35(m: &mut Machine) -> Cont {
     // 00407e35 fistp dword ptr [ebp-8]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffff8u32),
@@ -33319,9 +32307,8 @@ pub fn x00407e35() -> Cont {
     call(m, 0x407e45, Cont(x00403d06))
 }
 
-pub fn x00407e45() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00407e45(m: &mut Machine) -> Cont {
     // 00407e45 mov edx,[ebp-4Ch]
     m.regs.edx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffb4u32));
     // 00407e48 mov eax,ds:[433E34h]
@@ -33330,18 +32317,16 @@ pub fn x00407e45() -> Cont {
     call(m, 0x407e52, Cont(x00403377))
 }
 
-pub fn x00407e52() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00407e52(m: &mut Machine) -> Cont {
     // 00407e52 test edi,edi
     and(m.regs.edi, m.regs.edi, &mut m.flags);
     // 00407e54 jle near ptr 004084F5h
     jle(m, Cont(x00407e5a), Cont(x004084f5))
 }
 
-pub fn x00407e5a() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00407e5a(m: &mut Machine) -> Cont {
     // 00407e5a fld qword ptr [ebp-24h]
     m.fpu
         .push(m.memory.read::<f64>(m.regs.ebp.wrapping_add(0xffffffdcu32)));
@@ -33379,9 +32364,8 @@ pub fn x00407e5a() -> Cont {
     call(m, 0x407e8b, Cont(x00408838))
 }
 
-pub fn x00407e8b() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00407e8b(m: &mut Machine) -> Cont {
     // 00407e8b fistp dword ptr [ebp-4]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffffcu32),
@@ -33394,9 +32378,8 @@ pub fn x00407e8b() -> Cont {
     call(m, 0x407e96, Cont(x00401deb))
 }
 
-pub fn x00407e96() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00407e96(m: &mut Machine) -> Cont {
     // 00407e96 fld qword ptr [ebp-24h]
     m.fpu
         .push(m.memory.read::<f64>(m.regs.ebp.wrapping_add(0xffffffdcu32)));
@@ -33424,9 +32407,8 @@ pub fn x00407e96() -> Cont {
     call(m, 0x407ebe, Cont(x00408838))
 }
 
-pub fn x00407ebe() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00407ebe(m: &mut Machine) -> Cont {
     // 00407ebe fistp dword ptr [ebp-4]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffffcu32),
@@ -33439,23 +32421,20 @@ pub fn x00407ebe() -> Cont {
     call(m, 0x407ec9, Cont(x00401ff6))
 }
 
-pub fn x00407ec9() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00407ec9(m: &mut Machine) -> Cont {
     // 00407ec9 jmp near ptr 004084F5h
     Cont(x004084f5)
 }
 
-pub fn x00407ece() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00407ece(m: &mut Machine) -> Cont {
     // 00407ece jne near ptr 00408117h
     jne(m, Cont(x00407ed4), Cont(x00408117))
 }
 
-pub fn x00407ed4() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00407ed4(m: &mut Machine) -> Cont {
     // 00407ed4 mov eax,[ebp-48h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffb8u32));
     // 00407ed7 push dword ptr [ebp-4Ch]
@@ -33488,9 +32467,8 @@ pub fn x00407ed4() -> Cont {
     call(m, 0x407f01, Cont(x004046ea))
 }
 
-pub fn x00407f01() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00407f01(m: &mut Machine) -> Cont {
     // 00407f01 mov ecx,ds:[433E3Ch]
     m.regs.ecx = m.memory.read::<u32>(0x433e3cu32);
     // 00407f07 mov eax,ds:[40C724h]
@@ -33511,9 +32489,8 @@ pub fn x00407f01() -> Cont {
     jle(m, Cont(x00407f18), Cont(x00407f45))
 }
 
-pub fn x00407f07() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00407f07(m: &mut Machine) -> Cont {
     // 00407f07 mov eax,ds:[40C724h]
     m.regs.eax = m.memory.read::<u32>(0x40c724u32);
     // 00407f0c imul eax,ds:[40C728h]
@@ -33532,9 +32509,8 @@ pub fn x00407f07() -> Cont {
     jle(m, Cont(x00407f18), Cont(x00407f45))
 }
 
-pub fn x00407f18() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00407f18(m: &mut Machine) -> Cont {
     // 00407f18 mov ebx,[ecx]
     m.regs.ebx = m.memory.read::<u32>(m.regs.ecx);
     // 00407f1a mov eax,[edx]
@@ -33575,9 +32551,8 @@ pub fn x00407f18() -> Cont {
     Cont(x00407f07)
 }
 
-pub fn x00407f45() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00407f45(m: &mut Machine) -> Cont {
     // 00407f45 emms
     // no-op
     // 00407f47 mov eax,[ebp-48h]
@@ -33704,9 +32679,8 @@ pub fn x00407f45() -> Cont {
     call(m, 0x407fcc, Cont(x00408838))
 }
 
-pub fn x00407fcc() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00407fcc(m: &mut Machine) -> Cont {
     // 00407fcc fistp dword ptr [ebp-1Ch]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xffffffe4u32),
@@ -33789,9 +32763,8 @@ pub fn x00407fcc() -> Cont {
     call(m, 0x408028, Cont(x00408838))
 }
 
-pub fn x00408028() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408028(m: &mut Machine) -> Cont {
     // 00408028 fistp dword ptr [ebp-8]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffff8u32),
@@ -33806,9 +32779,8 @@ pub fn x00408028() -> Cont {
     call(m, 0x408038, Cont(x00403d06))
 }
 
-pub fn x00408038() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408038(m: &mut Machine) -> Cont {
     // 00408038 mov edx,[ebp-4Ch]
     m.regs.edx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffb4u32));
     // 0040803b mov eax,ds:[433E34h]
@@ -33817,9 +32789,8 @@ pub fn x00408038() -> Cont {
     call(m, 0x408045, Cont(x00403377))
 }
 
-pub fn x00408045() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408045(m: &mut Machine) -> Cont {
     // 00408045 mov ecx,ds:[40C724h]
     m.regs.ecx = m.memory.read::<u32>(0x40c724u32);
     // 0040804b imul ecx,ds:[40C728h]
@@ -33846,9 +32817,8 @@ pub fn x00408045() -> Cont {
     jle(m, Cont(x00408069), Cont(x0040807d))
 }
 
-pub fn x00408069() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408069(m: &mut Machine) -> Cont {
     // 00408069 mov eax,[ebp-14h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffecu32));
     // 0040806c mov ebx,ds:[433FACh]
@@ -33859,9 +32829,8 @@ pub fn x00408069() -> Cont {
     call(m, 0x40807d, Cont(x004034bd))
 }
 
-pub fn x0040807d() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040807d(m: &mut Machine) -> Cont {
     // 0040807d cmp dword ptr [ebp-0Ch],0
     sub(
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff4u32)),
@@ -33872,9 +32841,8 @@ pub fn x0040807d() -> Cont {
     jle(m, Cont(x00408083), Cont(x00408097))
 }
 
-pub fn x00408083() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408083(m: &mut Machine) -> Cont {
     // 00408083 mov eax,[ebp-0Ch]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff4u32));
     // 00408086 mov ebx,ds:[433FACh]
@@ -33885,9 +32853,8 @@ pub fn x00408083() -> Cont {
     call(m, 0x408097, Cont(x004034bd))
 }
 
-pub fn x00408097() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408097(m: &mut Machine) -> Cont {
     // 00408097 cmp dword ptr [ebp-10h],0
     sub(
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff0u32)),
@@ -33898,9 +32865,8 @@ pub fn x00408097() -> Cont {
     jle(m, Cont(x0040809d), Cont(x004080b1))
 }
 
-pub fn x0040809d() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040809d(m: &mut Machine) -> Cont {
     // 0040809d mov eax,[ebp-10h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff0u32));
     // 004080a0 mov ebx,ds:[433FACh]
@@ -33911,9 +32877,8 @@ pub fn x0040809d() -> Cont {
     call(m, 0x4080b1, Cont(x004034bd))
 }
 
-pub fn x004080b1() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004080b1(m: &mut Machine) -> Cont {
     // 004080b1 mov edx,ds:[433FACh]
     m.regs.edx = m.memory.read::<u32>(0x433facu32);
     // 004080b7 mov eax,ds:[433E38h]
@@ -33922,9 +32887,8 @@ pub fn x004080b1() -> Cont {
     call(m, 0x4080c1, Cont(x00403377))
 }
 
-pub fn x004080c1() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004080c1(m: &mut Machine) -> Cont {
     // 004080c1 push dword ptr ds:[433FACh]
     push(m, m.memory.read::<u32>(0x433facu32));
     // 004080c7 mov eax,[ebp-48h]
@@ -33946,9 +32910,8 @@ pub fn x004080c1() -> Cont {
     call(m, 0x4080e1, Cont(x0040760b))
 }
 
-pub fn x004080e1() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004080e1(m: &mut Machine) -> Cont {
     // 004080e1 mov eax,[ebp-48h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffb8u32));
     // 004080e4 mov edx,ds:[433FACh]
@@ -33959,9 +32922,8 @@ pub fn x004080e1() -> Cont {
     call(m, 0x4080f2, Cont(x0040750b))
 }
 
-pub fn x004080f2() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004080f2(m: &mut Machine) -> Cont {
     // 004080f2 mov ecx,ds:[40C73Fh]
     m.regs.ecx = m.memory.read::<u32>(0x40c73fu32);
     // 004080f8 mov edx,ds:[433FACh]
@@ -33974,18 +32936,16 @@ pub fn x004080f2() -> Cont {
     call(m, 0x408108, Cont(x00403202))
 }
 
-pub fn x00408108() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408108(m: &mut Machine) -> Cont {
     // 00408108 mov dword ptr ds:[424FF6h],0
     m.memory.write::<u32>(0x424ff6u32, 0x0u32);
     // 00408112 jmp near ptr 004084F5h
     Cont(x004084f5)
 }
 
-pub fn x00408117() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408117(m: &mut Machine) -> Cont {
     // 00408117 mov eax,ds:[40C724h]
     m.regs.eax = m.memory.read::<u32>(0x40c724u32);
     // 0040811c imul eax,ds:[40C728h]
@@ -34002,9 +32962,8 @@ pub fn x00408117() -> Cont {
     jge(m, Cont(x00408133), Cont(x00408334))
 }
 
-pub fn x00408133() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408133(m: &mut Machine) -> Cont {
     // 00408133 mov esi,ds:[433E40h]
     m.regs.esi = m.memory.read::<u32>(0x433e40u32);
     // 00408139 mov edi,ds:[433FACh]
@@ -34023,9 +32982,8 @@ pub fn x00408133() -> Cont {
     jle(m, Cont(x00408149), Cont(x0040815d))
 }
 
-pub fn x00408149() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408149(m: &mut Machine) -> Cont {
     // 00408149 mov eax,[ebp-14h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffecu32));
     // 0040814c mov ebx,ds:[433FACh]
@@ -34036,9 +32994,8 @@ pub fn x00408149() -> Cont {
     call(m, 0x40815d, Cont(x004034bd))
 }
 
-pub fn x0040815d() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040815d(m: &mut Machine) -> Cont {
     // 0040815d cmp dword ptr [ebp-0Ch],0
     sub(
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff4u32)),
@@ -34049,9 +33006,8 @@ pub fn x0040815d() -> Cont {
     jle(m, Cont(x00408163), Cont(x00408177))
 }
 
-pub fn x00408163() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408163(m: &mut Machine) -> Cont {
     // 00408163 mov eax,[ebp-0Ch]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff4u32));
     // 00408166 mov ebx,ds:[433FACh]
@@ -34062,9 +33018,8 @@ pub fn x00408163() -> Cont {
     call(m, 0x408177, Cont(x004034bd))
 }
 
-pub fn x00408177() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408177(m: &mut Machine) -> Cont {
     // 00408177 cmp dword ptr [ebp-10h],0
     sub(
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff0u32)),
@@ -34075,9 +33030,8 @@ pub fn x00408177() -> Cont {
     jle(m, Cont(x0040817d), Cont(x00408191))
 }
 
-pub fn x0040817d() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040817d(m: &mut Machine) -> Cont {
     // 0040817d mov eax,[ebp-10h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff0u32));
     // 00408180 mov ebx,ds:[433FACh]
@@ -34088,9 +33042,8 @@ pub fn x0040817d() -> Cont {
     call(m, 0x408191, Cont(x004034bd))
 }
 
-pub fn x00408191() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408191(m: &mut Machine) -> Cont {
     // 00408191 mov edx,[ebp-4Ch]
     m.regs.edx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffb4u32));
     // 00408194 mov eax,ds:[433FACh]
@@ -34099,9 +33052,8 @@ pub fn x00408191() -> Cont {
     call(m, 0x40819e, Cont(x00403340))
 }
 
-pub fn x0040819e() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040819e(m: &mut Machine) -> Cont {
     // 0040819e mov eax,[ebp-48h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffb8u32));
     // 004081a1 mov edx,ds:[433FACh]
@@ -34110,9 +33062,8 @@ pub fn x0040819e() -> Cont {
     call(m, 0x4081ac, Cont(x0040750b))
 }
 
-pub fn x004081ac() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004081ac(m: &mut Machine) -> Cont {
     // 004081ac push dword ptr [ebp-4Ch]
     push(
         m,
@@ -34124,9 +33075,8 @@ pub fn x004081ac() -> Cont {
     call(m, 0x4081ba, Cont(x004067f0))
 }
 
-pub fn x004081ba() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004081ba(m: &mut Machine) -> Cont {
     // 004081ba mov eax,[ebp-48h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffb8u32));
     // 004081bd mov [ebp-4],eax
@@ -34156,9 +33106,8 @@ pub fn x004081ba() -> Cont {
     call(m, 0x4081e6, Cont(x00408838))
 }
 
-pub fn x004081e6() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004081e6(m: &mut Machine) -> Cont {
     // 004081e6 fistp dword ptr [ebp-4]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffffcu32),
@@ -34171,9 +33120,8 @@ pub fn x004081e6() -> Cont {
     call(m, 0x4081f1, Cont(x00403202))
 }
 
-pub fn x004081f1() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004081f1(m: &mut Machine) -> Cont {
     // 004081f1 mov edx,ds:[433FACh]
     m.regs.edx = m.memory.read::<u32>(0x433facu32);
     // 004081f7 mov eax,ds:[433E38h]
@@ -34182,9 +33130,8 @@ pub fn x004081f1() -> Cont {
     call(m, 0x408201, Cont(x00403377))
 }
 
-pub fn x00408201() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408201(m: &mut Machine) -> Cont {
     // 00408201 mov eax,ds:[424FFEh]
     m.regs.eax = m.memory.read::<u32>(0x424ffeu32);
     // 00408206 push dword ptr ds:[433FACh]
@@ -34214,9 +33161,8 @@ pub fn x00408201() -> Cont {
     call(m, 0x40822a, Cont(x0040760b))
 }
 
-pub fn x0040822a() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040822a(m: &mut Machine) -> Cont {
     // 0040822a cmp dword ptr [ebp-18h],0
     sub(
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffe8u32)),
@@ -34227,27 +33173,24 @@ pub fn x0040822a() -> Cont {
     jle(m, Cont(x00408234), Cont(x004082d9))
 }
 
-pub fn x00408234() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408234(m: &mut Machine) -> Cont {
     // 00408234 cmp dword ptr ds:[40C743h],0Dh
     sub(m.memory.read::<u32>(0x40c743u32), 0xdu32, &mut m.flags);
     // 0040823b jle near ptr 004082D9h
     jle(m, Cont(x00408241), Cont(x004082d9))
 }
 
-pub fn x00408241() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408241(m: &mut Machine) -> Cont {
     // 00408241 cmp dword ptr ds:[424FF2h],0
     sub(m.memory.read::<u32>(0x424ff2u32), 0x0u32, &mut m.flags);
     // 00408248 jne short 00408272h
     jne(m, Cont(x0040824a), Cont(x00408272))
 }
 
-pub fn x0040824a() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040824a(m: &mut Machine) -> Cont {
     // 0040824a mov eax,[ebp-18h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffe8u32));
     // 0040824d mov [ebp-4],eax
@@ -34267,9 +33210,8 @@ pub fn x0040824a() -> Cont {
     call(m, 0x408267, Cont(x00408838))
 }
 
-pub fn x00408267() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408267(m: &mut Machine) -> Cont {
     // 00408267 fistp dword ptr [ebp-4]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffffcu32),
@@ -34282,18 +33224,16 @@ pub fn x00408267() -> Cont {
     call(m, 0x408272, Cont(x00401deb))
 }
 
-pub fn x00408272() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408272(m: &mut Machine) -> Cont {
     // 00408272 cmp dword ptr ds:[424FF2h],1
     sub(m.memory.read::<u32>(0x424ff2u32), 0x1u32, &mut m.flags);
     // 00408279 jne short 0040828Ch
     jne(m, Cont(x0040827b), Cont(x0040828c))
 }
 
-pub fn x0040827b() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040827b(m: &mut Machine) -> Cont {
     // 0040827b mov ebx,[ebp-4Ch]
     m.regs.ebx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffb4u32));
     // 0040827e mov eax,[ebp-18h]
@@ -34304,18 +33244,16 @@ pub fn x0040827b() -> Cont {
     call(m, 0x40828c, Cont(x004021ff))
 }
 
-pub fn x0040828c() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040828c(m: &mut Machine) -> Cont {
     // 0040828c cmp dword ptr ds:[424FF2h],2
     sub(m.memory.read::<u32>(0x424ff2u32), 0x2u32, &mut m.flags);
     // 00408293 jne short 004082BDh
     jne(m, Cont(x00408295), Cont(x004082bd))
 }
 
-pub fn x00408295() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408295(m: &mut Machine) -> Cont {
     // 00408295 mov eax,[ebp-18h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffe8u32));
     // 00408298 mov [ebp-4],eax
@@ -34335,9 +33273,8 @@ pub fn x00408295() -> Cont {
     call(m, 0x4082b2, Cont(x00408838))
 }
 
-pub fn x004082b2() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004082b2(m: &mut Machine) -> Cont {
     // 004082b2 fistp dword ptr [ebp-4]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffffcu32),
@@ -34350,18 +33287,16 @@ pub fn x004082b2() -> Cont {
     call(m, 0x4082bd, Cont(x00401ff6))
 }
 
-pub fn x004082bd() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004082bd(m: &mut Machine) -> Cont {
     // 004082bd cmp dword ptr ds:[424FF2h],3
     sub(m.memory.read::<u32>(0x424ff2u32), 0x3u32, &mut m.flags);
     // 004082c4 jne short 004082F4h
     jne(m, Cont(x004082c6), Cont(x004082f4))
 }
 
-pub fn x004082c6() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004082c6(m: &mut Machine) -> Cont {
     // 004082c6 mov ebx,[ebp-4Ch]
     m.regs.ebx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffb4u32));
     // 004082c9 mov eax,[ebp-18h]
@@ -34372,16 +33307,14 @@ pub fn x004082c6() -> Cont {
     call(m, 0x4082d7, Cont(x00402893))
 }
 
-pub fn x004082d7() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004082d7(m: &mut Machine) -> Cont {
     // 004082d7 jmp short 004082F4h
     Cont(x004082f4)
 }
 
-pub fn x004082d9() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004082d9(m: &mut Machine) -> Cont {
     // 004082d9 mov ecx,ds:[40C724h]
     m.regs.ecx = m.memory.read::<u32>(0x40c724u32);
     // 004082df imul ecx,ds:[40C728h]
@@ -34404,18 +33337,16 @@ pub fn x004082d9() -> Cont {
     jle(m, Cont(x004082fd), Cont(x00408307))
 }
 
-pub fn x004082f4() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004082f4(m: &mut Machine) -> Cont {
     // 004082f4 cmp dword ptr ds:[424FF6h],31h
     sub(m.memory.read::<u32>(0x424ff6u32), 0x31u32, &mut m.flags);
     // 004082fb jle short 00408307h
     jle(m, Cont(x004082fd), Cont(x00408307))
 }
 
-pub fn x004082fd() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004082fd(m: &mut Machine) -> Cont {
     // 004082fd mov dword ptr ds:[424FF6h],23h
     m.memory.write::<u32>(0x424ff6u32, 0x23u32);
     // 00408307 mov eax,ds:[424FF6h]
@@ -34447,9 +33378,8 @@ pub fn x004082fd() -> Cont {
     call(m, 0x40832f, Cont(x00405b0e))
 }
 
-pub fn x00408307() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408307(m: &mut Machine) -> Cont {
     // 00408307 mov eax,ds:[424FF6h]
     m.regs.eax = m.memory.read::<u32>(0x424ff6u32);
     // 0040830c mov ecx,32h
@@ -34479,34 +33409,30 @@ pub fn x00408307() -> Cont {
     call(m, 0x40832f, Cont(x00405b0e))
 }
 
-pub fn x0040832f() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040832f(m: &mut Machine) -> Cont {
     // 0040832f jmp near ptr 004084F5h
     Cont(x004084f5)
 }
 
-pub fn x00408334() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408334(m: &mut Machine) -> Cont {
     // 00408334 cmp dword ptr ds:[40C743h],1Eh
     sub(m.memory.read::<u32>(0x40c743u32), 0x1eu32, &mut m.flags);
     // 0040833b jge near ptr 0040840Bh
     jge(m, Cont(x00408341), Cont(x0040840b))
 }
 
-pub fn x00408341() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408341(m: &mut Machine) -> Cont {
     // 00408341 cmp dword ptr ds:[40C743h],1Dh
     sub(m.memory.read::<u32>(0x40c743u32), 0x1du32, &mut m.flags);
     // 00408348 jne short 00408354h
     jne(m, Cont(x0040834a), Cont(x00408354))
 }
 
-pub fn x0040834a() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040834a(m: &mut Machine) -> Cont {
     // 0040834a mov eax,ds:[40C73Fh]
     m.regs.eax = m.memory.read::<u32>(0x40c73fu32);
     // 0040834f shl eax,2
@@ -34515,9 +33441,8 @@ pub fn x0040834a() -> Cont {
     Cont(x00408356)
 }
 
-pub fn x00408354() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408354(m: &mut Machine) -> Cont {
     // 00408354 xor eax,eax
     m.regs.eax = xor(m.regs.eax, m.regs.eax, &mut m.flags);
     // 00408356 mov edx,[ebp-48h]
@@ -34552,9 +33477,8 @@ pub fn x00408354() -> Cont {
     call(m, 0x408383, Cont(x00404fad))
 }
 
-pub fn x00408356() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408356(m: &mut Machine) -> Cont {
     // 00408356 mov edx,[ebp-48h]
     m.regs.edx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffb8u32));
     // 00408359 push dword ptr [ebp-4Ch]
@@ -34587,9 +33511,8 @@ pub fn x00408356() -> Cont {
     call(m, 0x408383, Cont(x00404fad))
 }
 
-pub fn x00408383() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408383(m: &mut Machine) -> Cont {
     // 00408383 mov ecx,ds:[433E3Ch]
     m.regs.ecx = m.memory.read::<u32>(0x433e3cu32);
     // 00408389 mov eax,ds:[40C724h]
@@ -34610,9 +33533,8 @@ pub fn x00408383() -> Cont {
     jle(m, Cont(x0040839a), Cont(x004083c7))
 }
 
-pub fn x00408389() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408389(m: &mut Machine) -> Cont {
     // 00408389 mov eax,ds:[40C724h]
     m.regs.eax = m.memory.read::<u32>(0x40c724u32);
     // 0040838e imul eax,ds:[40C728h]
@@ -34631,9 +33553,8 @@ pub fn x00408389() -> Cont {
     jle(m, Cont(x0040839a), Cont(x004083c7))
 }
 
-pub fn x0040839a() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040839a(m: &mut Machine) -> Cont {
     // 0040839a mov ebx,[ecx]
     m.regs.ebx = m.memory.read::<u32>(m.regs.ecx);
     // 0040839c mov eax,[edx]
@@ -34674,9 +33595,8 @@ pub fn x0040839a() -> Cont {
     Cont(x00408389)
 }
 
-pub fn x004083c7() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004083c7(m: &mut Machine) -> Cont {
     // 004083c7 emms
     // no-op
     // 004083c9 mov edx,[ebp-4Ch]
@@ -34687,9 +33607,8 @@ pub fn x004083c7() -> Cont {
     call(m, 0x4083d6, Cont(x00403377))
 }
 
-pub fn x004083d6() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004083d6(m: &mut Machine) -> Cont {
     // 004083d6 mov eax,ds:[424FFEh]
     m.regs.eax = m.memory.read::<u32>(0x424ffeu32);
     // 004083db push dword ptr [ebp-4Ch]
@@ -34722,25 +33641,22 @@ pub fn x004083d6() -> Cont {
     call(m, 0x4083fc, Cont(x0040760b))
 }
 
-pub fn x004083fc() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004083fc(m: &mut Machine) -> Cont {
     // 004083fc mov eax,ds:[433FB0h]
     m.regs.eax = m.memory.read::<u32>(0x433fb0u32);
     // 00408401 call 00406684h
     call(m, 0x408406, Cont(x00406684))
 }
 
-pub fn x00408406() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408406(m: &mut Machine) -> Cont {
     // 00408406 jmp near ptr 00408108h
     Cont(x00408108)
 }
 
-pub fn x0040840b() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040840b(m: &mut Machine) -> Cont {
     // 0040840b mov esi,ds:[433E40h]
     m.regs.esi = m.memory.read::<u32>(0x433e40u32);
     // 00408411 mov edi,ds:[433FACh]
@@ -34776,9 +33692,8 @@ pub fn x0040840b() -> Cont {
     call(m, 0x408449, Cont(x00408838))
 }
 
-pub fn x00408449() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408449(m: &mut Machine) -> Cont {
     // 00408449 fistp dword ptr [ebp-4]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffffcu32),
@@ -34791,9 +33706,8 @@ pub fn x00408449() -> Cont {
     call(m, 0x408454, Cont(x0040750b))
 }
 
-pub fn x00408454() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408454(m: &mut Machine) -> Cont {
     // 00408454 push dword ptr [ebp-4Ch]
     push(
         m,
@@ -34819,18 +33733,16 @@ pub fn x00408454() -> Cont {
     call(m, 0x408480, Cont(x004076ea))
 }
 
-pub fn x00408480() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408480(m: &mut Machine) -> Cont {
     // 00408480 cmp dword ptr ds:[424FF6h],4Fh
     sub(m.memory.read::<u32>(0x424ff6u32), 0x4fu32, &mut m.flags);
     // 00408487 jle short 00408493h
     jle(m, Cont(x00408489), Cont(x00408493))
 }
 
-pub fn x00408489() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408489(m: &mut Machine) -> Cont {
     // 00408489 mov dword ptr ds:[424FF6h],4Fh
     m.memory.write::<u32>(0x424ff6u32, 0x4fu32);
     // 00408493 mov eax,ds:[424FF6h]
@@ -34852,9 +33764,8 @@ pub fn x00408489() -> Cont {
     jne(m, Cont(x004084a5), Cont(x004084d0))
 }
 
-pub fn x00408493() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408493(m: &mut Machine) -> Cont {
     // 00408493 mov eax,ds:[424FF6h]
     m.regs.eax = m.memory.read::<u32>(0x424ff6u32);
     // 00408498 mov ecx,2
@@ -34874,9 +33785,8 @@ pub fn x00408493() -> Cont {
     jne(m, Cont(x004084a5), Cont(x004084d0))
 }
 
-pub fn x004084a5() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004084a5(m: &mut Machine) -> Cont {
     // 004084a5 mov eax,ds:[424FF6h]
     m.regs.eax = m.memory.read::<u32>(0x424ff6u32);
     // 004084aa cdq
@@ -34915,18 +33825,16 @@ pub fn x004084a5() -> Cont {
     call(m, 0x4084d0, Cont(x00405b0e))
 }
 
-pub fn x004084d0() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004084d0(m: &mut Machine) -> Cont {
     // 004084d0 cmp dword ptr ds:[40C743h],29h
     sub(m.memory.read::<u32>(0x40c743u32), 0x29u32, &mut m.flags);
     // 004084d7 jne short 004084F5h
     jne(m, Cont(x004084d9), Cont(x004084f5))
 }
 
-pub fn x004084d9() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004084d9(m: &mut Machine) -> Cont {
     // 004084d9 imul ecx,ds:[40C73Fh],5
     m.regs.ecx = imul(
         m.memory.read::<u32>(0x40c73fu32) as i32,
@@ -34949,18 +33857,16 @@ pub fn x004084d9() -> Cont {
     call(m, 0x4084f5, Cont(x00402f03))
 }
 
-pub fn x004084f5() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004084f5(m: &mut Machine) -> Cont {
     // 004084f5 cmp dword ptr ds:[40C743h],16h
     sub(m.memory.read::<u32>(0x40c743u32), 0x16u32, &mut m.flags);
     // 004084fc jne near ptr 004085CFh
     jne(m, Cont(x00408502), Cont(x004085cf))
 }
 
-pub fn x00408502() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408502(m: &mut Machine) -> Cont {
     // 00408502 mov eax,[ebp-48h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffb8u32));
     // 00408505 push dword ptr ds:[433FACh]
@@ -34990,9 +33896,8 @@ pub fn x00408502() -> Cont {
     call(m, 0x408531, Cont(x00404fad))
 }
 
-pub fn x00408531() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408531(m: &mut Machine) -> Cont {
     // 00408531 mov ecx,ds:[433E3Ch]
     m.regs.ecx = m.memory.read::<u32>(0x433e3cu32);
     // 00408537 mov edx,ds:[433FACh]
@@ -35015,9 +33920,8 @@ pub fn x00408531() -> Cont {
     jle(m, Cont(x0040854e), Cont(x0040857b))
 }
 
-pub fn x0040853d() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040853d(m: &mut Machine) -> Cont {
     // 0040853d mov eax,ds:[40C724h]
     m.regs.eax = m.memory.read::<u32>(0x40c724u32);
     // 00408542 imul eax,ds:[40C728h]
@@ -35036,9 +33940,8 @@ pub fn x0040853d() -> Cont {
     jle(m, Cont(x0040854e), Cont(x0040857b))
 }
 
-pub fn x0040854e() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040854e(m: &mut Machine) -> Cont {
     // 0040854e mov ebx,[ecx]
     m.regs.ebx = m.memory.read::<u32>(m.regs.ecx);
     // 00408550 mov eax,[edx]
@@ -35079,9 +33982,8 @@ pub fn x0040854e() -> Cont {
     Cont(x0040853d)
 }
 
-pub fn x0040857b() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040857b(m: &mut Machine) -> Cont {
     // 0040857b emms
     // no-op
     // 0040857d mov edx,ds:[433FACh]
@@ -35092,9 +33994,8 @@ pub fn x0040857b() -> Cont {
     call(m, 0x40858d, Cont(x00403377))
 }
 
-pub fn x0040858d() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040858d(m: &mut Machine) -> Cont {
     // 0040858d mov eax,ds:[424FFEh]
     m.regs.eax = m.memory.read::<u32>(0x424ffeu32);
     // 00408592 push dword ptr ds:[433FACh]
@@ -35126,9 +34027,8 @@ pub fn x0040858d() -> Cont {
     call(m, 0x4085b9, Cont(x0040760b))
 }
 
-pub fn x004085b9() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004085b9(m: &mut Machine) -> Cont {
     // 004085b9 mov ecx,ds:[40C73Fh]
     m.regs.ecx = m.memory.read::<u32>(0x40c73fu32);
     // 004085bf mov edx,ds:[433FACh]
@@ -35141,9 +34041,8 @@ pub fn x004085b9() -> Cont {
     call(m, 0x4085cf, Cont(x00403202))
 }
 
-pub fn x004085cf() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004085cf(m: &mut Machine) -> Cont {
     // 004085cf mov eax,[ebp-48h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffb8u32));
     // 004085d2 mov ds:[424FFAh],eax
@@ -35162,16 +34061,14 @@ pub fn x004085cf() -> Cont {
     ret(m, 0)
 }
 
-pub fn x004085dd() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004085dd(m: &mut Machine) -> Cont {
     // 004085dd jmp near ptr 0040874Ch
     Cont(x0040874c)
 }
 
-pub fn x004085e2() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004085e2(m: &mut Machine) -> Cont {
     // 004085e2 push ebx
     push(m, m.regs.ebx);
     // 004085e3 push ecx
@@ -35182,9 +34079,8 @@ pub fn x004085e2() -> Cont {
     call(m, 0x4085ea, Cont(x00401a5a))
 }
 
-pub fn x004085ea() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004085ea(m: &mut Machine) -> Cont {
     // 004085ea mov ds:[433FB0h],eax
     m.memory.write::<u32>(0x433fb0u32, m.regs.eax);
     // 004085ef mov eax,ds:[40C724h]
@@ -35203,9 +34099,8 @@ pub fn x004085ea() -> Cont {
     call(m, 0x408604, Cont(x00401a60))
 }
 
-pub fn x00408604() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408604(m: &mut Machine) -> Cont {
     // 00408604 mov ds:[433FACh],eax
     m.memory.write::<u32>(0x433facu32, m.regs.eax);
     // 00408609 mov eax,ds:[40C724h]
@@ -35228,9 +34123,8 @@ pub fn x00408604() -> Cont {
     call(m, 0x408623, Cont(x00401a60))
 }
 
-pub fn x00408623() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408623(m: &mut Machine) -> Cont {
     // 00408623 add esp,4
     m.regs.esp = add(m.regs.esp, 0x4u32, &mut m.flags);
     // 00408626 mov ds:[433FA8h],eax
@@ -35253,9 +34147,8 @@ pub fn x00408623() -> Cont {
     call(m, 0x408641, Cont(x00401a60))
 }
 
-pub fn x0040862b() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040862b(m: &mut Machine) -> Cont {
     // 0040862b mov eax,ds:[40C724h]
     m.regs.eax = m.memory.read::<u32>(0x40c724u32);
     // 00408630 imul eax,ds:[40C728h]
@@ -35274,9 +34167,8 @@ pub fn x0040862b() -> Cont {
     call(m, 0x408641, Cont(x00401a60))
 }
 
-pub fn x00408641() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408641(m: &mut Machine) -> Cont {
     // 00408641 add esp,4
     m.regs.esp = add(m.regs.esp, 0x4u32, &mut m.flags);
     // 00408644 mov [ebx*4+433E24h],eax
@@ -35288,9 +34180,8 @@ pub fn x00408641() -> Cont {
     jl(m, Cont(x00408650), Cont(x0040862b))
 }
 
-pub fn x00408650() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408650(m: &mut Machine) -> Cont {
     // 00408650 xor ebx,ebx
     m.regs.ebx = xor(m.regs.ebx, m.regs.ebx, &mut m.flags);
     // 00408652 push 40000h
@@ -35301,9 +34192,8 @@ pub fn x00408650() -> Cont {
     call(m, 0x40865d, Cont(x00401a60))
 }
 
-pub fn x00408652() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408652(m: &mut Machine) -> Cont {
     // 00408652 push 40000h
     push(m, 0x40000u32);
     // 00408657 inc ebx
@@ -35312,9 +34202,8 @@ pub fn x00408652() -> Cont {
     call(m, 0x40865d, Cont(x00401a60))
 }
 
-pub fn x0040865d() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040865d(m: &mut Machine) -> Cont {
     // 0040865d add esp,4
     m.regs.esp = add(m.regs.esp, 0x4u32, &mut m.flags);
     // 00408660 mov [ebx*4+433F88h],eax
@@ -35326,9 +34215,8 @@ pub fn x0040865d() -> Cont {
     jl(m, Cont(x0040866c), Cont(x00408652))
 }
 
-pub fn x0040866c() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040866c(m: &mut Machine) -> Cont {
     // 0040866c mov ecx,14h
     m.regs.ecx = 0x14u32;
     // 00408671 mov ebx,64h
@@ -35341,18 +34229,16 @@ pub fn x0040866c() -> Cont {
     call(m, 0x408685, Cont(x00405771))
 }
 
-pub fn x00408685() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408685(m: &mut Machine) -> Cont {
     // 00408685 push 100h
     push(m, 0x100u32);
     // 0040868a call 00401A60h
     call(m, 0x40868f, Cont(x00401a60))
 }
 
-pub fn x0040868f() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040868f(m: &mut Machine) -> Cont {
     // 0040868f add esp,4
     m.regs.esp = add(m.regs.esp, 0x4u32, &mut m.flags);
     // 00408692 mov ds:[433F78h],eax
@@ -35361,37 +34247,32 @@ pub fn x0040868f() -> Cont {
     call(m, 0x40869c, Cont(x00406654))
 }
 
-pub fn x0040869c() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040869c(m: &mut Machine) -> Cont {
     // 0040869c call 004047E9h
     call(m, 0x4086a1, Cont(x004047e9))
 }
 
-pub fn x004086a1() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004086a1(m: &mut Machine) -> Cont {
     // 004086a1 call 00406884h
     call(m, 0x4086a6, Cont(x00406884))
 }
 
-pub fn x004086a6() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004086a6(m: &mut Machine) -> Cont {
     // 004086a6 call 00405337h
     call(m, 0x4086ab, Cont(x00405337))
 }
 
-pub fn x004086ab() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004086ab(m: &mut Machine) -> Cont {
     // 004086ab call 00406C9Ah
     call(m, 0x4086b0, Cont(x00406c9a))
 }
 
-pub fn x004086b0() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004086b0(m: &mut Machine) -> Cont {
     // 004086b0 pop edx
     m.regs.edx = pop(m);
     // 004086b1 pop ecx
@@ -35402,9 +34283,8 @@ pub fn x004086b0() -> Cont {
     ret(m, 0)
 }
 
-pub fn x004086b4() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004086b4(m: &mut Machine) -> Cont {
     // 004086b4 push ebx
     push(m, m.regs.ebx);
     // 004086b5 push ecx
@@ -35415,9 +34295,8 @@ pub fn x004086b4() -> Cont {
     call(m, 0x4086bc, Cont(x00405808))
 }
 
-pub fn x004086bc() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004086bc(m: &mut Machine) -> Cont {
     // 004086bc push 8000h
     push(m, 0x8000u32);
     // 004086c1 push 0
@@ -35430,32 +34309,28 @@ pub fn x004086bc() -> Cont {
     call(m, 0x4086d0, Cont(kernel32::VirtualFree_stdcall))
 }
 
-pub fn x004086d0() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004086d0(m: &mut Machine) -> Cont {
     // 004086d0 mov eax,433E54h
     m.regs.eax = 0x433e54u32;
     // 004086d5 call 00406050h
     call(m, 0x4086da, Cont(x00406050))
 }
 
-pub fn x004086da() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004086da(m: &mut Machine) -> Cont {
     // 004086da call 00404A00h
     call(m, 0x4086df, Cont(x00404a00))
 }
 
-pub fn x004086df() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004086df(m: &mut Machine) -> Cont {
     // 004086df call 00406C2Bh
     call(m, 0x4086e4, Cont(x00406c2b))
 }
 
-pub fn x004086e4() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004086e4(m: &mut Machine) -> Cont {
     // 004086e4 push 8000h
     push(m, 0x8000u32);
     // 004086e9 push 0
@@ -35468,9 +34343,8 @@ pub fn x004086e4() -> Cont {
     call(m, 0x4086f8, Cont(kernel32::VirtualFree_stdcall))
 }
 
-pub fn x004086f8() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004086f8(m: &mut Machine) -> Cont {
     // 004086f8 push 8000h
     push(m, 0x8000u32);
     // 004086fd push 0
@@ -35485,9 +34359,8 @@ pub fn x004086f8() -> Cont {
     call(m, 0x40870e, Cont(kernel32::VirtualFree_stdcall))
 }
 
-pub fn x0040870e() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040870e(m: &mut Machine) -> Cont {
     // 0040870e push 8000h
     push(m, 0x8000u32);
     // 00408713 push 0
@@ -35504,18 +34377,16 @@ pub fn x0040870e() -> Cont {
     call(m, 0x408725, Cont(kernel32::VirtualFree_stdcall))
 }
 
-pub fn x00408725() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408725(m: &mut Machine) -> Cont {
     // 00408725 cmp ebx,0Ah
     sub(m.regs.ebx, 0xau32, &mut m.flags);
     // 00408728 jl short 0040870Eh
     jl(m, Cont(x0040872a), Cont(x0040870e))
 }
 
-pub fn x0040872a() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040872a(m: &mut Machine) -> Cont {
     // 0040872a xor ebx,ebx
     m.regs.ebx = xor(m.regs.ebx, m.regs.ebx, &mut m.flags);
     // 0040872c push 8000h
@@ -35534,9 +34405,8 @@ pub fn x0040872a() -> Cont {
     call(m, 0x408743, Cont(kernel32::VirtualFree_stdcall))
 }
 
-pub fn x0040872c() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040872c(m: &mut Machine) -> Cont {
     // 0040872c push 8000h
     push(m, 0x8000u32);
     // 00408731 push 0
@@ -35553,18 +34423,16 @@ pub fn x0040872c() -> Cont {
     call(m, 0x408743, Cont(kernel32::VirtualFree_stdcall))
 }
 
-pub fn x00408743() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408743(m: &mut Machine) -> Cont {
     // 00408743 cmp ebx,7
     sub(m.regs.ebx, 0x7u32, &mut m.flags);
     // 00408746 jl short 0040872Ch
     jl(m, Cont(x00408748), Cont(x0040872c))
 }
 
-pub fn x00408748() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408748(m: &mut Machine) -> Cont {
     // 00408748 pop edx
     m.regs.edx = pop(m);
     // 00408749 pop ecx
@@ -35575,9 +34443,8 @@ pub fn x00408748() -> Cont {
     ret(m, 0)
 }
 
-pub fn x0040874c() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040874c(m: &mut Machine) -> Cont {
     // 0040874c push ebx
     push(m, m.regs.ebx);
     // 0040874d push ecx
@@ -35588,16 +34455,14 @@ pub fn x0040874c() -> Cont {
     call(m, 0x408754, Cont(x00401b35))
 }
 
-pub fn x00408754() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408754(m: &mut Machine) -> Cont {
     // 00408754 call 00408D65h
     call(m, 0x408759, Cont(x00408d65))
 }
 
-pub fn x00408759() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408759(m: &mut Machine) -> Cont {
     // 00408759 push eax
     push(m, m.regs.eax);
     // 0040875a push dword ptr ds:[40C73Bh]
@@ -35608,9 +34473,8 @@ pub fn x00408759() -> Cont {
     call(m, 0x408767, Cont(x0040a281))
 }
 
-pub fn x00408767() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408767(m: &mut Machine) -> Cont {
     // 00408767 push dword ptr ds:[433F88h]
     push(m, m.memory.read::<u32>(0x433f88u32));
     // 0040876d mov ecx,ds:[40C73Bh]
@@ -35623,34 +34487,30 @@ pub fn x00408767() -> Cont {
     call(m, 0x408783, Cont(x00401156))
 }
 
-pub fn x00408783() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408783(m: &mut Machine) -> Cont {
     // 00408783 test eax,eax
     and(m.regs.eax, m.regs.eax, &mut m.flags);
     // 00408785 jne near ptr 00408814h
     jne(m, Cont(x0040878b), Cont(x00408814))
 }
 
-pub fn x0040878b() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040878b(m: &mut Machine) -> Cont {
     // 0040878b push eax
     push(m, m.regs.eax);
     // 0040878c call dword ptr cs:[40B130h]
     call(m, 0x408793, Cont(user32::ShowCursor_stdcall))
 }
 
-pub fn x00408793() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408793(m: &mut Machine) -> Cont {
     // 00408793 call 004085E2h
     call(m, 0x408798, Cont(x004085e2))
 }
 
-pub fn x00408798() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408798(m: &mut Machine) -> Cont {
     // 00408798 xor eax,eax
     m.regs.eax = xor(m.regs.eax, m.regs.eax, &mut m.flags);
     // 0040879a mov edx,1
@@ -35659,34 +34519,30 @@ pub fn x00408798() -> Cont {
     call(m, 0x4087a4, Cont(x00409edf))
 }
 
-pub fn x004087a4() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004087a4(m: &mut Machine) -> Cont {
     // 004087a4 mov eax,1Eh
     m.regs.eax = 0x1eu32;
     // 004087a9 call 00401CC9h
     call(m, 0x4087ae, Cont(x00401cc9))
 }
 
-pub fn x004087ae() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004087ae(m: &mut Machine) -> Cont {
     // 004087ae cmp dword ptr ds:[40C72Ch],0
     sub(m.memory.read::<u32>(0x40c72cu32), 0x0u32, &mut m.flags);
     // 004087b5 jne short 004087F4h
     jne(m, Cont(x004087b7), Cont(x004087f4))
 }
 
-pub fn x004087b7() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004087b7(m: &mut Machine) -> Cont {
     // 004087b7 call 00401D0Fh
     call(m, 0x4087bc, Cont(x00401d0f))
 }
 
-pub fn x004087bc() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004087bc(m: &mut Machine) -> Cont {
     // 004087bc mov edx,ds:[433FB0h]
     m.regs.edx = m.memory.read::<u32>(0x433fb0u32);
     // 004087c2 mov eax,ds:[433F84h]
@@ -35695,114 +34551,100 @@ pub fn x004087bc() -> Cont {
     call(m, 0x4087cc, Cont(x00407ad4))
 }
 
-pub fn x004087cc() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004087cc(m: &mut Machine) -> Cont {
     // 004087cc call 00401529h
     call(m, 0x4087d1, Cont(x00401529))
 }
 
-pub fn x004087d1() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004087d1(m: &mut Machine) -> Cont {
     // 004087d1 cmp dword ptr ds:[40C743h],29h
     sub(m.memory.read::<u32>(0x40c743u32), 0x29u32, &mut m.flags);
     // 004087d8 jne short 004087EDh
     jne(m, Cont(x004087da), Cont(x004087ed))
 }
 
-pub fn x004087da() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004087da(m: &mut Machine) -> Cont {
     // 004087da cmp dword ptr ds:[40C73Fh],35h
     sub(m.memory.read::<u32>(0x40c73fu32), 0x35u32, &mut m.flags);
     // 004087e1 jle short 004087EDh
     jle(m, Cont(x004087e3), Cont(x004087ed))
 }
 
-pub fn x004087e3() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004087e3(m: &mut Machine) -> Cont {
     // 004087e3 mov dword ptr ds:[40C72Ch],1
     m.memory.write::<u32>(0x40c72cu32, 0x1u32);
     // 004087ed call 00401BB3h
     call(m, 0x4087f2, Cont(x00401bb3))
 }
 
-pub fn x004087ed() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004087ed(m: &mut Machine) -> Cont {
     // 004087ed call 00401BB3h
     call(m, 0x4087f2, Cont(x00401bb3))
 }
 
-pub fn x004087f2() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004087f2(m: &mut Machine) -> Cont {
     // 004087f2 jmp short 004087AEh
     Cont(x004087ae)
 }
 
-pub fn x004087f4() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004087f4(m: &mut Machine) -> Cont {
     // 004087f4 push dword ptr ds:[433F80h]
     push(m, m.memory.read::<u32>(0x433f80u32));
     // 004087fa call dword ptr cs:[40B0FCh]
     call(m, 0x408801, Cont(winmm::timeKillEvent_stdcall))
 }
 
-pub fn x00408801() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408801(m: &mut Machine) -> Cont {
     // 00408801 call 00409F49h
     call(m, 0x408806, Cont(x00409f49))
 }
 
-pub fn x00408806() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408806(m: &mut Machine) -> Cont {
     // 00408806 call 004086B4h
     call(m, 0x40880b, Cont(x004086b4))
 }
 
-pub fn x0040880b() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040880b(m: &mut Machine) -> Cont {
     // 0040880b push 1
     push(m, 0x1u32);
     // 0040880d call dword ptr cs:[40B130h]
     call(m, 0x408814, Cont(user32::ShowCursor_stdcall))
 }
 
-pub fn x00408814() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408814(m: &mut Machine) -> Cont {
     // 00408814 mov eax,ds:[40C73Bh]
     m.regs.eax = m.memory.read::<u32>(0x40c73bu32);
     // 00408819 call 0040148Ch
     call(m, 0x40881e, Cont(x0040148c))
 }
 
-pub fn x0040881e() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040881e(m: &mut Machine) -> Cont {
     // 0040881e call 0040A38Ah
     call(m, 0x408823, Cont(x0040a38a))
 }
 
-pub fn x00408823() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408823(m: &mut Machine) -> Cont {
     // 00408823 push 0
     push(m, 0x0u32);
     // 00408825 call dword ptr cs:[40B150h]
     call(m, 0x40882c, Cont(kernel32::ExitProcess_stdcall))
 }
 
-pub fn x0040882c() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040882c(m: &mut Machine) -> Cont {
     // 0040882c xor eax,eax
     m.regs.eax = xor(m.regs.eax, m.regs.eax, &mut m.flags);
     // 0040882e pop edx
@@ -35815,16 +34657,14 @@ pub fn x0040882c() -> Cont {
     ret(m, 0)
 }
 
-pub fn x00408838() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408838(m: &mut Machine) -> Cont {
     // 00408838 ret
     ret(m, 0)
 }
 
-pub fn x00408860() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408860(m: &mut Machine) -> Cont {
     // 00408860 push ebx
     push(m, m.regs.ebx);
     // 00408861 push ecx
@@ -35864,9 +34704,8 @@ pub fn x00408860() -> Cont {
     ret(m, 4)
 }
 
-pub fn x004088a6() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004088a6(m: &mut Machine) -> Cont {
     // 004088a6 push eax
     push(m, m.regs.eax);
     // 004088a7 push ebx
@@ -35911,9 +34750,8 @@ pub fn x004088a6() -> Cont {
     ret(m, 4)
 }
 
-pub fn x004089ad() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004089ad(m: &mut Machine) -> Cont {
     // 004089ad push ebx
     push(m, m.regs.ebx);
     // 004089ae push ecx
@@ -35937,9 +34775,8 @@ pub fn x004089ad() -> Cont {
     Cont(x004089d4)
 }
 
-pub fn x004089c3() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004089c3(m: &mut Machine) -> Cont {
     // 004089c3 mov ecx,edx
     m.regs.ecx = m.regs.edx;
     // 004089c5 mov esi,[ebp-8]
@@ -35955,9 +34792,8 @@ pub fn x004089c3() -> Cont {
     jge(m, Cont(x004089d4), Cont(x00408a14))
 }
 
-pub fn x004089d4() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004089d4(m: &mut Machine) -> Cont {
     // 004089d4 mov dword ptr [ebp-8],0
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32), 0x0u32);
@@ -35987,9 +34823,8 @@ pub fn x004089d4() -> Cont {
     call(m, 0x4089f6, Cont(x004088a6))
 }
 
-pub fn x004089dd() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004089dd(m: &mut Machine) -> Cont {
     // 004089dd mov edi,edx
     m.regs.edi = m.regs.edx;
     // 004089df imul edi,ecx
@@ -36014,9 +34849,8 @@ pub fn x004089dd() -> Cont {
     call(m, 0x4089f6, Cont(x004088a6))
 }
 
-pub fn x004089f6() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004089f6(m: &mut Machine) -> Cont {
     // 004089f6 fmul dword ptr [ecx*4+432A75h]
     m.fpu.set(
         0,
@@ -36041,18 +34875,16 @@ pub fn x004089f6() -> Cont {
     jl(m, Cont(x00408a09), Cont(x004089dd))
 }
 
-pub fn x00408a09() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408a09(m: &mut Machine) -> Cont {
     // 00408a09 test dl,40h
     and(m.regs.get_dl(), 0x40u8, &mut m.flags);
     // 00408a0c je short 004089C3h
     je(m, Cont(x00408a0e), Cont(x004089c3))
 }
 
-pub fn x00408a0e() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408a0e(m: &mut Machine) -> Cont {
     // 00408a0e xor byte ptr [ebp-5],80h
     m.memory.write::<u8>(
         m.regs.ebp.wrapping_add(0xfffffffbu32),
@@ -36066,18 +34898,16 @@ pub fn x00408a0e() -> Cont {
     Cont(x004089c3)
 }
 
-pub fn x00408a14() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408a14(m: &mut Machine) -> Cont {
     // 00408a14 xor ecx,ecx
     m.regs.ecx = xor(m.regs.ecx, m.regs.ecx, &mut m.flags);
     // 00408a16 jmp short 00408A1Eh
     Cont(x00408a1e)
 }
 
-pub fn x00408a18() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408a18(m: &mut Machine) -> Cont {
     // 00408a18 inc ecx
     m.regs.ecx = inc(m.regs.ecx, &mut m.flags);
     // 00408a19 cmp ecx,20h
@@ -36086,9 +34916,8 @@ pub fn x00408a18() -> Cont {
     jge(m, Cont(x00408a1e), Cont(x00408a60))
 }
 
-pub fn x00408a1e() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408a1e(m: &mut Machine) -> Cont {
     // 00408a1e xor edx,edx
     m.regs.edx = xor(m.regs.edx, m.regs.edx, &mut m.flags);
     // 00408a20 lea edi,[ecx+ecx]
@@ -36120,9 +34949,8 @@ pub fn x00408a1e() -> Cont {
     call(m, 0x408a47, Cont(x004088a6))
 }
 
-pub fn x00408a20() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408a20(m: &mut Machine) -> Cont {
     // 00408a20 lea edi,[ecx+ecx]
     m.regs.edi = m.regs.ecx.wrapping_add(m.regs.ecx);
     // 00408a23 lea esi,[edx-10h]
@@ -36152,9 +34980,8 @@ pub fn x00408a20() -> Cont {
     call(m, 0x408a47, Cont(x004088a6))
 }
 
-pub fn x00408a47() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408a47(m: &mut Machine) -> Cont {
     // 00408a47 mov esi,ecx
     m.regs.esi = m.regs.ecx;
     // 00408a49 shl esi,8
@@ -36180,16 +35007,14 @@ pub fn x00408a47() -> Cont {
     jl(m, Cont(x00408a5e), Cont(x00408a20))
 }
 
-pub fn x00408a5e() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408a5e(m: &mut Machine) -> Cont {
     // 00408a5e jmp short 00408A18h
     Cont(x00408a18)
 }
 
-pub fn x00408a60() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408a60(m: &mut Machine) -> Cont {
     // 00408a60 lea edi,[ebx+2800h]
     m.regs.edi = m.regs.ebx.wrapping_add(0x2800u32);
     // 00408a66 mov ecx,800h
@@ -36214,9 +35039,8 @@ pub fn x00408a60() -> Cont {
     ret(m, 0)
 }
 
-pub fn x00408a76() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408a76(m: &mut Machine) -> Cont {
     // 00408a76 push ecx
     push(m, m.regs.ecx);
     // 00408a77 push esi
@@ -36260,9 +35084,8 @@ pub fn x00408a76() -> Cont {
     Cont(x00408ab0)
 }
 
-pub fn x00408aa3() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408aa3(m: &mut Machine) -> Cont {
     // 00408aa3 inc dword ptr [ebp-0Ch]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffff4u32),
@@ -36281,9 +35104,8 @@ pub fn x00408aa3() -> Cont {
     jge(m, Cont(x00408ab0), Cont(x00408bd2))
 }
 
-pub fn x00408ab0() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408ab0(m: &mut Machine) -> Cont {
     // 00408ab0 mov cl,[ebp-0Ch]
     m.regs
         .set_cl(m.memory.read::<u8>(m.regs.ebp.wrapping_add(0xfffffff4u32)));
@@ -36301,9 +35123,8 @@ pub fn x00408ab0() -> Cont {
     je(m, Cont(x00408abf), Cont(x00408ad1))
 }
 
-pub fn x00408abf() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408abf(m: &mut Machine) -> Cont {
     // 00408abf test [ebp-14h],eax
     and(
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffecu32)),
@@ -36314,9 +35135,8 @@ pub fn x00408abf() -> Cont {
     je(m, Cont(x00408ac4), Cont(x00408ad1))
 }
 
-pub fn x00408ac4() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408ac4(m: &mut Machine) -> Cont {
     // 00408ac4 mov eax,4
     m.regs.eax = 0x4u32;
     // 00408ac9 mov [ebp-8],eax
@@ -36326,9 +35146,8 @@ pub fn x00408ac4() -> Cont {
     Cont(x00408b35)
 }
 
-pub fn x00408ac9() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408ac9(m: &mut Machine) -> Cont {
     // 00408ac9 mov [ebp-8],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32), m.regs.eax);
@@ -36336,9 +35155,8 @@ pub fn x00408ac9() -> Cont {
     Cont(x00408b35)
 }
 
-pub fn x00408ad1() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408ad1(m: &mut Machine) -> Cont {
     // 00408ad1 test [ebp-10h],eax
     and(
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff0u32)),
@@ -36349,9 +35167,8 @@ pub fn x00408ad1() -> Cont {
     je(m, Cont(x00408ad6), Cont(x00408ae9))
 }
 
-pub fn x00408ad6() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408ad6(m: &mut Machine) -> Cont {
     // 00408ad6 test [ebp-18h],eax
     and(
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffe8u32)),
@@ -36362,9 +35179,8 @@ pub fn x00408ad6() -> Cont {
     je(m, Cont(x00408adb), Cont(x00408ae9))
 }
 
-pub fn x00408adb() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408adb(m: &mut Machine) -> Cont {
     // 00408adb mov eax,4
     m.regs.eax = 0x4u32;
     // 00408ae0 mov dword ptr [ebp-8],3
@@ -36374,9 +35190,8 @@ pub fn x00408adb() -> Cont {
     Cont(x00408b35)
 }
 
-pub fn x00408ae9() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408ae9(m: &mut Machine) -> Cont {
     // 00408ae9 test [ebp-14h],eax
     and(
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffecu32)),
@@ -36387,9 +35202,8 @@ pub fn x00408ae9() -> Cont {
     je(m, Cont(x00408aee), Cont(x00408b01))
 }
 
-pub fn x00408aee() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408aee(m: &mut Machine) -> Cont {
     // 00408aee test [ebp-18h],eax
     and(
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffe8u32)),
@@ -36400,9 +35214,8 @@ pub fn x00408aee() -> Cont {
     je(m, Cont(x00408af3), Cont(x00408b01))
 }
 
-pub fn x00408af3() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408af3(m: &mut Machine) -> Cont {
     // 00408af3 mov eax,4
     m.regs.eax = 0x4u32;
     // 00408af8 mov dword ptr [ebp-8],2
@@ -36412,9 +35225,8 @@ pub fn x00408af3() -> Cont {
     Cont(x00408b35)
 }
 
-pub fn x00408b01() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408b01(m: &mut Machine) -> Cont {
     // 00408b01 test [ebp-10h],eax
     and(
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff0u32)),
@@ -36425,18 +35237,16 @@ pub fn x00408b01() -> Cont {
     je(m, Cont(x00408b06), Cont(x00408b0d))
 }
 
-pub fn x00408b06() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408b06(m: &mut Machine) -> Cont {
     // 00408b06 mov eax,2
     m.regs.eax = 0x2u32;
     // 00408b0b jmp short 00408AC9h
     Cont(x00408ac9)
 }
 
-pub fn x00408b0d() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408b0d(m: &mut Machine) -> Cont {
     // 00408b0d test [ebp-14h],eax
     and(
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffecu32)),
@@ -36447,9 +35257,8 @@ pub fn x00408b0d() -> Cont {
     je(m, Cont(x00408b12), Cont(x00408b20))
 }
 
-pub fn x00408b12() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408b12(m: &mut Machine) -> Cont {
     // 00408b12 mov eax,2
     m.regs.eax = 0x2u32;
     // 00408b17 mov dword ptr [ebp-8],1
@@ -36459,9 +35268,8 @@ pub fn x00408b12() -> Cont {
     Cont(x00408b35)
 }
 
-pub fn x00408b20() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408b20(m: &mut Machine) -> Cont {
     // 00408b20 test [ebp-18h],eax
     and(
         m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffe8u32)),
@@ -36472,9 +35280,8 @@ pub fn x00408b20() -> Cont {
     je(m, Cont(x00408b29), Cont(x00408bac))
 }
 
-pub fn x00408b29() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408b29(m: &mut Machine) -> Cont {
     // 00408b29 mov eax,2
     m.regs.eax = 0x2u32;
     // 00408b2e mov dword ptr [ebp-8],0
@@ -36494,9 +35301,8 @@ pub fn x00408b29() -> Cont {
     jge(m, Cont(x00408b42), Cont(x00408aa3))
 }
 
-pub fn x00408b35() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408b35(m: &mut Machine) -> Cont {
     // 00408b35 xor esi,esi
     m.regs.esi = xor(m.regs.esi, m.regs.esi, &mut m.flags);
     // 00408b37 xor ebx,ebx
@@ -36511,9 +35317,8 @@ pub fn x00408b35() -> Cont {
     jge(m, Cont(x00408b42), Cont(x00408aa3))
 }
 
-pub fn x00408b39() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408b39(m: &mut Machine) -> Cont {
     // 00408b39 cmp ebx,[ebp-2Ch]
     sub(
         m.regs.ebx,
@@ -36524,18 +35329,16 @@ pub fn x00408b39() -> Cont {
     jge(m, Cont(x00408b42), Cont(x00408aa3))
 }
 
-pub fn x00408b42() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408b42(m: &mut Machine) -> Cont {
     // 00408b42 test esi,esi
     and(m.regs.esi, m.regs.esi, &mut m.flags);
     // 00408b44 jne short 00408B4Eh
     jne(m, Cont(x00408b46), Cont(x00408b4e))
 }
 
-pub fn x00408b46() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408b46(m: &mut Machine) -> Cont {
     // 00408b46 mov ch,[edx]
     m.regs.set_ch(m.memory.read::<u8>(m.regs.edx));
     // 00408b48 mov esi,8
@@ -36628,9 +35431,8 @@ pub fn x00408b46() -> Cont {
     Cont(x00408b39)
 }
 
-pub fn x00408b4e() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408b4e(m: &mut Machine) -> Cont {
     // 00408b4e sub esi,eax
     m.regs.esi = sub(m.regs.esi, m.regs.eax, &mut m.flags);
     // 00408b50 movsx edi,ch
@@ -36717,9 +35519,8 @@ pub fn x00408b4e() -> Cont {
     Cont(x00408b39)
 }
 
-pub fn x00408bac() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408bac(m: &mut Machine) -> Cont {
     // 00408bac xor ebx,ebx
     m.regs.ebx = xor(m.regs.ebx, m.regs.ebx, &mut m.flags);
     // 00408bae cmp ebx,[ebp-2Ch]
@@ -36732,9 +35533,8 @@ pub fn x00408bac() -> Cont {
     jge(m, Cont(x00408bb7), Cont(x00408aa3))
 }
 
-pub fn x00408bae() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408bae(m: &mut Machine) -> Cont {
     // 00408bae cmp ebx,[ebp-2Ch]
     sub(
         m.regs.ebx,
@@ -36745,9 +35545,8 @@ pub fn x00408bae() -> Cont {
     jge(m, Cont(x00408bb7), Cont(x00408aa3))
 }
 
-pub fn x00408bb7() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408bb7(m: &mut Machine) -> Cont {
     // 00408bb7 mov eax,ebx
     m.regs.eax = m.regs.ebx;
     // 00408bb9 shl eax,7
@@ -36772,9 +35571,8 @@ pub fn x00408bb7() -> Cont {
     Cont(x00408bae)
 }
 
-pub fn x00408bd2() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408bd2(m: &mut Machine) -> Cont {
     // 00408bd2 mov eax,edx
     m.regs.eax = m.regs.edx;
     // 00408bd4 sub eax,[ebp-1Ch]
@@ -36795,9 +35593,8 @@ pub fn x00408bd2() -> Cont {
     ret(m, 0)
 }
 
-pub fn x00408bdc() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408bdc(m: &mut Machine) -> Cont {
     // 00408bdc push ebx
     push(m, m.regs.ebx);
     // 00408bdd push ecx
@@ -36818,9 +35615,8 @@ pub fn x00408bdc() -> Cont {
     Cont(x00408bf2)
 }
 
-pub fn x00408bec() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408bec(m: &mut Machine) -> Cont {
     // 00408bec inc edx
     m.regs.edx = inc(m.regs.edx, &mut m.flags);
     // 00408bed cmp edx,40h
@@ -36829,9 +35625,8 @@ pub fn x00408bec() -> Cont {
     jge(m, Cont(x00408bf2), Cont(x00408c49))
 }
 
-pub fn x00408bf2() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408bf2(m: &mut Machine) -> Cont {
     // 00408bf2 mov dword ptr [ebp-4],0
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32), 0x0u32);
@@ -36878,9 +35673,8 @@ pub fn x00408bf2() -> Cont {
     jl(m, Cont(x00408c24), Cont(x00408bfb))
 }
 
-pub fn x00408bfb() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408bfb(m: &mut Machine) -> Cont {
     // 00408bfb mov ecx,eax
     m.regs.ecx = m.regs.eax;
     // 00408bfd shl ecx,8
@@ -36922,9 +35716,8 @@ pub fn x00408bfb() -> Cont {
     jl(m, Cont(x00408c24), Cont(x00408bfb))
 }
 
-pub fn x00408c24() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408c24(m: &mut Machine) -> Cont {
     // 00408c24 xor ecx,ecx
     m.regs.ecx = xor(m.regs.ecx, m.regs.ecx, &mut m.flags);
     // 00408c26 mov eax,ecx
@@ -36971,9 +35764,8 @@ pub fn x00408c24() -> Cont {
     jl(m, Cont(x00408c47), Cont(x00408c26))
 }
 
-pub fn x00408c26() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408c26(m: &mut Machine) -> Cont {
     // 00408c26 mov eax,ecx
     m.regs.eax = m.regs.ecx;
     // 00408c28 shl eax,6
@@ -37018,16 +35810,14 @@ pub fn x00408c26() -> Cont {
     jl(m, Cont(x00408c47), Cont(x00408c26))
 }
 
-pub fn x00408c47() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408c47(m: &mut Machine) -> Cont {
     // 00408c47 jmp short 00408BECh
     Cont(x00408bec)
 }
 
-pub fn x00408c49() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408c49(m: &mut Machine) -> Cont {
     // 00408c49 leave
     leave(m);
     // 00408c4a pop edi
@@ -37042,9 +35832,8 @@ pub fn x00408c49() -> Cont {
     ret(m, 0)
 }
 
-pub fn x00408c4f() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408c4f(m: &mut Machine) -> Cont {
     // 00408c4f push ecx
     push(m, m.regs.ecx);
     // 00408c50 push esi
@@ -37075,9 +35864,8 @@ pub fn x00408c4f() -> Cont {
     call(m, 0x408c6e, Cont(x00401a60))
 }
 
-pub fn x00408c6e() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408c6e(m: &mut Machine) -> Cont {
     // 00408c6e add esp,4
     m.regs.esp = add(m.regs.esp, 0x4u32, &mut m.flags);
     // 00408c71 mov [ebp-4],eax
@@ -37091,9 +35879,8 @@ pub fn x00408c6e() -> Cont {
     call(m, 0x408c7d, Cont(x004089ad))
 }
 
-pub fn x00408c7d() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408c7d(m: &mut Machine) -> Cont {
     // 00408c7d mov ebx,10h
     m.regs.ebx = 0x10u32;
     // 00408c82 test edi,edi
@@ -37102,36 +35889,32 @@ pub fn x00408c7d() -> Cont {
     jle(m, Cont(x00408c8a), Cont(x00408d43))
 }
 
-pub fn x00408c82() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408c82(m: &mut Machine) -> Cont {
     // 00408c82 test edi,edi
     and(m.regs.edi, m.regs.edi, &mut m.flags);
     // 00408c84 jle near ptr 00408D43h
     jle(m, Cont(x00408c8a), Cont(x00408d43))
 }
 
-pub fn x00408c8a() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408c8a(m: &mut Machine) -> Cont {
     // 00408c8a cmp ebx,10h
     sub(m.regs.ebx, 0x10u32, &mut m.flags);
     // 00408c8d jne short 00408CA4h
     jne(m, Cont(x00408c8f), Cont(x00408ca4))
 }
 
-pub fn x00408c8f() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408c8f(m: &mut Machine) -> Cont {
     // 00408c8f cmp edi,ebx
     sub(m.regs.edi, m.regs.ebx, &mut m.flags);
     // 00408c91 jg short 00408C95h
     jg(m, Cont(x00408c93), Cont(x00408c95))
 }
 
-pub fn x00408c93() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408c93(m: &mut Machine) -> Cont {
     // 00408c93 mov ebx,edi
     m.regs.ebx = m.regs.edi;
     // 00408c95 mov edx,[ebp-8]
@@ -37142,9 +35925,8 @@ pub fn x00408c93() -> Cont {
     call(m, 0x408c9f, Cont(x00408a76))
 }
 
-pub fn x00408c95() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408c95(m: &mut Machine) -> Cont {
     // 00408c95 mov edx,[ebp-8]
     m.regs.edx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32));
     // 00408c98 mov eax,esi
@@ -37153,9 +35935,8 @@ pub fn x00408c95() -> Cont {
     call(m, 0x408c9f, Cont(x00408a76))
 }
 
-pub fn x00408c9f() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408c9f(m: &mut Machine) -> Cont {
     // 00408c9f add [ebp-8],eax
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffff8u32),
@@ -37181,9 +35962,8 @@ pub fn x00408c9f() -> Cont {
     call(m, 0x408cb8, Cont(x00408bdc))
 }
 
-pub fn x00408ca4() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408ca4(m: &mut Machine) -> Cont {
     // 00408ca4 mov eax,ebx
     m.regs.eax = m.regs.ebx;
     // 00408ca6 shl eax,7
@@ -37198,27 +35978,24 @@ pub fn x00408ca4() -> Cont {
     call(m, 0x408cb8, Cont(x00408bdc))
 }
 
-pub fn x00408cb8() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408cb8(m: &mut Machine) -> Cont {
     // 00408cb8 xor edx,edx
     m.regs.edx = xor(m.regs.edx, m.regs.edx, &mut m.flags);
     // 00408cba jmp short 00408CD4h
     Cont(x00408cd4)
 }
 
-pub fn x00408cbc() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408cbc(m: &mut Machine) -> Cont {
     // 00408cbc cmp eax,0FFFFFF80h
     sub(m.regs.eax, 0xffffff80u32, &mut m.flags);
     // 00408cbf jge short 00408CC8h
     jge(m, Cont(x00408cc1), Cont(x00408cc8))
 }
 
-pub fn x00408cc1() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408cc1(m: &mut Machine) -> Cont {
     // 00408cc1 mov dword ptr [ebp-0Ch],0FFFFFF80h
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffff4u32), 0xffffff80u32);
@@ -37237,9 +36014,8 @@ pub fn x00408cc1() -> Cont {
     jge(m, Cont(x00408cd4), Cont(x00408d06))
 }
 
-pub fn x00408cc8() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408cc8(m: &mut Machine) -> Cont {
     // 00408cc8 mov al,[ebp-0Ch]
     m.regs
         .set_al(m.memory.read::<u8>(m.regs.ebp.wrapping_add(0xfffffff4u32)));
@@ -37255,9 +36031,8 @@ pub fn x00408cc8() -> Cont {
     jge(m, Cont(x00408cd4), Cont(x00408d06))
 }
 
-pub fn x00408cd4() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408cd4(m: &mut Machine) -> Cont {
     // 00408cd4 mov eax,1FFh
     m.regs.eax = 0x1ffu32;
     // 00408cd9 sub eax,edx
@@ -37283,9 +36058,8 @@ pub fn x00408cd4() -> Cont {
     call(m, 0x408cf5, Cont(x00408860))
 }
 
-pub fn x00408cf5() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408cf5(m: &mut Machine) -> Cont {
     // 00408cf5 mov [ebp-0Ch],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffff4u32), m.regs.eax);
@@ -37295,9 +36069,8 @@ pub fn x00408cf5() -> Cont {
     jle(m, Cont(x00408cfd), Cont(x00408cbc))
 }
 
-pub fn x00408cfd() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408cfd(m: &mut Machine) -> Cont {
     // 00408cfd mov dword ptr [ebp-0Ch],7Fh
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffff4u32), 0x7fu32);
@@ -37305,9 +36078,8 @@ pub fn x00408cfd() -> Cont {
     Cont(x00408cc8)
 }
 
-pub fn x00408d06() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408d06(m: &mut Machine) -> Cont {
     // 00408d06 mov edx,1DFh
     m.regs.edx = 0x1dfu32;
     // 00408d0b mov eax,edx
@@ -37334,9 +36106,8 @@ pub fn x00408d06() -> Cont {
     jge(m, Cont(x00408d23), Cont(x00408d0b))
 }
 
-pub fn x00408d0b() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408d0b(m: &mut Machine) -> Cont {
     // 00408d0b mov eax,edx
     m.regs.eax = m.regs.edx;
     // 00408d0d shl eax,2
@@ -37361,9 +36132,8 @@ pub fn x00408d0b() -> Cont {
     jge(m, Cont(x00408d23), Cont(x00408d0b))
 }
 
-pub fn x00408d23() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408d23(m: &mut Machine) -> Cont {
     // 00408d23 xor edx,edx
     m.regs.edx = xor(m.regs.edx, m.regs.edx, &mut m.flags);
     // 00408d25 mov eax,edx
@@ -37383,9 +36153,8 @@ pub fn x00408d23() -> Cont {
     jl(m, Cont(x00408d3c), Cont(x00408d25))
 }
 
-pub fn x00408d25() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408d25(m: &mut Machine) -> Cont {
     // 00408d25 mov eax,edx
     m.regs.eax = m.regs.edx;
     // 00408d27 shl eax,2
@@ -37403,9 +36172,8 @@ pub fn x00408d25() -> Cont {
     jl(m, Cont(x00408d3c), Cont(x00408d25))
 }
 
-pub fn x00408d3c() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408d3c(m: &mut Machine) -> Cont {
     // 00408d3c inc ebx
     m.regs.ebx = inc(m.regs.ebx, &mut m.flags);
     // 00408d3d dec edi
@@ -37414,9 +36182,8 @@ pub fn x00408d3c() -> Cont {
     Cont(x00408c82)
 }
 
-pub fn x00408d43() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408d43(m: &mut Machine) -> Cont {
     // 00408d43 add dword ptr [ebp-4],1E0h
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xfffffffcu32),
@@ -37447,9 +36214,8 @@ pub fn x00408d43() -> Cont {
     call(m, 0x408d5d, Cont(x00401a78))
 }
 
-pub fn x00408d5d() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408d5d(m: &mut Machine) -> Cont {
     // 00408d5d add esp,4
     m.regs.esp = add(m.regs.esp, 0x4u32, &mut m.flags);
     // 00408d60 leave
@@ -37464,9 +36230,8 @@ pub fn x00408d5d() -> Cont {
     ret(m, 0)
 }
 
-pub fn x00408d65() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408d65(m: &mut Machine) -> Cont {
     // 00408d65 push ebx
     push(m, m.regs.ebx);
     // 00408d66 push ecx
@@ -37485,9 +36250,8 @@ pub fn x00408d65() -> Cont {
     call(m, 0x408d78, Cont(x00401a60))
 }
 
-pub fn x00408d78() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408d78(m: &mut Machine) -> Cont {
     // 00408d78 mov [ebp-4],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32), m.regs.eax);
@@ -37513,9 +36277,8 @@ pub fn x00408d78() -> Cont {
     call(m, 0x408da4, Cont(x00408c4f))
 }
 
-pub fn x00408da4() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00408da4(m: &mut Machine) -> Cont {
     // 00408da4 mov eax,[ebp-4]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32));
     // 00408da7 leave
@@ -37534,16 +36297,14 @@ pub fn x00408da4() -> Cont {
     ret(m, 0)
 }
 
-pub fn x004090c7() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004090c7(m: &mut Machine) -> Cont {
     // 004090c7 call 004090CCh
     call(m, 0x4090cc, Cont(x004090cc))
 }
 
-pub fn x004090cc() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004090cc(m: &mut Machine) -> Cont {
     // 004090cc pop ebp
     m.regs.ebp = pop(m);
     // 004090cd mov ebp,ds:[4377B4h]
@@ -37552,16 +36313,14 @@ pub fn x004090cc() -> Cont {
     ret(m, 0)
 }
 
-pub fn x004090d4() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004090d4(m: &mut Machine) -> Cont {
     // 004090d4 call 004090D9h
     call(m, 0x4090d9, Cont(x004090d9))
 }
 
-pub fn x004090d9() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004090d9(m: &mut Machine) -> Cont {
     // 004090d9 pop esi
     m.regs.esi = pop(m);
     // 004090da add esi,0E87h
@@ -37590,9 +36349,8 @@ pub fn x004090d9() -> Cont {
     jne(m, Cont(x004090fa), Cont(x004090f2))
 }
 
-pub fn x004090f2() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004090f2(m: &mut Machine) -> Cont {
     // 004090f2 dec esi
     m.regs.esi = dec(m.regs.esi, &mut m.flags);
     // 004090f3 mov al,[esi]
@@ -37605,9 +36363,8 @@ pub fn x004090f2() -> Cont {
     jne(m, Cont(x004090fa), Cont(x004090f2))
 }
 
-pub fn x004090fa() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004090fa(m: &mut Machine) -> Cont {
     // 004090fa lea esi,[ebp+477Bh]
     m.regs.esi = m.regs.ebp.wrapping_add(0x477bu32);
     // 00409100 mov cl,80h
@@ -37624,9 +36381,8 @@ pub fn x004090fa() -> Cont {
     jne(m, Cont(x0040910a), Cont(x00409102))
 }
 
-pub fn x00409102() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00409102(m: &mut Machine) -> Cont {
     // 00409102 lodsb
     lodsb(m);
     // 00409103 neg al
@@ -37639,9 +36395,8 @@ pub fn x00409102() -> Cont {
     jne(m, Cont(x0040910a), Cont(x00409102))
 }
 
-pub fn x0040910a() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040910a(m: &mut Machine) -> Cont {
     // 0040910a mov al,cl
     m.regs.set_al(m.regs.get_cl());
     // 0040910c sar al,1
@@ -37656,9 +36411,8 @@ pub fn x0040910a() -> Cont {
     jne(m, Cont(x00409115), Cont(x0040910a))
 }
 
-pub fn x00409115() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00409115(m: &mut Machine) -> Cont {
     // 00409115 mov al,cl
     m.regs.set_al(m.regs.get_cl());
     // 00409117 and al,80h
@@ -37673,9 +36427,8 @@ pub fn x00409115() -> Cont {
     jne(m, Cont(x00409120), Cont(x00409115))
 }
 
-pub fn x00409120() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00409120(m: &mut Machine) -> Cont {
     // 00409120 mov al,cl
     m.regs.set_al(m.regs.get_cl());
     // 00409122 sar al,1
@@ -37688,16 +36441,14 @@ pub fn x00409120() -> Cont {
     jne(m, Cont(x00409129), Cont(x00409120))
 }
 
-pub fn x00409129() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00409129(m: &mut Machine) -> Cont {
     // 00409129 ret
     ret(m, 0)
 }
 
-pub fn x0040912a() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040912a(m: &mut Machine) -> Cont {
     // 0040912a pusha
     pushad(m);
     // 0040912b mov ds:[4377B4h],edi
@@ -37717,9 +36468,8 @@ pub fn x0040912a() -> Cont {
     jne(m, Cont(x00409140), Cont(x00409138))
 }
 
-pub fn x00409138() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00409138(m: &mut Machine) -> Cont {
     // 00409138 dec ebx
     m.regs.ebx = dec(m.regs.ebx, &mut m.flags);
     // 00409139 mov byte ptr [ebp+ebx],0
@@ -37729,9 +36479,8 @@ pub fn x00409138() -> Cont {
     jne(m, Cont(x00409140), Cont(x00409138))
 }
 
-pub fn x00409140() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00409140(m: &mut Machine) -> Cont {
     // 00409140 mov byte ptr [ebp+1],40h
     m.memory
         .write::<u8>(m.regs.ebp.wrapping_add(0x1u32), 0x40u8);
@@ -37741,9 +36490,8 @@ pub fn x00409140() -> Cont {
     jne(m, Cont(x00409150), Cont(x004091bf))
 }
 
-pub fn x00409150() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00409150(m: &mut Machine) -> Cont {
     // 00409150 lea edi,[ebp+2Bh]
     m.regs.edi = m.regs.ebp.wrapping_add(0x2bu32);
     // 00409153 mov ecx,9D4h
@@ -37772,9 +36520,8 @@ pub fn x00409150() -> Cont {
     }
 }
 
-pub fn x0040916b() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040916b(m: &mut Machine) -> Cont {
     // 0040916b add [edi],esi
     m.memory.write::<u32>(
         m.regs.edi,
@@ -37791,9 +36538,8 @@ pub fn x0040916b() -> Cont {
     }
 }
 
-pub fn x00409172() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00409172(m: &mut Machine) -> Cont {
     // 00409172 test byte ptr [esi+1Ah],4
     and(
         m.memory.read::<u8>(m.regs.esi.wrapping_add(0x1au32)),
@@ -37804,9 +36550,8 @@ pub fn x00409172() -> Cont {
     je(m, Cont(x00409178), Cont(x004091a5))
 }
 
-pub fn x00409178() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00409178(m: &mut Machine) -> Cont {
     // 00409178 and word ptr [esi+1Ah],0FFFBh
     m.memory.write::<u16>(
         m.regs.esi.wrapping_add(0x1au32),
@@ -37826,9 +36571,8 @@ pub fn x00409178() -> Cont {
     jecxz(m, Cont(x00409188), Cont(x00409191))
 }
 
-pub fn x00409188() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00409188(m: &mut Machine) -> Cont {
     // 00409188 add al,[ebx+esi]
     m.regs.set_al(add(
         m.regs.get_al(),
@@ -37849,9 +36593,8 @@ pub fn x00409188() -> Cont {
     }
 }
 
-pub fn x00409191() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00409191(m: &mut Machine) -> Cont {
     // 00409191 mov ecx,[esi+24h]
     m.regs.ecx = m.memory.read::<u32>(m.regs.esi.wrapping_add(0x24u32));
     // 00409194 xor eax,eax
@@ -37860,9 +36603,8 @@ pub fn x00409191() -> Cont {
     jecxz(m, Cont(x00409198), Cont(x004091a5))
 }
 
-pub fn x00409198() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00409198(m: &mut Machine) -> Cont {
     // 00409198 add ax,[ebx+esi]
     m.regs.set_ax(add(
         m.regs.get_ax(),
@@ -37883,9 +36625,8 @@ pub fn x00409198() -> Cont {
     }
 }
 
-pub fn x004091a5() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004091a5(m: &mut Machine) -> Cont {
     // 004091a5 mov ecx,[esi+24h]
     m.regs.ecx = m.memory.read::<u32>(m.regs.esi.wrapping_add(0x24u32));
     // 004091a8 shl ecx,1
@@ -37904,9 +36645,8 @@ pub fn x004091a5() -> Cont {
     call(m, 0x4091b7, Cont(x004090d4))
 }
 
-pub fn x004091b7() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004091b7(m: &mut Machine) -> Cont {
     // 004091b7 xor eax,eax
     m.regs.eax = xor(m.regs.eax, m.regs.eax, &mut m.flags);
     // 004091b9 inc eax
@@ -37915,9 +36655,8 @@ pub fn x004091b7() -> Cont {
     Cont(x004091c1)
 }
 
-pub fn x004091bf() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004091bf(m: &mut Machine) -> Cont {
     // 004091bf xor eax,eax
     m.regs.eax = xor(m.regs.eax, m.regs.eax, &mut m.flags);
     // 004091c1 mov byte ptr [ebp+4B9Fh],0
@@ -37929,9 +36668,8 @@ pub fn x004091bf() -> Cont {
     ret(m, 0)
 }
 
-pub fn x004091c1() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x004091c1(m: &mut Machine) -> Cont {
     // 004091c1 mov byte ptr [ebp+4B9Fh],0
     m.memory
         .write::<u8>(m.regs.ebp.wrapping_add(0x4b9fu32), 0x0u8);
@@ -37941,18 +36679,16 @@ pub fn x004091c1() -> Cont {
     ret(m, 0)
 }
 
-pub fn x00409edf() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00409edf(m: &mut Machine) -> Cont {
     // 00409edf push ebp
     push(m, m.regs.ebp);
     // 00409ee0 call 004090C7h
     call(m, 0x409ee5, Cont(x004090c7))
 }
 
-pub fn x00409ee5() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00409ee5(m: &mut Machine) -> Cont {
     // 00409ee5 cmp byte ptr [ebp+4B9Fh],0
     sub(
         m.memory.read::<u8>(m.regs.ebp.wrapping_add(0x4b9fu32)),
@@ -37963,9 +36699,8 @@ pub fn x00409ee5() -> Cont {
     jne(m, Cont(x00409eee), Cont(x00409f47))
 }
 
-pub fn x00409eee() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00409eee(m: &mut Machine) -> Cont {
     // 00409eee mov [ebp+16h],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0x16u32), m.regs.eax);
@@ -38007,9 +36742,8 @@ pub fn x00409eee() -> Cont {
     jne(m, Cont(x00409f23), Cont(x00409f10))
 }
 
-pub fn x00409f10() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00409f10(m: &mut Machine) -> Cont {
     // 00409f10 mov al,[ebp+ecx+5Bh]
     m.regs.set_al(
         m.memory
@@ -38028,9 +36762,8 @@ pub fn x00409f10() -> Cont {
     jne(m, Cont(x00409f23), Cont(x00409f10))
 }
 
-pub fn x00409f23() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00409f23(m: &mut Machine) -> Cont {
     // 00409f23 xor eax,eax
     m.regs.eax = xor(m.regs.eax, m.regs.eax, &mut m.flags);
     // 00409f25 mov byte ptr [ebp],40h
@@ -38071,27 +36804,24 @@ pub fn x00409f23() -> Cont {
     ret(m, 0)
 }
 
-pub fn x00409f47() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00409f47(m: &mut Machine) -> Cont {
     // 00409f47 pop ebp
     m.regs.ebp = pop(m);
     // 00409f48 ret
     ret(m, 0)
 }
 
-pub fn x00409f49() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00409f49(m: &mut Machine) -> Cont {
     // 00409f49 push ebp
     push(m, m.regs.ebp);
     // 00409f4a call 004090C7h
     call(m, 0x409f4f, Cont(x004090c7))
 }
 
-pub fn x00409f4f() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00409f4f(m: &mut Machine) -> Cont {
     // 00409f4f cmp byte ptr [ebp+4B9Fh],0
     sub(
         m.memory.read::<u8>(m.regs.ebp.wrapping_add(0x4b9fu32)),
@@ -38102,9 +36832,8 @@ pub fn x00409f4f() -> Cont {
     je(m, Cont(x00409f58), Cont(x00409f5e))
 }
 
-pub fn x00409f58() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00409f58(m: &mut Machine) -> Cont {
     // 00409f58 dec byte ptr [ebp+4B9Fh]
     m.memory.write::<u8>(
         m.regs.ebp.wrapping_add(0x4b9fu32),
@@ -38119,18 +36848,16 @@ pub fn x00409f58() -> Cont {
     ret(m, 0)
 }
 
-pub fn x00409f5e() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00409f5e(m: &mut Machine) -> Cont {
     // 00409f5e pop ebp
     m.regs.ebp = pop(m);
     // 00409f5f ret
     ret(m, 0)
 }
 
-pub fn x0040a281() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040a281(m: &mut Machine) -> Cont {
     // 0040a281 pusha
     pushad(m);
     // 0040a282 mov ebx,4377B8h
@@ -38151,9 +36878,8 @@ pub fn x0040a281() -> Cont {
     call(m, 0x40a29e, Cont(x0040912a))
 }
 
-pub fn x0040a29e() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040a29e(m: &mut Machine) -> Cont {
     // 0040a29e push eax
     push(m, m.regs.eax);
     // 0040a29f lea ecx,[ebx+8]
@@ -38166,18 +36892,16 @@ pub fn x0040a29e() -> Cont {
     call(m, 0x40a2a9, Cont(x0040a556))
 }
 
-pub fn x0040a2a9() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040a2a9(m: &mut Machine) -> Cont {
     // 0040a2a9 or eax,eax
     m.regs.eax = or(m.regs.eax, m.regs.eax, &mut m.flags);
     // 0040a2ab jne short 0040A2D1h
     jne(m, Cont(x0040a2ad), Cont(x0040a2d1))
 }
 
-pub fn x0040a2ad() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040a2ad(m: &mut Machine) -> Cont {
     // 0040a2ad mov al,3
     m.regs.set_al(0x3u8);
     // 0040a2af push eax
@@ -38198,18 +36922,16 @@ pub fn x0040a2ad() -> Cont {
     )
 }
 
-pub fn x0040a2bd() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040a2bd(m: &mut Machine) -> Cont {
     // 0040a2bd or eax,eax
     m.regs.eax = or(m.regs.eax, m.regs.eax, &mut m.flags);
     // 0040a2bf jne short 0040A2D1h
     jne(m, Cont(x0040a2c1), Cont(x0040a2d1))
 }
 
-pub fn x0040a2c1() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040a2c1(m: &mut Machine) -> Cont {
     // 0040a2c1 push eax
     push(m, m.regs.eax);
     // 0040a2c2 lea ebp,[ebx+4]
@@ -38228,25 +36950,22 @@ pub fn x0040a2c1() -> Cont {
     )
 }
 
-pub fn x0040a2cf() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040a2cf(m: &mut Machine) -> Cont {
     // 0040a2cf or eax,eax
     m.regs.eax = or(m.regs.eax, m.regs.eax, &mut m.flags);
     // 0040a2d1 jne short 0040A2E2h
     jne(m, Cont(x0040a2d3), Cont(x0040a2e2))
 }
 
-pub fn x0040a2d1() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040a2d1(m: &mut Machine) -> Cont {
     // 0040a2d1 jne short 0040A2E2h
     jne(m, Cont(x0040a2d3), Cont(x0040a2e2))
 }
 
-pub fn x0040a2d3() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040a2d3(m: &mut Machine) -> Cont {
     // 0040a2d3 push eax
     push(m, m.regs.eax);
     // 0040a2d4 lea edx,[ebx]
@@ -38265,25 +36984,22 @@ pub fn x0040a2d3() -> Cont {
     )
 }
 
-pub fn x0040a2e0() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040a2e0(m: &mut Machine) -> Cont {
     // 0040a2e0 or eax,eax
     m.regs.eax = or(m.regs.eax, m.regs.eax, &mut m.flags);
     // 0040a2e2 jne near ptr 0040A37Eh
     jne(m, Cont(x0040a2e8), Cont(x0040a37e))
 }
 
-pub fn x0040a2e2() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040a2e2(m: &mut Machine) -> Cont {
     // 0040a2e2 jne near ptr 0040A37Eh
     jne(m, Cont(x0040a2e8), Cont(x0040a37e))
 }
 
-pub fn x0040a2e8() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040a2e8(m: &mut Machine) -> Cont {
     // 0040a2e8 lea edi,[ebx+34h]
     m.regs.edi = m.regs.ebx.wrapping_add(0x34u32);
     // 0040a2eb push edi
@@ -38308,9 +37024,8 @@ pub fn x0040a2e8() -> Cont {
     )
 }
 
-pub fn x0040a300() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040a300(m: &mut Machine) -> Cont {
     // 0040a300 xor esi,esi
     m.regs.esi = xor(m.regs.esi, m.regs.esi, &mut m.flags);
     // 0040a302 push 2
@@ -38349,18 +37064,16 @@ pub fn x0040a300() -> Cont {
     )
 }
 
-pub fn x0040a322() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040a322(m: &mut Machine) -> Cont {
     // 0040a322 or eax,eax
     m.regs.eax = or(m.regs.eax, m.regs.eax, &mut m.flags);
     // 0040a324 jne short 0040A37Eh
     jne(m, Cont(x0040a326), Cont(x0040a37e))
 }
 
-pub fn x0040a326() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040a326(m: &mut Machine) -> Cont {
     // 0040a326 mov ecx,[ebx+18h]
     m.regs.ecx = m.memory.read::<u32>(m.regs.ebx.wrapping_add(0x18u32));
     // 0040a329 mov edi,[ebx+14h]
@@ -38391,18 +37104,16 @@ pub fn x0040a326() -> Cont {
     )
 }
 
-pub fn x0040a346() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040a346(m: &mut Machine) -> Cont {
     // 0040a346 or eax,eax
     m.regs.eax = or(m.regs.eax, m.regs.eax, &mut m.flags);
     // 0040a348 jne short 0040A37Eh
     jne(m, Cont(x0040a34a), Cont(x0040a37e))
 }
 
-pub fn x0040a34a() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040a34a(m: &mut Machine) -> Cont {
     // 0040a34a xor eax,eax
     m.regs.eax = xor(m.regs.eax, m.regs.eax, &mut m.flags);
     // 0040a34c inc al
@@ -38427,18 +37138,16 @@ pub fn x0040a34a() -> Cont {
     )
 }
 
-pub fn x0040a358() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040a358(m: &mut Machine) -> Cont {
     // 0040a358 or eax,eax
     m.regs.eax = or(m.regs.eax, m.regs.eax, &mut m.flags);
     // 0040a35a jne short 0040A37Eh
     jne(m, Cont(x0040a35c), Cont(x0040a37e))
 }
 
-pub fn x0040a35c() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040a35c(m: &mut Machine) -> Cont {
     // 0040a35c lea edx,[ebx+30h]
     m.regs.edx = m.regs.ebx.wrapping_add(0x30u32);
     // 0040a35f push edx
@@ -38457,9 +37166,8 @@ pub fn x0040a35c() -> Cont {
     call(m, 0x40a36e, Cont(x0040a568))
 }
 
-pub fn x0040a36e() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040a36e(m: &mut Machine) -> Cont {
     // 0040a36e mov [ebx+10h],eax
     m.memory
         .write::<u32>(m.regs.ebx.wrapping_add(0x10u32), m.regs.eax);
@@ -38474,9 +37182,8 @@ pub fn x0040a36e() -> Cont {
     call(m, 0x40a37a, Cont(x0040a550))
 }
 
-pub fn x0040a37a() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040a37a(m: &mut Machine) -> Cont {
     // 0040a37a popa
     popad(m);
     // 0040a37b stc
@@ -38485,16 +37192,14 @@ pub fn x0040a37a() -> Cont {
     Cont(x0040a385)
 }
 
-pub fn x0040a37e() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040a37e(m: &mut Machine) -> Cont {
     // 0040a37e call 0040A38Ah
     call(m, 0x40a383, Cont(x0040a38a))
 }
 
-pub fn x0040a383() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040a383(m: &mut Machine) -> Cont {
     // 0040a383 popa
     popad(m);
     // 0040a384 clc
@@ -38505,18 +37210,16 @@ pub fn x0040a383() -> Cont {
     ret(m, 8)
 }
 
-pub fn x0040a385() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040a385(m: &mut Machine) -> Cont {
     // 0040a385 sbb eax,eax
     m.regs.eax = sbb(m.regs.eax, m.regs.eax, &mut m.flags);
     // 0040a387 ret 8
     ret(m, 8)
 }
 
-pub fn x0040a38a() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040a38a(m: &mut Machine) -> Cont {
     // 0040a38a pusha
     pushad(m);
     // 0040a38b mov ebx,4377B8h
@@ -38537,9 +37240,8 @@ pub fn x0040a38a() -> Cont {
     je(m, Cont(x0040a39a), Cont(x0040a3a5))
 }
 
-pub fn x0040a39a() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040a39a(m: &mut Machine) -> Cont {
     // 0040a39a push 3E8h
     push(m, 0x3e8u32);
     // 0040a39f push eax
@@ -38548,9 +37250,8 @@ pub fn x0040a39a() -> Cont {
     call(m, 0x40a3a5, Cont(x0040a562))
 }
 
-pub fn x0040a3a5() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040a3a5(m: &mut Machine) -> Cont {
     // 0040a3a5 mov edi,40A3B4h
     m.regs.edi = 0x40a3b4u32;
     // 0040a3aa xchg esi,ebx
@@ -38563,18 +37264,16 @@ pub fn x0040a3a5() -> Cont {
     call(m, 0x40a3af, indirect(m.regs.edi))
 }
 
-pub fn x0040a3af() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040a3af(m: &mut Machine) -> Cont {
     // 0040a3af lodsd
     lodsd(m);
     // 0040a3b0 call edi
     call(m, 0x40a3b2, indirect(m.regs.edi))
 }
 
-pub fn x0040a3b2() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040a3b2(m: &mut Machine) -> Cont {
     // 0040a3b2 lodsd
     lodsd(m);
     // 0040a3b3 mov cl,60h
@@ -38585,9 +37284,8 @@ pub fn x0040a3b2() -> Cont {
     je(m, Cont(x0040a3b9), Cont(x0040a3bf))
 }
 
-pub fn x0040a3b9() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040a3b9(m: &mut Machine) -> Cont {
     // 0040a3b9 mov edx,[eax]
     m.regs.edx = m.memory.read::<u32>(m.regs.eax);
     // 0040a3bb push eax
@@ -38600,51 +37298,45 @@ pub fn x0040a3b9() -> Cont {
     )
 }
 
-pub fn x0040a3bf() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040a3bf(m: &mut Machine) -> Cont {
     // 0040a3bf popa
     popad(m);
     // 0040a3c0 ret
     ret(m, 0)
 }
 
-pub fn x0040a550() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040a550(m: &mut Machine) -> Cont {
     // 0040a550 jmp dword ptr ds:[40B160h]
     Cont(kernel32::SetThreadPriority_stdcall)
 }
 
-pub fn x0040a556() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040a556(m: &mut Machine) -> Cont {
     // 0040a556 jmp dword ptr ds:[40B144h]
     Cont(dsound::ordinal1_stdcall)
 }
 
-pub fn x0040a562() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040a562(m: &mut Machine) -> Cont {
     // 0040a562 jmp dword ptr ds:[40B170h]
     Cont(kernel32::WaitForSingleObject_stdcall)
 }
 
-pub fn x0040a568() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040a568(m: &mut Machine) -> Cont {
     // 0040a568 jmp dword ptr ds:[40B14Ch]
     Cont(kernel32::CreateThread_stdcall)
 }
 
-pub fn x0040a56e() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040a56e(m: &mut Machine) -> Cont {
     // 0040a56e jmp dword ptr ds:[40B178h]
     Cont(ddraw::DirectDrawCreate_stdcall)
 }
 
-const BLOCKS: [(u32, fn() -> Cont); 1476] = [
+const BLOCKS: [(u32, fn(&mut Machine) -> Cont); 1476] = [
     (0x001001, winmm::timeKillEvent_stdcall),
     (0x001002, winmm::timeSetEvent_stdcall),
     (0x001003, user32::CheckDlgButton_stdcall),

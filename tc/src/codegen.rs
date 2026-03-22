@@ -214,9 +214,8 @@ fn gen_block(w: &mut Writer, state: &State, ip: AddrAbs, block: &Block) {
     println!("gen block: {:#08x}", ip.0);
     match block {
         Block::Instrs(instrs) => {
-            w.line(format!("pub fn x{:08x}() -> Cont {{", ip.0));
-            w.line("#[allow(unused)]");
-            w.line("let m = unsafe { &mut MACHINE };");
+            w.line("#[allow(unused_variables)]");
+            w.line(format!("pub fn x{:08x}(m: &mut Machine) -> Cont {{", ip.0));
             gen_instrs(w, state, instrs);
             w.line("}\n");
         }
@@ -497,7 +496,7 @@ out.copy_from_slice(bytes);",
     }
 
     w.line(format!(
-        "const BLOCKS: [(u32, fn() -> Cont); {}] = [\n",
+        "const BLOCKS: [(u32, fn(&mut Machine) -> Cont); {}] = [\n",
         ips.len() + 1,
     ));
     for &ip in &ips {

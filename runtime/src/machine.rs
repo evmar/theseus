@@ -6,7 +6,7 @@ pub struct Machine {
     pub fpu: FPU,
     pub mmx: MMX,
     pub memory: Memory,
-    pub blocks: &'static [(u32, fn() -> Cont)],
+    pub blocks: &'static [(u32, fn(&mut Machine) -> Cont)],
 }
 
 pub fn indirect(addr: u32) -> Cont {
@@ -22,7 +22,7 @@ pub fn indirect(addr: u32) -> Cont {
     }
 }
 
-pub fn proc_addr(func: fn() -> Cont) -> u32 {
+pub fn proc_addr(func: fn(&mut Machine) -> Cont) -> u32 {
     unsafe {
         MACHINE
             .blocks

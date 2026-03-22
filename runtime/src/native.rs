@@ -1,8 +1,8 @@
-use crate::{Cont, Host, MACHINE};
+use crate::{Cont, Host, MACHINE, Machine};
 
 pub struct NativeHost {}
 impl Host for NativeHost {
-    fn init(&self, blocks: &'static [(u32, fn() -> Cont)]) {
+    fn init(&self, blocks: &'static [(u32, fn(&mut Machine) -> Cont)]) {
         logger::init();
         unsafe {
             let size = 32 << 20;

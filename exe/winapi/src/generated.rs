@@ -29,18 +29,16 @@ fn init_mappings() {
         out.copy_from_slice(bytes);
     }
 }
-pub fn x00401000() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401000(m: &mut Machine) -> Cont {
     // 00401000 push 0FFFFFFF5h
     push(m, 0xfffffff5u32);
     // 00401002 call dword ptr ds:[402058h]
     call(m, 0x401008, Cont(kernel32::GetStdHandle_stdcall))
 }
 
-pub fn x00401008() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x00401008(m: &mut Machine) -> Cont {
     // 00401008 xor ecx,ecx
     m.regs.ecx = xor(m.regs.ecx, m.regs.ecx, &mut m.flags);
     // 0040100a push ecx
@@ -57,14 +55,13 @@ pub fn x00401008() -> Cont {
     call(m, 0x40101a, Cont(kernel32::WriteFile_stdcall))
 }
 
-pub fn x0040101a() -> Cont {
-    #[allow(unused)]
-    let m = unsafe { &mut MACHINE };
+#[allow(unused_variables)]
+pub fn x0040101a(m: &mut Machine) -> Cont {
     // 0040101a ret
     ret(m, 0)
 }
 
-const BLOCKS: [(u32, fn() -> Cont); 6] = [
+const BLOCKS: [(u32, fn(&mut Machine) -> Cont); 6] = [
     (0x001001, kernel32::GetStdHandle_stdcall),
     (0x001002, kernel32::WriteFile_stdcall),
     (0x401000, x00401000),
