@@ -49,6 +49,11 @@ pub fn PeekMessageA(
 }
 
 #[win32_derive::dllexport]
+pub fn GetMessageA(_lpMsg: u32, _hWnd: HWND, _wMsgFilterMin: u32, _wMsgFilterMax: u32) -> bool {
+    todo!()
+}
+
+#[win32_derive::dllexport]
 pub fn PostQuitMessage(_nExitCode: i32) {
     todo!()
 }

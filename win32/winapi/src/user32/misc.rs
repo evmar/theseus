@@ -46,11 +46,6 @@ pub fn DialogBoxParamA(
 }
 
 #[win32_derive::dllexport]
-pub fn GetMessageA(_lpMsg: u32, _hWnd: HWND, _wMsgFilterMin: u32, _wMsgFilterMax: u32) -> bool {
-    todo!()
-}
-
-#[win32_derive::dllexport]
 pub fn ShowCursor(bShow: bool) -> i32 {
     if bShow { stub!(1) } else { stub!(0) }
 }
