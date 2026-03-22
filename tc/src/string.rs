@@ -11,7 +11,7 @@ pub fn codegen(w: &mut Writer, state: &State, instr: &iced_x86::Instruction) -> 
             if instr.has_rep_prefix() {
                 w.line("rep(m, Rep::REP, movsb);");
             } else {
-                w.line("movsb(m)");
+                w.line("movsb(m);");
             }
         }
         Movsd => {

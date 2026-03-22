@@ -1,4 +1,5 @@
-Theseus translates Windows x86 code to Rust, one instruction at a time.
+Theseus translates 32-bit Windows x86 code to Rust.  This allows us to recompile
+it to a new target architecture.
 
 ## Project layout
 
@@ -13,7 +14,7 @@ that break the API expected by those files.
 
 ## x86 emulation limitations
 
-The emulator doesn't support the AF flag yet, don't report it as a bug.
+This project doesn't support the AF flag yet, don't report it as a bug.
 
 In general, when looking for bugs, hitting todo!()s is not a bug, because it
 will cause an obvious crash with a call stack.  If we're attempting to track down
