@@ -260,14 +260,7 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
             }
 
             // Binary operations.
-            And | Or | Add | Sub | Sbb | Xor => {
-                assert_eq!(instr.op_count(), 2);
-                let op0 = get_op(instr, 0);
-                let op1 = get_op(instr, 1);
-                let func = format!("{:?}", instr.mnemonic()).to_ascii_lowercase();
-                w.line(set_op(instr, 0, format!("{func}({op0}, {op1})")));
-            }
-            Shl | Shr | Sar => {
+            And | Or | Add | Sub | Sbb | Xor | Shl | Shr | Sar => {
                 assert_eq!(instr.op_count(), 2);
                 let op0 = get_op(instr, 0);
                 let op1 = get_op(instr, 1);
@@ -282,10 +275,14 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
             Cmp => {
                 let op0 = get_op(instr, 0);
                 let op1 = get_op(instr, 1);
-                w.line(format!("sub({op0}, {op1});"));
+                w.line(format!("sub({op0}, {op1}, &mut m.flags);"));
             }
             Test => {
-                w.line(format!("and({}, {});", get_op(instr, 0), get_op(instr, 1)));
+                w.line(format!(
+                    "and({}, {}, &mut m.flags);",
+                    get_op(instr, 0),
+                    get_op(instr, 1)
+                ));
             }
 
             // Conditional jumps.
@@ -297,7 +294,11 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
             }
 
             Lea => w.line(format!("{} = {};", get_op(instr, 0), gen_addr(instr))),
-            Neg => w.line(set_op(instr, 0, format!("neg({})", get_op(instr, 0)))),
+            Neg => w.line(set_op(
+                instr,
+                0,
+                format!("neg({}, &mut m.flags)", get_op(instr, 0)),
+            )),
 
             Movzx => {
                 w.line(set_op(instr, 0, format!("{} as _", get_op(instr, 1))));
@@ -324,8 +325,16 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
                 w.line(format!("enter({}, {:x});", get_op(instr, 0), op1));
             }
 
-            Dec => w.line(set_op(instr, 0, format!("dec({})", get_op(instr, 0)))),
-            Inc => w.line(set_op(instr, 0, format!("inc({})", get_op(instr, 0)))),
+            Dec => w.line(set_op(
+                instr,
+                0,
+                format!("dec({}, &mut m.flags)", get_op(instr, 0)),
+            )),
+            Inc => w.line(set_op(
+                instr,
+                0,
+                format!("inc({}, &mut m.flags)", get_op(instr, 0)),
+            )),
             Sete => w.line(set_op(instr, 0, "sete()".into())),
 
             Imul => {
@@ -349,7 +358,7 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
                     instr,
                     0,
                     format!(
-                        "imul({x} as i{size}, {y} as i{size}) as u{size}",
+                        "imul({x} as i{size}, {y} as i{size}, &mut m.flags) as u{size}",
                         size = op_size(instr, 0),
                     ),
                 ));

@@ -71,7 +71,7 @@ pub fn stosd(m: &mut Machine) {
 pub fn scasb(m: &mut Machine) {
     let addr = m.regs.edi;
     let mem = m.memory.read::<u8>(addr);
-    let _ = sub(m.regs.get_al(), mem);
+    let _ = sub(m.regs.get_al(), mem, &mut m.flags);
     if m.flags.contains(Flags::DF) {
         m.regs.edi = addr.wrapping_sub(1);
     } else {
@@ -82,7 +82,7 @@ pub fn scasb(m: &mut Machine) {
 pub fn cmpsb(m: &mut Machine) {
     let src = m.memory.read::<u8>(m.regs.esi);
     let dst = m.memory.read::<u8>(m.regs.edi);
-    let _ = sub(src, dst);
+    let _ = sub(src, dst, &mut m.flags);
     if m.flags.contains(Flags::DF) {
         m.regs.esi = m.regs.esi.wrapping_sub(1);
         m.regs.edi = m.regs.edi.wrapping_sub(1);
