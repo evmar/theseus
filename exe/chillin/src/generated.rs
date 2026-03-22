@@ -11665,6 +11665,7 @@ pub fn x00403a5e() -> Cont {
         .fpu
         .get(0)
         .total_cmp(&(m.memory.read::<f32>(0x40c080u32) as f64));
+    m.fpu.pop();
     // 00403a6b fnstsw ax
     m.regs.set_ax(m.fpu.status());
     // 00403a6d sahf
@@ -11684,6 +11685,7 @@ pub fn x00403a70() -> Cont {
         .fpu
         .get(0)
         .total_cmp(&(m.memory.read::<f32>(0x40c080u32) as f64));
+    m.fpu.pop();
     // 00403a79 fnstsw ax
     m.regs.set_ax(m.fpu.status());
     // 00403a7b sahf
@@ -11727,6 +11729,7 @@ pub fn x00403a98() -> Cont {
         .fpu
         .get(0)
         .total_cmp(&(m.memory.read::<f32>(0x40c084u32) as f64));
+    m.fpu.pop();
     // 00403aa1 fnstsw ax
     m.regs.set_ax(m.fpu.status());
     // 00403aa3 sahf
@@ -11746,6 +11749,7 @@ pub fn x00403aa6() -> Cont {
         .fpu
         .get(0)
         .total_cmp(&(m.memory.read::<f32>(0x40c084u32) as f64));
+    m.fpu.pop();
     // 00403aaf fnstsw ax
     m.regs.set_ax(m.fpu.status());
     // 00403ab1 sahf
@@ -11789,6 +11793,7 @@ pub fn x00403ace() -> Cont {
         .fpu
         .get(0)
         .total_cmp(&(m.memory.read::<f32>(0x40c080u32) as f64));
+    m.fpu.pop();
     // 00403ad7 fnstsw ax
     m.regs.set_ax(m.fpu.status());
     // 00403ad9 sahf
@@ -11848,6 +11853,7 @@ pub fn x00403adc() -> Cont {
         .fpu
         .get(0)
         .total_cmp(&(m.memory.read::<f32>(0x40c080u32) as f64));
+    m.fpu.pop();
     // 00403b0b fnstsw ax
     m.regs.set_ax(m.fpu.status());
     // 00403b0d sahf
@@ -11867,6 +11873,7 @@ pub fn x00403b02() -> Cont {
         .fpu
         .get(0)
         .total_cmp(&(m.memory.read::<f32>(0x40c080u32) as f64));
+    m.fpu.pop();
     // 00403b0b fnstsw ax
     m.regs.set_ax(m.fpu.status());
     // 00403b0d sahf
@@ -12054,6 +12061,7 @@ pub fn x00403b6e() -> Cont {
         .fpu
         .get(0)
         .total_cmp(&(m.memory.read::<f32>(0x40c084u32) as f64));
+    m.fpu.pop();
     // 00403b9d fnstsw ax
     m.regs.set_ax(m.fpu.status());
     // 00403b9f sahf
@@ -12073,6 +12081,7 @@ pub fn x00403b94() -> Cont {
         .fpu
         .get(0)
         .total_cmp(&(m.memory.read::<f32>(0x40c084u32) as f64));
+    m.fpu.pop();
     // 00403b9d fnstsw ax
     m.regs.set_ax(m.fpu.status());
     // 00403b9f sahf
@@ -12132,6 +12141,7 @@ pub fn x00403ba2() -> Cont {
         .fpu
         .get(0)
         .total_cmp(&(m.memory.read::<f32>(0x40c084u32) as f64));
+    m.fpu.pop();
     // 00403bd1 fnstsw ax
     m.regs.set_ax(m.fpu.status());
     // 00403bd3 sahf
@@ -12151,6 +12161,7 @@ pub fn x00403bc8() -> Cont {
         .fpu
         .get(0)
         .total_cmp(&(m.memory.read::<f32>(0x40c084u32) as f64));
+    m.fpu.pop();
     // 00403bd1 fnstsw ax
     m.regs.set_ax(m.fpu.status());
     // 00403bd3 sahf
@@ -12338,6 +12349,7 @@ pub fn x00403c34() -> Cont {
         .fpu
         .get(0)
         .total_cmp(&(m.memory.read::<f32>(0x40c080u32) as f64));
+    m.fpu.pop();
     // 00403c63 fnstsw ax
     m.regs.set_ax(m.fpu.status());
     // 00403c65 sahf
@@ -12357,6 +12369,7 @@ pub fn x00403c5a() -> Cont {
         .fpu
         .get(0)
         .total_cmp(&(m.memory.read::<f32>(0x40c080u32) as f64));
+    m.fpu.pop();
     // 00403c63 fnstsw ax
     m.regs.set_ax(m.fpu.status());
     // 00403c65 sahf
@@ -12376,6 +12389,7 @@ pub fn x00403c6c() -> Cont {
         .fpu
         .get(0)
         .total_cmp(&(m.memory.read::<f32>(0x40c080u32) as f64));
+    m.fpu.pop();
     // 00403c75 fnstsw ax
     m.regs.set_ax(m.fpu.status());
     // 00403c77 sahf
@@ -12419,6 +12433,7 @@ pub fn x00403c8c() -> Cont {
         .fpu
         .get(0)
         .total_cmp(&(m.memory.read::<f32>(0x40c084u32) as f64));
+    m.fpu.pop();
     // 00403c95 fnstsw ax
     m.regs.set_ax(m.fpu.status());
     // 00403c97 sahf
@@ -12438,6 +12453,7 @@ pub fn x00403c9a() -> Cont {
         .fpu
         .get(0)
         .total_cmp(&(m.memory.read::<f32>(0x40c084u32) as f64));
+    m.fpu.pop();
     // 00403ca3 fnstsw ax
     m.regs.set_ax(m.fpu.status());
     // 00403ca5 sahf
@@ -16113,6 +16129,7 @@ pub fn x004045b8() -> Cont {
         .fpu
         .get(0)
         .total_cmp(&(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0xfffffff4u32)) as f64));
+    m.fpu.pop();
     // 00404646 fnstsw ax
     m.regs.set_ax(m.fpu.status());
     // 00404648 sahf
@@ -17122,6 +17139,7 @@ pub fn x00404979() -> Cont {
         .fpu
         .get(0)
         .total_cmp(&(m.memory.read::<f64>(m.regs.ebp.wrapping_add(0xffffffe0u32))));
+    m.fpu.pop();
     // 0040497f fnstsw ax
     m.regs.set_ax(m.fpu.status());
     // 00404981 sahf
@@ -20577,6 +20595,7 @@ pub fn x004053fc() -> Cont {
         .fpu
         .get(0)
         .total_cmp(&(m.memory.read::<f32>(0x40c1bcu32) as f64));
+    m.fpu.pop();
     // 00405427 fnstsw ax
     m.regs.set_ax(m.fpu.status());
     // 00405429 sahf
@@ -25201,6 +25220,7 @@ pub fn x004061f6() -> Cont {
         .fpu
         .get(0)
         .total_cmp(&(m.memory.read::<f32>(m.regs.eax.wrapping_add(0x8u32)) as f64));
+    m.fpu.pop();
     // 00406224 fnstsw ax
     m.regs.set_ax(m.fpu.status());
     // 00406226 sahf
@@ -25226,6 +25246,7 @@ pub fn x00406229() -> Cont {
         .fpu
         .get(0)
         .total_cmp(&(m.memory.read::<f32>(m.regs.eax.wrapping_add(0x8u32)) as f64));
+    m.fpu.pop();
     // 00406234 fnstsw ax
     m.regs.set_ax(m.fpu.status());
     // 00406236 sahf
@@ -25250,6 +25271,7 @@ pub fn x00406239() -> Cont {
             .read::<f32>(m.regs.edi.wrapping_add(m.regs.eax).wrapping_add(0x8u32))
             as f64),
     );
+    m.fpu.pop();
     // 00406243 fnstsw ax
     m.regs.set_ax(m.fpu.status());
     // 00406245 sahf
@@ -31468,6 +31490,7 @@ pub fn x00407be5() -> Cont {
         .fpu
         .get(0)
         .total_cmp(&(m.memory.read::<f32>(0x40c628u32) as f64));
+    m.fpu.pop();
     // 00407c1f fnstsw ax
     m.regs.set_ax(m.fpu.status());
     // 00407c21 sahf
@@ -31520,6 +31543,7 @@ pub fn x00407be7() -> Cont {
         .fpu
         .get(0)
         .total_cmp(&(m.memory.read::<f32>(0x40c628u32) as f64));
+    m.fpu.pop();
     // 00407c1f fnstsw ax
     m.regs.set_ax(m.fpu.status());
     // 00407c21 sahf
@@ -31594,6 +31618,7 @@ pub fn x00407c24() -> Cont {
         .fpu
         .get(0)
         .total_cmp(&(m.memory.read::<f32>(0x40c640u32) as f64));
+    m.fpu.pop();
     // 00407c8a fnstsw ax
     m.regs.set_ax(m.fpu.status());
     // 00407c8c sahf
@@ -31666,6 +31691,7 @@ pub fn x00407c2e() -> Cont {
         .fpu
         .get(0)
         .total_cmp(&(m.memory.read::<f32>(0x40c640u32) as f64));
+    m.fpu.pop();
     // 00407c8a fnstsw ax
     m.regs.set_ax(m.fpu.status());
     // 00407c8c sahf
