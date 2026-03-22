@@ -387,7 +387,7 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
                         );
                         w.line(format!("let y = {} as i64;", get_op(instr, 0)));
                         w.line("m.regs.eax = (x / y) as i32 as u32;");
-                        w.line("m.regs.edx = (x % y) as u32;");
+                        w.line("m.regs.edx = (x % y) as i32 as u32;");
                     }
                     _ => todo!(),
                 }
