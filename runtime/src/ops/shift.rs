@@ -30,7 +30,6 @@ pub fn shr<I: Int>(x: I, y: u8, flags: &mut Flags) -> I {
     // In all modes but 64 it is correct to mask to 32 bits.
     assert!(I::bits() < 64); // 64 not implemented
     let y = y % 32;
-
     if y == 0 {
         return x; // Don't affect flags.
     }
@@ -47,9 +46,11 @@ pub fn shr<I: Int>(x: I, y: u8, flags: &mut Flags) -> I {
 }
 
 pub fn sar<I: Int>(x: I, y: u8, flags: &mut Flags) -> I {
+    let y = y % 32;
     if y == 0 {
         return x;
     }
+
     flags.set(Flags::CF, x.shr(y as usize - 1).bitand(I::one()).is_one());
     // Note: OF only defined for 1-bit rotates.
     flags.set(Flags::OF, false);
