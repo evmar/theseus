@@ -160,3 +160,28 @@ pub fn psrlw(x: u64, y: u64) -> u64 {
     let x: [u16; 4] = x.unpack();
     [x[0] >> y, x[1] >> y, x[2] >> y, x[3] >> y].pack()
 }
+
+pub fn packuswb(x: u64, y: u64) -> u64 {
+    fn saturate(x: i16) -> u8 {
+        if x < 0 {
+            0
+        } else if x > 0xFF {
+            0xFF
+        } else {
+            x as u8
+        }
+    }
+    let x: [u16; 4] = x.unpack();
+    let y: [u16; 4] = y.unpack();
+    [
+        saturate(x[0] as i16),
+        saturate(x[1] as i16),
+        saturate(x[2] as i16),
+        saturate(x[3] as i16),
+        saturate(y[0] as i16),
+        saturate(y[1] as i16),
+        saturate(y[2] as i16),
+        saturate(y[3] as i16),
+    ]
+    .pack()
+}
