@@ -125,7 +125,7 @@ pub fn mem_size(instr: &iced_x86::Instruction) -> usize {
         Float32 => 32,
         Float64 => 64,
         Packed32_UInt8 => 32,
-        Packed64_Int8 => 64,
+        Packed64_Int8 | Packed64_Int16 => 64,
         s => todo!("{s:?}"),
     }
 }

@@ -65,11 +65,17 @@ impl Pack for [u32; 2] {
 impl Pack for [i16; 4] {
     type Target = u64;
     fn pack(self) -> u64 {
-        let u16s = self.map(|b| b as u16);
-        (u16s[0] as u64)
-            | ((u16s[1] as u64) << 16)
-            | ((u16s[2] as u64) << 32)
-            | ((u16s[3] as u64) << 48)
+        self.map(|b| b as u16).pack()
+    }
+}
+
+impl Pack for [u16; 4] {
+    type Target = u64;
+    fn pack(self) -> u64 {
+        (self[0] as u64)
+            | ((self[1] as u64) << 16)
+            | ((self[2] as u64) << 32)
+            | ((self[3] as u64) << 48)
     }
 }
 
@@ -133,4 +139,16 @@ pub fn punpcklbw(x: u32, y: u32) -> u64 {
     let x: [u8; 4] = x.unpack();
     let y: [u8; 4] = y.unpack();
     [x[0], y[0], x[1], y[1], x[2], y[2], x[3], y[3]].pack()
+}
+
+pub fn pmullw(x: u64, y: u64) -> u64 {
+    let x: [u16; 4] = x.unpack();
+    let y: [u16; 4] = y.unpack();
+    [
+        x[0].wrapping_mul(y[0]),
+        x[1].wrapping_mul(y[1]),
+        x[2].wrapping_mul(y[2]),
+        x[3].wrapping_mul(y[3]),
+    ]
+    .pack()
 }

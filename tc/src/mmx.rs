@@ -112,7 +112,15 @@ pub fn codegen(w: &mut Writer, _state: &State, instr: &iced_x86::Instruction) ->
             ));
         }
 
-        Pmullw | Psrlw | Packuswb | Emms | Psubusb | Paddusb | Psubw | Psraw | Movdqa => {
+        Pmullw => {
+            w.line(mmx_set(
+                instr,
+                0,
+                format!("pmullw({}, {})", mmx_get(instr, 0), mmx_get(instr, 1)),
+            ));
+        }
+
+        Psrlw | Packuswb | Emms | Psubusb | Paddusb | Psubw | Psraw | Movdqa => {
             w.todo();
         }
         _ => return false,
