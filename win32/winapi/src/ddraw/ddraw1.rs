@@ -1,6 +1,6 @@
 use crate::ddraw::get_pixel_format;
 use crate::ddraw::state;
-use crate::ddraw::{DDSURFACEDESC, DDSURFACEDESC2};
+use crate::ddraw::types::*;
 use crate::user32::HWND;
 use crate::{ddraw::DD, kernel32, stub};
 use runtime::MACHINE;
