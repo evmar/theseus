@@ -1,6 +1,7 @@
-use crate::kernel32::{self, HANDLE, state};
 use runtime::MACHINE;
 use zerocopy::FromBytes;
+
+use crate::kernel32::{self, HANDLE, state};
 
 #[win32_derive::dllexport]
 pub fn ExitProcess(uExitCode: u32) -> u32 {

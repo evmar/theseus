@@ -1,13 +1,16 @@
-use crate::RECT;
-use crate::ddraw::Target;
-use crate::ddraw::{GUID, state, types::*};
-use crate::gdi32;
-use crate::gdi32::DIB;
-use crate::{gdi32::HDC, kernel32, stub, user32::HWND};
-use runtime::*;
 use std::cell::RefMut;
-use zerocopy::FromBytes as _;
-use zerocopy::IntoBytes;
+
+use runtime::*;
+use zerocopy::{FromBytes as _, IntoBytes};
+
+use crate::{
+    RECT,
+    ddraw::{GUID, Target, state, types::*},
+    gdi32,
+    gdi32::{DIB, HDC},
+    kernel32, stub,
+    user32::HWND,
+};
 
 pub const IID_IDirectDraw7: GUID = GUID((
     0x15e65ec0,

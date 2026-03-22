@@ -1,11 +1,13 @@
+use std::{cell::RefCell, rc::Rc};
+
+use runtime::*;
+
 use super::types::*;
 use crate::{
     ddraw::{GUID, ddraw1, ddraw7, state},
     kernel32,
     user32::{self, HWND},
 };
-use runtime::*;
-use std::{cell::RefCell, rc::Rc};
 
 pub struct DirectDraw {
     pub addr: u32,

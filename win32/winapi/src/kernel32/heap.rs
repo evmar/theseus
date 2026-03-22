@@ -1,12 +1,13 @@
 use std::rc::Rc;
 
+use runtime::MACHINE;
+
 use crate::{
     dllexport::win32flags,
     heap::Heap,
     kernel32::{self, HANDLE},
     stub,
 };
-use runtime::MACHINE;
 
 win32flags! {
     pub struct HEAP_FLAGS {

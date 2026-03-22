@@ -4,9 +4,9 @@ mod memory;
 mod mmx;
 mod string;
 
-use anyhow::Result;
 use std::collections::{HashMap, VecDeque};
 
+use anyhow::Result;
 use memory::*;
 
 struct Import {

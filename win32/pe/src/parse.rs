@@ -3,9 +3,10 @@
 //! Caller must call the functions in the proper sequence to successfully parse;
 //! use File::parse() for the simpler interface.
 
-use crate::{IMAGE_DATA_DIRECTORY, IMAGE_NT_HEADERS32, IMAGE_SECTION_HEADER, iter_pod_n};
 use anyhow::bail;
 use zerocopy::FromBytes;
+
+use crate::{IMAGE_DATA_DIRECTORY, IMAGE_NT_HEADERS32, IMAGE_SECTION_HEADER, iter_pod_n};
 
 pub fn dos_header(buf: &[u8]) -> anyhow::Result<u32> {
     let sig = &buf[0..2];

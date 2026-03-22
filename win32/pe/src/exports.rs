@@ -1,8 +1,9 @@
 #![allow(non_snake_case)]
 #![allow(non_camel_case_types)]
 
-use crate::{c_str, iter_pod_n};
 use zerocopy::FromBytes;
+
+use crate::{c_str, iter_pod_n};
 
 #[derive(Debug, zerocopy::FromBytes)]
 #[repr(C)]

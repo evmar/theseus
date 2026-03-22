@@ -1,6 +1,5 @@
-use crate::Flags;
-
 use super::int::Int;
+use crate::Flags;
 
 pub fn shl<I: Int + num_traits::WrappingShl>(x: I, y: u8, flags: &mut Flags) -> I {
     let y = y % 32;

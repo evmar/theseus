@@ -1,5 +1,4 @@
-use crate::Cont;
-use crate::{Flags, MACHINE, indirect};
+use crate::{Cont, Flags, MACHINE, indirect};
 
 pub fn call(ret: u32, addr: Cont) -> Cont {
     super::push(ret);

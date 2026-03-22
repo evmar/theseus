@@ -1,7 +1,8 @@
 //! The bitmap file/memory format and pixel buffers.
 
-use crate::FromABIParam;
 use zerocopy::FromBytes;
+
+use crate::FromABIParam;
 
 #[derive(Debug, Eq, PartialEq, win32_derive::ABIEnum)]
 pub enum BI {

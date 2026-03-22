@@ -1,6 +1,5 @@
-use crate::{Flags, MACHINE};
-
 use super::int::Int;
+use crate::{Flags, MACHINE};
 
 fn sbb_impl<I: Int + num_traits::ops::overflowing::OverflowingSub + num_traits::WrappingAdd>(
     x: I,

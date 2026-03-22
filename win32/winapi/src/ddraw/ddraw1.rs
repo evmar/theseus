@@ -1,10 +1,11 @@
-use crate::ddraw::get_pixel_format;
-use crate::ddraw::state;
-use crate::ddraw::types::*;
-use crate::user32::HWND;
-use crate::{ddraw::DD, kernel32, stub};
 use runtime::MACHINE;
 use zerocopy::{FromBytes, IntoBytes};
+
+use crate::{
+    ddraw::{DD, get_pixel_format, state, types::*},
+    kernel32, stub,
+    user32::HWND,
+};
 
 pub mod IDirectDraw {
     use super::*;

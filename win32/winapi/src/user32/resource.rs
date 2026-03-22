@@ -1,3 +1,5 @@
+use runtime::*;
+
 use super::*;
 use crate::{
     dllexport::win32flags,
@@ -5,7 +7,6 @@ use crate::{
     handle::HANDLE,
     kernel32, stub,
 };
-use runtime::*;
 
 #[win32_derive::dllexport]
 pub fn LoadCursorA(_hInstance: HINSTANCE, _lpCursorName: u32) -> HCURSOR {
