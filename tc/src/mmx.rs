@@ -170,9 +170,7 @@ pub fn codegen(w: &mut Writer, _state: &State, instr: &iced_x86::Instruction) ->
                 format!("psraw({}, {})", mmx_get(instr, 0), mmx_get(instr, 1)),
             ));
         }
-        Movdqa => {
-            w.todo();
-        }
+
         _ => return false,
     }
     true
