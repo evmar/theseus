@@ -491,26 +491,9 @@ pub mod IDirectDrawSurface7 {
     #[win32_derive::dllexport]
     pub fn Flip(this: u32, _lpDDSurfaceTargetOverride: u32, _dwFlags: u32) -> DD {
         let surfaces = state().surf.borrow_mut();
-
-        let surface = surfaces.get(&this).unwrap().borrow();
-        // "Flip can be called only for a surface that has the DDSCAPS_FLIP and DDSCAPS_FRONTBUFFER capabilities."
-        let Target::Window(window) = &surface.target else {
-            unreachable!()
-        };
-
-        let back = surface.attached.as_ref().unwrap().borrow();
-        let Target::Texture(texture) = &back.target else {
-            unreachable!()
-        };
-
-        let mut canvas = RefMut::map(window.borrow_mut(), |w| &mut w.canvas);
-        // For debugging, can verify that the flip covers the entire canvas by starting with red:
-        // canvas.set_draw_color(sdl3::pixels::Color::RED);
-        // canvas.clear();
-        canvas.copy(texture, None, None).unwrap();
-        canvas.present();
-
-        stub!(DD::OK)
+        let mut surface = surfaces.get(&this).unwrap().borrow_mut();
+        surface.flip();
+        DD::OK
     }
 
     #[win32_derive::dllexport]

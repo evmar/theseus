@@ -317,8 +317,11 @@ pub mod IDirectDrawSurface {
     }
 
     #[win32_derive::dllexport]
-    pub fn Flip(_this: u32, _lpDDSurfaceTargetOverride: u32, _dwFlags: u32) -> DD {
-        todo!()
+    pub fn Flip(this: u32, _lpDDSurfaceTargetOverride: u32, _dwFlags: u32) -> DD {
+        let surfaces = state().surf.borrow_mut();
+        let mut surface = surfaces.get(&this).unwrap().borrow_mut();
+        surface.flip();
+        DD::OK
     }
 
     #[win32_derive::dllexport]

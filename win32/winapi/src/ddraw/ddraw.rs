@@ -1,4 +1,7 @@
-use std::{cell::RefCell, rc::Rc};
+use std::{
+    cell::{RefCell, RefMut},
+    rc::Rc,
+};
 
 use runtime::*;
 
@@ -169,6 +172,25 @@ impl Surface {
             .borrow()
             .free(unsafe { &mut MACHINE.memory }, self.pixels.unwrap());
         self.pixels = None;
+    }
+
+    pub fn flip(&mut self) {
+        // "Flip can be called only for a surface that has the DDSCAPS_FLIP and DDSCAPS_FRONTBUFFER capabilities."
+        let Target::Window(window) = &self.target else {
+            unreachable!()
+        };
+
+        let back = self.attached.as_ref().unwrap().borrow();
+        let Target::Texture(texture) = &back.target else {
+            unreachable!()
+        };
+
+        let mut canvas = RefMut::map(window.borrow_mut(), |w| &mut w.canvas);
+        // For debugging, can verify that the flip covers the entire canvas by starting with red:
+        // canvas.set_draw_color(sdl3::pixels::Color::RED);
+        // canvas.clear();
+        canvas.copy(texture, None, None).unwrap();
+        canvas.present();
     }
 }
 
