@@ -10063,7 +10063,7 @@ pub fn x004033d5() -> Cont {
     // 004033e8 movd mm1,ebx
     m.mmx.mm1 = m.regs.ebx as u64;
     // 004033eb paddusb mm0,mm1
-    todo!();
+    m.mmx.mm0 = paddusb(m.mmx.mm0, m.mmx.mm1);
     // 004033ee movd eax,mm0
     m.regs.eax = m.mmx.mm0 as u32;
     // 004033f1 mov [edx],eax
@@ -10476,7 +10476,7 @@ pub fn x004034ed() -> Cont {
     // 00403526 movd mm1,ebx
     m.mmx.mm1 = m.regs.ebx as u64;
     // 00403529 paddusb mm0,mm1
-    todo!();
+    m.mmx.mm0 = paddusb(m.mmx.mm0, m.mmx.mm1);
     // 0040352c movd eax,mm0
     m.regs.eax = m.mmx.mm0 as u32;
     // 0040352f mov [edx],eax
@@ -28447,7 +28447,7 @@ pub fn x00406f6f() -> Cont {
     // 00406fb7 movd mm1,ebx
     m.mmx.mm1 = m.regs.ebx as u64;
     // 00406fba paddusb mm0,mm1
-    todo!();
+    m.mmx.mm0 = paddusb(m.mmx.mm0, m.mmx.mm1);
     // 00406fbd movd eax,mm0
     m.regs.eax = m.mmx.mm0 as u32;
     // 00406fc0 mov ebx,edx
@@ -28457,7 +28457,7 @@ pub fn x00406f6f() -> Cont {
     // 00406fc5 movd mm1,ebx
     m.mmx.mm1 = m.regs.ebx as u64;
     // 00406fc8 paddusb mm0,mm1
-    todo!();
+    m.mmx.mm0 = paddusb(m.mmx.mm0, m.mmx.mm1);
     // 00406fcb movd eax,mm0
     m.regs.eax = m.mmx.mm0 as u32;
     // 00406fce mov edx,eax

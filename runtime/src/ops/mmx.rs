@@ -142,6 +142,22 @@ pub fn paddsw(x: u64, y: u64) -> u64 {
     .pack()
 }
 
+pub fn paddusb(x: u64, y: u64) -> u64 {
+    let x: [u8; 8] = x.unpack();
+    let y: [u8; 8] = y.unpack();
+    [
+        x[0].saturating_add(y[0]),
+        x[1].saturating_add(y[1]),
+        x[2].saturating_add(y[2]),
+        x[3].saturating_add(y[3]),
+        x[4].saturating_add(y[4]),
+        x[5].saturating_add(y[5]),
+        x[6].saturating_add(y[6]),
+        x[7].saturating_add(y[7]),
+    ]
+    .pack()
+}
+
 pub fn punpcklbw(x: u32, y: u32) -> u64 {
     let x: [u8; 4] = x.unpack();
     let y: [u8; 4] = y.unpack();
