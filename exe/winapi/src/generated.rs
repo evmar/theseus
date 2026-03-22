@@ -61,7 +61,7 @@ pub fn x0040101a() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 0040101a ret
-    ret(0)
+    ret(m, 0)
 }
 
 const BLOCKS: [(u32, fn() -> Cont); 6] = [

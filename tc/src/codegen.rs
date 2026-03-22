@@ -256,7 +256,7 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
                     }
                     _ => todo!(),
                 };
-                w.line(format!("ret({n})"));
+                w.line(format!("ret(m, {n})"));
             }
 
             // Binary operations.
@@ -290,7 +290,7 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
                 let next = gen_abs_jmp(state, instr.next_ip32());
                 let dst = gen_jmp(state, instr);
                 let func = format!("{:?}", instr.mnemonic()).to_ascii_lowercase();
-                w.line(format!("{func}({next}, {dst})"));
+                w.line(format!("{func}(m, {next}, {dst})"));
             }
 
             Lea => w.line(format!("{} = {};", get_op(instr, 0), gen_addr(instr))),
@@ -317,12 +317,12 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
                 w.line("div();");
             }
             Leave => {
-                w.line("leave();");
+                w.line("leave(m);");
             }
             Enter => {
                 assert!(instr.op1_kind() == iced_x86::OpKind::Immediate8_2nd);
                 let op1 = instr.immediate8_2nd();
-                w.line(format!("enter({}, {:x});", get_op(instr, 0), op1));
+                w.line(format!("enter(m, {}, {:x});", get_op(instr, 0), op1));
             }
 
             Dec => w.line(set_op(
@@ -335,7 +335,7 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
                 0,
                 format!("inc({}, &mut m.flags)", get_op(instr, 0)),
             )),
-            Sete => w.line(set_op(instr, 0, "sete()".into())),
+            Sete => w.line(set_op(instr, 0, "sete(m)".into())),
 
             Imul => {
                 let (x, y) = match instr.op_count() {
@@ -367,7 +367,7 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
                 w.line("not();");
             }
             Setge => {
-                w.line("setge();");
+                w.line("setge(m);");
             }
             Int => {
                 w.line("int();");

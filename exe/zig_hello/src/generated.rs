@@ -34,7 +34,7 @@ pub fn x00401000() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00401000 push ebp
-    push(m.regs.ebp);
+    push(m, m.regs.ebp);
     // 00401001 mov ebp,esp
     m.regs.ebp = m.regs.esp;
     // 00401003 and esp,0FFFFFFF0h
@@ -42,35 +42,35 @@ pub fn x00401000() -> Cont {
     // 00401006 sub esp,10h
     m.regs.esp = sub(m.regs.esp, 0x10u32, &mut m.flags);
     // 00401009 call 00401015h
-    call(0x40100e, Cont(x00401015))
+    call(m, 0x40100e, Cont(x00401015))
 }
 
 pub fn x0040100e() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 0040100e push 0
-    push(0x0u32);
+    push(m, 0x0u32);
     // 00401010 call 00401077h
-    call(0x401015, Cont(x00401077))
+    call(m, 0x401015, Cont(x00401077))
 }
 
 pub fn x00401015() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00401015 push ebp
-    push(m.regs.ebp);
+    push(m, m.regs.ebp);
     // 00401016 push ebx
-    push(m.regs.ebx);
+    push(m, m.regs.ebx);
     // 00401017 push edi
-    push(m.regs.edi);
+    push(m, m.regs.edi);
     // 00401018 push esi
-    push(m.regs.esi);
+    push(m, m.regs.esi);
     // 00401019 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 0040101a cmp byte ptr ds:[403000h],0
     sub(m.memory.read::<u8>(0x403000u32), 0x0u8, &mut m.flags);
     // 00401021 jne short 0040102Ah
-    jne(Cont(x00401023), Cont(x0040102a))
+    jne(m, Cont(x00401023), Cont(x0040102a))
 }
 
 pub fn x00401023() -> Cont {
@@ -89,15 +89,15 @@ pub fn x00401023() -> Cont {
     // 00401038 mov esi,[eax+20h]
     m.regs.esi = m.memory.read::<u32>(m.regs.eax.wrapping_add(0x20u32));
     // 0040103b push 0Eh
-    push(0xeu32);
+    push(m, 0xeu32);
     // 0040103d pop ebx
-    m.regs.ebx = pop();
+    m.regs.ebx = pop(m);
     // 0040103e mov ebp,esp
     m.regs.ebp = m.regs.esp;
     // 00401040 cmp edi,0Eh
     sub(m.regs.edi, 0xeu32, &mut m.flags);
     // 00401043 je short 00401068h
-    je(Cont(x00401045), Cont(x00401068))
+    je(m, Cont(x00401045), Cont(x00401068))
 }
 
 pub fn x0040102a() -> Cont {
@@ -114,15 +114,15 @@ pub fn x0040102a() -> Cont {
     // 00401038 mov esi,[eax+20h]
     m.regs.esi = m.memory.read::<u32>(m.regs.eax.wrapping_add(0x20u32));
     // 0040103b push 0Eh
-    push(0xeu32);
+    push(m, 0xeu32);
     // 0040103d pop ebx
-    m.regs.ebx = pop();
+    m.regs.ebx = pop(m);
     // 0040103e mov ebp,esp
     m.regs.ebp = m.regs.esp;
     // 00401040 cmp edi,0Eh
     sub(m.regs.edi, 0xeu32, &mut m.flags);
     // 00401043 je short 00401068h
-    je(Cont(x00401045), Cont(x00401068))
+    je(m, Cont(x00401045), Cont(x00401068))
 }
 
 pub fn x00401040() -> Cont {
@@ -131,7 +131,7 @@ pub fn x00401040() -> Cont {
     // 00401040 cmp edi,0Eh
     sub(m.regs.edi, 0xeu32, &mut m.flags);
     // 00401043 je short 00401068h
-    je(Cont(x00401045), Cont(x00401068))
+    je(m, Cont(x00401045), Cont(x00401068))
 }
 
 pub fn x00401045() -> Cont {
@@ -144,17 +144,17 @@ pub fn x00401045() -> Cont {
     // 0040104d sub ecx,edi
     m.regs.ecx = sub(m.regs.ecx, m.regs.edi, &mut m.flags);
     // 0040104f push 0
-    push(0x0u32);
+    push(m, 0x0u32);
     // 00401051 push ebp
-    push(m.regs.ebp);
+    push(m, m.regs.ebp);
     // 00401052 push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 00401053 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 00401054 push esi
-    push(m.regs.esi);
+    push(m, m.regs.esi);
     // 00401055 call 00401083h
-    call(0x40105a, Cont(x00401083))
+    call(m, 0x40105a, Cont(x00401083))
 }
 
 pub fn x0040105a() -> Cont {
@@ -163,7 +163,7 @@ pub fn x0040105a() -> Cont {
     // 0040105a test eax,eax
     and(m.regs.eax, m.regs.eax, &mut m.flags);
     // 0040105c je short 00401063h
-    je(Cont(x0040105e), Cont(x00401063))
+    je(m, Cont(x0040105e), Cont(x00401063))
 }
 
 pub fn x0040105e() -> Cont {
@@ -179,7 +179,7 @@ pub fn x00401063() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00401063 call 0040107Dh
-    call(0x401068, Cont(x0040107d))
+    call(m, 0x401068, Cont(x0040107d))
 }
 
 pub fn x00401068() -> Cont {
@@ -190,15 +190,15 @@ pub fn x00401068() -> Cont {
     // 0040106f add esp,4
     m.regs.esp = add(m.regs.esp, 0x4u32, &mut m.flags);
     // 00401072 pop esi
-    m.regs.esi = pop();
+    m.regs.esi = pop(m);
     // 00401073 pop edi
-    m.regs.edi = pop();
+    m.regs.edi = pop(m);
     // 00401074 pop ebx
-    m.regs.ebx = pop();
+    m.regs.ebx = pop(m);
     // 00401075 pop ebp
-    m.regs.ebp = pop();
+    m.regs.ebp = pop(m);
     // 00401076 ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x00401077() -> Cont {

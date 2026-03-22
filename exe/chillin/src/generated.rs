@@ -40,48 +40,48 @@ pub fn x00401156() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00401156 push esi
-    push(m.regs.esi);
+    push(m, m.regs.esi);
     // 00401157 push edi
-    push(m.regs.edi);
+    push(m, m.regs.edi);
     // 00401158 enter 90h,0
-    enter(0x90u16, 0);
+    enter(m, 0x90u16, 0);
     // 0040115c push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 0040115d push edx
-    push(m.regs.edx);
+    push(m, m.regs.edx);
     // 0040115e sub ebp,7Eh
     m.regs.ebp = sub(m.regs.ebp, 0x7eu32, &mut m.flags);
     // 00401161 mov ebx,ecx
     m.regs.ebx = m.regs.ecx;
     // 00401163 push 0
-    push(0x0u32);
+    push(m, 0x0u32);
     // 00401165 push 401000h
-    push(0x401000u32);
+    push(m, 0x401000u32);
     // 0040116a push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 0040116b push 40C000h
-    push(0x40c000u32);
+    push(m, 0x40c000u32);
     // 00401170 mov ds:[433014h],eax
     m.memory.write::<u32>(0x433014u32, m.regs.eax);
     // 00401175 push dword ptr [ebp+8Eh]
-    push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x8eu32)));
+    push(m, m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x8eu32)));
     // 0040117b mov ds:[433018h],edx
     m.memory.write::<u32>(0x433018u32, m.regs.edx);
     // 00401181 call dword ptr cs:[40B114h]
-    call(0x401188, Cont(user32::DialogBoxParamA_stdcall))
+    call(m, 0x401188, Cont(user32::DialogBoxParamA_stdcall))
 }
 
 pub fn x00401188() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00401188 push 0
-    push(0x0u32);
+    push(m, 0x0u32);
     // 0040118a push 433024h
-    push(0x433024u32);
+    push(m, 0x433024u32);
     // 0040118f push 0
-    push(0x0u32);
+    push(m, 0x0u32);
     // 00401191 call 0040A56Eh
-    call(0x401196, Cont(x0040a56e))
+    call(m, 0x401196, Cont(x0040a56e))
 }
 
 pub fn x00401196() -> Cont {
@@ -90,24 +90,25 @@ pub fn x00401196() -> Cont {
     // 00401196 test eax,eax
     and(m.regs.eax, m.regs.eax, &mut m.flags);
     // 00401198 jl near ptr 004012FFh
-    jl(Cont(x0040119e), Cont(x004012ff))
+    jl(m, Cont(x0040119e), Cont(x004012ff))
 }
 
 pub fn x0040119e() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 0040119e push 11h
-    push(0x11u32);
+    push(m, 0x11u32);
     // 004011a0 mov eax,ds:[433024h]
     m.regs.eax = m.memory.read::<u32>(0x433024u32);
     // 004011a5 push ebx
-    push(m.regs.ebx);
+    push(m, m.regs.ebx);
     // 004011a6 mov edx,[eax]
     m.regs.edx = m.memory.read::<u32>(m.regs.eax);
     // 004011a8 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 004011a9 call dword ptr [edx+50h]
     call(
+        m,
         0x4011ac,
         indirect(m.memory.read(m.regs.edx.wrapping_add(0x50u32))),
     )
@@ -119,7 +120,7 @@ pub fn x004011ac() -> Cont {
     // 004011ac test eax,eax
     and(m.regs.eax, m.regs.eax, &mut m.flags);
     // 004011ae jl near ptr 0040125Fh
-    jl(Cont(x004011b4), Cont(x0040125f))
+    jl(m, Cont(x004011b4), Cont(x0040125f))
 }
 
 pub fn x004011b4() -> Cont {
@@ -130,14 +131,14 @@ pub fn x004011b4() -> Cont {
     // 004011b9 cmp eax,1
     sub(m.regs.eax, 0x1u32, &mut m.flags);
     // 004011bc jb near ptr 0040125Fh
-    jb(Cont(x004011c2), Cont(x0040125f))
+    jb(m, Cont(x004011c2), Cont(x0040125f))
 }
 
 pub fn x004011c2() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004011c2 jbe short 0040122Bh
-    jbe(Cont(x004011c4), Cont(x0040122b))
+    jbe(m, Cont(x004011c4), Cont(x0040122b))
 }
 
 pub fn x004011c4() -> Cont {
@@ -146,7 +147,7 @@ pub fn x004011c4() -> Cont {
     // 004011c4 cmp eax,2
     sub(m.regs.eax, 0x2u32, &mut m.flags);
     // 004011c7 je near ptr 0040142Ch
-    je(Cont(x004011cd), Cont(x0040142c))
+    je(m, Cont(x004011cd), Cont(x0040142c))
 }
 
 pub fn x004011cd() -> Cont {
@@ -160,21 +161,28 @@ pub fn x004011d2() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004011d2 push 0Fh
-    push(0xfu32);
+    push(m, 0xfu32);
     // 004011d4 mov ds:[433010h],eax
     m.memory.write::<u32>(0x433010u32, m.regs.eax);
     // 004011d9 push dword ptr [ebp-1Ah]
-    push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffe6u32)));
+    push(
+        m,
+        m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffe6u32)),
+    );
     // 004011dc mov eax,ds:[433024h]
     m.regs.eax = m.memory.read::<u32>(0x433024u32);
     // 004011e1 push dword ptr [ebp-16h]
-    push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffeau32)));
+    push(
+        m,
+        m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffeau32)),
+    );
     // 004011e4 mov edx,[eax]
     m.regs.edx = m.memory.read::<u32>(m.regs.eax);
     // 004011e6 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 004011e7 call dword ptr [edx+54h]
     call(
+        m,
         0x4011ea,
         indirect(m.memory.read(m.regs.edx.wrapping_add(0x54u32))),
     )
@@ -186,17 +194,24 @@ pub fn x004011d4() -> Cont {
     // 004011d4 mov ds:[433010h],eax
     m.memory.write::<u32>(0x433010u32, m.regs.eax);
     // 004011d9 push dword ptr [ebp-1Ah]
-    push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffe6u32)));
+    push(
+        m,
+        m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffe6u32)),
+    );
     // 004011dc mov eax,ds:[433024h]
     m.regs.eax = m.memory.read::<u32>(0x433024u32);
     // 004011e1 push dword ptr [ebp-16h]
-    push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffeau32)));
+    push(
+        m,
+        m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffeau32)),
+    );
     // 004011e4 mov edx,[eax]
     m.regs.edx = m.memory.read::<u32>(m.regs.eax);
     // 004011e6 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 004011e7 call dword ptr [edx+54h]
     call(
+        m,
         0x4011ea,
         indirect(m.memory.read(m.regs.edx.wrapping_add(0x54u32))),
     )
@@ -207,6 +222,7 @@ pub fn x004011e7() -> Cont {
     let m = unsafe { &mut MACHINE };
     // 004011e7 call dword ptr [edx+54h]
     call(
+        m,
         0x4011ea,
         indirect(m.memory.read(m.regs.edx.wrapping_add(0x54u32))),
     )
@@ -223,17 +239,23 @@ pub fn x004011ef() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004011ef push 10h
-    push(0x10u32);
+    push(m, 0x10u32);
     // 004011f1 push dword ptr [ebp-1Ah]
-    push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffe6u32)));
+    push(
+        m,
+        m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffe6u32)),
+    );
     // 004011f4 mov eax,ds:[433024h]
     m.regs.eax = m.memory.read::<u32>(0x433024u32);
     // 004011f9 push dword ptr [ebp-16h]
-    push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffeau32)));
+    push(
+        m,
+        m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffeau32)),
+    );
     // 004011fc mov edx,[eax]
     m.regs.edx = m.memory.read::<u32>(m.regs.eax);
     // 004011fe push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 004011ff mov dword ptr ds:[433010h],10h
     m.memory.write::<u32>(0x433010u32, 0x10u32);
     // 00401209 jmp short 004011E7h
@@ -244,17 +266,23 @@ pub fn x0040120b() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 0040120b push 18h
-    push(0x18u32);
+    push(m, 0x18u32);
     // 0040120d push dword ptr [ebp-1Ah]
-    push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffe6u32)));
+    push(
+        m,
+        m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffe6u32)),
+    );
     // 00401210 mov eax,ds:[433024h]
     m.regs.eax = m.memory.read::<u32>(0x433024u32);
     // 00401215 push dword ptr [ebp-16h]
-    push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffeau32)));
+    push(
+        m,
+        m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffeau32)),
+    );
     // 00401218 mov edx,[eax]
     m.regs.edx = m.memory.read::<u32>(m.regs.eax);
     // 0040121a push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 0040121b mov dword ptr ds:[433010h],18h
     m.memory.write::<u32>(0x433010u32, 0x18u32);
     // 00401225 jmp short 004011E7h
@@ -265,7 +293,7 @@ pub fn x00401227() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00401227 push 20h
-    push(0x20u32);
+    push(m, 0x20u32);
     // 00401229 jmp short 004011D4h
     Cont(x004011d4)
 }
@@ -280,14 +308,14 @@ pub fn x0040122b() -> Cont {
     // 0040123a cmp eax,10h
     sub(m.regs.eax, 0x10u32, &mut m.flags);
     // 0040123d jb short 00401256h
-    jb(Cont(x0040123f), Cont(x00401256))
+    jb(m, Cont(x0040123f), Cont(x00401256))
 }
 
 pub fn x0040123f() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 0040123f jbe short 004011EFh
-    jbe(Cont(x00401241), Cont(x004011ef))
+    jbe(m, Cont(x00401241), Cont(x004011ef))
 }
 
 pub fn x00401241() -> Cont {
@@ -296,14 +324,14 @@ pub fn x00401241() -> Cont {
     // 00401241 cmp eax,18h
     sub(m.regs.eax, 0x18u32, &mut m.flags);
     // 00401244 jb near ptr 0040125Fh
-    jb(Cont(x0040124a), Cont(x0040125f))
+    jb(m, Cont(x0040124a), Cont(x0040125f))
 }
 
 pub fn x0040124a() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 0040124a jbe short 0040120Bh
-    jbe(Cont(x0040124c), Cont(x0040120b))
+    jbe(m, Cont(x0040124c), Cont(x0040120b))
 }
 
 pub fn x0040124c() -> Cont {
@@ -312,7 +340,7 @@ pub fn x0040124c() -> Cont {
     // 0040124c cmp eax,20h
     sub(m.regs.eax, 0x20u32, &mut m.flags);
     // 0040124f je short 00401227h
-    je(Cont(x00401251), Cont(x00401227))
+    je(m, Cont(x00401251), Cont(x00401227))
 }
 
 pub fn x00401251() -> Cont {
@@ -328,16 +356,16 @@ pub fn x00401256() -> Cont {
     // 00401256 cmp eax,0Fh
     sub(m.regs.eax, 0xfu32, &mut m.flags);
     // 00401259 je near ptr 004011D2h
-    je(Cont(x0040125f), Cont(x004011d2))
+    je(m, Cont(x0040125f), Cont(x004011d2))
 }
 
 pub fn x0040125f() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 0040125f push 40C00Ah
-    push(0x40c00au32);
+    push(m, 0x40c00au32);
     // 00401264 call dword ptr cs:[40B15Ch]
-    call(0x40126b, Cont(kernel32::OutputDebugStringA_stdcall))
+    call(m, 0x40126b, Cont(kernel32::OutputDebugStringA_stdcall))
 }
 
 pub fn x0040126b() -> Cont {
@@ -346,7 +374,7 @@ pub fn x0040126b() -> Cont {
     // 0040126b cmp dword ptr ds:[43302Ch],0
     sub(m.memory.read::<u32>(0x43302cu32), 0x0u32, &mut m.flags);
     // 00401272 je short 00401289h
-    je(Cont(x00401274), Cont(x00401289))
+    je(m, Cont(x00401274), Cont(x00401289))
 }
 
 pub fn x00401274() -> Cont {
@@ -355,11 +383,12 @@ pub fn x00401274() -> Cont {
     // 00401274 mov eax,ds:[43302Ch]
     m.regs.eax = m.memory.read::<u32>(0x43302cu32);
     // 00401279 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 0040127a mov edx,[eax]
     m.regs.edx = m.memory.read::<u32>(m.regs.eax);
     // 0040127c call dword ptr [edx+8]
     call(
+        m,
         0x40127f,
         indirect(m.memory.read(m.regs.edx.wrapping_add(0x8u32))),
     )
@@ -373,7 +402,7 @@ pub fn x0040127f() -> Cont {
     // 00401289 cmp dword ptr ds:[433028h],0
     sub(m.memory.read::<u32>(0x433028u32), 0x0u32, &mut m.flags);
     // 00401290 je short 004012A7h
-    je(Cont(x00401292), Cont(x004012a7))
+    je(m, Cont(x00401292), Cont(x004012a7))
 }
 
 pub fn x00401289() -> Cont {
@@ -382,7 +411,7 @@ pub fn x00401289() -> Cont {
     // 00401289 cmp dword ptr ds:[433028h],0
     sub(m.memory.read::<u32>(0x433028u32), 0x0u32, &mut m.flags);
     // 00401290 je short 004012A7h
-    je(Cont(x00401292), Cont(x004012a7))
+    je(m, Cont(x00401292), Cont(x004012a7))
 }
 
 pub fn x00401292() -> Cont {
@@ -391,11 +420,12 @@ pub fn x00401292() -> Cont {
     // 00401292 mov eax,ds:[433028h]
     m.regs.eax = m.memory.read::<u32>(0x433028u32);
     // 00401297 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 00401298 mov edx,[eax]
     m.regs.edx = m.memory.read::<u32>(m.regs.eax);
     // 0040129a call dword ptr [edx+8]
     call(
+        m,
         0x40129d,
         indirect(m.memory.read(m.regs.edx.wrapping_add(0x8u32))),
     )
@@ -409,7 +439,7 @@ pub fn x0040129d() -> Cont {
     // 004012a7 cmp dword ptr ds:[433024h],0
     sub(m.memory.read::<u32>(0x433024u32), 0x0u32, &mut m.flags);
     // 004012ae je short 004012DEh
-    je(Cont(x004012b0), Cont(x004012de))
+    je(m, Cont(x004012b0), Cont(x004012de))
 }
 
 pub fn x004012a7() -> Cont {
@@ -418,24 +448,25 @@ pub fn x004012a7() -> Cont {
     // 004012a7 cmp dword ptr ds:[433024h],0
     sub(m.memory.read::<u32>(0x433024u32), 0x0u32, &mut m.flags);
     // 004012ae je short 004012DEh
-    je(Cont(x004012b0), Cont(x004012de))
+    je(m, Cont(x004012b0), Cont(x004012de))
 }
 
 pub fn x004012b0() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004012b0 push 8
-    push(0x8u32);
+    push(m, 0x8u32);
     // 004012b2 mov eax,ds:[433024h]
     m.regs.eax = m.memory.read::<u32>(0x433024u32);
     // 004012b7 push ebx
-    push(m.regs.ebx);
+    push(m, m.regs.ebx);
     // 004012b8 mov edx,[eax]
     m.regs.edx = m.memory.read::<u32>(m.regs.eax);
     // 004012ba push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 004012bb call dword ptr [edx+50h]
     call(
+        m,
         0x4012be,
         indirect(m.memory.read(m.regs.edx.wrapping_add(0x50u32))),
     )
@@ -447,11 +478,12 @@ pub fn x004012be() -> Cont {
     // 004012be mov eax,ds:[433024h]
     m.regs.eax = m.memory.read::<u32>(0x433024u32);
     // 004012c3 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 004012c4 mov edx,[eax]
     m.regs.edx = m.memory.read::<u32>(m.regs.eax);
     // 004012c6 call dword ptr [edx+4Ch]
     call(
+        m,
         0x4012c9,
         indirect(m.memory.read(m.regs.edx.wrapping_add(0x4cu32))),
     )
@@ -463,11 +495,12 @@ pub fn x004012c9() -> Cont {
     // 004012c9 mov eax,ds:[433024h]
     m.regs.eax = m.memory.read::<u32>(0x433024u32);
     // 004012ce push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 004012cf mov edx,[eax]
     m.regs.edx = m.memory.read::<u32>(m.regs.eax);
     // 004012d1 call dword ptr [edx+8]
     call(
+        m,
         0x4012d4,
         indirect(m.memory.read(m.regs.edx.wrapping_add(0x8u32))),
     )
@@ -481,7 +514,7 @@ pub fn x004012d4() -> Cont {
     // 004012de cmp dword ptr ds:[433020h],0
     sub(m.memory.read::<u32>(0x433020u32), 0x0u32, &mut m.flags);
     // 004012e5 je short 004012FFh
-    je(Cont(x004012e7), Cont(x004012ff))
+    je(m, Cont(x004012e7), Cont(x004012ff))
 }
 
 pub fn x004012de() -> Cont {
@@ -490,16 +523,16 @@ pub fn x004012de() -> Cont {
     // 004012de cmp dword ptr ds:[433020h],0
     sub(m.memory.read::<u32>(0x433020u32), 0x0u32, &mut m.flags);
     // 004012e5 je short 004012FFh
-    je(Cont(x004012e7), Cont(x004012ff))
+    je(m, Cont(x004012e7), Cont(x004012ff))
 }
 
 pub fn x004012e7() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004012e7 push dword ptr ds:[433020h]
-    push(m.memory.read::<u32>(0x433020u32));
+    push(m, m.memory.read::<u32>(0x433020u32));
     // 004012ed call 00401A78h
-    call(0x4012f2, Cont(x00401a78))
+    call(m, 0x4012f2, Cont(x00401a78))
 }
 
 pub fn x004012f2() -> Cont {
@@ -514,13 +547,13 @@ pub fn x004012f2() -> Cont {
     // 00401304 lea esp,[ebp+7Eh]
     m.regs.esp = m.regs.ebp.wrapping_add(0x7eu32);
     // 00401307 pop ebp
-    m.regs.ebp = pop();
+    m.regs.ebp = pop(m);
     // 00401308 pop edi
-    m.regs.edi = pop();
+    m.regs.edi = pop(m);
     // 00401309 pop esi
-    m.regs.esi = pop();
+    m.regs.esi = pop(m);
     // 0040130a ret 4
-    ret(4)
+    ret(m, 4)
 }
 
 pub fn x004012ff() -> Cont {
@@ -531,13 +564,13 @@ pub fn x004012ff() -> Cont {
     // 00401304 lea esp,[ebp+7Eh]
     m.regs.esp = m.regs.ebp.wrapping_add(0x7eu32);
     // 00401307 pop ebp
-    m.regs.ebp = pop();
+    m.regs.ebp = pop(m);
     // 00401308 pop edi
-    m.regs.edi = pop();
+    m.regs.edi = pop(m);
     // 00401309 pop esi
-    m.regs.esi = pop();
+    m.regs.esi = pop(m);
     // 0040130a ret 4
-    ret(4)
+    ret(m, 4)
 }
 
 pub fn x00401304() -> Cont {
@@ -546,34 +579,35 @@ pub fn x00401304() -> Cont {
     // 00401304 lea esp,[ebp+7Eh]
     m.regs.esp = m.regs.ebp.wrapping_add(0x7eu32);
     // 00401307 pop ebp
-    m.regs.ebp = pop();
+    m.regs.ebp = pop(m);
     // 00401308 pop edi
-    m.regs.edi = pop();
+    m.regs.edi = pop(m);
     // 00401309 pop esi
-    m.regs.esi = pop();
+    m.regs.esi = pop(m);
     // 0040130a ret 4
-    ret(4)
+    ret(m, 4)
 }
 
 pub fn x0040130d() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 0040130d push 0Fh
-    push(0xfu32);
+    push(m, 0xfu32);
     // 0040130f push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 00401310 mov ds:[433010h],eax
     m.memory.write::<u32>(0x433010u32, m.regs.eax);
     // 00401315 mov eax,ds:[433024h]
     m.regs.eax = m.memory.read::<u32>(0x433024u32);
     // 0040131a push edx
-    push(m.regs.edx);
+    push(m, m.regs.edx);
     // 0040131b mov esi,[eax]
     m.regs.esi = m.memory.read::<u32>(m.regs.eax);
     // 0040131d push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 0040131e call dword ptr [esi+54h]
     call(
+        m,
         0x401321,
         indirect(m.memory.read(m.regs.esi.wrapping_add(0x54u32))),
     )
@@ -583,19 +617,20 @@ pub fn x0040130f() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 0040130f push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 00401310 mov ds:[433010h],eax
     m.memory.write::<u32>(0x433010u32, m.regs.eax);
     // 00401315 mov eax,ds:[433024h]
     m.regs.eax = m.memory.read::<u32>(0x433024u32);
     // 0040131a push edx
-    push(m.regs.edx);
+    push(m, m.regs.edx);
     // 0040131b mov esi,[eax]
     m.regs.esi = m.memory.read::<u32>(m.regs.eax);
     // 0040131d push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 0040131e call dword ptr [esi+54h]
     call(
+        m,
         0x401321,
         indirect(m.memory.read(m.regs.esi.wrapping_add(0x54u32))),
     )
@@ -606,6 +641,7 @@ pub fn x0040131e() -> Cont {
     let m = unsafe { &mut MACHINE };
     // 0040131e call dword ptr [esi+54h]
     call(
+        m,
         0x401321,
         indirect(m.memory.read(m.regs.esi.wrapping_add(0x54u32))),
     )
@@ -617,7 +653,7 @@ pub fn x00401321() -> Cont {
     // 00401321 test eax,eax
     and(m.regs.eax, m.regs.eax, &mut m.flags);
     // 00401323 jl near ptr 0040125Fh
-    jl(Cont(x00401329), Cont(x0040125f))
+    jl(m, Cont(x00401329), Cont(x0040125f))
 }
 
 pub fn x00401329() -> Cont {
@@ -638,27 +674,28 @@ pub fn x00401329() -> Cont {
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffff2u32), 0x21u32);
     // 00401343 push 0
-    push(0x0u32);
+    push(m, 0x0u32);
     // 00401345 mov dword ptr [ebp+2],1
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0x2u32), 0x1u32);
     // 0040134c lea ecx,[ebp-12h]
     m.regs.ecx = m.regs.ebp.wrapping_add(0xffffffeeu32);
     // 0040134f push 433028h
-    push(0x433028u32);
+    push(m, 0x433028u32);
     // 00401354 mov eax,ds:[433024h]
     m.regs.eax = m.memory.read::<u32>(0x433024u32);
     // 00401359 mov dword ptr [ebp+56h],4218h
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0x56u32), 0x4218u32);
     // 00401360 push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 00401361 mov edx,[eax]
     m.regs.edx = m.memory.read::<u32>(m.regs.eax);
     // 00401363 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 00401364 call dword ptr [edx+18h]
     call(
+        m,
         0x401367,
         indirect(m.memory.read(m.regs.edx.wrapping_add(0x18u32))),
     )
@@ -670,7 +707,7 @@ pub fn x00401367() -> Cont {
     // 00401367 test eax,eax
     and(m.regs.eax, m.regs.eax, &mut m.flags);
     // 00401369 jl near ptr 0040125Fh
-    jl(Cont(x0040136f), Cont(x0040125f))
+    jl(m, Cont(x0040136f), Cont(x0040125f))
 }
 
 pub fn x0040136f() -> Cont {
@@ -685,7 +722,7 @@ pub fn x0040136f() -> Cont {
     // 00401379 rep stosb
     rep(m, Rep::REP, stosb);
     // 0040137b push 43302Ch
-    push(0x43302cu32);
+    push(m, 0x43302cu32);
     // 00401380 lea ecx,[ebp+7Ah]
     m.regs.ecx = m.regs.ebp.wrapping_add(0x7au32);
     // 00401383 mov eax,ds:[433028h]
@@ -694,13 +731,14 @@ pub fn x0040136f() -> Cont {
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0x7au32), 0x4u32);
     // 0040138f push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 00401390 mov edx,[eax]
     m.regs.edx = m.memory.read::<u32>(m.regs.eax);
     // 00401392 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 00401393 call dword ptr [edx+30h]
     call(
+        m,
         0x401396,
         indirect(m.memory.read(m.regs.edx.wrapping_add(0x30u32))),
     )
@@ -712,7 +750,7 @@ pub fn x00401396() -> Cont {
     // 00401396 test eax,eax
     and(m.regs.eax, m.regs.eax, &mut m.flags);
     // 00401398 jl near ptr 0040125Fh
-    jl(Cont(x0040139e), Cont(x0040125f))
+    jl(m, Cont(x0040139e), Cont(x0040125f))
 }
 
 pub fn x0040139e() -> Cont {
@@ -734,13 +772,14 @@ pub fn x0040139e() -> Cont {
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0x5au32), 0x20u32);
     // 004013b9 push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 004013ba mov edx,[eax]
     m.regs.edx = m.memory.read::<u32>(m.regs.eax);
     // 004013bc push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 004013bd call dword ptr [edx+54h]
     call(
+        m,
         0x4013c0,
         indirect(m.memory.read(m.regs.edx.wrapping_add(0x54u32))),
     )
@@ -752,7 +791,7 @@ pub fn x004013c0() -> Cont {
     // 004013c0 test eax,eax
     and(m.regs.eax, m.regs.eax, &mut m.flags);
     // 004013c2 jl near ptr 0040125Fh
-    jl(Cont(x004013c8), Cont(x0040125f))
+    jl(m, Cont(x004013c8), Cont(x0040125f))
 }
 
 pub fn x004013c8() -> Cont {
@@ -769,9 +808,9 @@ pub fn x004013c8() -> Cont {
     // 004013cf shl eax,2
     m.regs.eax = shl(m.regs.eax, 0x2u8, &mut m.flags);
     // 004013d2 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 004013d3 call 00401A60h
-    call(0x4013d8, Cont(x00401a60))
+    call(m, 0x4013d8, Cont(x00401a60))
 }
 
 pub fn x004013d8() -> Cont {
@@ -784,7 +823,7 @@ pub fn x004013d8() -> Cont {
     // 004013e0 test eax,eax
     and(m.regs.eax, m.regs.eax, &mut m.flags);
     // 004013e2 je near ptr 0040125Fh
-    je(Cont(x004013e8), Cont(x0040125f))
+    je(m, Cont(x004013e8), Cont(x0040125f))
 }
 
 pub fn x004013e8() -> Cont {
@@ -800,17 +839,17 @@ pub fn x004013ef() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004013ef push 10h
-    push(0x10u32);
+    push(m, 0x10u32);
     // 004013f1 push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 004013f2 mov eax,ds:[433024h]
     m.regs.eax = m.memory.read::<u32>(0x433024u32);
     // 004013f7 push edx
-    push(m.regs.edx);
+    push(m, m.regs.edx);
     // 004013f8 mov esi,[eax]
     m.regs.esi = m.memory.read::<u32>(m.regs.eax);
     // 004013fa push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 004013fb mov dword ptr ds:[433010h],10h
     m.memory.write::<u32>(0x433010u32, 0x10u32);
     // 00401405 jmp near ptr 0040131Eh
@@ -821,17 +860,17 @@ pub fn x0040140a() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 0040140a push 18h
-    push(0x18u32);
+    push(m, 0x18u32);
     // 0040140c push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 0040140d mov eax,ds:[433024h]
     m.regs.eax = m.memory.read::<u32>(0x433024u32);
     // 00401412 push edx
-    push(m.regs.edx);
+    push(m, m.regs.edx);
     // 00401413 mov esi,[eax]
     m.regs.esi = m.memory.read::<u32>(m.regs.eax);
     // 00401415 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 00401416 mov dword ptr ds:[433010h],18h
     m.memory.write::<u32>(0x433010u32, 0x18u32);
     // 00401420 jmp near ptr 0040131Eh
@@ -842,7 +881,7 @@ pub fn x00401425() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00401425 push 20h
-    push(0x20u32);
+    push(m, 0x20u32);
     // 00401427 jmp near ptr 0040130Fh
     Cont(x0040130f)
 }
@@ -865,14 +904,14 @@ pub fn x0040142c() -> Cont {
     // 00401445 cmp eax,10h
     sub(m.regs.eax, 0x10u32, &mut m.flags);
     // 00401448 jb short 00401461h
-    jb(Cont(x0040144a), Cont(x00401461))
+    jb(m, Cont(x0040144a), Cont(x00401461))
 }
 
 pub fn x0040144a() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 0040144a jbe short 004013EFh
-    jbe(Cont(x0040144c), Cont(x004013ef))
+    jbe(m, Cont(x0040144c), Cont(x004013ef))
 }
 
 pub fn x0040144c() -> Cont {
@@ -881,14 +920,14 @@ pub fn x0040144c() -> Cont {
     // 0040144c cmp eax,18h
     sub(m.regs.eax, 0x18u32, &mut m.flags);
     // 0040144f jb near ptr 0040125Fh
-    jb(Cont(x00401455), Cont(x0040125f))
+    jb(m, Cont(x00401455), Cont(x0040125f))
 }
 
 pub fn x00401455() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00401455 jbe short 0040140Ah
-    jbe(Cont(x00401457), Cont(x0040140a))
+    jbe(m, Cont(x00401457), Cont(x0040140a))
 }
 
 pub fn x00401457() -> Cont {
@@ -897,7 +936,7 @@ pub fn x00401457() -> Cont {
     // 00401457 cmp eax,20h
     sub(m.regs.eax, 0x20u32, &mut m.flags);
     // 0040145a je short 00401425h
-    je(Cont(x0040145c), Cont(x00401425))
+    je(m, Cont(x0040145c), Cont(x00401425))
 }
 
 pub fn x0040145c() -> Cont {
@@ -913,7 +952,7 @@ pub fn x00401461() -> Cont {
     // 00401461 cmp eax,0Fh
     sub(m.regs.eax, 0xfu32, &mut m.flags);
     // 00401464 je near ptr 0040130Dh
-    je(Cont(x0040146a), Cont(x0040130d))
+    je(m, Cont(x0040146a), Cont(x0040130d))
 }
 
 pub fn x0040146a() -> Cont {
@@ -927,17 +966,17 @@ pub fn x0040148c() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 0040148c push ebx
-    push(m.regs.ebx);
+    push(m, m.regs.ebx);
     // 0040148d push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 0040148e push edx
-    push(m.regs.edx);
+    push(m, m.regs.edx);
     // 0040148f mov ebx,eax
     m.regs.ebx = m.regs.eax;
     // 00401491 cmp dword ptr ds:[43302Ch],0
     sub(m.memory.read::<u32>(0x43302cu32), 0x0u32, &mut m.flags);
     // 00401498 je short 004014AFh
-    je(Cont(x0040149a), Cont(x004014af))
+    je(m, Cont(x0040149a), Cont(x004014af))
 }
 
 pub fn x0040149a() -> Cont {
@@ -946,11 +985,12 @@ pub fn x0040149a() -> Cont {
     // 0040149a mov eax,ds:[43302Ch]
     m.regs.eax = m.memory.read::<u32>(0x43302cu32);
     // 0040149f push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 004014a0 mov edx,[eax]
     m.regs.edx = m.memory.read::<u32>(m.regs.eax);
     // 004014a2 call dword ptr [edx+8]
     call(
+        m,
         0x4014a5,
         indirect(m.memory.read(m.regs.edx.wrapping_add(0x8u32))),
     )
@@ -964,7 +1004,7 @@ pub fn x004014a5() -> Cont {
     // 004014af cmp dword ptr ds:[433028h],0
     sub(m.memory.read::<u32>(0x433028u32), 0x0u32, &mut m.flags);
     // 004014b6 je short 004014CDh
-    je(Cont(x004014b8), Cont(x004014cd))
+    je(m, Cont(x004014b8), Cont(x004014cd))
 }
 
 pub fn x004014af() -> Cont {
@@ -973,7 +1013,7 @@ pub fn x004014af() -> Cont {
     // 004014af cmp dword ptr ds:[433028h],0
     sub(m.memory.read::<u32>(0x433028u32), 0x0u32, &mut m.flags);
     // 004014b6 je short 004014CDh
-    je(Cont(x004014b8), Cont(x004014cd))
+    je(m, Cont(x004014b8), Cont(x004014cd))
 }
 
 pub fn x004014b8() -> Cont {
@@ -982,11 +1022,12 @@ pub fn x004014b8() -> Cont {
     // 004014b8 mov eax,ds:[433028h]
     m.regs.eax = m.memory.read::<u32>(0x433028u32);
     // 004014bd push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 004014be mov edx,[eax]
     m.regs.edx = m.memory.read::<u32>(m.regs.eax);
     // 004014c0 call dword ptr [edx+8]
     call(
+        m,
         0x4014c3,
         indirect(m.memory.read(m.regs.edx.wrapping_add(0x8u32))),
     )
@@ -1000,7 +1041,7 @@ pub fn x004014c3() -> Cont {
     // 004014cd cmp dword ptr ds:[433024h],0
     sub(m.memory.read::<u32>(0x433024u32), 0x0u32, &mut m.flags);
     // 004014d4 je short 00401504h
-    je(Cont(x004014d6), Cont(x00401504))
+    je(m, Cont(x004014d6), Cont(x00401504))
 }
 
 pub fn x004014cd() -> Cont {
@@ -1009,24 +1050,25 @@ pub fn x004014cd() -> Cont {
     // 004014cd cmp dword ptr ds:[433024h],0
     sub(m.memory.read::<u32>(0x433024u32), 0x0u32, &mut m.flags);
     // 004014d4 je short 00401504h
-    je(Cont(x004014d6), Cont(x00401504))
+    je(m, Cont(x004014d6), Cont(x00401504))
 }
 
 pub fn x004014d6() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004014d6 push 8
-    push(0x8u32);
+    push(m, 0x8u32);
     // 004014d8 mov eax,ds:[433024h]
     m.regs.eax = m.memory.read::<u32>(0x433024u32);
     // 004014dd push ebx
-    push(m.regs.ebx);
+    push(m, m.regs.ebx);
     // 004014de mov edx,[eax]
     m.regs.edx = m.memory.read::<u32>(m.regs.eax);
     // 004014e0 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 004014e1 call dword ptr [edx+50h]
     call(
+        m,
         0x4014e4,
         indirect(m.memory.read(m.regs.edx.wrapping_add(0x50u32))),
     )
@@ -1038,11 +1080,12 @@ pub fn x004014e4() -> Cont {
     // 004014e4 mov eax,ds:[433024h]
     m.regs.eax = m.memory.read::<u32>(0x433024u32);
     // 004014e9 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 004014ea mov edx,[eax]
     m.regs.edx = m.memory.read::<u32>(m.regs.eax);
     // 004014ec call dword ptr [edx+4Ch]
     call(
+        m,
         0x4014ef,
         indirect(m.memory.read(m.regs.edx.wrapping_add(0x4cu32))),
     )
@@ -1054,11 +1097,12 @@ pub fn x004014ef() -> Cont {
     // 004014ef mov eax,ds:[433024h]
     m.regs.eax = m.memory.read::<u32>(0x433024u32);
     // 004014f4 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 004014f5 mov edx,[eax]
     m.regs.edx = m.memory.read::<u32>(m.regs.eax);
     // 004014f7 call dword ptr [edx+8]
     call(
+        m,
         0x4014fa,
         indirect(m.memory.read(m.regs.edx.wrapping_add(0x8u32))),
     )
@@ -1072,7 +1116,7 @@ pub fn x004014fa() -> Cont {
     // 00401504 cmp dword ptr ds:[433020h],0
     sub(m.memory.read::<u32>(0x433020u32), 0x0u32, &mut m.flags);
     // 0040150b je short 00401525h
-    je(Cont(x0040150d), Cont(x00401525))
+    je(m, Cont(x0040150d), Cont(x00401525))
 }
 
 pub fn x00401504() -> Cont {
@@ -1081,16 +1125,16 @@ pub fn x00401504() -> Cont {
     // 00401504 cmp dword ptr ds:[433020h],0
     sub(m.memory.read::<u32>(0x433020u32), 0x0u32, &mut m.flags);
     // 0040150b je short 00401525h
-    je(Cont(x0040150d), Cont(x00401525))
+    je(m, Cont(x0040150d), Cont(x00401525))
 }
 
 pub fn x0040150d() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 0040150d push dword ptr ds:[433020h]
-    push(m.memory.read::<u32>(0x433020u32));
+    push(m, m.memory.read::<u32>(0x433020u32));
     // 00401513 call 00401A78h
-    call(0x401518, Cont(x00401a78))
+    call(m, 0x401518, Cont(x00401a78))
 }
 
 pub fn x00401518() -> Cont {
@@ -1101,66 +1145,67 @@ pub fn x00401518() -> Cont {
     // 00401522 add esp,4
     m.regs.esp = add(m.regs.esp, 0x4u32, &mut m.flags);
     // 00401525 pop edx
-    m.regs.edx = pop();
+    m.regs.edx = pop(m);
     // 00401526 pop ecx
-    m.regs.ecx = pop();
+    m.regs.ecx = pop(m);
     // 00401527 pop ebx
-    m.regs.ebx = pop();
+    m.regs.ebx = pop(m);
     // 00401528 ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x00401525() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00401525 pop edx
-    m.regs.edx = pop();
+    m.regs.edx = pop(m);
     // 00401526 pop ecx
-    m.regs.ecx = pop();
+    m.regs.ecx = pop(m);
     // 00401527 pop ebx
-    m.regs.ebx = pop();
+    m.regs.ebx = pop(m);
     // 00401528 ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x00401529() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00401529 push ebx
-    push(m.regs.ebx);
+    push(m, m.regs.ebx);
     // 0040152a push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 0040152b push edx
-    push(m.regs.edx);
+    push(m, m.regs.edx);
     // 0040152c push esi
-    push(m.regs.esi);
+    push(m, m.regs.esi);
     // 0040152d push edi
-    push(m.regs.edi);
+    push(m, m.regs.edi);
     // 0040152e enter 90h,0
-    enter(0x90u16, 0);
+    enter(m, 0x90u16, 0);
     // 00401532 sub ebp,82h
     m.regs.ebp = sub(m.regs.ebp, 0x82u32, &mut m.flags);
     // 00401538 push 0
-    push(0x0u32);
+    push(m, 0x0u32);
     // 0040153a push 1
-    push(0x1u32);
+    push(m, 0x1u32);
     // 0040153c lea ecx,[ebp-0Eh]
     m.regs.ecx = m.regs.ebp.wrapping_add(0xfffffff2u32);
     // 0040153f push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 00401540 mov eax,ds:[43302Ch]
     m.regs.eax = m.memory.read::<u32>(0x43302cu32);
     // 00401545 mov dword ptr [ebp-0Eh],6Ch
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffff2u32), 0x6cu32);
     // 0040154c push 0
-    push(0x0u32);
+    push(m, 0x0u32);
     // 0040154e mov edx,[eax]
     m.regs.edx = m.memory.read::<u32>(m.regs.eax);
     // 00401550 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 00401551 call dword ptr [edx+64h]
     call(
+        m,
         0x401554,
         indirect(m.memory.read(m.regs.edx.wrapping_add(0x64u32))),
     )
@@ -1172,7 +1217,7 @@ pub fn x00401554() -> Cont {
     // 00401554 test eax,eax
     and(m.regs.eax, m.regs.eax, &mut m.flags);
     // 00401556 jl near ptr 00401600h
-    jl(Cont(x0040155c), Cont(x00401600))
+    jl(m, Cont(x0040155c), Cont(x00401600))
 }
 
 pub fn x0040155c() -> Cont {
@@ -1181,7 +1226,7 @@ pub fn x0040155c() -> Cont {
     // 0040155c cmp dword ptr ds:[433010h],0Fh
     sub(m.memory.read::<u32>(0x433010u32), 0xfu32, &mut m.flags);
     // 00401563 jne short 00401570h
-    jne(Cont(x00401565), Cont(x00401570))
+    jne(m, Cont(x00401565), Cont(x00401570))
 }
 
 pub fn x00401565() -> Cont {
@@ -1203,7 +1248,7 @@ pub fn x00401565() -> Cont {
     // 00401570 cmp dword ptr ds:[433010h],10h
     sub(m.memory.read::<u32>(0x433010u32), 0x10u32, &mut m.flags);
     // 00401577 jne short 00401584h
-    jne(Cont(x00401579), Cont(x00401584))
+    jne(m, Cont(x00401579), Cont(x00401584))
 }
 
 pub fn x00401570() -> Cont {
@@ -1212,7 +1257,7 @@ pub fn x00401570() -> Cont {
     // 00401570 cmp dword ptr ds:[433010h],10h
     sub(m.memory.read::<u32>(0x433010u32), 0x10u32, &mut m.flags);
     // 00401577 jne short 00401584h
-    jne(Cont(x00401579), Cont(x00401584))
+    jne(m, Cont(x00401579), Cont(x00401584))
 }
 
 pub fn x00401579() -> Cont {
@@ -1234,7 +1279,7 @@ pub fn x00401579() -> Cont {
     // 00401584 cmp dword ptr ds:[433010h],18h
     sub(m.memory.read::<u32>(0x433010u32), 0x18u32, &mut m.flags);
     // 0040158b jne short 0040159Bh
-    jne(Cont(x0040158d), Cont(x0040159b))
+    jne(m, Cont(x0040158d), Cont(x0040159b))
 }
 
 pub fn x00401584() -> Cont {
@@ -1243,7 +1288,7 @@ pub fn x00401584() -> Cont {
     // 00401584 cmp dword ptr ds:[433010h],18h
     sub(m.memory.read::<u32>(0x433010u32), 0x18u32, &mut m.flags);
     // 0040158b jne short 0040159Bh
-    jne(Cont(x0040158d), Cont(x0040159b))
+    jne(m, Cont(x0040158d), Cont(x0040159b))
 }
 
 pub fn x0040158d() -> Cont {
@@ -1268,7 +1313,7 @@ pub fn x0040158d() -> Cont {
     // 0040159b cmp dword ptr ds:[433010h],20h
     sub(m.memory.read::<u32>(0x433010u32), 0x20u32, &mut m.flags);
     // 004015a2 jne near ptr 004015B7h
-    jne(Cont(x004015a8), Cont(x004015b7))
+    jne(m, Cont(x004015a8), Cont(x004015b7))
 }
 
 pub fn x0040159b() -> Cont {
@@ -1277,7 +1322,7 @@ pub fn x0040159b() -> Cont {
     // 0040159b cmp dword ptr ds:[433010h],20h
     sub(m.memory.read::<u32>(0x433010u32), 0x20u32, &mut m.flags);
     // 004015a2 jne near ptr 004015B7h
-    jne(Cont(x004015a8), Cont(x004015b7))
+    jne(m, Cont(x004015a8), Cont(x004015b7))
 }
 
 pub fn x004015a8() -> Cont {
@@ -1318,7 +1363,7 @@ pub fn x004015a8() -> Cont {
     // 004015cf test eax,eax
     and(m.regs.eax, m.regs.eax, &mut m.flags);
     // 004015d1 jbe near ptr 00401785h
-    jbe(Cont(x004015d7), Cont(x00401785))
+    jbe(m, Cont(x004015d7), Cont(x00401785))
 }
 
 pub fn x004015b7() -> Cont {
@@ -1344,7 +1389,7 @@ pub fn x004015b7() -> Cont {
     // 004015cf test eax,eax
     and(m.regs.eax, m.regs.eax, &mut m.flags);
     // 004015d1 jbe near ptr 00401785h
-    jbe(Cont(x004015d7), Cont(x00401785))
+    jbe(m, Cont(x004015d7), Cont(x00401785))
 }
 
 pub fn x004015d7() -> Cont {
@@ -1353,22 +1398,23 @@ pub fn x004015d7() -> Cont {
     // 004015d7 cmp eax,1
     sub(m.regs.eax, 0x1u32, &mut m.flags);
     // 004015da je near ptr 00401A1Eh
-    je(Cont(x004015e0), Cont(x00401a1e))
+    je(m, Cont(x004015e0), Cont(x00401a1e))
 }
 
 pub fn x004015e0() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004015e0 push 0
-    push(0x0u32);
+    push(m, 0x0u32);
     // 004015e2 mov eax,ds:[43302Ch]
     m.regs.eax = m.memory.read::<u32>(0x43302cu32);
     // 004015e7 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 004015e8 mov edx,[eax]
     m.regs.edx = m.memory.read::<u32>(m.regs.eax);
     // 004015ea call dword ptr [edx+80h]
     call(
+        m,
         0x4015f0,
         indirect(m.memory.read(m.regs.edx.wrapping_add(0x80u32))),
     )
@@ -1380,33 +1426,34 @@ pub fn x004015f0() -> Cont {
     // 004015f0 test eax,eax
     and(m.regs.eax, m.regs.eax, &mut m.flags);
     // 004015f2 jge short 00401600h
-    jge(Cont(x004015f4), Cont(x00401600))
+    jge(m, Cont(x004015f4), Cont(x00401600))
 }
 
 pub fn x004015f4() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004015f4 push 40C016h
-    push(0x40c016u32);
+    push(m, 0x40c016u32);
     // 004015f9 call dword ptr cs:[40B15Ch]
-    call(0x401600, Cont(kernel32::OutputDebugStringA_stdcall))
+    call(m, 0x401600, Cont(kernel32::OutputDebugStringA_stdcall))
 }
 
 pub fn x00401600() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00401600 push 1
-    push(0x1u32);
+    push(m, 0x1u32);
     // 00401602 mov eax,ds:[433028h]
     m.regs.eax = m.memory.read::<u32>(0x433028u32);
     // 00401607 push 0
-    push(0x0u32);
+    push(m, 0x0u32);
     // 00401609 mov edx,[eax]
     m.regs.edx = m.memory.read::<u32>(m.regs.eax);
     // 0040160b push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 0040160c call dword ptr [edx+2Ch]
     call(
+        m,
         0x40160f,
         indirect(m.memory.read(m.regs.edx.wrapping_add(0x2cu32))),
     )
@@ -1418,16 +1465,16 @@ pub fn x0040160f() -> Cont {
     // 0040160f test eax,eax
     and(m.regs.eax, m.regs.eax, &mut m.flags);
     // 00401611 jge short 0040161Fh
-    jge(Cont(x00401613), Cont(x0040161f))
+    jge(m, Cont(x00401613), Cont(x0040161f))
 }
 
 pub fn x00401613() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00401613 push 40C033h
-    push(0x40c033u32);
+    push(m, 0x40c033u32);
     // 00401618 call dword ptr cs:[40B15Ch]
-    call(0x40161f, Cont(kernel32::OutputDebugStringA_stdcall))
+    call(m, 0x40161f, Cont(kernel32::OutputDebugStringA_stdcall))
 }
 
 pub fn x0040161f() -> Cont {
@@ -1436,19 +1483,19 @@ pub fn x0040161f() -> Cont {
     // 0040161f lea esp,[ebp+82h]
     m.regs.esp = m.regs.ebp.wrapping_add(0x82u32);
     // 00401625 pop ebp
-    m.regs.ebp = pop();
+    m.regs.ebp = pop(m);
     // 00401626 pop edi
-    m.regs.edi = pop();
+    m.regs.edi = pop(m);
     // 00401627 pop esi
-    m.regs.esi = pop();
+    m.regs.esi = pop(m);
     // 00401628 pop edx
-    m.regs.edx = pop();
+    m.regs.edx = pop(m);
     // 00401629 pop ecx
-    m.regs.ecx = pop();
+    m.regs.ecx = pop(m);
     // 0040162a pop ebx
-    m.regs.ebx = pop();
+    m.regs.ebx = pop(m);
     // 0040162b ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x0040162c() -> Cont {
@@ -1516,7 +1563,7 @@ pub fn x00401630() -> Cont {
     // 00401667 cmp esi,ds:[433014h]
     sub(m.regs.esi, m.memory.read::<u32>(0x433014u32), &mut m.flags);
     // 0040166d jl short 00401630h
-    jl(Cont(x0040166f), Cont(x00401630))
+    jl(m, Cont(x0040166f), Cont(x00401630))
 }
 
 pub fn x00401667() -> Cont {
@@ -1525,7 +1572,7 @@ pub fn x00401667() -> Cont {
     // 00401667 cmp esi,ds:[433014h]
     sub(m.regs.esi, m.memory.read::<u32>(0x433014u32), &mut m.flags);
     // 0040166d jl short 00401630h
-    jl(Cont(x0040166f), Cont(x00401630))
+    jl(m, Cont(x0040166f), Cont(x00401630))
 }
 
 pub fn x0040166f() -> Cont {
@@ -1551,7 +1598,7 @@ pub fn x0040166f() -> Cont {
     // 0040167e cmp edx,ds:[433018h]
     sub(m.regs.edx, m.memory.read::<u32>(0x433018u32), &mut m.flags);
     // 00401684 jge near ptr 004015E0h
-    jge(Cont(x0040168a), Cont(x004015e0))
+    jge(m, Cont(x0040168a), Cont(x004015e0))
 }
 
 pub fn x0040167e() -> Cont {
@@ -1560,7 +1607,7 @@ pub fn x0040167e() -> Cont {
     // 0040167e cmp edx,ds:[433018h]
     sub(m.regs.edx, m.memory.read::<u32>(0x433018u32), &mut m.flags);
     // 00401684 jge near ptr 004015E0h
-    jge(Cont(x0040168a), Cont(x004015e0))
+    jge(m, Cont(x0040168a), Cont(x004015e0))
 }
 
 pub fn x0040168a() -> Cont {
@@ -1637,7 +1684,7 @@ pub fn x00401692() -> Cont {
     // 004016c9 cmp esi,ds:[433014h]
     sub(m.regs.esi, m.memory.read::<u32>(0x433014u32), &mut m.flags);
     // 004016cf jl short 00401692h
-    jl(Cont(x004016d1), Cont(x00401692))
+    jl(m, Cont(x004016d1), Cont(x00401692))
 }
 
 pub fn x004016c9() -> Cont {
@@ -1646,7 +1693,7 @@ pub fn x004016c9() -> Cont {
     // 004016c9 cmp esi,ds:[433014h]
     sub(m.regs.esi, m.memory.read::<u32>(0x433014u32), &mut m.flags);
     // 004016cf jl short 00401692h
-    jl(Cont(x004016d1), Cont(x00401692))
+    jl(m, Cont(x004016d1), Cont(x00401692))
 }
 
 pub fn x004016d1() -> Cont {
@@ -1672,7 +1719,7 @@ pub fn x004016d1() -> Cont {
     // 004016e0 cmp edx,ds:[433018h]
     sub(m.regs.edx, m.memory.read::<u32>(0x433018u32), &mut m.flags);
     // 004016e6 jge near ptr 004015E0h
-    jge(Cont(x004016ec), Cont(x004015e0))
+    jge(m, Cont(x004016ec), Cont(x004015e0))
 }
 
 pub fn x004016e0() -> Cont {
@@ -1681,7 +1728,7 @@ pub fn x004016e0() -> Cont {
     // 004016e0 cmp edx,ds:[433018h]
     sub(m.regs.edx, m.memory.read::<u32>(0x433018u32), &mut m.flags);
     // 004016e6 jge near ptr 004015E0h
-    jge(Cont(x004016ec), Cont(x004015e0))
+    jge(m, Cont(x004016ec), Cont(x004015e0))
 }
 
 pub fn x004016ec() -> Cont {
@@ -1753,7 +1800,7 @@ pub fn x004016f4() -> Cont {
     // 00401723 cmp esi,ds:[433014h]
     sub(m.regs.esi, m.memory.read::<u32>(0x433014u32), &mut m.flags);
     // 00401729 jl short 004016F4h
-    jl(Cont(x0040172b), Cont(x004016f4))
+    jl(m, Cont(x0040172b), Cont(x004016f4))
 }
 
 pub fn x00401723() -> Cont {
@@ -1762,7 +1809,7 @@ pub fn x00401723() -> Cont {
     // 00401723 cmp esi,ds:[433014h]
     sub(m.regs.esi, m.memory.read::<u32>(0x433014u32), &mut m.flags);
     // 00401729 jl short 004016F4h
-    jl(Cont(x0040172b), Cont(x004016f4))
+    jl(m, Cont(x0040172b), Cont(x004016f4))
 }
 
 pub fn x0040172b() -> Cont {
@@ -1779,7 +1826,7 @@ pub fn x0040172b() -> Cont {
     // 00401737 cmp edx,ds:[433018h]
     sub(m.regs.edx, m.memory.read::<u32>(0x433018u32), &mut m.flags);
     // 0040173d jge near ptr 004015E0h
-    jge(Cont(x00401743), Cont(x004015e0))
+    jge(m, Cont(x00401743), Cont(x004015e0))
 }
 
 pub fn x00401737() -> Cont {
@@ -1788,7 +1835,7 @@ pub fn x00401737() -> Cont {
     // 00401737 cmp edx,ds:[433018h]
     sub(m.regs.edx, m.memory.read::<u32>(0x433018u32), &mut m.flags);
     // 0040173d jge near ptr 004015E0h
-    jge(Cont(x00401743), Cont(x004015e0))
+    jge(m, Cont(x00401743), Cont(x004015e0))
 }
 
 pub fn x00401743() -> Cont {
@@ -1828,7 +1875,7 @@ pub fn x00401747() -> Cont {
     // 00401778 dec ecx
     m.regs.ecx = dec(m.regs.ecx, &mut m.flags);
     // 00401779 jne short 0040176Eh
-    jne(Cont(x0040177b), Cont(x0040176e))
+    jne(m, Cont(x0040177b), Cont(x0040176e))
 }
 
 pub fn x00401768() -> Cont {
@@ -1847,7 +1894,7 @@ pub fn x00401768() -> Cont {
     // 00401778 dec ecx
     m.regs.ecx = dec(m.regs.ecx, &mut m.flags);
     // 00401779 jne short 0040176Eh
-    jne(Cont(x0040177b), Cont(x0040176e))
+    jne(m, Cont(x0040177b), Cont(x0040176e))
 }
 
 pub fn x0040176e() -> Cont {
@@ -1864,7 +1911,7 @@ pub fn x0040176e() -> Cont {
     // 00401778 dec ecx
     m.regs.ecx = dec(m.regs.ecx, &mut m.flags);
     // 00401779 jne short 0040176Eh
-    jne(Cont(x0040177b), Cont(x0040176e))
+    jne(m, Cont(x0040177b), Cont(x0040176e))
 }
 
 pub fn x0040177b() -> Cont {
@@ -1875,7 +1922,7 @@ pub fn x0040177b() -> Cont {
     // 0040177d dec ebx
     m.regs.ebx = dec(m.regs.ebx, &mut m.flags);
     // 0040177e jne short 00401768h
-    jne(Cont(x00401780), Cont(x00401768))
+    jne(m, Cont(x00401780), Cont(x00401768))
 }
 
 pub fn x00401780() -> Cont {
@@ -1893,14 +1940,14 @@ pub fn x00401785() -> Cont {
     // 0040178b cmp edx,10h
     sub(m.regs.edx, 0x10u32, &mut m.flags);
     // 0040178e jb short 004017AFh
-    jb(Cont(x00401790), Cont(x004017af))
+    jb(m, Cont(x00401790), Cont(x004017af))
 }
 
 pub fn x00401790() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00401790 jbe near ptr 0040168Eh
-    jbe(Cont(x00401796), Cont(x0040168e))
+    jbe(m, Cont(x00401796), Cont(x0040168e))
 }
 
 pub fn x00401796() -> Cont {
@@ -1909,14 +1956,14 @@ pub fn x00401796() -> Cont {
     // 00401796 cmp edx,18h
     sub(m.regs.edx, 0x18u32, &mut m.flags);
     // 00401799 jb near ptr 004015E0h
-    jb(Cont(x0040179f), Cont(x004015e0))
+    jb(m, Cont(x0040179f), Cont(x004015e0))
 }
 
 pub fn x0040179f() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 0040179f jbe near ptr 004016F0h
-    jbe(Cont(x004017a5), Cont(x004016f0))
+    jbe(m, Cont(x004017a5), Cont(x004016f0))
 }
 
 pub fn x004017a5() -> Cont {
@@ -1925,7 +1972,7 @@ pub fn x004017a5() -> Cont {
     // 004017a5 cmp edx,20h
     sub(m.regs.edx, 0x20u32, &mut m.flags);
     // 004017a8 je short 00401747h
-    je(Cont(x004017aa), Cont(x00401747))
+    je(m, Cont(x004017aa), Cont(x00401747))
 }
 
 pub fn x004017aa() -> Cont {
@@ -1941,7 +1988,7 @@ pub fn x004017af() -> Cont {
     // 004017af cmp edx,0Fh
     sub(m.regs.edx, 0xfu32, &mut m.flags);
     // 004017b2 je near ptr 0040162Ch
-    je(Cont(x004017b8), Cont(x0040162c))
+    je(m, Cont(x004017b8), Cont(x0040162c))
 }
 
 pub fn x004017b8() -> Cont {
@@ -2067,7 +2114,7 @@ pub fn x004017c1() -> Cont {
     // 00401822 cmp esi,ds:[433014h]
     sub(m.regs.esi, m.memory.read::<u32>(0x433014u32), &mut m.flags);
     // 00401828 jl short 004017C1h
-    jl(Cont(x0040182a), Cont(x004017c1))
+    jl(m, Cont(x0040182a), Cont(x004017c1))
 }
 
 pub fn x00401822() -> Cont {
@@ -2076,7 +2123,7 @@ pub fn x00401822() -> Cont {
     // 00401822 cmp esi,ds:[433014h]
     sub(m.regs.esi, m.memory.read::<u32>(0x433014u32), &mut m.flags);
     // 00401828 jl short 004017C1h
-    jl(Cont(x0040182a), Cont(x004017c1))
+    jl(m, Cont(x0040182a), Cont(x004017c1))
 }
 
 pub fn x0040182a() -> Cont {
@@ -2087,7 +2134,7 @@ pub fn x0040182a() -> Cont {
     // 0040182b cmp edx,ds:[433018h]
     sub(m.regs.edx, m.memory.read::<u32>(0x433018u32), &mut m.flags);
     // 00401831 jge near ptr 004015E0h
-    jge(Cont(x00401837), Cont(x004015e0))
+    jge(m, Cont(x00401837), Cont(x004015e0))
 }
 
 pub fn x0040182b() -> Cont {
@@ -2096,7 +2143,7 @@ pub fn x0040182b() -> Cont {
     // 0040182b cmp edx,ds:[433018h]
     sub(m.regs.edx, m.memory.read::<u32>(0x433018u32), &mut m.flags);
     // 00401831 jge near ptr 004015E0h
-    jge(Cont(x00401837), Cont(x004015e0))
+    jge(m, Cont(x00401837), Cont(x004015e0))
 }
 
 pub fn x00401837() -> Cont {
@@ -2230,7 +2277,7 @@ pub fn x00401852() -> Cont {
     // 004018af cmp esi,ds:[433014h]
     sub(m.regs.esi, m.memory.read::<u32>(0x433014u32), &mut m.flags);
     // 004018b5 jl short 00401852h
-    jl(Cont(x004018b7), Cont(x00401852))
+    jl(m, Cont(x004018b7), Cont(x00401852))
 }
 
 pub fn x004018af() -> Cont {
@@ -2239,7 +2286,7 @@ pub fn x004018af() -> Cont {
     // 004018af cmp esi,ds:[433014h]
     sub(m.regs.esi, m.memory.read::<u32>(0x433014u32), &mut m.flags);
     // 004018b5 jl short 00401852h
-    jl(Cont(x004018b7), Cont(x00401852))
+    jl(m, Cont(x004018b7), Cont(x00401852))
 }
 
 pub fn x004018b7() -> Cont {
@@ -2250,7 +2297,7 @@ pub fn x004018b7() -> Cont {
     // 004018b8 cmp edx,ds:[433018h]
     sub(m.regs.edx, m.memory.read::<u32>(0x433018u32), &mut m.flags);
     // 004018be jge near ptr 004015E0h
-    jge(Cont(x004018c4), Cont(x004015e0))
+    jge(m, Cont(x004018c4), Cont(x004015e0))
 }
 
 pub fn x004018b8() -> Cont {
@@ -2259,7 +2306,7 @@ pub fn x004018b8() -> Cont {
     // 004018b8 cmp edx,ds:[433018h]
     sub(m.regs.edx, m.memory.read::<u32>(0x433018u32), &mut m.flags);
     // 004018be jge near ptr 004015E0h
-    jge(Cont(x004018c4), Cont(x004015e0))
+    jge(m, Cont(x004018c4), Cont(x004015e0))
 }
 
 pub fn x004018c4() -> Cont {
@@ -2446,7 +2493,7 @@ pub fn x004018e2() -> Cont {
     // 0040197f cmp esi,ds:[433014h]
     sub(m.regs.esi, m.memory.read::<u32>(0x433014u32), &mut m.flags);
     // 00401985 jl near ptr 004018E2h
-    jl(Cont(x0040198b), Cont(x004018e2))
+    jl(m, Cont(x0040198b), Cont(x004018e2))
 }
 
 pub fn x0040197f() -> Cont {
@@ -2455,7 +2502,7 @@ pub fn x0040197f() -> Cont {
     // 0040197f cmp esi,ds:[433014h]
     sub(m.regs.esi, m.memory.read::<u32>(0x433014u32), &mut m.flags);
     // 00401985 jl near ptr 004018E2h
-    jl(Cont(x0040198b), Cont(x004018e2))
+    jl(m, Cont(x0040198b), Cont(x004018e2))
 }
 
 pub fn x0040198b() -> Cont {
@@ -2466,7 +2513,7 @@ pub fn x0040198b() -> Cont {
     // 0040198c cmp edx,ds:[433018h]
     sub(m.regs.edx, m.memory.read::<u32>(0x433018u32), &mut m.flags);
     // 00401992 jge near ptr 004015E0h
-    jge(Cont(x00401998), Cont(x004015e0))
+    jge(m, Cont(x00401998), Cont(x004015e0))
 }
 
 pub fn x0040198c() -> Cont {
@@ -2475,7 +2522,7 @@ pub fn x0040198c() -> Cont {
     // 0040198c cmp edx,ds:[433018h]
     sub(m.regs.edx, m.memory.read::<u32>(0x433018u32), &mut m.flags);
     // 00401992 jge near ptr 004015E0h
-    jge(Cont(x00401998), Cont(x004015e0))
+    jge(m, Cont(x00401998), Cont(x004015e0))
 }
 
 pub fn x00401998() -> Cont {
@@ -2593,7 +2640,7 @@ pub fn x004019b3() -> Cont {
     // 004019f2 cmp esi,ds:[433014h]
     sub(m.regs.esi, m.memory.read::<u32>(0x433014u32), &mut m.flags);
     // 004019f8 jl short 004019B3h
-    jl(Cont(x004019fa), Cont(x004019b3))
+    jl(m, Cont(x004019fa), Cont(x004019b3))
 }
 
 pub fn x004019f2() -> Cont {
@@ -2602,7 +2649,7 @@ pub fn x004019f2() -> Cont {
     // 004019f2 cmp esi,ds:[433014h]
     sub(m.regs.esi, m.memory.read::<u32>(0x433014u32), &mut m.flags);
     // 004019f8 jl short 004019B3h
-    jl(Cont(x004019fa), Cont(x004019b3))
+    jl(m, Cont(x004019fa), Cont(x004019b3))
 }
 
 pub fn x004019fa() -> Cont {
@@ -2613,7 +2660,7 @@ pub fn x004019fa() -> Cont {
     // 004019fb cmp edx,ds:[433018h]
     sub(m.regs.edx, m.memory.read::<u32>(0x433018u32), &mut m.flags);
     // 00401a01 jge near ptr 004015E0h
-    jge(Cont(x00401a07), Cont(x004015e0))
+    jge(m, Cont(x00401a07), Cont(x004015e0))
 }
 
 pub fn x004019fb() -> Cont {
@@ -2622,7 +2669,7 @@ pub fn x004019fb() -> Cont {
     // 004019fb cmp edx,ds:[433018h]
     sub(m.regs.edx, m.memory.read::<u32>(0x433018u32), &mut m.flags);
     // 00401a01 jge near ptr 004015E0h
-    jge(Cont(x00401a07), Cont(x004015e0))
+    jge(m, Cont(x00401a07), Cont(x004015e0))
 }
 
 pub fn x00401a07() -> Cont {
@@ -2655,14 +2702,14 @@ pub fn x00401a1e() -> Cont {
     // 00401a24 cmp edx,10h
     sub(m.regs.edx, 0x10u32, &mut m.flags);
     // 00401a27 jb short 00401A4Ch
-    jb(Cont(x00401a29), Cont(x00401a4c))
+    jb(m, Cont(x00401a29), Cont(x00401a4c))
 }
 
 pub fn x00401a29() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00401a29 jbe near ptr 0040184Eh
-    jbe(Cont(x00401a2f), Cont(x0040184e))
+    jbe(m, Cont(x00401a2f), Cont(x0040184e))
 }
 
 pub fn x00401a2f() -> Cont {
@@ -2671,14 +2718,14 @@ pub fn x00401a2f() -> Cont {
     // 00401a2f cmp edx,18h
     sub(m.regs.edx, 0x18u32, &mut m.flags);
     // 00401a32 jb near ptr 004015E0h
-    jb(Cont(x00401a38), Cont(x004015e0))
+    jb(m, Cont(x00401a38), Cont(x004015e0))
 }
 
 pub fn x00401a38() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00401a38 jbe near ptr 004018DBh
-    jbe(Cont(x00401a3e), Cont(x004018db))
+    jbe(m, Cont(x00401a3e), Cont(x004018db))
 }
 
 pub fn x00401a3e() -> Cont {
@@ -2687,7 +2734,7 @@ pub fn x00401a3e() -> Cont {
     // 00401a3e cmp edx,20h
     sub(m.regs.edx, 0x20u32, &mut m.flags);
     // 00401a41 je near ptr 004019AFh
-    je(Cont(x00401a47), Cont(x004019af))
+    je(m, Cont(x00401a47), Cont(x004019af))
 }
 
 pub fn x00401a47() -> Cont {
@@ -2703,7 +2750,7 @@ pub fn x00401a4c() -> Cont {
     // 00401a4c cmp edx,0Fh
     sub(m.regs.edx, 0xfu32, &mut m.flags);
     // 00401a4f je near ptr 004017BDh
-    je(Cont(x00401a55), Cont(x004017bd))
+    je(m, Cont(x00401a55), Cont(x004017bd))
 }
 
 pub fn x00401a55() -> Cont {
@@ -2719,143 +2766,143 @@ pub fn x00401a5a() -> Cont {
     // 00401a5a mov eax,ds:[433020h]
     m.regs.eax = m.memory.read::<u32>(0x433020u32);
     // 00401a5f ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x00401a60() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00401a60 push ebp
-    push(m.regs.ebp);
+    push(m, m.regs.ebp);
     // 00401a61 mov ebp,esp
     m.regs.ebp = m.regs.esp;
     // 00401a63 push 40h
-    push(0x40u32);
+    push(m, 0x40u32);
     // 00401a65 push 1000h
-    push(0x1000u32);
+    push(m, 0x1000u32);
     // 00401a6a push dword ptr [ebp+8]
-    push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x8u32)));
+    push(m, m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x8u32)));
     // 00401a6d push 0
-    push(0x0u32);
+    push(m, 0x0u32);
     // 00401a6f call dword ptr cs:[40B168h]
-    call(0x401a76, Cont(kernel32::VirtualAlloc_stdcall))
+    call(m, 0x401a76, Cont(kernel32::VirtualAlloc_stdcall))
 }
 
 pub fn x00401a76() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00401a76 pop ebp
-    m.regs.ebp = pop();
+    m.regs.ebp = pop(m);
     // 00401a77 ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x00401a78() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00401a78 push ebp
-    push(m.regs.ebp);
+    push(m, m.regs.ebp);
     // 00401a79 mov ebp,esp
     m.regs.ebp = m.regs.esp;
     // 00401a7b push 8000h
-    push(0x8000u32);
+    push(m, 0x8000u32);
     // 00401a80 push 0
-    push(0x0u32);
+    push(m, 0x0u32);
     // 00401a82 push dword ptr [ebp+8]
-    push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x8u32)));
+    push(m, m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x8u32)));
     // 00401a85 call dword ptr cs:[40B16Ch]
-    call(0x401a8c, Cont(kernel32::VirtualFree_stdcall))
+    call(m, 0x401a8c, Cont(kernel32::VirtualFree_stdcall))
 }
 
 pub fn x00401a8c() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00401a8c pop ebp
-    m.regs.ebp = pop();
+    m.regs.ebp = pop(m);
     // 00401a8d ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x00401af2() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00401af2 push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 00401af3 push edx
-    push(m.regs.edx);
+    push(m, m.regs.edx);
     // 00401af4 push 0
-    push(0x0u32);
+    push(m, 0x0u32);
     // 00401af6 mov eax,ds:[433E10h]
     m.regs.eax = m.memory.read::<u32>(0x433e10u32);
     // 00401afb push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 00401afc push 0
-    push(0x0u32);
+    push(m, 0x0u32);
     // 00401afe push 0
-    push(0x0u32);
+    push(m, 0x0u32);
     // 00401b00 push 0
-    push(0x0u32);
+    push(m, 0x0u32);
     // 00401b02 push 0
-    push(0x0u32);
+    push(m, 0x0u32);
     // 00401b04 push 0
-    push(0x0u32);
+    push(m, 0x0u32);
     // 00401b06 push 0
-    push(0x0u32);
+    push(m, 0x0u32);
     // 00401b08 push 0CF0000h
-    push(0xcf0000u32);
+    push(m, 0xcf0000u32);
     // 00401b0d push 40C730h
-    push(0x40c730u32);
+    push(m, 0x40c730u32);
     // 00401b12 push 40C730h
-    push(0x40c730u32);
+    push(m, 0x40c730u32);
     // 00401b17 push 0
-    push(0x0u32);
+    push(m, 0x0u32);
     // 00401b19 mov ds:[433F88h],eax
     m.memory.write::<u32>(0x433f88u32, m.regs.eax);
     // 00401b1e call dword ptr cs:[40B10Ch]
-    call(0x401b25, Cont(user32::CreateWindowExA_stdcall))
+    call(m, 0x401b25, Cont(user32::CreateWindowExA_stdcall))
 }
 
 pub fn x00401b25() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00401b25 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 00401b26 mov ds:[40C73Bh],eax
     m.memory.write::<u32>(0x40c73bu32, m.regs.eax);
     // 00401b2b call dword ptr cs:[40B138h]
-    call(0x401b32, Cont(user32::UpdateWindow_stdcall))
+    call(m, 0x401b32, Cont(user32::UpdateWindow_stdcall))
 }
 
 pub fn x00401b32() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00401b32 pop edx
-    m.regs.edx = pop();
+    m.regs.edx = pop(m);
     // 00401b33 pop ecx
-    m.regs.ecx = pop();
+    m.regs.ecx = pop(m);
     // 00401b34 ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x00401b35() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00401b35 push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 00401b36 push edx
-    push(m.regs.edx);
+    push(m, m.regs.edx);
     // 00401b37 mov dword ptr ds:[433E00h],3
     m.memory.write::<u32>(0x433e00u32, 0x3u32);
     // 00401b41 mov dword ptr ds:[433E04h],401A8Eh
     m.memory.write::<u32>(0x433e04u32, 0x401a8eu32);
     // 00401b4b push 0
-    push(0x0u32);
+    push(m, 0x0u32);
     // 00401b4d mov dword ptr ds:[433E08h],0
     m.memory.write::<u32>(0x433e08u32, 0x0u32);
     // 00401b57 mov dword ptr ds:[433E0Ch],0
     m.memory.write::<u32>(0x433e0cu32, 0x0u32);
     // 00401b61 call dword ptr cs:[40B154h]
-    call(0x401b68, Cont(kernel32::GetModuleHandleA_stdcall))
+    call(m, 0x401b68, Cont(kernel32::GetModuleHandleA_stdcall))
 }
 
 pub fn x00401b68() -> Cont {
@@ -2870,56 +2917,56 @@ pub fn x00401b68() -> Cont {
     // 00401b86 mov dword ptr ds:[433E20h],40C730h
     m.memory.write::<u32>(0x433e20u32, 0x40c730u32);
     // 00401b90 push 433E00h
-    push(0x433e00u32);
+    push(m, 0x433e00u32);
     // 00401b95 mov dword ptr ds:[433E24h],40C730h
     m.memory.write::<u32>(0x433e24u32, 0x40c730u32);
     // 00401b9f mov ds:[433E10h],eax
     m.memory.write::<u32>(0x433e10u32, m.regs.eax);
     // 00401ba4 call dword ptr cs:[40B12Ch]
-    call(0x401bab, Cont(user32::RegisterClassA_stdcall))
+    call(m, 0x401bab, Cont(user32::RegisterClassA_stdcall))
 }
 
 pub fn x00401bab() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00401bab call 00401AF2h
-    call(0x401bb0, Cont(x00401af2))
+    call(m, 0x401bb0, Cont(x00401af2))
 }
 
 pub fn x00401bb0() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00401bb0 pop edx
-    m.regs.edx = pop();
+    m.regs.edx = pop(m);
     // 00401bb1 pop ecx
-    m.regs.ecx = pop();
+    m.regs.ecx = pop(m);
     // 00401bb2 ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x00401bb3() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00401bb3 push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 00401bb4 push edx
-    push(m.regs.edx);
+    push(m, m.regs.edx);
     // 00401bb5 enter 1Ch,0
-    enter(0x1cu16, 0);
+    enter(m, 0x1cu16, 0);
     // 00401bb9 push 0
-    push(0x0u32);
+    push(m, 0x0u32);
     // 00401bbb push 0
-    push(0x0u32);
+    push(m, 0x0u32);
     // 00401bbd push 0
-    push(0x0u32);
+    push(m, 0x0u32);
     // 00401bbf push 0
-    push(0x0u32);
+    push(m, 0x0u32);
     // 00401bc1 lea eax,[ebp-1Ch]
     m.regs.eax = m.regs.ebp.wrapping_add(0xffffffe4u32);
     // 00401bc4 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 00401bc5 call dword ptr cs:[40B128h]
-    call(0x401bcc, Cont(user32::PeekMessageA_stdcall))
+    call(m, 0x401bcc, Cont(user32::PeekMessageA_stdcall))
 }
 
 pub fn x00401bcc() -> Cont {
@@ -2928,24 +2975,24 @@ pub fn x00401bcc() -> Cont {
     // 00401bcc test eax,eax
     and(m.regs.eax, m.regs.eax, &mut m.flags);
     // 00401bce je short 00401BFBh
-    je(Cont(x00401bd0), Cont(x00401bfb))
+    je(m, Cont(x00401bd0), Cont(x00401bfb))
 }
 
 pub fn x00401bd0() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00401bd0 push 0
-    push(0x0u32);
+    push(m, 0x0u32);
     // 00401bd2 push 0
-    push(0x0u32);
+    push(m, 0x0u32);
     // 00401bd4 push dword ptr ds:[40C73Bh]
-    push(m.memory.read::<u32>(0x40c73bu32));
+    push(m, m.memory.read::<u32>(0x40c73bu32));
     // 00401bda lea eax,[ebp-1Ch]
     m.regs.eax = m.regs.ebp.wrapping_add(0xffffffe4u32);
     // 00401bdd push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 00401bde call dword ptr cs:[40B120h]
-    call(0x401be5, Cont(user32::GetMessageA_stdcall))
+    call(m, 0x401be5, Cont(user32::GetMessageA_stdcall))
 }
 
 pub fn x00401be5() -> Cont {
@@ -2954,9 +3001,9 @@ pub fn x00401be5() -> Cont {
     // 00401be5 lea eax,[ebp-1Ch]
     m.regs.eax = m.regs.ebp.wrapping_add(0xffffffe4u32);
     // 00401be8 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 00401be9 call dword ptr cs:[40B134h]
-    call(0x401bf0, Cont(user32::TranslateMessage_stdcall))
+    call(m, 0x401bf0, Cont(user32::TranslateMessage_stdcall))
 }
 
 pub fn x00401bf0() -> Cont {
@@ -2965,39 +3012,39 @@ pub fn x00401bf0() -> Cont {
     // 00401bf0 lea eax,[ebp-1Ch]
     m.regs.eax = m.regs.ebp.wrapping_add(0xffffffe4u32);
     // 00401bf3 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 00401bf4 call dword ptr cs:[40B118h]
-    call(0x401bfb, Cont(user32::DispatchMessageA_stdcall))
+    call(m, 0x401bfb, Cont(user32::DispatchMessageA_stdcall))
 }
 
 pub fn x00401bfb() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00401bfb leave
-    leave();
+    leave(m);
     // 00401bfc pop edx
-    m.regs.edx = pop();
+    m.regs.edx = pop(m);
     // 00401bfd pop ecx
-    m.regs.ecx = pop();
+    m.regs.ecx = pop(m);
     // 00401bfe ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x00401cc9() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00401cc9 push ebx
-    push(m.regs.ebx);
+    push(m, m.regs.ebx);
     // 00401cca push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 00401ccb push esi
-    push(m.regs.esi);
+    push(m, m.regs.esi);
     // 00401ccc mov ebx,eax
     m.regs.ebx = m.regs.eax;
     // 00401cce mov esi,edx
     m.regs.esi = m.regs.edx;
     // 00401cd0 call dword ptr cs:[40B158h]
-    call(0x401cd7, Cont(kernel32::GetTickCount_stdcall))
+    call(m, 0x401cd7, Cont(kernel32::GetTickCount_stdcall))
 }
 
 pub fn x00401cd7() -> Cont {
@@ -3010,19 +3057,19 @@ pub fn x00401cd7() -> Cont {
     // 00401cde shl eax,10h
     m.regs.eax = shl(m.regs.eax, 0x10u8, &mut m.flags);
     // 00401ce1 push 1
-    push(0x1u32);
+    push(m, 0x1u32);
     // 00401ce3 or eax,esi
     m.regs.eax = or(m.regs.eax, m.regs.esi, &mut m.flags);
     // 00401ce5 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 00401ce6 push 401BFFh
-    push(0x401bffu32);
+    push(m, 0x401bffu32);
     // 00401ceb push esi
-    push(m.regs.esi);
+    push(m, m.regs.esi);
     // 00401cec push ebx
-    push(m.regs.ebx);
+    push(m, m.regs.ebx);
     // 00401ced call dword ptr cs:[40B100h]
-    call(0x401cf4, Cont(winmm::timeSetEvent_stdcall))
+    call(m, 0x401cf4, Cont(winmm::timeSetEvent_stdcall))
 }
 
 pub fn x00401cf4() -> Cont {
@@ -3031,28 +3078,28 @@ pub fn x00401cf4() -> Cont {
     // 00401cf4 mov ds:[433F80h],eax
     m.memory.write::<u32>(0x433f80u32, m.regs.eax);
     // 00401cf9 pop esi
-    m.regs.esi = pop();
+    m.regs.esi = pop(m);
     // 00401cfa pop ecx
-    m.regs.ecx = pop();
+    m.regs.ecx = pop(m);
     // 00401cfb pop ebx
-    m.regs.ebx = pop();
+    m.regs.ebx = pop(m);
     // 00401cfc ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x00401d0f() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00401d0f push ebx
-    push(m.regs.ebx);
+    push(m, m.regs.ebx);
     // 00401d10 push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 00401d11 push edx
-    push(m.regs.edx);
+    push(m, m.regs.edx);
     // 00401d12 push esi
-    push(m.regs.esi);
+    push(m, m.regs.esi);
     // 00401d13 call dword ptr cs:[40B158h]
-    call(0x401d1a, Cont(kernel32::GetTickCount_stdcall))
+    call(m, 0x401d1a, Cont(kernel32::GetTickCount_stdcall))
 }
 
 pub fn x00401d1a() -> Cont {
@@ -3085,7 +3132,7 @@ pub fn x00401d2f() -> Cont {
     // 00401d3a cmp edx,28h
     sub(m.regs.edx, 0x28u32, &mut m.flags);
     // 00401d3d jge near ptr 00401DE6h
-    jge(Cont(x00401d43), Cont(x00401de6))
+    jge(m, Cont(x00401d43), Cont(x00401de6))
 }
 
 pub fn x00401d39() -> Cont {
@@ -3096,7 +3143,7 @@ pub fn x00401d39() -> Cont {
     // 00401d3a cmp edx,28h
     sub(m.regs.edx, 0x28u32, &mut m.flags);
     // 00401d3d jge near ptr 00401DE6h
-    jge(Cont(x00401d43), Cont(x00401de6))
+    jge(m, Cont(x00401d43), Cont(x00401de6))
 }
 
 pub fn x00401d43() -> Cont {
@@ -3105,7 +3152,7 @@ pub fn x00401d43() -> Cont {
     // 00401d43 test esi,esi
     and(m.regs.esi, m.regs.esi, &mut m.flags);
     // 00401d45 jne short 00401D8Bh
-    jne(Cont(x00401d47), Cont(x00401d8b))
+    jne(m, Cont(x00401d47), Cont(x00401d8b))
 }
 
 pub fn x00401d47() -> Cont {
@@ -3120,7 +3167,7 @@ pub fn x00401d47() -> Cont {
         &mut m.flags,
     );
     // 00401d51 jne short 00401D8Bh
-    jne(Cont(x00401d53), Cont(x00401d8b))
+    jne(m, Cont(x00401d53), Cont(x00401d8b))
 }
 
 pub fn x00401d53() -> Cont {
@@ -3133,7 +3180,7 @@ pub fn x00401d53() -> Cont {
     // 00401d5f cmp ecx,ds:[433F84h]
     sub(m.regs.ecx, m.memory.read::<u32>(0x433f84u32), &mut m.flags);
     // 00401d65 jge short 00401D8Bh
-    jge(Cont(x00401d67), Cont(x00401d8b))
+    jge(m, Cont(x00401d67), Cont(x00401d8b))
 }
 
 pub fn x00401d67() -> Cont {
@@ -3161,7 +3208,7 @@ pub fn x00401d67() -> Cont {
         &mut m.flags,
     );
     // 00401d97 jne short 00401D39h
-    jne(Cont(x00401d99), Cont(x00401d39))
+    jne(m, Cont(x00401d99), Cont(x00401d39))
 }
 
 pub fn x00401d8b() -> Cont {
@@ -3178,7 +3225,7 @@ pub fn x00401d8b() -> Cont {
         &mut m.flags,
     );
     // 00401d97 jne short 00401D39h
-    jne(Cont(x00401d99), Cont(x00401d39))
+    jne(m, Cont(x00401d99), Cont(x00401d39))
 }
 
 pub fn x00401d99() -> Cont {
@@ -3191,7 +3238,7 @@ pub fn x00401d99() -> Cont {
     // 00401da5 cmp ecx,ds:[433F84h]
     sub(m.regs.ecx, m.memory.read::<u32>(0x433f84u32), &mut m.flags);
     // 00401dab jge short 00401D39h
-    jge(Cont(x00401dad), Cont(x00401d39))
+    jge(m, Cont(x00401dad), Cont(x00401d39))
 }
 
 pub fn x00401dad() -> Cont {
@@ -3204,7 +3251,7 @@ pub fn x00401dad() -> Cont {
         &mut m.flags,
     );
     // 00401db3 jge near ptr 00401D2Fh
-    jge(Cont(x00401db9), Cont(x00401d2f))
+    jge(m, Cont(x00401db9), Cont(x00401d2f))
 }
 
 pub fn x00401db9() -> Cont {
@@ -3231,38 +3278,38 @@ pub fn x00401de6() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00401de6 pop esi
-    m.regs.esi = pop();
+    m.regs.esi = pop(m);
     // 00401de7 pop edx
-    m.regs.edx = pop();
+    m.regs.edx = pop(m);
     // 00401de8 pop ecx
-    m.regs.ecx = pop();
+    m.regs.ecx = pop(m);
     // 00401de9 pop ebx
-    m.regs.ebx = pop();
+    m.regs.ebx = pop(m);
     // 00401dea ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x00401deb() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00401deb push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 00401dec push esi
-    push(m.regs.esi);
+    push(m, m.regs.esi);
     // 00401ded push edi
-    push(m.regs.edi);
+    push(m, m.regs.edi);
     // 00401dee enter 20h,0
-    enter(0x20u16, 0);
+    enter(m, 0x20u16, 0);
     // 00401df2 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 00401df3 push edx
-    push(m.regs.edx);
+    push(m, m.regs.edx);
     // 00401df4 push ebx
-    push(m.regs.ebx);
+    push(m, m.regs.ebx);
     // 00401df5 cmp eax,1
     sub(m.regs.eax, 0x1u32, &mut m.flags);
     // 00401df8 jge short 00401E15h
-    jge(Cont(x00401dfa), Cont(x00401e15))
+    jge(m, Cont(x00401dfa), Cont(x00401e15))
 }
 
 pub fn x00401dfa() -> Cont {
@@ -3285,15 +3332,15 @@ pub fn x00401dfa() -> Cont {
     // 00401e0e rep movsb
     rep(m, Rep::REP, movsb);
     // 00401e10 leave
-    leave();
+    leave(m);
     // 00401e11 pop edi
-    m.regs.edi = pop();
+    m.regs.edi = pop(m);
     // 00401e12 pop esi
-    m.regs.esi = pop();
+    m.regs.esi = pop(m);
     // 00401e13 pop ecx
-    m.regs.ecx = pop();
+    m.regs.ecx = pop(m);
     // 00401e14 ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x00401e15() -> Cont {
@@ -3323,7 +3370,7 @@ pub fn x00401e15() -> Cont {
     // 00401e2d cmp eax,ds:[40C728h]
     sub(m.regs.eax, m.memory.read::<u32>(0x40c728u32), &mut m.flags);
     // 00401e33 jge near ptr 00401FF1h
-    jge(Cont(x00401e39), Cont(x00401ff1))
+    jge(m, Cont(x00401e39), Cont(x00401ff1))
 }
 
 pub fn x00401e2a() -> Cont {
@@ -3334,7 +3381,7 @@ pub fn x00401e2a() -> Cont {
     // 00401e2d cmp eax,ds:[40C728h]
     sub(m.regs.eax, m.memory.read::<u32>(0x40c728u32), &mut m.flags);
     // 00401e33 jge near ptr 00401FF1h
-    jge(Cont(x00401e39), Cont(x00401ff1))
+    jge(m, Cont(x00401e39), Cont(x00401ff1))
 }
 
 pub fn x00401e39() -> Cont {
@@ -3369,7 +3416,7 @@ pub fn x00401e39() -> Cont {
         &mut m.flags,
     );
     // 00401e54 jge short 00401E8Fh
-    jge(Cont(x00401e56), Cont(x00401e8f))
+    jge(m, Cont(x00401e56), Cont(x00401e8f))
 }
 
 pub fn x00401e4e() -> Cont {
@@ -3384,7 +3431,7 @@ pub fn x00401e4e() -> Cont {
         &mut m.flags,
     );
     // 00401e54 jge short 00401E8Fh
-    jge(Cont(x00401e56), Cont(x00401e8f))
+    jge(m, Cont(x00401e56), Cont(x00401e8f))
 }
 
 pub fn x00401e56() -> Cont {
@@ -3517,7 +3564,7 @@ pub fn x00401e8f() -> Cont {
     // 00401edd cmp esi,ds:[40C724h]
     sub(m.regs.esi, m.memory.read::<u32>(0x40c724u32), &mut m.flags);
     // 00401ee3 jge near ptr 00401FE9h
-    jge(Cont(x00401ee9), Cont(x00401fe9))
+    jge(m, Cont(x00401ee9), Cont(x00401fe9))
 }
 
 pub fn x00401eda() -> Cont {
@@ -3528,7 +3575,7 @@ pub fn x00401eda() -> Cont {
     // 00401edd cmp esi,ds:[40C724h]
     sub(m.regs.esi, m.memory.read::<u32>(0x40c724u32), &mut m.flags);
     // 00401ee3 jge near ptr 00401FE9h
-    jge(Cont(x00401ee9), Cont(x00401fe9))
+    jge(m, Cont(x00401ee9), Cont(x00401fe9))
 }
 
 pub fn x00401ee9() -> Cont {
@@ -3543,7 +3590,7 @@ pub fn x00401ee9() -> Cont {
     // 00401eec test esi,esi
     and(m.regs.esi, m.regs.esi, &mut m.flags);
     // 00401eee jl short 00401EF5h
-    jl(Cont(x00401ef0), Cont(x00401ef5))
+    jl(m, Cont(x00401ef0), Cont(x00401ef5))
 }
 
 pub fn x00401ef0() -> Cont {
@@ -3611,7 +3658,7 @@ pub fn x00401ef5() -> Cont {
     // 00401f2f cmp esi,ds:[40C724h]
     sub(m.regs.esi, m.memory.read::<u32>(0x40c724u32), &mut m.flags);
     // 00401f35 jge short 00401F44h
-    jge(Cont(x00401f37), Cont(x00401f44))
+    jge(m, Cont(x00401f37), Cont(x00401f44))
 }
 
 pub fn x00401ef8() -> Cont {
@@ -3664,7 +3711,7 @@ pub fn x00401ef8() -> Cont {
     // 00401f2f cmp esi,ds:[40C724h]
     sub(m.regs.esi, m.memory.read::<u32>(0x40c724u32), &mut m.flags);
     // 00401f35 jge short 00401F44h
-    jge(Cont(x00401f37), Cont(x00401f44))
+    jge(m, Cont(x00401f37), Cont(x00401f44))
 }
 
 pub fn x00401f37() -> Cont {
@@ -3973,38 +4020,38 @@ pub fn x00401ff1() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00401ff1 leave
-    leave();
+    leave(m);
     // 00401ff2 pop edi
-    m.regs.edi = pop();
+    m.regs.edi = pop(m);
     // 00401ff3 pop esi
-    m.regs.esi = pop();
+    m.regs.esi = pop(m);
     // 00401ff4 pop ecx
-    m.regs.ecx = pop();
+    m.regs.ecx = pop(m);
     // 00401ff5 ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x00401ff6() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00401ff6 push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 00401ff7 push esi
-    push(m.regs.esi);
+    push(m, m.regs.esi);
     // 00401ff8 push edi
-    push(m.regs.edi);
+    push(m, m.regs.edi);
     // 00401ff9 enter 1Ch,0
-    enter(0x1cu16, 0);
+    enter(m, 0x1cu16, 0);
     // 00401ffd push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 00401ffe push edx
-    push(m.regs.edx);
+    push(m, m.regs.edx);
     // 00401fff push ebx
-    push(m.regs.ebx);
+    push(m, m.regs.ebx);
     // 00402000 cmp eax,1
     sub(m.regs.eax, 0x1u32, &mut m.flags);
     // 00402003 jge short 00402020h
-    jge(Cont(x00402005), Cont(x00402020))
+    jge(m, Cont(x00402005), Cont(x00402020))
 }
 
 pub fn x00402005() -> Cont {
@@ -4027,15 +4074,15 @@ pub fn x00402005() -> Cont {
     // 00402019 rep movsb
     rep(m, Rep::REP, movsb);
     // 0040201b leave
-    leave();
+    leave(m);
     // 0040201c pop edi
-    m.regs.edi = pop();
+    m.regs.edi = pop(m);
     // 0040201d pop esi
-    m.regs.esi = pop();
+    m.regs.esi = pop(m);
     // 0040201e pop ecx
-    m.regs.ecx = pop();
+    m.regs.ecx = pop(m);
     // 0040201f ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x00402020() -> Cont {
@@ -4065,7 +4112,7 @@ pub fn x00402020() -> Cont {
     // 00402038 cmp eax,ds:[40C724h]
     sub(m.regs.eax, m.memory.read::<u32>(0x40c724u32), &mut m.flags);
     // 0040203e jge near ptr 004021FAh
-    jge(Cont(x00402044), Cont(x004021fa))
+    jge(m, Cont(x00402044), Cont(x004021fa))
 }
 
 pub fn x00402035() -> Cont {
@@ -4076,7 +4123,7 @@ pub fn x00402035() -> Cont {
     // 00402038 cmp eax,ds:[40C724h]
     sub(m.regs.eax, m.memory.read::<u32>(0x40c724u32), &mut m.flags);
     // 0040203e jge near ptr 004021FAh
-    jge(Cont(x00402044), Cont(x004021fa))
+    jge(m, Cont(x00402044), Cont(x004021fa))
 }
 
 pub fn x00402044() -> Cont {
@@ -4102,7 +4149,7 @@ pub fn x00402044() -> Cont {
         &mut m.flags,
     );
     // 00402055 jge short 00402097h
-    jge(Cont(x00402057), Cont(x00402097))
+    jge(m, Cont(x00402057), Cont(x00402097))
 }
 
 pub fn x0040204f() -> Cont {
@@ -4117,7 +4164,7 @@ pub fn x0040204f() -> Cont {
         &mut m.flags,
     );
     // 00402055 jge short 00402097h
-    jge(Cont(x00402057), Cont(x00402097))
+    jge(m, Cont(x00402057), Cont(x00402097))
 }
 
 pub fn x00402057() -> Cont {
@@ -4256,7 +4303,7 @@ pub fn x00402097() -> Cont {
     // 004020e5 cmp esi,ds:[40C728h]
     sub(m.regs.esi, m.memory.read::<u32>(0x40c728u32), &mut m.flags);
     // 004020eb jge near ptr 004021F2h
-    jge(Cont(x004020f1), Cont(x004021f2))
+    jge(m, Cont(x004020f1), Cont(x004021f2))
 }
 
 pub fn x004020e2() -> Cont {
@@ -4267,7 +4314,7 @@ pub fn x004020e2() -> Cont {
     // 004020e5 cmp esi,ds:[40C728h]
     sub(m.regs.esi, m.memory.read::<u32>(0x40c728u32), &mut m.flags);
     // 004020eb jge near ptr 004021F2h
-    jge(Cont(x004020f1), Cont(x004021f2))
+    jge(m, Cont(x004020f1), Cont(x004021f2))
 }
 
 pub fn x004020f1() -> Cont {
@@ -4282,7 +4329,7 @@ pub fn x004020f1() -> Cont {
     // 004020f4 test esi,esi
     and(m.regs.esi, m.regs.esi, &mut m.flags);
     // 004020f6 jl short 00402104h
-    jl(Cont(x004020f8), Cont(x00402104))
+    jl(m, Cont(x004020f8), Cont(x00402104))
 }
 
 pub fn x004020f8() -> Cont {
@@ -4356,7 +4403,7 @@ pub fn x00402104() -> Cont {
     // 0040213e cmp esi,ds:[40C728h]
     sub(m.regs.esi, m.memory.read::<u32>(0x40c728u32), &mut m.flags);
     // 00402144 jl short 0040214Dh
-    jl(Cont(x00402146), Cont(x0040214d))
+    jl(m, Cont(x00402146), Cont(x0040214d))
 }
 
 pub fn x00402107() -> Cont {
@@ -4409,7 +4456,7 @@ pub fn x00402107() -> Cont {
     // 0040213e cmp esi,ds:[40C728h]
     sub(m.regs.esi, m.memory.read::<u32>(0x40c728u32), &mut m.flags);
     // 00402144 jl short 0040214Dh
-    jl(Cont(x00402146), Cont(x0040214d))
+    jl(m, Cont(x00402146), Cont(x0040214d))
 }
 
 pub fn x00402146() -> Cont {
@@ -4725,38 +4772,38 @@ pub fn x004021fa() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004021fa leave
-    leave();
+    leave(m);
     // 004021fb pop edi
-    m.regs.edi = pop();
+    m.regs.edi = pop(m);
     // 004021fc pop esi
-    m.regs.esi = pop();
+    m.regs.esi = pop(m);
     // 004021fd pop ecx
-    m.regs.ecx = pop();
+    m.regs.ecx = pop(m);
     // 004021fe ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x004021ff() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004021ff push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 00402200 push esi
-    push(m.regs.esi);
+    push(m, m.regs.esi);
     // 00402201 push edi
-    push(m.regs.edi);
+    push(m, m.regs.edi);
     // 00402202 enter 24h,0
-    enter(0x24u16, 0);
+    enter(m, 0x24u16, 0);
     // 00402206 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 00402207 push edx
-    push(m.regs.edx);
+    push(m, m.regs.edx);
     // 00402208 push ebx
-    push(m.regs.ebx);
+    push(m, m.regs.ebx);
     // 00402209 cmp eax,1
     sub(m.regs.eax, 0x1u32, &mut m.flags);
     // 0040220c jge short 00402229h
-    jge(Cont(x0040220e), Cont(x00402229))
+    jge(m, Cont(x0040220e), Cont(x00402229))
 }
 
 pub fn x0040220e() -> Cont {
@@ -4779,15 +4826,15 @@ pub fn x0040220e() -> Cont {
     // 00402222 rep movsb
     rep(m, Rep::REP, movsb);
     // 00402224 leave
-    leave();
+    leave(m);
     // 00402225 pop edi
-    m.regs.edi = pop();
+    m.regs.edi = pop(m);
     // 00402226 pop esi
-    m.regs.esi = pop();
+    m.regs.esi = pop(m);
     // 00402227 pop ecx
-    m.regs.ecx = pop();
+    m.regs.ecx = pop(m);
     // 00402228 ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x00402229() -> Cont {
@@ -4814,7 +4861,7 @@ pub fn x00402229() -> Cont {
     // 00402239 cmp ecx,ds:[40C728h]
     sub(m.regs.ecx, m.memory.read::<u32>(0x40c728u32), &mut m.flags);
     // 0040223f jge near ptr 00402444h
-    jge(Cont(x00402245), Cont(x00402444))
+    jge(m, Cont(x00402245), Cont(x00402444))
 }
 
 pub fn x00402239() -> Cont {
@@ -4823,7 +4870,7 @@ pub fn x00402239() -> Cont {
     // 00402239 cmp ecx,ds:[40C728h]
     sub(m.regs.ecx, m.memory.read::<u32>(0x40c728u32), &mut m.flags);
     // 0040223f jge near ptr 00402444h
-    jge(Cont(x00402245), Cont(x00402444))
+    jge(m, Cont(x00402245), Cont(x00402444))
 }
 
 pub fn x00402245() -> Cont {
@@ -4857,7 +4904,7 @@ pub fn x00402245() -> Cont {
         &mut m.flags,
     );
     // 00402262 jge short 004022C4h
-    jge(Cont(x00402264), Cont(x004022c4))
+    jge(m, Cont(x00402264), Cont(x004022c4))
 }
 
 pub fn x0040225c() -> Cont {
@@ -4872,7 +4919,7 @@ pub fn x0040225c() -> Cont {
         &mut m.flags,
     );
     // 00402262 jge short 004022C4h
-    jge(Cont(x00402264), Cont(x004022c4))
+    jge(m, Cont(x00402264), Cont(x004022c4))
 }
 
 pub fn x00402264() -> Cont {
@@ -4883,7 +4930,7 @@ pub fn x00402264() -> Cont {
     // 00402266 cmp eax,ds:[40C728h]
     sub(m.regs.eax, m.memory.read::<u32>(0x40c728u32), &mut m.flags);
     // 0040226c jge short 0040227Ah
-    jge(Cont(x0040226e), Cont(x0040227a))
+    jge(m, Cont(x0040226e), Cont(x0040227a))
 }
 
 pub fn x0040226e() -> Cont {
@@ -5123,7 +5170,7 @@ pub fn x004022c4() -> Cont {
         &mut m.flags,
     );
     // 0040231a jle near ptr 0040243Eh
-    jle(Cont(x00402320), Cont(x0040243e))
+    jle(m, Cont(x00402320), Cont(x0040243e))
 }
 
 pub fn x00402310() -> Cont {
@@ -5140,7 +5187,7 @@ pub fn x00402310() -> Cont {
         &mut m.flags,
     );
     // 0040231a jle near ptr 0040243Eh
-    jle(Cont(x00402320), Cont(x0040243e))
+    jle(m, Cont(x00402320), Cont(x0040243e))
 }
 
 pub fn x00402320() -> Cont {
@@ -5157,7 +5204,7 @@ pub fn x00402320() -> Cont {
     // 00402326 test eax,eax
     and(m.regs.eax, m.regs.eax, &mut m.flags);
     // 00402328 jl short 00402338h
-    jl(Cont(x0040232a), Cont(x00402338))
+    jl(m, Cont(x0040232a), Cont(x00402338))
 }
 
 pub fn x0040232a() -> Cont {
@@ -5238,7 +5285,7 @@ pub fn x00402338() -> Cont {
     // 00402375 cmp eax,ds:[40C728h]
     sub(m.regs.eax, m.memory.read::<u32>(0x40c728u32), &mut m.flags);
     // 0040237b jge short 0040238Fh
-    jge(Cont(x0040237d), Cont(x0040238f))
+    jge(m, Cont(x0040237d), Cont(x0040238f))
 }
 
 pub fn x0040233b() -> Cont {
@@ -5300,7 +5347,7 @@ pub fn x0040233b() -> Cont {
     // 00402375 cmp eax,ds:[40C728h]
     sub(m.regs.eax, m.memory.read::<u32>(0x40c728u32), &mut m.flags);
     // 0040237b jge short 0040238Fh
-    jge(Cont(x0040237d), Cont(x0040238f))
+    jge(m, Cont(x0040237d), Cont(x0040238f))
 }
 
 pub fn x0040237d() -> Cont {
@@ -5664,7 +5711,7 @@ pub fn x00402444() -> Cont {
         &mut m.flags,
     );
     // 0040245c jle near ptr 00402660h
-    jle(Cont(x00402462), Cont(x00402660))
+    jle(m, Cont(x00402462), Cont(x00402660))
 }
 
 pub fn x0040244b() -> Cont {
@@ -5683,7 +5730,7 @@ pub fn x0040244b() -> Cont {
         &mut m.flags,
     );
     // 0040245c jle near ptr 00402660h
-    jle(Cont(x00402462), Cont(x00402660))
+    jle(m, Cont(x00402462), Cont(x00402660))
 }
 
 pub fn x00402462() -> Cont {
@@ -5707,7 +5754,7 @@ pub fn x00402462() -> Cont {
         &mut m.flags,
     );
     // 00402470 jge short 004024E1h
-    jge(Cont(x00402472), Cont(x004024e1))
+    jge(m, Cont(x00402472), Cont(x004024e1))
 }
 
 pub fn x0040246d() -> Cont {
@@ -5720,7 +5767,7 @@ pub fn x0040246d() -> Cont {
         &mut m.flags,
     );
     // 00402470 jge short 004024E1h
-    jge(Cont(x00402472), Cont(x004024e1))
+    jge(m, Cont(x00402472), Cont(x004024e1))
 }
 
 pub fn x00402472() -> Cont {
@@ -5729,7 +5776,7 @@ pub fn x00402472() -> Cont {
     // 00402472 cmp ecx,ds:[40C728h]
     sub(m.regs.ecx, m.memory.read::<u32>(0x40c728u32), &mut m.flags);
     // 00402478 jge short 00402497h
-    jge(Cont(x0040247a), Cont(x00402497))
+    jge(m, Cont(x0040247a), Cont(x00402497))
 }
 
 pub fn x0040247a() -> Cont {
@@ -5953,7 +6000,7 @@ pub fn x004024e1() -> Cont {
     // 00402528 cmp ecx,ds:[40C728h]
     sub(m.regs.ecx, m.memory.read::<u32>(0x40c728u32), &mut m.flags);
     // 0040252e jge near ptr 00402658h
-    jge(Cont(x00402534), Cont(x00402658))
+    jge(m, Cont(x00402534), Cont(x00402658))
 }
 
 pub fn x00402528() -> Cont {
@@ -5962,7 +6009,7 @@ pub fn x00402528() -> Cont {
     // 00402528 cmp ecx,ds:[40C728h]
     sub(m.regs.ecx, m.memory.read::<u32>(0x40c728u32), &mut m.flags);
     // 0040252e jge near ptr 00402658h
-    jge(Cont(x00402534), Cont(x00402658))
+    jge(m, Cont(x00402534), Cont(x00402658))
 }
 
 pub fn x00402534() -> Cont {
@@ -5979,7 +6026,7 @@ pub fn x00402534() -> Cont {
     // 00402539 test eax,eax
     and(m.regs.eax, m.regs.eax, &mut m.flags);
     // 0040253b jl short 00402550h
-    jl(Cont(x0040253d), Cont(x00402550))
+    jl(m, Cont(x0040253d), Cont(x00402550))
 }
 
 pub fn x0040253d() -> Cont {
@@ -6062,7 +6109,7 @@ pub fn x00402550() -> Cont {
     // 0040258a cmp eax,ds:[40C728h]
     sub(m.regs.eax, m.memory.read::<u32>(0x40c728u32), &mut m.flags);
     // 00402590 jge short 004025A3h
-    jge(Cont(x00402592), Cont(x004025a3))
+    jge(m, Cont(x00402592), Cont(x004025a3))
 }
 
 pub fn x00402553() -> Cont {
@@ -6118,7 +6165,7 @@ pub fn x00402553() -> Cont {
     // 0040258a cmp eax,ds:[40C728h]
     sub(m.regs.eax, m.memory.read::<u32>(0x40c728u32), &mut m.flags);
     // 00402590 jge short 004025A3h
-    jge(Cont(x00402592), Cont(x004025a3))
+    jge(m, Cont(x00402592), Cont(x004025a3))
 }
 
 pub fn x00402592() -> Cont {
@@ -6473,7 +6520,7 @@ pub fn x00402660() -> Cont {
     // 00402669 cmp eax,ds:[40C724h]
     sub(m.regs.eax, m.memory.read::<u32>(0x40c724u32), &mut m.flags);
     // 0040266f jge near ptr 0040288Eh
-    jge(Cont(x00402675), Cont(x0040288e))
+    jge(m, Cont(x00402675), Cont(x0040288e))
 }
 
 pub fn x00402666() -> Cont {
@@ -6484,7 +6531,7 @@ pub fn x00402666() -> Cont {
     // 00402669 cmp eax,ds:[40C724h]
     sub(m.regs.eax, m.memory.read::<u32>(0x40c724u32), &mut m.flags);
     // 0040266f jge near ptr 0040288Eh
-    jge(Cont(x00402675), Cont(x0040288e))
+    jge(m, Cont(x00402675), Cont(x0040288e))
 }
 
 pub fn x00402675() -> Cont {
@@ -6508,7 +6555,7 @@ pub fn x00402675() -> Cont {
         &mut m.flags,
     );
     // 00402683 jge short 004026F6h
-    jge(Cont(x00402685), Cont(x004026f6))
+    jge(m, Cont(x00402685), Cont(x004026f6))
 }
 
 pub fn x00402680() -> Cont {
@@ -6521,7 +6568,7 @@ pub fn x00402680() -> Cont {
         &mut m.flags,
     );
     // 00402683 jge short 004026F6h
-    jge(Cont(x00402685), Cont(x004026f6))
+    jge(m, Cont(x00402685), Cont(x004026f6))
 }
 
 pub fn x00402685() -> Cont {
@@ -6530,7 +6577,7 @@ pub fn x00402685() -> Cont {
     // 00402685 cmp ecx,ds:[40C728h]
     sub(m.regs.ecx, m.memory.read::<u32>(0x40c728u32), &mut m.flags);
     // 0040268b jge short 004026AAh
-    jge(Cont(x0040268d), Cont(x004026aa))
+    jge(m, Cont(x0040268d), Cont(x004026aa))
 }
 
 pub fn x0040268d() -> Cont {
@@ -6770,7 +6817,7 @@ pub fn x004026f6() -> Cont {
     // 0040274b cmp ecx,edi
     sub(m.regs.ecx, m.regs.edi, &mut m.flags);
     // 0040274d jge near ptr 00402886h
-    jge(Cont(x00402753), Cont(x00402886))
+    jge(m, Cont(x00402753), Cont(x00402886))
 }
 
 pub fn x0040273d() -> Cont {
@@ -6791,7 +6838,7 @@ pub fn x0040273d() -> Cont {
     // 0040274b cmp ecx,edi
     sub(m.regs.ecx, m.regs.edi, &mut m.flags);
     // 0040274d jge near ptr 00402886h
-    jge(Cont(x00402753), Cont(x00402886))
+    jge(m, Cont(x00402753), Cont(x00402886))
 }
 
 pub fn x00402753() -> Cont {
@@ -6808,7 +6855,7 @@ pub fn x00402753() -> Cont {
     // 00402758 test eax,eax
     and(m.regs.eax, m.regs.eax, &mut m.flags);
     // 0040275a jl short 0040276Fh
-    jl(Cont(x0040275c), Cont(x0040276f))
+    jl(m, Cont(x0040275c), Cont(x0040276f))
 }
 
 pub fn x0040275c() -> Cont {
@@ -6897,7 +6944,7 @@ pub fn x0040276f() -> Cont {
     // 004027ac cmp eax,ds:[40C724h]
     sub(m.regs.eax, m.memory.read::<u32>(0x40c724u32), &mut m.flags);
     // 004027b2 jge short 004027D4h
-    jge(Cont(x004027b4), Cont(x004027d4))
+    jge(m, Cont(x004027b4), Cont(x004027d4))
 }
 
 pub fn x00402772() -> Cont {
@@ -6959,7 +7006,7 @@ pub fn x00402772() -> Cont {
     // 004027ac cmp eax,ds:[40C724h]
     sub(m.regs.eax, m.memory.read::<u32>(0x40c724u32), &mut m.flags);
     // 004027b2 jge short 004027D4h
-    jge(Cont(x004027b4), Cont(x004027d4))
+    jge(m, Cont(x004027b4), Cont(x004027d4))
 }
 
 pub fn x004027b4() -> Cont {
@@ -7298,38 +7345,38 @@ pub fn x0040288e() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 0040288e leave
-    leave();
+    leave(m);
     // 0040288f pop edi
-    m.regs.edi = pop();
+    m.regs.edi = pop(m);
     // 00402890 pop esi
-    m.regs.esi = pop();
+    m.regs.esi = pop(m);
     // 00402891 pop ecx
-    m.regs.ecx = pop();
+    m.regs.ecx = pop(m);
     // 00402892 ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x00402893() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00402893 push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 00402894 push esi
-    push(m.regs.esi);
+    push(m, m.regs.esi);
     // 00402895 push edi
-    push(m.regs.edi);
+    push(m, m.regs.edi);
     // 00402896 enter 24h,0
-    enter(0x24u16, 0);
+    enter(m, 0x24u16, 0);
     // 0040289a push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 0040289b push edx
-    push(m.regs.edx);
+    push(m, m.regs.edx);
     // 0040289c push ebx
-    push(m.regs.ebx);
+    push(m, m.regs.ebx);
     // 0040289d cmp eax,1
     sub(m.regs.eax, 0x1u32, &mut m.flags);
     // 004028a0 jge short 004028BDh
-    jge(Cont(x004028a2), Cont(x004028bd))
+    jge(m, Cont(x004028a2), Cont(x004028bd))
 }
 
 pub fn x004028a2() -> Cont {
@@ -7352,15 +7399,15 @@ pub fn x004028a2() -> Cont {
     // 004028b6 rep movsb
     rep(m, Rep::REP, movsb);
     // 004028b8 leave
-    leave();
+    leave(m);
     // 004028b9 pop edi
-    m.regs.edi = pop();
+    m.regs.edi = pop(m);
     // 004028ba pop esi
-    m.regs.esi = pop();
+    m.regs.esi = pop(m);
     // 004028bb pop ecx
-    m.regs.ecx = pop();
+    m.regs.ecx = pop(m);
     // 004028bc ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x004028bd() -> Cont {
@@ -7390,7 +7437,7 @@ pub fn x004028bd() -> Cont {
     // 004028d5 cmp eax,ds:[40C728h]
     sub(m.regs.eax, m.memory.read::<u32>(0x40c728u32), &mut m.flags);
     // 004028db jge near ptr 00402AABh
-    jge(Cont(x004028e1), Cont(x00402aab))
+    jge(m, Cont(x004028e1), Cont(x00402aab))
 }
 
 pub fn x004028d2() -> Cont {
@@ -7401,7 +7448,7 @@ pub fn x004028d2() -> Cont {
     // 004028d5 cmp eax,ds:[40C728h]
     sub(m.regs.eax, m.memory.read::<u32>(0x40c728u32), &mut m.flags);
     // 004028db jge near ptr 00402AABh
-    jge(Cont(x004028e1), Cont(x00402aab))
+    jge(m, Cont(x004028e1), Cont(x00402aab))
 }
 
 pub fn x004028e1() -> Cont {
@@ -7434,7 +7481,7 @@ pub fn x004028e1() -> Cont {
         &mut m.flags,
     );
     // 004028f9 jge short 00402947h
-    jge(Cont(x004028fb), Cont(x00402947))
+    jge(m, Cont(x004028fb), Cont(x00402947))
 }
 
 pub fn x004028f6() -> Cont {
@@ -7447,7 +7494,7 @@ pub fn x004028f6() -> Cont {
         &mut m.flags,
     );
     // 004028f9 jge short 00402947h
-    jge(Cont(x004028fb), Cont(x00402947))
+    jge(m, Cont(x004028fb), Cont(x00402947))
 }
 
 pub fn x004028fb() -> Cont {
@@ -7460,7 +7507,7 @@ pub fn x004028fb() -> Cont {
     // 00402900 test eax,eax
     and(m.regs.eax, m.regs.eax, &mut m.flags);
     // 00402902 jl short 0040290Fh
-    jl(Cont(x00402904), Cont(x0040290f))
+    jl(m, Cont(x00402904), Cont(x0040290f))
 }
 
 pub fn x00402904() -> Cont {
@@ -7665,7 +7712,7 @@ pub fn x00402947() -> Cont {
     // 00402992 cmp edx,eax
     sub(m.regs.edx, m.regs.eax, &mut m.flags);
     // 00402994 jge near ptr 00402AA3h
-    jge(Cont(x0040299a), Cont(x00402aa3))
+    jge(m, Cont(x0040299a), Cont(x00402aa3))
 }
 
 pub fn x0040298e() -> Cont {
@@ -7678,7 +7725,7 @@ pub fn x0040298e() -> Cont {
     // 00402992 cmp edx,eax
     sub(m.regs.edx, m.regs.eax, &mut m.flags);
     // 00402994 jge near ptr 00402AA3h
-    jge(Cont(x0040299a), Cont(x00402aa3))
+    jge(m, Cont(x0040299a), Cont(x00402aa3))
 }
 
 pub fn x0040299a() -> Cont {
@@ -7695,7 +7742,7 @@ pub fn x0040299a() -> Cont {
     // 0040299f test eax,eax
     and(m.regs.eax, m.regs.eax, &mut m.flags);
     // 004029a1 jl short 004029B6h
-    jl(Cont(x004029a3), Cont(x004029b6))
+    jl(m, Cont(x004029a3), Cont(x004029b6))
 }
 
 pub fn x004029a3() -> Cont {
@@ -7784,7 +7831,7 @@ pub fn x004029b6() -> Cont {
     // 004029f3 test eax,eax
     and(m.regs.eax, m.regs.eax, &mut m.flags);
     // 004029f5 jl short 00402A07h
-    jl(Cont(x004029f7), Cont(x00402a07))
+    jl(m, Cont(x004029f7), Cont(x00402a07))
 }
 
 pub fn x004029b9() -> Cont {
@@ -7846,7 +7893,7 @@ pub fn x004029b9() -> Cont {
     // 004029f3 test eax,eax
     and(m.regs.eax, m.regs.eax, &mut m.flags);
     // 004029f5 jl short 00402A07h
-    jl(Cont(x004029f7), Cont(x00402a07))
+    jl(m, Cont(x004029f7), Cont(x00402a07))
 }
 
 pub fn x004029f7() -> Cont {
@@ -8160,7 +8207,7 @@ pub fn x00402aab() -> Cont {
     // 00402ab1 cmp edx,ds:[40C724h]
     sub(m.regs.edx, m.memory.read::<u32>(0x40c724u32), &mut m.flags);
     // 00402ab7 jge near ptr 00402CCBh
-    jge(Cont(x00402abd), Cont(x00402ccb))
+    jge(m, Cont(x00402abd), Cont(x00402ccb))
 }
 
 pub fn x00402ab1() -> Cont {
@@ -8169,7 +8216,7 @@ pub fn x00402ab1() -> Cont {
     // 00402ab1 cmp edx,ds:[40C724h]
     sub(m.regs.edx, m.memory.read::<u32>(0x40c724u32), &mut m.flags);
     // 00402ab7 jge near ptr 00402CCBh
-    jge(Cont(x00402abd), Cont(x00402ccb))
+    jge(m, Cont(x00402abd), Cont(x00402ccb))
 }
 
 pub fn x00402abd() -> Cont {
@@ -8196,7 +8243,7 @@ pub fn x00402abd() -> Cont {
         &mut m.flags,
     );
     // 00402acf jge short 00402B3Fh
-    jge(Cont(x00402ad1), Cont(x00402b3f))
+    jge(m, Cont(x00402ad1), Cont(x00402b3f))
 }
 
 pub fn x00402ac9() -> Cont {
@@ -8211,7 +8258,7 @@ pub fn x00402ac9() -> Cont {
         &mut m.flags,
     );
     // 00402acf jge short 00402B3Fh
-    jge(Cont(x00402ad1), Cont(x00402b3f))
+    jge(m, Cont(x00402ad1), Cont(x00402b3f))
 }
 
 pub fn x00402ad1() -> Cont {
@@ -8220,7 +8267,7 @@ pub fn x00402ad1() -> Cont {
     // 00402ad1 cmp eax,ds:[40C728h]
     sub(m.regs.eax, m.memory.read::<u32>(0x40c728u32), &mut m.flags);
     // 00402ad7 jge short 00402AEDh
-    jge(Cont(x00402ad9), Cont(x00402aed))
+    jge(m, Cont(x00402ad9), Cont(x00402aed))
 }
 
 pub fn x00402ad9() -> Cont {
@@ -8476,7 +8523,7 @@ pub fn x00402b3f() -> Cont {
     // 00402b8d cmp eax,ds:[40C728h]
     sub(m.regs.eax, m.memory.read::<u32>(0x40c728u32), &mut m.flags);
     // 00402b93 jge near ptr 00402CC5h
-    jge(Cont(x00402b99), Cont(x00402cc5))
+    jge(m, Cont(x00402b99), Cont(x00402cc5))
 }
 
 pub fn x00402b8a() -> Cont {
@@ -8487,7 +8534,7 @@ pub fn x00402b8a() -> Cont {
     // 00402b8d cmp eax,ds:[40C728h]
     sub(m.regs.eax, m.memory.read::<u32>(0x40c728u32), &mut m.flags);
     // 00402b93 jge near ptr 00402CC5h
-    jge(Cont(x00402b99), Cont(x00402cc5))
+    jge(m, Cont(x00402b99), Cont(x00402cc5))
 }
 
 pub fn x00402b99() -> Cont {
@@ -8502,7 +8549,7 @@ pub fn x00402b99() -> Cont {
     // 00402b9c test eax,eax
     and(m.regs.eax, m.regs.eax, &mut m.flags);
     // 00402b9e jl short 00402BB3h
-    jl(Cont(x00402ba0), Cont(x00402bb3))
+    jl(m, Cont(x00402ba0), Cont(x00402bb3))
 }
 
 pub fn x00402ba0() -> Cont {
@@ -8593,7 +8640,7 @@ pub fn x00402bb3() -> Cont {
     // 00402bed cmp eax,ds:[40C728h]
     sub(m.regs.eax, m.memory.read::<u32>(0x40c728u32), &mut m.flags);
     // 00402bf3 jge short 00402C08h
-    jge(Cont(x00402bf5), Cont(x00402c08))
+    jge(m, Cont(x00402bf5), Cont(x00402c08))
 }
 
 pub fn x00402bb5() -> Cont {
@@ -8653,7 +8700,7 @@ pub fn x00402bb5() -> Cont {
     // 00402bed cmp eax,ds:[40C728h]
     sub(m.regs.eax, m.memory.read::<u32>(0x40c728u32), &mut m.flags);
     // 00402bf3 jge short 00402C08h
-    jge(Cont(x00402bf5), Cont(x00402c08))
+    jge(m, Cont(x00402bf5), Cont(x00402c08))
 }
 
 pub fn x00402bf5() -> Cont {
@@ -9040,7 +9087,7 @@ pub fn x00402ccb() -> Cont {
     // 00402cd5 cmp eax,ds:[40C728h]
     sub(m.regs.eax, m.memory.read::<u32>(0x40c728u32), &mut m.flags);
     // 00402cdb jge near ptr 00402EFEh
-    jge(Cont(x00402ce1), Cont(x00402efe))
+    jge(m, Cont(x00402ce1), Cont(x00402efe))
 }
 
 pub fn x00402cd2() -> Cont {
@@ -9051,7 +9098,7 @@ pub fn x00402cd2() -> Cont {
     // 00402cd5 cmp eax,ds:[40C728h]
     sub(m.regs.eax, m.memory.read::<u32>(0x40c728u32), &mut m.flags);
     // 00402cdb jge near ptr 00402EFEh
-    jge(Cont(x00402ce1), Cont(x00402efe))
+    jge(m, Cont(x00402ce1), Cont(x00402efe))
 }
 
 pub fn x00402ce1() -> Cont {
@@ -9088,7 +9135,7 @@ pub fn x00402ce1() -> Cont {
         &mut m.flags,
     );
     // 00402d00 jge short 00402D61h
-    jge(Cont(x00402d02), Cont(x00402d61))
+    jge(m, Cont(x00402d02), Cont(x00402d61))
 }
 
 pub fn x00402cfd() -> Cont {
@@ -9101,7 +9148,7 @@ pub fn x00402cfd() -> Cont {
         &mut m.flags,
     );
     // 00402d00 jge short 00402D61h
-    jge(Cont(x00402d02), Cont(x00402d61))
+    jge(m, Cont(x00402d02), Cont(x00402d61))
 }
 
 pub fn x00402d02() -> Cont {
@@ -9114,7 +9161,7 @@ pub fn x00402d02() -> Cont {
     // 00402d07 cmp eax,ds:[40C728h]
     sub(m.regs.eax, m.memory.read::<u32>(0x40c728u32), &mut m.flags);
     // 00402d0d jge short 00402D22h
-    jge(Cont(x00402d0f), Cont(x00402d22))
+    jge(m, Cont(x00402d0f), Cont(x00402d22))
 }
 
 pub fn x00402d0f() -> Cont {
@@ -9329,7 +9376,7 @@ pub fn x00402d61() -> Cont {
     // 00402db0 cmp edx,eax
     sub(m.regs.edx, m.regs.eax, &mut m.flags);
     // 00402db2 jge near ptr 00402EF6h
-    jge(Cont(x00402db8), Cont(x00402ef6))
+    jge(m, Cont(x00402db8), Cont(x00402ef6))
 }
 
 pub fn x00402da8() -> Cont {
@@ -9346,7 +9393,7 @@ pub fn x00402da8() -> Cont {
     // 00402db0 cmp edx,eax
     sub(m.regs.edx, m.regs.eax, &mut m.flags);
     // 00402db2 jge near ptr 00402EF6h
-    jge(Cont(x00402db8), Cont(x00402ef6))
+    jge(m, Cont(x00402db8), Cont(x00402ef6))
 }
 
 pub fn x00402db8() -> Cont {
@@ -9363,7 +9410,7 @@ pub fn x00402db8() -> Cont {
     // 00402dbd test eax,eax
     and(m.regs.eax, m.regs.eax, &mut m.flags);
     // 00402dbf jl short 00402DE1h
-    jl(Cont(x00402dc1), Cont(x00402de1))
+    jl(m, Cont(x00402dc1), Cont(x00402de1))
 }
 
 pub fn x00402dc1() -> Cont {
@@ -9462,7 +9509,7 @@ pub fn x00402de1() -> Cont {
     // 00402e1e cmp eax,ds:[40C728h]
     sub(m.regs.eax, m.memory.read::<u32>(0x40c728u32), &mut m.flags);
     // 00402e24 jge short 00402E3Eh
-    jge(Cont(x00402e26), Cont(x00402e3e))
+    jge(m, Cont(x00402e26), Cont(x00402e3e))
 }
 
 pub fn x00402de4() -> Cont {
@@ -9524,7 +9571,7 @@ pub fn x00402de4() -> Cont {
     // 00402e1e cmp eax,ds:[40C728h]
     sub(m.regs.eax, m.memory.read::<u32>(0x40c728u32), &mut m.flags);
     // 00402e24 jge short 00402E3Eh
-    jge(Cont(x00402e26), Cont(x00402e3e))
+    jge(m, Cont(x00402e26), Cont(x00402e3e))
 }
 
 pub fn x00402e26() -> Cont {
@@ -9879,28 +9926,28 @@ pub fn x00402efe() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00402efe leave
-    leave();
+    leave(m);
     // 00402eff pop edi
-    m.regs.edi = pop();
+    m.regs.edi = pop(m);
     // 00402f00 pop esi
-    m.regs.esi = pop();
+    m.regs.esi = pop(m);
     // 00402f01 pop ecx
-    m.regs.ecx = pop();
+    m.regs.ecx = pop(m);
     // 00402f02 ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x00402f03() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00402f03 push esi
-    push(m.regs.esi);
+    push(m, m.regs.esi);
     // 00402f04 push edi
-    push(m.regs.edi);
+    push(m, m.regs.edi);
     // 00402f05 enter 8,0
-    enter(0x8u16, 0);
+    enter(m, 0x8u16, 0);
     // 00402f09 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 00402f0a mov esi,edx
     m.regs.esi = m.regs.edx;
     // 00402f0c mov eax,ebx
@@ -9908,7 +9955,7 @@ pub fn x00402f03() -> Cont {
     // 00402f0e test ecx,ecx
     and(m.regs.ecx, m.regs.ecx, &mut m.flags);
     // 00402f10 jge short 00402F16h
-    jge(Cont(x00402f12), Cont(x00402f16))
+    jge(m, Cont(x00402f12), Cont(x00402f16))
 }
 
 pub fn x00402f12() -> Cont {
@@ -9926,7 +9973,7 @@ pub fn x00402f16() -> Cont {
     // 00402f16 cmp ecx,0FFh
     sub(m.regs.ecx, 0xffu32, &mut m.flags);
     // 00402f1c jle short 00402F23h
-    jle(Cont(x00402f1e), Cont(x00402f23))
+    jle(m, Cont(x00402f1e), Cont(x00402f23))
 }
 
 pub fn x00402f1e() -> Cont {
@@ -10010,7 +10057,7 @@ pub fn x00402f1e() -> Cont {
     // 00402f7c cmp edx,ebx
     sub(m.regs.edx, m.regs.ebx, &mut m.flags);
     // 00402f7e jge short 00402FB6h
-    jge(Cont(x00402f80), Cont(x00402fb6))
+    jge(m, Cont(x00402f80), Cont(x00402fb6))
 }
 
 pub fn x00402f23() -> Cont {
@@ -10092,7 +10139,7 @@ pub fn x00402f23() -> Cont {
     // 00402f7c cmp edx,ebx
     sub(m.regs.edx, m.regs.ebx, &mut m.flags);
     // 00402f7e jge short 00402FB6h
-    jge(Cont(x00402f80), Cont(x00402fb6))
+    jge(m, Cont(x00402f80), Cont(x00402fb6))
 }
 
 pub fn x00402f6f() -> Cont {
@@ -10109,7 +10156,7 @@ pub fn x00402f6f() -> Cont {
     // 00402f7c cmp edx,ebx
     sub(m.regs.edx, m.regs.ebx, &mut m.flags);
     // 00402f7e jge short 00402FB6h
-    jge(Cont(x00402f80), Cont(x00402fb6))
+    jge(m, Cont(x00402f80), Cont(x00402fb6))
 }
 
 pub fn x00402f80() -> Cont {
@@ -10163,36 +10210,36 @@ pub fn x00402fb6() -> Cont {
     // 00402fb6 emms
     // no-op
     // 00402fb8 leave
-    leave();
+    leave(m);
     // 00402fb9 pop edi
-    m.regs.edi = pop();
+    m.regs.edi = pop(m);
     // 00402fba pop esi
-    m.regs.esi = pop();
+    m.regs.esi = pop(m);
     // 00402fbb ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x00403202() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00403202 push esi
-    push(m.regs.esi);
+    push(m, m.regs.esi);
     // 00403203 push edi
-    push(m.regs.edi);
+    push(m, m.regs.edi);
     // 00403204 enter 4,0
-    enter(0x4u16, 0);
+    enter(m, 0x4u16, 0);
     // 00403208 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 00403209 push edx
-    push(m.regs.edx);
+    push(m, m.regs.edx);
     // 0040320a push ebx
-    push(m.regs.ebx);
+    push(m, m.regs.ebx);
     // 0040320b mov edx,ecx
     m.regs.edx = m.regs.ecx;
     // 0040320d test ecx,ecx
     and(m.regs.ecx, m.regs.ecx, &mut m.flags);
     // 0040320f jge short 00403215h
-    jge(Cont(x00403211), Cont(x00403215))
+    jge(m, Cont(x00403211), Cont(x00403215))
 }
 
 pub fn x00403211() -> Cont {
@@ -10210,7 +10257,7 @@ pub fn x00403215() -> Cont {
     // 00403215 cmp ecx,0FFh
     sub(m.regs.ecx, 0xffu32, &mut m.flags);
     // 0040321b jle short 00403222h
-    jle(Cont(x0040321d), Cont(x00403222))
+    jle(m, Cont(x0040321d), Cont(x00403222))
 }
 
 pub fn x0040321d() -> Cont {
@@ -10259,7 +10306,7 @@ pub fn x0040321d() -> Cont {
     // 00403253 cmp esi,eax
     sub(m.regs.esi, m.regs.eax, &mut m.flags);
     // 00403255 jge short 004032B2h
-    jge(Cont(x00403257), Cont(x004032b2))
+    jge(m, Cont(x00403257), Cont(x004032b2))
 }
 
 pub fn x00403222() -> Cont {
@@ -10306,7 +10353,7 @@ pub fn x00403222() -> Cont {
     // 00403253 cmp esi,eax
     sub(m.regs.esi, m.regs.eax, &mut m.flags);
     // 00403255 jge short 004032B2h
-    jge(Cont(x00403257), Cont(x004032b2))
+    jge(m, Cont(x00403257), Cont(x004032b2))
 }
 
 pub fn x00403247() -> Cont {
@@ -10323,7 +10370,7 @@ pub fn x00403247() -> Cont {
     // 00403253 cmp esi,eax
     sub(m.regs.esi, m.regs.eax, &mut m.flags);
     // 00403255 jge short 004032B2h
-    jge(Cont(x00403257), Cont(x004032b2))
+    jge(m, Cont(x00403257), Cont(x004032b2))
 }
 
 pub fn x00403257() -> Cont {
@@ -10407,26 +10454,26 @@ pub fn x004032b2() -> Cont {
     // 004032b2 emms
     // no-op
     // 004032b4 leave
-    leave();
+    leave(m);
     // 004032b5 pop edi
-    m.regs.edi = pop();
+    m.regs.edi = pop(m);
     // 004032b6 pop esi
-    m.regs.esi = pop();
+    m.regs.esi = pop(m);
     // 004032b7 ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x00403340() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00403340 push ebx
-    push(m.regs.ebx);
+    push(m, m.regs.ebx);
     // 00403341 push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 00403342 push esi
-    push(m.regs.esi);
+    push(m, m.regs.esi);
     // 00403343 push edi
-    push(m.regs.edi);
+    push(m, m.regs.edi);
     // 00403344 mov ecx,eax
     m.regs.ecx = m.regs.eax;
     // 00403346 mov esi,edx
@@ -10444,7 +10491,7 @@ pub fn x00403340() -> Cont {
     // 00403357 cmp eax,edx
     sub(m.regs.eax, m.regs.edx, &mut m.flags);
     // 00403359 jge short 00403372h
-    jge(Cont(x0040335b), Cont(x00403372))
+    jge(m, Cont(x0040335b), Cont(x00403372))
 }
 
 pub fn x0040334a() -> Cont {
@@ -10461,7 +10508,7 @@ pub fn x0040334a() -> Cont {
     // 00403357 cmp eax,edx
     sub(m.regs.eax, m.regs.edx, &mut m.flags);
     // 00403359 jge short 00403372h
-    jge(Cont(x0040335b), Cont(x00403372))
+    jge(m, Cont(x0040335b), Cont(x00403372))
 }
 
 pub fn x0040335b() -> Cont {
@@ -10491,28 +10538,28 @@ pub fn x00403372() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00403372 pop edi
-    m.regs.edi = pop();
+    m.regs.edi = pop(m);
     // 00403373 pop esi
-    m.regs.esi = pop();
+    m.regs.esi = pop(m);
     // 00403374 pop ecx
-    m.regs.ecx = pop();
+    m.regs.ecx = pop(m);
     // 00403375 pop ebx
-    m.regs.ebx = pop();
+    m.regs.ebx = pop(m);
     // 00403376 ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x00403377() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00403377 push ebx
-    push(m.regs.ebx);
+    push(m, m.regs.ebx);
     // 00403378 push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 00403379 push esi
-    push(m.regs.esi);
+    push(m, m.regs.esi);
     // 0040337a push edi
-    push(m.regs.edi);
+    push(m, m.regs.edi);
     // 0040337b mov edi,eax
     m.regs.edi = m.regs.eax;
     // 0040337d mov esi,edx
@@ -10530,7 +10577,7 @@ pub fn x00403377() -> Cont {
     // 0040338e cmp ecx,edx
     sub(m.regs.ecx, m.regs.edx, &mut m.flags);
     // 00403390 jge short 004033B2h
-    jge(Cont(x00403392), Cont(x004033b2))
+    jge(m, Cont(x00403392), Cont(x004033b2))
 }
 
 pub fn x00403381() -> Cont {
@@ -10547,7 +10594,7 @@ pub fn x00403381() -> Cont {
     // 0040338e cmp ecx,edx
     sub(m.regs.ecx, m.regs.edx, &mut m.flags);
     // 00403390 jge short 004033B2h
-    jge(Cont(x00403392), Cont(x004033b2))
+    jge(m, Cont(x00403392), Cont(x004033b2))
 }
 
 pub fn x00403392() -> Cont {
@@ -10587,32 +10634,32 @@ pub fn x004033b2() -> Cont {
     // 004033b2 emms
     // no-op
     // 004033b4 pop edi
-    m.regs.edi = pop();
+    m.regs.edi = pop(m);
     // 004033b5 pop esi
-    m.regs.esi = pop();
+    m.regs.esi = pop(m);
     // 004033b6 pop ecx
-    m.regs.ecx = pop();
+    m.regs.ecx = pop(m);
     // 004033b7 pop ebx
-    m.regs.ebx = pop();
+    m.regs.ebx = pop(m);
     // 004033b8 ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x004033b9() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004033b9 push ebx
-    push(m.regs.ebx);
+    push(m, m.regs.ebx);
     // 004033ba push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 004033bb push esi
-    push(m.regs.esi);
+    push(m, m.regs.esi);
     // 004033bc push ebp
-    push(m.regs.ebp);
+    push(m, m.regs.ebp);
     // 004033bd mov ebp,esp
     m.regs.ebp = m.regs.esp;
     // 004033bf push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 004033c0 mov esi,edx
     m.regs.esi = m.regs.edx;
     // 004033c2 xor ecx,ecx
@@ -10628,7 +10675,7 @@ pub fn x004033b9() -> Cont {
     // 004033d1 cmp ecx,edx
     sub(m.regs.ecx, m.regs.edx, &mut m.flags);
     // 004033d3 jge short 004033F5h
-    jge(Cont(x004033d5), Cont(x004033f5))
+    jge(m, Cont(x004033d5), Cont(x004033f5))
 }
 
 pub fn x004033c4() -> Cont {
@@ -10645,7 +10692,7 @@ pub fn x004033c4() -> Cont {
     // 004033d1 cmp ecx,edx
     sub(m.regs.ecx, m.regs.edx, &mut m.flags);
     // 004033d3 jge short 004033F5h
-    jge(Cont(x004033d5), Cont(x004033f5))
+    jge(m, Cont(x004033d5), Cont(x004033f5))
 }
 
 pub fn x004033d5() -> Cont {
@@ -10689,26 +10736,26 @@ pub fn x004033f5() -> Cont {
     // 004033f5 emms
     // no-op
     // 004033f7 leave
-    leave();
+    leave(m);
     // 004033f8 pop esi
-    m.regs.esi = pop();
+    m.regs.esi = pop(m);
     // 004033f9 pop ecx
-    m.regs.ecx = pop();
+    m.regs.ecx = pop(m);
     // 004033fa pop ebx
-    m.regs.ebx = pop();
+    m.regs.ebx = pop(m);
     // 004033fb ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x004033fc() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004033fc push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 004033fd push esi
-    push(m.regs.esi);
+    push(m, m.regs.esi);
     // 004033fe enter 8,0
-    enter(0x8u16, 0);
+    enter(m, 0x8u16, 0);
     // 00403402 mov esi,eax
     m.regs.esi = m.regs.eax;
     // 00403404 mov [ebp-4],edx
@@ -10730,7 +10777,7 @@ pub fn x004033fc() -> Cont {
         &mut m.flags,
     );
     // 00403418 jge near ptr 004034B9h
-    jge(Cont(x0040341e), Cont(x004034b9))
+    jge(m, Cont(x0040341e), Cont(x004034b9))
 }
 
 pub fn x00403415() -> Cont {
@@ -10743,7 +10790,7 @@ pub fn x00403415() -> Cont {
         &mut m.flags,
     );
     // 00403418 jge near ptr 004034B9h
-    jge(Cont(x0040341e), Cont(x004034b9))
+    jge(m, Cont(x0040341e), Cont(x004034b9))
 }
 
 pub fn x0040341e() -> Cont {
@@ -10802,7 +10849,7 @@ pub fn x0040341e() -> Cont {
     // 00403467 test ecx,ecx
     and(m.regs.ecx, m.regs.ecx, &mut m.flags);
     // 00403469 jge short 0040346Dh
-    jge(Cont(x0040346b), Cont(x0040346d))
+    jge(m, Cont(x0040346b), Cont(x0040346d))
 }
 
 pub fn x0040346b() -> Cont {
@@ -10813,7 +10860,7 @@ pub fn x0040346b() -> Cont {
     // 0040346d test eax,eax
     and(m.regs.eax, m.regs.eax, &mut m.flags);
     // 0040346f jge short 00403473h
-    jge(Cont(x00403471), Cont(x00403473))
+    jge(m, Cont(x00403471), Cont(x00403473))
 }
 
 pub fn x0040346d() -> Cont {
@@ -10822,7 +10869,7 @@ pub fn x0040346d() -> Cont {
     // 0040346d test eax,eax
     and(m.regs.eax, m.regs.eax, &mut m.flags);
     // 0040346f jge short 00403473h
-    jge(Cont(x00403471), Cont(x00403473))
+    jge(m, Cont(x00403471), Cont(x00403473))
 }
 
 pub fn x00403471() -> Cont {
@@ -10833,7 +10880,7 @@ pub fn x00403471() -> Cont {
     // 00403473 test edx,edx
     and(m.regs.edx, m.regs.edx, &mut m.flags);
     // 00403475 jge short 00403479h
-    jge(Cont(x00403477), Cont(x00403479))
+    jge(m, Cont(x00403477), Cont(x00403479))
 }
 
 pub fn x00403473() -> Cont {
@@ -10842,7 +10889,7 @@ pub fn x00403473() -> Cont {
     // 00403473 test edx,edx
     and(m.regs.edx, m.regs.edx, &mut m.flags);
     // 00403475 jge short 00403479h
-    jge(Cont(x00403477), Cont(x00403479))
+    jge(m, Cont(x00403477), Cont(x00403479))
 }
 
 pub fn x00403477() -> Cont {
@@ -10853,7 +10900,7 @@ pub fn x00403477() -> Cont {
     // 00403479 cmp ecx,0FFh
     sub(m.regs.ecx, 0xffu32, &mut m.flags);
     // 0040347f jle short 00403486h
-    jle(Cont(x00403481), Cont(x00403486))
+    jle(m, Cont(x00403481), Cont(x00403486))
 }
 
 pub fn x00403479() -> Cont {
@@ -10862,7 +10909,7 @@ pub fn x00403479() -> Cont {
     // 00403479 cmp ecx,0FFh
     sub(m.regs.ecx, 0xffu32, &mut m.flags);
     // 0040347f jle short 00403486h
-    jle(Cont(x00403481), Cont(x00403486))
+    jle(m, Cont(x00403481), Cont(x00403486))
 }
 
 pub fn x00403481() -> Cont {
@@ -10873,7 +10920,7 @@ pub fn x00403481() -> Cont {
     // 00403486 cmp eax,0FFh
     sub(m.regs.eax, 0xffu32, &mut m.flags);
     // 0040348b jle short 00403492h
-    jle(Cont(x0040348d), Cont(x00403492))
+    jle(m, Cont(x0040348d), Cont(x00403492))
 }
 
 pub fn x00403486() -> Cont {
@@ -10882,7 +10929,7 @@ pub fn x00403486() -> Cont {
     // 00403486 cmp eax,0FFh
     sub(m.regs.eax, 0xffu32, &mut m.flags);
     // 0040348b jle short 00403492h
-    jle(Cont(x0040348d), Cont(x00403492))
+    jle(m, Cont(x0040348d), Cont(x00403492))
 }
 
 pub fn x0040348d() -> Cont {
@@ -10893,7 +10940,7 @@ pub fn x0040348d() -> Cont {
     // 00403492 cmp edx,0FFh
     sub(m.regs.edx, 0xffu32, &mut m.flags);
     // 00403498 jle short 0040349Fh
-    jle(Cont(x0040349a), Cont(x0040349f))
+    jle(m, Cont(x0040349a), Cont(x0040349f))
 }
 
 pub fn x00403492() -> Cont {
@@ -10902,7 +10949,7 @@ pub fn x00403492() -> Cont {
     // 00403492 cmp edx,0FFh
     sub(m.regs.edx, 0xffu32, &mut m.flags);
     // 00403498 jle short 0040349Fh
-    jle(Cont(x0040349a), Cont(x0040349f))
+    jle(m, Cont(x0040349a), Cont(x0040349f))
 }
 
 pub fn x0040349a() -> Cont {
@@ -10969,26 +11016,26 @@ pub fn x004034b9() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004034b9 leave
-    leave();
+    leave(m);
     // 004034ba pop esi
-    m.regs.esi = pop();
+    m.regs.esi = pop(m);
     // 004034bb pop ecx
-    m.regs.ecx = pop();
+    m.regs.ecx = pop(m);
     // 004034bc ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x004034bd() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004034bd push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 004034be push esi
-    push(m.regs.esi);
+    push(m, m.regs.esi);
     // 004034bf push edi
-    push(m.regs.edi);
+    push(m, m.regs.edi);
     // 004034c0 enter 8,0
-    enter(0x8u16, 0);
+    enter(m, 0x8u16, 0);
     // 004034c4 mov edi,edx
     m.regs.edi = m.regs.edx;
     // 004034c6 mov [ebp-4],ebx
@@ -11009,7 +11056,7 @@ pub fn x004034bd() -> Cont {
     // 004034d7 test eax,eax
     and(m.regs.eax, m.regs.eax, &mut m.flags);
     // 004034d9 jle short 00403533h
-    jle(Cont(x004034db), Cont(x00403533))
+    jle(m, Cont(x004034db), Cont(x00403533))
 }
 
 pub fn x004034db() -> Cont {
@@ -11028,7 +11075,7 @@ pub fn x004034db() -> Cont {
     // 004034e9 cmp ecx,eax
     sub(m.regs.ecx, m.regs.eax, &mut m.flags);
     // 004034eb jge short 00403533h
-    jge(Cont(x004034ed), Cont(x00403533))
+    jge(m, Cont(x004034ed), Cont(x00403533))
 }
 
 pub fn x004034dd() -> Cont {
@@ -11045,7 +11092,7 @@ pub fn x004034dd() -> Cont {
     // 004034e9 cmp ecx,eax
     sub(m.regs.ecx, m.regs.eax, &mut m.flags);
     // 004034eb jge short 00403533h
-    jge(Cont(x004034ed), Cont(x00403533))
+    jge(m, Cont(x004034ed), Cont(x00403533))
 }
 
 pub fn x004034ed() -> Cont {
@@ -11116,26 +11163,26 @@ pub fn x00403533() -> Cont {
     // 00403533 emms
     // no-op
     // 00403535 leave
-    leave();
+    leave(m);
     // 00403536 pop edi
-    m.regs.edi = pop();
+    m.regs.edi = pop(m);
     // 00403537 pop esi
-    m.regs.esi = pop();
+    m.regs.esi = pop(m);
     // 00403538 pop ecx
-    m.regs.ecx = pop();
+    m.regs.ecx = pop(m);
     // 00403539 ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x00403737() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00403737 push esi
-    push(m.regs.esi);
+    push(m, m.regs.esi);
     // 00403738 push edi
-    push(m.regs.edi);
+    push(m, m.regs.edi);
     // 00403739 enter 8,0
-    enter(0x8u16, 0);
+    enter(m, 0x8u16, 0);
     // 0040373d mov edi,eax
     m.regs.edi = m.regs.eax;
     // 0040373f mov [ebp-4],edx
@@ -11150,7 +11197,7 @@ pub fn x00403737() -> Cont {
     // 00403748 cmp eax,ebx
     sub(m.regs.eax, m.regs.ebx, &mut m.flags);
     // 0040374a jge near ptr 0040380Fh
-    jge(Cont(x00403750), Cont(x0040380f))
+    jge(m, Cont(x00403750), Cont(x0040380f))
 }
 
 pub fn x00403748() -> Cont {
@@ -11159,7 +11206,7 @@ pub fn x00403748() -> Cont {
     // 00403748 cmp eax,ebx
     sub(m.regs.eax, m.regs.ebx, &mut m.flags);
     // 0040374a jge near ptr 0040380Fh
-    jge(Cont(x00403750), Cont(x0040380f))
+    jge(m, Cont(x00403750), Cont(x0040380f))
 }
 
 pub fn x00403750() -> Cont {
@@ -11180,7 +11227,7 @@ pub fn x00403750() -> Cont {
     // 0040375a test dl,1
     and(m.regs.get_dl(), 0x1u8, &mut m.flags);
     // 0040375d je short 00403767h
-    je(Cont(x0040375f), Cont(x00403767))
+    je(m, Cont(x0040375f), Cont(x00403767))
 }
 
 pub fn x0040375f() -> Cont {
@@ -11207,7 +11254,7 @@ pub fn x0040375f() -> Cont {
         &mut m.flags,
     );
     // 00403773 je short 0040377Eh
-    je(Cont(x00403775), Cont(x0040377e))
+    je(m, Cont(x00403775), Cont(x0040377e))
 }
 
 pub fn x00403767() -> Cont {
@@ -11227,7 +11274,7 @@ pub fn x00403767() -> Cont {
         &mut m.flags,
     );
     // 00403773 je short 0040377Eh
-    je(Cont(x00403775), Cont(x0040377e))
+    je(m, Cont(x00403775), Cont(x0040377e))
 }
 
 pub fn x00403775() -> Cont {
@@ -11256,7 +11303,7 @@ pub fn x00403775() -> Cont {
         &mut m.flags,
     );
     // 0040378b je short 00403796h
-    je(Cont(x0040378d), Cont(x00403796))
+    je(m, Cont(x0040378d), Cont(x00403796))
 }
 
 pub fn x0040377e() -> Cont {
@@ -11276,7 +11323,7 @@ pub fn x0040377e() -> Cont {
         &mut m.flags,
     );
     // 0040378b je short 00403796h
-    je(Cont(x0040378d), Cont(x00403796))
+    je(m, Cont(x0040378d), Cont(x00403796))
 }
 
 pub fn x0040378d() -> Cont {
@@ -11305,7 +11352,7 @@ pub fn x0040378d() -> Cont {
         &mut m.flags,
     );
     // 004037a3 je short 004037AEh
-    je(Cont(x004037a5), Cont(x004037ae))
+    je(m, Cont(x004037a5), Cont(x004037ae))
 }
 
 pub fn x00403796() -> Cont {
@@ -11325,7 +11372,7 @@ pub fn x00403796() -> Cont {
         &mut m.flags,
     );
     // 004037a3 je short 004037AEh
-    je(Cont(x004037a5), Cont(x004037ae))
+    je(m, Cont(x004037a5), Cont(x004037ae))
 }
 
 pub fn x004037a5() -> Cont {
@@ -11354,7 +11401,7 @@ pub fn x004037a5() -> Cont {
         &mut m.flags,
     );
     // 004037bb je short 004037C6h
-    je(Cont(x004037bd), Cont(x004037c6))
+    je(m, Cont(x004037bd), Cont(x004037c6))
 }
 
 pub fn x004037ae() -> Cont {
@@ -11374,7 +11421,7 @@ pub fn x004037ae() -> Cont {
         &mut m.flags,
     );
     // 004037bb je short 004037C6h
-    je(Cont(x004037bd), Cont(x004037c6))
+    je(m, Cont(x004037bd), Cont(x004037c6))
 }
 
 pub fn x004037bd() -> Cont {
@@ -11403,7 +11450,7 @@ pub fn x004037bd() -> Cont {
         &mut m.flags,
     );
     // 004037d3 je short 004037DEh
-    je(Cont(x004037d5), Cont(x004037de))
+    je(m, Cont(x004037d5), Cont(x004037de))
 }
 
 pub fn x004037c6() -> Cont {
@@ -11423,7 +11470,7 @@ pub fn x004037c6() -> Cont {
         &mut m.flags,
     );
     // 004037d3 je short 004037DEh
-    je(Cont(x004037d5), Cont(x004037de))
+    je(m, Cont(x004037d5), Cont(x004037de))
 }
 
 pub fn x004037d5() -> Cont {
@@ -11452,7 +11499,7 @@ pub fn x004037d5() -> Cont {
         &mut m.flags,
     );
     // 004037eb je short 004037F6h
-    je(Cont(x004037ed), Cont(x004037f6))
+    je(m, Cont(x004037ed), Cont(x004037f6))
 }
 
 pub fn x004037de() -> Cont {
@@ -11472,7 +11519,7 @@ pub fn x004037de() -> Cont {
         &mut m.flags,
     );
     // 004037eb je short 004037F6h
-    je(Cont(x004037ed), Cont(x004037f6))
+    je(m, Cont(x004037ed), Cont(x004037f6))
 }
 
 pub fn x004037ed() -> Cont {
@@ -11494,7 +11541,7 @@ pub fn x004037ed() -> Cont {
     // 004037fc test dl,1
     and(m.regs.get_dl(), 0x1u8, &mut m.flags);
     // 004037ff je short 00403807h
-    je(Cont(x00403801), Cont(x00403807))
+    je(m, Cont(x00403801), Cont(x00403807))
 }
 
 pub fn x004037f6() -> Cont {
@@ -11507,7 +11554,7 @@ pub fn x004037f6() -> Cont {
     // 004037fc test dl,1
     and(m.regs.get_dl(), 0x1u8, &mut m.flags);
     // 004037ff je short 00403807h
-    je(Cont(x00403801), Cont(x00403807))
+    je(m, Cont(x00403801), Cont(x00403807))
 }
 
 pub fn x00403801() -> Cont {
@@ -11548,7 +11595,7 @@ pub fn x0040380f() -> Cont {
     // 0040381a mov edx,esi
     m.regs.edx = m.regs.esi;
     // 0040381c call 00401DEBh
-    call(0x403821, Cont(x00401deb))
+    call(m, 0x403821, Cont(x00401deb))
 }
 
 pub fn x00403821() -> Cont {
@@ -11561,35 +11608,35 @@ pub fn x00403821() -> Cont {
     // 0040382c mov ebx,esi
     m.regs.ebx = m.regs.esi;
     // 0040382e call 00401FF6h
-    call(0x403833, Cont(x00401ff6))
+    call(m, 0x403833, Cont(x00401ff6))
 }
 
 pub fn x00403833() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00403833 leave
-    leave();
+    leave(m);
     // 00403834 pop edi
-    m.regs.edi = pop();
+    m.regs.edi = pop(m);
     // 00403835 pop esi
-    m.regs.esi = pop();
+    m.regs.esi = pop(m);
     // 00403836 ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x00403837() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00403837 push ebx
-    push(m.regs.ebx);
+    push(m, m.regs.ebx);
     // 00403838 push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 00403839 push esi
-    push(m.regs.esi);
+    push(m, m.regs.esi);
     // 0040383a push edi
-    push(m.regs.edi);
+    push(m, m.regs.edi);
     // 0040383b enter 30h,0
-    enter(0x30u16, 0);
+    enter(m, 0x30u16, 0);
     // 0040383f mov ebx,eax
     m.regs.ebx = m.regs.eax;
     // 00403841 mov [ebp-8],edx
@@ -11602,13 +11649,13 @@ pub fn x00403837() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f32>(0x423214u32) as f64);
     // 0040384d push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 0040384e fistp dword ptr [esp]
     m.memory
         .write::<u32>(m.regs.esp, m.fpu.get(0).round() as i32 as u32);
     m.fpu.pop();
     // 00403851 pop eax
-    m.regs.eax = pop();
+    m.regs.eax = pop(m);
     // 00403852 add eax,0FFFFh
     m.regs.eax = add(m.regs.eax, 0xffffu32, &mut m.flags);
     // 00403857 shr eax,10h
@@ -11623,13 +11670,13 @@ pub fn x00403837() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f32>(0x423214u32) as f64);
     // 00403866 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 00403867 fistp dword ptr [esp]
     m.memory
         .write::<u32>(m.regs.esp, m.fpu.get(0).round() as i32 as u32);
     m.fpu.pop();
     // 0040386a pop eax
-    m.regs.eax = pop();
+    m.regs.eax = pop(m);
     // 0040386b add eax,0FFFFh
     m.regs.eax = add(m.regs.eax, 0xffffu32, &mut m.flags);
     // 00403870 shr eax,10h
@@ -11644,13 +11691,13 @@ pub fn x00403837() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f32>(0x423214u32) as f64);
     // 0040387f push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 00403880 fistp dword ptr [esp]
     m.memory
         .write::<u32>(m.regs.esp, m.fpu.get(0).round() as i32 as u32);
     m.fpu.pop();
     // 00403883 pop eax
-    m.regs.eax = pop();
+    m.regs.eax = pop(m);
     // 00403884 add eax,0FFFFh
     m.regs.eax = add(m.regs.eax, 0xffffu32, &mut m.flags);
     // 00403889 shr eax,10h
@@ -11666,13 +11713,13 @@ pub fn x00403837() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f32>(0x423214u32) as f64);
     // 00403899 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 0040389a fistp dword ptr [esp]
     m.memory
         .write::<u32>(m.regs.esp, m.fpu.get(0).round() as i32 as u32);
     m.fpu.pop();
     // 0040389d pop eax
-    m.regs.eax = pop();
+    m.regs.eax = pop(m);
     // 0040389e add eax,0FFFFh
     m.regs.eax = add(m.regs.eax, 0xffffu32, &mut m.flags);
     // 004038a3 shr eax,10h
@@ -11692,7 +11739,7 @@ pub fn x00403837() -> Cont {
     // 004038af cmp eax,0
     sub(m.regs.eax, 0x0u32, &mut m.flags);
     // 004038b2 jns short 004038B6h
-    jns(Cont(x004038b4), Cont(x004038b6))
+    jns(m, Cont(x004038b4), Cont(x004038b6))
 }
 
 pub fn x004038b4() -> Cont {
@@ -11713,7 +11760,7 @@ pub fn x004038b4() -> Cont {
     // 004038bd cmp eax,0
     sub(m.regs.eax, 0x0u32, &mut m.flags);
     // 004038c0 jns short 004038C4h
-    jns(Cont(x004038c2), Cont(x004038c4))
+    jns(m, Cont(x004038c2), Cont(x004038c4))
 }
 
 pub fn x004038b6() -> Cont {
@@ -11732,7 +11779,7 @@ pub fn x004038b6() -> Cont {
     // 004038bd cmp eax,0
     sub(m.regs.eax, 0x0u32, &mut m.flags);
     // 004038c0 jns short 004038C4h
-    jns(Cont(x004038c2), Cont(x004038c4))
+    jns(m, Cont(x004038c2), Cont(x004038c4))
 }
 
 pub fn x004038c2() -> Cont {
@@ -11745,7 +11792,7 @@ pub fn x004038c2() -> Cont {
     // 004038c6 cmp eax,edx
     sub(m.regs.eax, m.regs.edx, &mut m.flags);
     // 004038c8 jle short 004038CFh
-    jle(Cont(x004038ca), Cont(x004038cf))
+    jle(m, Cont(x004038ca), Cont(x004038cf))
 }
 
 pub fn x004038c4() -> Cont {
@@ -11756,7 +11803,7 @@ pub fn x004038c4() -> Cont {
     // 004038c6 cmp eax,edx
     sub(m.regs.eax, m.regs.edx, &mut m.flags);
     // 004038c8 jle short 004038CFh
-    jle(Cont(x004038ca), Cont(x004038cf))
+    jle(m, Cont(x004038ca), Cont(x004038cf))
 }
 
 pub fn x004038ca() -> Cont {
@@ -11782,7 +11829,7 @@ pub fn x004038cf() -> Cont {
         &mut m.flags,
     );
     // 004038d6 jl near ptr 00403A56h
-    jl(Cont(x004038dc), Cont(x00403a56))
+    jl(m, Cont(x004038dc), Cont(x00403a56))
 }
 
 pub fn x004038d2() -> Cont {
@@ -11795,7 +11842,7 @@ pub fn x004038d2() -> Cont {
         &mut m.flags,
     );
     // 004038d6 jl near ptr 00403A56h
-    jl(Cont(x004038dc), Cont(x00403a56))
+    jl(m, Cont(x004038dc), Cont(x00403a56))
 }
 
 pub fn x004038dc() -> Cont {
@@ -11870,7 +11917,7 @@ pub fn x004038dc() -> Cont {
         &mut m.flags,
     );
     // 00403905 jle short 00403911h
-    jle(Cont(x00403907), Cont(x00403911))
+    jle(m, Cont(x00403907), Cont(x00403911))
 }
 
 pub fn x00403907() -> Cont {
@@ -11908,7 +11955,7 @@ pub fn x00403911() -> Cont {
         &mut m.flags,
     );
     // 0040391f jle short 0040392Ah
-    jle(Cont(x00403921), Cont(x0040392a))
+    jle(m, Cont(x00403921), Cont(x0040392a))
 }
 
 pub fn x0040391c() -> Cont {
@@ -11921,7 +11968,7 @@ pub fn x0040391c() -> Cont {
         &mut m.flags,
     );
     // 0040391f jle short 0040392Ah
-    jle(Cont(x00403921), Cont(x0040392a))
+    jle(m, Cont(x00403921), Cont(x0040392a))
 }
 
 pub fn x00403921() -> Cont {
@@ -11969,7 +12016,7 @@ pub fn x0040392a() -> Cont {
         &mut m.flags,
     );
     // 00403951 jne short 00403965h
-    jne(Cont(x00403953), Cont(x00403965))
+    jne(m, Cont(x00403953), Cont(x00403965))
 }
 
 pub fn x00403931() -> Cont {
@@ -12004,7 +12051,7 @@ pub fn x00403931() -> Cont {
         &mut m.flags,
     );
     // 00403951 jne short 00403965h
-    jne(Cont(x00403953), Cont(x00403965))
+    jne(m, Cont(x00403953), Cont(x00403965))
 }
 
 pub fn x00403953() -> Cont {
@@ -12067,7 +12114,7 @@ pub fn x00403965() -> Cont {
         &mut m.flags,
     );
     // 0040398f jge near ptr 00403A54h
-    jge(Cont(x00403995), Cont(x00403a54))
+    jge(m, Cont(x00403995), Cont(x00403a54))
 }
 
 pub fn x00403982() -> Cont {
@@ -12089,7 +12136,7 @@ pub fn x00403982() -> Cont {
         &mut m.flags,
     );
     // 0040398f jge near ptr 00403A54h
-    jge(Cont(x00403995), Cont(x00403a54))
+    jge(m, Cont(x00403995), Cont(x00403a54))
 }
 
 pub fn x0040398c() -> Cont {
@@ -12102,7 +12149,7 @@ pub fn x0040398c() -> Cont {
         &mut m.flags,
     );
     // 0040398f jge near ptr 00403A54h
-    jge(Cont(x00403995), Cont(x00403a54))
+    jge(m, Cont(x00403995), Cont(x00403a54))
 }
 
 pub fn x00403995() -> Cont {
@@ -12235,7 +12282,7 @@ pub fn x00403995() -> Cont {
         &mut m.flags,
     );
     // 00403a39 je short 00403A46h
-    je(Cont(x00403a3b), Cont(x00403a46))
+    je(m, Cont(x00403a3b), Cont(x00403a46))
 }
 
 pub fn x00403a3b() -> Cont {
@@ -12283,43 +12330,43 @@ pub fn x00403a54() -> Cont {
     // 00403a54 emms
     // no-op
     // 00403a56 leave
-    leave();
+    leave(m);
     // 00403a57 pop edi
-    m.regs.edi = pop();
+    m.regs.edi = pop(m);
     // 00403a58 pop esi
-    m.regs.esi = pop();
+    m.regs.esi = pop(m);
     // 00403a59 pop ecx
-    m.regs.ecx = pop();
+    m.regs.ecx = pop(m);
     // 00403a5a pop ebx
-    m.regs.ebx = pop();
+    m.regs.ebx = pop(m);
     // 00403a5b ret 10h
-    ret(16)
+    ret(m, 16)
 }
 
 pub fn x00403a56() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00403a56 leave
-    leave();
+    leave(m);
     // 00403a57 pop edi
-    m.regs.edi = pop();
+    m.regs.edi = pop(m);
     // 00403a58 pop esi
-    m.regs.esi = pop();
+    m.regs.esi = pop(m);
     // 00403a59 pop ecx
-    m.regs.ecx = pop();
+    m.regs.ecx = pop(m);
     // 00403a5a pop ebx
-    m.regs.ebx = pop();
+    m.regs.ebx = pop(m);
     // 00403a5b ret 10h
-    ret(16)
+    ret(m, 16)
 }
 
 pub fn x00403a5e() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00403a5e push edx
-    push(m.regs.edx);
+    push(m, m.regs.edx);
     // 00403a5f push ebp
-    push(m.regs.ebp);
+    push(m, m.regs.ebp);
     // 00403a60 mov ebp,esp
     m.regs.ebp = m.regs.esp;
     // 00403a62 fld dword ptr [ebp+0Ch]
@@ -12336,7 +12383,7 @@ pub fn x00403a5e() -> Cont {
     // 00403a6d sahf
     sahf(m);
     // 00403a6e jb short 00403A82h
-    jb(Cont(x00403a70), Cont(x00403a82))
+    jb(m, Cont(x00403a70), Cont(x00403a82))
 }
 
 pub fn x00403a70() -> Cont {
@@ -12356,7 +12403,7 @@ pub fn x00403a70() -> Cont {
     // 00403a7b sahf
     sahf(m);
     // 00403a7c jae near ptr 00403CD1h
-    jae(Cont(x00403a82), Cont(x00403cd1))
+    jae(m, Cont(x00403a82), Cont(x00403cd1))
 }
 
 pub fn x00403a82() -> Cont {
@@ -12369,7 +12416,7 @@ pub fn x00403a82() -> Cont {
         &mut m.flags,
     );
     // 00403a89 jge short 00403A98h
-    jge(Cont(x00403a8b), Cont(x00403a98))
+    jge(m, Cont(x00403a8b), Cont(x00403a98))
 }
 
 pub fn x00403a8b() -> Cont {
@@ -12382,7 +12429,7 @@ pub fn x00403a8b() -> Cont {
         &mut m.flags,
     );
     // 00403a92 jl near ptr 00403CD1h
-    jl(Cont(x00403a98), Cont(x00403cd1))
+    jl(m, Cont(x00403a98), Cont(x00403cd1))
 }
 
 pub fn x00403a98() -> Cont {
@@ -12402,7 +12449,7 @@ pub fn x00403a98() -> Cont {
     // 00403aa3 sahf
     sahf(m);
     // 00403aa4 jb short 00403AB8h
-    jb(Cont(x00403aa6), Cont(x00403ab8))
+    jb(m, Cont(x00403aa6), Cont(x00403ab8))
 }
 
 pub fn x00403aa6() -> Cont {
@@ -12422,7 +12469,7 @@ pub fn x00403aa6() -> Cont {
     // 00403ab1 sahf
     sahf(m);
     // 00403ab2 jae near ptr 00403CD1h
-    jae(Cont(x00403ab8), Cont(x00403cd1))
+    jae(m, Cont(x00403ab8), Cont(x00403cd1))
 }
 
 pub fn x00403ab8() -> Cont {
@@ -12435,7 +12482,7 @@ pub fn x00403ab8() -> Cont {
         &mut m.flags,
     );
     // 00403abf jge short 00403ACEh
-    jge(Cont(x00403ac1), Cont(x00403ace))
+    jge(m, Cont(x00403ac1), Cont(x00403ace))
 }
 
 pub fn x00403ac1() -> Cont {
@@ -12448,7 +12495,7 @@ pub fn x00403ac1() -> Cont {
         &mut m.flags,
     );
     // 00403ac8 jl near ptr 00403CD1h
-    jl(Cont(x00403ace), Cont(x00403cd1))
+    jl(m, Cont(x00403ace), Cont(x00403cd1))
 }
 
 pub fn x00403ace() -> Cont {
@@ -12468,7 +12515,7 @@ pub fn x00403ace() -> Cont {
     // 00403ad9 sahf
     sahf(m);
     // 00403ada jb short 00403B02h
-    jb(Cont(x00403adc), Cont(x00403b02))
+    jb(m, Cont(x00403adc), Cont(x00403b02))
 }
 
 pub fn x00403adc() -> Cont {
@@ -12528,7 +12575,7 @@ pub fn x00403adc() -> Cont {
     // 00403b0d sahf
     sahf(m);
     // 00403b0e jb short 00403B36h
-    jb(Cont(x00403b10), Cont(x00403b36))
+    jb(m, Cont(x00403b10), Cont(x00403b36))
 }
 
 pub fn x00403b02() -> Cont {
@@ -12548,7 +12595,7 @@ pub fn x00403b02() -> Cont {
     // 00403b0d sahf
     sahf(m);
     // 00403b0e jb short 00403B36h
-    jb(Cont(x00403b10), Cont(x00403b36))
+    jb(m, Cont(x00403b10), Cont(x00403b36))
 }
 
 pub fn x00403b10() -> Cont {
@@ -12601,7 +12648,7 @@ pub fn x00403b10() -> Cont {
         &mut m.flags,
     );
     // 00403b3d jge short 00403B65h
-    jge(Cont(x00403b3f), Cont(x00403b65))
+    jge(m, Cont(x00403b3f), Cont(x00403b65))
 }
 
 pub fn x00403b36() -> Cont {
@@ -12614,7 +12661,7 @@ pub fn x00403b36() -> Cont {
         &mut m.flags,
     );
     // 00403b3d jge short 00403B65h
-    jge(Cont(x00403b3f), Cont(x00403b65))
+    jge(m, Cont(x00403b3f), Cont(x00403b65))
 }
 
 pub fn x00403b3f() -> Cont {
@@ -12667,7 +12714,7 @@ pub fn x00403b3f() -> Cont {
         &mut m.flags,
     );
     // 00403b6c jge short 00403B94h
-    jge(Cont(x00403b6e), Cont(x00403b94))
+    jge(m, Cont(x00403b6e), Cont(x00403b94))
 }
 
 pub fn x00403b65() -> Cont {
@@ -12680,7 +12727,7 @@ pub fn x00403b65() -> Cont {
         &mut m.flags,
     );
     // 00403b6c jge short 00403B94h
-    jge(Cont(x00403b6e), Cont(x00403b94))
+    jge(m, Cont(x00403b6e), Cont(x00403b94))
 }
 
 pub fn x00403b6e() -> Cont {
@@ -12740,7 +12787,7 @@ pub fn x00403b6e() -> Cont {
     // 00403b9f sahf
     sahf(m);
     // 00403ba0 jb short 00403BC8h
-    jb(Cont(x00403ba2), Cont(x00403bc8))
+    jb(m, Cont(x00403ba2), Cont(x00403bc8))
 }
 
 pub fn x00403b94() -> Cont {
@@ -12760,7 +12807,7 @@ pub fn x00403b94() -> Cont {
     // 00403b9f sahf
     sahf(m);
     // 00403ba0 jb short 00403BC8h
-    jb(Cont(x00403ba2), Cont(x00403bc8))
+    jb(m, Cont(x00403ba2), Cont(x00403bc8))
 }
 
 pub fn x00403ba2() -> Cont {
@@ -12820,7 +12867,7 @@ pub fn x00403ba2() -> Cont {
     // 00403bd3 sahf
     sahf(m);
     // 00403bd4 jb short 00403BFCh
-    jb(Cont(x00403bd6), Cont(x00403bfc))
+    jb(m, Cont(x00403bd6), Cont(x00403bfc))
 }
 
 pub fn x00403bc8() -> Cont {
@@ -12840,7 +12887,7 @@ pub fn x00403bc8() -> Cont {
     // 00403bd3 sahf
     sahf(m);
     // 00403bd4 jb short 00403BFCh
-    jb(Cont(x00403bd6), Cont(x00403bfc))
+    jb(m, Cont(x00403bd6), Cont(x00403bfc))
 }
 
 pub fn x00403bd6() -> Cont {
@@ -12893,7 +12940,7 @@ pub fn x00403bd6() -> Cont {
         &mut m.flags,
     );
     // 00403c03 jge short 00403C2Bh
-    jge(Cont(x00403c05), Cont(x00403c2b))
+    jge(m, Cont(x00403c05), Cont(x00403c2b))
 }
 
 pub fn x00403bfc() -> Cont {
@@ -12906,7 +12953,7 @@ pub fn x00403bfc() -> Cont {
         &mut m.flags,
     );
     // 00403c03 jge short 00403C2Bh
-    jge(Cont(x00403c05), Cont(x00403c2b))
+    jge(m, Cont(x00403c05), Cont(x00403c2b))
 }
 
 pub fn x00403c05() -> Cont {
@@ -12959,7 +13006,7 @@ pub fn x00403c05() -> Cont {
         &mut m.flags,
     );
     // 00403c32 jge short 00403C5Ah
-    jge(Cont(x00403c34), Cont(x00403c5a))
+    jge(m, Cont(x00403c34), Cont(x00403c5a))
 }
 
 pub fn x00403c2b() -> Cont {
@@ -12972,7 +13019,7 @@ pub fn x00403c2b() -> Cont {
         &mut m.flags,
     );
     // 00403c32 jge short 00403C5Ah
-    jge(Cont(x00403c34), Cont(x00403c5a))
+    jge(m, Cont(x00403c34), Cont(x00403c5a))
 }
 
 pub fn x00403c34() -> Cont {
@@ -13032,7 +13079,7 @@ pub fn x00403c34() -> Cont {
     // 00403c65 sahf
     sahf(m);
     // 00403c66 jae near ptr 00403CD1h
-    jae(Cont(x00403c6c), Cont(x00403cd1))
+    jae(m, Cont(x00403c6c), Cont(x00403cd1))
 }
 
 pub fn x00403c5a() -> Cont {
@@ -13052,7 +13099,7 @@ pub fn x00403c5a() -> Cont {
     // 00403c65 sahf
     sahf(m);
     // 00403c66 jae near ptr 00403CD1h
-    jae(Cont(x00403c6c), Cont(x00403cd1))
+    jae(m, Cont(x00403c6c), Cont(x00403cd1))
 }
 
 pub fn x00403c6c() -> Cont {
@@ -13072,7 +13119,7 @@ pub fn x00403c6c() -> Cont {
     // 00403c77 sahf
     sahf(m);
     // 00403c78 jae short 00403CD1h
-    jae(Cont(x00403c7a), Cont(x00403cd1))
+    jae(m, Cont(x00403c7a), Cont(x00403cd1))
 }
 
 pub fn x00403c7a() -> Cont {
@@ -13085,7 +13132,7 @@ pub fn x00403c7a() -> Cont {
         &mut m.flags,
     );
     // 00403c81 jl short 00403CD1h
-    jl(Cont(x00403c83), Cont(x00403cd1))
+    jl(m, Cont(x00403c83), Cont(x00403cd1))
 }
 
 pub fn x00403c83() -> Cont {
@@ -13098,7 +13145,7 @@ pub fn x00403c83() -> Cont {
         &mut m.flags,
     );
     // 00403c8a jl short 00403CD1h
-    jl(Cont(x00403c8c), Cont(x00403cd1))
+    jl(m, Cont(x00403c8c), Cont(x00403cd1))
 }
 
 pub fn x00403c8c() -> Cont {
@@ -13118,7 +13165,7 @@ pub fn x00403c8c() -> Cont {
     // 00403c97 sahf
     sahf(m);
     // 00403c98 jae short 00403CD1h
-    jae(Cont(x00403c9a), Cont(x00403cd1))
+    jae(m, Cont(x00403c9a), Cont(x00403cd1))
 }
 
 pub fn x00403c9a() -> Cont {
@@ -13138,7 +13185,7 @@ pub fn x00403c9a() -> Cont {
     // 00403ca5 sahf
     sahf(m);
     // 00403ca6 jae short 00403CD1h
-    jae(Cont(x00403ca8), Cont(x00403cd1))
+    jae(m, Cont(x00403ca8), Cont(x00403cd1))
 }
 
 pub fn x00403ca8() -> Cont {
@@ -13151,7 +13198,7 @@ pub fn x00403ca8() -> Cont {
         &mut m.flags,
     );
     // 00403caf jl short 00403CD1h
-    jl(Cont(x00403cb1), Cont(x00403cd1))
+    jl(m, Cont(x00403cb1), Cont(x00403cd1))
 }
 
 pub fn x00403cb1() -> Cont {
@@ -13164,56 +13211,56 @@ pub fn x00403cb1() -> Cont {
         &mut m.flags,
     );
     // 00403cb8 jl short 00403CD1h
-    jl(Cont(x00403cba), Cont(x00403cd1))
+    jl(m, Cont(x00403cba), Cont(x00403cd1))
 }
 
 pub fn x00403cba() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00403cba push dword ptr [ebp+18h]
-    push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x18u32)));
+    push(m, m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x18u32)));
     // 00403cbd push dword ptr [ebp+14h]
-    push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x14u32)));
+    push(m, m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x14u32)));
     // 00403cc0 mov edx,[ebp+1Ch]
     m.regs.edx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x1cu32));
     // 00403cc3 push dword ptr [ebp+10h]
-    push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x10u32)));
+    push(m, m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x10u32)));
     // 00403cc6 mov eax,[ebp+20h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x20u32));
     // 00403cc9 push dword ptr [ebp+0Ch]
-    push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xcu32)));
+    push(m, m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xcu32)));
     // 00403ccc call 00403837h
-    call(0x403cd1, Cont(x00403837))
+    call(m, 0x403cd1, Cont(x00403837))
 }
 
 pub fn x00403cd1() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00403cd1 pop ebp
-    m.regs.ebp = pop();
+    m.regs.ebp = pop(m);
     // 00403cd2 pop edx
-    m.regs.edx = pop();
+    m.regs.edx = pop(m);
     // 00403cd3 ret 18h
-    ret(24)
+    ret(m, 24)
 }
 
 pub fn x00403d06() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00403d06 push esi
-    push(m.regs.esi);
+    push(m, m.regs.esi);
     // 00403d07 push edi
-    push(m.regs.edi);
+    push(m, m.regs.edi);
     // 00403d08 enter 48h,0
-    enter(0x48u16, 0);
+    enter(m, 0x48u16, 0);
     // 00403d0c push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 00403d0d push edx
-    push(m.regs.edx);
+    push(m, m.regs.edx);
     // 00403d0e push ebx
-    push(m.regs.ebx);
+    push(m, m.regs.ebx);
     // 00403d0f push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 00403d10 mov edx,ds:[40C724h]
     m.regs.edx = m.memory.read::<u32>(0x40c724u32);
     // 00403d16 imul edx,ds:[40C728h]
@@ -13367,7 +13414,7 @@ pub fn x00403dbd() -> Cont {
         &mut m.flags,
     );
     // 00403dc1 jle short 00403DCAh
-    jle(Cont(x00403dc3), Cont(x00403dca))
+    jle(m, Cont(x00403dc3), Cont(x00403dca))
 }
 
 pub fn x00403dc3() -> Cont {
@@ -13400,7 +13447,7 @@ pub fn x00403dc3() -> Cont {
     m.memory
         .write::<u8>(m.regs.ecx.wrapping_add(m.regs.edx), m.regs.get_al());
     // 00403de7 call 00408838h
-    call(0x403dec, Cont(x00408838))
+    call(m, 0x403dec, Cont(x00408838))
 }
 
 pub fn x00403dca() -> Cont {
@@ -13430,7 +13477,7 @@ pub fn x00403dca() -> Cont {
     m.memory
         .write::<u8>(m.regs.ecx.wrapping_add(m.regs.edx), m.regs.get_al());
     // 00403de7 call 00408838h
-    call(0x403dec, Cont(x00408838))
+    call(m, 0x403dec, Cont(x00408838))
 }
 
 pub fn x00403dec() -> Cont {
@@ -13449,7 +13496,7 @@ pub fn x00403dec() -> Cont {
         &mut m.flags,
     );
     // 00403df3 jge short 00403DFEh
-    jge(Cont(x00403df5), Cont(x00403dfe))
+    jge(m, Cont(x00403df5), Cont(x00403dfe))
 }
 
 pub fn x00403df5() -> Cont {
@@ -13472,7 +13519,7 @@ pub fn x00403dfe() -> Cont {
         &mut m.flags,
     );
     // 00403e02 jle short 00403E0Bh
-    jle(Cont(x00403e04), Cont(x00403e0b))
+    jle(m, Cont(x00403e04), Cont(x00403e0b))
 }
 
 pub fn x00403e04() -> Cont {
@@ -13496,7 +13543,7 @@ pub fn x00403e04() -> Cont {
     // 00403e19 cmp edx,80h
     sub(m.regs.edx, 0x80u32, &mut m.flags);
     // 00403e1f jge short 00403E5Ch
-    jge(Cont(x00403e21), Cont(x00403e5c))
+    jge(m, Cont(x00403e21), Cont(x00403e5c))
 }
 
 pub fn x00403e0b() -> Cont {
@@ -13517,7 +13564,7 @@ pub fn x00403e0b() -> Cont {
     // 00403e19 cmp edx,80h
     sub(m.regs.edx, 0x80u32, &mut m.flags);
     // 00403e1f jge short 00403E5Ch
-    jge(Cont(x00403e21), Cont(x00403e5c))
+    jge(m, Cont(x00403e21), Cont(x00403e5c))
 }
 
 pub fn x00403e21() -> Cont {
@@ -13554,7 +13601,7 @@ pub fn x00403e21() -> Cont {
     m.fpu.set(1, m.fpu.get(1) + m.fpu.get(0));
     m.fpu.pop();
     // 00403e3e call 00408838h
-    call(0x403e43, Cont(x00408838))
+    call(m, 0x403e43, Cont(x00408838))
 }
 
 pub fn x00403e43() -> Cont {
@@ -13573,7 +13620,7 @@ pub fn x00403e43() -> Cont {
         &mut m.flags,
     );
     // 00403e4a jge near ptr 00403DBDh
-    jge(Cont(x00403e50), Cont(x00403dbd))
+    jge(m, Cont(x00403e50), Cont(x00403dbd))
 }
 
 pub fn x00403e50() -> Cont {
@@ -13606,7 +13653,7 @@ pub fn x00403e5c() -> Cont {
     // 00403e78 dec ecx
     m.regs.ecx = dec(m.regs.ecx, &mut m.flags);
     // 00403e79 jne short 00403E68h
-    jne(Cont(x00403e7b), Cont(x00403e68))
+    jne(m, Cont(x00403e7b), Cont(x00403e68))
 }
 
 pub fn x00403e68() -> Cont {
@@ -13625,7 +13672,7 @@ pub fn x00403e68() -> Cont {
     // 00403e78 dec ecx
     m.regs.ecx = dec(m.regs.ecx, &mut m.flags);
     // 00403e79 jne short 00403E68h
-    jne(Cont(x00403e7b), Cont(x00403e68))
+    jne(m, Cont(x00403e7b), Cont(x00403e68))
 }
 
 pub fn x00403e7b() -> Cont {
@@ -13893,7 +13940,7 @@ pub fn x00403e7b() -> Cont {
         ),
     );
     // 00403ffe jne near ptr 00403EFEh
-    jne(Cont(x00404004), Cont(x00403efe))
+    jne(m, Cont(x00404004), Cont(x00403efe))
 }
 
 pub fn x00403ea3() -> Cont {
@@ -14133,7 +14180,7 @@ pub fn x00403ea3() -> Cont {
         ),
     );
     // 00403ffe jne near ptr 00403EFEh
-    jne(Cont(x00404004), Cont(x00403efe))
+    jne(m, Cont(x00404004), Cont(x00403efe))
 }
 
 pub fn x00403efe() -> Cont {
@@ -14326,7 +14373,7 @@ pub fn x00403efe() -> Cont {
         ),
     );
     // 00403ffe jne near ptr 00403EFEh
-    jne(Cont(x00404004), Cont(x00403efe))
+    jne(m, Cont(x00404004), Cont(x00403efe))
 }
 
 pub fn x00404004() -> Cont {
@@ -14358,7 +14405,7 @@ pub fn x00404004() -> Cont {
         ),
     );
     // 00404022 jne near ptr 00403EA3h
-    jne(Cont(x00404028), Cont(x00403ea3))
+    jne(m, Cont(x00404028), Cont(x00403ea3))
 }
 
 pub fn x00404028() -> Cont {
@@ -14633,7 +14680,7 @@ pub fn x00404028() -> Cont {
         ),
     );
     // 004041b4 jne near ptr 004040B4h
-    jne(Cont(x004041ba), Cont(x004040b4))
+    jne(m, Cont(x004041ba), Cont(x004040b4))
 }
 
 pub fn x00404050() -> Cont {
@@ -14880,7 +14927,7 @@ pub fn x00404050() -> Cont {
         ),
     );
     // 004041b4 jne near ptr 004040B4h
-    jne(Cont(x004041ba), Cont(x004040b4))
+    jne(m, Cont(x004041ba), Cont(x004040b4))
 }
 
 pub fn x004040b4() -> Cont {
@@ -15073,7 +15120,7 @@ pub fn x004040b4() -> Cont {
         ),
     );
     // 004041b4 jne near ptr 004040B4h
-    jne(Cont(x004041ba), Cont(x004040b4))
+    jne(m, Cont(x004041ba), Cont(x004040b4))
 }
 
 pub fn x004041ba() -> Cont {
@@ -15105,7 +15152,7 @@ pub fn x004041ba() -> Cont {
         ),
     );
     // 004041d8 jne near ptr 00404050h
-    jne(Cont(x004041de), Cont(x00404050))
+    jne(m, Cont(x004041de), Cont(x00404050))
 }
 
 pub fn x004041de() -> Cont {
@@ -15374,7 +15421,7 @@ pub fn x004041de() -> Cont {
         ),
     );
     // 00404365 jne near ptr 00404265h
-    jne(Cont(x0040436b), Cont(x00404265))
+    jne(m, Cont(x0040436b), Cont(x00404265))
 }
 
 pub fn x0040420a() -> Cont {
@@ -15614,7 +15661,7 @@ pub fn x0040420a() -> Cont {
         ),
     );
     // 00404365 jne near ptr 00404265h
-    jne(Cont(x0040436b), Cont(x00404265))
+    jne(m, Cont(x0040436b), Cont(x00404265))
 }
 
 pub fn x00404265() -> Cont {
@@ -15807,7 +15854,7 @@ pub fn x00404265() -> Cont {
         ),
     );
     // 00404365 jne near ptr 00404265h
-    jne(Cont(x0040436b), Cont(x00404265))
+    jne(m, Cont(x0040436b), Cont(x00404265))
 }
 
 pub fn x0040436b() -> Cont {
@@ -15839,7 +15886,7 @@ pub fn x0040436b() -> Cont {
         ),
     );
     // 00404389 jne near ptr 0040420Ah
-    jne(Cont(x0040438f), Cont(x0040420a))
+    jne(m, Cont(x0040438f), Cont(x0040420a))
 }
 
 pub fn x0040438f() -> Cont {
@@ -16115,7 +16162,7 @@ pub fn x0040438f() -> Cont {
         ),
     );
     // 0040451f jne near ptr 0040441Fh
-    jne(Cont(x00404525), Cont(x0040441f))
+    jne(m, Cont(x00404525), Cont(x0040441f))
 }
 
 pub fn x004043bb() -> Cont {
@@ -16362,7 +16409,7 @@ pub fn x004043bb() -> Cont {
         ),
     );
     // 0040451f jne near ptr 0040441Fh
-    jne(Cont(x00404525), Cont(x0040441f))
+    jne(m, Cont(x00404525), Cont(x0040441f))
 }
 
 pub fn x0040441f() -> Cont {
@@ -16555,7 +16602,7 @@ pub fn x0040441f() -> Cont {
         ),
     );
     // 0040451f jne near ptr 0040441Fh
-    jne(Cont(x00404525), Cont(x0040441f))
+    jne(m, Cont(x00404525), Cont(x0040441f))
 }
 
 pub fn x00404525() -> Cont {
@@ -16587,7 +16634,7 @@ pub fn x00404525() -> Cont {
         ),
     );
     // 00404543 jne near ptr 004043BBh
-    jne(Cont(x00404549), Cont(x004043bb))
+    jne(m, Cont(x00404549), Cont(x004043bb))
 }
 
 pub fn x00404549() -> Cont {
@@ -16610,7 +16657,7 @@ pub fn x00404549() -> Cont {
     // 00404565 dec ecx
     m.regs.ecx = dec(m.regs.ecx, &mut m.flags);
     // 00404566 jne short 00404555h
-    jne(Cont(x00404568), Cont(x00404555))
+    jne(m, Cont(x00404568), Cont(x00404555))
 }
 
 pub fn x00404555() -> Cont {
@@ -16629,7 +16676,7 @@ pub fn x00404555() -> Cont {
     // 00404565 dec ecx
     m.regs.ecx = dec(m.regs.ecx, &mut m.flags);
     // 00404566 jne short 00404555h
-    jne(Cont(x00404568), Cont(x00404555))
+    jne(m, Cont(x00404568), Cont(x00404555))
 }
 
 pub fn x00404568() -> Cont {
@@ -16638,22 +16685,22 @@ pub fn x00404568() -> Cont {
     // 00404568 emms
     // no-op
     // 0040456a leave
-    leave();
+    leave(m);
     // 0040456b pop edi
-    m.regs.edi = pop();
+    m.regs.edi = pop(m);
     // 0040456c pop esi
-    m.regs.esi = pop();
+    m.regs.esi = pop(m);
     // 0040456d ret 8
-    ret(8)
+    ret(m, 8)
 }
 
 pub fn x00404570() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00404570 push edx
-    push(m.regs.edx);
+    push(m, m.regs.edx);
     // 00404571 enter 4,0
-    enter(0x4u16, 0);
+    enter(m, 0x4u16, 0);
     // 00404575 mov edx,eax
     m.regs.edx = m.regs.eax;
     // 00404577 fld dword ptr [eax+4]
@@ -16718,22 +16765,22 @@ pub fn x00404570() -> Cont {
         .write::<f32>(m.regs.edx.wrapping_add(0x8u32), m.fpu.get(0) as f32);
     m.fpu.pop();
     // 004045a9 leave
-    leave();
+    leave(m);
     // 004045aa pop edx
-    m.regs.edx = pop();
+    m.regs.edx = pop(m);
     // 004045ab ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x004045ac() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004045ac enter 34h,0
-    enter(0x34u16, 0);
+    enter(m, 0x34u16, 0);
     // 004045b0 lea eax,[ebp+14h]
     m.regs.eax = m.regs.ebp.wrapping_add(0x14u32);
     // 004045b3 call 00404570h
-    call(0x4045b8, Cont(x00404570))
+    call(m, 0x4045b8, Cont(x00404570))
 }
 
 pub fn x004045b8() -> Cont {
@@ -16914,7 +16961,7 @@ pub fn x004045b8() -> Cont {
     // 00404648 sahf
     sahf(m);
     // 00404649 jae short 00404650h
-    jae(Cont(x0040464b), Cont(x00404650))
+    jae(m, Cont(x0040464b), Cont(x00404650))
 }
 
 pub fn x0040464b() -> Cont {
@@ -17012,7 +17059,7 @@ pub fn x00404650() -> Cont {
     m.fpu.set(0, m.fpu.get(1));
     m.fpu.set(1, t);
     // 0040468b call 00408838h
-    call(0x404690, Cont(x00408838))
+    call(m, 0x404690, Cont(x00408838))
 }
 
 pub fn x00404653() -> Cont {
@@ -17099,7 +17146,7 @@ pub fn x00404653() -> Cont {
     m.fpu.set(0, m.fpu.get(1));
     m.fpu.set(1, t);
     // 0040468b call 00408838h
-    call(0x404690, Cont(x00408838))
+    call(m, 0x404690, Cont(x00408838))
 }
 
 pub fn x00404690() -> Cont {
@@ -17120,7 +17167,7 @@ pub fn x00404690() -> Cont {
     // 00404699 cmp eax,0
     sub(m.regs.eax, 0x0u32, &mut m.flags);
     // 0040469c jns short 004046A0h
-    jns(Cont(x0040469e), Cont(x004046a0))
+    jns(m, Cont(x0040469e), Cont(x004046a0))
 }
 
 pub fn x0040469e() -> Cont {
@@ -17151,7 +17198,7 @@ pub fn x0040469e() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c0c8u32));
     // 004046bb call 00408838h
-    call(0x4046c0, Cont(x00408838))
+    call(m, 0x4046c0, Cont(x00408838))
 }
 
 pub fn x004046a0() -> Cont {
@@ -17180,7 +17227,7 @@ pub fn x004046a0() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c0c8u32));
     // 004046bb call 00408838h
-    call(0x4046c0, Cont(x00408838))
+    call(m, 0x4046c0, Cont(x00408838))
 }
 
 pub fn x004046c0() -> Cont {
@@ -17197,7 +17244,7 @@ pub fn x004046c0() -> Cont {
     // 004046c6 cmp eax,0
     sub(m.regs.eax, 0x0u32, &mut m.flags);
     // 004046c9 jns short 004046CDh
-    jns(Cont(x004046cb), Cont(x004046cd))
+    jns(m, Cont(x004046cb), Cont(x004046cd))
 }
 
 pub fn x004046cb() -> Cont {
@@ -17214,7 +17261,7 @@ pub fn x004046cb() -> Cont {
     // 004046d6 mov ds:[433F70h],eax
     m.memory.write::<u32>(0x433f70u32, m.regs.eax);
     // 004046db call 00408838h
-    call(0x4046e0, Cont(x00408838))
+    call(m, 0x4046e0, Cont(x00408838))
 }
 
 pub fn x004046cd() -> Cont {
@@ -17229,7 +17276,7 @@ pub fn x004046cd() -> Cont {
     // 004046d6 mov ds:[433F70h],eax
     m.memory.write::<u32>(0x433f70u32, m.regs.eax);
     // 004046db call 00408838h
-    call(0x4046e0, Cont(x00408838))
+    call(m, 0x4046e0, Cont(x00408838))
 }
 
 pub fn x004046e0() -> Cont {
@@ -17240,22 +17287,22 @@ pub fn x004046e0() -> Cont {
         .write::<u32>(0x433f74u32, m.fpu.get(0).round() as i32 as u32);
     m.fpu.pop();
     // 004046e6 leave
-    leave();
+    leave(m);
     // 004046e7 ret 18h
-    ret(24)
+    ret(m, 24)
 }
 
 pub fn x004046ea() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004046ea push ebx
-    push(m.regs.ebx);
+    push(m, m.regs.ebx);
     // 004046eb push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 004046ec push edx
-    push(m.regs.edx);
+    push(m, m.regs.edx);
     // 004046ed enter 28h,0
-    enter(0x28u16, 0);
+    enter(m, 0x28u16, 0);
     // 004046f1 fld dword ptr [ebp+14h]
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0x14u32)) as f64);
@@ -17275,7 +17322,7 @@ pub fn x004046ea() -> Cont {
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0x14u32)) as f64);
     // 00404709 call 00408838h
-    call(0x40470e, Cont(x00408838))
+    call(m, 0x40470e, Cont(x00408838))
 }
 
 pub fn x0040470e() -> Cont {
@@ -17292,7 +17339,7 @@ pub fn x0040470e() -> Cont {
     m.fpu.set(0, m.fpu.get(1));
     m.fpu.set(1, t);
     // 00404713 call 00408838h
-    call(0x404718, Cont(x00408838))
+    call(m, 0x404718, Cont(x00408838))
 }
 
 pub fn x00404718() -> Cont {
@@ -17389,7 +17436,7 @@ pub fn x00404718() -> Cont {
     m.fpu.set(0, m.fpu.get(1));
     m.fpu.set(1, t);
     // 0040476d call 00408838h
-    call(0x404772, Cont(x00408838))
+    call(m, 0x404772, Cont(x00408838))
 }
 
 pub fn x00404772() -> Cont {
@@ -17464,7 +17511,7 @@ pub fn x00404772() -> Cont {
     // 004047b9 mov ecx,[ebp-0Ch]
     m.regs.ecx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff4u32));
     // 004047bc push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 004047bd fadd qword ptr [ebp-28h]
     m.fpu.set(
         0,
@@ -17473,7 +17520,7 @@ pub fn x00404772() -> Cont {
     // 004047c0 movzx eax,byte ptr [ebp-4]
     m.regs.eax = m.memory.read::<u8>(m.regs.ebp.wrapping_add(0xfffffffcu32)) as _;
     // 004047c4 call 00408838h
-    call(0x4047c9, Cont(x00408838))
+    call(m, 0x4047c9, Cont(x00408838))
 }
 
 pub fn x004047c9() -> Cont {
@@ -17486,13 +17533,13 @@ pub fn x004047c9() -> Cont {
     );
     m.fpu.pop();
     // 004047cc push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 004047cd mov ebx,[ebp-10h]
     m.regs.ebx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff0u32));
     // 004047d0 xor eax,eax
     m.regs.eax = xor(m.regs.eax, m.regs.eax, &mut m.flags);
     // 004047d2 call 00404A91h
-    call(0x4047d7, Cont(x00404a91))
+    call(m, 0x4047d7, Cont(x00404a91))
 }
 
 pub fn x004047d7() -> Cont {
@@ -17503,43 +17550,43 @@ pub fn x004047d7() -> Cont {
     // 004047da mov eax,[ebp+18h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x18u32));
     // 004047dd call 00404CEBh
-    call(0x4047e2, Cont(x00404ceb))
+    call(m, 0x4047e2, Cont(x00404ceb))
 }
 
 pub fn x004047e2() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004047e2 leave
-    leave();
+    leave(m);
     // 004047e3 pop edx
-    m.regs.edx = pop();
+    m.regs.edx = pop(m);
     // 004047e4 pop ecx
-    m.regs.ecx = pop();
+    m.regs.ecx = pop(m);
     // 004047e5 pop ebx
-    m.regs.ebx = pop();
+    m.regs.ebx = pop(m);
     // 004047e6 ret 0Ch
-    ret(12)
+    ret(m, 12)
 }
 
 pub fn x004047e9() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004047e9 push ebx
-    push(m.regs.ebx);
+    push(m, m.regs.ebx);
     // 004047ea push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 004047eb push edx
-    push(m.regs.edx);
+    push(m, m.regs.edx);
     // 004047ec push esi
-    push(m.regs.esi);
+    push(m, m.regs.esi);
     // 004047ed push edi
-    push(m.regs.edi);
+    push(m, m.regs.edi);
     // 004047ee enter 30h,0
-    enter(0x30u16, 0);
+    enter(m, 0x30u16, 0);
     // 004047f2 push 100h
-    push(0x100u32);
+    push(m, 0x100u32);
     // 004047f7 call 00401A60h
-    call(0x4047fc, Cont(x00401a60))
+    call(m, 0x4047fc, Cont(x00401a60))
 }
 
 pub fn x004047fc() -> Cont {
@@ -17560,9 +17607,9 @@ pub fn x004047fc() -> Cont {
     // 00404810 shl eax,2
     m.regs.eax = shl(m.regs.eax, 0x2u8, &mut m.flags);
     // 00404813 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 00404814 call 00401A60h
-    call(0x404819, Cont(x00401a60))
+    call(m, 0x404819, Cont(x00401a60))
 }
 
 pub fn x00404819() -> Cont {
@@ -17581,9 +17628,9 @@ pub fn x00404819() -> Cont {
     // 0040482a add esp,4
     m.regs.esp = add(m.regs.esp, 0x4u32, &mut m.flags);
     // 0040482d push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 0040482e call 00401A60h
-    call(0x404833, Cont(x00401a60))
+    call(m, 0x404833, Cont(x00401a60))
 }
 
 pub fn x00404833() -> Cont {
@@ -17600,9 +17647,9 @@ pub fn x00404833() -> Cont {
     // 00404843 shl eax,2
     m.regs.eax = shl(m.regs.eax, 0x2u8, &mut m.flags);
     // 00404846 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 00404847 call 00401A60h
-    call(0x40484c, Cont(x00401a60))
+    call(m, 0x40484c, Cont(x00401a60))
 }
 
 pub fn x0040484c() -> Cont {
@@ -17629,9 +17676,9 @@ pub fn x0040484c() -> Cont {
     // 00404865 add eax,100h
     m.regs.eax = add(m.regs.eax, 0x100u32, &mut m.flags);
     // 0040486a push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 0040486b call 00401A60h
-    call(0x404870, Cont(x00401a60))
+    call(m, 0x404870, Cont(x00401a60))
 }
 
 pub fn x00404870() -> Cont {
@@ -17658,9 +17705,9 @@ pub fn x00404870() -> Cont {
     // 00404889 add eax,100h
     m.regs.eax = add(m.regs.eax, 0x100u32, &mut m.flags);
     // 0040488e push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 0040488f call 00401A60h
-    call(0x404894, Cont(x00401a60))
+    call(m, 0x404894, Cont(x00401a60))
 }
 
 pub fn x00404894() -> Cont {
@@ -17687,9 +17734,9 @@ pub fn x00404894() -> Cont {
     // 004048ad add eax,100h
     m.regs.eax = add(m.regs.eax, 0x100u32, &mut m.flags);
     // 004048b2 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 004048b3 call 00401A60h
-    call(0x4048b8, Cont(x00401a60))
+    call(m, 0x4048b8, Cont(x00401a60))
 }
 
 pub fn x004048b8() -> Cont {
@@ -17716,7 +17763,7 @@ pub fn x004048b8() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c120u32));
     // 004048d6 call 00408838h
-    call(0x4048db, Cont(x00408838))
+    call(m, 0x4048db, Cont(x00408838))
 }
 
 pub fn x004048c2() -> Cont {
@@ -17737,7 +17784,7 @@ pub fn x004048c2() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c120u32));
     // 004048d6 call 00408838h
-    call(0x4048db, Cont(x00408838))
+    call(m, 0x4048db, Cont(x00408838))
 }
 
 pub fn x004048db() -> Cont {
@@ -17764,7 +17811,7 @@ pub fn x004048db() -> Cont {
     // 004048ec cmp ecx,100h
     sub(m.regs.ecx, 0x100u32, &mut m.flags);
     // 004048f2 jl short 004048C2h
-    jl(Cont(x004048f4), Cont(x004048c2))
+    jl(m, Cont(x004048f4), Cont(x004048c2))
 }
 
 pub fn x004048f4() -> Cont {
@@ -17775,7 +17822,7 @@ pub fn x004048f4() -> Cont {
     // 004048f6 cmp ebx,ds:[40C728h]
     sub(m.regs.ebx, m.memory.read::<u32>(0x40c728u32), &mut m.flags);
     // 004048fc jge near ptr 004049F9h
-    jge(Cont(x00404902), Cont(x004049f9))
+    jge(m, Cont(x00404902), Cont(x004049f9))
 }
 
 pub fn x004048f6() -> Cont {
@@ -17784,7 +17831,7 @@ pub fn x004048f6() -> Cont {
     // 004048f6 cmp ebx,ds:[40C728h]
     sub(m.regs.ebx, m.memory.read::<u32>(0x40c728u32), &mut m.flags);
     // 004048fc jge near ptr 004049F9h
-    jge(Cont(x00404902), Cont(x004049f9))
+    jge(m, Cont(x00404902), Cont(x004049f9))
 }
 
 pub fn x00404902() -> Cont {
@@ -17825,7 +17872,7 @@ pub fn x00404902() -> Cont {
     // 00404925 xor ecx,ecx
     m.regs.ecx = xor(m.regs.ecx, m.regs.ecx, &mut m.flags);
     // 00404927 call 00408838h
-    call(0x40492c, Cont(x00408838))
+    call(m, 0x40492c, Cont(x00408838))
 }
 
 pub fn x0040492c() -> Cont {
@@ -17840,7 +17887,7 @@ pub fn x0040492c() -> Cont {
     // 0040492f cmp ecx,ds:[40C724h]
     sub(m.regs.ecx, m.memory.read::<u32>(0x40c724u32), &mut m.flags);
     // 00404935 jge near ptr 004049F3h
-    jge(Cont(x0040493b), Cont(x004049f3))
+    jge(m, Cont(x0040493b), Cont(x004049f3))
 }
 
 pub fn x0040492f() -> Cont {
@@ -17849,7 +17896,7 @@ pub fn x0040492f() -> Cont {
     // 0040492f cmp ecx,ds:[40C724h]
     sub(m.regs.ecx, m.memory.read::<u32>(0x40c724u32), &mut m.flags);
     // 00404935 jge near ptr 004049F3h
-    jge(Cont(x0040493b), Cont(x004049f3))
+    jge(m, Cont(x0040493b), Cont(x004049f3))
 }
 
 pub fn x0040493b() -> Cont {
@@ -17909,7 +17956,7 @@ pub fn x0040493b() -> Cont {
     m.fpu.set(0, m.fpu.get(1));
     m.fpu.set(1, t);
     // 00404974 call 00408838h
-    call(0x404979, Cont(x00408838))
+    call(m, 0x404979, Cont(x00408838))
 }
 
 pub fn x00404979() -> Cont {
@@ -17932,7 +17979,7 @@ pub fn x00404979() -> Cont {
     // 00404981 sahf
     sahf(m);
     // 00404982 jbe short 00404992h
-    jbe(Cont(x00404984), Cont(x00404992))
+    jbe(m, Cont(x00404984), Cont(x00404992))
 }
 
 pub fn x00404984() -> Cont {
@@ -17951,7 +17998,7 @@ pub fn x00404984() -> Cont {
         &mut m.flags,
     );
     // 00404999 jne short 004049AFh
-    jne(Cont(x0040499b), Cont(x004049af))
+    jne(m, Cont(x0040499b), Cont(x004049af))
 }
 
 pub fn x00404992() -> Cont {
@@ -17964,7 +18011,7 @@ pub fn x00404992() -> Cont {
         &mut m.flags,
     );
     // 00404999 jne short 004049AFh
-    jne(Cont(x0040499b), Cont(x004049af))
+    jne(m, Cont(x0040499b), Cont(x004049af))
 }
 
 pub fn x0040499b() -> Cont {
@@ -17977,7 +18024,7 @@ pub fn x0040499b() -> Cont {
         &mut m.flags,
     );
     // 0040499f jne short 004049AFh
-    jne(Cont(x004049a1), Cont(x004049af))
+    jne(m, Cont(x004049a1), Cont(x004049af))
 }
 
 pub fn x004049a1() -> Cont {
@@ -18015,7 +18062,7 @@ pub fn x004049a1() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c128u32));
     // 004049c5 call 00408838h
-    call(0x4049ca, Cont(x00408838))
+    call(m, 0x4049ca, Cont(x00408838))
 }
 
 pub fn x004049af() -> Cont {
@@ -18047,7 +18094,7 @@ pub fn x004049af() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c128u32));
     // 004049c5 call 00408838h
-    call(0x4049ca, Cont(x00408838))
+    call(m, 0x4049ca, Cont(x00408838))
 }
 
 pub fn x004049ca() -> Cont {
@@ -18101,152 +18148,152 @@ pub fn x004049f9() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004049f9 leave
-    leave();
+    leave(m);
     // 004049fa pop edi
-    m.regs.edi = pop();
+    m.regs.edi = pop(m);
     // 004049fb pop esi
-    m.regs.esi = pop();
+    m.regs.esi = pop(m);
     // 004049fc pop edx
-    m.regs.edx = pop();
+    m.regs.edx = pop(m);
     // 004049fd pop ecx
-    m.regs.ecx = pop();
+    m.regs.ecx = pop(m);
     // 004049fe pop ebx
-    m.regs.ebx = pop();
+    m.regs.ebx = pop(m);
     // 004049ff ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x00404a00() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00404a00 push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 00404a01 push edx
-    push(m.regs.edx);
+    push(m, m.regs.edx);
     // 00404a02 push 8000h
-    push(0x8000u32);
+    push(m, 0x8000u32);
     // 00404a07 push 0
-    push(0x0u32);
+    push(m, 0x0u32);
     // 00404a09 mov eax,ds:[433F58h]
     m.regs.eax = m.memory.read::<u32>(0x433f58u32);
     // 00404a0e push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 00404a0f call dword ptr cs:[40B16Ch]
-    call(0x404a16, Cont(kernel32::VirtualFree_stdcall))
+    call(m, 0x404a16, Cont(kernel32::VirtualFree_stdcall))
 }
 
 pub fn x00404a16() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00404a16 push 8000h
-    push(0x8000u32);
+    push(m, 0x8000u32);
     // 00404a1b push 0
-    push(0x0u32);
+    push(m, 0x0u32);
     // 00404a1d mov eax,ds:[433F54h]
     m.regs.eax = m.memory.read::<u32>(0x433f54u32);
     // 00404a22 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 00404a23 call dword ptr cs:[40B16Ch]
-    call(0x404a2a, Cont(kernel32::VirtualFree_stdcall))
+    call(m, 0x404a2a, Cont(kernel32::VirtualFree_stdcall))
 }
 
 pub fn x00404a2a() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00404a2a push 8000h
-    push(0x8000u32);
+    push(m, 0x8000u32);
     // 00404a2f push 0
-    push(0x0u32);
+    push(m, 0x0u32);
     // 00404a31 mov eax,ds:[433F68h]
     m.regs.eax = m.memory.read::<u32>(0x433f68u32);
     // 00404a36 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 00404a37 call dword ptr cs:[40B16Ch]
-    call(0x404a3e, Cont(kernel32::VirtualFree_stdcall))
+    call(m, 0x404a3e, Cont(kernel32::VirtualFree_stdcall))
 }
 
 pub fn x00404a3e() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00404a3e push 8000h
-    push(0x8000u32);
+    push(m, 0x8000u32);
     // 00404a43 push 0
-    push(0x0u32);
+    push(m, 0x0u32);
     // 00404a45 mov eax,ds:[433F50h]
     m.regs.eax = m.memory.read::<u32>(0x433f50u32);
     // 00404a4a push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 00404a4b call dword ptr cs:[40B16Ch]
-    call(0x404a52, Cont(kernel32::VirtualFree_stdcall))
+    call(m, 0x404a52, Cont(kernel32::VirtualFree_stdcall))
 }
 
 pub fn x00404a52() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00404a52 push 8000h
-    push(0x8000u32);
+    push(m, 0x8000u32);
     // 00404a57 push 0
-    push(0x0u32);
+    push(m, 0x0u32);
     // 00404a59 mov eax,ds:[433F64h]
     m.regs.eax = m.memory.read::<u32>(0x433f64u32);
     // 00404a5e push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 00404a5f call dword ptr cs:[40B16Ch]
-    call(0x404a66, Cont(kernel32::VirtualFree_stdcall))
+    call(m, 0x404a66, Cont(kernel32::VirtualFree_stdcall))
 }
 
 pub fn x00404a66() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00404a66 push 8000h
-    push(0x8000u32);
+    push(m, 0x8000u32);
     // 00404a6b push 0
-    push(0x0u32);
+    push(m, 0x0u32);
     // 00404a6d mov eax,ds:[433F60h]
     m.regs.eax = m.memory.read::<u32>(0x433f60u32);
     // 00404a72 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 00404a73 call dword ptr cs:[40B16Ch]
-    call(0x404a7a, Cont(kernel32::VirtualFree_stdcall))
+    call(m, 0x404a7a, Cont(kernel32::VirtualFree_stdcall))
 }
 
 pub fn x00404a7a() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00404a7a push 8000h
-    push(0x8000u32);
+    push(m, 0x8000u32);
     // 00404a7f push 0
-    push(0x0u32);
+    push(m, 0x0u32);
     // 00404a81 mov eax,ds:[433F5Ch]
     m.regs.eax = m.memory.read::<u32>(0x433f5cu32);
     // 00404a86 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 00404a87 call dword ptr cs:[40B16Ch]
-    call(0x404a8e, Cont(kernel32::VirtualFree_stdcall))
+    call(m, 0x404a8e, Cont(kernel32::VirtualFree_stdcall))
 }
 
 pub fn x00404a8e() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00404a8e pop edx
-    m.regs.edx = pop();
+    m.regs.edx = pop(m);
     // 00404a8f pop ecx
-    m.regs.ecx = pop();
+    m.regs.ecx = pop(m);
     // 00404a90 ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x00404a91() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00404a91 push esi
-    push(m.regs.esi);
+    push(m, m.regs.esi);
     // 00404a92 push edi
-    push(m.regs.edi);
+    push(m, m.regs.edi);
     // 00404a93 enter 30h,0
-    enter(0x30u16, 0);
+    enter(m, 0x30u16, 0);
     // 00404a97 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 00404a98 mov edi,edx
     m.regs.edi = m.regs.edx;
     // 00404a9a mov eax,edx
@@ -18288,7 +18335,7 @@ pub fn x00404a91() -> Cont {
     // 00404ac3 cmp eax,0
     sub(m.regs.eax, 0x0u32, &mut m.flags);
     // 00404ac6 jns short 00404ACAh
-    jns(Cont(x00404ac8), Cont(x00404aca))
+    jns(m, Cont(x00404ac8), Cont(x00404aca))
 }
 
 pub fn x00404ac8() -> Cont {
@@ -18301,7 +18348,7 @@ pub fn x00404ac8() -> Cont {
     // 00404acd cmp eax,0
     sub(m.regs.eax, 0x0u32, &mut m.flags);
     // 00404ad0 jns short 00404AD4h
-    jns(Cont(x00404ad2), Cont(x00404ad4))
+    jns(m, Cont(x00404ad2), Cont(x00404ad4))
 }
 
 pub fn x00404aca() -> Cont {
@@ -18312,7 +18359,7 @@ pub fn x00404aca() -> Cont {
     // 00404acd cmp eax,0
     sub(m.regs.eax, 0x0u32, &mut m.flags);
     // 00404ad0 jns short 00404AD4h
-    jns(Cont(x00404ad2), Cont(x00404ad4))
+    jns(m, Cont(x00404ad2), Cont(x00404ad4))
 }
 
 pub fn x00404ad2() -> Cont {
@@ -18338,7 +18385,7 @@ pub fn x00404ad2() -> Cont {
     // 00404ae6 cmp ecx,10000h
     sub(m.regs.ecx, 0x10000u32, &mut m.flags);
     // 00404aec jle short 00404AF4h
-    jle(Cont(x00404aee), Cont(x00404af4))
+    jle(m, Cont(x00404aee), Cont(x00404af4))
 }
 
 pub fn x00404ad4() -> Cont {
@@ -18362,7 +18409,7 @@ pub fn x00404ad4() -> Cont {
     // 00404ae6 cmp ecx,10000h
     sub(m.regs.ecx, 0x10000u32, &mut m.flags);
     // 00404aec jle short 00404AF4h
-    jle(Cont(x00404aee), Cont(x00404af4))
+    jle(m, Cont(x00404aee), Cont(x00404af4))
 }
 
 pub fn x00404aee() -> Cont {
@@ -18377,7 +18424,7 @@ pub fn x00404aee() -> Cont {
         &mut m.flags,
     );
     // 00404afb jle short 00404B04h
-    jle(Cont(x00404afd), Cont(x00404b04))
+    jle(m, Cont(x00404afd), Cont(x00404b04))
 }
 
 pub fn x00404af4() -> Cont {
@@ -18390,7 +18437,7 @@ pub fn x00404af4() -> Cont {
         &mut m.flags,
     );
     // 00404afb jle short 00404B04h
-    jle(Cont(x00404afd), Cont(x00404b04))
+    jle(m, Cont(x00404afd), Cont(x00404b04))
 }
 
 pub fn x00404afd() -> Cont {
@@ -18414,7 +18461,7 @@ pub fn x00404afd() -> Cont {
     // 00404b0e cmp edx,eax
     sub(m.regs.edx, m.regs.eax, &mut m.flags);
     // 00404b10 jge short 00404B5Dh
-    jge(Cont(x00404b12), Cont(x00404b5d))
+    jge(m, Cont(x00404b12), Cont(x00404b5d))
 }
 
 pub fn x00404b04() -> Cont {
@@ -18429,7 +18476,7 @@ pub fn x00404b04() -> Cont {
     // 00404b0e cmp edx,eax
     sub(m.regs.edx, m.regs.eax, &mut m.flags);
     // 00404b10 jge short 00404B5Dh
-    jge(Cont(x00404b12), Cont(x00404b5d))
+    jge(m, Cont(x00404b12), Cont(x00404b5d))
 }
 
 pub fn x00404b06() -> Cont {
@@ -18442,7 +18489,7 @@ pub fn x00404b06() -> Cont {
     // 00404b0e cmp edx,eax
     sub(m.regs.edx, m.regs.eax, &mut m.flags);
     // 00404b10 jge short 00404B5Dh
-    jge(Cont(x00404b12), Cont(x00404b5d))
+    jge(m, Cont(x00404b12), Cont(x00404b5d))
 }
 
 pub fn x00404b12() -> Cont {
@@ -18501,7 +18548,7 @@ pub fn x00404b12() -> Cont {
     // 00404b4b add esi,eax
     m.regs.esi = add(m.regs.esi, m.regs.eax, &mut m.flags);
     // 00404b4d call 00408838h
-    call(0x404b52, Cont(x00408838))
+    call(m, 0x404b52, Cont(x00408838))
 }
 
 pub fn x00404b52() -> Cont {
@@ -18543,7 +18590,7 @@ pub fn x00404b5d() -> Cont {
     // 00404b6d cmp ecx,eax
     sub(m.regs.ecx, m.regs.eax, &mut m.flags);
     // 00404b6f jge near ptr 00404CE5h
-    jge(Cont(x00404b75), Cont(x00404ce5))
+    jge(m, Cont(x00404b75), Cont(x00404ce5))
 }
 
 pub fn x00404b5f() -> Cont {
@@ -18564,7 +18611,7 @@ pub fn x00404b5f() -> Cont {
     // 00404b6d cmp ecx,eax
     sub(m.regs.ecx, m.regs.eax, &mut m.flags);
     // 00404b6f jge near ptr 00404CE5h
-    jge(Cont(x00404b75), Cont(x00404ce5))
+    jge(m, Cont(x00404b75), Cont(x00404ce5))
 }
 
 pub fn x00404b75() -> Cont {
@@ -18629,7 +18676,7 @@ pub fn x00404b75() -> Cont {
     // 00404bb9 xor ebx,ebx
     m.regs.ebx = xor(m.regs.ebx, m.regs.ebx, &mut m.flags);
     // 00404bbb call 00408838h
-    call(0x404bc0, Cont(x00408838))
+    call(m, 0x404bc0, Cont(x00408838))
 }
 
 pub fn x00404bc0() -> Cont {
@@ -18654,7 +18701,7 @@ pub fn x00404bcb() -> Cont {
     // 00404bcb test esi,esi
     and(m.regs.esi, m.regs.esi, &mut m.flags);
     // 00404bcd jle near ptr 00404C7Fh
-    jle(Cont(x00404bd3), Cont(x00404c7f))
+    jle(m, Cont(x00404bd3), Cont(x00404c7f))
 }
 
 pub fn x00404bd3() -> Cont {
@@ -18787,7 +18834,7 @@ pub fn x00404bd3() -> Cont {
     // 00404c55 cmp eax,0
     sub(m.regs.eax, 0x0u32, &mut m.flags);
     // 00404c58 jns short 00404C5Ch
-    jns(Cont(x00404c5a), Cont(x00404c5c))
+    jns(m, Cont(x00404c5a), Cont(x00404c5c))
 }
 
 pub fn x00404c5a() -> Cont {
@@ -18800,7 +18847,7 @@ pub fn x00404c5a() -> Cont {
     // 00404c5f cmp eax,7Fh
     sub(m.regs.eax, 0x7fu32, &mut m.flags);
     // 00404c62 jle short 00404C69h
-    jle(Cont(x00404c64), Cont(x00404c69))
+    jle(m, Cont(x00404c64), Cont(x00404c69))
 }
 
 pub fn x00404c5c() -> Cont {
@@ -18811,7 +18858,7 @@ pub fn x00404c5c() -> Cont {
     // 00404c5f cmp eax,7Fh
     sub(m.regs.eax, 0x7fu32, &mut m.flags);
     // 00404c62 jle short 00404C69h
-    jle(Cont(x00404c64), Cont(x00404c69))
+    jle(m, Cont(x00404c64), Cont(x00404c69))
 }
 
 pub fn x00404c64() -> Cont {
@@ -18877,7 +18924,7 @@ pub fn x00404c7f() -> Cont {
     // 00404c93 cmp ebx,29h
     sub(m.regs.ebx, 0x29u32, &mut m.flags);
     // 00404c96 jge short 00404CDFh
-    jge(Cont(x00404c98), Cont(x00404cdf))
+    jge(m, Cont(x00404c98), Cont(x00404cdf))
 }
 
 pub fn x00404c92() -> Cont {
@@ -18888,7 +18935,7 @@ pub fn x00404c92() -> Cont {
     // 00404c93 cmp ebx,29h
     sub(m.regs.ebx, 0x29u32, &mut m.flags);
     // 00404c96 jge short 00404CDFh
-    jge(Cont(x00404c98), Cont(x00404cdf))
+    jge(m, Cont(x00404c98), Cont(x00404cdf))
 }
 
 pub fn x00404c98() -> Cont {
@@ -18905,7 +18952,7 @@ pub fn x00404c98() -> Cont {
     // 00404ca3 cmp edx,eax
     sub(m.regs.edx, m.regs.eax, &mut m.flags);
     // 00404ca5 jle short 00404CA9h
-    jle(Cont(x00404ca7), Cont(x00404ca9))
+    jle(m, Cont(x00404ca7), Cont(x00404ca9))
 }
 
 pub fn x00404ca7() -> Cont {
@@ -18949,7 +18996,7 @@ pub fn x00404ca7() -> Cont {
         &mut m.flags,
     );
     // 00404ccf jne near ptr 00404BCBh
-    jne(Cont(x00404cd5), Cont(x00404bcb))
+    jne(m, Cont(x00404cd5), Cont(x00404bcb))
 }
 
 pub fn x00404ca9() -> Cont {
@@ -18991,7 +19038,7 @@ pub fn x00404ca9() -> Cont {
         &mut m.flags,
     );
     // 00404ccf jne near ptr 00404BCBh
-    jne(Cont(x00404cd5), Cont(x00404bcb))
+    jne(m, Cont(x00404cd5), Cont(x00404bcb))
 }
 
 pub fn x00404cd5() -> Cont {
@@ -19016,32 +19063,32 @@ pub fn x00404ce5() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00404ce5 leave
-    leave();
+    leave(m);
     // 00404ce6 pop edi
-    m.regs.edi = pop();
+    m.regs.edi = pop(m);
     // 00404ce7 pop esi
-    m.regs.esi = pop();
+    m.regs.esi = pop(m);
     // 00404ce8 ret 8
-    ret(8)
+    ret(m, 8)
 }
 
 pub fn x00404ceb() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00404ceb push ebx
-    push(m.regs.ebx);
+    push(m, m.regs.ebx);
     // 00404cec push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 00404ced push esi
-    push(m.regs.esi);
+    push(m, m.regs.esi);
     // 00404cee push edi
-    push(m.regs.edi);
+    push(m, m.regs.edi);
     // 00404cef enter 88h,0
-    enter(0x88u16, 0);
+    enter(m, 0x88u16, 0);
     // 00404cf3 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 00404cf4 push edx
-    push(m.regs.edx);
+    push(m, m.regs.edx);
     // 00404cf5 sub ebp,82h
     m.regs.ebp = sub(m.regs.ebp, 0x82u32, &mut m.flags);
     // 00404cfb xor ch,ch
@@ -19066,7 +19113,7 @@ pub fn x00404ceb() -> Cont {
     // 00404d0f cmp edx,eax
     sub(m.regs.edx, m.regs.eax, &mut m.flags);
     // 00404d11 jge near ptr 00404F9Fh
-    jge(Cont(x00404d17), Cont(x00404f9f))
+    jge(m, Cont(x00404d17), Cont(x00404f9f))
 }
 
 pub fn x00404cfd() -> Cont {
@@ -19091,7 +19138,7 @@ pub fn x00404cfd() -> Cont {
     // 00404d0f cmp edx,eax
     sub(m.regs.edx, m.regs.eax, &mut m.flags);
     // 00404d11 jge near ptr 00404F9Fh
-    jge(Cont(x00404d17), Cont(x00404f9f))
+    jge(m, Cont(x00404d17), Cont(x00404f9f))
 }
 
 pub fn x00404d17() -> Cont {
@@ -19112,7 +19159,7 @@ pub fn x00404d1b() -> Cont {
     // 00404d1d cmp cl,28h
     sub(m.regs.get_cl(), 0x28u8, &mut m.flags);
     // 00404d20 jae near ptr 00404F98h
-    jae(Cont(x00404d26), Cont(x00404f98))
+    jae(m, Cont(x00404d26), Cont(x00404f98))
 }
 
 pub fn x00404d26() -> Cont {
@@ -19218,7 +19265,7 @@ pub fn x00404d26() -> Cont {
         &mut m.flags,
     );
     // 00404db4 jle short 00404DBDh
-    jle(Cont(x00404db6), Cont(x00404dbd))
+    jle(m, Cont(x00404db6), Cont(x00404dbd))
 }
 
 pub fn x00404db6() -> Cont {
@@ -19230,7 +19277,7 @@ pub fn x00404db6() -> Cont {
     // 00404dbd cmp ebx,0FFh
     sub(m.regs.ebx, 0xffu32, &mut m.flags);
     // 00404dc3 jle short 00404DCAh
-    jle(Cont(x00404dc5), Cont(x00404dca))
+    jle(m, Cont(x00404dc5), Cont(x00404dca))
 }
 
 pub fn x00404dbd() -> Cont {
@@ -19239,7 +19286,7 @@ pub fn x00404dbd() -> Cont {
     // 00404dbd cmp ebx,0FFh
     sub(m.regs.ebx, 0xffu32, &mut m.flags);
     // 00404dc3 jle short 00404DCAh
-    jle(Cont(x00404dc5), Cont(x00404dca))
+    jle(m, Cont(x00404dc5), Cont(x00404dca))
 }
 
 pub fn x00404dc5() -> Cont {
@@ -19254,7 +19301,7 @@ pub fn x00404dc5() -> Cont {
         &mut m.flags,
     );
     // 00404dd1 jle short 00404DDAh
-    jle(Cont(x00404dd3), Cont(x00404dda))
+    jle(m, Cont(x00404dd3), Cont(x00404dda))
 }
 
 pub fn x00404dca() -> Cont {
@@ -19267,7 +19314,7 @@ pub fn x00404dca() -> Cont {
         &mut m.flags,
     );
     // 00404dd1 jle short 00404DDAh
-    jle(Cont(x00404dd3), Cont(x00404dda))
+    jle(m, Cont(x00404dd3), Cont(x00404dda))
 }
 
 pub fn x00404dd3() -> Cont {
@@ -19283,7 +19330,7 @@ pub fn x00404dd3() -> Cont {
         &mut m.flags,
     );
     // 00404de1 jle short 00404DEAh
-    jle(Cont(x00404de3), Cont(x00404dea))
+    jle(m, Cont(x00404de3), Cont(x00404dea))
 }
 
 pub fn x00404dda() -> Cont {
@@ -19296,7 +19343,7 @@ pub fn x00404dda() -> Cont {
         &mut m.flags,
     );
     // 00404de1 jle short 00404DEAh
-    jle(Cont(x00404de3), Cont(x00404dea))
+    jle(m, Cont(x00404de3), Cont(x00404dea))
 }
 
 pub fn x00404de3() -> Cont {
@@ -19610,7 +19657,7 @@ pub fn x00404e8a() -> Cont {
         &mut m.flags,
     );
     // 00404e9b jae near ptr 00404D1Bh
-    jae(Cont(x00404ea1), Cont(x00404d1b))
+    jae(m, Cont(x00404ea1), Cont(x00404d1b))
 }
 
 pub fn x00404ea1() -> Cont {
@@ -19880,7 +19927,7 @@ pub fn x00404ea1() -> Cont {
         &mut m.flags,
     );
     // 00404f8d jb near ptr 00404EF1h
-    jb(Cont(x00404f93), Cont(x00404ef1))
+    jb(m, Cont(x00404f93), Cont(x00404ef1))
 }
 
 pub fn x00404ef1() -> Cont {
@@ -20049,7 +20096,7 @@ pub fn x00404ef1() -> Cont {
         &mut m.flags,
     );
     // 00404f8d jb near ptr 00404EF1h
-    jb(Cont(x00404f93), Cont(x00404ef1))
+    jb(m, Cont(x00404f93), Cont(x00404ef1))
 }
 
 pub fn x00404f93() -> Cont {
@@ -20076,36 +20123,36 @@ pub fn x00404f9f() -> Cont {
     // 00404fa1 lea esp,[ebp+82h]
     m.regs.esp = m.regs.ebp.wrapping_add(0x82u32);
     // 00404fa7 pop ebp
-    m.regs.ebp = pop();
+    m.regs.ebp = pop(m);
     // 00404fa8 pop edi
-    m.regs.edi = pop();
+    m.regs.edi = pop(m);
     // 00404fa9 pop esi
-    m.regs.esi = pop();
+    m.regs.esi = pop(m);
     // 00404faa pop ecx
-    m.regs.ecx = pop();
+    m.regs.ecx = pop(m);
     // 00404fab pop ebx
-    m.regs.ebx = pop();
+    m.regs.ebx = pop(m);
     // 00404fac ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x00404fad() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00404fad push ebx
-    push(m.regs.ebx);
+    push(m, m.regs.ebx);
     // 00404fae push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 00404faf push edx
-    push(m.regs.edx);
+    push(m, m.regs.edx);
     // 00404fb0 push esi
-    push(m.regs.esi);
+    push(m, m.regs.esi);
     // 00404fb1 push edi
-    push(m.regs.edi);
+    push(m, m.regs.edi);
     // 00404fb2 enter 48h,0
-    enter(0x48u16, 0);
+    enter(m, 0x48u16, 0);
     // 00404fb6 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 00404fb7 fld dword ptr [ebp+1Ch]
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0x1cu32)) as f64);
@@ -20334,7 +20381,7 @@ pub fn x00404fad() -> Cont {
     // 004050b4 cmp ecx,eax
     sub(m.regs.ecx, m.regs.eax, &mut m.flags);
     // 004050b6 jge near ptr 004051C1h
-    jge(Cont(x004050bc), Cont(x004051c1))
+    jge(m, Cont(x004050bc), Cont(x004051c1))
 }
 
 pub fn x004050a6() -> Cont {
@@ -20355,7 +20402,7 @@ pub fn x004050a6() -> Cont {
     // 004050b4 cmp ecx,eax
     sub(m.regs.ecx, m.regs.eax, &mut m.flags);
     // 004050b6 jge near ptr 004051C1h
-    jge(Cont(x004050bc), Cont(x004051c1))
+    jge(m, Cont(x004050bc), Cont(x004051c1))
 }
 
 pub fn x004050bc() -> Cont {
@@ -20373,7 +20420,7 @@ pub fn x004050c0() -> Cont {
     // 004050c0 cmp eax,7Fh
     sub(m.regs.eax, 0x7fu32, &mut m.flags);
     // 004050c3 jle short 004050CAh
-    jle(Cont(x004050c5), Cont(x004050ca))
+    jle(m, Cont(x004050c5), Cont(x004050ca))
 }
 
 pub fn x004050c5() -> Cont {
@@ -20411,7 +20458,7 @@ pub fn x004050c5() -> Cont {
     // 004050fe cmp edx,29h
     sub(m.regs.edx, 0x29u32, &mut m.flags);
     // 00405101 jge near ptr 004051BBh
-    jge(Cont(x00405107), Cont(x004051bb))
+    jge(m, Cont(x00405107), Cont(x004051bb))
 }
 
 pub fn x004050ca() -> Cont {
@@ -20447,7 +20494,7 @@ pub fn x004050ca() -> Cont {
     // 004050fe cmp edx,29h
     sub(m.regs.edx, 0x29u32, &mut m.flags);
     // 00405101 jge near ptr 004051BBh
-    jge(Cont(x00405107), Cont(x004051bb))
+    jge(m, Cont(x00405107), Cont(x004051bb))
 }
 
 pub fn x00405107() -> Cont {
@@ -20598,23 +20645,41 @@ pub fn x00405107() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c1a8u32));
     // 00405185 push dword ptr [ebp-40h]
-    push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffc0u32)));
+    push(
+        m,
+        m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffc0u32)),
+    );
     // 00405188 fstp dword ptr [ebp-44h]
     m.memory
         .write::<f32>(m.regs.ebp.wrapping_add(0xffffffbcu32), m.fpu.get(0) as f32);
     m.fpu.pop();
     // 0040518b push dword ptr [ebp-44h]
-    push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffbcu32)));
+    push(
+        m,
+        m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffbcu32)),
+    );
     // 0040518e push dword ptr [ebp-48h]
-    push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffb8u32)));
+    push(
+        m,
+        m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffb8u32)),
+    );
     // 00405191 push dword ptr [ebp-34h]
-    push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffccu32)));
+    push(
+        m,
+        m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffccu32)),
+    );
     // 00405194 push dword ptr [ebp-38h]
-    push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffc8u32)));
+    push(
+        m,
+        m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffc8u32)),
+    );
     // 00405197 push dword ptr [ebp-3Ch]
-    push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffc4u32)));
+    push(
+        m,
+        m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffc4u32)),
+    );
     // 0040519a call 004045ACh
-    call(0x40519f, Cont(x004045ac))
+    call(m, 0x40519f, Cont(x004045ac))
 }
 
 pub fn x0040519f() -> Cont {
@@ -20635,7 +20700,7 @@ pub fn x0040519f() -> Cont {
     // 004051ac test eax,eax
     and(m.regs.eax, m.regs.eax, &mut m.flags);
     // 004051ae jge near ptr 004050C0h
-    jge(Cont(x004051b4), Cont(x004050c0))
+    jge(m, Cont(x004051b4), Cont(x004050c0))
 }
 
 pub fn x004051b4() -> Cont {
@@ -20664,37 +20729,37 @@ pub fn x004051c1() -> Cont {
     // 004051c4 mov eax,[ebp+20h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x20u32));
     // 004051c7 call 00404CEBh
-    call(0x4051cc, Cont(x00404ceb))
+    call(m, 0x4051cc, Cont(x00404ceb))
 }
 
 pub fn x004051cc() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004051cc leave
-    leave();
+    leave(m);
     // 004051cd pop edi
-    m.regs.edi = pop();
+    m.regs.edi = pop(m);
     // 004051ce pop esi
-    m.regs.esi = pop();
+    m.regs.esi = pop(m);
     // 004051cf pop edx
-    m.regs.edx = pop();
+    m.regs.edx = pop(m);
     // 004051d0 pop ecx
-    m.regs.ecx = pop();
+    m.regs.ecx = pop(m);
     // 004051d1 pop ebx
-    m.regs.ebx = pop();
+    m.regs.ebx = pop(m);
     // 004051d2 ret 0Ch
-    ret(12)
+    ret(m, 12)
 }
 
 pub fn x004051d5() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004051d5 push esi
-    push(m.regs.esi);
+    push(m, m.regs.esi);
     // 004051d6 push edi
-    push(m.regs.edi);
+    push(m, m.regs.edi);
     // 004051d7 enter 38h,0
-    enter(0x38u16, 0);
+    enter(m, 0x38u16, 0);
     // 004051db mov [ebp-8],ebx
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32), m.regs.ebx);
@@ -20723,7 +20788,7 @@ pub fn x004051d5() -> Cont {
     m.fpu.set(0, m.fpu.get(1));
     m.fpu.set(1, t);
     // 004051fb call 00408838h
-    call(0x405200, Cont(x00408838))
+    call(m, 0x405200, Cont(x00408838))
 }
 
 pub fn x00405200() -> Cont {
@@ -20779,7 +20844,7 @@ pub fn x00405200() -> Cont {
     m.fpu.set(0, m.fpu.get(1));
     m.fpu.set(1, t);
     // 0040522d call 00408838h
-    call(0x405232, Cont(x00408838))
+    call(m, 0x405232, Cont(x00408838))
 }
 
 pub fn x00405232() -> Cont {
@@ -20838,7 +20903,7 @@ pub fn x00405232() -> Cont {
     // 00405254 test eax,eax
     and(m.regs.eax, m.regs.eax, &mut m.flags);
     // 00405256 jge short 00405268h
-    jge(Cont(x00405258), Cont(x00405268))
+    jge(m, Cont(x00405258), Cont(x00405268))
 }
 
 pub fn x00405258() -> Cont {
@@ -20867,7 +20932,7 @@ pub fn x00405258() -> Cont {
     // 00405268 test ebx,ebx
     and(m.regs.ebx, m.regs.ebx, &mut m.flags);
     // 0040526a jge short 0040527Dh
-    jge(Cont(x0040526c), Cont(x0040527d))
+    jge(m, Cont(x0040526c), Cont(x0040527d))
 }
 
 pub fn x00405268() -> Cont {
@@ -20876,7 +20941,7 @@ pub fn x00405268() -> Cont {
     // 00405268 test ebx,ebx
     and(m.regs.ebx, m.regs.ebx, &mut m.flags);
     // 0040526a jge short 0040527Dh
-    jge(Cont(x0040526c), Cont(x0040527d))
+    jge(m, Cont(x0040526c), Cont(x0040527d))
 }
 
 pub fn x0040526c() -> Cont {
@@ -20907,7 +20972,7 @@ pub fn x0040526c() -> Cont {
     // 0040527d cmp esi,ds:[40C724h]
     sub(m.regs.esi, m.memory.read::<u32>(0x40c724u32), &mut m.flags);
     // 00405283 jle short 0040528Bh
-    jle(Cont(x00405285), Cont(x0040528b))
+    jle(m, Cont(x00405285), Cont(x0040528b))
 }
 
 pub fn x0040527d() -> Cont {
@@ -20916,7 +20981,7 @@ pub fn x0040527d() -> Cont {
     // 0040527d cmp esi,ds:[40C724h]
     sub(m.regs.esi, m.memory.read::<u32>(0x40c724u32), &mut m.flags);
     // 00405283 jle short 0040528Bh
-    jle(Cont(x00405285), Cont(x0040528b))
+    jle(m, Cont(x00405285), Cont(x0040528b))
 }
 
 pub fn x00405285() -> Cont {
@@ -20929,7 +20994,7 @@ pub fn x00405285() -> Cont {
     // 0040528e cmp eax,ds:[40C728h]
     sub(m.regs.eax, m.memory.read::<u32>(0x40c728u32), &mut m.flags);
     // 00405294 jle short 0040529Eh
-    jle(Cont(x00405296), Cont(x0040529e))
+    jle(m, Cont(x00405296), Cont(x0040529e))
 }
 
 pub fn x0040528b() -> Cont {
@@ -20940,7 +21005,7 @@ pub fn x0040528b() -> Cont {
     // 0040528e cmp eax,ds:[40C728h]
     sub(m.regs.eax, m.memory.read::<u32>(0x40c728u32), &mut m.flags);
     // 00405294 jle short 0040529Eh
-    jle(Cont(x00405296), Cont(x0040529e))
+    jle(m, Cont(x00405296), Cont(x0040529e))
 }
 
 pub fn x00405296() -> Cont {
@@ -20967,7 +21032,7 @@ pub fn x00405296() -> Cont {
     // 004052ae mov ecx,ebx
     m.regs.ecx = m.regs.ebx;
     // 004052b0 call 00408838h
-    call(0x4052b5, Cont(x00408838))
+    call(m, 0x4052b5, Cont(x00408838))
 }
 
 pub fn x0040529e() -> Cont {
@@ -20989,7 +21054,7 @@ pub fn x0040529e() -> Cont {
     // 004052ae mov ecx,ebx
     m.regs.ecx = m.regs.ebx;
     // 004052b0 call 00408838h
-    call(0x4052b5, Cont(x00408838))
+    call(m, 0x4052b5, Cont(x00408838))
 }
 
 pub fn x004052b5() -> Cont {
@@ -21000,7 +21065,7 @@ pub fn x004052b5() -> Cont {
     m.fpu.set(0, m.fpu.get(1));
     m.fpu.set(1, t);
     // 004052b7 call 00408838h
-    call(0x4052bc, Cont(x00408838))
+    call(m, 0x4052bc, Cont(x00408838))
 }
 
 pub fn x004052bc() -> Cont {
@@ -21025,7 +21090,7 @@ pub fn x004052bc() -> Cont {
         &mut m.flags,
     );
     // 004052c5 jae short 0040532Fh
-    jae(Cont(x004052c7), Cont(x0040532f))
+    jae(m, Cont(x004052c7), Cont(x0040532f))
 }
 
 pub fn x004052c2() -> Cont {
@@ -21038,7 +21103,7 @@ pub fn x004052c2() -> Cont {
         &mut m.flags,
     );
     // 004052c5 jae short 0040532Fh
-    jae(Cont(x004052c7), Cont(x0040532f))
+    jae(m, Cont(x004052c7), Cont(x0040532f))
 }
 
 pub fn x004052c7() -> Cont {
@@ -21092,7 +21157,7 @@ pub fn x004052c7() -> Cont {
     // 004052fb cmp edi,esi
     sub(m.regs.edi, m.regs.esi, &mut m.flags);
     // 004052fd jae short 0040532Ch
-    jae(Cont(x004052ff), Cont(x0040532c))
+    jae(m, Cont(x004052ff), Cont(x0040532c))
 }
 
 pub fn x004052fb() -> Cont {
@@ -21101,7 +21166,7 @@ pub fn x004052fb() -> Cont {
     // 004052fb cmp edi,esi
     sub(m.regs.edi, m.regs.esi, &mut m.flags);
     // 004052fd jae short 0040532Ch
-    jae(Cont(x004052ff), Cont(x0040532c))
+    jae(m, Cont(x004052ff), Cont(x0040532c))
 }
 
 pub fn x004052ff() -> Cont {
@@ -21173,28 +21238,28 @@ pub fn x0040532f() -> Cont {
     // 0040532f emms
     // no-op
     // 00405331 leave
-    leave();
+    leave(m);
     // 00405332 pop edi
-    m.regs.edi = pop();
+    m.regs.edi = pop(m);
     // 00405333 pop esi
-    m.regs.esi = pop();
+    m.regs.esi = pop(m);
     // 00405334 ret 8
-    ret(8)
+    ret(m, 8)
 }
 
 pub fn x00405337() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00405337 push ebx
-    push(m.regs.ebx);
+    push(m, m.regs.ebx);
     // 00405338 push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 00405339 push edx
-    push(m.regs.edx);
+    push(m, m.regs.edx);
     // 0040533a push esi
-    push(m.regs.esi);
+    push(m, m.regs.esi);
     // 0040533b enter 8,0
-    enter(0x8u16, 0);
+    enter(m, 0x8u16, 0);
     // 0040533f mov eax,ds:[40C724h]
     m.regs.eax = m.memory.read::<u32>(0x40c724u32);
     // 00405344 imul eax,ds:[40C728h]
@@ -21206,9 +21271,9 @@ pub fn x00405337() -> Cont {
     // 0040534b shl eax,2
     m.regs.eax = shl(m.regs.eax, 0x2u8, &mut m.flags);
     // 0040534e push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 0040534f call 00401A60h
-    call(0x405354, Cont(x00401a60))
+    call(m, 0x405354, Cont(x00401a60))
 }
 
 pub fn x00405354() -> Cont {
@@ -21217,11 +21282,11 @@ pub fn x00405354() -> Cont {
     // 00405354 add esp,4
     m.regs.esp = add(m.regs.esp, 0x4u32, &mut m.flags);
     // 00405357 push 40000h
-    push(0x40000u32);
+    push(m, 0x40000u32);
     // 0040535c mov ds:[433F4Ch],eax
     m.memory.write::<u32>(0x433f4cu32, m.regs.eax);
     // 00405361 call 00401A60h
-    call(0x405366, Cont(x00401a60))
+    call(m, 0x405366, Cont(x00401a60))
 }
 
 pub fn x00405366() -> Cont {
@@ -21245,7 +21310,7 @@ pub fn x00405372() -> Cont {
     // 00405373 cmp ecx,100h
     sub(m.regs.ecx, 0x100u32, &mut m.flags);
     // 00405379 jge near ptr 004053F6h
-    jge(Cont(x0040537f), Cont(x004053f6))
+    jge(m, Cont(x0040537f), Cont(x004053f6))
 }
 
 pub fn x0040537f() -> Cont {
@@ -21290,7 +21355,7 @@ pub fn x00405383() -> Cont {
     // 004053a1 cmp ebx,100h
     sub(m.regs.ebx, 0x100u32, &mut m.flags);
     // 004053a7 jge short 00405372h
-    jge(Cont(x004053a9), Cont(x00405372))
+    jge(m, Cont(x004053a9), Cont(x00405372))
 }
 
 pub fn x004053a9() -> Cont {
@@ -21301,7 +21366,7 @@ pub fn x004053a9() -> Cont {
     // 004053ac cmp eax,0
     sub(m.regs.eax, 0x0u32, &mut m.flags);
     // 004053af jns short 004053B3h
-    jns(Cont(x004053b1), Cont(x004053b3))
+    jns(m, Cont(x004053b1), Cont(x004053b3))
 }
 
 pub fn x004053b1() -> Cont {
@@ -21318,7 +21383,7 @@ pub fn x004053b1() -> Cont {
     // 004053bb cmp eax,0
     sub(m.regs.eax, 0x0u32, &mut m.flags);
     // 004053be jns short 004053C2h
-    jns(Cont(x004053c0), Cont(x004053c2))
+    jns(m, Cont(x004053c0), Cont(x004053c2))
 }
 
 pub fn x004053b3() -> Cont {
@@ -21333,7 +21398,7 @@ pub fn x004053b3() -> Cont {
     // 004053bb cmp eax,0
     sub(m.regs.eax, 0x0u32, &mut m.flags);
     // 004053be jns short 004053C2h
-    jns(Cont(x004053c0), Cont(x004053c2))
+    jns(m, Cont(x004053c0), Cont(x004053c2))
 }
 
 pub fn x004053c0() -> Cont {
@@ -21354,7 +21419,7 @@ pub fn x004053c0() -> Cont {
     // 004053cd fsqrt
     m.fpu.set(0, m.fpu.get(0).sqrt());
     // 004053cf call 00408838h
-    call(0x4053d4, Cont(x00408838))
+    call(m, 0x4053d4, Cont(x00408838))
 }
 
 pub fn x004053c2() -> Cont {
@@ -21373,7 +21438,7 @@ pub fn x004053c2() -> Cont {
     // 004053cd fsqrt
     m.fpu.set(0, m.fpu.get(0).sqrt());
     // 004053cf call 00408838h
-    call(0x4053d4, Cont(x00408838))
+    call(m, 0x4053d4, Cont(x00408838))
 }
 
 pub fn x004053d4() -> Cont {
@@ -21409,7 +21474,7 @@ pub fn x004053d4() -> Cont {
     // 004053ee test edx,edx
     and(m.regs.edx, m.regs.edx, &mut m.flags);
     // 004053f0 jge short 00405383h
-    jge(Cont(x004053f2), Cont(x00405383))
+    jge(m, Cont(x004053f2), Cont(x00405383))
 }
 
 pub fn x004053f2() -> Cont {
@@ -21425,36 +21490,36 @@ pub fn x004053f6() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004053f6 leave
-    leave();
+    leave(m);
     // 004053f7 pop esi
-    m.regs.esi = pop();
+    m.regs.esi = pop(m);
     // 004053f8 pop edx
-    m.regs.edx = pop();
+    m.regs.edx = pop(m);
     // 004053f9 pop ecx
-    m.regs.ecx = pop();
+    m.regs.ecx = pop(m);
     // 004053fa pop ebx
-    m.regs.ebx = pop();
+    m.regs.ebx = pop(m);
     // 004053fb ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x004053fc() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004053fc push ebx
-    push(m.regs.ebx);
+    push(m, m.regs.ebx);
     // 004053fd push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 004053fe push edx
-    push(m.regs.edx);
+    push(m, m.regs.edx);
     // 004053ff push esi
-    push(m.regs.esi);
+    push(m, m.regs.esi);
     // 00405400 push edi
-    push(m.regs.edi);
+    push(m, m.regs.edi);
     // 00405401 enter 4Ch,0
-    enter(0x4cu16, 0);
+    enter(m, 0x4cu16, 0);
     // 00405405 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 00405406 fld dword ptr [ebp+24h]
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0x24u32)) as f64);
@@ -21488,7 +21553,7 @@ pub fn x004053fc() -> Cont {
     // 00405429 sahf
     sahf(m);
     // 0040542a jbe near ptr 00405647h
-    jbe(Cont(x00405430), Cont(x00405647))
+    jbe(m, Cont(x00405430), Cont(x00405647))
 }
 
 pub fn x00405430() -> Cont {
@@ -21501,7 +21566,7 @@ pub fn x00405430() -> Cont {
         &mut m.flags,
     );
     // 00405437 je short 00405447h
-    je(Cont(x00405439), Cont(x00405447))
+    je(m, Cont(x00405439), Cont(x00405447))
 }
 
 pub fn x00405439() -> Cont {
@@ -21553,7 +21618,7 @@ pub fn x00405447() -> Cont {
         &mut m.flags,
     );
     // 00405463 je short 0040547Eh
-    je(Cont(x00405465), Cont(x0040547e))
+    je(m, Cont(x00405465), Cont(x0040547e))
 }
 
 pub fn x0040544a() -> Cont {
@@ -21584,7 +21649,7 @@ pub fn x0040544a() -> Cont {
         &mut m.flags,
     );
     // 00405463 je short 0040547Eh
-    je(Cont(x00405465), Cont(x0040547e))
+    je(m, Cont(x00405465), Cont(x0040547e))
 }
 
 pub fn x00405465() -> Cont {
@@ -21601,7 +21666,7 @@ pub fn x00405465() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) + m.memory.read::<f32>(0x40c1c8u32) as f64);
     // 00405474 call 00408838h
-    call(0x405479, Cont(x00408838))
+    call(m, 0x405479, Cont(x00408838))
 }
 
 pub fn x00405479() -> Cont {
@@ -21630,7 +21695,7 @@ pub fn x0040547e() -> Cont {
         &mut m.flags,
     );
     // 00405489 jne short 004054C2h
-    jne(Cont(x0040548b), Cont(x004054c2))
+    jne(m, Cont(x0040548b), Cont(x004054c2))
 }
 
 pub fn x00405485() -> Cont {
@@ -21643,7 +21708,7 @@ pub fn x00405485() -> Cont {
         &mut m.flags,
     );
     // 00405489 jne short 004054C2h
-    jne(Cont(x0040548b), Cont(x004054c2))
+    jne(m, Cont(x0040548b), Cont(x004054c2))
 }
 
 pub fn x0040548b() -> Cont {
@@ -21734,7 +21799,7 @@ pub fn x0040548b() -> Cont {
         &mut m.flags,
     );
     // 004054db je short 004054EEh
-    je(Cont(x004054dd), Cont(x004054ee))
+    je(m, Cont(x004054dd), Cont(x004054ee))
 }
 
 pub fn x004054c2() -> Cont {
@@ -21765,7 +21830,7 @@ pub fn x004054c2() -> Cont {
         &mut m.flags,
     );
     // 004054db je short 004054EEh
-    je(Cont(x004054dd), Cont(x004054ee))
+    je(m, Cont(x004054dd), Cont(x004054ee))
 }
 
 pub fn x004054dd() -> Cont {
@@ -21779,7 +21844,7 @@ pub fn x004054dd() -> Cont {
         m.fpu.get(0) / m.memory.read::<f32>(m.regs.ebp.wrapping_add(0xffffffd4u32)) as f64,
     );
     // 004054e6 call 00408838h
-    call(0x4054eb, Cont(x00408838))
+    call(m, 0x4054eb, Cont(x00408838))
 }
 
 pub fn x004054eb() -> Cont {
@@ -21798,7 +21863,7 @@ pub fn x004054eb() -> Cont {
         &mut m.flags,
     );
     // 004054f2 jge short 004054FBh
-    jge(Cont(x004054f4), Cont(x004054fb))
+    jge(m, Cont(x004054f4), Cont(x004054fb))
 }
 
 pub fn x004054ee() -> Cont {
@@ -21811,7 +21876,7 @@ pub fn x004054ee() -> Cont {
         &mut m.flags,
     );
     // 004054f2 jge short 004054FBh
-    jge(Cont(x004054f4), Cont(x004054fb))
+    jge(m, Cont(x004054f4), Cont(x004054fb))
 }
 
 pub fn x004054f4() -> Cont {
@@ -21879,7 +21944,7 @@ pub fn x004054f4() -> Cont {
     m.fpu.set(0, m.fpu.get(3));
     m.fpu.set(3, t);
     // 00405529 call 00408838h
-    call(0x40552e, Cont(x00408838))
+    call(m, 0x40552e, Cont(x00408838))
 }
 
 pub fn x004054fb() -> Cont {
@@ -21944,7 +22009,7 @@ pub fn x004054fb() -> Cont {
     m.fpu.set(0, m.fpu.get(3));
     m.fpu.set(3, t);
     // 00405529 call 00408838h
-    call(0x40552e, Cont(x00408838))
+    call(m, 0x40552e, Cont(x00408838))
 }
 
 pub fn x0040552e() -> Cont {
@@ -21955,7 +22020,7 @@ pub fn x0040552e() -> Cont {
     m.fpu.set(0, m.fpu.get(3));
     m.fpu.set(3, t);
     // 00405530 call 00408838h
-    call(0x405535, Cont(x00408838))
+    call(m, 0x405535, Cont(x00408838))
 }
 
 pub fn x00405535() -> Cont {
@@ -21966,7 +22031,7 @@ pub fn x00405535() -> Cont {
     m.fpu.set(0, m.fpu.get(1));
     m.fpu.set(1, t);
     // 00405537 call 00408838h
-    call(0x40553c, Cont(x00408838))
+    call(m, 0x40553c, Cont(x00408838))
 }
 
 pub fn x0040553c() -> Cont {
@@ -21977,7 +22042,7 @@ pub fn x0040553c() -> Cont {
     m.fpu.set(0, m.fpu.get(2));
     m.fpu.set(2, t);
     // 0040553e call 00408838h
-    call(0x405543, Cont(x00408838))
+    call(m, 0x405543, Cont(x00408838))
 }
 
 pub fn x00405543() -> Cont {
@@ -22018,7 +22083,7 @@ pub fn x00405543() -> Cont {
     // 00405556 cmp eax,ds:[40C724h]
     sub(m.regs.eax, m.memory.read::<u32>(0x40c724u32), &mut m.flags);
     // 0040555c jge near ptr 00405647h
-    jge(Cont(x00405562), Cont(x00405647))
+    jge(m, Cont(x00405562), Cont(x00405647))
 }
 
 pub fn x00405562() -> Cont {
@@ -22029,7 +22094,7 @@ pub fn x00405562() -> Cont {
     // 00405565 cmp eax,ds:[40C728h]
     sub(m.regs.eax, m.memory.read::<u32>(0x40c728u32), &mut m.flags);
     // 0040556b jge near ptr 00405647h
-    jge(Cont(x00405571), Cont(x00405647))
+    jge(m, Cont(x00405571), Cont(x00405647))
 }
 
 pub fn x00405571() -> Cont {
@@ -22042,7 +22107,7 @@ pub fn x00405571() -> Cont {
         &mut m.flags,
     );
     // 00405575 jl near ptr 00405647h
-    jl(Cont(x0040557b), Cont(x00405647))
+    jl(m, Cont(x0040557b), Cont(x00405647))
 }
 
 pub fn x0040557b() -> Cont {
@@ -22055,7 +22120,7 @@ pub fn x0040557b() -> Cont {
         &mut m.flags,
     );
     // 0040557f jl near ptr 00405647h
-    jl(Cont(x00405585), Cont(x00405647))
+    jl(m, Cont(x00405585), Cont(x00405647))
 }
 
 pub fn x00405585() -> Cont {
@@ -22072,7 +22137,7 @@ pub fn x00405585() -> Cont {
         &mut m.flags,
     );
     // 0040558e jge short 00405593h
-    jge(Cont(x00405590), Cont(x00405593))
+    jge(m, Cont(x00405590), Cont(x00405593))
 }
 
 pub fn x00405590() -> Cont {
@@ -22092,7 +22157,7 @@ pub fn x00405590() -> Cont {
         &mut m.flags,
     );
     // 0040559c jge short 004055A1h
-    jge(Cont(x0040559e), Cont(x004055a1))
+    jge(m, Cont(x0040559e), Cont(x004055a1))
 }
 
 pub fn x00405593() -> Cont {
@@ -22109,7 +22174,7 @@ pub fn x00405593() -> Cont {
         &mut m.flags,
     );
     // 0040559c jge short 004055A1h
-    jge(Cont(x0040559e), Cont(x004055a1))
+    jge(m, Cont(x0040559e), Cont(x004055a1))
 }
 
 pub fn x0040559e() -> Cont {
@@ -22125,7 +22190,7 @@ pub fn x0040559e() -> Cont {
         &mut m.flags,
     );
     // 004055a5 jge short 004055C0h
-    jge(Cont(x004055a7), Cont(x004055c0))
+    jge(m, Cont(x004055a7), Cont(x004055c0))
 }
 
 pub fn x004055a1() -> Cont {
@@ -22138,7 +22203,7 @@ pub fn x004055a1() -> Cont {
         &mut m.flags,
     );
     // 004055a5 jge short 004055C0h
-    jge(Cont(x004055a7), Cont(x004055c0))
+    jge(m, Cont(x004055a7), Cont(x004055c0))
 }
 
 pub fn x004055a7() -> Cont {
@@ -22151,7 +22216,7 @@ pub fn x004055a7() -> Cont {
     // 004055ac cmp eax,0
     sub(m.regs.eax, 0x0u32, &mut m.flags);
     // 004055af jns short 004055B3h
-    jns(Cont(x004055b1), Cont(x004055b3))
+    jns(m, Cont(x004055b1), Cont(x004055b3))
 }
 
 pub fn x004055b1() -> Cont {
@@ -22174,7 +22239,7 @@ pub fn x004055b1() -> Cont {
         &mut m.flags,
     );
     // 004055c4 jge short 004055DCh
-    jge(Cont(x004055c6), Cont(x004055dc))
+    jge(m, Cont(x004055c6), Cont(x004055dc))
 }
 
 pub fn x004055b3() -> Cont {
@@ -22195,7 +22260,7 @@ pub fn x004055b3() -> Cont {
         &mut m.flags,
     );
     // 004055c4 jge short 004055DCh
-    jge(Cont(x004055c6), Cont(x004055dc))
+    jge(m, Cont(x004055c6), Cont(x004055dc))
 }
 
 pub fn x004055c0() -> Cont {
@@ -22208,7 +22273,7 @@ pub fn x004055c0() -> Cont {
         &mut m.flags,
     );
     // 004055c4 jge short 004055DCh
-    jge(Cont(x004055c6), Cont(x004055dc))
+    jge(m, Cont(x004055c6), Cont(x004055dc))
 }
 
 pub fn x004055c6() -> Cont {
@@ -22219,7 +22284,7 @@ pub fn x004055c6() -> Cont {
     // 004055c9 cmp eax,0
     sub(m.regs.eax, 0x0u32, &mut m.flags);
     // 004055cc jns short 004055D0h
-    jns(Cont(x004055ce), Cont(x004055d0))
+    jns(m, Cont(x004055ce), Cont(x004055d0))
 }
 
 pub fn x004055ce() -> Cont {
@@ -22243,7 +22308,7 @@ pub fn x004055ce() -> Cont {
         &mut m.flags,
     );
     // 004055e2 jge short 00405647h
-    jge(Cont(x004055e4), Cont(x00405647))
+    jge(m, Cont(x004055e4), Cont(x00405647))
 }
 
 pub fn x004055d0() -> Cont {
@@ -22265,7 +22330,7 @@ pub fn x004055d0() -> Cont {
         &mut m.flags,
     );
     // 004055e2 jge short 00405647h
-    jge(Cont(x004055e4), Cont(x00405647))
+    jge(m, Cont(x004055e4), Cont(x00405647))
 }
 
 pub fn x004055dc() -> Cont {
@@ -22280,7 +22345,7 @@ pub fn x004055dc() -> Cont {
         &mut m.flags,
     );
     // 004055e2 jge short 00405647h
-    jge(Cont(x004055e4), Cont(x00405647))
+    jge(m, Cont(x004055e4), Cont(x00405647))
 }
 
 pub fn x004055df() -> Cont {
@@ -22293,7 +22358,7 @@ pub fn x004055df() -> Cont {
         &mut m.flags,
     );
     // 004055e2 jge short 00405647h
-    jge(Cont(x004055e4), Cont(x00405647))
+    jge(m, Cont(x004055e4), Cont(x00405647))
 }
 
 pub fn x004055e4() -> Cont {
@@ -22329,7 +22394,7 @@ pub fn x004055e4() -> Cont {
         &mut m.flags,
     );
     // 00405606 jge short 00405642h
-    jge(Cont(x00405608), Cont(x00405642))
+    jge(m, Cont(x00405608), Cont(x00405642))
 }
 
 pub fn x00405603() -> Cont {
@@ -22342,7 +22407,7 @@ pub fn x00405603() -> Cont {
         &mut m.flags,
     );
     // 00405606 jge short 00405642h
-    jge(Cont(x00405608), Cont(x00405642))
+    jge(m, Cont(x00405608), Cont(x00405642))
 }
 
 pub fn x00405608() -> Cont {
@@ -22369,7 +22434,7 @@ pub fn x00405608() -> Cont {
     // 0040561e test ecx,ecx
     and(m.regs.ecx, m.regs.ecx, &mut m.flags);
     // 00405620 jle short 0040563Ch
-    jle(Cont(x00405622), Cont(x0040563c))
+    jle(m, Cont(x00405622), Cont(x0040563c))
 }
 
 pub fn x00405622() -> Cont {
@@ -22401,7 +22466,7 @@ pub fn x00405622() -> Cont {
     // 00405636 cmp ecx,[eax]
     sub(m.regs.ecx, m.memory.read::<u32>(m.regs.eax), &mut m.flags);
     // 00405638 jle short 0040563Ch
-    jle(Cont(x0040563a), Cont(x0040563c))
+    jle(m, Cont(x0040563a), Cont(x0040563c))
 }
 
 pub fn x0040563a() -> Cont {
@@ -22457,38 +22522,38 @@ pub fn x00405647() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00405647 leave
-    leave();
+    leave(m);
     // 00405648 pop edi
-    m.regs.edi = pop();
+    m.regs.edi = pop(m);
     // 00405649 pop esi
-    m.regs.esi = pop();
+    m.regs.esi = pop(m);
     // 0040564a pop edx
-    m.regs.edx = pop();
+    m.regs.edx = pop(m);
     // 0040564b pop ecx
-    m.regs.ecx = pop();
+    m.regs.ecx = pop(m);
     // 0040564c pop ebx
-    m.regs.ebx = pop();
+    m.regs.ebx = pop(m);
     // 0040564d ret 10h
-    ret(16)
+    ret(m, 16)
 }
 
 pub fn x00405650() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00405650 push esi
-    push(m.regs.esi);
+    push(m, m.regs.esi);
     // 00405651 push edi
-    push(m.regs.edi);
+    push(m, m.regs.edi);
     // 00405652 enter 0Ch,0
-    enter(0xcu16, 0);
+    enter(m, 0xcu16, 0);
     // 00405656 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 00405657 push edx
-    push(m.regs.edx);
+    push(m, m.regs.edx);
     // 00405658 push ebx
-    push(m.regs.ebx);
+    push(m, m.regs.ebx);
     // 00405659 push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 0040565a xor ebx,ebx
     m.regs.ebx = xor(m.regs.ebx, m.regs.ebx, &mut m.flags);
     // 0040565c xor edi,edi
@@ -22496,7 +22561,7 @@ pub fn x00405650() -> Cont {
     // 0040565e cmp ebx,ds:[40C728h]
     sub(m.regs.ebx, m.memory.read::<u32>(0x40c728u32), &mut m.flags);
     // 00405664 jge near ptr 004056DDh
-    jge(Cont(x0040566a), Cont(x004056dd))
+    jge(m, Cont(x0040566a), Cont(x004056dd))
 }
 
 pub fn x0040565e() -> Cont {
@@ -22505,7 +22570,7 @@ pub fn x0040565e() -> Cont {
     // 0040565e cmp ebx,ds:[40C728h]
     sub(m.regs.ebx, m.memory.read::<u32>(0x40c728u32), &mut m.flags);
     // 00405664 jge near ptr 004056DDh
-    jge(Cont(x0040566a), Cont(x004056dd))
+    jge(m, Cont(x0040566a), Cont(x004056dd))
 }
 
 pub fn x0040566a() -> Cont {
@@ -22527,7 +22592,7 @@ pub fn x0040566a() -> Cont {
     // 00405674 cmp esi,ds:[40C724h]
     sub(m.regs.esi, m.memory.read::<u32>(0x40c724u32), &mut m.flags);
     // 0040567a jge short 004056DAh
-    jge(Cont(x0040567c), Cont(x004056da))
+    jge(m, Cont(x0040567c), Cont(x004056da))
 }
 
 pub fn x00405674() -> Cont {
@@ -22536,7 +22601,7 @@ pub fn x00405674() -> Cont {
     // 00405674 cmp esi,ds:[40C724h]
     sub(m.regs.esi, m.memory.read::<u32>(0x40c724u32), &mut m.flags);
     // 0040567a jge short 004056DAh
-    jge(Cont(x0040567c), Cont(x004056da))
+    jge(m, Cont(x0040567c), Cont(x004056da))
 }
 
 pub fn x0040567c() -> Cont {
@@ -22569,7 +22634,7 @@ pub fn x0040567c() -> Cont {
     // 00405693 test ecx,ecx
     and(m.regs.ecx, m.regs.ecx, &mut m.flags);
     // 00405695 je short 004056D6h
-    je(Cont(x00405697), Cont(x004056d6))
+    je(m, Cont(x00405697), Cont(x004056d6))
 }
 
 pub fn x00405697() -> Cont {
@@ -22678,32 +22743,32 @@ pub fn x004056dd() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004056dd leave
-    leave();
+    leave(m);
     // 004056de pop edi
-    m.regs.edi = pop();
+    m.regs.edi = pop(m);
     // 004056df pop esi
-    m.regs.esi = pop();
+    m.regs.esi = pop(m);
     // 004056e0 ret 0Ch
-    ret(12)
+    ret(m, 12)
 }
 
 pub fn x004056e3() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004056e3 push ebx
-    push(m.regs.ebx);
+    push(m, m.regs.ebx);
     // 004056e4 push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 004056e5 push esi
-    push(m.regs.esi);
+    push(m, m.regs.esi);
     // 004056e6 push edi
-    push(m.regs.edi);
+    push(m, m.regs.edi);
     // 004056e7 enter 4,0
-    enter(0x4u16, 0);
+    enter(m, 0x4u16, 0);
     // 004056eb push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 004056ec push edx
-    push(m.regs.edx);
+    push(m, m.regs.edx);
     // 004056ed mov ecx,ds:[40C724h]
     m.regs.ecx = m.memory.read::<u32>(0x40c724u32);
     // 004056f3 imul ecx,ds:[40C728h]
@@ -22724,12 +22789,12 @@ pub fn x004056e3() -> Cont {
     // 00405708 rep stosb
     rep(m, Rep::REP, stosb);
     // 0040570a push 1
-    push(0x1u32);
+    push(m, 0x1u32);
     // 0040570c fild dword ptr [ebp-4]
     m.fpu
         .push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32)) as i32 as f64);
     // 0040570f push dword ptr [ebp+18h]
-    push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x18u32)));
+    push(m, m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x18u32)));
     // 00405712 mov eax,[ebp-8]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32));
     // 00405715 sub esp,4
@@ -22751,88 +22816,97 @@ pub fn x004056e3() -> Cont {
     m.memory.write::<f32>(m.regs.esp, m.fpu.get(0) as f32);
     m.fpu.pop();
     // 0040572c call 004053FCh
-    call(0x405731, Cont(x004053fc))
+    call(m, 0x405731, Cont(x004053fc))
 }
 
 pub fn x00405731() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00405731 push edx
-    push(m.regs.edx);
+    push(m, m.regs.edx);
     // 00405732 mov ebx,[ebp+24h]
     m.regs.ebx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x24u32));
     // 00405735 mov ecx,[ebp+1Ch]
     m.regs.ecx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x1cu32));
     // 00405738 push dword ptr [ebp-8]
-    push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32)));
+    push(
+        m,
+        m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32)),
+    );
     // 0040573b mov eax,[ebp+2Ch]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x2cu32));
     // 0040573e push dword ptr [ebp+20h]
-    push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x20u32)));
+    push(m, m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x20u32)));
     // 00405741 mov edx,ds:[433F4Ch]
     m.regs.edx = m.memory.read::<u32>(0x433f4cu32);
     // 00405747 call 00405650h
-    call(0x40574c, Cont(x00405650))
+    call(m, 0x40574c, Cont(x00405650))
 }
 
 pub fn x0040574c() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 0040574c push dword ptr [ebp-0Ch]
-    push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff4u32)));
+    push(
+        m,
+        m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff4u32)),
+    );
     // 0040574f mov ecx,[ebp+1Ch]
     m.regs.ecx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x1cu32));
     // 00405752 mov ebx,[ebp+28h]
     m.regs.ebx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x28u32));
     // 00405755 push dword ptr [ebp-8]
-    push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32)));
+    push(
+        m,
+        m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32)),
+    );
     // 00405758 mov eax,[ebp+30h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x30u32));
     // 0040575b push dword ptr [ebp+20h]
-    push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x20u32)));
+    push(m, m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x20u32)));
     // 0040575e mov edx,ds:[433F4Ch]
     m.regs.edx = m.memory.read::<u32>(0x433f4cu32);
     // 00405764 call 00405650h
-    call(0x405769, Cont(x00405650))
+    call(m, 0x405769, Cont(x00405650))
 }
 
 pub fn x00405769() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00405769 leave
-    leave();
+    leave(m);
     // 0040576a pop edi
-    m.regs.edi = pop();
+    m.regs.edi = pop(m);
     // 0040576b pop esi
-    m.regs.esi = pop();
+    m.regs.esi = pop(m);
     // 0040576c pop ecx
-    m.regs.ecx = pop();
+    m.regs.ecx = pop(m);
     // 0040576d pop ebx
-    m.regs.ebx = pop();
+    m.regs.ebx = pop(m);
     // 0040576e ret 1Ch
-    ret(28)
+    ret(m, 28)
 }
 
 pub fn x00405771() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00405771 push esi
-    push(m.regs.esi);
+    push(m, m.regs.esi);
     // 00405772 push edi
-    push(m.regs.edi);
+    push(m, m.regs.edi);
     // 00405773 enter 4,0
-    enter(0x4u16, 0);
+    enter(m, 0x4u16, 0);
     // 00405777 mov esi,eax
     m.regs.esi = m.regs.eax;
     // 00405779 mov [ebp-4],edx
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32), m.regs.edx);
     // 0040577c push 100h
-    push(0x100u32);
+    push(m, 0x100u32);
     // 00405781 mov ds:[433F44h],ecx
     m.memory.write::<u32>(0x433f44u32, m.regs.ecx);
     // 00405787 call 00401A60h
-    call(0x40578c, Cont(x00401a60))
+    call(m, 0x40578c, Cont(x00401a60))
 }
 
 pub fn x0040578c() -> Cont {
@@ -22841,11 +22915,11 @@ pub fn x0040578c() -> Cont {
     // 0040578c add esp,4
     m.regs.esp = add(m.regs.esp, 0x4u32, &mut m.flags);
     // 0040578f push 100h
-    push(0x100u32);
+    push(m, 0x100u32);
     // 00405794 mov ds:[433F34h],eax
     m.memory.write::<u32>(0x433f34u32, m.regs.eax);
     // 00405799 call 00401A60h
-    call(0x40579e, Cont(x00401a60))
+    call(m, 0x40579e, Cont(x00401a60))
 }
 
 pub fn x0040579e() -> Cont {
@@ -22854,11 +22928,11 @@ pub fn x0040579e() -> Cont {
     // 0040579e add esp,4
     m.regs.esp = add(m.regs.esp, 0x4u32, &mut m.flags);
     // 004057a1 push 0FA00h
-    push(0xfa00u32);
+    push(m, 0xfa00u32);
     // 004057a6 mov ds:[433F24h],eax
     m.memory.write::<u32>(0x433f24u32, m.regs.eax);
     // 004057ab call 00401A60h
-    call(0x4057b0, Cont(x00401a60))
+    call(m, 0x4057b0, Cont(x00401a60))
 }
 
 pub fn x004057b0() -> Cont {
@@ -22867,11 +22941,11 @@ pub fn x004057b0() -> Cont {
     // 004057b0 add esp,4
     m.regs.esp = add(m.regs.esp, 0x4u32, &mut m.flags);
     // 004057b3 push 100h
-    push(0x100u32);
+    push(m, 0x100u32);
     // 004057b8 mov ds:[433F38h],eax
     m.memory.write::<u32>(0x433f38u32, m.regs.eax);
     // 004057bd call 00401A60h
-    call(0x4057c2, Cont(x00401a60))
+    call(m, 0x4057c2, Cont(x00401a60))
 }
 
 pub fn x004057c2() -> Cont {
@@ -22880,11 +22954,11 @@ pub fn x004057c2() -> Cont {
     // 004057c2 add esp,4
     m.regs.esp = add(m.regs.esp, 0x4u32, &mut m.flags);
     // 004057c5 push 200h
-    push(0x200u32);
+    push(m, 0x200u32);
     // 004057ca mov ds:[433F3Ch],eax
     m.memory.write::<u32>(0x433f3cu32, m.regs.eax);
     // 004057cf call 00401A60h
-    call(0x4057d4, Cont(x00401a60))
+    call(m, 0x4057d4, Cont(x00401a60))
 }
 
 pub fn x004057d4() -> Cont {
@@ -22901,7 +22975,7 @@ pub fn x004057d4() -> Cont {
     // 004057e7 rep movsb
     rep(m, Rep::REP, movsb);
     // 004057e9 call 00405889h
-    call(0x4057ee, Cont(x00405889))
+    call(m, 0x4057ee, Cont(x00405889))
 }
 
 pub fn x004057ee() -> Cont {
@@ -22910,7 +22984,7 @@ pub fn x004057ee() -> Cont {
     // 004057ee mov eax,ebx
     m.regs.eax = m.regs.ebx;
     // 004057f0 call 004058D8h
-    call(0x4057f5, Cont(x004058d8))
+    call(m, 0x4057f5, Cont(x004058d8))
 }
 
 pub fn x004057f5() -> Cont {
@@ -22919,7 +22993,7 @@ pub fn x004057f5() -> Cont {
     // 004057f5 mov eax,ebx
     m.regs.eax = m.regs.ebx;
     // 004057f7 call 0040595Fh
-    call(0x4057fc, Cont(x0040595f))
+    call(m, 0x4057fc, Cont(x0040595f))
 }
 
 pub fn x004057fc() -> Cont {
@@ -22928,125 +23002,125 @@ pub fn x004057fc() -> Cont {
     // 004057fc mov eax,[ebp-4]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32));
     // 004057ff call 00405A15h
-    call(0x405804, Cont(x00405a15))
+    call(m, 0x405804, Cont(x00405a15))
 }
 
 pub fn x00405804() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00405804 leave
-    leave();
+    leave(m);
     // 00405805 pop edi
-    m.regs.edi = pop();
+    m.regs.edi = pop(m);
     // 00405806 pop esi
-    m.regs.esi = pop();
+    m.regs.esi = pop(m);
     // 00405807 ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x00405808() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00405808 push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 00405809 push edx
-    push(m.regs.edx);
+    push(m, m.regs.edx);
     // 0040580a push 8000h
-    push(0x8000u32);
+    push(m, 0x8000u32);
     // 0040580f push 0
-    push(0x0u32);
+    push(m, 0x0u32);
     // 00405811 mov eax,ds:[433F24h]
     m.regs.eax = m.memory.read::<u32>(0x433f24u32);
     // 00405816 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 00405817 call dword ptr cs:[40B16Ch]
-    call(0x40581e, Cont(kernel32::VirtualFree_stdcall))
+    call(m, 0x40581e, Cont(kernel32::VirtualFree_stdcall))
 }
 
 pub fn x0040581e() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 0040581e push 8000h
-    push(0x8000u32);
+    push(m, 0x8000u32);
     // 00405823 push 0
-    push(0x0u32);
+    push(m, 0x0u32);
     // 00405825 mov eax,ds:[433F3Ch]
     m.regs.eax = m.memory.read::<u32>(0x433f3cu32);
     // 0040582a push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 0040582b call dword ptr cs:[40B16Ch]
-    call(0x405832, Cont(kernel32::VirtualFree_stdcall))
+    call(m, 0x405832, Cont(kernel32::VirtualFree_stdcall))
 }
 
 pub fn x00405832() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00405832 push 8000h
-    push(0x8000u32);
+    push(m, 0x8000u32);
     // 00405837 push 0
-    push(0x0u32);
+    push(m, 0x0u32);
     // 00405839 mov eax,ds:[433F34h]
     m.regs.eax = m.memory.read::<u32>(0x433f34u32);
     // 0040583e push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 0040583f call dword ptr cs:[40B16Ch]
-    call(0x405846, Cont(kernel32::VirtualFree_stdcall))
+    call(m, 0x405846, Cont(kernel32::VirtualFree_stdcall))
 }
 
 pub fn x00405846() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00405846 push 8000h
-    push(0x8000u32);
+    push(m, 0x8000u32);
     // 0040584b push 0
-    push(0x0u32);
+    push(m, 0x0u32);
     // 0040584d mov eax,ds:[433F20h]
     m.regs.eax = m.memory.read::<u32>(0x433f20u32);
     // 00405852 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 00405853 call dword ptr cs:[40B16Ch]
-    call(0x40585a, Cont(kernel32::VirtualFree_stdcall))
+    call(m, 0x40585a, Cont(kernel32::VirtualFree_stdcall))
 }
 
 pub fn x0040585a() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 0040585a push 8000h
-    push(0x8000u32);
+    push(m, 0x8000u32);
     // 0040585f push 0
-    push(0x0u32);
+    push(m, 0x0u32);
     // 00405861 mov eax,ds:[433F38h]
     m.regs.eax = m.memory.read::<u32>(0x433f38u32);
     // 00405866 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 00405867 call dword ptr cs:[40B16Ch]
-    call(0x40586e, Cont(kernel32::VirtualFree_stdcall))
+    call(m, 0x40586e, Cont(kernel32::VirtualFree_stdcall))
 }
 
 pub fn x0040586e() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 0040586e pop edx
-    m.regs.edx = pop();
+    m.regs.edx = pop(m);
     // 0040586f pop ecx
-    m.regs.ecx = pop();
+    m.regs.ecx = pop(m);
     // 00405870 ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x00405889() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00405889 push ebx
-    push(m.regs.ebx);
+    push(m, m.regs.ebx);
     // 0040588a push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 0040588b push edx
-    push(m.regs.edx);
+    push(m, m.regs.edx);
     // 0040588c push esi
-    push(m.regs.esi);
+    push(m, m.regs.esi);
     // 0040588d push edi
-    push(m.regs.edi);
+    push(m, m.regs.edi);
     // 0040588e mov ecx,100h
     m.regs.ecx = 0x100u32;
     // 00405893 mov edi,ds:[433F3Ch]
@@ -23073,7 +23147,7 @@ pub fn x004058a9() -> Cont {
     // 004058aa cmp eax,0FA00h
     sub(m.regs.eax, 0xfa00u32, &mut m.flags);
     // 004058af jge short 004058D2h
-    jge(Cont(x004058b1), Cont(x004058d2))
+    jge(m, Cont(x004058b1), Cont(x004058d2))
 }
 
 pub fn x004058b1() -> Cont {
@@ -23088,7 +23162,7 @@ pub fn x004058b1() -> Cont {
         &mut m.flags,
     );
     // 004058bb jne short 004058A9h
-    jne(Cont(x004058bd), Cont(x004058a9))
+    jne(m, Cont(x004058bd), Cont(x004058a9))
 }
 
 pub fn x004058bd() -> Cont {
@@ -23116,38 +23190,38 @@ pub fn x004058d2() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004058d2 pop edi
-    m.regs.edi = pop();
+    m.regs.edi = pop(m);
     // 004058d3 pop esi
-    m.regs.esi = pop();
+    m.regs.esi = pop(m);
     // 004058d4 pop edx
-    m.regs.edx = pop();
+    m.regs.edx = pop(m);
     // 004058d5 pop ecx
-    m.regs.ecx = pop();
+    m.regs.ecx = pop(m);
     // 004058d6 pop ebx
-    m.regs.ebx = pop();
+    m.regs.ebx = pop(m);
     // 004058d7 ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x004058d8() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004058d8 push ebx
-    push(m.regs.ebx);
+    push(m, m.regs.ebx);
     // 004058d9 push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 004058da push edx
-    push(m.regs.edx);
+    push(m, m.regs.edx);
     // 004058db push esi
-    push(m.regs.esi);
+    push(m, m.regs.esi);
     // 004058dc push edi
-    push(m.regs.edi);
+    push(m, m.regs.edi);
     // 004058dd push ebp
-    push(m.regs.ebp);
+    push(m, m.regs.ebp);
     // 004058de mov ebp,esp
     m.regs.ebp = m.regs.esp;
     // 004058e0 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 004058e1 mov ecx,100h
     m.regs.ecx = 0x100u32;
     // 004058e6 mov edi,ds:[433F34h]
@@ -23163,7 +23237,7 @@ pub fn x004058d8() -> Cont {
     // 004058f4 cmp edx,ds:[433F40h]
     sub(m.regs.edx, m.memory.read::<u32>(0x433f40u32), &mut m.flags);
     // 004058fa jge short 0040593Bh
-    jge(Cont(x004058fc), Cont(x0040593b))
+    jge(m, Cont(x004058fc), Cont(x0040593b))
 }
 
 pub fn x004058f4() -> Cont {
@@ -23172,7 +23246,7 @@ pub fn x004058f4() -> Cont {
     // 004058f4 cmp edx,ds:[433F40h]
     sub(m.regs.edx, m.memory.read::<u32>(0x433f40u32), &mut m.flags);
     // 004058fa jge short 0040593Bh
-    jge(Cont(x004058fc), Cont(x0040593b))
+    jge(m, Cont(x004058fc), Cont(x0040593b))
 }
 
 pub fn x004058fc() -> Cont {
@@ -23191,7 +23265,7 @@ pub fn x004058fc() -> Cont {
         &mut m.flags,
     );
     // 0040590c jne short 0040591Ah
-    jne(Cont(x0040590e), Cont(x0040591a))
+    jne(m, Cont(x0040590e), Cont(x0040591a))
 }
 
 pub fn x0040590e() -> Cont {
@@ -23238,7 +23312,7 @@ pub fn x0040591a() -> Cont {
         &mut m.flags,
     );
     // 00405934 jl short 00405937h
-    jl(Cont(x00405936), Cont(x00405937))
+    jl(m, Cont(x00405936), Cont(x00405937))
 }
 
 pub fn x00405936() -> Cont {
@@ -23275,7 +23349,7 @@ pub fn x0040593b() -> Cont {
     // 00405942 cmp edx,ds:[433F40h]
     sub(m.regs.edx, m.memory.read::<u32>(0x433f40u32), &mut m.flags);
     // 00405948 jge short 00405958h
-    jge(Cont(x0040594a), Cont(x00405958))
+    jge(m, Cont(x0040594a), Cont(x00405958))
 }
 
 pub fn x00405942() -> Cont {
@@ -23284,7 +23358,7 @@ pub fn x00405942() -> Cont {
     // 00405942 cmp edx,ds:[433F40h]
     sub(m.regs.edx, m.memory.read::<u32>(0x433f40u32), &mut m.flags);
     // 00405948 jge short 00405958h
-    jge(Cont(x0040594a), Cont(x00405958))
+    jge(m, Cont(x0040594a), Cont(x00405958))
 }
 
 pub fn x0040594a() -> Cont {
@@ -23305,36 +23379,36 @@ pub fn x00405958() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00405958 leave
-    leave();
+    leave(m);
     // 00405959 pop edi
-    m.regs.edi = pop();
+    m.regs.edi = pop(m);
     // 0040595a pop esi
-    m.regs.esi = pop();
+    m.regs.esi = pop(m);
     // 0040595b pop edx
-    m.regs.edx = pop();
+    m.regs.edx = pop(m);
     // 0040595c pop ecx
-    m.regs.ecx = pop();
+    m.regs.ecx = pop(m);
     // 0040595d pop ebx
-    m.regs.ebx = pop();
+    m.regs.ebx = pop(m);
     // 0040595e ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x0040595f() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 0040595f push ebx
-    push(m.regs.ebx);
+    push(m, m.regs.ebx);
     // 00405960 push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 00405961 push edx
-    push(m.regs.edx);
+    push(m, m.regs.edx);
     // 00405962 push esi
-    push(m.regs.esi);
+    push(m, m.regs.esi);
     // 00405963 push edi
-    push(m.regs.edi);
+    push(m, m.regs.edi);
     // 00405964 enter 4,0
-    enter(0x4u16, 0);
+    enter(m, 0x4u16, 0);
     // 00405968 mov esi,eax
     m.regs.esi = m.regs.eax;
     // 0040596a xor eax,eax
@@ -23360,7 +23434,7 @@ pub fn x0040595f() -> Cont {
     // 00405988 cmp eax,100h
     sub(m.regs.eax, 0x100u32, &mut m.flags);
     // 0040598d jl short 0040596Eh
-    jl(Cont(x0040598f), Cont(x0040596e))
+    jl(m, Cont(x0040598f), Cont(x0040596e))
 }
 
 pub fn x0040596e() -> Cont {
@@ -23385,7 +23459,7 @@ pub fn x0040596e() -> Cont {
     // 00405988 cmp eax,100h
     sub(m.regs.eax, 0x100u32, &mut m.flags);
     // 0040598d jl short 0040596Eh
-    jl(Cont(x0040598f), Cont(x0040596e))
+    jl(m, Cont(x0040598f), Cont(x0040596e))
 }
 
 pub fn x0040598f() -> Cont {
@@ -23405,7 +23479,7 @@ pub fn x00405993() -> Cont {
     // 00405994 cmp eax,100h
     sub(m.regs.eax, 0x100u32, &mut m.flags);
     // 00405999 jge short 004059E4h
-    jge(Cont(x0040599b), Cont(x004059e4))
+    jge(m, Cont(x0040599b), Cont(x004059e4))
 }
 
 pub fn x0040599b() -> Cont {
@@ -23447,7 +23521,7 @@ pub fn x0040599b() -> Cont {
     // 004059c7 cmp ebx,esi
     sub(m.regs.ebx, m.regs.esi, &mut m.flags);
     // 004059c9 jle short 004059CCh
-    jle(Cont(x004059cb), Cont(x004059cc))
+    jle(m, Cont(x004059cb), Cont(x004059cc))
 }
 
 pub fn x004059cb() -> Cont {
@@ -23470,7 +23544,7 @@ pub fn x004059cb() -> Cont {
     // 004059e0 test ebx,ebx
     and(m.regs.ebx, m.regs.ebx, &mut m.flags);
     // 004059e2 jg short 00405993h
-    jg(Cont(x004059e4), Cont(x00405993))
+    jg(m, Cont(x004059e4), Cont(x00405993))
 }
 
 pub fn x004059cc() -> Cont {
@@ -23491,7 +23565,7 @@ pub fn x004059cc() -> Cont {
     // 004059e0 test ebx,ebx
     and(m.regs.ebx, m.regs.ebx, &mut m.flags);
     // 004059e2 jg short 00405993h
-    jg(Cont(x004059e4), Cont(x00405993))
+    jg(m, Cont(x004059e4), Cont(x00405993))
 }
 
 pub fn x004059e4() -> Cont {
@@ -23506,7 +23580,7 @@ pub fn x004059e4() -> Cont {
     // 004059ed cmp eax,ds:[433F40h]
     sub(m.regs.eax, m.memory.read::<u32>(0x433f40u32), &mut m.flags);
     // 004059f3 jge short 00405A0Eh
-    jge(Cont(x004059f5), Cont(x00405a0e))
+    jge(m, Cont(x004059f5), Cont(x00405a0e))
 }
 
 pub fn x004059ed() -> Cont {
@@ -23515,7 +23589,7 @@ pub fn x004059ed() -> Cont {
     // 004059ed cmp eax,ds:[433F40h]
     sub(m.regs.eax, m.memory.read::<u32>(0x433f40u32), &mut m.flags);
     // 004059f3 jge short 00405A0Eh
-    jge(Cont(x004059f5), Cont(x00405a0e))
+    jge(m, Cont(x004059f5), Cont(x00405a0e))
 }
 
 pub fn x004059f5() -> Cont {
@@ -23542,38 +23616,38 @@ pub fn x00405a0e() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00405a0e leave
-    leave();
+    leave(m);
     // 00405a0f pop edi
-    m.regs.edi = pop();
+    m.regs.edi = pop(m);
     // 00405a10 pop esi
-    m.regs.esi = pop();
+    m.regs.esi = pop(m);
     // 00405a11 pop edx
-    m.regs.edx = pop();
+    m.regs.edx = pop(m);
     // 00405a12 pop ecx
-    m.regs.ecx = pop();
+    m.regs.ecx = pop(m);
     // 00405a13 pop ebx
-    m.regs.ebx = pop();
+    m.regs.ebx = pop(m);
     // 00405a14 ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x00405a15() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00405a15 push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 00405a16 push edx
-    push(m.regs.edx);
+    push(m, m.regs.edx);
     // 00405a17 push esi
-    push(m.regs.esi);
+    push(m, m.regs.esi);
     // 00405a18 push edi
-    push(m.regs.edi);
+    push(m, m.regs.edi);
     // 00405a19 push ebp
-    push(m.regs.ebp);
+    push(m, m.regs.ebp);
     // 00405a1a mov ebp,esp
     m.regs.ebp = m.regs.esp;
     // 00405a1c push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 00405a1d mov ecx,100h
     m.regs.ecx = 0x100u32;
     // 00405a22 mov edi,ds:[433F24h]
@@ -23587,7 +23661,7 @@ pub fn x00405a15() -> Cont {
     // 00405a2e cmp eax,ds:[433F40h]
     sub(m.regs.eax, m.memory.read::<u32>(0x433f40u32), &mut m.flags);
     // 00405a34 jge short 00405A48h
-    jge(Cont(x00405a36), Cont(x00405a48))
+    jge(m, Cont(x00405a36), Cont(x00405a48))
 }
 
 pub fn x00405a2e() -> Cont {
@@ -23596,7 +23670,7 @@ pub fn x00405a2e() -> Cont {
     // 00405a2e cmp eax,ds:[433F40h]
     sub(m.regs.eax, m.memory.read::<u32>(0x433f40u32), &mut m.flags);
     // 00405a34 jge short 00405A48h
-    jge(Cont(x00405a36), Cont(x00405a48))
+    jge(m, Cont(x00405a36), Cont(x00405a48))
 }
 
 pub fn x00405a36() -> Cont {
@@ -23622,32 +23696,32 @@ pub fn x00405a48() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00405a48 leave
-    leave();
+    leave(m);
     // 00405a49 pop edi
-    m.regs.edi = pop();
+    m.regs.edi = pop(m);
     // 00405a4a pop esi
-    m.regs.esi = pop();
+    m.regs.esi = pop(m);
     // 00405a4b pop edx
-    m.regs.edx = pop();
+    m.regs.edx = pop(m);
     // 00405a4c pop ecx
-    m.regs.ecx = pop();
+    m.regs.ecx = pop(m);
     // 00405a4d ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x00405a4e() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00405a4e push ebx
-    push(m.regs.ebx);
+    push(m, m.regs.ebx);
     // 00405a4f push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 00405a50 push esi
-    push(m.regs.esi);
+    push(m, m.regs.esi);
     // 00405a51 push edi
-    push(m.regs.edi);
+    push(m, m.regs.edi);
     // 00405a52 enter 0Ch,0
-    enter(0xcu16, 0);
+    enter(m, 0xcu16, 0);
     // 00405a56 mov edi,eax
     m.regs.edi = m.regs.eax;
     // 00405a58 mov [ebp-8],edx
@@ -23667,7 +23741,7 @@ pub fn x00405a4e() -> Cont {
     // 00405a6b cmp esi,eax
     sub(m.regs.esi, m.regs.eax, &mut m.flags);
     // 00405a6d jge near ptr 00405AFCh
-    jge(Cont(x00405a73), Cont(x00405afc))
+    jge(m, Cont(x00405a73), Cont(x00405afc))
 }
 
 pub fn x00405a65() -> Cont {
@@ -23680,7 +23754,7 @@ pub fn x00405a65() -> Cont {
     // 00405a6b cmp esi,eax
     sub(m.regs.esi, m.regs.eax, &mut m.flags);
     // 00405a6d jge near ptr 00405AFCh
-    jge(Cont(x00405a73), Cont(x00405afc))
+    jge(m, Cont(x00405a73), Cont(x00405afc))
 }
 
 pub fn x00405a73() -> Cont {
@@ -23703,7 +23777,7 @@ pub fn x00405a73() -> Cont {
     // 00405a8b cmp ecx,edx
     sub(m.regs.ecx, m.regs.edx, &mut m.flags);
     // 00405a8d jge short 00405ADCh
-    jge(Cont(x00405a8f), Cont(x00405adc))
+    jge(m, Cont(x00405a8f), Cont(x00405adc))
 }
 
 pub fn x00405a79() -> Cont {
@@ -23724,7 +23798,7 @@ pub fn x00405a79() -> Cont {
     // 00405a8b cmp ecx,edx
     sub(m.regs.ecx, m.regs.edx, &mut m.flags);
     // 00405a8d jge short 00405ADCh
-    jge(Cont(x00405a8f), Cont(x00405adc))
+    jge(m, Cont(x00405a8f), Cont(x00405adc))
 }
 
 pub fn x00405a8f() -> Cont {
@@ -23741,7 +23815,7 @@ pub fn x00405a8f() -> Cont {
     // 00405aa6 test ebx,ebx
     and(m.regs.ebx, m.regs.ebx, &mut m.flags);
     // 00405aa8 je short 00405AD3h
-    je(Cont(x00405aaa), Cont(x00405ad3))
+    je(m, Cont(x00405aaa), Cont(x00405ad3))
 }
 
 pub fn x00405aaa() -> Cont {
@@ -23847,28 +23921,28 @@ pub fn x00405afc() -> Cont {
     // 00405b06 emms
     // no-op
     // 00405b08 leave
-    leave();
+    leave(m);
     // 00405b09 pop edi
-    m.regs.edi = pop();
+    m.regs.edi = pop(m);
     // 00405b0a pop esi
-    m.regs.esi = pop();
+    m.regs.esi = pop(m);
     // 00405b0b pop ecx
-    m.regs.ecx = pop();
+    m.regs.ecx = pop(m);
     // 00405b0c pop ebx
-    m.regs.ebx = pop();
+    m.regs.ebx = pop(m);
     // 00405b0d ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x00405b0e() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00405b0e push esi
-    push(m.regs.esi);
+    push(m, m.regs.esi);
     // 00405b0f push edi
-    push(m.regs.edi);
+    push(m, m.regs.edi);
     // 00405b10 enter 14h,0
-    enter(0x14u16, 0);
+    enter(m, 0x14u16, 0);
     // 00405b14 mov esi,eax
     m.regs.esi = m.regs.eax;
     // 00405b16 mov [ebp-14h],edx
@@ -23892,7 +23966,7 @@ pub fn x00405b0e() -> Cont {
     // 00405b35 cmp byte ptr [eax],0
     sub(m.memory.read::<u8>(m.regs.eax), 0x0u8, &mut m.flags);
     // 00405b38 je near ptr 00405BD5h
-    je(Cont(x00405b3e), Cont(x00405bd5))
+    je(m, Cont(x00405b3e), Cont(x00405bd5))
 }
 
 pub fn x00405b32() -> Cont {
@@ -23903,7 +23977,7 @@ pub fn x00405b32() -> Cont {
     // 00405b35 cmp byte ptr [eax],0
     sub(m.memory.read::<u8>(m.regs.eax), 0x0u8, &mut m.flags);
     // 00405b38 je near ptr 00405BD5h
-    je(Cont(x00405b3e), Cont(x00405bd5))
+    je(m, Cont(x00405b3e), Cont(x00405bd5))
 }
 
 pub fn x00405b3e() -> Cont {
@@ -23916,7 +23990,7 @@ pub fn x00405b3e() -> Cont {
     // 00405b4d cmp eax,ds:[433F40h]
     sub(m.regs.eax, m.memory.read::<u32>(0x433f40u32), &mut m.flags);
     // 00405b53 jge short 00405B9Dh
-    jge(Cont(x00405b55), Cont(x00405b9d))
+    jge(m, Cont(x00405b55), Cont(x00405b9d))
 }
 
 pub fn x00405b48() -> Cont {
@@ -23927,7 +24001,7 @@ pub fn x00405b48() -> Cont {
     // 00405b4d cmp eax,ds:[433F40h]
     sub(m.regs.eax, m.memory.read::<u32>(0x433f40u32), &mut m.flags);
     // 00405b53 jge short 00405B9Dh
-    jge(Cont(x00405b55), Cont(x00405b9d))
+    jge(m, Cont(x00405b55), Cont(x00405b9d))
 }
 
 pub fn x00405b55() -> Cont {
@@ -23948,7 +24022,7 @@ pub fn x00405b55() -> Cont {
         &mut m.flags,
     );
     // 00405b64 jne short 00405B95h
-    jne(Cont(x00405b66), Cont(x00405b95))
+    jne(m, Cont(x00405b66), Cont(x00405b95))
 }
 
 pub fn x00405b66() -> Cont {
@@ -23979,7 +24053,7 @@ pub fn x00405b66() -> Cont {
     // 00405b7e mov edx,[ebp+10h]
     m.regs.edx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x10u32));
     // 00405b81 call 00405A4Eh
-    call(0x405b86, Cont(x00405a4e))
+    call(m, 0x405b86, Cont(x00405a4e))
 }
 
 pub fn x00405b86() -> Cont {
@@ -24036,7 +24110,7 @@ pub fn x00405b9d() -> Cont {
     // 00405baf cmp eax,ds:[433F40h]
     sub(m.regs.eax, m.memory.read::<u32>(0x433f40u32), &mut m.flags);
     // 00405bb5 jge short 00405BC9h
-    jge(Cont(x00405bb7), Cont(x00405bc9))
+    jge(m, Cont(x00405bb7), Cont(x00405bc9))
 }
 
 pub fn x00405baf() -> Cont {
@@ -24045,7 +24119,7 @@ pub fn x00405baf() -> Cont {
     // 00405baf cmp eax,ds:[433F40h]
     sub(m.regs.eax, m.memory.read::<u32>(0x433f40u32), &mut m.flags);
     // 00405bb5 jge short 00405BC9h
-    jge(Cont(x00405bb7), Cont(x00405bc9))
+    jge(m, Cont(x00405bb7), Cont(x00405bc9))
 }
 
 pub fn x00405bb7() -> Cont {
@@ -24061,7 +24135,7 @@ pub fn x00405bb7() -> Cont {
         &mut m.flags,
     );
     // 00405bbd jne short 00405BC6h
-    jne(Cont(x00405bbf), Cont(x00405bc6))
+    jne(m, Cont(x00405bbf), Cont(x00405bc6))
 }
 
 pub fn x00405bbf() -> Cont {
@@ -24095,7 +24169,7 @@ pub fn x00405bc9() -> Cont {
         &mut m.flags,
     );
     // 00405bcd je short 00405BD5h
-    je(Cont(x00405bcf), Cont(x00405bd5))
+    je(m, Cont(x00405bcf), Cont(x00405bd5))
 }
 
 pub fn x00405bcf() -> Cont {
@@ -24111,28 +24185,28 @@ pub fn x00405bd5() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00405bd5 leave
-    leave();
+    leave(m);
     // 00405bd6 pop edi
-    m.regs.edi = pop();
+    m.regs.edi = pop(m);
     // 00405bd7 pop esi
-    m.regs.esi = pop();
+    m.regs.esi = pop(m);
     // 00405bd8 ret 4
-    ret(4)
+    ret(m, 4)
 }
 
 pub fn x00405bdb() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00405bdb push ebx
-    push(m.regs.ebx);
+    push(m, m.regs.ebx);
     // 00405bdc push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 00405bdd push esi
-    push(m.regs.esi);
+    push(m, m.regs.esi);
     // 00405bde push edi
-    push(m.regs.edi);
+    push(m, m.regs.edi);
     // 00405bdf enter 10h,0
-    enter(0x10u16, 0);
+    enter(m, 0x10u16, 0);
     // 00405be3 mov ebx,eax
     m.regs.ebx = m.regs.eax;
     // 00405be5 mov esi,edx
@@ -24142,7 +24216,7 @@ pub fn x00405bdb() -> Cont {
     // 00405be9 cmp ecx,[ebx]
     sub(m.regs.ecx, m.memory.read::<u32>(m.regs.ebx), &mut m.flags);
     // 00405beb jge near ptr 00405C90h
-    jge(Cont(x00405bf1), Cont(x00405c90))
+    jge(m, Cont(x00405bf1), Cont(x00405c90))
 }
 
 pub fn x00405be9() -> Cont {
@@ -24151,7 +24225,7 @@ pub fn x00405be9() -> Cont {
     // 00405be9 cmp ecx,[ebx]
     sub(m.regs.ecx, m.memory.read::<u32>(m.regs.ebx), &mut m.flags);
     // 00405beb jge near ptr 00405C90h
-    jge(Cont(x00405bf1), Cont(x00405c90))
+    jge(m, Cont(x00405bf1), Cont(x00405c90))
 }
 
 pub fn x00405bf1() -> Cont {
@@ -24182,7 +24256,7 @@ pub fn x00405bf1() -> Cont {
         &mut m.flags,
     );
     // 00405c08 je short 00405C14h
-    je(Cont(x00405c0a), Cont(x00405c14))
+    je(m, Cont(x00405c0a), Cont(x00405c14))
 }
 
 pub fn x00405c0a() -> Cont {
@@ -24254,7 +24328,7 @@ pub fn x00405c14() -> Cont {
     // 00405c48 shl eax,3
     m.regs.eax = shl(m.regs.eax, 0x3u8, &mut m.flags);
     // 00405c4b call 00408838h
-    call(0x405c50, Cont(x00408838))
+    call(m, 0x405c50, Cont(x00408838))
 }
 
 pub fn x00405c1b() -> Cont {
@@ -24305,7 +24379,7 @@ pub fn x00405c1b() -> Cont {
     // 00405c48 shl eax,3
     m.regs.eax = shl(m.regs.eax, 0x3u8, &mut m.flags);
     // 00405c4b call 00408838h
-    call(0x405c50, Cont(x00408838))
+    call(m, 0x405c50, Cont(x00408838))
 }
 
 pub fn x00405c50() -> Cont {
@@ -24364,7 +24438,7 @@ pub fn x00405c50() -> Cont {
         &mut m.flags,
     );
     // 00405c7c call 00408838h
-    call(0x405c81, Cont(x00408838))
+    call(m, 0x405c81, Cont(x00408838))
 }
 
 pub fn x00405c81() -> Cont {
@@ -24399,7 +24473,7 @@ pub fn x00405c90() -> Cont {
         &mut m.flags,
     );
     // 00405c95 jge short 00405CD8h
-    jge(Cont(x00405c97), Cont(x00405cd8))
+    jge(m, Cont(x00405c97), Cont(x00405cd8))
 }
 
 pub fn x00405c92() -> Cont {
@@ -24412,7 +24486,7 @@ pub fn x00405c92() -> Cont {
         &mut m.flags,
     );
     // 00405c95 jge short 00405CD8h
-    jge(Cont(x00405c97), Cont(x00405cd8))
+    jge(m, Cont(x00405c97), Cont(x00405cd8))
 }
 
 pub fn x00405c97() -> Cont {
@@ -24474,7 +24548,7 @@ pub fn x00405c97() -> Cont {
     // 00405cc0 fchs
     m.fpu.set(0, -m.fpu.get(0));
     // 00405cc2 call 00408838h
-    call(0x405cc7, Cont(x00408838))
+    call(m, 0x405cc7, Cont(x00408838))
 }
 
 pub fn x00405cc7() -> Cont {
@@ -24513,7 +24587,7 @@ pub fn x00405cd8() -> Cont {
         &mut m.flags,
     );
     // 00405cdd jge short 00405CEAh
-    jge(Cont(x00405cdf), Cont(x00405cea))
+    jge(m, Cont(x00405cdf), Cont(x00405cea))
 }
 
 pub fn x00405cda() -> Cont {
@@ -24526,7 +24600,7 @@ pub fn x00405cda() -> Cont {
         &mut m.flags,
     );
     // 00405cdd jge short 00405CEAh
-    jge(Cont(x00405cdf), Cont(x00405cea))
+    jge(m, Cont(x00405cdf), Cont(x00405cea))
 }
 
 pub fn x00405cdf() -> Cont {
@@ -24555,33 +24629,33 @@ pub fn x00405cea() -> Cont {
     // 00405cef dec edx
     m.regs.edx = dec(m.regs.edx, &mut m.flags);
     // 00405cf0 call 004060B3h
-    call(0x405cf5, Cont(x004060b3))
+    call(m, 0x405cf5, Cont(x004060b3))
 }
 
 pub fn x00405cf5() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00405cf5 leave
-    leave();
+    leave(m);
     // 00405cf6 pop edi
-    m.regs.edi = pop();
+    m.regs.edi = pop(m);
     // 00405cf7 pop esi
-    m.regs.esi = pop();
+    m.regs.esi = pop(m);
     // 00405cf8 pop ecx
-    m.regs.ecx = pop();
+    m.regs.ecx = pop(m);
     // 00405cf9 pop ebx
-    m.regs.ebx = pop();
+    m.regs.ebx = pop(m);
     // 00405cfa ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x00405cfb() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00405cfb push esi
-    push(m.regs.esi);
+    push(m, m.regs.esi);
     // 00405cfc enter 38h,0
-    enter(0x38u16, 0);
+    enter(m, 0x38u16, 0);
     // 00405d00 mov esi,eax
     m.regs.esi = m.regs.eax;
     // 00405d02 mov [ebp-8],edx
@@ -24714,7 +24788,7 @@ pub fn x00405cfb() -> Cont {
         &mut m.flags,
     );
     // 00405d8c jge near ptr 00405E64h
-    jge(Cont(x00405d92), Cont(x00405e64))
+    jge(m, Cont(x00405d92), Cont(x00405e64))
 }
 
 pub fn x00405d89() -> Cont {
@@ -24727,7 +24801,7 @@ pub fn x00405d89() -> Cont {
         &mut m.flags,
     );
     // 00405d8c jge near ptr 00405E64h
-    jge(Cont(x00405d92), Cont(x00405e64))
+    jge(m, Cont(x00405d92), Cont(x00405e64))
 }
 
 pub fn x00405d92() -> Cont {
@@ -25008,22 +25082,22 @@ pub fn x00405e64() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00405e64 leave
-    leave();
+    leave(m);
     // 00405e65 pop esi
-    m.regs.esi = pop();
+    m.regs.esi = pop(m);
     // 00405e66 ret 14h
-    ret(20)
+    ret(m, 20)
 }
 
 pub fn x00405e69() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00405e69 push ebx
-    push(m.regs.ebx);
+    push(m, m.regs.ebx);
     // 00405e6a push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 00405e6b push edx
-    push(m.regs.edx);
+    push(m, m.regs.edx);
     // 00405e6c mov ebx,eax
     m.regs.ebx = m.regs.eax;
     // 00405e6e imul eax,[eax],0Ch
@@ -25033,9 +25107,9 @@ pub fn x00405e69() -> Cont {
         &mut m.flags,
     ) as u32;
     // 00405e71 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 00405e72 call 00401A60h
-    call(0x405e77, Cont(x00401a60))
+    call(m, 0x405e77, Cont(x00401a60))
 }
 
 pub fn x00405e77() -> Cont {
@@ -25053,9 +25127,9 @@ pub fn x00405e77() -> Cont {
     // 00405e7d add esp,4
     m.regs.esp = add(m.regs.esp, 0x4u32, &mut m.flags);
     // 00405e80 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 00405e81 call 00401A60h
-    call(0x405e86, Cont(x00401a60))
+    call(m, 0x405e86, Cont(x00401a60))
 }
 
 pub fn x00405e86() -> Cont {
@@ -25071,9 +25145,9 @@ pub fn x00405e86() -> Cont {
     // 00405e8f shl eax,5
     m.regs.eax = shl(m.regs.eax, 0x5u8, &mut m.flags);
     // 00405e92 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 00405e93 call 00401A60h
-    call(0x405e98, Cont(x00401a60))
+    call(m, 0x405e98, Cont(x00401a60))
 }
 
 pub fn x00405e98() -> Cont {
@@ -25089,9 +25163,9 @@ pub fn x00405e98() -> Cont {
     // 00405ea0 shl eax,3
     m.regs.eax = shl(m.regs.eax, 0x3u8, &mut m.flags);
     // 00405ea3 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 00405ea4 call 00401A60h
-    call(0x405ea9, Cont(x00401a60))
+    call(m, 0x405ea9, Cont(x00401a60))
 }
 
 pub fn x00405ea9() -> Cont {
@@ -25107,9 +25181,9 @@ pub fn x00405ea9() -> Cont {
     // 00405eb2 shl eax,3
     m.regs.eax = shl(m.regs.eax, 0x3u8, &mut m.flags);
     // 00405eb5 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 00405eb6 call 00401A60h
-    call(0x405ebb, Cont(x00401a60))
+    call(m, 0x405ebb, Cont(x00401a60))
 }
 
 pub fn x00405ebb() -> Cont {
@@ -25148,28 +25222,28 @@ pub fn x00405ebb() -> Cont {
     m.memory
         .write::<u32>(m.regs.ebx.wrapping_add(0x40u32), m.regs.eax);
     // 00405f00 pop edx
-    m.regs.edx = pop();
+    m.regs.edx = pop(m);
     // 00405f01 pop ecx
-    m.regs.ecx = pop();
+    m.regs.ecx = pop(m);
     // 00405f02 pop ebx
-    m.regs.ebx = pop();
+    m.regs.ebx = pop(m);
     // 00405f03 ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x00405f04() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00405f04 push ebx
-    push(m.regs.ebx);
+    push(m, m.regs.ebx);
     // 00405f05 push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 00405f06 push esi
-    push(m.regs.esi);
+    push(m, m.regs.esi);
     // 00405f07 push edi
-    push(m.regs.edi);
+    push(m, m.regs.edi);
     // 00405f08 enter 8,0
-    enter(0x8u16, 0);
+    enter(m, 0x8u16, 0);
     // 00405f0c mov ecx,eax
     m.regs.ecx = m.regs.eax;
     // 00405f0e movzx ax,byte ptr [eax+1]
@@ -25212,7 +25286,7 @@ pub fn x00405f04() -> Cont {
     // 00405f40 inc ecx
     m.regs.ecx = inc(m.regs.ecx, &mut m.flags);
     // 00405f41 call 00405E69h
-    call(0x405f46, Cont(x00405e69))
+    call(m, 0x405f46, Cont(x00405e69))
 }
 
 pub fn x00405f46() -> Cont {
@@ -25223,7 +25297,7 @@ pub fn x00405f46() -> Cont {
     // 00405f48 cmp eax,[edx]
     sub(m.regs.eax, m.memory.read::<u32>(m.regs.edx), &mut m.flags);
     // 00405f4a jge near ptr 00405FDBh
-    jge(Cont(x00405f50), Cont(x00405fdb))
+    jge(m, Cont(x00405f50), Cont(x00405fdb))
 }
 
 pub fn x00405f48() -> Cont {
@@ -25232,7 +25306,7 @@ pub fn x00405f48() -> Cont {
     // 00405f48 cmp eax,[edx]
     sub(m.regs.eax, m.memory.read::<u32>(m.regs.edx), &mut m.flags);
     // 00405f4a jge near ptr 00405FDBh
-    jge(Cont(x00405f50), Cont(x00405fdb))
+    jge(m, Cont(x00405f50), Cont(x00405fdb))
 }
 
 pub fn x00405f50() -> Cont {
@@ -25377,7 +25451,7 @@ pub fn x00405fdb() -> Cont {
         &mut m.flags,
     );
     // 00405fe0 jge short 0040604Ah
-    jge(Cont(x00405fe2), Cont(x0040604a))
+    jge(m, Cont(x00405fe2), Cont(x0040604a))
 }
 
 pub fn x00405fdd() -> Cont {
@@ -25390,7 +25464,7 @@ pub fn x00405fdd() -> Cont {
         &mut m.flags,
     );
     // 00405fe0 jge short 0040604Ah
-    jge(Cont(x00405fe2), Cont(x0040604a))
+    jge(m, Cont(x00405fe2), Cont(x0040604a))
 }
 
 pub fn x00405fe2() -> Cont {
@@ -25493,130 +25567,130 @@ pub fn x0040604a() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 0040604a leave
-    leave();
+    leave(m);
     // 0040604b pop edi
-    m.regs.edi = pop();
+    m.regs.edi = pop(m);
     // 0040604c pop esi
-    m.regs.esi = pop();
+    m.regs.esi = pop(m);
     // 0040604d pop ecx
-    m.regs.ecx = pop();
+    m.regs.ecx = pop(m);
     // 0040604e pop ebx
-    m.regs.ebx = pop();
+    m.regs.ebx = pop(m);
     // 0040604f ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x00406050() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00406050 push ebx
-    push(m.regs.ebx);
+    push(m, m.regs.ebx);
     // 00406051 push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 00406052 push edx
-    push(m.regs.edx);
+    push(m, m.regs.edx);
     // 00406053 mov ebx,eax
     m.regs.ebx = m.regs.eax;
     // 00406055 push 8000h
-    push(0x8000u32);
+    push(m, 0x8000u32);
     // 0040605a push 0
-    push(0x0u32);
+    push(m, 0x0u32);
     // 0040605c mov eax,[eax+34h]
     m.regs.eax = m.memory.read::<u32>(m.regs.eax.wrapping_add(0x34u32));
     // 0040605f push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 00406060 call dword ptr cs:[40B16Ch]
-    call(0x406067, Cont(kernel32::VirtualFree_stdcall))
+    call(m, 0x406067, Cont(kernel32::VirtualFree_stdcall))
 }
 
 pub fn x00406067() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00406067 push 8000h
-    push(0x8000u32);
+    push(m, 0x8000u32);
     // 0040606c push 0
-    push(0x0u32);
+    push(m, 0x0u32);
     // 0040606e mov eax,[ebx+40h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebx.wrapping_add(0x40u32));
     // 00406071 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 00406072 call dword ptr cs:[40B16Ch]
-    call(0x406079, Cont(kernel32::VirtualFree_stdcall))
+    call(m, 0x406079, Cont(kernel32::VirtualFree_stdcall))
 }
 
 pub fn x00406079() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00406079 push 8000h
-    push(0x8000u32);
+    push(m, 0x8000u32);
     // 0040607e push 0
-    push(0x0u32);
+    push(m, 0x0u32);
     // 00406080 mov eax,[ebx+3Ch]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebx.wrapping_add(0x3cu32));
     // 00406083 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 00406084 call dword ptr cs:[40B16Ch]
-    call(0x40608b, Cont(kernel32::VirtualFree_stdcall))
+    call(m, 0x40608b, Cont(kernel32::VirtualFree_stdcall))
 }
 
 pub fn x0040608b() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 0040608b push 8000h
-    push(0x8000u32);
+    push(m, 0x8000u32);
     // 00406090 push 0
-    push(0x0u32);
+    push(m, 0x0u32);
     // 00406092 mov eax,[ebx+30h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebx.wrapping_add(0x30u32));
     // 00406095 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 00406096 call dword ptr cs:[40B16Ch]
-    call(0x40609d, Cont(kernel32::VirtualFree_stdcall))
+    call(m, 0x40609d, Cont(kernel32::VirtualFree_stdcall))
 }
 
 pub fn x0040609d() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 0040609d push 8000h
-    push(0x8000u32);
+    push(m, 0x8000u32);
     // 004060a2 push 0
-    push(0x0u32);
+    push(m, 0x0u32);
     // 004060a4 mov eax,[ebx+38h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebx.wrapping_add(0x38u32));
     // 004060a7 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 004060a8 call dword ptr cs:[40B16Ch]
-    call(0x4060af, Cont(kernel32::VirtualFree_stdcall))
+    call(m, 0x4060af, Cont(kernel32::VirtualFree_stdcall))
 }
 
 pub fn x004060af() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004060af pop edx
-    m.regs.edx = pop();
+    m.regs.edx = pop(m);
     // 004060b0 pop ecx
-    m.regs.ecx = pop();
+    m.regs.ecx = pop(m);
     // 004060b1 pop ebx
-    m.regs.ebx = pop();
+    m.regs.ebx = pop(m);
     // 004060b2 ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x004060b3() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004060b3 push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 004060b4 push esi
-    push(m.regs.esi);
+    push(m, m.regs.esi);
     // 004060b5 push edi
-    push(m.regs.edi);
+    push(m, m.regs.edi);
     // 004060b6 enter 10h,0
-    enter(0x10u16, 0);
+    enter(m, 0x10u16, 0);
     // 004060ba push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 004060bb push edx
-    push(m.regs.edx);
+    push(m, m.regs.edx);
     // 004060bc mov ecx,ebx
     m.regs.ecx = m.regs.ebx;
     // 004060be mov edi,[ebp-18h]
@@ -25671,7 +25745,7 @@ pub fn x004060b3() -> Cont {
         &mut m.flags,
     );
     // 004060e8 jge short 004060EDh
-    jge(Cont(x004060ea), Cont(x004060ed))
+    jge(m, Cont(x004060ea), Cont(x004060ed))
 }
 
 pub fn x004060be() -> Cont {
@@ -25729,7 +25803,7 @@ pub fn x004060be() -> Cont {
         &mut m.flags,
     );
     // 004060e8 jge short 004060EDh
-    jge(Cont(x004060ea), Cont(x004060ed))
+    jge(m, Cont(x004060ea), Cont(x004060ed))
 }
 
 pub fn x004060d9() -> Cont {
@@ -25757,7 +25831,7 @@ pub fn x004060d9() -> Cont {
         &mut m.flags,
     );
     // 004060e8 jge short 004060EDh
-    jge(Cont(x004060ea), Cont(x004060ed))
+    jge(m, Cont(x004060ea), Cont(x004060ed))
 }
 
 pub fn x004060ea() -> Cont {
@@ -25816,7 +25890,7 @@ pub fn x004060ed() -> Cont {
         &mut m.flags,
     );
     // 00406114 jge short 0040611Bh
-    jge(Cont(x00406116), Cont(x0040611b))
+    jge(m, Cont(x00406116), Cont(x0040611b))
 }
 
 pub fn x00406116() -> Cont {
@@ -25834,7 +25908,7 @@ pub fn x0040611b() -> Cont {
     // 0040611b cmp esi,edi
     sub(m.regs.esi, m.regs.edi, &mut m.flags);
     // 0040611d jg short 00406139h
-    jg(Cont(x0040611f), Cont(x00406139))
+    jg(m, Cont(x0040611f), Cont(x00406139))
 }
 
 pub fn x0040611f() -> Cont {
@@ -25873,7 +25947,7 @@ pub fn x0040611f() -> Cont {
     // 00406139 cmp esi,edi
     sub(m.regs.esi, m.regs.edi, &mut m.flags);
     // 0040613b jle short 004060D9h
-    jle(Cont(x0040613d), Cont(x004060d9))
+    jle(m, Cont(x0040613d), Cont(x004060d9))
 }
 
 pub fn x00406139() -> Cont {
@@ -25882,7 +25956,7 @@ pub fn x00406139() -> Cont {
     // 00406139 cmp esi,edi
     sub(m.regs.esi, m.regs.edi, &mut m.flags);
     // 0040613b jle short 004060D9h
-    jle(Cont(x0040613d), Cont(x004060d9))
+    jle(m, Cont(x0040613d), Cont(x004060d9))
 }
 
 pub fn x0040613d() -> Cont {
@@ -25895,7 +25969,7 @@ pub fn x0040613d() -> Cont {
         &mut m.flags,
     );
     // 00406140 jle short 0040614Eh
-    jle(Cont(x00406142), Cont(x0040614e))
+    jle(m, Cont(x00406142), Cont(x0040614e))
 }
 
 pub fn x00406142() -> Cont {
@@ -25908,7 +25982,7 @@ pub fn x00406142() -> Cont {
     // 00406147 mov edx,edi
     m.regs.edx = m.regs.edi;
     // 00406149 call 004060B3h
-    call(0x40614e, Cont(x004060b3))
+    call(m, 0x40614e, Cont(x004060b3))
 }
 
 pub fn x0040614e() -> Cont {
@@ -25921,7 +25995,7 @@ pub fn x0040614e() -> Cont {
         &mut m.flags,
     );
     // 00406151 jge short 0040615Bh
-    jge(Cont(x00406153), Cont(x0040615b))
+    jge(m, Cont(x00406153), Cont(x0040615b))
 }
 
 pub fn x00406153() -> Cont {
@@ -25938,28 +26012,28 @@ pub fn x0040615b() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 0040615b leave
-    leave();
+    leave(m);
     // 0040615c pop edi
-    m.regs.edi = pop();
+    m.regs.edi = pop(m);
     // 0040615d pop esi
-    m.regs.esi = pop();
+    m.regs.esi = pop(m);
     // 0040615e pop ecx
-    m.regs.ecx = pop();
+    m.regs.ecx = pop(m);
     // 0040615f ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x00406160() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00406160 push ebx
-    push(m.regs.ebx);
+    push(m, m.regs.ebx);
     // 00406161 push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 00406162 push edx
-    push(m.regs.edx);
+    push(m, m.regs.edx);
     // 00406163 enter 18h,0
-    enter(0x18u16, 0);
+    enter(m, 0x18u16, 0);
     // 00406167 fld dword ptr [eax+20h]
     m.fpu
         .push(m.memory.read::<f32>(m.regs.eax.wrapping_add(0x20u32)) as f64);
@@ -25983,7 +26057,7 @@ pub fn x00406160() -> Cont {
     m.fpu.set(0, m.fpu.get(5));
     m.fpu.set(5, t);
     // 0040617b call 00408838h
-    call(0x406180, Cont(x00408838))
+    call(m, 0x406180, Cont(x00408838))
 }
 
 pub fn x00406180() -> Cont {
@@ -25994,7 +26068,7 @@ pub fn x00406180() -> Cont {
     m.fpu.set(0, m.fpu.get(4));
     m.fpu.set(4, t);
     // 00406182 call 00408838h
-    call(0x406187, Cont(x00408838))
+    call(m, 0x406187, Cont(x00408838))
 }
 
 pub fn x00406187() -> Cont {
@@ -26005,7 +26079,7 @@ pub fn x00406187() -> Cont {
     m.fpu.set(0, m.fpu.get(3));
     m.fpu.set(3, t);
     // 00406189 call 00408838h
-    call(0x40618e, Cont(x00408838))
+    call(m, 0x40618e, Cont(x00408838))
 }
 
 pub fn x0040618e() -> Cont {
@@ -26016,7 +26090,7 @@ pub fn x0040618e() -> Cont {
     m.fpu.set(0, m.fpu.get(2));
     m.fpu.set(2, t);
     // 00406190 call 00408838h
-    call(0x406195, Cont(x00408838))
+    call(m, 0x406195, Cont(x00408838))
 }
 
 pub fn x00406195() -> Cont {
@@ -26027,7 +26101,7 @@ pub fn x00406195() -> Cont {
     m.fpu.set(0, m.fpu.get(1));
     m.fpu.set(1, t);
     // 00406197 call 00408838h
-    call(0x40619c, Cont(x00408838))
+    call(m, 0x40619c, Cont(x00408838))
 }
 
 pub fn x0040619c() -> Cont {
@@ -26038,14 +26112,14 @@ pub fn x0040619c() -> Cont {
     m.fpu.set(0, m.fpu.get(5));
     m.fpu.set(5, t);
     // 0040619e call 00408838h
-    call(0x4061a3, Cont(x00408838))
+    call(m, 0x4061a3, Cont(x00408838))
 }
 
 pub fn x004061a3() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004061a3 push dword ptr [eax]
-    push(m.memory.read::<u32>(m.regs.eax));
+    push(m, m.memory.read::<u32>(m.regs.eax));
     // 004061a5 fxch st(4)
     let t = m.fpu.get(0);
     m.fpu.set(0, m.fpu.get(4));
@@ -26095,53 +26169,59 @@ pub fn x004061a3() -> Cont {
     );
     m.fpu.pop();
     // 004061bd push dword ptr [eax+38h]
-    push(m.memory.read::<u32>(m.regs.eax.wrapping_add(0x38u32)));
+    push(m, m.memory.read::<u32>(m.regs.eax.wrapping_add(0x38u32)));
     // 004061c0 mov ecx,[ebp-10h]
     m.regs.ecx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff0u32));
     // 004061c3 push dword ptr [eax+30h]
-    push(m.memory.read::<u32>(m.regs.eax.wrapping_add(0x30u32)));
+    push(m, m.memory.read::<u32>(m.regs.eax.wrapping_add(0x30u32)));
     // 004061c6 mov ebx,[ebp-0Ch]
     m.regs.ebx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff4u32));
     // 004061c9 push dword ptr [ebp-18h]
-    push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffe8u32)));
+    push(
+        m,
+        m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffe8u32)),
+    );
     // 004061cc mov edx,[ebp-8]
     m.regs.edx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32));
     // 004061cf push dword ptr [ebp-14h]
-    push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffecu32)));
+    push(
+        m,
+        m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffecu32)),
+    );
     // 004061d2 mov eax,[ebp-4]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32));
     // 004061d5 call 00405CFBh
-    call(0x4061da, Cont(x00405cfb))
+    call(m, 0x4061da, Cont(x00405cfb))
 }
 
 pub fn x004061da() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004061da leave
-    leave();
+    leave(m);
     // 004061db pop edx
-    m.regs.edx = pop();
+    m.regs.edx = pop(m);
     // 004061dc pop ecx
-    m.regs.ecx = pop();
+    m.regs.ecx = pop(m);
     // 004061dd pop ebx
-    m.regs.ebx = pop();
+    m.regs.ebx = pop(m);
     // 004061de ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x004061df() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004061df push ebx
-    push(m.regs.ebx);
+    push(m, m.regs.ebx);
     // 004061e0 push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 004061e1 push esi
-    push(m.regs.esi);
+    push(m, m.regs.esi);
     // 004061e2 push edi
-    push(m.regs.edi);
+    push(m, m.regs.edi);
     // 004061e3 enter 28h,0
-    enter(0x28u16, 0);
+    enter(m, 0x28u16, 0);
     // 004061e7 mov ecx,eax
     m.regs.ecx = m.regs.eax;
     // 004061e9 mov esi,edx
@@ -26155,7 +26235,7 @@ pub fn x004061df() -> Cont {
         &mut m.flags,
     );
     // 004061f0 jge near ptr 004062FFh
-    jge(Cont(x004061f6), Cont(x004062ff))
+    jge(m, Cont(x004061f6), Cont(x004062ff))
 }
 
 pub fn x004061ed() -> Cont {
@@ -26168,7 +26248,7 @@ pub fn x004061ed() -> Cont {
         &mut m.flags,
     );
     // 004061f0 jge near ptr 004062FFh
-    jge(Cont(x004061f6), Cont(x004062ff))
+    jge(m, Cont(x004061f6), Cont(x004062ff))
 }
 
 pub fn x004061f6() -> Cont {
@@ -26222,7 +26302,7 @@ pub fn x004061f6() -> Cont {
     // 00406226 sahf
     sahf(m);
     // 00406227 ja short 00406246h
-    ja(Cont(x00406229), Cont(x00406246))
+    ja(m, Cont(x00406229), Cont(x00406246))
 }
 
 pub fn x00406229() -> Cont {
@@ -26249,7 +26329,7 @@ pub fn x00406229() -> Cont {
     // 00406236 sahf
     sahf(m);
     // 00406237 ja short 00406246h
-    ja(Cont(x00406239), Cont(x00406246))
+    ja(m, Cont(x00406239), Cont(x00406246))
 }
 
 pub fn x00406239() -> Cont {
@@ -26348,12 +26428,12 @@ pub fn x00406239() -> Cont {
     // 00406289 mov eax,[ebp-1Ch]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffe4u32));
     // 0040628c push esi
-    push(m.regs.esi);
+    push(m, m.regs.esi);
     // 0040628d mov [ebp-4],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32), m.regs.eax);
     // 00406290 push 111111h
-    push(0x111111u32);
+    push(m, 0x111111u32);
     // 00406295 fild dword ptr [ebp-4]
     m.fpu
         .push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32)) as i32 as f64);
@@ -26367,7 +26447,10 @@ pub fn x00406239() -> Cont {
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32), m.regs.eax);
     // 004062a1 push dword ptr [ebp-18h]
-    push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffe8u32)));
+    push(
+        m,
+        m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffe8u32)),
+    );
     // 004062a4 fild dword ptr [ebp-4]
     m.fpu
         .push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32)) as i32 as f64);
@@ -26378,7 +26461,10 @@ pub fn x00406239() -> Cont {
         .write::<f32>(m.regs.ebp.wrapping_add(0xffffffecu32), m.fpu.get(0) as f32);
     m.fpu.pop();
     // 004062ad push dword ptr [ebp-14h]
-    push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffecu32)));
+    push(
+        m,
+        m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffecu32)),
+    );
     // 004062b0 mov [ebp-4],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32), m.regs.eax);
@@ -26404,7 +26490,7 @@ pub fn x00406239() -> Cont {
     m.memory.write::<f32>(m.regs.esp, m.fpu.get(0) as f32);
     m.fpu.pop();
     // 004062cb call 00403A5Eh
-    call(0x4062d0, Cont(x00403a5e))
+    call(m, 0x4062d0, Cont(x00403a5e))
 }
 
 pub fn x00406246() -> Cont {
@@ -26484,12 +26570,12 @@ pub fn x00406246() -> Cont {
     // 00406289 mov eax,[ebp-1Ch]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffe4u32));
     // 0040628c push esi
-    push(m.regs.esi);
+    push(m, m.regs.esi);
     // 0040628d mov [ebp-4],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32), m.regs.eax);
     // 00406290 push 111111h
-    push(0x111111u32);
+    push(m, 0x111111u32);
     // 00406295 fild dword ptr [ebp-4]
     m.fpu
         .push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32)) as i32 as f64);
@@ -26503,7 +26589,10 @@ pub fn x00406246() -> Cont {
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32), m.regs.eax);
     // 004062a1 push dword ptr [ebp-18h]
-    push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffe8u32)));
+    push(
+        m,
+        m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffe8u32)),
+    );
     // 004062a4 fild dword ptr [ebp-4]
     m.fpu
         .push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32)) as i32 as f64);
@@ -26514,7 +26603,10 @@ pub fn x00406246() -> Cont {
         .write::<f32>(m.regs.ebp.wrapping_add(0xffffffecu32), m.fpu.get(0) as f32);
     m.fpu.pop();
     // 004062ad push dword ptr [ebp-14h]
-    push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffecu32)));
+    push(
+        m,
+        m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffecu32)),
+    );
     // 004062b0 mov [ebp-4],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32), m.regs.eax);
@@ -26540,16 +26632,16 @@ pub fn x00406246() -> Cont {
     m.memory.write::<f32>(m.regs.esp, m.fpu.get(0) as f32);
     m.fpu.pop();
     // 004062cb call 00403A5Eh
-    call(0x4062d0, Cont(x00403a5e))
+    call(m, 0x4062d0, Cont(x00403a5e))
 }
 
 pub fn x004062d0() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004062d0 push esi
-    push(m.regs.esi);
+    push(m, m.regs.esi);
     // 004062d1 push 111111h
-    push(0x111111u32);
+    push(m, 0x111111u32);
     // 004062d6 mov [ebp-4],edx
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32), m.regs.edx);
@@ -26573,13 +26665,19 @@ pub fn x004062d0() -> Cont {
     m.memory.write::<f32>(m.regs.esp, m.fpu.get(0) as f32);
     m.fpu.pop();
     // 004062ee push dword ptr [ebp-18h]
-    push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffe8u32)));
+    push(
+        m,
+        m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffe8u32)),
+    );
     // 004062f1 push dword ptr [ebp-14h]
-    push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffecu32)));
+    push(
+        m,
+        m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffecu32)),
+    );
     // 004062f4 inc ebx
     m.regs.ebx = inc(m.regs.ebx, &mut m.flags);
     // 004062f5 call 00403A5Eh
-    call(0x4062fa, Cont(x00403a5e))
+    call(m, 0x4062fa, Cont(x00403a5e))
 }
 
 pub fn x004062fa() -> Cont {
@@ -26593,30 +26691,30 @@ pub fn x004062ff() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004062ff leave
-    leave();
+    leave(m);
     // 00406300 pop edi
-    m.regs.edi = pop();
+    m.regs.edi = pop(m);
     // 00406301 pop esi
-    m.regs.esi = pop();
+    m.regs.esi = pop(m);
     // 00406302 pop ecx
-    m.regs.ecx = pop();
+    m.regs.ecx = pop(m);
     // 00406303 pop ebx
-    m.regs.ebx = pop();
+    m.regs.ebx = pop(m);
     // 00406304 ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x00406305() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00406305 push ebx
-    push(m.regs.ebx);
+    push(m, m.regs.ebx);
     // 00406306 push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 00406307 push edx
-    push(m.regs.edx);
+    push(m, m.regs.edx);
     // 00406308 enter 10h,0
-    enter(0x10u16, 0);
+    enter(m, 0x10u16, 0);
     // 0040630c mov edx,[ebp+28h]
     m.regs.edx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x28u32));
     // 0040630f xor ecx,ecx
@@ -26624,7 +26722,7 @@ pub fn x00406305() -> Cont {
     // 00406311 cmp ecx,[edx]
     sub(m.regs.ecx, m.memory.read::<u32>(m.regs.edx), &mut m.flags);
     // 00406313 jge near ptr 004063AFh
-    jge(Cont(x00406319), Cont(x004063af))
+    jge(m, Cont(x00406319), Cont(x004063af))
 }
 
 pub fn x00406311() -> Cont {
@@ -26633,7 +26731,7 @@ pub fn x00406311() -> Cont {
     // 00406311 cmp ecx,[edx]
     sub(m.regs.ecx, m.memory.read::<u32>(m.regs.edx), &mut m.flags);
     // 00406313 jge near ptr 004063AFh
-    jge(Cont(x00406319), Cont(x004063af))
+    jge(m, Cont(x00406319), Cont(x004063af))
 }
 
 pub fn x00406319() -> Cont {
@@ -26735,7 +26833,7 @@ pub fn x00406319() -> Cont {
         &mut m.flags,
     );
     // 00406360 je short 0040636Bh
-    je(Cont(x00406362), Cont(x0040636b))
+    je(m, Cont(x00406362), Cont(x0040636b))
 }
 
 pub fn x00406362() -> Cont {
@@ -26940,30 +27038,30 @@ pub fn x004063af() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004063af leave
-    leave();
+    leave(m);
     // 004063b0 pop edx
-    m.regs.edx = pop();
+    m.regs.edx = pop(m);
     // 004063b1 pop ecx
-    m.regs.ecx = pop();
+    m.regs.ecx = pop(m);
     // 004063b2 pop ebx
-    m.regs.ebx = pop();
+    m.regs.ebx = pop(m);
     // 004063b3 ret 18h
-    ret(24)
+    ret(m, 24)
 }
 
 pub fn x00406452() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00406452 push ebx
-    push(m.regs.ebx);
+    push(m, m.regs.ebx);
     // 00406453 push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 00406454 push edx
-    push(m.regs.edx);
+    push(m, m.regs.edx);
     // 00406455 push esi
-    push(m.regs.esi);
+    push(m, m.regs.esi);
     // 00406456 enter 18h,0
-    enter(0x18u16, 0);
+    enter(m, 0x18u16, 0);
     // 0040645a xor ecx,ecx
     m.regs.ecx = xor(m.regs.ecx, m.regs.ecx, &mut m.flags);
     // 0040645c jmp short 0040646Bh
@@ -26978,7 +27076,7 @@ pub fn x0040645e() -> Cont {
     // 0040645f cmp ecx,100h
     sub(m.regs.ecx, 0x100u32, &mut m.flags);
     // 00406465 jge near ptr 0040664Eh
-    jge(Cont(x0040646b), Cont(x0040664e))
+    jge(m, Cont(x0040646b), Cont(x0040664e))
 }
 
 pub fn x0040646b() -> Cont {
@@ -27034,7 +27132,7 @@ pub fn x00406478() -> Cont {
     // 0040649c cmp ebx,100h
     sub(m.regs.ebx, 0x100u32, &mut m.flags);
     // 004064a2 jge short 0040645Eh
-    jge(Cont(x004064a4), Cont(x0040645e))
+    jge(m, Cont(x004064a4), Cont(x0040645e))
 }
 
 pub fn x004064a4() -> Cont {
@@ -27065,7 +27163,7 @@ pub fn x004064a4() -> Cont {
     m.fpu
         .set(0, m.memory.read::<f64>(0x40c1e8u32) - m.fpu.get(0));
     // 004064c1 call 00408838h
-    call(0x4064c6, Cont(x00408838))
+    call(m, 0x4064c6, Cont(x00408838))
 }
 
 pub fn x004064c6() -> Cont {
@@ -27084,7 +27182,7 @@ pub fn x004064c6() -> Cont {
         &mut m.flags,
     );
     // 004064cd jge short 004064D6h
-    jge(Cont(x004064cf), Cont(x004064d6))
+    jge(m, Cont(x004064cf), Cont(x004064d6))
 }
 
 pub fn x004064cf() -> Cont {
@@ -27156,7 +27254,7 @@ pub fn x004064cf() -> Cont {
     // 00406519 shl eax,10h
     m.regs.eax = shl(m.regs.eax, 0x10u8, &mut m.flags);
     // 0040651c call 00408838h
-    call(0x406521, Cont(x00408838))
+    call(m, 0x406521, Cont(x00408838))
 }
 
 pub fn x004064d6() -> Cont {
@@ -27225,7 +27323,7 @@ pub fn x004064d6() -> Cont {
     // 00406519 shl eax,10h
     m.regs.eax = shl(m.regs.eax, 0x10u8, &mut m.flags);
     // 0040651c call 00408838h
-    call(0x406521, Cont(x00408838))
+    call(m, 0x406521, Cont(x00408838))
 }
 
 pub fn x00406521() -> Cont {
@@ -27270,7 +27368,7 @@ pub fn x00406521() -> Cont {
         &mut m.flags,
     );
     // 0040654f jle short 00406558h
-    jle(Cont(x00406551), Cont(x00406558))
+    jle(m, Cont(x00406551), Cont(x00406558))
 }
 
 pub fn x00406551() -> Cont {
@@ -27308,7 +27406,7 @@ pub fn x00406551() -> Cont {
     // 00406577 mov esi,ecx
     m.regs.esi = m.regs.ecx;
     // 00406579 call 00408838h
-    call(0x40657e, Cont(x00408838))
+    call(m, 0x40657e, Cont(x00408838))
 }
 
 pub fn x00406558() -> Cont {
@@ -27343,7 +27441,7 @@ pub fn x00406558() -> Cont {
     // 00406577 mov esi,ecx
     m.regs.esi = m.regs.ecx;
     // 00406579 call 00408838h
-    call(0x40657e, Cont(x00408838))
+    call(m, 0x40657e, Cont(x00408838))
 }
 
 pub fn x0040657e() -> Cont {
@@ -27387,7 +27485,7 @@ pub fn x0040657e() -> Cont {
         &mut m.flags,
     );
     // 004065a8 jle short 004065B1h
-    jle(Cont(x004065aa), Cont(x004065b1))
+    jle(m, Cont(x004065aa), Cont(x004065b1))
 }
 
 pub fn x004065aa() -> Cont {
@@ -27418,7 +27516,7 @@ pub fn x004065aa() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) + m.memory.read::<f64>(0x40c1f8u32));
     // 004065d0 call 00408838h
-    call(0x4065d5, Cont(x00408838))
+    call(m, 0x4065d5, Cont(x00408838))
 }
 
 pub fn x004065b1() -> Cont {
@@ -27446,7 +27544,7 @@ pub fn x004065b1() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) + m.memory.read::<f64>(0x40c1f8u32));
     // 004065d0 call 00408838h
-    call(0x4065d5, Cont(x00408838))
+    call(m, 0x4065d5, Cont(x00408838))
 }
 
 pub fn x004065d5() -> Cont {
@@ -27530,7 +27628,7 @@ pub fn x004065d5() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c1f8u32));
     // 00406630 call 00408838h
-    call(0x406635, Cont(x00408838))
+    call(m, 0x406635, Cont(x00408838))
 }
 
 pub fn x00406635() -> Cont {
@@ -27549,7 +27647,7 @@ pub fn x00406635() -> Cont {
         &mut m.flags,
     );
     // 0040663c jge near ptr 00406478h
-    jge(Cont(x00406642), Cont(x00406478))
+    jge(m, Cont(x00406642), Cont(x00406478))
 }
 
 pub fn x00406642() -> Cont {
@@ -27566,30 +27664,30 @@ pub fn x0040664e() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 0040664e leave
-    leave();
+    leave(m);
     // 0040664f pop esi
-    m.regs.esi = pop();
+    m.regs.esi = pop(m);
     // 00406650 pop edx
-    m.regs.edx = pop();
+    m.regs.edx = pop(m);
     // 00406651 pop ecx
-    m.regs.ecx = pop();
+    m.regs.ecx = pop(m);
     // 00406652 pop ebx
-    m.regs.ebx = pop();
+    m.regs.ebx = pop(m);
     // 00406653 ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x00406654() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00406654 push edx
-    push(m.regs.edx);
+    push(m, m.regs.edx);
     // 00406655 mov edx,433E54h
     m.regs.edx = 0x433e54u32;
     // 0040665a mov eax,423238h
     m.regs.eax = 0x423238u32;
     // 0040665f call 00405F04h
-    call(0x406664, Cont(x00405f04))
+    call(m, 0x406664, Cont(x00405f04))
 }
 
 pub fn x00406664() -> Cont {
@@ -27600,34 +27698,34 @@ pub fn x00406664() -> Cont {
     // 00406669 mov eax,424A55h
     m.regs.eax = 0x424a55u32;
     // 0040666e call 00405F04h
-    call(0x406673, Cont(x00405f04))
+    call(m, 0x406673, Cont(x00405f04))
 }
 
 pub fn x00406673() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00406673 call 00406452h
-    call(0x406678, Cont(x00406452))
+    call(m, 0x406678, Cont(x00406452))
 }
 
 pub fn x00406678() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00406678 pop edx
-    m.regs.edx = pop();
+    m.regs.edx = pop(m);
     // 00406679 ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x00406684() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00406684 push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 00406685 push edx
-    push(m.regs.edx);
+    push(m, m.regs.edx);
     // 00406686 enter 10h,0
-    enter(0x10u16, 0);
+    enter(m, 0x10u16, 0);
     // 0040668a mov ecx,eax
     m.regs.ecx = m.regs.eax;
     // 0040668c fild dword ptr ds:[433F84h]
@@ -27696,7 +27794,7 @@ pub fn x00406684() -> Cont {
     m.memory.write::<f32>(0x433e68u32, m.fpu.get(0) as f32);
     m.fpu.pop();
     // 00406733 call 00406160h
-    call(0x406738, Cont(x00406160))
+    call(m, 0x406738, Cont(x00406160))
 }
 
 pub fn x00406738() -> Cont {
@@ -27722,7 +27820,7 @@ pub fn x00406738() -> Cont {
     m.fpu.set(0, m.fpu.get(1));
     m.fpu.set(1, t);
     // 0040675a call 00408838h
-    call(0x40675f, Cont(x00408838))
+    call(m, 0x40675f, Cont(x00408838))
 }
 
 pub fn x0040675f() -> Cont {
@@ -27749,7 +27847,7 @@ pub fn x0040675f() -> Cont {
     m.fpu.set(0, m.fpu.get(1));
     m.fpu.set(1, t);
     // 00406778 call 00408838h
-    call(0x40677d, Cont(x00408838))
+    call(m, 0x40677d, Cont(x00408838))
 }
 
 pub fn x0040677d() -> Cont {
@@ -27767,7 +27865,7 @@ pub fn x0040677d() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c230u32));
     // 00406788 call 00408838h
-    call(0x40678d, Cont(x00408838))
+    call(m, 0x40678d, Cont(x00408838))
 }
 
 pub fn x0040678d() -> Cont {
@@ -27782,7 +27880,7 @@ pub fn x0040678d() -> Cont {
     // 00406790 mov eax,[ebp-10h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff0u32));
     // 00406793 push 433E54h
-    push(0x433e54u32);
+    push(m, 0x433e54u32);
     // 00406798 mov [ebp-4],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32), m.regs.eax);
@@ -27821,13 +27919,13 @@ pub fn x0040678d() -> Cont {
     m.memory.write::<f32>(m.regs.esp, m.fpu.get(0) as f32);
     m.fpu.pop();
     // 004067c2 push 41200000h
-    push(0x41200000u32);
+    push(m, 0x41200000u32);
     // 004067c7 push 4684D000h
-    push(0x4684d000u32);
+    push(m, 0x4684d000u32);
     // 004067cc mov edx,433198h
     m.regs.edx = 0x433198u32;
     // 004067d1 call 00406305h
-    call(0x4067d6, Cont(x00406305))
+    call(m, 0x4067d6, Cont(x00406305))
 }
 
 pub fn x004067d6() -> Cont {
@@ -27836,7 +27934,7 @@ pub fn x004067d6() -> Cont {
     // 004067d6 mov eax,433E54h
     m.regs.eax = 0x433e54u32;
     // 004067db call 00405BDBh
-    call(0x4067e0, Cont(x00405bdb))
+    call(m, 0x4067e0, Cont(x00405bdb))
 }
 
 pub fn x004067e0() -> Cont {
@@ -27847,29 +27945,29 @@ pub fn x004067e0() -> Cont {
     // 004067e5 mov edx,ecx
     m.regs.edx = m.regs.ecx;
     // 004067e7 call 004061DFh
-    call(0x4067ec, Cont(x004061df))
+    call(m, 0x4067ec, Cont(x004061df))
 }
 
 pub fn x004067ec() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004067ec leave
-    leave();
+    leave(m);
     // 004067ed pop edx
-    m.regs.edx = pop();
+    m.regs.edx = pop(m);
     // 004067ee pop ecx
-    m.regs.ecx = pop();
+    m.regs.ecx = pop(m);
     // 004067ef ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x004067f0() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004067f0 push edx
-    push(m.regs.edx);
+    push(m, m.regs.edx);
     // 004067f1 push ebp
-    push(m.regs.ebp);
+    push(m, m.regs.ebp);
     // 004067f2 mov ebp,esp
     m.regs.ebp = m.regs.esp;
     // 004067f4 fld dword ptr [ebp+0Ch]
@@ -27903,7 +28001,7 @@ pub fn x004067f0() -> Cont {
     m.memory.write::<f32>(0x433ea8u32, m.fpu.get(0) as f32);
     m.fpu.pop();
     // 00406863 call 00406160h
-    call(0x406868, Cont(x00406160))
+    call(m, 0x406868, Cont(x00406160))
 }
 
 pub fn x00406868() -> Cont {
@@ -27912,7 +28010,7 @@ pub fn x00406868() -> Cont {
     // 00406868 mov eax,433E98h
     m.regs.eax = 0x433e98u32;
     // 0040686d call 00405BDBh
-    call(0x406872, Cont(x00405bdb))
+    call(m, 0x406872, Cont(x00405bdb))
 }
 
 pub fn x00406872() -> Cont {
@@ -27923,48 +28021,48 @@ pub fn x00406872() -> Cont {
     // 00406875 mov eax,433E98h
     m.regs.eax = 0x433e98u32;
     // 0040687a call 004061DFh
-    call(0x40687f, Cont(x004061df))
+    call(m, 0x40687f, Cont(x004061df))
 }
 
 pub fn x0040687f() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 0040687f pop ebp
-    m.regs.ebp = pop();
+    m.regs.ebp = pop(m);
     // 00406880 pop edx
-    m.regs.edx = pop();
+    m.regs.edx = pop(m);
     // 00406881 ret 8
-    ret(8)
+    ret(m, 8)
 }
 
 pub fn x00406884() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00406884 push ebx
-    push(m.regs.ebx);
+    push(m, m.regs.ebx);
     // 00406885 push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 00406886 push edx
-    push(m.regs.edx);
+    push(m, m.regs.edx);
     // 00406887 xor ebx,ebx
     m.regs.ebx = xor(m.regs.ebx, m.regs.ebx, &mut m.flags);
     // 00406889 push 100h
-    push(0x100u32);
+    push(m, 0x100u32);
     // 0040688e inc ebx
     m.regs.ebx = inc(m.regs.ebx, &mut m.flags);
     // 0040688f call 00401A60h
-    call(0x406894, Cont(x00401a60))
+    call(m, 0x406894, Cont(x00401a60))
 }
 
 pub fn x00406889() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00406889 push 100h
-    push(0x100u32);
+    push(m, 0x100u32);
     // 0040688e inc ebx
     m.regs.ebx = inc(m.regs.ebx, &mut m.flags);
     // 0040688f call 00401A60h
-    call(0x406894, Cont(x00401a60))
+    call(m, 0x406894, Cont(x00401a60))
 }
 
 pub fn x00406894() -> Cont {
@@ -27978,7 +28076,7 @@ pub fn x00406894() -> Cont {
     // 0040689e cmp ebx,5Ah
     sub(m.regs.ebx, 0x5au32, &mut m.flags);
     // 004068a1 jl short 00406889h
-    jl(Cont(x004068a3), Cont(x00406889))
+    jl(m, Cont(x004068a3), Cont(x00406889))
 }
 
 pub fn x004068a3() -> Cont {
@@ -28165,59 +28263,59 @@ pub fn x004068a3() -> Cont {
     // 00406c1d mov dword ptr ds:[433160h],40C3E0h
     m.memory.write::<u32>(0x433160u32, 0x40c3e0u32);
     // 00406c27 pop edx
-    m.regs.edx = pop();
+    m.regs.edx = pop(m);
     // 00406c28 pop ecx
-    m.regs.ecx = pop();
+    m.regs.ecx = pop(m);
     // 00406c29 pop ebx
-    m.regs.ebx = pop();
+    m.regs.ebx = pop(m);
     // 00406c2a ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x00406c2b() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00406c2b push ebx
-    push(m.regs.ebx);
+    push(m, m.regs.ebx);
     // 00406c2c push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 00406c2d push edx
-    push(m.regs.edx);
+    push(m, m.regs.edx);
     // 00406c2e xor ebx,ebx
     m.regs.ebx = xor(m.regs.ebx, m.regs.ebx, &mut m.flags);
     // 00406c30 push 8000h
-    push(0x8000u32);
+    push(m, 0x8000u32);
     // 00406c35 push 0
-    push(0x0u32);
+    push(m, 0x0u32);
     // 00406c37 mov eax,[ebx*4+433030h]
     m.regs.eax = m
         .memory
         .read::<u32>((m.regs.ebx * 4).wrapping_add(0x433030u32));
     // 00406c3e push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 00406c3f inc ebx
     m.regs.ebx = inc(m.regs.ebx, &mut m.flags);
     // 00406c40 call dword ptr cs:[40B16Ch]
-    call(0x406c47, Cont(kernel32::VirtualFree_stdcall))
+    call(m, 0x406c47, Cont(kernel32::VirtualFree_stdcall))
 }
 
 pub fn x00406c30() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00406c30 push 8000h
-    push(0x8000u32);
+    push(m, 0x8000u32);
     // 00406c35 push 0
-    push(0x0u32);
+    push(m, 0x0u32);
     // 00406c37 mov eax,[ebx*4+433030h]
     m.regs.eax = m
         .memory
         .read::<u32>((m.regs.ebx * 4).wrapping_add(0x433030u32));
     // 00406c3e push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 00406c3f inc ebx
     m.regs.ebx = inc(m.regs.ebx, &mut m.flags);
     // 00406c40 call dword ptr cs:[40B16Ch]
-    call(0x406c47, Cont(kernel32::VirtualFree_stdcall))
+    call(m, 0x406c47, Cont(kernel32::VirtualFree_stdcall))
 }
 
 pub fn x00406c47() -> Cont {
@@ -28226,39 +28324,39 @@ pub fn x00406c47() -> Cont {
     // 00406c47 cmp ebx,0B4h
     sub(m.regs.ebx, 0xb4u32, &mut m.flags);
     // 00406c4d jl short 00406C30h
-    jl(Cont(x00406c4f), Cont(x00406c30))
+    jl(m, Cont(x00406c4f), Cont(x00406c30))
 }
 
 pub fn x00406c4f() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00406c4f pop edx
-    m.regs.edx = pop();
+    m.regs.edx = pop(m);
     // 00406c50 pop ecx
-    m.regs.ecx = pop();
+    m.regs.ecx = pop(m);
     // 00406c51 pop ebx
-    m.regs.ebx = pop();
+    m.regs.ebx = pop(m);
     // 00406c52 ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x00406c53() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00406c53 push esi
-    push(m.regs.esi);
+    push(m, m.regs.esi);
     // 00406c54 push edi
-    push(m.regs.edi);
+    push(m, m.regs.edi);
     // 00406c55 push ebp
-    push(m.regs.ebp);
+    push(m, m.regs.ebp);
     // 00406c56 mov ebp,esp
     m.regs.ebp = m.regs.esp;
     // 00406c58 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 00406c59 push edx
-    push(m.regs.edx);
+    push(m, m.regs.edx);
     // 00406c5a push ebx
-    push(m.regs.ebx);
+    push(m, m.regs.ebx);
     // 00406c5b mov esi,ecx
     m.regs.esi = m.regs.ecx;
     // 00406c5d xor edx,edx
@@ -28266,7 +28364,7 @@ pub fn x00406c53() -> Cont {
     // 00406c5f cmp edx,ds:[40C728h]
     sub(m.regs.edx, m.memory.read::<u32>(0x40c728u32), &mut m.flags);
     // 00406c65 jge short 00406C96h
-    jge(Cont(x00406c67), Cont(x00406c96))
+    jge(m, Cont(x00406c67), Cont(x00406c96))
 }
 
 pub fn x00406c5f() -> Cont {
@@ -28275,7 +28373,7 @@ pub fn x00406c5f() -> Cont {
     // 00406c5f cmp edx,ds:[40C728h]
     sub(m.regs.edx, m.memory.read::<u32>(0x40c728u32), &mut m.flags);
     // 00406c65 jge short 00406C96h
-    jge(Cont(x00406c67), Cont(x00406c96))
+    jge(m, Cont(x00406c67), Cont(x00406c96))
 }
 
 pub fn x00406c67() -> Cont {
@@ -28317,7 +28415,7 @@ pub fn x00406c67() -> Cont {
     // 00406c8c cmp eax,0A0h
     sub(m.regs.eax, 0xa0u32, &mut m.flags);
     // 00406c91 jl short 00406C69h
-    jl(Cont(x00406c93), Cont(x00406c69))
+    jl(m, Cont(x00406c93), Cont(x00406c69))
 }
 
 pub fn x00406c69() -> Cont {
@@ -28357,7 +28455,7 @@ pub fn x00406c69() -> Cont {
     // 00406c8c cmp eax,0A0h
     sub(m.regs.eax, 0xa0u32, &mut m.flags);
     // 00406c91 jl short 00406C69h
-    jl(Cont(x00406c93), Cont(x00406c69))
+    jl(m, Cont(x00406c93), Cont(x00406c69))
 }
 
 pub fn x00406c93() -> Cont {
@@ -28373,36 +28471,36 @@ pub fn x00406c96() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00406c96 leave
-    leave();
+    leave(m);
     // 00406c97 pop edi
-    m.regs.edi = pop();
+    m.regs.edi = pop(m);
     // 00406c98 pop esi
-    m.regs.esi = pop();
+    m.regs.esi = pop(m);
     // 00406c99 ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x00406c9a() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00406c9a push ebx
-    push(m.regs.ebx);
+    push(m, m.regs.ebx);
     // 00406c9b push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 00406c9c push edx
-    push(m.regs.edx);
+    push(m, m.regs.edx);
     // 00406c9d push esi
-    push(m.regs.esi);
+    push(m, m.regs.esi);
     // 00406c9e push edi
-    push(m.regs.edi);
+    push(m, m.regs.edi);
     // 00406c9f enter 14h,0
-    enter(0x14u16, 0);
+    enter(m, 0x14u16, 0);
     // 00406ca3 xor edi,edi
     m.regs.edi = xor(m.regs.edi, m.regs.edi, &mut m.flags);
     // 00406ca5 cmp edi,ds:[40C728h]
     sub(m.regs.edi, m.memory.read::<u32>(0x40c728u32), &mut m.flags);
     // 00406cab jge near ptr 00406E4Dh
-    jge(Cont(x00406cb1), Cont(x00406e4d))
+    jge(m, Cont(x00406cb1), Cont(x00406e4d))
 }
 
 pub fn x00406ca5() -> Cont {
@@ -28411,7 +28509,7 @@ pub fn x00406ca5() -> Cont {
     // 00406ca5 cmp edi,ds:[40C728h]
     sub(m.regs.edi, m.memory.read::<u32>(0x40c728u32), &mut m.flags);
     // 00406cab jge near ptr 00406E4Dh
-    jge(Cont(x00406cb1), Cont(x00406e4d))
+    jge(m, Cont(x00406cb1), Cont(x00406e4d))
 }
 
 pub fn x00406cb1() -> Cont {
@@ -28422,7 +28520,7 @@ pub fn x00406cb1() -> Cont {
     // 00406cb3 cmp ecx,ds:[40C724h]
     sub(m.regs.ecx, m.memory.read::<u32>(0x40c724u32), &mut m.flags);
     // 00406cb9 jge near ptr 00406E47h
-    jge(Cont(x00406cbf), Cont(x00406e47))
+    jge(m, Cont(x00406cbf), Cont(x00406e47))
 }
 
 pub fn x00406cb3() -> Cont {
@@ -28431,7 +28529,7 @@ pub fn x00406cb3() -> Cont {
     // 00406cb3 cmp ecx,ds:[40C724h]
     sub(m.regs.ecx, m.memory.read::<u32>(0x40c724u32), &mut m.flags);
     // 00406cb9 jge near ptr 00406E47h
-    jge(Cont(x00406cbf), Cont(x00406e47))
+    jge(m, Cont(x00406cbf), Cont(x00406e47))
 }
 
 pub fn x00406cbf() -> Cont {
@@ -28482,7 +28580,7 @@ pub fn x00406cbf() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) + m.memory.read::<f64>(0x40c480u32));
     // 00406cf5 call 00408838h
-    call(0x406cfa, Cont(x00408838))
+    call(m, 0x406cfa, Cont(x00408838))
 }
 
 pub fn x00406cfa() -> Cont {
@@ -28501,7 +28599,7 @@ pub fn x00406cfa() -> Cont {
         &mut m.flags,
     );
     // 00406d04 jle short 00406D0Fh
-    jle(Cont(x00406d06), Cont(x00406d0f))
+    jle(m, Cont(x00406d06), Cont(x00406d0f))
 }
 
 pub fn x00406d06() -> Cont {
@@ -28524,7 +28622,7 @@ pub fn x00406d0f() -> Cont {
         &mut m.flags,
     );
     // 00406d13 jge short 00406D1Ch
-    jge(Cont(x00406d15), Cont(x00406d1c))
+    jge(m, Cont(x00406d15), Cont(x00406d1c))
 }
 
 pub fn x00406d15() -> Cont {
@@ -28590,7 +28688,7 @@ pub fn x00406d15() -> Cont {
     // 00406d51 fsqrt
     m.fpu.set(0, m.fpu.get(0).sqrt());
     // 00406d53 call 00408838h
-    call(0x406d58, Cont(x00408838))
+    call(m, 0x406d58, Cont(x00408838))
 }
 
 pub fn x00406d1c() -> Cont {
@@ -28653,7 +28751,7 @@ pub fn x00406d1c() -> Cont {
     // 00406d51 fsqrt
     m.fpu.set(0, m.fpu.get(0).sqrt());
     // 00406d53 call 00408838h
-    call(0x406d58, Cont(x00408838))
+    call(m, 0x406d58, Cont(x00408838))
 }
 
 pub fn x00406d58() -> Cont {
@@ -28701,7 +28799,7 @@ pub fn x00406d58() -> Cont {
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffff4u32), m.regs.edx);
     // 00406d8a call 00408838h
-    call(0x406d8f, Cont(x00408838))
+    call(m, 0x406d8f, Cont(x00408838))
 }
 
 pub fn x00406d8f() -> Cont {
@@ -28720,7 +28818,7 @@ pub fn x00406d8f() -> Cont {
         &mut m.flags,
     );
     // 00406d99 jle short 00406DA4h
-    jle(Cont(x00406d9b), Cont(x00406da4))
+    jle(m, Cont(x00406d9b), Cont(x00406da4))
 }
 
 pub fn x00406d9b() -> Cont {
@@ -28743,7 +28841,7 @@ pub fn x00406da4() -> Cont {
         &mut m.flags,
     );
     // 00406da8 jge short 00406DB1h
-    jge(Cont(x00406daa), Cont(x00406db1))
+    jge(m, Cont(x00406daa), Cont(x00406db1))
 }
 
 pub fn x00406daa() -> Cont {
@@ -29001,7 +29099,7 @@ pub fn x00406e4d() -> Cont {
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32), m.regs.ecx);
     // 00406e6f push dword ptr ds:[433E30h]
-    push(m.memory.read::<u32>(0x433e30u32));
+    push(m, m.memory.read::<u32>(0x433e30u32));
     // 00406e75 fild dword ptr [ebp-4]
     m.fpu
         .push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32)) as i32 as f64);
@@ -29012,7 +29110,7 @@ pub fn x00406e4d() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c440u32));
     // 00406e81 push 151515h
-    push(0x151515u32);
+    push(m, 0x151515u32);
     // 00406e86 fcos
     m.fpu.set(0, m.fpu.get(0).cos());
     // 00406e88 mov eax,ds:[40C728h]
@@ -29182,7 +29280,7 @@ pub fn x00406e4d() -> Cont {
     // 00406f47 inc ecx
     m.regs.ecx = inc(m.regs.ecx, &mut m.flags);
     // 00406f48 call 00403A5Eh
-    call(0x406f4d, Cont(x00403a5e))
+    call(m, 0x406f4d, Cont(x00403a5e))
 }
 
 pub fn x00406e6c() -> Cont {
@@ -29192,7 +29290,7 @@ pub fn x00406e6c() -> Cont {
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32), m.regs.ecx);
     // 00406e6f push dword ptr ds:[433E30h]
-    push(m.memory.read::<u32>(0x433e30u32));
+    push(m, m.memory.read::<u32>(0x433e30u32));
     // 00406e75 fild dword ptr [ebp-4]
     m.fpu
         .push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32)) as i32 as f64);
@@ -29203,7 +29301,7 @@ pub fn x00406e6c() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c440u32));
     // 00406e81 push 151515h
-    push(0x151515u32);
+    push(m, 0x151515u32);
     // 00406e86 fcos
     m.fpu.set(0, m.fpu.get(0).cos());
     // 00406e88 mov eax,ds:[40C728h]
@@ -29373,7 +29471,7 @@ pub fn x00406e6c() -> Cont {
     // 00406f47 inc ecx
     m.regs.ecx = inc(m.regs.ecx, &mut m.flags);
     // 00406f48 call 00403A5Eh
-    call(0x406f4d, Cont(x00403a5e))
+    call(m, 0x406f4d, Cont(x00403a5e))
 }
 
 pub fn x00406f4d() -> Cont {
@@ -29382,7 +29480,7 @@ pub fn x00406f4d() -> Cont {
     // 00406f4d cmp ecx,1388h
     sub(m.regs.ecx, 0x1388u32, &mut m.flags);
     // 00406f53 jl near ptr 00406E6Ch
-    jl(Cont(x00406f59), Cont(x00406e6c))
+    jl(m, Cont(x00406f59), Cont(x00406e6c))
 }
 
 pub fn x00406f59() -> Cont {
@@ -29401,7 +29499,7 @@ pub fn x00406f59() -> Cont {
     // 00406f67 cmp ecx,eax
     sub(m.regs.ecx, m.regs.eax, &mut m.flags);
     // 00406f69 jge near ptr 0040700Ah
-    jge(Cont(x00406f6f), Cont(x0040700a))
+    jge(m, Cont(x00406f6f), Cont(x0040700a))
 }
 
 pub fn x00406f5b() -> Cont {
@@ -29418,7 +29516,7 @@ pub fn x00406f5b() -> Cont {
     // 00406f67 cmp ecx,eax
     sub(m.regs.ecx, m.regs.eax, &mut m.flags);
     // 00406f69 jge near ptr 0040700Ah
-    jge(Cont(x00406f6f), Cont(x0040700a))
+    jge(m, Cont(x00406f6f), Cont(x0040700a))
 }
 
 pub fn x00406f6f() -> Cont {
@@ -29630,7 +29728,7 @@ pub fn x0040700a() -> Cont {
     // 0040708e cmp ecx,100h
     sub(m.regs.ecx, 0x100u32, &mut m.flags);
     // 00407094 jl short 0040701Bh
-    jl(Cont(x00407096), Cont(x0040701b))
+    jl(m, Cont(x00407096), Cont(x0040701b))
 }
 
 pub fn x0040700c() -> Cont {
@@ -29732,7 +29830,7 @@ pub fn x0040700c() -> Cont {
     // 0040708e cmp ecx,100h
     sub(m.regs.ecx, 0x100u32, &mut m.flags);
     // 00407094 jl short 0040701Bh
-    jl(Cont(x00407096), Cont(x0040701b))
+    jl(m, Cont(x00407096), Cont(x0040701b))
 }
 
 pub fn x0040700f() -> Cont {
@@ -29831,7 +29929,7 @@ pub fn x0040700f() -> Cont {
     // 0040708e cmp ecx,100h
     sub(m.regs.ecx, 0x100u32, &mut m.flags);
     // 00407094 jl short 0040701Bh
-    jl(Cont(x00407096), Cont(x0040701b))
+    jl(m, Cont(x00407096), Cont(x0040701b))
 }
 
 pub fn x0040701b() -> Cont {
@@ -29919,7 +30017,7 @@ pub fn x0040701b() -> Cont {
     // 0040708e cmp ecx,100h
     sub(m.regs.ecx, 0x100u32, &mut m.flags);
     // 00407094 jl short 0040701Bh
-    jl(Cont(x00407096), Cont(x0040701b))
+    jl(m, Cont(x00407096), Cont(x0040701b))
 }
 
 pub fn x00407096() -> Cont {
@@ -29930,7 +30028,7 @@ pub fn x00407096() -> Cont {
     // 00407097 cmp edi,100h
     sub(m.regs.edi, 0x100u32, &mut m.flags);
     // 0040709d jge short 004070D5h
-    jge(Cont(x0040709f), Cont(x004070d5))
+    jge(m, Cont(x0040709f), Cont(x004070d5))
 }
 
 pub fn x0040709f() -> Cont {
@@ -29939,7 +30037,7 @@ pub fn x0040709f() -> Cont {
     // 0040709f cmp edi,0C8h
     sub(m.regs.edi, 0xc8u32, &mut m.flags);
     // 004070a5 jl near ptr 0040700Ch
-    jl(Cont(x004070ab), Cont(x0040700c))
+    jl(m, Cont(x004070ab), Cont(x0040700c))
 }
 
 pub fn x004070ab() -> Cont {
@@ -29965,7 +30063,7 @@ pub fn x004070ab() -> Cont {
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32), m.regs.eax);
     // 004070c8 call 00408838h
-    call(0x4070cd, Cont(x00408838))
+    call(m, 0x4070cd, Cont(x00408838))
 }
 
 pub fn x004070cd() -> Cont {
@@ -29993,7 +30091,7 @@ pub fn x004070d5() -> Cont {
     // 004070e1 mov edx,ds:[433FA4h]
     m.regs.edx = m.memory.read::<u32>(0x433fa4u32);
     // 004070e7 call 004033FCh
-    call(0x4070ec, Cont(x004033fc))
+    call(m, 0x4070ec, Cont(x004033fc))
 }
 
 pub fn x004070ec() -> Cont {
@@ -30006,7 +30104,7 @@ pub fn x004070ec() -> Cont {
     // 004070f7 mov edx,ds:[433E30h]
     m.regs.edx = m.memory.read::<u32>(0x433e30u32);
     // 004070fd call 00401DEBh
-    call(0x407102, Cont(x00401deb))
+    call(m, 0x407102, Cont(x00401deb))
 }
 
 pub fn x00407102() -> Cont {
@@ -30021,7 +30119,7 @@ pub fn x00407102() -> Cont {
     // 00407113 mov ecx,12C00h
     m.regs.ecx = 0x12c00u32;
     // 00407118 call 00401DEBh
-    call(0x40711d, Cont(x00401deb))
+    call(m, 0x40711d, Cont(x00401deb))
 }
 
 pub fn x0040711d() -> Cont {
@@ -30034,7 +30132,7 @@ pub fn x0040711d() -> Cont {
     // 00407127 mov ebx,ds:[433E34h]
     m.regs.ebx = m.memory.read::<u32>(0x433e34u32);
     // 0040712d call 00403737h
-    call(0x407132, Cont(x00403737))
+    call(m, 0x407132, Cont(x00403737))
 }
 
 pub fn x00407132() -> Cont {
@@ -30049,7 +30147,7 @@ pub fn x00407132() -> Cont {
     // 00407141 mov ebx,ds:[433E38h]
     m.regs.ebx = m.memory.read::<u32>(0x433e38u32);
     // 00407147 call 00403737h
-    call(0x40714c, Cont(x00403737))
+    call(m, 0x40714c, Cont(x00403737))
 }
 
 pub fn x0040714c() -> Cont {
@@ -30064,7 +30162,7 @@ pub fn x0040714c() -> Cont {
     // 0040715b mov ebx,ds:[433E44h]
     m.regs.ebx = m.memory.read::<u32>(0x433e44u32);
     // 00407161 call 00403737h
-    call(0x407166, Cont(x00403737))
+    call(m, 0x407166, Cont(x00403737))
 }
 
 pub fn x00407166() -> Cont {
@@ -30079,7 +30177,7 @@ pub fn x00407166() -> Cont {
     // 00407177 xor eax,eax
     m.regs.eax = xor(m.regs.eax, m.regs.eax, &mut m.flags);
     // 00407179 call 00406C53h
-    call(0x40717e, Cont(x00406c53))
+    call(m, 0x40717e, Cont(x00406c53))
 }
 
 pub fn x0040717e() -> Cont {
@@ -30094,7 +30192,7 @@ pub fn x0040717e() -> Cont {
     // 0040718c xor eax,eax
     m.regs.eax = xor(m.regs.eax, m.regs.eax, &mut m.flags);
     // 0040718e call 00406C53h
-    call(0x407193, Cont(x00406c53))
+    call(m, 0x407193, Cont(x00406c53))
 }
 
 pub fn x00407193() -> Cont {
@@ -30109,7 +30207,7 @@ pub fn x00407193() -> Cont {
     // 004071a4 mov eax,edx
     m.regs.eax = m.regs.edx;
     // 004071a6 call 00406C53h
-    call(0x4071ab, Cont(x00406c53))
+    call(m, 0x4071ab, Cont(x00406c53))
 }
 
 pub fn x004071ab() -> Cont {
@@ -30124,35 +30222,35 @@ pub fn x004071ab() -> Cont {
     // 004071bc xor edx,edx
     m.regs.edx = xor(m.regs.edx, m.regs.edx, &mut m.flags);
     // 004071be call 00406C53h
-    call(0x4071c3, Cont(x00406c53))
+    call(m, 0x4071c3, Cont(x00406c53))
 }
 
 pub fn x004071c3() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004071c3 leave
-    leave();
+    leave(m);
     // 004071c4 pop edi
-    m.regs.edi = pop();
+    m.regs.edi = pop(m);
     // 004071c5 pop esi
-    m.regs.esi = pop();
+    m.regs.esi = pop(m);
     // 004071c6 pop edx
-    m.regs.edx = pop();
+    m.regs.edx = pop(m);
     // 004071c7 pop ecx
-    m.regs.ecx = pop();
+    m.regs.ecx = pop(m);
     // 004071c8 pop ebx
-    m.regs.ebx = pop();
+    m.regs.ebx = pop(m);
     // 004071c9 ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x00407315() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00407315 push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 00407316 enter 38h,0
-    enter(0x38u16, 0);
+    enter(m, 0x38u16, 0);
     // 0040731a mov ecx,eax
     m.regs.ecx = m.regs.eax;
     // 0040731c fld dword ptr [ebp+10h]
@@ -30162,7 +30260,7 @@ pub fn x00407315() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) + m.memory.read::<f32>(0x40c518u32) as f64);
     // 00407325 push dword ptr [ebp+18h]
-    push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x18u32)));
+    push(m, m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x18u32)));
     // 00407328 fst qword ptr [ebp-18h]
     m.memory
         .write::<f64>(m.regs.ebp.wrapping_add(0xffffffe8u32), m.fpu.get(0));
@@ -30170,7 +30268,7 @@ pub fn x00407315() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c520u32));
     // 00407331 push dword ptr [ebp+14h]
-    push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x14u32)));
+    push(m, m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x14u32)));
     // 00407334 fsin
     m.fpu.set(0, m.fpu.get(0).sin());
     // 00407336 fld dword ptr [ebp+0Ch]
@@ -30300,7 +30398,7 @@ pub fn x00407315() -> Cont {
     m.memory.write::<f32>(m.regs.esp, m.fpu.get(0) as f32);
     m.fpu.pop();
     // 004073a8 call 00403A5Eh
-    call(0x4073ad, Cont(x00403a5e))
+    call(m, 0x4073ad, Cont(x00403a5e))
 }
 
 pub fn x004073ad() -> Cont {
@@ -30310,7 +30408,7 @@ pub fn x004073ad() -> Cont {
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0x10u32)) as f64);
     // 004073b0 push dword ptr [ebp+18h]
-    push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x18u32)));
+    push(m, m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x18u32)));
     // 004073b3 fadd dword ptr ds:[40C528h]
     m.fpu
         .set(0, m.fpu.get(0) + m.memory.read::<f32>(0x40c528u32) as f64);
@@ -30321,7 +30419,7 @@ pub fn x004073ad() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c520u32));
     // 004073c2 push dword ptr [ebp+14h]
-    push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x14u32)));
+    push(m, m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x14u32)));
     // 004073c5 fsin
     m.fpu.set(0, m.fpu.get(0).sin());
     // 004073c7 fmul qword ptr [ebp-20h]
@@ -30421,7 +30519,7 @@ pub fn x004073ad() -> Cont {
     m.memory.write::<f32>(m.regs.esp, m.fpu.get(0) as f32);
     m.fpu.pop();
     // 0040741e call 00403A5Eh
-    call(0x407423, Cont(x00403a5e))
+    call(m, 0x407423, Cont(x00403a5e))
 }
 
 pub fn x00407423() -> Cont {
@@ -30434,7 +30532,7 @@ pub fn x00407423() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) + m.memory.read::<f32>(0x40c52cu32) as f64);
     // 0040742c push dword ptr [ebp+18h]
-    push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x18u32)));
+    push(m, m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x18u32)));
     // 0040742f fst qword ptr [ebp-18h]
     m.memory
         .write::<f64>(m.regs.ebp.wrapping_add(0xffffffe8u32), m.fpu.get(0));
@@ -30442,7 +30540,7 @@ pub fn x00407423() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c520u32));
     // 00407438 push dword ptr [ebp+14h]
-    push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x14u32)));
+    push(m, m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x14u32)));
     // 0040743b fsin
     m.fpu.set(0, m.fpu.get(0).sin());
     // 0040743d fmul qword ptr [ebp-20h]
@@ -30542,7 +30640,7 @@ pub fn x00407423() -> Cont {
     m.memory.write::<f32>(m.regs.esp, m.fpu.get(0) as f32);
     m.fpu.pop();
     // 00407494 call 00403A5Eh
-    call(0x407499, Cont(x00403a5e))
+    call(m, 0x407499, Cont(x00403a5e))
 }
 
 pub fn x00407499() -> Cont {
@@ -30552,12 +30650,12 @@ pub fn x00407499() -> Cont {
     m.fpu
         .push(m.memory.read::<f64>(m.regs.ebp.wrapping_add(0xffffffc8u32)));
     // 0040749c push dword ptr [ebp+18h]
-    push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x18u32)));
+    push(m, m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x18u32)));
     // 0040749f fmul qword ptr ds:[40C520h]
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c520u32));
     // 004074a5 push dword ptr [ebp+14h]
-    push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x14u32)));
+    push(m, m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x14u32)));
     // 004074a8 fsin
     m.fpu.set(0, m.fpu.get(0).sin());
     // 004074aa fmul qword ptr [ebp-20h]
@@ -30657,33 +30755,33 @@ pub fn x00407499() -> Cont {
     m.memory.write::<f32>(m.regs.esp, m.fpu.get(0) as f32);
     m.fpu.pop();
     // 00407501 call 00403A5Eh
-    call(0x407506, Cont(x00403a5e))
+    call(m, 0x407506, Cont(x00403a5e))
 }
 
 pub fn x00407506() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00407506 leave
-    leave();
+    leave(m);
     // 00407507 pop ecx
-    m.regs.ecx = pop();
+    m.regs.ecx = pop(m);
     // 00407508 ret 10h
-    ret(16)
+    ret(m, 16)
 }
 
 pub fn x0040750b() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 0040750b push ebx
-    push(m.regs.ebx);
+    push(m, m.regs.ebx);
     // 0040750c push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 0040750d push esi
-    push(m.regs.esi);
+    push(m, m.regs.esi);
     // 0040750e push edi
-    push(m.regs.edi);
+    push(m, m.regs.edi);
     // 0040750f enter 28h,0
-    enter(0x28u16, 0);
+    enter(m, 0x28u16, 0);
     // 00407513 mov esi,eax
     m.regs.esi = m.regs.eax;
     // 00407515 mov edi,edx
@@ -30760,7 +30858,7 @@ pub fn x0040750b() -> Cont {
     m.fpu.set(0, m.fpu.get(1));
     m.fpu.set(1, t);
     // 00407563 call 00408838h
-    call(0x407568, Cont(x00408838))
+    call(m, 0x407568, Cont(x00408838))
 }
 
 pub fn x00407519() -> Cont {
@@ -30836,7 +30934,7 @@ pub fn x00407519() -> Cont {
     m.fpu.set(0, m.fpu.get(1));
     m.fpu.set(1, t);
     // 00407563 call 00408838h
-    call(0x407568, Cont(x00408838))
+    call(m, 0x407568, Cont(x00408838))
 }
 
 pub fn x00407568() -> Cont {
@@ -30936,9 +31034,9 @@ pub fn x00407568() -> Cont {
     // 004075c9 sar eax,1
     m.regs.eax = sar(m.regs.eax, 0x1u8, &mut m.flags);
     // 004075cb push edi
-    push(m.regs.edi);
+    push(m, m.regs.edi);
     // 004075cc push ebx
-    push(m.regs.ebx);
+    push(m, m.regs.ebx);
     // 004075cd mov ebx,eax
     m.regs.ebx = m.regs.eax;
     // 004075cf mov eax,ds:[40C724h]
@@ -30968,9 +31066,15 @@ pub fn x00407568() -> Cont {
         .write::<f32>(m.regs.ebp.wrapping_add(0xfffffff4u32), m.fpu.get(0) as f32);
     m.fpu.pop();
     // 004075ed push dword ptr [ebp-0Ch]
-    push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff4u32)));
+    push(
+        m,
+        m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff4u32)),
+    );
     // 004075f0 push dword ptr [ebp-10h]
-    push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff0u32)));
+    push(
+        m,
+        m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff0u32)),
+    );
     // 004075f3 mov edx,ebx
     m.regs.edx = m.regs.ebx;
     // 004075f5 inc ecx
@@ -30978,7 +31082,7 @@ pub fn x00407568() -> Cont {
     // 004075f6 inc ecx
     m.regs.ecx = inc(m.regs.ecx, &mut m.flags);
     // 004075f7 call 00407315h
-    call(0x4075fc, Cont(x00407315))
+    call(m, 0x4075fc, Cont(x00407315))
 }
 
 pub fn x004075fc() -> Cont {
@@ -30987,37 +31091,37 @@ pub fn x004075fc() -> Cont {
     // 004075fc cmp ecx,14h
     sub(m.regs.ecx, 0x14u32, &mut m.flags);
     // 004075ff jl near ptr 00407519h
-    jl(Cont(x00407605), Cont(x00407519))
+    jl(m, Cont(x00407605), Cont(x00407519))
 }
 
 pub fn x00407605() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00407605 leave
-    leave();
+    leave(m);
     // 00407606 pop edi
-    m.regs.edi = pop();
+    m.regs.edi = pop(m);
     // 00407607 pop esi
-    m.regs.esi = pop();
+    m.regs.esi = pop(m);
     // 00407608 pop ecx
-    m.regs.ecx = pop();
+    m.regs.ecx = pop(m);
     // 00407609 pop ebx
-    m.regs.ebx = pop();
+    m.regs.ebx = pop(m);
     // 0040760a ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x0040760b() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 0040760b push ebx
-    push(m.regs.ebx);
+    push(m, m.regs.ebx);
     // 0040760c push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 0040760d push edx
-    push(m.regs.edx);
+    push(m, m.regs.edx);
     // 0040760e enter 2Ch,0
-    enter(0x2cu16, 0);
+    enter(m, 0x2cu16, 0);
     // 00407612 fld dword ptr [ebp+14h]
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0x14u32)) as f64);
@@ -31071,7 +31175,7 @@ pub fn x0040760b() -> Cont {
     m.fpu.set(0, m.fpu.get(1));
     m.fpu.set(1, t);
     // 00407656 call 00408838h
-    call(0x40765b, Cont(x00408838))
+    call(m, 0x40765b, Cont(x00408838))
 }
 
 pub fn x0040765b() -> Cont {
@@ -31089,16 +31193,16 @@ pub fn x0040765b() -> Cont {
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c5b0u32));
     // 00407666 push dword ptr [ebp+1Ch]
-    push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x1cu32)));
+    push(m, m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x1cu32)));
     // 00407669 mov eax,[ebp-0Ch]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff4u32));
     // 0040766c push dword ptr [ebp+18h]
-    push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x18u32)));
+    push(m, m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x18u32)));
     // 0040766f mov [ebp-4],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32), m.regs.eax);
     // 00407672 call 00408838h
-    call(0x407677, Cont(x00408838))
+    call(m, 0x407677, Cont(x00408838))
 }
 
 pub fn x00407677() -> Cont {
@@ -31131,7 +31235,7 @@ pub fn x00407677() -> Cont {
         &mut m.flags,
     );
     // 0040768a call 00408838h
-    call(0x40768f, Cont(x00408838))
+    call(m, 0x40768f, Cont(x00408838))
 }
 
 pub fn x0040768f() -> Cont {
@@ -31167,7 +31271,7 @@ pub fn x0040768f() -> Cont {
     m.fpu.set(0, m.fpu.get(1));
     m.fpu.set(1, t);
     // 004076a6 call 00408838h
-    call(0x4076ab, Cont(x00408838))
+    call(m, 0x4076ab, Cont(x00408838))
 }
 
 pub fn x004076ab() -> Cont {
@@ -31195,7 +31299,7 @@ pub fn x004076ab() -> Cont {
         &mut m.flags,
     );
     // 004076bc call 00408838h
-    call(0x4076c1, Cont(x00408838))
+    call(m, 0x4076c1, Cont(x00408838))
 }
 
 pub fn x004076c1() -> Cont {
@@ -31223,7 +31327,7 @@ pub fn x004076c1() -> Cont {
     // 004076d0 mov eax,[ebp-1Ch]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffe4u32));
     // 004076d3 call 00408838h
-    call(0x4076d8, Cont(x00408838))
+    call(m, 0x4076d8, Cont(x00408838))
 }
 
 pub fn x004076d8() -> Cont {
@@ -31238,39 +31342,39 @@ pub fn x004076d8() -> Cont {
     // 004076db mov ecx,[ebp-10h]
     m.regs.ecx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff0u32));
     // 004076de call 004051D5h
-    call(0x4076e3, Cont(x004051d5))
+    call(m, 0x4076e3, Cont(x004051d5))
 }
 
 pub fn x004076e3() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004076e3 leave
-    leave();
+    leave(m);
     // 004076e4 pop edx
-    m.regs.edx = pop();
+    m.regs.edx = pop(m);
     // 004076e5 pop ecx
-    m.regs.ecx = pop();
+    m.regs.ecx = pop(m);
     // 004076e6 pop ebx
-    m.regs.ebx = pop();
+    m.regs.ebx = pop(m);
     // 004076e7 ret 0Ch
-    ret(12)
+    ret(m, 12)
 }
 
 pub fn x004076ea() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004076ea push ebx
-    push(m.regs.ebx);
+    push(m, m.regs.ebx);
     // 004076eb push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 004076ec push edx
-    push(m.regs.edx);
+    push(m, m.regs.edx);
     // 004076ed push esi
-    push(m.regs.esi);
+    push(m, m.regs.esi);
     // 004076ee push edi
-    push(m.regs.edi);
+    push(m, m.regs.edi);
     // 004076ef enter 28h,0
-    enter(0x28u16, 0);
+    enter(m, 0x28u16, 0);
     // 004076f3 mov edi,[ebp+2Ch]
     m.regs.edi = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x2cu32));
     // 004076f6 emms
@@ -31361,7 +31465,7 @@ pub fn x004076ea() -> Cont {
     m.fpu.set(0, m.fpu.get(1));
     m.fpu.set(1, t);
     // 00407756 call 00408838h
-    call(0x40775b, Cont(x00408838))
+    call(m, 0x40775b, Cont(x00408838))
 }
 
 pub fn x0040775b() -> Cont {
@@ -31450,7 +31554,7 @@ pub fn x0040775b() -> Cont {
     m.fpu.set(0, m.fpu.get(1));
     m.fpu.set(1, t);
     // 004077b0 call 00408838h
-    call(0x4077b5, Cont(x00408838))
+    call(m, 0x4077b5, Cont(x00408838))
 }
 
 pub fn x004077b5() -> Cont {
@@ -31501,12 +31605,12 @@ pub fn x004077b5() -> Cont {
     m.fpu
         .push(m.memory.read::<f64>(m.regs.ebp.wrapping_add(0xffffffd8u32)));
     // 004077e3 push dword ptr [ebp+28h]
-    push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x28u32)));
+    push(m, m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x28u32)));
     // 004077e6 fmul qword ptr ds:[40C600h]
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c600u32));
     // 004077ec push edi
-    push(m.regs.edi);
+    push(m, m.regs.edi);
     // 004077ed fxch
     let t = m.fpu.get(0);
     m.fpu.set(0, m.fpu.get(1));
@@ -31517,16 +31621,16 @@ pub fn x004077b5() -> Cont {
         m.fpu.get(0) + m.memory.read::<f64>(m.regs.ebp.wrapping_add(0xffffffe0u32)),
     );
     // 004077f2 push dword ptr [ebp+24h]
-    push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x24u32)));
+    push(m, m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x24u32)));
     // 004077f5 call 00408838h
-    call(0x4077fa, Cont(x00408838))
+    call(m, 0x4077fa, Cont(x00408838))
 }
 
 pub fn x004077fa() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004077fa push dword ptr [ebp+20h]
-    push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x20u32)));
+    push(m, m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x20u32)));
     // 004077fd fistp dword ptr [ebp-18h]
     m.memory.write::<u32>(
         m.regs.ebp.wrapping_add(0xffffffe8u32),
@@ -31549,7 +31653,7 @@ pub fn x004077fa() -> Cont {
     m.fpu.set(0, m.fpu.get(1));
     m.fpu.set(1, t);
     // 00407813 call 00408838h
-    call(0x407818, Cont(x00408838))
+    call(m, 0x407818, Cont(x00408838))
 }
 
 pub fn x00407818() -> Cont {
@@ -31562,7 +31666,10 @@ pub fn x00407818() -> Cont {
     );
     m.fpu.pop();
     // 0040781b push dword ptr [ebp-14h]
-    push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffecu32)));
+    push(
+        m,
+        m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffecu32)),
+    );
     // 0040781e fsin
     m.fpu.set(0, m.fpu.get(0).sin());
     // 00407820 fmul qword ptr ds:[40C608h]
@@ -31573,7 +31680,7 @@ pub fn x00407818() -> Cont {
     // 00407829 mov eax,[ebp-18h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffe8u32));
     // 0040782c call 00408838h
-    call(0x407831, Cont(x00408838))
+    call(m, 0x407831, Cont(x00408838))
 }
 
 pub fn x00407831() -> Cont {
@@ -31589,7 +31696,10 @@ pub fn x00407831() -> Cont {
     );
     m.fpu.pop();
     // 00407837 push dword ptr [ebp-14h]
-    push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffecu32)));
+    push(
+        m,
+        m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffecu32)),
+    );
     // 0040783a fild dword ptr [ebp-4]
     m.fpu
         .push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32)) as i32 as f64);
@@ -31603,7 +31713,7 @@ pub fn x00407831() -> Cont {
     // 00407846 mov ecx,[ebp-0Ch]
     m.regs.ecx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff4u32));
     // 00407849 call 004056E3h
-    call(0x40784e, Cont(x004056e3))
+    call(m, 0x40784e, Cont(x004056e3))
 }
 
 pub fn x0040784e() -> Cont {
@@ -31997,7 +32107,7 @@ pub fn x0040784e() -> Cont {
     // 00407a43 mov eax,[edx-0Ch]
     m.regs.eax = m.memory.read::<u32>(m.regs.edx.wrapping_add(0xfffffff4u32));
     // 00407a46 push 40800000h
-    push(0x40800000u32);
+    push(m, 0x40800000u32);
     // 00407a4b mov ecx,eax
     m.regs.ecx = m.regs.eax;
     // 00407a4d mov ebx,eax
@@ -32049,9 +32159,9 @@ pub fn x0040784e() -> Cont {
     // 00407a9b mov eax,edi
     m.regs.eax = m.regs.edi;
     // 00407a9d push 3DCCCCCDh
-    push(0x3dcccccdu32);
+    push(m, 0x3dcccccdu32);
     // 00407aa2 call 00403D06h
-    call(0x407aa7, Cont(x00403d06))
+    call(m, 0x407aa7, Cont(x00403d06))
 }
 
 pub fn x00407aa7() -> Cont {
@@ -32062,7 +32172,7 @@ pub fn x00407aa7() -> Cont {
     // 00407aaa mov edx,edi
     m.regs.edx = m.regs.edi;
     // 00407aac call 004033B9h
-    call(0x407ab1, Cont(x004033b9))
+    call(m, 0x407ab1, Cont(x004033b9))
 }
 
 pub fn x00407ab1() -> Cont {
@@ -32071,7 +32181,7 @@ pub fn x00407ab1() -> Cont {
     // 00407ab1 cmp esi,5
     sub(m.regs.esi, 0x5u32, &mut m.flags);
     // 00407ab4 jle short 00407ACBh
-    jle(Cont(x00407ab6), Cont(x00407acb))
+    jle(m, Cont(x00407ab6), Cont(x00407acb))
 }
 
 pub fn x00407ab6() -> Cont {
@@ -32088,49 +32198,49 @@ pub fn x00407ab6() -> Cont {
     // 00407ac4 sub ecx,esi
     m.regs.ecx = sub(m.regs.ecx, m.regs.esi, &mut m.flags);
     // 00407ac6 call 00402F03h
-    call(0x407acb, Cont(x00402f03))
+    call(m, 0x407acb, Cont(x00402f03))
 }
 
 pub fn x00407acb() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00407acb leave
-    leave();
+    leave(m);
     // 00407acc pop edi
-    m.regs.edi = pop();
+    m.regs.edi = pop(m);
     // 00407acd pop esi
-    m.regs.esi = pop();
+    m.regs.esi = pop(m);
     // 00407ace pop edx
-    m.regs.edx = pop();
+    m.regs.edx = pop(m);
     // 00407acf pop ecx
-    m.regs.ecx = pop();
+    m.regs.ecx = pop(m);
     // 00407ad0 pop ebx
-    m.regs.ebx = pop();
+    m.regs.ebx = pop(m);
     // 00407ad1 ret 14h
-    ret(20)
+    ret(m, 20)
 }
 
 pub fn x00407ad4() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00407ad4 push ebx
-    push(m.regs.ebx);
+    push(m, m.regs.ebx);
     // 00407ad5 push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 00407ad6 push esi
-    push(m.regs.esi);
+    push(m, m.regs.esi);
     // 00407ad7 push edi
-    push(m.regs.edi);
+    push(m, m.regs.edi);
     // 00407ad8 enter 44h,0
-    enter(0x44u16, 0);
+    enter(m, 0x44u16, 0);
     // 00407adc push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 00407add push edx
-    push(m.regs.edx);
+    push(m, m.regs.edx);
     // 00407ade cmp dword ptr ds:[40C753h],1
     sub(m.memory.read::<u32>(0x40c753u32), 0x1u32, &mut m.flags);
     // 00407ae5 jne short 00407B44h
-    jne(Cont(x00407ae7), Cont(x00407b44))
+    jne(m, Cont(x00407ae7), Cont(x00407b44))
 }
 
 pub fn x00407ae7() -> Cont {
@@ -32139,7 +32249,7 @@ pub fn x00407ae7() -> Cont {
     // 00407ae7 cmp dword ptr ds:[40C757h],1
     sub(m.memory.read::<u32>(0x40c757u32), 0x1u32, &mut m.flags);
     // 00407aee jne short 00407AFBh
-    jne(Cont(x00407af0), Cont(x00407afb))
+    jne(m, Cont(x00407af0), Cont(x00407afb))
 }
 
 pub fn x00407af0() -> Cont {
@@ -32155,7 +32265,7 @@ pub fn x00407af0() -> Cont {
     // 00407afb cmp dword ptr ds:[40C757h],2
     sub(m.memory.read::<u32>(0x40c757u32), 0x2u32, &mut m.flags);
     // 00407b02 jne short 00407B18h
-    jne(Cont(x00407b04), Cont(x00407b18))
+    jne(m, Cont(x00407b04), Cont(x00407b18))
 }
 
 pub fn x00407afb() -> Cont {
@@ -32164,7 +32274,7 @@ pub fn x00407afb() -> Cont {
     // 00407afb cmp dword ptr ds:[40C757h],2
     sub(m.memory.read::<u32>(0x40c757u32), 0x2u32, &mut m.flags);
     // 00407b02 jne short 00407B18h
-    jne(Cont(x00407b04), Cont(x00407b18))
+    jne(m, Cont(x00407b04), Cont(x00407b18))
 }
 
 pub fn x00407b04() -> Cont {
@@ -32187,7 +32297,7 @@ pub fn x00407b04() -> Cont {
     // 00407b18 cmp dword ptr ds:[40C757h],3
     sub(m.memory.read::<u32>(0x40c757u32), 0x3u32, &mut m.flags);
     // 00407b1f jne short 00407B29h
-    jne(Cont(x00407b21), Cont(x00407b29))
+    jne(m, Cont(x00407b21), Cont(x00407b29))
 }
 
 pub fn x00407b18() -> Cont {
@@ -32196,7 +32306,7 @@ pub fn x00407b18() -> Cont {
     // 00407b18 cmp dword ptr ds:[40C757h],3
     sub(m.memory.read::<u32>(0x40c757u32), 0x3u32, &mut m.flags);
     // 00407b1f jne short 00407B29h
-    jne(Cont(x00407b21), Cont(x00407b29))
+    jne(m, Cont(x00407b21), Cont(x00407b29))
 }
 
 pub fn x00407b21() -> Cont {
@@ -32209,7 +32319,7 @@ pub fn x00407b21() -> Cont {
     // 00407b29 cmp dword ptr ds:[40C757h],4
     sub(m.memory.read::<u32>(0x40c757u32), 0x4u32, &mut m.flags);
     // 00407b30 jne short 00407B3Ah
-    jne(Cont(x00407b32), Cont(x00407b3a))
+    jne(m, Cont(x00407b32), Cont(x00407b3a))
 }
 
 pub fn x00407b29() -> Cont {
@@ -32218,7 +32328,7 @@ pub fn x00407b29() -> Cont {
     // 00407b29 cmp dword ptr ds:[40C757h],4
     sub(m.memory.read::<u32>(0x40c757u32), 0x4u32, &mut m.flags);
     // 00407b30 jne short 00407B3Ah
-    jne(Cont(x00407b32), Cont(x00407b3a))
+    jne(m, Cont(x00407b32), Cont(x00407b3a))
 }
 
 pub fn x00407b32() -> Cont {
@@ -32233,7 +32343,7 @@ pub fn x00407b32() -> Cont {
     // 00407b44 cmp dword ptr ds:[424FF2h],3
     sub(m.memory.read::<u32>(0x424ff2u32), 0x3u32, &mut m.flags);
     // 00407b4b jle short 00407B57h
-    jle(Cont(x00407b4d), Cont(x00407b57))
+    jle(m, Cont(x00407b4d), Cont(x00407b57))
 }
 
 pub fn x00407b3a() -> Cont {
@@ -32244,7 +32354,7 @@ pub fn x00407b3a() -> Cont {
     // 00407b44 cmp dword ptr ds:[424FF2h],3
     sub(m.memory.read::<u32>(0x424ff2u32), 0x3u32, &mut m.flags);
     // 00407b4b jle short 00407B57h
-    jle(Cont(x00407b4d), Cont(x00407b57))
+    jle(m, Cont(x00407b4d), Cont(x00407b57))
 }
 
 pub fn x00407b44() -> Cont {
@@ -32253,7 +32363,7 @@ pub fn x00407b44() -> Cont {
     // 00407b44 cmp dword ptr ds:[424FF2h],3
     sub(m.memory.read::<u32>(0x424ff2u32), 0x3u32, &mut m.flags);
     // 00407b4b jle short 00407B57h
-    jle(Cont(x00407b4d), Cont(x00407b57))
+    jle(m, Cont(x00407b4d), Cont(x00407b57))
 }
 
 pub fn x00407b4d() -> Cont {
@@ -32286,7 +32396,7 @@ pub fn x00407b4d() -> Cont {
     // 00407b72 test edx,edx
     and(m.regs.edx, m.regs.edx, &mut m.flags);
     // 00407b74 jge short 00407B7Dh
-    jge(Cont(x00407b76), Cont(x00407b7d))
+    jge(m, Cont(x00407b76), Cont(x00407b7d))
 }
 
 pub fn x00407b57() -> Cont {
@@ -32317,7 +32427,7 @@ pub fn x00407b57() -> Cont {
     // 00407b72 test edx,edx
     and(m.regs.edx, m.regs.edx, &mut m.flags);
     // 00407b74 jge short 00407B7Dh
-    jge(Cont(x00407b76), Cont(x00407b7d))
+    jge(m, Cont(x00407b76), Cont(x00407b7d))
 }
 
 pub fn x00407b76() -> Cont {
@@ -32351,7 +32461,7 @@ pub fn x00407b76() -> Cont {
     // 00407b98 test edx,edx
     and(m.regs.edx, m.regs.edx, &mut m.flags);
     // 00407b9a jge short 00407BA3h
-    jge(Cont(x00407b9c), Cont(x00407ba3))
+    jge(m, Cont(x00407b9c), Cont(x00407ba3))
 }
 
 pub fn x00407b7d() -> Cont {
@@ -32382,7 +32492,7 @@ pub fn x00407b7d() -> Cont {
     // 00407b98 test edx,edx
     and(m.regs.edx, m.regs.edx, &mut m.flags);
     // 00407b9a jge short 00407BA3h
-    jge(Cont(x00407b9c), Cont(x00407ba3))
+    jge(m, Cont(x00407b9c), Cont(x00407ba3))
 }
 
 pub fn x00407b9c() -> Cont {
@@ -32416,7 +32526,7 @@ pub fn x00407b9c() -> Cont {
     // 00407bbe test edx,edx
     and(m.regs.edx, m.regs.edx, &mut m.flags);
     // 00407bc0 jge short 00407BC9h
-    jge(Cont(x00407bc2), Cont(x00407bc9))
+    jge(m, Cont(x00407bc2), Cont(x00407bc9))
 }
 
 pub fn x00407ba3() -> Cont {
@@ -32447,7 +32557,7 @@ pub fn x00407ba3() -> Cont {
     // 00407bbe test edx,edx
     and(m.regs.edx, m.regs.edx, &mut m.flags);
     // 00407bc0 jge short 00407BC9h
-    jge(Cont(x00407bc2), Cont(x00407bc9))
+    jge(m, Cont(x00407bc2), Cont(x00407bc9))
 }
 
 pub fn x00407bc2() -> Cont {
@@ -32478,7 +32588,7 @@ pub fn x00407bc2() -> Cont {
     // 00407be1 test edi,edi
     and(m.regs.edi, m.regs.edi, &mut m.flags);
     // 00407be3 jge short 00407BE7h
-    jge(Cont(x00407be5), Cont(x00407be7))
+    jge(m, Cont(x00407be5), Cont(x00407be7))
 }
 
 pub fn x00407bc9() -> Cont {
@@ -32506,7 +32616,7 @@ pub fn x00407bc9() -> Cont {
     // 00407be1 test edi,edi
     and(m.regs.edi, m.regs.edi, &mut m.flags);
     // 00407be3 jge short 00407BE7h
-    jge(Cont(x00407be5), Cont(x00407be7))
+    jge(m, Cont(x00407be5), Cont(x00407be7))
 }
 
 pub fn x00407be5() -> Cont {
@@ -32561,7 +32671,7 @@ pub fn x00407be5() -> Cont {
     // 00407c21 sahf
     sahf(m);
     // 00407c22 jae short 00407C2Eh
-    jae(Cont(x00407c24), Cont(x00407c2e))
+    jae(m, Cont(x00407c24), Cont(x00407c2e))
 }
 
 pub fn x00407be7() -> Cont {
@@ -32614,7 +32724,7 @@ pub fn x00407be7() -> Cont {
     // 00407c21 sahf
     sahf(m);
     // 00407c22 jae short 00407C2Eh
-    jae(Cont(x00407c24), Cont(x00407c2e))
+    jae(m, Cont(x00407c24), Cont(x00407c2e))
 }
 
 pub fn x00407c24() -> Cont {
@@ -32689,7 +32799,7 @@ pub fn x00407c24() -> Cont {
     // 00407c8c sahf
     sahf(m);
     // 00407c8d jae short 00407C99h
-    jae(Cont(x00407c8f), Cont(x00407c99))
+    jae(m, Cont(x00407c8f), Cont(x00407c99))
 }
 
 pub fn x00407c2e() -> Cont {
@@ -32762,7 +32872,7 @@ pub fn x00407c2e() -> Cont {
     // 00407c8c sahf
     sahf(m);
     // 00407c8d jae short 00407C99h
-    jae(Cont(x00407c8f), Cont(x00407c99))
+    jae(m, Cont(x00407c8f), Cont(x00407c99))
 }
 
 pub fn x00407c8f() -> Cont {
@@ -32807,7 +32917,7 @@ pub fn x00407c8f() -> Cont {
     // 00407cd4 cmp dword ptr ds:[40C743h],7
     sub(m.memory.read::<u32>(0x40c743u32), 0x7u32, &mut m.flags);
     // 00407cdb jge near ptr 00407ECEh
-    jge(Cont(x00407ce1), Cont(x00407ece))
+    jge(m, Cont(x00407ce1), Cont(x00407ece))
 }
 
 pub fn x00407c99() -> Cont {
@@ -32850,7 +32960,7 @@ pub fn x00407c99() -> Cont {
     // 00407cd4 cmp dword ptr ds:[40C743h],7
     sub(m.memory.read::<u32>(0x40c743u32), 0x7u32, &mut m.flags);
     // 00407cdb jge near ptr 00407ECEh
-    jge(Cont(x00407ce1), Cont(x00407ece))
+    jge(m, Cont(x00407ce1), Cont(x00407ece))
 }
 
 pub fn x00407ce1() -> Cont {
@@ -32859,12 +32969,15 @@ pub fn x00407ce1() -> Cont {
     // 00407ce1 mov eax,[ebp-48h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffb8u32));
     // 00407ce4 push dword ptr [ebp-4Ch]
-    push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffb4u32)));
+    push(
+        m,
+        m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffb4u32)),
+    );
     // 00407ce7 mov [ebp-4],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32), m.regs.eax);
     // 00407cea push dword ptr ds:[433F98h]
-    push(m.memory.read::<u32>(0x433f98u32));
+    push(m, m.memory.read::<u32>(0x433f98u32));
     // 00407cf0 fild dword ptr [ebp-4]
     m.fpu
         .push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32)) as i32 as f64);
@@ -32882,7 +32995,7 @@ pub fn x00407ce1() -> Cont {
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32), 0x0u32);
     // 00407d09 call 004046EAh
-    call(0x407d0e, Cont(x004046ea))
+    call(m, 0x407d0e, Cont(x004046ea))
 }
 
 pub fn x00407d0e() -> Cont {
@@ -32905,7 +33018,7 @@ pub fn x00407d0e() -> Cont {
         &mut m.flags,
     );
     // 00407d23 jle short 00407D52h
-    jle(Cont(x00407d25), Cont(x00407d52))
+    jle(m, Cont(x00407d25), Cont(x00407d52))
 }
 
 pub fn x00407d14() -> Cont {
@@ -32926,7 +33039,7 @@ pub fn x00407d14() -> Cont {
         &mut m.flags,
     );
     // 00407d23 jle short 00407D52h
-    jle(Cont(x00407d25), Cont(x00407d52))
+    jle(m, Cont(x00407d25), Cont(x00407d52))
 }
 
 pub fn x00407d25() -> Cont {
@@ -33101,7 +33214,7 @@ pub fn x00407d52() -> Cont {
     m.fpu.set(0, m.fpu.get(1));
     m.fpu.set(1, t);
     // 00407dd7 call 00408838h
-    call(0x407ddc, Cont(x00408838))
+    call(m, 0x407ddc, Cont(x00408838))
 }
 
 pub fn x00407ddc() -> Cont {
@@ -33179,14 +33292,14 @@ pub fn x00407ddc() -> Cont {
         m.fpu.get(0) + m.memory.read::<f64>(m.regs.ebp.wrapping_add(0xffffffd4u32)),
     );
     // 00407e25 push 0
-    push(0x0u32);
+    push(m, 0x0u32);
     // 00407e27 fadd qword ptr ds:[40C6D8h]
     m.fpu
         .set(0, m.fpu.get(0) + m.memory.read::<f64>(0x40c6d8u32));
     // 00407e2d mov eax,[ebp-4Ch]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffb4u32));
     // 00407e30 call 00408838h
-    call(0x407e35, Cont(x00408838))
+    call(m, 0x407e35, Cont(x00408838))
 }
 
 pub fn x00407e35() -> Cont {
@@ -33201,9 +33314,9 @@ pub fn x00407e35() -> Cont {
     // 00407e38 mov edx,[ebp-8]
     m.regs.edx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32));
     // 00407e3b push 3E0F5C29h
-    push(0x3e0f5c29u32);
+    push(m, 0x3e0f5c29u32);
     // 00407e40 call 00403D06h
-    call(0x407e45, Cont(x00403d06))
+    call(m, 0x407e45, Cont(x00403d06))
 }
 
 pub fn x00407e45() -> Cont {
@@ -33214,7 +33327,7 @@ pub fn x00407e45() -> Cont {
     // 00407e48 mov eax,ds:[433E34h]
     m.regs.eax = m.memory.read::<u32>(0x433e34u32);
     // 00407e4d call 00403377h
-    call(0x407e52, Cont(x00403377))
+    call(m, 0x407e52, Cont(x00403377))
 }
 
 pub fn x00407e52() -> Cont {
@@ -33223,7 +33336,7 @@ pub fn x00407e52() -> Cont {
     // 00407e52 test edi,edi
     and(m.regs.edi, m.regs.edi, &mut m.flags);
     // 00407e54 jle near ptr 004084F5h
-    jle(Cont(x00407e5a), Cont(x004084f5))
+    jle(m, Cont(x00407e5a), Cont(x004084f5))
 }
 
 pub fn x00407e5a() -> Cont {
@@ -33263,7 +33376,7 @@ pub fn x00407e5a() -> Cont {
     // 00407e83 mov edx,[ebp-4Ch]
     m.regs.edx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffb4u32));
     // 00407e86 call 00408838h
-    call(0x407e8b, Cont(x00408838))
+    call(m, 0x407e8b, Cont(x00408838))
 }
 
 pub fn x00407e8b() -> Cont {
@@ -33278,7 +33391,7 @@ pub fn x00407e8b() -> Cont {
     // 00407e8e mov eax,[ebp-4]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32));
     // 00407e91 call 00401DEBh
-    call(0x407e96, Cont(x00401deb))
+    call(m, 0x407e96, Cont(x00401deb))
 }
 
 pub fn x00407e96() -> Cont {
@@ -33308,7 +33421,7 @@ pub fn x00407e96() -> Cont {
     // 00407eb6 mov ebx,[ebp-4Ch]
     m.regs.ebx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffb4u32));
     // 00407eb9 call 00408838h
-    call(0x407ebe, Cont(x00408838))
+    call(m, 0x407ebe, Cont(x00408838))
 }
 
 pub fn x00407ebe() -> Cont {
@@ -33323,7 +33436,7 @@ pub fn x00407ebe() -> Cont {
     // 00407ec1 mov eax,[ebp-4]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32));
     // 00407ec4 call 00401FF6h
-    call(0x407ec9, Cont(x00401ff6))
+    call(m, 0x407ec9, Cont(x00401ff6))
 }
 
 pub fn x00407ec9() -> Cont {
@@ -33337,7 +33450,7 @@ pub fn x00407ece() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00407ece jne near ptr 00408117h
-    jne(Cont(x00407ed4), Cont(x00408117))
+    jne(m, Cont(x00407ed4), Cont(x00408117))
 }
 
 pub fn x00407ed4() -> Cont {
@@ -33346,12 +33459,15 @@ pub fn x00407ed4() -> Cont {
     // 00407ed4 mov eax,[ebp-48h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffb8u32));
     // 00407ed7 push dword ptr [ebp-4Ch]
-    push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffb4u32)));
+    push(
+        m,
+        m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffb4u32)),
+    );
     // 00407eda mov [ebp-4],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32), m.regs.eax);
     // 00407edd push dword ptr ds:[433F98h]
-    push(m.memory.read::<u32>(0x433f98u32));
+    push(m, m.memory.read::<u32>(0x433f98u32));
     // 00407ee3 fild dword ptr [ebp-4]
     m.fpu
         .push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32)) as i32 as f64);
@@ -33369,7 +33485,7 @@ pub fn x00407ed4() -> Cont {
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32), 0x0u32);
     // 00407efc call 004046EAh
-    call(0x407f01, Cont(x004046ea))
+    call(m, 0x407f01, Cont(x004046ea))
 }
 
 pub fn x00407f01() -> Cont {
@@ -33392,7 +33508,7 @@ pub fn x00407f01() -> Cont {
         &mut m.flags,
     );
     // 00407f16 jle short 00407F45h
-    jle(Cont(x00407f18), Cont(x00407f45))
+    jle(m, Cont(x00407f18), Cont(x00407f45))
 }
 
 pub fn x00407f07() -> Cont {
@@ -33413,7 +33529,7 @@ pub fn x00407f07() -> Cont {
         &mut m.flags,
     );
     // 00407f16 jle short 00407F45h
-    jle(Cont(x00407f18), Cont(x00407f45))
+    jle(m, Cont(x00407f18), Cont(x00407f45))
 }
 
 pub fn x00407f18() -> Cont {
@@ -33585,7 +33701,7 @@ pub fn x00407f45() -> Cont {
     m.fpu.set(0, m.fpu.get(1));
     m.fpu.set(1, t);
     // 00407fc7 call 00408838h
-    call(0x407fcc, Cont(x00408838))
+    call(m, 0x407fcc, Cont(x00408838))
 }
 
 pub fn x00407fcc() -> Cont {
@@ -33663,14 +33779,14 @@ pub fn x00407fcc() -> Cont {
         m.fpu.get(0) + m.memory.read::<f64>(m.regs.ebp.wrapping_add(0xffffffd4u32)),
     );
     // 00408015 push 3F800000h
-    push(0x3f800000u32);
+    push(m, 0x3f800000u32);
     // 0040801a fadd qword ptr ds:[40C6D8h]
     m.fpu
         .set(0, m.fpu.get(0) + m.memory.read::<f64>(0x40c6d8u32));
     // 00408020 mov eax,[ebp-4Ch]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffb4u32));
     // 00408023 call 00408838h
-    call(0x408028, Cont(x00408838))
+    call(m, 0x408028, Cont(x00408838))
 }
 
 pub fn x00408028() -> Cont {
@@ -33685,9 +33801,9 @@ pub fn x00408028() -> Cont {
     // 0040802b mov edx,[ebp-8]
     m.regs.edx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32));
     // 0040802e push 3E0F5C29h
-    push(0x3e0f5c29u32);
+    push(m, 0x3e0f5c29u32);
     // 00408033 call 00403D06h
-    call(0x408038, Cont(x00403d06))
+    call(m, 0x408038, Cont(x00403d06))
 }
 
 pub fn x00408038() -> Cont {
@@ -33698,7 +33814,7 @@ pub fn x00408038() -> Cont {
     // 0040803b mov eax,ds:[433E34h]
     m.regs.eax = m.memory.read::<u32>(0x433e34u32);
     // 00408040 call 00403377h
-    call(0x408045, Cont(x00403377))
+    call(m, 0x408045, Cont(x00403377))
 }
 
 pub fn x00408045() -> Cont {
@@ -33727,7 +33843,7 @@ pub fn x00408045() -> Cont {
         &mut m.flags,
     );
     // 00408067 jle short 0040807Dh
-    jle(Cont(x00408069), Cont(x0040807d))
+    jle(m, Cont(x00408069), Cont(x0040807d))
 }
 
 pub fn x00408069() -> Cont {
@@ -33740,7 +33856,7 @@ pub fn x00408069() -> Cont {
     // 00408072 mov edx,ds:[433E28h]
     m.regs.edx = m.memory.read::<u32>(0x433e28u32);
     // 00408078 call 004034BDh
-    call(0x40807d, Cont(x004034bd))
+    call(m, 0x40807d, Cont(x004034bd))
 }
 
 pub fn x0040807d() -> Cont {
@@ -33753,7 +33869,7 @@ pub fn x0040807d() -> Cont {
         &mut m.flags,
     );
     // 00408081 jle short 00408097h
-    jle(Cont(x00408083), Cont(x00408097))
+    jle(m, Cont(x00408083), Cont(x00408097))
 }
 
 pub fn x00408083() -> Cont {
@@ -33766,7 +33882,7 @@ pub fn x00408083() -> Cont {
     // 0040808c mov edx,ds:[433E2Ch]
     m.regs.edx = m.memory.read::<u32>(0x433e2cu32);
     // 00408092 call 004034BDh
-    call(0x408097, Cont(x004034bd))
+    call(m, 0x408097, Cont(x004034bd))
 }
 
 pub fn x00408097() -> Cont {
@@ -33779,7 +33895,7 @@ pub fn x00408097() -> Cont {
         &mut m.flags,
     );
     // 0040809b jle short 004080B1h
-    jle(Cont(x0040809d), Cont(x004080b1))
+    jle(m, Cont(x0040809d), Cont(x004080b1))
 }
 
 pub fn x0040809d() -> Cont {
@@ -33792,7 +33908,7 @@ pub fn x0040809d() -> Cont {
     // 004080a6 mov edx,ds:[433E30h]
     m.regs.edx = m.memory.read::<u32>(0x433e30u32);
     // 004080ac call 004034BDh
-    call(0x4080b1, Cont(x004034bd))
+    call(m, 0x4080b1, Cont(x004034bd))
 }
 
 pub fn x004080b1() -> Cont {
@@ -33803,18 +33919,18 @@ pub fn x004080b1() -> Cont {
     // 004080b7 mov eax,ds:[433E38h]
     m.regs.eax = m.memory.read::<u32>(0x433e38u32);
     // 004080bc call 00403377h
-    call(0x4080c1, Cont(x00403377))
+    call(m, 0x4080c1, Cont(x00403377))
 }
 
 pub fn x004080c1() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004080c1 push dword ptr ds:[433FACh]
-    push(m.memory.read::<u32>(0x433facu32));
+    push(m, m.memory.read::<u32>(0x433facu32));
     // 004080c7 mov eax,[ebp-48h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffb8u32));
     // 004080ca push dword ptr ds:[433E48h]
-    push(m.memory.read::<u32>(0x433e48u32));
+    push(m, m.memory.read::<u32>(0x433e48u32));
     // 004080d0 mov [ebp-4],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32), m.regs.eax);
@@ -33827,7 +33943,7 @@ pub fn x004080c1() -> Cont {
     m.memory.write::<f32>(m.regs.esp, m.fpu.get(0) as f32);
     m.fpu.pop();
     // 004080dc call 0040760Bh
-    call(0x4080e1, Cont(x0040760b))
+    call(m, 0x4080e1, Cont(x0040760b))
 }
 
 pub fn x004080e1() -> Cont {
@@ -33840,7 +33956,7 @@ pub fn x004080e1() -> Cont {
     // 004080ea mov ebx,[ebp-4Ch]
     m.regs.ebx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffb4u32));
     // 004080ed call 0040750Bh
-    call(0x4080f2, Cont(x0040750b))
+    call(m, 0x4080f2, Cont(x0040750b))
 }
 
 pub fn x004080f2() -> Cont {
@@ -33855,7 +33971,7 @@ pub fn x004080f2() -> Cont {
     // 00408100 shl ecx,2
     m.regs.ecx = shl(m.regs.ecx, 0x2u8, &mut m.flags);
     // 00408103 call 00403202h
-    call(0x408108, Cont(x00403202))
+    call(m, 0x408108, Cont(x00403202))
 }
 
 pub fn x00408108() -> Cont {
@@ -33883,7 +33999,7 @@ pub fn x00408117() -> Cont {
     // 00408126 cmp dword ptr ds:[40C743h],17h
     sub(m.memory.read::<u32>(0x40c743u32), 0x17u32, &mut m.flags);
     // 0040812d jge near ptr 00408334h
-    jge(Cont(x00408133), Cont(x00408334))
+    jge(m, Cont(x00408133), Cont(x00408334))
 }
 
 pub fn x00408133() -> Cont {
@@ -33904,7 +34020,7 @@ pub fn x00408133() -> Cont {
         &mut m.flags,
     );
     // 00408147 jle short 0040815Dh
-    jle(Cont(x00408149), Cont(x0040815d))
+    jle(m, Cont(x00408149), Cont(x0040815d))
 }
 
 pub fn x00408149() -> Cont {
@@ -33917,7 +34033,7 @@ pub fn x00408149() -> Cont {
     // 00408152 mov edx,ds:[433E28h]
     m.regs.edx = m.memory.read::<u32>(0x433e28u32);
     // 00408158 call 004034BDh
-    call(0x40815d, Cont(x004034bd))
+    call(m, 0x40815d, Cont(x004034bd))
 }
 
 pub fn x0040815d() -> Cont {
@@ -33930,7 +34046,7 @@ pub fn x0040815d() -> Cont {
         &mut m.flags,
     );
     // 00408161 jle short 00408177h
-    jle(Cont(x00408163), Cont(x00408177))
+    jle(m, Cont(x00408163), Cont(x00408177))
 }
 
 pub fn x00408163() -> Cont {
@@ -33943,7 +34059,7 @@ pub fn x00408163() -> Cont {
     // 0040816c mov edx,ds:[433E2Ch]
     m.regs.edx = m.memory.read::<u32>(0x433e2cu32);
     // 00408172 call 004034BDh
-    call(0x408177, Cont(x004034bd))
+    call(m, 0x408177, Cont(x004034bd))
 }
 
 pub fn x00408177() -> Cont {
@@ -33956,7 +34072,7 @@ pub fn x00408177() -> Cont {
         &mut m.flags,
     );
     // 0040817b jle short 00408191h
-    jle(Cont(x0040817d), Cont(x00408191))
+    jle(m, Cont(x0040817d), Cont(x00408191))
 }
 
 pub fn x0040817d() -> Cont {
@@ -33969,7 +34085,7 @@ pub fn x0040817d() -> Cont {
     // 00408186 mov edx,ds:[433E30h]
     m.regs.edx = m.memory.read::<u32>(0x433e30u32);
     // 0040818c call 004034BDh
-    call(0x408191, Cont(x004034bd))
+    call(m, 0x408191, Cont(x004034bd))
 }
 
 pub fn x00408191() -> Cont {
@@ -33980,7 +34096,7 @@ pub fn x00408191() -> Cont {
     // 00408194 mov eax,ds:[433FACh]
     m.regs.eax = m.memory.read::<u32>(0x433facu32);
     // 00408199 call 00403340h
-    call(0x40819e, Cont(x00403340))
+    call(m, 0x40819e, Cont(x00403340))
 }
 
 pub fn x0040819e() -> Cont {
@@ -33991,18 +34107,21 @@ pub fn x0040819e() -> Cont {
     // 004081a1 mov edx,ds:[433FACh]
     m.regs.edx = m.memory.read::<u32>(0x433facu32);
     // 004081a7 call 0040750Bh
-    call(0x4081ac, Cont(x0040750b))
+    call(m, 0x4081ac, Cont(x0040750b))
 }
 
 pub fn x004081ac() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004081ac push dword ptr [ebp-4Ch]
-    push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffb4u32)));
+    push(
+        m,
+        m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffb4u32)),
+    );
     // 004081af push dword ptr ds:[425002h]
-    push(m.memory.read::<u32>(0x425002u32));
+    push(m, m.memory.read::<u32>(0x425002u32));
     // 004081b5 call 004067F0h
-    call(0x4081ba, Cont(x004067f0))
+    call(m, 0x4081ba, Cont(x004067f0))
 }
 
 pub fn x004081ba() -> Cont {
@@ -34034,7 +34153,7 @@ pub fn x004081ba() -> Cont {
     // 004081df mov ebx,eax
     m.regs.ebx = m.regs.eax;
     // 004081e1 call 00408838h
-    call(0x4081e6, Cont(x00408838))
+    call(m, 0x4081e6, Cont(x00408838))
 }
 
 pub fn x004081e6() -> Cont {
@@ -34049,7 +34168,7 @@ pub fn x004081e6() -> Cont {
     // 004081e9 mov ecx,[ebp-4]
     m.regs.ecx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32));
     // 004081ec call 00403202h
-    call(0x4081f1, Cont(x00403202))
+    call(m, 0x4081f1, Cont(x00403202))
 }
 
 pub fn x004081f1() -> Cont {
@@ -34060,7 +34179,7 @@ pub fn x004081f1() -> Cont {
     // 004081f7 mov eax,ds:[433E38h]
     m.regs.eax = m.memory.read::<u32>(0x433e38u32);
     // 004081fc call 00403377h
-    call(0x408201, Cont(x00403377))
+    call(m, 0x408201, Cont(x00403377))
 }
 
 pub fn x00408201() -> Cont {
@@ -34069,11 +34188,12 @@ pub fn x00408201() -> Cont {
     // 00408201 mov eax,ds:[424FFEh]
     m.regs.eax = m.memory.read::<u32>(0x424ffeu32);
     // 00408206 push dword ptr ds:[433FACh]
-    push(m.memory.read::<u32>(0x433facu32));
+    push(m, m.memory.read::<u32>(0x433facu32));
     // 0040820c and eax,1
     m.regs.eax = and(m.regs.eax, 0x1u32, &mut m.flags);
     // 0040820f push dword ptr [eax*4+433E48h]
     push(
+        m,
         m.memory
             .read::<u32>((m.regs.eax * 4).wrapping_add(0x433e48u32)),
     );
@@ -34091,7 +34211,7 @@ pub fn x00408201() -> Cont {
     m.memory.write::<f32>(m.regs.esp, m.fpu.get(0) as f32);
     m.fpu.pop();
     // 00408225 call 0040760Bh
-    call(0x40822a, Cont(x0040760b))
+    call(m, 0x40822a, Cont(x0040760b))
 }
 
 pub fn x0040822a() -> Cont {
@@ -34104,7 +34224,7 @@ pub fn x0040822a() -> Cont {
         &mut m.flags,
     );
     // 0040822e jle near ptr 004082D9h
-    jle(Cont(x00408234), Cont(x004082d9))
+    jle(m, Cont(x00408234), Cont(x004082d9))
 }
 
 pub fn x00408234() -> Cont {
@@ -34113,7 +34233,7 @@ pub fn x00408234() -> Cont {
     // 00408234 cmp dword ptr ds:[40C743h],0Dh
     sub(m.memory.read::<u32>(0x40c743u32), 0xdu32, &mut m.flags);
     // 0040823b jle near ptr 004082D9h
-    jle(Cont(x00408241), Cont(x004082d9))
+    jle(m, Cont(x00408241), Cont(x004082d9))
 }
 
 pub fn x00408241() -> Cont {
@@ -34122,7 +34242,7 @@ pub fn x00408241() -> Cont {
     // 00408241 cmp dword ptr ds:[424FF2h],0
     sub(m.memory.read::<u32>(0x424ff2u32), 0x0u32, &mut m.flags);
     // 00408248 jne short 00408272h
-    jne(Cont(x0040824a), Cont(x00408272))
+    jne(m, Cont(x0040824a), Cont(x00408272))
 }
 
 pub fn x0040824a() -> Cont {
@@ -34144,7 +34264,7 @@ pub fn x0040824a() -> Cont {
     // 0040825c mov edx,ds:[433FACh]
     m.regs.edx = m.memory.read::<u32>(0x433facu32);
     // 00408262 call 00408838h
-    call(0x408267, Cont(x00408838))
+    call(m, 0x408267, Cont(x00408838))
 }
 
 pub fn x00408267() -> Cont {
@@ -34159,7 +34279,7 @@ pub fn x00408267() -> Cont {
     // 0040826a mov eax,[ebp-4]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32));
     // 0040826d call 00401DEBh
-    call(0x408272, Cont(x00401deb))
+    call(m, 0x408272, Cont(x00401deb))
 }
 
 pub fn x00408272() -> Cont {
@@ -34168,7 +34288,7 @@ pub fn x00408272() -> Cont {
     // 00408272 cmp dword ptr ds:[424FF2h],1
     sub(m.memory.read::<u32>(0x424ff2u32), 0x1u32, &mut m.flags);
     // 00408279 jne short 0040828Ch
-    jne(Cont(x0040827b), Cont(x0040828c))
+    jne(m, Cont(x0040827b), Cont(x0040828c))
 }
 
 pub fn x0040827b() -> Cont {
@@ -34181,7 +34301,7 @@ pub fn x0040827b() -> Cont {
     // 00408281 mov edx,ds:[433FACh]
     m.regs.edx = m.memory.read::<u32>(0x433facu32);
     // 00408287 call 004021FFh
-    call(0x40828c, Cont(x004021ff))
+    call(m, 0x40828c, Cont(x004021ff))
 }
 
 pub fn x0040828c() -> Cont {
@@ -34190,7 +34310,7 @@ pub fn x0040828c() -> Cont {
     // 0040828c cmp dword ptr ds:[424FF2h],2
     sub(m.memory.read::<u32>(0x424ff2u32), 0x2u32, &mut m.flags);
     // 00408293 jne short 004082BDh
-    jne(Cont(x00408295), Cont(x004082bd))
+    jne(m, Cont(x00408295), Cont(x004082bd))
 }
 
 pub fn x00408295() -> Cont {
@@ -34212,7 +34332,7 @@ pub fn x00408295() -> Cont {
     // 004082a7 mov edx,ds:[433FACh]
     m.regs.edx = m.memory.read::<u32>(0x433facu32);
     // 004082ad call 00408838h
-    call(0x4082b2, Cont(x00408838))
+    call(m, 0x4082b2, Cont(x00408838))
 }
 
 pub fn x004082b2() -> Cont {
@@ -34227,7 +34347,7 @@ pub fn x004082b2() -> Cont {
     // 004082b5 mov eax,[ebp-4]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32));
     // 004082b8 call 00401FF6h
-    call(0x4082bd, Cont(x00401ff6))
+    call(m, 0x4082bd, Cont(x00401ff6))
 }
 
 pub fn x004082bd() -> Cont {
@@ -34236,7 +34356,7 @@ pub fn x004082bd() -> Cont {
     // 004082bd cmp dword ptr ds:[424FF2h],3
     sub(m.memory.read::<u32>(0x424ff2u32), 0x3u32, &mut m.flags);
     // 004082c4 jne short 004082F4h
-    jne(Cont(x004082c6), Cont(x004082f4))
+    jne(m, Cont(x004082c6), Cont(x004082f4))
 }
 
 pub fn x004082c6() -> Cont {
@@ -34249,7 +34369,7 @@ pub fn x004082c6() -> Cont {
     // 004082cc mov edx,ds:[433FACh]
     m.regs.edx = m.memory.read::<u32>(0x433facu32);
     // 004082d2 call 00402893h
-    call(0x4082d7, Cont(x00402893))
+    call(m, 0x4082d7, Cont(x00402893))
 }
 
 pub fn x004082d7() -> Cont {
@@ -34281,7 +34401,7 @@ pub fn x004082d9() -> Cont {
     // 004082f4 cmp dword ptr ds:[424FF6h],31h
     sub(m.memory.read::<u32>(0x424ff6u32), 0x31u32, &mut m.flags);
     // 004082fb jle short 00408307h
-    jle(Cont(x004082fd), Cont(x00408307))
+    jle(m, Cont(x004082fd), Cont(x00408307))
 }
 
 pub fn x004082f4() -> Cont {
@@ -34290,7 +34410,7 @@ pub fn x004082f4() -> Cont {
     // 004082f4 cmp dword ptr ds:[424FF6h],31h
     sub(m.memory.read::<u32>(0x424ff6u32), 0x31u32, &mut m.flags);
     // 004082fb jle short 00408307h
-    jle(Cont(x004082fd), Cont(x00408307))
+    jle(m, Cont(x004082fd), Cont(x00408307))
 }
 
 pub fn x004082fd() -> Cont {
@@ -34312,7 +34432,7 @@ pub fn x004082fd() -> Cont {
     m.regs.eax = (x / y) as i32 as u32;
     m.regs.edx = (x % y) as i32 as u32;
     // 00408314 push 140h
-    push(0x140u32);
+    push(m, 0x140u32);
     // 00408319 mov ecx,5
     m.regs.ecx = 0x5u32;
     // 0040831e mov eax,[edx*4+433030h]
@@ -34324,7 +34444,7 @@ pub fn x004082fd() -> Cont {
     // 00408328 mov ebx,ecx
     m.regs.ebx = m.regs.ecx;
     // 0040832a call 00405B0Eh
-    call(0x40832f, Cont(x00405b0e))
+    call(m, 0x40832f, Cont(x00405b0e))
 }
 
 pub fn x00408307() -> Cont {
@@ -34344,7 +34464,7 @@ pub fn x00408307() -> Cont {
     m.regs.eax = (x / y) as i32 as u32;
     m.regs.edx = (x % y) as i32 as u32;
     // 00408314 push 140h
-    push(0x140u32);
+    push(m, 0x140u32);
     // 00408319 mov ecx,5
     m.regs.ecx = 0x5u32;
     // 0040831e mov eax,[edx*4+433030h]
@@ -34356,7 +34476,7 @@ pub fn x00408307() -> Cont {
     // 00408328 mov ebx,ecx
     m.regs.ebx = m.regs.ecx;
     // 0040832a call 00405B0Eh
-    call(0x40832f, Cont(x00405b0e))
+    call(m, 0x40832f, Cont(x00405b0e))
 }
 
 pub fn x0040832f() -> Cont {
@@ -34372,7 +34492,7 @@ pub fn x00408334() -> Cont {
     // 00408334 cmp dword ptr ds:[40C743h],1Eh
     sub(m.memory.read::<u32>(0x40c743u32), 0x1eu32, &mut m.flags);
     // 0040833b jge near ptr 0040840Bh
-    jge(Cont(x00408341), Cont(x0040840b))
+    jge(m, Cont(x00408341), Cont(x0040840b))
 }
 
 pub fn x00408341() -> Cont {
@@ -34381,7 +34501,7 @@ pub fn x00408341() -> Cont {
     // 00408341 cmp dword ptr ds:[40C743h],1Dh
     sub(m.memory.read::<u32>(0x40c743u32), 0x1du32, &mut m.flags);
     // 00408348 jne short 00408354h
-    jne(Cont(x0040834a), Cont(x00408354))
+    jne(m, Cont(x0040834a), Cont(x00408354))
 }
 
 pub fn x0040834a() -> Cont {
@@ -34403,12 +34523,15 @@ pub fn x00408354() -> Cont {
     // 00408356 mov edx,[ebp-48h]
     m.regs.edx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffb8u32));
     // 00408359 push dword ptr [ebp-4Ch]
-    push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffb4u32)));
+    push(
+        m,
+        m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffb4u32)),
+    );
     // 0040835c mov [ebp-4],edx
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32), m.regs.edx);
     // 0040835f push dword ptr ds:[433F94h]
-    push(m.memory.read::<u32>(0x433f94u32));
+    push(m, m.memory.read::<u32>(0x433f94u32));
     // 00408365 fild dword ptr [ebp-4]
     m.fpu
         .push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32)) as i32 as f64);
@@ -34426,7 +34549,7 @@ pub fn x00408354() -> Cont {
     // 0040837b mov edx,[ebp-4Ch]
     m.regs.edx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffb4u32));
     // 0040837e call 00404FADh
-    call(0x408383, Cont(x00404fad))
+    call(m, 0x408383, Cont(x00404fad))
 }
 
 pub fn x00408356() -> Cont {
@@ -34435,12 +34558,15 @@ pub fn x00408356() -> Cont {
     // 00408356 mov edx,[ebp-48h]
     m.regs.edx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffb8u32));
     // 00408359 push dword ptr [ebp-4Ch]
-    push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffb4u32)));
+    push(
+        m,
+        m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffb4u32)),
+    );
     // 0040835c mov [ebp-4],edx
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32), m.regs.edx);
     // 0040835f push dword ptr ds:[433F94h]
-    push(m.memory.read::<u32>(0x433f94u32));
+    push(m, m.memory.read::<u32>(0x433f94u32));
     // 00408365 fild dword ptr [ebp-4]
     m.fpu
         .push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32)) as i32 as f64);
@@ -34458,7 +34584,7 @@ pub fn x00408356() -> Cont {
     // 0040837b mov edx,[ebp-4Ch]
     m.regs.edx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffb4u32));
     // 0040837e call 00404FADh
-    call(0x408383, Cont(x00404fad))
+    call(m, 0x408383, Cont(x00404fad))
 }
 
 pub fn x00408383() -> Cont {
@@ -34481,7 +34607,7 @@ pub fn x00408383() -> Cont {
         &mut m.flags,
     );
     // 00408398 jle short 004083C7h
-    jle(Cont(x0040839a), Cont(x004083c7))
+    jle(m, Cont(x0040839a), Cont(x004083c7))
 }
 
 pub fn x00408389() -> Cont {
@@ -34502,7 +34628,7 @@ pub fn x00408389() -> Cont {
         &mut m.flags,
     );
     // 00408398 jle short 004083C7h
-    jle(Cont(x0040839a), Cont(x004083c7))
+    jle(m, Cont(x0040839a), Cont(x004083c7))
 }
 
 pub fn x0040839a() -> Cont {
@@ -34558,7 +34684,7 @@ pub fn x004083c7() -> Cont {
     // 004083cc mov eax,ds:[433E38h]
     m.regs.eax = m.memory.read::<u32>(0x433e38u32);
     // 004083d1 call 00403377h
-    call(0x4083d6, Cont(x00403377))
+    call(m, 0x4083d6, Cont(x00403377))
 }
 
 pub fn x004083d6() -> Cont {
@@ -34567,11 +34693,15 @@ pub fn x004083d6() -> Cont {
     // 004083d6 mov eax,ds:[424FFEh]
     m.regs.eax = m.memory.read::<u32>(0x424ffeu32);
     // 004083db push dword ptr [ebp-4Ch]
-    push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffb4u32)));
+    push(
+        m,
+        m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffb4u32)),
+    );
     // 004083de and eax,1
     m.regs.eax = and(m.regs.eax, 0x1u32, &mut m.flags);
     // 004083e1 push dword ptr [eax*4+433E48h]
     push(
+        m,
         m.memory
             .read::<u32>((m.regs.eax * 4).wrapping_add(0x433e48u32)),
     );
@@ -34589,7 +34719,7 @@ pub fn x004083d6() -> Cont {
     m.memory.write::<f32>(m.regs.esp, m.fpu.get(0) as f32);
     m.fpu.pop();
     // 004083f7 call 0040760Bh
-    call(0x4083fc, Cont(x0040760b))
+    call(m, 0x4083fc, Cont(x0040760b))
 }
 
 pub fn x004083fc() -> Cont {
@@ -34598,7 +34728,7 @@ pub fn x004083fc() -> Cont {
     // 004083fc mov eax,ds:[433FB0h]
     m.regs.eax = m.memory.read::<u32>(0x433fb0u32);
     // 00408401 call 00406684h
-    call(0x408406, Cont(x00406684))
+    call(m, 0x408406, Cont(x00406684))
 }
 
 pub fn x00408406() -> Cont {
@@ -34643,7 +34773,7 @@ pub fn x0040840b() -> Cont {
     // 0040843e mov edx,ds:[433FACh]
     m.regs.edx = m.memory.read::<u32>(0x433facu32);
     // 00408444 call 00408838h
-    call(0x408449, Cont(x00408838))
+    call(m, 0x408449, Cont(x00408838))
 }
 
 pub fn x00408449() -> Cont {
@@ -34658,22 +34788,25 @@ pub fn x00408449() -> Cont {
     // 0040844c mov eax,[ebp-4]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32));
     // 0040844f call 0040750Bh
-    call(0x408454, Cont(x0040750b))
+    call(m, 0x408454, Cont(x0040750b))
 }
 
 pub fn x00408454() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00408454 push dword ptr [ebp-4Ch]
-    push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffb4u32)));
+    push(
+        m,
+        m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffb4u32)),
+    );
     // 00408457 push dword ptr ds:[433FACh]
-    push(m.memory.read::<u32>(0x433facu32));
+    push(m, m.memory.read::<u32>(0x433facu32));
     // 0040845d push dword ptr ds:[433FA0h]
-    push(m.memory.read::<u32>(0x433fa0u32));
+    push(m, m.memory.read::<u32>(0x433fa0u32));
     // 00408463 fld dword ptr ds:[425006h]
     m.fpu.push(m.memory.read::<f32>(0x425006u32) as f64);
     // 00408469 push dword ptr ds:[433FA4h]
-    push(m.memory.read::<u32>(0x433fa4u32));
+    push(m, m.memory.read::<u32>(0x433fa4u32));
     // 0040846f fmul qword ptr ds:[40C658h]
     m.fpu
         .set(0, m.fpu.get(0) * m.memory.read::<f64>(0x40c658u32));
@@ -34683,7 +34816,7 @@ pub fn x00408454() -> Cont {
     m.memory.write::<f32>(m.regs.esp, m.fpu.get(0) as f32);
     m.fpu.pop();
     // 0040847b call 004076EAh
-    call(0x408480, Cont(x004076ea))
+    call(m, 0x408480, Cont(x004076ea))
 }
 
 pub fn x00408480() -> Cont {
@@ -34692,7 +34825,7 @@ pub fn x00408480() -> Cont {
     // 00408480 cmp dword ptr ds:[424FF6h],4Fh
     sub(m.memory.read::<u32>(0x424ff6u32), 0x4fu32, &mut m.flags);
     // 00408487 jle short 00408493h
-    jle(Cont(x00408489), Cont(x00408493))
+    jle(m, Cont(x00408489), Cont(x00408493))
 }
 
 pub fn x00408489() -> Cont {
@@ -34716,7 +34849,7 @@ pub fn x00408489() -> Cont {
     // 004084a0 cmp edx,1
     sub(m.regs.edx, 0x1u32, &mut m.flags);
     // 004084a3 jne short 004084D0h
-    jne(Cont(x004084a5), Cont(x004084d0))
+    jne(m, Cont(x004084a5), Cont(x004084d0))
 }
 
 pub fn x00408493() -> Cont {
@@ -34738,7 +34871,7 @@ pub fn x00408493() -> Cont {
     // 004084a0 cmp edx,1
     sub(m.regs.edx, 0x1u32, &mut m.flags);
     // 004084a3 jne short 004084D0h
-    jne(Cont(x004084a5), Cont(x004084d0))
+    jne(m, Cont(x004084a5), Cont(x004084d0))
 }
 
 pub fn x004084a5() -> Cont {
@@ -34767,7 +34900,7 @@ pub fn x004084a5() -> Cont {
     m.regs.eax = (x / y) as i32 as u32;
     m.regs.edx = (x % y) as i32 as u32;
     // 004084b5 push 140h
-    push(0x140u32);
+    push(m, 0x140u32);
     // 004084ba xor ebx,ebx
     m.regs.ebx = xor(m.regs.ebx, m.regs.ebx, &mut m.flags);
     // 004084bc mov ecx,0DCh
@@ -34779,7 +34912,7 @@ pub fn x004084a5() -> Cont {
     // 004084c8 mov edx,[ebp-4Ch]
     m.regs.edx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffb4u32));
     // 004084cb call 00405B0Eh
-    call(0x4084d0, Cont(x00405b0e))
+    call(m, 0x4084d0, Cont(x00405b0e))
 }
 
 pub fn x004084d0() -> Cont {
@@ -34788,7 +34921,7 @@ pub fn x004084d0() -> Cont {
     // 004084d0 cmp dword ptr ds:[40C743h],29h
     sub(m.memory.read::<u32>(0x40c743u32), 0x29u32, &mut m.flags);
     // 004084d7 jne short 004084F5h
-    jne(Cont(x004084d9), Cont(x004084f5))
+    jne(m, Cont(x004084d9), Cont(x004084f5))
 }
 
 pub fn x004084d9() -> Cont {
@@ -34813,7 +34946,7 @@ pub fn x004084d9() -> Cont {
     // 004084ee mov eax,edx
     m.regs.eax = m.regs.edx;
     // 004084f0 call 00402F03h
-    call(0x4084f5, Cont(x00402f03))
+    call(m, 0x4084f5, Cont(x00402f03))
 }
 
 pub fn x004084f5() -> Cont {
@@ -34822,7 +34955,7 @@ pub fn x004084f5() -> Cont {
     // 004084f5 cmp dword ptr ds:[40C743h],16h
     sub(m.memory.read::<u32>(0x40c743u32), 0x16u32, &mut m.flags);
     // 004084fc jne near ptr 004085CFh
-    jne(Cont(x00408502), Cont(x004085cf))
+    jne(m, Cont(x00408502), Cont(x004085cf))
 }
 
 pub fn x00408502() -> Cont {
@@ -34831,12 +34964,12 @@ pub fn x00408502() -> Cont {
     // 00408502 mov eax,[ebp-48h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffb8u32));
     // 00408505 push dword ptr ds:[433FACh]
-    push(m.memory.read::<u32>(0x433facu32));
+    push(m, m.memory.read::<u32>(0x433facu32));
     // 0040850b mov [ebp-4],eax
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32), m.regs.eax);
     // 0040850e push dword ptr ds:[433F94h]
-    push(m.memory.read::<u32>(0x433f94u32));
+    push(m, m.memory.read::<u32>(0x433f94u32));
     // 00408514 fild dword ptr [ebp-4]
     m.fpu
         .push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32)) as i32 as f64);
@@ -34854,7 +34987,7 @@ pub fn x00408502() -> Cont {
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xfffffff8u32), 0x0u32);
     // 0040852c call 00404FADh
-    call(0x408531, Cont(x00404fad))
+    call(m, 0x408531, Cont(x00404fad))
 }
 
 pub fn x00408531() -> Cont {
@@ -34879,7 +35012,7 @@ pub fn x00408531() -> Cont {
         &mut m.flags,
     );
     // 0040854c jle short 0040857Bh
-    jle(Cont(x0040854e), Cont(x0040857b))
+    jle(m, Cont(x0040854e), Cont(x0040857b))
 }
 
 pub fn x0040853d() -> Cont {
@@ -34900,7 +35033,7 @@ pub fn x0040853d() -> Cont {
         &mut m.flags,
     );
     // 0040854c jle short 0040857Bh
-    jle(Cont(x0040854e), Cont(x0040857b))
+    jle(m, Cont(x0040854e), Cont(x0040857b))
 }
 
 pub fn x0040854e() -> Cont {
@@ -34956,7 +35089,7 @@ pub fn x0040857b() -> Cont {
     // 00408583 mov eax,ds:[433E38h]
     m.regs.eax = m.memory.read::<u32>(0x433e38u32);
     // 00408588 call 00403377h
-    call(0x40858d, Cont(x00403377))
+    call(m, 0x40858d, Cont(x00403377))
 }
 
 pub fn x0040858d() -> Cont {
@@ -34965,11 +35098,12 @@ pub fn x0040858d() -> Cont {
     // 0040858d mov eax,ds:[424FFEh]
     m.regs.eax = m.memory.read::<u32>(0x424ffeu32);
     // 00408592 push dword ptr ds:[433FACh]
-    push(m.memory.read::<u32>(0x433facu32));
+    push(m, m.memory.read::<u32>(0x433facu32));
     // 00408598 and eax,1
     m.regs.eax = and(m.regs.eax, 0x1u32, &mut m.flags);
     // 0040859b push dword ptr [eax*4+433E48h]
     push(
+        m,
         m.memory
             .read::<u32>((m.regs.eax * 4).wrapping_add(0x433e48u32)),
     );
@@ -34989,7 +35123,7 @@ pub fn x0040858d() -> Cont {
     // 004085b1 mov ebx,[ebp-4Ch]
     m.regs.ebx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffb4u32));
     // 004085b4 call 0040760Bh
-    call(0x4085b9, Cont(x0040760b))
+    call(m, 0x4085b9, Cont(x0040760b))
 }
 
 pub fn x004085b9() -> Cont {
@@ -35004,7 +35138,7 @@ pub fn x004085b9() -> Cont {
     // 004085c7 shl ecx,2
     m.regs.ecx = shl(m.regs.ecx, 0x2u8, &mut m.flags);
     // 004085ca call 00403202h
-    call(0x4085cf, Cont(x00403202))
+    call(m, 0x4085cf, Cont(x00403202))
 }
 
 pub fn x004085cf() -> Cont {
@@ -35015,17 +35149,17 @@ pub fn x004085cf() -> Cont {
     // 004085d2 mov ds:[424FFAh],eax
     m.memory.write::<u32>(0x424ffau32, m.regs.eax);
     // 004085d7 leave
-    leave();
+    leave(m);
     // 004085d8 pop edi
-    m.regs.edi = pop();
+    m.regs.edi = pop(m);
     // 004085d9 pop esi
-    m.regs.esi = pop();
+    m.regs.esi = pop(m);
     // 004085da pop ecx
-    m.regs.ecx = pop();
+    m.regs.ecx = pop(m);
     // 004085db pop ebx
-    m.regs.ebx = pop();
+    m.regs.ebx = pop(m);
     // 004085dc ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x004085dd() -> Cont {
@@ -35039,13 +35173,13 @@ pub fn x004085e2() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004085e2 push ebx
-    push(m.regs.ebx);
+    push(m, m.regs.ebx);
     // 004085e3 push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 004085e4 push edx
-    push(m.regs.edx);
+    push(m, m.regs.edx);
     // 004085e5 call 00401A5Ah
-    call(0x4085ea, Cont(x00401a5a))
+    call(m, 0x4085ea, Cont(x00401a5a))
 }
 
 pub fn x004085ea() -> Cont {
@@ -35064,9 +35198,9 @@ pub fn x004085ea() -> Cont {
     // 004085fb shl eax,2
     m.regs.eax = shl(m.regs.eax, 0x2u8, &mut m.flags);
     // 004085fe push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 004085ff call 00401A60h
-    call(0x408604, Cont(x00401a60))
+    call(m, 0x408604, Cont(x00401a60))
 }
 
 pub fn x00408604() -> Cont {
@@ -35087,11 +35221,11 @@ pub fn x00408604() -> Cont {
     // 00408618 shl eax,2
     m.regs.eax = shl(m.regs.eax, 0x2u8, &mut m.flags);
     // 0040861b push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 0040861c xor ebx,ebx
     m.regs.ebx = xor(m.regs.ebx, m.regs.ebx, &mut m.flags);
     // 0040861e call 00401A60h
-    call(0x408623, Cont(x00401a60))
+    call(m, 0x408623, Cont(x00401a60))
 }
 
 pub fn x00408623() -> Cont {
@@ -35112,11 +35246,11 @@ pub fn x00408623() -> Cont {
     // 00408637 shl eax,2
     m.regs.eax = shl(m.regs.eax, 0x2u8, &mut m.flags);
     // 0040863a push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 0040863b inc ebx
     m.regs.ebx = inc(m.regs.ebx, &mut m.flags);
     // 0040863c call 00401A60h
-    call(0x408641, Cont(x00401a60))
+    call(m, 0x408641, Cont(x00401a60))
 }
 
 pub fn x0040862b() -> Cont {
@@ -35133,11 +35267,11 @@ pub fn x0040862b() -> Cont {
     // 00408637 shl eax,2
     m.regs.eax = shl(m.regs.eax, 0x2u8, &mut m.flags);
     // 0040863a push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 0040863b inc ebx
     m.regs.ebx = inc(m.regs.ebx, &mut m.flags);
     // 0040863c call 00401A60h
-    call(0x408641, Cont(x00401a60))
+    call(m, 0x408641, Cont(x00401a60))
 }
 
 pub fn x00408641() -> Cont {
@@ -35151,7 +35285,7 @@ pub fn x00408641() -> Cont {
     // 0040864b cmp ebx,0Ah
     sub(m.regs.ebx, 0xau32, &mut m.flags);
     // 0040864e jl short 0040862Bh
-    jl(Cont(x00408650), Cont(x0040862b))
+    jl(m, Cont(x00408650), Cont(x0040862b))
 }
 
 pub fn x00408650() -> Cont {
@@ -35160,22 +35294,22 @@ pub fn x00408650() -> Cont {
     // 00408650 xor ebx,ebx
     m.regs.ebx = xor(m.regs.ebx, m.regs.ebx, &mut m.flags);
     // 00408652 push 40000h
-    push(0x40000u32);
+    push(m, 0x40000u32);
     // 00408657 inc ebx
     m.regs.ebx = inc(m.regs.ebx, &mut m.flags);
     // 00408658 call 00401A60h
-    call(0x40865d, Cont(x00401a60))
+    call(m, 0x40865d, Cont(x00401a60))
 }
 
 pub fn x00408652() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00408652 push 40000h
-    push(0x40000u32);
+    push(m, 0x40000u32);
     // 00408657 inc ebx
     m.regs.ebx = inc(m.regs.ebx, &mut m.flags);
     // 00408658 call 00401A60h
-    call(0x40865d, Cont(x00401a60))
+    call(m, 0x40865d, Cont(x00401a60))
 }
 
 pub fn x0040865d() -> Cont {
@@ -35189,7 +35323,7 @@ pub fn x0040865d() -> Cont {
     // 00408667 cmp ebx,7
     sub(m.regs.ebx, 0x7u32, &mut m.flags);
     // 0040866a jl short 00408652h
-    jl(Cont(x0040866c), Cont(x00408652))
+    jl(m, Cont(x0040866c), Cont(x00408652))
 }
 
 pub fn x0040866c() -> Cont {
@@ -35204,16 +35338,16 @@ pub fn x0040866c() -> Cont {
     // 0040867b mov eax,40C763h
     m.regs.eax = 0x40c763u32;
     // 00408680 call 00405771h
-    call(0x408685, Cont(x00405771))
+    call(m, 0x408685, Cont(x00405771))
 }
 
 pub fn x00408685() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00408685 push 100h
-    push(0x100u32);
+    push(m, 0x100u32);
     // 0040868a call 00401A60h
-    call(0x40868f, Cont(x00401a60))
+    call(m, 0x40868f, Cont(x00401a60))
 }
 
 pub fn x0040868f() -> Cont {
@@ -35224,76 +35358,76 @@ pub fn x0040868f() -> Cont {
     // 00408692 mov ds:[433F78h],eax
     m.memory.write::<u32>(0x433f78u32, m.regs.eax);
     // 00408697 call 00406654h
-    call(0x40869c, Cont(x00406654))
+    call(m, 0x40869c, Cont(x00406654))
 }
 
 pub fn x0040869c() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 0040869c call 004047E9h
-    call(0x4086a1, Cont(x004047e9))
+    call(m, 0x4086a1, Cont(x004047e9))
 }
 
 pub fn x004086a1() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004086a1 call 00406884h
-    call(0x4086a6, Cont(x00406884))
+    call(m, 0x4086a6, Cont(x00406884))
 }
 
 pub fn x004086a6() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004086a6 call 00405337h
-    call(0x4086ab, Cont(x00405337))
+    call(m, 0x4086ab, Cont(x00405337))
 }
 
 pub fn x004086ab() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004086ab call 00406C9Ah
-    call(0x4086b0, Cont(x00406c9a))
+    call(m, 0x4086b0, Cont(x00406c9a))
 }
 
 pub fn x004086b0() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004086b0 pop edx
-    m.regs.edx = pop();
+    m.regs.edx = pop(m);
     // 004086b1 pop ecx
-    m.regs.ecx = pop();
+    m.regs.ecx = pop(m);
     // 004086b2 pop ebx
-    m.regs.ebx = pop();
+    m.regs.ebx = pop(m);
     // 004086b3 ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x004086b4() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004086b4 push ebx
-    push(m.regs.ebx);
+    push(m, m.regs.ebx);
     // 004086b5 push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 004086b6 push edx
-    push(m.regs.edx);
+    push(m, m.regs.edx);
     // 004086b7 call 00405808h
-    call(0x4086bc, Cont(x00405808))
+    call(m, 0x4086bc, Cont(x00405808))
 }
 
 pub fn x004086bc() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004086bc push 8000h
-    push(0x8000u32);
+    push(m, 0x8000u32);
     // 004086c1 push 0
-    push(0x0u32);
+    push(m, 0x0u32);
     // 004086c3 mov eax,ds:[433F78h]
     m.regs.eax = m.memory.read::<u32>(0x433f78u32);
     // 004086c8 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 004086c9 call dword ptr cs:[40B16Ch]
-    call(0x4086d0, Cont(kernel32::VirtualFree_stdcall))
+    call(m, 0x4086d0, Cont(kernel32::VirtualFree_stdcall))
 }
 
 pub fn x004086d0() -> Cont {
@@ -35302,72 +35436,72 @@ pub fn x004086d0() -> Cont {
     // 004086d0 mov eax,433E54h
     m.regs.eax = 0x433e54u32;
     // 004086d5 call 00406050h
-    call(0x4086da, Cont(x00406050))
+    call(m, 0x4086da, Cont(x00406050))
 }
 
 pub fn x004086da() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004086da call 00404A00h
-    call(0x4086df, Cont(x00404a00))
+    call(m, 0x4086df, Cont(x00404a00))
 }
 
 pub fn x004086df() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004086df call 00406C2Bh
-    call(0x4086e4, Cont(x00406c2b))
+    call(m, 0x4086e4, Cont(x00406c2b))
 }
 
 pub fn x004086e4() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004086e4 push 8000h
-    push(0x8000u32);
+    push(m, 0x8000u32);
     // 004086e9 push 0
-    push(0x0u32);
+    push(m, 0x0u32);
     // 004086eb mov eax,ds:[433FACh]
     m.regs.eax = m.memory.read::<u32>(0x433facu32);
     // 004086f0 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 004086f1 call dword ptr cs:[40B16Ch]
-    call(0x4086f8, Cont(kernel32::VirtualFree_stdcall))
+    call(m, 0x4086f8, Cont(kernel32::VirtualFree_stdcall))
 }
 
 pub fn x004086f8() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004086f8 push 8000h
-    push(0x8000u32);
+    push(m, 0x8000u32);
     // 004086fd push 0
-    push(0x0u32);
+    push(m, 0x0u32);
     // 004086ff mov eax,ds:[433FA8h]
     m.regs.eax = m.memory.read::<u32>(0x433fa8u32);
     // 00408704 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 00408705 xor ebx,ebx
     m.regs.ebx = xor(m.regs.ebx, m.regs.ebx, &mut m.flags);
     // 00408707 call dword ptr cs:[40B16Ch]
-    call(0x40870e, Cont(kernel32::VirtualFree_stdcall))
+    call(m, 0x40870e, Cont(kernel32::VirtualFree_stdcall))
 }
 
 pub fn x0040870e() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 0040870e push 8000h
-    push(0x8000u32);
+    push(m, 0x8000u32);
     // 00408713 push 0
-    push(0x0u32);
+    push(m, 0x0u32);
     // 00408715 mov eax,[ebx*4+433E28h]
     m.regs.eax = m
         .memory
         .read::<u32>((m.regs.ebx * 4).wrapping_add(0x433e28u32));
     // 0040871c push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 0040871d inc ebx
     m.regs.ebx = inc(m.regs.ebx, &mut m.flags);
     // 0040871e call dword ptr cs:[40B16Ch]
-    call(0x408725, Cont(kernel32::VirtualFree_stdcall))
+    call(m, 0x408725, Cont(kernel32::VirtualFree_stdcall))
 }
 
 pub fn x00408725() -> Cont {
@@ -35376,7 +35510,7 @@ pub fn x00408725() -> Cont {
     // 00408725 cmp ebx,0Ah
     sub(m.regs.ebx, 0xau32, &mut m.flags);
     // 00408728 jl short 0040870Eh
-    jl(Cont(x0040872a), Cont(x0040870e))
+    jl(m, Cont(x0040872a), Cont(x0040870e))
 }
 
 pub fn x0040872a() -> Cont {
@@ -35385,38 +35519,38 @@ pub fn x0040872a() -> Cont {
     // 0040872a xor ebx,ebx
     m.regs.ebx = xor(m.regs.ebx, m.regs.ebx, &mut m.flags);
     // 0040872c push 8000h
-    push(0x8000u32);
+    push(m, 0x8000u32);
     // 00408731 push 0
-    push(0x0u32);
+    push(m, 0x0u32);
     // 00408733 mov eax,[ebx*4+433F8Ch]
     m.regs.eax = m
         .memory
         .read::<u32>((m.regs.ebx * 4).wrapping_add(0x433f8cu32));
     // 0040873a push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 0040873b inc ebx
     m.regs.ebx = inc(m.regs.ebx, &mut m.flags);
     // 0040873c call dword ptr cs:[40B16Ch]
-    call(0x408743, Cont(kernel32::VirtualFree_stdcall))
+    call(m, 0x408743, Cont(kernel32::VirtualFree_stdcall))
 }
 
 pub fn x0040872c() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 0040872c push 8000h
-    push(0x8000u32);
+    push(m, 0x8000u32);
     // 00408731 push 0
-    push(0x0u32);
+    push(m, 0x0u32);
     // 00408733 mov eax,[ebx*4+433F8Ch]
     m.regs.eax = m
         .memory
         .read::<u32>((m.regs.ebx * 4).wrapping_add(0x433f8cu32));
     // 0040873a push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 0040873b inc ebx
     m.regs.ebx = inc(m.regs.ebx, &mut m.flags);
     // 0040873c call dword ptr cs:[40B16Ch]
-    call(0x408743, Cont(kernel32::VirtualFree_stdcall))
+    call(m, 0x408743, Cont(kernel32::VirtualFree_stdcall))
 }
 
 pub fn x00408743() -> Cont {
@@ -35425,60 +35559,60 @@ pub fn x00408743() -> Cont {
     // 00408743 cmp ebx,7
     sub(m.regs.ebx, 0x7u32, &mut m.flags);
     // 00408746 jl short 0040872Ch
-    jl(Cont(x00408748), Cont(x0040872c))
+    jl(m, Cont(x00408748), Cont(x0040872c))
 }
 
 pub fn x00408748() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00408748 pop edx
-    m.regs.edx = pop();
+    m.regs.edx = pop(m);
     // 00408749 pop ecx
-    m.regs.ecx = pop();
+    m.regs.ecx = pop(m);
     // 0040874a pop ebx
-    m.regs.ebx = pop();
+    m.regs.ebx = pop(m);
     // 0040874b ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x0040874c() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 0040874c push ebx
-    push(m.regs.ebx);
+    push(m, m.regs.ebx);
     // 0040874d push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 0040874e push edx
-    push(m.regs.edx);
+    push(m, m.regs.edx);
     // 0040874f call 00401B35h
-    call(0x408754, Cont(x00401b35))
+    call(m, 0x408754, Cont(x00401b35))
 }
 
 pub fn x00408754() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00408754 call 00408D65h
-    call(0x408759, Cont(x00408d65))
+    call(m, 0x408759, Cont(x00408d65))
 }
 
 pub fn x00408759() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00408759 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 0040875a push dword ptr ds:[40C73Bh]
-    push(m.memory.read::<u32>(0x40c73bu32));
+    push(m, m.memory.read::<u32>(0x40c73bu32));
     // 00408760 xor ebx,ebx
     m.regs.ebx = xor(m.regs.ebx, m.regs.ebx, &mut m.flags);
     // 00408762 call 0040A281h
-    call(0x408767, Cont(x0040a281))
+    call(m, 0x408767, Cont(x0040a281))
 }
 
 pub fn x00408767() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00408767 push dword ptr ds:[433F88h]
-    push(m.memory.read::<u32>(0x433f88u32));
+    push(m, m.memory.read::<u32>(0x433f88u32));
     // 0040876d mov ecx,ds:[40C73Bh]
     m.regs.ecx = m.memory.read::<u32>(0x40c73bu32);
     // 00408773 mov edx,ds:[40C728h]
@@ -35486,7 +35620,7 @@ pub fn x00408767() -> Cont {
     // 00408779 mov eax,ds:[40C724h]
     m.regs.eax = m.memory.read::<u32>(0x40c724u32);
     // 0040877e call 00401156h
-    call(0x408783, Cont(x00401156))
+    call(m, 0x408783, Cont(x00401156))
 }
 
 pub fn x00408783() -> Cont {
@@ -35495,23 +35629,23 @@ pub fn x00408783() -> Cont {
     // 00408783 test eax,eax
     and(m.regs.eax, m.regs.eax, &mut m.flags);
     // 00408785 jne near ptr 00408814h
-    jne(Cont(x0040878b), Cont(x00408814))
+    jne(m, Cont(x0040878b), Cont(x00408814))
 }
 
 pub fn x0040878b() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 0040878b push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 0040878c call dword ptr cs:[40B130h]
-    call(0x408793, Cont(user32::ShowCursor_stdcall))
+    call(m, 0x408793, Cont(user32::ShowCursor_stdcall))
 }
 
 pub fn x00408793() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00408793 call 004085E2h
-    call(0x408798, Cont(x004085e2))
+    call(m, 0x408798, Cont(x004085e2))
 }
 
 pub fn x00408798() -> Cont {
@@ -35522,7 +35656,7 @@ pub fn x00408798() -> Cont {
     // 0040879a mov edx,1
     m.regs.edx = 0x1u32;
     // 0040879f call 00409EDFh
-    call(0x4087a4, Cont(x00409edf))
+    call(m, 0x4087a4, Cont(x00409edf))
 }
 
 pub fn x004087a4() -> Cont {
@@ -35531,7 +35665,7 @@ pub fn x004087a4() -> Cont {
     // 004087a4 mov eax,1Eh
     m.regs.eax = 0x1eu32;
     // 004087a9 call 00401CC9h
-    call(0x4087ae, Cont(x00401cc9))
+    call(m, 0x4087ae, Cont(x00401cc9))
 }
 
 pub fn x004087ae() -> Cont {
@@ -35540,14 +35674,14 @@ pub fn x004087ae() -> Cont {
     // 004087ae cmp dword ptr ds:[40C72Ch],0
     sub(m.memory.read::<u32>(0x40c72cu32), 0x0u32, &mut m.flags);
     // 004087b5 jne short 004087F4h
-    jne(Cont(x004087b7), Cont(x004087f4))
+    jne(m, Cont(x004087b7), Cont(x004087f4))
 }
 
 pub fn x004087b7() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004087b7 call 00401D0Fh
-    call(0x4087bc, Cont(x00401d0f))
+    call(m, 0x4087bc, Cont(x00401d0f))
 }
 
 pub fn x004087bc() -> Cont {
@@ -35558,14 +35692,14 @@ pub fn x004087bc() -> Cont {
     // 004087c2 mov eax,ds:[433F84h]
     m.regs.eax = m.memory.read::<u32>(0x433f84u32);
     // 004087c7 call 00407AD4h
-    call(0x4087cc, Cont(x00407ad4))
+    call(m, 0x4087cc, Cont(x00407ad4))
 }
 
 pub fn x004087cc() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004087cc call 00401529h
-    call(0x4087d1, Cont(x00401529))
+    call(m, 0x4087d1, Cont(x00401529))
 }
 
 pub fn x004087d1() -> Cont {
@@ -35574,7 +35708,7 @@ pub fn x004087d1() -> Cont {
     // 004087d1 cmp dword ptr ds:[40C743h],29h
     sub(m.memory.read::<u32>(0x40c743u32), 0x29u32, &mut m.flags);
     // 004087d8 jne short 004087EDh
-    jne(Cont(x004087da), Cont(x004087ed))
+    jne(m, Cont(x004087da), Cont(x004087ed))
 }
 
 pub fn x004087da() -> Cont {
@@ -35583,7 +35717,7 @@ pub fn x004087da() -> Cont {
     // 004087da cmp dword ptr ds:[40C73Fh],35h
     sub(m.memory.read::<u32>(0x40c73fu32), 0x35u32, &mut m.flags);
     // 004087e1 jle short 004087EDh
-    jle(Cont(x004087e3), Cont(x004087ed))
+    jle(m, Cont(x004087e3), Cont(x004087ed))
 }
 
 pub fn x004087e3() -> Cont {
@@ -35592,14 +35726,14 @@ pub fn x004087e3() -> Cont {
     // 004087e3 mov dword ptr ds:[40C72Ch],1
     m.memory.write::<u32>(0x40c72cu32, 0x1u32);
     // 004087ed call 00401BB3h
-    call(0x4087f2, Cont(x00401bb3))
+    call(m, 0x4087f2, Cont(x00401bb3))
 }
 
 pub fn x004087ed() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004087ed call 00401BB3h
-    call(0x4087f2, Cont(x00401bb3))
+    call(m, 0x4087f2, Cont(x00401bb3))
 }
 
 pub fn x004087f2() -> Cont {
@@ -35613,32 +35747,32 @@ pub fn x004087f4() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004087f4 push dword ptr ds:[433F80h]
-    push(m.memory.read::<u32>(0x433f80u32));
+    push(m, m.memory.read::<u32>(0x433f80u32));
     // 004087fa call dword ptr cs:[40B0FCh]
-    call(0x408801, Cont(winmm::timeKillEvent_stdcall))
+    call(m, 0x408801, Cont(winmm::timeKillEvent_stdcall))
 }
 
 pub fn x00408801() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00408801 call 00409F49h
-    call(0x408806, Cont(x00409f49))
+    call(m, 0x408806, Cont(x00409f49))
 }
 
 pub fn x00408806() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00408806 call 004086B4h
-    call(0x40880b, Cont(x004086b4))
+    call(m, 0x40880b, Cont(x004086b4))
 }
 
 pub fn x0040880b() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 0040880b push 1
-    push(0x1u32);
+    push(m, 0x1u32);
     // 0040880d call dword ptr cs:[40B130h]
-    call(0x408814, Cont(user32::ShowCursor_stdcall))
+    call(m, 0x408814, Cont(user32::ShowCursor_stdcall))
 }
 
 pub fn x00408814() -> Cont {
@@ -35647,23 +35781,23 @@ pub fn x00408814() -> Cont {
     // 00408814 mov eax,ds:[40C73Bh]
     m.regs.eax = m.memory.read::<u32>(0x40c73bu32);
     // 00408819 call 0040148Ch
-    call(0x40881e, Cont(x0040148c))
+    call(m, 0x40881e, Cont(x0040148c))
 }
 
 pub fn x0040881e() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 0040881e call 0040A38Ah
-    call(0x408823, Cont(x0040a38a))
+    call(m, 0x408823, Cont(x0040a38a))
 }
 
 pub fn x00408823() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00408823 push 0
-    push(0x0u32);
+    push(m, 0x0u32);
     // 00408825 call dword ptr cs:[40B150h]
-    call(0x40882c, Cont(kernel32::ExitProcess_stdcall))
+    call(m, 0x40882c, Cont(kernel32::ExitProcess_stdcall))
 }
 
 pub fn x0040882c() -> Cont {
@@ -35672,37 +35806,37 @@ pub fn x0040882c() -> Cont {
     // 0040882c xor eax,eax
     m.regs.eax = xor(m.regs.eax, m.regs.eax, &mut m.flags);
     // 0040882e pop edx
-    m.regs.edx = pop();
+    m.regs.edx = pop(m);
     // 0040882f pop ecx
-    m.regs.ecx = pop();
+    m.regs.ecx = pop(m);
     // 00408830 pop ebx
-    m.regs.ebx = pop();
+    m.regs.ebx = pop(m);
     // 00408831 ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x00408838() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00408838 ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x00408860() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00408860 push ebx
-    push(m.regs.ebx);
+    push(m, m.regs.ebx);
     // 00408861 push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 00408862 push edx
-    push(m.regs.edx);
+    push(m, m.regs.edx);
     // 00408863 push esi
-    push(m.regs.esi);
+    push(m, m.regs.esi);
     // 00408864 push edi
-    push(m.regs.edi);
+    push(m, m.regs.edi);
     // 00408865 enter 4,0
-    enter(0x4u16, 0);
+    enter(m, 0x4u16, 0);
     // 00408869 fld dword ptr [ebp+1Ch]
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0x1cu32)) as f64);
@@ -35715,38 +35849,38 @@ pub fn x00408860() -> Cont {
     // 00408875 mov eax,[ebp-4]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32));
     // 00408878 leave
-    leave();
+    leave(m);
     // 00408879 pop edi
-    m.regs.edi = pop();
+    m.regs.edi = pop(m);
     // 0040887a pop esi
-    m.regs.esi = pop();
+    m.regs.esi = pop(m);
     // 0040887b pop edx
-    m.regs.edx = pop();
+    m.regs.edx = pop(m);
     // 0040887c pop ecx
-    m.regs.ecx = pop();
+    m.regs.ecx = pop(m);
     // 0040887d pop ebx
-    m.regs.ebx = pop();
+    m.regs.ebx = pop(m);
     // 0040887e ret 4
-    ret(4)
+    ret(m, 4)
 }
 
 pub fn x004088a6() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004088a6 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 004088a7 push ebx
-    push(m.regs.ebx);
+    push(m, m.regs.ebx);
     // 004088a8 push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 004088a9 push edx
-    push(m.regs.edx);
+    push(m, m.regs.edx);
     // 004088aa push esi
-    push(m.regs.esi);
+    push(m, m.regs.esi);
     // 004088ab push edi
-    push(m.regs.edi);
+    push(m, m.regs.edi);
     // 004088ac enter 4,0
-    enter(0x4u16, 0);
+    enter(m, 0x4u16, 0);
     // 004088b0 fld dword ptr [ebp+20h]
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0x20u32)) as f64);
@@ -35760,38 +35894,38 @@ pub fn x004088a6() -> Cont {
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0xfffffffcu32)) as f64);
     // 004088c1 leave
-    leave();
+    leave(m);
     // 004088c2 pop edi
-    m.regs.edi = pop();
+    m.regs.edi = pop(m);
     // 004088c3 pop esi
-    m.regs.esi = pop();
+    m.regs.esi = pop(m);
     // 004088c4 pop edx
-    m.regs.edx = pop();
+    m.regs.edx = pop(m);
     // 004088c5 pop ecx
-    m.regs.ecx = pop();
+    m.regs.ecx = pop(m);
     // 004088c6 pop ebx
-    m.regs.ebx = pop();
+    m.regs.ebx = pop(m);
     // 004088c7 pop eax
-    m.regs.eax = pop();
+    m.regs.eax = pop(m);
     // 004088c8 ret 4
-    ret(4)
+    ret(m, 4)
 }
 
 pub fn x004089ad() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004089ad push ebx
-    push(m.regs.ebx);
+    push(m, m.regs.ebx);
     // 004089ae push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 004089af push edx
-    push(m.regs.edx);
+    push(m, m.regs.edx);
     // 004089b0 push esi
-    push(m.regs.esi);
+    push(m, m.regs.esi);
     // 004089b1 push edi
-    push(m.regs.edi);
+    push(m, m.regs.edi);
     // 004089b2 enter 0Ch,0
-    enter(0xcu16, 0);
+    enter(m, 0xcu16, 0);
     // 004089b6 mov ebx,eax
     m.regs.ebx = m.regs.eax;
     // 004089b8 mov dword ptr [ebp-0Ch],3C490FDBh
@@ -35818,7 +35952,7 @@ pub fn x004089c3() -> Cont {
     // 004089cc cmp edx,200h
     sub(m.regs.edx, 0x200u32, &mut m.flags);
     // 004089d2 jge short 00408A14h
-    jge(Cont(x004089d4), Cont(x00408a14))
+    jge(m, Cont(x004089d4), Cont(x00408a14))
 }
 
 pub fn x004089d4() -> Cont {
@@ -35850,7 +35984,7 @@ pub fn x004089d4() -> Cont {
     m.memory.write::<f32>(m.regs.esp, m.fpu.get(0) as f32);
     m.fpu.pop();
     // 004089f1 call 004088A6h
-    call(0x4089f6, Cont(x004088a6))
+    call(m, 0x4089f6, Cont(x004088a6))
 }
 
 pub fn x004089dd() -> Cont {
@@ -35877,7 +36011,7 @@ pub fn x004089dd() -> Cont {
     m.memory.write::<f32>(m.regs.esp, m.fpu.get(0) as f32);
     m.fpu.pop();
     // 004089f1 call 004088A6h
-    call(0x4089f6, Cont(x004088a6))
+    call(m, 0x4089f6, Cont(x004088a6))
 }
 
 pub fn x004089f6() -> Cont {
@@ -35904,7 +36038,7 @@ pub fn x004089f6() -> Cont {
     // 00408a04 cmp ecx,8
     sub(m.regs.ecx, 0x8u32, &mut m.flags);
     // 00408a07 jl short 004089DDh
-    jl(Cont(x00408a09), Cont(x004089dd))
+    jl(m, Cont(x00408a09), Cont(x004089dd))
 }
 
 pub fn x00408a09() -> Cont {
@@ -35913,7 +36047,7 @@ pub fn x00408a09() -> Cont {
     // 00408a09 test dl,40h
     and(m.regs.get_dl(), 0x40u8, &mut m.flags);
     // 00408a0c je short 004089C3h
-    je(Cont(x00408a0e), Cont(x004089c3))
+    je(m, Cont(x00408a0e), Cont(x004089c3))
 }
 
 pub fn x00408a0e() -> Cont {
@@ -35949,7 +36083,7 @@ pub fn x00408a18() -> Cont {
     // 00408a19 cmp ecx,20h
     sub(m.regs.ecx, 0x20u32, &mut m.flags);
     // 00408a1c jge short 00408A60h
-    jge(Cont(x00408a1e), Cont(x00408a60))
+    jge(m, Cont(x00408a1e), Cont(x00408a60))
 }
 
 pub fn x00408a1e() -> Cont {
@@ -35983,7 +36117,7 @@ pub fn x00408a1e() -> Cont {
     m.memory.write::<f32>(m.regs.esp, m.fpu.get(0) as f32);
     m.fpu.pop();
     // 00408a42 call 004088A6h
-    call(0x408a47, Cont(x004088a6))
+    call(m, 0x408a47, Cont(x004088a6))
 }
 
 pub fn x00408a20() -> Cont {
@@ -36015,7 +36149,7 @@ pub fn x00408a20() -> Cont {
     m.memory.write::<f32>(m.regs.esp, m.fpu.get(0) as f32);
     m.fpu.pop();
     // 00408a42 call 004088A6h
-    call(0x408a47, Cont(x004088a6))
+    call(m, 0x408a47, Cont(x004088a6))
 }
 
 pub fn x00408a47() -> Cont {
@@ -36043,7 +36177,7 @@ pub fn x00408a47() -> Cont {
     // 00408a59 cmp edx,40h
     sub(m.regs.edx, 0x40u32, &mut m.flags);
     // 00408a5c jl short 00408A20h
-    jl(Cont(x00408a5e), Cont(x00408a20))
+    jl(m, Cont(x00408a5e), Cont(x00408a20))
 }
 
 pub fn x00408a5e() -> Cont {
@@ -36065,36 +36199,36 @@ pub fn x00408a60() -> Cont {
     // 00408a6d rep stosb
     rep(m, Rep::REP, stosb);
     // 00408a6f leave
-    leave();
+    leave(m);
     // 00408a70 pop edi
-    m.regs.edi = pop();
+    m.regs.edi = pop(m);
     // 00408a71 pop esi
-    m.regs.esi = pop();
+    m.regs.esi = pop(m);
     // 00408a72 pop edx
-    m.regs.edx = pop();
+    m.regs.edx = pop(m);
     // 00408a73 pop ecx
-    m.regs.ecx = pop();
+    m.regs.ecx = pop(m);
     // 00408a74 pop ebx
-    m.regs.ebx = pop();
+    m.regs.ebx = pop(m);
     // 00408a75 ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x00408a76() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00408a76 push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 00408a77 push esi
-    push(m.regs.esi);
+    push(m, m.regs.esi);
     // 00408a78 push edi
-    push(m.regs.edi);
+    push(m, m.regs.edi);
     // 00408a79 enter 24h,0
-    enter(0x24u16, 0);
+    enter(m, 0x24u16, 0);
     // 00408a7d push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 00408a7e push ebx
-    push(m.regs.ebx);
+    push(m, m.regs.ebx);
     // 00408a7f mov [ebp-1Ch],edx
     m.memory
         .write::<u32>(m.regs.ebp.wrapping_add(0xffffffe4u32), m.regs.edx);
@@ -36144,7 +36278,7 @@ pub fn x00408aa3() -> Cont {
         &mut m.flags,
     );
     // 00408aaa jge near ptr 00408BD2h
-    jge(Cont(x00408ab0), Cont(x00408bd2))
+    jge(m, Cont(x00408ab0), Cont(x00408bd2))
 }
 
 pub fn x00408ab0() -> Cont {
@@ -36164,7 +36298,7 @@ pub fn x00408ab0() -> Cont {
         &mut m.flags,
     );
     // 00408abd je short 00408AD1h
-    je(Cont(x00408abf), Cont(x00408ad1))
+    je(m, Cont(x00408abf), Cont(x00408ad1))
 }
 
 pub fn x00408abf() -> Cont {
@@ -36177,7 +36311,7 @@ pub fn x00408abf() -> Cont {
         &mut m.flags,
     );
     // 00408ac2 je short 00408AD1h
-    je(Cont(x00408ac4), Cont(x00408ad1))
+    je(m, Cont(x00408ac4), Cont(x00408ad1))
 }
 
 pub fn x00408ac4() -> Cont {
@@ -36212,7 +36346,7 @@ pub fn x00408ad1() -> Cont {
         &mut m.flags,
     );
     // 00408ad4 je short 00408AE9h
-    je(Cont(x00408ad6), Cont(x00408ae9))
+    je(m, Cont(x00408ad6), Cont(x00408ae9))
 }
 
 pub fn x00408ad6() -> Cont {
@@ -36225,7 +36359,7 @@ pub fn x00408ad6() -> Cont {
         &mut m.flags,
     );
     // 00408ad9 je short 00408AE9h
-    je(Cont(x00408adb), Cont(x00408ae9))
+    je(m, Cont(x00408adb), Cont(x00408ae9))
 }
 
 pub fn x00408adb() -> Cont {
@@ -36250,7 +36384,7 @@ pub fn x00408ae9() -> Cont {
         &mut m.flags,
     );
     // 00408aec je short 00408B01h
-    je(Cont(x00408aee), Cont(x00408b01))
+    je(m, Cont(x00408aee), Cont(x00408b01))
 }
 
 pub fn x00408aee() -> Cont {
@@ -36263,7 +36397,7 @@ pub fn x00408aee() -> Cont {
         &mut m.flags,
     );
     // 00408af1 je short 00408B01h
-    je(Cont(x00408af3), Cont(x00408b01))
+    je(m, Cont(x00408af3), Cont(x00408b01))
 }
 
 pub fn x00408af3() -> Cont {
@@ -36288,7 +36422,7 @@ pub fn x00408b01() -> Cont {
         &mut m.flags,
     );
     // 00408b04 je short 00408B0Dh
-    je(Cont(x00408b06), Cont(x00408b0d))
+    je(m, Cont(x00408b06), Cont(x00408b0d))
 }
 
 pub fn x00408b06() -> Cont {
@@ -36310,7 +36444,7 @@ pub fn x00408b0d() -> Cont {
         &mut m.flags,
     );
     // 00408b10 je short 00408B20h
-    je(Cont(x00408b12), Cont(x00408b20))
+    je(m, Cont(x00408b12), Cont(x00408b20))
 }
 
 pub fn x00408b12() -> Cont {
@@ -36335,7 +36469,7 @@ pub fn x00408b20() -> Cont {
         &mut m.flags,
     );
     // 00408b23 je near ptr 00408BACh
-    je(Cont(x00408b29), Cont(x00408bac))
+    je(m, Cont(x00408b29), Cont(x00408bac))
 }
 
 pub fn x00408b29() -> Cont {
@@ -36357,7 +36491,7 @@ pub fn x00408b29() -> Cont {
         &mut m.flags,
     );
     // 00408b3c jge near ptr 00408AA3h
-    jge(Cont(x00408b42), Cont(x00408aa3))
+    jge(m, Cont(x00408b42), Cont(x00408aa3))
 }
 
 pub fn x00408b35() -> Cont {
@@ -36374,7 +36508,7 @@ pub fn x00408b35() -> Cont {
         &mut m.flags,
     );
     // 00408b3c jge near ptr 00408AA3h
-    jge(Cont(x00408b42), Cont(x00408aa3))
+    jge(m, Cont(x00408b42), Cont(x00408aa3))
 }
 
 pub fn x00408b39() -> Cont {
@@ -36387,7 +36521,7 @@ pub fn x00408b39() -> Cont {
         &mut m.flags,
     );
     // 00408b3c jge near ptr 00408AA3h
-    jge(Cont(x00408b42), Cont(x00408aa3))
+    jge(m, Cont(x00408b42), Cont(x00408aa3))
 }
 
 pub fn x00408b42() -> Cont {
@@ -36396,7 +36530,7 @@ pub fn x00408b42() -> Cont {
     // 00408b42 test esi,esi
     and(m.regs.esi, m.regs.esi, &mut m.flags);
     // 00408b44 jne short 00408B4Eh
-    jne(Cont(x00408b46), Cont(x00408b4e))
+    jne(m, Cont(x00408b46), Cont(x00408b4e))
 }
 
 pub fn x00408b46() -> Cont {
@@ -36595,7 +36729,7 @@ pub fn x00408bac() -> Cont {
         &mut m.flags,
     );
     // 00408bb1 jge near ptr 00408AA3h
-    jge(Cont(x00408bb7), Cont(x00408aa3))
+    jge(m, Cont(x00408bb7), Cont(x00408aa3))
 }
 
 pub fn x00408bae() -> Cont {
@@ -36608,7 +36742,7 @@ pub fn x00408bae() -> Cont {
         &mut m.flags,
     );
     // 00408bb1 jge near ptr 00408AA3h
-    jge(Cont(x00408bb7), Cont(x00408aa3))
+    jge(m, Cont(x00408bb7), Cont(x00408aa3))
 }
 
 pub fn x00408bb7() -> Cont {
@@ -36650,30 +36784,30 @@ pub fn x00408bd2() -> Cont {
         &mut m.flags,
     );
     // 00408bd7 leave
-    leave();
+    leave(m);
     // 00408bd8 pop edi
-    m.regs.edi = pop();
+    m.regs.edi = pop(m);
     // 00408bd9 pop esi
-    m.regs.esi = pop();
+    m.regs.esi = pop(m);
     // 00408bda pop ecx
-    m.regs.ecx = pop();
+    m.regs.ecx = pop(m);
     // 00408bdb ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x00408bdc() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00408bdc push ebx
-    push(m.regs.ebx);
+    push(m, m.regs.ebx);
     // 00408bdd push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 00408bde push esi
-    push(m.regs.esi);
+    push(m, m.regs.esi);
     // 00408bdf push edi
-    push(m.regs.edi);
+    push(m, m.regs.edi);
     // 00408be0 enter 4,0
-    enter(0x4u16, 0);
+    enter(m, 0x4u16, 0);
     // 00408be4 mov ebx,eax
     m.regs.ebx = m.regs.eax;
     // 00408be6 mov edi,edx
@@ -36692,7 +36826,7 @@ pub fn x00408bec() -> Cont {
     // 00408bed cmp edx,40h
     sub(m.regs.edx, 0x40u32, &mut m.flags);
     // 00408bf0 jge short 00408C49h
-    jge(Cont(x00408bf2), Cont(x00408c49))
+    jge(m, Cont(x00408bf2), Cont(x00408c49))
 }
 
 pub fn x00408bf2() -> Cont {
@@ -36741,7 +36875,7 @@ pub fn x00408bf2() -> Cont {
     // 00408c1f cmp eax,20h
     sub(m.regs.eax, 0x20u32, &mut m.flags);
     // 00408c22 jl short 00408BFBh
-    jl(Cont(x00408c24), Cont(x00408bfb))
+    jl(m, Cont(x00408c24), Cont(x00408bfb))
 }
 
 pub fn x00408bfb() -> Cont {
@@ -36785,7 +36919,7 @@ pub fn x00408bfb() -> Cont {
     // 00408c1f cmp eax,20h
     sub(m.regs.eax, 0x20u32, &mut m.flags);
     // 00408c22 jl short 00408BFBh
-    jl(Cont(x00408c24), Cont(x00408bfb))
+    jl(m, Cont(x00408c24), Cont(x00408bfb))
 }
 
 pub fn x00408c24() -> Cont {
@@ -36834,7 +36968,7 @@ pub fn x00408c24() -> Cont {
     // 00408c42 cmp ecx,8
     sub(m.regs.ecx, 0x8u32, &mut m.flags);
     // 00408c45 jl short 00408C26h
-    jl(Cont(x00408c47), Cont(x00408c26))
+    jl(m, Cont(x00408c47), Cont(x00408c26))
 }
 
 pub fn x00408c26() -> Cont {
@@ -36881,7 +37015,7 @@ pub fn x00408c26() -> Cont {
     // 00408c42 cmp ecx,8
     sub(m.regs.ecx, 0x8u32, &mut m.flags);
     // 00408c45 jl short 00408C26h
-    jl(Cont(x00408c47), Cont(x00408c26))
+    jl(m, Cont(x00408c47), Cont(x00408c26))
 }
 
 pub fn x00408c47() -> Cont {
@@ -36895,30 +37029,30 @@ pub fn x00408c49() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00408c49 leave
-    leave();
+    leave(m);
     // 00408c4a pop edi
-    m.regs.edi = pop();
+    m.regs.edi = pop(m);
     // 00408c4b pop esi
-    m.regs.esi = pop();
+    m.regs.esi = pop(m);
     // 00408c4c pop ecx
-    m.regs.ecx = pop();
+    m.regs.ecx = pop(m);
     // 00408c4d pop ebx
-    m.regs.ebx = pop();
+    m.regs.ebx = pop(m);
     // 00408c4e ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x00408c4f() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00408c4f push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 00408c50 push esi
-    push(m.regs.esi);
+    push(m, m.regs.esi);
     // 00408c51 push edi
-    push(m.regs.edi);
+    push(m, m.regs.edi);
     // 00408c52 enter 10h,0
-    enter(0x10u16, 0);
+    enter(m, 0x10u16, 0);
     // 00408c56 mov esi,eax
     m.regs.esi = m.regs.eax;
     // 00408c58 mov [ebp-10h],ebx
@@ -36936,9 +37070,9 @@ pub fn x00408c4f() -> Cont {
     // 00408c65 shl eax,5
     m.regs.eax = shl(m.regs.eax, 0x5u8, &mut m.flags);
     // 00408c68 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 00408c69 call 00401A60h
-    call(0x408c6e, Cont(x00401a60))
+    call(m, 0x408c6e, Cont(x00401a60))
 }
 
 pub fn x00408c6e() -> Cont {
@@ -36954,7 +37088,7 @@ pub fn x00408c6e() -> Cont {
     // 00408c76 mov eax,esi
     m.regs.eax = m.regs.esi;
     // 00408c78 call 004089ADh
-    call(0x408c7d, Cont(x004089ad))
+    call(m, 0x408c7d, Cont(x004089ad))
 }
 
 pub fn x00408c7d() -> Cont {
@@ -36965,7 +37099,7 @@ pub fn x00408c7d() -> Cont {
     // 00408c82 test edi,edi
     and(m.regs.edi, m.regs.edi, &mut m.flags);
     // 00408c84 jle near ptr 00408D43h
-    jle(Cont(x00408c8a), Cont(x00408d43))
+    jle(m, Cont(x00408c8a), Cont(x00408d43))
 }
 
 pub fn x00408c82() -> Cont {
@@ -36974,7 +37108,7 @@ pub fn x00408c82() -> Cont {
     // 00408c82 test edi,edi
     and(m.regs.edi, m.regs.edi, &mut m.flags);
     // 00408c84 jle near ptr 00408D43h
-    jle(Cont(x00408c8a), Cont(x00408d43))
+    jle(m, Cont(x00408c8a), Cont(x00408d43))
 }
 
 pub fn x00408c8a() -> Cont {
@@ -36983,7 +37117,7 @@ pub fn x00408c8a() -> Cont {
     // 00408c8a cmp ebx,10h
     sub(m.regs.ebx, 0x10u32, &mut m.flags);
     // 00408c8d jne short 00408CA4h
-    jne(Cont(x00408c8f), Cont(x00408ca4))
+    jne(m, Cont(x00408c8f), Cont(x00408ca4))
 }
 
 pub fn x00408c8f() -> Cont {
@@ -36992,7 +37126,7 @@ pub fn x00408c8f() -> Cont {
     // 00408c8f cmp edi,ebx
     sub(m.regs.edi, m.regs.ebx, &mut m.flags);
     // 00408c91 jg short 00408C95h
-    jg(Cont(x00408c93), Cont(x00408c95))
+    jg(m, Cont(x00408c93), Cont(x00408c95))
 }
 
 pub fn x00408c93() -> Cont {
@@ -37005,7 +37139,7 @@ pub fn x00408c93() -> Cont {
     // 00408c98 mov eax,esi
     m.regs.eax = m.regs.esi;
     // 00408c9a call 00408A76h
-    call(0x408c9f, Cont(x00408a76))
+    call(m, 0x408c9f, Cont(x00408a76))
 }
 
 pub fn x00408c95() -> Cont {
@@ -37016,7 +37150,7 @@ pub fn x00408c95() -> Cont {
     // 00408c98 mov eax,esi
     m.regs.eax = m.regs.esi;
     // 00408c9a call 00408A76h
-    call(0x408c9f, Cont(x00408a76))
+    call(m, 0x408c9f, Cont(x00408a76))
 }
 
 pub fn x00408c9f() -> Cont {
@@ -37044,7 +37178,7 @@ pub fn x00408c9f() -> Cont {
     // 00408cb1 mov eax,esi
     m.regs.eax = m.regs.esi;
     // 00408cb3 call 00408BDCh
-    call(0x408cb8, Cont(x00408bdc))
+    call(m, 0x408cb8, Cont(x00408bdc))
 }
 
 pub fn x00408ca4() -> Cont {
@@ -37061,7 +37195,7 @@ pub fn x00408ca4() -> Cont {
     // 00408cb1 mov eax,esi
     m.regs.eax = m.regs.esi;
     // 00408cb3 call 00408BDCh
-    call(0x408cb8, Cont(x00408bdc))
+    call(m, 0x408cb8, Cont(x00408bdc))
 }
 
 pub fn x00408cb8() -> Cont {
@@ -37079,7 +37213,7 @@ pub fn x00408cbc() -> Cont {
     // 00408cbc cmp eax,0FFFFFF80h
     sub(m.regs.eax, 0xffffff80u32, &mut m.flags);
     // 00408cbf jge short 00408CC8h
-    jge(Cont(x00408cc1), Cont(x00408cc8))
+    jge(m, Cont(x00408cc1), Cont(x00408cc8))
 }
 
 pub fn x00408cc1() -> Cont {
@@ -37100,7 +37234,7 @@ pub fn x00408cc1() -> Cont {
     // 00408ccf cmp edx,20h
     sub(m.regs.edx, 0x20u32, &mut m.flags);
     // 00408cd2 jge short 00408D06h
-    jge(Cont(x00408cd4), Cont(x00408d06))
+    jge(m, Cont(x00408cd4), Cont(x00408d06))
 }
 
 pub fn x00408cc8() -> Cont {
@@ -37118,7 +37252,7 @@ pub fn x00408cc8() -> Cont {
     // 00408ccf cmp edx,20h
     sub(m.regs.edx, 0x20u32, &mut m.flags);
     // 00408cd2 jge short 00408D06h
-    jge(Cont(x00408cd4), Cont(x00408d06))
+    jge(m, Cont(x00408cd4), Cont(x00408d06))
 }
 
 pub fn x00408cd4() -> Cont {
@@ -37146,7 +37280,7 @@ pub fn x00408cd4() -> Cont {
     m.memory.write::<f32>(m.regs.esp, m.fpu.get(0) as f32);
     m.fpu.pop();
     // 00408cf0 call 00408860h
-    call(0x408cf5, Cont(x00408860))
+    call(m, 0x408cf5, Cont(x00408860))
 }
 
 pub fn x00408cf5() -> Cont {
@@ -37158,7 +37292,7 @@ pub fn x00408cf5() -> Cont {
     // 00408cf8 cmp eax,7Fh
     sub(m.regs.eax, 0x7fu32, &mut m.flags);
     // 00408cfb jle short 00408CBCh
-    jle(Cont(x00408cfd), Cont(x00408cbc))
+    jle(m, Cont(x00408cfd), Cont(x00408cbc))
 }
 
 pub fn x00408cfd() -> Cont {
@@ -37197,7 +37331,7 @@ pub fn x00408d06() -> Cont {
     // 00408d1f test edx,edx
     and(m.regs.edx, m.regs.edx, &mut m.flags);
     // 00408d21 jge short 00408D0Bh
-    jge(Cont(x00408d23), Cont(x00408d0b))
+    jge(m, Cont(x00408d23), Cont(x00408d0b))
 }
 
 pub fn x00408d0b() -> Cont {
@@ -37224,7 +37358,7 @@ pub fn x00408d0b() -> Cont {
     // 00408d1f test edx,edx
     and(m.regs.edx, m.regs.edx, &mut m.flags);
     // 00408d21 jge short 00408D0Bh
-    jge(Cont(x00408d23), Cont(x00408d0b))
+    jge(m, Cont(x00408d23), Cont(x00408d0b))
 }
 
 pub fn x00408d23() -> Cont {
@@ -37246,7 +37380,7 @@ pub fn x00408d23() -> Cont {
     // 00408d37 cmp edx,20h
     sub(m.regs.edx, 0x20u32, &mut m.flags);
     // 00408d3a jl short 00408D25h
-    jl(Cont(x00408d3c), Cont(x00408d25))
+    jl(m, Cont(x00408d3c), Cont(x00408d25))
 }
 
 pub fn x00408d25() -> Cont {
@@ -37266,7 +37400,7 @@ pub fn x00408d25() -> Cont {
     // 00408d37 cmp edx,20h
     sub(m.regs.edx, 0x20u32, &mut m.flags);
     // 00408d3a jl short 00408D25h
-    jl(Cont(x00408d3c), Cont(x00408d25))
+    jl(m, Cont(x00408d3c), Cont(x00408d25))
 }
 
 pub fn x00408d3c() -> Cont {
@@ -37305,9 +37439,12 @@ pub fn x00408d43() -> Cont {
     // 00408d53 rep movsb
     rep(m, Rep::REP, movsb);
     // 00408d55 push dword ptr [ebp-4]
-    push(m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32)));
+    push(
+        m,
+        m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32)),
+    );
     // 00408d58 call 00401A78h
-    call(0x408d5d, Cont(x00401a78))
+    call(m, 0x408d5d, Cont(x00401a78))
 }
 
 pub fn x00408d5d() -> Cont {
@@ -37316,36 +37453,36 @@ pub fn x00408d5d() -> Cont {
     // 00408d5d add esp,4
     m.regs.esp = add(m.regs.esp, 0x4u32, &mut m.flags);
     // 00408d60 leave
-    leave();
+    leave(m);
     // 00408d61 pop edi
-    m.regs.edi = pop();
+    m.regs.edi = pop(m);
     // 00408d62 pop esi
-    m.regs.esi = pop();
+    m.regs.esi = pop(m);
     // 00408d63 pop ecx
-    m.regs.ecx = pop();
+    m.regs.ecx = pop(m);
     // 00408d64 ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x00408d65() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00408d65 push ebx
-    push(m.regs.ebx);
+    push(m, m.regs.ebx);
     // 00408d66 push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 00408d67 push edx
-    push(m.regs.edx);
+    push(m, m.regs.edx);
     // 00408d68 push esi
-    push(m.regs.esi);
+    push(m, m.regs.esi);
     // 00408d69 push edi
-    push(m.regs.edi);
+    push(m, m.regs.edi);
     // 00408d6a enter 4,0
-    enter(0x4u16, 0);
+    enter(m, 0x4u16, 0);
     // 00408d6e push 100000h
-    push(0x100000u32);
+    push(m, 0x100000u32);
     // 00408d73 call 00401A60h
-    call(0x408d78, Cont(x00401a60))
+    call(m, 0x408d78, Cont(x00401a60))
 }
 
 pub fn x00408d78() -> Cont {
@@ -37373,7 +37510,7 @@ pub fn x00408d78() -> Cont {
     // 00408d9a mov eax,433FB4h
     m.regs.eax = 0x433fb4u32;
     // 00408d9f call 00408C4Fh
-    call(0x408da4, Cont(x00408c4f))
+    call(m, 0x408da4, Cont(x00408c4f))
 }
 
 pub fn x00408da4() -> Cont {
@@ -37382,51 +37519,51 @@ pub fn x00408da4() -> Cont {
     // 00408da4 mov eax,[ebp-4]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xfffffffcu32));
     // 00408da7 leave
-    leave();
+    leave(m);
     // 00408da8 pop edi
-    m.regs.edi = pop();
+    m.regs.edi = pop(m);
     // 00408da9 pop esi
-    m.regs.esi = pop();
+    m.regs.esi = pop(m);
     // 00408daa pop edx
-    m.regs.edx = pop();
+    m.regs.edx = pop(m);
     // 00408dab pop ecx
-    m.regs.ecx = pop();
+    m.regs.ecx = pop(m);
     // 00408dac pop ebx
-    m.regs.ebx = pop();
+    m.regs.ebx = pop(m);
     // 00408dad ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x004090c7() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004090c7 call 004090CCh
-    call(0x4090cc, Cont(x004090cc))
+    call(m, 0x4090cc, Cont(x004090cc))
 }
 
 pub fn x004090cc() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004090cc pop ebp
-    m.regs.ebp = pop();
+    m.regs.ebp = pop(m);
     // 004090cd mov ebp,ds:[4377B4h]
     m.regs.ebp = m.memory.read::<u32>(0x4377b4u32);
     // 004090d3 ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x004090d4() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004090d4 call 004090D9h
-    call(0x4090d9, Cont(x004090d9))
+    call(m, 0x4090d9, Cont(x004090d9))
 }
 
 pub fn x004090d9() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004090d9 pop esi
-    m.regs.esi = pop();
+    m.regs.esi = pop(m);
     // 004090da add esi,0E87h
     m.regs.esi = add(m.regs.esi, 0xe87u32, &mut m.flags);
     // 004090e0 lea edi,[ebp+477Bh]
@@ -37450,7 +37587,7 @@ pub fn x004090d9() -> Cont {
     // 004090f6 dec cl
     m.regs.set_cl(dec(m.regs.get_cl(), &mut m.flags));
     // 004090f8 jne short 004090F2h
-    jne(Cont(x004090fa), Cont(x004090f2))
+    jne(m, Cont(x004090fa), Cont(x004090f2))
 }
 
 pub fn x004090f2() -> Cont {
@@ -37465,7 +37602,7 @@ pub fn x004090f2() -> Cont {
     // 004090f6 dec cl
     m.regs.set_cl(dec(m.regs.get_cl(), &mut m.flags));
     // 004090f8 jne short 004090F2h
-    jne(Cont(x004090fa), Cont(x004090f2))
+    jne(m, Cont(x004090fa), Cont(x004090f2))
 }
 
 pub fn x004090fa() -> Cont {
@@ -37484,7 +37621,7 @@ pub fn x004090fa() -> Cont {
     // 00409106 dec cl
     m.regs.set_cl(dec(m.regs.get_cl(), &mut m.flags));
     // 00409108 jne short 00409102h
-    jne(Cont(x0040910a), Cont(x00409102))
+    jne(m, Cont(x0040910a), Cont(x00409102))
 }
 
 pub fn x00409102() -> Cont {
@@ -37499,7 +37636,7 @@ pub fn x00409102() -> Cont {
     // 00409106 dec cl
     m.regs.set_cl(dec(m.regs.get_cl(), &mut m.flags));
     // 00409108 jne short 00409102h
-    jne(Cont(x0040910a), Cont(x00409102))
+    jne(m, Cont(x0040910a), Cont(x00409102))
 }
 
 pub fn x0040910a() -> Cont {
@@ -37516,7 +37653,7 @@ pub fn x0040910a() -> Cont {
     // 00409111 dec cl
     m.regs.set_cl(dec(m.regs.get_cl(), &mut m.flags));
     // 00409113 jne short 0040910Ah
-    jne(Cont(x00409115), Cont(x0040910a))
+    jne(m, Cont(x00409115), Cont(x0040910a))
 }
 
 pub fn x00409115() -> Cont {
@@ -37533,7 +37670,7 @@ pub fn x00409115() -> Cont {
     // 0040911c dec cl
     m.regs.set_cl(dec(m.regs.get_cl(), &mut m.flags));
     // 0040911e jne short 00409115h
-    jne(Cont(x00409120), Cont(x00409115))
+    jne(m, Cont(x00409120), Cont(x00409115))
 }
 
 pub fn x00409120() -> Cont {
@@ -37548,14 +37685,14 @@ pub fn x00409120() -> Cont {
     // 00409125 dec cl
     m.regs.set_cl(dec(m.regs.get_cl(), &mut m.flags));
     // 00409127 jne short 00409120h
-    jne(Cont(x00409129), Cont(x00409120))
+    jne(m, Cont(x00409129), Cont(x00409120))
 }
 
 pub fn x00409129() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00409129 ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x0040912a() -> Cont {
@@ -37577,7 +37714,7 @@ pub fn x0040912a() -> Cont {
     m.memory
         .write::<u8>(m.regs.ebp.wrapping_add(m.regs.ebx), 0x0u8);
     // 0040913e jne short 00409138h
-    jne(Cont(x00409140), Cont(x00409138))
+    jne(m, Cont(x00409140), Cont(x00409138))
 }
 
 pub fn x00409138() -> Cont {
@@ -37589,7 +37726,7 @@ pub fn x00409138() -> Cont {
     m.memory
         .write::<u8>(m.regs.ebp.wrapping_add(m.regs.ebx), 0x0u8);
     // 0040913e jne short 00409138h
-    jne(Cont(x00409140), Cont(x00409138))
+    jne(m, Cont(x00409140), Cont(x00409138))
 }
 
 pub fn x00409140() -> Cont {
@@ -37601,7 +37738,7 @@ pub fn x00409140() -> Cont {
     // 00409144 cmp dword ptr [esi],4D584Dh
     sub(m.memory.read::<u32>(m.regs.esi), 0x4d584du32, &mut m.flags);
     // 0040914a jne near ptr 004091BFh
-    jne(Cont(x00409150), Cont(x004091bf))
+    jne(m, Cont(x00409150), Cont(x004091bf))
 }
 
 pub fn x00409150() -> Cont {
@@ -37664,7 +37801,7 @@ pub fn x00409172() -> Cont {
         &mut m.flags,
     );
     // 00409176 je short 004091A5h
-    je(Cont(x00409178), Cont(x004091a5))
+    je(m, Cont(x00409178), Cont(x004091a5))
 }
 
 pub fn x00409178() -> Cont {
@@ -37686,7 +37823,7 @@ pub fn x00409178() -> Cont {
     // 00409184 xor eax,eax
     m.regs.eax = xor(m.regs.eax, m.regs.eax, &mut m.flags);
     // 00409186 jecxz 00409191h
-    jecxz(Cont(x00409188), Cont(x00409191))
+    jecxz(m, Cont(x00409188), Cont(x00409191))
 }
 
 pub fn x00409188() -> Cont {
@@ -37720,7 +37857,7 @@ pub fn x00409191() -> Cont {
     // 00409194 xor eax,eax
     m.regs.eax = xor(m.regs.eax, m.regs.eax, &mut m.flags);
     // 00409196 jecxz 004091A5h
-    jecxz(Cont(x00409198), Cont(x004091a5))
+    jecxz(m, Cont(x00409198), Cont(x004091a5))
 }
 
 pub fn x00409198() -> Cont {
@@ -37764,7 +37901,7 @@ pub fn x004091a5() -> Cont {
     // 004091b0 add esi,eax
     m.regs.esi = add(m.regs.esi, m.regs.eax, &mut m.flags);
     // 004091b2 call 004090D4h
-    call(0x4091b7, Cont(x004090d4))
+    call(m, 0x4091b7, Cont(x004090d4))
 }
 
 pub fn x004091b7() -> Cont {
@@ -37789,7 +37926,7 @@ pub fn x004091bf() -> Cont {
     // 004091c8 popa
     popad(m);
     // 004091c9 ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x004091c1() -> Cont {
@@ -37801,16 +37938,16 @@ pub fn x004091c1() -> Cont {
     // 004091c8 popa
     popad(m);
     // 004091c9 ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x00409edf() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00409edf push ebp
-    push(m.regs.ebp);
+    push(m, m.regs.ebp);
     // 00409ee0 call 004090C7h
-    call(0x409ee5, Cont(x004090c7))
+    call(m, 0x409ee5, Cont(x004090c7))
 }
 
 pub fn x00409ee5() -> Cont {
@@ -37823,7 +37960,7 @@ pub fn x00409ee5() -> Cont {
         &mut m.flags,
     );
     // 00409eec jne short 00409F47h
-    jne(Cont(x00409eee), Cont(x00409f47))
+    jne(m, Cont(x00409eee), Cont(x00409f47))
 }
 
 pub fn x00409eee() -> Cont {
@@ -37867,7 +38004,7 @@ pub fn x00409eee() -> Cont {
     // 00409f1e cmp cl,20h
     sub(m.regs.get_cl(), 0x20u8, &mut m.flags);
     // 00409f21 jne short 00409F10h
-    jne(Cont(x00409f23), Cont(x00409f10))
+    jne(m, Cont(x00409f23), Cont(x00409f10))
 }
 
 pub fn x00409f10() -> Cont {
@@ -37888,7 +38025,7 @@ pub fn x00409f10() -> Cont {
     // 00409f1e cmp cl,20h
     sub(m.regs.get_cl(), 0x20u8, &mut m.flags);
     // 00409f21 jne short 00409F10h
-    jne(Cont(x00409f23), Cont(x00409f10))
+    jne(m, Cont(x00409f23), Cont(x00409f10))
 }
 
 pub fn x00409f23() -> Cont {
@@ -37929,27 +38066,27 @@ pub fn x00409f23() -> Cont {
         ),
     );
     // 00409f47 pop ebp
-    m.regs.ebp = pop();
+    m.regs.ebp = pop(m);
     // 00409f48 ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x00409f47() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00409f47 pop ebp
-    m.regs.ebp = pop();
+    m.regs.ebp = pop(m);
     // 00409f48 ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x00409f49() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00409f49 push ebp
-    push(m.regs.ebp);
+    push(m, m.regs.ebp);
     // 00409f4a call 004090C7h
-    call(0x409f4f, Cont(x004090c7))
+    call(m, 0x409f4f, Cont(x004090c7))
 }
 
 pub fn x00409f4f() -> Cont {
@@ -37962,7 +38099,7 @@ pub fn x00409f4f() -> Cont {
         &mut m.flags,
     );
     // 00409f56 je short 00409F5Eh
-    je(Cont(x00409f58), Cont(x00409f5e))
+    je(m, Cont(x00409f58), Cont(x00409f5e))
 }
 
 pub fn x00409f58() -> Cont {
@@ -37977,18 +38114,18 @@ pub fn x00409f58() -> Cont {
         ),
     );
     // 00409f5e pop ebp
-    m.regs.ebp = pop();
+    m.regs.ebp = pop(m);
     // 00409f5f ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x00409f5e() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00409f5e pop ebp
-    m.regs.ebp = pop();
+    m.regs.ebp = pop(m);
     // 00409f5f ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x0040a281() -> Cont {
@@ -38011,22 +38148,22 @@ pub fn x0040a281() -> Cont {
     // 0040a295 mov esi,[esp+28h]
     m.regs.esi = m.memory.read::<u32>(m.regs.esp.wrapping_add(0x28u32));
     // 0040a299 call 0040912Ah
-    call(0x40a29e, Cont(x0040912a))
+    call(m, 0x40a29e, Cont(x0040912a))
 }
 
 pub fn x0040a29e() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 0040a29e push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 0040a29f lea ecx,[ebx+8]
     m.regs.ecx = m.regs.ebx.wrapping_add(0x8u32);
     // 0040a2a2 push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 0040a2a3 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 0040a2a4 call 0040A556h
-    call(0x40a2a9, Cont(x0040a556))
+    call(m, 0x40a2a9, Cont(x0040a556))
 }
 
 pub fn x0040a2a9() -> Cont {
@@ -38035,7 +38172,7 @@ pub fn x0040a2a9() -> Cont {
     // 0040a2a9 or eax,eax
     m.regs.eax = or(m.regs.eax, m.regs.eax, &mut m.flags);
     // 0040a2ab jne short 0040A2D1h
-    jne(Cont(x0040a2ad), Cont(x0040a2d1))
+    jne(m, Cont(x0040a2ad), Cont(x0040a2d1))
 }
 
 pub fn x0040a2ad() -> Cont {
@@ -38044,17 +38181,18 @@ pub fn x0040a2ad() -> Cont {
     // 0040a2ad mov al,3
     m.regs.set_al(0x3u8);
     // 0040a2af push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 0040a2b0 push dword ptr [esp+28h]
-    push(m.memory.read::<u32>(m.regs.esp.wrapping_add(0x28u32)));
+    push(m, m.memory.read::<u32>(m.regs.esp.wrapping_add(0x28u32)));
     // 0040a2b4 mov esi,[ebx+8]
     m.regs.esi = m.memory.read::<u32>(m.regs.ebx.wrapping_add(0x8u32));
     // 0040a2b7 push esi
-    push(m.regs.esi);
+    push(m, m.regs.esi);
     // 0040a2b8 mov edi,[esi]
     m.regs.edi = m.memory.read::<u32>(m.regs.esi);
     // 0040a2ba call dword ptr [edi+18h]
     call(
+        m,
         0x40a2bd,
         indirect(m.memory.read(m.regs.edi.wrapping_add(0x18u32))),
     )
@@ -38066,24 +38204,25 @@ pub fn x0040a2bd() -> Cont {
     // 0040a2bd or eax,eax
     m.regs.eax = or(m.regs.eax, m.regs.eax, &mut m.flags);
     // 0040a2bf jne short 0040A2D1h
-    jne(Cont(x0040a2c1), Cont(x0040a2d1))
+    jne(m, Cont(x0040a2c1), Cont(x0040a2d1))
 }
 
 pub fn x0040a2c1() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 0040a2c1 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 0040a2c2 lea ebp,[ebx+4]
     m.regs.ebp = m.regs.ebx.wrapping_add(0x4u32);
     // 0040a2c5 push ebp
-    push(m.regs.ebp);
+    push(m, m.regs.ebp);
     // 0040a2c6 push 40A4B7h
-    push(0x40a4b7u32);
+    push(m, 0x40a4b7u32);
     // 0040a2cb push esi
-    push(m.regs.esi);
+    push(m, m.regs.esi);
     // 0040a2cc call dword ptr [edi+0Ch]
     call(
+        m,
         0x40a2cf,
         indirect(m.memory.read(m.regs.edi.wrapping_add(0xcu32))),
     )
@@ -38095,31 +38234,32 @@ pub fn x0040a2cf() -> Cont {
     // 0040a2cf or eax,eax
     m.regs.eax = or(m.regs.eax, m.regs.eax, &mut m.flags);
     // 0040a2d1 jne short 0040A2E2h
-    jne(Cont(x0040a2d3), Cont(x0040a2e2))
+    jne(m, Cont(x0040a2d3), Cont(x0040a2e2))
 }
 
 pub fn x0040a2d1() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 0040a2d1 jne short 0040A2E2h
-    jne(Cont(x0040a2d3), Cont(x0040a2e2))
+    jne(m, Cont(x0040a2d3), Cont(x0040a2e2))
 }
 
 pub fn x0040a2d3() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 0040a2d3 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 0040a2d4 lea edx,[ebx]
     m.regs.edx = m.regs.ebx;
     // 0040a2d6 push edx
-    push(m.regs.edx);
+    push(m, m.regs.edx);
     // 0040a2d7 push 40A4A3h
-    push(0x40a4a3u32);
+    push(m, 0x40a4a3u32);
     // 0040a2dc push esi
-    push(m.regs.esi);
+    push(m, m.regs.esi);
     // 0040a2dd call dword ptr [edi+0Ch]
     call(
+        m,
         0x40a2e0,
         indirect(m.memory.read(m.regs.edi.wrapping_add(0xcu32))),
     )
@@ -38131,14 +38271,14 @@ pub fn x0040a2e0() -> Cont {
     // 0040a2e0 or eax,eax
     m.regs.eax = or(m.regs.eax, m.regs.eax, &mut m.flags);
     // 0040a2e2 jne near ptr 0040A37Eh
-    jne(Cont(x0040a2e8), Cont(x0040a37e))
+    jne(m, Cont(x0040a2e8), Cont(x0040a37e))
 }
 
 pub fn x0040a2e2() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 0040a2e2 jne near ptr 0040A37Eh
-    jne(Cont(x0040a2e8), Cont(x0040a37e))
+    jne(m, Cont(x0040a2e8), Cont(x0040a37e))
 }
 
 pub fn x0040a2e8() -> Cont {
@@ -38147,7 +38287,7 @@ pub fn x0040a2e8() -> Cont {
     // 0040a2e8 lea edi,[ebx+34h]
     m.regs.edi = m.regs.ebx.wrapping_add(0x34u32);
     // 0040a2eb push edi
-    push(m.regs.edi);
+    push(m, m.regs.edi);
     // 0040a2ec lea esi,ds:[40A48Fh]
     m.regs.esi = 0x40a48fu32;
     // 0040a2f2 lea ecx,[eax+12h]
@@ -38157,11 +38297,12 @@ pub fn x0040a2e8() -> Cont {
     // 0040a2f7 mov esi,[ebp]
     m.regs.esi = m.memory.read::<u32>(m.regs.ebp);
     // 0040a2fa push esi
-    push(m.regs.esi);
+    push(m, m.regs.esi);
     // 0040a2fb mov edi,[esi]
     m.regs.edi = m.memory.read::<u32>(m.regs.esi);
     // 0040a2fd call dword ptr [edi+38h]
     call(
+        m,
         0x40a300,
         indirect(m.memory.read(m.regs.edi.wrapping_add(0x38u32))),
     )
@@ -38173,35 +38314,36 @@ pub fn x0040a300() -> Cont {
     // 0040a300 xor esi,esi
     m.regs.esi = xor(m.regs.esi, m.regs.esi, &mut m.flags);
     // 0040a302 push 2
-    push(0x2u32);
+    push(m, 0x2u32);
     // 0040a307 lea edx,[ebx+20h]
     m.regs.edx = m.regs.ebx.wrapping_add(0x20u32);
     // 0040a30a push edx
-    push(m.regs.edx);
+    push(m, m.regs.edx);
     // 0040a30b lea edx,[ebx+1Ch]
     m.regs.edx = m.regs.ebx.wrapping_add(0x1cu32);
     // 0040a30e push edx
-    push(m.regs.edx);
+    push(m, m.regs.edx);
     // 0040a30f lea edx,[ebx+18h]
     m.regs.edx = m.regs.ebx.wrapping_add(0x18u32);
     // 0040a312 push edx
-    push(m.regs.edx);
+    push(m, m.regs.edx);
     // 0040a313 lea edx,[ebx+14h]
     m.regs.edx = m.regs.ebx.wrapping_add(0x14u32);
     // 0040a316 push edx
-    push(m.regs.edx);
+    push(m, m.regs.edx);
     // 0040a317 push esi
-    push(m.regs.esi);
+    push(m, m.regs.esi);
     // 0040a318 push esi
-    push(m.regs.esi);
+    push(m, m.regs.esi);
     // 0040a319 mov ebp,[ebx]
     m.regs.ebp = m.memory.read::<u32>(m.regs.ebx);
     // 0040a31b mov esi,[ebp]
     m.regs.esi = m.memory.read::<u32>(m.regs.ebp);
     // 0040a31e push ebp
-    push(m.regs.ebp);
+    push(m, m.regs.ebp);
     // 0040a31f call dword ptr [esi+2Ch]
     call(
+        m,
         0x40a322,
         indirect(m.memory.read(m.regs.esi.wrapping_add(0x2cu32))),
     )
@@ -38213,7 +38355,7 @@ pub fn x0040a322() -> Cont {
     // 0040a322 or eax,eax
     m.regs.eax = or(m.regs.eax, m.regs.eax, &mut m.flags);
     // 0040a324 jne short 0040A37Eh
-    jne(Cont(x0040a326), Cont(x0040a37e))
+    jne(m, Cont(x0040a326), Cont(x0040a37e))
 }
 
 pub fn x0040a326() -> Cont {
@@ -38232,17 +38374,18 @@ pub fn x0040a326() -> Cont {
     // 0040a334 rep stosb
     rep(m, Rep::REP, stosb);
     // 0040a336 push dword ptr [ebx+20h]
-    push(m.memory.read::<u32>(m.regs.ebx.wrapping_add(0x20u32)));
+    push(m, m.memory.read::<u32>(m.regs.ebx.wrapping_add(0x20u32)));
     // 0040a339 push dword ptr [ebx+1Ch]
-    push(m.memory.read::<u32>(m.regs.ebx.wrapping_add(0x1cu32)));
+    push(m, m.memory.read::<u32>(m.regs.ebx.wrapping_add(0x1cu32)));
     // 0040a33c push dword ptr [ebx+18h]
-    push(m.memory.read::<u32>(m.regs.ebx.wrapping_add(0x18u32)));
+    push(m, m.memory.read::<u32>(m.regs.ebx.wrapping_add(0x18u32)));
     // 0040a33f push dword ptr [ebx+14h]
-    push(m.memory.read::<u32>(m.regs.ebx.wrapping_add(0x14u32)));
+    push(m, m.memory.read::<u32>(m.regs.ebx.wrapping_add(0x14u32)));
     // 0040a342 push ebp
-    push(m.regs.ebp);
+    push(m, m.regs.ebp);
     // 0040a343 call dword ptr [esi+4Ch]
     call(
+        m,
         0x40a346,
         indirect(m.memory.read(m.regs.esi.wrapping_add(0x4cu32))),
     )
@@ -38254,7 +38397,7 @@ pub fn x0040a346() -> Cont {
     // 0040a346 or eax,eax
     m.regs.eax = or(m.regs.eax, m.regs.eax, &mut m.flags);
     // 0040a348 jne short 0040A37Eh
-    jne(Cont(x0040a34a), Cont(x0040a37e))
+    jne(m, Cont(x0040a34a), Cont(x0040a37e))
 }
 
 pub fn x0040a34a() -> Cont {
@@ -38265,19 +38408,20 @@ pub fn x0040a34a() -> Cont {
     // 0040a34c inc al
     m.regs.set_al(inc(m.regs.get_al(), &mut m.flags));
     // 0040a34e push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 0040a34f push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 0040a350 dec al
     m.regs.set_al(dec(m.regs.get_al(), &mut m.flags));
     // 0040a352 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 0040a353 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 0040a354 push ebp
-    push(m.regs.ebp);
+    push(m, m.regs.ebp);
     // 0040a355 call dword ptr [esi+30h]
     call(
+        m,
         0x40a358,
         indirect(m.memory.read(m.regs.esi.wrapping_add(0x30u32))),
     )
@@ -38289,7 +38433,7 @@ pub fn x0040a358() -> Cont {
     // 0040a358 or eax,eax
     m.regs.eax = or(m.regs.eax, m.regs.eax, &mut m.flags);
     // 0040a35a jne short 0040A37Eh
-    jne(Cont(x0040a35c), Cont(x0040a37e))
+    jne(m, Cont(x0040a35c), Cont(x0040a37e))
 }
 
 pub fn x0040a35c() -> Cont {
@@ -38298,19 +38442,19 @@ pub fn x0040a35c() -> Cont {
     // 0040a35c lea edx,[ebx+30h]
     m.regs.edx = m.regs.ebx.wrapping_add(0x30u32);
     // 0040a35f push edx
-    push(m.regs.edx);
+    push(m, m.regs.edx);
     // 0040a360 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 0040a361 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 0040a362 push 40A3C1h
-    push(0x40a3c1u32);
+    push(m, 0x40a3c1u32);
     // 0040a367 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 0040a368 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 0040a369 call 0040A568h
-    call(0x40a36e, Cont(x0040a568))
+    call(m, 0x40a36e, Cont(x0040a568))
 }
 
 pub fn x0040a36e() -> Cont {
@@ -38325,9 +38469,9 @@ pub fn x0040a36e() -> Cont {
         inc(m.memory.read::<u32>(m.regs.esp), &mut m.flags),
     );
     // 0040a374 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 0040a375 call 0040A550h
-    call(0x40a37a, Cont(x0040a550))
+    call(m, 0x40a37a, Cont(x0040a550))
 }
 
 pub fn x0040a37a() -> Cont {
@@ -38345,7 +38489,7 @@ pub fn x0040a37e() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 0040a37e call 0040A38Ah
-    call(0x40a383, Cont(x0040a38a))
+    call(m, 0x40a383, Cont(x0040a38a))
 }
 
 pub fn x0040a383() -> Cont {
@@ -38358,7 +38502,7 @@ pub fn x0040a383() -> Cont {
     // 0040a385 sbb eax,eax
     m.regs.eax = sbb(m.regs.eax, m.regs.eax, &mut m.flags);
     // 0040a387 ret 8
-    ret(8)
+    ret(m, 8)
 }
 
 pub fn x0040a385() -> Cont {
@@ -38367,7 +38511,7 @@ pub fn x0040a385() -> Cont {
     // 0040a385 sbb eax,eax
     m.regs.eax = sbb(m.regs.eax, m.regs.eax, &mut m.flags);
     // 0040a387 ret 8
-    ret(8)
+    ret(m, 8)
 }
 
 pub fn x0040a38a() -> Cont {
@@ -38390,18 +38534,18 @@ pub fn x0040a38a() -> Cont {
     // 0040a396 or eax,eax
     m.regs.eax = or(m.regs.eax, m.regs.eax, &mut m.flags);
     // 0040a398 je short 0040A3A5h
-    je(Cont(x0040a39a), Cont(x0040a3a5))
+    je(m, Cont(x0040a39a), Cont(x0040a3a5))
 }
 
 pub fn x0040a39a() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 0040a39a push 3E8h
-    push(0x3e8u32);
+    push(m, 0x3e8u32);
     // 0040a39f push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 0040a3a0 call 0040A562h
-    call(0x40a3a5, Cont(x0040a562))
+    call(m, 0x40a3a5, Cont(x0040a562))
 }
 
 pub fn x0040a3a5() -> Cont {
@@ -38416,7 +38560,7 @@ pub fn x0040a3a5() -> Cont {
     // 0040a3ac lodsd
     lodsd(m);
     // 0040a3ad call edi
-    call(0x40a3af, indirect(m.regs.edi))
+    call(m, 0x40a3af, indirect(m.regs.edi))
 }
 
 pub fn x0040a3af() -> Cont {
@@ -38425,7 +38569,7 @@ pub fn x0040a3af() -> Cont {
     // 0040a3af lodsd
     lodsd(m);
     // 0040a3b0 call edi
-    call(0x40a3b2, indirect(m.regs.edi))
+    call(m, 0x40a3b2, indirect(m.regs.edi))
 }
 
 pub fn x0040a3b2() -> Cont {
@@ -38438,7 +38582,7 @@ pub fn x0040a3b2() -> Cont {
     // 0040a3b5 or eax,eax
     m.regs.eax = or(m.regs.eax, m.regs.eax, &mut m.flags);
     // 0040a3b7 je short 0040A3BFh
-    je(Cont(x0040a3b9), Cont(x0040a3bf))
+    je(m, Cont(x0040a3b9), Cont(x0040a3bf))
 }
 
 pub fn x0040a3b9() -> Cont {
@@ -38447,9 +38591,10 @@ pub fn x0040a3b9() -> Cont {
     // 0040a3b9 mov edx,[eax]
     m.regs.edx = m.memory.read::<u32>(m.regs.eax);
     // 0040a3bb push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 0040a3bc call dword ptr [edx+8]
     call(
+        m,
         0x40a3bf,
         indirect(m.memory.read(m.regs.edx.wrapping_add(0x8u32))),
     )
@@ -38461,7 +38606,7 @@ pub fn x0040a3bf() -> Cont {
     // 0040a3bf popa
     popad(m);
     // 0040a3c0 ret
-    ret(0)
+    ret(m, 0)
 }
 
 pub fn x0040a550() -> Cont {

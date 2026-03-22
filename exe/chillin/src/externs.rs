@@ -1,4 +1,4 @@
-use runtime::{Cont, ret};
+use runtime::{Cont, MACHINE, ret};
 
 pub fn x0040a3b4() -> Cont {
     // code is like
@@ -11,5 +11,6 @@ pub fn x0040a3b4() -> Cont {
     // where 403ab4 is in the middle of that?
     // maybe some unpacker failure?
     // It's in directsound shutdown anyway.
-    ret(0)
+    #[allow(static_mut_refs)]
+    ret(unsafe { &mut MACHINE }, 0)
 }
