@@ -236,3 +236,11 @@ pub fn psubw(x: u64, y: u64) -> u64 {
     ]
     .pack()
 }
+
+pub fn psraw(x: u64, y: u64) -> u64 {
+    if y > 15 {
+        todo!();
+    }
+    let x: [i16; 4] = x.unpack();
+    [x[0] >> y, x[1] >> y, x[2] >> y, x[3] >> y].pack()
+}
