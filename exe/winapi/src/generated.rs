@@ -33,9 +33,9 @@ pub fn x00401000() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00401000 push 0FFFFFFF5h
-    push(0xfffffff5u32);
+    push(m, 0xfffffff5u32);
     // 00401002 call dword ptr ds:[402058h]
-    call(0x401008, Cont(kernel32::GetStdHandle_stdcall))
+    call(m, 0x401008, Cont(kernel32::GetStdHandle_stdcall))
 }
 
 pub fn x00401008() -> Cont {
@@ -44,17 +44,17 @@ pub fn x00401008() -> Cont {
     // 00401008 xor ecx,ecx
     m.regs.ecx = xor(m.regs.ecx, m.regs.ecx, &mut m.flags);
     // 0040100a push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 0040100b push ecx
-    push(m.regs.ecx);
+    push(m, m.regs.ecx);
     // 0040100c push 6
-    push(0x6u32);
+    push(m, 0x6u32);
     // 0040100e push 402000h
-    push(0x402000u32);
+    push(m, 0x402000u32);
     // 00401013 push eax
-    push(m.regs.eax);
+    push(m, m.regs.eax);
     // 00401014 call dword ptr ds:[40205Ch]
-    call(0x40101a, Cont(kernel32::WriteFile_stdcall))
+    call(m, 0x40101a, Cont(kernel32::WriteFile_stdcall))
 }
 
 pub fn x0040101a() -> Cont {

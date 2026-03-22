@@ -1,7 +1,7 @@
-use crate::{Cont, Flags, MACHINE, indirect};
+use crate::{Cont, Flags, MACHINE, Machine, indirect};
 
-pub fn call(ret: u32, addr: Cont) -> Cont {
-    super::push(ret);
+pub fn call(m: &mut Machine, ret: u32, addr: Cont) -> Cont {
+    super::push(m, ret);
     addr
 }
 
@@ -128,7 +128,7 @@ pub fn jbe(from: Cont, x: Cont) -> Cont {
 
 pub fn ret(n: u16) -> Cont {
     unsafe {
-        let ret = super::pop();
+        let ret = super::pop(&mut MACHINE);
         MACHINE.regs.esp += n as u32;
         indirect(ret)
     }
@@ -137,7 +137,7 @@ pub fn ret(n: u16) -> Cont {
 pub fn enter(bytes: u16, nesting: u8) {
     assert_eq!(nesting, 0);
     unsafe {
-        super::push(MACHINE.regs.ebp);
+        super::push(&mut MACHINE, MACHINE.regs.ebp);
         MACHINE.regs.ebp = MACHINE.regs.esp;
         MACHINE.regs.esp -= bytes as u32;
     }
@@ -146,7 +146,7 @@ pub fn enter(bytes: u16, nesting: u8) {
 pub fn leave() {
     unsafe {
         MACHINE.regs.esp = MACHINE.regs.ebp;
-        MACHINE.regs.ebp = super::pop();
+        MACHINE.regs.ebp = super::pop(&mut MACHINE);
     }
 }
 

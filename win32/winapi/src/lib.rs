@@ -27,6 +27,7 @@ macro_rules! stub {
         $arg
     }};
 }
+use runtime::MACHINE;
 pub(crate) use stub;
 
 pub struct EXEData {
@@ -44,6 +45,6 @@ pub fn run(exe: &EXEData) {
     (exe.init_mappings)();
     kernel32::init_process();
 
-    runtime::push(0xf000_0000); // return_from_main
+    runtime::push(unsafe { &mut MACHINE }, 0xf000_0000); // return_from_main
     runtime::run_loop(exe.entry_point);
 }

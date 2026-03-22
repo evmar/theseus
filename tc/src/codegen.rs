@@ -232,8 +232,8 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
         w.line(format!("// {:08x} {}", AddrAbs(instr.ip32()).0, instr));
         use iced_x86::Mnemonic::*;
         match instr.mnemonic() {
-            Push => w.line(format!("push({});", get_op(instr, 0))),
-            Pop => w.line(set_op(instr, 0, "pop()".into())),
+            Push => w.line(format!("push(m, {});", get_op(instr, 0))),
+            Pop => w.line(set_op(instr, 0, "pop(m)".into())),
             Pushad => w.line("pushad(m);"),
             Popad => w.line("popad(m);"),
             Jmp => w.line(gen_jmp(state, instr)),
@@ -241,7 +241,7 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
 
             Call => {
                 w.line(format!(
-                    "call({:#08x}, {})",
+                    "call(m, {:#08x}, {})",
                     instr.next_ip32(),
                     gen_jmp(state, instr)
                 ));
