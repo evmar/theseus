@@ -75,9 +75,8 @@ pub fn codegen(w: &mut Writer, _state: &State, instr: &iced_x86::Instruction) ->
     use iced_x86::Mnemonic::*;
     match instr.mnemonic() {
         Movd => w.line(mmx_set_32(instr, 0, mmx_get_32(instr, 1))),
-        Movq => {
-            w.line(mmx_set(instr, 0, mmx_get(instr, 1)));
-        }
+        Movq => w.line(mmx_set(instr, 0, mmx_get(instr, 1))),
+
         Pxor => {
             w.line(mmx_set(
                 instr,
@@ -86,89 +85,28 @@ pub fn codegen(w: &mut Writer, _state: &State, instr: &iced_x86::Instruction) ->
             ));
         }
 
-        Paddsb => {
+        // Binary operations, all implemented with same name as mnemonic.
+        Paddsb | Paddsw | Paddusb | Pmullw | Psrlw | Packuswb | Psubusb | Psubw | Psraw => {
+            let func = format!("{:?}", instr.mnemonic()).to_ascii_lowercase();
             w.line(mmx_set(
                 instr,
                 0,
-                format!("paddsb({}, {})", mmx_get(instr, 0), mmx_get(instr, 1)),
+                format!("{func}({}, {})", mmx_get(instr, 0), mmx_get(instr, 1)),
             ));
         }
-        Paddsw => {
-            w.line(mmx_set(
-                instr,
-                0,
-                format!("paddsw({}, {})", mmx_get(instr, 0), mmx_get(instr, 1)),
-            ));
-        }
-        Paddusb => {
-            w.line(mmx_set(
-                instr,
-                0,
-                format!("paddusb({}, {})", mmx_get(instr, 0), mmx_get(instr, 1)),
-            ));
-        }
+
+        // Punpcklbw special because it only reads 4 bytes of memory.
         Punpcklbw => {
+            let func = format!("{:?}", instr.mnemonic()).to_ascii_lowercase();
             w.line(mmx_set(
                 instr,
                 0,
-                format!(
-                    "punpcklbw({}, {})",
-                    mmx_get_32(instr, 0),
-                    mmx_get_32(instr, 1)
-                ),
-            ));
-        }
-
-        Pmullw => {
-            w.line(mmx_set(
-                instr,
-                0,
-                format!("pmullw({}, {})", mmx_get(instr, 0), mmx_get(instr, 1)),
-            ));
-        }
-
-        Psrlw => {
-            w.line(mmx_set(
-                instr,
-                0,
-                format!("psrlw({}, {})", mmx_get(instr, 0), mmx_get(instr, 1)),
-            ));
-        }
-
-        Packuswb => {
-            w.line(mmx_set(
-                instr,
-                0,
-                format!("packuswb({}, {})", mmx_get(instr, 0), mmx_get(instr, 1)),
+                format!("{func}({}, {})", mmx_get_32(instr, 0), mmx_get_32(instr, 1)),
             ));
         }
 
         Emms => {
             w.line("// no-op");
-        }
-
-        Psubusb => {
-            w.line(mmx_set(
-                instr,
-                0,
-                format!("psubusb({}, {})", mmx_get(instr, 0), mmx_get(instr, 1)),
-            ));
-        }
-
-        Psubw => {
-            w.line(mmx_set(
-                instr,
-                0,
-                format!("psubw({}, {})", mmx_get(instr, 0), mmx_get(instr, 1)),
-            ));
-        }
-
-        Psraw => {
-            w.line(mmx_set(
-                instr,
-                0,
-                format!("psraw({}, {})", mmx_get(instr, 0), mmx_get(instr, 1)),
-            ));
         }
 
         _ => return false,
