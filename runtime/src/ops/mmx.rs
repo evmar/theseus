@@ -229,10 +229,10 @@ pub fn psubw(x: u64, y: u64) -> u64 {
     let x: [u16; 4] = x.unpack();
     let y: [u16; 4] = y.unpack();
     [
-        x[0].saturating_sub(y[0]),
-        x[1].saturating_sub(y[1]),
-        x[2].saturating_sub(y[2]),
-        x[3].saturating_sub(y[3]),
+        x[0].wrapping_sub(y[0]),
+        x[1].wrapping_sub(y[1]),
+        x[2].wrapping_sub(y[2]),
+        x[3].wrapping_sub(y[3]),
     ]
     .pack()
 }
