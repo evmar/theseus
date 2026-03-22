@@ -36375,15 +36375,7 @@ pub fn x0040912a() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 0040912a pusha
-    let esp = m.regs.esp;
-    push(m.regs.eax);
-    push(m.regs.ecx);
-    push(m.regs.edx);
-    push(m.regs.ebx);
-    push(esp);
-    push(m.regs.ebp);
-    push(m.regs.esi);
-    push(m.regs.edi);
+    pushad(m);
     // 0040912b mov ds:[4377B4h],edi
     m.memory.write::<u32>(0x4377b4u32, m.regs.edi);
     // 00409131 xchg ebp,edi
@@ -36600,14 +36592,7 @@ pub fn x004091bf() -> Cont {
     m.memory
         .write::<u8>(m.regs.ebp.wrapping_add(0x4b9fu32), 0x0u8);
     // 004091c8 popa
-    m.regs.edi = pop();
-    m.regs.esi = pop();
-    m.regs.ebp = pop();
-    pop();
-    m.regs.ebx = pop();
-    m.regs.edx = pop();
-    m.regs.ecx = pop();
-    m.regs.eax = pop();
+    popad(m);
     // 004091c9 ret
     ret(0)
 }
@@ -36619,14 +36604,7 @@ pub fn x004091c1() -> Cont {
     m.memory
         .write::<u8>(m.regs.ebp.wrapping_add(0x4b9fu32), 0x0u8);
     // 004091c8 popa
-    m.regs.edi = pop();
-    m.regs.esi = pop();
-    m.regs.ebp = pop();
-    pop();
-    m.regs.ebx = pop();
-    m.regs.edx = pop();
-    m.regs.ecx = pop();
-    m.regs.eax = pop();
+    popad(m);
     // 004091c9 ret
     ret(0)
 }
@@ -36814,15 +36792,7 @@ pub fn x0040a281() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 0040a281 pusha
-    let esp = m.regs.esp;
-    push(m.regs.eax);
-    push(m.regs.ecx);
-    push(m.regs.edx);
-    push(m.regs.ebx);
-    push(esp);
-    push(m.regs.ebp);
-    push(m.regs.esi);
-    push(m.regs.edi);
+    pushad(m);
     // 0040a282 mov ebx,4377B8h
     m.regs.ebx = 0x4377b8u32;
     // 0040a287 mov ecx,90046h
@@ -37159,14 +37129,7 @@ pub fn x0040a37a() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 0040a37a popa
-    m.regs.edi = pop();
-    m.regs.esi = pop();
-    m.regs.ebp = pop();
-    pop();
-    m.regs.ebx = pop();
-    m.regs.edx = pop();
-    m.regs.ecx = pop();
-    m.regs.eax = pop();
+    popad(m);
     // 0040a37b stc
     stc(m);
     // 0040a37c jmp short 0040A385h
@@ -37184,14 +37147,7 @@ pub fn x0040a383() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 0040a383 popa
-    m.regs.edi = pop();
-    m.regs.esi = pop();
-    m.regs.ebp = pop();
-    pop();
-    m.regs.ebx = pop();
-    m.regs.edx = pop();
-    m.regs.ecx = pop();
-    m.regs.eax = pop();
+    popad(m);
     // 0040a384 clc
     clc(m);
     // 0040a385 sbb eax,eax
@@ -37213,15 +37169,7 @@ pub fn x0040a38a() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 0040a38a pusha
-    let esp = m.regs.esp;
-    push(m.regs.eax);
-    push(m.regs.ecx);
-    push(m.regs.edx);
-    push(m.regs.ebx);
-    push(esp);
-    push(m.regs.ebp);
-    push(m.regs.esi);
-    push(m.regs.edi);
+    pushad(m);
     // 0040a38b mov ebx,4377B8h
     m.regs.ebx = 0x4377b8u32;
     // 0040a390 inc dword ptr [ebx+0Ch]
@@ -37303,14 +37251,7 @@ pub fn x0040a3bf() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 0040a3bf popa
-    m.regs.edi = pop();
-    m.regs.esi = pop();
-    m.regs.ebp = pop();
-    pop();
-    m.regs.ebx = pop();
-    m.regs.edx = pop();
-    m.regs.ecx = pop();
-    m.regs.eax = pop();
+    popad(m);
     // 0040a3c0 ret
     ret(0)
 }

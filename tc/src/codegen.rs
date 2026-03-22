@@ -232,36 +232,12 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
         w.line(format!("// {:08x} {}", AddrAbs(instr.ip32()).0, instr));
         use iced_x86::Mnemonic::*;
         match instr.mnemonic() {
-            Push => {
-                w.line(format!("push({});", get_op(instr, 0)));
-            }
-            Pop => {
-                w.line(format!("{};", set_op(instr, 0, "pop()".into())));
-            }
-            Pushad => {
-                w.line("let esp = m.regs.esp;");
-                w.line("push(m.regs.eax);");
-                w.line("push(m.regs.ecx);");
-                w.line("push(m.regs.edx);");
-                w.line("push(m.regs.ebx);");
-                w.line("push(esp);");
-                w.line("push(m.regs.ebp);");
-                w.line("push(m.regs.esi);");
-                w.line("push(m.regs.edi);");
-            }
-            Popad => {
-                w.line("m.regs.edi = pop();");
-                w.line("m.regs.esi = pop();");
-                w.line("m.regs.ebp = pop();");
-                w.line("pop();");
-                w.line("m.regs.ebx = pop();");
-                w.line("m.regs.edx = pop();");
-                w.line("m.regs.ecx = pop();");
-                w.line("m.regs.eax = pop();");
-            }
-            Jmp => {
-                w.line(format!("{}", gen_jmp(state, instr)));
-            }
+            Push => w.line(format!("push({});", get_op(instr, 0))),
+            Pop => w.line(set_op(instr, 0, "pop()".into())),
+            Pushad => w.line("pushad(m);"),
+            Popad => w.line("popad(m);"),
+            Jmp => w.line(gen_jmp(state, instr)),
+            Mov => w.line(set_op(instr, 0, get_op(instr, 1))),
 
             Call => {
                 w.line(format!(
@@ -270,6 +246,7 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
                     gen_jmp(state, instr)
                 ));
             }
+
             Ret => {
                 let n = match instr.op_count() {
                     0 => 0,
@@ -311,10 +288,6 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
                 w.line(format!("and({}, {});", get_op(instr, 0), get_op(instr, 1)));
             }
 
-            Mov => {
-                w.line(set_op(instr, 0, get_op(instr, 1)));
-            }
-
             // Conditional jumps.
             Je | Jne | Jb | Js | Jns | Ja | Jae | Jl | Jg | Jge | Jecxz | Jle | Jbe => {
                 let next = gen_abs_jmp(state, instr.next_ip32());
@@ -323,12 +296,8 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
                 w.line(format!("{func}({next}, {dst})"));
             }
 
-            Lea => {
-                w.line(format!("{} = {};", get_op(instr, 0), gen_addr(instr)));
-            }
-            Neg => {
-                w.line(set_op(instr, 0, format!("neg({})", get_op(instr, 0))));
-            }
+            Lea => w.line(format!("{} = {};", get_op(instr, 0), gen_addr(instr))),
+            Neg => w.line(set_op(instr, 0, format!("neg({})", get_op(instr, 0)))),
 
             Movzx => {
                 w.line(set_op(instr, 0, format!("{} as _", get_op(instr, 1))));
@@ -354,15 +323,11 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
                 let op1 = instr.immediate8_2nd();
                 w.line(format!("enter({}, {:x});", get_op(instr, 0), op1));
             }
-            Dec => {
-                w.line(set_op(instr, 0, format!("dec({})", get_op(instr, 0))));
-            }
-            Inc => {
-                w.line(set_op(instr, 0, format!("inc({})", get_op(instr, 0))));
-            }
-            Sete => {
-                w.line(set_op(instr, 0, "sete()".into()));
-            }
+
+            Dec => w.line(set_op(instr, 0, format!("dec({})", get_op(instr, 0)))),
+            Inc => w.line(set_op(instr, 0, format!("inc({})", get_op(instr, 0)))),
+            Sete => w.line(set_op(instr, 0, "sete()".into())),
+
             Imul => {
                 let (x, y) = match instr.op_count() {
                     2 => {
@@ -419,45 +384,23 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
                 }
             }
 
-            Int3 => {
-                w.line("int3();");
-            }
+            Int3 => w.line("int3();"),
             Xchg => {
                 w.line(format!("let t = {};", get_op(instr, 0)));
                 w.line(set_op(instr, 0, get_op(instr, 1)));
                 w.line(set_op(instr, 1, "t".into()));
             }
-            Cmpxchg => {
-                w.line("cmpxchg();");
-            }
-            Pushfd => {
-                w.line("pushfd();");
-            }
-            Setne => {
-                w.line("setne();");
-            }
-            Cpuid => {
-                w.line("cpuid();");
-            }
-            Nop => {
-                w.line("nop();");
-            }
-            Xgetbv => {
-                w.line("xgetbv();");
-            }
-            Setg => {
-                w.line("setg();");
-            }
-            Bt => {
-                w.line("bt();");
-            }
+            Cmpxchg => w.line("cmpxchg();"),
+            Pushfd => w.line("pushfd();"),
+            Setne => w.line("setne();"),
+            Cpuid => w.line("cpuid();"),
+            Nop => {}
+            Xgetbv => w.line("xgetbv();"),
+            Setg => w.line("setg();"),
+            Bt => w.line("bt();"),
 
-            Cbw => {
-                w.line("m.regs.set_ax(m.regs.get_al() as i8 as i16 as u16);");
-            }
-            Cwde => {
-                w.line("m.regs.eax = m.regs.get_ax() as i16 as i32 as u32;");
-            }
+            Cbw => w.line("m.regs.set_ax(m.regs.get_al() as i8 as i16 as u16);"),
+            Cwde => w.line("m.regs.eax = m.regs.get_ax() as i16 as i32 as u32;"),
 
             Stc | Clc | Std | Cld | Sahf => {
                 w.line(format!(
