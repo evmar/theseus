@@ -84,17 +84,11 @@ impl DirectDraw {
         } else {
             log::info!("back {addr:x} {:x}x{:x}", params.width, params.height);
             let texture_creator = window.borrow().canvas.texture_creator();
-            let mut texture = texture_creator
+            let texture = texture_creator
                 .create_texture_target(None, params.width, params.height)
                 .unwrap();
             // FML, this means BGRA in memory order
             assert_eq!(texture.format(), sdl3::pixels::PixelFormat::ARGB8888);
-            let mut pixels = Vec::new();
-            pixels.resize((params.width * params.height) as usize, 0xff000000u32);
-            use zerocopy::IntoBytes;
-            texture
-                .update(None, pixels.as_bytes(), params.width as usize * 4)
-                .unwrap();
             Target::Texture(texture)
         };
 
@@ -180,10 +174,12 @@ impl Surface {
             unreachable!()
         };
 
-        let back = self.attached.as_ref().unwrap().borrow();
-        let Target::Texture(texture) = &back.target else {
+        let mut back = self.attached.as_ref().unwrap().borrow_mut();
+        let Target::Texture(texture) = &mut back.target else {
             unreachable!()
         };
+        // Ignore any alpha in the input when doing the final render copy.
+        texture.set_blend_mode(sdl3::render::BlendMode::None);
 
         let mut canvas = RefMut::map(window.borrow_mut(), |w| &mut w.canvas);
         // For debugging, can verify that the flip covers the entire canvas by starting with red:
