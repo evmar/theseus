@@ -9416,9 +9416,9 @@ pub fn x00402f1e() -> Cont {
     // 00402f4f movd mm1,ebx
     m.mmx.mm1 = m.regs.ebx as u64;
     // 00402f52 punpcklbw mm0,mm3
-    todo!();
+    m.mmx.mm0 = punpcklbw(m.mmx.mm0 as u32, m.mmx.mm3 as u32);
     // 00402f55 punpcklbw mm1,mm3
-    todo!();
+    m.mmx.mm1 = punpcklbw(m.mmx.mm1 as u32, m.mmx.mm3 as u32);
     // 00402f58 pmullw mm0,mm1
     todo!();
     // 00402f5b psrlw mm0,8
@@ -9492,9 +9492,9 @@ pub fn x00402f23() -> Cont {
     // 00402f4f movd mm1,ebx
     m.mmx.mm1 = m.regs.ebx as u64;
     // 00402f52 punpcklbw mm0,mm3
-    todo!();
+    m.mmx.mm0 = punpcklbw(m.mmx.mm0 as u32, m.mmx.mm3 as u32);
     // 00402f55 punpcklbw mm1,mm3
-    todo!();
+    m.mmx.mm1 = punpcklbw(m.mmx.mm1 as u32, m.mmx.mm3 as u32);
     // 00402f58 pmullw mm0,mm1
     todo!();
     // 00402f5b psrlw mm0,8
@@ -9558,9 +9558,9 @@ pub fn x00402f80() -> Cont {
     // 00402f93 movd mm1,ebx
     m.mmx.mm1 = m.regs.ebx as u64;
     // 00402f96 punpcklbw mm0,mm3
-    todo!();
+    m.mmx.mm0 = punpcklbw(m.mmx.mm0 as u32, m.mmx.mm3 as u32);
     // 00402f99 punpcklbw mm1,mm3
-    todo!();
+    m.mmx.mm1 = punpcklbw(m.mmx.mm1 as u32, m.mmx.mm3 as u32);
     // 00402f9c pmullw mm0,mm1
     todo!();
     // 00402f9f psrlw mm0,8
@@ -9760,9 +9760,9 @@ pub fn x00403257() -> Cont {
     // 00403267 movd mm1,ebx
     m.mmx.mm1 = m.regs.ebx as u64;
     // 0040326a punpcklbw mm0,mm3
-    todo!();
+    m.mmx.mm0 = punpcklbw(m.mmx.mm0 as u32, m.mmx.mm3 as u32);
     // 0040326d punpcklbw mm1,mm3
-    todo!();
+    m.mmx.mm1 = punpcklbw(m.mmx.mm1 as u32, m.mmx.mm3 as u32);
     // 00403270 pmullw mm0,mm1
     todo!();
     // 00403273 psrlw mm0,8
@@ -9789,9 +9789,9 @@ pub fn x00403257() -> Cont {
     // 0040328e movd mm1,ebx
     m.mmx.mm1 = m.regs.ebx as u64;
     // 00403291 punpcklbw mm0,mm3
-    todo!();
+    m.mmx.mm0 = punpcklbw(m.mmx.mm0 as u32, m.mmx.mm3 as u32);
     // 00403294 punpcklbw mm1,mm3
-    todo!();
+    m.mmx.mm1 = punpcklbw(m.mmx.mm1 as u32, m.mmx.mm3 as u32);
     // 00403297 pmullw mm0,mm1
     todo!();
     // 0040329a psrlw mm0,8
@@ -10449,9 +10449,9 @@ pub fn x004034ed() -> Cont {
     // 00403502 movd mm1,ebx
     m.mmx.mm1 = m.regs.ebx as u64;
     // 00403505 punpcklbw mm0,mm3
-    todo!();
+    m.mmx.mm0 = punpcklbw(m.mmx.mm0 as u32, m.mmx.mm3 as u32);
     // 00403508 punpcklbw mm1,mm3
-    todo!();
+    m.mmx.mm1 = punpcklbw(m.mmx.mm1 as u32, m.mmx.mm3 as u32);
     // 0040350b pmullw mm0,mm1
     todo!();
     // 0040350e psrlw mm0,8
@@ -11475,9 +11475,9 @@ pub fn x00403995() -> Cont {
     // 004039be movd mm1,ebx
     m.mmx.mm1 = m.regs.ebx as u64;
     // 004039c1 punpcklbw mm0,mm3
-    todo!();
+    m.mmx.mm0 = punpcklbw(m.mmx.mm0 as u32, m.mmx.mm3 as u32);
     // 004039c4 punpcklbw mm1,mm3
-    todo!();
+    m.mmx.mm1 = punpcklbw(m.mmx.mm1 as u32, m.mmx.mm3 as u32);
     // 004039c7 pmullw mm0,mm1
     todo!();
     // 004039ca psrlw mm0,8
@@ -11518,9 +11518,9 @@ pub fn x00403995() -> Cont {
     // 004039fa movd mm1,ebx
     m.mmx.mm1 = m.regs.ebx as u64;
     // 004039fd punpcklbw mm0,mm3
-    todo!();
+    m.mmx.mm0 = punpcklbw(m.mmx.mm0 as u32, m.mmx.mm3 as u32);
     // 00403a00 punpcklbw mm1,mm3
-    todo!();
+    m.mmx.mm1 = punpcklbw(m.mmx.mm1 as u32, m.mmx.mm3 as u32);
     // 00403a03 pmullw mm0,mm1
     todo!();
     // 00403a06 psrlw mm0,8
@@ -12883,7 +12883,7 @@ pub fn x00403e5c() -> Cont {
     // 00403e62 mov ecx,[ebp-1Ch]
     m.regs.ecx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffe4u32));
     // 00403e68 punpcklbw mm0,[esi]
-    todo!();
+    m.mmx.mm0 = punpcklbw(m.mmx.mm0 as u32, m.memory.read::<u32>(m.regs.esi));
     // 00403e6b psrlw mm0,9
     todo!();
     // 00403e6f packuswb mm0,mm0
@@ -12902,7 +12902,7 @@ pub fn x00403e68() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00403e68 punpcklbw mm0,[esi]
-    todo!();
+    m.mmx.mm0 = punpcklbw(m.mmx.mm0 as u32, m.memory.read::<u32>(m.regs.esi));
     // 00403e6b psrlw mm0,9
     todo!();
     // 00403e6f packuswb mm0,mm0
@@ -13014,13 +13014,41 @@ pub fn x00403e7b() -> Cont {
     m.memory
         .write::<u16>(m.regs.ebp.wrapping_add(0xffffffc6u32), m.regs.get_ax());
     // 00403f2c punpcklbw mm0,[esi+ebx*4]
-    todo!();
+    m.mmx.mm0 = punpcklbw(
+        m.mmx.mm0 as u32,
+        m.memory
+            .read::<u32>(m.regs.esi.wrapping_add((m.regs.ebx * 4))),
+    );
     // 00403f30 punpcklbw mm1,[esi+ebx*4+4]
-    todo!();
+    m.mmx.mm1 = punpcklbw(
+        m.mmx.mm1 as u32,
+        m.memory.read::<u32>(
+            m.regs
+                .esi
+                .wrapping_add((m.regs.ebx * 4))
+                .wrapping_add(0x4u32),
+        ),
+    );
     // 00403f35 punpcklbw mm2,[esi+ebx*4+500h]
-    todo!();
+    m.mmx.mm2 = punpcklbw(
+        m.mmx.mm2 as u32,
+        m.memory.read::<u32>(
+            m.regs
+                .esi
+                .wrapping_add((m.regs.ebx * 4))
+                .wrapping_add(0x500u32),
+        ),
+    );
     // 00403f3d punpcklbw mm3,[esi+ebx*4+504h]
-    todo!();
+    m.mmx.mm3 = punpcklbw(
+        m.mmx.mm3 as u32,
+        m.memory.read::<u32>(
+            m.regs
+                .esi
+                .wrapping_add((m.regs.ebx * 4))
+                .wrapping_add(0x504u32),
+        ),
+    );
     // 00403f45 movq mm4,mm1
     m.mmx.mm4 = m.mmx.mm1;
     // 00403f48 psubw mm4,mm0
@@ -13213,13 +13241,41 @@ pub fn x00403ea3() -> Cont {
     m.memory
         .write::<u16>(m.regs.ebp.wrapping_add(0xffffffc6u32), m.regs.get_ax());
     // 00403f2c punpcklbw mm0,[esi+ebx*4]
-    todo!();
+    m.mmx.mm0 = punpcklbw(
+        m.mmx.mm0 as u32,
+        m.memory
+            .read::<u32>(m.regs.esi.wrapping_add((m.regs.ebx * 4))),
+    );
     // 00403f30 punpcklbw mm1,[esi+ebx*4+4]
-    todo!();
+    m.mmx.mm1 = punpcklbw(
+        m.mmx.mm1 as u32,
+        m.memory.read::<u32>(
+            m.regs
+                .esi
+                .wrapping_add((m.regs.ebx * 4))
+                .wrapping_add(0x4u32),
+        ),
+    );
     // 00403f35 punpcklbw mm2,[esi+ebx*4+500h]
-    todo!();
+    m.mmx.mm2 = punpcklbw(
+        m.mmx.mm2 as u32,
+        m.memory.read::<u32>(
+            m.regs
+                .esi
+                .wrapping_add((m.regs.ebx * 4))
+                .wrapping_add(0x500u32),
+        ),
+    );
     // 00403f3d punpcklbw mm3,[esi+ebx*4+504h]
-    todo!();
+    m.mmx.mm3 = punpcklbw(
+        m.mmx.mm3 as u32,
+        m.memory.read::<u32>(
+            m.regs
+                .esi
+                .wrapping_add((m.regs.ebx * 4))
+                .wrapping_add(0x504u32),
+        ),
+    );
     // 00403f45 movq mm4,mm1
     m.mmx.mm4 = m.mmx.mm1;
     // 00403f48 psubw mm4,mm0
@@ -13365,13 +13421,41 @@ pub fn x00403efe() -> Cont {
     m.memory
         .write::<u16>(m.regs.ebp.wrapping_add(0xffffffc6u32), m.regs.get_ax());
     // 00403f2c punpcklbw mm0,[esi+ebx*4]
-    todo!();
+    m.mmx.mm0 = punpcklbw(
+        m.mmx.mm0 as u32,
+        m.memory
+            .read::<u32>(m.regs.esi.wrapping_add((m.regs.ebx * 4))),
+    );
     // 00403f30 punpcklbw mm1,[esi+ebx*4+4]
-    todo!();
+    m.mmx.mm1 = punpcklbw(
+        m.mmx.mm1 as u32,
+        m.memory.read::<u32>(
+            m.regs
+                .esi
+                .wrapping_add((m.regs.ebx * 4))
+                .wrapping_add(0x4u32),
+        ),
+    );
     // 00403f35 punpcklbw mm2,[esi+ebx*4+500h]
-    todo!();
+    m.mmx.mm2 = punpcklbw(
+        m.mmx.mm2 as u32,
+        m.memory.read::<u32>(
+            m.regs
+                .esi
+                .wrapping_add((m.regs.ebx * 4))
+                .wrapping_add(0x500u32),
+        ),
+    );
     // 00403f3d punpcklbw mm3,[esi+ebx*4+504h]
-    todo!();
+    m.mmx.mm3 = punpcklbw(
+        m.mmx.mm3 as u32,
+        m.memory.read::<u32>(
+            m.regs
+                .esi
+                .wrapping_add((m.regs.ebx * 4))
+                .wrapping_add(0x504u32),
+        ),
+    );
     // 00403f45 movq mm4,mm1
     m.mmx.mm4 = m.mmx.mm1;
     // 00403f48 psubw mm4,mm0
@@ -13621,13 +13705,41 @@ pub fn x00404028() -> Cont {
     m.memory
         .write::<u16>(m.regs.ebp.wrapping_add(0xffffffc6u32), m.regs.get_ax());
     // 004040e2 punpcklbw mm0,[esi+ebx*4]
-    todo!();
+    m.mmx.mm0 = punpcklbw(
+        m.mmx.mm0 as u32,
+        m.memory
+            .read::<u32>(m.regs.esi.wrapping_add((m.regs.ebx * 4))),
+    );
     // 004040e6 punpcklbw mm1,[esi+ebx*4+4]
-    todo!();
+    m.mmx.mm1 = punpcklbw(
+        m.mmx.mm1 as u32,
+        m.memory.read::<u32>(
+            m.regs
+                .esi
+                .wrapping_add((m.regs.ebx * 4))
+                .wrapping_add(0x4u32),
+        ),
+    );
     // 004040eb punpcklbw mm2,[esi+ebx*4+500h]
-    todo!();
+    m.mmx.mm2 = punpcklbw(
+        m.mmx.mm2 as u32,
+        m.memory.read::<u32>(
+            m.regs
+                .esi
+                .wrapping_add((m.regs.ebx * 4))
+                .wrapping_add(0x500u32),
+        ),
+    );
     // 004040f3 punpcklbw mm3,[esi+ebx*4+504h]
-    todo!();
+    m.mmx.mm3 = punpcklbw(
+        m.mmx.mm3 as u32,
+        m.memory.read::<u32>(
+            m.regs
+                .esi
+                .wrapping_add((m.regs.ebx * 4))
+                .wrapping_add(0x504u32),
+        ),
+    );
     // 004040fb movq mm4,mm1
     m.mmx.mm4 = m.mmx.mm1;
     // 004040fe psubw mm4,mm0
@@ -13826,13 +13938,41 @@ pub fn x00404050() -> Cont {
     m.memory
         .write::<u16>(m.regs.ebp.wrapping_add(0xffffffc6u32), m.regs.get_ax());
     // 004040e2 punpcklbw mm0,[esi+ebx*4]
-    todo!();
+    m.mmx.mm0 = punpcklbw(
+        m.mmx.mm0 as u32,
+        m.memory
+            .read::<u32>(m.regs.esi.wrapping_add((m.regs.ebx * 4))),
+    );
     // 004040e6 punpcklbw mm1,[esi+ebx*4+4]
-    todo!();
+    m.mmx.mm1 = punpcklbw(
+        m.mmx.mm1 as u32,
+        m.memory.read::<u32>(
+            m.regs
+                .esi
+                .wrapping_add((m.regs.ebx * 4))
+                .wrapping_add(0x4u32),
+        ),
+    );
     // 004040eb punpcklbw mm2,[esi+ebx*4+500h]
-    todo!();
+    m.mmx.mm2 = punpcklbw(
+        m.mmx.mm2 as u32,
+        m.memory.read::<u32>(
+            m.regs
+                .esi
+                .wrapping_add((m.regs.ebx * 4))
+                .wrapping_add(0x500u32),
+        ),
+    );
     // 004040f3 punpcklbw mm3,[esi+ebx*4+504h]
-    todo!();
+    m.mmx.mm3 = punpcklbw(
+        m.mmx.mm3 as u32,
+        m.memory.read::<u32>(
+            m.regs
+                .esi
+                .wrapping_add((m.regs.ebx * 4))
+                .wrapping_add(0x504u32),
+        ),
+    );
     // 004040fb movq mm4,mm1
     m.mmx.mm4 = m.mmx.mm1;
     // 004040fe psubw mm4,mm0
@@ -13978,13 +14118,41 @@ pub fn x004040b4() -> Cont {
     m.memory
         .write::<u16>(m.regs.ebp.wrapping_add(0xffffffc6u32), m.regs.get_ax());
     // 004040e2 punpcklbw mm0,[esi+ebx*4]
-    todo!();
+    m.mmx.mm0 = punpcklbw(
+        m.mmx.mm0 as u32,
+        m.memory
+            .read::<u32>(m.regs.esi.wrapping_add((m.regs.ebx * 4))),
+    );
     // 004040e6 punpcklbw mm1,[esi+ebx*4+4]
-    todo!();
+    m.mmx.mm1 = punpcklbw(
+        m.mmx.mm1 as u32,
+        m.memory.read::<u32>(
+            m.regs
+                .esi
+                .wrapping_add((m.regs.ebx * 4))
+                .wrapping_add(0x4u32),
+        ),
+    );
     // 004040eb punpcklbw mm2,[esi+ebx*4+500h]
-    todo!();
+    m.mmx.mm2 = punpcklbw(
+        m.mmx.mm2 as u32,
+        m.memory.read::<u32>(
+            m.regs
+                .esi
+                .wrapping_add((m.regs.ebx * 4))
+                .wrapping_add(0x500u32),
+        ),
+    );
     // 004040f3 punpcklbw mm3,[esi+ebx*4+504h]
-    todo!();
+    m.mmx.mm3 = punpcklbw(
+        m.mmx.mm3 as u32,
+        m.memory.read::<u32>(
+            m.regs
+                .esi
+                .wrapping_add((m.regs.ebx * 4))
+                .wrapping_add(0x504u32),
+        ),
+    );
     // 004040fb movq mm4,mm1
     m.mmx.mm4 = m.mmx.mm1;
     // 004040fe psubw mm4,mm0
@@ -14231,13 +14399,41 @@ pub fn x004041de() -> Cont {
     m.memory
         .write::<u16>(m.regs.ebp.wrapping_add(0xffffffc6u32), m.regs.get_ax());
     // 00404293 punpcklbw mm0,[esi+ebx*4]
-    todo!();
+    m.mmx.mm0 = punpcklbw(
+        m.mmx.mm0 as u32,
+        m.memory
+            .read::<u32>(m.regs.esi.wrapping_add((m.regs.ebx * 4))),
+    );
     // 00404297 punpcklbw mm1,[esi+ebx*4+4]
-    todo!();
+    m.mmx.mm1 = punpcklbw(
+        m.mmx.mm1 as u32,
+        m.memory.read::<u32>(
+            m.regs
+                .esi
+                .wrapping_add((m.regs.ebx * 4))
+                .wrapping_add(0x4u32),
+        ),
+    );
     // 0040429c punpcklbw mm2,[esi+ebx*4+500h]
-    todo!();
+    m.mmx.mm2 = punpcklbw(
+        m.mmx.mm2 as u32,
+        m.memory.read::<u32>(
+            m.regs
+                .esi
+                .wrapping_add((m.regs.ebx * 4))
+                .wrapping_add(0x500u32),
+        ),
+    );
     // 004042a4 punpcklbw mm3,[esi+ebx*4+504h]
-    todo!();
+    m.mmx.mm3 = punpcklbw(
+        m.mmx.mm3 as u32,
+        m.memory.read::<u32>(
+            m.regs
+                .esi
+                .wrapping_add((m.regs.ebx * 4))
+                .wrapping_add(0x504u32),
+        ),
+    );
     // 004042ac movq mm4,mm1
     m.mmx.mm4 = m.mmx.mm1;
     // 004042af psubw mm4,mm0
@@ -14430,13 +14626,41 @@ pub fn x0040420a() -> Cont {
     m.memory
         .write::<u16>(m.regs.ebp.wrapping_add(0xffffffc6u32), m.regs.get_ax());
     // 00404293 punpcklbw mm0,[esi+ebx*4]
-    todo!();
+    m.mmx.mm0 = punpcklbw(
+        m.mmx.mm0 as u32,
+        m.memory
+            .read::<u32>(m.regs.esi.wrapping_add((m.regs.ebx * 4))),
+    );
     // 00404297 punpcklbw mm1,[esi+ebx*4+4]
-    todo!();
+    m.mmx.mm1 = punpcklbw(
+        m.mmx.mm1 as u32,
+        m.memory.read::<u32>(
+            m.regs
+                .esi
+                .wrapping_add((m.regs.ebx * 4))
+                .wrapping_add(0x4u32),
+        ),
+    );
     // 0040429c punpcklbw mm2,[esi+ebx*4+500h]
-    todo!();
+    m.mmx.mm2 = punpcklbw(
+        m.mmx.mm2 as u32,
+        m.memory.read::<u32>(
+            m.regs
+                .esi
+                .wrapping_add((m.regs.ebx * 4))
+                .wrapping_add(0x500u32),
+        ),
+    );
     // 004042a4 punpcklbw mm3,[esi+ebx*4+504h]
-    todo!();
+    m.mmx.mm3 = punpcklbw(
+        m.mmx.mm3 as u32,
+        m.memory.read::<u32>(
+            m.regs
+                .esi
+                .wrapping_add((m.regs.ebx * 4))
+                .wrapping_add(0x504u32),
+        ),
+    );
     // 004042ac movq mm4,mm1
     m.mmx.mm4 = m.mmx.mm1;
     // 004042af psubw mm4,mm0
@@ -14582,13 +14806,41 @@ pub fn x00404265() -> Cont {
     m.memory
         .write::<u16>(m.regs.ebp.wrapping_add(0xffffffc6u32), m.regs.get_ax());
     // 00404293 punpcklbw mm0,[esi+ebx*4]
-    todo!();
+    m.mmx.mm0 = punpcklbw(
+        m.mmx.mm0 as u32,
+        m.memory
+            .read::<u32>(m.regs.esi.wrapping_add((m.regs.ebx * 4))),
+    );
     // 00404297 punpcklbw mm1,[esi+ebx*4+4]
-    todo!();
+    m.mmx.mm1 = punpcklbw(
+        m.mmx.mm1 as u32,
+        m.memory.read::<u32>(
+            m.regs
+                .esi
+                .wrapping_add((m.regs.ebx * 4))
+                .wrapping_add(0x4u32),
+        ),
+    );
     // 0040429c punpcklbw mm2,[esi+ebx*4+500h]
-    todo!();
+    m.mmx.mm2 = punpcklbw(
+        m.mmx.mm2 as u32,
+        m.memory.read::<u32>(
+            m.regs
+                .esi
+                .wrapping_add((m.regs.ebx * 4))
+                .wrapping_add(0x500u32),
+        ),
+    );
     // 004042a4 punpcklbw mm3,[esi+ebx*4+504h]
-    todo!();
+    m.mmx.mm3 = punpcklbw(
+        m.mmx.mm3 as u32,
+        m.memory.read::<u32>(
+            m.regs
+                .esi
+                .wrapping_add((m.regs.ebx * 4))
+                .wrapping_add(0x504u32),
+        ),
+    );
     // 004042ac movq mm4,mm1
     m.mmx.mm4 = m.mmx.mm1;
     // 004042af psubw mm4,mm0
@@ -14841,13 +15093,41 @@ pub fn x0040438f() -> Cont {
     m.memory
         .write::<u16>(m.regs.ebp.wrapping_add(0xffffffc6u32), m.regs.get_ax());
     // 0040444d punpcklbw mm0,[esi+ebx*4]
-    todo!();
+    m.mmx.mm0 = punpcklbw(
+        m.mmx.mm0 as u32,
+        m.memory
+            .read::<u32>(m.regs.esi.wrapping_add((m.regs.ebx * 4))),
+    );
     // 00404451 punpcklbw mm1,[esi+ebx*4+4]
-    todo!();
+    m.mmx.mm1 = punpcklbw(
+        m.mmx.mm1 as u32,
+        m.memory.read::<u32>(
+            m.regs
+                .esi
+                .wrapping_add((m.regs.ebx * 4))
+                .wrapping_add(0x4u32),
+        ),
+    );
     // 00404456 punpcklbw mm2,[esi+ebx*4+500h]
-    todo!();
+    m.mmx.mm2 = punpcklbw(
+        m.mmx.mm2 as u32,
+        m.memory.read::<u32>(
+            m.regs
+                .esi
+                .wrapping_add((m.regs.ebx * 4))
+                .wrapping_add(0x500u32),
+        ),
+    );
     // 0040445e punpcklbw mm3,[esi+ebx*4+504h]
-    todo!();
+    m.mmx.mm3 = punpcklbw(
+        m.mmx.mm3 as u32,
+        m.memory.read::<u32>(
+            m.regs
+                .esi
+                .wrapping_add((m.regs.ebx * 4))
+                .wrapping_add(0x504u32),
+        ),
+    );
     // 00404466 movq mm4,mm1
     m.mmx.mm4 = m.mmx.mm1;
     // 00404469 psubw mm4,mm0
@@ -15046,13 +15326,41 @@ pub fn x004043bb() -> Cont {
     m.memory
         .write::<u16>(m.regs.ebp.wrapping_add(0xffffffc6u32), m.regs.get_ax());
     // 0040444d punpcklbw mm0,[esi+ebx*4]
-    todo!();
+    m.mmx.mm0 = punpcklbw(
+        m.mmx.mm0 as u32,
+        m.memory
+            .read::<u32>(m.regs.esi.wrapping_add((m.regs.ebx * 4))),
+    );
     // 00404451 punpcklbw mm1,[esi+ebx*4+4]
-    todo!();
+    m.mmx.mm1 = punpcklbw(
+        m.mmx.mm1 as u32,
+        m.memory.read::<u32>(
+            m.regs
+                .esi
+                .wrapping_add((m.regs.ebx * 4))
+                .wrapping_add(0x4u32),
+        ),
+    );
     // 00404456 punpcklbw mm2,[esi+ebx*4+500h]
-    todo!();
+    m.mmx.mm2 = punpcklbw(
+        m.mmx.mm2 as u32,
+        m.memory.read::<u32>(
+            m.regs
+                .esi
+                .wrapping_add((m.regs.ebx * 4))
+                .wrapping_add(0x500u32),
+        ),
+    );
     // 0040445e punpcklbw mm3,[esi+ebx*4+504h]
-    todo!();
+    m.mmx.mm3 = punpcklbw(
+        m.mmx.mm3 as u32,
+        m.memory.read::<u32>(
+            m.regs
+                .esi
+                .wrapping_add((m.regs.ebx * 4))
+                .wrapping_add(0x504u32),
+        ),
+    );
     // 00404466 movq mm4,mm1
     m.mmx.mm4 = m.mmx.mm1;
     // 00404469 psubw mm4,mm0
@@ -15198,13 +15506,41 @@ pub fn x0040441f() -> Cont {
     m.memory
         .write::<u16>(m.regs.ebp.wrapping_add(0xffffffc6u32), m.regs.get_ax());
     // 0040444d punpcklbw mm0,[esi+ebx*4]
-    todo!();
+    m.mmx.mm0 = punpcklbw(
+        m.mmx.mm0 as u32,
+        m.memory
+            .read::<u32>(m.regs.esi.wrapping_add((m.regs.ebx * 4))),
+    );
     // 00404451 punpcklbw mm1,[esi+ebx*4+4]
-    todo!();
+    m.mmx.mm1 = punpcklbw(
+        m.mmx.mm1 as u32,
+        m.memory.read::<u32>(
+            m.regs
+                .esi
+                .wrapping_add((m.regs.ebx * 4))
+                .wrapping_add(0x4u32),
+        ),
+    );
     // 00404456 punpcklbw mm2,[esi+ebx*4+500h]
-    todo!();
+    m.mmx.mm2 = punpcklbw(
+        m.mmx.mm2 as u32,
+        m.memory.read::<u32>(
+            m.regs
+                .esi
+                .wrapping_add((m.regs.ebx * 4))
+                .wrapping_add(0x500u32),
+        ),
+    );
     // 0040445e punpcklbw mm3,[esi+ebx*4+504h]
-    todo!();
+    m.mmx.mm3 = punpcklbw(
+        m.mmx.mm3 as u32,
+        m.memory.read::<u32>(
+            m.regs
+                .esi
+                .wrapping_add((m.regs.ebx * 4))
+                .wrapping_add(0x504u32),
+        ),
+    );
     // 00404466 movq mm4,mm1
     m.mmx.mm4 = m.mmx.mm1;
     // 00404469 psubw mm4,mm0
@@ -15359,7 +15695,7 @@ pub fn x00404549() -> Cont {
     // 0040454f mov ecx,[ebp-1Ch]
     m.regs.ecx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffe4u32));
     // 00404555 punpcklbw mm0,[esi]
-    todo!();
+    m.mmx.mm0 = punpcklbw(m.mmx.mm0 as u32, m.memory.read::<u32>(m.regs.esi));
     // 00404558 psrlw mm0,7
     todo!();
     // 0040455c packuswb mm0,mm0
@@ -15378,7 +15714,7 @@ pub fn x00404555() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00404555 punpcklbw mm0,[esi]
-    todo!();
+    m.mmx.mm0 = punpcklbw(m.mmx.mm0 as u32, m.memory.read::<u32>(m.regs.esi));
     // 00404558 psrlw mm0,7
     todo!();
     // 0040455c packuswb mm0,mm0
@@ -18524,9 +18860,9 @@ pub fn x00404ea1() -> Cont {
     // 00404f5d movd mm1,ebx
     m.mmx.mm1 = m.regs.ebx as u64;
     // 00404f60 punpcklbw mm0,mm3
-    todo!();
+    m.mmx.mm0 = punpcklbw(m.mmx.mm0 as u32, m.mmx.mm3 as u32);
     // 00404f63 punpcklbw mm1,mm3
-    todo!();
+    m.mmx.mm1 = punpcklbw(m.mmx.mm1 as u32, m.mmx.mm3 as u32);
     // 00404f66 pmullw mm0,mm1
     todo!();
     // 00404f69 psrlw mm0,8
@@ -18678,9 +19014,9 @@ pub fn x00404ef1() -> Cont {
     // 00404f5d movd mm1,ebx
     m.mmx.mm1 = m.regs.ebx as u64;
     // 00404f60 punpcklbw mm0,mm3
-    todo!();
+    m.mmx.mm0 = punpcklbw(m.mmx.mm0 as u32, m.mmx.mm3 as u32);
     // 00404f63 punpcklbw mm1,mm3
-    todo!();
+    m.mmx.mm1 = punpcklbw(m.mmx.mm1 as u32, m.mmx.mm3 as u32);
     // 00404f66 pmullw mm0,mm1
     todo!();
     // 00404f69 psrlw mm0,8
@@ -27297,9 +27633,9 @@ pub fn x00406daa() -> Cont {
     // 00406dcd movd mm1,ebx
     m.mmx.mm1 = m.regs.ebx as u64;
     // 00406dd0 punpcklbw mm0,mm3
-    todo!();
+    m.mmx.mm0 = punpcklbw(m.mmx.mm0 as u32, m.mmx.mm3 as u32);
     // 00406dd3 punpcklbw mm1,mm3
-    todo!();
+    m.mmx.mm1 = punpcklbw(m.mmx.mm1 as u32, m.mmx.mm3 as u32);
     // 00406dd6 pmullw mm0,mm1
     todo!();
     // 00406dd9 psrlw mm0,8
@@ -27345,9 +27681,9 @@ pub fn x00406daa() -> Cont {
     // 00406e14 movd mm1,ebx
     m.mmx.mm1 = m.regs.ebx as u64;
     // 00406e17 punpcklbw mm0,mm3
-    todo!();
+    m.mmx.mm0 = punpcklbw(m.mmx.mm0 as u32, m.mmx.mm3 as u32);
     // 00406e1a punpcklbw mm1,mm3
-    todo!();
+    m.mmx.mm1 = punpcklbw(m.mmx.mm1 as u32, m.mmx.mm3 as u32);
     // 00406e1d pmullw mm0,mm1
     todo!();
     // 00406e20 psrlw mm0,8
@@ -27404,9 +27740,9 @@ pub fn x00406db1() -> Cont {
     // 00406dcd movd mm1,ebx
     m.mmx.mm1 = m.regs.ebx as u64;
     // 00406dd0 punpcklbw mm0,mm3
-    todo!();
+    m.mmx.mm0 = punpcklbw(m.mmx.mm0 as u32, m.mmx.mm3 as u32);
     // 00406dd3 punpcklbw mm1,mm3
-    todo!();
+    m.mmx.mm1 = punpcklbw(m.mmx.mm1 as u32, m.mmx.mm3 as u32);
     // 00406dd6 pmullw mm0,mm1
     todo!();
     // 00406dd9 psrlw mm0,8
@@ -27452,9 +27788,9 @@ pub fn x00406db1() -> Cont {
     // 00406e14 movd mm1,ebx
     m.mmx.mm1 = m.regs.ebx as u64;
     // 00406e17 punpcklbw mm0,mm3
-    todo!();
+    m.mmx.mm0 = punpcklbw(m.mmx.mm0 as u32, m.mmx.mm3 as u32);
     // 00406e1a punpcklbw mm1,mm3
-    todo!();
+    m.mmx.mm1 = punpcklbw(m.mmx.mm1 as u32, m.mmx.mm3 as u32);
     // 00406e1d pmullw mm0,mm1
     todo!();
     // 00406e20 psrlw mm0,8
@@ -27946,9 +28282,9 @@ pub fn x00406f6f() -> Cont {
     // 00406f84 movd mm1,ebx
     m.mmx.mm1 = m.regs.ebx as u64;
     // 00406f87 punpcklbw mm0,mm3
-    todo!();
+    m.mmx.mm0 = punpcklbw(m.mmx.mm0 as u32, m.mmx.mm3 as u32);
     // 00406f8a punpcklbw mm1,mm3
-    todo!();
+    m.mmx.mm1 = punpcklbw(m.mmx.mm1 as u32, m.mmx.mm3 as u32);
     // 00406f8d pmullw mm0,mm1
     todo!();
     // 00406f90 psrlw mm0,8
@@ -28012,9 +28348,9 @@ pub fn x00406f6f() -> Cont {
     // 00406fe5 movd mm1,ebx
     m.mmx.mm1 = m.regs.ebx as u64;
     // 00406fe8 punpcklbw mm0,mm3
-    todo!();
+    m.mmx.mm0 = punpcklbw(m.mmx.mm0 as u32, m.mmx.mm3 as u32);
     // 00406feb punpcklbw mm1,mm3
-    todo!();
+    m.mmx.mm1 = punpcklbw(m.mmx.mm1 as u32, m.mmx.mm3 as u32);
     // 00406fee pmullw mm0,mm1
     todo!();
     // 00406ff1 psrlw mm0,8
@@ -28088,9 +28424,9 @@ pub fn x0040700a() -> Cont {
     // 0040704a movd mm1,ebx
     m.mmx.mm1 = m.regs.ebx as u64;
     // 0040704d punpcklbw mm0,mm3
-    todo!();
+    m.mmx.mm0 = punpcklbw(m.mmx.mm0 as u32, m.mmx.mm3 as u32);
     // 00407050 punpcklbw mm1,mm3
-    todo!();
+    m.mmx.mm1 = punpcklbw(m.mmx.mm1 as u32, m.mmx.mm3 as u32);
     // 00407053 pmullw mm0,mm1
     todo!();
     // 00407056 psrlw mm0,8
@@ -28110,9 +28446,9 @@ pub fn x0040700a() -> Cont {
     // 0040706d movd mm1,ebx
     m.mmx.mm1 = m.regs.ebx as u64;
     // 00407070 punpcklbw mm0,mm3
-    todo!();
+    m.mmx.mm0 = punpcklbw(m.mmx.mm0 as u32, m.mmx.mm3 as u32);
     // 00407073 punpcklbw mm1,mm3
-    todo!();
+    m.mmx.mm1 = punpcklbw(m.mmx.mm1 as u32, m.mmx.mm3 as u32);
     // 00407076 pmullw mm0,mm1
     todo!();
     // 00407079 psrlw mm0,8
@@ -28188,9 +28524,9 @@ pub fn x0040700c() -> Cont {
     // 0040704a movd mm1,ebx
     m.mmx.mm1 = m.regs.ebx as u64;
     // 0040704d punpcklbw mm0,mm3
-    todo!();
+    m.mmx.mm0 = punpcklbw(m.mmx.mm0 as u32, m.mmx.mm3 as u32);
     // 00407050 punpcklbw mm1,mm3
-    todo!();
+    m.mmx.mm1 = punpcklbw(m.mmx.mm1 as u32, m.mmx.mm3 as u32);
     // 00407053 pmullw mm0,mm1
     todo!();
     // 00407056 psrlw mm0,8
@@ -28210,9 +28546,9 @@ pub fn x0040700c() -> Cont {
     // 0040706d movd mm1,ebx
     m.mmx.mm1 = m.regs.ebx as u64;
     // 00407070 punpcklbw mm0,mm3
-    todo!();
+    m.mmx.mm0 = punpcklbw(m.mmx.mm0 as u32, m.mmx.mm3 as u32);
     // 00407073 punpcklbw mm1,mm3
-    todo!();
+    m.mmx.mm1 = punpcklbw(m.mmx.mm1 as u32, m.mmx.mm3 as u32);
     // 00407076 pmullw mm0,mm1
     todo!();
     // 00407079 psrlw mm0,8
@@ -28285,9 +28621,9 @@ pub fn x0040700f() -> Cont {
     // 0040704a movd mm1,ebx
     m.mmx.mm1 = m.regs.ebx as u64;
     // 0040704d punpcklbw mm0,mm3
-    todo!();
+    m.mmx.mm0 = punpcklbw(m.mmx.mm0 as u32, m.mmx.mm3 as u32);
     // 00407050 punpcklbw mm1,mm3
-    todo!();
+    m.mmx.mm1 = punpcklbw(m.mmx.mm1 as u32, m.mmx.mm3 as u32);
     // 00407053 pmullw mm0,mm1
     todo!();
     // 00407056 psrlw mm0,8
@@ -28307,9 +28643,9 @@ pub fn x0040700f() -> Cont {
     // 0040706d movd mm1,ebx
     m.mmx.mm1 = m.regs.ebx as u64;
     // 00407070 punpcklbw mm0,mm3
-    todo!();
+    m.mmx.mm0 = punpcklbw(m.mmx.mm0 as u32, m.mmx.mm3 as u32);
     // 00407073 punpcklbw mm1,mm3
-    todo!();
+    m.mmx.mm1 = punpcklbw(m.mmx.mm1 as u32, m.mmx.mm3 as u32);
     // 00407076 pmullw mm0,mm1
     todo!();
     // 00407079 psrlw mm0,8
@@ -28372,9 +28708,9 @@ pub fn x0040701b() -> Cont {
     // 0040704a movd mm1,ebx
     m.mmx.mm1 = m.regs.ebx as u64;
     // 0040704d punpcklbw mm0,mm3
-    todo!();
+    m.mmx.mm0 = punpcklbw(m.mmx.mm0 as u32, m.mmx.mm3 as u32);
     // 00407050 punpcklbw mm1,mm3
-    todo!();
+    m.mmx.mm1 = punpcklbw(m.mmx.mm1 as u32, m.mmx.mm3 as u32);
     // 00407053 pmullw mm0,mm1
     todo!();
     // 00407056 psrlw mm0,8
@@ -28394,9 +28730,9 @@ pub fn x0040701b() -> Cont {
     // 0040706d movd mm1,ebx
     m.mmx.mm1 = m.regs.ebx as u64;
     // 00407070 punpcklbw mm0,mm3
-    todo!();
+    m.mmx.mm0 = punpcklbw(m.mmx.mm0 as u32, m.mmx.mm3 as u32);
     // 00407073 punpcklbw mm1,mm3
-    todo!();
+    m.mmx.mm1 = punpcklbw(m.mmx.mm1 as u32, m.mmx.mm3 as u32);
     // 00407076 pmullw mm0,mm1
     todo!();
     // 00407079 psrlw mm0,8
@@ -31403,9 +31739,9 @@ pub fn x00407d25() -> Cont {
     // 00407d32 movd mm1,ebx
     m.mmx.mm1 = m.regs.ebx as u64;
     // 00407d35 punpcklbw mm0,mm3
-    todo!();
+    m.mmx.mm0 = punpcklbw(m.mmx.mm0 as u32, m.mmx.mm3 as u32);
     // 00407d38 punpcklbw mm1,mm3
-    todo!();
+    m.mmx.mm1 = punpcklbw(m.mmx.mm1 as u32, m.mmx.mm3 as u32);
     // 00407d3b pmullw mm0,mm1
     todo!();
     // 00407d3e psrlw mm0,8
@@ -31877,9 +32213,9 @@ pub fn x00407f18() -> Cont {
     // 00407f25 movd mm1,ebx
     m.mmx.mm1 = m.regs.ebx as u64;
     // 00407f28 punpcklbw mm0,mm3
-    todo!();
+    m.mmx.mm0 = punpcklbw(m.mmx.mm0 as u32, m.mmx.mm3 as u32);
     // 00407f2b punpcklbw mm1,mm3
-    todo!();
+    m.mmx.mm1 = punpcklbw(m.mmx.mm1 as u32, m.mmx.mm3 as u32);
     // 00407f2e pmullw mm0,mm1
     todo!();
     // 00407f31 psrlw mm0,8
@@ -32934,9 +33270,9 @@ pub fn x0040839a() -> Cont {
     // 004083a7 movd mm1,ebx
     m.mmx.mm1 = m.regs.ebx as u64;
     // 004083aa punpcklbw mm0,mm3
-    todo!();
+    m.mmx.mm0 = punpcklbw(m.mmx.mm0 as u32, m.mmx.mm3 as u32);
     // 004083ad punpcklbw mm1,mm3
-    todo!();
+    m.mmx.mm1 = punpcklbw(m.mmx.mm1 as u32, m.mmx.mm3 as u32);
     // 004083b0 pmullw mm0,mm1
     todo!();
     // 004083b3 psrlw mm0,8
@@ -33311,9 +33647,9 @@ pub fn x0040854e() -> Cont {
     // 0040855b movd mm1,ebx
     m.mmx.mm1 = m.regs.ebx as u64;
     // 0040855e punpcklbw mm0,mm3
-    todo!();
+    m.mmx.mm0 = punpcklbw(m.mmx.mm0 as u32, m.mmx.mm3 as u32);
     // 00408561 punpcklbw mm1,mm3
-    todo!();
+    m.mmx.mm1 = punpcklbw(m.mmx.mm1 as u32, m.mmx.mm3 as u32);
     // 00408564 pmullw mm0,mm1
     todo!();
     // 00408567 psrlw mm0,8
