@@ -73,7 +73,6 @@ fn mmx_set_32(instr: &iced_x86::Instruction, n: u32, expr: String) -> String {
 pub fn codegen(w: &mut Writer, _state: &State, instr: &iced_x86::Instruction) -> bool {
     use iced_x86::Mnemonic::*;
     match instr.mnemonic() {
-        Movdqa | Paddsb | Paddsw => w.todo(),
         Movd => w.line(mmx_set_32(instr, 0, mmx_get_32(instr, 1))),
         Movq => {
             w.line(mmx_set(instr, 0, mmx_get(instr, 1)));
@@ -86,21 +85,22 @@ pub fn codegen(w: &mut Writer, _state: &State, instr: &iced_x86::Instruction) ->
             ));
         }
 
-        // Paddsb => {
-        //     w.line(mmx_set(
-        //         instr,
-        //         0,
-        //         format!("paddsb({}, {})", mmx_get(instr, 0), mmx_get(instr, 1)),
-        //     ));
-        // }
-        // Paddsw => {
-        //     w.line(mmx_set(
-        //         instr,
-        //         0,
-        //         format!("paddsw({}, {})", mmx_get(instr, 0), mmx_get(instr, 1)),
-        //     ));
-        // }
-        Punpcklbw | Pmullw | Psrlw | Packuswb | Emms | Psubusb | Paddusb | Psubw | Psraw => {
+        Paddsb => {
+            w.line(mmx_set(
+                instr,
+                0,
+                format!("paddsb({}, {})", mmx_get(instr, 0), mmx_get(instr, 1)),
+            ));
+        }
+        Paddsw => {
+            w.line(mmx_set(
+                instr,
+                0,
+                format!("paddsw({}, {})", mmx_get(instr, 0), mmx_get(instr, 1)),
+            ));
+        }
+        Punpcklbw | Pmullw | Psrlw | Packuswb | Emms | Psubusb | Paddusb | Psubw | Psraw
+        | Movdqa => {
             w.todo();
         }
         _ => return false,
