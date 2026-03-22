@@ -316,7 +316,7 @@ pub mod IDirectDrawSurface {
     }
 
     #[win32_derive::dllexport]
-    pub fn Flip(_this: u32) -> DD {
+    pub fn Flip(_this: u32, _lpDDSurfaceTargetOverride: u32, _dwFlags: u32) -> DD {
         todo!()
     }
 
