@@ -9970,7 +9970,7 @@ pub fn x00403392() -> Cont {
     // 004033a5 movd mm1,ebx
     m.mmx.mm1 = m.regs.ebx as u64;
     // 004033a8 psubusb mm0,mm1
-    todo!();
+    m.mmx.mm0 = psubusb(m.mmx.mm0, m.mmx.mm1);
     // 004033ab movd eax,mm0
     m.regs.eax = m.mmx.mm0 as u32;
     // 004033ae mov [edx],eax
@@ -11500,7 +11500,7 @@ pub fn x00403995() -> Cont {
     // 004039e1 movd mm1,ebx
     m.mmx.mm1 = m.regs.ebx as u64;
     // 004039e4 psubusb mm0,mm1
-    todo!();
+    m.mmx.mm0 = psubusb(m.mmx.mm0, m.mmx.mm1);
     // 004039e7 movd eax,mm0
     m.regs.eax = m.mmx.mm0 as u32;
     // 004039ea mov ebx,[ebp-8]
@@ -11545,7 +11545,7 @@ pub fn x00403995() -> Cont {
     // 00403a1e movd mm1,ebx
     m.mmx.mm1 = m.regs.ebx as u64;
     // 00403a21 psubusb mm0,mm1
-    todo!();
+    m.mmx.mm0 = psubusb(m.mmx.mm0, m.mmx.mm1);
     // 00403a24 movd eax,mm0
     m.regs.eax = m.mmx.mm0 as u32;
     // 00403a27 mov [ecx+esi*4],eax
@@ -20246,7 +20246,7 @@ pub fn x004052ff() -> Cont {
     // 0040531c movd mm1,ebx
     m.mmx.mm1 = m.regs.ebx as u64;
     // 0040531f psubusb mm0,mm1
-    todo!();
+    m.mmx.mm0 = psubusb(m.mmx.mm0, m.mmx.mm1);
     // 00405322 movd eax,mm0
     m.regs.eax = m.mmx.mm0 as u32;
     // 00405325 mov [edx],eax
@@ -22820,7 +22820,7 @@ pub fn x00405aaa() -> Cont {
     // 00405ac7 movd mm1,ebx
     m.mmx.mm1 = m.regs.ebx as u64;
     // 00405aca psubusb mm0,mm1
-    todo!();
+    m.mmx.mm0 = psubusb(m.mmx.mm0, m.mmx.mm1);
     // 00405acd movd eax,mm0
     m.regs.eax = m.mmx.mm0 as u32;
     // 00405ad0 mov [edi+edx*4],eax

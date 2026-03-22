@@ -34,7 +34,14 @@ impl Unpack<[i16; 4]> for u64 {
 
 impl Unpack<[i8; 8]> for u64 {
     fn unpack(self) -> [i8; 8] {
-        self.to_le_bytes().map(|b| b as i8)
+        let x: [u8; 8] = self.unpack();
+        x.map(|b| b as i8)
+    }
+}
+
+impl Unpack<[u8; 8]> for u64 {
+    fn unpack(self) -> [u8; 8] {
+        self.to_le_bytes()
     }
 }
 
@@ -182,6 +189,22 @@ pub fn packuswb(x: u64, y: u64) -> u64 {
         saturate(y[1] as i16),
         saturate(y[2] as i16),
         saturate(y[3] as i16),
+    ]
+    .pack()
+}
+
+pub fn psubusb(x: u64, y: u64) -> u64 {
+    let x: [u8; 8] = x.unpack();
+    let y: [u8; 8] = y.unpack();
+    [
+        x[0].saturating_sub(y[0]),
+        x[1].saturating_sub(y[1]),
+        x[2].saturating_sub(y[2]),
+        x[3].saturating_sub(y[3]),
+        x[4].saturating_sub(y[4]),
+        x[5].saturating_sub(y[5]),
+        x[6].saturating_sub(y[6]),
+        x[7].saturating_sub(y[7]),
     ]
     .pack()
 }

@@ -141,7 +141,14 @@ pub fn codegen(w: &mut Writer, _state: &State, instr: &iced_x86::Instruction) ->
             w.line("// no-op");
         }
 
-        Psubusb | Paddusb | Psubw | Psraw | Movdqa => {
+        Psubusb => {
+            w.line(mmx_set(
+                instr,
+                0,
+                format!("psubusb({}, {})", mmx_get(instr, 0), mmx_get(instr, 1)),
+            ));
+        }
+        Paddusb | Psubw | Psraw | Movdqa => {
             w.todo();
         }
         _ => return false,
