@@ -2,6 +2,7 @@ use super::int::Int;
 use crate::Flags;
 
 pub fn shl<I: Int + num_traits::WrappingShl>(x: I, y: u8, flags: &mut Flags) -> I {
+    assert!(I::bits() < 64);
     let y = y % 32;
     if y == 0 {
         return x;
@@ -9,7 +10,7 @@ pub fn shl<I: Int + num_traits::WrappingShl>(x: I, y: u8, flags: &mut Flags) -> 
 
     // Carry is the highest bit that will be shifted out.
     let cf = (x >> (I::bits() - y as usize) & I::one()).is_one();
-    let val = x.wrapping_shl(y as u32);
+    let val = x << y as usize;
     flags.set(Flags::CF, cf);
     let msb = val.high_bit().is_one();
     flags.set(Flags::SF, msb);
@@ -27,8 +28,7 @@ pub fn shl<I: Int + num_traits::WrappingShl>(x: I, y: u8, flags: &mut Flags) -> 
 }
 
 pub fn shr<I: Int>(x: I, y: u8, flags: &mut Flags) -> I {
-    // In all modes but 64 it is correct to mask to 32 bits.
-    assert!(I::bits() < 64); // 64 not implemented
+    assert!(I::bits() < 64);
     let y = y % 32;
     if y == 0 {
         return x; // Don't affect flags.
@@ -46,6 +46,7 @@ pub fn shr<I: Int>(x: I, y: u8, flags: &mut Flags) -> I {
 }
 
 pub fn sar<I: Int>(x: I, y: u8, flags: &mut Flags) -> I {
+    assert!(I::bits() < 64);
     let y = y % 32;
     if y == 0 {
         return x;
