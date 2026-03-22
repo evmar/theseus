@@ -1,7 +1,3 @@
-pub fn movq() {
-    todo!("movq");
-}
-
 pub fn movdqa() {
     todo!("movdqa");
 }

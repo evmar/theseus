@@ -23,7 +23,7 @@ pub fn get_reg(r: iced_x86::Register) -> String {
     }
 }
 
-fn set_reg(r: iced_x86::Register, expr: String) -> String {
+pub fn set_reg(r: iced_x86::Register, expr: String) -> String {
     use iced_x86::Register::*;
     match r {
         EAX | ECX | EDX | EBX | ESI | EDI | ESP | EBP => {
@@ -110,6 +110,7 @@ pub fn reg_size(r: iced_x86::Register) -> usize {
         AL | AH | BL | BH | CL | CH | DL | DH => 8,
         AX | BX | CX | DX | SI | DI | BP | SP => 16,
         EAX | EBX | ECX | EDX | ESI | EDI | ESP | EBP => 32,
+        MM0 | MM1 | MM2 | MM3 | MM4 | MM5 | MM6 | MM7 => 64,
         r => todo!("{r:?}"),
     }
 }
@@ -445,13 +446,6 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
             }
             Bt => {
                 w.line("bt();");
-            }
-
-            Movq => {
-                w.line("movq();");
-            }
-            Movdqa => {
-                w.line("movdqa();");
             }
 
             Cbw => {
