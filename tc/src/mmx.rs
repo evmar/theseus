@@ -32,7 +32,8 @@ fn mmx_get(instr: &iced_x86::Instruction, n: u32) -> String {
             let size = codegen::mem_size(instr);
             codegen::get_mem(format!("u{size}"), addr)
         }
-        _ => unreachable!(),
+        Immediate8 => format!("{:#x}u64", instr.immediate8()),
+        k => todo!("{k:?}"),
     }
 }
 
@@ -120,7 +121,15 @@ pub fn codegen(w: &mut Writer, _state: &State, instr: &iced_x86::Instruction) ->
             ));
         }
 
-        Psrlw | Packuswb | Emms | Psubusb | Paddusb | Psubw | Psraw | Movdqa => {
+        Psrlw => {
+            w.line(mmx_set(
+                instr,
+                0,
+                format!("psrlw({}, {})", mmx_get(instr, 0), mmx_get(instr, 1)),
+            ));
+        }
+
+        Packuswb | Emms | Psubusb | Paddusb | Psubw | Psraw | Movdqa => {
             w.todo();
         }
         _ => return false,

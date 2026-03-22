@@ -152,3 +152,11 @@ pub fn pmullw(x: u64, y: u64) -> u64 {
     ]
     .pack()
 }
+
+pub fn psrlw(x: u64, y: u64) -> u64 {
+    if y > 15 {
+        return 0;
+    }
+    let x: [u16; 4] = x.unpack();
+    [x[0] >> y, x[1] >> y, x[2] >> y, x[3] >> y].pack()
+}
