@@ -56,4 +56,11 @@ impl Memory {
         }
         &self.bytes[start as usize..]
     }
+
+    pub fn slice_mut_from(&mut self, start: u32) -> &mut [u8] {
+        if start < 0x1000 {
+            log::error!("null slice");
+        }
+        &mut self.bytes[start as usize..]
+    }
 }
