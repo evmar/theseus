@@ -137,7 +137,11 @@ pub fn codegen(w: &mut Writer, _state: &State, instr: &iced_x86::Instruction) ->
             ));
         }
 
-        Emms | Psubusb | Paddusb | Psubw | Psraw | Movdqa => {
+        Emms => {
+            w.line("// no-op");
+        }
+
+        Psubusb | Paddusb | Psubw | Psraw | Movdqa => {
             w.todo();
         }
         _ => return false,

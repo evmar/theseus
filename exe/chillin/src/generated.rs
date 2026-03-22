@@ -9587,7 +9587,7 @@ pub fn x00402fb6() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00402fb6 emms
-    todo!();
+    // no-op
     // 00402fb8 leave
     leave();
     // 00402fb9 pop edi
@@ -9819,7 +9819,7 @@ pub fn x004032b2() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004032b2 emms
-    todo!();
+    // no-op
     // 004032b4 leave
     leave();
     // 004032b5 pop edi
@@ -9983,7 +9983,7 @@ pub fn x004033b2() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004033b2 emms
-    todo!();
+    // no-op
     // 004033b4 pop edi
     m.regs.edi = pop();
     // 004033b5 pop esi
@@ -10076,7 +10076,7 @@ pub fn x004033f5() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004033f5 emms
-    todo!();
+    // no-op
     // 004033f7 leave
     leave();
     // 004033f8 pop esi
@@ -10489,7 +10489,7 @@ pub fn x00403533() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00403533 emms
-    todo!();
+    // no-op
     // 00403535 leave
     leave();
     // 00403536 pop edi
@@ -11616,7 +11616,7 @@ pub fn x00403a54() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00403a54 emms
-    todo!();
+    // no-op
     // 00403a56 leave
     leave();
     // 00403a57 pop edi
@@ -15841,7 +15841,7 @@ pub fn x00404568() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00404568 emms
-    todo!();
+    // no-op
     // 0040456a leave
     leave();
     // 0040456b pop edi
@@ -19184,7 +19184,7 @@ pub fn x00404f9f() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00404f9f emms
-    todo!();
+    // no-op
     // 00404fa1 lea esp,[ebp+82h]
     m.regs.esp = m.regs.ebp.wrapping_add(0x82u32);
     // 00404fa7 pop ebp
@@ -20270,7 +20270,7 @@ pub fn x0040532f() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 0040532f emms
-    todo!();
+    // no-op
     // 00405331 leave
     leave();
     // 00405332 pop edi
@@ -22881,7 +22881,7 @@ pub fn x00405afc() -> Cont {
     // 00405afc mov dword ptr ds:[433F28h],140h
     m.memory.write::<u32>(0x433f28u32, 0x140u32);
     // 00405b06 emms
-    todo!();
+    // no-op
     // 00405b08 leave
     leave();
     // 00405b09 pop edi
@@ -27814,7 +27814,7 @@ pub fn x00406daa() -> Cont {
     m.memory
         .write::<u32>(m.regs.ebx.wrapping_add((m.regs.eax * 4)), m.regs.edx);
     // 00406e3f emms
-    todo!();
+    // no-op
     // 00406e41 inc ecx
     m.regs.ecx = inc(m.regs.ecx);
     // 00406e42 jmp near ptr 00406CB3h
@@ -27921,7 +27921,7 @@ pub fn x00406db1() -> Cont {
     m.memory
         .write::<u32>(m.regs.ebx.wrapping_add((m.regs.eax * 4)), m.regs.edx);
     // 00406e3f emms
-    todo!();
+    // no-op
     // 00406e41 inc ecx
     m.regs.ecx = inc(m.regs.ecx);
     // 00406e42 jmp near ptr 00406CB3h
@@ -28888,7 +28888,7 @@ pub fn x004070ab() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004070ab emms
-    todo!();
+    // no-op
     // 004070ad lea eax,[edi-0C8h]
     m.regs.eax = m.regs.edi.wrapping_add(0xffffff38u32);
     // 004070b3 mov [ebp-4],eax
@@ -28927,7 +28927,7 @@ pub fn x004070d5() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004070d5 emms
-    todo!();
+    // no-op
     // 004070d7 mov ebx,10000h
     m.regs.ebx = 0x10000u32;
     // 004070dc mov eax,96h
@@ -30214,7 +30214,7 @@ pub fn x004076ea() -> Cont {
     // 004076f3 mov edi,[ebp+2Ch]
     m.regs.edi = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0x2cu32));
     // 004076f6 emms
-    todo!();
+    // no-op
     // 004076f8 fld dword ptr [ebp+1Ch]
     m.fpu
         .push(m.memory.read::<f32>(m.regs.ebp.wrapping_add(0x1cu32)) as f64);
@@ -31872,7 +31872,7 @@ pub fn x00407d52() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00407d52 emms
-    todo!();
+    // no-op
     // 00407d54 mov eax,[ebp-48h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffb8u32));
     // 00407d57 mov [ebp-4],eax
@@ -32346,7 +32346,7 @@ pub fn x00407f45() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 00407f45 emms
-    todo!();
+    // no-op
     // 00407f47 mov eax,[ebp-48h]
     m.regs.eax = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffb8u32));
     // 00407f4a mov [ebp-4],eax
@@ -33403,7 +33403,7 @@ pub fn x004083c7() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 004083c7 emms
-    todo!();
+    // no-op
     // 004083c9 mov edx,[ebp-4Ch]
     m.regs.edx = m.memory.read::<u32>(m.regs.ebp.wrapping_add(0xffffffb4u32));
     // 004083cc mov eax,ds:[433E38h]
@@ -33780,7 +33780,7 @@ pub fn x0040857b() -> Cont {
     #[allow(unused)]
     let m = unsafe { &mut MACHINE };
     // 0040857b emms
-    todo!();
+    // no-op
     // 0040857d mov edx,ds:[433FACh]
     m.regs.edx = m.memory.read::<u32>(0x433facu32);
     // 00408583 mov eax,ds:[433E38h]
