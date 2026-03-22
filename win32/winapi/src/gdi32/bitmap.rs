@@ -1,3 +1,4 @@
+use runtime::Machine;
 use std::rc::Rc;
 
 use runtime::MACHINE;
@@ -10,6 +11,7 @@ use crate::{
 
 #[win32_derive::dllexport]
 pub fn StretchBlt(
+    _m: &mut Machine,
     hdcDest: HDC,
     xDest: i32,
     yDest: i32,

@@ -1,3 +1,4 @@
+use runtime::Machine;
 use std::rc::Rc;
 
 use runtime::MACHINE;
@@ -15,7 +16,7 @@ win32flags! {
 }
 
 #[win32_derive::dllexport]
-pub fn HeapAlloc(hHeap: HANDLE, dwFlags: HEAP_FLAGS, dwBytes: u32) -> u32 {
+pub fn HeapAlloc(_m: &mut Machine, hHeap: HANDLE, dwFlags: HEAP_FLAGS, dwBytes: u32) -> u32 {
     if !dwFlags.is_empty() {
         todo!();
     }
@@ -46,6 +47,7 @@ pub fn heap_create(name: String, size: u32) -> Rc<Heap> {
 
 #[win32_derive::dllexport]
 pub fn HeapCreate(
+    _m: &mut Machine,
     _flOptions: u32, /* HEAP_FLAGS */
     dwInitialSize: u32,
     _dwMaximumSize: u32,
@@ -58,12 +60,17 @@ pub fn HeapCreate(
 }
 
 #[win32_derive::dllexport]
-pub fn HeapDestroy(_hHeap: HANDLE) -> bool {
+pub fn HeapDestroy(_m: &mut Machine, _hHeap: HANDLE) -> bool {
     stub!(true) // success
 }
 
 #[win32_derive::dllexport]
-pub fn HeapSize(hHeap: HANDLE, dwFlags: u32 /* HEAP_FLAGS */, lpMem: u32) -> u32 {
+pub fn HeapSize(
+    _m: &mut Machine,
+    hHeap: HANDLE,
+    dwFlags: u32, /* HEAP_FLAGS */
+    lpMem: u32,
+) -> u32 {
     if dwFlags != 0 {
         log::warn!("HeapFree flags {dwFlags:x}");
     }
@@ -73,7 +80,12 @@ pub fn HeapSize(hHeap: HANDLE, dwFlags: u32 /* HEAP_FLAGS */, lpMem: u32) -> u32
 }
 
 #[win32_derive::dllexport]
-pub fn HeapFree(hHeap: HANDLE, dwFlags: u32 /* HEAP_FLAGS */, lpMem: u32) -> bool {
+pub fn HeapFree(
+    _m: &mut Machine,
+    hHeap: HANDLE,
+    dwFlags: u32, /* HEAP_FLAGS */
+    lpMem: u32,
+) -> bool {
     if dwFlags != 0 {
         log::warn!("HeapFree flags {dwFlags:x}");
     }
@@ -85,6 +97,7 @@ pub fn HeapFree(hHeap: HANDLE, dwFlags: u32 /* HEAP_FLAGS */, lpMem: u32) -> boo
 
 #[win32_derive::dllexport]
 pub fn HeapReAlloc(
+    _m: &mut Machine,
     _hHeap: HANDLE,
     dwFlags: u32, /* HEAP_FLAGS */
     _lpMem: u32,

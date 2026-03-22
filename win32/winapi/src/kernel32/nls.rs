@@ -1,17 +1,19 @@
 use crate::stub;
+use runtime::Machine;
 
 #[win32_derive::dllexport]
-pub fn GetACP() -> u32 {
+pub fn GetACP(_m: &mut Machine) -> u32 {
     1252 // windows-1252
 }
 
 #[win32_derive::dllexport]
-pub fn GetCPInfo(_CodePage: u32, _lpCPInfo: u32) -> bool {
+pub fn GetCPInfo(_m: &mut Machine, _CodePage: u32, _lpCPInfo: u32) -> bool {
     stub!(false) // fail
 }
 
 #[win32_derive::dllexport]
 pub fn GetStringTypeA(
+    _m: &mut Machine,
     _Locale: u32,
     _dwInfoType: u32,
     _lpSrcStr: u32,
@@ -22,12 +24,19 @@ pub fn GetStringTypeA(
 }
 
 #[win32_derive::dllexport]
-pub fn GetStringTypeW(_dwInfoType: u32, _lpSrcStr: u32, _cchSrc: i32, _lpCharType: u32) -> bool {
+pub fn GetStringTypeW(
+    _m: &mut Machine,
+    _dwInfoType: u32,
+    _lpSrcStr: u32,
+    _cchSrc: i32,
+    _lpCharType: u32,
+) -> bool {
     todo!();
 }
 
 #[win32_derive::dllexport]
 pub fn LCMapStringA(
+    _m: &mut Machine,
     _Locale: u32,
     _dwMapFlags: u32,
     _lpSrcStr: u32,
@@ -40,6 +49,7 @@ pub fn LCMapStringA(
 
 #[win32_derive::dllexport]
 pub fn LCMapStringW(
+    _m: &mut Machine,
     _Locale: u32,
     _dwMapFlags: u32,
     _lpSrcStr: u32,
@@ -52,6 +62,7 @@ pub fn LCMapStringW(
 
 #[win32_derive::dllexport]
 pub fn MultiByteToWideChar(
+    _m: &mut Machine,
     _CodePage: u32,
     _dwFlags: u32, /* MULTI_BYTE_TO_WIDE_CHAR_FLAGS */
     _lpMultiByteStr: u32,

@@ -1,9 +1,10 @@
 use runtime::MACHINE;
+use runtime::Machine;
 
 use crate::kernel32::{HMODULE, state};
 
 #[win32_derive::dllexport]
-pub fn GetLastError() -> u32 {
+pub fn GetLastError(_m: &mut Machine) -> u32 {
     0
 }
 
@@ -33,7 +34,7 @@ pub struct STARTUPINFOA {
 }
 
 #[win32_derive::dllexport]
-pub fn GetStartupInfoA(lpStartupInfo: u32) {
+pub fn GetStartupInfoA(_m: &mut Machine, lpStartupInfo: u32) {
     let size = unsafe { MACHINE.memory.read::<u32>(lpStartupInfo) };
     if size > 0 && size < std::mem::size_of::<STARTUPINFOA>() as u32 {
         log::error!("GetStartupInfoA: undersized buffer");
@@ -47,7 +48,7 @@ pub fn GetStartupInfoA(lpStartupInfo: u32) {
 }
 
 #[win32_derive::dllexport]
-pub fn GetVersion() -> u32 {
+pub fn GetVersion(_m: &mut Machine) -> u32 {
     // Win95, version 4.0.
     (1 << 31) | 0x4
 }
@@ -64,7 +65,7 @@ pub struct OSVERSIONINFO {
 }
 
 #[win32_derive::dllexport]
-pub fn GetVersionExA(lpVersionInformation: u32) -> bool {
+pub fn GetVersionExA(_m: &mut Machine, lpVersionInformation: u32) -> bool {
     let size = unsafe { MACHINE.memory.read::<u32>(lpVersionInformation) };
     if size < std::mem::size_of::<OSVERSIONINFO>() as u32 {
         log::error!("GetVersionExA undersized buffer");
@@ -82,18 +83,19 @@ pub fn GetVersionExA(lpVersionInformation: u32) -> bool {
 }
 
 #[win32_derive::dllexport]
-pub fn TerminateProcess(_hProcess: HANDLE, _uExitCode: u32) -> bool {
+pub fn TerminateProcess(_m: &mut Machine, _hProcess: HANDLE, _uExitCode: u32) -> bool {
     todo!();
 }
 
 #[win32_derive::dllexport]
-pub fn UnhandledExceptionFilter(_ExceptionInfo: u32) -> i32 {
+pub fn UnhandledExceptionFilter(_m: &mut Machine, _ExceptionInfo: u32) -> i32 {
     // "The process is being debugged, so the exception should be passed (as second chance) to the application's debugger."
     0 // EXCEPTION_CONTINUE_SEARCH
 }
 
 #[win32_derive::dllexport]
 pub fn VirtualAlloc(
+    _m: &mut Machine,
     lpAddress: u32,
     dwSize: u32,
     _flAllocationType: u32, /* VIRTUAL_ALLOCATION_TYPE */
@@ -135,6 +137,7 @@ pub fn VirtualAlloc(
 
 #[win32_derive::dllexport]
 pub fn VirtualFree(
+    _m: &mut Machine,
     _lpAddress: u32,
     _dwSize: u32,
     _dwFreeType: u32, /* VIRTUAL_FREE_TYPE */
@@ -144,6 +147,7 @@ pub fn VirtualFree(
 
 #[win32_derive::dllexport]
 pub fn WideCharToMultiByte(
+    _m: &mut Machine,
     _CodePage: u32,
     _dwFlags: u32,
     _lpWideCharStr: u32,
@@ -194,42 +198,54 @@ pub fn WideCharToMultiByte(
 }
 
 #[win32_derive::dllexport]
-pub fn GetOEMCP() -> u32 {
+pub fn GetOEMCP(_m: &mut Machine) -> u32 {
     todo!()
 }
 
 #[win32_derive::dllexport]
-pub fn OutputDebugStringA(_lpOutputString: u32) {
+pub fn OutputDebugStringA(_m: &mut Machine, _lpOutputString: u32) {
     todo!()
 }
 
 #[win32_derive::dllexport]
-pub fn GetProcAddress(_hModule: HMODULE, _lpProcName: u32) -> u32 /* FARPROC */ {
+pub fn GetProcAddress(_m: &mut Machine, _hModule: HMODULE, _lpProcName: u32) -> u32 /* FARPROC */ {
     todo!()
 }
 
 #[win32_derive::dllexport]
-pub fn RtlUnwind(_TargetFrame: u32, _TargetIp: u32, _ExceptionRecord: u32, _ReturnValue: u32) {
+pub fn RtlUnwind(
+    _m: &mut Machine,
+    _TargetFrame: u32,
+    _TargetIp: u32,
+    _ExceptionRecord: u32,
+    _ReturnValue: u32,
+) {
     todo!()
 }
 
 #[win32_derive::dllexport]
-pub fn GetTickCount() -> u32 {
+pub fn GetTickCount(_m: &mut Machine) -> u32 {
     state().start.elapsed().as_millis() as u32
 }
 
 #[win32_derive::dllexport]
-pub fn SetThreadPriority(_hThread: HANDLE, _nPriority: u32 /* THREAD_PRIORITY */) -> bool {
+pub fn SetThreadPriority(
+    _m: &mut Machine,
+    _hThread: HANDLE,
+    _nPriority: u32, /* THREAD_PRIORITY */
+) -> bool {
     todo!()
 }
 
 #[win32_derive::dllexport]
-pub fn WaitForSingleObject(_hHandle: HANDLE, _dwMilliseconds: u32) -> u32 /* WAIT_EVENT */ {
+pub fn WaitForSingleObject(_m: &mut Machine, _hHandle: HANDLE, _dwMilliseconds: u32) -> u32 /* WAIT_EVENT */
+{
     todo!()
 }
 
 #[win32_derive::dllexport]
 pub fn CreateThread(
+    _m: &mut Machine,
     _lpThreadAttributes: u32,
     _dwStackSize: u32,
     _lpStartAddress: u32, /* LPTHREAD_START_ROUTINE */
@@ -241,6 +257,6 @@ pub fn CreateThread(
 }
 
 #[win32_derive::dllexport]
-pub fn Sleep(_dwMilliseconds: u32) {
+pub fn Sleep(_m: &mut Machine, _dwMilliseconds: u32) {
     todo!()
 }

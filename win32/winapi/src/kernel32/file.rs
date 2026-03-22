@@ -1,3 +1,4 @@
+use runtime::Machine;
 use runtime::{HOST, Host, MACHINE};
 
 use crate::kernel32::HANDLE;
@@ -7,7 +8,7 @@ const STDOUT_HFILE: HANDLE = 0xF11E_0002;
 const STDERR_HFILE: HANDLE = 0xF11E_0003;
 
 #[win32_derive::dllexport]
-pub fn GetStdHandle(nStdHandle: u32) -> u32 {
+pub fn GetStdHandle(_m: &mut Machine, nStdHandle: u32) -> u32 {
     match nStdHandle as i32 {
         -10 => STDIN_HFILE,
         -11 => STDOUT_HFILE,
@@ -21,6 +22,7 @@ pub fn GetStdHandle(nStdHandle: u32) -> u32 {
 
 #[win32_derive::dllexport]
 pub fn WriteFile(
+    _m: &mut Machine,
     hFile: u32,
     lpBuffer: u32,
     nNumberOfBytesToWrite: u32,
@@ -49,7 +51,7 @@ pub fn WriteFile(
 }
 
 #[win32_derive::dllexport]
-pub fn GetFileType(hFile: HANDLE) -> u32 /* FILE_TYPE */ {
+pub fn GetFileType(_m: &mut Machine, hFile: HANDLE) -> u32 /* FILE_TYPE */ {
     let FILE_TYPE_CHAR = 0x2;
     let FILE_TYPE_UNKNOWN = 0x8;
     match hFile {
@@ -67,7 +69,7 @@ pub fn GetFileType(hFile: HANDLE) -> u32 /* FILE_TYPE */ {
 }
 
 #[win32_derive::dllexport]
-pub fn SetHandleCount(uNumber: u32) -> u32 {
+pub fn SetHandleCount(_m: &mut Machine, uNumber: u32) -> u32 {
     // "For Windows Win32 systems, this API has no effect."
     uNumber
 }

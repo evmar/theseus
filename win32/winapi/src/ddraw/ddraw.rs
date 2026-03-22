@@ -204,12 +204,18 @@ pub fn get_pixel_format() -> DDPIXELFORMAT {
 }
 
 #[win32_derive::dllexport]
-pub fn DirectDrawCreate(lpGUID: u32, lplpDD: u32, pUnkOuter: u32) -> DD {
-    DirectDrawCreateEx(lpGUID, lplpDD, 0, pUnkOuter)
+pub fn DirectDrawCreate(m: &mut Machine, lpGUID: u32, lplpDD: u32, pUnkOuter: u32) -> DD {
+    DirectDrawCreateEx(m, lpGUID, lplpDD, 0, pUnkOuter)
 }
 
 #[win32_derive::dllexport]
-pub fn DirectDrawCreateEx(lpGuid: u32, lplpDD: u32, iid: u32, _pUnkOuter: u32) -> DD {
+pub fn DirectDrawCreateEx(
+    _m: &mut Machine,
+    lpGuid: u32,
+    lplpDD: u32,
+    iid: u32,
+    _pUnkOuter: u32,
+) -> DD {
     assert!(lpGuid == 0);
     let iid = if iid == 0 {
         None

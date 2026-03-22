@@ -58,32 +58,39 @@ pub mod IDirectDraw7 {
     }
 
     #[win32_derive::dllexport]
-    pub fn QueryInterface(_this: u32, _riid: u32, _ppv: u32) -> DD {
+    pub fn QueryInterface(_m: &mut Machine, _this: u32, _riid: u32, _ppv: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn AddRef(_this: u32) -> u32 {
+    pub fn AddRef(_m: &mut Machine, _this: u32) -> u32 {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn Release(_this: u32) -> u32 {
+    pub fn Release(_m: &mut Machine, _this: u32) -> u32 {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn Compact(_this: u32) -> DD {
+    pub fn Compact(_m: &mut Machine, _this: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn CreateClipper(_this: u32, _flags: u32, _lplpClipper: u32, _pUnkOuter: u32) -> DD {
+    pub fn CreateClipper(
+        _m: &mut Machine,
+        _this: u32,
+        _flags: u32,
+        _lplpClipper: u32,
+        _pUnkOuter: u32,
+    ) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
     pub fn CreatePalette(
+        _m: &mut Machine,
         _this: u32,
         _flags: u32,
         _lpColorTable: u32,
@@ -95,6 +102,7 @@ pub mod IDirectDraw7 {
 
     #[win32_derive::dllexport]
     pub fn CreateSurface(
+        _m: &mut Machine,
         this: u32,
         lpDDSurfaceDesc2: u32,
         lplpDDSurface: u32,
@@ -114,12 +122,18 @@ pub mod IDirectDraw7 {
     }
 
     #[win32_derive::dllexport]
-    pub fn DuplicateSurface(_this: u32, _lpDDSurface: u32, _lplpDupDDSurface: u32) -> DD {
+    pub fn DuplicateSurface(
+        _m: &mut Machine,
+        _this: u32,
+        _lpDDSurface: u32,
+        _lplpDupDDSurface: u32,
+    ) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
     pub fn EnumDisplayModes(
+        _m: &mut Machine,
         _this: u32,
         _flags: u32,
         _lpSurfaceDesc2: u32,
@@ -131,6 +145,7 @@ pub mod IDirectDraw7 {
 
     #[win32_derive::dllexport]
     pub fn EnumSurfaces(
+        _m: &mut Machine,
         _this: u32,
         _flags: u32,
         _lpSurfaceDesc2: u32,
@@ -141,63 +156,64 @@ pub mod IDirectDraw7 {
     }
 
     #[win32_derive::dllexport]
-    pub fn FlipToGDISurface(_this: u32) -> DD {
+    pub fn FlipToGDISurface(_m: &mut Machine, _this: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn GetCaps(_this: u32, _lpDDDriverCaps: u32, _lpDDEmulCaps: u32) -> DD {
+    pub fn GetCaps(_m: &mut Machine, _this: u32, _lpDDDriverCaps: u32, _lpDDEmulCaps: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn GetDisplayMode(_this: u32, _lpDDSurfaceDesc2: u32) -> DD {
+    pub fn GetDisplayMode(_m: &mut Machine, _this: u32, _lpDDSurfaceDesc2: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn GetFourCCCodes(_this: u32, _lpNumCodes: u32, _lpCodes: u32) -> DD {
+    pub fn GetFourCCCodes(_m: &mut Machine, _this: u32, _lpNumCodes: u32, _lpCodes: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn GetGDISurface(_this: u32, _lplpGDISurface: u32) -> DD {
+    pub fn GetGDISurface(_m: &mut Machine, _this: u32, _lplpGDISurface: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn GetMonitorFrequency(_this: u32, _lpdwFrequency: u32) -> DD {
+    pub fn GetMonitorFrequency(_m: &mut Machine, _this: u32, _lpdwFrequency: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn GetScanLine(_this: u32, _lpdwScanLine: u32) -> DD {
+    pub fn GetScanLine(_m: &mut Machine, _this: u32, _lpdwScanLine: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn GetVerticalBlankStatus(_this: u32, _lpbIsInVB: u32) -> DD {
+    pub fn GetVerticalBlankStatus(_m: &mut Machine, _this: u32, _lpbIsInVB: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn Initialize(_this: u32, _lpGUID: u32) -> DD {
+    pub fn Initialize(_m: &mut Machine, _this: u32, _lpGUID: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn RestoreDisplayMode(_this: u32) -> DD {
+    pub fn RestoreDisplayMode(_m: &mut Machine, _this: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn SetCooperativeLevel(this: u32, hwnd: HWND, flags: u32) -> DD {
+    pub fn SetCooperativeLevel(_m: &mut Machine, this: u32, hwnd: HWND, flags: u32) -> DD {
         state().get_ddraw(this).set_cooperative_level(hwnd, flags);
         DD::OK
     }
 
     #[win32_derive::dllexport]
     pub fn SetDisplayMode(
+        _m: &mut Machine,
         _this: u32,
         _width: u32,
         _height: u32,
@@ -209,42 +225,64 @@ pub mod IDirectDraw7 {
     }
 
     #[win32_derive::dllexport]
-    pub fn WaitForVerticalBlank(_this: u32, _flags: u32, _hEvent: u32) -> DD {
+    pub fn WaitForVerticalBlank(_m: &mut Machine, _this: u32, _flags: u32, _hEvent: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn GetAvailableVidMem(_this: u32, _lpDDSCaps2: u32, _lpdwTotal: u32, _lpdwFree: u32) -> DD {
+    pub fn GetAvailableVidMem(
+        _m: &mut Machine,
+        _this: u32,
+        _lpDDSCaps2: u32,
+        _lpdwTotal: u32,
+        _lpdwFree: u32,
+    ) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn GetSurfaceFromDC(_this: u32, _hdc: HDC, _lplpDDSurface: u32) -> DD {
+    pub fn GetSurfaceFromDC(_m: &mut Machine, _this: u32, _hdc: HDC, _lplpDDSurface: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn RestoreAllSurfaces(_this: u32) -> DD {
+    pub fn RestoreAllSurfaces(_m: &mut Machine, _this: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn TestCooperativeLevel(_this: u32) -> DD {
+    pub fn TestCooperativeLevel(_m: &mut Machine, _this: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn GetDeviceIdentifier(_this: u32, _lpDDDeviceIdentifier: u32, _flags: u32) -> DD {
+    pub fn GetDeviceIdentifier(
+        _m: &mut Machine,
+        _this: u32,
+        _lpDDDeviceIdentifier: u32,
+        _flags: u32,
+    ) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn StartModeTest(_this: u32, _lpModesToTest: u32, _numEntries: u32, _flags: u32) -> DD {
+    pub fn StartModeTest(
+        _m: &mut Machine,
+        _this: u32,
+        _lpModesToTest: u32,
+        _numEntries: u32,
+        _flags: u32,
+    ) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn EvaluateMode(_this: u32, _flags: u32, _pSecondsUntilTimeout: u32) -> DD {
+    pub fn EvaluateMode(
+        _m: &mut Machine,
+        _this: u32,
+        _flags: u32,
+        _pSecondsUntilTimeout: u32,
+    ) -> DD {
         todo!()
     }
 
@@ -362,32 +400,33 @@ pub mod IDirectDrawSurface7 {
     }
 
     #[win32_derive::dllexport]
-    pub fn QueryInterface(_this: u32, _riid: u32, _ppv: u32) -> DD {
+    pub fn QueryInterface(_m: &mut Machine, _this: u32, _riid: u32, _ppv: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn AddRef(_this: u32) -> u32 {
+    pub fn AddRef(_m: &mut Machine, _this: u32) -> u32 {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn Release(_this: u32) -> u32 {
+    pub fn Release(_m: &mut Machine, _this: u32) -> u32 {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn AddAttachedSurface(_this: u32, _lpDDSAttachedSurface: u32) -> DD {
+    pub fn AddAttachedSurface(_m: &mut Machine, _this: u32, _lpDDSAttachedSurface: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn AddOverlayDirtyRect(_this: u32, _lpRect: u32) -> DD {
+    pub fn AddOverlayDirtyRect(_m: &mut Machine, _this: u32, _lpRect: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
     pub fn Blt(
+        _m: &mut Machine,
         _this: u32,
         _lpDestRect: u32,
         _lpDDSrcSurface: u32,
@@ -399,12 +438,19 @@ pub mod IDirectDrawSurface7 {
     }
 
     #[win32_derive::dllexport]
-    pub fn BltBatch(_this: u32, _lpDDBltBatch: u32, _dwCount: u32, _dwFlags: u32) -> DD {
+    pub fn BltBatch(
+        _m: &mut Machine,
+        _this: u32,
+        _lpDDBltBatch: u32,
+        _dwCount: u32,
+        _dwFlags: u32,
+    ) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
     pub fn BltFast(
+        _m: &mut Machine,
         this: u32,
         dwX: u32,
         dwY: u32,
@@ -469,17 +515,28 @@ pub mod IDirectDrawSurface7 {
     }
 
     #[win32_derive::dllexport]
-    pub fn DeleteAttachedSurface(_this: u32, _dwFlags: u32, _lpDDSAttachedSurface: u32) -> DD {
+    pub fn DeleteAttachedSurface(
+        _m: &mut Machine,
+        _this: u32,
+        _dwFlags: u32,
+        _lpDDSAttachedSurface: u32,
+    ) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn EnumAttachedSurfaces(_this: u32, _lpContext: u32, _lpEnumSurfacesCallback: u32) -> DD {
+    pub fn EnumAttachedSurfaces(
+        _m: &mut Machine,
+        _this: u32,
+        _lpContext: u32,
+        _lpEnumSurfacesCallback: u32,
+    ) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
     pub fn EnumOverlayZOrders(
+        _m: &mut Machine,
         _this: u32,
         _dwFlags: u32,
         _lpContext: u32,
@@ -489,7 +546,7 @@ pub mod IDirectDrawSurface7 {
     }
 
     #[win32_derive::dllexport]
-    pub fn Flip(this: u32, _lpDDSurfaceTargetOverride: u32, _dwFlags: u32) -> DD {
+    pub fn Flip(_m: &mut Machine, this: u32, _lpDDSurfaceTargetOverride: u32, _dwFlags: u32) -> DD {
         let surfaces = state().surf.borrow_mut();
         let mut surface = surfaces.get(&this).unwrap().borrow_mut();
         surface.flip();
@@ -497,7 +554,12 @@ pub mod IDirectDrawSurface7 {
     }
 
     #[win32_derive::dllexport]
-    pub fn GetAttachedSurface(this: u32, _lpDDSCaps: u32, lplpDDAttachedSurface: u32) -> DD {
+    pub fn GetAttachedSurface(
+        _m: &mut Machine,
+        this: u32,
+        _lpDDSCaps: u32,
+        lplpDDAttachedSurface: u32,
+    ) -> DD {
         let surfaces = state().surf.borrow_mut();
         let surface = surfaces.get(&this).unwrap().borrow();
         unsafe {
@@ -510,27 +572,27 @@ pub mod IDirectDrawSurface7 {
     }
 
     #[win32_derive::dllexport]
-    pub fn GetBltStatus(_this: u32, _dwFlags: u32) -> DD {
+    pub fn GetBltStatus(_m: &mut Machine, _this: u32, _dwFlags: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn GetCaps(_this: u32, _lpDDSCaps: u32) -> DD {
+    pub fn GetCaps(_m: &mut Machine, _this: u32, _lpDDSCaps: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn GetClipper(_this: u32, _lplpDDClipper: u32) -> DD {
+    pub fn GetClipper(_m: &mut Machine, _this: u32, _lplpDDClipper: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn GetColorKey(_this: u32, _dwFlags: u32, _lpDDColorKey: u32) -> DD {
+    pub fn GetColorKey(_m: &mut Machine, _this: u32, _dwFlags: u32, _lpDDColorKey: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn GetDC(this: u32, lphDC: u32) -> DD {
+    pub fn GetDC(_m: &mut Machine, this: u32, lphDC: u32) -> DD {
         let surfaces = state().surf.borrow_mut();
         let mut surface = surfaces.get(&this).unwrap().borrow_mut();
         let pixels = surface.lock();
@@ -549,27 +611,27 @@ pub mod IDirectDrawSurface7 {
     }
 
     #[win32_derive::dllexport]
-    pub fn GetFlipStatus(_this: u32, _dwFlags: u32) -> DD {
+    pub fn GetFlipStatus(_m: &mut Machine, _this: u32, _dwFlags: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn GetOverlayPosition(_this: u32, _lplX: u32, _lplY: u32) -> DD {
+    pub fn GetOverlayPosition(_m: &mut Machine, _this: u32, _lplX: u32, _lplY: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn GetPalette(_this: u32, _lplpDDPalette: u32) -> DD {
+    pub fn GetPalette(_m: &mut Machine, _this: u32, _lplpDDPalette: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn GetPixelFormat(_this: u32, _lpDDPixelFormat: u32) -> DD {
+    pub fn GetPixelFormat(_m: &mut Machine, _this: u32, _lpDDPixelFormat: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn GetSurfaceDesc(this: u32, lpDDSurfaceDesc2: u32) -> DD {
+    pub fn GetSurfaceDesc(_m: &mut Machine, this: u32, lpDDSurfaceDesc2: u32) -> DD {
         let surfaces = state().surf.borrow_mut();
         let surface = surfaces.get(&this).unwrap().borrow();
         unsafe {
@@ -590,17 +652,18 @@ pub mod IDirectDrawSurface7 {
     }
 
     #[win32_derive::dllexport]
-    pub fn Initialize(_this: u32, _lpDD: u32, _lpDDSurfaceDesc: u32) -> DD {
+    pub fn Initialize(_m: &mut Machine, _this: u32, _lpDD: u32, _lpDDSurfaceDesc: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn IsLost(_this: u32) -> DD {
+    pub fn IsLost(_m: &mut Machine, _this: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
     pub fn Lock(
+        _m: &mut Machine,
         _this: u32,
         _lpDestRect: u32,
         _lpDDSurfaceDesc2: u32,
@@ -611,7 +674,7 @@ pub mod IDirectDrawSurface7 {
     }
 
     #[win32_derive::dllexport]
-    pub fn ReleaseDC(this: u32, hDC: u32) -> DD {
+    pub fn ReleaseDC(_m: &mut Machine, this: u32, hDC: u32) -> DD {
         let surfaces = state().surf.borrow_mut();
         let mut surface = surfaces.get(&this).unwrap().borrow_mut();
         gdi32::state().dcs.borrow_mut().remove(HDC::from_raw(hDC));
@@ -620,37 +683,38 @@ pub mod IDirectDrawSurface7 {
     }
 
     #[win32_derive::dllexport]
-    pub fn Restore(_this: u32) -> DD {
+    pub fn Restore(_m: &mut Machine, _this: u32) -> DD {
         DD::OK
     }
 
     #[win32_derive::dllexport]
-    pub fn SetClipper(_this: u32, _lpDDClipper: u32) -> DD {
+    pub fn SetClipper(_m: &mut Machine, _this: u32, _lpDDClipper: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn SetColorKey(_this: u32, _dwFlags: u32, _lpDDColorKey: u32) -> DD {
+    pub fn SetColorKey(_m: &mut Machine, _this: u32, _dwFlags: u32, _lpDDColorKey: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn SetOverlayPosition(_this: u32, _lX: i32, _lY: i32) -> DD {
+    pub fn SetOverlayPosition(_m: &mut Machine, _this: u32, _lX: i32, _lY: i32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn SetPalette(_this: u32, _lpDDPalette: u32) -> DD {
+    pub fn SetPalette(_m: &mut Machine, _this: u32, _lpDDPalette: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn Unlock(_this: u32, _lpSurfaceData: u32) -> DD {
+    pub fn Unlock(_m: &mut Machine, _this: u32, _lpSurfaceData: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
     pub fn UpdateOverlay(
+        _m: &mut Machine,
         _this: u32,
         _lpSrcRect: u32,
         _lpDDDestSurface: u32,
@@ -662,37 +726,48 @@ pub mod IDirectDrawSurface7 {
     }
 
     #[win32_derive::dllexport]
-    pub fn UpdateOverlayDisplay(_this: u32, _dwFlags: u32) -> DD {
+    pub fn UpdateOverlayDisplay(_m: &mut Machine, _this: u32, _dwFlags: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn UpdateOverlayZOrder(_this: u32, _dwFlags: u32, _lpDDSurfaceReference: u32) -> DD {
+    pub fn UpdateOverlayZOrder(
+        _m: &mut Machine,
+        _this: u32,
+        _dwFlags: u32,
+        _lpDDSurfaceReference: u32,
+    ) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn GetDDInterface(_this: u32, _lplpDD: u32) -> DD {
+    pub fn GetDDInterface(_m: &mut Machine, _this: u32, _lplpDD: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn PageLock(_this: u32, _dwFlags: u32) -> DD {
+    pub fn PageLock(_m: &mut Machine, _this: u32, _dwFlags: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn PageUnlock(_this: u32, _dwFlags: u32) -> DD {
+    pub fn PageUnlock(_m: &mut Machine, _this: u32, _dwFlags: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn SetSurfaceDesc(_this: u32, _lpDDSurfaceDesc2: u32, _dwFlags: u32) -> DD {
+    pub fn SetSurfaceDesc(
+        _m: &mut Machine,
+        _this: u32,
+        _lpDDSurfaceDesc2: u32,
+        _dwFlags: u32,
+    ) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
     pub fn SetPrivateData(
+        _m: &mut Machine,
         _this: u32,
         _guidTag: u32,
         _lpData: u32,
@@ -703,42 +778,48 @@ pub mod IDirectDrawSurface7 {
     }
 
     #[win32_derive::dllexport]
-    pub fn GetPrivateData(_this: u32, _guidTag: u32, _lpBuffer: u32, _lpcbBufferSize: u32) -> DD {
+    pub fn GetPrivateData(
+        _m: &mut Machine,
+        _this: u32,
+        _guidTag: u32,
+        _lpBuffer: u32,
+        _lpcbBufferSize: u32,
+    ) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn FreePrivateData(_this: u32, _guidTag: u32) -> DD {
+    pub fn FreePrivateData(_m: &mut Machine, _this: u32, _guidTag: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn GetUniquenessValue(_this: u32, _lpValue: u32) -> DD {
+    pub fn GetUniquenessValue(_m: &mut Machine, _this: u32, _lpValue: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn ChangeUniquenessValue(_this: u32) -> DD {
+    pub fn ChangeUniquenessValue(_m: &mut Machine, _this: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn SetPriority(_this: u32, _dwPriority: u32) -> DD {
+    pub fn SetPriority(_m: &mut Machine, _this: u32, _dwPriority: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn GetPriority(_this: u32, _lpdwPriority: u32) -> DD {
+    pub fn GetPriority(_m: &mut Machine, _this: u32, _lpdwPriority: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn SetLOD(_this: u32, _dwMaxLOD: u32) -> DD {
+    pub fn SetLOD(_m: &mut Machine, _this: u32, _dwMaxLOD: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn GetLOD(_this: u32, _lpdwMaxLOD: u32) -> DD {
+    pub fn GetLOD(_m: &mut Machine, _this: u32, _lpdwMaxLOD: u32) -> DD {
         todo!()
     }
 

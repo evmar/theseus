@@ -12,7 +12,7 @@ pub fn dllexport(_attr: TokenStream, mut tokens: TokenStream) -> TokenStream {
     let return_addr = format_ident!("return_addr");
     let u32_ty = syn::parse::<syn::Type>(quote!(u32).into()).unwrap();
     args.push((&return_addr, &u32_ty));
-    for arg in func.sig.inputs.iter() {
+    for arg in func.sig.inputs.iter().skip(1) {
         let FnArg::Typed(arg) = arg else {
             unimplemented!()
         };
@@ -63,7 +63,7 @@ pub fn dllexport(_attr: TokenStream, mut tokens: TokenStream) -> TokenStream {
             use runtime::*;
             #fetch_args
             #trace
-            let ret: ABIReturn = #name(#(#call_args),*).into();
+            let ret: ABIReturn = #name(m, #(#call_args),*).into();
             m.regs.eax = ret.to_abi_return();
             m.regs.esp += #stack_popped * 4;
             runtime::indirect(return_addr)

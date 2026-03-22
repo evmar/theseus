@@ -1,3 +1,4 @@
+use runtime::Machine;
 use std::rc::Rc;
 
 use crate::{
@@ -21,7 +22,7 @@ pub fn new_memory_dc(dib: DIB) -> DC {
 }
 
 #[win32_derive::dllexport]
-pub fn CreateCompatibleDC(hdc: HDC) -> HDC {
+pub fn CreateCompatibleDC(_m: &mut Machine, hdc: HDC) -> HDC {
     if hdc.is_null() {
         // memory DC compatible with screen
         state().dcs.borrow_mut().add(DC::default())
@@ -31,6 +32,6 @@ pub fn CreateCompatibleDC(hdc: HDC) -> HDC {
 }
 
 #[win32_derive::dllexport]
-pub fn DeleteDC(_hdc: HDC) -> bool {
+pub fn DeleteDC(_m: &mut Machine, _hdc: HDC) -> bool {
     stub!(true)
 }

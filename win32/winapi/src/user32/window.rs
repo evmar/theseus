@@ -1,3 +1,4 @@
+use runtime::Machine;
 use std::{cell::RefCell, rc::Rc};
 
 use runtime::MACHINE;
@@ -30,6 +31,7 @@ impl Window {
 
 #[win32_derive::dllexport]
 pub fn CreateWindowExA(
+    _m: &mut Machine,
     _dwExStyle: u32, /* WINDOW_EX_STYLE */
     _lpClassName: u32,
     lpWindowName: u32,
@@ -74,16 +76,16 @@ pub fn CreateWindowExA(
 }
 
 #[win32_derive::dllexport]
-pub fn ShowWindow(_hWnd: HWND, _nCmdShow: u32 /* SHOW_WINDOW_CMD */) -> bool {
+pub fn ShowWindow(_m: &mut Machine, _hWnd: HWND, _nCmdShow: u32 /* SHOW_WINDOW_CMD */) -> bool {
     stub!(true)
 }
 
 #[win32_derive::dllexport]
-pub fn UpdateWindow(_hWnd: HWND) -> bool {
+pub fn UpdateWindow(_m: &mut Machine, _hWnd: HWND) -> bool {
     stub!(true)
 }
 
 #[win32_derive::dllexport]
-pub fn DefWindowProcA(_hWnd: HWND, _Msg: u32, _wParam: u32, _lParam: u32) -> u32 {
+pub fn DefWindowProcA(_m: &mut Machine, _hWnd: HWND, _Msg: u32, _wParam: u32, _lParam: u32) -> u32 {
     todo!()
 }

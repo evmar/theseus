@@ -9,12 +9,12 @@ use crate::{
 };
 
 #[win32_derive::dllexport]
-pub fn LoadCursorA(_hInstance: HINSTANCE, _lpCursorName: u32) -> HCURSOR {
+pub fn LoadCursorA(_m: &mut Machine, _hInstance: HINSTANCE, _lpCursorName: u32) -> HCURSOR {
     stub!(0)
 }
 
 #[win32_derive::dllexport]
-pub fn LoadIconA(_hInstance: HINSTANCE, _lpIconName: u32) -> HICON {
+pub fn LoadIconA(_m: &mut Machine, _hInstance: HINSTANCE, _lpIconName: u32) -> HICON {
     stub!(0)
 }
 
@@ -36,7 +36,15 @@ fn is_intresource(x: u32) -> bool {
 }
 
 #[win32_derive::dllexport]
-pub fn LoadImageA(hInst: HINSTANCE, name: u32, typ: IMAGE, cx: u32, cy: u32, fuLoad: LR) -> HANDLE {
+pub fn LoadImageA(
+    _m: &mut Machine,
+    hInst: HINSTANCE,
+    name: u32,
+    typ: IMAGE,
+    cx: u32,
+    cy: u32,
+    fuLoad: LR,
+) -> HANDLE {
     assert!(hInst == 0);
 
     assert!(is_intresource(name));

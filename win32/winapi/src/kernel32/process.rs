@@ -1,10 +1,11 @@
 use runtime::MACHINE;
+use runtime::Machine;
 use zerocopy::FromBytes;
 
 use crate::kernel32::{self, HANDLE, state};
 
 #[win32_derive::dllexport]
-pub fn ExitProcess(uExitCode: u32) -> u32 {
+pub fn ExitProcess(_m: &mut Machine, uExitCode: u32) -> u32 {
     std::process::exit(uExitCode as i32);
 }
 
@@ -102,7 +103,7 @@ pub struct CommandLine {
 }
 
 #[win32_derive::dllexport]
-pub fn GetCommandLineA() -> u32 {
+pub fn GetCommandLineA(_m: &mut Machine) -> u32 {
     state().command_line.borrow().command_line_8
 }
 
@@ -175,7 +176,7 @@ pub fn init_process() {
 pub const CURRENT_PROCESS_HANDLE: HANDLE = -1i32 as u32;
 
 #[win32_derive::dllexport]
-pub fn GetCurrentProcess() -> HANDLE {
+pub fn GetCurrentProcess(_m: &mut Machine) -> HANDLE {
     CURRENT_PROCESS_HANDLE
 }
 
@@ -196,6 +197,6 @@ fn peb_mut(memory: &mut [u8]) -> &mut PEB {
 }
 
 #[win32_derive::dllexport]
-pub fn GetProcessHeap() -> HANDLE {
+pub fn GetProcessHeap(_m: &mut Machine) -> HANDLE {
     state().process_heap.borrow().addr
 }
