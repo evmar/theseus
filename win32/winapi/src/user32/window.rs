@@ -17,7 +17,14 @@ impl Window {
     pub fn resize(&mut self, width: u32, height: u32) {
         self.width = width;
         self.height = height;
-        self.canvas.window_mut().set_size(width, height).unwrap();
+        let window = self.canvas.window_mut();
+        let scale = window.display_scale();
+        window
+            .set_size(
+                (width as f32 * scale) as u32,
+                (height as f32 * scale) as u32,
+            )
+            .unwrap();
     }
 }
 
@@ -56,12 +63,12 @@ pub fn CreateWindowExA(
         canvas: state()
             .video
             .window(name, width, height)
+            .high_pixel_density()
             .build()
             .unwrap()
             .into_canvas(),
     };
     window.canvas.clear();
-
     *state().window.borrow_mut() = Some(Rc::new(RefCell::new(window)));
     stub!(1)
 }
