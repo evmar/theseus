@@ -20,7 +20,7 @@ pub use ops::*;
 pub use registers::Regs;
 
 pub trait Host {
-    fn init(&self, blocks: &'static [(u32, fn(&mut Machine) -> Cont)]);
+    fn init(&self);
     fn panic(&self, msg: &str);
     fn print(&self, text: &[u8]);
 }
