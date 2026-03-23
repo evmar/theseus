@@ -193,3 +193,8 @@ fn peb_mut(m: &mut Machine) -> &mut PEB {
 pub fn GetProcessHeap(_m: &mut Machine) -> HANDLE {
     state().process_heap.borrow().addr
 }
+
+#[win32_derive::dllexport]
+pub fn TerminateProcess(_m: &mut Machine, _hProcess: HANDLE, _uExitCode: u32) -> bool {
+    todo!();
+}

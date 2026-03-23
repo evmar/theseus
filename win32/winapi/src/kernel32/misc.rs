@@ -82,11 +82,6 @@ pub fn GetVersionExA(m: &mut Machine, lpVersionInformation: u32) -> bool {
 }
 
 #[win32_derive::dllexport]
-pub fn TerminateProcess(_m: &mut Machine, _hProcess: HANDLE, _uExitCode: u32) -> bool {
-    todo!();
-}
-
-#[win32_derive::dllexport]
 pub fn UnhandledExceptionFilter(_m: &mut Machine, _ExceptionInfo: u32) -> i32 {
     // "The process is being debugged, so the exception should be passed (as second chance) to the application's debugger."
     0 // EXCEPTION_CONTINUE_SEARCH
@@ -228,54 +223,12 @@ pub fn GetTickCount(_m: &mut Machine) -> u32 {
 }
 
 #[win32_derive::dllexport]
-pub fn SetThreadPriority(
-    _m: &mut Machine,
-    _hThread: HANDLE,
-    _nPriority: u32, /* THREAD_PRIORITY */
-) -> bool {
-    todo!()
-}
-
-#[win32_derive::dllexport]
 pub fn WaitForSingleObject(_m: &mut Machine, _hHandle: HANDLE, _dwMilliseconds: u32) -> u32 /* WAIT_EVENT */
 {
     todo!()
 }
 
 #[win32_derive::dllexport]
-pub fn CreateThread(
-    _m: &mut Machine,
-    _lpThreadAttributes: u32,
-    _dwStackSize: u32,
-    _lpStartAddress: u32, /* LPTHREAD_START_ROUTINE */
-    _lpParameter: u32,
-    _dwCreationFlags: u32, /* THREAD_CREATION_FLAGS */
-    _lpThreadId: u32,
-) -> HANDLE {
-    todo!()
-}
-
-#[win32_derive::dllexport]
 pub fn Sleep(_m: &mut Machine, _dwMilliseconds: u32) {
-    todo!()
-}
-
-#[win32_derive::dllexport]
-pub fn GetCurrentThreadId(_m: &mut Machine) -> u32 {
-    todo!()
-}
-
-#[win32_derive::dllexport]
-pub fn TlsAlloc(_m: &mut Machine) -> u32 {
-    todo!()
-}
-
-#[win32_derive::dllexport]
-pub fn TlsGetValue(_m: &mut Machine, _dwTlsIndex: u32) -> u32 {
-    todo!()
-}
-
-#[win32_derive::dllexport]
-pub fn TlsSetValue(_m: &mut Machine, _dwTlsIndex: u32, _lpTlsValue: u32) -> bool {
     todo!()
 }

@@ -6,6 +6,7 @@ mod mapping;
 mod misc;
 mod nls;
 mod process;
+mod thread;
 
 use std::{
     cell::{Cell, OnceCell, RefCell},
@@ -21,6 +22,7 @@ pub use mapping::*;
 pub use misc::*;
 pub use nls::*;
 pub use process::*;
+pub use thread::*;
 
 use crate::heap::Heap;
 
