@@ -1,48 +1,11 @@
 use runtime::Machine;
 use zerocopy::FromBytes;
 
-use crate::kernel32::{self, HANDLE, state};
+use crate::kernel32::{self, HANDLE, init_thread, state, teb};
 
 #[win32_derive::dllexport]
 pub fn ExitProcess(_m: &mut Machine, uExitCode: u32) -> u32 {
     std::process::exit(uExitCode as i32);
-}
-
-#[repr(C)]
-#[derive(zerocopy::FromBytes, zerocopy::Immutable, zerocopy::IntoBytes)]
-pub struct NT_TIB {
-    ExceptionList: u32,
-    StackBase: u32,
-    StackLimit: u32,
-    SubSystemTib: u32,
-    FiberData: u32,
-    ArbitraryUserPointer: u32,
-    _Self: u32,
-}
-
-#[repr(C)]
-#[derive(zerocopy::FromBytes, zerocopy::Immutable, zerocopy::IntoBytes, zerocopy::KnownLayout)]
-pub struct TEB {
-    pub Tib: NT_TIB,
-    pub EnvironmentPointer: u32,
-    pub ClientId_UniqueProcess: u32,
-    pub ClientId_UniqueThread: u32,
-    pub ActiveRpcHandle: u32,
-    pub ThreadLocalStoragePointer: u32,
-    pub Peb: u32,
-    pub LastErrorValue: u32,
-    pub CountOfOwnedCriticalSections: u32,
-    pub CsrClientThread: u32,
-    pub Win32ThreadInfo: u32,
-    pub User32Reserved: [u32; 26],
-    pub UserReserved: [u32; 5],
-    pub WOW32Reserved: u32,
-    pub CurrentLocale: u32,
-    // TODO: ... there are many more fields here
-    pub padding: [u32; 20],
-
-    // This is at the wrong offset, but it shouldn't matter.
-    pub TlsSlots: [u32; 64],
 }
 
 #[repr(C)]
@@ -112,14 +75,11 @@ fn align_to_4(x: usize) -> usize {
 
 pub fn init_process(m: &mut Machine) {
     unsafe {
-        let mut mappings = state().mappings.borrow_mut();
-        let stack_size = 64 << 10;
-        let stack_addr = mappings.alloc("stack".into(), None, stack_size);
-        m.regs.esp = stack_addr + stack_size;
-        m.regs.ebp = stack_addr + stack_size;
-
-        let process_data_addr = mappings.alloc("process data".into(), None, 0x1000);
-        drop(mappings);
+        let process_data_addr =
+            state()
+                .mappings
+                .borrow_mut()
+                .alloc("process data".into(), None, 0x1000);
 
         let origin = m.memory.bytes.as_ptr();
         let buf = &mut m.memory.bytes[process_data_addr as usize..][..0x1000];
@@ -151,17 +111,18 @@ pub fn init_process(m: &mut Machine) {
         params.hStdOutput = 0xF11E_0002;
         params.hStdError = 0xF11E_0003;
 
-        let (peb, buf) = PEB::mut_from_prefix(buf).unwrap();
+        let (peb, _buf) = PEB::mut_from_prefix(buf).unwrap();
         peb.ProcessParameters = (&raw const *params).byte_offset_from_unsigned(origin) as u32;
+
         let process_heap = kernel32::heap_create("process heap".into(), 4 << 20);
         peb.ProcessHeap = process_heap.addr;
         *state().process_heap.borrow_mut() = process_heap;
 
-        let (teb, _) = TEB::mut_from_prefix(buf).unwrap();
-        teb.Peb = (&raw const *peb).byte_offset_from_unsigned(origin) as u32;
-        teb.Tib._Self = (&raw const *teb).byte_offset_from_unsigned(origin) as u32;
-
-        m.regs.fs_base = (&raw const *teb).byte_offset_from_unsigned(origin) as u32;
+        let peb_addr = (&raw const *peb).byte_offset_from_unsigned(origin) as u32;
+        let thread = init_thread(m, peb_addr);
+        m.regs.esp = thread.stack_pointer;
+        m.regs.ebp = thread.stack_pointer;
+        m.regs.fs_base = thread.fs_base;
 
         state().mappings.borrow().dump();
     }
@@ -173,13 +134,6 @@ pub const CURRENT_PROCESS_HANDLE: HANDLE = -1i32 as u32;
 #[win32_derive::dllexport]
 pub fn GetCurrentProcess(_m: &mut Machine) -> HANDLE {
     CURRENT_PROCESS_HANDLE
-}
-
-#[allow(unused)]
-fn teb(m: &mut Machine) -> &TEB {
-    let teb_addr = m.regs.fs_base;
-    let (teb, _) = TEB::ref_from_prefix(&m.memory.bytes[teb_addr as usize..]).unwrap();
-    teb
 }
 
 #[allow(unused)]
