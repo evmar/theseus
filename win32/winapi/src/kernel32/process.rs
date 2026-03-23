@@ -111,18 +111,19 @@ fn align_to_4(x: usize) -> usize {
     (x + 4 - 1) & !(4 - 1)
 }
 
-pub fn init_process() {
+pub fn init_process(m: &mut Machine) {
     unsafe {
         let mut mappings = state().mappings.borrow_mut();
         let stack_size = 64 << 10;
         let stack_addr = mappings.alloc("stack".into(), None, stack_size);
-        MACHINE.regs.esp = stack_addr + stack_size;
-        MACHINE.regs.ebp = stack_addr + stack_size;
+        m.regs.esp = stack_addr + stack_size;
+        m.regs.ebp = stack_addr + stack_size;
 
         let process_data_addr = mappings.alloc("process data".into(), None, 0x1000);
         drop(mappings);
 
-        let buf = &mut MACHINE.memory.bytes[process_data_addr as usize..][..0x1000];
+        let origin = m.memory.bytes.as_ptr();
+        let buf = &mut m.memory.bytes[process_data_addr as usize..][..0x1000];
 
         let command_line = "TODO\0";
 
@@ -135,11 +136,8 @@ pub fn init_process() {
             command_line_16[i] = c as u16;
         }
         *state().command_line.borrow_mut() = CommandLine {
-            command_line_8: (&raw const *command_line_8)
-                .byte_offset_from_unsigned(MACHINE.memory.bytes) as u32,
-            command_line_16: (&raw const *command_line_16)
-                .byte_offset_from_unsigned(MACHINE.memory.bytes)
-                as u32,
+            command_line_8: (&raw const *command_line_8).byte_offset_from_unsigned(origin) as u32,
+            command_line_16: (&raw const *command_line_16).byte_offset_from_unsigned(origin) as u32,
         };
 
         let env = "\0\0";
@@ -148,25 +146,23 @@ pub fn init_process() {
         env.fill(0);
         state()
             .environ
-            .set((&raw const *env).byte_offset_from_unsigned(MACHINE.memory.bytes) as u32);
+            .set((&raw const *env).byte_offset_from_unsigned(origin) as u32);
 
         let (params, buf) = RTL_USER_PROCESS_PARAMETERS::mut_from_prefix(buf).unwrap();
         params.hStdOutput = 0xF11E_0002;
         params.hStdError = 0xF11E_0003;
 
         let (peb, buf) = PEB::mut_from_prefix(buf).unwrap();
-        peb.ProcessParameters =
-            (&raw const *params).byte_offset_from_unsigned(MACHINE.memory.bytes) as u32;
+        peb.ProcessParameters = (&raw const *params).byte_offset_from_unsigned(origin) as u32;
         let process_heap = kernel32::heap_create("process heap".into(), 4 << 20);
         peb.ProcessHeap = process_heap.addr;
         *state().process_heap.borrow_mut() = process_heap;
 
         let (teb, _) = TEB::mut_from_prefix(buf).unwrap();
-        teb.Peb = (&raw const *peb).byte_offset_from_unsigned(MACHINE.memory.bytes) as u32;
-        teb.Tib._Self = (&raw const *teb).byte_offset_from_unsigned(MACHINE.memory.bytes) as u32;
+        teb.Peb = (&raw const *peb).byte_offset_from_unsigned(origin) as u32;
+        teb.Tib._Self = (&raw const *teb).byte_offset_from_unsigned(origin) as u32;
 
-        MACHINE.regs.fs_base =
-            (&raw const *teb).byte_offset_from_unsigned(MACHINE.memory.bytes) as u32;
+        m.regs.fs_base = (&raw const *teb).byte_offset_from_unsigned(origin) as u32;
 
         state().mappings.borrow().dump();
     }

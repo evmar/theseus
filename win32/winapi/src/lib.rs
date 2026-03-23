@@ -44,7 +44,7 @@ pub fn run(exe: &EXEData) {
     runtime::HOST.init(exe.blocks);
     kernel32::init_state(exe.image_base, exe.resources.clone());
     (exe.init_mappings)(m);
-    kernel32::init_process();
+    kernel32::init_process(m);
 
     runtime::push(m, 0xf000_0000); // return_from_main
     runtime::run_loop(m, exe.entry_point);
