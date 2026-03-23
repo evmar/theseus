@@ -11,6 +11,5 @@ pub fn x0040a3b4(m: &mut Machine) -> Cont {
     // where 403ab4 is in the middle of that?
     // maybe some unpacker failure?
     // It's in directsound shutdown anyway.
-    #[allow(static_mut_refs)]
     ret(m, 0)
 }

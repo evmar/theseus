@@ -1,5 +1,3 @@
-#![allow(static_mut_refs)]
-
 #[cfg(feature = "wasm")]
 mod wasm;
 

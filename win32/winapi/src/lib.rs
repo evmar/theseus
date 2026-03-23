@@ -1,7 +1,6 @@
 #![allow(non_snake_case)]
 #![allow(non_camel_case_types)]
 #![allow(non_upper_case_globals)]
-#![allow(static_mut_refs)]
 
 pub mod bitmap;
 pub mod ddraw;
