@@ -1,4 +1,3 @@
-use runtime::MACHINE;
 use runtime::Machine;
 
 use crate::{
@@ -19,7 +18,7 @@ struct BITMAP {
 }
 
 #[win32_derive::dllexport]
-pub fn GetObjectA(_m: &mut Machine, handle: HGDIOBJ, size: u32, lpOut: u32) -> u32 {
+pub fn GetObjectA(m: &mut Machine, handle: HGDIOBJ, size: u32, lpOut: u32) -> u32 {
     let bitmap = state().objects.borrow().get(handle).unwrap().clone();
     assert!(size == std::mem::size_of::<BITMAP>() as u32);
     let fields = match &bitmap.typ {
@@ -34,9 +33,7 @@ pub fn GetObjectA(_m: &mut Machine, handle: HGDIOBJ, size: u32, lpOut: u32) -> u
         },
         BitmapType::DIB(_) => todo!(),
     };
-    unsafe {
-        MACHINE.memory.write(lpOut, fields);
-    }
+    m.memory.write(lpOut, fields);
     size
 }
 

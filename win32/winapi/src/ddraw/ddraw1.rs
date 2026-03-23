@@ -70,19 +70,19 @@ pub mod IDirectDraw {
 
     #[win32_derive::dllexport]
     pub fn CreateSurface(
-        _m: &mut Machine,
+        m: &mut Machine,
         this: u32,
         desc: u32,
         lplpDDSurface: u32,
         _pUnkOuter: u32,
     ) -> DD {
         let mut ddraw = state().get_ddraw(this);
-        let desc = <DDSURFACEDESC>::ref_from_prefix(unsafe { MACHINE.memory.slice_from(desc) })
+        let desc = <DDSURFACEDESC>::ref_from_prefix(m.memory.slice_from(desc))
             .unwrap()
             .0;
         let desc2 = DDSURFACEDESC2::from_desc(&desc);
         let surface = ddraw.create_surface(&desc2, &mut || IDirectDrawSurface::new());
-        unsafe { MACHINE.memory.write(lplpDDSurface, surface.borrow().addr) };
+        m.memory.write(lplpDDSurface, surface.borrow().addr);
 
         DD::OK
     }
@@ -333,19 +333,17 @@ pub mod IDirectDrawSurface {
 
     #[win32_derive::dllexport]
     pub fn GetAttachedSurface(
-        _m: &mut Machine,
+        m: &mut Machine,
         this: u32,
         _lpDDSCaps: u32,
         lplpDDAttachedSurface: u32,
     ) -> DD {
         let surfaces = state().surf.borrow_mut();
         let surface = surfaces.get(&this).unwrap().borrow();
-        unsafe {
-            MACHINE.memory.write(
-                lplpDDAttachedSurface,
-                surface.attached.as_ref().unwrap().borrow().addr,
-            );
-        }
+        m.memory.write(
+            lplpDDAttachedSurface,
+            surface.attached.as_ref().unwrap().borrow().addr,
+        );
         DD::OK
     }
 
@@ -390,10 +388,8 @@ pub mod IDirectDrawSurface {
     }
 
     #[win32_derive::dllexport]
-    pub fn GetPixelFormat(_m: &mut Machine, _this: u32, lpDDPixelFormat: u32) -> DD {
-        unsafe {
-            MACHINE.memory.write(lpDDPixelFormat, get_pixel_format());
-        }
+    pub fn GetPixelFormat(m: &mut Machine, _this: u32, lpDDPixelFormat: u32) -> DD {
+        m.memory.write(lpDDPixelFormat, get_pixel_format());
         DD::OK
     }
 
@@ -414,7 +410,7 @@ pub mod IDirectDrawSurface {
 
     #[win32_derive::dllexport]
     pub fn Lock(
-        _m: &mut Machine,
+        m: &mut Machine,
         this: u32,
         rect: u32,
         lpDesc: u32,
@@ -432,7 +428,7 @@ pub mod IDirectDrawSurface {
             lpSurface: pixels,
             ..DDSURFACEDESC::default()
         };
-        desc.write_to_prefix(unsafe { MACHINE.memory.slice_mut_from(lpDesc) })
+        desc.write_to_prefix(m.memory.slice_mut_from(lpDesc))
             .unwrap();
         DD::OK
     }

@@ -102,21 +102,19 @@ pub mod IDirectDraw7 {
 
     #[win32_derive::dllexport]
     pub fn CreateSurface(
-        _m: &mut Machine,
+        m: &mut Machine,
         this: u32,
         lpDDSurfaceDesc2: u32,
         lplpDDSurface: u32,
         _pUnkOuter: u32,
     ) -> DD {
         let mut ddraw = state().get_ddraw(this);
-        let desc = <DDSURFACEDESC2>::ref_from_prefix(unsafe {
-            MACHINE.memory.slice_from(lpDDSurfaceDesc2)
-        })
-        .unwrap()
-        .0;
+        let desc = <DDSURFACEDESC2>::ref_from_prefix(m.memory.slice_from(lpDDSurfaceDesc2))
+            .unwrap()
+            .0;
 
         let surface = ddraw.create_surface(desc, &mut || IDirectDrawSurface7::new());
-        unsafe { MACHINE.memory.write(lplpDDSurface, surface.borrow().addr) };
+        m.memory.write(lplpDDSurface, surface.borrow().addr);
 
         DD::OK
     }
@@ -450,7 +448,7 @@ pub mod IDirectDrawSurface7 {
 
     #[win32_derive::dllexport]
     pub fn BltFast(
-        _m: &mut Machine,
+        m: &mut Machine,
         this: u32,
         dwX: u32,
         dwY: u32,
@@ -460,11 +458,9 @@ pub mod IDirectDrawSurface7 {
     ) -> DD {
         let surfaces = state().surf.borrow_mut();
         let mut dst_surface = surfaces.get(&this).unwrap().borrow_mut();
-        let src_rect = unsafe {
-            <RECT>::ref_from_prefix(MACHINE.memory.slice_from(lpSrcRect))
-                .unwrap()
-                .0
-        };
+        let src_rect = <RECT>::ref_from_prefix(m.memory.slice_from(lpSrcRect))
+            .unwrap()
+            .0;
         let src_surface = surfaces.get(&lpDDSrcSurface).unwrap().borrow();
 
         let Target::Texture(dst_texture) = &mut dst_surface.target else {
@@ -555,19 +551,17 @@ pub mod IDirectDrawSurface7 {
 
     #[win32_derive::dllexport]
     pub fn GetAttachedSurface(
-        _m: &mut Machine,
+        m: &mut Machine,
         this: u32,
         _lpDDSCaps: u32,
         lplpDDAttachedSurface: u32,
     ) -> DD {
         let surfaces = state().surf.borrow_mut();
         let surface = surfaces.get(&this).unwrap().borrow();
-        unsafe {
-            MACHINE.memory.write(
-                lplpDDAttachedSurface,
-                surface.attached.as_ref().unwrap().borrow().addr,
-            );
-        }
+        m.memory.write(
+            lplpDDAttachedSurface,
+            surface.attached.as_ref().unwrap().borrow().addr,
+        );
         DD::OK
     }
 
@@ -592,7 +586,7 @@ pub mod IDirectDrawSurface7 {
     }
 
     #[win32_derive::dllexport]
-    pub fn GetDC(_m: &mut Machine, this: u32, lphDC: u32) -> DD {
+    pub fn GetDC(m: &mut Machine, this: u32, lphDC: u32) -> DD {
         let surfaces = state().surf.borrow_mut();
         let mut surface = surfaces.get(&this).unwrap().borrow_mut();
         let pixels = surface.lock();
@@ -604,9 +598,7 @@ pub mod IDirectDrawSurface7 {
                 height: surface.height,
                 pixels,
             }));
-        unsafe {
-            MACHINE.memory.write(lphDC, dc.to_raw());
-        }
+        m.memory.write(lphDC, dc.to_raw());
         stub!(DD::OK)
     }
 
@@ -631,23 +623,22 @@ pub mod IDirectDrawSurface7 {
     }
 
     #[win32_derive::dllexport]
-    pub fn GetSurfaceDesc(_m: &mut Machine, this: u32, lpDDSurfaceDesc2: u32) -> DD {
+    pub fn GetSurfaceDesc(m: &mut Machine, this: u32, lpDDSurfaceDesc2: u32) -> DD {
         let surfaces = state().surf.borrow_mut();
         let surface = surfaces.get(&this).unwrap().borrow();
-        unsafe {
-            let size = MACHINE.memory.read::<u32>(lpDDSurfaceDesc2);
-            assert_eq!(size, std::mem::size_of::<DDSURFACEDESC2>() as u32);
-            MACHINE.memory.write(
-                lpDDSurfaceDesc2,
-                DDSURFACEDESC2 {
-                    dwSize: std::mem::size_of::<DDSURFACEDESC2>() as u32,
-                    dwFlags: DDSD::WIDTH | DDSD::HEIGHT,
-                    dwWidth: surface.width,
-                    dwHeight: surface.height,
-                    ..Default::default()
-                },
-            );
-        }
+        let size = m.memory.read::<u32>(lpDDSurfaceDesc2);
+        assert_eq!(size, std::mem::size_of::<DDSURFACEDESC2>() as u32);
+        m.memory.write(
+            lpDDSurfaceDesc2,
+            DDSURFACEDESC2 {
+                dwSize: std::mem::size_of::<DDSURFACEDESC2>() as u32,
+                dwFlags: DDSD::WIDTH | DDSD::HEIGHT,
+                dwWidth: surface.width,
+                dwHeight: surface.height,
+                ..Default::default()
+            },
+        );
+
         DD::OK
     }
 

@@ -1,5 +1,5 @@
 use runtime::Machine;
-use runtime::{HOST, Host, MACHINE};
+use runtime::{HOST, Host};
 
 use crate::kernel32::HANDLE;
 
@@ -22,7 +22,7 @@ pub fn GetStdHandle(_m: &mut Machine, nStdHandle: u32) -> u32 {
 
 #[win32_derive::dllexport]
 pub fn WriteFile(
-    _m: &mut Machine,
+    m: &mut Machine,
     hFile: u32,
     lpBuffer: u32,
     nNumberOfBytesToWrite: u32,
@@ -35,14 +35,11 @@ pub fn WriteFile(
     HOST.print(buf.as_bytes());
 
     if hFile == 0xf11e_0002 || hFile == 0xf11e_0003 {
-        unsafe {
-            let buf = &MACHINE.memory.bytes[lpBuffer as usize..][..nNumberOfBytesToWrite as usize];
-            HOST.print(buf);
-            if lpNumberOfBytesWritten != 0 {
-                MACHINE
-                    .memory
-                    .write(lpNumberOfBytesWritten, nNumberOfBytesToWrite);
-            }
+        let buf = &m.memory.bytes[lpBuffer as usize..][..nNumberOfBytesToWrite as usize];
+        HOST.print(buf);
+        if lpNumberOfBytesWritten != 0 {
+            m.memory
+                .write(lpNumberOfBytesWritten, nNumberOfBytesToWrite);
         }
     } else {
         todo!("WriteFile(hFile={hFile:x})");

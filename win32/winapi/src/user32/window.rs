@@ -1,8 +1,6 @@
 use runtime::Machine;
 use std::{cell::RefCell, rc::Rc};
 
-use runtime::MACHINE;
-
 use crate::{
     stub,
     user32::{HINSTANCE, HMENU, HWND, state},
@@ -31,7 +29,7 @@ impl Window {
 
 #[win32_derive::dllexport]
 pub fn CreateWindowExA(
-    _m: &mut Machine,
+    m: &mut Machine,
     _dwExStyle: u32, /* WINDOW_EX_STYLE */
     _lpClassName: u32,
     lpWindowName: u32,
@@ -45,7 +43,7 @@ pub fn CreateWindowExA(
     _hInstance: HINSTANCE,
     _lpParam: u32,
 ) -> HWND {
-    let name = unsafe { MACHINE.memory.read_str(lpWindowName) };
+    let name = m.memory.read_str(lpWindowName);
 
     const CW_USEDEFAULT: i32 = 0x8000_0000u32 as i32;
     let width = if nWidth == CW_USEDEFAULT {
@@ -76,7 +74,11 @@ pub fn CreateWindowExA(
 }
 
 #[win32_derive::dllexport]
-pub fn ShowWindow(_m: &mut Machine, _hWnd: HWND, _nCmdShow: u32 /* SHOW_WINDOW_CMD */) -> bool {
+pub fn ShowWindow(
+    _m: &mut Machine,
+    _hWnd: HWND,
+    _nCmdShow: u32, /* SHOW_WINDOW_CMD */
+) -> bool {
     stub!(true)
 }
 

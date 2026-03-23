@@ -1,8 +1,6 @@
 use runtime::Machine;
 use std::rc::Rc;
 
-use runtime::MACHINE;
-
 use crate::{
     HANDLE,
     bitmap::DDB,
@@ -11,7 +9,7 @@ use crate::{
 
 #[win32_derive::dllexport]
 pub fn StretchBlt(
-    _m: &mut Machine,
+    m: &mut Machine,
     hdcDest: HDC,
     xDest: i32,
     yDest: i32,
@@ -40,11 +38,9 @@ pub fn StretchBlt(
     let BitmapType::DIB(dib_dst) = &bmp_dst.typ else {
         todo!()
     };
-    let pixels_dst = unsafe {
-        MACHINE
-            .memory
-            .slice_mut(dib_dst.pixels..dib_dst.pixels + (dib_dst.width * dib_dst.height * 4))
-    };
+    let pixels_dst = m
+        .memory
+        .slice_mut(dib_dst.pixels..dib_dst.pixels + (dib_dst.width * dib_dst.height * 4));
 
     assert_eq!(wDest, wSrc);
     assert_eq!(hDest, hSrc);

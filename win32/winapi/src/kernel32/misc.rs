@@ -1,4 +1,3 @@
-use runtime::MACHINE;
 use runtime::Machine;
 
 use crate::kernel32::{HMODULE, state};
@@ -34,8 +33,8 @@ pub struct STARTUPINFOA {
 }
 
 #[win32_derive::dllexport]
-pub fn GetStartupInfoA(_m: &mut Machine, lpStartupInfo: u32) {
-    let size = unsafe { MACHINE.memory.read::<u32>(lpStartupInfo) };
+pub fn GetStartupInfoA(m: &mut Machine, lpStartupInfo: u32) {
+    let size = m.memory.read::<u32>(lpStartupInfo);
     if size > 0 && size < std::mem::size_of::<STARTUPINFOA>() as u32 {
         log::error!("GetStartupInfoA: undersized buffer");
         return;
@@ -44,7 +43,7 @@ pub fn GetStartupInfoA(_m: &mut Machine, lpStartupInfo: u32) {
     let info = STARTUPINFOA {
         ..Default::default()
     };
-    unsafe { MACHINE.memory.write(lpStartupInfo, info) };
+    m.memory.write(lpStartupInfo, info);
 }
 
 #[win32_derive::dllexport]
@@ -65,8 +64,8 @@ pub struct OSVERSIONINFO {
 }
 
 #[win32_derive::dllexport]
-pub fn GetVersionExA(_m: &mut Machine, lpVersionInformation: u32) -> bool {
-    let size = unsafe { MACHINE.memory.read::<u32>(lpVersionInformation) };
+pub fn GetVersionExA(m: &mut Machine, lpVersionInformation: u32) -> bool {
+    let size = m.memory.read::<u32>(lpVersionInformation);
     if size < std::mem::size_of::<OSVERSIONINFO>() as u32 {
         log::error!("GetVersionExA undersized buffer");
         return false;
@@ -77,7 +76,7 @@ pub fn GetVersionExA(_m: &mut Machine, lpVersionInformation: u32) -> bool {
         dwPlatformId: 2,   /* VER_PLATFORM_WIN32_NT */
         ..Default::default()
     };
-    unsafe { MACHINE.memory.write(lpVersionInformation, info) };
+    m.memory.write(lpVersionInformation, info);
 
     true
 }

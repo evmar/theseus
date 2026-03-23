@@ -1,8 +1,6 @@
 use runtime::Machine;
 use std::rc::Rc;
 
-use runtime::MACHINE;
-
 use crate::{
     dllexport::win32flags,
     heap::Heap,
@@ -16,14 +14,14 @@ win32flags! {
 }
 
 #[win32_derive::dllexport]
-pub fn HeapAlloc(_m: &mut Machine, hHeap: HANDLE, dwFlags: HEAP_FLAGS, dwBytes: u32) -> u32 {
+pub fn HeapAlloc(m: &mut Machine, hHeap: HANDLE, dwFlags: HEAP_FLAGS, dwBytes: u32) -> u32 {
     if !dwFlags.is_empty() {
         todo!();
     }
 
     let heaps = kernel32::state().heaps.borrow();
     let heap = heaps.get(&hHeap).unwrap();
-    heap.alloc(unsafe { &mut MACHINE.memory }, dwBytes)
+    heap.alloc(&mut m.memory, dwBytes)
     /*
     if flags.contains(HeapAllocFlags::HEAP_ZERO_MEMORY) {
         memory.mem().sub32_mut(addr, dwBytes).fill(0);
@@ -66,7 +64,7 @@ pub fn HeapDestroy(_m: &mut Machine, _hHeap: HANDLE) -> bool {
 
 #[win32_derive::dllexport]
 pub fn HeapSize(
-    _m: &mut Machine,
+    m: &mut Machine,
     hHeap: HANDLE,
     dwFlags: u32, /* HEAP_FLAGS */
     lpMem: u32,
@@ -76,12 +74,12 @@ pub fn HeapSize(
     }
     let heaps = kernel32::state().heaps.borrow();
     let heap = heaps.get(&hHeap).unwrap();
-    heap.size(unsafe { &mut MACHINE.memory }, lpMem)
+    heap.size(&mut m.memory, lpMem)
 }
 
 #[win32_derive::dllexport]
 pub fn HeapFree(
-    _m: &mut Machine,
+    m: &mut Machine,
     hHeap: HANDLE,
     dwFlags: u32, /* HEAP_FLAGS */
     lpMem: u32,
@@ -91,7 +89,7 @@ pub fn HeapFree(
     }
     let heaps = kernel32::state().heaps.borrow();
     let heap = heaps.get(&hHeap).unwrap();
-    heap.free(unsafe { &mut MACHINE.memory }, lpMem);
+    heap.free(&mut m.memory, lpMem);
     true
 }
 

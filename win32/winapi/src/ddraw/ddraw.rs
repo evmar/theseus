@@ -210,7 +210,7 @@ pub fn DirectDrawCreate(m: &mut Machine, lpGUID: u32, lplpDD: u32, pUnkOuter: u3
 
 #[win32_derive::dllexport]
 pub fn DirectDrawCreateEx(
-    _m: &mut Machine,
+    m: &mut Machine,
     lpGuid: u32,
     lplpDD: u32,
     iid: u32,
@@ -220,7 +220,7 @@ pub fn DirectDrawCreateEx(
     let iid = if iid == 0 {
         None
     } else {
-        Some(unsafe { MACHINE.memory.read::<GUID>(iid) })
+        Some(m.memory.read::<GUID>(iid))
     };
 
     let addr: u32 = match iid {
@@ -233,8 +233,6 @@ pub fn DirectDrawCreateEx(
     assert!(ddraw.is_none());
     *ddraw = Some(DirectDraw { addr, window: None });
 
-    unsafe {
-        MACHINE.memory.write(lplpDD, addr);
-    }
+    m.memory.write(lplpDD, addr);
     DD::OK
 }
