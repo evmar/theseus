@@ -588,7 +588,7 @@ pub mod IDirectDrawSurface7 {
     pub fn GetDC(m: &mut Machine, this: u32, lphDC: u32) -> DD {
         let surfaces = state().surf.borrow_mut();
         let mut surface = surfaces.get(&this).unwrap().borrow_mut();
-        let pixels = surface.lock();
+        let pixels = surface.lock(&mut m.memory);
         let dc = gdi32::state()
             .dcs
             .borrow_mut()
@@ -664,11 +664,11 @@ pub mod IDirectDrawSurface7 {
     }
 
     #[win32_derive::dllexport]
-    pub fn ReleaseDC(_m: &mut Machine, this: u32, hDC: u32) -> DD {
+    pub fn ReleaseDC(m: &mut Machine, this: u32, hDC: u32) -> DD {
         let surfaces = state().surf.borrow_mut();
         let mut surface = surfaces.get(&this).unwrap().borrow_mut();
         gdi32::state().dcs.borrow_mut().remove(HDC::from_raw(hDC));
-        surface.unlock();
+        surface.unlock(&mut m.memory);
         DD::OK
     }
 

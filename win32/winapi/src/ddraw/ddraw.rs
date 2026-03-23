@@ -130,28 +130,19 @@ pub struct Surface {
 }
 
 impl Surface {
-    pub fn lock(&mut self) -> u32 {
+    pub fn lock(&mut self, mem: &mut Memory) -> u32 {
         assert_eq!(self.pixels, None);
         let size = self.width * self.height * 4;
-        let pixels = kernel32::state()
-            .process_heap
-            .borrow()
-            .alloc(unsafe { &mut MACHINE.memory }, size);
+        let pixels = kernel32::state().process_heap.borrow().alloc(mem, size);
         // scribble on pixels so we can see it
-        unsafe {
-            MACHINE.memory.slice_mut(pixels..pixels + size).fill(0x8F);
-        }
+        mem.slice_mut(pixels..pixels + size).fill(0x8F);
         self.pixels = Some(pixels);
         pixels
     }
 
-    pub fn unlock(&mut self) {
+    pub fn unlock(&mut self, mem: &mut Memory) {
         let pixels = self.pixels.unwrap();
-        let pixel_data = unsafe {
-            MACHINE
-                .memory
-                .slice(pixels..pixels + (self.width * self.height * 4))
-        };
+        let pixel_data = mem.slice(pixels..pixels + (self.width * self.height * 4));
         match &mut self.target {
             Target::Window(_) => unreachable!(),
             Target::Texture(texture) => {
@@ -164,7 +155,7 @@ impl Surface {
         kernel32::state()
             .process_heap
             .borrow()
-            .free(unsafe { &mut MACHINE.memory }, self.pixels.unwrap());
+            .free(mem, self.pixels.unwrap());
         self.pixels = None;
     }
 

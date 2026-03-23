@@ -420,7 +420,7 @@ pub mod IDirectDrawSurface {
         let mut surface = surfaces.get(&this).unwrap().borrow_mut();
         assert_eq!(rect, 0);
 
-        let pixels = surface.lock();
+        let pixels = surface.lock(&mut m.memory);
         let desc = DDSURFACEDESC {
             dwSize: std::mem::size_of::<DDSURFACEDESC>() as u32,
             lPitch_dwLinearSize: surface.width * 4,
@@ -463,10 +463,10 @@ pub mod IDirectDrawSurface {
     }
 
     #[win32_derive::dllexport]
-    pub fn Unlock(_m: &mut Machine, this: u32) -> DD {
+    pub fn Unlock(m: &mut Machine, this: u32) -> DD {
         let surfaces = state().surf.borrow_mut();
         let mut surface = surfaces.get(&this).unwrap().borrow_mut();
-        surface.unlock();
+        surface.unlock(&mut m.memory);
         DD::OK
     }
 
