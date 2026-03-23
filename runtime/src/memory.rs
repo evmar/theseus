@@ -6,11 +6,13 @@ pub struct Memory {
     pub bytes: &'static mut [u8],
 }
 
-impl Memory {
-    pub const fn default() -> Self {
+impl Default for Memory {
+    fn default() -> Self {
         Memory { bytes: &mut [] }
     }
+}
 
+impl Memory {
     pub fn read<T: FromBytes>(&self, addr: u32) -> T {
         if addr < 0x1000 {
             log::error!("null read");

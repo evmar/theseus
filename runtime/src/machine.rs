@@ -1,5 +1,6 @@
 use crate::{Cont, Flags, Memory, Regs, fpu::FPU, mmx::MMX};
 
+#[derive(Default)]
 pub struct Machine {
     pub regs: Regs,
     pub flags: Flags,
@@ -27,15 +28,6 @@ pub fn proc_addr(m: &mut Machine, func: fn(&mut Machine) -> Cont) -> u32 {
         .unwrap()
         .0
 }
-
-pub static mut MACHINE: Machine = Machine {
-    regs: Regs::default(),
-    flags: Flags::empty(),
-    fpu: FPU::default(),
-    mmx: MMX::default(),
-    memory: Memory::default(),
-    blocks: &[],
-};
 
 impl Machine {
     pub fn dump_state(&self) {

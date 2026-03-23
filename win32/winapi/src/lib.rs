@@ -27,7 +27,7 @@ macro_rules! stub {
         $arg
     }};
 }
-use runtime::{MACHINE, Machine};
+use runtime::Machine;
 pub(crate) use stub;
 
 pub struct EXEData {
@@ -39,11 +39,11 @@ pub struct EXEData {
 }
 
 pub fn run(exe: &EXEData) {
-    let m = unsafe { &mut MACHINE };
-
     use runtime::Host;
     runtime::HOST.init();
 
+    let mut machine = Machine::default();
+    let m = &mut machine;
     unsafe {
         let size = 32 << 20;
         let mem = std::alloc::alloc(std::alloc::Layout::from_size_align(size, 0x1000).unwrap());

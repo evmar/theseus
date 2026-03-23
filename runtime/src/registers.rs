@@ -1,5 +1,5 @@
 #[repr(C)]
-#[derive(Debug)]
+#[derive(Debug, Default)]
 pub struct Regs {
     pub eax: u32,
     pub ecx: u32,

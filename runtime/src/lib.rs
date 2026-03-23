@@ -13,7 +13,7 @@ mod ops;
 mod registers;
 
 pub use flags::Flags;
-pub use machine::{MACHINE, Machine, indirect, proc_addr};
+pub use machine::{Machine, indirect, proc_addr};
 pub use memory::Memory;
 pub use native::HOST;
 pub use ops::*;

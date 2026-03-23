@@ -1,3 +1,4 @@
+#[derive(Default)]
 pub struct MMX {
     pub mm0: u64,
     pub mm1: u64,

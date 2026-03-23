@@ -20,15 +20,17 @@ pub struct FPU {
     pub cmp: std::cmp::Ordering,
 }
 
-impl FPU {
-    pub const fn default() -> Self {
+impl Default for FPU {
+    fn default() -> Self {
         Self {
             st: [0.; 8],
             st_top: 8,
             cmp: std::cmp::Ordering::Equal,
         }
     }
+}
 
+impl FPU {
     fn exception(_msg: &str) {
         // TODO: modify state bits etc.
         // At least ignoring these may allow programs to make some progress.
