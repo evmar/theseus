@@ -29,13 +29,13 @@ fn init_mappings(m: &mut Machine) {
 #[allow(unused_variables)]
 pub fn x00401000(m: &mut Machine) -> Cont {
     // 00401000 push ebp
-    push(m, m.regs.ebp);
+    push(m, m.cpu.regs.ebp);
     // 00401001 mov ebp,esp
-    m.regs.ebp = m.regs.esp;
+    m.cpu.regs.ebp = m.cpu.regs.esp;
     // 00401003 and esp,0FFFFFFF0h
-    m.regs.esp = and(m.regs.esp, 0xfffffff0u32, &mut m.flags);
+    m.cpu.regs.esp = and(m.cpu.regs.esp, 0xfffffff0u32, &mut m.cpu.flags);
     // 00401006 sub esp,10h
-    m.regs.esp = sub(m.regs.esp, 0x10u32, &mut m.flags);
+    m.cpu.regs.esp = sub(m.cpu.regs.esp, 0x10u32, &mut m.cpu.flags);
     // 00401009 call 00401015h
     let dst = Cont(x00401015);
     call(m, 0x40100e, dst)
@@ -53,17 +53,17 @@ pub fn x0040100e(m: &mut Machine) -> Cont {
 #[allow(unused_variables)]
 pub fn x00401015(m: &mut Machine) -> Cont {
     // 00401015 push ebp
-    push(m, m.regs.ebp);
+    push(m, m.cpu.regs.ebp);
     // 00401016 push ebx
-    push(m, m.regs.ebx);
+    push(m, m.cpu.regs.ebx);
     // 00401017 push edi
-    push(m, m.regs.edi);
+    push(m, m.cpu.regs.edi);
     // 00401018 push esi
-    push(m, m.regs.esi);
+    push(m, m.cpu.regs.esi);
     // 00401019 push eax
-    push(m, m.regs.eax);
+    push(m, m.cpu.regs.eax);
     // 0040101a cmp byte ptr ds:[403000h],0
-    sub(m.memory.read::<u8>(0x403000u32), 0x0u8, &mut m.flags);
+    sub(m.memory.read::<u8>(0x403000u32), 0x0u8, &mut m.cpu.flags);
     // 00401021 jne short 0040102Ah
     jne(m, Cont(x00401023), Cont(x0040102a))
 }
@@ -73,23 +73,25 @@ pub fn x00401023(m: &mut Machine) -> Cont {
     // 00401023 mov byte ptr ds:[403000h],1
     m.memory.write::<u8>(0x403000u32, 0x1u8);
     // 0040102a mov eax,fs:[18h]
-    m.regs.eax = m.memory.read::<u32>(m.regs.fs_base.wrapping_add(0x18u32));
+    m.cpu.regs.eax = m
+        .memory
+        .read::<u32>(m.cpu.regs.fs_base.wrapping_add(0x18u32));
     // 00401030 mov eax,[eax+30h]
-    m.regs.eax = m.memory.read::<u32>(m.regs.eax.wrapping_add(0x30u32));
+    m.cpu.regs.eax = m.memory.read::<u32>(m.cpu.regs.eax.wrapping_add(0x30u32));
     // 00401033 xor edi,edi
-    m.regs.edi = xor(m.regs.edi, m.regs.edi, &mut m.flags);
+    m.cpu.regs.edi = xor(m.cpu.regs.edi, m.cpu.regs.edi, &mut m.cpu.flags);
     // 00401035 mov eax,[eax+10h]
-    m.regs.eax = m.memory.read::<u32>(m.regs.eax.wrapping_add(0x10u32));
+    m.cpu.regs.eax = m.memory.read::<u32>(m.cpu.regs.eax.wrapping_add(0x10u32));
     // 00401038 mov esi,[eax+20h]
-    m.regs.esi = m.memory.read::<u32>(m.regs.eax.wrapping_add(0x20u32));
+    m.cpu.regs.esi = m.memory.read::<u32>(m.cpu.regs.eax.wrapping_add(0x20u32));
     // 0040103b push 0Eh
     push(m, 0xeu32);
     // 0040103d pop ebx
-    m.regs.ebx = pop(m);
+    m.cpu.regs.ebx = pop(m);
     // 0040103e mov ebp,esp
-    m.regs.ebp = m.regs.esp;
+    m.cpu.regs.ebp = m.cpu.regs.esp;
     // 00401040 cmp edi,0Eh
-    sub(m.regs.edi, 0xeu32, &mut m.flags);
+    sub(m.cpu.regs.edi, 0xeu32, &mut m.cpu.flags);
     // 00401043 je short 00401068h
     je(m, Cont(x00401045), Cont(x00401068))
 }
@@ -97,23 +99,25 @@ pub fn x00401023(m: &mut Machine) -> Cont {
 #[allow(unused_variables)]
 pub fn x0040102a(m: &mut Machine) -> Cont {
     // 0040102a mov eax,fs:[18h]
-    m.regs.eax = m.memory.read::<u32>(m.regs.fs_base.wrapping_add(0x18u32));
+    m.cpu.regs.eax = m
+        .memory
+        .read::<u32>(m.cpu.regs.fs_base.wrapping_add(0x18u32));
     // 00401030 mov eax,[eax+30h]
-    m.regs.eax = m.memory.read::<u32>(m.regs.eax.wrapping_add(0x30u32));
+    m.cpu.regs.eax = m.memory.read::<u32>(m.cpu.regs.eax.wrapping_add(0x30u32));
     // 00401033 xor edi,edi
-    m.regs.edi = xor(m.regs.edi, m.regs.edi, &mut m.flags);
+    m.cpu.regs.edi = xor(m.cpu.regs.edi, m.cpu.regs.edi, &mut m.cpu.flags);
     // 00401035 mov eax,[eax+10h]
-    m.regs.eax = m.memory.read::<u32>(m.regs.eax.wrapping_add(0x10u32));
+    m.cpu.regs.eax = m.memory.read::<u32>(m.cpu.regs.eax.wrapping_add(0x10u32));
     // 00401038 mov esi,[eax+20h]
-    m.regs.esi = m.memory.read::<u32>(m.regs.eax.wrapping_add(0x20u32));
+    m.cpu.regs.esi = m.memory.read::<u32>(m.cpu.regs.eax.wrapping_add(0x20u32));
     // 0040103b push 0Eh
     push(m, 0xeu32);
     // 0040103d pop ebx
-    m.regs.ebx = pop(m);
+    m.cpu.regs.ebx = pop(m);
     // 0040103e mov ebp,esp
-    m.regs.ebp = m.regs.esp;
+    m.cpu.regs.ebp = m.cpu.regs.esp;
     // 00401040 cmp edi,0Eh
-    sub(m.regs.edi, 0xeu32, &mut m.flags);
+    sub(m.cpu.regs.edi, 0xeu32, &mut m.cpu.flags);
     // 00401043 je short 00401068h
     je(m, Cont(x00401045), Cont(x00401068))
 }
@@ -121,7 +125,7 @@ pub fn x0040102a(m: &mut Machine) -> Cont {
 #[allow(unused_variables)]
 pub fn x00401040(m: &mut Machine) -> Cont {
     // 00401040 cmp edi,0Eh
-    sub(m.regs.edi, 0xeu32, &mut m.flags);
+    sub(m.cpu.regs.edi, 0xeu32, &mut m.cpu.flags);
     // 00401043 je short 00401068h
     je(m, Cont(x00401045), Cont(x00401068))
 }
@@ -129,21 +133,21 @@ pub fn x00401040(m: &mut Machine) -> Cont {
 #[allow(unused_variables)]
 pub fn x00401045(m: &mut Machine) -> Cont {
     // 00401045 mov ecx,ebx
-    m.regs.ecx = m.regs.ebx;
+    m.cpu.regs.ecx = m.cpu.regs.ebx;
     // 00401047 lea eax,[edi+402000h]
-    m.regs.eax = m.regs.edi.wrapping_add(0x402000u32);
+    m.cpu.regs.eax = m.cpu.regs.edi.wrapping_add(0x402000u32);
     // 0040104d sub ecx,edi
-    m.regs.ecx = sub(m.regs.ecx, m.regs.edi, &mut m.flags);
+    m.cpu.regs.ecx = sub(m.cpu.regs.ecx, m.cpu.regs.edi, &mut m.cpu.flags);
     // 0040104f push 0
     push(m, 0x0u32);
     // 00401051 push ebp
-    push(m, m.regs.ebp);
+    push(m, m.cpu.regs.ebp);
     // 00401052 push ecx
-    push(m, m.regs.ecx);
+    push(m, m.cpu.regs.ecx);
     // 00401053 push eax
-    push(m, m.regs.eax);
+    push(m, m.cpu.regs.eax);
     // 00401054 push esi
-    push(m, m.regs.esi);
+    push(m, m.cpu.regs.esi);
     // 00401055 call 00401083h
     let dst = Cont(x00401083);
     call(m, 0x40105a, dst)
@@ -152,7 +156,7 @@ pub fn x00401045(m: &mut Machine) -> Cont {
 #[allow(unused_variables)]
 pub fn x0040105a(m: &mut Machine) -> Cont {
     // 0040105a test eax,eax
-    and(m.regs.eax, m.regs.eax, &mut m.flags);
+    and(m.cpu.regs.eax, m.cpu.regs.eax, &mut m.cpu.flags);
     // 0040105c je short 00401063h
     je(m, Cont(x0040105e), Cont(x00401063))
 }
@@ -160,7 +164,11 @@ pub fn x0040105a(m: &mut Machine) -> Cont {
 #[allow(unused_variables)]
 pub fn x0040105e(m: &mut Machine) -> Cont {
     // 0040105e add edi,[esp]
-    m.regs.edi = add(m.regs.edi, m.memory.read::<u32>(m.regs.esp), &mut m.flags);
+    m.cpu.regs.edi = add(
+        m.cpu.regs.edi,
+        m.memory.read::<u32>(m.cpu.regs.esp),
+        &mut m.cpu.flags,
+    );
     // 00401061 jmp short 00401040h
     Cont(x00401040)
 }
@@ -177,15 +185,15 @@ pub fn x00401068(m: &mut Machine) -> Cont {
     // 00401068 mov byte ptr ds:[403000h],0
     m.memory.write::<u8>(0x403000u32, 0x0u8);
     // 0040106f add esp,4
-    m.regs.esp = add(m.regs.esp, 0x4u32, &mut m.flags);
+    m.cpu.regs.esp = add(m.cpu.regs.esp, 0x4u32, &mut m.cpu.flags);
     // 00401072 pop esi
-    m.regs.esi = pop(m);
+    m.cpu.regs.esi = pop(m);
     // 00401073 pop edi
-    m.regs.edi = pop(m);
+    m.cpu.regs.edi = pop(m);
     // 00401074 pop ebx
-    m.regs.ebx = pop(m);
+    m.cpu.regs.ebx = pop(m);
     // 00401075 pop ebp
-    m.regs.ebp = pop(m);
+    m.cpu.regs.ebp = pop(m);
     // 00401076 ret
     ret(m, 0)
 }

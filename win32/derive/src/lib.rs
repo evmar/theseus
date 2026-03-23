@@ -31,7 +31,7 @@ pub fn dllexport(_attr: TokenStream, mut tokens: TokenStream) -> TokenStream {
         for (i, (arg, ty)) in args.iter().enumerate() {
             let offset = i as u32 * 4;
             v.push(quote! {
-                let #arg = <#ty>::from_abi(m.memory.read::<u32>(m.regs.esp + #offset));
+                let #arg = <#ty>::from_abi(m.memory.read::<u32>(m.cpu.regs.esp + #offset));
             });
         }
         quote!(#(#v)*)
@@ -64,8 +64,8 @@ pub fn dllexport(_attr: TokenStream, mut tokens: TokenStream) -> TokenStream {
             #fetch_args
             #trace
             let ret: ABIReturn = #name(m, #(#call_args),*).into();
-            m.regs.eax = ret.to_abi_return();
-            m.regs.esp += #stack_popped * 4;
+            m.cpu.regs.eax = ret.to_abi_return();
+            m.cpu.regs.esp += #stack_popped * 4;
             runtime::indirect(m, return_addr)
         }
     }

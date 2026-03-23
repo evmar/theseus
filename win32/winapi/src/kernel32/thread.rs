@@ -70,7 +70,7 @@ pub fn init_thread(m: &mut Machine, peb_addr: u32) -> NewThread {
 
 #[allow(unused)]
 pub fn teb(m: &mut Machine) -> &TEB {
-    let teb_addr = m.regs.fs_base;
+    let teb_addr = m.cpu.regs.fs_base;
     let teb =
         TEB::ref_from_bytes(&m.memory.bytes[teb_addr as usize..][..std::mem::size_of::<TEB>()])
             .unwrap();

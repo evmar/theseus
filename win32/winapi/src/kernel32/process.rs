@@ -120,9 +120,9 @@ pub fn init_process(m: &mut Machine) {
 
         let peb_addr = (&raw const *peb).byte_offset_from_unsigned(origin) as u32;
         let thread = init_thread(m, peb_addr);
-        m.regs.esp = thread.stack_pointer;
-        m.regs.ebp = thread.stack_pointer;
-        m.regs.fs_base = thread.fs_base;
+        m.cpu.regs.esp = thread.stack_pointer;
+        m.cpu.regs.ebp = thread.stack_pointer;
+        m.cpu.regs.fs_base = thread.fs_base;
 
         state().mappings.borrow().dump();
     }

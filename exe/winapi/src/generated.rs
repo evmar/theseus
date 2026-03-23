@@ -37,17 +37,17 @@ pub fn x00401000(m: &mut Machine) -> Cont {
 #[allow(unused_variables)]
 pub fn x00401008(m: &mut Machine) -> Cont {
     // 00401008 xor ecx,ecx
-    m.regs.ecx = xor(m.regs.ecx, m.regs.ecx, &mut m.flags);
+    m.cpu.regs.ecx = xor(m.cpu.regs.ecx, m.cpu.regs.ecx, &mut m.cpu.flags);
     // 0040100a push ecx
-    push(m, m.regs.ecx);
+    push(m, m.cpu.regs.ecx);
     // 0040100b push ecx
-    push(m, m.regs.ecx);
+    push(m, m.cpu.regs.ecx);
     // 0040100c push 6
     push(m, 0x6u32);
     // 0040100e push 402000h
     push(m, 0x402000u32);
     // 00401013 push eax
-    push(m, m.regs.eax);
+    push(m, m.cpu.regs.eax);
     // 00401014 call dword ptr ds:[40205Ch]
     let dst = Cont(kernel32::WriteFile_stdcall);
     call(m, 0x40101a, dst)

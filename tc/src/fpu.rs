@@ -35,11 +35,11 @@ fn reg_to_index(register: iced_x86::Register) -> usize {
 }
 
 fn fpu_get_reg(index: usize) -> String {
-    format!("m.fpu.get({index})")
+    format!("m.cpu.fpu.get({index})")
 }
 
 fn fpu_set_reg(index: usize, expr: String) -> String {
-    format!("m.fpu.set({index}, {expr});")
+    format!("m.cpu.fpu.set({index}, {expr});")
 }
 
 fn fpu_get_op(instr: &iced_x86::Instruction, n: u32) -> String {
@@ -73,22 +73,22 @@ pub fn codegen(w: &mut Writer, _state: &State, instr: &iced_x86::Instruction) ->
     match instr.mnemonic() {
         Fld => {
             let expr = fpu_get_op(instr, 0);
-            w.line(format!("m.fpu.push({expr});"));
+            w.line(format!("m.cpu.fpu.push({expr});"));
         }
         Fild => {
             w.line(format!(
-                "m.fpu.push({} as i{size} as f64);",
+                "m.cpu.fpu.push({} as i{size} as f64);",
                 get_op(instr, 0),
                 size = op_size(instr, 0)
             ));
         }
-        Fldz => w.line("m.fpu.push(0.0);"),
-        Fld1 => w.line("m.fpu.push(1.0);"),
+        Fldz => w.line("m.cpu.fpu.push(0.0);"),
+        Fld1 => w.line("m.cpu.fpu.push(1.0);"),
 
         Fst | Fstp => {
             w.line(fpu_set_op(instr, 0, fpu_get_reg(0)));
             if instr.mnemonic() == Fstp {
-                w.line("m.fpu.pop();");
+                w.line("m.cpu.fpu.pop();");
             }
         }
 
@@ -100,7 +100,7 @@ pub fn codegen(w: &mut Writer, _state: &State, instr: &iced_x86::Instruction) ->
                 format!("{}.round() as i{size} as u{size}", fpu_get_reg(0)),
             ));
             if instr.mnemonic() == Fistp {
-                w.line("m.fpu.pop();");
+                w.line("m.cpu.fpu.pop();");
             }
         }
 
@@ -141,7 +141,7 @@ pub fn codegen(w: &mut Writer, _state: &State, instr: &iced_x86::Instruction) ->
                 instr.mnemonic(),
                 Faddp | Fsubp | Fsubrp | Fmulp | Fdivp | Fdivrp
             ) {
-                w.line("m.fpu.pop();");
+                w.line("m.cpu.fpu.pop();");
             }
         }
 
@@ -169,24 +169,24 @@ pub fn codegen(w: &mut Writer, _state: &State, instr: &iced_x86::Instruction) ->
         Fcom | Fcomp => {
             assert_eq!(instr.op_count(), 1);
             w.line(format!(
-                "m.fpu.cmp = {}.total_cmp(&({}));",
+                "m.cpu.fpu.cmp = {}.total_cmp(&({}));",
                 fpu_get_reg(0),
                 fpu_get_op(instr, 0)
             ));
             if instr.mnemonic() == Fcomp {
-                w.line("m.fpu.pop();");
+                w.line("m.cpu.fpu.pop();");
             }
         }
 
         Fnstsw => {
             assert_eq!(instr.op_count(), 1);
-            w.line(set_op(instr, 0, "m.fpu.status()".into()));
+            w.line(set_op(instr, 0, "m.cpu.fpu.status()".into()));
         }
 
         Fpatan => {
-            w.line("let t = m.fpu.get(0);");
-            w.line("m.fpu.pop();");
-            w.line("m.fpu.set(0, m.fpu.get(0).atan2(t));");
+            w.line("let t = m.cpu.fpu.get(0);");
+            w.line("m.cpu.fpu.pop();");
+            w.line("m.cpu.fpu.set(0, m.cpu.fpu.get(0).atan2(t));");
         }
         _ => return false,
     }

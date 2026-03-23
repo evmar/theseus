@@ -11,14 +11,14 @@ fn is_mmx_reg(reg: iced_x86::Register) -> bool {
 fn mmx_reg(reg: iced_x86::Register) -> String {
     use iced_x86::Register::*;
     match reg {
-        MM0 => "m.mmx.mm0".into(),
-        MM1 => "m.mmx.mm1".into(),
-        MM2 => "m.mmx.mm2".into(),
-        MM3 => "m.mmx.mm3".into(),
-        MM4 => "m.mmx.mm4".into(),
-        MM5 => "m.mmx.mm5".into(),
-        MM6 => "m.mmx.mm6".into(),
-        MM7 => "m.mmx.mm7".into(),
+        MM0 => "m.cpu.mmx.mm0".into(),
+        MM1 => "m.cpu.mmx.mm1".into(),
+        MM2 => "m.cpu.mmx.mm2".into(),
+        MM3 => "m.cpu.mmx.mm3".into(),
+        MM4 => "m.cpu.mmx.mm4".into(),
+        MM5 => "m.cpu.mmx.mm5".into(),
+        MM6 => "m.cpu.mmx.mm6".into(),
+        MM7 => "m.cpu.mmx.mm7".into(),
         _ => unreachable!(),
     }
 }

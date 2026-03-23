@@ -11,12 +11,12 @@ pub fn get_reg(r: iced_x86::Register) -> String {
     match r {
         EAX | ECX | EDX | EBX | ESI | EDI | ESP | EBP => {
             let reg = format!("{r:?}").to_ascii_lowercase();
-            format!("m.regs.{reg}")
+            format!("m.cpu.regs.{reg}")
         }
 
         AL | AH | AX | CL | CH | CX | DL | DH | DX | BL | BH | BX | DI | SI => {
             let reg = format!("{r:?}").to_ascii_lowercase();
-            format!("m.regs.get_{reg}()")
+            format!("m.cpu.regs.get_{reg}()")
         }
 
         r => todo!("{r:?}"),
@@ -28,12 +28,12 @@ pub fn set_reg(r: iced_x86::Register, expr: String) -> String {
     match r {
         EAX | ECX | EDX | EBX | ESI | EDI | ESP | EBP => {
             let reg = format!("{r:?}").to_ascii_lowercase();
-            format!("m.regs.{reg} = {expr};")
+            format!("m.cpu.regs.{reg} = {expr};")
         }
 
         AL | AH | AX | CL | CH | CX | DL | DH | DX | BL | BH | BX | DI | SI => {
             let reg = format!("{r:?}").to_ascii_lowercase();
-            format!("m.regs.set_{reg}({expr});")
+            format!("m.cpu.regs.set_{reg}({expr});")
         }
         r => todo!("{r:?}"),
     }
@@ -43,7 +43,7 @@ pub fn gen_addr(instr: &iced_x86::Instruction) -> String {
     let mut expr = Vec::new();
     match instr.memory_segment() {
         iced_x86::Register::DS | iced_x86::Register::SS => {}
-        iced_x86::Register::FS => expr.push(format!("m.regs.fs_base")),
+        iced_x86::Register::FS => expr.push(format!("m.cpu.regs.fs_base")),
         iced_x86::Register::None => {}
         r => todo!("{r:?}"),
     }
@@ -265,18 +265,18 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
                 w.line(set_op(
                     instr,
                     0,
-                    format!("{func}({op0}, {op1}, &mut m.flags)"),
+                    format!("{func}({op0}, {op1}, &mut m.cpu.flags)"),
                 ));
             }
 
             Cmp => {
                 let op0 = get_op(instr, 0);
                 let op1 = get_op(instr, 1);
-                w.line(format!("sub({op0}, {op1}, &mut m.flags);"));
+                w.line(format!("sub({op0}, {op1}, &mut m.cpu.flags);"));
             }
             Test => {
                 w.line(format!(
-                    "and({}, {}, &mut m.flags);",
+                    "and({}, {}, &mut m.cpu.flags);",
                     get_op(instr, 0),
                     get_op(instr, 1)
                 ));
@@ -294,7 +294,7 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
             Neg => w.line(set_op(
                 instr,
                 0,
-                format!("neg({}, &mut m.flags)", get_op(instr, 0)),
+                format!("neg({}, &mut m.cpu.flags)", get_op(instr, 0)),
             )),
 
             Movzx => {
@@ -327,12 +327,12 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
             Dec => w.line(set_op(
                 instr,
                 0,
-                format!("dec({}, &mut m.flags)", get_op(instr, 0)),
+                format!("dec({}, &mut m.cpu.flags)", get_op(instr, 0)),
             )),
             Inc => w.line(set_op(
                 instr,
                 0,
-                format!("inc({}, &mut m.flags)", get_op(instr, 0)),
+                format!("inc({}, &mut m.cpu.flags)", get_op(instr, 0)),
             )),
             Sete => w.line(set_op(instr, 0, "sete(m)".into())),
 
@@ -357,7 +357,7 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
                     instr,
                     0,
                     format!(
-                        "imul({x} as i{size}, {y} as i{size}, &mut m.flags) as u{size}",
+                        "imul({x} as i{size}, {y} as i{size}, &mut m.cpu.flags) as u{size}",
                         size = op_size(instr, 0),
                     ),
                 ));
@@ -372,9 +372,9 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
                 w.line("int();");
             }
             Cdq => {
-                w.line("let t = m.regs.eax as i32 as i64 as u64;");
-                w.line("m.regs.edx = (t >> 32) as u32;");
-                w.line("m.regs.eax = t as u32;");
+                w.line("let t = m.cpu.regs.eax as i32 as i64 as u64;");
+                w.line("m.cpu.regs.edx = (t >> 32) as u32;");
+                w.line("m.cpu.regs.eax = t as u32;");
             }
 
             Idiv => {
@@ -382,11 +382,11 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
                 match op_size(instr, 0) {
                     32 => {
                         w.line(
-                            "let x = (((m.regs.edx as u64) << 32) | (m.regs.eax as u64)) as i64;",
+                            "let x = (((m.cpu.regs.edx as u64) << 32) | (m.cpu.regs.eax as u64)) as i64;",
                         );
                         w.line(format!("let y = {} as i64;", get_op(instr, 0)));
-                        w.line("m.regs.eax = (x / y) as i32 as u32;");
-                        w.line("m.regs.edx = (x % y) as i32 as u32;");
+                        w.line("m.cpu.regs.eax = (x / y) as i32 as u32;");
+                        w.line("m.cpu.regs.edx = (x % y) as i32 as u32;");
                     }
                     _ => todo!(),
                 }
@@ -407,8 +407,8 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
             Setg => w.line("setg();"),
             Bt => w.line("bt();"),
 
-            Cbw => w.line("m.regs.set_ax(m.regs.get_al() as i8 as i16 as u16);"),
-            Cwde => w.line("m.regs.eax = m.regs.get_ax() as i16 as i32 as u32;"),
+            Cbw => w.line("m.cpu.regs.set_ax(m.cpu.regs.get_al() as i8 as i16 as u16);"),
+            Cwde => w.line("m.cpu.regs.eax = m.cpu.regs.get_ax() as i16 as i32 as u32;"),
 
             Stc | Clc | Std | Cld | Sahf => {
                 w.line(format!(
