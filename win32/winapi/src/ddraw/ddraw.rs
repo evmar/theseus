@@ -224,8 +224,8 @@ pub fn DirectDrawCreateEx(
     };
 
     let addr: u32 = match iid {
-        None => ddraw1::IDirectDraw::new(),
-        Some(ddraw7::IID_IDirectDraw7) => ddraw7::IDirectDraw7::new(),
+        None => ddraw1::IDirectDraw::new(m),
+        Some(ddraw7::IID_IDirectDraw7) => ddraw7::IDirectDraw7::new(m),
         _ => panic!(),
     };
 

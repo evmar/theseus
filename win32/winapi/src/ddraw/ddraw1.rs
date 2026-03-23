@@ -1,4 +1,3 @@
-use runtime::MACHINE;
 use runtime::Machine;
 use zerocopy::{FromBytes, IntoBytes};
 
@@ -81,7 +80,7 @@ pub mod IDirectDraw {
             .unwrap()
             .0;
         let desc2 = DDSURFACEDESC2::from_desc(&desc);
-        let surface = ddraw.create_surface(&desc2, &mut || IDirectDrawSurface::new());
+        let surface = ddraw.create_surface(&desc2, &mut || IDirectDrawSurface::new(m));
         m.memory.write(lplpDDSurface, surface.borrow().addr);
 
         DD::OK
@@ -175,12 +174,12 @@ pub mod IDirectDraw {
         todo!()
     }
 
-    fn vtable() -> u32 {
-        let vtable_addr = kernel32::state().process_heap.borrow().alloc(
-            unsafe { &mut MACHINE.memory },
-            std::mem::size_of::<VTable>() as u32,
-        );
-        let func_addr = runtime::proc_addr(QueryInterface_stdcall);
+    fn vtable(m: &mut Machine) -> u32 {
+        let vtable_addr = kernel32::state()
+            .process_heap
+            .borrow()
+            .alloc(&mut m.memory, std::mem::size_of::<VTable>() as u32);
+        let func_addr = runtime::proc_addr(m, QueryInterface_stdcall);
         let vtable = VTable {
             QueryInterface: func_addr + 0,
             AddRef: func_addr + 1,
@@ -207,24 +206,24 @@ pub mod IDirectDraw {
             WaitForVerticalBlank: func_addr + 22,
         };
         vtable
-            .write_to_prefix(unsafe { &mut MACHINE.memory.bytes[vtable_addr as usize..] })
+            .write_to_prefix(&mut m.memory.bytes[vtable_addr as usize..])
             .unwrap();
         vtable_addr
     }
 
-    pub fn new() -> u32 {
+    pub fn new(m: &mut Machine) -> u32 {
         let addr = kernel32::state()
             .process_heap
             .borrow()
-            .alloc(unsafe { &mut MACHINE.memory }, 4);
-        unsafe {
-            MACHINE.memory.write(addr, vtable());
-        }
+            .alloc(&mut m.memory, 4);
+        let vtable = vtable(m);
+        m.memory.write(addr, vtable);
         addr
     }
 }
 
 pub mod IDirectDrawSurface {
+
     use super::*;
 
     #[derive(Default, zerocopy::IntoBytes, zerocopy::Immutable)]
@@ -486,12 +485,12 @@ pub mod IDirectDrawSurface {
         todo!()
     }
 
-    fn vtable() -> u32 {
-        let vtable_addr = kernel32::state().process_heap.borrow().alloc(
-            unsafe { &mut MACHINE.memory },
-            std::mem::size_of::<VTable>() as u32,
-        );
-        let func_addr = runtime::proc_addr(QueryInterface_stdcall);
+    fn vtable(m: &mut Machine) -> u32 {
+        let vtable_addr = kernel32::state()
+            .process_heap
+            .borrow()
+            .alloc(&mut m.memory, std::mem::size_of::<VTable>() as u32);
+        let func_addr = runtime::proc_addr(m, QueryInterface_stdcall);
         let vtable = VTable {
             QueryInterface: func_addr + 0,
             AddRef: func_addr + 1,
@@ -531,19 +530,18 @@ pub mod IDirectDrawSurface {
             UpdateOverlayZOrder: func_addr + 35,
         };
         vtable
-            .write_to_prefix(unsafe { &mut MACHINE.memory.bytes[vtable_addr as usize..] })
+            .write_to_prefix(&mut m.memory.bytes[vtable_addr as usize..])
             .unwrap();
         vtable_addr
     }
 
-    pub fn new() -> u32 {
+    pub fn new(m: &mut Machine) -> u32 {
         let addr = kernel32::state()
             .process_heap
             .borrow()
-            .alloc(unsafe { &mut MACHINE.memory }, 4);
-        unsafe {
-            MACHINE.memory.write(addr, vtable());
-        }
+            .alloc(&mut m.memory, 4);
+        let vtable = vtable(m);
+        m.memory.write(addr, vtable);
         addr
     }
 }

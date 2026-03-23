@@ -20,15 +20,12 @@ pub fn indirect(m: &mut Machine, addr: u32) -> Cont {
     Cont(m.blocks[index].1)
 }
 
-pub fn proc_addr(func: fn(&mut Machine) -> Cont) -> u32 {
-    unsafe {
-        MACHINE
-            .blocks
-            .iter()
-            .find(|&(_, f)| std::ptr::fn_addr_eq(*f, func))
-            .unwrap()
-            .0
-    }
+pub fn proc_addr(m: &mut Machine, func: fn(&mut Machine) -> Cont) -> u32 {
+    m.blocks
+        .iter()
+        .find(|&(_, f)| std::ptr::fn_addr_eq(*f, func))
+        .unwrap()
+        .0
 }
 
 pub static mut MACHINE: Machine = Machine {
