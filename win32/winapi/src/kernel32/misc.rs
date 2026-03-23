@@ -259,3 +259,23 @@ pub fn CreateThread(
 pub fn Sleep(_m: &mut Machine, _dwMilliseconds: u32) {
     todo!()
 }
+
+#[win32_derive::dllexport]
+pub fn GetCurrentThreadId(_m: &mut Machine) -> u32 {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn TlsAlloc(_m: &mut Machine) -> u32 {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn TlsGetValue(_m: &mut Machine, _dwTlsIndex: u32) -> u32 {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn TlsSetValue(_m: &mut Machine, _dwTlsIndex: u32, _lpTlsValue: u32) -> bool {
+    todo!()
+}

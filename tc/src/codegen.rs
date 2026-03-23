@@ -310,6 +310,8 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
                 w.line(set_op(instr, 0, read));
             }
 
+            Mul => w.todo(),
+
             Div => {
                 w.line("div();");
             }
