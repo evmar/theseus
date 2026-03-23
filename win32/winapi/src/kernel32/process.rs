@@ -1,4 +1,3 @@
-use runtime::MACHINE;
 use runtime::Machine;
 use zerocopy::FromBytes;
 
@@ -177,18 +176,16 @@ pub fn GetCurrentProcess(_m: &mut Machine) -> HANDLE {
 }
 
 #[allow(unused)]
-fn teb(memory: &[u8]) -> &TEB {
-    unsafe {
-        let teb_addr = MACHINE.regs.fs_base;
-        let (teb, _) = TEB::ref_from_prefix(&memory[teb_addr as usize..]).unwrap();
-        teb
-    }
+fn teb(m: &mut Machine) -> &TEB {
+    let teb_addr = m.regs.fs_base;
+    let (teb, _) = TEB::ref_from_prefix(&m.memory.bytes[teb_addr as usize..]).unwrap();
+    teb
 }
 
 #[allow(unused)]
-fn peb_mut(memory: &mut [u8]) -> &mut PEB {
-    let peb_addr = teb(memory).Peb;
-    let (peb, _) = PEB::mut_from_prefix(&mut memory[peb_addr as usize..]).unwrap();
+fn peb_mut(m: &mut Machine) -> &mut PEB {
+    let peb_addr = teb(m).Peb;
+    let (peb, _) = PEB::mut_from_prefix(&mut m.memory.bytes[peb_addr as usize..]).unwrap();
     peb
 }
 
