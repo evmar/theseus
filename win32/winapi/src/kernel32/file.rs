@@ -27,13 +27,9 @@ pub fn WriteFile(
     lpBuffer: u32,
     nNumberOfBytesToWrite: u32,
     lpNumberOfBytesWritten: u32,
-    o: u32,
+    lpOverlapped: u32,
 ) -> u32 {
-    let buf = format!(
-        "WriteFile({hFile:x} {lpBuffer:x} {nNumberOfBytesToWrite:x} {lpNumberOfBytesWritten:x} {o:x})\n"
-    );
-    HOST.print(buf.as_bytes());
-
+    assert_eq!(lpOverlapped, 0);
     if hFile == 0xf11e_0002 || hFile == 0xf11e_0003 {
         let buf = &ctx.memory.bytes[lpBuffer as usize..][..nNumberOfBytesToWrite as usize];
         HOST.print(buf);
