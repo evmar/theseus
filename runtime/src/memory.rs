@@ -13,6 +13,14 @@ impl Default for Memory {
 }
 
 impl Memory {
+    pub fn unsafe_clone(&mut self) -> Memory {
+        Memory {
+            bytes: unsafe {
+                std::slice::from_raw_parts_mut(self.bytes.as_mut_ptr(), self.bytes.len())
+            },
+        }
+    }
+
     pub fn read<T: FromBytes>(&self, addr: u32) -> T {
         if addr < 0x1000 {
             log::error!("null read");

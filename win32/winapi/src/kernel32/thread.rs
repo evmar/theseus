@@ -69,7 +69,7 @@ pub fn init_thread(ctx: &mut Context, peb_addr: u32) -> NewThread {
 }
 
 #[allow(unused)]
-pub fn teb(ctx: &mut Context) -> &TEB {
+pub fn teb<'a>(ctx: &'a mut Context) -> &'a TEB {
     let teb_addr = ctx.cpu.regs.fs_base;
     let teb =
         TEB::ref_from_bytes(&ctx.memory.bytes[teb_addr as usize..][..std::mem::size_of::<TEB>()])

@@ -137,7 +137,7 @@ pub fn GetCurrentProcess(_ctx: &mut Context) -> HANDLE {
 }
 
 #[allow(unused)]
-fn peb_mut(ctx: &mut Context) -> &mut PEB {
+fn peb_mut<'a>(ctx: &'a mut Context) -> &'a mut PEB {
     let peb_addr = teb(ctx).Peb;
     let (peb, _) = PEB::mut_from_prefix(&mut ctx.memory.bytes[peb_addr as usize..]).unwrap();
     peb

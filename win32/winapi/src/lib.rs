@@ -26,14 +26,14 @@ macro_rules! stub {
         $arg
     }};
 }
-use runtime::{Context, Machine};
+use runtime::{CPU, Context, Machine};
 pub(crate) use stub;
 
 pub struct EXEData {
     pub image_base: u32,
     pub resources: std::ops::Range<u32>,
     pub blocks: &'static [(u32, fn(&mut Context) -> runtime::Cont)],
-    pub init_mappings: fn(&mut Machine),
+    pub init_mappings: fn(&mut Context),
     pub entry_point: runtime::Cont,
 }
 
@@ -50,9 +50,16 @@ pub fn run(exe: &EXEData) {
     }
     m.blocks = exe.blocks;
     kernel32::init_state(exe.image_base, exe.resources.clone());
-    (exe.init_mappings)(m);
-    kernel32::init_process(m);
 
-    runtime::push(m, 0xf000_0000); // return_from_main
-    runtime::run_loop(m, exe.entry_point);
+    let mut ctx = Context {
+        cpu: CPU::default(),
+        memory: m.memory.unsafe_clone(),
+        blocks: m.blocks,
+    };
+    let ctx = &mut ctx;
+    (exe.init_mappings)(ctx);
+    kernel32::init_process(ctx);
+
+    runtime::push(ctx, 0xf000_0000); // return_from_main
+    runtime::run_loop(ctx, exe.entry_point);
 }

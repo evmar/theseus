@@ -2,12 +2,9 @@ use crate::{Cont, Flags, Memory, Regs, fpu::FPU, mmx::MMX};
 
 #[derive(Default)]
 pub struct Machine {
-    pub cpu: CPU,
     pub memory: Memory,
     pub blocks: &'static [(u32, fn(&mut Context) -> Cont)],
 }
-
-pub type Context = Machine;
 
 #[derive(Default)]
 pub struct CPU {
@@ -15,6 +12,12 @@ pub struct CPU {
     pub flags: Flags,
     pub fpu: FPU,
     pub mmx: MMX,
+}
+
+pub struct Context {
+    pub cpu: CPU,
+    pub memory: Memory,
+    pub blocks: &'static [(u32, fn(&mut Context) -> Cont)],
 }
 
 pub fn indirect(ctx: &mut Context, addr: u32) -> Cont {
@@ -37,11 +40,10 @@ pub fn proc_addr(ctx: &mut Context, func: fn(&mut Context) -> Cont) -> u32 {
 }
 
 impl Machine {
-    pub fn dump_state(&self) {
-        self.cpu.regs.dump();
+    pub fn dump_stack(&self, esp: u32) {
         println!("stack:");
         for i in 0..8 {
-            let addr = self.cpu.regs.esp + i * 4;
+            let addr = esp + i * 4;
             println!("{addr:#08x} {:#08x}", self.memory.read::<u32>(addr));
         }
     }
