@@ -76,7 +76,7 @@ pub fn CreateThread(
     _lpThreadAttributes: u32,
     _dwStackSize: u32,
     lpStartAddress: u32, /* LPTHREAD_START_ROUTINE */
-    _lpParameter: u32,
+    lpParameter: u32,
     _dwCreationFlags: u32, /* THREAD_CREATION_FLAGS */
     _lpThreadId: u32,
 ) -> HANDLE {
@@ -93,6 +93,9 @@ pub fn CreateThread(
 
     std::thread::spawn(move || {
         let new_ctx = &mut new_ctx;
+        // TODO: wrap thread startup in a helper function
+        runtime::push(new_ctx, lpParameter);
+        runtime::push(new_ctx, 0); // return address
         let start = runtime::indirect(new_ctx, lpStartAddress);
         runtime::run_loop(new_ctx, start);
     });
@@ -102,7 +105,7 @@ pub fn CreateThread(
 
 #[win32_derive::dllexport]
 pub fn GetCurrentThreadId(_ctx: &mut Context) -> u32 {
-    todo!()
+    stub!(1)
 }
 
 #[win32_derive::dllexport]
