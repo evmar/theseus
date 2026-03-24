@@ -1128,7 +1128,11 @@ pub fn x004012ae(ctx: &mut Context) -> Cont {
     // 004012cb mov edx,0CCCCCCCDh
     ctx.cpu.regs.edx = 0xcccccccdu32;
     // 004012d0 mul edx
-    todo!();
+    let x = ctx.cpu.regs.eax;
+    let y = ctx.cpu.regs.edx;
+    let out = mul(x as u64, y as u64, &mut ctx.cpu.flags);
+    ctx.cpu.regs.edx = (out >> 32) as u32;
+    ctx.cpu.regs.eax = out as u32;
     // 004012d2 shr edx,3
     ctx.cpu.regs.edx = shr(ctx.cpu.regs.edx, 0x3u8, &mut ctx.cpu.flags);
     // 004012d5 lea eax,[edx+edx]
@@ -1176,7 +1180,11 @@ pub fn x004012c3(ctx: &mut Context) -> Cont {
     // 004012cb mov edx,0CCCCCCCDh
     ctx.cpu.regs.edx = 0xcccccccdu32;
     // 004012d0 mul edx
-    todo!();
+    let x = ctx.cpu.regs.eax;
+    let y = ctx.cpu.regs.edx;
+    let out = mul(x as u64, y as u64, &mut ctx.cpu.flags);
+    ctx.cpu.regs.edx = (out >> 32) as u32;
+    ctx.cpu.regs.eax = out as u32;
     // 004012d2 shr edx,3
     ctx.cpu.regs.edx = shr(ctx.cpu.regs.edx, 0x3u8, &mut ctx.cpu.flags);
     // 004012d5 lea eax,[edx+edx]
@@ -1220,7 +1228,11 @@ pub fn x004012c9(ctx: &mut Context) -> Cont {
     // 004012cb mov edx,0CCCCCCCDh
     ctx.cpu.regs.edx = 0xcccccccdu32;
     // 004012d0 mul edx
-    todo!();
+    let x = ctx.cpu.regs.eax;
+    let y = ctx.cpu.regs.edx;
+    let out = mul(x as u64, y as u64, &mut ctx.cpu.flags);
+    ctx.cpu.regs.edx = (out >> 32) as u32;
+    ctx.cpu.regs.eax = out as u32;
     // 004012d2 shr edx,3
     ctx.cpu.regs.edx = shr(ctx.cpu.regs.edx, 0x3u8, &mut ctx.cpu.flags);
     // 004012d5 lea eax,[edx+edx]

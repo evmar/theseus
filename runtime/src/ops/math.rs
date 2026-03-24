@@ -144,3 +144,13 @@ pub fn xor<I: Int>(x: I, y: I, flags: &mut Flags) -> I {
     flags.set(Flags::PF, result.low_byte().count_ones() % 2 == 0);
     result
 }
+
+/// Shared impl of mul_rmXX.  The trick is to pass in a higher width int,
+/// e.g. x as u32 for the 16-bit mul, so there is enough space in the result.
+pub fn mul<I: Int>(x: I, y: I, flags: &mut Flags) -> I {
+    let res = x.mul(y);
+    let tophalf = res.shr(I::bits() / 2);
+    flags.set(Flags::OF, !tophalf.is_zero());
+    flags.set(Flags::CF, !tophalf.is_zero());
+    res
+}

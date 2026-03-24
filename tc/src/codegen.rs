@@ -316,7 +316,19 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
                 w.line(set_op(instr, 0, read));
             }
 
-            Mul => w.todo(),
+            Mul => {
+                assert_eq!(instr.op_count(), 1);
+                match op_size(instr, 0) {
+                    32 => {
+                        w.line("let x = ctx.cpu.regs.eax;");
+                        w.line(format!("let y = {};", get_op(instr, 0)));
+                        w.line("let out = mul(x as u64, y as u64, &mut ctx.cpu.flags);");
+                        w.line("ctx.cpu.regs.edx = (out >> 32) as u32;");
+                        w.line("ctx.cpu.regs.eax = out as u32;");
+                    }
+                    size => todo!("{size}"),
+                }
+            }
 
             Div => {
                 w.line("div();");

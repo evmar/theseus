@@ -7,6 +7,15 @@ pub trait Int: num_traits::PrimInt {
     }
 }
 
+impl Int for u64 {
+    fn bits() -> usize {
+        64
+    }
+    fn low_byte(&self) -> u8 {
+        *self as u8
+    }
+}
+
 impl Int for u32 {
     fn bits() -> usize {
         32
