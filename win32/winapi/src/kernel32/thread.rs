@@ -1,7 +1,7 @@
 use runtime::Context;
 use zerocopy::FromBytes as _;
 
-use crate::{HANDLE, kernel32::state};
+use crate::{HANDLE, kernel32::state, stub};
 
 #[repr(C)]
 #[derive(zerocopy::FromBytes, zerocopy::Immutable, zerocopy::IntoBytes)]
@@ -79,15 +79,32 @@ pub fn teb<'a>(ctx: &'a mut Context) -> &'a TEB {
 
 #[win32_derive::dllexport]
 pub fn CreateThread(
-    _ctx: &mut Context,
+    ctx: &mut Context,
     _lpThreadAttributes: u32,
     _dwStackSize: u32,
-    _lpStartAddress: u32, /* LPTHREAD_START_ROUTINE */
+    lpStartAddress: u32, /* LPTHREAD_START_ROUTINE */
     _lpParameter: u32,
     _dwCreationFlags: u32, /* THREAD_CREATION_FLAGS */
     _lpThreadId: u32,
 ) -> HANDLE {
-    todo!()
+    let mut new_ctx = Context {
+        cpu: runtime::CPU::default(),
+        memory: ctx.memory.unsafe_clone(),
+        blocks: ctx.blocks,
+    };
+
+    init_thread(&mut new_ctx, teb(ctx).Peb);
+
+    // TODO: thread exit
+    // runtime::push(new_ctx, 0xf000_0000); // return_from_main
+
+    std::thread::spawn(move || {
+        let new_ctx = &mut new_ctx;
+        let start = runtime::indirect(new_ctx, lpStartAddress);
+        runtime::run_loop(new_ctx, start);
+    });
+
+    stub!(HANDLE::from_raw(1))
 }
 
 #[win32_derive::dllexport]
@@ -97,17 +114,17 @@ pub fn GetCurrentThreadId(_ctx: &mut Context) -> u32 {
 
 #[win32_derive::dllexport]
 pub fn TlsAlloc(_ctx: &mut Context) -> u32 {
-    todo!()
+    stub!(0)
 }
 
 #[win32_derive::dllexport]
 pub fn TlsGetValue(_ctx: &mut Context, _dwTlsIndex: u32) -> u32 {
-    todo!()
+    stub!(0)
 }
 
 #[win32_derive::dllexport]
 pub fn TlsSetValue(_ctx: &mut Context, _dwTlsIndex: u32, _lpTlsValue: u32) -> bool {
-    todo!()
+    stub!(true)
 }
 
 #[win32_derive::dllexport]
