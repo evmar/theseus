@@ -1,11 +1,11 @@
 use crate::stub;
-use runtime::Machine;
+use runtime::Context;
 
 pub type HMODULE = u32;
 
 #[win32_derive::dllexport]
 pub fn GetModuleFileNameA(
-    _m: &mut Machine,
+    _ctx: &mut Context,
     _hModule: HMODULE,
     _lpFilename: u32,
     _nSize: u32,
@@ -17,7 +17,7 @@ pub fn GetModuleFileNameA(
 }
 
 #[win32_derive::dllexport]
-pub fn GetModuleHandleA(_m: &mut Machine, _lpModuleName: u32) -> HMODULE {
+pub fn GetModuleHandleA(_ctx: &mut Context, _lpModuleName: u32) -> HMODULE {
     stub!(0)
     /*
     let state = get_state(sys);
@@ -36,7 +36,7 @@ pub fn GetModuleHandleA(_m: &mut Machine, _lpModuleName: u32) -> HMODULE {
 }
 
 #[win32_derive::dllexport]
-pub fn LoadLibraryA(_m: &mut Machine, _lpLibFileName: u32) -> HMODULE {
+pub fn LoadLibraryA(_ctx: &mut Context, _lpLibFileName: u32) -> HMODULE {
     stub!(0)
     // load_library(sys, filename.unwrap()).await
 }

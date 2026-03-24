@@ -1,4 +1,4 @@
-use runtime::Machine;
+use runtime::Context;
 use zerocopy::{FromBytes, IntoBytes};
 
 use crate::{
@@ -39,126 +39,126 @@ pub mod IDirectDraw {
     }
 
     #[win32_derive::dllexport]
-    pub fn QueryInterface(_m: &mut Machine, _this: u32, _riid: u32, _ppvObject: u32) -> DD {
+    pub fn QueryInterface(_ctx: &mut Context, _this: u32, _riid: u32, _ppvObject: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn AddRef(_m: &mut Machine, _this: u32) -> u32 {
+    pub fn AddRef(_ctx: &mut Context, _this: u32) -> u32 {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn Release(_m: &mut Machine, _this: u32) -> u32 {
+    pub fn Release(_ctx: &mut Context, _this: u32) -> u32 {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn Compact(_m: &mut Machine, _this: u32) -> DD {
+    pub fn Compact(_ctx: &mut Context, _this: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn CreateClipper(_m: &mut Machine, _this: u32) -> DD {
+    pub fn CreateClipper(_ctx: &mut Context, _this: u32) -> DD {
         todo!()
     }
     #[win32_derive::dllexport]
-    pub fn CreatePalette(_m: &mut Machine, _this: u32) -> DD {
+    pub fn CreatePalette(_ctx: &mut Context, _this: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
     pub fn CreateSurface(
-        m: &mut Machine,
+        ctx: &mut Context,
         this: u32,
         desc: u32,
         lplpDDSurface: u32,
         _pUnkOuter: u32,
     ) -> DD {
         let mut ddraw = state().get_ddraw(this);
-        let desc = <DDSURFACEDESC>::ref_from_prefix(m.memory.slice_from(desc))
+        let desc = <DDSURFACEDESC>::ref_from_prefix(ctx.memory.slice_from(desc))
             .unwrap()
             .0;
         let desc2 = DDSURFACEDESC2::from_desc(&desc);
-        let surface = ddraw.create_surface(&desc2, &mut || IDirectDrawSurface::new(m));
-        m.memory.write(lplpDDSurface, surface.borrow().addr);
+        let surface = ddraw.create_surface(&desc2, &mut || IDirectDrawSurface::new(ctx));
+        ctx.memory.write(lplpDDSurface, surface.borrow().addr);
 
         DD::OK
     }
 
     #[win32_derive::dllexport]
-    pub fn DuplicateSurface(_m: &mut Machine, _this: u32) -> DD {
+    pub fn DuplicateSurface(_ctx: &mut Context, _this: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn EnumDisplayModes(_m: &mut Machine, _this: u32) -> DD {
+    pub fn EnumDisplayModes(_ctx: &mut Context, _this: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn EnumSurfaces(_m: &mut Machine, _this: u32) -> DD {
+    pub fn EnumSurfaces(_ctx: &mut Context, _this: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn FlipToGDISurface(_m: &mut Machine, _this: u32) -> DD {
+    pub fn FlipToGDISurface(_ctx: &mut Context, _this: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn GetCaps(_m: &mut Machine, _this: u32) -> DD {
+    pub fn GetCaps(_ctx: &mut Context, _this: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn GetDisplayMode(_m: &mut Machine, _this: u32) -> DD {
+    pub fn GetDisplayMode(_ctx: &mut Context, _this: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn GetFourCCCodes(_m: &mut Machine, _this: u32) -> DD {
+    pub fn GetFourCCCodes(_ctx: &mut Context, _this: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn GetGDISurface(_m: &mut Machine, _this: u32) -> DD {
+    pub fn GetGDISurface(_ctx: &mut Context, _this: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn GetMonitorFrequency(_m: &mut Machine, _this: u32) -> DD {
+    pub fn GetMonitorFrequency(_ctx: &mut Context, _this: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn GetScanLine(_m: &mut Machine, _this: u32) -> DD {
+    pub fn GetScanLine(_ctx: &mut Context, _this: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn GetVerticalBlankStatus(_m: &mut Machine, _this: u32) -> DD {
+    pub fn GetVerticalBlankStatus(_ctx: &mut Context, _this: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn Initialize(_m: &mut Machine, _this: u32) -> DD {
+    pub fn Initialize(_ctx: &mut Context, _this: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn RestoreDisplayMode(_m: &mut Machine, _this: u32) -> DD {
+    pub fn RestoreDisplayMode(_ctx: &mut Context, _this: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn SetCooperativeLevel(_m: &mut Machine, this: u32, hwnd: HWND, flags: u32) -> DD {
+    pub fn SetCooperativeLevel(_ctx: &mut Context, this: u32, hwnd: HWND, flags: u32) -> DD {
         state().get_ddraw(this).set_cooperative_level(hwnd, flags);
         DD::OK
     }
 
     #[win32_derive::dllexport]
-    pub fn SetDisplayMode(_m: &mut Machine, this: u32, width: u32, height: u32, _bpp: u32) -> DD {
+    pub fn SetDisplayMode(_ctx: &mut Context, this: u32, width: u32, height: u32, _bpp: u32) -> DD {
         let ddraw = state().get_ddraw(this);
         ddraw
             .window
@@ -170,16 +170,16 @@ pub mod IDirectDraw {
     }
 
     #[win32_derive::dllexport]
-    pub fn WaitForVerticalBlank(_m: &mut Machine, _this: u32) -> DD {
+    pub fn WaitForVerticalBlank(_ctx: &mut Context, _this: u32) -> DD {
         todo!()
     }
 
-    fn vtable(m: &mut Machine) -> u32 {
+    fn vtable(ctx: &mut Context) -> u32 {
         let vtable_addr = kernel32::state()
             .process_heap
             .borrow()
-            .alloc(&mut m.memory, std::mem::size_of::<VTable>() as u32);
-        let func_addr = runtime::proc_addr(m, QueryInterface_stdcall);
+            .alloc(&mut ctx.memory, std::mem::size_of::<VTable>() as u32);
+        let func_addr = runtime::proc_addr(ctx, QueryInterface_stdcall);
         let vtable = VTable {
             QueryInterface: func_addr + 0,
             AddRef: func_addr + 1,
@@ -206,23 +206,25 @@ pub mod IDirectDraw {
             WaitForVerticalBlank: func_addr + 22,
         };
         vtable
-            .write_to_prefix(&mut m.memory.bytes[vtable_addr as usize..])
+            .write_to_prefix(&mut ctx.memory.bytes[vtable_addr as usize..])
             .unwrap();
         vtable_addr
     }
 
-    pub fn new(m: &mut Machine) -> u32 {
+    pub fn new(ctx: &mut Context) -> u32 {
         let addr = kernel32::state()
             .process_heap
             .borrow()
-            .alloc(&mut m.memory, 4);
-        let vtable = vtable(m);
-        m.memory.write(addr, vtable);
+            .alloc(&mut ctx.memory, 4);
+        let vtable = vtable(ctx);
+        ctx.memory.write(addr, vtable);
         addr
     }
 }
 
 pub mod IDirectDrawSurface {
+
+    use runtime::Context;
 
     use super::*;
 
@@ -268,62 +270,67 @@ pub mod IDirectDrawSurface {
     }
 
     #[win32_derive::dllexport]
-    pub fn QueryInterface(_m: &mut Machine, _this: u32) -> DD {
+    pub fn QueryInterface(_ctx: &mut Context, _this: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn AddRef(_m: &mut Machine, _this: u32) -> u32 {
+    pub fn AddRef(_ctx: &mut Context, _this: u32) -> u32 {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn Release(_m: &mut Machine, _this: u32) -> u32 {
+    pub fn Release(_ctx: &mut Context, _this: u32) -> u32 {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn AddAttachedSurface(_m: &mut Machine, _this: u32) -> DD {
+    pub fn AddAttachedSurface(_ctx: &mut Context, _this: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn AddOverlayDirtyRect(_m: &mut Machine, _this: u32) -> DD {
+    pub fn AddOverlayDirtyRect(_ctx: &mut Context, _this: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn Blt(_m: &mut Machine, _this: u32) -> DD {
+    pub fn Blt(_ctx: &mut Context, _this: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn BltBatch(_m: &mut Machine, _this: u32) -> DD {
+    pub fn BltBatch(_ctx: &mut Context, _this: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn BltFast(_m: &mut Machine, _this: u32) -> DD {
+    pub fn BltFast(_ctx: &mut Context, _this: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn DeleteAttachedSurface(_m: &mut Machine, _this: u32) -> DD {
+    pub fn DeleteAttachedSurface(_ctx: &mut Context, _this: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn EnumAttachedSurfaces(_m: &mut Machine, _this: u32) -> DD {
+    pub fn EnumAttachedSurfaces(_ctx: &mut Context, _this: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn EnumOverlayZOrders(_m: &mut Machine, _this: u32) -> DD {
+    pub fn EnumOverlayZOrders(_ctx: &mut Context, _this: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn Flip(_m: &mut Machine, this: u32, _lpDDSurfaceTargetOverride: u32, _dwFlags: u32) -> DD {
+    pub fn Flip(
+        _ctx: &mut Context,
+        this: u32,
+        _lpDDSurfaceTargetOverride: u32,
+        _dwFlags: u32,
+    ) -> DD {
         let surfaces = state().surf.borrow_mut();
         let mut surface = surfaces.get(&this).unwrap().borrow_mut();
         surface.flip();
@@ -332,14 +339,14 @@ pub mod IDirectDrawSurface {
 
     #[win32_derive::dllexport]
     pub fn GetAttachedSurface(
-        m: &mut Machine,
+        ctx: &mut Context,
         this: u32,
         _lpDDSCaps: u32,
         lplpDDAttachedSurface: u32,
     ) -> DD {
         let surfaces = state().surf.borrow_mut();
         let surface = surfaces.get(&this).unwrap().borrow();
-        m.memory.write(
+        ctx.memory.write(
             lplpDDAttachedSurface,
             surface.attached.as_ref().unwrap().borrow().addr,
         );
@@ -347,69 +354,69 @@ pub mod IDirectDrawSurface {
     }
 
     #[win32_derive::dllexport]
-    pub fn GetBltStatus(_m: &mut Machine, _this: u32) -> DD {
+    pub fn GetBltStatus(_ctx: &mut Context, _this: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn GetCaps(_m: &mut Machine, _this: u32) -> DD {
+    pub fn GetCaps(_ctx: &mut Context, _this: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn GetClipper(_m: &mut Machine, _this: u32) -> DD {
+    pub fn GetClipper(_ctx: &mut Context, _this: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn GetColorKey(_m: &mut Machine, _this: u32) -> DD {
+    pub fn GetColorKey(_ctx: &mut Context, _this: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn GetDC(_m: &mut Machine, _this: u32) -> DD {
+    pub fn GetDC(_ctx: &mut Context, _this: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn GetFlipStatus(_m: &mut Machine, _this: u32) -> DD {
+    pub fn GetFlipStatus(_ctx: &mut Context, _this: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn GetOverlayPosition(_m: &mut Machine, _this: u32) -> DD {
+    pub fn GetOverlayPosition(_ctx: &mut Context, _this: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn GetPalette(_m: &mut Machine, _this: u32) -> DD {
+    pub fn GetPalette(_ctx: &mut Context, _this: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn GetPixelFormat(m: &mut Machine, _this: u32, lpDDPixelFormat: u32) -> DD {
-        m.memory.write(lpDDPixelFormat, get_pixel_format());
+    pub fn GetPixelFormat(ctx: &mut Context, _this: u32, lpDDPixelFormat: u32) -> DD {
+        ctx.memory.write(lpDDPixelFormat, get_pixel_format());
         DD::OK
     }
 
     #[win32_derive::dllexport]
-    pub fn GetSurfaceDesc(_m: &mut Machine, _this: u32) -> DD {
+    pub fn GetSurfaceDesc(_ctx: &mut Context, _this: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn Initialize(_m: &mut Machine, _this: u32) -> DD {
+    pub fn Initialize(_ctx: &mut Context, _this: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn IsLost(_m: &mut Machine, _this: u32) -> DD {
+    pub fn IsLost(_ctx: &mut Context, _this: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
     pub fn Lock(
-        m: &mut Machine,
+        ctx: &mut Context,
         this: u32,
         rect: u32,
         lpDesc: u32,
@@ -420,77 +427,77 @@ pub mod IDirectDrawSurface {
         let mut surface = surfaces.get(&this).unwrap().borrow_mut();
         assert_eq!(rect, 0);
 
-        let pixels = surface.lock(&mut m.memory);
+        let pixels = surface.lock(&mut ctx.memory);
         let desc = DDSURFACEDESC {
             dwSize: std::mem::size_of::<DDSURFACEDESC>() as u32,
             lPitch_dwLinearSize: surface.width * 4,
             lpSurface: pixels,
             ..DDSURFACEDESC::default()
         };
-        desc.write_to_prefix(m.memory.slice_mut_from(lpDesc))
+        desc.write_to_prefix(ctx.memory.slice_mut_from(lpDesc))
             .unwrap();
         DD::OK
     }
 
     #[win32_derive::dllexport]
-    pub fn ReleaseDC(_m: &mut Machine, _this: u32) -> DD {
+    pub fn ReleaseDC(_ctx: &mut Context, _this: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn Restore(_m: &mut Machine, _this: u32) -> DD {
+    pub fn Restore(_ctx: &mut Context, _this: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn SetClipper(_m: &mut Machine, _this: u32) -> DD {
+    pub fn SetClipper(_ctx: &mut Context, _this: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn SetColorKey(_m: &mut Machine, _this: u32) -> DD {
+    pub fn SetColorKey(_ctx: &mut Context, _this: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn SetOverlayPosition(_m: &mut Machine, _this: u32) -> DD {
+    pub fn SetOverlayPosition(_ctx: &mut Context, _this: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn SetPalette(_m: &mut Machine, _this: u32) -> DD {
+    pub fn SetPalette(_ctx: &mut Context, _this: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn Unlock(m: &mut Machine, this: u32) -> DD {
+    pub fn Unlock(ctx: &mut Context, this: u32) -> DD {
         let surfaces = state().surf.borrow_mut();
         let mut surface = surfaces.get(&this).unwrap().borrow_mut();
-        surface.unlock(&mut m.memory);
+        surface.unlock(&mut ctx.memory);
         DD::OK
     }
 
     #[win32_derive::dllexport]
-    pub fn UpdateOverlay(_m: &mut Machine, _this: u32) -> DD {
+    pub fn UpdateOverlay(_ctx: &mut Context, _this: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn UpdateOverlayDisplay(_m: &mut Machine, _this: u32) -> DD {
+    pub fn UpdateOverlayDisplay(_ctx: &mut Context, _this: u32) -> DD {
         todo!()
     }
 
     #[win32_derive::dllexport]
-    pub fn UpdateOverlayZOrder(_m: &mut Machine, _this: u32) -> DD {
+    pub fn UpdateOverlayZOrder(_ctx: &mut Context, _this: u32) -> DD {
         todo!()
     }
 
-    fn vtable(m: &mut Machine) -> u32 {
+    fn vtable(ctx: &mut Context) -> u32 {
         let vtable_addr = kernel32::state()
             .process_heap
             .borrow()
-            .alloc(&mut m.memory, std::mem::size_of::<VTable>() as u32);
-        let func_addr = runtime::proc_addr(m, QueryInterface_stdcall);
+            .alloc(&mut ctx.memory, std::mem::size_of::<VTable>() as u32);
+        let func_addr = runtime::proc_addr(ctx, QueryInterface_stdcall);
         let vtable = VTable {
             QueryInterface: func_addr + 0,
             AddRef: func_addr + 1,
@@ -530,18 +537,18 @@ pub mod IDirectDrawSurface {
             UpdateOverlayZOrder: func_addr + 35,
         };
         vtable
-            .write_to_prefix(&mut m.memory.bytes[vtable_addr as usize..])
+            .write_to_prefix(&mut ctx.memory.bytes[vtable_addr as usize..])
             .unwrap();
         vtable_addr
     }
 
-    pub fn new(m: &mut Machine) -> u32 {
+    pub fn new(ctx: &mut Context) -> u32 {
         let addr = kernel32::state()
             .process_heap
             .borrow()
-            .alloc(&mut m.memory, 4);
-        let vtable = vtable(m);
-        m.memory.write(addr, vtable);
+            .alloc(&mut ctx.memory, 4);
+        let vtable = vtable(ctx);
+        ctx.memory.write(addr, vtable);
         addr
     }
 }

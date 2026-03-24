@@ -11,7 +11,7 @@ mod ops;
 mod registers;
 
 pub use flags::Flags;
-pub use machine::{Machine, indirect, proc_addr};
+pub use machine::{Context, Machine, indirect, proc_addr};
 pub use memory::Memory;
 pub use native::HOST;
 pub use ops::*;
@@ -24,11 +24,11 @@ pub trait Host {
 }
 
 #[derive(Clone, Copy)]
-pub struct Cont(pub fn(&mut Machine) -> Cont);
+pub struct Cont(pub fn(&mut Context) -> Cont);
 
-pub fn run_loop(m: &mut Machine, mut f: Cont) {
+pub fn run_loop(ctx: &mut Context, mut f: Cont) {
     loop {
-        f = f.0(m);
+        f = f.0(ctx);
     }
 }
 
@@ -36,6 +36,6 @@ pub fn null_pointer_error() -> Cont {
     panic!("jmp to null pointer");
 }
 
-pub fn return_from_main(_m: &mut Machine) -> Cont {
+pub fn return_from_main(_ctx: &mut Context) -> Cont {
     std::process::exit(0);
 }

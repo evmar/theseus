@@ -1,4 +1,4 @@
-use runtime::Machine;
+use runtime::Context;
 use std::rc::Rc;
 
 use crate::{
@@ -14,14 +14,14 @@ win32flags! {
 }
 
 #[win32_derive::dllexport]
-pub fn HeapAlloc(m: &mut Machine, hHeap: HANDLE, dwFlags: HEAP_FLAGS, dwBytes: u32) -> u32 {
+pub fn HeapAlloc(ctx: &mut Context, hHeap: HANDLE, dwFlags: HEAP_FLAGS, dwBytes: u32) -> u32 {
     if !dwFlags.is_empty() {
         todo!();
     }
 
     let heaps = kernel32::state().heaps.borrow();
     let heap = heaps.get(&hHeap).unwrap();
-    heap.alloc(&mut m.memory, dwBytes)
+    heap.alloc(&mut ctx.memory, dwBytes)
     /*
     if flags.contains(HeapAllocFlags::HEAP_ZERO_MEMORY) {
         memory.mem().sub32_mut(addr, dwBytes).fill(0);
@@ -45,7 +45,7 @@ pub fn heap_create(name: String, size: u32) -> Rc<Heap> {
 
 #[win32_derive::dllexport]
 pub fn HeapCreate(
-    _m: &mut Machine,
+    _ctx: &mut Context,
     _flOptions: u32, /* HEAP_FLAGS */
     dwInitialSize: u32,
     _dwMaximumSize: u32,
@@ -58,13 +58,13 @@ pub fn HeapCreate(
 }
 
 #[win32_derive::dllexport]
-pub fn HeapDestroy(_m: &mut Machine, _hHeap: HANDLE) -> bool {
+pub fn HeapDestroy(_ctx: &mut Context, _hHeap: HANDLE) -> bool {
     stub!(true) // success
 }
 
 #[win32_derive::dllexport]
 pub fn HeapSize(
-    m: &mut Machine,
+    ctx: &mut Context,
     hHeap: HANDLE,
     dwFlags: u32, /* HEAP_FLAGS */
     lpMem: u32,
@@ -74,12 +74,12 @@ pub fn HeapSize(
     }
     let heaps = kernel32::state().heaps.borrow();
     let heap = heaps.get(&hHeap).unwrap();
-    heap.size(&mut m.memory, lpMem)
+    heap.size(&mut ctx.memory, lpMem)
 }
 
 #[win32_derive::dllexport]
 pub fn HeapFree(
-    m: &mut Machine,
+    ctx: &mut Context,
     hHeap: HANDLE,
     dwFlags: u32, /* HEAP_FLAGS */
     lpMem: u32,
@@ -89,13 +89,13 @@ pub fn HeapFree(
     }
     let heaps = kernel32::state().heaps.borrow();
     let heap = heaps.get(&hHeap).unwrap();
-    heap.free(&mut m.memory, lpMem);
+    heap.free(&mut ctx.memory, lpMem);
     true
 }
 
 #[win32_derive::dllexport]
 pub fn HeapReAlloc(
-    _m: &mut Machine,
+    _ctx: &mut Context,
     _hHeap: HANDLE,
     dwFlags: u32, /* HEAP_FLAGS */
     _lpMem: u32,

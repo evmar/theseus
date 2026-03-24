@@ -1,6 +1,6 @@
 #![allow(unused)]
 
-use runtime::Machine;
+use runtime::Context;
 use std::cell::{OnceCell, RefCell};
 
 use crate::stub;
@@ -55,7 +55,7 @@ impl crate::dllexport::FromABIParam for TIME {
 
 #[win32_derive::dllexport]
 pub fn timeSetEvent(
-    _m: &mut Machine,
+    _ctx: &mut Context,
     _uDelay: u32,
     _uResolution: u32,
     _lpTimeProc: u32,
@@ -68,6 +68,6 @@ pub fn timeSetEvent(
 }
 
 #[win32_derive::dllexport]
-pub fn timeKillEvent(_m: &mut Machine, _uTimerID: u32) -> u32 {
+pub fn timeKillEvent(_ctx: &mut Context, _uTimerID: u32) -> u32 {
     todo!()
 }

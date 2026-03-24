@@ -9,81 +9,81 @@ pub fn codegen(w: &mut Writer, state: &State, instr: &iced_x86::Instruction) -> 
         Movsb => {
             assert!(!instr.has_repne_prefix());
             if instr.has_rep_prefix() {
-                w.line("rep(m, Rep::REP, movsb);");
+                w.line("rep(ctx, Rep::REP, movsb);");
             } else {
-                w.line("movsb(m);");
+                w.line("movsb(ctx);");
             }
         }
         Movsd => {
             assert!(!instr.has_repne_prefix());
             if instr.has_rep_prefix() {
-                w.line("rep(m, Rep::REP, movsd);");
+                w.line("rep(ctx, Rep::REP, movsd);");
             } else {
-                w.line("movsd(m);");
+                w.line("movsd(ctx);");
             }
         }
 
         Lodsb => {
             assert!(!instr.has_repne_prefix());
             if instr.has_rep_prefix() {
-                w.line("rep(m, Rep::REP, lodsb);");
+                w.line("rep(ctx, Rep::REP, lodsb);");
             } else {
-                w.line("lodsb(m);");
+                w.line("lodsb(ctx);");
             };
         }
         Lodsd => {
             assert!(!instr.has_repne_prefix());
             if instr.has_rep_prefix() {
-                w.line("rep(m, Rep::REP, lodsd);");
+                w.line("rep(ctx, Rep::REP, lodsd);");
             } else {
-                w.line("lodsd(m);");
+                w.line("lodsd(ctx);");
             };
         }
 
         Stosb => {
             assert!(!instr.has_repne_prefix());
             if instr.has_rep_prefix() {
-                w.line("rep(m, Rep::REP, stosb);");
+                w.line("rep(ctx, Rep::REP, stosb);");
             } else {
-                w.line("stosb(m);");
+                w.line("stosb(ctx);");
             };
         }
         Stosd => {
             assert!(!instr.has_repne_prefix());
             if instr.has_rep_prefix() {
-                w.line("rep(m, Rep::REP, stosd);");
+                w.line("rep(ctx, Rep::REP, stosd);");
             } else {
-                w.line("stosd(m);");
+                w.line("stosd(ctx);");
             };
         }
 
         // XXX: cmps/scas use repe, not rep
         Cmpsb => {
             if instr.has_repe_prefix() {
-                w.line("rep(m, Rep::REPE, cmpsb);");
+                w.line("rep(ctx, Rep::REPE, cmpsb);");
             } else if instr.has_repne_prefix() {
-                w.line("rep(m, Rep::REPNE, cmpsb);");
+                w.line("rep(ctx, Rep::REPNE, cmpsb);");
             } else {
-                w.line("cmpsb(m);");
+                w.line("cmpsb(ctx);");
             };
         }
 
         // XXX: cmps/scas use repe, not rep
         Scasb => {
             if instr.has_repe_prefix() {
-                w.line("rep(m, Rep::REPE, scasb);");
+                w.line("rep(ctx, Rep::REPE, scasb);");
             } else if instr.has_repne_prefix() {
-                w.line("rep(m, Rep::REPNE, scasb);");
+                w.line("rep(ctx, Rep::REPNE, scasb);");
             } else {
-                w.line("scasb(m);");
+                w.line("scasb(ctx);");
             };
         }
 
         Loop => {
             let next = gen_abs_jmp(state, instr.next_ip32());
             let dst = gen_jmp(state, instr);
-            w.line("m.cpu.regs.ecx = m.cpu.regs.ecx.wrapping_sub(1);");
-            w.line(format!("if m.cpu.regs.ecx == 0 {{ {next} }}"));
+            w.line("ctx.cpu.regs.ecx = ctx.cpu.regs.ecx.wrapping_sub(1);");
+            w.line(format!("if ctx.cpu.regs.ecx == 0 {{ {next} }}"));
             w.line(format!("else {{ {dst} }}"));
         }
         _ => return false,

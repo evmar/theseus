@@ -1,10 +1,10 @@
 use super::*;
 use crate::stub;
-use runtime::Machine;
+use runtime::Context;
 
 #[win32_derive::dllexport]
 pub fn MessageBoxA(
-    _m: &mut Machine,
+    _ctx: &mut Context,
     _hWnd: HWND,
     _lpText: u32,
     _lpCaption: u32,
@@ -14,17 +14,17 @@ pub fn MessageBoxA(
 }
 
 #[win32_derive::dllexport]
-pub fn RegisterClassA(_m: &mut Machine, _lpWndClass: u32) -> u16 {
+pub fn RegisterClassA(_ctx: &mut Context, _lpWndClass: u32) -> u16 {
     stub!(1)
 }
 
 #[win32_derive::dllexport]
-pub fn SetFocus(_m: &mut Machine, _hWnd: HWND) -> HWND {
+pub fn SetFocus(_ctx: &mut Context, _hWnd: HWND) -> HWND {
     stub!(0)
 }
 
 #[win32_derive::dllexport]
-pub fn GetSystemMetrics(_m: &mut Machine, nIndex: u32 /* SYSTEM_METRICS_INDEX */) -> i32 {
+pub fn GetSystemMetrics(_ctx: &mut Context, nIndex: u32 /* SYSTEM_METRICS_INDEX */) -> i32 {
     // These were dumped from a win2k VM running at 640x480.
     // See exe/rust/bin/metrics.rs.
     const METRICS: [i32; 100] = [
@@ -38,7 +38,7 @@ pub fn GetSystemMetrics(_m: &mut Machine, nIndex: u32 /* SYSTEM_METRICS_INDEX */
 
 #[win32_derive::dllexport]
 pub fn DialogBoxParamA(
-    _m: &mut Machine,
+    _ctx: &mut Context,
     _hInstance: HINSTANCE,
     _lpTemplateName: u32,
     _hWndParent: HWND,
@@ -49,13 +49,13 @@ pub fn DialogBoxParamA(
 }
 
 #[win32_derive::dllexport]
-pub fn ShowCursor(_m: &mut Machine, bShow: bool) -> i32 {
+pub fn ShowCursor(_ctx: &mut Context, bShow: bool) -> i32 {
     if bShow { stub!(1) } else { stub!(0) }
 }
 
 #[win32_derive::dllexport]
 pub fn CheckDlgButton(
-    _m: &mut Machine,
+    _ctx: &mut Context,
     _hDlg: HWND,
     _nIDButton: i32,
     _uCheck: u32, /* DLG_BUTTON_CHECK_STATE */
@@ -64,16 +64,16 @@ pub fn CheckDlgButton(
 }
 
 #[win32_derive::dllexport]
-pub fn EndDialog(_m: &mut Machine, _hDlg: HWND, _nResult: i32) -> bool {
+pub fn EndDialog(_ctx: &mut Context, _hDlg: HWND, _nResult: i32) -> bool {
     todo!()
 }
 
 #[win32_derive::dllexport]
-pub fn IsDlgButtonChecked(_m: &mut Machine, _hDlg: HWND, _nIDButton: i32) -> u32 {
+pub fn IsDlgButtonChecked(_ctx: &mut Context, _hDlg: HWND, _nIDButton: i32) -> u32 {
     todo!()
 }
 
 #[win32_derive::dllexport]
-pub fn ValidateRect(_m: &mut Machine, _hWnd: HWND, _lpRect: u32) -> bool {
+pub fn ValidateRect(_ctx: &mut Context, _hWnd: HWND, _lpRect: u32) -> bool {
     todo!()
 }

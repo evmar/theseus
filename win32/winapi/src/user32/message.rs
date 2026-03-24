@@ -1,4 +1,4 @@
-use runtime::Machine;
+use runtime::Context;
 use std::collections::VecDeque;
 
 use crate::{
@@ -28,18 +28,18 @@ impl MessageQueue {
 }
 
 #[win32_derive::dllexport]
-pub fn DispatchMessageA(_m: &mut Machine, _lpMsg: u32) -> u32 {
+pub fn DispatchMessageA(_ctx: &mut Context, _lpMsg: u32) -> u32 {
     todo!()
 }
 
 #[win32_derive::dllexport]
-pub fn TranslateMessage(_m: &mut Machine, _lpMsg: u32) -> bool {
+pub fn TranslateMessage(_ctx: &mut Context, _lpMsg: u32) -> bool {
     todo!()
 }
 
 #[win32_derive::dllexport]
 pub fn PeekMessageA(
-    _m: &mut Machine,
+    _ctx: &mut Context,
     _lpMsg: u32,
     _hWnd: HWND,
     _wMsgFilterMin: u32,
@@ -52,7 +52,7 @@ pub fn PeekMessageA(
 
 #[win32_derive::dllexport]
 pub fn GetMessageA(
-    _m: &mut Machine,
+    _ctx: &mut Context,
     _lpMsg: u32,
     _hWnd: HWND,
     _wMsgFilterMin: u32,
@@ -62,6 +62,6 @@ pub fn GetMessageA(
 }
 
 #[win32_derive::dllexport]
-pub fn PostQuitMessage(_m: &mut Machine, _nExitCode: i32) {
+pub fn PostQuitMessage(_ctx: &mut Context, _nExitCode: i32) {
     todo!()
 }

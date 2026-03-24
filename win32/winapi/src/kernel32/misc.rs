@@ -1,9 +1,9 @@
-use runtime::Machine;
+use runtime::Context;
 
 use crate::kernel32::{HMODULE, state};
 
 #[win32_derive::dllexport]
-pub fn GetLastError(_m: &mut Machine) -> u32 {
+pub fn GetLastError(_ctx: &mut Context) -> u32 {
     0
 }
 
@@ -33,8 +33,8 @@ pub struct STARTUPINFOA {
 }
 
 #[win32_derive::dllexport]
-pub fn GetStartupInfoA(m: &mut Machine, lpStartupInfo: u32) {
-    let size = m.memory.read::<u32>(lpStartupInfo);
+pub fn GetStartupInfoA(ctx: &mut Context, lpStartupInfo: u32) {
+    let size = ctx.memory.read::<u32>(lpStartupInfo);
     if size > 0 && size < std::mem::size_of::<STARTUPINFOA>() as u32 {
         log::error!("GetStartupInfoA: undersized buffer");
         return;
@@ -43,11 +43,11 @@ pub fn GetStartupInfoA(m: &mut Machine, lpStartupInfo: u32) {
     let info = STARTUPINFOA {
         ..Default::default()
     };
-    m.memory.write(lpStartupInfo, info);
+    ctx.memory.write(lpStartupInfo, info);
 }
 
 #[win32_derive::dllexport]
-pub fn GetVersion(_m: &mut Machine) -> u32 {
+pub fn GetVersion(_ctx: &mut Context) -> u32 {
     // Win95, version 4.0.
     (1 << 31) | 0x4
 }
@@ -64,8 +64,8 @@ pub struct OSVERSIONINFO {
 }
 
 #[win32_derive::dllexport]
-pub fn GetVersionExA(m: &mut Machine, lpVersionInformation: u32) -> bool {
-    let size = m.memory.read::<u32>(lpVersionInformation);
+pub fn GetVersionExA(ctx: &mut Context, lpVersionInformation: u32) -> bool {
+    let size = ctx.memory.read::<u32>(lpVersionInformation);
     if size < std::mem::size_of::<OSVERSIONINFO>() as u32 {
         log::error!("GetVersionExA undersized buffer");
         return false;
@@ -76,20 +76,20 @@ pub fn GetVersionExA(m: &mut Machine, lpVersionInformation: u32) -> bool {
         dwPlatformId: 2,   /* VER_PLATFORM_WIN32_NT */
         ..Default::default()
     };
-    m.memory.write(lpVersionInformation, info);
+    ctx.memory.write(lpVersionInformation, info);
 
     true
 }
 
 #[win32_derive::dllexport]
-pub fn UnhandledExceptionFilter(_m: &mut Machine, _ExceptionInfo: u32) -> i32 {
+pub fn UnhandledExceptionFilter(_ctx: &mut Context, _ExceptionInfo: u32) -> i32 {
     // "The process is being debugged, so the exception should be passed (as second chance) to the application's debugger."
     0 // EXCEPTION_CONTINUE_SEARCH
 }
 
 #[win32_derive::dllexport]
 pub fn VirtualAlloc(
-    _m: &mut Machine,
+    _ctx: &mut Context,
     lpAddress: u32,
     dwSize: u32,
     _flAllocationType: u32, /* VIRTUAL_ALLOCATION_TYPE */
@@ -131,7 +131,7 @@ pub fn VirtualAlloc(
 
 #[win32_derive::dllexport]
 pub fn VirtualFree(
-    _m: &mut Machine,
+    _ctx: &mut Context,
     _lpAddress: u32,
     _dwSize: u32,
     _dwFreeType: u32, /* VIRTUAL_FREE_TYPE */
@@ -141,7 +141,7 @@ pub fn VirtualFree(
 
 #[win32_derive::dllexport]
 pub fn WideCharToMultiByte(
-    _m: &mut Machine,
+    _ctx: &mut Context,
     _CodePage: u32,
     _dwFlags: u32,
     _lpWideCharStr: u32,
@@ -192,23 +192,24 @@ pub fn WideCharToMultiByte(
 }
 
 #[win32_derive::dllexport]
-pub fn GetOEMCP(_m: &mut Machine) -> u32 {
+pub fn GetOEMCP(_ctx: &mut Context) -> u32 {
     todo!()
 }
 
 #[win32_derive::dllexport]
-pub fn OutputDebugStringA(_m: &mut Machine, _lpOutputString: u32) {
+pub fn OutputDebugStringA(_ctx: &mut Context, _lpOutputString: u32) {
     todo!()
 }
 
 #[win32_derive::dllexport]
-pub fn GetProcAddress(_m: &mut Machine, _hModule: HMODULE, _lpProcName: u32) -> u32 /* FARPROC */ {
+pub fn GetProcAddress(_ctx: &mut Context, _hModule: HMODULE, _lpProcName: u32) -> u32 /* FARPROC */
+{
     todo!()
 }
 
 #[win32_derive::dllexport]
 pub fn RtlUnwind(
-    _m: &mut Machine,
+    _ctx: &mut Context,
     _TargetFrame: u32,
     _TargetIp: u32,
     _ExceptionRecord: u32,
@@ -218,17 +219,17 @@ pub fn RtlUnwind(
 }
 
 #[win32_derive::dllexport]
-pub fn GetTickCount(_m: &mut Machine) -> u32 {
+pub fn GetTickCount(_ctx: &mut Context) -> u32 {
     state().start.elapsed().as_millis() as u32
 }
 
 #[win32_derive::dllexport]
-pub fn WaitForSingleObject(_m: &mut Machine, _hHandle: HANDLE, _dwMilliseconds: u32) -> u32 /* WAIT_EVENT */
+pub fn WaitForSingleObject(_ctx: &mut Context, _hHandle: HANDLE, _dwMilliseconds: u32) -> u32 /* WAIT_EVENT */
 {
     todo!()
 }
 
 #[win32_derive::dllexport]
-pub fn Sleep(_m: &mut Machine, _dwMilliseconds: u32) {
+pub fn Sleep(_ctx: &mut Context, _dwMilliseconds: u32) {
     todo!()
 }

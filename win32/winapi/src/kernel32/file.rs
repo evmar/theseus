@@ -1,4 +1,4 @@
-use runtime::Machine;
+use runtime::Context;
 use runtime::{HOST, Host};
 
 use crate::kernel32::HANDLE;
@@ -8,7 +8,7 @@ const STDOUT_HFILE: HANDLE = 0xF11E_0002;
 const STDERR_HFILE: HANDLE = 0xF11E_0003;
 
 #[win32_derive::dllexport]
-pub fn GetStdHandle(_m: &mut Machine, nStdHandle: u32) -> u32 {
+pub fn GetStdHandle(_ctx: &mut Context, nStdHandle: u32) -> u32 {
     match nStdHandle as i32 {
         -10 => STDIN_HFILE,
         -11 => STDOUT_HFILE,
@@ -22,7 +22,7 @@ pub fn GetStdHandle(_m: &mut Machine, nStdHandle: u32) -> u32 {
 
 #[win32_derive::dllexport]
 pub fn WriteFile(
-    m: &mut Machine,
+    ctx: &mut Context,
     hFile: u32,
     lpBuffer: u32,
     nNumberOfBytesToWrite: u32,
@@ -35,10 +35,10 @@ pub fn WriteFile(
     HOST.print(buf.as_bytes());
 
     if hFile == 0xf11e_0002 || hFile == 0xf11e_0003 {
-        let buf = &m.memory.bytes[lpBuffer as usize..][..nNumberOfBytesToWrite as usize];
+        let buf = &ctx.memory.bytes[lpBuffer as usize..][..nNumberOfBytesToWrite as usize];
         HOST.print(buf);
         if lpNumberOfBytesWritten != 0 {
-            m.memory
+            ctx.memory
                 .write(lpNumberOfBytesWritten, nNumberOfBytesToWrite);
         }
     } else {
@@ -48,7 +48,7 @@ pub fn WriteFile(
 }
 
 #[win32_derive::dllexport]
-pub fn GetFileType(_m: &mut Machine, hFile: HANDLE) -> u32 /* FILE_TYPE */ {
+pub fn GetFileType(_ctx: &mut Context, hFile: HANDLE) -> u32 /* FILE_TYPE */ {
     let FILE_TYPE_CHAR = 0x2;
     let FILE_TYPE_UNKNOWN = 0x8;
     match hFile {
@@ -66,7 +66,7 @@ pub fn GetFileType(_m: &mut Machine, hFile: HANDLE) -> u32 /* FILE_TYPE */ {
 }
 
 #[win32_derive::dllexport]
-pub fn SetHandleCount(_m: &mut Machine, uNumber: u32) -> u32 {
+pub fn SetHandleCount(_ctx: &mut Context, uNumber: u32) -> u32 {
     // "For Windows Win32 systems, this API has no effect."
     uNumber
 }

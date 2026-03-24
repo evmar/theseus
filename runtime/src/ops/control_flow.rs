@@ -1,135 +1,135 @@
-use crate::{Cont, Flags, Machine, indirect};
+use crate::{Cont, Context, Flags, indirect};
 
-pub fn call(m: &mut Machine, ret: u32, addr: Cont) -> Cont {
-    super::push(m, ret);
+pub fn call(ctx: &mut Context, ret: u32, addr: Cont) -> Cont {
+    super::push(ctx, ret);
     addr
 }
 
-pub fn je(m: &mut Machine, from: Cont, x: Cont) -> Cont {
-    if m.cpu.flags.contains(Flags::ZF) {
+pub fn je(ctx: &mut Context, from: Cont, x: Cont) -> Cont {
+    if ctx.cpu.flags.contains(Flags::ZF) {
         return x;
     }
     from
 }
 
-pub fn jne(m: &mut Machine, from: Cont, x: Cont) -> Cont {
-    if !m.cpu.flags.contains(Flags::ZF) {
+pub fn jne(ctx: &mut Context, from: Cont, x: Cont) -> Cont {
+    if !ctx.cpu.flags.contains(Flags::ZF) {
         return x;
     }
     from
 }
 
-pub fn jb(m: &mut Machine, from: Cont, x: Cont) -> Cont {
-    if m.cpu.flags.contains(Flags::CF) {
+pub fn jb(ctx: &mut Context, from: Cont, x: Cont) -> Cont {
+    if ctx.cpu.flags.contains(Flags::CF) {
         return x;
     }
     from
 }
 
-pub fn js(m: &mut Machine, from: Cont, x: Cont) -> Cont {
-    if m.cpu.flags.contains(Flags::SF) {
+pub fn js(ctx: &mut Context, from: Cont, x: Cont) -> Cont {
+    if ctx.cpu.flags.contains(Flags::SF) {
         return x;
     }
     from
 }
 
-pub fn jns(m: &mut Machine, from: Cont, x: Cont) -> Cont {
-    if !m.cpu.flags.contains(Flags::SF) {
+pub fn jns(ctx: &mut Context, from: Cont, x: Cont) -> Cont {
+    if !ctx.cpu.flags.contains(Flags::SF) {
         return x;
     }
     from
 }
 
-pub fn ja(m: &mut Machine, from: Cont, x: Cont) -> Cont {
-    if !m.cpu.flags.contains(Flags::CF) && !m.cpu.flags.contains(Flags::ZF) {
+pub fn ja(ctx: &mut Context, from: Cont, x: Cont) -> Cont {
+    if !ctx.cpu.flags.contains(Flags::CF) && !ctx.cpu.flags.contains(Flags::ZF) {
         return x;
     }
     from
 }
 
-pub fn jae(m: &mut Machine, from: Cont, x: Cont) -> Cont {
-    if !m.cpu.flags.contains(Flags::CF) {
+pub fn jae(ctx: &mut Context, from: Cont, x: Cont) -> Cont {
+    if !ctx.cpu.flags.contains(Flags::CF) {
         return x;
     }
     from
 }
 
-pub fn jl(m: &mut Machine, from: Cont, x: Cont) -> Cont {
-    if m.cpu.flags.contains(Flags::SF) != m.cpu.flags.contains(Flags::OF) {
+pub fn jl(ctx: &mut Context, from: Cont, x: Cont) -> Cont {
+    if ctx.cpu.flags.contains(Flags::SF) != ctx.cpu.flags.contains(Flags::OF) {
         return x;
     }
     from
 }
 
-pub fn jge(m: &mut Machine, from: Cont, x: Cont) -> Cont {
-    if m.cpu.flags.contains(Flags::SF) == m.cpu.flags.contains(Flags::OF) {
+pub fn jge(ctx: &mut Context, from: Cont, x: Cont) -> Cont {
+    if ctx.cpu.flags.contains(Flags::SF) == ctx.cpu.flags.contains(Flags::OF) {
         return x;
     }
     from
 }
 
-pub fn jecxz(m: &mut Machine, from: Cont, x: Cont) -> Cont {
-    if m.cpu.regs.ecx == 0 {
+pub fn jecxz(ctx: &mut Context, from: Cont, x: Cont) -> Cont {
+    if ctx.cpu.regs.ecx == 0 {
         return x;
     }
     from
 }
 
-pub fn jg(m: &mut Machine, from: Cont, x: Cont) -> Cont {
-    if !m.cpu.flags.contains(Flags::ZF)
-        && m.cpu.flags.contains(Flags::SF) == m.cpu.flags.contains(Flags::OF)
+pub fn jg(ctx: &mut Context, from: Cont, x: Cont) -> Cont {
+    if !ctx.cpu.flags.contains(Flags::ZF)
+        && ctx.cpu.flags.contains(Flags::SF) == ctx.cpu.flags.contains(Flags::OF)
     {
         return x;
     }
     from
 }
 
-pub fn jle(m: &mut Machine, from: Cont, x: Cont) -> Cont {
-    if m.cpu.flags.contains(Flags::ZF)
-        || m.cpu.flags.contains(Flags::SF) != m.cpu.flags.contains(Flags::OF)
+pub fn jle(ctx: &mut Context, from: Cont, x: Cont) -> Cont {
+    if ctx.cpu.flags.contains(Flags::ZF)
+        || ctx.cpu.flags.contains(Flags::SF) != ctx.cpu.flags.contains(Flags::OF)
     {
         return x;
     }
     from
 }
 
-pub fn jbe(m: &mut Machine, from: Cont, x: Cont) -> Cont {
-    if m.cpu.flags.contains(Flags::CF) || m.cpu.flags.contains(Flags::ZF) {
+pub fn jbe(ctx: &mut Context, from: Cont, x: Cont) -> Cont {
+    if ctx.cpu.flags.contains(Flags::CF) || ctx.cpu.flags.contains(Flags::ZF) {
         return x;
     }
     from
 }
 
-pub fn ret(m: &mut Machine, n: u16) -> Cont {
-    let ret = super::pop(m);
-    m.cpu.regs.esp += n as u32;
-    indirect(m, ret)
+pub fn ret(ctx: &mut Context, n: u16) -> Cont {
+    let ret = super::pop(ctx);
+    ctx.cpu.regs.esp += n as u32;
+    indirect(ctx, ret)
 }
 
-pub fn enter(m: &mut Machine, bytes: u16, nesting: u8) {
+pub fn enter(ctx: &mut Context, bytes: u16, nesting: u8) {
     assert_eq!(nesting, 0);
-    super::push(m, m.cpu.regs.ebp);
-    m.cpu.regs.ebp = m.cpu.regs.esp;
-    m.cpu.regs.esp -= bytes as u32;
+    super::push(ctx, ctx.cpu.regs.ebp);
+    ctx.cpu.regs.ebp = ctx.cpu.regs.esp;
+    ctx.cpu.regs.esp -= bytes as u32;
 }
 
-pub fn leave(m: &mut Machine) {
-    m.cpu.regs.esp = m.cpu.regs.ebp;
-    m.cpu.regs.ebp = super::pop(m);
+pub fn leave(ctx: &mut Context) {
+    ctx.cpu.regs.esp = ctx.cpu.regs.ebp;
+    ctx.cpu.regs.ebp = super::pop(ctx);
 }
 
-pub fn sete(m: &Machine) -> u8 {
-    m.cpu.flags.contains(Flags::ZF) as u8
+pub fn sete(ctx: &Context) -> u8 {
+    ctx.cpu.flags.contains(Flags::ZF) as u8
 }
 
-pub fn setge(_m: &mut Machine) {
+pub fn setge(_ctx: &mut Context) {
     todo!("setge");
 }
 
-pub fn setne(_m: &mut Machine) {
+pub fn setne(_ctx: &mut Context) {
     todo!("setne");
 }
 
-pub fn setg(_m: &mut Machine) {
+pub fn setg(_ctx: &mut Context) {
     todo!("setg");
 }

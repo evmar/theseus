@@ -1,10 +1,10 @@
-use runtime::Machine;
+use runtime::Context;
 use zerocopy::FromBytes;
 
 use crate::kernel32::{self, HANDLE, init_thread, state, teb};
 
 #[win32_derive::dllexport]
-pub fn ExitProcess(_m: &mut Machine, uExitCode: u32) -> u32 {
+pub fn ExitProcess(_ctx: &mut Context, uExitCode: u32) -> u32 {
     std::process::exit(uExitCode as i32);
 }
 
@@ -65,7 +65,7 @@ pub struct CommandLine {
 }
 
 #[win32_derive::dllexport]
-pub fn GetCommandLineA(_m: &mut Machine) -> u32 {
+pub fn GetCommandLineA(_ctx: &mut Context) -> u32 {
     state().command_line.borrow().command_line_8
 }
 
@@ -73,7 +73,7 @@ fn align_to_4(x: usize) -> usize {
     (x + 4 - 1) & !(4 - 1)
 }
 
-pub fn init_process(m: &mut Machine) {
+pub fn init_process(ctx: &mut Context) {
     unsafe {
         let process_data_addr =
             state()
@@ -81,8 +81,8 @@ pub fn init_process(m: &mut Machine) {
                 .borrow_mut()
                 .alloc("process data".into(), None, 0x1000);
 
-        let origin = m.memory.bytes.as_ptr();
-        let buf = &mut m.memory.bytes[process_data_addr as usize..][..0x1000];
+        let origin = ctx.memory.bytes.as_ptr();
+        let buf = &mut ctx.memory.bytes[process_data_addr as usize..][..0x1000];
 
         let command_line = "TODO\0";
 
@@ -119,10 +119,10 @@ pub fn init_process(m: &mut Machine) {
         *state().process_heap.borrow_mut() = process_heap;
 
         let peb_addr = (&raw const *peb).byte_offset_from_unsigned(origin) as u32;
-        let thread = init_thread(m, peb_addr);
-        m.cpu.regs.esp = thread.stack_pointer;
-        m.cpu.regs.ebp = thread.stack_pointer;
-        m.cpu.regs.fs_base = thread.fs_base;
+        let thread = init_thread(ctx, peb_addr);
+        ctx.cpu.regs.esp = thread.stack_pointer;
+        ctx.cpu.regs.ebp = thread.stack_pointer;
+        ctx.cpu.regs.fs_base = thread.fs_base;
 
         state().mappings.borrow().dump();
     }
@@ -132,23 +132,23 @@ pub fn init_process(m: &mut Machine) {
 pub const CURRENT_PROCESS_HANDLE: HANDLE = -1i32 as u32;
 
 #[win32_derive::dllexport]
-pub fn GetCurrentProcess(_m: &mut Machine) -> HANDLE {
+pub fn GetCurrentProcess(_ctx: &mut Context) -> HANDLE {
     CURRENT_PROCESS_HANDLE
 }
 
 #[allow(unused)]
-fn peb_mut(m: &mut Machine) -> &mut PEB {
-    let peb_addr = teb(m).Peb;
-    let (peb, _) = PEB::mut_from_prefix(&mut m.memory.bytes[peb_addr as usize..]).unwrap();
+fn peb_mut(ctx: &mut Context) -> &mut PEB {
+    let peb_addr = teb(ctx).Peb;
+    let (peb, _) = PEB::mut_from_prefix(&mut ctx.memory.bytes[peb_addr as usize..]).unwrap();
     peb
 }
 
 #[win32_derive::dllexport]
-pub fn GetProcessHeap(_m: &mut Machine) -> HANDLE {
+pub fn GetProcessHeap(_ctx: &mut Context) -> HANDLE {
     state().process_heap.borrow().addr
 }
 
 #[win32_derive::dllexport]
-pub fn TerminateProcess(_m: &mut Machine, _hProcess: HANDLE, _uExitCode: u32) -> bool {
+pub fn TerminateProcess(_ctx: &mut Context, _hProcess: HANDLE, _uExitCode: u32) -> bool {
     todo!();
 }

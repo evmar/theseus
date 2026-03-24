@@ -1,4 +1,4 @@
-use runtime::Machine;
+use runtime::Context;
 
 use crate::{
     gdi32::{BitmapType, HDC, HGDIOBJ, state},
@@ -18,7 +18,7 @@ struct BITMAP {
 }
 
 #[win32_derive::dllexport]
-pub fn GetObjectA(m: &mut Machine, handle: HGDIOBJ, size: u32, lpOut: u32) -> u32 {
+pub fn GetObjectA(ctx: &mut Context, handle: HGDIOBJ, size: u32, lpOut: u32) -> u32 {
     let bitmap = state().objects.borrow().get(handle).unwrap().clone();
     assert!(size == std::mem::size_of::<BITMAP>() as u32);
     let fields = match &bitmap.typ {
@@ -33,17 +33,17 @@ pub fn GetObjectA(m: &mut Machine, handle: HGDIOBJ, size: u32, lpOut: u32) -> u3
         },
         BitmapType::DIB(_) => todo!(),
     };
-    m.memory.write(lpOut, fields);
+    ctx.memory.write(lpOut, fields);
     size
 }
 
 #[win32_derive::dllexport]
-pub fn GetStockObject(_m: &mut Machine, _i: u32 /* GET_STOCK_OBJECT_FLAGS */) -> HGDIOBJ {
+pub fn GetStockObject(_ctx: &mut Context, _i: u32 /* GET_STOCK_OBJECT_FLAGS */) -> HGDIOBJ {
     stub!(HGDIOBJ::null())
 }
 
 #[win32_derive::dllexport]
-pub fn SelectObject(_m: &mut Machine, hdc: HDC, h: HGDIOBJ) -> HGDIOBJ {
+pub fn SelectObject(_ctx: &mut Context, hdc: HDC, h: HGDIOBJ) -> HGDIOBJ {
     let object = state().objects.borrow().get(h).unwrap().clone();
     let prev = state()
         .dcs

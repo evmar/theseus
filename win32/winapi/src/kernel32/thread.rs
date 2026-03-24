@@ -1,4 +1,4 @@
-use runtime::Machine;
+use runtime::Context;
 use zerocopy::FromBytes as _;
 
 use crate::{HANDLE, kernel32::state};
@@ -45,7 +45,7 @@ pub struct NewThread {
     pub fs_base: u32,
 }
 
-pub fn init_thread(m: &mut Machine, peb_addr: u32) -> NewThread {
+pub fn init_thread(ctx: &mut Context, peb_addr: u32) -> NewThread {
     let mut mappings = state().mappings.borrow_mut();
 
     let teb_addr = mappings.alloc(
@@ -53,7 +53,7 @@ pub fn init_thread(m: &mut Machine, peb_addr: u32) -> NewThread {
         None,
         std::mem::size_of::<TEB>() as u32,
     );
-    let buf = &mut m.memory.bytes[teb_addr as usize..][..std::mem::size_of::<TEB>()];
+    let buf = &mut ctx.memory.bytes[teb_addr as usize..][..std::mem::size_of::<TEB>()];
     let teb = TEB::mut_from_bytes(buf).unwrap();
     teb.Peb = peb_addr;
     teb.Tib._Self = teb_addr;
@@ -69,17 +69,17 @@ pub fn init_thread(m: &mut Machine, peb_addr: u32) -> NewThread {
 }
 
 #[allow(unused)]
-pub fn teb(m: &mut Machine) -> &TEB {
-    let teb_addr = m.cpu.regs.fs_base;
+pub fn teb(ctx: &mut Context) -> &TEB {
+    let teb_addr = ctx.cpu.regs.fs_base;
     let teb =
-        TEB::ref_from_bytes(&m.memory.bytes[teb_addr as usize..][..std::mem::size_of::<TEB>()])
+        TEB::ref_from_bytes(&ctx.memory.bytes[teb_addr as usize..][..std::mem::size_of::<TEB>()])
             .unwrap();
     teb
 }
 
 #[win32_derive::dllexport]
 pub fn CreateThread(
-    _m: &mut Machine,
+    _ctx: &mut Context,
     _lpThreadAttributes: u32,
     _dwStackSize: u32,
     _lpStartAddress: u32, /* LPTHREAD_START_ROUTINE */
@@ -91,28 +91,28 @@ pub fn CreateThread(
 }
 
 #[win32_derive::dllexport]
-pub fn GetCurrentThreadId(_m: &mut Machine) -> u32 {
+pub fn GetCurrentThreadId(_ctx: &mut Context) -> u32 {
     todo!()
 }
 
 #[win32_derive::dllexport]
-pub fn TlsAlloc(_m: &mut Machine) -> u32 {
+pub fn TlsAlloc(_ctx: &mut Context) -> u32 {
     todo!()
 }
 
 #[win32_derive::dllexport]
-pub fn TlsGetValue(_m: &mut Machine, _dwTlsIndex: u32) -> u32 {
+pub fn TlsGetValue(_ctx: &mut Context, _dwTlsIndex: u32) -> u32 {
     todo!()
 }
 
 #[win32_derive::dllexport]
-pub fn TlsSetValue(_m: &mut Machine, _dwTlsIndex: u32, _lpTlsValue: u32) -> bool {
+pub fn TlsSetValue(_ctx: &mut Context, _dwTlsIndex: u32, _lpTlsValue: u32) -> bool {
     todo!()
 }
 
 #[win32_derive::dllexport]
 pub fn SetThreadPriority(
-    _m: &mut Machine,
+    _ctx: &mut Context,
     _hThread: HANDLE,
     _nPriority: u32, /* THREAD_PRIORITY */
 ) -> bool {

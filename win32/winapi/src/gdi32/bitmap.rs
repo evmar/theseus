@@ -1,4 +1,4 @@
-use runtime::Machine;
+use runtime::Context;
 use std::rc::Rc;
 
 use crate::{
@@ -9,7 +9,7 @@ use crate::{
 
 #[win32_derive::dllexport]
 pub fn StretchBlt(
-    m: &mut Machine,
+    ctx: &mut Context,
     hdcDest: HDC,
     xDest: i32,
     yDest: i32,
@@ -38,7 +38,7 @@ pub fn StretchBlt(
     let BitmapType::DIB(dib_dst) = &bmp_dst.typ else {
         todo!()
     };
-    let pixels_dst = m
+    let pixels_dst = ctx
         .memory
         .slice_mut(dib_dst.pixels..dib_dst.pixels + (dib_dst.width * dib_dst.height * 4));
 

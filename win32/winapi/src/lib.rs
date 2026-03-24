@@ -26,13 +26,13 @@ macro_rules! stub {
         $arg
     }};
 }
-use runtime::Machine;
+use runtime::{Context, Machine};
 pub(crate) use stub;
 
 pub struct EXEData {
     pub image_base: u32,
     pub resources: std::ops::Range<u32>,
-    pub blocks: &'static [(u32, fn(&mut Machine) -> runtime::Cont)],
+    pub blocks: &'static [(u32, fn(&mut Context) -> runtime::Cont)],
     pub init_mappings: fn(&mut Machine),
     pub entry_point: runtime::Cont,
 }

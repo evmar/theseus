@@ -1,13 +1,13 @@
-use crate::Machine;
+use crate::Context;
 
-pub fn push(m: &mut Machine, x: u32) {
-    m.cpu.regs.esp -= 4;
-    m.memory.write::<u32>(m.cpu.regs.esp, x);
+pub fn push(ctx: &mut Context, x: u32) {
+    ctx.cpu.regs.esp -= 4;
+    ctx.memory.write::<u32>(ctx.cpu.regs.esp, x);
 }
 
-pub fn pop(m: &mut Machine) -> u32 {
-    let x = m.memory.read::<u32>(m.cpu.regs.esp);
-    m.cpu.regs.esp += 4;
+pub fn pop(ctx: &mut Context) -> u32 {
+    let x = ctx.memory.read::<u32>(ctx.cpu.regs.esp);
+    ctx.cpu.regs.esp += 4;
     x
 }
 
@@ -15,29 +15,29 @@ pub fn pushfd() {
     todo!("pushfd");
 }
 
-pub fn cwde(_m: &mut Machine) {
+pub fn cwde(_ctx: &mut Context) {
     todo!("cwde");
 }
 
-pub fn pushad(m: &mut Machine) {
-    let esp = m.cpu.regs.esp;
-    push(m, m.cpu.regs.eax);
-    push(m, m.cpu.regs.ecx);
-    push(m, m.cpu.regs.edx);
-    push(m, m.cpu.regs.ebx);
-    push(m, esp);
-    push(m, m.cpu.regs.ebp);
-    push(m, m.cpu.regs.esi);
-    push(m, m.cpu.regs.edi);
+pub fn pushad(ctx: &mut Context) {
+    let esp = ctx.cpu.regs.esp;
+    push(ctx, ctx.cpu.regs.eax);
+    push(ctx, ctx.cpu.regs.ecx);
+    push(ctx, ctx.cpu.regs.edx);
+    push(ctx, ctx.cpu.regs.ebx);
+    push(ctx, esp);
+    push(ctx, ctx.cpu.regs.ebp);
+    push(ctx, ctx.cpu.regs.esi);
+    push(ctx, ctx.cpu.regs.edi);
 }
 
-pub fn popad(m: &mut Machine) {
-    m.cpu.regs.edi = pop(m);
-    m.cpu.regs.esi = pop(m);
-    m.cpu.regs.ebp = pop(m);
-    pop(m);
-    m.cpu.regs.ebx = pop(m);
-    m.cpu.regs.edx = pop(m);
-    m.cpu.regs.ecx = pop(m);
-    m.cpu.regs.eax = pop(m);
+pub fn popad(ctx: &mut Context) {
+    ctx.cpu.regs.edi = pop(ctx);
+    ctx.cpu.regs.esi = pop(ctx);
+    ctx.cpu.regs.ebp = pop(ctx);
+    pop(ctx);
+    ctx.cpu.regs.ebx = pop(ctx);
+    ctx.cpu.regs.edx = pop(ctx);
+    ctx.cpu.regs.ecx = pop(ctx);
+    ctx.cpu.regs.eax = pop(ctx);
 }

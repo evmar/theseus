@@ -31,7 +31,7 @@ pub fn dllexport(_attr: TokenStream, mut tokens: TokenStream) -> TokenStream {
         for (i, (arg, ty)) in args.iter().enumerate() {
             let offset = i as u32 * 4;
             v.push(quote! {
-                let #arg = <#ty>::from_abi(m.memory.read::<u32>(m.cpu.regs.esp + #offset));
+                let #arg = <#ty>::from_abi(ctx.memory.read::<u32>(ctx.cpu.regs.esp + #offset));
             });
         }
         quote!(#(#v)*)
@@ -58,15 +58,15 @@ pub fn dllexport(_attr: TokenStream, mut tokens: TokenStream) -> TokenStream {
     call_args.next(); // skip return_addr
 
     let wrapper: TokenStream = quote! {
-        pub fn #wrapper_name(m: &mut crate::Machine) -> runtime::Cont {
+        pub fn #wrapper_name(ctx: &mut crate::Context) -> runtime::Cont {
             use crate::{ABIReturn, FromABIParam};
             use runtime::*;
             #fetch_args
             #trace
-            let ret: ABIReturn = #name(m, #(#call_args),*).into();
-            m.cpu.regs.eax = ret.to_abi_return();
-            m.cpu.regs.esp += #stack_popped * 4;
-            runtime::indirect(m, return_addr)
+            let ret: ABIReturn = #name(ctx, #(#call_args),*).into();
+            ctx.cpu.regs.eax = ret.to_abi_return();
+            ctx.cpu.regs.esp += #stack_popped * 4;
+            runtime::indirect(ctx, return_addr)
         }
     }
     .into();

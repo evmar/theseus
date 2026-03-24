@@ -195,13 +195,13 @@ pub fn get_pixel_format() -> DDPIXELFORMAT {
 }
 
 #[win32_derive::dllexport]
-pub fn DirectDrawCreate(m: &mut Machine, lpGUID: u32, lplpDD: u32, pUnkOuter: u32) -> DD {
-    DirectDrawCreateEx(m, lpGUID, lplpDD, 0, pUnkOuter)
+pub fn DirectDrawCreate(ctx: &mut Context, lpGUID: u32, lplpDD: u32, pUnkOuter: u32) -> DD {
+    DirectDrawCreateEx(ctx, lpGUID, lplpDD, 0, pUnkOuter)
 }
 
 #[win32_derive::dllexport]
 pub fn DirectDrawCreateEx(
-    m: &mut Machine,
+    ctx: &mut Context,
     lpGuid: u32,
     lplpDD: u32,
     iid: u32,
@@ -211,12 +211,12 @@ pub fn DirectDrawCreateEx(
     let iid = if iid == 0 {
         None
     } else {
-        Some(m.memory.read::<GUID>(iid))
+        Some(ctx.memory.read::<GUID>(iid))
     };
 
     let addr: u32 = match iid {
-        None => ddraw1::IDirectDraw::new(m),
-        Some(ddraw7::IID_IDirectDraw7) => ddraw7::IDirectDraw7::new(m),
+        None => ddraw1::IDirectDraw::new(ctx),
+        Some(ddraw7::IID_IDirectDraw7) => ddraw7::IDirectDraw7::new(ctx),
         _ => panic!(),
     };
 
@@ -224,6 +224,6 @@ pub fn DirectDrawCreateEx(
     assert!(ddraw.is_none());
     *ddraw = Some(DirectDraw { addr, window: None });
 
-    m.memory.write(lplpDD, addr);
+    ctx.memory.write(lplpDD, addr);
     DD::OK
 }

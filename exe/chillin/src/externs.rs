@@ -1,6 +1,6 @@
-use runtime::{Cont, Machine, ret};
+use runtime::{Cont, Context, ret};
 
-pub fn x0040a3b4(m: &mut Machine) -> Cont {
+pub fn x0040a3b4(ctx: &mut Context) -> Cont {
     // code is like
     //   mov edi, 0x403a3b4
     //   call edi
@@ -11,5 +11,5 @@ pub fn x0040a3b4(m: &mut Machine) -> Cont {
     // where 403ab4 is in the middle of that?
     // maybe some unpacker failure?
     // It's in directsound shutdown anyway.
-    ret(m, 0)
+    ret(ctx, 0)
 }

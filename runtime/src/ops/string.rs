@@ -1,5 +1,5 @@
 use super::math::sub;
-use crate::{Flags, Machine};
+use crate::{Context, Flags};
 
 /// Width of an operation, e.g. movsb/w/d.
 #[derive(Clone, Copy)]
@@ -16,102 +16,102 @@ pub enum Rep {
     REPE,
 }
 
-pub fn rep(m: &mut Machine, rep: Rep, func: impl Fn(&mut Machine)) {
-    while m.cpu.regs.ecx > 0 {
-        func(m);
-        m.cpu.regs.ecx = m.cpu.regs.ecx.wrapping_sub(1);
+pub fn rep(ctx: &mut Context, rep: Rep, func: impl Fn(&mut Context)) {
+    while ctx.cpu.regs.ecx > 0 {
+        func(ctx);
+        ctx.cpu.regs.ecx = ctx.cpu.regs.ecx.wrapping_sub(1);
         match rep {
-            Rep::REPE if !m.cpu.flags.contains(Flags::ZF) => break,
-            Rep::REPNE if m.cpu.flags.contains(Flags::ZF) => break,
+            Rep::REPE if !ctx.cpu.flags.contains(Flags::ZF) => break,
+            Rep::REPNE if ctx.cpu.flags.contains(Flags::ZF) => break,
             _ => {}
         }
     }
 }
 
-pub fn lodsb(m: &mut Machine) {
-    let addr = m.cpu.regs.esi;
-    m.cpu.regs.set_al(m.memory.read::<u8>(addr));
-    if m.cpu.flags.contains(Flags::DF) {
-        m.cpu.regs.esi = addr.wrapping_sub(1);
+pub fn lodsb(ctx: &mut Context) {
+    let addr = ctx.cpu.regs.esi;
+    ctx.cpu.regs.set_al(ctx.memory.read::<u8>(addr));
+    if ctx.cpu.flags.contains(Flags::DF) {
+        ctx.cpu.regs.esi = addr.wrapping_sub(1);
     } else {
-        m.cpu.regs.esi = addr.wrapping_add(1);
+        ctx.cpu.regs.esi = addr.wrapping_add(1);
     }
 }
 
-pub fn lodsd(m: &mut Machine) {
-    let addr = m.cpu.regs.esi;
-    m.cpu.regs.eax = m.memory.read::<u32>(addr);
-    if m.cpu.flags.contains(Flags::DF) {
-        m.cpu.regs.esi = addr.wrapping_sub(4);
+pub fn lodsd(ctx: &mut Context) {
+    let addr = ctx.cpu.regs.esi;
+    ctx.cpu.regs.eax = ctx.memory.read::<u32>(addr);
+    if ctx.cpu.flags.contains(Flags::DF) {
+        ctx.cpu.regs.esi = addr.wrapping_sub(4);
     } else {
-        m.cpu.regs.esi = addr.wrapping_add(4);
+        ctx.cpu.regs.esi = addr.wrapping_add(4);
     }
 }
 
-pub fn stosb(m: &mut Machine) {
-    let addr = m.cpu.regs.edi;
-    m.memory.write::<u8>(addr, m.cpu.regs.eax as u8);
-    if m.cpu.flags.contains(Flags::DF) {
-        m.cpu.regs.edi = addr.wrapping_sub(1);
+pub fn stosb(ctx: &mut Context) {
+    let addr = ctx.cpu.regs.edi;
+    ctx.memory.write::<u8>(addr, ctx.cpu.regs.eax as u8);
+    if ctx.cpu.flags.contains(Flags::DF) {
+        ctx.cpu.regs.edi = addr.wrapping_sub(1);
     } else {
-        m.cpu.regs.edi = addr.wrapping_add(1);
+        ctx.cpu.regs.edi = addr.wrapping_add(1);
     }
 }
 
-pub fn stosd(m: &mut Machine) {
-    let addr = m.cpu.regs.edi;
-    m.memory.write::<u32>(addr, m.cpu.regs.eax);
-    if m.cpu.flags.contains(Flags::DF) {
-        m.cpu.regs.edi = addr.wrapping_sub(4);
+pub fn stosd(ctx: &mut Context) {
+    let addr = ctx.cpu.regs.edi;
+    ctx.memory.write::<u32>(addr, ctx.cpu.regs.eax);
+    if ctx.cpu.flags.contains(Flags::DF) {
+        ctx.cpu.regs.edi = addr.wrapping_sub(4);
     } else {
-        m.cpu.regs.edi = addr.wrapping_add(4);
+        ctx.cpu.regs.edi = addr.wrapping_add(4);
     }
 }
 
-pub fn scasb(m: &mut Machine) {
-    let addr = m.cpu.regs.edi;
-    let mem = m.memory.read::<u8>(addr);
-    let _ = sub(m.cpu.regs.get_al(), mem, &mut m.cpu.flags);
-    if m.cpu.flags.contains(Flags::DF) {
-        m.cpu.regs.edi = addr.wrapping_sub(1);
+pub fn scasb(ctx: &mut Context) {
+    let addr = ctx.cpu.regs.edi;
+    let mem = ctx.memory.read::<u8>(addr);
+    let _ = sub(ctx.cpu.regs.get_al(), mem, &mut ctx.cpu.flags);
+    if ctx.cpu.flags.contains(Flags::DF) {
+        ctx.cpu.regs.edi = addr.wrapping_sub(1);
     } else {
-        m.cpu.regs.edi = addr.wrapping_add(1);
+        ctx.cpu.regs.edi = addr.wrapping_add(1);
     }
 }
 
-pub fn cmpsb(m: &mut Machine) {
-    let src = m.memory.read::<u8>(m.cpu.regs.esi);
-    let dst = m.memory.read::<u8>(m.cpu.regs.edi);
-    let _ = sub(src, dst, &mut m.cpu.flags);
-    if m.cpu.flags.contains(Flags::DF) {
-        m.cpu.regs.esi = m.cpu.regs.esi.wrapping_sub(1);
-        m.cpu.regs.edi = m.cpu.regs.edi.wrapping_sub(1);
+pub fn cmpsb(ctx: &mut Context) {
+    let src = ctx.memory.read::<u8>(ctx.cpu.regs.esi);
+    let dst = ctx.memory.read::<u8>(ctx.cpu.regs.edi);
+    let _ = sub(src, dst, &mut ctx.cpu.flags);
+    if ctx.cpu.flags.contains(Flags::DF) {
+        ctx.cpu.regs.esi = ctx.cpu.regs.esi.wrapping_sub(1);
+        ctx.cpu.regs.edi = ctx.cpu.regs.edi.wrapping_sub(1);
     } else {
-        m.cpu.regs.esi = m.cpu.regs.esi.wrapping_add(1);
-        m.cpu.regs.edi = m.cpu.regs.edi.wrapping_add(1);
+        ctx.cpu.regs.esi = ctx.cpu.regs.esi.wrapping_add(1);
+        ctx.cpu.regs.edi = ctx.cpu.regs.edi.wrapping_add(1);
     }
 }
 
-pub fn movsd(m: &mut Machine) {
-    let val = m.memory.read::<u32>(m.cpu.regs.esi);
-    m.memory.write::<u32>(m.cpu.regs.edi, val);
-    if m.cpu.flags.contains(Flags::DF) {
-        m.cpu.regs.esi = m.cpu.regs.esi.wrapping_sub(4);
-        m.cpu.regs.edi = m.cpu.regs.edi.wrapping_sub(4);
+pub fn movsd(ctx: &mut Context) {
+    let val = ctx.memory.read::<u32>(ctx.cpu.regs.esi);
+    ctx.memory.write::<u32>(ctx.cpu.regs.edi, val);
+    if ctx.cpu.flags.contains(Flags::DF) {
+        ctx.cpu.regs.esi = ctx.cpu.regs.esi.wrapping_sub(4);
+        ctx.cpu.regs.edi = ctx.cpu.regs.edi.wrapping_sub(4);
     } else {
-        m.cpu.regs.esi = m.cpu.regs.esi.wrapping_add(4);
-        m.cpu.regs.edi = m.cpu.regs.edi.wrapping_add(4);
+        ctx.cpu.regs.esi = ctx.cpu.regs.esi.wrapping_add(4);
+        ctx.cpu.regs.edi = ctx.cpu.regs.edi.wrapping_add(4);
     }
 }
 
-pub fn movsb(m: &mut Machine) {
-    let val = m.memory.read::<u8>(m.cpu.regs.esi);
-    m.memory.write::<u8>(m.cpu.regs.edi, val);
-    if m.cpu.flags.contains(Flags::DF) {
-        m.cpu.regs.esi = m.cpu.regs.esi.wrapping_sub(1);
-        m.cpu.regs.edi = m.cpu.regs.edi.wrapping_sub(1);
+pub fn movsb(ctx: &mut Context) {
+    let val = ctx.memory.read::<u8>(ctx.cpu.regs.esi);
+    ctx.memory.write::<u8>(ctx.cpu.regs.edi, val);
+    if ctx.cpu.flags.contains(Flags::DF) {
+        ctx.cpu.regs.esi = ctx.cpu.regs.esi.wrapping_sub(1);
+        ctx.cpu.regs.edi = ctx.cpu.regs.edi.wrapping_sub(1);
     } else {
-        m.cpu.regs.esi = m.cpu.regs.esi.wrapping_add(1);
-        m.cpu.regs.edi = m.cpu.regs.edi.wrapping_add(1);
+        ctx.cpu.regs.esi = ctx.cpu.regs.esi.wrapping_add(1);
+        ctx.cpu.regs.edi = ctx.cpu.regs.edi.wrapping_add(1);
     }
 }
