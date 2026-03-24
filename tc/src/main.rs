@@ -21,9 +21,12 @@ struct Import {
 pub struct State {
     pe_file: pe::File,
     mem: Memory,
+    code_memory: std::ops::Range<u32>,
     imports: HashMap<u32, Import>,
     blocks: HashMap<u32, Block>,
     resources: Option<(u32, u32)>,
+
+    scan_immediates: bool,
 }
 
 impl State {
@@ -34,6 +37,7 @@ impl State {
         let image_base = AddrAbs(f.opt_header.ImageBase);
         mem.alloc("exe header".into(), image_base, 0x1000);
         mem.put(image_base, &buf[..0x1000.min(buf.len())]);
+        let mut code_range = None;
         for sec in &f.sections {
             let addr = AddrImage(sec.VirtualAddress).to_abs(image_base);
             let size = winapi::kernel32::round_to_page(sec.SizeOfRawData.max(sec.VirtualSize));
@@ -46,7 +50,12 @@ impl State {
                 let data = &buf[sec.PointerToRawData as usize..][..sec.SizeOfRawData as usize];
                 mem.put(addr, data);
             }
+            if flags.contains(pe::IMAGE_SCN::CODE) {
+                assert!(code_range.is_none());
+                code_range = Some(addr.0..(addr.0 + sec.SizeOfRawData));
+            }
         }
+        log::info!("code {:x?}", code_range);
 
         let resource_dir = f
             .get_data_directory(pe::IMAGE_DIRECTORY_ENTRY::RESOURCE)
@@ -55,9 +64,11 @@ impl State {
         State {
             pe_file: f,
             mem,
+            code_memory: code_range.unwrap(),
             imports: Default::default(),
             blocks: Default::default(),
             resources: resource_dir,
+            scan_immediates: false,
         }
     }
 
@@ -181,6 +192,19 @@ fn traverse(state: &mut State, start: u32) {
         for instr in decoder {
             println!("{:08x} {}", instr.ip32(), instr);
             instrs.push(instr);
+
+            if state.scan_immediates {
+                for i in 0..instr.op_count() {
+                    if instr.op_kind(i) == iced_x86::OpKind::Immediate32 {
+                        let imm = instr.immediate32();
+                        if state.code_memory.contains(&imm) {
+                            println!("{imm:x} looks like a code pointer");
+                            queue.push_back(imm);
+                        }
+                    }
+                }
+            }
+
             if instr.flow_control() == iced_x86::FlowControl::Next {
                 continue;
             }
@@ -228,27 +252,16 @@ fn traverse(state: &mut State, start: u32) {
 }
 
 fn scan_for_pointers(state: &mut State) {
-    let entry_point = AddrImage(state.pe_file.opt_header.AddressOfEntryPoint)
-        .to_abs(state.image_base())
-        .0;
-
-    let code = state
-        .mem
-        .mappings
-        .vec()
-        .iter()
-        .position(|m| m.contains(entry_point))
-        .unwrap();
     for i in 0..state.mem.mappings.vec().len() {
-        if i == code {
+        let mapping = &state.mem.mappings.vec()[i];
+        if mapping.addr == state.code_memory.start {
             continue;
         }
-        let mapping = &state.mem.mappings.vec()[i];
         println!("scanning {:?}", mapping);
         let data = state.mem.data[mapping.addr as usize..][..mapping.size as usize].to_vec();
         for w in data.windows(4) {
             let addr = u32::from_le_bytes(w.try_into().unwrap());
-            if state.mem.mappings.vec()[code].contains(addr) {
+            if state.code_memory.contains(&addr) {
                 println!("scan found {addr:x}");
                 traverse(state, addr);
             }
@@ -270,6 +283,10 @@ struct Args {
     #[argh(switch)]
     scan: bool,
 
+    /// scan immediates for code-looking pointers
+    #[argh(switch)]
+    scan_immediates: bool,
+
     /// path to input executable
     #[argh(option)]
     exe: String,
@@ -289,6 +306,9 @@ fn run() -> Result<()> {
 
     let buf = std::fs::read(args.exe).unwrap();
     let mut state = State::new(buf);
+    if args.scan_immediates {
+        state.scan_immediates = true;
+    }
 
     for addr in args.externs {
         log::info!("extern: {addr:#x}");

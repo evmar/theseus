@@ -1070,13 +1070,17 @@ pub fn x00401299(ctx: &mut Context) -> Cont {
     // 00401299 add esp,408h
     ctx.cpu.regs.esp = add(ctx.cpu.regs.esp, 0x408u32, &mut ctx.cpu.flags);
     // 0040129f pop esi
-    ctx.cpu.regs.esi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.esi = x;
     // 004012a0 pop edi
-    ctx.cpu.regs.edi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edi = x;
     // 004012a1 pop ebx
-    ctx.cpu.regs.ebx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ebx = x;
     // 004012a2 pop ebp
-    ctx.cpu.regs.ebp = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ebp = x;
     // 004012a3 ret
     ret(ctx, 0)
 }
@@ -1360,15 +1364,261 @@ pub fn x0040131e(ctx: &mut Context) -> Cont {
     // 0040131e mov eax,ecx
     ctx.cpu.regs.eax = ctx.cpu.regs.ecx;
     // 00401320 pop esi
-    ctx.cpu.regs.esi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.esi = x;
     // 00401321 pop edi
-    ctx.cpu.regs.edi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edi = x;
     // 00401322 pop ebx
-    ctx.cpu.regs.ebx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ebx = x;
     // 00401323 pop ebp
-    ctx.cpu.regs.ebp = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ebp = x;
     // 00401324 ret
     ret(ctx, 0)
+}
+
+#[allow(unused_variables)]
+pub fn x00401325(ctx: &mut Context) -> Cont {
+    // 00401325 push esi
+    push(ctx, ctx.cpu.regs.esi);
+    // 00401326 mov esi,[esp+8]
+    ctx.cpu.regs.esi = ctx
+        .memory
+        .read::<u32>(ctx.cpu.regs.esp.wrapping_add(0x8u32));
+    // 0040132a push 2
+    push(ctx, 0x2u32);
+    // 0040132c push dword ptr [esi+8]
+    push(
+        ctx,
+        ctx.memory
+            .read::<u32>(ctx.cpu.regs.esi.wrapping_add(0x8u32)),
+    );
+    // 0040132f call dword ptr ds:[40219Ch]
+    let dst = Cont(kernel32::TlsSetValue_stdcall);
+    call(ctx, 0x401335, dst)
+}
+
+#[allow(unused_variables)]
+pub fn x00401335(ctx: &mut Context) -> Cont {
+    // 00401335 mov ecx,esi
+    ctx.cpu.regs.ecx = ctx.cpu.regs.esi;
+    // 00401337 call 00401000h
+    let dst = Cont(x00401000);
+    call(ctx, 0x40133c, dst)
+}
+
+#[allow(unused_variables)]
+pub fn x0040133c(ctx: &mut Context) -> Cont {
+    // 0040133c xor eax,eax
+    ctx.cpu.regs.eax = xor(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
+    // 0040133e pop esi
+    let x = pop(ctx);
+    ctx.cpu.regs.esi = x;
+    // 0040133f ret 4
+    ret(ctx, 4)
+}
+
+#[allow(unused_variables)]
+pub fn x00401342(ctx: &mut Context) -> Cont {
+    // 00401342 push edi
+    push(ctx, ctx.cpu.regs.edi);
+    // 00401343 push esi
+    push(ctx, ctx.cpu.regs.esi);
+    // 00401344 sub esp,404h
+    ctx.cpu.regs.esp = sub(ctx.cpu.regs.esp, 0x404u32, &mut ctx.cpu.flags);
+    // 0040134a call dword ptr ds:[402188h]
+    let dst = Cont(kernel32::GetCurrentThreadId_stdcall);
+    call(ctx, 0x401350, dst)
+}
+
+#[allow(unused_variables)]
+pub fn x00401350(ctx: &mut Context) -> Cont {
+    // 00401350 mov dword ptr [esp+400h],0
+    ctx.memory
+        .write::<u32>(ctx.cpu.regs.esp.wrapping_add(0x400u32), 0x0u32);
+    // 0040135b mov ecx,0FFFFFFF6h
+    ctx.cpu.regs.ecx = 0xfffffff6u32;
+    // 00401360 mov dl,[ecx+402112h]
+    ctx.cpu.regs.set_dl(
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.ecx.wrapping_add(0x402112u32)),
+    );
+    // 00401366 mov esi,[esp+400h]
+    ctx.cpu.regs.esi = ctx
+        .memory
+        .read::<u32>(ctx.cpu.regs.esp.wrapping_add(0x400u32));
+    // 0040136d lea edi,[esi+1]
+    ctx.cpu.regs.edi = ctx.cpu.regs.esi.wrapping_add(0x1u32);
+    // 00401370 mov [esp+400h],edi
+    ctx.memory
+        .write::<u32>(ctx.cpu.regs.esp.wrapping_add(0x400u32), ctx.cpu.regs.edi);
+    // 00401377 mov [esp+esi],dl
+    ctx.memory.write::<u8>(
+        ctx.cpu.regs.esp.wrapping_add(ctx.cpu.regs.esi),
+        ctx.cpu.regs.get_dl(),
+    );
+    // 0040137a inc ecx
+    ctx.cpu.regs.ecx = inc(ctx.cpu.regs.ecx, &mut ctx.cpu.flags);
+    // 0040137b jne short 00401360h
+    jne(ctx, Cont(x0040137d), Cont(x00401360))
+}
+
+#[allow(unused_variables)]
+pub fn x00401360(ctx: &mut Context) -> Cont {
+    // 00401360 mov dl,[ecx+402112h]
+    ctx.cpu.regs.set_dl(
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.ecx.wrapping_add(0x402112u32)),
+    );
+    // 00401366 mov esi,[esp+400h]
+    ctx.cpu.regs.esi = ctx
+        .memory
+        .read::<u32>(ctx.cpu.regs.esp.wrapping_add(0x400u32));
+    // 0040136d lea edi,[esi+1]
+    ctx.cpu.regs.edi = ctx.cpu.regs.esi.wrapping_add(0x1u32);
+    // 00401370 mov [esp+400h],edi
+    ctx.memory
+        .write::<u32>(ctx.cpu.regs.esp.wrapping_add(0x400u32), ctx.cpu.regs.edi);
+    // 00401377 mov [esp+esi],dl
+    ctx.memory.write::<u8>(
+        ctx.cpu.regs.esp.wrapping_add(ctx.cpu.regs.esi),
+        ctx.cpu.regs.get_dl(),
+    );
+    // 0040137a inc ecx
+    ctx.cpu.regs.ecx = inc(ctx.cpu.regs.ecx, &mut ctx.cpu.flags);
+    // 0040137b jne short 00401360h
+    jne(ctx, Cont(x0040137d), Cont(x00401360))
+}
+
+#[allow(unused_variables)]
+pub fn x0040137d(ctx: &mut Context) -> Cont {
+    // 0040137d mov esi,esp
+    ctx.cpu.regs.esi = ctx.cpu.regs.esp;
+    // 0040137f mov ecx,esi
+    ctx.cpu.regs.ecx = ctx.cpu.regs.esi;
+    // 00401381 mov edx,eax
+    ctx.cpu.regs.edx = ctx.cpu.regs.eax;
+    // 00401383 call 004012A4h
+    let dst = Cont(x004012a4);
+    call(ctx, 0x401388, dst)
+}
+
+#[allow(unused_variables)]
+pub fn x00401388(ctx: &mut Context) -> Cont {
+    // 00401388 mov eax,0FFFFFFE6h
+    ctx.cpu.regs.eax = 0xffffffe6u32;
+    // 0040138d mov cl,[eax+4020DFh]
+    ctx.cpu.regs.set_cl(
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.eax.wrapping_add(0x4020dfu32)),
+    );
+    // 00401393 mov edx,[esp+400h]
+    ctx.cpu.regs.edx = ctx
+        .memory
+        .read::<u32>(ctx.cpu.regs.esp.wrapping_add(0x400u32));
+    // 0040139a lea edi,[edx+1]
+    ctx.cpu.regs.edi = ctx.cpu.regs.edx.wrapping_add(0x1u32);
+    // 0040139d mov [esp+400h],edi
+    ctx.memory
+        .write::<u32>(ctx.cpu.regs.esp.wrapping_add(0x400u32), ctx.cpu.regs.edi);
+    // 004013a4 mov [esp+edx],cl
+    ctx.memory.write::<u8>(
+        ctx.cpu.regs.esp.wrapping_add(ctx.cpu.regs.edx),
+        ctx.cpu.regs.get_cl(),
+    );
+    // 004013a7 inc eax
+    ctx.cpu.regs.eax = inc(ctx.cpu.regs.eax, &mut ctx.cpu.flags);
+    // 004013a8 jne short 0040138Dh
+    jne(ctx, Cont(x004013aa), Cont(x0040138d))
+}
+
+#[allow(unused_variables)]
+pub fn x0040138d(ctx: &mut Context) -> Cont {
+    // 0040138d mov cl,[eax+4020DFh]
+    ctx.cpu.regs.set_cl(
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.eax.wrapping_add(0x4020dfu32)),
+    );
+    // 00401393 mov edx,[esp+400h]
+    ctx.cpu.regs.edx = ctx
+        .memory
+        .read::<u32>(ctx.cpu.regs.esp.wrapping_add(0x400u32));
+    // 0040139a lea edi,[edx+1]
+    ctx.cpu.regs.edi = ctx.cpu.regs.edx.wrapping_add(0x1u32);
+    // 0040139d mov [esp+400h],edi
+    ctx.memory
+        .write::<u32>(ctx.cpu.regs.esp.wrapping_add(0x400u32), ctx.cpu.regs.edi);
+    // 004013a4 mov [esp+edx],cl
+    ctx.memory.write::<u8>(
+        ctx.cpu.regs.esp.wrapping_add(ctx.cpu.regs.edx),
+        ctx.cpu.regs.get_cl(),
+    );
+    // 004013a7 inc eax
+    ctx.cpu.regs.eax = inc(ctx.cpu.regs.eax, &mut ctx.cpu.flags);
+    // 004013a8 jne short 0040138Dh
+    jne(ctx, Cont(x004013aa), Cont(x0040138d))
+}
+
+#[allow(unused_variables)]
+pub fn x004013aa(ctx: &mut Context) -> Cont {
+    // 004013aa mov eax,[esp+400h]
+    ctx.cpu.regs.eax = ctx
+        .memory
+        .read::<u32>(ctx.cpu.regs.esp.wrapping_add(0x400u32));
+    // 004013b1 lea ecx,[eax+1]
+    ctx.cpu.regs.ecx = ctx.cpu.regs.eax.wrapping_add(0x1u32);
+    // 004013b4 mov [esp+400h],ecx
+    ctx.memory
+        .write::<u32>(ctx.cpu.regs.esp.wrapping_add(0x400u32), ctx.cpu.regs.ecx);
+    // 004013bb mov byte ptr [esp+eax],0Ah
+    ctx.memory
+        .write::<u8>(ctx.cpu.regs.esp.wrapping_add(ctx.cpu.regs.eax), 0xau8);
+    // 004013bf mov edi,[esp+400h]
+    ctx.cpu.regs.edi = ctx
+        .memory
+        .read::<u32>(ctx.cpu.regs.esp.wrapping_add(0x400u32));
+    // 004013c6 push 0FFFFFFF5h
+    push(ctx, 0xfffffff5u32);
+    // 004013c8 call dword ptr ds:[40218Ch]
+    let dst = Cont(kernel32::GetStdHandle_stdcall);
+    call(ctx, 0x4013ce, dst)
+}
+
+#[allow(unused_variables)]
+pub fn x004013ce(ctx: &mut Context) -> Cont {
+    // 004013ce xor ecx,ecx
+    ctx.cpu.regs.ecx = xor(ctx.cpu.regs.ecx, ctx.cpu.regs.ecx, &mut ctx.cpu.flags);
+    // 004013d0 push ecx
+    push(ctx, ctx.cpu.regs.ecx);
+    // 004013d1 push ecx
+    push(ctx, ctx.cpu.regs.ecx);
+    // 004013d2 push edi
+    push(ctx, ctx.cpu.regs.edi);
+    // 004013d3 push esi
+    push(ctx, ctx.cpu.regs.esi);
+    // 004013d4 push eax
+    push(ctx, ctx.cpu.regs.eax);
+    // 004013d5 call dword ptr ds:[4021A0h]
+    let dst = Cont(kernel32::WriteFile_stdcall);
+    call(ctx, 0x4013db, dst)
+}
+
+#[allow(unused_variables)]
+pub fn x004013db(ctx: &mut Context) -> Cont {
+    // 004013db xor eax,eax
+    ctx.cpu.regs.eax = xor(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
+    // 004013dd add esp,404h
+    ctx.cpu.regs.esp = add(ctx.cpu.regs.esp, 0x404u32, &mut ctx.cpu.flags);
+    // 004013e3 pop esi
+    let x = pop(ctx);
+    ctx.cpu.regs.esi = x;
+    // 004013e4 pop edi
+    let x = pop(ctx);
+    ctx.cpu.regs.edi = x;
+    // 004013e5 ret 4
+    ret(ctx, 4)
 }
 
 #[allow(unused_variables)]
@@ -1473,16 +1723,19 @@ pub fn x00401452(ctx: &mut Context) -> Cont {
     // 00401452 add esp,18h
     ctx.cpu.regs.esp = add(ctx.cpu.regs.esp, 0x18u32, &mut ctx.cpu.flags);
     // 00401455 pop esi
-    ctx.cpu.regs.esi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.esi = x;
     // 00401456 pop edi
-    ctx.cpu.regs.edi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edi = x;
     // 00401457 pop ebx
-    ctx.cpu.regs.ebx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ebx = x;
     // 00401458 ret
     ret(ctx, 0)
 }
 
-const BLOCKS: [(u32, fn(&mut Context) -> Cont); 66] = [
+const BLOCKS: [(u32, fn(&mut Context) -> Cont); 78] = [
     (0x001001, kernel32::CreateThread_stdcall),
     (0x001002, kernel32::GetCurrentThreadId_stdcall),
     (0x001003, kernel32::GetStdHandle_stdcall),
@@ -1542,6 +1795,18 @@ const BLOCKS: [(u32, fn(&mut Context) -> Cont); 66] = [
     (0x401305, x00401305),
     (0x401306, x00401306),
     (0x40131e, x0040131e),
+    (0x401325, x00401325),
+    (0x401335, x00401335),
+    (0x40133c, x0040133c),
+    (0x401342, x00401342),
+    (0x401350, x00401350),
+    (0x401360, x00401360),
+    (0x40137d, x0040137d),
+    (0x401388, x00401388),
+    (0x40138d, x0040138d),
+    (0x4013aa, x004013aa),
+    (0x4013ce, x004013ce),
+    (0x4013db, x004013db),
     (0x4013e8, x004013e8),
     (0x401406, x00401406),
     (0x40140c, x0040140c),

@@ -97,7 +97,8 @@ pub fn x00401023(ctx: &mut Context) -> Cont {
     // 0040103b push 0Eh
     push(ctx, 0xeu32);
     // 0040103d pop ebx
-    ctx.cpu.regs.ebx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ebx = x;
     // 0040103e mov ebp,esp
     ctx.cpu.regs.ebp = ctx.cpu.regs.esp;
     // 00401040 cmp edi,0Eh
@@ -129,7 +130,8 @@ pub fn x0040102a(ctx: &mut Context) -> Cont {
     // 0040103b push 0Eh
     push(ctx, 0xeu32);
     // 0040103d pop ebx
-    ctx.cpu.regs.ebx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ebx = x;
     // 0040103e mov ebp,esp
     ctx.cpu.regs.ebp = ctx.cpu.regs.esp;
     // 00401040 cmp edi,0Eh
@@ -203,13 +205,17 @@ pub fn x00401068(ctx: &mut Context) -> Cont {
     // 0040106f add esp,4
     ctx.cpu.regs.esp = add(ctx.cpu.regs.esp, 0x4u32, &mut ctx.cpu.flags);
     // 00401072 pop esi
-    ctx.cpu.regs.esi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.esi = x;
     // 00401073 pop edi
-    ctx.cpu.regs.edi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edi = x;
     // 00401074 pop ebx
-    ctx.cpu.regs.ebx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ebx = x;
     // 00401075 pop ebp
-    ctx.cpu.regs.ebp = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ebp = x;
     // 00401076 ret
     ret(ctx, 0)
 }

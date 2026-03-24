@@ -235,7 +235,10 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
         use iced_x86::Mnemonic::*;
         match instr.mnemonic() {
             Push => w.line(format!("push(ctx, {});", get_op(instr, 0))),
-            Pop => w.line(set_op(instr, 0, "pop(ctx)".into())),
+            Pop => {
+                w.line("let x = pop(ctx);");
+                w.line(set_op(instr, 0, "x".into()))
+            }
             Pushad => w.line("pushad(ctx);"),
             Popad => w.line("popad(ctx);"),
             Jmp => w.line(gen_jmp(state, instr)),

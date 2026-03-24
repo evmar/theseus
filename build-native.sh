@@ -17,7 +17,7 @@ elif [[ $1 == "chillin" ]]; then
         --extern 0x40a3b4
     cargo run --release -p chillin-exe
 elif [[ $1 == "thread" ]]; then
-    cargo run -p tc -- --exe ~/win/rs/exe/cpp/thread.exe --out exe/thread
+    cargo run -p tc -- --exe ~/win/rs/exe/cpp/thread.exe --out exe/thread --scan-immediates
     cargo build -p thread-exe
     ./target/debug/thread-exe
 else

@@ -522,11 +522,14 @@ pub fn x004012f2(ctx: &mut Context) -> Cont {
     // 00401304 lea esp,[ebp+7Eh]
     ctx.cpu.regs.esp = ctx.cpu.regs.ebp.wrapping_add(0x7eu32);
     // 00401307 pop ebp
-    ctx.cpu.regs.ebp = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ebp = x;
     // 00401308 pop edi
-    ctx.cpu.regs.edi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edi = x;
     // 00401309 pop esi
-    ctx.cpu.regs.esi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.esi = x;
     // 0040130a ret 4
     ret(ctx, 4)
 }
@@ -538,11 +541,14 @@ pub fn x004012ff(ctx: &mut Context) -> Cont {
     // 00401304 lea esp,[ebp+7Eh]
     ctx.cpu.regs.esp = ctx.cpu.regs.ebp.wrapping_add(0x7eu32);
     // 00401307 pop ebp
-    ctx.cpu.regs.ebp = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ebp = x;
     // 00401308 pop edi
-    ctx.cpu.regs.edi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edi = x;
     // 00401309 pop esi
-    ctx.cpu.regs.esi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.esi = x;
     // 0040130a ret 4
     ret(ctx, 4)
 }
@@ -552,11 +558,14 @@ pub fn x00401304(ctx: &mut Context) -> Cont {
     // 00401304 lea esp,[ebp+7Eh]
     ctx.cpu.regs.esp = ctx.cpu.regs.ebp.wrapping_add(0x7eu32);
     // 00401307 pop ebp
-    ctx.cpu.regs.ebp = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ebp = x;
     // 00401308 pop edi
-    ctx.cpu.regs.edi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edi = x;
     // 00401309 pop esi
-    ctx.cpu.regs.esi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.esi = x;
     // 0040130a ret 4
     ret(ctx, 4)
 }
@@ -1084,11 +1093,14 @@ pub fn x00401518(ctx: &mut Context) -> Cont {
     // 00401522 add esp,4
     ctx.cpu.regs.esp = add(ctx.cpu.regs.esp, 0x4u32, &mut ctx.cpu.flags);
     // 00401525 pop edx
-    ctx.cpu.regs.edx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edx = x;
     // 00401526 pop ecx
-    ctx.cpu.regs.ecx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ecx = x;
     // 00401527 pop ebx
-    ctx.cpu.regs.ebx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ebx = x;
     // 00401528 ret
     ret(ctx, 0)
 }
@@ -1096,11 +1108,14 @@ pub fn x00401518(ctx: &mut Context) -> Cont {
 #[allow(unused_variables)]
 pub fn x00401525(ctx: &mut Context) -> Cont {
     // 00401525 pop edx
-    ctx.cpu.regs.edx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edx = x;
     // 00401526 pop ecx
-    ctx.cpu.regs.ecx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ecx = x;
     // 00401527 pop ebx
-    ctx.cpu.regs.ebx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ebx = x;
     // 00401528 ret
     ret(ctx, 0)
 }
@@ -1435,17 +1450,23 @@ pub fn x0040161f(ctx: &mut Context) -> Cont {
     // 0040161f lea esp,[ebp+82h]
     ctx.cpu.regs.esp = ctx.cpu.regs.ebp.wrapping_add(0x82u32);
     // 00401625 pop ebp
-    ctx.cpu.regs.ebp = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ebp = x;
     // 00401626 pop edi
-    ctx.cpu.regs.edi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edi = x;
     // 00401627 pop esi
-    ctx.cpu.regs.esi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.esi = x;
     // 00401628 pop edx
-    ctx.cpu.regs.edx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edx = x;
     // 00401629 pop ecx
-    ctx.cpu.regs.ecx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ecx = x;
     // 0040162a pop ebx
-    ctx.cpu.regs.ebx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ebx = x;
     // 0040162b ret
     ret(ctx, 0)
 }
@@ -2988,7 +3009,8 @@ pub fn x00401a60(ctx: &mut Context) -> Cont {
 #[allow(unused_variables)]
 pub fn x00401a76(ctx: &mut Context) -> Cont {
     // 00401a76 pop ebp
-    ctx.cpu.regs.ebp = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ebp = x;
     // 00401a77 ret
     ret(ctx, 0)
 }
@@ -3017,7 +3039,8 @@ pub fn x00401a78(ctx: &mut Context) -> Cont {
 #[allow(unused_variables)]
 pub fn x00401a8c(ctx: &mut Context) -> Cont {
     // 00401a8c pop ebp
-    ctx.cpu.regs.ebp = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ebp = x;
     // 00401a8d ret
     ret(ctx, 0)
 }
@@ -3075,9 +3098,11 @@ pub fn x00401b25(ctx: &mut Context) -> Cont {
 #[allow(unused_variables)]
 pub fn x00401b32(ctx: &mut Context) -> Cont {
     // 00401b32 pop edx
-    ctx.cpu.regs.edx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edx = x;
     // 00401b33 pop ecx
-    ctx.cpu.regs.ecx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ecx = x;
     // 00401b34 ret
     ret(ctx, 0)
 }
@@ -3134,9 +3159,11 @@ pub fn x00401bab(ctx: &mut Context) -> Cont {
 #[allow(unused_variables)]
 pub fn x00401bb0(ctx: &mut Context) -> Cont {
     // 00401bb0 pop edx
-    ctx.cpu.regs.edx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edx = x;
     // 00401bb1 pop ecx
-    ctx.cpu.regs.ecx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ecx = x;
     // 00401bb2 ret
     ret(ctx, 0)
 }
@@ -3218,9 +3245,11 @@ pub fn x00401bfb(ctx: &mut Context) -> Cont {
     // 00401bfb leave
     leave(ctx);
     // 00401bfc pop edx
-    ctx.cpu.regs.edx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edx = x;
     // 00401bfd pop ecx
-    ctx.cpu.regs.ecx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ecx = x;
     // 00401bfe ret
     ret(ctx, 0)
 }
@@ -3272,11 +3301,14 @@ pub fn x00401cf4(ctx: &mut Context) -> Cont {
     // 00401cf4 mov ds:[433F80h],eax
     ctx.memory.write::<u32>(0x433f80u32, ctx.cpu.regs.eax);
     // 00401cf9 pop esi
-    ctx.cpu.regs.esi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.esi = x;
     // 00401cfa pop ecx
-    ctx.cpu.regs.ecx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ecx = x;
     // 00401cfb pop ebx
-    ctx.cpu.regs.ebx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ebx = x;
     // 00401cfc ret
     ret(ctx, 0)
 }
@@ -3484,13 +3516,17 @@ pub fn x00401db9(ctx: &mut Context) -> Cont {
 #[allow(unused_variables)]
 pub fn x00401de6(ctx: &mut Context) -> Cont {
     // 00401de6 pop esi
-    ctx.cpu.regs.esi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.esi = x;
     // 00401de7 pop edx
-    ctx.cpu.regs.edx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edx = x;
     // 00401de8 pop ecx
-    ctx.cpu.regs.ecx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ecx = x;
     // 00401de9 pop ebx
-    ctx.cpu.regs.ebx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ebx = x;
     // 00401dea ret
     ret(ctx, 0)
 }
@@ -3538,11 +3574,14 @@ pub fn x00401dfa(ctx: &mut Context) -> Cont {
     // 00401e10 leave
     leave(ctx);
     // 00401e11 pop edi
-    ctx.cpu.regs.edi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edi = x;
     // 00401e12 pop esi
-    ctx.cpu.regs.esi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.esi = x;
     // 00401e13 pop ecx
-    ctx.cpu.regs.ecx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ecx = x;
     // 00401e14 ret
     ret(ctx, 0)
 }
@@ -4369,11 +4408,14 @@ pub fn x00401ff1(ctx: &mut Context) -> Cont {
     // 00401ff1 leave
     leave(ctx);
     // 00401ff2 pop edi
-    ctx.cpu.regs.edi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edi = x;
     // 00401ff3 pop esi
-    ctx.cpu.regs.esi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.esi = x;
     // 00401ff4 pop ecx
-    ctx.cpu.regs.ecx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ecx = x;
     // 00401ff5 ret
     ret(ctx, 0)
 }
@@ -4421,11 +4463,14 @@ pub fn x00402005(ctx: &mut Context) -> Cont {
     // 0040201b leave
     leave(ctx);
     // 0040201c pop edi
-    ctx.cpu.regs.edi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edi = x;
     // 0040201d pop esi
-    ctx.cpu.regs.esi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.esi = x;
     // 0040201e pop ecx
-    ctx.cpu.regs.ecx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ecx = x;
     // 0040201f ret
     ret(ctx, 0)
 }
@@ -5259,11 +5304,14 @@ pub fn x004021fa(ctx: &mut Context) -> Cont {
     // 004021fa leave
     leave(ctx);
     // 004021fb pop edi
-    ctx.cpu.regs.edi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edi = x;
     // 004021fc pop esi
-    ctx.cpu.regs.esi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.esi = x;
     // 004021fd pop ecx
-    ctx.cpu.regs.ecx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ecx = x;
     // 004021fe ret
     ret(ctx, 0)
 }
@@ -5311,11 +5359,14 @@ pub fn x0040220e(ctx: &mut Context) -> Cont {
     // 00402224 leave
     leave(ctx);
     // 00402225 pop edi
-    ctx.cpu.regs.edi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edi = x;
     // 00402226 pop esi
-    ctx.cpu.regs.esi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.esi = x;
     // 00402227 pop ecx
-    ctx.cpu.regs.ecx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ecx = x;
     // 00402228 ret
     ret(ctx, 0)
 }
@@ -8285,11 +8336,14 @@ pub fn x0040288e(ctx: &mut Context) -> Cont {
     // 0040288e leave
     leave(ctx);
     // 0040288f pop edi
-    ctx.cpu.regs.edi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edi = x;
     // 00402890 pop esi
-    ctx.cpu.regs.esi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.esi = x;
     // 00402891 pop ecx
-    ctx.cpu.regs.ecx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ecx = x;
     // 00402892 ret
     ret(ctx, 0)
 }
@@ -8337,11 +8391,14 @@ pub fn x004028a2(ctx: &mut Context) -> Cont {
     // 004028b8 leave
     leave(ctx);
     // 004028b9 pop edi
-    ctx.cpu.regs.edi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edi = x;
     // 004028ba pop esi
-    ctx.cpu.regs.esi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.esi = x;
     // 004028bb pop ecx
-    ctx.cpu.regs.ecx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ecx = x;
     // 004028bc ret
     ret(ctx, 0)
 }
@@ -11302,11 +11359,14 @@ pub fn x00402efe(ctx: &mut Context) -> Cont {
     // 00402efe leave
     leave(ctx);
     // 00402eff pop edi
-    ctx.cpu.regs.edi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edi = x;
     // 00402f00 pop esi
-    ctx.cpu.regs.esi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.esi = x;
     // 00402f01 pop ecx
-    ctx.cpu.regs.ecx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ecx = x;
     // 00402f02 ret
     ret(ctx, 0)
 }
@@ -11600,9 +11660,11 @@ pub fn x00402fb6(ctx: &mut Context) -> Cont {
     // 00402fb8 leave
     leave(ctx);
     // 00402fb9 pop edi
-    ctx.cpu.regs.edi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edi = x;
     // 00402fba pop esi
-    ctx.cpu.regs.esi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.esi = x;
     // 00402fbb ret
     ret(ctx, 0)
 }
@@ -11848,9 +11910,11 @@ pub fn x004032b2(ctx: &mut Context) -> Cont {
     // 004032b4 leave
     leave(ctx);
     // 004032b5 pop edi
-    ctx.cpu.regs.edi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edi = x;
     // 004032b6 pop esi
-    ctx.cpu.regs.esi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.esi = x;
     // 004032b7 ret
     ret(ctx, 0)
 }
@@ -11930,13 +11994,17 @@ pub fn x0040335b(ctx: &mut Context) -> Cont {
 #[allow(unused_variables)]
 pub fn x00403372(ctx: &mut Context) -> Cont {
     // 00403372 pop edi
-    ctx.cpu.regs.edi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edi = x;
     // 00403373 pop esi
-    ctx.cpu.regs.esi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.esi = x;
     // 00403374 pop ecx
-    ctx.cpu.regs.ecx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ecx = x;
     // 00403375 pop ebx
-    ctx.cpu.regs.ebx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ebx = x;
     // 00403376 ret
     ret(ctx, 0)
 }
@@ -12022,13 +12090,17 @@ pub fn x004033b2(ctx: &mut Context) -> Cont {
     // 004033b2 emms
     // no-op
     // 004033b4 pop edi
-    ctx.cpu.regs.edi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edi = x;
     // 004033b5 pop esi
-    ctx.cpu.regs.esi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.esi = x;
     // 004033b6 pop ecx
-    ctx.cpu.regs.ecx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ecx = x;
     // 004033b7 pop ebx
-    ctx.cpu.regs.ebx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ebx = x;
     // 004033b8 ret
     ret(ctx, 0)
 }
@@ -12123,11 +12195,14 @@ pub fn x004033f5(ctx: &mut Context) -> Cont {
     // 004033f7 leave
     leave(ctx);
     // 004033f8 pop esi
-    ctx.cpu.regs.esi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.esi = x;
     // 004033f9 pop ecx
-    ctx.cpu.regs.ecx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ecx = x;
     // 004033fa pop ebx
-    ctx.cpu.regs.ebx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ebx = x;
     // 004033fb ret
     ret(ctx, 0)
 }
@@ -12412,9 +12487,11 @@ pub fn x004034b9(ctx: &mut Context) -> Cont {
     // 004034b9 leave
     leave(ctx);
     // 004034ba pop esi
-    ctx.cpu.regs.esi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.esi = x;
     // 004034bb pop ecx
-    ctx.cpu.regs.ecx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ecx = x;
     // 004034bc ret
     ret(ctx, 0)
 }
@@ -12561,11 +12638,14 @@ pub fn x00403533(ctx: &mut Context) -> Cont {
     // 00403535 leave
     leave(ctx);
     // 00403536 pop edi
-    ctx.cpu.regs.edi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edi = x;
     // 00403537 pop esi
-    ctx.cpu.regs.esi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.esi = x;
     // 00403538 pop ecx
-    ctx.cpu.regs.ecx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ecx = x;
     // 00403539 ret
     ret(ctx, 0)
 }
@@ -13059,9 +13139,11 @@ pub fn x00403833(ctx: &mut Context) -> Cont {
     // 00403833 leave
     leave(ctx);
     // 00403834 pop edi
-    ctx.cpu.regs.edi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edi = x;
     // 00403835 pop esi
-    ctx.cpu.regs.esi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.esi = x;
     // 00403836 ret
     ret(ctx, 0)
 }
@@ -13102,7 +13184,8 @@ pub fn x00403837(ctx: &mut Context) -> Cont {
         .write::<u32>(ctx.cpu.regs.esp, ctx.cpu.fpu.get(0).round() as i32 as u32);
     ctx.cpu.fpu.pop();
     // 00403851 pop eax
-    ctx.cpu.regs.eax = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.eax = x;
     // 00403852 add eax,0FFFFh
     ctx.cpu.regs.eax = add(ctx.cpu.regs.eax, 0xffffu32, &mut ctx.cpu.flags);
     // 00403857 shr eax,10h
@@ -13129,7 +13212,8 @@ pub fn x00403837(ctx: &mut Context) -> Cont {
         .write::<u32>(ctx.cpu.regs.esp, ctx.cpu.fpu.get(0).round() as i32 as u32);
     ctx.cpu.fpu.pop();
     // 0040386a pop eax
-    ctx.cpu.regs.eax = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.eax = x;
     // 0040386b add eax,0FFFFh
     ctx.cpu.regs.eax = add(ctx.cpu.regs.eax, 0xffffu32, &mut ctx.cpu.flags);
     // 00403870 shr eax,10h
@@ -13156,7 +13240,8 @@ pub fn x00403837(ctx: &mut Context) -> Cont {
         .write::<u32>(ctx.cpu.regs.esp, ctx.cpu.fpu.get(0).round() as i32 as u32);
     ctx.cpu.fpu.pop();
     // 00403883 pop eax
-    ctx.cpu.regs.eax = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.eax = x;
     // 00403884 add eax,0FFFFh
     ctx.cpu.regs.eax = add(ctx.cpu.regs.eax, 0xffffu32, &mut ctx.cpu.flags);
     // 00403889 shr eax,10h
@@ -13182,7 +13267,8 @@ pub fn x00403837(ctx: &mut Context) -> Cont {
         .write::<u32>(ctx.cpu.regs.esp, ctx.cpu.fpu.get(0).round() as i32 as u32);
     ctx.cpu.fpu.pop();
     // 0040389d pop eax
-    ctx.cpu.regs.eax = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.eax = x;
     // 0040389e add eax,0FFFFh
     ctx.cpu.regs.eax = add(ctx.cpu.regs.eax, 0xffffu32, &mut ctx.cpu.flags);
     // 004038a3 shr eax,10h
@@ -13856,13 +13942,17 @@ pub fn x00403a54(ctx: &mut Context) -> Cont {
     // 00403a56 leave
     leave(ctx);
     // 00403a57 pop edi
-    ctx.cpu.regs.edi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edi = x;
     // 00403a58 pop esi
-    ctx.cpu.regs.esi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.esi = x;
     // 00403a59 pop ecx
-    ctx.cpu.regs.ecx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ecx = x;
     // 00403a5a pop ebx
-    ctx.cpu.regs.ebx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ebx = x;
     // 00403a5b ret 10h
     ret(ctx, 16)
 }
@@ -13872,13 +13962,17 @@ pub fn x00403a56(ctx: &mut Context) -> Cont {
     // 00403a56 leave
     leave(ctx);
     // 00403a57 pop edi
-    ctx.cpu.regs.edi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edi = x;
     // 00403a58 pop esi
-    ctx.cpu.regs.esi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.esi = x;
     // 00403a59 pop ecx
-    ctx.cpu.regs.ecx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ecx = x;
     // 00403a5a pop ebx
-    ctx.cpu.regs.ebx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ebx = x;
     // 00403a5b ret 10h
     ret(ctx, 16)
 }
@@ -14955,9 +15049,11 @@ pub fn x00403cba(ctx: &mut Context) -> Cont {
 #[allow(unused_variables)]
 pub fn x00403cd1(ctx: &mut Context) -> Cont {
     // 00403cd1 pop ebp
-    ctx.cpu.regs.ebp = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ebp = x;
     // 00403cd2 pop edx
-    ctx.cpu.regs.edx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edx = x;
     // 00403cd3 ret 18h
     ret(ctx, 24)
 }
@@ -19080,9 +19176,11 @@ pub fn x00404568(ctx: &mut Context) -> Cont {
     // 0040456a leave
     leave(ctx);
     // 0040456b pop edi
-    ctx.cpu.regs.edi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edi = x;
     // 0040456c pop esi
-    ctx.cpu.regs.esi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.esi = x;
     // 0040456d ret 8
     ret(ctx, 8)
 }
@@ -19176,7 +19274,8 @@ pub fn x00404570(ctx: &mut Context) -> Cont {
     // 004045a9 leave
     leave(ctx);
     // 004045aa pop edx
-    ctx.cpu.regs.edx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edx = x;
     // 004045ab ret
     ret(ctx, 0)
 }
@@ -20165,11 +20264,14 @@ pub fn x004047e2(ctx: &mut Context) -> Cont {
     // 004047e2 leave
     leave(ctx);
     // 004047e3 pop edx
-    ctx.cpu.regs.edx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edx = x;
     // 004047e4 pop ecx
-    ctx.cpu.regs.ecx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ecx = x;
     // 004047e5 pop ebx
-    ctx.cpu.regs.ebx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ebx = x;
     // 004047e6 ret 0Ch
     ret(ctx, 12)
 }
@@ -20842,15 +20944,20 @@ pub fn x004049f9(ctx: &mut Context) -> Cont {
     // 004049f9 leave
     leave(ctx);
     // 004049fa pop edi
-    ctx.cpu.regs.edi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edi = x;
     // 004049fb pop esi
-    ctx.cpu.regs.esi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.esi = x;
     // 004049fc pop edx
-    ctx.cpu.regs.edx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edx = x;
     // 004049fd pop ecx
-    ctx.cpu.regs.ecx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ecx = x;
     // 004049fe pop ebx
-    ctx.cpu.regs.ebx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ebx = x;
     // 004049ff ret
     ret(ctx, 0)
 }
@@ -20967,9 +21074,11 @@ pub fn x00404a7a(ctx: &mut Context) -> Cont {
 #[allow(unused_variables)]
 pub fn x00404a8e(ctx: &mut Context) -> Cont {
     // 00404a8e pop edx
-    ctx.cpu.regs.edx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edx = x;
     // 00404a8f pop ecx
-    ctx.cpu.regs.ecx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ecx = x;
     // 00404a90 ret
     ret(ctx, 0)
 }
@@ -21849,9 +21958,11 @@ pub fn x00404ce5(ctx: &mut Context) -> Cont {
     // 00404ce5 leave
     leave(ctx);
     // 00404ce6 pop edi
-    ctx.cpu.regs.edi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edi = x;
     // 00404ce7 pop esi
-    ctx.cpu.regs.esi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.esi = x;
     // 00404ce8 ret 8
     ret(ctx, 8)
 }
@@ -23104,15 +23215,20 @@ pub fn x00404f9f(ctx: &mut Context) -> Cont {
     // 00404fa1 lea esp,[ebp+82h]
     ctx.cpu.regs.esp = ctx.cpu.regs.ebp.wrapping_add(0x82u32);
     // 00404fa7 pop ebp
-    ctx.cpu.regs.ebp = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ebp = x;
     // 00404fa8 pop edi
-    ctx.cpu.regs.edi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edi = x;
     // 00404fa9 pop esi
-    ctx.cpu.regs.esi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.esi = x;
     // 00404faa pop ecx
-    ctx.cpu.regs.ecx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ecx = x;
     // 00404fab pop ebx
-    ctx.cpu.regs.ebx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ebx = x;
     // 00404fac ret
     ret(ctx, 0)
 }
@@ -23864,15 +23980,20 @@ pub fn x004051cc(ctx: &mut Context) -> Cont {
     // 004051cc leave
     leave(ctx);
     // 004051cd pop edi
-    ctx.cpu.regs.edi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edi = x;
     // 004051ce pop esi
-    ctx.cpu.regs.esi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.esi = x;
     // 004051cf pop edx
-    ctx.cpu.regs.edx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edx = x;
     // 004051d0 pop ecx
-    ctx.cpu.regs.ecx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ecx = x;
     // 004051d1 pop ebx
-    ctx.cpu.regs.ebx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ebx = x;
     // 004051d2 ret 0Ch
     ret(ctx, 12)
 }
@@ -24468,9 +24589,11 @@ pub fn x0040532f(ctx: &mut Context) -> Cont {
     // 00405331 leave
     leave(ctx);
     // 00405332 pop edi
-    ctx.cpu.regs.edi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edi = x;
     // 00405333 pop esi
-    ctx.cpu.regs.esi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.esi = x;
     // 00405334 ret 8
     ret(ctx, 8)
 }
@@ -24742,13 +24865,17 @@ pub fn x004053f6(ctx: &mut Context) -> Cont {
     // 004053f6 leave
     leave(ctx);
     // 004053f7 pop esi
-    ctx.cpu.regs.esi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.esi = x;
     // 004053f8 pop edx
-    ctx.cpu.regs.edx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edx = x;
     // 004053f9 pop ecx
-    ctx.cpu.regs.ecx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ecx = x;
     // 004053fa pop ebx
-    ctx.cpu.regs.ebx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ebx = x;
     // 004053fb ret
     ret(ctx, 0)
 }
@@ -25951,15 +26078,20 @@ pub fn x00405647(ctx: &mut Context) -> Cont {
     // 00405647 leave
     leave(ctx);
     // 00405648 pop edi
-    ctx.cpu.regs.edi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edi = x;
     // 00405649 pop esi
-    ctx.cpu.regs.esi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.esi = x;
     // 0040564a pop edx
-    ctx.cpu.regs.edx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edx = x;
     // 0040564b pop ecx
-    ctx.cpu.regs.ecx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ecx = x;
     // 0040564c pop ebx
-    ctx.cpu.regs.ebx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ebx = x;
     // 0040564d ret 10h
     ret(ctx, 16)
 }
@@ -26202,9 +26334,11 @@ pub fn x004056dd(ctx: &mut Context) -> Cont {
     // 004056dd leave
     leave(ctx);
     // 004056de pop edi
-    ctx.cpu.regs.edi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edi = x;
     // 004056df pop esi
-    ctx.cpu.regs.esi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.esi = x;
     // 004056e0 ret 0Ch
     ret(ctx, 12)
 }
@@ -26371,13 +26505,17 @@ pub fn x00405769(ctx: &mut Context) -> Cont {
     // 00405769 leave
     leave(ctx);
     // 0040576a pop edi
-    ctx.cpu.regs.edi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edi = x;
     // 0040576b pop esi
-    ctx.cpu.regs.esi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.esi = x;
     // 0040576c pop ecx
-    ctx.cpu.regs.ecx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ecx = x;
     // 0040576d pop ebx
-    ctx.cpu.regs.ebx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ebx = x;
     // 0040576e ret 1Ch
     ret(ctx, 28)
 }
@@ -26509,9 +26647,11 @@ pub fn x00405804(ctx: &mut Context) -> Cont {
     // 00405804 leave
     leave(ctx);
     // 00405805 pop edi
-    ctx.cpu.regs.edi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edi = x;
     // 00405806 pop esi
-    ctx.cpu.regs.esi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.esi = x;
     // 00405807 ret
     ret(ctx, 0)
 }
@@ -26598,9 +26738,11 @@ pub fn x0040585a(ctx: &mut Context) -> Cont {
 #[allow(unused_variables)]
 pub fn x0040586e(ctx: &mut Context) -> Cont {
     // 0040586e pop edx
-    ctx.cpu.regs.edx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edx = x;
     // 0040586f pop ecx
-    ctx.cpu.regs.ecx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ecx = x;
     // 00405870 ret
     ret(ctx, 0)
 }
@@ -26685,15 +26827,20 @@ pub fn x004058bd(ctx: &mut Context) -> Cont {
 #[allow(unused_variables)]
 pub fn x004058d2(ctx: &mut Context) -> Cont {
     // 004058d2 pop edi
-    ctx.cpu.regs.edi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edi = x;
     // 004058d3 pop esi
-    ctx.cpu.regs.esi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.esi = x;
     // 004058d4 pop edx
-    ctx.cpu.regs.edx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edx = x;
     // 004058d5 pop ecx
-    ctx.cpu.regs.ecx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ecx = x;
     // 004058d6 pop ebx
-    ctx.cpu.regs.ebx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ebx = x;
     // 004058d7 ret
     ret(ctx, 0)
 }
@@ -26896,15 +27043,20 @@ pub fn x00405958(ctx: &mut Context) -> Cont {
     // 00405958 leave
     leave(ctx);
     // 00405959 pop edi
-    ctx.cpu.regs.edi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edi = x;
     // 0040595a pop esi
-    ctx.cpu.regs.esi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.esi = x;
     // 0040595b pop edx
-    ctx.cpu.regs.edx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edx = x;
     // 0040595c pop ecx
-    ctx.cpu.regs.ecx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ecx = x;
     // 0040595d pop ebx
-    ctx.cpu.regs.ebx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ebx = x;
     // 0040595e ret
     ret(ctx, 0)
 }
@@ -27152,15 +27304,20 @@ pub fn x00405a0e(ctx: &mut Context) -> Cont {
     // 00405a0e leave
     leave(ctx);
     // 00405a0f pop edi
-    ctx.cpu.regs.edi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edi = x;
     // 00405a10 pop esi
-    ctx.cpu.regs.esi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.esi = x;
     // 00405a11 pop edx
-    ctx.cpu.regs.edx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edx = x;
     // 00405a12 pop ecx
-    ctx.cpu.regs.ecx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ecx = x;
     // 00405a13 pop ebx
-    ctx.cpu.regs.ebx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ebx = x;
     // 00405a14 ret
     ret(ctx, 0)
 }
@@ -27242,13 +27399,17 @@ pub fn x00405a48(ctx: &mut Context) -> Cont {
     // 00405a48 leave
     leave(ctx);
     // 00405a49 pop edi
-    ctx.cpu.regs.edi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edi = x;
     // 00405a4a pop esi
-    ctx.cpu.regs.esi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.esi = x;
     // 00405a4b pop edx
-    ctx.cpu.regs.edx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edx = x;
     // 00405a4c pop ecx
-    ctx.cpu.regs.ecx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ecx = x;
     // 00405a4d ret
     ret(ctx, 0)
 }
@@ -27492,13 +27653,17 @@ pub fn x00405afc(ctx: &mut Context) -> Cont {
     // 00405b08 leave
     leave(ctx);
     // 00405b09 pop edi
-    ctx.cpu.regs.edi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edi = x;
     // 00405b0a pop esi
-    ctx.cpu.regs.esi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.esi = x;
     // 00405b0b pop ecx
-    ctx.cpu.regs.ecx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ecx = x;
     // 00405b0c pop ebx
-    ctx.cpu.regs.ebx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ebx = x;
     // 00405b0d ret
     ret(ctx, 0)
 }
@@ -27785,9 +27950,11 @@ pub fn x00405bd5(ctx: &mut Context) -> Cont {
     // 00405bd5 leave
     leave(ctx);
     // 00405bd6 pop edi
-    ctx.cpu.regs.edi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edi = x;
     // 00405bd7 pop esi
-    ctx.cpu.regs.esi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.esi = x;
     // 00405bd8 ret 4
     ret(ctx, 4)
 }
@@ -28330,13 +28497,17 @@ pub fn x00405cf5(ctx: &mut Context) -> Cont {
     // 00405cf5 leave
     leave(ctx);
     // 00405cf6 pop edi
-    ctx.cpu.regs.edi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edi = x;
     // 00405cf7 pop esi
-    ctx.cpu.regs.esi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.esi = x;
     // 00405cf8 pop ecx
-    ctx.cpu.regs.ecx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ecx = x;
     // 00405cf9 pop ebx
-    ctx.cpu.regs.ebx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ebx = x;
     // 00405cfa ret
     ret(ctx, 0)
 }
@@ -28904,7 +29075,8 @@ pub fn x00405e64(ctx: &mut Context) -> Cont {
     // 00405e64 leave
     leave(ctx);
     // 00405e65 pop esi
-    ctx.cpu.regs.esi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.esi = x;
     // 00405e66 ret 14h
     ret(ctx, 20)
 }
@@ -29045,11 +29217,14 @@ pub fn x00405ebb(ctx: &mut Context) -> Cont {
     ctx.memory
         .write::<u32>(ctx.cpu.regs.ebx.wrapping_add(0x40u32), ctx.cpu.regs.eax);
     // 00405f00 pop edx
-    ctx.cpu.regs.edx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edx = x;
     // 00405f01 pop ecx
-    ctx.cpu.regs.ecx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ecx = x;
     // 00405f02 pop ebx
-    ctx.cpu.regs.ebx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ebx = x;
     // 00405f03 ret
     ret(ctx, 0)
 }
@@ -29494,13 +29669,17 @@ pub fn x0040604a(ctx: &mut Context) -> Cont {
     // 0040604a leave
     leave(ctx);
     // 0040604b pop edi
-    ctx.cpu.regs.edi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edi = x;
     // 0040604c pop esi
-    ctx.cpu.regs.esi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.esi = x;
     // 0040604d pop ecx
-    ctx.cpu.regs.ecx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ecx = x;
     // 0040604e pop ebx
-    ctx.cpu.regs.ebx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ebx = x;
     // 0040604f ret
     ret(ctx, 0)
 }
@@ -29601,11 +29780,14 @@ pub fn x0040609d(ctx: &mut Context) -> Cont {
 #[allow(unused_variables)]
 pub fn x004060af(ctx: &mut Context) -> Cont {
     // 004060af pop edx
-    ctx.cpu.regs.edx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edx = x;
     // 004060b0 pop ecx
-    ctx.cpu.regs.ecx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ecx = x;
     // 004060b1 pop ebx
-    ctx.cpu.regs.ebx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ebx = x;
     // 004060b2 ret
     ret(ctx, 0)
 }
@@ -29992,11 +30174,14 @@ pub fn x0040615b(ctx: &mut Context) -> Cont {
     // 0040615b leave
     leave(ctx);
     // 0040615c pop edi
-    ctx.cpu.regs.edi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edi = x;
     // 0040615d pop esi
-    ctx.cpu.regs.esi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.esi = x;
     // 0040615e pop ecx
-    ctx.cpu.regs.ecx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ecx = x;
     // 0040615f ret
     ret(ctx, 0)
 }
@@ -30207,11 +30392,14 @@ pub fn x004061da(ctx: &mut Context) -> Cont {
     // 004061da leave
     leave(ctx);
     // 004061db pop edx
-    ctx.cpu.regs.edx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edx = x;
     // 004061dc pop ecx
-    ctx.cpu.regs.ecx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ecx = x;
     // 004061dd pop ebx
-    ctx.cpu.regs.ebx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ebx = x;
     // 004061de ret
     ret(ctx, 0)
 }
@@ -30854,13 +31042,17 @@ pub fn x004062ff(ctx: &mut Context) -> Cont {
     // 004062ff leave
     leave(ctx);
     // 00406300 pop edi
-    ctx.cpu.regs.edi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edi = x;
     // 00406301 pop esi
-    ctx.cpu.regs.esi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.esi = x;
     // 00406302 pop ecx
-    ctx.cpu.regs.ecx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ecx = x;
     // 00406303 pop ebx
-    ctx.cpu.regs.ebx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ebx = x;
     // 00406304 ret
     ret(ctx, 0)
 }
@@ -31326,11 +31518,14 @@ pub fn x004063af(ctx: &mut Context) -> Cont {
     // 004063af leave
     leave(ctx);
     // 004063b0 pop edx
-    ctx.cpu.regs.edx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edx = x;
     // 004063b1 pop ecx
-    ctx.cpu.regs.ecx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ecx = x;
     // 004063b2 pop ebx
-    ctx.cpu.regs.ebx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ebx = x;
     // 004063b3 ret 18h
     ret(ctx, 24)
 }
@@ -32072,13 +32267,17 @@ pub fn x0040664e(ctx: &mut Context) -> Cont {
     // 0040664e leave
     leave(ctx);
     // 0040664f pop esi
-    ctx.cpu.regs.esi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.esi = x;
     // 00406650 pop edx
-    ctx.cpu.regs.edx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edx = x;
     // 00406651 pop ecx
-    ctx.cpu.regs.ecx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ecx = x;
     // 00406652 pop ebx
-    ctx.cpu.regs.ebx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ebx = x;
     // 00406653 ret
     ret(ctx, 0)
 }
@@ -32117,7 +32316,8 @@ pub fn x00406673(ctx: &mut Context) -> Cont {
 #[allow(unused_variables)]
 pub fn x00406678(ctx: &mut Context) -> Cont {
     // 00406678 pop edx
-    ctx.cpu.regs.edx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edx = x;
     // 00406679 ret
     ret(ctx, 0)
 }
@@ -32406,9 +32606,11 @@ pub fn x004067ec(ctx: &mut Context) -> Cont {
     // 004067ec leave
     leave(ctx);
     // 004067ed pop edx
-    ctx.cpu.regs.edx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edx = x;
     // 004067ee pop ecx
-    ctx.cpu.regs.ecx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ecx = x;
     // 004067ef ret
     ret(ctx, 0)
 }
@@ -32484,9 +32686,11 @@ pub fn x00406872(ctx: &mut Context) -> Cont {
 #[allow(unused_variables)]
 pub fn x0040687f(ctx: &mut Context) -> Cont {
     // 0040687f pop ebp
-    ctx.cpu.regs.ebp = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ebp = x;
     // 00406880 pop edx
-    ctx.cpu.regs.edx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edx = x;
     // 00406881 ret 8
     ret(ctx, 8)
 }
@@ -32719,11 +32923,14 @@ pub fn x004068a3(ctx: &mut Context) -> Cont {
     // 00406c1d mov dword ptr ds:[433160h],40C3E0h
     ctx.memory.write::<u32>(0x433160u32, 0x40c3e0u32);
     // 00406c27 pop edx
-    ctx.cpu.regs.edx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edx = x;
     // 00406c28 pop ecx
-    ctx.cpu.regs.ecx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ecx = x;
     // 00406c29 pop ebx
-    ctx.cpu.regs.ebx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ebx = x;
     // 00406c2a ret
     ret(ctx, 0)
 }
@@ -32785,11 +32992,14 @@ pub fn x00406c47(ctx: &mut Context) -> Cont {
 #[allow(unused_variables)]
 pub fn x00406c4f(ctx: &mut Context) -> Cont {
     // 00406c4f pop edx
-    ctx.cpu.regs.edx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edx = x;
     // 00406c50 pop ecx
-    ctx.cpu.regs.ecx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ecx = x;
     // 00406c51 pop ebx
-    ctx.cpu.regs.ebx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ebx = x;
     // 00406c52 ret
     ret(ctx, 0)
 }
@@ -32951,9 +33161,11 @@ pub fn x00406c96(ctx: &mut Context) -> Cont {
     // 00406c96 leave
     leave(ctx);
     // 00406c97 pop edi
-    ctx.cpu.regs.edi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edi = x;
     // 00406c98 pop esi
-    ctx.cpu.regs.esi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.esi = x;
     // 00406c99 ret
     ret(ctx, 0)
 }
@@ -34948,15 +35160,20 @@ pub fn x004071c3(ctx: &mut Context) -> Cont {
     // 004071c3 leave
     leave(ctx);
     // 004071c4 pop edi
-    ctx.cpu.regs.edi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edi = x;
     // 004071c5 pop esi
-    ctx.cpu.regs.esi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.esi = x;
     // 004071c6 pop edx
-    ctx.cpu.regs.edx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edx = x;
     // 004071c7 pop ecx
-    ctx.cpu.regs.ecx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ecx = x;
     // 004071c8 pop ebx
-    ctx.cpu.regs.ebx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ebx = x;
     // 004071c9 ret
     ret(ctx, 0)
 }
@@ -35702,7 +35919,8 @@ pub fn x00407506(ctx: &mut Context) -> Cont {
     // 00407506 leave
     leave(ctx);
     // 00407507 pop ecx
-    ctx.cpu.regs.ecx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ecx = x;
     // 00407508 ret 10h
     ret(ctx, 16)
 }
@@ -36115,13 +36333,17 @@ pub fn x00407605(ctx: &mut Context) -> Cont {
     // 00407605 leave
     leave(ctx);
     // 00407606 pop edi
-    ctx.cpu.regs.edi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edi = x;
     // 00407607 pop esi
-    ctx.cpu.regs.esi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.esi = x;
     // 00407608 pop ecx
-    ctx.cpu.regs.ecx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ecx = x;
     // 00407609 pop ebx
-    ctx.cpu.regs.ebx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ebx = x;
     // 0040760a ret
     ret(ctx, 0)
 }
@@ -36435,11 +36657,14 @@ pub fn x004076e3(ctx: &mut Context) -> Cont {
     // 004076e3 leave
     leave(ctx);
     // 004076e4 pop edx
-    ctx.cpu.regs.edx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edx = x;
     // 004076e5 pop ecx
-    ctx.cpu.regs.ecx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ecx = x;
     // 004076e6 pop ebx
-    ctx.cpu.regs.ebx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ebx = x;
     // 004076e7 ret 0Ch
     ret(ctx, 12)
 }
@@ -37443,15 +37668,20 @@ pub fn x00407acb(ctx: &mut Context) -> Cont {
     // 00407acb leave
     leave(ctx);
     // 00407acc pop edi
-    ctx.cpu.regs.edi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edi = x;
     // 00407acd pop esi
-    ctx.cpu.regs.esi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.esi = x;
     // 00407ace pop edx
-    ctx.cpu.regs.edx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edx = x;
     // 00407acf pop ecx
-    ctx.cpu.regs.ecx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ecx = x;
     // 00407ad0 pop ebx
-    ctx.cpu.regs.ebx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ebx = x;
     // 00407ad1 ret 14h
     ret(ctx, 20)
 }
@@ -40979,13 +41209,17 @@ pub fn x004085cf(ctx: &mut Context) -> Cont {
     // 004085d7 leave
     leave(ctx);
     // 004085d8 pop edi
-    ctx.cpu.regs.edi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edi = x;
     // 004085d9 pop esi
-    ctx.cpu.regs.esi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.esi = x;
     // 004085da pop ecx
-    ctx.cpu.regs.ecx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ecx = x;
     // 004085db pop ebx
-    ctx.cpu.regs.ebx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ebx = x;
     // 004085dc ret
     ret(ctx, 0)
 }
@@ -41221,11 +41455,14 @@ pub fn x004086ab(ctx: &mut Context) -> Cont {
 #[allow(unused_variables)]
 pub fn x004086b0(ctx: &mut Context) -> Cont {
     // 004086b0 pop edx
-    ctx.cpu.regs.edx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edx = x;
     // 004086b1 pop ecx
-    ctx.cpu.regs.ecx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ecx = x;
     // 004086b2 pop ebx
-    ctx.cpu.regs.ebx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ebx = x;
     // 004086b3 ret
     ret(ctx, 0)
 }
@@ -41391,11 +41628,14 @@ pub fn x00408743(ctx: &mut Context) -> Cont {
 #[allow(unused_variables)]
 pub fn x00408748(ctx: &mut Context) -> Cont {
     // 00408748 pop edx
-    ctx.cpu.regs.edx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edx = x;
     // 00408749 pop ecx
-    ctx.cpu.regs.ecx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ecx = x;
     // 0040874a pop ebx
-    ctx.cpu.regs.ebx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ebx = x;
     // 0040874b ret
     ret(ctx, 0)
 }
@@ -41637,11 +41877,14 @@ pub fn x0040882c(ctx: &mut Context) -> Cont {
     // 0040882c xor eax,eax
     ctx.cpu.regs.eax = xor(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
     // 0040882e pop edx
-    ctx.cpu.regs.edx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edx = x;
     // 0040882f pop ecx
-    ctx.cpu.regs.ecx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ecx = x;
     // 00408830 pop ebx
-    ctx.cpu.regs.ebx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ebx = x;
     // 00408831 ret
     ret(ctx, 0)
 }
@@ -41684,15 +41927,20 @@ pub fn x00408860(ctx: &mut Context) -> Cont {
     // 00408878 leave
     leave(ctx);
     // 00408879 pop edi
-    ctx.cpu.regs.edi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edi = x;
     // 0040887a pop esi
-    ctx.cpu.regs.esi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.esi = x;
     // 0040887b pop edx
-    ctx.cpu.regs.edx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edx = x;
     // 0040887c pop ecx
-    ctx.cpu.regs.ecx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ecx = x;
     // 0040887d pop ebx
-    ctx.cpu.regs.ebx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ebx = x;
     // 0040887e ret 4
     ret(ctx, 4)
 }
@@ -41734,17 +41982,23 @@ pub fn x004088a6(ctx: &mut Context) -> Cont {
     // 004088c1 leave
     leave(ctx);
     // 004088c2 pop edi
-    ctx.cpu.regs.edi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edi = x;
     // 004088c3 pop esi
-    ctx.cpu.regs.esi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.esi = x;
     // 004088c4 pop edx
-    ctx.cpu.regs.edx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edx = x;
     // 004088c5 pop ecx
-    ctx.cpu.regs.ecx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ecx = x;
     // 004088c6 pop ebx
-    ctx.cpu.regs.ebx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ebx = x;
     // 004088c7 pop eax
-    ctx.cpu.regs.eax = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.eax = x;
     // 004088c8 ret 4
     ret(ctx, 4)
 }
@@ -42087,15 +42341,20 @@ pub fn x00408a60(ctx: &mut Context) -> Cont {
     // 00408a6f leave
     leave(ctx);
     // 00408a70 pop edi
-    ctx.cpu.regs.edi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edi = x;
     // 00408a71 pop esi
-    ctx.cpu.regs.esi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.esi = x;
     // 00408a72 pop edx
-    ctx.cpu.regs.edx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edx = x;
     // 00408a73 pop ecx
-    ctx.cpu.regs.ecx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ecx = x;
     // 00408a74 pop ebx
-    ctx.cpu.regs.ebx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ebx = x;
     // 00408a75 ret
     ret(ctx, 0)
 }
@@ -42757,11 +43016,14 @@ pub fn x00408bd2(ctx: &mut Context) -> Cont {
     // 00408bd7 leave
     leave(ctx);
     // 00408bd8 pop edi
-    ctx.cpu.regs.edi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edi = x;
     // 00408bd9 pop esi
-    ctx.cpu.regs.esi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.esi = x;
     // 00408bda pop ecx
-    ctx.cpu.regs.ecx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ecx = x;
     // 00408bdb ret
     ret(ctx, 0)
 }
@@ -43024,13 +43286,17 @@ pub fn x00408c49(ctx: &mut Context) -> Cont {
     // 00408c49 leave
     leave(ctx);
     // 00408c4a pop edi
-    ctx.cpu.regs.edi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edi = x;
     // 00408c4b pop esi
-    ctx.cpu.regs.esi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.esi = x;
     // 00408c4c pop ecx
-    ctx.cpu.regs.ecx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ecx = x;
     // 00408c4d pop ebx
-    ctx.cpu.regs.ebx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ebx = x;
     // 00408c4e ret
     ret(ctx, 0)
 }
@@ -43477,11 +43743,14 @@ pub fn x00408d5d(ctx: &mut Context) -> Cont {
     // 00408d60 leave
     leave(ctx);
     // 00408d61 pop edi
-    ctx.cpu.regs.edi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edi = x;
     // 00408d62 pop esi
-    ctx.cpu.regs.esi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.esi = x;
     // 00408d63 pop ecx
-    ctx.cpu.regs.ecx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ecx = x;
     // 00408d64 ret
     ret(ctx, 0)
 }
@@ -43548,15 +43817,20 @@ pub fn x00408da4(ctx: &mut Context) -> Cont {
     // 00408da7 leave
     leave(ctx);
     // 00408da8 pop edi
-    ctx.cpu.regs.edi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edi = x;
     // 00408da9 pop esi
-    ctx.cpu.regs.esi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.esi = x;
     // 00408daa pop edx
-    ctx.cpu.regs.edx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.edx = x;
     // 00408dab pop ecx
-    ctx.cpu.regs.ecx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ecx = x;
     // 00408dac pop ebx
-    ctx.cpu.regs.ebx = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ebx = x;
     // 00408dad ret
     ret(ctx, 0)
 }
@@ -43571,7 +43845,8 @@ pub fn x004090c7(ctx: &mut Context) -> Cont {
 #[allow(unused_variables)]
 pub fn x004090cc(ctx: &mut Context) -> Cont {
     // 004090cc pop ebp
-    ctx.cpu.regs.ebp = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ebp = x;
     // 004090cd mov ebp,ds:[4377B4h]
     ctx.cpu.regs.ebp = ctx.memory.read::<u32>(0x4377b4u32);
     // 004090d3 ret
@@ -43588,7 +43863,8 @@ pub fn x004090d4(ctx: &mut Context) -> Cont {
 #[allow(unused_variables)]
 pub fn x004090d9(ctx: &mut Context) -> Cont {
     // 004090d9 pop esi
-    ctx.cpu.regs.esi = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.esi = x;
     // 004090da add esi,0E87h
     ctx.cpu.regs.esi = add(ctx.cpu.regs.esi, 0xe87u32, &mut ctx.cpu.flags);
     // 004090e0 lea edi,[ebp+477Bh]
@@ -44148,7 +44424,8 @@ pub fn x00409f23(ctx: &mut Context) -> Cont {
         ),
     );
     // 00409f47 pop ebp
-    ctx.cpu.regs.ebp = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ebp = x;
     // 00409f48 ret
     ret(ctx, 0)
 }
@@ -44156,7 +44433,8 @@ pub fn x00409f23(ctx: &mut Context) -> Cont {
 #[allow(unused_variables)]
 pub fn x00409f47(ctx: &mut Context) -> Cont {
     // 00409f47 pop ebp
-    ctx.cpu.regs.ebp = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ebp = x;
     // 00409f48 ret
     ret(ctx, 0)
 }
@@ -44195,7 +44473,8 @@ pub fn x00409f58(ctx: &mut Context) -> Cont {
         ),
     );
     // 00409f5e pop ebp
-    ctx.cpu.regs.ebp = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ebp = x;
     // 00409f5f ret
     ret(ctx, 0)
 }
@@ -44203,7 +44482,8 @@ pub fn x00409f58(ctx: &mut Context) -> Cont {
 #[allow(unused_variables)]
 pub fn x00409f5e(ctx: &mut Context) -> Cont {
     // 00409f5e pop ebp
-    ctx.cpu.regs.ebp = pop(ctx);
+    let x = pop(ctx);
+    ctx.cpu.regs.ebp = x;
     // 00409f5f ret
     ret(ctx, 0)
 }
