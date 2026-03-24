@@ -119,10 +119,7 @@ pub fn init_process(ctx: &mut Context) {
         *state().process_heap.borrow_mut() = process_heap;
 
         let peb_addr = (&raw const *peb).byte_offset_from_unsigned(origin) as u32;
-        let thread = init_thread(ctx, peb_addr);
-        ctx.cpu.regs.esp = thread.stack_pointer;
-        ctx.cpu.regs.ebp = thread.stack_pointer;
-        ctx.cpu.regs.fs_base = thread.fs_base;
+        init_thread(ctx, peb_addr);
 
         state().mappings.borrow().dump();
     }

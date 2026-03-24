@@ -40,12 +40,7 @@ pub struct TEB {
     pub TlsSlots: [u32; 64],
 }
 
-pub struct NewThread {
-    pub stack_pointer: u32,
-    pub fs_base: u32,
-}
-
-pub fn init_thread(ctx: &mut Context, peb_addr: u32) -> NewThread {
+pub fn init_thread(ctx: &mut Context, peb_addr: u32) {
     let mut mappings = state().mappings.borrow_mut();
 
     let teb_addr = mappings.alloc(
@@ -57,15 +52,13 @@ pub fn init_thread(ctx: &mut Context, peb_addr: u32) -> NewThread {
     let teb = TEB::mut_from_bytes(buf).unwrap();
     teb.Peb = peb_addr;
     teb.Tib._Self = teb_addr;
+    ctx.cpu.regs.fs_base = teb_addr;
 
-    let fs_base = teb_addr;
     let stack_size = 64 << 10;
     let stack_addr = mappings.alloc(format!("thread 0 stack"), None, stack_size);
-
-    NewThread {
-        stack_pointer: stack_addr + stack_size,
-        fs_base,
-    }
+    let stack_pointer = stack_addr + stack_size;
+    ctx.cpu.regs.esp = stack_pointer;
+    ctx.cpu.regs.ebp = stack_pointer;
 }
 
 #[allow(unused)]
