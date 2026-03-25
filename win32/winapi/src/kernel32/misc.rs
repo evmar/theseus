@@ -1,9 +1,6 @@
 use runtime::Context;
 
-use crate::{
-    kernel32::{HMODULE, state},
-    stub,
-};
+use crate::kernel32::{HMODULE, state};
 
 #[win32_derive::dllexport]
 pub fn GetLastError(_ctx: &mut Context) -> u32 {
@@ -233,6 +230,6 @@ pub fn WaitForSingleObject(_ctx: &mut Context, _hHandle: HANDLE, _dwMilliseconds
 }
 
 #[win32_derive::dllexport]
-pub fn Sleep(_ctx: &mut Context, _dwMilliseconds: u32) {
-    stub!(0);
+pub fn Sleep(_ctx: &mut Context, dwMilliseconds: u32) {
+    std::thread::sleep(std::time::Duration::from_millis(dwMilliseconds as u64));
 }
