@@ -1,23 +1,24 @@
 #![allow(unused)]
 
 use runtime::Context;
-use std::cell::{OnceCell, RefCell};
+use std::{
+    cell::{LazyCell, OnceCell, RefCell},
+    sync::{LazyLock, Mutex, MutexGuard},
+};
 
 use crate::stub;
 
+#[derive(Default)]
 pub struct State {
     timer: RefCell<Option<Timer>>,
 }
 
-struct StaticState(OnceCell<State>);
-unsafe impl Sync for StaticState {}
+static STATE: Mutex<State> = Mutex::new(State {
+    timer: RefCell::new(None),
+});
 
-static STATE: StaticState = StaticState(OnceCell::new());
-
-pub fn state() -> &'static State {
-    STATE.0.get_or_init(|| State {
-        timer: Default::default(),
-    })
+pub fn state() -> MutexGuard<'static, State> {
+    STATE.lock().unwrap()
 }
 
 struct Timer {
@@ -26,7 +27,8 @@ struct Timer {
 }
 
 fn timer_proc() {
-    let mut timer = state().timer.borrow_mut();
+    let state = state();
+    let mut timer = state.timer.borrow_mut();
     let Some(timer) = timer.as_mut() else { return };
     timer.next = 3;
 }
