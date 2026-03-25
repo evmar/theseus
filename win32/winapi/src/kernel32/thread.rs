@@ -92,7 +92,7 @@ pub fn CreateThread(
         .spawn(move || {
             let ctx = &mut new_ctx;
             let f = runtime::indirect(ctx, lpStartAddress);
-            runtime::call_nested(ctx, f, vec![lpParameter]);
+            runtime::call_x86(ctx, f, vec![lpParameter]);
         })
         .unwrap();
 

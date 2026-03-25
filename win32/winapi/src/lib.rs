@@ -60,6 +60,6 @@ pub fn run(exe: &EXEData) {
     (exe.init_mappings)(ctx);
     kernel32::init_process(ctx);
 
-    runtime::push(ctx, 0xf000_0000); // return_from_main
-    runtime::run_loop(ctx, exe.entry_point);
+    runtime::call_x86(ctx, exe.entry_point, vec![]);
+    // TODO: per Windows, we need to join any spawned threads here.
 }
