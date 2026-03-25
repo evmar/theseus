@@ -87,18 +87,14 @@ pub fn CreateThread(
     };
 
     init_thread(&mut new_ctx, teb(ctx).Peb);
-
-    // TODO: thread exit
-    // runtime::push(new_ctx, 0xf000_0000); // return_from_main
-
-    std::thread::spawn(move || {
-        let new_ctx = &mut new_ctx;
-        // TODO: wrap thread startup in a helper function
-        runtime::push(new_ctx, lpParameter);
-        runtime::push(new_ctx, 0); // return address
-        let start = runtime::indirect(new_ctx, lpStartAddress);
-        runtime::run_loop(new_ctx, start);
-    });
+    std::thread::Builder::new()
+        .name(format!("thread {lpStartAddress:x}"))
+        .spawn(move || {
+            let ctx = &mut new_ctx;
+            let f = runtime::indirect(ctx, lpStartAddress);
+            runtime::call_nested(ctx, f, vec![lpParameter]);
+        })
+        .unwrap();
 
     stub!(HANDLE::from_raw(1))
 }
