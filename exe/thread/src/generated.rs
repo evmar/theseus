@@ -1748,14 +1748,14 @@ pub fn x00401452(ctx: &mut Context) -> Cont {
 }
 
 const BLOCKS: [(u32, fn(&mut Context) -> Cont); 78] = [
-    (0x001001, kernel32::CreateThread_stdcall),
-    (0x001002, kernel32::GetCurrentThreadId_stdcall),
-    (0x001003, kernel32::GetStdHandle_stdcall),
-    (0x001004, kernel32::Sleep_stdcall),
-    (0x001005, kernel32::TlsAlloc_stdcall),
-    (0x001006, kernel32::TlsGetValue_stdcall),
-    (0x001007, kernel32::TlsSetValue_stdcall),
-    (0x001008, kernel32::WriteFile_stdcall),
+    (0x001000, kernel32::CreateThread_stdcall),
+    (0x001001, kernel32::GetCurrentThreadId_stdcall),
+    (0x001002, kernel32::GetStdHandle_stdcall),
+    (0x001003, kernel32::Sleep_stdcall),
+    (0x001004, kernel32::TlsAlloc_stdcall),
+    (0x001005, kernel32::TlsGetValue_stdcall),
+    (0x001006, kernel32::TlsSetValue_stdcall),
+    (0x001007, kernel32::WriteFile_stdcall),
     (0x401000, x00401000),
     (0x401016, x00401016),
     (0x401018, x00401018),

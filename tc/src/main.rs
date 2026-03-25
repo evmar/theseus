@@ -107,16 +107,16 @@ impl State {
 
         // Reserve some fake addresses for imported functions so they can be assigned addresses.
         // If we never write to the memory it stays zero and doesn't end up in the output.
-        let import_funcs_addr =
+        let mut import_func_addr =
             self.mem
                 .mappings
                 .alloc("imported functions".into(), None, self.imports.len() as u32);
+
         let mut imports = self.imports.values_mut().collect::<Vec<_>>();
         imports.sort_by_key(|i| i.iat_addr);
-        let mut i = 1;
         for import in imports.iter_mut() {
-            import.func_addr = import_funcs_addr + i;
-            i += 1;
+            import.func_addr = import_func_addr;
+            import_func_addr += 1;
             self.mem.write::<u32>(import.iat_addr, import.func_addr);
             self.blocks.insert(
                 import.func_addr,
@@ -126,10 +126,11 @@ impl State {
 
         if imports.iter().find(|i| i.dll == "ddraw").is_some() {
             for func in winapi::ddraw::EXPORTS {
-                let addr = import_funcs_addr + i;
-                i += 1;
-                self.blocks
-                    .insert(addr, Block::Stdcall(format!("ddraw::{}", func.to_string())));
+                self.blocks.insert(
+                    import_func_addr,
+                    Block::Stdcall(format!("ddraw::{}", func.to_string())),
+                );
+                import_func_addr += 1;
             }
         }
     }
