@@ -133,7 +133,7 @@ impl Surface {
     pub fn lock(&mut self, mem: &mut Memory) -> u32 {
         assert_eq!(self.pixels, None);
         let size = self.width * self.height * 4;
-        let pixels = kernel32::state().process_heap.borrow().alloc(mem, size);
+        let pixels = kernel32::lock().process_heap.alloc(mem, size);
         // scribble on pixels so we can see it
         mem.slice_mut(pixels..pixels + size).fill(0x8F);
         self.pixels = Some(pixels);
@@ -152,9 +152,8 @@ impl Surface {
             }
         }
 
-        kernel32::state()
+        kernel32::lock()
             .process_heap
-            .borrow()
             .free(mem, self.pixels.unwrap());
         self.pixels = None;
     }
@@ -214,9 +213,12 @@ pub fn DirectDrawCreateEx(
         Some(ctx.memory.read::<GUID>(iid))
     };
 
+    let mut kernel32 = kernel32::lock();
     let addr: u32 = match iid {
-        None => ddraw1::IDirectDraw::new(ctx),
-        Some(ddraw7::IID_IDirectDraw7) => ddraw7::IDirectDraw7::new(ctx),
+        None => ddraw1::IDirectDraw::new(ctx, &mut kernel32.process_heap),
+        Some(ddraw7::IID_IDirectDraw7) => {
+            ddraw7::IDirectDraw7::new(ctx, &mut kernel32.process_heap)
+        }
         _ => panic!(),
     };
 

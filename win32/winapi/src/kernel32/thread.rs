@@ -1,7 +1,11 @@
 use runtime::Context;
 use zerocopy::FromBytes as _;
 
-use crate::{HANDLE, kernel32::state, stub};
+use crate::{
+    HANDLE,
+    kernel32::{self, Mappings},
+    stub,
+};
 
 #[repr(C)]
 #[derive(zerocopy::FromBytes, zerocopy::Immutable, zerocopy::IntoBytes)]
@@ -40,9 +44,7 @@ pub struct TEB {
     pub TlsSlots: [u32; 64],
 }
 
-pub fn init_thread(ctx: &mut Context, peb_addr: u32) {
-    let mut mappings = state().mappings.borrow_mut();
-
+pub fn init_thread(ctx: &mut Context, mappings: &mut Mappings, peb_addr: u32) {
     let teb_addr = mappings.alloc(
         format!("thread 0 TEB"),
         None,
@@ -86,7 +88,8 @@ pub fn CreateThread(
         blocks: ctx.blocks,
     };
 
-    init_thread(&mut new_ctx, teb(ctx).Peb);
+    let mut lock = kernel32::lock();
+    init_thread(&mut new_ctx, &mut lock.mappings, teb(ctx).Peb);
     std::thread::Builder::new()
         .name(format!("thread {lpStartAddress:x}"))
         .spawn(move || {

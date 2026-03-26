@@ -4,8 +4,7 @@
 use runtime::*;
 use winapi::*;
 
-fn init_mappings(ctx: &mut Context) {
-    let mut mappings = kernel32::state().mappings.borrow_mut();
+fn init_mappings(ctx: &mut Context, mappings: &mut kernel32::Mappings) {
     mappings.alloc("null page".to_string(), Some(0x0), 0x1000);
     mappings.alloc("imported functions".to_string(), Some(0x1000), 0x1000);
     mappings.alloc("exe header".to_string(), Some(0x400000), 0x1000);

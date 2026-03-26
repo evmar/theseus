@@ -4,8 +4,7 @@
 use runtime::*;
 use winapi::*;
 
-fn init_mappings(ctx: &mut Context) {
-    let mut mappings = kernel32::state().mappings.borrow_mut();
+fn init_mappings(ctx: &mut Context, mappings: &mut kernel32::Mappings) {
     mappings.alloc("null page".to_string(), Some(0x0), 0x1000);
     mappings.alloc("imported functions".to_string(), Some(0x1000), 0x1000);
     mappings.alloc("exe header".to_string(), Some(0x400000), 0x1000);
@@ -60,8 +59,8 @@ pub fn x0040101a(ctx: &mut Context) -> Cont {
 }
 
 const BLOCKS: [(u32, fn(&mut Context) -> Cont); 6] = [
-    (0x001001, kernel32::GetStdHandle_stdcall),
-    (0x001002, kernel32::WriteFile_stdcall),
+    (0x001000, kernel32::GetStdHandle_stdcall),
+    (0x001001, kernel32::WriteFile_stdcall),
     (0x401000, x00401000),
     (0x401008, x00401008),
     (0x40101a, x0040101a),

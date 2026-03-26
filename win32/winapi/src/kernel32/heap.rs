@@ -1,5 +1,4 @@
 use runtime::Context;
-use std::rc::Rc;
 
 use crate::{
     dllexport::win32flags,
@@ -19,8 +18,8 @@ pub fn HeapAlloc(ctx: &mut Context, hHeap: HANDLE, dwFlags: HEAP_FLAGS, dwBytes:
         todo!();
     }
 
-    let heaps = kernel32::state().heaps.borrow();
-    let heap = heaps.get(&hHeap).unwrap();
+    let state = kernel32::lock();
+    let heap = state.heaps.get(&hHeap).unwrap();
     heap.alloc(&mut ctx.memory, dwBytes)
     /*
     if flags.contains(HeapAllocFlags::HEAP_ZERO_MEMORY) {
@@ -28,19 +27,6 @@ pub fn HeapAlloc(ctx: &mut Context, hHeap: HANDLE, dwFlags: HEAP_FLAGS, dwBytes:
         flags.remove(HeapAllocFlags::HEAP_ZERO_MEMORY);
     }
     */
-}
-
-pub fn heap_create(name: String, size: u32) -> Rc<Heap> {
-    let addr = kernel32::state()
-        .mappings
-        .borrow_mut()
-        .alloc(name, None, size);
-    let heap = Rc::new(Heap::new(addr, size));
-    kernel32::state()
-        .heaps
-        .borrow_mut()
-        .insert(addr, heap.clone());
-    heap
 }
 
 #[win32_derive::dllexport]
@@ -53,8 +39,11 @@ pub fn HeapCreate(
     // Currently none of the flags will affect behavior, but we might need to revisit this
     // with exceptions or threads support...
     let size = dwInitialSize.max(20 << 20);
-    let heap = heap_create("HeapCreate".into(), size);
-    heap.addr
+    let mut state = kernel32::lock();
+    let addr = state.mappings.alloc("HeapCreate".into(), None, size);
+    let heap = Heap::new(addr, size);
+    state.heaps.insert(addr, heap);
+    addr
 }
 
 #[win32_derive::dllexport]
@@ -72,8 +61,8 @@ pub fn HeapSize(
     if dwFlags != 0 {
         log::warn!("HeapFree flags {dwFlags:x}");
     }
-    let heaps = kernel32::state().heaps.borrow();
-    let heap = heaps.get(&hHeap).unwrap();
+    let state = kernel32::lock();
+    let heap = state.heaps.get(&hHeap).unwrap();
     heap.size(&mut ctx.memory, lpMem)
 }
 
@@ -87,8 +76,8 @@ pub fn HeapFree(
     if dwFlags != 0 {
         log::warn!("HeapFree flags {dwFlags:x}");
     }
-    let heaps = kernel32::state().heaps.borrow();
-    let heap = heaps.get(&hHeap).unwrap();
+    let state = kernel32::lock();
+    let heap = state.heaps.get(&hHeap).unwrap();
     heap.free(&mut ctx.memory, lpMem);
     true
 }

@@ -1,4 +1,4 @@
-use crate::{kernel32::state, stub};
+use crate::{kernel32::lock, stub};
 use runtime::Context;
 
 #[win32_derive::dllexport]
@@ -36,7 +36,7 @@ pub fn GetEnvironmentVariableA(
     _lpBuffer: u32,
     _nSize: u32,
 ) -> u32 {
-    stub!(state().environ.get())
+    stub!(lock().environ.get())
 }
 
 #[win32_derive::dllexport]

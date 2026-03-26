@@ -1,3 +1,4 @@
+use crate::heap::Heap;
 use runtime::Context;
 use zerocopy::{FromBytes, IntoBytes};
 
@@ -80,7 +81,10 @@ pub mod IDirectDraw {
             .unwrap()
             .0;
         let desc2 = DDSURFACEDESC2::from_desc(&desc);
-        let surface = ddraw.create_surface(&desc2, &mut || IDirectDrawSurface::new(ctx));
+        let mut state = kernel32::lock();
+        let surface = ddraw.create_surface(&desc2, &mut || {
+            IDirectDrawSurface::new(ctx, &mut state.process_heap)
+        });
         ctx.memory.write(lplpDDSurface, surface.borrow().addr);
 
         DD::OK
@@ -174,11 +178,8 @@ pub mod IDirectDraw {
         todo!()
     }
 
-    fn vtable(ctx: &mut Context) -> u32 {
-        let vtable_addr = kernel32::state()
-            .process_heap
-            .borrow()
-            .alloc(&mut ctx.memory, std::mem::size_of::<VTable>() as u32);
+    fn vtable(ctx: &mut Context, heap: &mut Heap) -> u32 {
+        let vtable_addr = heap.alloc(&mut ctx.memory, std::mem::size_of::<VTable>() as u32);
         let func_addr = runtime::proc_addr(ctx, QueryInterface_stdcall);
         let vtable = VTable {
             QueryInterface: func_addr + 0,
@@ -211,12 +212,9 @@ pub mod IDirectDraw {
         vtable_addr
     }
 
-    pub fn new(ctx: &mut Context) -> u32 {
-        let addr = kernel32::state()
-            .process_heap
-            .borrow()
-            .alloc(&mut ctx.memory, 4);
-        let vtable = vtable(ctx);
+    pub fn new(ctx: &mut Context, heap: &mut Heap) -> u32 {
+        let addr = heap.alloc(&mut ctx.memory, 4);
+        let vtable = vtable(ctx, heap);
         ctx.memory.write(addr, vtable);
         addr
     }
@@ -492,11 +490,8 @@ pub mod IDirectDrawSurface {
         todo!()
     }
 
-    fn vtable(ctx: &mut Context) -> u32 {
-        let vtable_addr = kernel32::state()
-            .process_heap
-            .borrow()
-            .alloc(&mut ctx.memory, std::mem::size_of::<VTable>() as u32);
+    fn vtable(ctx: &mut Context, heap: &mut Heap) -> u32 {
+        let vtable_addr = heap.alloc(&mut ctx.memory, std::mem::size_of::<VTable>() as u32);
         let func_addr = runtime::proc_addr(ctx, QueryInterface_stdcall);
         let vtable = VTable {
             QueryInterface: func_addr + 0,
@@ -542,12 +537,9 @@ pub mod IDirectDrawSurface {
         vtable_addr
     }
 
-    pub fn new(ctx: &mut Context) -> u32 {
-        let addr = kernel32::state()
-            .process_heap
-            .borrow()
-            .alloc(&mut ctx.memory, 4);
-        let vtable = vtable(ctx);
+    pub fn new(ctx: &mut Context, heap: &mut Heap) -> u32 {
+        let addr = heap.alloc(&mut ctx.memory, 4);
+        let vtable = vtable(ctx, heap);
         ctx.memory.write(addr, vtable);
         addr
     }

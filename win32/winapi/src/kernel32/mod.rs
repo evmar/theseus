@@ -9,9 +9,10 @@ mod process;
 mod thread;
 
 use std::{
-    cell::{Cell, OnceCell, RefCell},
+    cell::Cell,
     collections::HashMap,
-    rc::Rc,
+    ptr::NonNull,
+    sync::{Mutex, MutexGuard},
 };
 
 pub use dll::*;
@@ -28,34 +29,56 @@ use crate::heap::Heap;
 
 pub struct State {
     pub start: std::time::Instant,
-    pub mappings: RefCell<Mappings>,
-    pub heaps: RefCell<HashMap<u32, Rc<Heap>>>,
-    pub process_heap: RefCell<Rc<Heap>>,
+    pub mappings: Mappings,
+    pub heaps: HashMap<u32, Heap>,
+    pub process_heap: Heap,
     pub image_base: u32,
     pub resources: std::ops::Range<u32>,
-    pub command_line: RefCell<CommandLine>,
+    pub command_line: CommandLine,
     pub environ: Cell<u32>,
 }
 
-struct StaticState(OnceCell<State>);
-unsafe impl Sync for StaticState {}
-
-static STATE: StaticState = StaticState(OnceCell::new());
+static STATE: Mutex<Option<State>> = Mutex::new(None);
 
 pub fn init_state(image_base: u32, resources: std::ops::Range<u32>) {
-    let state = State {
+    let mut state = STATE.lock().unwrap();
+    *state = Some(State {
         start: std::time::Instant::now(),
-        mappings: Default::default(),
-        heaps: Default::default(),
-        process_heap: Default::default(),
         image_base,
         resources,
+        heaps: HashMap::new(),
+        mappings: Default::default(),
+        process_heap: Default::default(),
         command_line: Default::default(),
         environ: Default::default(),
-    };
-    STATE.0.set(state).unwrap_or_else(|_| panic!());
+    });
 }
 
-pub fn state() -> &'static State {
-    STATE.0.get_or_init(|| panic!())
+pub struct LockedState {
+    _lock: MutexGuard<'static, Option<State>>,
+    ptr: NonNull<State>,
+}
+
+impl std::ops::Deref for LockedState {
+    type Target = State;
+
+    fn deref(&self) -> &Self::Target {
+        unsafe { self.ptr.as_ref() }
+    }
+}
+
+impl std::ops::DerefMut for LockedState {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        unsafe { self.ptr.as_mut() }
+    }
+}
+
+pub type Lock = LockedState;
+pub fn lock() -> Lock {
+    let mut lock = STATE.lock().unwrap();
+    let state = NonNull::from_mut(lock.as_mut().unwrap());
+    LockedState {
+        _lock: lock,
+        ptr: state,
+    }
 }

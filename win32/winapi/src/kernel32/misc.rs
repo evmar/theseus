@@ -1,6 +1,6 @@
 use runtime::Context;
 
-use crate::kernel32::{HMODULE, state};
+use crate::kernel32::{HMODULE, lock};
 
 #[win32_derive::dllexport]
 pub fn GetLastError(_ctx: &mut Context) -> u32 {
@@ -96,10 +96,7 @@ pub fn VirtualAlloc(
     _flProtect: u32,        /* PAGE_PROTECTION_FLAGS */
 ) -> u32 {
     assert_eq!(lpAddress, 0);
-    state()
-        .mappings
-        .borrow_mut()
-        .alloc("VirtualAlloc".into(), None, dwSize)
+    lock().mappings.alloc("VirtualAlloc".into(), None, dwSize)
     /*
     let memory = sys.memory_mut();
     if lpAddress != 0 {
@@ -220,7 +217,7 @@ pub fn RtlUnwind(
 
 #[win32_derive::dllexport]
 pub fn GetTickCount(_ctx: &mut Context) -> u32 {
-    state().start.elapsed().as_millis() as u32
+    lock().start.elapsed().as_millis() as u32
 }
 
 #[win32_derive::dllexport]

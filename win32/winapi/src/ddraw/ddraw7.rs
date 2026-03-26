@@ -1,3 +1,4 @@
+use crate::heap::Heap;
 use std::cell::RefMut;
 
 use runtime::*;
@@ -113,7 +114,10 @@ pub mod IDirectDraw7 {
             .unwrap()
             .0;
 
-        let surface = ddraw.create_surface(&desc, &mut || IDirectDrawSurface7::new(ctx));
+        let mut lock = kernel32::lock();
+        let surface = ddraw.create_surface(&desc, &mut || {
+            IDirectDrawSurface7::new(ctx, &mut lock.process_heap)
+        });
         ctx.memory.write(lplpDDSurface, surface.borrow().addr);
 
         DD::OK
@@ -284,11 +288,8 @@ pub mod IDirectDraw7 {
         todo!()
     }
 
-    fn vtable(ctx: &mut Context) -> u32 {
-        let vtable_addr = kernel32::state()
-            .process_heap
-            .borrow()
-            .alloc(&mut ctx.memory, std::mem::size_of::<VTable>() as u32);
+    fn vtable(ctx: &mut Context, heap: &mut Heap) -> u32 {
+        let vtable_addr = heap.alloc(&mut ctx.memory, std::mem::size_of::<VTable>() as u32);
         let func_addr = runtime::proc_addr(ctx, QueryInterface_stdcall);
         let vtable = VTable {
             QueryInterface: func_addr + 0,
@@ -328,12 +329,9 @@ pub mod IDirectDraw7 {
         vtable_addr
     }
 
-    pub fn new(ctx: &mut Context) -> u32 {
-        let addr = kernel32::state()
-            .process_heap
-            .borrow()
-            .alloc(&mut ctx.memory, 4);
-        let vtable = vtable(ctx);
+    pub fn new(ctx: &mut Context, heap: &mut Heap) -> u32 {
+        let addr = heap.alloc(&mut ctx.memory, 4);
+        let vtable = vtable(ctx, heap);
         ctx.memory.write(addr, vtable);
         addr
     }
@@ -818,11 +816,8 @@ pub mod IDirectDrawSurface7 {
         todo!()
     }
 
-    fn vtable(ctx: &mut Context) -> u32 {
-        let vtable_addr = kernel32::state()
-            .process_heap
-            .borrow()
-            .alloc(&mut ctx.memory, std::mem::size_of::<VTable>() as u32);
+    fn vtable(ctx: &mut Context, heap: &mut Heap) -> u32 {
+        let vtable_addr = heap.alloc(&mut ctx.memory, std::mem::size_of::<VTable>() as u32);
         let func_addr = runtime::proc_addr(ctx, QueryInterface_stdcall);
         let vtable = VTable {
             QueryInterface: func_addr + 0,
@@ -881,12 +876,9 @@ pub mod IDirectDrawSurface7 {
         vtable_addr
     }
 
-    pub fn new(ctx: &mut Context) -> u32 {
-        let addr = kernel32::state()
-            .process_heap
-            .borrow()
-            .alloc(&mut ctx.memory, 4);
-        let vtable = vtable(ctx);
+    pub fn new(ctx: &mut Context, heap: &mut Heap) -> u32 {
+        let addr = heap.alloc(&mut ctx.memory, 4);
+        let vtable = vtable(ctx, heap);
         ctx.memory.write(addr, vtable);
         addr
     }

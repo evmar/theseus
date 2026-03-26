@@ -1,7 +1,10 @@
 use runtime::Context;
 use zerocopy::FromBytes;
 
-use crate::kernel32::{self, HANDLE, init_thread, state, teb};
+use crate::{
+    heap::Heap,
+    kernel32::{self, HANDLE, init_thread, lock, teb},
+};
 
 #[win32_derive::dllexport]
 pub fn ExitProcess(_ctx: &mut Context, uExitCode: u32) -> u32 {
@@ -66,20 +69,16 @@ pub struct CommandLine {
 
 #[win32_derive::dllexport]
 pub fn GetCommandLineA(_ctx: &mut Context) -> u32 {
-    state().command_line.borrow().command_line_8
+    lock().command_line.command_line_8
 }
 
 fn align_to_4(x: usize) -> usize {
     (x + 4 - 1) & !(4 - 1)
 }
 
-pub fn init_process(ctx: &mut Context) {
+pub fn init_process(ctx: &mut Context, state: &mut kernel32::Lock) {
     unsafe {
-        let process_data_addr =
-            state()
-                .mappings
-                .borrow_mut()
-                .alloc("process data".into(), None, 0x1000);
+        let process_data_addr = state.mappings.alloc("process data".into(), None, 0x1000);
 
         let origin = ctx.memory.bytes.as_ptr();
         let buf = &mut ctx.memory.bytes[process_data_addr as usize..][..0x1000];
@@ -94,7 +93,7 @@ pub fn init_process(ctx: &mut Context) {
             command_line_8[i] = c;
             command_line_16[i] = c as u16;
         }
-        *state().command_line.borrow_mut() = CommandLine {
+        state.command_line = CommandLine {
             command_line_8: (&raw const *command_line_8).byte_offset_from_unsigned(origin) as u32,
             command_line_16: (&raw const *command_line_16).byte_offset_from_unsigned(origin) as u32,
         };
@@ -103,7 +102,7 @@ pub fn init_process(ctx: &mut Context) {
         let len = align_to_4(env.len() * 2);
         let (env, buf) = buf.split_at_mut(len);
         env.fill(0);
-        state()
+        state
             .environ
             .set((&raw const *env).byte_offset_from_unsigned(origin) as u32);
 
@@ -114,14 +113,16 @@ pub fn init_process(ctx: &mut Context) {
         let (peb, _buf) = PEB::mut_from_prefix(buf).unwrap();
         peb.ProcessParameters = (&raw const *params).byte_offset_from_unsigned(origin) as u32;
 
-        let process_heap = kernel32::heap_create("process heap".into(), 4 << 20);
+        let heap_size = 4 << 20;
+        let heap_addr = state.mappings.alloc("process heap".into(), None, heap_size);
+        let process_heap = Heap::new(heap_addr, heap_size);
         peb.ProcessHeap = process_heap.addr;
-        *state().process_heap.borrow_mut() = process_heap;
+        state.process_heap = process_heap;
 
         let peb_addr = (&raw const *peb).byte_offset_from_unsigned(origin) as u32;
-        init_thread(ctx, peb_addr);
+        init_thread(ctx, &mut state.mappings, peb_addr);
 
-        state().mappings.borrow().dump();
+        state.mappings.dump();
     }
 }
 
@@ -142,7 +143,7 @@ fn peb_mut<'a>(ctx: &'a mut Context) -> &'a mut PEB {
 
 #[win32_derive::dllexport]
 pub fn GetProcessHeap(_ctx: &mut Context) -> HANDLE {
-    state().process_heap.borrow().addr
+    lock().process_heap.addr
 }
 
 #[win32_derive::dllexport]
