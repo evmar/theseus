@@ -1,6 +1,6 @@
 use crate::{
     heap::Heap,
-    kernel32::{CommandLine, Mappings},
+    kernel32::{CommandLine, Mappings, UnsafeTickCount},
 };
 use std::{
     cell::Cell,
@@ -10,7 +10,6 @@ use std::{
 };
 
 pub struct State {
-    pub start: std::time::Instant,
     pub mappings: Mappings,
     pub heaps: HashMap<u32, Heap>,
     pub process_heap: Heap,
@@ -25,9 +24,9 @@ pub struct State {
 static STATE: Mutex<Option<State>> = Mutex::new(None);
 
 pub fn init_state(image_base: u32, resources: std::ops::Range<u32>) {
+    UnsafeTickCount::init();
     let mut state = STATE.lock().unwrap();
     *state = Some(State {
-        start: std::time::Instant::now(),
         image_base,
         resources,
         heaps: HashMap::new(),
