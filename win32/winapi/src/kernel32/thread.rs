@@ -46,7 +46,7 @@ pub struct TEB {
 
 pub fn init_thread(ctx: &mut Context, mappings: &mut Mappings, peb_addr: u32) {
     let teb_addr = mappings.alloc(
-        format!("thread 0 TEB"),
+        format!("thread {} TEB", ctx.thread_id),
         None,
         std::mem::size_of::<TEB>() as u32,
     );
@@ -82,16 +82,19 @@ pub fn CreateThread(
     _dwCreationFlags: u32, /* THREAD_CREATION_FLAGS */
     _lpThreadId: u32,
 ) -> HANDLE {
+    let mut lock = kernel32::lock();
+
     let mut new_ctx = Context {
         cpu: runtime::CPU::default(),
+        thread_id: lock.next_thread_id,
         memory: ctx.memory.unsafe_clone(),
         blocks: ctx.blocks,
     };
+    lock.next_thread_id += 1;
 
-    let mut lock = kernel32::lock();
     init_thread(&mut new_ctx, &mut lock.mappings, teb(ctx).Peb);
     std::thread::Builder::new()
-        .name(format!("thread {lpStartAddress:x}"))
+        .name(format!("thread {}@{lpStartAddress:x}", new_ctx.thread_id))
         .spawn(move || {
             let ctx = &mut new_ctx;
             let f = runtime::indirect(ctx, lpStartAddress);
@@ -103,8 +106,8 @@ pub fn CreateThread(
 }
 
 #[win32_derive::dllexport]
-pub fn GetCurrentThreadId(_ctx: &mut Context) -> u32 {
-    stub!(1)
+pub fn GetCurrentThreadId(ctx: &mut Context) -> u32 {
+    ctx.thread_id
 }
 
 #[win32_derive::dllexport]

@@ -53,6 +53,7 @@ pub fn run(exe: &EXEData) {
 
     let mut ctx = Context {
         cpu: CPU::default(),
+        thread_id: 1,
         memory: m.memory.unsafe_clone(),
         blocks: m.blocks,
     };
