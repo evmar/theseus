@@ -3,7 +3,7 @@ use zerocopy::FromBytes as _;
 
 use crate::{
     HANDLE,
-    kernel32::{self, Mappings},
+    kernel32::{self, Mappings, lock},
     stub,
 };
 
@@ -72,6 +72,16 @@ pub fn teb<'a>(ctx: &'a mut Context) -> &'a TEB {
     teb
 }
 
+#[allow(unused)]
+pub fn teb_mut<'a>(ctx: &'a mut Context) -> &'a mut TEB {
+    let teb_addr = ctx.cpu.regs.fs_base;
+    let teb = TEB::mut_from_bytes(
+        &mut ctx.memory.bytes[teb_addr as usize..][..std::mem::size_of::<TEB>()],
+    )
+    .unwrap();
+    teb
+}
+
 #[win32_derive::dllexport]
 pub fn CreateThread(
     ctx: &mut Context,
@@ -112,17 +122,21 @@ pub fn GetCurrentThreadId(ctx: &mut Context) -> u32 {
 
 #[win32_derive::dllexport]
 pub fn TlsAlloc(_ctx: &mut Context) -> u32 {
-    stub!(0)
+    let mut state = lock();
+    let index = state.next_tls_index;
+    state.next_tls_index += 1;
+    index
 }
 
 #[win32_derive::dllexport]
-pub fn TlsGetValue(_ctx: &mut Context, _dwTlsIndex: u32) -> u32 {
-    stub!(0)
+pub fn TlsGetValue(ctx: &mut Context, dwTlsIndex: u32) -> u32 {
+    teb(ctx).TlsSlots[dwTlsIndex as usize]
 }
 
 #[win32_derive::dllexport]
-pub fn TlsSetValue(_ctx: &mut Context, _dwTlsIndex: u32, _lpTlsValue: u32) -> bool {
-    stub!(true)
+pub fn TlsSetValue(ctx: &mut Context, dwTlsIndex: u32, lpTlsValue: u32) -> bool {
+    teb_mut(ctx).TlsSlots[dwTlsIndex as usize] = lpTlsValue;
+    true
 }
 
 #[win32_derive::dllexport]

@@ -19,6 +19,7 @@ pub struct State {
     pub command_line: CommandLine,
     pub environ: Cell<u32>,
     pub next_thread_id: u32,
+    pub next_tls_index: u32,
 }
 
 static STATE: Mutex<Option<State>> = Mutex::new(None);
@@ -35,6 +36,7 @@ pub fn init_state(image_base: u32, resources: std::ops::Range<u32>) {
         command_line: Default::default(),
         environ: Default::default(),
         next_thread_id: 2,
+        next_tls_index: 0,
     });
 }
 
