@@ -1,21 +1,17 @@
-#![allow(unused)]
-
 use runtime::Context;
-use std::{
-    cell::{LazyCell, OnceCell, RefCell},
-    sync::{LazyLock, Mutex, MutexGuard},
-};
+use std::sync::{Mutex, MutexGuard};
 
-use crate::stub;
+use crate::{
+    kernel32::{self, get_tick_count},
+    stub,
+};
 
 #[derive(Default)]
 pub struct State {
-    timer: RefCell<Option<Timer>>,
+    timer: Option<Timer>,
 }
 
-static STATE: Mutex<State> = Mutex::new(State {
-    timer: RefCell::new(None),
-});
+static STATE: Mutex<State> = Mutex::new(State { timer: None });
 
 pub fn state() -> MutexGuard<'static, State> {
     STATE.lock().unwrap()
@@ -24,13 +20,29 @@ pub fn state() -> MutexGuard<'static, State> {
 struct Timer {
     next: u32,
     callback: u32,
+    user_data: u32,
 }
 
-fn timer_proc() {
-    let state = state();
-    let mut timer = state.timer.borrow_mut();
-    let Some(timer) = timer.as_mut() else { return };
-    timer.next = 3;
+fn winmm_main(ctx: &mut Context) {
+    loop {
+        let mut state = state();
+        let Some(timer) = state.timer.as_mut() else {
+            return;
+        };
+
+        let now = get_tick_count();
+        if now > timer.next {
+            std::thread::sleep(std::time::Duration::from_millis((now - timer.next) as u64));
+        }
+
+        let func = runtime::indirect(ctx, timer.callback);
+        let timer_id = 1;
+        let user_data = timer.user_data;
+        drop(state);
+
+        // LPTIMECALLBACK
+        runtime::call_x86(ctx, func, vec![timer_id, 0, user_data, 0, 0]);
+    }
 }
 
 #[derive(Debug)]
@@ -57,14 +69,25 @@ impl crate::dllexport::FromABIParam for TIME {
 
 #[win32_derive::dllexport]
 pub fn timeSetEvent(
-    _ctx: &mut Context,
-    _uDelay: u32,
+    ctx: &mut Context,
+    uDelay: u32,
     _uResolution: u32,
-    _lpTimeProc: u32,
-    _dwUser: u32,
+    lpTimeProc: u32,
+    dwUser: u32,
     fuEvent: TIME,
 ) -> u32 {
     assert_eq!(fuEvent.periodic, true);
+
+    let mut state = state();
+    assert!(state.timer.is_none());
+    state.timer = Some(Timer {
+        next: get_tick_count() + uDelay,
+        callback: lpTimeProc,
+        user_data: dwUser,
+    });
+    kernel32::create_thread(ctx, &mut kernel32::lock(), "winmm".into(), |ctx| {
+        winmm_main(ctx);
+    });
 
     stub!(1)
 }

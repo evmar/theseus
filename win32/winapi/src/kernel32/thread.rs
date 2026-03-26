@@ -4,7 +4,6 @@ use zerocopy::FromBytes as _;
 use crate::{
     HANDLE,
     kernel32::{self, Mappings, lock},
-    stub,
 };
 
 #[repr(C)]
@@ -82,6 +81,26 @@ pub fn teb_mut<'a>(ctx: &'a mut Context) -> &'a mut TEB {
     teb
 }
 
+pub fn create_thread(
+    ctx: &mut Context,
+    lock: &mut kernel32::Lock,
+    name: String,
+    proc: impl FnOnce(&mut Context) + Send + Sync + 'static,
+) {
+    let mut new_ctx = Context {
+        cpu: runtime::CPU::default(),
+        thread_id: lock.next_thread_id,
+        memory: ctx.memory.unsafe_clone(),
+        blocks: ctx.blocks,
+    };
+    lock.next_thread_id += 1;
+    init_thread(&mut new_ctx, &mut lock.mappings, teb(ctx).Peb);
+    std::thread::Builder::new()
+        .name(name)
+        .spawn(move || proc(&mut new_ctx))
+        .unwrap();
+}
+
 #[win32_derive::dllexport]
 pub fn CreateThread(
     ctx: &mut Context,
@@ -93,26 +112,13 @@ pub fn CreateThread(
     _lpThreadId: u32,
 ) -> HANDLE {
     let mut lock = kernel32::lock();
-
-    let mut new_ctx = Context {
-        cpu: runtime::CPU::default(),
-        thread_id: lock.next_thread_id,
-        memory: ctx.memory.unsafe_clone(),
-        blocks: ctx.blocks,
-    };
-    lock.next_thread_id += 1;
-
-    init_thread(&mut new_ctx, &mut lock.mappings, teb(ctx).Peb);
-    std::thread::Builder::new()
-        .name(format!("thread {}@{lpStartAddress:x}", new_ctx.thread_id))
-        .spawn(move || {
-            let ctx = &mut new_ctx;
-            let f = runtime::indirect(ctx, lpStartAddress);
-            runtime::call_x86(ctx, f, vec![lpParameter]);
-        })
-        .unwrap();
-
-    stub!(HANDLE::from_raw(1))
+    let id = lock.next_thread_id;
+    let name = format!("thread {}@{}", id, lpStartAddress);
+    create_thread(ctx, &mut lock, name, move |ctx| {
+        let f = runtime::indirect(ctx, lpStartAddress);
+        runtime::call_x86(ctx, f, vec![lpParameter]);
+    });
+    HANDLE::from_raw(id)
 }
 
 #[win32_derive::dllexport]
