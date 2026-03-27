@@ -48,7 +48,6 @@ pub fn addc<I: Int + num_traits::ops::wrapping::WrappingAdd>(
     z: I,
     flags: &mut Flags,
 ) -> I {
-    // TODO "The CF, OF, SF, ZF, AF, and PF flags are set according to the result."
     let result = x.wrapping_add(&y.wrapping_add(&z));
     flags.set(Flags::CF, result < x || (result == x && !z.is_zero()));
     flags.set(Flags::ZF, result.is_zero());

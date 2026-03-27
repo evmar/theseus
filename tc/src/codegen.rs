@@ -275,6 +275,19 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
                 ));
             }
 
+            Adc => {
+                assert_eq!(instr.op_count(), 2);
+                let op0 = get_op(instr, 0);
+                let op1 = get_op(instr, 1);
+                w.line(set_op(
+                    instr,
+                    0,
+                    format!(
+                        "addc({op0}, {op1}, ctx.cpu.flags.contains(Flags::CF) as u32, &mut ctx.cpu.flags)"
+                    ),
+                ));
+            }
+
             Shld => {
                 assert_eq!(instr.op_count(), 3);
                 let op0 = get_op(instr, 0);
