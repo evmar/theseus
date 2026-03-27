@@ -8,17 +8,23 @@ use crate::{
     memory::{AddrAbs, AddrImage},
 };
 
+fn reg_name(r: iced_x86::Register) -> String {
+    format!("{r:?}").to_ascii_lowercase()
+}
+
+fn instr_name(instr: &iced_x86::Instruction) -> String {
+    format!("{:?}", instr.mnemonic()).to_ascii_lowercase()
+}
+
 pub fn get_reg(r: iced_x86::Register) -> String {
     use iced_x86::Register::*;
     match r {
         EAX | ECX | EDX | EBX | ESI | EDI | ESP | EBP => {
-            let reg = format!("{r:?}").to_ascii_lowercase();
-            format!("ctx.cpu.regs.{reg}")
+            format!("ctx.cpu.regs.{reg}", reg = reg_name(r))
         }
 
         AL | AH | AX | CL | CH | CX | DL | DH | DX | BL | BH | BX | DI | SI => {
-            let reg = format!("{r:?}").to_ascii_lowercase();
-            format!("ctx.cpu.regs.get_{reg}()")
+            format!("ctx.cpu.regs.get_{reg}()", reg = reg_name(r))
         }
 
         r => todo!("{r:?}"),
@@ -29,13 +35,11 @@ pub fn set_reg(r: iced_x86::Register, expr: String) -> String {
     use iced_x86::Register::*;
     match r {
         EAX | ECX | EDX | EBX | ESI | EDI | ESP | EBP => {
-            let reg = format!("{r:?}").to_ascii_lowercase();
-            format!("ctx.cpu.regs.{reg} = {expr};")
+            format!("ctx.cpu.regs.{reg} = {expr};", reg = reg_name(r))
         }
 
         AL | AH | AX | CL | CH | CX | DL | DH | DX | BL | BH | BX | DI | SI => {
-            let reg = format!("{r:?}").to_ascii_lowercase();
-            format!("ctx.cpu.regs.set_{reg}({expr});")
+            format!("ctx.cpu.regs.set_{reg}({expr});", reg = reg_name(r))
         }
         r => todo!("{r:?}"),
     }
@@ -269,7 +273,7 @@ fn gen_instr(w: &mut Writer, state: &State, instr: &iced_x86::Instruction) {
             assert_eq!(instr.op_count(), 2);
             let op0 = get_op(instr, 0);
             let op1 = get_op(instr, 1);
-            let func = format!("{:?}", instr.mnemonic()).to_ascii_lowercase();
+            let func = instr_name(instr);
             w.line(set_op(
                 instr,
                 0,
@@ -320,7 +324,7 @@ fn gen_instr(w: &mut Writer, state: &State, instr: &iced_x86::Instruction) {
         Je | Jne | Jb | Js | Jns | Ja | Jae | Jl | Jg | Jge | Jecxz | Jle | Jbe => {
             let next = gen_abs_jmp(state, instr.next_ip32());
             let dst = gen_jmp(state, instr);
-            let func = format!("{:?}", instr.mnemonic()).to_ascii_lowercase();
+            let func = instr_name(instr);
             w.line(format!("{func}(ctx, {next}, {dst})"));
         }
 
@@ -470,10 +474,7 @@ fn gen_instr(w: &mut Writer, state: &State, instr: &iced_x86::Instruction) {
         Cwde => w.line("ctx.cpu.regs.eax = ctx.cpu.regs.get_ax() as i16 as i32 as u32;"),
 
         Stc | Clc | Std | Cld | Sahf => {
-            w.line(format!(
-                "{}(ctx);",
-                format!("{:?}", instr.mnemonic()).to_ascii_lowercase()
-            ));
+            w.line(format!("{}(ctx);", instr_name(instr)));
         }
 
         c => {

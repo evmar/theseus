@@ -1,5 +1,6 @@
 #![allow(unreachable_code)]
 #![allow(unused_parens)]
+#![allow(unused_variables)]
 
 use runtime::*;
 use winapi::*;
@@ -28,20 +29,17 @@ fn init_mappings(ctx: &mut Context, mappings: &mut kernel32::Mappings) {
     let out = &mut ctx.memory.bytes[0x40a000 as usize..][..bytes.len()];
     out.copy_from_slice(bytes);
 }
-#[allow(unused_variables)]
 pub fn x00401000(ctx: &mut Context) -> Cont {
     // 00401000 call 00401010h
     let dst = Cont(x00401010);
     call(ctx, 0x401005, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401005(ctx: &mut Context) -> Cont {
     // 00401005 jmp near ptr 00401020h
     Cont(x00401020)
 }
 
-#[allow(unused_variables)]
 pub fn x00401010(ctx: &mut Context) -> Cont {
     // 00401010 mov ecx,409550h
     ctx.cpu.regs.ecx = 0x409550u32;
@@ -49,7 +47,6 @@ pub fn x00401010(ctx: &mut Context) -> Cont {
     Cont(x00401460)
 }
 
-#[allow(unused_variables)]
 pub fn x00401020(ctx: &mut Context) -> Cont {
     // 00401020 push 401030h
     push(ctx, 0x401030u32);
@@ -58,7 +55,6 @@ pub fn x00401020(ctx: &mut Context) -> Cont {
     call(ctx, 0x40102a, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x0040102a(ctx: &mut Context) -> Cont {
     // 0040102a pop ecx
     let x = pop(ctx);
@@ -67,7 +63,6 @@ pub fn x0040102a(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00401040(ctx: &mut Context) -> Cont {
     // 00401040 mov ecx,[esp+10h]
     ctx.cpu.regs.ecx = ctx
@@ -88,7 +83,6 @@ pub fn x00401040(ctx: &mut Context) -> Cont {
     call(ctx, 0x401056, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401056(ctx: &mut Context) -> Cont {
     // 00401056 add esp,4
     ctx.cpu.regs.esp = add(ctx.cpu.regs.esp, 0x4u32, &mut ctx.cpu.flags);
@@ -100,7 +94,6 @@ pub fn x00401056(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00401062), Cont(x0040106b))
 }
 
-#[allow(unused_variables)]
 pub fn x00401062(ctx: &mut Context) -> Cont {
     // 00401062 or eax,0FFFFFFFFh
     ctx.cpu.regs.eax = or(ctx.cpu.regs.eax, 0xffffffffu32, &mut ctx.cpu.flags);
@@ -110,14 +103,12 @@ pub fn x00401062(ctx: &mut Context) -> Cont {
     ret(ctx, 16)
 }
 
-#[allow(unused_variables)]
 pub fn x0040106b(ctx: &mut Context) -> Cont {
     // 0040106b call 00401310h
     let dst = Cont(x00401310);
     call(ctx, 0x401070, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401070(ctx: &mut Context) -> Cont {
     // 00401070 test eax,eax
     and(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -125,14 +116,12 @@ pub fn x00401070(ctx: &mut Context) -> Cont {
     jge(ctx, Cont(x00401074), Cont(x0040109a))
 }
 
-#[allow(unused_variables)]
 pub fn x00401074(ctx: &mut Context) -> Cont {
     // 00401074 call 00401420h
     let dst = Cont(x00401420);
     call(ctx, 0x401079, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401079(ctx: &mut Context) -> Cont {
     // 00401079 mov edx,ds:[409580h]
     ctx.cpu.regs.edx = ctx.memory.read::<u32>(0x409580u32);
@@ -149,7 +138,6 @@ pub fn x00401079(ctx: &mut Context) -> Cont {
     call(ctx, 0x401092, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401092(ctx: &mut Context) -> Cont {
     // 00401092 xor eax,eax
     ctx.cpu.regs.eax = xor(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -159,7 +147,6 @@ pub fn x00401092(ctx: &mut Context) -> Cont {
     ret(ctx, 16)
 }
 
-#[allow(unused_variables)]
 pub fn x0040109a(ctx: &mut Context) -> Cont {
     // 0040109a mov eax,ds:[409584h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x409584u32);
@@ -184,7 +171,6 @@ pub fn x0040109a(ctx: &mut Context) -> Cont {
     call(ctx, 0x4010b9, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004010b9(ctx: &mut Context) -> Cont {
     // 004010b9 mov ecx,ds:[40957Ch]
     ctx.cpu.regs.ecx = ctx.memory.read::<u32>(0x40957cu32);
@@ -207,7 +193,6 @@ pub fn x004010b9(ctx: &mut Context) -> Cont {
     call(ctx, 0x4010da, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004010da(ctx: &mut Context) -> Cont {
     // 004010da mov esi,ds:[4060D4h]
     ctx.cpu.regs.esi = ctx.memory.read::<u32>(0x4060d4u32);
@@ -232,7 +217,6 @@ pub fn x004010da(ctx: &mut Context) -> Cont {
     call(ctx, 0x4010fb, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004010ec(ctx: &mut Context) -> Cont {
     // 004010ec push 1
     push(ctx, 0x1u32);
@@ -251,7 +235,6 @@ pub fn x004010ec(ctx: &mut Context) -> Cont {
     call(ctx, 0x4010fb, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004010fb(ctx: &mut Context) -> Cont {
     // 004010fb test eax,eax
     and(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -259,7 +242,6 @@ pub fn x004010fb(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004010ff), Cont(x00401116))
 }
 
-#[allow(unused_variables)]
 pub fn x004010ff(ctx: &mut Context) -> Cont {
     // 004010ff cmp dword ptr [esp+10h],12h
     sub(
@@ -272,7 +254,6 @@ pub fn x004010ff(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00401106), Cont(x0040111d))
 }
 
-#[allow(unused_variables)]
 pub fn x00401106(ctx: &mut Context) -> Cont {
     // 00401106 lea eax,[esp+0Ch]
     ctx.cpu.regs.eax = ctx.cpu.regs.esp.wrapping_add(0xcu32);
@@ -283,7 +264,6 @@ pub fn x00401106(ctx: &mut Context) -> Cont {
     call(ctx, 0x40110d, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x0040110d(ctx: &mut Context) -> Cont {
     // 0040110d lea ecx,[esp+0Ch]
     ctx.cpu.regs.ecx = ctx.cpu.regs.esp.wrapping_add(0xcu32);
@@ -294,33 +274,28 @@ pub fn x0040110d(ctx: &mut Context) -> Cont {
     call(ctx, 0x401114, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401114(ctx: &mut Context) -> Cont {
     // 00401114 jmp short 004010ECh
     Cont(x004010ec)
 }
 
-#[allow(unused_variables)]
 pub fn x00401116(ctx: &mut Context) -> Cont {
     // 00401116 call 00401130h
     let dst = Cont(x00401130);
     call(ctx, 0x40111b, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x0040111b(ctx: &mut Context) -> Cont {
     // 0040111b jmp short 004010ECh
     Cont(x004010ec)
 }
 
-#[allow(unused_variables)]
 pub fn x0040111d(ctx: &mut Context) -> Cont {
     // 0040111d call 00401420h
     let dst = Cont(x00401420);
     call(ctx, 0x401122, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401122(ctx: &mut Context) -> Cont {
     // 00401122 pop edi
     let x = pop(ctx);
@@ -339,7 +314,6 @@ pub fn x00401122(ctx: &mut Context) -> Cont {
     ret(ctx, 16)
 }
 
-#[allow(unused_variables)]
 pub fn x00401130(ctx: &mut Context) -> Cont {
     // 00401130 push edi
     push(ctx, ctx.cpu.regs.edi);
@@ -350,7 +324,6 @@ pub fn x00401130(ctx: &mut Context) -> Cont {
     call(ctx, 0x401139, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401139(ctx: &mut Context) -> Cont {
     // 00401139 sub eax,ds:[409548h]
     ctx.cpu.regs.eax = sub(
@@ -364,7 +337,6 @@ pub fn x00401139(ctx: &mut Context) -> Cont {
     jb(ctx, Cont(x00401148), Cont(x004011ef))
 }
 
-#[allow(unused_variables)]
 pub fn x00401148(ctx: &mut Context) -> Cont {
     // 00401148 mov eax,ds:[409594h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x409594u32);
@@ -393,7 +365,6 @@ pub fn x00401148(ctx: &mut Context) -> Cont {
     call(ctx, 0x40117a, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x0040117a(ctx: &mut Context) -> Cont {
     // 0040117a mov eax,ds:[409588h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x409588u32);
@@ -410,7 +381,6 @@ pub fn x0040117a(ctx: &mut Context) -> Cont {
     call(ctx, 0x401189, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401189(ctx: &mut Context) -> Cont {
     // 00401189 test eax,eax
     and(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -418,7 +388,6 @@ pub fn x00401189(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x0040118d), Cont(x004011a8))
 }
 
-#[allow(unused_variables)]
 pub fn x0040118d(ctx: &mut Context) -> Cont {
     // 0040118d cmp eax,887601C2h
     sub(ctx.cpu.regs.eax, 0x887601c2u32, &mut ctx.cpu.flags);
@@ -426,7 +395,6 @@ pub fn x0040118d(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00401194), Cont(x0040119d))
 }
 
-#[allow(unused_variables)]
 pub fn x00401194(ctx: &mut Context) -> Cont {
     // 00401194 cmp eax,8876021Ch
     sub(ctx.cpu.regs.eax, 0x8876021cu32, &mut ctx.cpu.flags);
@@ -434,13 +402,11 @@ pub fn x00401194(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x0040119b), Cont(x004011a8))
 }
 
-#[allow(unused_variables)]
 pub fn x0040119b(ctx: &mut Context) -> Cont {
     // 0040119b jmp short 0040117Ah
     Cont(x0040117a)
 }
 
-#[allow(unused_variables)]
 pub fn x0040119d(ctx: &mut Context) -> Cont {
     // 0040119d mov eax,ds:[409588h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x409588u32);
@@ -453,7 +419,6 @@ pub fn x0040119d(ctx: &mut Context) -> Cont {
     call(ctx, 0x4011a8, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004011a8(ctx: &mut Context) -> Cont {
     // 004011a8 mov eax,ds:[409590h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x409590u32);
@@ -467,7 +432,6 @@ pub fn x004011a8(ctx: &mut Context) -> Cont {
     jl(ctx, Cont(x004011be), Cont(x004011e8))
 }
 
-#[allow(unused_variables)]
 pub fn x004011be(ctx: &mut Context) -> Cont {
     // 004011be mov eax,ds:[409594h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x409594u32);
@@ -483,7 +447,6 @@ pub fn x004011be(ctx: &mut Context) -> Cont {
     jl(ctx, Cont(x004011de), Cont(x004011e8))
 }
 
-#[allow(unused_variables)]
 pub fn x004011de(ctx: &mut Context) -> Cont {
     // 004011de mov dword ptr ds:[409594h],0
     ctx.memory.write::<u32>(0x409594u32, 0x0u32);
@@ -492,14 +455,12 @@ pub fn x004011de(ctx: &mut Context) -> Cont {
     call(ctx, 0x4011ea, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004011e8(ctx: &mut Context) -> Cont {
     // 004011e8 call edi
     let dst = indirect(ctx, ctx.cpu.regs.edi);
     call(ctx, 0x4011ea, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004011ea(ctx: &mut Context) -> Cont {
     // 004011ea mov ds:[409548h],eax
     ctx.memory.write::<u32>(0x409548u32, ctx.cpu.regs.eax);
@@ -510,7 +471,6 @@ pub fn x004011ea(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x004011ef(ctx: &mut Context) -> Cont {
     // 004011ef pop edi
     let x = pop(ctx);
@@ -519,7 +479,6 @@ pub fn x004011ef(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00401200(ctx: &mut Context) -> Cont {
     // 00401200 sub esp,28h
     ctx.cpu.regs.esp = sub(ctx.cpu.regs.esp, 0x28u32, &mut ctx.cpu.flags);
@@ -551,7 +510,6 @@ pub fn x00401200(ctx: &mut Context) -> Cont {
     call(ctx, 0x401239, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401239(ctx: &mut Context) -> Cont {
     // 00401239 push 7F00h
     push(ctx, 0x7f00u32);
@@ -565,7 +523,6 @@ pub fn x00401239(ctx: &mut Context) -> Cont {
     call(ctx, 0x40124a, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x0040124a(ctx: &mut Context) -> Cont {
     // 0040124a push 4
     push(ctx, 0x4u32);
@@ -577,7 +534,6 @@ pub fn x0040124a(ctx: &mut Context) -> Cont {
     call(ctx, 0x401256, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401256(ctx: &mut Context) -> Cont {
     // 00401256 mov [esp+20h],eax
     ctx.memory
@@ -597,7 +553,6 @@ pub fn x00401256(ctx: &mut Context) -> Cont {
     call(ctx, 0x401275, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401275(ctx: &mut Context) -> Cont {
     // 00401275 mov ecx,ds:[40957Ch]
     ctx.cpu.regs.ecx = ctx.memory.read::<u32>(0x40957cu32);
@@ -618,7 +573,6 @@ pub fn x00401275(ctx: &mut Context) -> Cont {
     call(ctx, 0x40128c, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x0040128c(ctx: &mut Context) -> Cont {
     // 0040128c push eax
     push(ctx, ctx.cpu.regs.eax);
@@ -629,7 +583,6 @@ pub fn x0040128c(ctx: &mut Context) -> Cont {
     call(ctx, 0x401291, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401291(ctx: &mut Context) -> Cont {
     // 00401291 push eax
     push(ctx, ctx.cpu.regs.eax);
@@ -650,7 +603,6 @@ pub fn x00401291(ctx: &mut Context) -> Cont {
     call(ctx, 0x4012ad, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004012ad(ctx: &mut Context) -> Cont {
     // 004012ad mov edx,[esp+30h]
     ctx.cpu.regs.edx = ctx
@@ -667,7 +619,6 @@ pub fn x004012ad(ctx: &mut Context) -> Cont {
     call(ctx, 0x4012bb, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004012bb(ctx: &mut Context) -> Cont {
     // 004012bb push esi
     push(ctx, ctx.cpu.regs.esi);
@@ -676,7 +627,6 @@ pub fn x004012bb(ctx: &mut Context) -> Cont {
     call(ctx, 0x4012c2, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004012c2(ctx: &mut Context) -> Cont {
     // 004012c2 push esi
     push(ctx, ctx.cpu.regs.esi);
@@ -685,7 +635,6 @@ pub fn x004012c2(ctx: &mut Context) -> Cont {
     call(ctx, 0x4012c9, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004012c9(ctx: &mut Context) -> Cont {
     // 004012c9 mov eax,esi
     ctx.cpu.regs.eax = ctx.cpu.regs.esi;
@@ -698,7 +647,6 @@ pub fn x004012c9(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00401310(ctx: &mut Context) -> Cont {
     // 00401310 sub esp,8Ch
     ctx.cpu.regs.esp = sub(ctx.cpu.regs.esp, 0x8cu32, &mut ctx.cpu.flags);
@@ -715,7 +663,6 @@ pub fn x00401310(ctx: &mut Context) -> Cont {
     call(ctx, 0x401329, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401329(ctx: &mut Context) -> Cont {
     // 00401329 test eax,eax
     and(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -723,7 +670,6 @@ pub fn x00401329(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x0040132d), Cont(x00401337))
 }
 
-#[allow(unused_variables)]
 pub fn x0040132d(ctx: &mut Context) -> Cont {
     // 0040132d or eax,0FFFFFFFFh
     ctx.cpu.regs.eax = or(ctx.cpu.regs.eax, 0xffffffffu32, &mut ctx.cpu.flags);
@@ -733,7 +679,6 @@ pub fn x0040132d(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00401337(ctx: &mut Context) -> Cont {
     // 00401337 mov eax,ds:[409584h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x409584u32);
@@ -752,7 +697,6 @@ pub fn x00401337(ctx: &mut Context) -> Cont {
     call(ctx, 0x40134b, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x0040134b(ctx: &mut Context) -> Cont {
     // 0040134b test eax,eax
     and(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -760,7 +704,6 @@ pub fn x0040134b(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x0040134f), Cont(x0040135b))
 }
 
-#[allow(unused_variables)]
 pub fn x0040134f(ctx: &mut Context) -> Cont {
     // 0040134f mov eax,0FFFFFFFEh
     ctx.cpu.regs.eax = 0xfffffffeu32;
@@ -770,7 +713,6 @@ pub fn x0040134f(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x0040135b(ctx: &mut Context) -> Cont {
     // 0040135b mov eax,ds:[409584h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x409584u32);
@@ -793,7 +735,6 @@ pub fn x0040135b(ctx: &mut Context) -> Cont {
     call(ctx, 0x401376, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401376(ctx: &mut Context) -> Cont {
     // 00401376 test eax,eax
     and(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -801,7 +742,6 @@ pub fn x00401376(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x0040137a), Cont(x00401386))
 }
 
-#[allow(unused_variables)]
 pub fn x0040137a(ctx: &mut Context) -> Cont {
     // 0040137a mov eax,0FFFFFFFDh
     ctx.cpu.regs.eax = 0xfffffffdu32;
@@ -811,7 +751,6 @@ pub fn x0040137a(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00401386(ctx: &mut Context) -> Cont {
     // 00401386 push edi
     push(ctx, ctx.cpu.regs.edi);
@@ -854,7 +793,6 @@ pub fn x00401386(ctx: &mut Context) -> Cont {
     call(ctx, 0x4013ce, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004013ce(ctx: &mut Context) -> Cont {
     // 004013ce test eax,eax
     and(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -865,7 +803,6 @@ pub fn x004013ce(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004013d3), Cont(x004013dd))
 }
 
-#[allow(unused_variables)]
 pub fn x004013d3(ctx: &mut Context) -> Cont {
     // 004013d3 or eax,0FFFFFFFFh
     ctx.cpu.regs.eax = or(ctx.cpu.regs.eax, 0xffffffffu32, &mut ctx.cpu.flags);
@@ -875,7 +812,6 @@ pub fn x004013d3(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x004013dd(ctx: &mut Context) -> Cont {
     // 004013dd xor edx,edx
     ctx.cpu.regs.edx = xor(ctx.cpu.regs.edx, ctx.cpu.regs.edx, &mut ctx.cpu.flags);
@@ -909,7 +845,6 @@ pub fn x004013dd(ctx: &mut Context) -> Cont {
     call(ctx, 0x40140c, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x0040140c(ctx: &mut Context) -> Cont {
     // 0040140c neg eax
     ctx.cpu.regs.eax = neg(ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -921,7 +856,6 @@ pub fn x0040140c(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00401420(ctx: &mut Context) -> Cont {
     // 00401420 mov ecx,409550h
     ctx.cpu.regs.ecx = 0x409550u32;
@@ -930,7 +864,6 @@ pub fn x00401420(ctx: &mut Context) -> Cont {
     call(ctx, 0x40142a, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x0040142a(ctx: &mut Context) -> Cont {
     // 0040142a mov eax,ds:[40958Ch]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x40958cu32);
@@ -940,7 +873,6 @@ pub fn x0040142a(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00401433), Cont(x00401439))
 }
 
-#[allow(unused_variables)]
 pub fn x00401433(ctx: &mut Context) -> Cont {
     // 00401433 mov ecx,[eax]
     ctx.cpu.regs.ecx = ctx.memory.read::<u32>(ctx.cpu.regs.eax);
@@ -951,7 +883,6 @@ pub fn x00401433(ctx: &mut Context) -> Cont {
     call(ctx, 0x401439, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401439(ctx: &mut Context) -> Cont {
     // 00401439 mov eax,ds:[409588h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x409588u32);
@@ -961,7 +892,6 @@ pub fn x00401439(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00401442), Cont(x00401448))
 }
 
-#[allow(unused_variables)]
 pub fn x00401442(ctx: &mut Context) -> Cont {
     // 00401442 mov edx,[eax]
     ctx.cpu.regs.edx = ctx.memory.read::<u32>(ctx.cpu.regs.eax);
@@ -972,7 +902,6 @@ pub fn x00401442(ctx: &mut Context) -> Cont {
     call(ctx, 0x401448, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401448(ctx: &mut Context) -> Cont {
     // 00401448 mov eax,ds:[409584h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x409584u32);
@@ -982,7 +911,6 @@ pub fn x00401448(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00401451), Cont(x00401457))
 }
 
-#[allow(unused_variables)]
 pub fn x00401451(ctx: &mut Context) -> Cont {
     // 00401451 mov ecx,[eax]
     ctx.cpu.regs.ecx = ctx.memory.read::<u32>(ctx.cpu.regs.eax);
@@ -993,13 +921,11 @@ pub fn x00401451(ctx: &mut Context) -> Cont {
     call(ctx, 0x401457, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401457(ctx: &mut Context) -> Cont {
     // 00401457 ret
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00401460(ctx: &mut Context) -> Cont {
     // 00401460 mov eax,ecx
     ctx.cpu.regs.eax = ctx.cpu.regs.ecx;
@@ -1015,7 +941,6 @@ pub fn x00401460(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00401480(ctx: &mut Context) -> Cont {
     // 00401480 push esi
     push(ctx, ctx.cpu.regs.esi);
@@ -1026,7 +951,6 @@ pub fn x00401480(ctx: &mut Context) -> Cont {
     call(ctx, 0x401488, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401488(ctx: &mut Context) -> Cont {
     // 00401488 test byte ptr [esp+8],1
     and(
@@ -1038,7 +962,6 @@ pub fn x00401488(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x0040148f), Cont(x00401498))
 }
 
-#[allow(unused_variables)]
 pub fn x0040148f(ctx: &mut Context) -> Cont {
     // 0040148f push esi
     push(ctx, ctx.cpu.regs.esi);
@@ -1047,7 +970,6 @@ pub fn x0040148f(ctx: &mut Context) -> Cont {
     call(ctx, 0x401495, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401495(ctx: &mut Context) -> Cont {
     // 00401495 add esp,4
     ctx.cpu.regs.esp = add(ctx.cpu.regs.esp, 0x4u32, &mut ctx.cpu.flags);
@@ -1060,7 +982,6 @@ pub fn x00401495(ctx: &mut Context) -> Cont {
     ret(ctx, 4)
 }
 
-#[allow(unused_variables)]
 pub fn x00401498(ctx: &mut Context) -> Cont {
     // 00401498 mov eax,esi
     ctx.cpu.regs.eax = ctx.cpu.regs.esi;
@@ -1071,7 +992,6 @@ pub fn x00401498(ctx: &mut Context) -> Cont {
     ret(ctx, 4)
 }
 
-#[allow(unused_variables)]
 pub fn x004014a0(ctx: &mut Context) -> Cont {
     // 004014a0 push esi
     push(ctx, ctx.cpu.regs.esi);
@@ -1089,7 +1009,6 @@ pub fn x004014a0(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004014b0), Cont(x004014cb))
 }
 
-#[allow(unused_variables)]
 pub fn x004014b0(ctx: &mut Context) -> Cont {
     // 004014b0 push 4070B0h
     push(ctx, 0x4070b0u32);
@@ -1098,7 +1017,6 @@ pub fn x004014b0(ctx: &mut Context) -> Cont {
     call(ctx, 0x4014bb, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004014bb(ctx: &mut Context) -> Cont {
     // 004014bb mov eax,[esi+28h]
     ctx.cpu.regs.eax = ctx
@@ -1113,7 +1031,6 @@ pub fn x004014bb(ctx: &mut Context) -> Cont {
     call(ctx, 0x4014c4, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004014c4(ctx: &mut Context) -> Cont {
     // 004014c4 mov dword ptr [esi+28h],0
     ctx.memory
@@ -1125,7 +1042,6 @@ pub fn x004014c4(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x004014cb(ctx: &mut Context) -> Cont {
     // 004014cb pop esi
     let x = pop(ctx);
@@ -1134,7 +1050,6 @@ pub fn x004014cb(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x004014d0(ctx: &mut Context) -> Cont {
     // 004014d0 mov eax,[esp+18h]
     ctx.cpu.regs.eax = ctx
@@ -1183,7 +1098,6 @@ pub fn x004014d0(ctx: &mut Context) -> Cont {
     call(ctx, 0x401509, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401509(ctx: &mut Context) -> Cont {
     // 00401509 mov ebp,eax
     ctx.cpu.regs.ebp = ctx.cpu.regs.eax;
@@ -1193,7 +1107,6 @@ pub fn x00401509(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00401513), Cont(x00401627))
 }
 
-#[allow(unused_variables)]
 pub fn x00401513(ctx: &mut Context) -> Cont {
     // 00401513 mov eax,[esi+28h]
     ctx.cpu.regs.eax = ctx
@@ -1205,7 +1118,6 @@ pub fn x00401513(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x0040151e), Cont(x00401627))
 }
 
-#[allow(unused_variables)]
 pub fn x0040151e(ctx: &mut Context) -> Cont {
     // 0040151e mov ecx,[eax]
     ctx.cpu.regs.ecx = ctx.memory.read::<u32>(ctx.cpu.regs.eax);
@@ -1216,7 +1128,6 @@ pub fn x0040151e(ctx: &mut Context) -> Cont {
     call(ctx, 0x401524, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401524(ctx: &mut Context) -> Cont {
     // 00401524 push 0
     push(ctx, 0x0u32);
@@ -1225,7 +1136,6 @@ pub fn x00401524(ctx: &mut Context) -> Cont {
     call(ctx, 0x40152c, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x0040152c(ctx: &mut Context) -> Cont {
     // 0040152c mov edi,eax
     ctx.cpu.regs.edi = ctx.cpu.regs.eax;
@@ -1235,7 +1145,6 @@ pub fn x0040152c(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00401536), Cont(x00401627))
 }
 
-#[allow(unused_variables)]
 pub fn x00401536(ctx: &mut Context) -> Cont {
     // 00401536 push ebp
     push(ctx, ctx.cpu.regs.ebp);
@@ -1246,7 +1155,6 @@ pub fn x00401536(ctx: &mut Context) -> Cont {
     call(ctx, 0x40153e, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x0040153e(ctx: &mut Context) -> Cont {
     // 0040153e lea edx,[esp+14h]
     ctx.cpu.regs.edx = ctx.cpu.regs.esp.wrapping_add(0x14u32);
@@ -1261,7 +1169,6 @@ pub fn x0040153e(ctx: &mut Context) -> Cont {
     call(ctx, 0x40154c, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x0040154c(ctx: &mut Context) -> Cont {
     // 0040154c test ebx,ebx
     and(ctx.cpu.regs.ebx, ctx.cpu.regs.ebx, &mut ctx.cpu.flags);
@@ -1269,7 +1176,6 @@ pub fn x0040154c(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00401550), Cont(x00401554))
 }
 
-#[allow(unused_variables)]
 pub fn x00401550(ctx: &mut Context) -> Cont {
     // 00401550 mov ebx,[esp+18h]
     ctx.cpu.regs.ebx = ctx
@@ -1285,7 +1191,6 @@ pub fn x00401550(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x0040155f), Cont(x0040156a))
 }
 
-#[allow(unused_variables)]
 pub fn x00401554(ctx: &mut Context) -> Cont {
     // 00401554 mov eax,[esp+0C0h]
     ctx.cpu.regs.eax = ctx
@@ -1297,7 +1202,6 @@ pub fn x00401554(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x0040155f), Cont(x0040156a))
 }
 
-#[allow(unused_variables)]
 pub fn x0040155f(ctx: &mut Context) -> Cont {
     // 0040155f mov eax,[esp+1Ch]
     ctx.cpu.regs.eax = ctx
@@ -1329,7 +1233,6 @@ pub fn x0040155f(ctx: &mut Context) -> Cont {
     call(ctx, 0x401588, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x0040156a(ctx: &mut Context) -> Cont {
     // 0040156a mov eax,[esi+28h]
     ctx.cpu.regs.eax = ctx
@@ -1354,7 +1257,6 @@ pub fn x0040156a(ctx: &mut Context) -> Cont {
     call(ctx, 0x401588, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401588(ctx: &mut Context) -> Cont {
     // 00401588 mov eax,[esi+28h]
     ctx.cpu.regs.eax = ctx
@@ -1373,7 +1275,6 @@ pub fn x00401588(ctx: &mut Context) -> Cont {
     call(ctx, 0x401596, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401596(ctx: &mut Context) -> Cont {
     // 00401596 mov ebp,[esp+0B8h]
     ctx.cpu.regs.ebp = ctx
@@ -1385,7 +1286,6 @@ pub fn x00401596(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004015a1), Cont(x004015e0))
 }
 
-#[allow(unused_variables)]
 pub fn x004015a1(ctx: &mut Context) -> Cont {
     // 004015a1 mov eax,[esp+0C0h]
     ctx.cpu.regs.eax = ctx
@@ -1434,7 +1334,6 @@ pub fn x004015a1(ctx: &mut Context) -> Cont {
     call(ctx, 0x4015d2, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004015d2(ctx: &mut Context) -> Cont {
     // 004015d2 mov eax,[esi+28h]
     ctx.cpu.regs.eax = ctx
@@ -1455,7 +1354,6 @@ pub fn x004015d2(ctx: &mut Context) -> Cont {
     call(ctx, 0x4015e0, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004015e0(ctx: &mut Context) -> Cont {
     // 004015e0 push edi
     push(ctx, ctx.cpu.regs.edi);
@@ -1464,7 +1362,6 @@ pub fn x004015e0(ctx: &mut Context) -> Cont {
     call(ctx, 0x4015e7, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004015e7(ctx: &mut Context) -> Cont {
     // 004015e7 mov edx,[esp+0ACh]
     ctx.cpu.regs.edx = ctx
@@ -1520,7 +1417,6 @@ pub fn x004015e7(ctx: &mut Context) -> Cont {
     ret(ctx, 24)
 }
 
-#[allow(unused_variables)]
 pub fn x00401627(ctx: &mut Context) -> Cont {
     // 00401627 pop edi
     let x = pop(ctx);
@@ -1542,7 +1438,6 @@ pub fn x00401627(ctx: &mut Context) -> Cont {
     ret(ctx, 24)
 }
 
-#[allow(unused_variables)]
 pub fn x00401640(ctx: &mut Context) -> Cont {
     // 00401640 sub esp,84h
     ctx.cpu.regs.esp = sub(ctx.cpu.regs.esp, 0x84u32, &mut ctx.cpu.flags);
@@ -1610,7 +1505,6 @@ pub fn x00401640(ctx: &mut Context) -> Cont {
     call(ctx, 0x4016a2, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004016a2(ctx: &mut Context) -> Cont {
     // 004016a2 test eax,eax
     and(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -1618,7 +1512,6 @@ pub fn x004016a2(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004016a6), Cont(x004016d9))
 }
 
-#[allow(unused_variables)]
 pub fn x004016a6(ctx: &mut Context) -> Cont {
     // 004016a6 cmp eax,8876017Ch
     sub(ctx.cpu.regs.eax, 0x8876017cu32, &mut ctx.cpu.flags);
@@ -1626,7 +1519,6 @@ pub fn x004016a6(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004016ad), Cont(x004016c6))
 }
 
-#[allow(unused_variables)]
 pub fn x004016ad(ctx: &mut Context) -> Cont {
     // 004016ad mov eax,[esi]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(ctx.cpu.regs.esi);
@@ -1648,7 +1540,6 @@ pub fn x004016ad(ctx: &mut Context) -> Cont {
     call(ctx, 0x4016c6, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004016c6(ctx: &mut Context) -> Cont {
     // 004016c6 test eax,eax
     and(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -1656,7 +1547,6 @@ pub fn x004016c6(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004016ca), Cont(x004016d9))
 }
 
-#[allow(unused_variables)]
 pub fn x004016ca(ctx: &mut Context) -> Cont {
     // 004016ca pop edi
     let x = pop(ctx);
@@ -1678,7 +1568,6 @@ pub fn x004016ca(ctx: &mut Context) -> Cont {
     ret(ctx, 16)
 }
 
-#[allow(unused_variables)]
 pub fn x004016d9(ctx: &mut Context) -> Cont {
     // 004016d9 mov esi,[esp+0A4h]
     ctx.cpu.regs.esi = ctx
@@ -1690,7 +1579,6 @@ pub fn x004016d9(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004016e5), Cont(x00401700))
 }
 
-#[allow(unused_variables)]
 pub fn x004016e5(ctx: &mut Context) -> Cont {
     // 004016e5 mov edi,[edi]
     ctx.cpu.regs.edi = ctx.memory.read::<u32>(ctx.cpu.regs.edi);
@@ -1715,7 +1603,6 @@ pub fn x004016e5(ctx: &mut Context) -> Cont {
     call(ctx, 0x401700, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401700(ctx: &mut Context) -> Cont {
     // 00401700 mov ecx,[esp+0A0h]
     ctx.cpu.regs.ecx = ctx
@@ -1750,7 +1637,6 @@ pub fn x00401700(ctx: &mut Context) -> Cont {
     ret(ctx, 16)
 }
 
-#[allow(unused_variables)]
 pub fn x00401730(ctx: &mut Context) -> Cont {
     // 00401730 sub esp,10h
     ctx.cpu.regs.esp = sub(ctx.cpu.regs.esp, 0x10u32, &mut ctx.cpu.flags);
@@ -1774,7 +1660,6 @@ pub fn x00401730(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00401741), Cont(x00401744))
 }
 
-#[allow(unused_variables)]
 pub fn x00401741(ctx: &mut Context) -> Cont {
     // 00401741 mov esi,[edi+24h]
     ctx.cpu.regs.esi = ctx
@@ -1790,7 +1675,6 @@ pub fn x00401741(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x0040174c), Cont(x0040174f))
 }
 
-#[allow(unused_variables)]
 pub fn x00401744(ctx: &mut Context) -> Cont {
     // 00401744 mov edx,[esp+3Ch]
     ctx.cpu.regs.edx = ctx
@@ -1802,7 +1686,6 @@ pub fn x00401744(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x0040174c), Cont(x0040174f))
 }
 
-#[allow(unused_variables)]
 pub fn x0040174c(ctx: &mut Context) -> Cont {
     // 0040174c mov edx,[edi+20h]
     ctx.cpu.regs.edx = ctx
@@ -1856,7 +1739,6 @@ pub fn x0040174c(ctx: &mut Context) -> Cont {
     jge(ctx, Cont(x00401780), Cont(x00401784))
 }
 
-#[allow(unused_variables)]
 pub fn x0040174f(ctx: &mut Context) -> Cont {
     // 0040174f mov eax,[esp+30h]
     ctx.cpu.regs.eax = ctx
@@ -1906,7 +1788,6 @@ pub fn x0040174f(ctx: &mut Context) -> Cont {
     jge(ctx, Cont(x00401780), Cont(x00401784))
 }
 
-#[allow(unused_variables)]
 pub fn x00401777(ctx: &mut Context) -> Cont {
     // 00401777 mov eax,[edi+1Ch]
     ctx.cpu.regs.eax = ctx
@@ -1920,7 +1801,6 @@ pub fn x00401777(ctx: &mut Context) -> Cont {
     jge(ctx, Cont(x00401780), Cont(x00401784))
 }
 
-#[allow(unused_variables)]
 pub fn x00401780(ctx: &mut Context) -> Cont {
     // 00401780 push 0
     push(ctx, 0x0u32);
@@ -1928,7 +1808,6 @@ pub fn x00401780(ctx: &mut Context) -> Cont {
     Cont(x00401786)
 }
 
-#[allow(unused_variables)]
 pub fn x00401784(ctx: &mut Context) -> Cont {
     // 00401784 push 1
     push(ctx, 0x1u32);
@@ -1953,7 +1832,6 @@ pub fn x00401784(ctx: &mut Context) -> Cont {
     call(ctx, 0x401795, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401786(ctx: &mut Context) -> Cont {
     // 00401786 mov edx,[edi+28h]
     ctx.cpu.regs.edx = ctx
@@ -1976,7 +1854,6 @@ pub fn x00401786(ctx: &mut Context) -> Cont {
     call(ctx, 0x401795, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401795(ctx: &mut Context) -> Cont {
     // 00401795 test eax,eax
     and(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -1984,7 +1861,6 @@ pub fn x00401795(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00401799), Cont(x004017bc))
 }
 
-#[allow(unused_variables)]
 pub fn x00401799(ctx: &mut Context) -> Cont {
     // 00401799 cmp eax,887601C2h
     sub(ctx.cpu.regs.eax, 0x887601c2u32, &mut ctx.cpu.flags);
@@ -1992,7 +1868,6 @@ pub fn x00401799(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004017a0), Cont(x004017a9))
 }
 
-#[allow(unused_variables)]
 pub fn x004017a0(ctx: &mut Context) -> Cont {
     // 004017a0 mov ecx,edi
     ctx.cpu.regs.ecx = ctx.cpu.regs.edi;
@@ -2001,13 +1876,11 @@ pub fn x004017a0(ctx: &mut Context) -> Cont {
     call(ctx, 0x4017a7, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004017a7(ctx: &mut Context) -> Cont {
     // 004017a7 jmp short 00401777h
     Cont(x00401777)
 }
 
-#[allow(unused_variables)]
 pub fn x004017a9(ctx: &mut Context) -> Cont {
     // 004017a9 cmp eax,8876021Ch
     sub(ctx.cpu.regs.eax, 0x8876021cu32, &mut ctx.cpu.flags);
@@ -2015,7 +1888,6 @@ pub fn x004017a9(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004017b0), Cont(x00401777))
 }
 
-#[allow(unused_variables)]
 pub fn x004017b0(ctx: &mut Context) -> Cont {
     // 004017b0 pop edi
     let x = pop(ctx);
@@ -2037,7 +1909,6 @@ pub fn x004017b0(ctx: &mut Context) -> Cont {
     ret(ctx, 28)
 }
 
-#[allow(unused_variables)]
 pub fn x004017bc(ctx: &mut Context) -> Cont {
     // 004017bc pop edi
     let x = pop(ctx);
@@ -2059,7 +1930,6 @@ pub fn x004017bc(ctx: &mut Context) -> Cont {
     ret(ctx, 28)
 }
 
-#[allow(unused_variables)]
 pub fn x004017d0(ctx: &mut Context) -> Cont {
     // 004017d0 push esi
     push(ctx, ctx.cpu.regs.esi);
@@ -2075,7 +1945,6 @@ pub fn x004017d0(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004017da), Cont(x004017e7))
 }
 
-#[allow(unused_variables)]
 pub fn x004017da(ctx: &mut Context) -> Cont {
     // 004017da mov ecx,[eax]
     ctx.cpu.regs.ecx = ctx.memory.read::<u32>(ctx.cpu.regs.eax);
@@ -2086,7 +1955,6 @@ pub fn x004017da(ctx: &mut Context) -> Cont {
     call(ctx, 0x4017e0, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004017e0(ctx: &mut Context) -> Cont {
     // 004017e0 mov dword ptr [esi+28h],0
     ctx.memory
@@ -2098,7 +1966,6 @@ pub fn x004017e0(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x004017e7(ctx: &mut Context) -> Cont {
     // 004017e7 pop esi
     let x = pop(ctx);
@@ -2107,7 +1974,6 @@ pub fn x004017e7(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x004017f0(ctx: &mut Context) -> Cont {
     // 004017f0 mov eax,[ecx+28h]
     ctx.cpu.regs.eax = ctx
@@ -2122,19 +1988,16 @@ pub fn x004017f0(ctx: &mut Context) -> Cont {
     call(ctx, 0x4017f9, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004017f9(ctx: &mut Context) -> Cont {
     // 004017f9 ret
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00401800(ctx: &mut Context) -> Cont {
     // 00401800 jmp dword ptr ds:[406000h]
     Cont(ddraw::DirectDrawCreateEx_stdcall)
 }
 
-#[allow(unused_variables)]
 pub fn x00401806(ctx: &mut Context) -> Cont {
     // 00401806 push esi
     push(ctx, ctx.cpu.regs.esi);
@@ -2145,7 +2008,6 @@ pub fn x00401806(ctx: &mut Context) -> Cont {
     call(ctx, 0x401812, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401812(ctx: &mut Context) -> Cont {
     // 00401812 mov edx,ds:[409AB0h]
     ctx.cpu.regs.edx = ctx.memory.read::<u32>(0x409ab0u32);
@@ -2169,7 +2031,6 @@ pub fn x00401812(ctx: &mut Context) -> Cont {
     jae(ctx, Cont(x0040182b), Cont(x00401865))
 }
 
-#[allow(unused_variables)]
 pub fn x0040182b(ctx: &mut Context) -> Cont {
     // 0040182b push edx
     push(ctx, ctx.cpu.regs.edx);
@@ -2178,7 +2039,6 @@ pub fn x0040182b(ctx: &mut Context) -> Cont {
     call(ctx, 0x401831, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401831(ctx: &mut Context) -> Cont {
     // 00401831 add eax,10h
     ctx.cpu.regs.eax = add(ctx.cpu.regs.eax, 0x10u32, &mut ctx.cpu.flags);
@@ -2191,7 +2051,6 @@ pub fn x00401831(ctx: &mut Context) -> Cont {
     call(ctx, 0x401840, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401840(ctx: &mut Context) -> Cont {
     // 00401840 add esp,0Ch
     ctx.cpu.regs.esp = add(ctx.cpu.regs.esp, 0xcu32, &mut ctx.cpu.flags);
@@ -2201,13 +2060,11 @@ pub fn x00401840(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00401847), Cont(x00401848))
 }
 
-#[allow(unused_variables)]
 pub fn x00401847(ctx: &mut Context) -> Cont {
     // 00401847 ret
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00401848(ctx: &mut Context) -> Cont {
     // 00401848 mov ecx,ds:[409AACh]
     ctx.cpu.regs.ecx = ctx.memory.read::<u32>(0x409aacu32);
@@ -2244,7 +2101,6 @@ pub fn x00401848(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00401865(ctx: &mut Context) -> Cont {
     // 00401865 mov eax,[esp+4]
     ctx.cpu.regs.eax = ctx
@@ -2265,7 +2121,6 @@ pub fn x00401865(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00401873(ctx: &mut Context) -> Cont {
     // 00401873 push dword ptr [esp+4]
     push(
@@ -2278,7 +2133,6 @@ pub fn x00401873(ctx: &mut Context) -> Cont {
     call(ctx, 0x40187c, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x0040187c(ctx: &mut Context) -> Cont {
     // 0040187c neg eax
     ctx.cpu.regs.eax = neg(ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -2295,7 +2149,6 @@ pub fn x0040187c(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00401885(ctx: &mut Context) -> Cont {
     // 00401885 push 80h
     push(ctx, 0x80u32);
@@ -2304,7 +2157,6 @@ pub fn x00401885(ctx: &mut Context) -> Cont {
     call(ctx, 0x40188f, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x0040188f(ctx: &mut Context) -> Cont {
     // 0040188f test eax,eax
     and(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -2317,7 +2169,6 @@ pub fn x0040188f(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00401899), Cont(x004018a6))
 }
 
-#[allow(unused_variables)]
 pub fn x00401899(ctx: &mut Context) -> Cont {
     // 00401899 push 18h
     push(ctx, 0x18u32);
@@ -2326,7 +2177,6 @@ pub fn x00401899(ctx: &mut Context) -> Cont {
     call(ctx, 0x4018a0, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004018a0(ctx: &mut Context) -> Cont {
     // 004018a0 mov eax,ds:[409AB0h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x409ab0u32);
@@ -2350,7 +2200,6 @@ pub fn x004018a0(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x004018a6(ctx: &mut Context) -> Cont {
     // 004018a6 and dword ptr [eax],0
     ctx.memory.write::<u32>(
@@ -2369,7 +2218,6 @@ pub fn x004018a6(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x004018b4(ctx: &mut Context) -> Cont {
     // 004018b4 push dword ptr [esp+4]
     push(
@@ -2382,7 +2230,6 @@ pub fn x004018b4(ctx: &mut Context) -> Cont {
     call(ctx, 0x4018bd, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004018bd(ctx: &mut Context) -> Cont {
     // 004018bd pop ecx
     let x = pop(ctx);
@@ -2391,7 +2238,6 @@ pub fn x004018bd(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x004018bf(ctx: &mut Context) -> Cont {
     // 004018bf push ebp
     push(ctx, ctx.cpu.regs.ebp);
@@ -2428,7 +2274,6 @@ pub fn x004018bf(ctx: &mut Context) -> Cont {
     call(ctx, 0x4018eb, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004018eb(ctx: &mut Context) -> Cont {
     // 004018eb xor edx,edx
     ctx.cpu.regs.edx = xor(ctx.cpu.regs.edx, ctx.cpu.regs.edx, &mut ctx.cpu.flags);
@@ -2461,7 +2306,6 @@ pub fn x004018eb(ctx: &mut Context) -> Cont {
     call(ctx, 0x40191e, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x0040191e(ctx: &mut Context) -> Cont {
     // 0040191e pop ecx
     let x = pop(ctx);
@@ -2472,7 +2316,6 @@ pub fn x0040191e(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00401923), Cont(x0040192b))
 }
 
-#[allow(unused_variables)]
 pub fn x00401923(ctx: &mut Context) -> Cont {
     // 00401923 push 1Ch
     push(ctx, 0x1cu32);
@@ -2481,7 +2324,6 @@ pub fn x00401923(ctx: &mut Context) -> Cont {
     call(ctx, 0x40192a, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x0040192a(ctx: &mut Context) -> Cont {
     // 0040192a pop ecx
     let x = pop(ctx);
@@ -2496,7 +2338,6 @@ pub fn x0040192a(ctx: &mut Context) -> Cont {
     call(ctx, 0x401933, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x0040192b(ctx: &mut Context) -> Cont {
     // 0040192b mov [ebp-4],esi
     ctx.memory.write::<u32>(
@@ -2508,14 +2349,12 @@ pub fn x0040192b(ctx: &mut Context) -> Cont {
     call(ctx, 0x401933, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401933(ctx: &mut Context) -> Cont {
     // 00401933 call dword ptr ds:[406070h]
     let dst = Cont(kernel32::GetCommandLineA_stdcall);
     call(ctx, 0x401939, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401939(ctx: &mut Context) -> Cont {
     // 00401939 mov ds:[409AB8h],eax
     ctx.memory.write::<u32>(0x409ab8u32, ctx.cpu.regs.eax);
@@ -2524,7 +2363,6 @@ pub fn x00401939(ctx: &mut Context) -> Cont {
     call(ctx, 0x401943, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401943(ctx: &mut Context) -> Cont {
     // 00401943 mov ds:[40959Ch],eax
     ctx.memory.write::<u32>(0x40959cu32, ctx.cpu.regs.eax);
@@ -2533,21 +2371,18 @@ pub fn x00401943(ctx: &mut Context) -> Cont {
     call(ctx, 0x40194d, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x0040194d(ctx: &mut Context) -> Cont {
     // 0040194d call 004020F8h
     let dst = Cont(x004020f8);
     call(ctx, 0x401952, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401952(ctx: &mut Context) -> Cont {
     // 00401952 call 00401C9Eh
     let dst = Cont(x00401c9e);
     call(ctx, 0x401957, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401957(ctx: &mut Context) -> Cont {
     // 00401957 mov [ebp-30h],esi
     ctx.memory.write::<u32>(
@@ -2563,14 +2398,12 @@ pub fn x00401957(ctx: &mut Context) -> Cont {
     call(ctx, 0x401964, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401964(ctx: &mut Context) -> Cont {
     // 00401964 call 004020A0h
     let dst = Cont(x004020a0);
     call(ctx, 0x401969, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401969(ctx: &mut Context) -> Cont {
     // 00401969 mov [ebp-64h],eax
     ctx.memory.write::<u32>(
@@ -2588,7 +2421,6 @@ pub fn x00401969(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00401972), Cont(x00401978))
 }
 
-#[allow(unused_variables)]
 pub fn x00401972(ctx: &mut Context) -> Cont {
     // 00401972 movzx eax,word ptr [ebp-2Ch]
     ctx.cpu.regs.eax = ctx
@@ -2598,7 +2430,6 @@ pub fn x00401972(ctx: &mut Context) -> Cont {
     Cont(x0040197b)
 }
 
-#[allow(unused_variables)]
 pub fn x00401978(ctx: &mut Context) -> Cont {
     // 00401978 push 0Ah
     push(ctx, 0xau32);
@@ -2622,7 +2453,6 @@ pub fn x00401978(ctx: &mut Context) -> Cont {
     call(ctx, 0x401987, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x0040197b(ctx: &mut Context) -> Cont {
     // 0040197b push eax
     push(ctx, ctx.cpu.regs.eax);
@@ -2641,7 +2471,6 @@ pub fn x0040197b(ctx: &mut Context) -> Cont {
     call(ctx, 0x401987, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401987(ctx: &mut Context) -> Cont {
     // 00401987 push eax
     push(ctx, ctx.cpu.regs.eax);
@@ -2650,7 +2479,6 @@ pub fn x00401987(ctx: &mut Context) -> Cont {
     call(ctx, 0x40198d, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x0040198d(ctx: &mut Context) -> Cont {
     // 0040198d mov [ebp-60h],eax
     ctx.memory.write::<u32>(
@@ -2664,7 +2492,6 @@ pub fn x0040198d(ctx: &mut Context) -> Cont {
     call(ctx, 0x401996, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401996(ctx: &mut Context) -> Cont {
     // 00401996 mov eax,[ebp-14h]
     ctx.cpu.regs.eax = ctx
@@ -2688,7 +2515,6 @@ pub fn x00401996(ctx: &mut Context) -> Cont {
     call(ctx, 0x4019a7, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004019a7(ctx: &mut Context) -> Cont {
     // 004019a7 pop ecx
     let x = pop(ctx);
@@ -2700,7 +2526,6 @@ pub fn x004019a7(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x004019aa(ctx: &mut Context) -> Cont {
     // 004019aa mov esp,[ebp-18h]
     ctx.cpu.regs.esp = ctx
@@ -2717,7 +2542,6 @@ pub fn x004019aa(ctx: &mut Context) -> Cont {
     call(ctx, 0x4019b5, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004019b5(ctx: &mut Context) -> Cont {
     // 004019b5 cmp dword ptr ds:[4095A4h],1
     sub(
@@ -2729,14 +2553,12 @@ pub fn x004019b5(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004019be), Cont(x004019c3))
 }
 
-#[allow(unused_variables)]
 pub fn x004019be(ctx: &mut Context) -> Cont {
     // 004019be call 00402A80h
     let dst = Cont(x00402a80);
     call(ctx, 0x4019c3, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004019c3(ctx: &mut Context) -> Cont {
     // 004019c3 push dword ptr [esp+4]
     push(
@@ -2749,7 +2571,6 @@ pub fn x004019c3(ctx: &mut Context) -> Cont {
     call(ctx, 0x4019cc, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004019cc(ctx: &mut Context) -> Cont {
     // 004019cc push 0FFh
     push(ctx, 0xffu32);
@@ -2758,7 +2579,6 @@ pub fn x004019cc(ctx: &mut Context) -> Cont {
     call(ctx, 0x4019d7, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004019d7(ctx: &mut Context) -> Cont {
     // 004019d7 pop ecx
     let x = pop(ctx);
@@ -2770,7 +2590,6 @@ pub fn x004019d7(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x004019da(ctx: &mut Context) -> Cont {
     // 004019da cmp dword ptr ds:[4095A4h],1
     sub(
@@ -2782,14 +2601,12 @@ pub fn x004019da(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004019e3), Cont(x004019e8))
 }
 
-#[allow(unused_variables)]
 pub fn x004019e3(ctx: &mut Context) -> Cont {
     // 004019e3 call 00402A80h
     let dst = Cont(x00402a80);
     call(ctx, 0x4019e8, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004019e8(ctx: &mut Context) -> Cont {
     // 004019e8 push dword ptr [esp+4]
     push(
@@ -2802,7 +2619,6 @@ pub fn x004019e8(ctx: &mut Context) -> Cont {
     call(ctx, 0x4019f1, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004019f1(ctx: &mut Context) -> Cont {
     // 004019f1 pop ecx
     let x = pop(ctx);
@@ -2814,13 +2630,11 @@ pub fn x004019f1(ctx: &mut Context) -> Cont {
     call(ctx, 0x4019fd, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004019fd(ctx: &mut Context) -> Cont {
     // 004019fd ret
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x004019fe(ctx: &mut Context) -> Cont {
     // 004019fe push ebp
     push(ctx, ctx.cpu.regs.ebp);
@@ -2845,7 +2659,6 @@ pub fn x004019fe(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00401a0b), Cont(x00401a19))
 }
 
-#[allow(unused_variables)]
 pub fn x00401a0b(ctx: &mut Context) -> Cont {
     // 00401a0b push dword ptr [ebp+0Ch]
     push(
@@ -2858,7 +2671,6 @@ pub fn x00401a0b(ctx: &mut Context) -> Cont {
     call(ctx, 0x401a13, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401a13(ctx: &mut Context) -> Cont {
     // 00401a13 pop ecx
     let x = pop(ctx);
@@ -2867,7 +2679,6 @@ pub fn x00401a13(ctx: &mut Context) -> Cont {
     Cont(x00401c99)
 }
 
-#[allow(unused_variables)]
 pub fn x00401a19(ctx: &mut Context) -> Cont {
     // 00401a19 mov esi,[ebp+0Ch]
     ctx.cpu.regs.esi = ctx
@@ -2879,7 +2690,6 @@ pub fn x00401a19(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00401a20), Cont(x00401a2e))
 }
 
-#[allow(unused_variables)]
 pub fn x00401a20(ctx: &mut Context) -> Cont {
     // 00401a20 push dword ptr [ebp+8]
     push(
@@ -2892,7 +2702,6 @@ pub fn x00401a20(ctx: &mut Context) -> Cont {
     call(ctx, 0x401a28, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401a28(ctx: &mut Context) -> Cont {
     // 00401a28 pop ecx
     let x = pop(ctx);
@@ -2901,7 +2710,6 @@ pub fn x00401a28(ctx: &mut Context) -> Cont {
     Cont(x00401c97)
 }
 
-#[allow(unused_variables)]
 pub fn x00401a2e(ctx: &mut Context) -> Cont {
     // 00401a2e mov eax,ds:[409988h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x409988u32);
@@ -2911,7 +2719,6 @@ pub fn x00401a2e(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00401a3c), Cont(x00401b3e))
 }
 
-#[allow(unused_variables)]
 pub fn x00401a3c(ctx: &mut Context) -> Cont {
     // 00401a3c xor edi,edi
     ctx.cpu.regs.edi = xor(ctx.cpu.regs.edi, ctx.cpu.regs.edi, &mut ctx.cpu.flags);
@@ -2921,7 +2728,6 @@ pub fn x00401a3c(ctx: &mut Context) -> Cont {
     ja(ctx, Cont(x00401a47), Cont(x00401b1a))
 }
 
-#[allow(unused_variables)]
 pub fn x00401a47(ctx: &mut Context) -> Cont {
     // 00401a47 push dword ptr [ebp+8]
     push(
@@ -2934,7 +2740,6 @@ pub fn x00401a47(ctx: &mut Context) -> Cont {
     call(ctx, 0x401a4f, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401a4f(ctx: &mut Context) -> Cont {
     // 00401a4f mov ebx,eax
     ctx.cpu.regs.ebx = ctx.cpu.regs.eax;
@@ -2947,7 +2752,6 @@ pub fn x00401a4f(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00401a5a), Cont(x00401af5))
 }
 
-#[allow(unused_variables)]
 pub fn x00401a5a(ctx: &mut Context) -> Cont {
     // 00401a5a cmp esi,ds:[409980h]
     sub(
@@ -2959,7 +2763,6 @@ pub fn x00401a5a(ctx: &mut Context) -> Cont {
     ja(ctx, Cont(x00401a62), Cont(x00401aae))
 }
 
-#[allow(unused_variables)]
 pub fn x00401a62(ctx: &mut Context) -> Cont {
     // 00401a62 mov edi,[ebp+8]
     ctx.cpu.regs.edi = ctx
@@ -2976,7 +2779,6 @@ pub fn x00401a62(ctx: &mut Context) -> Cont {
     call(ctx, 0x401a6d, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401a6d(ctx: &mut Context) -> Cont {
     // 00401a6d add esp,0Ch
     ctx.cpu.regs.esp = add(ctx.cpu.regs.esp, 0xcu32, &mut ctx.cpu.flags);
@@ -2986,7 +2788,6 @@ pub fn x00401a6d(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00401a74), Cont(x00401aaa))
 }
 
-#[allow(unused_variables)]
 pub fn x00401a74(ctx: &mut Context) -> Cont {
     // 00401a74 push esi
     push(ctx, ctx.cpu.regs.esi);
@@ -2995,7 +2796,6 @@ pub fn x00401a74(ctx: &mut Context) -> Cont {
     call(ctx, 0x401a7a, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401a7a(ctx: &mut Context) -> Cont {
     // 00401a7a mov edi,eax
     ctx.cpu.regs.edi = ctx.cpu.regs.eax;
@@ -3008,7 +2808,6 @@ pub fn x00401a7a(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00401a81), Cont(x00401aae))
 }
 
-#[allow(unused_variables)]
 pub fn x00401a81(ctx: &mut Context) -> Cont {
     // 00401a81 mov ebx,[ebp+8]
     ctx.cpu.regs.ebx = ctx
@@ -3026,7 +2825,6 @@ pub fn x00401a81(ctx: &mut Context) -> Cont {
     jb(ctx, Cont(x00401a8c), Cont(x00401a8e))
 }
 
-#[allow(unused_variables)]
 pub fn x00401a8c(ctx: &mut Context) -> Cont {
     // 00401a8c mov eax,esi
     ctx.cpu.regs.eax = ctx.cpu.regs.esi;
@@ -3041,7 +2839,6 @@ pub fn x00401a8c(ctx: &mut Context) -> Cont {
     call(ctx, 0x401a96, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401a8e(ctx: &mut Context) -> Cont {
     // 00401a8e push eax
     push(ctx, ctx.cpu.regs.eax);
@@ -3054,7 +2851,6 @@ pub fn x00401a8e(ctx: &mut Context) -> Cont {
     call(ctx, 0x401a96, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401a96(ctx: &mut Context) -> Cont {
     // 00401a96 push ebx
     push(ctx, ctx.cpu.regs.ebx);
@@ -3063,7 +2859,6 @@ pub fn x00401a96(ctx: &mut Context) -> Cont {
     call(ctx, 0x401a9c, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401a9c(ctx: &mut Context) -> Cont {
     // 00401a9c push dword ptr [ebp+8]
     push(
@@ -3080,7 +2875,6 @@ pub fn x00401a9c(ctx: &mut Context) -> Cont {
     call(ctx, 0x401aa7, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401aa7(ctx: &mut Context) -> Cont {
     // 00401aa7 add esp,18h
     ctx.cpu.regs.esp = add(ctx.cpu.regs.esp, 0x18u32, &mut ctx.cpu.flags);
@@ -3090,7 +2884,6 @@ pub fn x00401aa7(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00401aae), Cont(x00401af1))
 }
 
-#[allow(unused_variables)]
 pub fn x00401aaa(ctx: &mut Context) -> Cont {
     // 00401aaa test edi,edi
     and(ctx.cpu.regs.edi, ctx.cpu.regs.edi, &mut ctx.cpu.flags);
@@ -3098,7 +2891,6 @@ pub fn x00401aaa(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00401aae), Cont(x00401af1))
 }
 
-#[allow(unused_variables)]
 pub fn x00401aae(ctx: &mut Context) -> Cont {
     // 00401aae test esi,esi
     and(ctx.cpu.regs.esi, ctx.cpu.regs.esi, &mut ctx.cpu.flags);
@@ -3106,7 +2898,6 @@ pub fn x00401aae(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00401ab2), Cont(x00401ab5))
 }
 
-#[allow(unused_variables)]
 pub fn x00401ab2(ctx: &mut Context) -> Cont {
     // 00401ab2 push 1
     push(ctx, 0x1u32);
@@ -3128,7 +2919,6 @@ pub fn x00401ab2(ctx: &mut Context) -> Cont {
     call(ctx, 0x401aca, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401ab5(ctx: &mut Context) -> Cont {
     // 00401ab5 add esi,0Fh
     ctx.cpu.regs.esi = add(ctx.cpu.regs.esi, 0xfu32, &mut ctx.cpu.flags);
@@ -3145,7 +2935,6 @@ pub fn x00401ab5(ctx: &mut Context) -> Cont {
     call(ctx, 0x401aca, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401aca(ctx: &mut Context) -> Cont {
     // 00401aca mov edi,eax
     ctx.cpu.regs.edi = ctx.cpu.regs.eax;
@@ -3155,7 +2944,6 @@ pub fn x00401aca(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00401ad0), Cont(x00401af1))
 }
 
-#[allow(unused_variables)]
 pub fn x00401ad0(ctx: &mut Context) -> Cont {
     // 00401ad0 mov ecx,[ebp+8]
     ctx.cpu.regs.ecx = ctx
@@ -3173,7 +2961,6 @@ pub fn x00401ad0(ctx: &mut Context) -> Cont {
     jb(ctx, Cont(x00401adb), Cont(x00401add))
 }
 
-#[allow(unused_variables)]
 pub fn x00401adb(ctx: &mut Context) -> Cont {
     // 00401adb mov eax,esi
     ctx.cpu.regs.eax = ctx.cpu.regs.esi;
@@ -3188,7 +2975,6 @@ pub fn x00401adb(ctx: &mut Context) -> Cont {
     call(ctx, 0x401ae5, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401add(ctx: &mut Context) -> Cont {
     // 00401add push eax
     push(ctx, ctx.cpu.regs.eax);
@@ -3201,7 +2987,6 @@ pub fn x00401add(ctx: &mut Context) -> Cont {
     call(ctx, 0x401ae5, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401ae5(ctx: &mut Context) -> Cont {
     // 00401ae5 push dword ptr [ebp+8]
     push(
@@ -3216,7 +3001,6 @@ pub fn x00401ae5(ctx: &mut Context) -> Cont {
     call(ctx, 0x401aee, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401aee(ctx: &mut Context) -> Cont {
     // 00401aee add esp,14h
     ctx.cpu.regs.esp = add(ctx.cpu.regs.esp, 0x14u32, &mut ctx.cpu.flags);
@@ -3226,7 +3010,6 @@ pub fn x00401aee(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00401af5), Cont(x00401b16))
 }
 
-#[allow(unused_variables)]
 pub fn x00401af1(ctx: &mut Context) -> Cont {
     // 00401af1 test ebx,ebx
     and(ctx.cpu.regs.ebx, ctx.cpu.regs.ebx, &mut ctx.cpu.flags);
@@ -3234,7 +3017,6 @@ pub fn x00401af1(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00401af5), Cont(x00401b16))
 }
 
-#[allow(unused_variables)]
 pub fn x00401af5(ctx: &mut Context) -> Cont {
     // 00401af5 test esi,esi
     and(ctx.cpu.regs.esi, ctx.cpu.regs.esi, &mut ctx.cpu.flags);
@@ -3242,7 +3024,6 @@ pub fn x00401af5(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00401af9), Cont(x00401afc))
 }
 
-#[allow(unused_variables)]
 pub fn x00401af9(ctx: &mut Context) -> Cont {
     // 00401af9 push 1
     push(ctx, 0x1u32);
@@ -3270,7 +3051,6 @@ pub fn x00401af9(ctx: &mut Context) -> Cont {
     call(ctx, 0x401b14, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401afc(ctx: &mut Context) -> Cont {
     // 00401afc add esi,0Fh
     ctx.cpu.regs.esi = add(ctx.cpu.regs.esi, 0xfu32, &mut ctx.cpu.flags);
@@ -3293,7 +3073,6 @@ pub fn x00401afc(ctx: &mut Context) -> Cont {
     call(ctx, 0x401b14, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401b14(ctx: &mut Context) -> Cont {
     // 00401b14 mov edi,eax
     ctx.cpu.regs.edi = ctx.cpu.regs.eax;
@@ -3303,7 +3082,6 @@ pub fn x00401b14(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00401b1a), Cont(x00401b37))
 }
 
-#[allow(unused_variables)]
 pub fn x00401b16(ctx: &mut Context) -> Cont {
     // 00401b16 test edi,edi
     and(ctx.cpu.regs.edi, ctx.cpu.regs.edi, &mut ctx.cpu.flags);
@@ -3311,7 +3089,6 @@ pub fn x00401b16(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00401b1a), Cont(x00401b37))
 }
 
-#[allow(unused_variables)]
 pub fn x00401b1a(ctx: &mut Context) -> Cont {
     // 00401b1a cmp dword ptr ds:[40970Ch],0
     sub(
@@ -3323,7 +3100,6 @@ pub fn x00401b1a(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00401b23), Cont(x00401b37))
 }
 
-#[allow(unused_variables)]
 pub fn x00401b23(ctx: &mut Context) -> Cont {
     // 00401b23 push esi
     push(ctx, ctx.cpu.regs.esi);
@@ -3332,7 +3108,6 @@ pub fn x00401b23(ctx: &mut Context) -> Cont {
     call(ctx, 0x401b29, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401b29(ctx: &mut Context) -> Cont {
     // 00401b29 test eax,eax
     and(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -3343,13 +3118,11 @@ pub fn x00401b29(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00401b32), Cont(x00401a3c))
 }
 
-#[allow(unused_variables)]
 pub fn x00401b32(ctx: &mut Context) -> Cont {
     // 00401b32 jmp near ptr 00401C97h
     Cont(x00401c97)
 }
 
-#[allow(unused_variables)]
 pub fn x00401b37(ctx: &mut Context) -> Cont {
     // 00401b37 mov eax,edi
     ctx.cpu.regs.eax = ctx.cpu.regs.edi;
@@ -3357,7 +3130,6 @@ pub fn x00401b37(ctx: &mut Context) -> Cont {
     Cont(x00401c99)
 }
 
-#[allow(unused_variables)]
 pub fn x00401b3e(ctx: &mut Context) -> Cont {
     // 00401b3e cmp eax,2
     sub(ctx.cpu.regs.eax, 0x2u32, &mut ctx.cpu.flags);
@@ -3365,7 +3137,6 @@ pub fn x00401b3e(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00401b47), Cont(x00401c59))
 }
 
-#[allow(unused_variables)]
 pub fn x00401b47(ctx: &mut Context) -> Cont {
     // 00401b47 cmp esi,0FFFFFFE0h
     sub(ctx.cpu.regs.esi, 0xffffffe0u32, &mut ctx.cpu.flags);
@@ -3373,7 +3144,6 @@ pub fn x00401b47(ctx: &mut Context) -> Cont {
     ja(ctx, Cont(x00401b4c), Cont(x00401b5b))
 }
 
-#[allow(unused_variables)]
 pub fn x00401b4c(ctx: &mut Context) -> Cont {
     // 00401b4c test esi,esi
     and(ctx.cpu.regs.esi, ctx.cpu.regs.esi, &mut ctx.cpu.flags);
@@ -3381,7 +3151,6 @@ pub fn x00401b4c(ctx: &mut Context) -> Cont {
     jbe(ctx, Cont(x00401b50), Cont(x00401b58))
 }
 
-#[allow(unused_variables)]
 pub fn x00401b50(ctx: &mut Context) -> Cont {
     // 00401b50 add esi,0Fh
     ctx.cpu.regs.esi = add(ctx.cpu.regs.esi, 0xfu32, &mut ctx.cpu.flags);
@@ -3391,7 +3160,6 @@ pub fn x00401b50(ctx: &mut Context) -> Cont {
     Cont(x00401b5b)
 }
 
-#[allow(unused_variables)]
 pub fn x00401b58(ctx: &mut Context) -> Cont {
     // 00401b58 push 10h
     push(ctx, 0x10u32);
@@ -3406,7 +3174,6 @@ pub fn x00401b58(ctx: &mut Context) -> Cont {
     ja(ctx, Cont(x00401b66), Cont(x00401c3b))
 }
 
-#[allow(unused_variables)]
 pub fn x00401b5b(ctx: &mut Context) -> Cont {
     // 00401b5b xor edi,edi
     ctx.cpu.regs.edi = xor(ctx.cpu.regs.edi, ctx.cpu.regs.edi, &mut ctx.cpu.flags);
@@ -3416,7 +3183,6 @@ pub fn x00401b5b(ctx: &mut Context) -> Cont {
     ja(ctx, Cont(x00401b66), Cont(x00401c3b))
 }
 
-#[allow(unused_variables)]
 pub fn x00401b66(ctx: &mut Context) -> Cont {
     // 00401b66 lea eax,[ebp+0Ch]
     ctx.cpu.regs.eax = ctx.cpu.regs.ebp.wrapping_add(0xcu32);
@@ -3437,7 +3203,6 @@ pub fn x00401b66(ctx: &mut Context) -> Cont {
     call(ctx, 0x401b76, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401b76(ctx: &mut Context) -> Cont {
     // 00401b76 mov ebx,eax
     ctx.cpu.regs.ebx = ctx.cpu.regs.eax;
@@ -3449,7 +3214,6 @@ pub fn x00401b76(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00401b83), Cont(x00401c1f))
 }
 
-#[allow(unused_variables)]
 pub fn x00401b83(ctx: &mut Context) -> Cont {
     // 00401b83 cmp esi,ds:[40922Ch]
     sub(
@@ -3461,7 +3225,6 @@ pub fn x00401b83(ctx: &mut Context) -> Cont {
     jae(ctx, Cont(x00401b8b), Cont(x00401be3))
 }
 
-#[allow(unused_variables)]
 pub fn x00401b8b(ctx: &mut Context) -> Cont {
     // 00401b8b mov edi,esi
     ctx.cpu.regs.edi = ctx.cpu.regs.esi;
@@ -3488,7 +3251,6 @@ pub fn x00401b8b(ctx: &mut Context) -> Cont {
     call(ctx, 0x401b9d, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401b9d(ctx: &mut Context) -> Cont {
     // 00401b9d add esp,10h
     ctx.cpu.regs.esp = add(ctx.cpu.regs.esp, 0x10u32, &mut ctx.cpu.flags);
@@ -3498,7 +3260,6 @@ pub fn x00401b9d(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00401ba4), Cont(x00401ba9))
 }
 
-#[allow(unused_variables)]
 pub fn x00401ba4(ctx: &mut Context) -> Cont {
     // 00401ba4 mov edi,[ebp+8]
     ctx.cpu.regs.edi = ctx
@@ -3508,7 +3269,6 @@ pub fn x00401ba4(ctx: &mut Context) -> Cont {
     Cont(x00401bdb)
 }
 
-#[allow(unused_variables)]
 pub fn x00401ba9(ctx: &mut Context) -> Cont {
     // 00401ba9 push edi
     push(ctx, ctx.cpu.regs.edi);
@@ -3517,7 +3277,6 @@ pub fn x00401ba9(ctx: &mut Context) -> Cont {
     call(ctx, 0x401baf, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401baf(ctx: &mut Context) -> Cont {
     // 00401baf mov edi,eax
     ctx.cpu.regs.edi = ctx.cpu.regs.eax;
@@ -3530,7 +3289,6 @@ pub fn x00401baf(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00401bb6), Cont(x00401be3))
 }
 
-#[allow(unused_variables)]
 pub fn x00401bb6(ctx: &mut Context) -> Cont {
     // 00401bb6 movzx eax,byte ptr [ebx]
     ctx.cpu.regs.eax = ctx.memory.read::<u8>(ctx.cpu.regs.ebx) as _;
@@ -3542,7 +3300,6 @@ pub fn x00401bb6(ctx: &mut Context) -> Cont {
     jb(ctx, Cont(x00401bc0), Cont(x00401bc2))
 }
 
-#[allow(unused_variables)]
 pub fn x00401bc0(ctx: &mut Context) -> Cont {
     // 00401bc0 mov eax,esi
     ctx.cpu.regs.eax = ctx.cpu.regs.esi;
@@ -3561,7 +3318,6 @@ pub fn x00401bc0(ctx: &mut Context) -> Cont {
     call(ctx, 0x401bcc, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401bc2(ctx: &mut Context) -> Cont {
     // 00401bc2 push eax
     push(ctx, ctx.cpu.regs.eax);
@@ -3578,7 +3334,6 @@ pub fn x00401bc2(ctx: &mut Context) -> Cont {
     call(ctx, 0x401bcc, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401bcc(ctx: &mut Context) -> Cont {
     // 00401bcc push ebx
     push(ctx, ctx.cpu.regs.ebx);
@@ -3599,7 +3354,6 @@ pub fn x00401bcc(ctx: &mut Context) -> Cont {
     call(ctx, 0x401bd8, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401bd8(ctx: &mut Context) -> Cont {
     // 00401bd8 add esp,18h
     ctx.cpu.regs.esp = add(ctx.cpu.regs.esp, 0x18u32, &mut ctx.cpu.flags);
@@ -3609,7 +3363,6 @@ pub fn x00401bd8(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00401be3), Cont(x00401b37))
 }
 
-#[allow(unused_variables)]
 pub fn x00401bdb(ctx: &mut Context) -> Cont {
     // 00401bdb test edi,edi
     and(ctx.cpu.regs.edi, ctx.cpu.regs.edi, &mut ctx.cpu.flags);
@@ -3617,7 +3370,6 @@ pub fn x00401bdb(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00401be3), Cont(x00401b37))
 }
 
-#[allow(unused_variables)]
 pub fn x00401be3(ctx: &mut Context) -> Cont {
     // 00401be3 push esi
     push(ctx, ctx.cpu.regs.esi);
@@ -3630,7 +3382,6 @@ pub fn x00401be3(ctx: &mut Context) -> Cont {
     call(ctx, 0x401bf2, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401bf2(ctx: &mut Context) -> Cont {
     // 00401bf2 mov edi,eax
     ctx.cpu.regs.edi = ctx.cpu.regs.eax;
@@ -3640,7 +3391,6 @@ pub fn x00401bf2(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00401bf8), Cont(x00401c3b))
 }
 
-#[allow(unused_variables)]
 pub fn x00401bf8(ctx: &mut Context) -> Cont {
     // 00401bf8 movzx eax,byte ptr [ebx]
     ctx.cpu.regs.eax = ctx.memory.read::<u8>(ctx.cpu.regs.ebx) as _;
@@ -3652,7 +3402,6 @@ pub fn x00401bf8(ctx: &mut Context) -> Cont {
     jb(ctx, Cont(x00401c02), Cont(x00401c04))
 }
 
-#[allow(unused_variables)]
 pub fn x00401c02(ctx: &mut Context) -> Cont {
     // 00401c02 mov eax,esi
     ctx.cpu.regs.eax = ctx.cpu.regs.esi;
@@ -3671,7 +3420,6 @@ pub fn x00401c02(ctx: &mut Context) -> Cont {
     call(ctx, 0x401c0e, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401c04(ctx: &mut Context) -> Cont {
     // 00401c04 push eax
     push(ctx, ctx.cpu.regs.eax);
@@ -3688,7 +3436,6 @@ pub fn x00401c04(ctx: &mut Context) -> Cont {
     call(ctx, 0x401c0e, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401c0e(ctx: &mut Context) -> Cont {
     // 00401c0e push ebx
     push(ctx, ctx.cpu.regs.ebx);
@@ -3709,7 +3456,6 @@ pub fn x00401c0e(ctx: &mut Context) -> Cont {
     call(ctx, 0x401c1a, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401c1a(ctx: &mut Context) -> Cont {
     // 00401c1a add esp,18h
     ctx.cpu.regs.esp = add(ctx.cpu.regs.esp, 0x18u32, &mut ctx.cpu.flags);
@@ -3717,7 +3463,6 @@ pub fn x00401c1a(ctx: &mut Context) -> Cont {
     Cont(x00401c33)
 }
 
-#[allow(unused_variables)]
 pub fn x00401c1f(ctx: &mut Context) -> Cont {
     // 00401c1f push esi
     push(ctx, ctx.cpu.regs.esi);
@@ -3736,7 +3481,6 @@ pub fn x00401c1f(ctx: &mut Context) -> Cont {
     call(ctx, 0x401c31, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401c31(ctx: &mut Context) -> Cont {
     // 00401c31 mov edi,eax
     ctx.cpu.regs.edi = ctx.cpu.regs.eax;
@@ -3746,7 +3490,6 @@ pub fn x00401c31(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00401c3b), Cont(x00401b37))
 }
 
-#[allow(unused_variables)]
 pub fn x00401c33(ctx: &mut Context) -> Cont {
     // 00401c33 test edi,edi
     and(ctx.cpu.regs.edi, ctx.cpu.regs.edi, &mut ctx.cpu.flags);
@@ -3754,7 +3497,6 @@ pub fn x00401c33(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00401c3b), Cont(x00401b37))
 }
 
-#[allow(unused_variables)]
 pub fn x00401c3b(ctx: &mut Context) -> Cont {
     // 00401c3b cmp dword ptr ds:[40970Ch],0
     sub(
@@ -3766,7 +3508,6 @@ pub fn x00401c3b(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00401c48), Cont(x00401b37))
 }
 
-#[allow(unused_variables)]
 pub fn x00401c48(ctx: &mut Context) -> Cont {
     // 00401c48 push esi
     push(ctx, ctx.cpu.regs.esi);
@@ -3775,7 +3516,6 @@ pub fn x00401c48(ctx: &mut Context) -> Cont {
     call(ctx, 0x401c4e, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401c4e(ctx: &mut Context) -> Cont {
     // 00401c4e test eax,eax
     and(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -3786,13 +3526,11 @@ pub fn x00401c4e(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00401c57), Cont(x00401b5b))
 }
 
-#[allow(unused_variables)]
 pub fn x00401c57(ctx: &mut Context) -> Cont {
     // 00401c57 jmp short 00401C97h
     Cont(x00401c97)
 }
 
-#[allow(unused_variables)]
 pub fn x00401c59(ctx: &mut Context) -> Cont {
     // 00401c59 xor eax,eax
     ctx.cpu.regs.eax = xor(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -3802,7 +3540,6 @@ pub fn x00401c59(ctx: &mut Context) -> Cont {
     ja(ctx, Cont(x00401c60), Cont(x00401c83))
 }
 
-#[allow(unused_variables)]
 pub fn x00401c60(ctx: &mut Context) -> Cont {
     // 00401c60 test esi,esi
     and(ctx.cpu.regs.esi, ctx.cpu.regs.esi, &mut ctx.cpu.flags);
@@ -3810,7 +3547,6 @@ pub fn x00401c60(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00401c64), Cont(x00401c67))
 }
 
-#[allow(unused_variables)]
 pub fn x00401c64(ctx: &mut Context) -> Cont {
     // 00401c64 push 1
     push(ctx, 0x1u32);
@@ -3838,7 +3574,6 @@ pub fn x00401c64(ctx: &mut Context) -> Cont {
     call(ctx, 0x401c7f, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401c67(ctx: &mut Context) -> Cont {
     // 00401c67 add esi,0Fh
     ctx.cpu.regs.esi = add(ctx.cpu.regs.esi, 0xfu32, &mut ctx.cpu.flags);
@@ -3861,7 +3596,6 @@ pub fn x00401c67(ctx: &mut Context) -> Cont {
     call(ctx, 0x401c7f, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401c7f(ctx: &mut Context) -> Cont {
     // 00401c7f test eax,eax
     and(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -3869,7 +3603,6 @@ pub fn x00401c7f(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00401c83), Cont(x00401c99))
 }
 
-#[allow(unused_variables)]
 pub fn x00401c83(ctx: &mut Context) -> Cont {
     // 00401c83 cmp dword ptr ds:[40970Ch],0
     sub(
@@ -3881,7 +3614,6 @@ pub fn x00401c83(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00401c8c), Cont(x00401c99))
 }
 
-#[allow(unused_variables)]
 pub fn x00401c8c(ctx: &mut Context) -> Cont {
     // 00401c8c push esi
     push(ctx, ctx.cpu.regs.esi);
@@ -3890,7 +3622,6 @@ pub fn x00401c8c(ctx: &mut Context) -> Cont {
     call(ctx, 0x401c92, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401c92(ctx: &mut Context) -> Cont {
     // 00401c92 test eax,eax
     and(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -3901,7 +3632,6 @@ pub fn x00401c92(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00401c97), Cont(x00401c59))
 }
 
-#[allow(unused_variables)]
 pub fn x00401c97(ctx: &mut Context) -> Cont {
     // 00401c97 xor eax,eax
     ctx.cpu.regs.eax = xor(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -3920,7 +3650,6 @@ pub fn x00401c97(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00401c99(ctx: &mut Context) -> Cont {
     // 00401c99 pop edi
     let x = pop(ctx);
@@ -3937,7 +3666,6 @@ pub fn x00401c99(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00401c9e(ctx: &mut Context) -> Cont {
     // 00401c9e mov eax,ds:[409AB4h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x409ab4u32);
@@ -3947,14 +3675,12 @@ pub fn x00401c9e(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00401ca7), Cont(x00401ca9))
 }
 
-#[allow(unused_variables)]
 pub fn x00401ca7(ctx: &mut Context) -> Cont {
     // 00401ca7 call eax
     let dst = indirect(ctx, ctx.cpu.regs.eax);
     call(ctx, 0x401ca9, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401ca9(ctx: &mut Context) -> Cont {
     // 00401ca9 push 407018h
     push(ctx, 0x407018u32);
@@ -3965,7 +3691,6 @@ pub fn x00401ca9(ctx: &mut Context) -> Cont {
     call(ctx, 0x401cb8, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401cb8(ctx: &mut Context) -> Cont {
     // 00401cb8 push 407008h
     push(ctx, 0x407008u32);
@@ -3976,7 +3701,6 @@ pub fn x00401cb8(ctx: &mut Context) -> Cont {
     call(ctx, 0x401cc7, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401cc7(ctx: &mut Context) -> Cont {
     // 00401cc7 add esp,10h
     ctx.cpu.regs.esp = add(ctx.cpu.regs.esp, 0x10u32, &mut ctx.cpu.flags);
@@ -3984,7 +3708,6 @@ pub fn x00401cc7(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00401ccb(ctx: &mut Context) -> Cont {
     // 00401ccb push 0
     push(ctx, 0x0u32);
@@ -4001,7 +3724,6 @@ pub fn x00401ccb(ctx: &mut Context) -> Cont {
     call(ctx, 0x401cd8, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401cd8(ctx: &mut Context) -> Cont {
     // 00401cd8 add esp,0Ch
     ctx.cpu.regs.esp = add(ctx.cpu.regs.esp, 0xcu32, &mut ctx.cpu.flags);
@@ -4009,7 +3731,6 @@ pub fn x00401cd8(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00401cdc(ctx: &mut Context) -> Cont {
     // 00401cdc push 0
     push(ctx, 0x0u32);
@@ -4026,7 +3747,6 @@ pub fn x00401cdc(ctx: &mut Context) -> Cont {
     call(ctx, 0x401ce9, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401ce9(ctx: &mut Context) -> Cont {
     // 00401ce9 add esp,0Ch
     ctx.cpu.regs.esp = add(ctx.cpu.regs.esp, 0xcu32, &mut ctx.cpu.flags);
@@ -4034,7 +3754,6 @@ pub fn x00401ce9(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00401ced(ctx: &mut Context) -> Cont {
     // 00401ced push edi
     push(ctx, ctx.cpu.regs.edi);
@@ -4053,7 +3772,6 @@ pub fn x00401ced(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00401cf9), Cont(x00401d0a))
 }
 
-#[allow(unused_variables)]
 pub fn x00401cf9(ctx: &mut Context) -> Cont {
     // 00401cf9 push dword ptr [esp+8]
     push(
@@ -4066,7 +3784,6 @@ pub fn x00401cf9(ctx: &mut Context) -> Cont {
     call(ctx, 0x401d03, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401d03(ctx: &mut Context) -> Cont {
     // 00401d03 push eax
     push(ctx, ctx.cpu.regs.eax);
@@ -4075,7 +3792,6 @@ pub fn x00401d03(ctx: &mut Context) -> Cont {
     call(ctx, 0x401d0a, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401d0a(ctx: &mut Context) -> Cont {
     // 00401d0a cmp dword ptr [esp+0Ch],0
     sub(
@@ -4098,7 +3814,6 @@ pub fn x00401d0a(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00401d22), Cont(x00401d5e))
 }
 
-#[allow(unused_variables)]
 pub fn x00401d22(ctx: &mut Context) -> Cont {
     // 00401d22 mov eax,ds:[409AB0h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x409ab0u32);
@@ -4108,7 +3823,6 @@ pub fn x00401d22(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00401d2b), Cont(x00401d4d))
 }
 
-#[allow(unused_variables)]
 pub fn x00401d2b(ctx: &mut Context) -> Cont {
     // 00401d2b mov ecx,ds:[409AACh]
     ctx.cpu.regs.ecx = ctx.memory.read::<u32>(0x409aacu32);
@@ -4122,7 +3836,6 @@ pub fn x00401d2b(ctx: &mut Context) -> Cont {
     jb(ctx, Cont(x00401d39), Cont(x00401d4c))
 }
 
-#[allow(unused_variables)]
 pub fn x00401d39(ctx: &mut Context) -> Cont {
     // 00401d39 mov eax,[esi]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(ctx.cpu.regs.esi);
@@ -4132,14 +3845,12 @@ pub fn x00401d39(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00401d3f), Cont(x00401d41))
 }
 
-#[allow(unused_variables)]
 pub fn x00401d3f(ctx: &mut Context) -> Cont {
     // 00401d3f call eax
     let dst = indirect(ctx, ctx.cpu.regs.eax);
     call(ctx, 0x401d41, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401d41(ctx: &mut Context) -> Cont {
     // 00401d41 sub esi,4
     ctx.cpu.regs.esi = sub(ctx.cpu.regs.esi, 0x4u32, &mut ctx.cpu.flags);
@@ -4153,7 +3864,6 @@ pub fn x00401d41(ctx: &mut Context) -> Cont {
     jae(ctx, Cont(x00401d4c), Cont(x00401d39))
 }
 
-#[allow(unused_variables)]
 pub fn x00401d4c(ctx: &mut Context) -> Cont {
     // 00401d4c pop esi
     let x = pop(ctx);
@@ -4167,7 +3877,6 @@ pub fn x00401d4c(ctx: &mut Context) -> Cont {
     call(ctx, 0x401d5c, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401d4d(ctx: &mut Context) -> Cont {
     // 00401d4d push 407020h
     push(ctx, 0x407020u32);
@@ -4178,7 +3887,6 @@ pub fn x00401d4d(ctx: &mut Context) -> Cont {
     call(ctx, 0x401d5c, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401d5c(ctx: &mut Context) -> Cont {
     // 00401d5c pop ecx
     let x = pop(ctx);
@@ -4195,7 +3903,6 @@ pub fn x00401d5c(ctx: &mut Context) -> Cont {
     call(ctx, 0x401d6d, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401d5e(ctx: &mut Context) -> Cont {
     // 00401d5e push 407028h
     push(ctx, 0x407028u32);
@@ -4206,7 +3913,6 @@ pub fn x00401d5e(ctx: &mut Context) -> Cont {
     call(ctx, 0x401d6d, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401d6d(ctx: &mut Context) -> Cont {
     // 00401d6d pop ecx
     let x = pop(ctx);
@@ -4223,7 +3929,6 @@ pub fn x00401d6d(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00401d74), Cont(x00401d84))
 }
 
-#[allow(unused_variables)]
 pub fn x00401d74(ctx: &mut Context) -> Cont {
     // 00401d74 push dword ptr [esp+8]
     push(
@@ -4238,7 +3943,6 @@ pub fn x00401d74(ctx: &mut Context) -> Cont {
     call(ctx, 0x401d84, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401d84(ctx: &mut Context) -> Cont {
     // 00401d84 pop edi
     let x = pop(ctx);
@@ -4247,7 +3951,6 @@ pub fn x00401d84(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00401d86(ctx: &mut Context) -> Cont {
     // 00401d86 push esi
     push(ctx, ctx.cpu.regs.esi);
@@ -4266,7 +3969,6 @@ pub fn x00401d86(ctx: &mut Context) -> Cont {
     jae(ctx, Cont(x00401d91), Cont(x00401d9e))
 }
 
-#[allow(unused_variables)]
 pub fn x00401d8b(ctx: &mut Context) -> Cont {
     // 00401d8b cmp esi,[esp+0Ch]
     sub(
@@ -4279,7 +3981,6 @@ pub fn x00401d8b(ctx: &mut Context) -> Cont {
     jae(ctx, Cont(x00401d91), Cont(x00401d9e))
 }
 
-#[allow(unused_variables)]
 pub fn x00401d91(ctx: &mut Context) -> Cont {
     // 00401d91 mov eax,[esi]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(ctx.cpu.regs.esi);
@@ -4289,14 +3990,12 @@ pub fn x00401d91(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00401d97), Cont(x00401d99))
 }
 
-#[allow(unused_variables)]
 pub fn x00401d97(ctx: &mut Context) -> Cont {
     // 00401d97 call eax
     let dst = indirect(ctx, ctx.cpu.regs.eax);
     call(ctx, 0x401d99, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401d99(ctx: &mut Context) -> Cont {
     // 00401d99 add esi,4
     ctx.cpu.regs.esi = add(ctx.cpu.regs.esi, 0x4u32, &mut ctx.cpu.flags);
@@ -4304,7 +4003,6 @@ pub fn x00401d99(ctx: &mut Context) -> Cont {
     Cont(x00401d8b)
 }
 
-#[allow(unused_variables)]
 pub fn x00401d9e(ctx: &mut Context) -> Cont {
     // 00401d9e pop esi
     let x = pop(ctx);
@@ -4313,7 +4011,6 @@ pub fn x00401d9e(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00401da0(ctx: &mut Context) -> Cont {
     // 00401da0 push ebp
     push(ctx, ctx.cpu.regs.ebp);
@@ -4333,7 +4030,6 @@ pub fn x00401da0(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00401db0), Cont(x00401dc9))
 }
 
-#[allow(unused_variables)]
 pub fn x00401db0(ctx: &mut Context) -> Cont {
     // 00401db0 mov esi,[ebp+8]
     ctx.cpu.regs.esi = ctx
@@ -4346,7 +4042,6 @@ pub fn x00401db0(ctx: &mut Context) -> Cont {
     call(ctx, 0x401db9, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401db9(ctx: &mut Context) -> Cont {
     // 00401db9 test eax,eax
     and(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -4357,7 +4052,6 @@ pub fn x00401db9(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00401dbe), Cont(x00401dc6))
 }
 
-#[allow(unused_variables)]
 pub fn x00401dbe(ctx: &mut Context) -> Cont {
     // 00401dbe mov eax,[esi-4]
     ctx.cpu.regs.eax = ctx
@@ -4369,7 +4063,6 @@ pub fn x00401dbe(ctx: &mut Context) -> Cont {
     Cont(x00401dfe)
 }
 
-#[allow(unused_variables)]
 pub fn x00401dc6(ctx: &mut Context) -> Cont {
     // 00401dc6 push esi
     push(ctx, ctx.cpu.regs.esi);
@@ -4377,7 +4070,6 @@ pub fn x00401dc6(ctx: &mut Context) -> Cont {
     Cont(x00401df0)
 }
 
-#[allow(unused_variables)]
 pub fn x00401dc9(ctx: &mut Context) -> Cont {
     // 00401dc9 cmp eax,2
     sub(ctx.cpu.regs.eax, 0x2u32, &mut ctx.cpu.flags);
@@ -4385,7 +4077,6 @@ pub fn x00401dc9(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00401dce), Cont(x00401ded))
 }
 
-#[allow(unused_variables)]
 pub fn x00401dce(ctx: &mut Context) -> Cont {
     // 00401dce lea eax,[ebp-4]
     ctx.cpu.regs.eax = ctx.cpu.regs.ebp.wrapping_add(0xfffffffcu32);
@@ -4406,7 +4097,6 @@ pub fn x00401dce(ctx: &mut Context) -> Cont {
     call(ctx, 0x401dde, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401dde(ctx: &mut Context) -> Cont {
     // 00401dde add esp,0Ch
     ctx.cpu.regs.esp = add(ctx.cpu.regs.esp, 0xcu32, &mut ctx.cpu.flags);
@@ -4416,7 +4106,6 @@ pub fn x00401dde(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00401de5), Cont(x00401ded))
 }
 
-#[allow(unused_variables)]
 pub fn x00401de5(ctx: &mut Context) -> Cont {
     // 00401de5 movzx eax,byte ptr [eax]
     ctx.cpu.regs.eax = ctx.memory.read::<u8>(ctx.cpu.regs.eax) as _;
@@ -4426,7 +4115,6 @@ pub fn x00401de5(ctx: &mut Context) -> Cont {
     Cont(x00401dfe)
 }
 
-#[allow(unused_variables)]
 pub fn x00401ded(ctx: &mut Context) -> Cont {
     // 00401ded push dword ptr [ebp+8]
     push(
@@ -4443,7 +4131,6 @@ pub fn x00401ded(ctx: &mut Context) -> Cont {
     call(ctx, 0x401dfe, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401df0(ctx: &mut Context) -> Cont {
     // 00401df0 push 0
     push(ctx, 0x0u32);
@@ -4454,7 +4141,6 @@ pub fn x00401df0(ctx: &mut Context) -> Cont {
     call(ctx, 0x401dfe, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401dfe(ctx: &mut Context) -> Cont {
     // 00401dfe pop esi
     let x = pop(ctx);
@@ -4465,7 +4151,6 @@ pub fn x00401dfe(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00401e01(ctx: &mut Context) -> Cont {
     // 00401e01 push dword ptr ds:[40970Ch]
     push(ctx, ctx.memory.read::<u32>(0x40970cu32));
@@ -4480,7 +4165,6 @@ pub fn x00401e01(ctx: &mut Context) -> Cont {
     call(ctx, 0x401e10, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401e10(ctx: &mut Context) -> Cont {
     // 00401e10 pop ecx
     let x = pop(ctx);
@@ -4492,7 +4176,6 @@ pub fn x00401e10(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00401e13(ctx: &mut Context) -> Cont {
     // 00401e13 cmp dword ptr [esp+4],0FFFFFFE0h
     sub(
@@ -4505,7 +4188,6 @@ pub fn x00401e13(ctx: &mut Context) -> Cont {
     ja(ctx, Cont(x00401e1a), Cont(x00401e3c))
 }
 
-#[allow(unused_variables)]
 pub fn x00401e1a(ctx: &mut Context) -> Cont {
     // 00401e1a push dword ptr [esp+4]
     push(
@@ -4518,7 +4200,6 @@ pub fn x00401e1a(ctx: &mut Context) -> Cont {
     call(ctx, 0x401e23, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401e23(ctx: &mut Context) -> Cont {
     // 00401e23 test eax,eax
     and(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -4529,7 +4210,6 @@ pub fn x00401e23(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00401e28), Cont(x00401e3e))
 }
 
-#[allow(unused_variables)]
 pub fn x00401e28(ctx: &mut Context) -> Cont {
     // 00401e28 cmp [esp+8],eax
     sub(
@@ -4542,7 +4222,6 @@ pub fn x00401e28(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00401e2e), Cont(x00401e3e))
 }
 
-#[allow(unused_variables)]
 pub fn x00401e2e(ctx: &mut Context) -> Cont {
     // 00401e2e push dword ptr [esp+4]
     push(
@@ -4555,7 +4234,6 @@ pub fn x00401e2e(ctx: &mut Context) -> Cont {
     call(ctx, 0x401e37, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401e37(ctx: &mut Context) -> Cont {
     // 00401e37 test eax,eax
     and(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -4566,7 +4244,6 @@ pub fn x00401e37(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00401e3c), Cont(x00401e1a))
 }
 
-#[allow(unused_variables)]
 pub fn x00401e3c(ctx: &mut Context) -> Cont {
     // 00401e3c xor eax,eax
     ctx.cpu.regs.eax = xor(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -4574,13 +4251,11 @@ pub fn x00401e3c(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00401e3e(ctx: &mut Context) -> Cont {
     // 00401e3e ret
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00401e3f(ctx: &mut Context) -> Cont {
     // 00401e3f mov eax,ds:[409988h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x409988u32);
@@ -4596,7 +4271,6 @@ pub fn x00401e3f(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00401e4e), Cont(x00401e63))
 }
 
-#[allow(unused_variables)]
 pub fn x00401e4e(ctx: &mut Context) -> Cont {
     // 00401e4e cmp esi,ds:[409980h]
     sub(
@@ -4608,7 +4282,6 @@ pub fn x00401e4e(ctx: &mut Context) -> Cont {
     ja(ctx, Cont(x00401e56), Cont(x00401e95))
 }
 
-#[allow(unused_variables)]
 pub fn x00401e56(ctx: &mut Context) -> Cont {
     // 00401e56 push esi
     push(ctx, ctx.cpu.regs.esi);
@@ -4617,7 +4290,6 @@ pub fn x00401e56(ctx: &mut Context) -> Cont {
     call(ctx, 0x401e5c, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401e5c(ctx: &mut Context) -> Cont {
     // 00401e5c test eax,eax
     and(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -4628,7 +4300,6 @@ pub fn x00401e5c(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00401e61), Cont(x00401e95))
 }
 
-#[allow(unused_variables)]
 pub fn x00401e61(ctx: &mut Context) -> Cont {
     // 00401e61 pop esi
     let x = pop(ctx);
@@ -4637,7 +4308,6 @@ pub fn x00401e61(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00401e63(ctx: &mut Context) -> Cont {
     // 00401e63 cmp eax,2
     sub(ctx.cpu.regs.eax, 0x2u32, &mut ctx.cpu.flags);
@@ -4645,7 +4315,6 @@ pub fn x00401e63(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00401e68), Cont(x00401e95))
 }
 
-#[allow(unused_variables)]
 pub fn x00401e68(ctx: &mut Context) -> Cont {
     // 00401e68 mov eax,[esp+8]
     ctx.cpu.regs.eax = ctx
@@ -4657,7 +4326,6 @@ pub fn x00401e68(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00401e70), Cont(x00401e78))
 }
 
-#[allow(unused_variables)]
 pub fn x00401e70(ctx: &mut Context) -> Cont {
     // 00401e70 lea esi,[eax+0Fh]
     ctx.cpu.regs.esi = ctx.cpu.regs.eax.wrapping_add(0xfu32);
@@ -4667,7 +4335,6 @@ pub fn x00401e70(ctx: &mut Context) -> Cont {
     Cont(x00401e7b)
 }
 
-#[allow(unused_variables)]
 pub fn x00401e78(ctx: &mut Context) -> Cont {
     // 00401e78 push 10h
     push(ctx, 0x10u32);
@@ -4684,7 +4351,6 @@ pub fn x00401e78(ctx: &mut Context) -> Cont {
     ja(ctx, Cont(x00401e83), Cont(x00401ea2))
 }
 
-#[allow(unused_variables)]
 pub fn x00401e7b(ctx: &mut Context) -> Cont {
     // 00401e7b cmp esi,ds:[40922Ch]
     sub(
@@ -4696,7 +4362,6 @@ pub fn x00401e7b(ctx: &mut Context) -> Cont {
     ja(ctx, Cont(x00401e83), Cont(x00401ea2))
 }
 
-#[allow(unused_variables)]
 pub fn x00401e83(ctx: &mut Context) -> Cont {
     // 00401e83 mov eax,esi
     ctx.cpu.regs.eax = ctx.cpu.regs.esi;
@@ -4709,7 +4374,6 @@ pub fn x00401e83(ctx: &mut Context) -> Cont {
     call(ctx, 0x401e8e, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401e8e(ctx: &mut Context) -> Cont {
     // 00401e8e test eax,eax
     and(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -4720,13 +4384,11 @@ pub fn x00401e8e(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00401e93), Cont(x00401eb1))
 }
 
-#[allow(unused_variables)]
 pub fn x00401e93(ctx: &mut Context) -> Cont {
     // 00401e93 jmp short 00401EA2h
     Cont(x00401ea2)
 }
 
-#[allow(unused_variables)]
 pub fn x00401e95(ctx: &mut Context) -> Cont {
     // 00401e95 test esi,esi
     and(ctx.cpu.regs.esi, ctx.cpu.regs.esi, &mut ctx.cpu.flags);
@@ -4734,7 +4396,6 @@ pub fn x00401e95(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00401e99), Cont(x00401e9c))
 }
 
-#[allow(unused_variables)]
 pub fn x00401e99(ctx: &mut Context) -> Cont {
     // 00401e99 push 1
     push(ctx, 0x1u32);
@@ -4756,7 +4417,6 @@ pub fn x00401e99(ctx: &mut Context) -> Cont {
     call(ctx, 0x401eb1, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401e9c(ctx: &mut Context) -> Cont {
     // 00401e9c add esi,0Fh
     ctx.cpu.regs.esi = add(ctx.cpu.regs.esi, 0xfu32, &mut ctx.cpu.flags);
@@ -4773,7 +4433,6 @@ pub fn x00401e9c(ctx: &mut Context) -> Cont {
     call(ctx, 0x401eb1, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401ea2(ctx: &mut Context) -> Cont {
     // 00401ea2 push esi
     push(ctx, ctx.cpu.regs.esi);
@@ -4786,7 +4445,6 @@ pub fn x00401ea2(ctx: &mut Context) -> Cont {
     call(ctx, 0x401eb1, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401eb1(ctx: &mut Context) -> Cont {
     // 00401eb1 pop esi
     let x = pop(ctx);
@@ -4795,7 +4453,6 @@ pub fn x00401eb1(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00401eb3(ctx: &mut Context) -> Cont {
     // 00401eb3 push ebp
     push(ctx, ctx.cpu.regs.ebp);
@@ -4815,7 +4472,6 @@ pub fn x00401eb3(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00401ebf), Cont(x00401f19))
 }
 
-#[allow(unused_variables)]
 pub fn x00401ebf(ctx: &mut Context) -> Cont {
     // 00401ebf mov eax,ds:[409988h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x409988u32);
@@ -4825,7 +4481,6 @@ pub fn x00401ebf(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00401ec9), Cont(x00401edf))
 }
 
-#[allow(unused_variables)]
 pub fn x00401ec9(ctx: &mut Context) -> Cont {
     // 00401ec9 push esi
     push(ctx, ctx.cpu.regs.esi);
@@ -4834,7 +4489,6 @@ pub fn x00401ec9(ctx: &mut Context) -> Cont {
     call(ctx, 0x401ecf, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401ecf(ctx: &mut Context) -> Cont {
     // 00401ecf pop ecx
     let x = pop(ctx);
@@ -4847,7 +4501,6 @@ pub fn x00401ecf(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00401ed5), Cont(x00401f0b))
 }
 
-#[allow(unused_variables)]
 pub fn x00401ed5(ctx: &mut Context) -> Cont {
     // 00401ed5 push eax
     push(ctx, ctx.cpu.regs.eax);
@@ -4856,7 +4509,6 @@ pub fn x00401ed5(ctx: &mut Context) -> Cont {
     call(ctx, 0x401edb, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401edb(ctx: &mut Context) -> Cont {
     // 00401edb pop ecx
     let x = pop(ctx);
@@ -4868,7 +4520,6 @@ pub fn x00401edb(ctx: &mut Context) -> Cont {
     Cont(x00401f19)
 }
 
-#[allow(unused_variables)]
 pub fn x00401edf(ctx: &mut Context) -> Cont {
     // 00401edf cmp eax,2
     sub(ctx.cpu.regs.eax, 0x2u32, &mut ctx.cpu.flags);
@@ -4876,7 +4527,6 @@ pub fn x00401edf(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00401ee4), Cont(x00401f0a))
 }
 
-#[allow(unused_variables)]
 pub fn x00401ee4(ctx: &mut Context) -> Cont {
     // 00401ee4 lea eax,[ebp+8]
     ctx.cpu.regs.eax = ctx.cpu.regs.ebp.wrapping_add(0x8u32);
@@ -4893,7 +4543,6 @@ pub fn x00401ee4(ctx: &mut Context) -> Cont {
     call(ctx, 0x401ef2, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401ef2(ctx: &mut Context) -> Cont {
     // 00401ef2 add esp,0Ch
     ctx.cpu.regs.esp = add(ctx.cpu.regs.esp, 0xcu32, &mut ctx.cpu.flags);
@@ -4903,7 +4552,6 @@ pub fn x00401ef2(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00401ef9), Cont(x00401f0a))
 }
 
-#[allow(unused_variables)]
 pub fn x00401ef9(ctx: &mut Context) -> Cont {
     // 00401ef9 push eax
     push(ctx, ctx.cpu.regs.eax);
@@ -4924,7 +4572,6 @@ pub fn x00401ef9(ctx: &mut Context) -> Cont {
     call(ctx, 0x401f05, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401f05(ctx: &mut Context) -> Cont {
     // 00401f05 add esp,0Ch
     ctx.cpu.regs.esp = add(ctx.cpu.regs.esp, 0xcu32, &mut ctx.cpu.flags);
@@ -4932,7 +4579,6 @@ pub fn x00401f05(ctx: &mut Context) -> Cont {
     Cont(x00401f19)
 }
 
-#[allow(unused_variables)]
 pub fn x00401f0a(ctx: &mut Context) -> Cont {
     // 00401f0a push esi
     push(ctx, ctx.cpu.regs.esi);
@@ -4945,7 +4591,6 @@ pub fn x00401f0a(ctx: &mut Context) -> Cont {
     call(ctx, 0x401f19, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401f0b(ctx: &mut Context) -> Cont {
     // 00401f0b push 0
     push(ctx, 0x0u32);
@@ -4956,7 +4601,6 @@ pub fn x00401f0b(ctx: &mut Context) -> Cont {
     call(ctx, 0x401f19, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401f19(ctx: &mut Context) -> Cont {
     // 00401f19 pop esi
     let x = pop(ctx);
@@ -4967,7 +4611,6 @@ pub fn x00401f19(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00401f1c(ctx: &mut Context) -> Cont {
     // 00401f1c push ebp
     push(ctx, ctx.cpu.regs.ebp);
@@ -4986,7 +4629,6 @@ pub fn x00401f1c(ctx: &mut Context) -> Cont {
     call(ctx, 0x401f28, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401f28(ctx: &mut Context) -> Cont {
     // 00401f28 test eax,eax
     and(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -4997,7 +4639,6 @@ pub fn x00401f28(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00401f31), Cont(x00402051))
 }
 
-#[allow(unused_variables)]
 pub fn x00401f31(ctx: &mut Context) -> Cont {
     // 00401f31 mov ebx,[eax+8]
     ctx.cpu.regs.ebx = ctx
@@ -5009,7 +4650,6 @@ pub fn x00401f31(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00401f3c), Cont(x00402051))
 }
 
-#[allow(unused_variables)]
 pub fn x00401f3c(ctx: &mut Context) -> Cont {
     // 00401f3c cmp ebx,5
     sub(ctx.cpu.regs.ebx, 0x5u32, &mut ctx.cpu.flags);
@@ -5017,7 +4657,6 @@ pub fn x00401f3c(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00401f41), Cont(x00401f4d))
 }
 
-#[allow(unused_variables)]
 pub fn x00401f41(ctx: &mut Context) -> Cont {
     // 00401f41 and dword ptr [eax+8],0
     ctx.memory.write::<u32>(
@@ -5038,7 +4677,6 @@ pub fn x00401f41(ctx: &mut Context) -> Cont {
     Cont(x0040205a)
 }
 
-#[allow(unused_variables)]
 pub fn x00401f4d(ctx: &mut Context) -> Cont {
     // 00401f4d cmp ebx,1
     sub(ctx.cpu.regs.ebx, 0x1u32, &mut ctx.cpu.flags);
@@ -5046,7 +4684,6 @@ pub fn x00401f4d(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00401f56), Cont(x0040204c))
 }
 
-#[allow(unused_variables)]
 pub fn x00401f56(ctx: &mut Context) -> Cont {
     // 00401f56 mov ecx,ds:[4095F4h]
     ctx.cpu.regs.ecx = ctx.memory.read::<u32>(0x4095f4u32);
@@ -5069,7 +4706,6 @@ pub fn x00401f56(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00401f74), Cont(x0040203c))
 }
 
-#[allow(unused_variables)]
 pub fn x00401f74(ctx: &mut Context) -> Cont {
     // 00401f74 mov ecx,ds:[407148h]
     ctx.cpu.regs.ecx = ctx.memory.read::<u32>(0x407148u32);
@@ -5085,7 +4721,6 @@ pub fn x00401f74(ctx: &mut Context) -> Cont {
     jge(ctx, Cont(x00401f87), Cont(x00401f9c))
 }
 
-#[allow(unused_variables)]
 pub fn x00401f87(ctx: &mut Context) -> Cont {
     // 00401f87 lea esi,[ecx+ecx*2]
     ctx.cpu.regs.esi = ctx.cpu.regs.ecx.wrapping_add((ctx.cpu.regs.ecx * 2));
@@ -5110,7 +4745,6 @@ pub fn x00401f87(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00401f9c), Cont(x00401f93))
 }
 
-#[allow(unused_variables)]
 pub fn x00401f93(ctx: &mut Context) -> Cont {
     // 00401f93 and dword ptr [esi],0
     ctx.memory.write::<u32>(
@@ -5129,7 +4763,6 @@ pub fn x00401f93(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00401f9c), Cont(x00401f93))
 }
 
-#[allow(unused_variables)]
 pub fn x00401f9c(ctx: &mut Context) -> Cont {
     // 00401f9c mov eax,[eax]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(ctx.cpu.regs.eax);
@@ -5141,7 +4774,6 @@ pub fn x00401f9c(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00401fab), Cont(x00401fb7))
 }
 
-#[allow(unused_variables)]
 pub fn x00401fab(ctx: &mut Context) -> Cont {
     // 00401fab mov dword ptr ds:[407154h],83h
     ctx.memory.write::<u32>(0x407154u32, 0x83u32);
@@ -5149,7 +4781,6 @@ pub fn x00401fab(ctx: &mut Context) -> Cont {
     Cont(x00402027)
 }
 
-#[allow(unused_variables)]
 pub fn x00401fb7(ctx: &mut Context) -> Cont {
     // 00401fb7 cmp eax,0C0000090h
     sub(ctx.cpu.regs.eax, 0xc0000090u32, &mut ctx.cpu.flags);
@@ -5157,7 +4788,6 @@ pub fn x00401fb7(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00401fbe), Cont(x00401fca))
 }
 
-#[allow(unused_variables)]
 pub fn x00401fbe(ctx: &mut Context) -> Cont {
     // 00401fbe mov dword ptr ds:[407154h],81h
     ctx.memory.write::<u32>(0x407154u32, 0x81u32);
@@ -5165,7 +4795,6 @@ pub fn x00401fbe(ctx: &mut Context) -> Cont {
     Cont(x00402027)
 }
 
-#[allow(unused_variables)]
 pub fn x00401fca(ctx: &mut Context) -> Cont {
     // 00401fca cmp eax,0C0000091h
     sub(ctx.cpu.regs.eax, 0xc0000091u32, &mut ctx.cpu.flags);
@@ -5173,7 +4802,6 @@ pub fn x00401fca(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00401fd1), Cont(x00401fdd))
 }
 
-#[allow(unused_variables)]
 pub fn x00401fd1(ctx: &mut Context) -> Cont {
     // 00401fd1 mov dword ptr ds:[407154h],84h
     ctx.memory.write::<u32>(0x407154u32, 0x84u32);
@@ -5181,7 +4809,6 @@ pub fn x00401fd1(ctx: &mut Context) -> Cont {
     Cont(x00402027)
 }
 
-#[allow(unused_variables)]
 pub fn x00401fdd(ctx: &mut Context) -> Cont {
     // 00401fdd cmp eax,0C0000093h
     sub(ctx.cpu.regs.eax, 0xc0000093u32, &mut ctx.cpu.flags);
@@ -5189,7 +4816,6 @@ pub fn x00401fdd(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00401fe4), Cont(x00401ff0))
 }
 
-#[allow(unused_variables)]
 pub fn x00401fe4(ctx: &mut Context) -> Cont {
     // 00401fe4 mov dword ptr ds:[407154h],85h
     ctx.memory.write::<u32>(0x407154u32, 0x85u32);
@@ -5197,7 +4823,6 @@ pub fn x00401fe4(ctx: &mut Context) -> Cont {
     Cont(x00402027)
 }
 
-#[allow(unused_variables)]
 pub fn x00401ff0(ctx: &mut Context) -> Cont {
     // 00401ff0 cmp eax,0C000008Dh
     sub(ctx.cpu.regs.eax, 0xc000008du32, &mut ctx.cpu.flags);
@@ -5205,7 +4830,6 @@ pub fn x00401ff0(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00401ff7), Cont(x00402003))
 }
 
-#[allow(unused_variables)]
 pub fn x00401ff7(ctx: &mut Context) -> Cont {
     // 00401ff7 mov dword ptr ds:[407154h],82h
     ctx.memory.write::<u32>(0x407154u32, 0x82u32);
@@ -5213,7 +4837,6 @@ pub fn x00401ff7(ctx: &mut Context) -> Cont {
     Cont(x00402027)
 }
 
-#[allow(unused_variables)]
 pub fn x00402003(ctx: &mut Context) -> Cont {
     // 00402003 cmp eax,0C000008Fh
     sub(ctx.cpu.regs.eax, 0xc000008fu32, &mut ctx.cpu.flags);
@@ -5221,7 +4844,6 @@ pub fn x00402003(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x0040200a), Cont(x00402016))
 }
 
-#[allow(unused_variables)]
 pub fn x0040200a(ctx: &mut Context) -> Cont {
     // 0040200a mov dword ptr ds:[407154h],86h
     ctx.memory.write::<u32>(0x407154u32, 0x86u32);
@@ -5229,7 +4851,6 @@ pub fn x0040200a(ctx: &mut Context) -> Cont {
     Cont(x00402027)
 }
 
-#[allow(unused_variables)]
 pub fn x00402016(ctx: &mut Context) -> Cont {
     // 00402016 cmp eax,0C0000092h
     sub(ctx.cpu.regs.eax, 0xc0000092u32, &mut ctx.cpu.flags);
@@ -5237,7 +4858,6 @@ pub fn x00402016(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x0040201d), Cont(x00402027))
 }
 
-#[allow(unused_variables)]
 pub fn x0040201d(ctx: &mut Context) -> Cont {
     // 0040201d mov dword ptr ds:[407154h],8Ah
     ctx.memory.write::<u32>(0x407154u32, 0x8au32);
@@ -5250,7 +4870,6 @@ pub fn x0040201d(ctx: &mut Context) -> Cont {
     call(ctx, 0x402031, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00402027(ctx: &mut Context) -> Cont {
     // 00402027 push dword ptr ds:[407154h]
     push(ctx, ctx.memory.read::<u32>(0x407154u32));
@@ -5261,7 +4880,6 @@ pub fn x00402027(ctx: &mut Context) -> Cont {
     call(ctx, 0x402031, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00402031(ctx: &mut Context) -> Cont {
     // 00402031 pop ecx
     let x = pop(ctx);
@@ -5278,7 +4896,6 @@ pub fn x00402031(ctx: &mut Context) -> Cont {
     Cont(x00402044)
 }
 
-#[allow(unused_variables)]
 pub fn x0040203c(ctx: &mut Context) -> Cont {
     // 0040203c and dword ptr [eax+8],0
     ctx.memory.write::<u32>(
@@ -5297,7 +4914,6 @@ pub fn x0040203c(ctx: &mut Context) -> Cont {
     call(ctx, 0x402043, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00402043(ctx: &mut Context) -> Cont {
     // 00402043 pop ecx
     let x = pop(ctx);
@@ -5314,7 +4930,6 @@ pub fn x00402043(ctx: &mut Context) -> Cont {
     Cont(x0040205a)
 }
 
-#[allow(unused_variables)]
 pub fn x00402044(ctx: &mut Context) -> Cont {
     // 00402044 mov eax,[ebp+8]
     ctx.cpu.regs.eax = ctx
@@ -5328,7 +4943,6 @@ pub fn x00402044(ctx: &mut Context) -> Cont {
     Cont(x0040205a)
 }
 
-#[allow(unused_variables)]
 pub fn x0040204c(ctx: &mut Context) -> Cont {
     // 0040204c or eax,0FFFFFFFFh
     ctx.cpu.regs.eax = or(ctx.cpu.regs.eax, 0xffffffffu32, &mut ctx.cpu.flags);
@@ -5336,7 +4950,6 @@ pub fn x0040204c(ctx: &mut Context) -> Cont {
     Cont(x0040205a)
 }
 
-#[allow(unused_variables)]
 pub fn x00402051(ctx: &mut Context) -> Cont {
     // 00402051 push dword ptr [ebp+0Ch]
     push(
@@ -5349,7 +4962,6 @@ pub fn x00402051(ctx: &mut Context) -> Cont {
     call(ctx, 0x40205a, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x0040205a(ctx: &mut Context) -> Cont {
     // 0040205a pop ebx
     let x = pop(ctx);
@@ -5361,7 +4973,6 @@ pub fn x0040205a(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x0040205d(ctx: &mut Context) -> Cont {
     // 0040205d mov edx,[esp+4]
     ctx.cpu.regs.edx = ctx
@@ -5383,7 +4994,6 @@ pub fn x0040205d(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00402075), Cont(x0040208a))
 }
 
-#[allow(unused_variables)]
 pub fn x00402075(ctx: &mut Context) -> Cont {
     // 00402075 lea esi,[ecx+ecx*2]
     ctx.cpu.regs.esi = ctx.cpu.regs.ecx.wrapping_add((ctx.cpu.regs.ecx * 2));
@@ -5397,7 +5007,6 @@ pub fn x00402075(ctx: &mut Context) -> Cont {
     jae(ctx, Cont(x00402086), Cont(x0040208a))
 }
 
-#[allow(unused_variables)]
 pub fn x0040207f(ctx: &mut Context) -> Cont {
     // 0040207f add eax,0Ch
     ctx.cpu.regs.eax = add(ctx.cpu.regs.eax, 0xcu32, &mut ctx.cpu.flags);
@@ -5407,7 +5016,6 @@ pub fn x0040207f(ctx: &mut Context) -> Cont {
     jae(ctx, Cont(x00402086), Cont(x0040208a))
 }
 
-#[allow(unused_variables)]
 pub fn x00402086(ctx: &mut Context) -> Cont {
     // 00402086 cmp [eax],edx
     sub(
@@ -5419,7 +5027,6 @@ pub fn x00402086(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x0040208a), Cont(x0040207f))
 }
 
-#[allow(unused_variables)]
 pub fn x0040208a(ctx: &mut Context) -> Cont {
     // 0040208a lea ecx,[ecx+ecx*2]
     ctx.cpu.regs.ecx = ctx.cpu.regs.ecx.wrapping_add((ctx.cpu.regs.ecx * 2));
@@ -5434,7 +5041,6 @@ pub fn x0040208a(ctx: &mut Context) -> Cont {
     jae(ctx, Cont(x00402099), Cont(x0040209d))
 }
 
-#[allow(unused_variables)]
 pub fn x00402099(ctx: &mut Context) -> Cont {
     // 00402099 cmp [eax],edx
     sub(
@@ -5446,7 +5052,6 @@ pub fn x00402099(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x0040209d), Cont(x0040209f))
 }
 
-#[allow(unused_variables)]
 pub fn x0040209d(ctx: &mut Context) -> Cont {
     // 0040209d xor eax,eax
     ctx.cpu.regs.eax = xor(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -5454,13 +5059,11 @@ pub fn x0040209d(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x0040209f(ctx: &mut Context) -> Cont {
     // 0040209f ret
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x004020a0(ctx: &mut Context) -> Cont {
     // 004020a0 cmp dword ptr ds:[409AA8h],0
     sub(
@@ -5472,14 +5075,12 @@ pub fn x004020a0(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004020a9), Cont(x004020ae))
 }
 
-#[allow(unused_variables)]
 pub fn x004020a9(ctx: &mut Context) -> Cont {
     // 004020a9 call 0040457Bh
     let dst = Cont(x0040457b);
     call(ctx, 0x4020ae, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004020ae(ctx: &mut Context) -> Cont {
     // 004020ae push esi
     push(ctx, ctx.cpu.regs.esi);
@@ -5493,7 +5094,6 @@ pub fn x004020ae(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004020bb), Cont(x004020e0))
 }
 
-#[allow(unused_variables)]
 pub fn x004020bb(ctx: &mut Context) -> Cont {
     // 004020bb mov al,[esi+1]
     ctx.cpu
@@ -5507,7 +5107,6 @@ pub fn x004020bb(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004020c3), Cont(x004020d8))
 }
 
-#[allow(unused_variables)]
 pub fn x004020c3(ctx: &mut Context) -> Cont {
     // 004020c3 test al,al
     and(
@@ -5519,7 +5118,6 @@ pub fn x004020c3(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004020c7), Cont(x004020d8))
 }
 
-#[allow(unused_variables)]
 pub fn x004020c7(ctx: &mut Context) -> Cont {
     // 004020c7 movzx eax,al
     ctx.cpu.regs.eax = ctx.cpu.regs.get_al() as _;
@@ -5530,7 +5128,6 @@ pub fn x004020c7(ctx: &mut Context) -> Cont {
     call(ctx, 0x4020d0, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004020d0(ctx: &mut Context) -> Cont {
     // 004020d0 test eax,eax
     and(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -5541,7 +5138,6 @@ pub fn x004020d0(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004020d5), Cont(x004020bb))
 }
 
-#[allow(unused_variables)]
 pub fn x004020d5(ctx: &mut Context) -> Cont {
     // 004020d5 inc esi
     ctx.cpu.regs.esi = inc(ctx.cpu.regs.esi, &mut ctx.cpu.flags);
@@ -5549,7 +5145,6 @@ pub fn x004020d5(ctx: &mut Context) -> Cont {
     Cont(x004020bb)
 }
 
-#[allow(unused_variables)]
 pub fn x004020d8(ctx: &mut Context) -> Cont {
     // 004020d8 cmp byte ptr [esi],22h
     sub(
@@ -5561,7 +5156,6 @@ pub fn x004020d8(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004020dd), Cont(x004020ea))
 }
 
-#[allow(unused_variables)]
 pub fn x004020dd(ctx: &mut Context) -> Cont {
     // 004020dd inc esi
     ctx.cpu.regs.esi = inc(ctx.cpu.regs.esi, &mut ctx.cpu.flags);
@@ -5569,7 +5163,6 @@ pub fn x004020dd(ctx: &mut Context) -> Cont {
     Cont(x004020ea)
 }
 
-#[allow(unused_variables)]
 pub fn x004020e0(ctx: &mut Context) -> Cont {
     // 004020e0 cmp al,20h
     sub(ctx.cpu.regs.get_al(), 0x20u8, &mut ctx.cpu.flags);
@@ -5577,7 +5170,6 @@ pub fn x004020e0(ctx: &mut Context) -> Cont {
     jbe(ctx, Cont(x004020e4), Cont(x004020ea))
 }
 
-#[allow(unused_variables)]
 pub fn x004020e4(ctx: &mut Context) -> Cont {
     // 004020e4 inc esi
     ctx.cpu.regs.esi = inc(ctx.cpu.regs.esi, &mut ctx.cpu.flags);
@@ -5591,7 +5183,6 @@ pub fn x004020e4(ctx: &mut Context) -> Cont {
     ja(ctx, Cont(x004020ea), Cont(x004020e4))
 }
 
-#[allow(unused_variables)]
 pub fn x004020ea(ctx: &mut Context) -> Cont {
     // 004020ea mov al,[esi]
     ctx.cpu.regs.set_al(ctx.memory.read::<u8>(ctx.cpu.regs.esi));
@@ -5605,7 +5196,6 @@ pub fn x004020ea(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004020f0), Cont(x004020f4))
 }
 
-#[allow(unused_variables)]
 pub fn x004020f0(ctx: &mut Context) -> Cont {
     // 004020f0 cmp al,20h
     sub(ctx.cpu.regs.get_al(), 0x20u8, &mut ctx.cpu.flags);
@@ -5613,7 +5203,6 @@ pub fn x004020f0(ctx: &mut Context) -> Cont {
     jbe(ctx, Cont(x004020f4), Cont(x004020dd))
 }
 
-#[allow(unused_variables)]
 pub fn x004020f4(ctx: &mut Context) -> Cont {
     // 004020f4 mov eax,esi
     ctx.cpu.regs.eax = ctx.cpu.regs.esi;
@@ -5624,7 +5213,6 @@ pub fn x004020f4(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x004020f8(ctx: &mut Context) -> Cont {
     // 004020f8 push ebx
     push(ctx, ctx.cpu.regs.ebx);
@@ -5644,14 +5232,12 @@ pub fn x004020f8(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00402105), Cont(x0040210a))
 }
 
-#[allow(unused_variables)]
 pub fn x00402105(ctx: &mut Context) -> Cont {
     // 00402105 call 0040457Bh
     let dst = Cont(x0040457b);
     call(ctx, 0x40210a, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x0040210a(ctx: &mut Context) -> Cont {
     // 0040210a mov esi,ds:[40959Ch]
     ctx.cpu.regs.esi = ctx.memory.read::<u32>(0x40959cu32);
@@ -5669,7 +5255,6 @@ pub fn x0040210a(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00402118), Cont(x0040212a))
 }
 
-#[allow(unused_variables)]
 pub fn x00402112(ctx: &mut Context) -> Cont {
     // 00402112 mov al,[esi]
     ctx.cpu.regs.set_al(ctx.memory.read::<u8>(ctx.cpu.regs.esi));
@@ -5683,7 +5268,6 @@ pub fn x00402112(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00402118), Cont(x0040212a))
 }
 
-#[allow(unused_variables)]
 pub fn x00402118(ctx: &mut Context) -> Cont {
     // 00402118 cmp al,3Dh
     sub(ctx.cpu.regs.get_al(), 0x3du8, &mut ctx.cpu.flags);
@@ -5691,7 +5275,6 @@ pub fn x00402118(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x0040211c), Cont(x0040211d))
 }
 
-#[allow(unused_variables)]
 pub fn x0040211c(ctx: &mut Context) -> Cont {
     // 0040211c inc edi
     ctx.cpu.regs.edi = inc(ctx.cpu.regs.edi, &mut ctx.cpu.flags);
@@ -5702,7 +5285,6 @@ pub fn x0040211c(ctx: &mut Context) -> Cont {
     call(ctx, 0x402123, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x0040211d(ctx: &mut Context) -> Cont {
     // 0040211d push esi
     push(ctx, ctx.cpu.regs.esi);
@@ -5711,7 +5293,6 @@ pub fn x0040211d(ctx: &mut Context) -> Cont {
     call(ctx, 0x402123, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00402123(ctx: &mut Context) -> Cont {
     // 00402123 pop ecx
     let x = pop(ctx);
@@ -5727,7 +5308,6 @@ pub fn x00402123(ctx: &mut Context) -> Cont {
     Cont(x00402112)
 }
 
-#[allow(unused_variables)]
 pub fn x0040212a(ctx: &mut Context) -> Cont {
     // 0040212a lea eax,[edi*4+4]
     ctx.cpu.regs.eax = (ctx.cpu.regs.edi * 4).wrapping_add(0x4u32);
@@ -5738,7 +5318,6 @@ pub fn x0040212a(ctx: &mut Context) -> Cont {
     call(ctx, 0x402137, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00402137(ctx: &mut Context) -> Cont {
     // 00402137 mov esi,eax
     ctx.cpu.regs.esi = ctx.cpu.regs.eax;
@@ -5753,7 +5332,6 @@ pub fn x00402137(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00402144), Cont(x0040214c))
 }
 
-#[allow(unused_variables)]
 pub fn x00402144(ctx: &mut Context) -> Cont {
     // 00402144 push 9
     push(ctx, 0x9u32);
@@ -5762,7 +5340,6 @@ pub fn x00402144(ctx: &mut Context) -> Cont {
     call(ctx, 0x40214b, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x0040214b(ctx: &mut Context) -> Cont {
     // 0040214b pop ecx
     let x = pop(ctx);
@@ -5779,7 +5356,6 @@ pub fn x0040214b(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00402156), Cont(x0040218f))
 }
 
-#[allow(unused_variables)]
 pub fn x0040214c(ctx: &mut Context) -> Cont {
     // 0040214c mov edi,ds:[40959Ch]
     ctx.cpu.regs.edi = ctx.memory.read::<u32>(0x40959cu32);
@@ -5793,7 +5369,6 @@ pub fn x0040214c(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00402156), Cont(x0040218f))
 }
 
-#[allow(unused_variables)]
 pub fn x00402156(ctx: &mut Context) -> Cont {
     // 00402156 push ebp
     push(ctx, ctx.cpu.regs.ebp);
@@ -5804,7 +5379,6 @@ pub fn x00402156(ctx: &mut Context) -> Cont {
     call(ctx, 0x40215d, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00402157(ctx: &mut Context) -> Cont {
     // 00402157 push edi
     push(ctx, ctx.cpu.regs.edi);
@@ -5813,7 +5387,6 @@ pub fn x00402157(ctx: &mut Context) -> Cont {
     call(ctx, 0x40215d, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x0040215d(ctx: &mut Context) -> Cont {
     // 0040215d mov ebp,eax
     ctx.cpu.regs.ebp = ctx.cpu.regs.eax;
@@ -5832,7 +5405,6 @@ pub fn x0040215d(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00402166), Cont(x00402188))
 }
 
-#[allow(unused_variables)]
 pub fn x00402166(ctx: &mut Context) -> Cont {
     // 00402166 push ebp
     push(ctx, ctx.cpu.regs.ebp);
@@ -5841,7 +5413,6 @@ pub fn x00402166(ctx: &mut Context) -> Cont {
     call(ctx, 0x40216c, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x0040216c(ctx: &mut Context) -> Cont {
     // 0040216c cmp eax,ebx
     sub(ctx.cpu.regs.eax, ctx.cpu.regs.ebx, &mut ctx.cpu.flags);
@@ -5854,7 +5425,6 @@ pub fn x0040216c(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00402173), Cont(x0040217b))
 }
 
-#[allow(unused_variables)]
 pub fn x00402173(ctx: &mut Context) -> Cont {
     // 00402173 push 9
     push(ctx, 0x9u32);
@@ -5863,7 +5433,6 @@ pub fn x00402173(ctx: &mut Context) -> Cont {
     call(ctx, 0x40217a, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x0040217a(ctx: &mut Context) -> Cont {
     // 0040217a pop ecx
     let x = pop(ctx);
@@ -5877,7 +5446,6 @@ pub fn x0040217a(ctx: &mut Context) -> Cont {
     call(ctx, 0x402183, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x0040217b(ctx: &mut Context) -> Cont {
     // 0040217b push edi
     push(ctx, ctx.cpu.regs.edi);
@@ -5888,7 +5456,6 @@ pub fn x0040217b(ctx: &mut Context) -> Cont {
     call(ctx, 0x402183, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00402183(ctx: &mut Context) -> Cont {
     // 00402183 pop ecx
     let x = pop(ctx);
@@ -5910,7 +5477,6 @@ pub fn x00402183(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x0040218e), Cont(x00402157))
 }
 
-#[allow(unused_variables)]
 pub fn x00402188(ctx: &mut Context) -> Cont {
     // 00402188 add edi,ebp
     ctx.cpu.regs.edi = add(ctx.cpu.regs.edi, ctx.cpu.regs.ebp, &mut ctx.cpu.flags);
@@ -5924,7 +5490,6 @@ pub fn x00402188(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x0040218e), Cont(x00402157))
 }
 
-#[allow(unused_variables)]
 pub fn x0040218e(ctx: &mut Context) -> Cont {
     // 0040218e pop ebp
     let x = pop(ctx);
@@ -5936,7 +5501,6 @@ pub fn x0040218e(ctx: &mut Context) -> Cont {
     call(ctx, 0x40219a, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x0040218f(ctx: &mut Context) -> Cont {
     // 0040218f push dword ptr ds:[40959Ch]
     push(ctx, ctx.memory.read::<u32>(0x40959cu32));
@@ -5945,7 +5509,6 @@ pub fn x0040218f(ctx: &mut Context) -> Cont {
     call(ctx, 0x40219a, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x0040219a(ctx: &mut Context) -> Cont {
     // 0040219a pop ecx
     let x = pop(ctx);
@@ -5969,7 +5532,6 @@ pub fn x0040219a(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x004021b1(ctx: &mut Context) -> Cont {
     // 004021b1 push ebp
     push(ctx, ctx.cpu.regs.ebp);
@@ -5997,14 +5559,12 @@ pub fn x004021b1(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004021c3), Cont(x004021c8))
 }
 
-#[allow(unused_variables)]
 pub fn x004021c3(ctx: &mut Context) -> Cont {
     // 004021c3 call 0040457Bh
     let dst = Cont(x0040457b);
     call(ctx, 0x4021c8, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004021c8(ctx: &mut Context) -> Cont {
     // 004021c8 mov esi,4095F8h
     ctx.cpu.regs.esi = 0x4095f8u32;
@@ -6019,7 +5579,6 @@ pub fn x004021c8(ctx: &mut Context) -> Cont {
     call(ctx, 0x4021da, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004021da(ctx: &mut Context) -> Cont {
     // 004021da mov eax,ds:[409AB8h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x409ab8u32);
@@ -6037,7 +5596,6 @@ pub fn x004021da(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004021eb), Cont(x004021ed))
 }
 
-#[allow(unused_variables)]
 pub fn x004021eb(ctx: &mut Context) -> Cont {
     // 004021eb mov edi,eax
     ctx.cpu.regs.edi = ctx.cpu.regs.eax;
@@ -6060,7 +5618,6 @@ pub fn x004021eb(ctx: &mut Context) -> Cont {
     call(ctx, 0x4021fd, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004021ed(ctx: &mut Context) -> Cont {
     // 004021ed lea eax,[ebp-8]
     ctx.cpu.regs.eax = ctx.cpu.regs.ebp.wrapping_add(0xfffffff8u32);
@@ -6081,7 +5638,6 @@ pub fn x004021ed(ctx: &mut Context) -> Cont {
     call(ctx, 0x4021fd, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004021fd(ctx: &mut Context) -> Cont {
     // 004021fd mov eax,[ebp-8]
     ctx.cpu.regs.eax = ctx
@@ -6100,7 +5656,6 @@ pub fn x004021fd(ctx: &mut Context) -> Cont {
     call(ctx, 0x40220c, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x0040220c(ctx: &mut Context) -> Cont {
     // 0040220c mov esi,eax
     ctx.cpu.regs.esi = ctx.cpu.regs.eax;
@@ -6112,7 +5667,6 @@ pub fn x0040220c(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00402215), Cont(x0040221d))
 }
 
-#[allow(unused_variables)]
 pub fn x00402215(ctx: &mut Context) -> Cont {
     // 00402215 push 8
     push(ctx, 0x8u32);
@@ -6121,7 +5675,6 @@ pub fn x00402215(ctx: &mut Context) -> Cont {
     call(ctx, 0x40221c, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x0040221c(ctx: &mut Context) -> Cont {
     // 0040221c pop ecx
     let x = pop(ctx);
@@ -6151,7 +5704,6 @@ pub fn x0040221c(ctx: &mut Context) -> Cont {
     call(ctx, 0x402233, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x0040221d(ctx: &mut Context) -> Cont {
     // 0040221d lea eax,[ebp-8]
     ctx.cpu.regs.eax = ctx.cpu.regs.ebp.wrapping_add(0xfffffff8u32);
@@ -6178,7 +5730,6 @@ pub fn x0040221d(ctx: &mut Context) -> Cont {
     call(ctx, 0x402233, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00402233(ctx: &mut Context) -> Cont {
     // 00402233 mov eax,[ebp-4]
     ctx.cpu.regs.eax = ctx
@@ -6207,7 +5758,6 @@ pub fn x00402233(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x0040224a(ctx: &mut Context) -> Cont {
     // 0040224a push ebp
     push(ctx, ctx.cpu.regs.ebp);
@@ -6256,7 +5806,6 @@ pub fn x0040224a(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x0040226c), Cont(x00402274))
 }
 
-#[allow(unused_variables)]
 pub fn x0040226c(ctx: &mut Context) -> Cont {
     // 0040226c mov [edi],esi
     ctx.memory.write::<u32>(ctx.cpu.regs.edi, ctx.cpu.regs.esi);
@@ -6275,7 +5824,6 @@ pub fn x0040226c(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00402279), Cont(x004022bd))
 }
 
-#[allow(unused_variables)]
 pub fn x00402274(ctx: &mut Context) -> Cont {
     // 00402274 cmp byte ptr [eax],22h
     sub(
@@ -6287,7 +5835,6 @@ pub fn x00402274(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00402279), Cont(x004022bd))
 }
 
-#[allow(unused_variables)]
 pub fn x00402279(ctx: &mut Context) -> Cont {
     // 00402279 mov dl,[eax+1]
     ctx.cpu
@@ -6301,7 +5848,6 @@ pub fn x00402279(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00402282), Cont(x004022ab))
 }
 
-#[allow(unused_variables)]
 pub fn x00402282(ctx: &mut Context) -> Cont {
     // 00402282 test dl,dl
     and(
@@ -6313,7 +5859,6 @@ pub fn x00402282(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00402286), Cont(x004022ab))
 }
 
-#[allow(unused_variables)]
 pub fn x00402286(ctx: &mut Context) -> Cont {
     // 00402286 movzx edx,dl
     ctx.cpu.regs.edx = ctx.cpu.regs.get_dl() as _;
@@ -6328,7 +5873,6 @@ pub fn x00402286(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00402292), Cont(x0040229e))
 }
 
-#[allow(unused_variables)]
 pub fn x00402292(ctx: &mut Context) -> Cont {
     // 00402292 inc dword ptr [ecx]
     ctx.memory.write::<u32>(
@@ -6341,7 +5885,6 @@ pub fn x00402292(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00402298), Cont(x0040229e))
 }
 
-#[allow(unused_variables)]
 pub fn x00402298(ctx: &mut Context) -> Cont {
     // 00402298 mov dl,[eax]
     ctx.cpu.regs.set_dl(ctx.memory.read::<u8>(ctx.cpu.regs.eax));
@@ -6363,7 +5906,6 @@ pub fn x00402298(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004022a4), Cont(x00402279))
 }
 
-#[allow(unused_variables)]
 pub fn x0040229e(ctx: &mut Context) -> Cont {
     // 0040229e inc dword ptr [ecx]
     ctx.memory.write::<u32>(
@@ -6376,7 +5918,6 @@ pub fn x0040229e(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004022a4), Cont(x00402279))
 }
 
-#[allow(unused_variables)]
 pub fn x004022a4(ctx: &mut Context) -> Cont {
     // 004022a4 mov dl,[eax]
     ctx.cpu.regs.set_dl(ctx.memory.read::<u8>(ctx.cpu.regs.eax));
@@ -6389,7 +5930,6 @@ pub fn x004022a4(ctx: &mut Context) -> Cont {
     Cont(x00402279)
 }
 
-#[allow(unused_variables)]
 pub fn x004022ab(ctx: &mut Context) -> Cont {
     // 004022ab inc dword ptr [ecx]
     ctx.memory.write::<u32>(
@@ -6402,7 +5942,6 @@ pub fn x004022ab(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004022b1), Cont(x004022b5))
 }
 
-#[allow(unused_variables)]
 pub fn x004022b1(ctx: &mut Context) -> Cont {
     // 004022b1 and byte ptr [esi],0
     ctx.memory.write::<u8>(
@@ -6425,7 +5964,6 @@ pub fn x004022b1(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004022ba), Cont(x00402300))
 }
 
-#[allow(unused_variables)]
 pub fn x004022b5(ctx: &mut Context) -> Cont {
     // 004022b5 cmp byte ptr [eax],22h
     sub(
@@ -6437,7 +5975,6 @@ pub fn x004022b5(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004022ba), Cont(x00402300))
 }
 
-#[allow(unused_variables)]
 pub fn x004022ba(ctx: &mut Context) -> Cont {
     // 004022ba inc eax
     ctx.cpu.regs.eax = inc(ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -6445,7 +5982,6 @@ pub fn x004022ba(ctx: &mut Context) -> Cont {
     Cont(x00402300)
 }
 
-#[allow(unused_variables)]
 pub fn x004022bd(ctx: &mut Context) -> Cont {
     // 004022bd inc dword ptr [ecx]
     ctx.memory.write::<u32>(
@@ -6458,7 +5994,6 @@ pub fn x004022bd(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004022c3), Cont(x004022c8))
 }
 
-#[allow(unused_variables)]
 pub fn x004022c3(ctx: &mut Context) -> Cont {
     // 004022c3 mov dl,[eax]
     ctx.cpu.regs.set_dl(ctx.memory.read::<u8>(ctx.cpu.regs.eax));
@@ -6484,7 +6019,6 @@ pub fn x004022c3(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004022d7), Cont(x004022e3))
 }
 
-#[allow(unused_variables)]
 pub fn x004022c8(ctx: &mut Context) -> Cont {
     // 004022c8 mov dl,[eax]
     ctx.cpu.regs.set_dl(ctx.memory.read::<u8>(ctx.cpu.regs.eax));
@@ -6503,7 +6037,6 @@ pub fn x004022c8(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004022d7), Cont(x004022e3))
 }
 
-#[allow(unused_variables)]
 pub fn x004022d7(ctx: &mut Context) -> Cont {
     // 004022d7 inc dword ptr [ecx]
     ctx.memory.write::<u32>(
@@ -6516,7 +6049,6 @@ pub fn x004022d7(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004022dd), Cont(x004022e2))
 }
 
-#[allow(unused_variables)]
 pub fn x004022dd(ctx: &mut Context) -> Cont {
     // 004022dd mov bl,[eax]
     ctx.cpu.regs.set_bl(ctx.memory.read::<u8>(ctx.cpu.regs.eax));
@@ -6533,7 +6065,6 @@ pub fn x004022dd(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004022e8), Cont(x004022f1))
 }
 
-#[allow(unused_variables)]
 pub fn x004022e2(ctx: &mut Context) -> Cont {
     // 004022e2 inc eax
     ctx.cpu.regs.eax = inc(ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -6543,7 +6074,6 @@ pub fn x004022e2(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004022e8), Cont(x004022f1))
 }
 
-#[allow(unused_variables)]
 pub fn x004022e3(ctx: &mut Context) -> Cont {
     // 004022e3 cmp dl,20h
     sub(ctx.cpu.regs.get_dl(), 0x20u8, &mut ctx.cpu.flags);
@@ -6551,7 +6081,6 @@ pub fn x004022e3(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004022e8), Cont(x004022f1))
 }
 
-#[allow(unused_variables)]
 pub fn x004022e8(ctx: &mut Context) -> Cont {
     // 004022e8 test dl,dl
     and(
@@ -6563,7 +6092,6 @@ pub fn x004022e8(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004022ec), Cont(x004022f5))
 }
 
-#[allow(unused_variables)]
 pub fn x004022ec(ctx: &mut Context) -> Cont {
     // 004022ec cmp dl,9
     sub(ctx.cpu.regs.get_dl(), 0x9u8, &mut ctx.cpu.flags);
@@ -6571,7 +6099,6 @@ pub fn x004022ec(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004022f1), Cont(x004022bd))
 }
 
-#[allow(unused_variables)]
 pub fn x004022f1(ctx: &mut Context) -> Cont {
     // 004022f1 test dl,dl
     and(
@@ -6583,7 +6110,6 @@ pub fn x004022f1(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004022f5), Cont(x004022f8))
 }
 
-#[allow(unused_variables)]
 pub fn x004022f5(ctx: &mut Context) -> Cont {
     // 004022f5 dec eax
     ctx.cpu.regs.eax = dec(ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -6591,7 +6117,6 @@ pub fn x004022f5(ctx: &mut Context) -> Cont {
     Cont(x00402300)
 }
 
-#[allow(unused_variables)]
 pub fn x004022f8(ctx: &mut Context) -> Cont {
     // 004022f8 test esi,esi
     and(ctx.cpu.regs.esi, ctx.cpu.regs.esi, &mut ctx.cpu.flags);
@@ -6599,7 +6124,6 @@ pub fn x004022f8(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004022fc), Cont(x00402300))
 }
 
-#[allow(unused_variables)]
 pub fn x004022fc(ctx: &mut Context) -> Cont {
     // 004022fc and byte ptr [esi-1],0
     ctx.memory.write::<u8>(
@@ -6631,7 +6155,6 @@ pub fn x004022fc(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x0040230d), Cont(x004023ed))
 }
 
-#[allow(unused_variables)]
 pub fn x00402300(ctx: &mut Context) -> Cont {
     // 00402300 and dword ptr [ebp+18h],0
     ctx.memory.write::<u32>(
@@ -6653,7 +6176,6 @@ pub fn x00402300(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x0040230d), Cont(x004023ed))
 }
 
-#[allow(unused_variables)]
 pub fn x00402304(ctx: &mut Context) -> Cont {
     // 00402304 cmp byte ptr [eax],0
     sub(
@@ -6665,7 +6187,6 @@ pub fn x00402304(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x0040230d), Cont(x004023ed))
 }
 
-#[allow(unused_variables)]
 pub fn x0040230d(ctx: &mut Context) -> Cont {
     // 0040230d mov dl,[eax]
     ctx.cpu.regs.set_dl(ctx.memory.read::<u8>(ctx.cpu.regs.eax));
@@ -6675,7 +6196,6 @@ pub fn x0040230d(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00402314), Cont(x00402319))
 }
 
-#[allow(unused_variables)]
 pub fn x00402314(ctx: &mut Context) -> Cont {
     // 00402314 cmp dl,9
     sub(ctx.cpu.regs.get_dl(), 0x9u8, &mut ctx.cpu.flags);
@@ -6683,7 +6203,6 @@ pub fn x00402314(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00402319), Cont(x0040231c))
 }
 
-#[allow(unused_variables)]
 pub fn x00402319(ctx: &mut Context) -> Cont {
     // 00402319 inc eax
     ctx.cpu.regs.eax = inc(ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -6691,7 +6210,6 @@ pub fn x00402319(ctx: &mut Context) -> Cont {
     Cont(x0040230d)
 }
 
-#[allow(unused_variables)]
 pub fn x0040231c(ctx: &mut Context) -> Cont {
     // 0040231c cmp byte ptr [eax],0
     sub(
@@ -6703,7 +6221,6 @@ pub fn x0040231c(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00402325), Cont(x004023ed))
 }
 
-#[allow(unused_variables)]
 pub fn x00402325(ctx: &mut Context) -> Cont {
     // 00402325 test edi,edi
     and(ctx.cpu.regs.edi, ctx.cpu.regs.edi, &mut ctx.cpu.flags);
@@ -6711,7 +6228,6 @@ pub fn x00402325(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00402329), Cont(x00402331))
 }
 
-#[allow(unused_variables)]
 pub fn x00402329(ctx: &mut Context) -> Cont {
     // 00402329 mov [edi],esi
     ctx.memory.write::<u32>(ctx.cpu.regs.edi, ctx.cpu.regs.esi);
@@ -6744,7 +6260,6 @@ pub fn x00402329(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00402344), Cont(x00402348))
 }
 
-#[allow(unused_variables)]
 pub fn x00402331(ctx: &mut Context) -> Cont {
     // 00402331 mov edx,[ebp+14h]
     ctx.cpu.regs.edx = ctx
@@ -6770,7 +6285,6 @@ pub fn x00402331(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00402344), Cont(x00402348))
 }
 
-#[allow(unused_variables)]
 pub fn x00402336(ctx: &mut Context) -> Cont {
     // 00402336 mov dword ptr [ebp+8],1
     ctx.memory
@@ -6787,7 +6301,6 @@ pub fn x00402336(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00402344), Cont(x00402348))
 }
 
-#[allow(unused_variables)]
 pub fn x0040233f(ctx: &mut Context) -> Cont {
     // 0040233f cmp byte ptr [eax],5Ch
     sub(
@@ -6799,7 +6312,6 @@ pub fn x0040233f(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00402344), Cont(x00402348))
 }
 
-#[allow(unused_variables)]
 pub fn x00402344(ctx: &mut Context) -> Cont {
     // 00402344 inc eax
     ctx.cpu.regs.eax = inc(ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -6809,7 +6321,6 @@ pub fn x00402344(ctx: &mut Context) -> Cont {
     Cont(x0040233f)
 }
 
-#[allow(unused_variables)]
 pub fn x00402348(ctx: &mut Context) -> Cont {
     // 00402348 cmp byte ptr [eax],22h
     sub(
@@ -6821,7 +6332,6 @@ pub fn x00402348(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x0040234d), Cont(x00402379))
 }
 
-#[allow(unused_variables)]
 pub fn x0040234d(ctx: &mut Context) -> Cont {
     // 0040234d test bl,1
     and(ctx.cpu.regs.get_bl(), 0x1u8, &mut ctx.cpu.flags);
@@ -6829,7 +6339,6 @@ pub fn x0040234d(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00402352), Cont(x00402377))
 }
 
-#[allow(unused_variables)]
 pub fn x00402352(ctx: &mut Context) -> Cont {
     // 00402352 xor edi,edi
     ctx.cpu.regs.edi = xor(ctx.cpu.regs.edi, ctx.cpu.regs.edi, &mut ctx.cpu.flags);
@@ -6844,7 +6353,6 @@ pub fn x00402352(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00402359), Cont(x00402366))
 }
 
-#[allow(unused_variables)]
 pub fn x00402359(ctx: &mut Context) -> Cont {
     // 00402359 cmp byte ptr [eax+1],22h
     sub(
@@ -6858,7 +6366,6 @@ pub fn x00402359(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00402362), Cont(x00402366))
 }
 
-#[allow(unused_variables)]
 pub fn x00402362(ctx: &mut Context) -> Cont {
     // 00402362 mov eax,edx
     ctx.cpu.regs.eax = ctx.cpu.regs.edx;
@@ -6866,7 +6373,6 @@ pub fn x00402362(ctx: &mut Context) -> Cont {
     Cont(x00402369)
 }
 
-#[allow(unused_variables)]
 pub fn x00402366(ctx: &mut Context) -> Cont {
     // 00402366 mov [ebp+8],edi
     ctx.memory
@@ -6901,7 +6407,6 @@ pub fn x00402366(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00402380), Cont(x0040238e))
 }
 
-#[allow(unused_variables)]
 pub fn x00402369(ctx: &mut Context) -> Cont {
     // 00402369 mov edi,[ebp+0Ch]
     ctx.cpu.regs.edi = ctx
@@ -6933,7 +6438,6 @@ pub fn x00402369(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00402380), Cont(x0040238e))
 }
 
-#[allow(unused_variables)]
 pub fn x00402377(ctx: &mut Context) -> Cont {
     // 00402377 shr ebx,1
     ctx.cpu.regs.ebx = shr(ctx.cpu.regs.ebx, 0x1u8, &mut ctx.cpu.flags);
@@ -6947,7 +6451,6 @@ pub fn x00402377(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00402380), Cont(x0040238e))
 }
 
-#[allow(unused_variables)]
 pub fn x00402379(ctx: &mut Context) -> Cont {
     // 00402379 mov edx,ebx
     ctx.cpu.regs.edx = ctx.cpu.regs.ebx;
@@ -6959,7 +6462,6 @@ pub fn x00402379(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00402380), Cont(x0040238e))
 }
 
-#[allow(unused_variables)]
 pub fn x00402380(ctx: &mut Context) -> Cont {
     // 00402380 inc ebx
     ctx.cpu.regs.ebx = inc(ctx.cpu.regs.ebx, &mut ctx.cpu.flags);
@@ -6969,7 +6471,6 @@ pub fn x00402380(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00402385), Cont(x00402389))
 }
 
-#[allow(unused_variables)]
 pub fn x00402381(ctx: &mut Context) -> Cont {
     // 00402381 test esi,esi
     and(ctx.cpu.regs.esi, ctx.cpu.regs.esi, &mut ctx.cpu.flags);
@@ -6977,7 +6478,6 @@ pub fn x00402381(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00402385), Cont(x00402389))
 }
 
-#[allow(unused_variables)]
 pub fn x00402385(ctx: &mut Context) -> Cont {
     // 00402385 mov byte ptr [esi],5Ch
     ctx.memory.write::<u8>(ctx.cpu.regs.esi, 0x5cu8);
@@ -6994,7 +6494,6 @@ pub fn x00402385(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x0040238e), Cont(x00402381))
 }
 
-#[allow(unused_variables)]
 pub fn x00402389(ctx: &mut Context) -> Cont {
     // 00402389 inc dword ptr [ecx]
     ctx.memory.write::<u32>(
@@ -7007,7 +6506,6 @@ pub fn x00402389(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x0040238e), Cont(x00402381))
 }
 
-#[allow(unused_variables)]
 pub fn x0040238e(ctx: &mut Context) -> Cont {
     // 0040238e mov dl,[eax]
     ctx.cpu.regs.set_dl(ctx.memory.read::<u8>(ctx.cpu.regs.eax));
@@ -7021,7 +6519,6 @@ pub fn x0040238e(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00402394), Cont(x004023de))
 }
 
-#[allow(unused_variables)]
 pub fn x00402394(ctx: &mut Context) -> Cont {
     // 00402394 cmp dword ptr [ebp+18h],0
     sub(
@@ -7034,7 +6531,6 @@ pub fn x00402394(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x0040239a), Cont(x004023a4))
 }
 
-#[allow(unused_variables)]
 pub fn x0040239a(ctx: &mut Context) -> Cont {
     // 0040239a cmp dl,20h
     sub(ctx.cpu.regs.get_dl(), 0x20u8, &mut ctx.cpu.flags);
@@ -7042,7 +6538,6 @@ pub fn x0040239a(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x0040239f), Cont(x004023de))
 }
 
-#[allow(unused_variables)]
 pub fn x0040239f(ctx: &mut Context) -> Cont {
     // 0040239f cmp dl,9
     sub(ctx.cpu.regs.get_dl(), 0x9u8, &mut ctx.cpu.flags);
@@ -7050,7 +6545,6 @@ pub fn x0040239f(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004023a4), Cont(x004023de))
 }
 
-#[allow(unused_variables)]
 pub fn x004023a4(ctx: &mut Context) -> Cont {
     // 004023a4 cmp dword ptr [ebp+8],0
     sub(
@@ -7063,7 +6557,6 @@ pub fn x004023a4(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004023aa), Cont(x004023d8))
 }
 
-#[allow(unused_variables)]
 pub fn x004023aa(ctx: &mut Context) -> Cont {
     // 004023aa test esi,esi
     and(ctx.cpu.regs.esi, ctx.cpu.regs.esi, &mut ctx.cpu.flags);
@@ -7071,7 +6564,6 @@ pub fn x004023aa(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004023ae), Cont(x004023c7))
 }
 
-#[allow(unused_variables)]
 pub fn x004023ae(ctx: &mut Context) -> Cont {
     // 004023ae movzx ebx,dl
     ctx.cpu.regs.ebx = ctx.cpu.regs.get_dl() as _;
@@ -7086,7 +6578,6 @@ pub fn x004023ae(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004023ba), Cont(x004023c0))
 }
 
-#[allow(unused_variables)]
 pub fn x004023ba(ctx: &mut Context) -> Cont {
     // 004023ba mov [esi],dl
     ctx.memory
@@ -7111,7 +6602,6 @@ pub fn x004023ba(ctx: &mut Context) -> Cont {
     Cont(x004023d6)
 }
 
-#[allow(unused_variables)]
 pub fn x004023c0(ctx: &mut Context) -> Cont {
     // 004023c0 mov dl,[eax]
     ctx.cpu.regs.set_dl(ctx.memory.read::<u8>(ctx.cpu.regs.eax));
@@ -7124,7 +6614,6 @@ pub fn x004023c0(ctx: &mut Context) -> Cont {
     Cont(x004023d6)
 }
 
-#[allow(unused_variables)]
 pub fn x004023c7(ctx: &mut Context) -> Cont {
     // 004023c7 movzx edx,dl
     ctx.cpu.regs.edx = ctx.cpu.regs.get_dl() as _;
@@ -7139,7 +6628,6 @@ pub fn x004023c7(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004023d3), Cont(x004023d6))
 }
 
-#[allow(unused_variables)]
 pub fn x004023d3(ctx: &mut Context) -> Cont {
     // 004023d3 inc eax
     ctx.cpu.regs.eax = inc(ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -7159,7 +6647,6 @@ pub fn x004023d3(ctx: &mut Context) -> Cont {
     Cont(x00402336)
 }
 
-#[allow(unused_variables)]
 pub fn x004023d6(ctx: &mut Context) -> Cont {
     // 004023d6 inc dword ptr [ecx]
     ctx.memory.write::<u32>(
@@ -7172,7 +6659,6 @@ pub fn x004023d6(ctx: &mut Context) -> Cont {
     Cont(x00402336)
 }
 
-#[allow(unused_variables)]
 pub fn x004023d8(ctx: &mut Context) -> Cont {
     // 004023d8 inc eax
     ctx.cpu.regs.eax = inc(ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -7180,7 +6666,6 @@ pub fn x004023d8(ctx: &mut Context) -> Cont {
     Cont(x00402336)
 }
 
-#[allow(unused_variables)]
 pub fn x004023de(ctx: &mut Context) -> Cont {
     // 004023de test esi,esi
     and(ctx.cpu.regs.esi, ctx.cpu.regs.esi, &mut ctx.cpu.flags);
@@ -7188,7 +6673,6 @@ pub fn x004023de(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004023e2), Cont(x004023e6))
 }
 
-#[allow(unused_variables)]
 pub fn x004023e2(ctx: &mut Context) -> Cont {
     // 004023e2 and byte ptr [esi],0
     ctx.memory.write::<u8>(
@@ -7210,7 +6694,6 @@ pub fn x004023e2(ctx: &mut Context) -> Cont {
     Cont(x00402304)
 }
 
-#[allow(unused_variables)]
 pub fn x004023e6(ctx: &mut Context) -> Cont {
     // 004023e6 inc dword ptr [ecx]
     ctx.memory.write::<u32>(
@@ -7221,7 +6704,6 @@ pub fn x004023e6(ctx: &mut Context) -> Cont {
     Cont(x00402304)
 }
 
-#[allow(unused_variables)]
 pub fn x004023ed(ctx: &mut Context) -> Cont {
     // 004023ed test edi,edi
     and(ctx.cpu.regs.edi, ctx.cpu.regs.edi, &mut ctx.cpu.flags);
@@ -7229,7 +6711,6 @@ pub fn x004023ed(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004023f1), Cont(x004023f4))
 }
 
-#[allow(unused_variables)]
 pub fn x004023f1(ctx: &mut Context) -> Cont {
     // 004023f1 and dword ptr [edi],0
     ctx.memory.write::<u32>(
@@ -7265,7 +6746,6 @@ pub fn x004023f1(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x004023f4(ctx: &mut Context) -> Cont {
     // 004023f4 mov eax,[ebp+14h]
     ctx.cpu.regs.eax = ctx
@@ -7292,7 +6772,6 @@ pub fn x004023f4(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x004023fe(ctx: &mut Context) -> Cont {
     // 004023fe push ecx
     push(ctx, ctx.cpu.regs.ecx);
@@ -7322,14 +6801,12 @@ pub fn x004023fe(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00402419), Cont(x0040244c))
 }
 
-#[allow(unused_variables)]
 pub fn x00402419(ctx: &mut Context) -> Cont {
     // 00402419 call ebp
     let dst = indirect(ctx, ctx.cpu.regs.ebp);
     call(ctx, 0x40241b, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x0040241b(ctx: &mut Context) -> Cont {
     // 0040241b mov esi,eax
     ctx.cpu.regs.esi = ctx.cpu.regs.eax;
@@ -7339,7 +6816,6 @@ pub fn x0040241b(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00402421), Cont(x0040242d))
 }
 
-#[allow(unused_variables)]
 pub fn x00402421(ctx: &mut Context) -> Cont {
     // 00402421 mov dword ptr ds:[4096FCh],1
     ctx.memory.write::<u32>(0x4096fcu32, 0x1u32);
@@ -7347,14 +6823,12 @@ pub fn x00402421(ctx: &mut Context) -> Cont {
     Cont(x00402455)
 }
 
-#[allow(unused_variables)]
 pub fn x0040242d(ctx: &mut Context) -> Cont {
     // 0040242d call dword ptr ds:[4060A8h]
     let dst = Cont(kernel32::GetEnvironmentStrings_stdcall);
     call(ctx, 0x402433, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00402433(ctx: &mut Context) -> Cont {
     // 00402433 mov edi,eax
     ctx.cpu.regs.edi = ctx.cpu.regs.eax;
@@ -7364,7 +6838,6 @@ pub fn x00402433(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x0040243d), Cont(x00402527))
 }
 
-#[allow(unused_variables)]
 pub fn x0040243d(ctx: &mut Context) -> Cont {
     // 0040243d mov dword ptr ds:[4096FCh],2
     ctx.memory.write::<u32>(0x4096fcu32, 0x2u32);
@@ -7372,7 +6845,6 @@ pub fn x0040243d(ctx: &mut Context) -> Cont {
     Cont(x004024db)
 }
 
-#[allow(unused_variables)]
 pub fn x0040244c(ctx: &mut Context) -> Cont {
     // 0040244c cmp eax,1
     sub(ctx.cpu.regs.eax, 0x1u32, &mut ctx.cpu.flags);
@@ -7380,7 +6852,6 @@ pub fn x0040244c(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00402455), Cont(x004024d6))
 }
 
-#[allow(unused_variables)]
 pub fn x00402455(ctx: &mut Context) -> Cont {
     // 00402455 cmp esi,ebx
     sub(ctx.cpu.regs.esi, ctx.cpu.regs.ebx, &mut ctx.cpu.flags);
@@ -7388,14 +6859,12 @@ pub fn x00402455(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00402459), Cont(x00402465))
 }
 
-#[allow(unused_variables)]
 pub fn x00402459(ctx: &mut Context) -> Cont {
     // 00402459 call ebp
     let dst = indirect(ctx, ctx.cpu.regs.ebp);
     call(ctx, 0x40245b, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x0040245b(ctx: &mut Context) -> Cont {
     // 0040245b mov esi,eax
     ctx.cpu.regs.esi = ctx.cpu.regs.eax;
@@ -7405,7 +6874,6 @@ pub fn x0040245b(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00402465), Cont(x00402527))
 }
 
-#[allow(unused_variables)]
 pub fn x00402465(ctx: &mut Context) -> Cont {
     // 00402465 cmp [esi],bx
     sub(
@@ -7419,7 +6887,6 @@ pub fn x00402465(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x0040246c), Cont(x0040247a))
 }
 
-#[allow(unused_variables)]
 pub fn x0040246c(ctx: &mut Context) -> Cont {
     // 0040246c inc eax
     ctx.cpu.regs.eax = inc(ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -7435,7 +6902,6 @@ pub fn x0040246c(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00402473), Cont(x0040246c))
 }
 
-#[allow(unused_variables)]
 pub fn x00402473(ctx: &mut Context) -> Cont {
     // 00402473 inc eax
     ctx.cpu.regs.eax = inc(ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -7451,7 +6917,6 @@ pub fn x00402473(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x0040247a), Cont(x0040246c))
 }
 
-#[allow(unused_variables)]
 pub fn x0040247a(ctx: &mut Context) -> Cont {
     // 0040247a sub eax,esi
     ctx.cpu.regs.eax = sub(ctx.cpu.regs.eax, ctx.cpu.regs.esi, &mut ctx.cpu.flags);
@@ -7485,7 +6950,6 @@ pub fn x0040247a(ctx: &mut Context) -> Cont {
     call(ctx, 0x402493, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00402493(ctx: &mut Context) -> Cont {
     // 00402493 mov ebp,eax
     ctx.cpu.regs.ebp = ctx.cpu.regs.eax;
@@ -7495,7 +6959,6 @@ pub fn x00402493(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00402499), Cont(x004024cb))
 }
 
-#[allow(unused_variables)]
 pub fn x00402499(ctx: &mut Context) -> Cont {
     // 00402499 push ebp
     push(ctx, ctx.cpu.regs.ebp);
@@ -7504,7 +6967,6 @@ pub fn x00402499(ctx: &mut Context) -> Cont {
     call(ctx, 0x40249f, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x0040249f(ctx: &mut Context) -> Cont {
     // 0040249f cmp eax,ebx
     sub(ctx.cpu.regs.eax, ctx.cpu.regs.ebx, &mut ctx.cpu.flags);
@@ -7518,7 +6980,6 @@ pub fn x0040249f(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004024a8), Cont(x004024cb))
 }
 
-#[allow(unused_variables)]
 pub fn x004024a8(ctx: &mut Context) -> Cont {
     // 004024a8 push ebx
     push(ctx, ctx.cpu.regs.ebx);
@@ -7545,7 +7006,6 @@ pub fn x004024a8(ctx: &mut Context) -> Cont {
     call(ctx, 0x4024b5, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004024b5(ctx: &mut Context) -> Cont {
     // 004024b5 test eax,eax
     and(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -7553,7 +7013,6 @@ pub fn x004024b5(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004024b9), Cont(x004024c7))
 }
 
-#[allow(unused_variables)]
 pub fn x004024b9(ctx: &mut Context) -> Cont {
     // 004024b9 push dword ptr [esp+10h]
     push(
@@ -7566,7 +7025,6 @@ pub fn x004024b9(ctx: &mut Context) -> Cont {
     call(ctx, 0x4024c2, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004024c2(ctx: &mut Context) -> Cont {
     // 004024c2 pop ecx
     let x = pop(ctx);
@@ -7585,7 +7043,6 @@ pub fn x004024c2(ctx: &mut Context) -> Cont {
     call(ctx, 0x4024d2, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004024c7(ctx: &mut Context) -> Cont {
     // 004024c7 mov ebx,[esp+10h]
     ctx.cpu.regs.ebx = ctx
@@ -7598,7 +7055,6 @@ pub fn x004024c7(ctx: &mut Context) -> Cont {
     call(ctx, 0x4024d2, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004024cb(ctx: &mut Context) -> Cont {
     // 004024cb push esi
     push(ctx, ctx.cpu.regs.esi);
@@ -7607,7 +7063,6 @@ pub fn x004024cb(ctx: &mut Context) -> Cont {
     call(ctx, 0x4024d2, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004024d2(ctx: &mut Context) -> Cont {
     // 004024d2 mov eax,ebx
     ctx.cpu.regs.eax = ctx.cpu.regs.ebx;
@@ -7615,7 +7070,6 @@ pub fn x004024d2(ctx: &mut Context) -> Cont {
     Cont(x00402529)
 }
 
-#[allow(unused_variables)]
 pub fn x004024d6(ctx: &mut Context) -> Cont {
     // 004024d6 cmp eax,2
     sub(ctx.cpu.regs.eax, 0x2u32, &mut ctx.cpu.flags);
@@ -7623,7 +7077,6 @@ pub fn x004024d6(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004024db), Cont(x00402527))
 }
 
-#[allow(unused_variables)]
 pub fn x004024db(ctx: &mut Context) -> Cont {
     // 004024db cmp edi,ebx
     sub(ctx.cpu.regs.edi, ctx.cpu.regs.ebx, &mut ctx.cpu.flags);
@@ -7631,14 +7084,12 @@ pub fn x004024db(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004024df), Cont(x004024eb))
 }
 
-#[allow(unused_variables)]
 pub fn x004024df(ctx: &mut Context) -> Cont {
     // 004024df call dword ptr ds:[4060A8h]
     let dst = Cont(kernel32::GetEnvironmentStrings_stdcall);
     call(ctx, 0x4024e5, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004024e5(ctx: &mut Context) -> Cont {
     // 004024e5 mov edi,eax
     ctx.cpu.regs.edi = ctx.cpu.regs.eax;
@@ -7648,7 +7099,6 @@ pub fn x004024e5(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004024eb), Cont(x00402527))
 }
 
-#[allow(unused_variables)]
 pub fn x004024eb(ctx: &mut Context) -> Cont {
     // 004024eb cmp [edi],bl
     sub(
@@ -7662,7 +7112,6 @@ pub fn x004024eb(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004024f1), Cont(x004024fb))
 }
 
-#[allow(unused_variables)]
 pub fn x004024f1(ctx: &mut Context) -> Cont {
     // 004024f1 inc eax
     ctx.cpu.regs.eax = inc(ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -7676,7 +7125,6 @@ pub fn x004024f1(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004024f6), Cont(x004024f1))
 }
 
-#[allow(unused_variables)]
 pub fn x004024f6(ctx: &mut Context) -> Cont {
     // 004024f6 inc eax
     ctx.cpu.regs.eax = inc(ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -7690,7 +7138,6 @@ pub fn x004024f6(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004024fb), Cont(x004024f1))
 }
 
-#[allow(unused_variables)]
 pub fn x004024fb(ctx: &mut Context) -> Cont {
     // 004024fb sub eax,edi
     ctx.cpu.regs.eax = sub(ctx.cpu.regs.eax, ctx.cpu.regs.edi, &mut ctx.cpu.flags);
@@ -7705,7 +7152,6 @@ pub fn x004024fb(ctx: &mut Context) -> Cont {
     call(ctx, 0x402506, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00402506(ctx: &mut Context) -> Cont {
     // 00402506 mov esi,eax
     ctx.cpu.regs.esi = ctx.cpu.regs.eax;
@@ -7718,7 +7164,6 @@ pub fn x00402506(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x0040250d), Cont(x00402511))
 }
 
-#[allow(unused_variables)]
 pub fn x0040250d(ctx: &mut Context) -> Cont {
     // 0040250d xor esi,esi
     ctx.cpu.regs.esi = xor(ctx.cpu.regs.esi, ctx.cpu.regs.esi, &mut ctx.cpu.flags);
@@ -7726,7 +7171,6 @@ pub fn x0040250d(ctx: &mut Context) -> Cont {
     Cont(x0040251c)
 }
 
-#[allow(unused_variables)]
 pub fn x00402511(ctx: &mut Context) -> Cont {
     // 00402511 push ebp
     push(ctx, ctx.cpu.regs.ebp);
@@ -7739,7 +7183,6 @@ pub fn x00402511(ctx: &mut Context) -> Cont {
     call(ctx, 0x402519, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00402519(ctx: &mut Context) -> Cont {
     // 00402519 add esp,0Ch
     ctx.cpu.regs.esp = add(ctx.cpu.regs.esp, 0xcu32, &mut ctx.cpu.flags);
@@ -7750,7 +7193,6 @@ pub fn x00402519(ctx: &mut Context) -> Cont {
     call(ctx, 0x402523, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x0040251c(ctx: &mut Context) -> Cont {
     // 0040251c push edi
     push(ctx, ctx.cpu.regs.edi);
@@ -7759,7 +7201,6 @@ pub fn x0040251c(ctx: &mut Context) -> Cont {
     call(ctx, 0x402523, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00402523(ctx: &mut Context) -> Cont {
     // 00402523 mov eax,esi
     ctx.cpu.regs.eax = ctx.cpu.regs.esi;
@@ -7767,7 +7208,6 @@ pub fn x00402523(ctx: &mut Context) -> Cont {
     Cont(x00402529)
 }
 
-#[allow(unused_variables)]
 pub fn x00402527(ctx: &mut Context) -> Cont {
     // 00402527 xor eax,eax
     ctx.cpu.regs.eax = xor(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -7793,7 +7233,6 @@ pub fn x00402527(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00402529(ctx: &mut Context) -> Cont {
     // 00402529 pop edi
     let x = pop(ctx);
@@ -7817,7 +7256,6 @@ pub fn x00402529(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00402530(ctx: &mut Context) -> Cont {
     // 00402530 sub esp,44h
     ctx.cpu.regs.esp = sub(ctx.cpu.regs.esp, 0x44u32, &mut ctx.cpu.flags);
@@ -7836,7 +7274,6 @@ pub fn x00402530(ctx: &mut Context) -> Cont {
     call(ctx, 0x402541, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00402541(ctx: &mut Context) -> Cont {
     // 00402541 mov esi,eax
     ctx.cpu.regs.esi = ctx.cpu.regs.eax;
@@ -7849,7 +7286,6 @@ pub fn x00402541(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00402548), Cont(x00402550))
 }
 
-#[allow(unused_variables)]
 pub fn x00402548(ctx: &mut Context) -> Cont {
     // 00402548 push 1Bh
     push(ctx, 0x1bu32);
@@ -7858,7 +7294,6 @@ pub fn x00402548(ctx: &mut Context) -> Cont {
     call(ctx, 0x40254f, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x0040254f(ctx: &mut Context) -> Cont {
     // 0040254f pop ecx
     let x = pop(ctx);
@@ -7875,7 +7310,6 @@ pub fn x0040254f(ctx: &mut Context) -> Cont {
     jae(ctx, Cont(x0040256a), Cont(x00402584))
 }
 
-#[allow(unused_variables)]
 pub fn x00402550(ctx: &mut Context) -> Cont {
     // 00402550 mov ds:[4099A0h],esi
     ctx.memory.write::<u32>(0x4099a0u32, ctx.cpu.regs.esi);
@@ -7889,7 +7323,6 @@ pub fn x00402550(ctx: &mut Context) -> Cont {
     jae(ctx, Cont(x0040256a), Cont(x00402584))
 }
 
-#[allow(unused_variables)]
 pub fn x00402566(ctx: &mut Context) -> Cont {
     // 00402566 cmp esi,eax
     sub(ctx.cpu.regs.esi, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -7897,7 +7330,6 @@ pub fn x00402566(ctx: &mut Context) -> Cont {
     jae(ctx, Cont(x0040256a), Cont(x00402584))
 }
 
-#[allow(unused_variables)]
 pub fn x0040256a(ctx: &mut Context) -> Cont {
     // 0040256a and byte ptr [esi+4],0
     ctx.memory.write::<u8>(
@@ -7930,7 +7362,6 @@ pub fn x0040256a(ctx: &mut Context) -> Cont {
     Cont(x00402566)
 }
 
-#[allow(unused_variables)]
 pub fn x00402584(ctx: &mut Context) -> Cont {
     // 00402584 lea eax,[esp+10h]
     ctx.cpu.regs.eax = ctx.cpu.regs.esp.wrapping_add(0x10u32);
@@ -7941,7 +7372,6 @@ pub fn x00402584(ctx: &mut Context) -> Cont {
     call(ctx, 0x40258f, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x0040258f(ctx: &mut Context) -> Cont {
     // 0040258f cmp word ptr [esp+42h],0
     sub(
@@ -7954,7 +7384,6 @@ pub fn x0040258f(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x0040259b), Cont(x00402660))
 }
 
-#[allow(unused_variables)]
 pub fn x0040259b(ctx: &mut Context) -> Cont {
     // 0040259b mov eax,[esp+44h]
     ctx.cpu.regs.eax = ctx
@@ -7966,7 +7395,6 @@ pub fn x0040259b(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004025a7), Cont(x00402660))
 }
 
-#[allow(unused_variables)]
 pub fn x004025a7(ctx: &mut Context) -> Cont {
     // 004025a7 mov esi,[eax]
     ctx.cpu.regs.esi = ctx.memory.read::<u32>(ctx.cpu.regs.eax);
@@ -7982,7 +7410,6 @@ pub fn x004025a7(ctx: &mut Context) -> Cont {
     jl(ctx, Cont(x004025b8), Cont(x004025ba))
 }
 
-#[allow(unused_variables)]
 pub fn x004025b8(ctx: &mut Context) -> Cont {
     // 004025b8 mov esi,eax
     ctx.cpu.regs.esi = ctx.cpu.regs.eax;
@@ -7996,7 +7423,6 @@ pub fn x004025b8(ctx: &mut Context) -> Cont {
     jge(ctx, Cont(x004025c2), Cont(x00402614))
 }
 
-#[allow(unused_variables)]
 pub fn x004025ba(ctx: &mut Context) -> Cont {
     // 004025ba cmp ds:[409AA0h],esi
     sub(
@@ -8008,7 +7434,6 @@ pub fn x004025ba(ctx: &mut Context) -> Cont {
     jge(ctx, Cont(x004025c2), Cont(x00402614))
 }
 
-#[allow(unused_variables)]
 pub fn x004025c2(ctx: &mut Context) -> Cont {
     // 004025c2 mov edi,4099A4h
     ctx.cpu.regs.edi = 0x4099a4u32;
@@ -8019,7 +7444,6 @@ pub fn x004025c2(ctx: &mut Context) -> Cont {
     call(ctx, 0x4025d1, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004025c7(ctx: &mut Context) -> Cont {
     // 004025c7 push 100h
     push(ctx, 0x100u32);
@@ -8028,7 +7452,6 @@ pub fn x004025c7(ctx: &mut Context) -> Cont {
     call(ctx, 0x4025d1, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004025d1(ctx: &mut Context) -> Cont {
     // 004025d1 test eax,eax
     and(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -8039,7 +7462,6 @@ pub fn x004025d1(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004025d6), Cont(x0040260e))
 }
 
-#[allow(unused_variables)]
 pub fn x004025d6(ctx: &mut Context) -> Cont {
     // 004025d6 add dword ptr ds:[409AA0h],20h
     ctx.memory.write::<u32>(
@@ -8060,7 +7482,6 @@ pub fn x004025d6(ctx: &mut Context) -> Cont {
     jae(ctx, Cont(x004025e9), Cont(x00402601))
 }
 
-#[allow(unused_variables)]
 pub fn x004025e5(ctx: &mut Context) -> Cont {
     // 004025e5 cmp eax,ecx
     sub(ctx.cpu.regs.eax, ctx.cpu.regs.ecx, &mut ctx.cpu.flags);
@@ -8068,7 +7489,6 @@ pub fn x004025e5(ctx: &mut Context) -> Cont {
     jae(ctx, Cont(x004025e9), Cont(x00402601))
 }
 
-#[allow(unused_variables)]
 pub fn x004025e9(ctx: &mut Context) -> Cont {
     // 004025e9 and byte ptr [eax+4],0
     ctx.memory.write::<u8>(
@@ -8101,7 +7521,6 @@ pub fn x004025e9(ctx: &mut Context) -> Cont {
     Cont(x004025e5)
 }
 
-#[allow(unused_variables)]
 pub fn x00402601(ctx: &mut Context) -> Cont {
     // 00402601 add edi,4
     ctx.cpu.regs.edi = add(ctx.cpu.regs.edi, 0x4u32, &mut ctx.cpu.flags);
@@ -8115,13 +7534,11 @@ pub fn x00402601(ctx: &mut Context) -> Cont {
     jl(ctx, Cont(x0040260c), Cont(x004025c7))
 }
 
-#[allow(unused_variables)]
 pub fn x0040260c(ctx: &mut Context) -> Cont {
     // 0040260c jmp short 00402614h
     Cont(x00402614)
 }
 
-#[allow(unused_variables)]
 pub fn x0040260e(ctx: &mut Context) -> Cont {
     // 0040260e mov esi,ds:[409AA0h]
     ctx.cpu.regs.esi = ctx.memory.read::<u32>(0x409aa0u32);
@@ -8133,7 +7550,6 @@ pub fn x0040260e(ctx: &mut Context) -> Cont {
     jle(ctx, Cont(x0040261a), Cont(x00402660))
 }
 
-#[allow(unused_variables)]
 pub fn x00402614(ctx: &mut Context) -> Cont {
     // 00402614 xor edi,edi
     ctx.cpu.regs.edi = xor(ctx.cpu.regs.edi, ctx.cpu.regs.edi, &mut ctx.cpu.flags);
@@ -8143,7 +7559,6 @@ pub fn x00402614(ctx: &mut Context) -> Cont {
     jle(ctx, Cont(x0040261a), Cont(x00402660))
 }
 
-#[allow(unused_variables)]
 pub fn x0040261a(ctx: &mut Context) -> Cont {
     // 0040261a mov eax,[ebx]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(ctx.cpu.regs.ebx);
@@ -8153,7 +7568,6 @@ pub fn x0040261a(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00402621), Cont(x00402657))
 }
 
-#[allow(unused_variables)]
 pub fn x00402621(ctx: &mut Context) -> Cont {
     // 00402621 mov cl,[ebp]
     ctx.cpu.regs.set_cl(ctx.memory.read::<u8>(ctx.cpu.regs.ebp));
@@ -8163,7 +7577,6 @@ pub fn x00402621(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00402629), Cont(x00402657))
 }
 
-#[allow(unused_variables)]
 pub fn x00402629(ctx: &mut Context) -> Cont {
     // 00402629 test cl,8
     and(ctx.cpu.regs.get_cl(), 0x8u8, &mut ctx.cpu.flags);
@@ -8171,7 +7584,6 @@ pub fn x00402629(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x0040262e), Cont(x00402639))
 }
 
-#[allow(unused_variables)]
 pub fn x0040262e(ctx: &mut Context) -> Cont {
     // 0040262e push eax
     push(ctx, ctx.cpu.regs.eax);
@@ -8180,7 +7592,6 @@ pub fn x0040262e(ctx: &mut Context) -> Cont {
     call(ctx, 0x402635, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00402635(ctx: &mut Context) -> Cont {
     // 00402635 test eax,eax
     and(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -8188,7 +7599,6 @@ pub fn x00402635(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00402639), Cont(x00402657))
 }
 
-#[allow(unused_variables)]
 pub fn x00402639(ctx: &mut Context) -> Cont {
     // 00402639 mov eax,edi
     ctx.cpu.regs.eax = ctx.cpu.regs.edi;
@@ -8225,7 +7635,6 @@ pub fn x00402639(ctx: &mut Context) -> Cont {
     jl(ctx, Cont(x00402660), Cont(x0040261a))
 }
 
-#[allow(unused_variables)]
 pub fn x00402657(ctx: &mut Context) -> Cont {
     // 00402657 inc edi
     ctx.cpu.regs.edi = inc(ctx.cpu.regs.edi, &mut ctx.cpu.flags);
@@ -8239,7 +7648,6 @@ pub fn x00402657(ctx: &mut Context) -> Cont {
     jl(ctx, Cont(x00402660), Cont(x0040261a))
 }
 
-#[allow(unused_variables)]
 pub fn x00402660(ctx: &mut Context) -> Cont {
     // 00402660 xor ebx,ebx
     ctx.cpu.regs.ebx = xor(ctx.cpu.regs.ebx, ctx.cpu.regs.ebx, &mut ctx.cpu.flags);
@@ -8258,7 +7666,6 @@ pub fn x00402660(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00402670), Cont(x004026bd))
 }
 
-#[allow(unused_variables)]
 pub fn x00402662(ctx: &mut Context) -> Cont {
     // 00402662 mov eax,ds:[4099A0h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x4099a0u32);
@@ -8275,7 +7682,6 @@ pub fn x00402662(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00402670), Cont(x004026bd))
 }
 
-#[allow(unused_variables)]
 pub fn x00402670(ctx: &mut Context) -> Cont {
     // 00402670 test ebx,ebx
     and(ctx.cpu.regs.ebx, ctx.cpu.regs.ebx, &mut ctx.cpu.flags);
@@ -8286,7 +7692,6 @@ pub fn x00402670(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00402678), Cont(x0040267d))
 }
 
-#[allow(unused_variables)]
 pub fn x00402678(ctx: &mut Context) -> Cont {
     // 00402678 push 0FFFFFFF6h
     push(ctx, 0xfffffff6u32);
@@ -8297,7 +7702,6 @@ pub fn x00402678(ctx: &mut Context) -> Cont {
     Cont(x00402687)
 }
 
-#[allow(unused_variables)]
 pub fn x0040267d(ctx: &mut Context) -> Cont {
     // 0040267d mov eax,ebx
     ctx.cpu.regs.eax = ctx.cpu.regs.ebx;
@@ -8316,7 +7720,6 @@ pub fn x0040267d(ctx: &mut Context) -> Cont {
     call(ctx, 0x40268e, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00402687(ctx: &mut Context) -> Cont {
     // 00402687 push eax
     push(ctx, ctx.cpu.regs.eax);
@@ -8325,7 +7728,6 @@ pub fn x00402687(ctx: &mut Context) -> Cont {
     call(ctx, 0x40268e, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x0040268e(ctx: &mut Context) -> Cont {
     // 0040268e mov edi,eax
     ctx.cpu.regs.edi = ctx.cpu.regs.eax;
@@ -8335,7 +7737,6 @@ pub fn x0040268e(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00402695), Cont(x004026ac))
 }
 
-#[allow(unused_variables)]
 pub fn x00402695(ctx: &mut Context) -> Cont {
     // 00402695 push edi
     push(ctx, ctx.cpu.regs.edi);
@@ -8344,7 +7745,6 @@ pub fn x00402695(ctx: &mut Context) -> Cont {
     call(ctx, 0x40269c, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x0040269c(ctx: &mut Context) -> Cont {
     // 0040269c test eax,eax
     and(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -8352,7 +7752,6 @@ pub fn x0040269c(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004026a0), Cont(x004026ac))
 }
 
-#[allow(unused_variables)]
 pub fn x004026a0(ctx: &mut Context) -> Cont {
     // 004026a0 and eax,0FFh
     ctx.cpu.regs.eax = and(ctx.cpu.regs.eax, 0xffu32, &mut ctx.cpu.flags);
@@ -8364,7 +7763,6 @@ pub fn x004026a0(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004026ac), Cont(x004026b2))
 }
 
-#[allow(unused_variables)]
 pub fn x004026ac(ctx: &mut Context) -> Cont {
     // 004026ac or byte ptr [esi+4],40h
     ctx.memory.write::<u8>(
@@ -8379,7 +7777,6 @@ pub fn x004026ac(ctx: &mut Context) -> Cont {
     Cont(x004026c1)
 }
 
-#[allow(unused_variables)]
 pub fn x004026b2(ctx: &mut Context) -> Cont {
     // 004026b2 cmp eax,3
     sub(ctx.cpu.regs.eax, 0x3u32, &mut ctx.cpu.flags);
@@ -8387,7 +7784,6 @@ pub fn x004026b2(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004026b7), Cont(x004026c1))
 }
 
-#[allow(unused_variables)]
 pub fn x004026b7(ctx: &mut Context) -> Cont {
     // 004026b7 or byte ptr [esi+4],8
     ctx.memory.write::<u8>(
@@ -8402,7 +7798,6 @@ pub fn x004026b7(ctx: &mut Context) -> Cont {
     Cont(x004026c1)
 }
 
-#[allow(unused_variables)]
 pub fn x004026bd(ctx: &mut Context) -> Cont {
     // 004026bd or byte ptr [esi+4],80h
     ctx.memory.write::<u8>(
@@ -8421,7 +7816,6 @@ pub fn x004026bd(ctx: &mut Context) -> Cont {
     jl(ctx, Cont(x004026c7), Cont(x00402662))
 }
 
-#[allow(unused_variables)]
 pub fn x004026c1(ctx: &mut Context) -> Cont {
     // 004026c1 inc ebx
     ctx.cpu.regs.ebx = inc(ctx.cpu.regs.ebx, &mut ctx.cpu.flags);
@@ -8431,7 +7825,6 @@ pub fn x004026c1(ctx: &mut Context) -> Cont {
     jl(ctx, Cont(x004026c7), Cont(x00402662))
 }
 
-#[allow(unused_variables)]
 pub fn x004026c7(ctx: &mut Context) -> Cont {
     // 004026c7 push dword ptr ds:[409AA0h]
     push(ctx, ctx.memory.read::<u32>(0x409aa0u32));
@@ -8440,7 +7833,6 @@ pub fn x004026c7(ctx: &mut Context) -> Cont {
     call(ctx, 0x4026d3, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004026d3(ctx: &mut Context) -> Cont {
     // 004026d3 pop edi
     let x = pop(ctx);
@@ -8460,7 +7852,6 @@ pub fn x004026d3(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x004026db(ctx: &mut Context) -> Cont {
     // 004026db push esi
     push(ctx, ctx.cpu.regs.esi);
@@ -8484,7 +7875,6 @@ pub fn x004026db(ctx: &mut Context) -> Cont {
     call(ctx, 0x4026eb, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004026eb(ctx: &mut Context) -> Cont {
     // 004026eb cmp word ptr [eax],5A4Dh
     sub(
@@ -8496,7 +7886,6 @@ pub fn x004026eb(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004026f2), Cont(x00402706))
 }
 
-#[allow(unused_variables)]
 pub fn x004026f2(ctx: &mut Context) -> Cont {
     // 004026f2 mov ecx,[eax+3Ch]
     ctx.cpu.regs.ecx = ctx
@@ -8508,7 +7897,6 @@ pub fn x004026f2(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004026f9), Cont(x00402706))
 }
 
-#[allow(unused_variables)]
 pub fn x004026f9(ctx: &mut Context) -> Cont {
     // 004026f9 add eax,ecx
     ctx.cpu.regs.eax = add(ctx.cpu.regs.eax, ctx.cpu.regs.ecx, &mut ctx.cpu.flags);
@@ -8535,7 +7923,6 @@ pub fn x004026f9(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00402706(ctx: &mut Context) -> Cont {
     // 00402706 pop esi
     let x = pop(ctx);
@@ -8544,7 +7931,6 @@ pub fn x00402706(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00402708(ctx: &mut Context) -> Cont {
     // 00402708 push ebp
     push(ctx, ctx.cpu.regs.ebp);
@@ -8557,7 +7943,6 @@ pub fn x00402708(ctx: &mut Context) -> Cont {
     call(ctx, 0x402715, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00402715(ctx: &mut Context) -> Cont {
     // 00402715 lea eax,[ebp-98h]
     ctx.cpu.regs.eax = ctx.cpu.regs.ebp.wrapping_add(0xffffff68u32);
@@ -8573,7 +7958,6 @@ pub fn x00402715(ctx: &mut Context) -> Cont {
     call(ctx, 0x40272d, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x0040272d(ctx: &mut Context) -> Cont {
     // 0040272d test eax,eax
     and(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -8581,7 +7965,6 @@ pub fn x0040272d(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00402731), Cont(x0040274b))
 }
 
-#[allow(unused_variables)]
 pub fn x00402731(ctx: &mut Context) -> Cont {
     // 00402731 cmp dword ptr [ebp-88h],2
     sub(
@@ -8594,7 +7977,6 @@ pub fn x00402731(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x0040273a), Cont(x0040274b))
 }
 
-#[allow(unused_variables)]
 pub fn x0040273a(ctx: &mut Context) -> Cont {
     // 0040273a cmp dword ptr [ebp-94h],5
     sub(
@@ -8607,7 +7989,6 @@ pub fn x0040273a(ctx: &mut Context) -> Cont {
     jb(ctx, Cont(x00402743), Cont(x0040274b))
 }
 
-#[allow(unused_variables)]
 pub fn x00402743(ctx: &mut Context) -> Cont {
     // 00402743 push 1
     push(ctx, 0x1u32);
@@ -8618,7 +7999,6 @@ pub fn x00402743(ctx: &mut Context) -> Cont {
     Cont(x0040284d)
 }
 
-#[allow(unused_variables)]
 pub fn x0040274b(ctx: &mut Context) -> Cont {
     // 0040274b lea eax,[ebp-122Ch]
     ctx.cpu.regs.eax = ctx.cpu.regs.ebp.wrapping_add(0xffffedd4u32);
@@ -8633,7 +8013,6 @@ pub fn x0040274b(ctx: &mut Context) -> Cont {
     call(ctx, 0x402762, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00402762(ctx: &mut Context) -> Cont {
     // 00402762 test eax,eax
     and(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -8641,7 +8020,6 @@ pub fn x00402762(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x0040276a), Cont(x0040283a))
 }
 
-#[allow(unused_variables)]
 pub fn x0040276a(ctx: &mut Context) -> Cont {
     // 0040276a xor ebx,ebx
     ctx.cpu.regs.ebx = xor(ctx.cpu.regs.ebx, ctx.cpu.regs.ebx, &mut ctx.cpu.flags);
@@ -8658,7 +8036,6 @@ pub fn x0040276a(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x0040277a), Cont(x0040278d))
 }
 
-#[allow(unused_variables)]
 pub fn x0040277a(ctx: &mut Context) -> Cont {
     // 0040277a mov al,[ecx]
     ctx.cpu.regs.set_al(ctx.memory.read::<u8>(ctx.cpu.regs.ecx));
@@ -8668,7 +8045,6 @@ pub fn x0040277a(ctx: &mut Context) -> Cont {
     jl(ctx, Cont(x00402780), Cont(x00402788))
 }
 
-#[allow(unused_variables)]
 pub fn x00402780(ctx: &mut Context) -> Cont {
     // 00402780 cmp al,7Ah
     sub(ctx.cpu.regs.get_al(), 0x7au8, &mut ctx.cpu.flags);
@@ -8676,7 +8052,6 @@ pub fn x00402780(ctx: &mut Context) -> Cont {
     jg(ctx, Cont(x00402784), Cont(x00402788))
 }
 
-#[allow(unused_variables)]
 pub fn x00402784(ctx: &mut Context) -> Cont {
     // 00402784 sub al,20h
     ctx.cpu
@@ -8697,7 +8072,6 @@ pub fn x00402784(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x0040278d), Cont(x0040277a))
 }
 
-#[allow(unused_variables)]
 pub fn x00402788(ctx: &mut Context) -> Cont {
     // 00402788 inc ecx
     ctx.cpu.regs.ecx = inc(ctx.cpu.regs.ecx, &mut ctx.cpu.flags);
@@ -8711,7 +8085,6 @@ pub fn x00402788(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x0040278d), Cont(x0040277a))
 }
 
-#[allow(unused_variables)]
 pub fn x0040278d(ctx: &mut Context) -> Cont {
     // 0040278d lea eax,[ebp-122Ch]
     ctx.cpu.regs.eax = ctx.cpu.regs.ebp.wrapping_add(0xffffedd4u32);
@@ -8726,7 +8099,6 @@ pub fn x0040278d(ctx: &mut Context) -> Cont {
     call(ctx, 0x4027a0, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004027a0(ctx: &mut Context) -> Cont {
     // 004027a0 add esp,0Ch
     ctx.cpu.regs.esp = add(ctx.cpu.regs.esp, 0xcu32, &mut ctx.cpu.flags);
@@ -8736,7 +8108,6 @@ pub fn x004027a0(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004027a7), Cont(x004027af))
 }
 
-#[allow(unused_variables)]
 pub fn x004027a7(ctx: &mut Context) -> Cont {
     // 004027a7 lea eax,[ebp-122Ch]
     ctx.cpu.regs.eax = ctx.cpu.regs.ebp.wrapping_add(0xffffedd4u32);
@@ -8744,7 +8115,6 @@ pub fn x004027a7(ctx: &mut Context) -> Cont {
     Cont(x004027f8)
 }
 
-#[allow(unused_variables)]
 pub fn x004027af(ctx: &mut Context) -> Cont {
     // 004027af lea eax,[ebp-19Ch]
     ctx.cpu.regs.eax = ctx.cpu.regs.ebp.wrapping_add(0xfffffe64u32);
@@ -8759,7 +8129,6 @@ pub fn x004027af(ctx: &mut Context) -> Cont {
     call(ctx, 0x4027c2, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004027c2(ctx: &mut Context) -> Cont {
     // 004027c2 cmp [ebp-19Ch],bl
     sub(
@@ -8774,7 +8143,6 @@ pub fn x004027c2(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004027d0), Cont(x004027e3))
 }
 
-#[allow(unused_variables)]
 pub fn x004027d0(ctx: &mut Context) -> Cont {
     // 004027d0 mov al,[ecx]
     ctx.cpu.regs.set_al(ctx.memory.read::<u8>(ctx.cpu.regs.ecx));
@@ -8784,7 +8152,6 @@ pub fn x004027d0(ctx: &mut Context) -> Cont {
     jl(ctx, Cont(x004027d6), Cont(x004027de))
 }
 
-#[allow(unused_variables)]
 pub fn x004027d6(ctx: &mut Context) -> Cont {
     // 004027d6 cmp al,7Ah
     sub(ctx.cpu.regs.get_al(), 0x7au8, &mut ctx.cpu.flags);
@@ -8792,7 +8159,6 @@ pub fn x004027d6(ctx: &mut Context) -> Cont {
     jg(ctx, Cont(x004027da), Cont(x004027de))
 }
 
-#[allow(unused_variables)]
 pub fn x004027da(ctx: &mut Context) -> Cont {
     // 004027da sub al,20h
     ctx.cpu
@@ -8813,7 +8179,6 @@ pub fn x004027da(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004027e3), Cont(x004027d0))
 }
 
-#[allow(unused_variables)]
 pub fn x004027de(ctx: &mut Context) -> Cont {
     // 004027de inc ecx
     ctx.cpu.regs.ecx = inc(ctx.cpu.regs.ecx, &mut ctx.cpu.flags);
@@ -8827,7 +8192,6 @@ pub fn x004027de(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004027e3), Cont(x004027d0))
 }
 
-#[allow(unused_variables)]
 pub fn x004027e3(ctx: &mut Context) -> Cont {
     // 004027e3 lea eax,[ebp-19Ch]
     ctx.cpu.regs.eax = ctx.cpu.regs.ebp.wrapping_add(0xfffffe64u32);
@@ -8842,7 +8206,6 @@ pub fn x004027e3(ctx: &mut Context) -> Cont {
     call(ctx, 0x4027f6, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004027f6(ctx: &mut Context) -> Cont {
     // 004027f6 pop ecx
     let x = pop(ctx);
@@ -8856,7 +8219,6 @@ pub fn x004027f6(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004027fc), Cont(x0040283a))
 }
 
-#[allow(unused_variables)]
 pub fn x004027f8(ctx: &mut Context) -> Cont {
     // 004027f8 cmp eax,ebx
     sub(ctx.cpu.regs.eax, ctx.cpu.regs.ebx, &mut ctx.cpu.flags);
@@ -8864,7 +8226,6 @@ pub fn x004027f8(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004027fc), Cont(x0040283a))
 }
 
-#[allow(unused_variables)]
 pub fn x004027fc(ctx: &mut Context) -> Cont {
     // 004027fc push 2Ch
     push(ctx, 0x2cu32);
@@ -8875,7 +8236,6 @@ pub fn x004027fc(ctx: &mut Context) -> Cont {
     call(ctx, 0x402804, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00402804(ctx: &mut Context) -> Cont {
     // 00402804 pop ecx
     let x = pop(ctx);
@@ -8889,7 +8249,6 @@ pub fn x00402804(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x0040280a), Cont(x0040283a))
 }
 
-#[allow(unused_variables)]
 pub fn x0040280a(ctx: &mut Context) -> Cont {
     // 0040280a inc eax
     ctx.cpu.regs.eax = inc(ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -8905,7 +8264,6 @@ pub fn x0040280a(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00402811), Cont(x0040281f))
 }
 
-#[allow(unused_variables)]
 pub fn x00402811(ctx: &mut Context) -> Cont {
     // 00402811 cmp byte ptr [ecx],3Bh
     sub(
@@ -8917,7 +8275,6 @@ pub fn x00402811(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00402816), Cont(x0040281a))
 }
 
-#[allow(unused_variables)]
 pub fn x00402816(ctx: &mut Context) -> Cont {
     // 00402816 mov [ecx],bl
     ctx.memory
@@ -8926,7 +8283,6 @@ pub fn x00402816(ctx: &mut Context) -> Cont {
     Cont(x0040281b)
 }
 
-#[allow(unused_variables)]
 pub fn x0040281a(ctx: &mut Context) -> Cont {
     // 0040281a inc ecx
     ctx.cpu.regs.ecx = inc(ctx.cpu.regs.ecx, &mut ctx.cpu.flags);
@@ -8940,7 +8296,6 @@ pub fn x0040281a(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x0040281f), Cont(x00402811))
 }
 
-#[allow(unused_variables)]
 pub fn x0040281b(ctx: &mut Context) -> Cont {
     // 0040281b cmp [ecx],bl
     sub(
@@ -8952,7 +8307,6 @@ pub fn x0040281b(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x0040281f), Cont(x00402811))
 }
 
-#[allow(unused_variables)]
 pub fn x0040281f(ctx: &mut Context) -> Cont {
     // 0040281f push 0Ah
     push(ctx, 0xau32);
@@ -8965,7 +8319,6 @@ pub fn x0040281f(ctx: &mut Context) -> Cont {
     call(ctx, 0x402828, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00402828(ctx: &mut Context) -> Cont {
     // 00402828 add esp,0Ch
     ctx.cpu.regs.esp = add(ctx.cpu.regs.esp, 0xcu32, &mut ctx.cpu.flags);
@@ -8975,7 +8328,6 @@ pub fn x00402828(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00402830), Cont(x0040284d))
 }
 
-#[allow(unused_variables)]
 pub fn x00402830(ctx: &mut Context) -> Cont {
     // 00402830 cmp eax,3
     sub(ctx.cpu.regs.eax, 0x3u32, &mut ctx.cpu.flags);
@@ -8983,7 +8335,6 @@ pub fn x00402830(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00402835), Cont(x0040284d))
 }
 
-#[allow(unused_variables)]
 pub fn x00402835(ctx: &mut Context) -> Cont {
     // 00402835 cmp eax,1
     sub(ctx.cpu.regs.eax, 0x1u32, &mut ctx.cpu.flags);
@@ -8991,7 +8342,6 @@ pub fn x00402835(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x0040283a), Cont(x0040284d))
 }
 
-#[allow(unused_variables)]
 pub fn x0040283a(ctx: &mut Context) -> Cont {
     // 0040283a lea eax,[ebp-4]
     ctx.cpu.regs.eax = ctx.cpu.regs.ebp.wrapping_add(0xfffffffcu32);
@@ -9002,7 +8352,6 @@ pub fn x0040283a(ctx: &mut Context) -> Cont {
     call(ctx, 0x402843, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00402843(ctx: &mut Context) -> Cont {
     // 00402843 cmp byte ptr [ebp-4],6
     sub(
@@ -9027,7 +8376,6 @@ pub fn x00402843(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x0040284d(ctx: &mut Context) -> Cont {
     // 0040284d pop ebx
     let x = pop(ctx);
@@ -9038,7 +8386,6 @@ pub fn x0040284d(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00402850(ctx: &mut Context) -> Cont {
     // 00402850 xor eax,eax
     ctx.cpu.regs.eax = xor(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -9062,7 +8409,6 @@ pub fn x00402850(ctx: &mut Context) -> Cont {
     call(ctx, 0x402867, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00402867(ctx: &mut Context) -> Cont {
     // 00402867 test eax,eax
     and(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -9072,14 +8418,12 @@ pub fn x00402867(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00402870), Cont(x004028a6))
 }
 
-#[allow(unused_variables)]
 pub fn x00402870(ctx: &mut Context) -> Cont {
     // 00402870 call 00402708h
     let dst = Cont(x00402708);
     call(ctx, 0x402875, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00402875(ctx: &mut Context) -> Cont {
     // 00402875 cmp eax,3
     sub(ctx.cpu.regs.eax, 0x3u32, &mut ctx.cpu.flags);
@@ -9089,7 +8433,6 @@ pub fn x00402875(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x0040287f), Cont(x0040288c))
 }
 
-#[allow(unused_variables)]
 pub fn x0040287f(ctx: &mut Context) -> Cont {
     // 0040287f push 3F8h
     push(ctx, 0x3f8u32);
@@ -9098,7 +8441,6 @@ pub fn x0040287f(ctx: &mut Context) -> Cont {
     call(ctx, 0x402889, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00402889(ctx: &mut Context) -> Cont {
     // 00402889 pop ecx
     let x = pop(ctx);
@@ -9107,7 +8449,6 @@ pub fn x00402889(ctx: &mut Context) -> Cont {
     Cont(x00402896)
 }
 
-#[allow(unused_variables)]
 pub fn x0040288c(ctx: &mut Context) -> Cont {
     // 0040288c cmp eax,2
     sub(ctx.cpu.regs.eax, 0x2u32, &mut ctx.cpu.flags);
@@ -9115,14 +8456,12 @@ pub fn x0040288c(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00402891), Cont(x004028a9))
 }
 
-#[allow(unused_variables)]
 pub fn x00402891(ctx: &mut Context) -> Cont {
     // 00402891 call 00403753h
     let dst = Cont(x00403753);
     call(ctx, 0x402896, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00402896(ctx: &mut Context) -> Cont {
     // 00402896 test eax,eax
     and(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -9130,7 +8469,6 @@ pub fn x00402896(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x0040289a), Cont(x004028a9))
 }
 
-#[allow(unused_variables)]
 pub fn x0040289a(ctx: &mut Context) -> Cont {
     // 0040289a push dword ptr ds:[409984h]
     push(ctx, ctx.memory.read::<u32>(0x409984u32));
@@ -9139,7 +8477,6 @@ pub fn x0040289a(ctx: &mut Context) -> Cont {
     call(ctx, 0x4028a6, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004028a6(ctx: &mut Context) -> Cont {
     // 004028a6 xor eax,eax
     ctx.cpu.regs.eax = xor(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -9147,7 +8484,6 @@ pub fn x004028a6(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x004028a9(ctx: &mut Context) -> Cont {
     // 004028a9 push 1
     push(ctx, 0x1u32);
@@ -9158,7 +8494,6 @@ pub fn x004028a9(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00402a80(ctx: &mut Context) -> Cont {
     // 00402a80 mov eax,ds:[4095A4h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x4095a4u32);
@@ -9168,7 +8503,6 @@ pub fn x00402a80(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00402a8a), Cont(x00402a97))
 }
 
-#[allow(unused_variables)]
 pub fn x00402a8a(ctx: &mut Context) -> Cont {
     // 00402a8a test eax,eax
     and(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -9176,7 +8510,6 @@ pub fn x00402a8a(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00402a8e), Cont(x00402ab8))
 }
 
-#[allow(unused_variables)]
 pub fn x00402a8e(ctx: &mut Context) -> Cont {
     // 00402a8e cmp dword ptr ds:[4070C8h],1
     sub(
@@ -9188,7 +8521,6 @@ pub fn x00402a8e(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00402a97), Cont(x00402ab8))
 }
 
-#[allow(unused_variables)]
 pub fn x00402a97(ctx: &mut Context) -> Cont {
     // 00402a97 push 0FCh
     push(ctx, 0xfcu32);
@@ -9197,7 +8529,6 @@ pub fn x00402a97(ctx: &mut Context) -> Cont {
     call(ctx, 0x402aa1, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00402aa1(ctx: &mut Context) -> Cont {
     // 00402aa1 mov eax,ds:[409700h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x409700u32);
@@ -9210,14 +8541,12 @@ pub fn x00402aa1(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00402aab), Cont(x00402aad))
 }
 
-#[allow(unused_variables)]
 pub fn x00402aab(ctx: &mut Context) -> Cont {
     // 00402aab call eax
     let dst = indirect(ctx, ctx.cpu.regs.eax);
     call(ctx, 0x402aad, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00402aad(ctx: &mut Context) -> Cont {
     // 00402aad push 0FFh
     push(ctx, 0xffu32);
@@ -9226,7 +8555,6 @@ pub fn x00402aad(ctx: &mut Context) -> Cont {
     call(ctx, 0x402ab7, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00402ab7(ctx: &mut Context) -> Cont {
     // 00402ab7 pop ecx
     let x = pop(ctx);
@@ -9235,13 +8563,11 @@ pub fn x00402ab7(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00402ab8(ctx: &mut Context) -> Cont {
     // 00402ab8 ret
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00402ab9(ctx: &mut Context) -> Cont {
     // 00402ab9 push ebp
     push(ctx, ctx.cpu.regs.ebp);
@@ -9267,7 +8593,6 @@ pub fn x00402ab9(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00402ad0), Cont(x00402adb))
 }
 
-#[allow(unused_variables)]
 pub fn x00402acc(ctx: &mut Context) -> Cont {
     // 00402acc cmp edx,[eax]
     sub(
@@ -9279,7 +8604,6 @@ pub fn x00402acc(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00402ad0), Cont(x00402adb))
 }
 
-#[allow(unused_variables)]
 pub fn x00402ad0(ctx: &mut Context) -> Cont {
     // 00402ad0 add eax,8
     ctx.cpu.regs.eax = add(ctx.cpu.regs.eax, 0x8u32, &mut ctx.cpu.flags);
@@ -9291,7 +8615,6 @@ pub fn x00402ad0(ctx: &mut Context) -> Cont {
     jl(ctx, Cont(x00402adb), Cont(x00402acc))
 }
 
-#[allow(unused_variables)]
 pub fn x00402adb(ctx: &mut Context) -> Cont {
     // 00402adb push esi
     push(ctx, ctx.cpu.regs.esi);
@@ -9310,7 +8633,6 @@ pub fn x00402adb(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00402aed), Cont(x00402c09))
 }
 
-#[allow(unused_variables)]
 pub fn x00402aed(ctx: &mut Context) -> Cont {
     // 00402aed mov eax,ds:[4095A4h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x4095a4u32);
@@ -9320,7 +8642,6 @@ pub fn x00402aed(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00402afb), Cont(x00402be3))
 }
 
-#[allow(unused_variables)]
 pub fn x00402afb(ctx: &mut Context) -> Cont {
     // 00402afb test eax,eax
     and(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -9328,7 +8649,6 @@ pub fn x00402afb(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00402aff), Cont(x00402b0c))
 }
 
-#[allow(unused_variables)]
 pub fn x00402aff(ctx: &mut Context) -> Cont {
     // 00402aff cmp dword ptr ds:[4070C8h],1
     sub(
@@ -9340,7 +8660,6 @@ pub fn x00402aff(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00402b0c), Cont(x00402be3))
 }
 
-#[allow(unused_variables)]
 pub fn x00402b0c(ctx: &mut Context) -> Cont {
     // 00402b0c cmp edx,0FCh
     sub(ctx.cpu.regs.edx, 0xfcu32, &mut ctx.cpu.flags);
@@ -9348,7 +8667,6 @@ pub fn x00402b0c(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00402b18), Cont(x00402c09))
 }
 
-#[allow(unused_variables)]
 pub fn x00402b18(ctx: &mut Context) -> Cont {
     // 00402b18 lea eax,[ebp-1A4h]
     ctx.cpu.regs.eax = ctx.cpu.regs.ebp.wrapping_add(0xfffffe5cu32);
@@ -9363,7 +8681,6 @@ pub fn x00402b18(ctx: &mut Context) -> Cont {
     call(ctx, 0x402b2c, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00402b2c(ctx: &mut Context) -> Cont {
     // 00402b2c test eax,eax
     and(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -9371,7 +8688,6 @@ pub fn x00402b2c(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00402b30), Cont(x00402b43))
 }
 
-#[allow(unused_variables)]
 pub fn x00402b30(ctx: &mut Context) -> Cont {
     // 00402b30 lea eax,[ebp-1A4h]
     ctx.cpu.regs.eax = ctx.cpu.regs.ebp.wrapping_add(0xfffffe5cu32);
@@ -9384,7 +8700,6 @@ pub fn x00402b30(ctx: &mut Context) -> Cont {
     call(ctx, 0x402b41, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00402b41(ctx: &mut Context) -> Cont {
     // 00402b41 pop ecx
     let x = pop(ctx);
@@ -9405,7 +8720,6 @@ pub fn x00402b41(ctx: &mut Context) -> Cont {
     call(ctx, 0x402b56, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00402b43(ctx: &mut Context) -> Cont {
     // 00402b43 lea eax,[ebp-1A4h]
     ctx.cpu.regs.eax = ctx.cpu.regs.ebp.wrapping_add(0xfffffe5cu32);
@@ -9420,7 +8734,6 @@ pub fn x00402b43(ctx: &mut Context) -> Cont {
     call(ctx, 0x402b56, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00402b56(ctx: &mut Context) -> Cont {
     // 00402b56 inc eax
     ctx.cpu.regs.eax = inc(ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -9433,7 +8746,6 @@ pub fn x00402b56(ctx: &mut Context) -> Cont {
     jbe(ctx, Cont(x00402b5d), Cont(x00402b86))
 }
 
-#[allow(unused_variables)]
 pub fn x00402b5d(ctx: &mut Context) -> Cont {
     // 00402b5d lea eax,[ebp-1A4h]
     ctx.cpu.regs.eax = ctx.cpu.regs.ebp.wrapping_add(0xfffffe5cu32);
@@ -9444,7 +8756,6 @@ pub fn x00402b5d(ctx: &mut Context) -> Cont {
     call(ctx, 0x402b69, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00402b69(ctx: &mut Context) -> Cont {
     // 00402b69 mov edi,eax
     ctx.cpu.regs.edi = ctx.cpu.regs.eax;
@@ -9465,7 +8776,6 @@ pub fn x00402b69(ctx: &mut Context) -> Cont {
     call(ctx, 0x402b83, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00402b83(ctx: &mut Context) -> Cont {
     // 00402b83 add esp,10h
     ctx.cpu.regs.esp = add(ctx.cpu.regs.esp, 0x10u32, &mut ctx.cpu.flags);
@@ -9480,7 +8790,6 @@ pub fn x00402b83(ctx: &mut Context) -> Cont {
     call(ctx, 0x402b97, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00402b86(ctx: &mut Context) -> Cont {
     // 00402b86 lea eax,[ebp-0A0h]
     ctx.cpu.regs.eax = ctx.cpu.regs.ebp.wrapping_add(0xffffff60u32);
@@ -9493,7 +8802,6 @@ pub fn x00402b86(ctx: &mut Context) -> Cont {
     call(ctx, 0x402b97, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00402b97(ctx: &mut Context) -> Cont {
     // 00402b97 lea eax,[ebp-0A0h]
     ctx.cpu.regs.eax = ctx.cpu.regs.ebp.wrapping_add(0xffffff60u32);
@@ -9506,7 +8814,6 @@ pub fn x00402b97(ctx: &mut Context) -> Cont {
     call(ctx, 0x402ba4, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00402ba4(ctx: &mut Context) -> Cont {
     // 00402ba4 lea eax,[ebp-0A0h]
     ctx.cpu.regs.eax = ctx.cpu.regs.ebp.wrapping_add(0xffffff60u32);
@@ -9519,7 +8826,6 @@ pub fn x00402ba4(ctx: &mut Context) -> Cont {
     call(ctx, 0x402bb5, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00402bb5(ctx: &mut Context) -> Cont {
     // 00402bb5 push dword ptr [esi+40717Ch]
     push(
@@ -9536,7 +8842,6 @@ pub fn x00402bb5(ctx: &mut Context) -> Cont {
     call(ctx, 0x402bc7, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00402bc7(ctx: &mut Context) -> Cont {
     // 00402bc7 push 12010h
     push(ctx, 0x12010u32);
@@ -9551,7 +8856,6 @@ pub fn x00402bc7(ctx: &mut Context) -> Cont {
     call(ctx, 0x402bdd, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00402bdd(ctx: &mut Context) -> Cont {
     // 00402bdd add esp,2Ch
     ctx.cpu.regs.esp = add(ctx.cpu.regs.esp, 0x2cu32, &mut ctx.cpu.flags);
@@ -9562,7 +8866,6 @@ pub fn x00402bdd(ctx: &mut Context) -> Cont {
     Cont(x00402c09)
 }
 
-#[allow(unused_variables)]
 pub fn x00402be3(ctx: &mut Context) -> Cont {
     // 00402be3 lea eax,[ebp+8]
     ctx.cpu.regs.eax = ctx.cpu.regs.ebp.wrapping_add(0x8u32);
@@ -9579,7 +8882,6 @@ pub fn x00402be3(ctx: &mut Context) -> Cont {
     call(ctx, 0x402bf6, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00402bf6(ctx: &mut Context) -> Cont {
     // 00402bf6 pop ecx
     let x = pop(ctx);
@@ -9595,7 +8897,6 @@ pub fn x00402bf6(ctx: &mut Context) -> Cont {
     call(ctx, 0x402c02, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00402c02(ctx: &mut Context) -> Cont {
     // 00402c02 push eax
     push(ctx, ctx.cpu.regs.eax);
@@ -9604,7 +8905,6 @@ pub fn x00402c02(ctx: &mut Context) -> Cont {
     call(ctx, 0x402c09, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00402c09(ctx: &mut Context) -> Cont {
     // 00402c09 pop esi
     let x = pop(ctx);
@@ -9615,7 +8915,6 @@ pub fn x00402c09(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00402c0c(ctx: &mut Context) -> Cont {
     // 00402c0c push 140h
     push(ctx, 0x140u32);
@@ -9628,7 +8927,6 @@ pub fn x00402c0c(ctx: &mut Context) -> Cont {
     call(ctx, 0x402c1f, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00402c1f(ctx: &mut Context) -> Cont {
     // 00402c1f test eax,eax
     and(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -9638,13 +8936,11 @@ pub fn x00402c1f(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00402c28), Cont(x00402c29))
 }
 
-#[allow(unused_variables)]
 pub fn x00402c28(ctx: &mut Context) -> Cont {
     // 00402c28 ret
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00402c29(ctx: &mut Context) -> Cont {
     // 00402c29 mov ecx,[esp+4]
     ctx.cpu.regs.ecx = ctx
@@ -9683,7 +8979,6 @@ pub fn x00402c29(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00402c54(ctx: &mut Context) -> Cont {
     // 00402c54 mov eax,ds:[409978h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x409978u32);
@@ -9699,7 +8994,6 @@ pub fn x00402c54(ctx: &mut Context) -> Cont {
     jae(ctx, Cont(x00402c68), Cont(x00402c7c))
 }
 
-#[allow(unused_variables)]
 pub fn x00402c64(ctx: &mut Context) -> Cont {
     // 00402c64 cmp eax,ecx
     sub(ctx.cpu.regs.eax, ctx.cpu.regs.ecx, &mut ctx.cpu.flags);
@@ -9707,7 +9001,6 @@ pub fn x00402c64(ctx: &mut Context) -> Cont {
     jae(ctx, Cont(x00402c68), Cont(x00402c7c))
 }
 
-#[allow(unused_variables)]
 pub fn x00402c68(ctx: &mut Context) -> Cont {
     // 00402c68 mov edx,[esp+4]
     ctx.cpu.regs.edx = ctx
@@ -9726,7 +9019,6 @@ pub fn x00402c68(ctx: &mut Context) -> Cont {
     jb(ctx, Cont(x00402c77), Cont(x00402c7e))
 }
 
-#[allow(unused_variables)]
 pub fn x00402c77(ctx: &mut Context) -> Cont {
     // 00402c77 add eax,14h
     ctx.cpu.regs.eax = add(ctx.cpu.regs.eax, 0x14u32, &mut ctx.cpu.flags);
@@ -9734,7 +9026,6 @@ pub fn x00402c77(ctx: &mut Context) -> Cont {
     Cont(x00402c64)
 }
 
-#[allow(unused_variables)]
 pub fn x00402c7c(ctx: &mut Context) -> Cont {
     // 00402c7c xor eax,eax
     ctx.cpu.regs.eax = xor(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -9742,13 +9033,11 @@ pub fn x00402c7c(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00402c7e(ctx: &mut Context) -> Cont {
     // 00402c7e ret
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00402c7f(ctx: &mut Context) -> Cont {
     // 00402c7f push ebp
     push(ctx, ctx.cpu.regs.ebp);
@@ -9790,7 +9079,12 @@ pub fn x00402c7f(ctx: &mut Context) -> Cont {
     // 00402c9c mov ecx,edi
     ctx.cpu.regs.ecx = ctx.cpu.regs.edi;
     // 00402c9e imul ecx,204h
-    ctx.cpu.regs.ecx = imul(ctx.cpu.regs.ecx as i32, 0x204u32 as i32, &mut ctx.cpu.flags) as u32;
+    let x = ctx.cpu.regs.ecx as i32;
+    let y = 0x204u32 as i32;
+    let (res, overflow) = x.overflowing_mul(y);
+    ctx.cpu.flags.set(Flags::CF, overflow);
+    ctx.cpu.flags.set(Flags::OF, overflow);
+    ctx.cpu.regs.ecx = res as u32;
     // 00402ca4 lea ecx,[ecx+eax+144h]
     ctx.cpu.regs.ecx = ctx
         .cpu
@@ -9818,7 +9112,6 @@ pub fn x00402c7f(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00402cbd), Cont(x00402fa3))
 }
 
-#[allow(unused_variables)]
 pub fn x00402cbd(ctx: &mut Context) -> Cont {
     // 00402cbd mov edx,[ecx+esi]
     ctx.cpu.regs.edx = ctx
@@ -9853,7 +9146,6 @@ pub fn x00402cbd(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00402cd7), Cont(x00402d55))
 }
 
-#[allow(unused_variables)]
 pub fn x00402cd7(ctx: &mut Context) -> Cont {
     // 00402cd7 sar edx,4
     ctx.cpu.regs.edx = sar(ctx.cpu.regs.edx, 0x4u8, &mut ctx.cpu.flags);
@@ -9865,7 +9157,6 @@ pub fn x00402cd7(ctx: &mut Context) -> Cont {
     jbe(ctx, Cont(x00402ce0), Cont(x00402ce3))
 }
 
-#[allow(unused_variables)]
 pub fn x00402ce0(ctx: &mut Context) -> Cont {
     // 00402ce0 push 3Fh
     push(ctx, 0x3fu32);
@@ -9887,7 +9178,6 @@ pub fn x00402ce0(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00402ceb), Cont(x00402d37))
 }
 
-#[allow(unused_variables)]
 pub fn x00402ce3(ctx: &mut Context) -> Cont {
     // 00402ce3 mov ecx,[ebx+4]
     ctx.cpu.regs.ecx = ctx
@@ -9904,7 +9194,6 @@ pub fn x00402ce3(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00402ceb), Cont(x00402d37))
 }
 
-#[allow(unused_variables)]
 pub fn x00402ceb(ctx: &mut Context) -> Cont {
     // 00402ceb cmp edx,20h
     sub(ctx.cpu.regs.edx, 0x20u32, &mut ctx.cpu.flags);
@@ -9912,7 +9201,6 @@ pub fn x00402ceb(ctx: &mut Context) -> Cont {
     jae(ctx, Cont(x00402cf0), Cont(x00402d0e))
 }
 
-#[allow(unused_variables)]
 pub fn x00402cf0(ctx: &mut Context) -> Cont {
     // 00402cf0 mov ebx,80000000h
     ctx.cpu.regs.ebx = 0x80000000u32;
@@ -9957,7 +9245,6 @@ pub fn x00402cf0(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00402d07), Cont(x00402d2f))
 }
 
-#[allow(unused_variables)]
 pub fn x00402d07(ctx: &mut Context) -> Cont {
     // 00402d07 mov ecx,[ebp+8]
     ctx.cpu.regs.ecx = ctx
@@ -9976,7 +9263,6 @@ pub fn x00402d07(ctx: &mut Context) -> Cont {
     Cont(x00402d2f)
 }
 
-#[allow(unused_variables)]
 pub fn x00402d0e(ctx: &mut Context) -> Cont {
     // 00402d0e lea ecx,[edx-20h]
     ctx.cpu.regs.ecx = ctx.cpu.regs.edx.wrapping_add(0xffffffe0u32);
@@ -10021,7 +9307,6 @@ pub fn x00402d0e(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00402d29), Cont(x00402d2f))
 }
 
-#[allow(unused_variables)]
 pub fn x00402d29(ctx: &mut Context) -> Cont {
     // 00402d29 mov ecx,[ebp+8]
     ctx.cpu.regs.ecx = ctx
@@ -10049,7 +9334,6 @@ pub fn x00402d29(ctx: &mut Context) -> Cont {
     Cont(x00402d3a)
 }
 
-#[allow(unused_variables)]
 pub fn x00402d2f(ctx: &mut Context) -> Cont {
     // 00402d2f mov ecx,[ebp-4]
     ctx.cpu.regs.ecx = ctx
@@ -10063,7 +9347,6 @@ pub fn x00402d2f(ctx: &mut Context) -> Cont {
     Cont(x00402d3a)
 }
 
-#[allow(unused_variables)]
 pub fn x00402d37(ctx: &mut Context) -> Cont {
     // 00402d37 mov ecx,[ebp-4]
     ctx.cpu.regs.ecx = ctx
@@ -10119,7 +9402,6 @@ pub fn x00402d37(ctx: &mut Context) -> Cont {
     jbe(ctx, Cont(x00402d60), Cont(x00402d63))
 }
 
-#[allow(unused_variables)]
 pub fn x00402d3a(ctx: &mut Context) -> Cont {
     // 00402d3a mov edx,[ebx+8]
     ctx.cpu.regs.edx = ctx
@@ -10171,7 +9453,6 @@ pub fn x00402d3a(ctx: &mut Context) -> Cont {
     jbe(ctx, Cont(x00402d60), Cont(x00402d63))
 }
 
-#[allow(unused_variables)]
 pub fn x00402d55(ctx: &mut Context) -> Cont {
     // 00402d55 mov edx,ecx
     ctx.cpu.regs.edx = ctx.cpu.regs.ecx;
@@ -10185,7 +9466,6 @@ pub fn x00402d55(ctx: &mut Context) -> Cont {
     jbe(ctx, Cont(x00402d60), Cont(x00402d63))
 }
 
-#[allow(unused_variables)]
 pub fn x00402d60(ctx: &mut Context) -> Cont {
     // 00402d60 push 3Fh
     push(ctx, 0x3fu32);
@@ -10207,7 +9487,6 @@ pub fn x00402d60(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00402d72), Cont(x00402e06))
 }
 
-#[allow(unused_variables)]
 pub fn x00402d63(ctx: &mut Context) -> Cont {
     // 00402d63 mov ebx,[ebp-8]
     ctx.cpu.regs.ebx = ctx
@@ -10224,7 +9503,6 @@ pub fn x00402d63(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00402d72), Cont(x00402e06))
 }
 
-#[allow(unused_variables)]
 pub fn x00402d72(ctx: &mut Context) -> Cont {
     // 00402d72 sub esi,[ebp-8]
     ctx.cpu.regs.esi = sub(
@@ -10255,7 +9533,6 @@ pub fn x00402d72(ctx: &mut Context) -> Cont {
     jbe(ctx, Cont(x00402d86), Cont(x00402d88))
 }
 
-#[allow(unused_variables)]
 pub fn x00402d86(ctx: &mut Context) -> Cont {
     // 00402d86 mov ebx,esi
     ctx.cpu.regs.ebx = ctx.cpu.regs.esi;
@@ -10283,7 +9560,6 @@ pub fn x00402d86(ctx: &mut Context) -> Cont {
     jbe(ctx, Cont(x00402d98), Cont(x00402d9a))
 }
 
-#[allow(unused_variables)]
 pub fn x00402d88(ctx: &mut Context) -> Cont {
     // 00402d88 add ecx,[ebp-8]
     ctx.cpu.regs.ecx = add(
@@ -10309,7 +9585,6 @@ pub fn x00402d88(ctx: &mut Context) -> Cont {
     jbe(ctx, Cont(x00402d98), Cont(x00402d9a))
 }
 
-#[allow(unused_variables)]
 pub fn x00402d98(ctx: &mut Context) -> Cont {
     // 00402d98 mov edx,esi
     ctx.cpu.regs.edx = ctx.cpu.regs.esi;
@@ -10319,7 +9594,6 @@ pub fn x00402d98(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00402d9e), Cont(x00402e01))
 }
 
-#[allow(unused_variables)]
 pub fn x00402d9a(ctx: &mut Context) -> Cont {
     // 00402d9a cmp ebx,edx
     sub(ctx.cpu.regs.ebx, ctx.cpu.regs.edx, &mut ctx.cpu.flags);
@@ -10327,7 +9601,6 @@ pub fn x00402d9a(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00402d9e), Cont(x00402e01))
 }
 
-#[allow(unused_variables)]
 pub fn x00402d9e(ctx: &mut Context) -> Cont {
     // 00402d9e mov ecx,[ebp+0Ch]
     ctx.cpu.regs.ecx = ctx
@@ -10348,7 +9621,6 @@ pub fn x00402d9e(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00402da9), Cont(x00402de9))
 }
 
-#[allow(unused_variables)]
 pub fn x00402da9(ctx: &mut Context) -> Cont {
     // 00402da9 cmp ebx,20h
     sub(ctx.cpu.regs.ebx, 0x20u32, &mut ctx.cpu.flags);
@@ -10356,7 +9628,6 @@ pub fn x00402da9(ctx: &mut Context) -> Cont {
     jae(ctx, Cont(x00402dae), Cont(x00402dca))
 }
 
-#[allow(unused_variables)]
 pub fn x00402dae(ctx: &mut Context) -> Cont {
     // 00402dae mov esi,80000000h
     ctx.cpu.regs.esi = 0x80000000u32;
@@ -10407,7 +9678,6 @@ pub fn x00402dae(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00402dc3), Cont(x00402de9))
 }
 
-#[allow(unused_variables)]
 pub fn x00402dc3(ctx: &mut Context) -> Cont {
     // 00402dc3 mov ecx,[ebp+8]
     ctx.cpu.regs.ecx = ctx
@@ -10426,7 +9696,6 @@ pub fn x00402dc3(ctx: &mut Context) -> Cont {
     Cont(x00402de9)
 }
 
-#[allow(unused_variables)]
 pub fn x00402dca(ctx: &mut Context) -> Cont {
     // 00402dca lea ecx,[ebx-20h]
     ctx.cpu.regs.ecx = ctx.cpu.regs.ebx.wrapping_add(0xffffffe0u32);
@@ -10477,7 +9746,6 @@ pub fn x00402dca(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00402de3), Cont(x00402de9))
 }
 
-#[allow(unused_variables)]
 pub fn x00402de3(ctx: &mut Context) -> Cont {
     // 00402de3 mov ecx,[ebp+8]
     ctx.cpu.regs.ecx = ctx
@@ -10531,7 +9799,6 @@ pub fn x00402de3(ctx: &mut Context) -> Cont {
     Cont(x00402e09)
 }
 
-#[allow(unused_variables)]
 pub fn x00402de9(ctx: &mut Context) -> Cont {
     // 00402de9 mov ecx,[ebp+0Ch]
     ctx.cpu.regs.ecx = ctx
@@ -10571,7 +9838,6 @@ pub fn x00402de9(ctx: &mut Context) -> Cont {
     Cont(x00402e09)
 }
 
-#[allow(unused_variables)]
 pub fn x00402e01(ctx: &mut Context) -> Cont {
     // 00402e01 mov esi,[ebp+0Ch]
     ctx.cpu.regs.esi = ctx
@@ -10581,7 +9847,6 @@ pub fn x00402e01(ctx: &mut Context) -> Cont {
     Cont(x00402e09)
 }
 
-#[allow(unused_variables)]
 pub fn x00402e06(ctx: &mut Context) -> Cont {
     // 00402e06 mov ebx,[ebp+8]
     ctx.cpu.regs.ebx = ctx
@@ -10598,7 +9863,6 @@ pub fn x00402e06(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00402e0f), Cont(x00402e17))
 }
 
-#[allow(unused_variables)]
 pub fn x00402e09(ctx: &mut Context) -> Cont {
     // 00402e09 cmp dword ptr [ebp-0Ch],0
     sub(
@@ -10611,7 +9875,6 @@ pub fn x00402e09(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00402e0f), Cont(x00402e17))
 }
 
-#[allow(unused_variables)]
 pub fn x00402e0f(ctx: &mut Context) -> Cont {
     // 00402e0f cmp ebx,edx
     sub(ctx.cpu.regs.ebx, ctx.cpu.regs.edx, &mut ctx.cpu.flags);
@@ -10619,7 +9882,6 @@ pub fn x00402e0f(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00402e17), Cont(x00402e98))
 }
 
-#[allow(unused_variables)]
 pub fn x00402e17(ctx: &mut Context) -> Cont {
     // 00402e17 mov ecx,[ebp-10h]
     ctx.cpu.regs.ecx = ctx
@@ -10666,7 +9928,6 @@ pub fn x00402e17(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00402e38), Cont(x00402e98))
 }
 
-#[allow(unused_variables)]
 pub fn x00402e38(ctx: &mut Context) -> Cont {
     // 00402e38 mov cl,[edx+eax+4]
     ctx.cpu.regs.set_cl(
@@ -10700,7 +9961,6 @@ pub fn x00402e38(ctx: &mut Context) -> Cont {
     jae(ctx, Cont(x00402e4a), Cont(x00402e6f))
 }
 
-#[allow(unused_variables)]
 pub fn x00402e4a(ctx: &mut Context) -> Cont {
     // 00402e4a cmp byte ptr [ebp+0Fh],0
     sub(
@@ -10712,7 +9972,6 @@ pub fn x00402e4a(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00402e50), Cont(x00402e5e))
 }
 
-#[allow(unused_variables)]
 pub fn x00402e50(ctx: &mut Context) -> Cont {
     // 00402e50 mov ebx,80000000h
     ctx.cpu.regs.ebx = 0x80000000u32;
@@ -10759,7 +10018,6 @@ pub fn x00402e50(ctx: &mut Context) -> Cont {
     Cont(x00402e98)
 }
 
-#[allow(unused_variables)]
 pub fn x00402e5e(ctx: &mut Context) -> Cont {
     // 00402e5e mov ebx,80000000h
     ctx.cpu.regs.ebx = 0x80000000u32;
@@ -10787,7 +10045,6 @@ pub fn x00402e5e(ctx: &mut Context) -> Cont {
     Cont(x00402e98)
 }
 
-#[allow(unused_variables)]
 pub fn x00402e6f(ctx: &mut Context) -> Cont {
     // 00402e6f cmp byte ptr [ebp+0Fh],0
     sub(
@@ -10799,7 +10056,6 @@ pub fn x00402e6f(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00402e75), Cont(x00402e85))
 }
 
-#[allow(unused_variables)]
 pub fn x00402e75(ctx: &mut Context) -> Cont {
     // 00402e75 lea ecx,[edx-20h]
     ctx.cpu.regs.ecx = ctx.cpu.regs.edx.wrapping_add(0xffffffe0u32);
@@ -10871,7 +10127,6 @@ pub fn x00402e75(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00402eac), Cont(x00402fa3))
 }
 
-#[allow(unused_variables)]
 pub fn x00402e85(ctx: &mut Context) -> Cont {
     // 00402e85 lea ecx,[edx-20h]
     ctx.cpu.regs.ecx = ctx.cpu.regs.edx.wrapping_add(0xffffffe0u32);
@@ -10923,7 +10178,6 @@ pub fn x00402e85(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00402eac), Cont(x00402fa3))
 }
 
-#[allow(unused_variables)]
 pub fn x00402e98(ctx: &mut Context) -> Cont {
     // 00402e98 mov eax,[ebp-4]
     ctx.cpu.regs.eax = ctx
@@ -10953,7 +10207,6 @@ pub fn x00402e98(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00402eac), Cont(x00402fa3))
 }
 
-#[allow(unused_variables)]
 pub fn x00402eac(ctx: &mut Context) -> Cont {
     // 00402eac mov eax,ds:[409974h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x409974u32);
@@ -10963,7 +10216,6 @@ pub fn x00402eac(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00402eb9), Cont(x00402f95))
 }
 
-#[allow(unused_variables)]
 pub fn x00402eb9(ctx: &mut Context) -> Cont {
     // 00402eb9 mov ecx,ds:[40996Ch]
     ctx.cpu.regs.ecx = ctx.memory.read::<u32>(0x40996cu32);
@@ -10991,7 +10243,6 @@ pub fn x00402eb9(ctx: &mut Context) -> Cont {
     call(ctx, 0x402ed9, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00402ed9(ctx: &mut Context) -> Cont {
     // 00402ed9 mov ecx,ds:[40996Ch]
     ctx.cpu.regs.ecx = ctx.memory.read::<u32>(0x40996cu32);
@@ -11070,7 +10321,6 @@ pub fn x00402ed9(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00402f1d), Cont(x00402f26))
 }
 
-#[allow(unused_variables)]
 pub fn x00402f1d(ctx: &mut Context) -> Cont {
     // 00402f1d and dword ptr [eax+4],0FFFFFFFEh
     ctx.memory.write::<u32>(
@@ -11095,7 +10345,6 @@ pub fn x00402f1d(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00402f2c), Cont(x00402f95))
 }
 
-#[allow(unused_variables)]
 pub fn x00402f26(ctx: &mut Context) -> Cont {
     // 00402f26 cmp dword ptr [eax+8],0FFFFFFFFh
     sub(
@@ -11108,7 +10357,6 @@ pub fn x00402f26(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00402f2c), Cont(x00402f95))
 }
 
-#[allow(unused_variables)]
 pub fn x00402f2c(ctx: &mut Context) -> Cont {
     // 00402f2c push ebx
     push(ctx, ctx.cpu.regs.ebx);
@@ -11125,7 +10373,6 @@ pub fn x00402f2c(ctx: &mut Context) -> Cont {
     call(ctx, 0x402f34, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00402f34(ctx: &mut Context) -> Cont {
     // 00402f34 mov eax,ds:[409974h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x409974u32);
@@ -11144,7 +10391,6 @@ pub fn x00402f34(ctx: &mut Context) -> Cont {
     call(ctx, 0x402f4a, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00402f4a(ctx: &mut Context) -> Cont {
     // 00402f4a mov eax,ds:[409978h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x409978u32);
@@ -11180,7 +10426,6 @@ pub fn x00402f4a(ctx: &mut Context) -> Cont {
     call(ctx, 0x402f73, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00402f73(ctx: &mut Context) -> Cont {
     // 00402f73 mov eax,[ebp+8]
     ctx.cpu.regs.eax = ctx
@@ -11203,7 +10448,6 @@ pub fn x00402f73(ctx: &mut Context) -> Cont {
     jbe(ctx, Cont(x00402f87), Cont(x00402f8b))
 }
 
-#[allow(unused_variables)]
 pub fn x00402f87(ctx: &mut Context) -> Cont {
     // 00402f87 sub dword ptr [ebp+8],14h
     ctx.memory.write::<u32>(
@@ -11242,7 +10486,6 @@ pub fn x00402f87(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00402f8b(ctx: &mut Context) -> Cont {
     // 00402f8b mov eax,ds:[40997Ch]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x40997cu32);
@@ -11271,7 +10514,6 @@ pub fn x00402f8b(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00402f95(ctx: &mut Context) -> Cont {
     // 00402f95 mov eax,[ebp+8]
     ctx.cpu.regs.eax = ctx
@@ -11296,7 +10538,6 @@ pub fn x00402f95(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00402fa3(ctx: &mut Context) -> Cont {
     // 00402fa3 pop edi
     let x = pop(ctx);
@@ -11313,7 +10554,6 @@ pub fn x00402fa3(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00402fa8(ctx: &mut Context) -> Cont {
     // 00402fa8 push ebp
     push(ctx, ctx.cpu.regs.ebp);
@@ -11363,7 +10603,6 @@ pub fn x00402fa8(ctx: &mut Context) -> Cont {
     jge(ctx, Cont(x00402fda), Cont(x00402fe8))
 }
 
-#[allow(unused_variables)]
 pub fn x00402fda(ctx: &mut Context) -> Cont {
     // 00402fda or esi,0FFFFFFFFh
     ctx.cpu.regs.esi = or(ctx.cpu.regs.esi, 0xffffffffu32, &mut ctx.cpu.flags);
@@ -11388,7 +10627,6 @@ pub fn x00402fda(ctx: &mut Context) -> Cont {
     Cont(x00402ff8)
 }
 
-#[allow(unused_variables)]
 pub fn x00402fe8(ctx: &mut Context) -> Cont {
     // 00402fe8 add ecx,0FFFFFFE0h
     ctx.cpu.regs.ecx = add(ctx.cpu.regs.ecx, 0xffffffe0u32, &mut ctx.cpu.flags);
@@ -11421,7 +10659,6 @@ pub fn x00402fe8(ctx: &mut Context) -> Cont {
     jae(ctx, Cont(x00403006), Cont(x0040301f))
 }
 
-#[allow(unused_variables)]
 pub fn x00402ff8(ctx: &mut Context) -> Cont {
     // 00402ff8 mov eax,ds:[409970h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x409970u32);
@@ -11436,7 +10673,6 @@ pub fn x00402ff8(ctx: &mut Context) -> Cont {
     jae(ctx, Cont(x00403006), Cont(x0040301f))
 }
 
-#[allow(unused_variables)]
 pub fn x00403006(ctx: &mut Context) -> Cont {
     // 00403006 mov ecx,[ebx+4]
     ctx.cpu.regs.ecx = ctx
@@ -11459,7 +10695,6 @@ pub fn x00403006(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00403014), Cont(x0040301f))
 }
 
-#[allow(unused_variables)]
 pub fn x00403014(ctx: &mut Context) -> Cont {
     // 00403014 add ebx,14h
     ctx.cpu.regs.ebx = add(ctx.cpu.regs.ebx, 0x14u32, &mut ctx.cpu.flags);
@@ -11477,7 +10712,6 @@ pub fn x00403014(ctx: &mut Context) -> Cont {
     jb(ctx, Cont(x0040301f), Cont(x00403006))
 }
 
-#[allow(unused_variables)]
 pub fn x0040301f(ctx: &mut Context) -> Cont {
     // 0040301f cmp ebx,[ebp-4]
     sub(
@@ -11490,7 +10724,6 @@ pub fn x0040301f(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00403024), Cont(x0040309d))
 }
 
-#[allow(unused_variables)]
 pub fn x00403024(ctx: &mut Context) -> Cont {
     // 00403024 mov ebx,edx
     ctx.cpu.regs.ebx = ctx.cpu.regs.edx;
@@ -11503,7 +10736,6 @@ pub fn x00403024(ctx: &mut Context) -> Cont {
     jae(ctx, Cont(x0040302d), Cont(x00403042))
 }
 
-#[allow(unused_variables)]
 pub fn x00403026(ctx: &mut Context) -> Cont {
     // 00403026 cmp ebx,eax
     sub(ctx.cpu.regs.ebx, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -11514,7 +10746,6 @@ pub fn x00403026(ctx: &mut Context) -> Cont {
     jae(ctx, Cont(x0040302d), Cont(x00403042))
 }
 
-#[allow(unused_variables)]
 pub fn x0040302d(ctx: &mut Context) -> Cont {
     // 0040302d mov ecx,[ebx+4]
     ctx.cpu.regs.ecx = ctx
@@ -11537,7 +10768,6 @@ pub fn x0040302d(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x0040303b), Cont(x00403040))
 }
 
-#[allow(unused_variables)]
 pub fn x0040303b(ctx: &mut Context) -> Cont {
     // 0040303b add ebx,14h
     ctx.cpu.regs.ebx = add(ctx.cpu.regs.ebx, 0x14u32, &mut ctx.cpu.flags);
@@ -11545,7 +10775,6 @@ pub fn x0040303b(ctx: &mut Context) -> Cont {
     Cont(x00403026)
 }
 
-#[allow(unused_variables)]
 pub fn x00403040(ctx: &mut Context) -> Cont {
     // 00403040 cmp ebx,eax
     sub(ctx.cpu.regs.ebx, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -11553,13 +10782,11 @@ pub fn x00403040(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00403044), Cont(x0040309d))
 }
 
-#[allow(unused_variables)]
 pub fn x00403042(ctx: &mut Context) -> Cont {
     // 00403042 jne short 0040309Dh
     jne(ctx, Cont(x00403044), Cont(x0040309d))
 }
 
-#[allow(unused_variables)]
 pub fn x00403044(ctx: &mut Context) -> Cont {
     // 00403044 cmp ebx,[ebp-4]
     sub(
@@ -11572,7 +10799,6 @@ pub fn x00403044(ctx: &mut Context) -> Cont {
     jae(ctx, Cont(x00403049), Cont(x0040305a))
 }
 
-#[allow(unused_variables)]
 pub fn x00403049(ctx: &mut Context) -> Cont {
     // 00403049 cmp dword ptr [ebx+8],0
     sub(
@@ -11585,7 +10811,6 @@ pub fn x00403049(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x0040304f), Cont(x00403057))
 }
 
-#[allow(unused_variables)]
 pub fn x0040304f(ctx: &mut Context) -> Cont {
     // 0040304f add ebx,14h
     ctx.cpu.regs.ebx = add(ctx.cpu.regs.ebx, 0x14u32, &mut ctx.cpu.flags);
@@ -11596,7 +10821,6 @@ pub fn x0040304f(ctx: &mut Context) -> Cont {
     Cont(x00403044)
 }
 
-#[allow(unused_variables)]
 pub fn x00403057(ctx: &mut Context) -> Cont {
     // 00403057 cmp ebx,[ebp-4]
     sub(
@@ -11609,13 +10833,11 @@ pub fn x00403057(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x0040305c), Cont(x00403082))
 }
 
-#[allow(unused_variables)]
 pub fn x0040305a(ctx: &mut Context) -> Cont {
     // 0040305a jne short 00403082h
     jne(ctx, Cont(x0040305c), Cont(x00403082))
 }
 
-#[allow(unused_variables)]
 pub fn x0040305c(ctx: &mut Context) -> Cont {
     // 0040305c mov ebx,edx
     ctx.cpu.regs.ebx = ctx.cpu.regs.edx;
@@ -11628,7 +10850,6 @@ pub fn x0040305c(ctx: &mut Context) -> Cont {
     jae(ctx, Cont(x00403065), Cont(x00403072))
 }
 
-#[allow(unused_variables)]
 pub fn x0040305e(ctx: &mut Context) -> Cont {
     // 0040305e cmp ebx,eax
     sub(ctx.cpu.regs.ebx, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -11639,7 +10860,6 @@ pub fn x0040305e(ctx: &mut Context) -> Cont {
     jae(ctx, Cont(x00403065), Cont(x00403072))
 }
 
-#[allow(unused_variables)]
 pub fn x00403065(ctx: &mut Context) -> Cont {
     // 00403065 cmp dword ptr [ebx+8],0
     sub(
@@ -11652,7 +10872,6 @@ pub fn x00403065(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x0040306b), Cont(x00403070))
 }
 
-#[allow(unused_variables)]
 pub fn x0040306b(ctx: &mut Context) -> Cont {
     // 0040306b add ebx,14h
     ctx.cpu.regs.ebx = add(ctx.cpu.regs.ebx, 0x14u32, &mut ctx.cpu.flags);
@@ -11660,7 +10879,6 @@ pub fn x0040306b(ctx: &mut Context) -> Cont {
     Cont(x0040305e)
 }
 
-#[allow(unused_variables)]
 pub fn x00403070(ctx: &mut Context) -> Cont {
     // 00403070 cmp ebx,eax
     sub(ctx.cpu.regs.ebx, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -11668,20 +10886,17 @@ pub fn x00403070(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00403074), Cont(x00403082))
 }
 
-#[allow(unused_variables)]
 pub fn x00403072(ctx: &mut Context) -> Cont {
     // 00403072 jne short 00403082h
     jne(ctx, Cont(x00403074), Cont(x00403082))
 }
 
-#[allow(unused_variables)]
 pub fn x00403074(ctx: &mut Context) -> Cont {
     // 00403074 call 004032B1h
     let dst = Cont(x004032b1);
     call(ctx, 0x403079, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00403079(ctx: &mut Context) -> Cont {
     // 00403079 mov ebx,eax
     ctx.cpu.regs.ebx = ctx.cpu.regs.eax;
@@ -11694,7 +10909,6 @@ pub fn x00403079(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00403082), Cont(x00403096))
 }
 
-#[allow(unused_variables)]
 pub fn x00403082(ctx: &mut Context) -> Cont {
     // 00403082 push ebx
     push(ctx, ctx.cpu.regs.ebx);
@@ -11703,7 +10917,6 @@ pub fn x00403082(ctx: &mut Context) -> Cont {
     call(ctx, 0x403088, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00403088(ctx: &mut Context) -> Cont {
     // 00403088 pop ecx
     let x = pop(ctx);
@@ -11728,7 +10941,6 @@ pub fn x00403088(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00403096), Cont(x0040309d))
 }
 
-#[allow(unused_variables)]
 pub fn x00403096(ctx: &mut Context) -> Cont {
     // 00403096 xor eax,eax
     ctx.cpu.regs.eax = xor(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -11736,7 +10948,6 @@ pub fn x00403096(ctx: &mut Context) -> Cont {
     Cont(x004032ac)
 }
 
-#[allow(unused_variables)]
 pub fn x0040309d(ctx: &mut Context) -> Cont {
     // 0040309d mov ds:[409970h],ebx
     ctx.memory.write::<u32>(0x409970u32, ctx.cpu.regs.ebx);
@@ -11757,7 +10968,6 @@ pub fn x0040309d(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004030b0), Cont(x004030c4))
 }
 
-#[allow(unused_variables)]
 pub fn x004030b0(ctx: &mut Context) -> Cont {
     // 004030b0 mov ecx,[eax+edx*4+0C4h]
     ctx.cpu.regs.ecx = ctx.memory.read::<u32>(
@@ -11790,7 +11000,6 @@ pub fn x004030b0(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004030c4), Cont(x004030fb))
 }
 
-#[allow(unused_variables)]
 pub fn x004030c4(ctx: &mut Context) -> Cont {
     // 004030c4 mov edx,[eax+0C4h]
     ctx.cpu.regs.edx = ctx
@@ -11836,7 +11045,6 @@ pub fn x004030c4(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004030e1), Cont(x004030f8))
 }
 
-#[allow(unused_variables)]
 pub fn x004030e1(ctx: &mut Context) -> Cont {
     // 004030e1 mov edx,[ecx+84h]
     ctx.cpu.regs.edx = ctx
@@ -11874,7 +11082,6 @@ pub fn x004030e1(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004030f8), Cont(x004030e1))
 }
 
-#[allow(unused_variables)]
 pub fn x004030f8(ctx: &mut Context) -> Cont {
     // 004030f8 mov edx,[ebp-4]
     ctx.cpu.regs.edx = ctx
@@ -11885,7 +11092,12 @@ pub fn x004030f8(ctx: &mut Context) -> Cont {
     // 004030fd xor edi,edi
     ctx.cpu.regs.edi = xor(ctx.cpu.regs.edi, ctx.cpu.regs.edi, &mut ctx.cpu.flags);
     // 004030ff imul ecx,204h
-    ctx.cpu.regs.ecx = imul(ctx.cpu.regs.ecx as i32, 0x204u32 as i32, &mut ctx.cpu.flags) as u32;
+    let x = ctx.cpu.regs.ecx as i32;
+    let y = 0x204u32 as i32;
+    let (res, overflow) = x.overflowing_mul(y);
+    ctx.cpu.flags.set(Flags::CF, overflow);
+    ctx.cpu.flags.set(Flags::OF, overflow);
+    ctx.cpu.regs.ecx = res as u32;
     // 00403105 lea ecx,[ecx+eax+144h]
     ctx.cpu.regs.ecx = ctx
         .cpu
@@ -11912,14 +11124,18 @@ pub fn x004030f8(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00403117), Cont(x00403124))
 }
 
-#[allow(unused_variables)]
 pub fn x004030fb(ctx: &mut Context) -> Cont {
     // 004030fb mov ecx,edx
     ctx.cpu.regs.ecx = ctx.cpu.regs.edx;
     // 004030fd xor edi,edi
     ctx.cpu.regs.edi = xor(ctx.cpu.regs.edi, ctx.cpu.regs.edi, &mut ctx.cpu.flags);
     // 004030ff imul ecx,204h
-    ctx.cpu.regs.ecx = imul(ctx.cpu.regs.ecx as i32, 0x204u32 as i32, &mut ctx.cpu.flags) as u32;
+    let x = ctx.cpu.regs.ecx as i32;
+    let y = 0x204u32 as i32;
+    let (res, overflow) = x.overflowing_mul(y);
+    ctx.cpu.flags.set(Flags::CF, overflow);
+    ctx.cpu.flags.set(Flags::OF, overflow);
+    ctx.cpu.regs.ecx = res as u32;
     // 00403105 lea ecx,[ecx+eax+144h]
     ctx.cpu.regs.ecx = ctx
         .cpu
@@ -11946,7 +11162,6 @@ pub fn x004030fb(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00403117), Cont(x00403124))
 }
 
-#[allow(unused_variables)]
 pub fn x00403117(ctx: &mut Context) -> Cont {
     // 00403117 mov ecx,[eax+edx*4+0C4h]
     ctx.cpu.regs.ecx = ctx.memory.read::<u32>(
@@ -11974,7 +11189,6 @@ pub fn x00403117(ctx: &mut Context) -> Cont {
     jl(ctx, Cont(x00403128), Cont(x0040312d))
 }
 
-#[allow(unused_variables)]
 pub fn x00403124(ctx: &mut Context) -> Cont {
     // 00403124 test ecx,ecx
     and(ctx.cpu.regs.ecx, ctx.cpu.regs.ecx, &mut ctx.cpu.flags);
@@ -11982,7 +11196,6 @@ pub fn x00403124(ctx: &mut Context) -> Cont {
     jl(ctx, Cont(x00403128), Cont(x0040312d))
 }
 
-#[allow(unused_variables)]
 pub fn x00403128(ctx: &mut Context) -> Cont {
     // 00403128 shl ecx,1
     ctx.cpu.regs.ecx = shl(ctx.cpu.regs.ecx, 0x1u8, &mut ctx.cpu.flags);
@@ -11992,7 +11205,6 @@ pub fn x00403128(ctx: &mut Context) -> Cont {
     Cont(x00403124)
 }
 
-#[allow(unused_variables)]
 pub fn x0040312d(ctx: &mut Context) -> Cont {
     // 0040312d mov ecx,[ebp-0Ch]
     ctx.cpu.regs.ecx = ctx
@@ -12032,7 +11244,6 @@ pub fn x0040312d(ctx: &mut Context) -> Cont {
     jle(ctx, Cont(x00403147), Cont(x0040314a))
 }
 
-#[allow(unused_variables)]
 pub fn x00403147(ctx: &mut Context) -> Cont {
     // 00403147 push 3Fh
     push(ctx, 0x3fu32);
@@ -12045,7 +11256,6 @@ pub fn x00403147(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00403152), Cont(x0040325f))
 }
 
-#[allow(unused_variables)]
 pub fn x0040314a(ctx: &mut Context) -> Cont {
     // 0040314a cmp esi,edi
     sub(ctx.cpu.regs.esi, ctx.cpu.regs.edi, &mut ctx.cpu.flags);
@@ -12053,7 +11263,6 @@ pub fn x0040314a(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00403152), Cont(x0040325f))
 }
 
-#[allow(unused_variables)]
 pub fn x00403152(ctx: &mut Context) -> Cont {
     // 00403152 mov ecx,[edx+4]
     ctx.cpu.regs.ecx = ctx
@@ -12070,7 +11279,6 @@ pub fn x00403152(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x0040315a), Cont(x004031bb))
 }
 
-#[allow(unused_variables)]
 pub fn x0040315a(ctx: &mut Context) -> Cont {
     // 0040315a cmp edi,20h
     sub(ctx.cpu.regs.edi, 0x20u32, &mut ctx.cpu.flags);
@@ -12078,7 +11286,6 @@ pub fn x0040315a(ctx: &mut Context) -> Cont {
     jge(ctx, Cont(x0040315f), Cont(x0040318a))
 }
 
-#[allow(unused_variables)]
 pub fn x0040315f(ctx: &mut Context) -> Cont {
     // 0040315f mov ebx,80000000h
     ctx.cpu.regs.ebx = 0x80000000u32;
@@ -12134,7 +11341,6 @@ pub fn x0040315f(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00403180), Cont(x004031b8))
 }
 
-#[allow(unused_variables)]
 pub fn x00403180(ctx: &mut Context) -> Cont {
     // 00403180 mov ebx,[ebp+8]
     ctx.cpu.regs.ebx = ctx
@@ -12157,7 +11363,6 @@ pub fn x00403180(ctx: &mut Context) -> Cont {
     Cont(x004031bb)
 }
 
-#[allow(unused_variables)]
 pub fn x0040318a(ctx: &mut Context) -> Cont {
     // 0040318a lea ecx,[edi-20h]
     ctx.cpu.regs.ecx = ctx.cpu.regs.edi.wrapping_add(0xffffffe0u32);
@@ -12208,7 +11413,6 @@ pub fn x0040318a(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004031ad), Cont(x004031b8))
 }
 
-#[allow(unused_variables)]
 pub fn x004031ad(ctx: &mut Context) -> Cont {
     // 004031ad mov ebx,[ebp+8]
     ctx.cpu.regs.ebx = ctx
@@ -12232,7 +11436,6 @@ pub fn x004031ad(ctx: &mut Context) -> Cont {
     Cont(x004031bb)
 }
 
-#[allow(unused_variables)]
 pub fn x004031b8(ctx: &mut Context) -> Cont {
     // 004031b8 mov ebx,[ebp+8]
     ctx.cpu.regs.ebx = ctx
@@ -12271,7 +11474,6 @@ pub fn x004031b8(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004031d7), Cont(x0040326b))
 }
 
-#[allow(unused_variables)]
 pub fn x004031bb(ctx: &mut Context) -> Cont {
     // 004031bb mov ecx,[edx+8]
     ctx.cpu.regs.ecx = ctx
@@ -12306,7 +11508,6 @@ pub fn x004031bb(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004031d7), Cont(x0040326b))
 }
 
-#[allow(unused_variables)]
 pub fn x004031d7(ctx: &mut Context) -> Cont {
     // 004031d7 mov ecx,[ebp-0Ch]
     ctx.cpu.regs.ecx = ctx
@@ -12353,7 +11554,6 @@ pub fn x004031d7(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004031f8), Cont(x0040325c))
 }
 
-#[allow(unused_variables)]
 pub fn x004031f8(ctx: &mut Context) -> Cont {
     // 004031f8 mov cl,[esi+eax+4]
     ctx.cpu.regs.set_cl(
@@ -12374,7 +11574,6 @@ pub fn x004031f8(ctx: &mut Context) -> Cont {
     jge(ctx, Cont(x00403204), Cont(x0040322d))
 }
 
-#[allow(unused_variables)]
 pub fn x00403204(ctx: &mut Context) -> Cont {
     // 00403204 inc cl
     ctx.cpu
@@ -12399,7 +11598,6 @@ pub fn x00403204(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00403210), Cont(x0040321b))
 }
 
-#[allow(unused_variables)]
 pub fn x00403210(ctx: &mut Context) -> Cont {
     // 00403210 mov edi,80000000h
     ctx.cpu.regs.edi = 0x80000000u32;
@@ -12449,7 +11647,6 @@ pub fn x00403210(ctx: &mut Context) -> Cont {
     Cont(x0040325c)
 }
 
-#[allow(unused_variables)]
 pub fn x0040321b(ctx: &mut Context) -> Cont {
     // 0040321b mov edi,80000000h
     ctx.cpu.regs.edi = 0x80000000u32;
@@ -12484,7 +11681,6 @@ pub fn x0040321b(ctx: &mut Context) -> Cont {
     Cont(x0040325c)
 }
 
-#[allow(unused_variables)]
 pub fn x0040322d(ctx: &mut Context) -> Cont {
     // 0040322d inc cl
     ctx.cpu
@@ -12509,7 +11705,6 @@ pub fn x0040322d(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00403239), Cont(x00403246))
 }
 
-#[allow(unused_variables)]
 pub fn x00403239(ctx: &mut Context) -> Cont {
     // 00403239 lea ecx,[esi-20h]
     ctx.cpu.regs.ecx = ctx.cpu.regs.esi.wrapping_add(0xffffffe0u32);
@@ -12563,7 +11758,6 @@ pub fn x00403239(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00403263), Cont(x0040326e))
 }
 
-#[allow(unused_variables)]
 pub fn x00403246(ctx: &mut Context) -> Cont {
     // 00403246 mov ecx,[ebp-4]
     ctx.cpu.regs.ecx = ctx
@@ -12601,7 +11795,6 @@ pub fn x00403246(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00403263), Cont(x0040326e))
 }
 
-#[allow(unused_variables)]
 pub fn x0040325c(ctx: &mut Context) -> Cont {
     // 0040325c mov ecx,[ebp-8]
     ctx.cpu.regs.ecx = ctx
@@ -12613,7 +11806,6 @@ pub fn x0040325c(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00403263), Cont(x0040326e))
 }
 
-#[allow(unused_variables)]
 pub fn x0040325f(ctx: &mut Context) -> Cont {
     // 0040325f test ecx,ecx
     and(ctx.cpu.regs.ecx, ctx.cpu.regs.ecx, &mut ctx.cpu.flags);
@@ -12621,7 +11813,6 @@ pub fn x0040325f(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00403263), Cont(x0040326e))
 }
 
-#[allow(unused_variables)]
 pub fn x00403263(ctx: &mut Context) -> Cont {
     // 00403263 mov [edx],ecx
     ctx.memory.write::<u32>(ctx.cpu.regs.edx, ctx.cpu.regs.ecx);
@@ -12638,7 +11829,6 @@ pub fn x00403263(ctx: &mut Context) -> Cont {
     Cont(x0040326e)
 }
 
-#[allow(unused_variables)]
 pub fn x0040326b(ctx: &mut Context) -> Cont {
     // 0040326b mov ecx,[ebp-8]
     ctx.cpu.regs.ecx = ctx
@@ -12679,7 +11869,6 @@ pub fn x0040326b(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x0040328a), Cont(x004032a4))
 }
 
-#[allow(unused_variables)]
 pub fn x0040326e(ctx: &mut Context) -> Cont {
     // 0040326e mov esi,[ebp-10h]
     ctx.cpu.regs.esi = ctx
@@ -12716,7 +11905,6 @@ pub fn x0040326e(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x0040328a), Cont(x004032a4))
 }
 
-#[allow(unused_variables)]
 pub fn x0040328a(ctx: &mut Context) -> Cont {
     // 0040328a cmp ebx,ds:[409974h]
     sub(
@@ -12728,7 +11916,6 @@ pub fn x0040328a(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00403292), Cont(x004032a4))
 }
 
-#[allow(unused_variables)]
 pub fn x00403292(ctx: &mut Context) -> Cont {
     // 00403292 mov ecx,[ebp-4]
     ctx.cpu.regs.ecx = ctx
@@ -12744,7 +11931,6 @@ pub fn x00403292(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x0040329d), Cont(x004032a4))
 }
 
-#[allow(unused_variables)]
 pub fn x0040329d(ctx: &mut Context) -> Cont {
     // 0040329d and dword ptr ds:[409974h],0
     ctx.memory.write::<u32>(
@@ -12778,7 +11964,6 @@ pub fn x0040329d(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x004032a4(ctx: &mut Context) -> Cont {
     // 004032a4 mov ecx,[ebp-4]
     ctx.cpu.regs.ecx = ctx
@@ -12803,7 +11988,6 @@ pub fn x004032a4(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x004032ac(ctx: &mut Context) -> Cont {
     // 004032ac pop edi
     let x = pop(ctx);
@@ -12820,7 +12004,6 @@ pub fn x004032ac(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x004032b1(ctx: &mut Context) -> Cont {
     // 004032b1 mov eax,ds:[409978h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x409978u32);
@@ -12838,7 +12021,6 @@ pub fn x004032b1(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004032c4), Cont(x004032f4))
 }
 
-#[allow(unused_variables)]
 pub fn x004032c4(ctx: &mut Context) -> Cont {
     // 004032c4 lea eax,[ecx+ecx*4+50h]
     ctx.cpu.regs.eax = ctx
@@ -12862,7 +12044,6 @@ pub fn x004032c4(ctx: &mut Context) -> Cont {
     call(ctx, 0x4032df, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004032df(ctx: &mut Context) -> Cont {
     // 004032df cmp eax,edi
     sub(ctx.cpu.regs.eax, ctx.cpu.regs.edi, &mut ctx.cpu.flags);
@@ -12870,7 +12051,6 @@ pub fn x004032df(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004032e3), Cont(x00403344))
 }
 
-#[allow(unused_variables)]
 pub fn x004032e3(ctx: &mut Context) -> Cont {
     // 004032e3 add dword ptr ds:[409968h],10h
     ctx.memory.write::<u32>(
@@ -12902,7 +12082,6 @@ pub fn x004032e3(ctx: &mut Context) -> Cont {
     call(ctx, 0x403313, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004032f4(ctx: &mut Context) -> Cont {
     // 004032f4 mov ecx,ds:[40997Ch]
     ctx.cpu.regs.ecx = ctx.memory.read::<u32>(0x40997cu32);
@@ -12921,7 +12100,6 @@ pub fn x004032f4(ctx: &mut Context) -> Cont {
     call(ctx, 0x403313, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00403313(ctx: &mut Context) -> Cont {
     // 00403313 cmp eax,edi
     sub(ctx.cpu.regs.eax, ctx.cpu.regs.edi, &mut ctx.cpu.flags);
@@ -12932,7 +12110,6 @@ pub fn x00403313(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x0040331a), Cont(x00403344))
 }
 
-#[allow(unused_variables)]
 pub fn x0040331a(ctx: &mut Context) -> Cont {
     // 0040331a push 4
     push(ctx, 0x4u32);
@@ -12947,7 +12124,6 @@ pub fn x0040331a(ctx: &mut Context) -> Cont {
     call(ctx, 0x40332d, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x0040332d(ctx: &mut Context) -> Cont {
     // 0040332d cmp eax,edi
     sub(ctx.cpu.regs.eax, ctx.cpu.regs.edi, &mut ctx.cpu.flags);
@@ -12958,7 +12134,6 @@ pub fn x0040332d(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00403334), Cont(x00403348))
 }
 
-#[allow(unused_variables)]
 pub fn x00403334(ctx: &mut Context) -> Cont {
     // 00403334 push dword ptr [esi+10h]
     push(
@@ -12975,7 +12150,6 @@ pub fn x00403334(ctx: &mut Context) -> Cont {
     call(ctx, 0x403344, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00403344(ctx: &mut Context) -> Cont {
     // 00403344 xor eax,eax
     ctx.cpu.regs.eax = xor(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -12983,7 +12157,6 @@ pub fn x00403344(ctx: &mut Context) -> Cont {
     Cont(x0040335f)
 }
 
-#[allow(unused_variables)]
 pub fn x00403348(ctx: &mut Context) -> Cont {
     // 00403348 or dword ptr [esi+8],0FFFFFFFFh
     ctx.memory.write::<u32>(
@@ -13030,7 +12203,6 @@ pub fn x00403348(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x0040335f(ctx: &mut Context) -> Cont {
     // 0040335f pop edi
     let x = pop(ctx);
@@ -13042,7 +12214,6 @@ pub fn x0040335f(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00403362(ctx: &mut Context) -> Cont {
     // 00403362 push ebp
     push(ctx, ctx.cpu.regs.ebp);
@@ -13076,7 +12247,6 @@ pub fn x00403362(ctx: &mut Context) -> Cont {
     jl(ctx, Cont(x00403378), Cont(x0040337d))
 }
 
-#[allow(unused_variables)]
 pub fn x00403374(ctx: &mut Context) -> Cont {
     // 00403374 test eax,eax
     and(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -13084,7 +12254,6 @@ pub fn x00403374(ctx: &mut Context) -> Cont {
     jl(ctx, Cont(x00403378), Cont(x0040337d))
 }
 
-#[allow(unused_variables)]
 pub fn x00403378(ctx: &mut Context) -> Cont {
     // 00403378 shl eax,1
     ctx.cpu.regs.eax = shl(ctx.cpu.regs.eax, 0x1u8, &mut ctx.cpu.flags);
@@ -13094,14 +12263,18 @@ pub fn x00403378(ctx: &mut Context) -> Cont {
     Cont(x00403374)
 }
 
-#[allow(unused_variables)]
 pub fn x0040337d(ctx: &mut Context) -> Cont {
     // 0040337d mov eax,ebx
     ctx.cpu.regs.eax = ctx.cpu.regs.ebx;
     // 0040337f push 3Fh
     push(ctx, 0x3fu32);
     // 00403381 imul eax,204h
-    ctx.cpu.regs.eax = imul(ctx.cpu.regs.eax as i32, 0x204u32 as i32, &mut ctx.cpu.flags) as u32;
+    let x = ctx.cpu.regs.eax as i32;
+    let y = 0x204u32 as i32;
+    let (res, overflow) = x.overflowing_mul(y);
+    ctx.cpu.flags.set(Flags::CF, overflow);
+    ctx.cpu.flags.set(Flags::OF, overflow);
+    ctx.cpu.regs.eax = res as u32;
     // 00403387 pop edx
     let x = pop(ctx);
     ctx.cpu.regs.edx = x;
@@ -13131,7 +12304,6 @@ pub fn x0040337d(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x0040339e), Cont(x00403392))
 }
 
-#[allow(unused_variables)]
 pub fn x00403392(ctx: &mut Context) -> Cont {
     // 00403392 mov [eax+8],eax
     ctx.memory
@@ -13147,7 +12319,6 @@ pub fn x00403392(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x0040339e), Cont(x00403392))
 }
 
-#[allow(unused_variables)]
 pub fn x0040339e(ctx: &mut Context) -> Cont {
     // 0040339e mov edi,ebx
     ctx.cpu.regs.edi = ctx.cpu.regs.ebx;
@@ -13173,7 +12344,6 @@ pub fn x0040339e(ctx: &mut Context) -> Cont {
     call(ctx, 0x4033b9, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004033b9(ctx: &mut Context) -> Cont {
     // 004033b9 test eax,eax
     and(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -13181,7 +12351,6 @@ pub fn x004033b9(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004033bd), Cont(x004033c5))
 }
 
-#[allow(unused_variables)]
 pub fn x004033bd(ctx: &mut Context) -> Cont {
     // 004033bd or eax,0FFFFFFFFh
     ctx.cpu.regs.eax = or(ctx.cpu.regs.eax, 0xffffffffu32, &mut ctx.cpu.flags);
@@ -13189,7 +12358,6 @@ pub fn x004033bd(ctx: &mut Context) -> Cont {
     Cont(x00403458)
 }
 
-#[allow(unused_variables)]
 pub fn x004033c5(ctx: &mut Context) -> Cont {
     // 004033c5 lea edx,[edi+7000h]
     ctx.cpu.regs.edx = ctx.cpu.regs.edi.wrapping_add(0x7000u32);
@@ -13199,7 +12367,6 @@ pub fn x004033c5(ctx: &mut Context) -> Cont {
     ja(ctx, Cont(x004033cf), Cont(x0040340b))
 }
 
-#[allow(unused_variables)]
 pub fn x004033cf(ctx: &mut Context) -> Cont {
     // 004033cf lea eax,[edi+10h]
     ctx.cpu.regs.eax = ctx.cpu.regs.edi.wrapping_add(0x10u32);
@@ -13248,7 +12415,6 @@ pub fn x004033cf(ctx: &mut Context) -> Cont {
     jbe(ctx, Cont(x0040340b), Cont(x004033d2))
 }
 
-#[allow(unused_variables)]
 pub fn x004033d2(ctx: &mut Context) -> Cont {
     // 004033d2 or dword ptr [eax-8],0FFFFFFFFh
     ctx.memory.write::<u32>(
@@ -13295,7 +12461,6 @@ pub fn x004033d2(ctx: &mut Context) -> Cont {
     jbe(ctx, Cont(x0040340b), Cont(x004033d2))
 }
 
-#[allow(unused_variables)]
 pub fn x0040340b(ctx: &mut Context) -> Cont {
     // 0040340b mov eax,[ebp-4]
     ctx.cpu.regs.eax = ctx
@@ -13382,7 +12547,6 @@ pub fn x0040340b(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00403445), Cont(x00403448))
 }
 
-#[allow(unused_variables)]
 pub fn x00403445(ctx: &mut Context) -> Cont {
     // 00403445 or [eax+4],edi
     ctx.memory.write::<u32>(
@@ -13429,7 +12593,6 @@ pub fn x00403445(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00403448(ctx: &mut Context) -> Cont {
     // 00403448 mov edx,80000000h
     ctx.cpu.regs.edx = 0x80000000u32;
@@ -13466,7 +12629,6 @@ pub fn x00403448(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00403458(ctx: &mut Context) -> Cont {
     // 00403458 pop edi
     let x = pop(ctx);
@@ -13483,7 +12645,6 @@ pub fn x00403458(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x0040345d(ctx: &mut Context) -> Cont {
     // 0040345d push ebp
     push(ctx, ctx.cpu.regs.ebp);
@@ -13531,7 +12692,12 @@ pub fn x0040345d(ctx: &mut Context) -> Cont {
     // 00403480 mov ecx,edx
     ctx.cpu.regs.ecx = ctx.cpu.regs.edx;
     // 00403482 imul ecx,204h
-    ctx.cpu.regs.ecx = imul(ctx.cpu.regs.ecx as i32, 0x204u32 as i32, &mut ctx.cpu.flags) as u32;
+    let x = ctx.cpu.regs.ecx as i32;
+    let y = 0x204u32 as i32;
+    let (res, overflow) = x.overflowing_mul(y);
+    ctx.cpu.flags.set(Flags::CF, overflow);
+    ctx.cpu.flags.set(Flags::OF, overflow);
+    ctx.cpu.regs.ecx = res as u32;
     // 00403488 lea ecx,[ecx+eax+144h]
     ctx.cpu.regs.ecx = ctx
         .cpu
@@ -13579,7 +12745,6 @@ pub fn x0040345d(ctx: &mut Context) -> Cont {
     jle(ctx, Cont(x004034ac), Cont(x0040360b))
 }
 
-#[allow(unused_variables)]
 pub fn x004034ac(ctx: &mut Context) -> Cont {
     // 004034ac test bl,1
     and(ctx.cpu.regs.get_bl(), 0x1u8, &mut ctx.cpu.flags);
@@ -13587,7 +12752,6 @@ pub fn x004034ac(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004034b5), Cont(x00403604))
 }
 
-#[allow(unused_variables)]
 pub fn x004034b5(ctx: &mut Context) -> Cont {
     // 004034b5 add ebx,ecx
     ctx.cpu.regs.ebx = add(ctx.cpu.regs.ebx, ctx.cpu.regs.ecx, &mut ctx.cpu.flags);
@@ -13597,7 +12761,6 @@ pub fn x004034b5(ctx: &mut Context) -> Cont {
     jg(ctx, Cont(x004034bf), Cont(x00403604))
 }
 
-#[allow(unused_variables)]
 pub fn x004034bf(ctx: &mut Context) -> Cont {
     // 004034bf mov ecx,[ebp-4]
     ctx.cpu.regs.ecx = ctx
@@ -13618,7 +12781,6 @@ pub fn x004034bf(ctx: &mut Context) -> Cont {
     jbe(ctx, Cont(x004034ce), Cont(x004034d4))
 }
 
-#[allow(unused_variables)]
 pub fn x004034ce(ctx: &mut Context) -> Cont {
     // 004034ce push 3Fh
     push(ctx, 0x3fu32);
@@ -13645,7 +12807,6 @@ pub fn x004034ce(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004034dc), Cont(x00403524))
 }
 
-#[allow(unused_variables)]
 pub fn x004034d4(ctx: &mut Context) -> Cont {
     // 004034d4 mov ebx,[edi+4]
     ctx.cpu.regs.ebx = ctx
@@ -13662,7 +12823,6 @@ pub fn x004034d4(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004034dc), Cont(x00403524))
 }
 
-#[allow(unused_variables)]
 pub fn x004034dc(ctx: &mut Context) -> Cont {
     // 004034dc cmp ecx,20h
     sub(ctx.cpu.regs.ecx, 0x20u32, &mut ctx.cpu.flags);
@@ -13670,7 +12830,6 @@ pub fn x004034dc(ctx: &mut Context) -> Cont {
     jae(ctx, Cont(x004034e1), Cont(x00403500))
 }
 
-#[allow(unused_variables)]
 pub fn x004034e1(ctx: &mut Context) -> Cont {
     // 004034e1 mov ebx,80000000h
     ctx.cpu.regs.ebx = 0x80000000u32;
@@ -13717,7 +12876,6 @@ pub fn x004034e1(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004034f9), Cont(x00403524))
 }
 
-#[allow(unused_variables)]
 pub fn x004034f9(ctx: &mut Context) -> Cont {
     // 004034f9 mov ecx,[ebp+8]
     ctx.cpu.regs.ecx = ctx
@@ -13736,7 +12894,6 @@ pub fn x004034f9(ctx: &mut Context) -> Cont {
     Cont(x00403524)
 }
 
-#[allow(unused_variables)]
 pub fn x00403500(ctx: &mut Context) -> Cont {
     // 00403500 add ecx,0FFFFFFE0h
     ctx.cpu.regs.ecx = add(ctx.cpu.regs.ecx, 0xffffffe0u32, &mut ctx.cpu.flags);
@@ -13785,7 +12942,6 @@ pub fn x00403500(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x0040351e), Cont(x00403524))
 }
 
-#[allow(unused_variables)]
 pub fn x0040351e(ctx: &mut Context) -> Cont {
     // 0040351e mov ecx,[ebp+8]
     ctx.cpu.regs.ecx = ctx
@@ -13850,7 +13006,6 @@ pub fn x0040351e(ctx: &mut Context) -> Cont {
     jle(ctx, Cont(x00403548), Cont(x004035f2))
 }
 
-#[allow(unused_variables)]
 pub fn x00403524(ctx: &mut Context) -> Cont {
     // 00403524 mov ecx,[edi+8]
     ctx.cpu.regs.ecx = ctx
@@ -13901,7 +13056,6 @@ pub fn x00403524(ctx: &mut Context) -> Cont {
     jle(ctx, Cont(x00403548), Cont(x004035f2))
 }
 
-#[allow(unused_variables)]
 pub fn x00403548(ctx: &mut Context) -> Cont {
     // 00403548 mov edi,[ebp-4]
     ctx.cpu.regs.edi = ctx
@@ -13928,7 +13082,6 @@ pub fn x00403548(ctx: &mut Context) -> Cont {
     jbe(ctx, Cont(x0040355b), Cont(x0040355e))
 }
 
-#[allow(unused_variables)]
 pub fn x0040355b(ctx: &mut Context) -> Cont {
     // 0040355b push 3Fh
     push(ctx, 0x3fu32);
@@ -13983,7 +13136,6 @@ pub fn x0040355b(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00403584), Cont(x004035e0))
 }
 
-#[allow(unused_variables)]
 pub fn x0040355e(ctx: &mut Context) -> Cont {
     // 0040355e mov ebx,[ebp-0Ch]
     ctx.cpu.regs.ebx = ctx
@@ -14033,7 +13185,6 @@ pub fn x0040355e(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00403584), Cont(x004035e0))
 }
 
-#[allow(unused_variables)]
 pub fn x00403584(ctx: &mut Context) -> Cont {
     // 00403584 mov cl,[edi+eax+4]
     ctx.cpu.regs.set_cl(
@@ -14069,7 +13220,6 @@ pub fn x00403584(ctx: &mut Context) -> Cont {
     jae(ctx, Cont(x00403596), Cont(x004035b7))
 }
 
-#[allow(unused_variables)]
 pub fn x00403596(ctx: &mut Context) -> Cont {
     // 00403596 cmp byte ptr [ebp+13h],0
     sub(
@@ -14082,7 +13232,6 @@ pub fn x00403596(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x0040359c), Cont(x004035aa))
 }
 
-#[allow(unused_variables)]
 pub fn x0040359c(ctx: &mut Context) -> Cont {
     // 0040359c mov ebx,80000000h
     ctx.cpu.regs.ebx = 0x80000000u32;
@@ -14118,7 +13267,6 @@ pub fn x0040359c(ctx: &mut Context) -> Cont {
     Cont(x004035dc)
 }
 
-#[allow(unused_variables)]
 pub fn x004035aa(ctx: &mut Context) -> Cont {
     // 004035aa lea eax,[eax+edx*4+44h]
     ctx.cpu.regs.eax = ctx
@@ -14135,7 +13283,6 @@ pub fn x004035aa(ctx: &mut Context) -> Cont {
     Cont(x004035dc)
 }
 
-#[allow(unused_variables)]
 pub fn x004035b7(ctx: &mut Context) -> Cont {
     // 004035b7 cmp byte ptr [ebp+13h],0
     sub(
@@ -14148,7 +13295,6 @@ pub fn x004035b7(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004035bd), Cont(x004035cd))
 }
 
-#[allow(unused_variables)]
 pub fn x004035bd(ctx: &mut Context) -> Cont {
     // 004035bd lea ecx,[edi-20h]
     ctx.cpu.regs.ecx = ctx.cpu.regs.edi.wrapping_add(0xffffffe0u32);
@@ -14222,7 +13368,6 @@ pub fn x004035bd(ctx: &mut Context) -> Cont {
     Cont(x004035f5)
 }
 
-#[allow(unused_variables)]
 pub fn x004035cd(ctx: &mut Context) -> Cont {
     // 004035cd lea eax,[eax+edx*4+0C4h]
     ctx.cpu.regs.eax = ctx
@@ -14276,7 +13421,6 @@ pub fn x004035cd(ctx: &mut Context) -> Cont {
     Cont(x004035f5)
 }
 
-#[allow(unused_variables)]
 pub fn x004035dc(ctx: &mut Context) -> Cont {
     // 004035dc shr edx,cl
     ctx.cpu.regs.edx = shr(ctx.cpu.regs.edx, ctx.cpu.regs.get_cl(), &mut ctx.cpu.flags);
@@ -14319,7 +13463,6 @@ pub fn x004035dc(ctx: &mut Context) -> Cont {
     Cont(x004035f5)
 }
 
-#[allow(unused_variables)]
 pub fn x004035e0(ctx: &mut Context) -> Cont {
     // 004035e0 mov edx,[ebp+0Ch]
     ctx.cpu.regs.edx = ctx
@@ -14351,7 +13494,6 @@ pub fn x004035e0(ctx: &mut Context) -> Cont {
     Cont(x004035f5)
 }
 
-#[allow(unused_variables)]
 pub fn x004035f2(ctx: &mut Context) -> Cont {
     // 004035f2 mov edx,[ebp+0Ch]
     ctx.cpu.regs.edx = ctx
@@ -14377,7 +13519,6 @@ pub fn x004035f2(ctx: &mut Context) -> Cont {
     Cont(x0040374b)
 }
 
-#[allow(unused_variables)]
 pub fn x004035f5(ctx: &mut Context) -> Cont {
     // 004035f5 lea eax,[esi+1]
     ctx.cpu.regs.eax = ctx.cpu.regs.esi.wrapping_add(0x1u32);
@@ -14399,7 +13540,6 @@ pub fn x004035f5(ctx: &mut Context) -> Cont {
     Cont(x0040374b)
 }
 
-#[allow(unused_variables)]
 pub fn x00403604(ctx: &mut Context) -> Cont {
     // 00403604 xor eax,eax
     ctx.cpu.regs.eax = xor(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -14407,13 +13547,11 @@ pub fn x00403604(ctx: &mut Context) -> Cont {
     Cont(x0040374e)
 }
 
-#[allow(unused_variables)]
 pub fn x0040360b(ctx: &mut Context) -> Cont {
     // 0040360b jge near ptr 0040374Bh
     jge(ctx, Cont(x00403611), Cont(x0040374b))
 }
 
-#[allow(unused_variables)]
 pub fn x00403611(ctx: &mut Context) -> Cont {
     // 00403611 mov ebx,[ebp+0Ch]
     ctx.cpu.regs.ebx = ctx
@@ -14465,7 +13603,6 @@ pub fn x00403611(ctx: &mut Context) -> Cont {
     jbe(ctx, Cont(x00403633), Cont(x00403636))
 }
 
-#[allow(unused_variables)]
 pub fn x00403633(ctx: &mut Context) -> Cont {
     // 00403633 push 3Fh
     push(ctx, 0x3fu32);
@@ -14483,7 +13620,6 @@ pub fn x00403633(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00403640), Cont(x004036c5))
 }
 
-#[allow(unused_variables)]
 pub fn x00403636(ctx: &mut Context) -> Cont {
     // 00403636 test byte ptr [ebp-4],1
     and(
@@ -14496,7 +13632,6 @@ pub fn x00403636(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00403640), Cont(x004036c5))
 }
 
-#[allow(unused_variables)]
 pub fn x00403640(ctx: &mut Context) -> Cont {
     // 00403640 mov esi,[ebp-4]
     ctx.cpu.regs.esi = ctx
@@ -14512,7 +13647,6 @@ pub fn x00403640(ctx: &mut Context) -> Cont {
     jbe(ctx, Cont(x0040364c), Cont(x0040364f))
 }
 
-#[allow(unused_variables)]
 pub fn x0040364c(ctx: &mut Context) -> Cont {
     // 0040364c push 3Fh
     push(ctx, 0x3fu32);
@@ -14534,7 +13668,6 @@ pub fn x0040364c(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00403657), Cont(x0040369e))
 }
 
-#[allow(unused_variables)]
 pub fn x0040364f(ctx: &mut Context) -> Cont {
     // 0040364f mov ecx,[edi+4]
     ctx.cpu.regs.ecx = ctx
@@ -14551,7 +13684,6 @@ pub fn x0040364f(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00403657), Cont(x0040369e))
 }
 
-#[allow(unused_variables)]
 pub fn x00403657(ctx: &mut Context) -> Cont {
     // 00403657 cmp esi,20h
     sub(ctx.cpu.regs.esi, 0x20u32, &mut ctx.cpu.flags);
@@ -14559,7 +13691,6 @@ pub fn x00403657(ctx: &mut Context) -> Cont {
     jae(ctx, Cont(x0040365c), Cont(x0040367a))
 }
 
-#[allow(unused_variables)]
 pub fn x0040365c(ctx: &mut Context) -> Cont {
     // 0040365c mov ebx,80000000h
     ctx.cpu.regs.ebx = 0x80000000u32;
@@ -14604,7 +13735,6 @@ pub fn x0040365c(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00403673), Cont(x0040369b))
 }
 
-#[allow(unused_variables)]
 pub fn x00403673(ctx: &mut Context) -> Cont {
     // 00403673 mov ecx,[ebp+8]
     ctx.cpu.regs.ecx = ctx
@@ -14623,7 +13753,6 @@ pub fn x00403673(ctx: &mut Context) -> Cont {
     Cont(x0040369b)
 }
 
-#[allow(unused_variables)]
 pub fn x0040367a(ctx: &mut Context) -> Cont {
     // 0040367a lea ecx,[esi-20h]
     ctx.cpu.regs.ecx = ctx.cpu.regs.esi.wrapping_add(0xffffffe0u32);
@@ -14668,7 +13797,6 @@ pub fn x0040367a(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00403695), Cont(x0040369b))
 }
 
-#[allow(unused_variables)]
 pub fn x00403695(ctx: &mut Context) -> Cont {
     // 00403695 mov ecx,[ebp+8]
     ctx.cpu.regs.ecx = ctx
@@ -14734,7 +13862,6 @@ pub fn x00403695(ctx: &mut Context) -> Cont {
     jbe(ctx, Cont(x004036c2), Cont(x004036c5))
 }
 
-#[allow(unused_variables)]
 pub fn x0040369b(ctx: &mut Context) -> Cont {
     // 0040369b mov ebx,[ebp+0Ch]
     ctx.cpu.regs.ebx = ctx
@@ -14786,7 +13913,6 @@ pub fn x0040369b(ctx: &mut Context) -> Cont {
     jbe(ctx, Cont(x004036c2), Cont(x004036c5))
 }
 
-#[allow(unused_variables)]
 pub fn x0040369e(ctx: &mut Context) -> Cont {
     // 0040369e mov ecx,[edi+8]
     ctx.cpu.regs.ecx = ctx
@@ -14834,7 +13960,6 @@ pub fn x0040369e(ctx: &mut Context) -> Cont {
     jbe(ctx, Cont(x004036c2), Cont(x004036c5))
 }
 
-#[allow(unused_variables)]
 pub fn x004036c2(ctx: &mut Context) -> Cont {
     // 004036c2 push 3Fh
     push(ctx, 0x3fu32);
@@ -14886,7 +14011,6 @@ pub fn x004036c2(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004036e6), Cont(x00403742))
 }
 
-#[allow(unused_variables)]
 pub fn x004036c5(ctx: &mut Context) -> Cont {
     // 004036c5 mov ecx,[ebp-0Ch]
     ctx.cpu.regs.ecx = ctx
@@ -14933,7 +14057,6 @@ pub fn x004036c5(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004036e6), Cont(x00403742))
 }
 
-#[allow(unused_variables)]
 pub fn x004036e6(ctx: &mut Context) -> Cont {
     // 004036e6 mov cl,[esi+eax+4]
     ctx.cpu.regs.set_cl(
@@ -14967,7 +14090,6 @@ pub fn x004036e6(ctx: &mut Context) -> Cont {
     jae(ctx, Cont(x004036f8), Cont(x00403719))
 }
 
-#[allow(unused_variables)]
 pub fn x004036f8(ctx: &mut Context) -> Cont {
     // 004036f8 cmp byte ptr [ebp+0Fh],0
     sub(
@@ -14979,7 +14101,6 @@ pub fn x004036f8(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004036fe), Cont(x0040370c))
 }
 
-#[allow(unused_variables)]
 pub fn x004036fe(ctx: &mut Context) -> Cont {
     // 004036fe mov edi,80000000h
     ctx.cpu.regs.edi = 0x80000000u32;
@@ -15015,7 +14136,6 @@ pub fn x004036fe(ctx: &mut Context) -> Cont {
     Cont(x0040373e)
 }
 
-#[allow(unused_variables)]
 pub fn x0040370c(ctx: &mut Context) -> Cont {
     // 0040370c lea eax,[eax+edx*4+44h]
     ctx.cpu.regs.eax = ctx
@@ -15032,7 +14152,6 @@ pub fn x0040370c(ctx: &mut Context) -> Cont {
     Cont(x0040373e)
 }
 
-#[allow(unused_variables)]
 pub fn x00403719(ctx: &mut Context) -> Cont {
     // 00403719 cmp byte ptr [ebp+0Fh],0
     sub(
@@ -15044,7 +14163,6 @@ pub fn x00403719(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x0040371f), Cont(x0040372f))
 }
 
-#[allow(unused_variables)]
 pub fn x0040371f(ctx: &mut Context) -> Cont {
     // 0040371f lea ecx,[esi-20h]
     ctx.cpu.regs.ecx = ctx.cpu.regs.esi.wrapping_add(0xffffffe0u32);
@@ -15123,7 +14241,6 @@ pub fn x0040371f(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x0040372f(ctx: &mut Context) -> Cont {
     // 0040372f lea eax,[eax+edx*4+0C4h]
     ctx.cpu.regs.eax = ctx
@@ -15182,7 +14299,6 @@ pub fn x0040372f(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x0040373e(ctx: &mut Context) -> Cont {
     // 0040373e shr edx,cl
     ctx.cpu.regs.edx = shr(ctx.cpu.regs.edx, ctx.cpu.regs.get_cl(), &mut ctx.cpu.flags);
@@ -15230,7 +14346,6 @@ pub fn x0040373e(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00403742(ctx: &mut Context) -> Cont {
     // 00403742 mov eax,[ebp+10h]
     ctx.cpu.regs.eax = ctx
@@ -15267,7 +14382,6 @@ pub fn x00403742(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x0040374b(ctx: &mut Context) -> Cont {
     // 0040374b push 1
     push(ctx, 0x1u32);
@@ -15289,7 +14403,6 @@ pub fn x0040374b(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x0040374e(ctx: &mut Context) -> Cont {
     // 0040374e pop edi
     let x = pop(ctx);
@@ -15306,7 +14419,6 @@ pub fn x0040374e(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00403753(ctx: &mut Context) -> Cont {
     // 00403753 cmp dword ptr ds:[407218h],0FFFFFFFFh
     sub(
@@ -15326,7 +14438,6 @@ pub fn x00403753(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00403760), Cont(x00403767))
 }
 
-#[allow(unused_variables)]
 pub fn x00403760(ctx: &mut Context) -> Cont {
     // 00403760 mov esi,407208h
     ctx.cpu.regs.esi = 0x407208u32;
@@ -15334,7 +14445,6 @@ pub fn x00403760(ctx: &mut Context) -> Cont {
     Cont(x00403784)
 }
 
-#[allow(unused_variables)]
 pub fn x00403767(ctx: &mut Context) -> Cont {
     // 00403767 push 2020h
     push(ctx, 0x2020u32);
@@ -15347,7 +14457,6 @@ pub fn x00403767(ctx: &mut Context) -> Cont {
     call(ctx, 0x40377a, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x0040377a(ctx: &mut Context) -> Cont {
     // 0040377a mov esi,eax
     ctx.cpu.regs.esi = ctx.cpu.regs.eax;
@@ -15357,7 +14466,6 @@ pub fn x0040377a(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00403784), Cont(x00403890))
 }
 
-#[allow(unused_variables)]
 pub fn x00403784(ctx: &mut Context) -> Cont {
     // 00403784 mov ebp,ds:[40605Ch]
     ctx.cpu.regs.ebp = ctx.memory.read::<u32>(0x40605cu32);
@@ -15374,7 +14482,6 @@ pub fn x00403784(ctx: &mut Context) -> Cont {
     call(ctx, 0x40379a, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x0040379a(ctx: &mut Context) -> Cont {
     // 0040379a mov edi,eax
     ctx.cpu.regs.edi = ctx.cpu.regs.eax;
@@ -15384,7 +14491,6 @@ pub fn x0040379a(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004037a4), Cont(x00403879))
 }
 
-#[allow(unused_variables)]
 pub fn x004037a4(ctx: &mut Context) -> Cont {
     // 004037a4 push 4
     push(ctx, 0x4u32);
@@ -15401,7 +14507,6 @@ pub fn x004037a4(ctx: &mut Context) -> Cont {
     call(ctx, 0x4037b4, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004037b4(ctx: &mut Context) -> Cont {
     // 004037b4 test eax,eax
     and(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -15409,7 +14514,6 @@ pub fn x004037b4(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004037bc), Cont(x0040386b))
 }
 
-#[allow(unused_variables)]
 pub fn x004037bc(ctx: &mut Context) -> Cont {
     // 004037bc mov eax,407208h
     ctx.cpu.regs.eax = 0x407208u32;
@@ -15419,7 +14523,6 @@ pub fn x004037bc(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004037c5), Cont(x004037e3))
 }
 
-#[allow(unused_variables)]
 pub fn x004037c5(ctx: &mut Context) -> Cont {
     // 004037c5 cmp dword ptr ds:[407208h],0
     sub(
@@ -15431,7 +14534,6 @@ pub fn x004037c5(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004037ce), Cont(x004037d3))
 }
 
-#[allow(unused_variables)]
 pub fn x004037ce(ctx: &mut Context) -> Cont {
     // 004037ce mov ds:[407208h],eax
     ctx.memory.write::<u32>(0x407208u32, ctx.cpu.regs.eax);
@@ -15445,7 +14547,6 @@ pub fn x004037ce(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004037dc), Cont(x004037f8))
 }
 
-#[allow(unused_variables)]
 pub fn x004037d3(ctx: &mut Context) -> Cont {
     // 004037d3 cmp dword ptr ds:[40720Ch],0
     sub(
@@ -15457,7 +14558,6 @@ pub fn x004037d3(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004037dc), Cont(x004037f8))
 }
 
-#[allow(unused_variables)]
 pub fn x004037dc(ctx: &mut Context) -> Cont {
     // 004037dc mov ds:[40720Ch],eax
     ctx.memory.write::<u32>(0x40720cu32, ctx.cpu.regs.eax);
@@ -15465,7 +14565,6 @@ pub fn x004037dc(ctx: &mut Context) -> Cont {
     Cont(x004037f8)
 }
 
-#[allow(unused_variables)]
 pub fn x004037e3(ctx: &mut Context) -> Cont {
     // 004037e3 mov [esi],eax
     ctx.memory.write::<u32>(ctx.cpu.regs.esi, ctx.cpu.regs.eax);
@@ -15531,7 +14630,6 @@ pub fn x004037e3(ctx: &mut Context) -> Cont {
     jl(ctx, Cont(x00403837), Cont(x0040381a))
 }
 
-#[allow(unused_variables)]
 pub fn x004037f8(ctx: &mut Context) -> Cont {
     // 004037f8 lea eax,[edi+400000h]
     ctx.cpu.regs.eax = ctx.cpu.regs.edi.wrapping_add(0x400000u32);
@@ -15582,7 +14680,6 @@ pub fn x004037f8(ctx: &mut Context) -> Cont {
     jl(ctx, Cont(x00403837), Cont(x0040381a))
 }
 
-#[allow(unused_variables)]
 pub fn x0040381a(ctx: &mut Context) -> Cont {
     // 0040381a xor edx,edx
     ctx.cpu.regs.edx = xor(ctx.cpu.regs.edx, ctx.cpu.regs.edx, &mut ctx.cpu.flags);
@@ -15611,7 +14708,6 @@ pub fn x0040381a(ctx: &mut Context) -> Cont {
     jl(ctx, Cont(x00403837), Cont(x0040381a))
 }
 
-#[allow(unused_variables)]
 pub fn x00403837(ctx: &mut Context) -> Cont {
     // 00403837 push ebx
     push(ctx, ctx.cpu.regs.ebx);
@@ -15624,7 +14720,6 @@ pub fn x00403837(ctx: &mut Context) -> Cont {
     call(ctx, 0x403840, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00403840(ctx: &mut Context) -> Cont {
     // 00403840 add esp,0Ch
     ctx.cpu.regs.esp = add(ctx.cpu.regs.esp, 0xcu32, &mut ctx.cpu.flags);
@@ -15640,7 +14735,6 @@ pub fn x00403840(ctx: &mut Context) -> Cont {
     jae(ctx, Cont(x0040384c), Cont(x00403867))
 }
 
-#[allow(unused_variables)]
 pub fn x00403843(ctx: &mut Context) -> Cont {
     // 00403843 mov eax,[esi+10h]
     ctx.cpu.regs.eax = ctx
@@ -15654,7 +14748,6 @@ pub fn x00403843(ctx: &mut Context) -> Cont {
     jae(ctx, Cont(x0040384c), Cont(x00403867))
 }
 
-#[allow(unused_variables)]
 pub fn x0040384c(ctx: &mut Context) -> Cont {
     // 0040384c or byte ptr [edi+0F8h],0FFh
     ctx.memory.write::<u8>(
@@ -15679,7 +14772,6 @@ pub fn x0040384c(ctx: &mut Context) -> Cont {
     Cont(x00403843)
 }
 
-#[allow(unused_variables)]
 pub fn x00403867(ctx: &mut Context) -> Cont {
     // 00403867 mov eax,esi
     ctx.cpu.regs.eax = ctx.cpu.regs.esi;
@@ -15687,7 +14779,6 @@ pub fn x00403867(ctx: &mut Context) -> Cont {
     Cont(x00403892)
 }
 
-#[allow(unused_variables)]
 pub fn x0040386b(ctx: &mut Context) -> Cont {
     // 0040386b push 8000h
     push(ctx, 0x8000u32);
@@ -15700,7 +14791,6 @@ pub fn x0040386b(ctx: &mut Context) -> Cont {
     call(ctx, 0x403879, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00403879(ctx: &mut Context) -> Cont {
     // 00403879 cmp esi,407208h
     sub(ctx.cpu.regs.esi, 0x407208u32, &mut ctx.cpu.flags);
@@ -15708,7 +14798,6 @@ pub fn x00403879(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00403881), Cont(x00403890))
 }
 
-#[allow(unused_variables)]
 pub fn x00403881(ctx: &mut Context) -> Cont {
     // 00403881 push esi
     push(ctx, ctx.cpu.regs.esi);
@@ -15721,7 +14810,6 @@ pub fn x00403881(ctx: &mut Context) -> Cont {
     call(ctx, 0x403890, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00403890(ctx: &mut Context) -> Cont {
     // 00403890 xor eax,eax
     ctx.cpu.regs.eax = xor(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -15741,7 +14829,6 @@ pub fn x00403890(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00403892(ctx: &mut Context) -> Cont {
     // 00403892 pop edi
     let x = pop(ctx);
@@ -15759,7 +14846,6 @@ pub fn x00403892(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00403897(ctx: &mut Context) -> Cont {
     // 00403897 push esi
     push(ctx, ctx.cpu.regs.esi);
@@ -15782,7 +14868,6 @@ pub fn x00403897(ctx: &mut Context) -> Cont {
     call(ctx, 0x4038ac, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004038ac(ctx: &mut Context) -> Cont {
     // 004038ac cmp ds:[409228h],esi
     sub(
@@ -15794,7 +14879,6 @@ pub fn x004038ac(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004038b4), Cont(x004038bc))
 }
 
-#[allow(unused_variables)]
 pub fn x004038b4(ctx: &mut Context) -> Cont {
     // 004038b4 mov eax,[esi+4]
     ctx.cpu.regs.eax = ctx
@@ -15808,7 +14892,6 @@ pub fn x004038b4(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004038c4), Cont(x004038e4))
 }
 
-#[allow(unused_variables)]
 pub fn x004038bc(ctx: &mut Context) -> Cont {
     // 004038bc cmp esi,407208h
     sub(ctx.cpu.regs.esi, 0x407208u32, &mut ctx.cpu.flags);
@@ -15816,7 +14899,6 @@ pub fn x004038bc(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004038c4), Cont(x004038e4))
 }
 
-#[allow(unused_variables)]
 pub fn x004038c4(ctx: &mut Context) -> Cont {
     // 004038c4 mov eax,[esi+4]
     ctx.cpu.regs.eax = ctx
@@ -15846,7 +14928,6 @@ pub fn x004038c4(ctx: &mut Context) -> Cont {
     call(ctx, 0x4038e2, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004038e2(ctx: &mut Context) -> Cont {
     // 004038e2 pop esi
     let x = pop(ctx);
@@ -15855,7 +14936,6 @@ pub fn x004038e2(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x004038e4(ctx: &mut Context) -> Cont {
     // 004038e4 or dword ptr ds:[407218h],0FFFFFFFFh
     ctx.memory.write::<u32>(
@@ -15873,7 +14953,6 @@ pub fn x004038e4(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x004038ed(ctx: &mut Context) -> Cont {
     // 004038ed push ebp
     push(ctx, ctx.cpu.regs.ebp);
@@ -15900,7 +14979,6 @@ pub fn x004038ed(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00403904), Cont(x00403998))
 }
 
-#[allow(unused_variables)]
 pub fn x004038fa(ctx: &mut Context) -> Cont {
     // 004038fa cmp dword ptr [esi+10h],0FFFFFFFFh
     sub(
@@ -15913,7 +14991,6 @@ pub fn x004038fa(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00403904), Cont(x00403998))
 }
 
-#[allow(unused_variables)]
 pub fn x00403904(ctx: &mut Context) -> Cont {
     // 00403904 and dword ptr [ebp-4],0
     ctx.memory.write::<u32>(
@@ -15939,7 +15016,6 @@ pub fn x00403904(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x0040391b), Cont(x00403954))
 }
 
-#[allow(unused_variables)]
 pub fn x00403913(ctx: &mut Context) -> Cont {
     // 00403913 cmp dword ptr [edi],0F0h
     sub(
@@ -15951,7 +15027,6 @@ pub fn x00403913(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x0040391b), Cont(x00403954))
 }
 
-#[allow(unused_variables)]
 pub fn x0040391b(ctx: &mut Context) -> Cont {
     // 0040391b mov eax,ebx
     ctx.cpu.regs.eax = ctx.cpu.regs.ebx;
@@ -15973,7 +15048,6 @@ pub fn x0040391b(ctx: &mut Context) -> Cont {
     call(ctx, 0x403931, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00403931(ctx: &mut Context) -> Cont {
     // 00403931 test eax,eax
     and(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -15981,7 +15055,6 @@ pub fn x00403931(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00403935), Cont(x00403954))
 }
 
-#[allow(unused_variables)]
 pub fn x00403935(ctx: &mut Context) -> Cont {
     // 00403935 or dword ptr [edi],0FFFFFFFFh
     ctx.memory.write::<u32>(
@@ -16007,7 +15080,6 @@ pub fn x00403935(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00403945), Cont(x00403949))
 }
 
-#[allow(unused_variables)]
 pub fn x00403945(ctx: &mut Context) -> Cont {
     // 00403945 cmp eax,edi
     sub(ctx.cpu.regs.eax, ctx.cpu.regs.edi, &mut ctx.cpu.flags);
@@ -16015,7 +15087,6 @@ pub fn x00403945(ctx: &mut Context) -> Cont {
     jbe(ctx, Cont(x00403949), Cont(x0040394c))
 }
 
-#[allow(unused_variables)]
 pub fn x00403949(ctx: &mut Context) -> Cont {
     // 00403949 mov [esi+0Ch],edi
     ctx.memory
@@ -16042,7 +15113,6 @@ pub fn x00403949(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00403954), Cont(x00403961))
 }
 
-#[allow(unused_variables)]
 pub fn x0040394c(ctx: &mut Context) -> Cont {
     // 0040394c inc dword ptr [ebp-4]
     ctx.memory.write::<u32>(
@@ -16066,7 +15136,6 @@ pub fn x0040394c(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00403954), Cont(x00403961))
 }
 
-#[allow(unused_variables)]
 pub fn x00403954(ctx: &mut Context) -> Cont {
     // 00403954 sub ebx,1000h
     ctx.cpu.regs.ebx = sub(ctx.cpu.regs.ebx, 0x1000u32, &mut ctx.cpu.flags);
@@ -16078,7 +15147,6 @@ pub fn x00403954(ctx: &mut Context) -> Cont {
     jge(ctx, Cont(x00403961), Cont(x00403913))
 }
 
-#[allow(unused_variables)]
 pub fn x00403961(ctx: &mut Context) -> Cont {
     // 00403961 cmp dword ptr [ebp-4],0
     sub(
@@ -16097,7 +15165,6 @@ pub fn x00403961(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x0040396c), Cont(x00403998))
 }
 
-#[allow(unused_variables)]
 pub fn x0040396c(ctx: &mut Context) -> Cont {
     // 0040396c cmp dword ptr [ecx+18h],0FFFFFFFFh
     sub(
@@ -16110,7 +15177,6 @@ pub fn x0040396c(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00403972), Cont(x00403998))
 }
 
-#[allow(unused_variables)]
 pub fn x00403972(ctx: &mut Context) -> Cont {
     // 00403972 push 1
     push(ctx, 0x1u32);
@@ -16129,7 +15195,6 @@ pub fn x00403972(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x0040397d), Cont(x00403989))
 }
 
-#[allow(unused_variables)]
 pub fn x00403978(ctx: &mut Context) -> Cont {
     // 00403978 cmp dword ptr [eax],0FFFFFFFFh
     sub(
@@ -16141,7 +15206,6 @@ pub fn x00403978(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x0040397d), Cont(x00403989))
 }
 
-#[allow(unused_variables)]
 pub fn x0040397d(ctx: &mut Context) -> Cont {
     // 0040397d inc edx
     ctx.cpu.regs.edx = inc(ctx.cpu.regs.edx, &mut ctx.cpu.flags);
@@ -16153,7 +15217,6 @@ pub fn x0040397d(ctx: &mut Context) -> Cont {
     jl(ctx, Cont(x00403989), Cont(x00403978))
 }
 
-#[allow(unused_variables)]
 pub fn x00403989(ctx: &mut Context) -> Cont {
     // 00403989 cmp edx,400h
     sub(ctx.cpu.regs.edx, 0x400u32, &mut ctx.cpu.flags);
@@ -16161,7 +15224,6 @@ pub fn x00403989(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00403991), Cont(x00403998))
 }
 
-#[allow(unused_variables)]
 pub fn x00403991(ctx: &mut Context) -> Cont {
     // 00403991 push ecx
     push(ctx, ctx.cpu.regs.ecx);
@@ -16170,7 +15232,6 @@ pub fn x00403991(ctx: &mut Context) -> Cont {
     call(ctx, 0x403997, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00403997(ctx: &mut Context) -> Cont {
     // 00403997 pop ecx
     let x = pop(ctx);
@@ -16185,7 +15246,6 @@ pub fn x00403997(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004039a0), Cont(x004039aa))
 }
 
-#[allow(unused_variables)]
 pub fn x00403998(ctx: &mut Context) -> Cont {
     // 00403998 cmp esi,ds:[40720Ch]
     sub(
@@ -16197,7 +15257,6 @@ pub fn x00403998(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004039a0), Cont(x004039aa))
 }
 
-#[allow(unused_variables)]
 pub fn x004039a0(ctx: &mut Context) -> Cont {
     // 004039a0 cmp dword ptr [ebp+8],0
     sub(
@@ -16210,7 +15269,6 @@ pub fn x004039a0(ctx: &mut Context) -> Cont {
     jg(ctx, Cont(x004039aa), Cont(x004038fa))
 }
 
-#[allow(unused_variables)]
 pub fn x004039aa(ctx: &mut Context) -> Cont {
     // 004039aa pop edi
     let x = pop(ctx);
@@ -16227,7 +15285,6 @@ pub fn x004039aa(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x004039af(ctx: &mut Context) -> Cont {
     // 004039af mov eax,[esp+4]
     ctx.cpu.regs.eax = ctx
@@ -16250,7 +15307,6 @@ pub fn x004039af(ctx: &mut Context) -> Cont {
     jbe(ctx, Cont(x004039c0), Cont(x004039c5))
 }
 
-#[allow(unused_variables)]
 pub fn x004039bb(ctx: &mut Context) -> Cont {
     // 004039bb cmp eax,[ecx+10h]
     sub(
@@ -16263,7 +15319,6 @@ pub fn x004039bb(ctx: &mut Context) -> Cont {
     jbe(ctx, Cont(x004039c0), Cont(x004039c5))
 }
 
-#[allow(unused_variables)]
 pub fn x004039c0(ctx: &mut Context) -> Cont {
     // 004039c0 cmp eax,[ecx+14h]
     sub(
@@ -16276,7 +15331,6 @@ pub fn x004039c0(ctx: &mut Context) -> Cont {
     jb(ctx, Cont(x004039c5), Cont(x004039cd))
 }
 
-#[allow(unused_variables)]
 pub fn x004039c5(ctx: &mut Context) -> Cont {
     // 004039c5 mov ecx,[ecx]
     ctx.cpu.regs.ecx = ctx.memory.read::<u32>(ctx.cpu.regs.ecx);
@@ -16286,13 +15340,11 @@ pub fn x004039c5(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004039cb), Cont(x00403a02))
 }
 
-#[allow(unused_variables)]
 pub fn x004039cb(ctx: &mut Context) -> Cont {
     // 004039cb jmp short 004039BBh
     Cont(x004039bb)
 }
 
-#[allow(unused_variables)]
 pub fn x004039cd(ctx: &mut Context) -> Cont {
     // 004039cd test al,0Fh
     and(ctx.cpu.regs.get_al(), 0xfu8, &mut ctx.cpu.flags);
@@ -16300,7 +15352,6 @@ pub fn x004039cd(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004039d1), Cont(x00403a02))
 }
 
-#[allow(unused_variables)]
 pub fn x004039d1(ctx: &mut Context) -> Cont {
     // 004039d1 mov esi,eax
     ctx.cpu.regs.esi = ctx.cpu.regs.eax;
@@ -16314,7 +15365,6 @@ pub fn x004039d1(ctx: &mut Context) -> Cont {
     jb(ctx, Cont(x004039e2), Cont(x00403a02))
 }
 
-#[allow(unused_variables)]
 pub fn x004039e2(ctx: &mut Context) -> Cont {
     // 004039e2 mov esi,[esp+0Ch]
     ctx.cpu.regs.esi = ctx
@@ -16354,7 +15404,6 @@ pub fn x004039e2(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00403a02(ctx: &mut Context) -> Cont {
     // 00403a02 xor eax,eax
     ctx.cpu.regs.eax = xor(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -16365,7 +15414,6 @@ pub fn x00403a02(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00403a06(ctx: &mut Context) -> Cont {
     // 00403a06 mov eax,[esp+4]
     ctx.cpu.regs.eax = ctx
@@ -16428,7 +15476,6 @@ pub fn x00403a06(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00403a33), Cont(x00403a4a))
 }
 
-#[allow(unused_variables)]
 pub fn x00403a33(ctx: &mut Context) -> Cont {
     // 00403a33 inc dword ptr ds:[409704h]
     ctx.memory.write::<u32>(
@@ -16445,7 +15492,6 @@ pub fn x00403a33(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00403a42), Cont(x00403a4a))
 }
 
-#[allow(unused_variables)]
 pub fn x00403a42(ctx: &mut Context) -> Cont {
     // 00403a42 push 10h
     push(ctx, 0x10u32);
@@ -16454,7 +15500,6 @@ pub fn x00403a42(ctx: &mut Context) -> Cont {
     call(ctx, 0x403a49, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00403a49(ctx: &mut Context) -> Cont {
     // 00403a49 pop ecx
     let x = pop(ctx);
@@ -16463,13 +15508,11 @@ pub fn x00403a49(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00403a4a(ctx: &mut Context) -> Cont {
     // 00403a4a ret
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00403a4b(ctx: &mut Context) -> Cont {
     // 00403a4b push ebp
     push(ctx, ctx.cpu.regs.ebp);
@@ -16497,7 +15540,6 @@ pub fn x00403a4b(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00403a65), Cont(x00403b04))
 }
 
-#[allow(unused_variables)]
 pub fn x00403a59(ctx: &mut Context) -> Cont {
     // 00403a59 mov edx,[esi+10h]
     ctx.cpu.regs.edx = ctx
@@ -16509,7 +15551,6 @@ pub fn x00403a59(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00403a65), Cont(x00403b04))
 }
 
-#[allow(unused_variables)]
 pub fn x00403a65(ctx: &mut Context) -> Cont {
     // 00403a65 mov edi,[esi+8]
     ctx.cpu.regs.edi = ctx
@@ -16540,7 +15581,6 @@ pub fn x00403a65(ctx: &mut Context) -> Cont {
     jae(ctx, Cont(x00403a84), Cont(x00403abe))
 }
 
-#[allow(unused_variables)]
 pub fn x00403a84(ctx: &mut Context) -> Cont {
     // 00403a84 mov ecx,[edi]
     ctx.cpu.regs.ecx = ctx.memory.read::<u32>(ctx.cpu.regs.edi);
@@ -16554,7 +15594,6 @@ pub fn x00403a84(ctx: &mut Context) -> Cont {
     jl(ctx, Cont(x00403a8d), Cont(x00403aa7))
 }
 
-#[allow(unused_variables)]
 pub fn x00403a8d(ctx: &mut Context) -> Cont {
     // 00403a8d cmp [edi+4],ebx
     sub(
@@ -16567,7 +15606,6 @@ pub fn x00403a8d(ctx: &mut Context) -> Cont {
     jbe(ctx, Cont(x00403a92), Cont(x00403aa7))
 }
 
-#[allow(unused_variables)]
 pub fn x00403a92(ctx: &mut Context) -> Cont {
     // 00403a92 push ebx
     push(ctx, ctx.cpu.regs.ebx);
@@ -16580,7 +15618,6 @@ pub fn x00403a92(ctx: &mut Context) -> Cont {
     call(ctx, 0x403a9a, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00403a9a(ctx: &mut Context) -> Cont {
     // 00403a9a add esp,0Ch
     ctx.cpu.regs.esp = add(ctx.cpu.regs.esp, 0xcu32, &mut ctx.cpu.flags);
@@ -16590,7 +15627,6 @@ pub fn x00403a9a(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00403aa1), Cont(x00403b16))
 }
 
-#[allow(unused_variables)]
 pub fn x00403aa1(ctx: &mut Context) -> Cont {
     // 00403aa1 mov eax,[ebp-4]
     ctx.cpu.regs.eax = ctx
@@ -16616,7 +15652,6 @@ pub fn x00403aa1(ctx: &mut Context) -> Cont {
     jb(ctx, Cont(x00403abc), Cont(x00403a84))
 }
 
-#[allow(unused_variables)]
 pub fn x00403aa7(ctx: &mut Context) -> Cont {
     // 00403aa7 add edi,8
     ctx.cpu.regs.edi = add(ctx.cpu.regs.edi, 0x8u32, &mut ctx.cpu.flags);
@@ -16635,13 +15670,11 @@ pub fn x00403aa7(ctx: &mut Context) -> Cont {
     jb(ctx, Cont(x00403abc), Cont(x00403a84))
 }
 
-#[allow(unused_variables)]
 pub fn x00403abc(ctx: &mut Context) -> Cont {
     // 00403abc jmp short 00403AC1h
     Cont(x00403ac1)
 }
 
-#[allow(unused_variables)]
 pub fn x00403abe(ctx: &mut Context) -> Cont {
     // 00403abe mov ebx,[ebp+8]
     ctx.cpu.regs.ebx = ctx
@@ -16673,7 +15706,6 @@ pub fn x00403abe(ctx: &mut Context) -> Cont {
     jae(ctx, Cont(x00403ad4), Cont(x00403b07))
 }
 
-#[allow(unused_variables)]
 pub fn x00403ac1(ctx: &mut Context) -> Cont {
     // 00403ac1 mov eax,[esi+8]
     ctx.cpu.regs.eax = ctx
@@ -16701,7 +15733,6 @@ pub fn x00403ac1(ctx: &mut Context) -> Cont {
     jae(ctx, Cont(x00403ad4), Cont(x00403b07))
 }
 
-#[allow(unused_variables)]
 pub fn x00403ad4(ctx: &mut Context) -> Cont {
     // 00403ad4 mov eax,[edi]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(ctx.cpu.regs.edi);
@@ -16711,7 +15742,6 @@ pub fn x00403ad4(ctx: &mut Context) -> Cont {
     jl(ctx, Cont(x00403ada), Cont(x00403af3))
 }
 
-#[allow(unused_variables)]
 pub fn x00403ada(ctx: &mut Context) -> Cont {
     // 00403ada cmp [edi+4],ebx
     sub(
@@ -16724,7 +15754,6 @@ pub fn x00403ada(ctx: &mut Context) -> Cont {
     jbe(ctx, Cont(x00403adf), Cont(x00403af3))
 }
 
-#[allow(unused_variables)]
 pub fn x00403adf(ctx: &mut Context) -> Cont {
     // 00403adf push ebx
     push(ctx, ctx.cpu.regs.ebx);
@@ -16741,7 +15770,6 @@ pub fn x00403adf(ctx: &mut Context) -> Cont {
     call(ctx, 0x403ae9, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00403ae9(ctx: &mut Context) -> Cont {
     // 00403ae9 add esp,0Ch
     ctx.cpu.regs.esp = add(ctx.cpu.regs.esp, 0xcu32, &mut ctx.cpu.flags);
@@ -16751,7 +15779,6 @@ pub fn x00403ae9(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00403af0), Cont(x00403b16))
 }
 
-#[allow(unused_variables)]
 pub fn x00403af0(ctx: &mut Context) -> Cont {
     // 00403af0 mov [edi+4],ebx
     ctx.memory
@@ -16779,7 +15806,6 @@ pub fn x00403af0(ctx: &mut Context) -> Cont {
     jb(ctx, Cont(x00403b02), Cont(x00403ad4))
 }
 
-#[allow(unused_variables)]
 pub fn x00403af3(ctx: &mut Context) -> Cont {
     // 00403af3 add dword ptr [ebp-4],1000h
     ctx.memory.write::<u32>(
@@ -16804,13 +15830,11 @@ pub fn x00403af3(ctx: &mut Context) -> Cont {
     jb(ctx, Cont(x00403b02), Cont(x00403ad4))
 }
 
-#[allow(unused_variables)]
 pub fn x00403b02(ctx: &mut Context) -> Cont {
     // 00403b02 jmp short 00403B07h
     Cont(x00403b07)
 }
 
-#[allow(unused_variables)]
 pub fn x00403b04(ctx: &mut Context) -> Cont {
     // 00403b04 mov ebx,[ebp+8]
     ctx.cpu.regs.ebx = ctx
@@ -16828,7 +15852,6 @@ pub fn x00403b04(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00403b11), Cont(x00403b26))
 }
 
-#[allow(unused_variables)]
 pub fn x00403b07(ctx: &mut Context) -> Cont {
     // 00403b07 mov esi,[esi]
     ctx.cpu.regs.esi = ctx.memory.read::<u32>(ctx.cpu.regs.esi);
@@ -16842,13 +15865,11 @@ pub fn x00403b07(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00403b11), Cont(x00403b26))
 }
 
-#[allow(unused_variables)]
 pub fn x00403b11(ctx: &mut Context) -> Cont {
     // 00403b11 jmp near ptr 00403A59h
     Cont(x00403a59)
 }
 
-#[allow(unused_variables)]
 pub fn x00403b16(ctx: &mut Context) -> Cont {
     // 00403b16 mov ds:[409228h],esi
     ctx.memory.write::<u32>(0x409228u32, ctx.cpu.regs.esi);
@@ -16868,7 +15889,6 @@ pub fn x00403b16(ctx: &mut Context) -> Cont {
     Cont(x00403c4e)
 }
 
-#[allow(unused_variables)]
 pub fn x00403b26(ctx: &mut Context) -> Cont {
     // 00403b26 mov eax,407208h
     ctx.cpu.regs.eax = 0x407208u32;
@@ -16885,7 +15905,6 @@ pub fn x00403b26(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00403b33), Cont(x00403b39))
 }
 
-#[allow(unused_variables)]
 pub fn x00403b2d(ctx: &mut Context) -> Cont {
     // 00403b2d cmp dword ptr [edi+10h],0FFFFFFFFh
     sub(
@@ -16898,7 +15917,6 @@ pub fn x00403b2d(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00403b33), Cont(x00403b39))
 }
 
-#[allow(unused_variables)]
 pub fn x00403b33(ctx: &mut Context) -> Cont {
     // 00403b33 cmp dword ptr [edi+0Ch],0
     sub(
@@ -16911,7 +15929,6 @@ pub fn x00403b33(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00403b39), Cont(x00403b45))
 }
 
-#[allow(unused_variables)]
 pub fn x00403b39(ctx: &mut Context) -> Cont {
     // 00403b39 mov edi,[edi]
     ctx.cpu.regs.edi = ctx.memory.read::<u32>(ctx.cpu.regs.edi);
@@ -16921,13 +15938,11 @@ pub fn x00403b39(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00403b43), Cont(x00403c1a))
 }
 
-#[allow(unused_variables)]
 pub fn x00403b43(ctx: &mut Context) -> Cont {
     // 00403b43 jmp short 00403B2Dh
     Cont(x00403b2d)
 }
 
-#[allow(unused_variables)]
 pub fn x00403b45(ctx: &mut Context) -> Cont {
     // 00403b45 mov ebx,[edi+0Ch]
     ctx.cpu.regs.ebx = ctx
@@ -16972,7 +15987,6 @@ pub fn x00403b45(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00403b63), Cont(x00403b74))
 }
 
-#[allow(unused_variables)]
 pub fn x00403b63(ctx: &mut Context) -> Cont {
     // 00403b63 cmp dword ptr [ebp-4],10h
     sub(
@@ -16985,7 +15999,6 @@ pub fn x00403b63(ctx: &mut Context) -> Cont {
     jge(ctx, Cont(x00403b69), Cont(x00403b74))
 }
 
-#[allow(unused_variables)]
 pub fn x00403b69(ctx: &mut Context) -> Cont {
     // 00403b69 add eax,8
     ctx.cpu.regs.eax = add(ctx.cpu.regs.eax, 0x8u32, &mut ctx.cpu.flags);
@@ -17008,7 +16021,6 @@ pub fn x00403b69(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00403b74), Cont(x00403b63))
 }
 
-#[allow(unused_variables)]
 pub fn x00403b74(ctx: &mut Context) -> Cont {
     // 00403b74 mov eax,[ebp-4]
     ctx.cpu.regs.eax = ctx
@@ -17034,7 +16046,6 @@ pub fn x00403b74(ctx: &mut Context) -> Cont {
     call(ctx, 0x403b8c, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00403b8c(ctx: &mut Context) -> Cont {
     // 00403b8c cmp eax,esi
     sub(ctx.cpu.regs.eax, ctx.cpu.regs.esi, &mut ctx.cpu.flags);
@@ -17042,7 +16053,6 @@ pub fn x00403b8c(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00403b94), Cont(x00403c4c))
 }
 
-#[allow(unused_variables)]
 pub fn x00403b94(ctx: &mut Context) -> Cont {
     // 00403b94 push 0
     push(ctx, 0x0u32);
@@ -17059,7 +16069,6 @@ pub fn x00403b94(ctx: &mut Context) -> Cont {
     call(ctx, 0x403b9f, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00403b9f(ctx: &mut Context) -> Cont {
     // 00403b9f mov edx,[ebp-4]
     ctx.cpu.regs.edx = ctx
@@ -17075,7 +16084,6 @@ pub fn x00403b9f(ctx: &mut Context) -> Cont {
     jle(ctx, Cont(x00403bab), Cont(x00403bdb))
 }
 
-#[allow(unused_variables)]
 pub fn x00403bab(ctx: &mut Context) -> Cont {
     // 00403bab lea eax,[esi+4]
     ctx.cpu.regs.eax = ctx.cpu.regs.esi.wrapping_add(0x4u32);
@@ -17127,7 +16135,6 @@ pub fn x00403bab(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00403bdb), Cont(x00403bb1))
 }
 
-#[allow(unused_variables)]
 pub fn x00403bb1(ctx: &mut Context) -> Cont {
     // 00403bb1 or byte ptr [eax+0F4h],0FFh
     ctx.memory.write::<u8>(
@@ -17172,7 +16179,6 @@ pub fn x00403bb1(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00403bdb), Cont(x00403bb1))
 }
 
-#[allow(unused_variables)]
 pub fn x00403bdb(ctx: &mut Context) -> Cont {
     // 00403bdb mov ds:[409228h],edi
     ctx.memory.write::<u32>(0x409228u32, ctx.cpu.regs.edi);
@@ -17184,7 +16190,6 @@ pub fn x00403bdb(ctx: &mut Context) -> Cont {
     jae(ctx, Cont(x00403beb), Cont(x00403bf7))
 }
 
-#[allow(unused_variables)]
 pub fn x00403be7(ctx: &mut Context) -> Cont {
     // 00403be7 cmp ecx,eax
     sub(ctx.cpu.regs.ecx, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -17192,7 +16197,6 @@ pub fn x00403be7(ctx: &mut Context) -> Cont {
     jae(ctx, Cont(x00403beb), Cont(x00403bf7))
 }
 
-#[allow(unused_variables)]
 pub fn x00403beb(ctx: &mut Context) -> Cont {
     // 00403beb cmp dword ptr [ecx],0FFFFFFFFh
     sub(
@@ -17204,7 +16208,6 @@ pub fn x00403beb(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00403bf0), Cont(x00403bf5))
 }
 
-#[allow(unused_variables)]
 pub fn x00403bf0(ctx: &mut Context) -> Cont {
     // 00403bf0 add ecx,8
     ctx.cpu.regs.ecx = add(ctx.cpu.regs.ecx, 0x8u32, &mut ctx.cpu.flags);
@@ -17212,7 +16215,6 @@ pub fn x00403bf0(ctx: &mut Context) -> Cont {
     Cont(x00403be7)
 }
 
-#[allow(unused_variables)]
 pub fn x00403bf5(ctx: &mut Context) -> Cont {
     // 00403bf5 cmp ecx,eax
     sub(ctx.cpu.regs.ecx, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -17267,7 +16269,6 @@ pub fn x00403bf5(ctx: &mut Context) -> Cont {
     Cont(x00403c4e)
 }
 
-#[allow(unused_variables)]
 pub fn x00403bf7(ctx: &mut Context) -> Cont {
     // 00403bf7 sbb eax,eax
     ctx.cpu.regs.eax = sbb(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -17320,14 +16321,12 @@ pub fn x00403bf7(ctx: &mut Context) -> Cont {
     Cont(x00403c4e)
 }
 
-#[allow(unused_variables)]
 pub fn x00403c1a(ctx: &mut Context) -> Cont {
     // 00403c1a call 00403753h
     let dst = Cont(x00403753);
     call(ctx, 0x403c1f, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00403c1f(ctx: &mut Context) -> Cont {
     // 00403c1f test eax,eax
     and(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -17335,7 +16334,6 @@ pub fn x00403c1f(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00403c23), Cont(x00403c4c))
 }
 
-#[allow(unused_variables)]
 pub fn x00403c23(ctx: &mut Context) -> Cont {
     // 00403c23 mov ecx,[eax+10h]
     ctx.cpu.regs.ecx = ctx
@@ -17380,7 +16378,6 @@ pub fn x00403c23(ctx: &mut Context) -> Cont {
     Cont(x00403c4e)
 }
 
-#[allow(unused_variables)]
 pub fn x00403c4c(ctx: &mut Context) -> Cont {
     // 00403c4c xor eax,eax
     ctx.cpu.regs.eax = xor(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -17399,7 +16396,6 @@ pub fn x00403c4c(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00403c4e(ctx: &mut Context) -> Cont {
     // 00403c4e pop edi
     let x = pop(ctx);
@@ -17416,7 +16412,6 @@ pub fn x00403c4e(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00403c53(ctx: &mut Context) -> Cont {
     // 00403c53 push ebp
     push(ctx, ctx.cpu.regs.ebp);
@@ -17462,7 +16457,6 @@ pub fn x00403c53(ctx: &mut Context) -> Cont {
     jb(ctx, Cont(x00403c77), Cont(x00403c98))
 }
 
-#[allow(unused_variables)]
 pub fn x00403c77(ctx: &mut Context) -> Cont {
     // 00403c77 lea eax,[edi+edx]
     ctx.cpu.regs.eax = ctx.cpu.regs.edi.wrapping_add(ctx.cpu.regs.edx);
@@ -17475,7 +16469,6 @@ pub fn x00403c77(ctx: &mut Context) -> Cont {
     jae(ctx, Cont(x00403c80), Cont(x00403c87))
 }
 
-#[allow(unused_variables)]
 pub fn x00403c80(ctx: &mut Context) -> Cont {
     // 00403c80 add [ecx],edx
     ctx.memory.write::<u32>(
@@ -17500,7 +16493,6 @@ pub fn x00403c80(ctx: &mut Context) -> Cont {
     Cont(x00403c90)
 }
 
-#[allow(unused_variables)]
 pub fn x00403c87(ctx: &mut Context) -> Cont {
     // 00403c87 and dword ptr [ecx+4],0
     ctx.memory.write::<u32>(
@@ -17522,7 +16514,6 @@ pub fn x00403c87(ctx: &mut Context) -> Cont {
     Cont(x00403d66)
 }
 
-#[allow(unused_variables)]
 pub fn x00403c90(ctx: &mut Context) -> Cont {
     // 00403c90 lea eax,[edi+8]
     ctx.cpu.regs.eax = ctx.cpu.regs.edi.wrapping_add(0x8u32);
@@ -17530,7 +16521,6 @@ pub fn x00403c90(ctx: &mut Context) -> Cont {
     Cont(x00403d66)
 }
 
-#[allow(unused_variables)]
 pub fn x00403c98(ctx: &mut Context) -> Cont {
     // 00403c98 add esi,edi
     ctx.cpu.regs.esi = add(ctx.cpu.regs.esi, ctx.cpu.regs.edi, &mut ctx.cpu.flags);
@@ -17544,7 +16534,6 @@ pub fn x00403c98(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00403c9f), Cont(x00403ca1))
 }
 
-#[allow(unused_variables)]
 pub fn x00403c9f(ctx: &mut Context) -> Cont {
     // 00403c9f mov eax,esi
     ctx.cpu.regs.eax = ctx.cpu.regs.esi;
@@ -17556,7 +16545,6 @@ pub fn x00403c9f(ctx: &mut Context) -> Cont {
     jae(ctx, Cont(x00403ca8), Cont(x00403ceb))
 }
 
-#[allow(unused_variables)]
 pub fn x00403ca1(ctx: &mut Context) -> Cont {
     // 00403ca1 lea esi,[eax+edx]
     ctx.cpu.regs.esi = ctx.cpu.regs.eax.wrapping_add(ctx.cpu.regs.edx);
@@ -17566,7 +16554,6 @@ pub fn x00403ca1(ctx: &mut Context) -> Cont {
     jae(ctx, Cont(x00403ca8), Cont(x00403ceb))
 }
 
-#[allow(unused_variables)]
 pub fn x00403ca8(ctx: &mut Context) -> Cont {
     // 00403ca8 mov bl,[eax]
     ctx.cpu.regs.set_bl(ctx.memory.read::<u8>(ctx.cpu.regs.eax));
@@ -17580,7 +16567,6 @@ pub fn x00403ca8(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00403cae), Cont(x00403cde))
 }
 
-#[allow(unused_variables)]
 pub fn x00403cae(ctx: &mut Context) -> Cont {
     // 00403cae push 1
     push(ctx, 0x1u32);
@@ -17599,7 +16585,6 @@ pub fn x00403cae(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00403cb9), Cont(x00403cbd))
 }
 
-#[allow(unused_variables)]
 pub fn x00403cb4(ctx: &mut Context) -> Cont {
     // 00403cb4 cmp byte ptr [ebx],0
     sub(
@@ -17611,7 +16596,6 @@ pub fn x00403cb4(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00403cb9), Cont(x00403cbd))
 }
 
-#[allow(unused_variables)]
 pub fn x00403cb9(ctx: &mut Context) -> Cont {
     // 00403cb9 inc ebx
     ctx.cpu.regs.ebx = inc(ctx.cpu.regs.ebx, &mut ctx.cpu.flags);
@@ -17621,7 +16605,6 @@ pub fn x00403cb9(ctx: &mut Context) -> Cont {
     Cont(x00403cb4)
 }
 
-#[allow(unused_variables)]
 pub fn x00403cbd(ctx: &mut Context) -> Cont {
     // 00403cbd cmp esi,edx
     sub(ctx.cpu.regs.esi, ctx.cpu.regs.edx, &mut ctx.cpu.flags);
@@ -17629,7 +16612,6 @@ pub fn x00403cbd(ctx: &mut Context) -> Cont {
     jae(ctx, Cont(x00403cc1), Cont(x00403d0f))
 }
 
-#[allow(unused_variables)]
 pub fn x00403cc1(ctx: &mut Context) -> Cont {
     // 00403cc1 cmp eax,[ebp-4]
     sub(
@@ -17642,7 +16624,6 @@ pub fn x00403cc1(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00403cc6), Cont(x00403ccb))
 }
 
-#[allow(unused_variables)]
 pub fn x00403cc6(ctx: &mut Context) -> Cont {
     // 00403cc6 mov [ecx+4],esi
     ctx.memory
@@ -17651,7 +16632,6 @@ pub fn x00403cc6(ctx: &mut Context) -> Cont {
     Cont(x00403cd7)
 }
 
-#[allow(unused_variables)]
 pub fn x00403ccb(ctx: &mut Context) -> Cont {
     // 00403ccb sub [ebp+0Ch],esi
     ctx.memory.write::<u32>(
@@ -17674,7 +16654,6 @@ pub fn x00403ccb(ctx: &mut Context) -> Cont {
     jb(ctx, Cont(x00403cd7), Cont(x00403d70))
 }
 
-#[allow(unused_variables)]
 pub fn x00403cd7(ctx: &mut Context) -> Cont {
     // 00403cd7 mov edi,[ebp-4]
     ctx.cpu.regs.edi = ctx
@@ -17686,7 +16665,6 @@ pub fn x00403cd7(ctx: &mut Context) -> Cont {
     Cont(x00403ce3)
 }
 
-#[allow(unused_variables)]
 pub fn x00403cde(ctx: &mut Context) -> Cont {
     // 00403cde movzx esi,bl
     ctx.cpu.regs.esi = ctx.cpu.regs.get_bl() as _;
@@ -17705,7 +16683,6 @@ pub fn x00403cde(ctx: &mut Context) -> Cont {
     jb(ctx, Cont(x00403ceb), Cont(x00403ca8))
 }
 
-#[allow(unused_variables)]
 pub fn x00403ce3(ctx: &mut Context) -> Cont {
     // 00403ce3 lea esi,[eax+edx]
     ctx.cpu.regs.esi = ctx.cpu.regs.eax.wrapping_add(ctx.cpu.regs.edx);
@@ -17720,7 +16697,6 @@ pub fn x00403ce3(ctx: &mut Context) -> Cont {
     jb(ctx, Cont(x00403ceb), Cont(x00403ca8))
 }
 
-#[allow(unused_variables)]
 pub fn x00403ceb(ctx: &mut Context) -> Cont {
     // 00403ceb lea esi,[ecx+8]
     ctx.cpu.regs.esi = ctx.cpu.regs.ecx.wrapping_add(0x8u32);
@@ -17730,7 +16706,6 @@ pub fn x00403ceb(ctx: &mut Context) -> Cont {
     jae(ctx, Cont(x00403cf2), Cont(x00403d70))
 }
 
-#[allow(unused_variables)]
 pub fn x00403cee(ctx: &mut Context) -> Cont {
     // 00403cee cmp esi,edi
     sub(ctx.cpu.regs.esi, ctx.cpu.regs.edi, &mut ctx.cpu.flags);
@@ -17738,7 +16713,6 @@ pub fn x00403cee(ctx: &mut Context) -> Cont {
     jae(ctx, Cont(x00403cf2), Cont(x00403d70))
 }
 
-#[allow(unused_variables)]
 pub fn x00403cf2(ctx: &mut Context) -> Cont {
     // 00403cf2 lea eax,[esi+edx]
     ctx.cpu.regs.eax = ctx.cpu.regs.esi.wrapping_add(ctx.cpu.regs.edx);
@@ -17753,7 +16727,6 @@ pub fn x00403cf2(ctx: &mut Context) -> Cont {
     jae(ctx, Cont(x00403cfa), Cont(x00403d70))
 }
 
-#[allow(unused_variables)]
 pub fn x00403cfa(ctx: &mut Context) -> Cont {
     // 00403cfa mov al,[esi]
     ctx.cpu.regs.set_al(ctx.memory.read::<u8>(ctx.cpu.regs.esi));
@@ -17767,7 +16740,6 @@ pub fn x00403cfa(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00403d00), Cont(x00403d40))
 }
 
-#[allow(unused_variables)]
 pub fn x00403d00(ctx: &mut Context) -> Cont {
     // 00403d00 push 1
     push(ctx, 0x1u32);
@@ -17786,7 +16758,6 @@ pub fn x00403d00(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00403d0b), Cont(x00403d30))
 }
 
-#[allow(unused_variables)]
 pub fn x00403d06(ctx: &mut Context) -> Cont {
     // 00403d06 cmp byte ptr [ebx],0
     sub(
@@ -17798,7 +16769,6 @@ pub fn x00403d06(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00403d0b), Cont(x00403d30))
 }
 
-#[allow(unused_variables)]
 pub fn x00403d0b(ctx: &mut Context) -> Cont {
     // 00403d0b inc ebx
     ctx.cpu.regs.ebx = inc(ctx.cpu.regs.ebx, &mut ctx.cpu.flags);
@@ -17808,7 +16778,6 @@ pub fn x00403d0b(ctx: &mut Context) -> Cont {
     Cont(x00403d06)
 }
 
-#[allow(unused_variables)]
 pub fn x00403d0f(ctx: &mut Context) -> Cont {
     // 00403d0f lea ebx,[eax+edx]
     ctx.cpu.regs.ebx = ctx.cpu.regs.eax.wrapping_add(ctx.cpu.regs.edx);
@@ -17823,7 +16792,6 @@ pub fn x00403d0f(ctx: &mut Context) -> Cont {
     jae(ctx, Cont(x00403d17), Cont(x00403d20))
 }
 
-#[allow(unused_variables)]
 pub fn x00403d17(ctx: &mut Context) -> Cont {
     // 00403d17 sub esi,edx
     ctx.cpu.regs.esi = sub(ctx.cpu.regs.esi, ctx.cpu.regs.edx, &mut ctx.cpu.flags);
@@ -17836,7 +16804,6 @@ pub fn x00403d17(ctx: &mut Context) -> Cont {
     Cont(x00403d29)
 }
 
-#[allow(unused_variables)]
 pub fn x00403d20(ctx: &mut Context) -> Cont {
     // 00403d20 and dword ptr [ecx+4],0
     ctx.memory.write::<u32>(
@@ -17861,7 +16828,6 @@ pub fn x00403d20(ctx: &mut Context) -> Cont {
     Cont(x00403d66)
 }
 
-#[allow(unused_variables)]
 pub fn x00403d29(ctx: &mut Context) -> Cont {
     // 00403d29 mov [eax],dl
     ctx.memory
@@ -17872,7 +16838,6 @@ pub fn x00403d29(ctx: &mut Context) -> Cont {
     Cont(x00403d66)
 }
 
-#[allow(unused_variables)]
 pub fn x00403d30(ctx: &mut Context) -> Cont {
     // 00403d30 cmp eax,edx
     sub(ctx.cpu.regs.eax, ctx.cpu.regs.edx, &mut ctx.cpu.flags);
@@ -17880,7 +16845,6 @@ pub fn x00403d30(ctx: &mut Context) -> Cont {
     jae(ctx, Cont(x00403d34), Cont(x00403d47))
 }
 
-#[allow(unused_variables)]
 pub fn x00403d34(ctx: &mut Context) -> Cont {
     // 00403d34 sub [ebp+0Ch],eax
     ctx.memory.write::<u32>(
@@ -17903,7 +16867,6 @@ pub fn x00403d34(ctx: &mut Context) -> Cont {
     jb(ctx, Cont(x00403d3c), Cont(x00403d70))
 }
 
-#[allow(unused_variables)]
 pub fn x00403d3c(ctx: &mut Context) -> Cont {
     // 00403d3c mov esi,ebx
     ctx.cpu.regs.esi = ctx.cpu.regs.ebx;
@@ -17911,7 +16874,6 @@ pub fn x00403d3c(ctx: &mut Context) -> Cont {
     Cont(x00403cee)
 }
 
-#[allow(unused_variables)]
 pub fn x00403d40(ctx: &mut Context) -> Cont {
     // 00403d40 movzx eax,al
     ctx.cpu.regs.eax = ctx.cpu.regs.get_al() as _;
@@ -17921,7 +16883,6 @@ pub fn x00403d40(ctx: &mut Context) -> Cont {
     Cont(x00403cee)
 }
 
-#[allow(unused_variables)]
 pub fn x00403d47(ctx: &mut Context) -> Cont {
     // 00403d47 lea ebx,[esi+edx]
     ctx.cpu.regs.ebx = ctx.cpu.regs.esi.wrapping_add(ctx.cpu.regs.edx);
@@ -17936,7 +16897,6 @@ pub fn x00403d47(ctx: &mut Context) -> Cont {
     jae(ctx, Cont(x00403d4f), Cont(x00403d58))
 }
 
-#[allow(unused_variables)]
 pub fn x00403d4f(ctx: &mut Context) -> Cont {
     // 00403d4f sub eax,edx
     ctx.cpu.regs.eax = sub(ctx.cpu.regs.eax, ctx.cpu.regs.edx, &mut ctx.cpu.flags);
@@ -17949,7 +16909,6 @@ pub fn x00403d4f(ctx: &mut Context) -> Cont {
     Cont(x00403d61)
 }
 
-#[allow(unused_variables)]
 pub fn x00403d58(ctx: &mut Context) -> Cont {
     // 00403d58 and dword ptr [ecx+4],0
     ctx.memory.write::<u32>(
@@ -17971,7 +16930,12 @@ pub fn x00403d58(ctx: &mut Context) -> Cont {
     // 00403d63 lea eax,[esi+8]
     ctx.cpu.regs.eax = ctx.cpu.regs.esi.wrapping_add(0x8u32);
     // 00403d66 imul ecx,0Fh
-    ctx.cpu.regs.ecx = imul(ctx.cpu.regs.ecx as i32, 0xfu32 as i32, &mut ctx.cpu.flags) as u32;
+    let x = ctx.cpu.regs.ecx as i32;
+    let y = 0xfu32 as i32;
+    let (res, overflow) = x.overflowing_mul(y);
+    ctx.cpu.flags.set(Flags::CF, overflow);
+    ctx.cpu.flags.set(Flags::OF, overflow);
+    ctx.cpu.regs.ecx = res as u32;
     // 00403d69 shl eax,4
     ctx.cpu.regs.eax = shl(ctx.cpu.regs.eax, 0x4u8, &mut ctx.cpu.flags);
     // 00403d6c sub eax,ecx
@@ -17980,7 +16944,6 @@ pub fn x00403d58(ctx: &mut Context) -> Cont {
     Cont(x00403d72)
 }
 
-#[allow(unused_variables)]
 pub fn x00403d61(ctx: &mut Context) -> Cont {
     // 00403d61 mov [esi],dl
     ctx.memory
@@ -17988,7 +16951,12 @@ pub fn x00403d61(ctx: &mut Context) -> Cont {
     // 00403d63 lea eax,[esi+8]
     ctx.cpu.regs.eax = ctx.cpu.regs.esi.wrapping_add(0x8u32);
     // 00403d66 imul ecx,0Fh
-    ctx.cpu.regs.ecx = imul(ctx.cpu.regs.ecx as i32, 0xfu32 as i32, &mut ctx.cpu.flags) as u32;
+    let x = ctx.cpu.regs.ecx as i32;
+    let y = 0xfu32 as i32;
+    let (res, overflow) = x.overflowing_mul(y);
+    ctx.cpu.flags.set(Flags::CF, overflow);
+    ctx.cpu.flags.set(Flags::OF, overflow);
+    ctx.cpu.regs.ecx = res as u32;
     // 00403d69 shl eax,4
     ctx.cpu.regs.eax = shl(ctx.cpu.regs.eax, 0x4u8, &mut ctx.cpu.flags);
     // 00403d6c sub eax,ecx
@@ -17997,10 +16965,14 @@ pub fn x00403d61(ctx: &mut Context) -> Cont {
     Cont(x00403d72)
 }
 
-#[allow(unused_variables)]
 pub fn x00403d66(ctx: &mut Context) -> Cont {
     // 00403d66 imul ecx,0Fh
-    ctx.cpu.regs.ecx = imul(ctx.cpu.regs.ecx as i32, 0xfu32 as i32, &mut ctx.cpu.flags) as u32;
+    let x = ctx.cpu.regs.ecx as i32;
+    let y = 0xfu32 as i32;
+    let (res, overflow) = x.overflowing_mul(y);
+    ctx.cpu.flags.set(Flags::CF, overflow);
+    ctx.cpu.flags.set(Flags::OF, overflow);
+    ctx.cpu.regs.ecx = res as u32;
     // 00403d69 shl eax,4
     ctx.cpu.regs.eax = shl(ctx.cpu.regs.eax, 0x4u8, &mut ctx.cpu.flags);
     // 00403d6c sub eax,ecx
@@ -18009,7 +16981,6 @@ pub fn x00403d66(ctx: &mut Context) -> Cont {
     Cont(x00403d72)
 }
 
-#[allow(unused_variables)]
 pub fn x00403d70(ctx: &mut Context) -> Cont {
     // 00403d70 xor eax,eax
     ctx.cpu.regs.eax = xor(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -18028,7 +16999,6 @@ pub fn x00403d70(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00403d72(ctx: &mut Context) -> Cont {
     // 00403d72 pop edi
     let x = pop(ctx);
@@ -18045,7 +17015,6 @@ pub fn x00403d72(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00403d77(ctx: &mut Context) -> Cont {
     // 00403d77 push ebp
     push(ctx, ctx.cpu.regs.ebp);
@@ -18112,7 +17081,6 @@ pub fn x00403d77(ctx: &mut Context) -> Cont {
     jbe(ctx, Cont(x00403d9f), Cont(x00403db1))
 }
 
-#[allow(unused_variables)]
 pub fn x00403d9f(ctx: &mut Context) -> Cont {
     // 00403d9f mov eax,[ebp+14h]
     ctx.cpu.regs.eax = ctx
@@ -18139,13 +17107,11 @@ pub fn x00403d9f(ctx: &mut Context) -> Cont {
     Cont(x00403e11)
 }
 
-#[allow(unused_variables)]
 pub fn x00403db1(ctx: &mut Context) -> Cont {
     // 00403db1 jae short 00403E18h
     jae(ctx, Cont(x00403db3), Cont(x00403e18))
 }
 
-#[allow(unused_variables)]
 pub fn x00403db3(ctx: &mut Context) -> Cont {
     // 00403db3 mov eax,[ebp+14h]
     ctx.cpu.regs.eax = ctx
@@ -18161,7 +17127,6 @@ pub fn x00403db3(ctx: &mut Context) -> Cont {
     jb(ctx, Cont(x00403dc3), Cont(x00403e18))
 }
 
-#[allow(unused_variables)]
 pub fn x00403dc3(ctx: &mut Context) -> Cont {
     // 00403dc3 lea eax,[ecx+edx]
     ctx.cpu.regs.eax = ctx.cpu.regs.ecx.wrapping_add(ctx.cpu.regs.edx);
@@ -18171,7 +17136,6 @@ pub fn x00403dc3(ctx: &mut Context) -> Cont {
     jae(ctx, Cont(x00403dca), Cont(x00403dd4))
 }
 
-#[allow(unused_variables)]
 pub fn x00403dc6(ctx: &mut Context) -> Cont {
     // 00403dc6 cmp eax,esi
     sub(ctx.cpu.regs.eax, ctx.cpu.regs.esi, &mut ctx.cpu.flags);
@@ -18179,7 +17143,6 @@ pub fn x00403dc6(ctx: &mut Context) -> Cont {
     jae(ctx, Cont(x00403dca), Cont(x00403dd4))
 }
 
-#[allow(unused_variables)]
 pub fn x00403dca(ctx: &mut Context) -> Cont {
     // 00403dca cmp byte ptr [eax],0
     sub(
@@ -18191,7 +17154,6 @@ pub fn x00403dca(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00403dcf), Cont(x00403dd2))
 }
 
-#[allow(unused_variables)]
 pub fn x00403dcf(ctx: &mut Context) -> Cont {
     // 00403dcf inc eax
     ctx.cpu.regs.eax = inc(ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -18199,7 +17161,6 @@ pub fn x00403dcf(ctx: &mut Context) -> Cont {
     Cont(x00403dc6)
 }
 
-#[allow(unused_variables)]
 pub fn x00403dd2(ctx: &mut Context) -> Cont {
     // 00403dd2 cmp eax,esi
     sub(ctx.cpu.regs.eax, ctx.cpu.regs.esi, &mut ctx.cpu.flags);
@@ -18207,13 +17168,11 @@ pub fn x00403dd2(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00403dd6), Cont(x00403e18))
 }
 
-#[allow(unused_variables)]
 pub fn x00403dd4(ctx: &mut Context) -> Cont {
     // 00403dd4 jne short 00403E18h
     jne(ctx, Cont(x00403dd6), Cont(x00403e18))
 }
 
-#[allow(unused_variables)]
 pub fn x00403dd6(ctx: &mut Context) -> Cont {
     // 00403dd6 mov al,[ebp+14h]
     ctx.cpu.regs.set_al(
@@ -18231,7 +17190,6 @@ pub fn x00403dd6(ctx: &mut Context) -> Cont {
     ja(ctx, Cont(x00403de1), Cont(x00403e0c))
 }
 
-#[allow(unused_variables)]
 pub fn x00403de1(ctx: &mut Context) -> Cont {
     // 00403de1 cmp esi,eax
     sub(ctx.cpu.regs.esi, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -18239,7 +17197,6 @@ pub fn x00403de1(ctx: &mut Context) -> Cont {
     jbe(ctx, Cont(x00403de5), Cont(x00403e0c))
 }
 
-#[allow(unused_variables)]
 pub fn x00403de5(ctx: &mut Context) -> Cont {
     // 00403de5 lea eax,[ebx+0F8h]
     ctx.cpu.regs.eax = ctx.cpu.regs.ebx.wrapping_add(0xf8u32);
@@ -18249,7 +17206,6 @@ pub fn x00403de5(ctx: &mut Context) -> Cont {
     jae(ctx, Cont(x00403def), Cont(x00403e03))
 }
 
-#[allow(unused_variables)]
 pub fn x00403def(ctx: &mut Context) -> Cont {
     // 00403def xor eax,eax
     ctx.cpu.regs.eax = xor(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -18265,7 +17221,6 @@ pub fn x00403def(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00403df7), Cont(x00403dfe))
 }
 
-#[allow(unused_variables)]
 pub fn x00403df7(ctx: &mut Context) -> Cont {
     // 00403df7 inc eax
     ctx.cpu.regs.eax = inc(ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -18280,7 +17235,6 @@ pub fn x00403df7(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00403dfe), Cont(x00403df7))
 }
 
-#[allow(unused_variables)]
 pub fn x00403dfe(ctx: &mut Context) -> Cont {
     // 00403dfe mov [ebx+4],eax
     ctx.memory
@@ -18289,7 +17243,6 @@ pub fn x00403dfe(ctx: &mut Context) -> Cont {
     Cont(x00403e0c)
 }
 
-#[allow(unused_variables)]
 pub fn x00403e03(ctx: &mut Context) -> Cont {
     // 00403e03 and dword ptr [ebx+4],0
     ctx.memory.write::<u32>(
@@ -18343,7 +17296,6 @@ pub fn x00403e03(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00403e0c(ctx: &mut Context) -> Cont {
     // 00403e0c sub ecx,[ebp+14h]
     ctx.cpu.regs.ecx = sub(
@@ -18383,7 +17335,6 @@ pub fn x00403e0c(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00403e11(ctx: &mut Context) -> Cont {
     // 00403e11 mov dword ptr [ebp-4],1
     ctx.memory
@@ -18407,7 +17358,6 @@ pub fn x00403e11(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00403e18(ctx: &mut Context) -> Cont {
     // 00403e18 mov eax,[ebp-4]
     ctx.cpu.regs.eax = ctx
@@ -18428,7 +17378,6 @@ pub fn x00403e18(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00403e20(ctx: &mut Context) -> Cont {
     // 00403e20 mov eax,ds:[409708h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x409708u32);
@@ -18438,7 +17387,6 @@ pub fn x00403e20(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00403e29), Cont(x00403e38))
 }
 
-#[allow(unused_variables)]
 pub fn x00403e29(ctx: &mut Context) -> Cont {
     // 00403e29 push dword ptr [esp+4]
     push(
@@ -18451,7 +17399,6 @@ pub fn x00403e29(ctx: &mut Context) -> Cont {
     call(ctx, 0x403e2f, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00403e2f(ctx: &mut Context) -> Cont {
     // 00403e2f test eax,eax
     and(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -18462,7 +17409,6 @@ pub fn x00403e2f(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00403e34), Cont(x00403e38))
 }
 
-#[allow(unused_variables)]
 pub fn x00403e34(ctx: &mut Context) -> Cont {
     // 00403e34 push 1
     push(ctx, 0x1u32);
@@ -18473,7 +17419,6 @@ pub fn x00403e34(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00403e38(ctx: &mut Context) -> Cont {
     // 00403e38 xor eax,eax
     ctx.cpu.regs.eax = xor(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -18481,7 +17426,6 @@ pub fn x00403e38(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00403e40(ctx: &mut Context) -> Cont {
     // 00403e40 push ebp
     push(ctx, ctx.cpu.regs.ebp);
@@ -18515,7 +17459,6 @@ pub fn x00403e40(ctx: &mut Context) -> Cont {
     jbe(ctx, Cont(x00403e58), Cont(x00403e60))
 }
 
-#[allow(unused_variables)]
 pub fn x00403e58(ctx: &mut Context) -> Cont {
     // 00403e58 cmp edi,eax
     sub(ctx.cpu.regs.edi, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -18523,7 +17466,6 @@ pub fn x00403e58(ctx: &mut Context) -> Cont {
     jb(ctx, Cont(x00403e60), Cont(x00403fd8))
 }
 
-#[allow(unused_variables)]
 pub fn x00403e60(ctx: &mut Context) -> Cont {
     // 00403e60 test edi,3
     and(ctx.cpu.regs.edi, 0x3u32, &mut ctx.cpu.flags);
@@ -18531,7 +17473,6 @@ pub fn x00403e60(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00403e68), Cont(x00403e7c))
 }
 
-#[allow(unused_variables)]
 pub fn x00403e68(ctx: &mut Context) -> Cont {
     // 00403e68 shr ecx,2
     ctx.cpu.regs.ecx = shr(ctx.cpu.regs.ecx, 0x2u8, &mut ctx.cpu.flags);
@@ -18543,7 +17484,6 @@ pub fn x00403e68(ctx: &mut Context) -> Cont {
     jb(ctx, Cont(x00403e73), Cont(x00403e9c))
 }
 
-#[allow(unused_variables)]
 pub fn x00403e73(ctx: &mut Context) -> Cont {
     // 00403e73 rep movsd
     rep(ctx, Rep::REP, movsd);
@@ -18555,7 +17495,6 @@ pub fn x00403e73(ctx: &mut Context) -> Cont {
     )
 }
 
-#[allow(unused_variables)]
 pub fn x00403e7c(ctx: &mut Context) -> Cont {
     // 00403e7c mov eax,edi
     ctx.cpu.regs.eax = ctx.cpu.regs.edi;
@@ -18567,7 +17506,6 @@ pub fn x00403e7c(ctx: &mut Context) -> Cont {
     jb(ctx, Cont(x00403e88), Cont(x00403e94))
 }
 
-#[allow(unused_variables)]
 pub fn x00403e88(ctx: &mut Context) -> Cont {
     // 00403e88 and eax,3
     ctx.cpu.regs.eax = and(ctx.cpu.regs.eax, 0x3u32, &mut ctx.cpu.flags);
@@ -18581,7 +17519,6 @@ pub fn x00403e88(ctx: &mut Context) -> Cont {
     )
 }
 
-#[allow(unused_variables)]
 pub fn x00403e94(ctx: &mut Context) -> Cont {
     // 00403e94 jmp dword ptr [ecx*4+403F98h]
     indirect(
@@ -18591,7 +17528,6 @@ pub fn x00403e94(ctx: &mut Context) -> Cont {
     )
 }
 
-#[allow(unused_variables)]
 pub fn x00403e9c(ctx: &mut Context) -> Cont {
     // 00403e9c jmp dword ptr [ecx*4+403F1Ch]
     indirect(
@@ -18601,7 +17537,6 @@ pub fn x00403e9c(ctx: &mut Context) -> Cont {
     )
 }
 
-#[allow(unused_variables)]
 pub fn x00403fd8(ctx: &mut Context) -> Cont {
     // 00403fd8 lea esi,[ecx+esi-4]
     ctx.cpu.regs.esi = ctx
@@ -18623,7 +17558,6 @@ pub fn x00403fd8(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00403fe8), Cont(x0040400c))
 }
 
-#[allow(unused_variables)]
 pub fn x00403fe8(ctx: &mut Context) -> Cont {
     // 00403fe8 shr ecx,2
     ctx.cpu.regs.ecx = shr(ctx.cpu.regs.ecx, 0x2u8, &mut ctx.cpu.flags);
@@ -18635,7 +17569,6 @@ pub fn x00403fe8(ctx: &mut Context) -> Cont {
     jb(ctx, Cont(x00403ff3), Cont(x00404000))
 }
 
-#[allow(unused_variables)]
 pub fn x00403ff3(ctx: &mut Context) -> Cont {
     // 00403ff3 std
     std(ctx);
@@ -18651,7 +17584,6 @@ pub fn x00403ff3(ctx: &mut Context) -> Cont {
     )
 }
 
-#[allow(unused_variables)]
 pub fn x00404000(ctx: &mut Context) -> Cont {
     // 00404000 neg ecx
     ctx.cpu.regs.ecx = neg(ctx.cpu.regs.ecx, &mut ctx.cpu.flags);
@@ -18663,7 +17595,6 @@ pub fn x00404000(ctx: &mut Context) -> Cont {
     )
 }
 
-#[allow(unused_variables)]
 pub fn x0040400c(ctx: &mut Context) -> Cont {
     // 0040400c mov eax,edi
     ctx.cpu.regs.eax = ctx.cpu.regs.edi;
@@ -18675,7 +17606,6 @@ pub fn x0040400c(ctx: &mut Context) -> Cont {
     jb(ctx, Cont(x00404018), Cont(x00404024))
 }
 
-#[allow(unused_variables)]
 pub fn x00404018(ctx: &mut Context) -> Cont {
     // 00404018 and eax,3
     ctx.cpu.regs.eax = and(ctx.cpu.regs.eax, 0x3u32, &mut ctx.cpu.flags);
@@ -18689,7 +17619,6 @@ pub fn x00404018(ctx: &mut Context) -> Cont {
     )
 }
 
-#[allow(unused_variables)]
 pub fn x00404024(ctx: &mut Context) -> Cont {
     // 00404024 jmp dword ptr [ecx*4+404120h]
     indirect(
@@ -18699,7 +17628,6 @@ pub fn x00404024(ctx: &mut Context) -> Cont {
     )
 }
 
-#[allow(unused_variables)]
 pub fn x00404175(ctx: &mut Context) -> Cont {
     // 00404175 push 4
     push(ctx, 0x4u32);
@@ -18716,7 +17644,6 @@ pub fn x00404175(ctx: &mut Context) -> Cont {
     call(ctx, 0x404182, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00404182(ctx: &mut Context) -> Cont {
     // 00404182 add esp,0Ch
     ctx.cpu.regs.esp = add(ctx.cpu.regs.esp, 0xcu32, &mut ctx.cpu.flags);
@@ -18724,7 +17651,6 @@ pub fn x00404182(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00404186(ctx: &mut Context) -> Cont {
     // 00404186 movzx eax,byte ptr [esp+4]
     ctx.cpu.regs.eax = ctx.memory.read::<u8>(ctx.cpu.regs.esp.wrapping_add(0x4u32)) as _;
@@ -18743,7 +17669,6 @@ pub fn x00404186(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00404197), Cont(x004041b3))
 }
 
-#[allow(unused_variables)]
 pub fn x00404197(ctx: &mut Context) -> Cont {
     // 00404197 cmp dword ptr [esp+8],0
     sub(
@@ -18756,7 +17681,6 @@ pub fn x00404197(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x0040419e), Cont(x004041ac))
 }
 
-#[allow(unused_variables)]
 pub fn x0040419e(ctx: &mut Context) -> Cont {
     // 0040419e movzx eax,word ptr [eax*2+40933Ah]
     ctx.cpu.regs.eax = ctx
@@ -18773,7 +17697,6 @@ pub fn x0040419e(ctx: &mut Context) -> Cont {
     Cont(x004041ae)
 }
 
-#[allow(unused_variables)]
 pub fn x004041ac(ctx: &mut Context) -> Cont {
     // 004041ac xor eax,eax
     ctx.cpu.regs.eax = xor(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -18783,7 +17706,6 @@ pub fn x004041ac(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004041b2), Cont(x004041b3))
 }
 
-#[allow(unused_variables)]
 pub fn x004041ae(ctx: &mut Context) -> Cont {
     // 004041ae test eax,eax
     and(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -18791,13 +17713,11 @@ pub fn x004041ae(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004041b2), Cont(x004041b3))
 }
 
-#[allow(unused_variables)]
 pub fn x004041b2(ctx: &mut Context) -> Cont {
     // 004041b2 ret
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x004041b3(ctx: &mut Context) -> Cont {
     // 004041b3 push 1
     push(ctx, 0x1u32);
@@ -18808,7 +17728,6 @@ pub fn x004041b3(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x004041b7(ctx: &mut Context) -> Cont {
     // 004041b7 push ebp
     push(ctx, ctx.cpu.regs.ebp);
@@ -18833,7 +17752,6 @@ pub fn x004041b7(ctx: &mut Context) -> Cont {
     call(ctx, 0x4041c8, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004041c8(ctx: &mut Context) -> Cont {
     // 004041c8 mov esi,eax
     ctx.cpu.regs.esi = ctx.cpu.regs.eax;
@@ -18853,7 +17771,6 @@ pub fn x004041c8(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004041da), Cont(x00404344))
 }
 
-#[allow(unused_variables)]
 pub fn x004041da(ctx: &mut Context) -> Cont {
     // 004041da xor ebx,ebx
     ctx.cpu.regs.ebx = xor(ctx.cpu.regs.ebx, ctx.cpu.regs.ebx, &mut ctx.cpu.flags);
@@ -18863,7 +17780,6 @@ pub fn x004041da(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004041e4), Cont(x0040433a))
 }
 
-#[allow(unused_variables)]
 pub fn x004041e4(ctx: &mut Context) -> Cont {
     // 004041e4 xor edx,edx
     ctx.cpu.regs.edx = xor(ctx.cpu.regs.edx, ctx.cpu.regs.edx, &mut ctx.cpu.flags);
@@ -18879,7 +17795,6 @@ pub fn x004041e4(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004041ef), Cont(x00404261))
 }
 
-#[allow(unused_variables)]
 pub fn x004041eb(ctx: &mut Context) -> Cont {
     // 004041eb cmp [eax],esi
     sub(
@@ -18891,7 +17806,6 @@ pub fn x004041eb(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004041ef), Cont(x00404261))
 }
 
-#[allow(unused_variables)]
 pub fn x004041ef(ctx: &mut Context) -> Cont {
     // 004041ef add eax,30h
     ctx.cpu.regs.eax = add(ctx.cpu.regs.eax, 0x30u32, &mut ctx.cpu.flags);
@@ -18903,7 +17817,6 @@ pub fn x004041ef(ctx: &mut Context) -> Cont {
     jl(ctx, Cont(x004041fa), Cont(x004041eb))
 }
 
-#[allow(unused_variables)]
 pub fn x004041fa(ctx: &mut Context) -> Cont {
     // 004041fa lea eax,[ebp-18h]
     ctx.cpu.regs.eax = ctx.cpu.regs.ebp.wrapping_add(0xffffffe8u32);
@@ -18916,7 +17829,6 @@ pub fn x004041fa(ctx: &mut Context) -> Cont {
     call(ctx, 0x404205, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00404205(ctx: &mut Context) -> Cont {
     // 00404205 cmp eax,1
     sub(ctx.cpu.regs.eax, 0x1u32, &mut ctx.cpu.flags);
@@ -18924,7 +17836,6 @@ pub fn x00404205(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x0040420e), Cont(x00404332))
 }
 
-#[allow(unused_variables)]
 pub fn x0040420e(ctx: &mut Context) -> Cont {
     // 0040420e push 40h
     push(ctx, 0x40u32);
@@ -18954,7 +17865,6 @@ pub fn x0040420e(ctx: &mut Context) -> Cont {
     jbe(ctx, Cont(x00404231), Cont(x00404320))
 }
 
-#[allow(unused_variables)]
 pub fn x00404231(ctx: &mut Context) -> Cont {
     // 00404231 cmp byte ptr [ebp-12h],0
     sub(
@@ -18967,7 +17877,6 @@ pub fn x00404231(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x0040423b), Cont(x004042f6))
 }
 
-#[allow(unused_variables)]
 pub fn x0040423b(ctx: &mut Context) -> Cont {
     // 0040423b lea ecx,[ebp-11h]
     ctx.cpu.regs.ecx = ctx.cpu.regs.ebp.wrapping_add(0xffffffefu32);
@@ -18983,7 +17892,6 @@ pub fn x0040423b(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00404248), Cont(x004042f6))
 }
 
-#[allow(unused_variables)]
 pub fn x0040423e(ctx: &mut Context) -> Cont {
     // 0040423e mov dl,[ecx]
     ctx.cpu.regs.set_dl(ctx.memory.read::<u8>(ctx.cpu.regs.ecx));
@@ -18997,7 +17905,6 @@ pub fn x0040423e(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00404248), Cont(x004042f6))
 }
 
-#[allow(unused_variables)]
 pub fn x00404248(ctx: &mut Context) -> Cont {
     // 00404248 movzx eax,byte ptr [ecx-1]
     ctx.cpu.regs.eax = ctx
@@ -19011,7 +17918,6 @@ pub fn x00404248(ctx: &mut Context) -> Cont {
     ja(ctx, Cont(x00404257), Cont(x004042ea))
 }
 
-#[allow(unused_variables)]
 pub fn x0040424f(ctx: &mut Context) -> Cont {
     // 0040424f cmp eax,edx
     sub(ctx.cpu.regs.eax, ctx.cpu.regs.edx, &mut ctx.cpu.flags);
@@ -19019,7 +17925,6 @@ pub fn x0040424f(ctx: &mut Context) -> Cont {
     ja(ctx, Cont(x00404257), Cont(x004042ea))
 }
 
-#[allow(unused_variables)]
 pub fn x00404257(ctx: &mut Context) -> Cont {
     // 00404257 or byte ptr [eax+409861h],4
     ctx.memory.write::<u8>(
@@ -19037,7 +17942,6 @@ pub fn x00404257(ctx: &mut Context) -> Cont {
     Cont(x0040424f)
 }
 
-#[allow(unused_variables)]
 pub fn x00404261(ctx: &mut Context) -> Cont {
     // 00404261 push 40h
     push(ctx, 0x40u32);
@@ -19075,7 +17979,6 @@ pub fn x00404261(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00404284), Cont(x004042b0))
 }
 
-#[allow(unused_variables)]
 pub fn x0040427d(ctx: &mut Context) -> Cont {
     // 0040427d cmp byte ptr [ebx],0
     sub(
@@ -19089,7 +17992,6 @@ pub fn x0040427d(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00404284), Cont(x004042b0))
 }
 
-#[allow(unused_variables)]
 pub fn x00404284(ctx: &mut Context) -> Cont {
     // 00404284 mov dl,[ecx+1]
     ctx.cpu
@@ -19105,7 +18007,6 @@ pub fn x00404284(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x0040428b), Cont(x004042b0))
 }
 
-#[allow(unused_variables)]
 pub fn x0040428b(ctx: &mut Context) -> Cont {
     // 0040428b movzx eax,byte ptr [ecx]
     ctx.cpu.regs.eax = ctx.memory.read::<u8>(ctx.cpu.regs.ecx) as _;
@@ -19117,7 +18018,6 @@ pub fn x0040428b(ctx: &mut Context) -> Cont {
     ja(ctx, Cont(x00404295), Cont(x004042a9))
 }
 
-#[allow(unused_variables)]
 pub fn x00404295(ctx: &mut Context) -> Cont {
     // 00404295 mov edx,[ebp-4]
     ctx.cpu.regs.edx = ctx
@@ -19146,7 +18046,6 @@ pub fn x00404295(ctx: &mut Context) -> Cont {
     jbe(ctx, Cont(x004042a9), Cont(x0040429e))
 }
 
-#[allow(unused_variables)]
 pub fn x0040429e(ctx: &mut Context) -> Cont {
     // 0040429e or [eax+409861h],dl
     ctx.memory.write::<u8>(
@@ -19166,7 +18065,6 @@ pub fn x0040429e(ctx: &mut Context) -> Cont {
     jbe(ctx, Cont(x004042a9), Cont(x0040429e))
 }
 
-#[allow(unused_variables)]
 pub fn x004042a9(ctx: &mut Context) -> Cont {
     // 004042a9 inc ecx
     ctx.cpu.regs.ecx = inc(ctx.cpu.regs.ecx, &mut ctx.cpu.flags);
@@ -19182,7 +18080,6 @@ pub fn x004042a9(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004042b0), Cont(x00404284))
 }
 
-#[allow(unused_variables)]
 pub fn x004042b0(ctx: &mut Context) -> Cont {
     // 004042b0 inc dword ptr [ebp-4]
     ctx.memory.write::<u32>(
@@ -19206,7 +18103,6 @@ pub fn x004042b0(ctx: &mut Context) -> Cont {
     jb(ctx, Cont(x004042bc), Cont(x0040427d))
 }
 
-#[allow(unused_variables)]
 pub fn x004042bc(ctx: &mut Context) -> Cont {
     // 004042bc mov eax,[ebp+8]
     ctx.cpu.regs.eax = ctx
@@ -19223,7 +18119,6 @@ pub fn x004042bc(ctx: &mut Context) -> Cont {
     call(ctx, 0x4042d4, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004042d4(ctx: &mut Context) -> Cont {
     // 004042d4 lea esi,[esi+40923Ch]
     ctx.cpu.regs.esi = ctx.cpu.regs.esi.wrapping_add(0x40923cu32);
@@ -19244,7 +18139,6 @@ pub fn x004042d4(ctx: &mut Context) -> Cont {
     Cont(x0040433f)
 }
 
-#[allow(unused_variables)]
 pub fn x004042ea(ctx: &mut Context) -> Cont {
     // 004042ea inc ecx
     ctx.cpu.regs.ecx = inc(ctx.cpu.regs.ecx, &mut ctx.cpu.flags);
@@ -19261,7 +18155,6 @@ pub fn x004042ea(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004042f6), Cont(x0040423e))
 }
 
-#[allow(unused_variables)]
 pub fn x004042f6(ctx: &mut Context) -> Cont {
     // 004042f6 push 1
     push(ctx, 0x1u32);
@@ -19286,7 +18179,6 @@ pub fn x004042f6(ctx: &mut Context) -> Cont {
     jb(ctx, Cont(x00404308), Cont(x004042f9))
 }
 
-#[allow(unused_variables)]
 pub fn x004042f9(ctx: &mut Context) -> Cont {
     // 004042f9 or byte ptr [eax+409861h],8
     ctx.memory.write::<u8>(
@@ -19306,7 +18198,6 @@ pub fn x004042f9(ctx: &mut Context) -> Cont {
     jb(ctx, Cont(x00404308), Cont(x004042f9))
 }
 
-#[allow(unused_variables)]
 pub fn x00404308(ctx: &mut Context) -> Cont {
     // 00404308 push esi
     push(ctx, ctx.cpu.regs.esi);
@@ -19315,7 +18206,6 @@ pub fn x00404308(ctx: &mut Context) -> Cont {
     call(ctx, 0x40430e, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x0040430e(ctx: &mut Context) -> Cont {
     // 0040430e pop ecx
     let x = pop(ctx);
@@ -19328,7 +18218,6 @@ pub fn x0040430e(ctx: &mut Context) -> Cont {
     Cont(x00404326)
 }
 
-#[allow(unused_variables)]
 pub fn x00404320(ctx: &mut Context) -> Cont {
     // 00404320 mov ds:[40975Ch],ebx
     ctx.memory.write::<u32>(0x40975cu32, ctx.cpu.regs.ebx);
@@ -19346,7 +18235,6 @@ pub fn x00404320(ctx: &mut Context) -> Cont {
     Cont(x0040433f)
 }
 
-#[allow(unused_variables)]
 pub fn x00404326(ctx: &mut Context) -> Cont {
     // 00404326 xor eax,eax
     ctx.cpu.regs.eax = xor(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -19362,7 +18250,6 @@ pub fn x00404326(ctx: &mut Context) -> Cont {
     Cont(x0040433f)
 }
 
-#[allow(unused_variables)]
 pub fn x00404332(ctx: &mut Context) -> Cont {
     // 00404332 cmp ds:[409710h],ebx
     sub(
@@ -19374,21 +18261,18 @@ pub fn x00404332(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x0040433a), Cont(x00404348))
 }
 
-#[allow(unused_variables)]
 pub fn x0040433a(ctx: &mut Context) -> Cont {
     // 0040433a call 004043CDh
     let dst = Cont(x004043cd);
     call(ctx, 0x40433f, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x0040433f(ctx: &mut Context) -> Cont {
     // 0040433f call 004043F6h
     let dst = Cont(x004043f6);
     call(ctx, 0x404344, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00404344(ctx: &mut Context) -> Cont {
     // 00404344 xor eax,eax
     ctx.cpu.regs.eax = xor(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -19396,7 +18280,6 @@ pub fn x00404344(ctx: &mut Context) -> Cont {
     Cont(x0040434b)
 }
 
-#[allow(unused_variables)]
 pub fn x00404348(ctx: &mut Context) -> Cont {
     // 00404348 or eax,0FFFFFFFFh
     ctx.cpu.regs.eax = or(ctx.cpu.regs.eax, 0xffffffffu32, &mut ctx.cpu.flags);
@@ -19415,7 +18298,6 @@ pub fn x00404348(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x0040434b(ctx: &mut Context) -> Cont {
     // 0040434b pop edi
     let x = pop(ctx);
@@ -19432,7 +18314,6 @@ pub fn x0040434b(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00404350(ctx: &mut Context) -> Cont {
     // 00404350 mov eax,[esp+4]
     ctx.cpu.regs.eax = ctx
@@ -19453,7 +18334,6 @@ pub fn x00404350(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00404360), Cont(x00404370))
 }
 
-#[allow(unused_variables)]
 pub fn x00404360(ctx: &mut Context) -> Cont {
     // 00404360 mov dword ptr ds:[409710h],1
     ctx.memory.write::<u32>(0x409710u32, 0x1u32);
@@ -19461,7 +18341,6 @@ pub fn x00404360(ctx: &mut Context) -> Cont {
     Cont(kernel32::GetOEMCP_stdcall)
 }
 
-#[allow(unused_variables)]
 pub fn x00404370(ctx: &mut Context) -> Cont {
     // 00404370 cmp eax,0FFFFFFFDh
     sub(ctx.cpu.regs.eax, 0xfffffffdu32, &mut ctx.cpu.flags);
@@ -19469,7 +18348,6 @@ pub fn x00404370(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00404375), Cont(x00404385))
 }
 
-#[allow(unused_variables)]
 pub fn x00404375(ctx: &mut Context) -> Cont {
     // 00404375 mov dword ptr ds:[409710h],1
     ctx.memory.write::<u32>(0x409710u32, 0x1u32);
@@ -19477,7 +18355,6 @@ pub fn x00404375(ctx: &mut Context) -> Cont {
     Cont(kernel32::GetACP_stdcall)
 }
 
-#[allow(unused_variables)]
 pub fn x00404385(ctx: &mut Context) -> Cont {
     // 00404385 cmp eax,0FFFFFFFCh
     sub(ctx.cpu.regs.eax, 0xfffffffcu32, &mut ctx.cpu.flags);
@@ -19485,7 +18362,6 @@ pub fn x00404385(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x0040438a), Cont(x00404399))
 }
 
-#[allow(unused_variables)]
 pub fn x0040438a(ctx: &mut Context) -> Cont {
     // 0040438a mov eax,ds:[409738h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x409738u32);
@@ -19495,13 +18371,11 @@ pub fn x0040438a(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00404399(ctx: &mut Context) -> Cont {
     // 00404399 ret
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x0040439a(ctx: &mut Context) -> Cont {
     // 0040439a mov eax,[esp+4]
     ctx.cpu.regs.eax = ctx
@@ -19513,7 +18387,6 @@ pub fn x0040439a(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004043a5), Cont(x004043c7))
 }
 
-#[allow(unused_variables)]
 pub fn x004043a5(ctx: &mut Context) -> Cont {
     // 004043a5 sub eax,4
     ctx.cpu.regs.eax = sub(ctx.cpu.regs.eax, 0x4u32, &mut ctx.cpu.flags);
@@ -19521,7 +18394,6 @@ pub fn x004043a5(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004043aa), Cont(x004043c1))
 }
 
-#[allow(unused_variables)]
 pub fn x004043aa(ctx: &mut Context) -> Cont {
     // 004043aa sub eax,0Dh
     ctx.cpu.regs.eax = sub(ctx.cpu.regs.eax, 0xdu32, &mut ctx.cpu.flags);
@@ -19529,7 +18401,6 @@ pub fn x004043aa(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004043af), Cont(x004043bb))
 }
 
-#[allow(unused_variables)]
 pub fn x004043af(ctx: &mut Context) -> Cont {
     // 004043af dec eax
     ctx.cpu.regs.eax = dec(ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -19537,7 +18408,6 @@ pub fn x004043af(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004043b2), Cont(x004043b5))
 }
 
-#[allow(unused_variables)]
 pub fn x004043b2(ctx: &mut Context) -> Cont {
     // 004043b2 xor eax,eax
     ctx.cpu.regs.eax = xor(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -19545,7 +18415,6 @@ pub fn x004043b2(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x004043b5(ctx: &mut Context) -> Cont {
     // 004043b5 mov eax,404h
     ctx.cpu.regs.eax = 0x404u32;
@@ -19553,7 +18422,6 @@ pub fn x004043b5(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x004043bb(ctx: &mut Context) -> Cont {
     // 004043bb mov eax,412h
     ctx.cpu.regs.eax = 0x412u32;
@@ -19561,7 +18429,6 @@ pub fn x004043bb(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x004043c1(ctx: &mut Context) -> Cont {
     // 004043c1 mov eax,804h
     ctx.cpu.regs.eax = 0x804u32;
@@ -19569,7 +18436,6 @@ pub fn x004043c1(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x004043c7(ctx: &mut Context) -> Cont {
     // 004043c7 mov eax,411h
     ctx.cpu.regs.eax = 0x411u32;
@@ -19577,7 +18443,6 @@ pub fn x004043c7(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x004043cd(ctx: &mut Context) -> Cont {
     // 004043cd push edi
     push(ctx, ctx.cpu.regs.edi);
@@ -19617,7 +18482,6 @@ pub fn x004043cd(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x004043f6(ctx: &mut Context) -> Cont {
     // 004043f6 push ebp
     push(ctx, ctx.cpu.regs.ebp);
@@ -19638,7 +18502,6 @@ pub fn x004043f6(ctx: &mut Context) -> Cont {
     call(ctx, 0x404410, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00404410(ctx: &mut Context) -> Cont {
     // 00404410 cmp eax,1
     sub(ctx.cpu.regs.eax, 0x1u32, &mut ctx.cpu.flags);
@@ -19646,7 +18509,6 @@ pub fn x00404410(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00404419), Cont(x0040452f))
 }
 
-#[allow(unused_variables)]
 pub fn x00404419(ctx: &mut Context) -> Cont {
     // 00404419 xor eax,eax
     ctx.cpu.regs.eax = xor(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -19669,7 +18531,6 @@ pub fn x00404419(ctx: &mut Context) -> Cont {
     jb(ctx, Cont(x0040442c), Cont(x00404420))
 }
 
-#[allow(unused_variables)]
 pub fn x00404420(ctx: &mut Context) -> Cont {
     // 00404420 mov [ebp+eax-114h],al
     ctx.memory.write::<u8>(
@@ -19688,7 +18549,6 @@ pub fn x00404420(ctx: &mut Context) -> Cont {
     jb(ctx, Cont(x0040442c), Cont(x00404420))
 }
 
-#[allow(unused_variables)]
 pub fn x0040442c(ctx: &mut Context) -> Cont {
     // 0040442c mov al,[ebp-0Eh]
     ctx.cpu.regs.set_al(
@@ -19708,7 +18568,6 @@ pub fn x0040442c(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x0040443a), Cont(x00404471))
 }
 
-#[allow(unused_variables)]
 pub fn x0040443a(ctx: &mut Context) -> Cont {
     // 0040443a push ebx
     push(ctx, ctx.cpu.regs.ebx);
@@ -19726,7 +18585,6 @@ pub fn x0040443a(ctx: &mut Context) -> Cont {
     ja(ctx, Cont(x00404449), Cont(x00404466))
 }
 
-#[allow(unused_variables)]
 pub fn x0040443f(ctx: &mut Context) -> Cont {
     // 0040443f movzx ecx,byte ptr [edx]
     ctx.cpu.regs.ecx = ctx.memory.read::<u8>(ctx.cpu.regs.edx) as _;
@@ -19738,7 +18596,6 @@ pub fn x0040443f(ctx: &mut Context) -> Cont {
     ja(ctx, Cont(x00404449), Cont(x00404466))
 }
 
-#[allow(unused_variables)]
 pub fn x00404449(ctx: &mut Context) -> Cont {
     // 00404449 sub ecx,eax
     ctx.cpu.regs.ecx = sub(ctx.cpu.regs.ecx, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -19784,7 +18641,6 @@ pub fn x00404449(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x0040446f), Cont(x0040443f))
 }
 
-#[allow(unused_variables)]
 pub fn x00404466(ctx: &mut Context) -> Cont {
     // 00404466 inc edx
     ctx.cpu.regs.edx = inc(ctx.cpu.regs.edx, &mut ctx.cpu.flags);
@@ -19805,7 +18661,6 @@ pub fn x00404466(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x0040446f), Cont(x0040443f))
 }
 
-#[allow(unused_variables)]
 pub fn x0040446f(ctx: &mut Context) -> Cont {
     // 0040446f pop edi
     let x = pop(ctx);
@@ -19836,7 +18691,6 @@ pub fn x0040446f(ctx: &mut Context) -> Cont {
     call(ctx, 0x404495, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00404471(ctx: &mut Context) -> Cont {
     // 00404471 push 0
     push(ctx, 0x0u32);
@@ -19861,7 +18715,6 @@ pub fn x00404471(ctx: &mut Context) -> Cont {
     call(ctx, 0x404495, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00404495(ctx: &mut Context) -> Cont {
     // 00404495 push 0
     push(ctx, 0x0u32);
@@ -19888,7 +18741,6 @@ pub fn x00404495(ctx: &mut Context) -> Cont {
     call(ctx, 0x4044b9, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004044b9(ctx: &mut Context) -> Cont {
     // 004044b9 push 0
     push(ctx, 0x0u32);
@@ -19915,7 +18767,6 @@ pub fn x004044b9(ctx: &mut Context) -> Cont {
     call(ctx, 0x4044e1, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004044e1(ctx: &mut Context) -> Cont {
     // 004044e1 add esp,5Ch
     ctx.cpu.regs.esp = add(ctx.cpu.regs.esp, 0x5cu32, &mut ctx.cpu.flags);
@@ -19933,7 +18784,6 @@ pub fn x004044e1(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004044f4), Cont(x0040450a))
 }
 
-#[allow(unused_variables)]
 pub fn x004044ec(ctx: &mut Context) -> Cont {
     // 004044ec mov dx,[ecx]
     ctx.cpu
@@ -19945,7 +18795,6 @@ pub fn x004044ec(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004044f4), Cont(x0040450a))
 }
 
-#[allow(unused_variables)]
 pub fn x004044f4(ctx: &mut Context) -> Cont {
     // 004044f4 or byte ptr [eax+409861h],10h
     ctx.memory.write::<u8>(
@@ -19976,7 +18825,6 @@ pub fn x004044f4(ctx: &mut Context) -> Cont {
     Cont(x00404526)
 }
 
-#[allow(unused_variables)]
 pub fn x00404502(ctx: &mut Context) -> Cont {
     // 00404502 mov [eax+409760h],dl
     ctx.memory.write::<u8>(
@@ -19987,7 +18835,6 @@ pub fn x00404502(ctx: &mut Context) -> Cont {
     Cont(x00404526)
 }
 
-#[allow(unused_variables)]
 pub fn x0040450a(ctx: &mut Context) -> Cont {
     // 0040450a test dl,2
     and(ctx.cpu.regs.get_dl(), 0x2u8, &mut ctx.cpu.flags);
@@ -19995,7 +18842,6 @@ pub fn x0040450a(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x0040450f), Cont(x0040451f))
 }
 
-#[allow(unused_variables)]
 pub fn x0040450f(ctx: &mut Context) -> Cont {
     // 0040450f or byte ptr [eax+409861h],20h
     ctx.memory.write::<u8>(
@@ -20021,7 +18867,6 @@ pub fn x0040450f(ctx: &mut Context) -> Cont {
     Cont(x00404502)
 }
 
-#[allow(unused_variables)]
 pub fn x0040451f(ctx: &mut Context) -> Cont {
     // 0040451f and byte ptr [eax+409760h],0
     ctx.memory.write::<u8>(
@@ -20045,7 +18890,6 @@ pub fn x0040451f(ctx: &mut Context) -> Cont {
     jb(ctx, Cont(x0040452d), Cont(x004044ec))
 }
 
-#[allow(unused_variables)]
 pub fn x00404526(ctx: &mut Context) -> Cont {
     // 00404526 inc eax
     ctx.cpu.regs.eax = inc(ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -20059,13 +18903,11 @@ pub fn x00404526(ctx: &mut Context) -> Cont {
     jb(ctx, Cont(x0040452d), Cont(x004044ec))
 }
 
-#[allow(unused_variables)]
 pub fn x0040452d(ctx: &mut Context) -> Cont {
     // 0040452d jmp short 00404578h
     Cont(x00404578)
 }
 
-#[allow(unused_variables)]
 pub fn x0040452f(ctx: &mut Context) -> Cont {
     // 0040452f xor eax,eax
     ctx.cpu.regs.eax = xor(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -20077,7 +18919,6 @@ pub fn x0040452f(ctx: &mut Context) -> Cont {
     jb(ctx, Cont(x0040453b), Cont(x00404554))
 }
 
-#[allow(unused_variables)]
 pub fn x00404536(ctx: &mut Context) -> Cont {
     // 00404536 cmp eax,41h
     sub(ctx.cpu.regs.eax, 0x41u32, &mut ctx.cpu.flags);
@@ -20085,7 +18926,6 @@ pub fn x00404536(ctx: &mut Context) -> Cont {
     jb(ctx, Cont(x0040453b), Cont(x00404554))
 }
 
-#[allow(unused_variables)]
 pub fn x0040453b(ctx: &mut Context) -> Cont {
     // 0040453b cmp eax,5Ah
     sub(ctx.cpu.regs.eax, 0x5au32, &mut ctx.cpu.flags);
@@ -20093,7 +18933,6 @@ pub fn x0040453b(ctx: &mut Context) -> Cont {
     ja(ctx, Cont(x00404540), Cont(x00404554))
 }
 
-#[allow(unused_variables)]
 pub fn x00404540(ctx: &mut Context) -> Cont {
     // 00404540 or byte ptr [eax+409861h],10h
     ctx.memory.write::<u8>(
@@ -20120,7 +18959,6 @@ pub fn x00404540(ctx: &mut Context) -> Cont {
     Cont(x00404573)
 }
 
-#[allow(unused_variables)]
 pub fn x0040454c(ctx: &mut Context) -> Cont {
     // 0040454c mov [eax+409760h],cl
     ctx.memory.write::<u8>(
@@ -20131,7 +18969,6 @@ pub fn x0040454c(ctx: &mut Context) -> Cont {
     Cont(x00404573)
 }
 
-#[allow(unused_variables)]
 pub fn x00404554(ctx: &mut Context) -> Cont {
     // 00404554 cmp eax,61h
     sub(ctx.cpu.regs.eax, 0x61u32, &mut ctx.cpu.flags);
@@ -20139,7 +18976,6 @@ pub fn x00404554(ctx: &mut Context) -> Cont {
     jb(ctx, Cont(x00404559), Cont(x0040456c))
 }
 
-#[allow(unused_variables)]
 pub fn x00404559(ctx: &mut Context) -> Cont {
     // 00404559 cmp eax,7Ah
     sub(ctx.cpu.regs.eax, 0x7au32, &mut ctx.cpu.flags);
@@ -20147,7 +18983,6 @@ pub fn x00404559(ctx: &mut Context) -> Cont {
     ja(ctx, Cont(x0040455e), Cont(x0040456c))
 }
 
-#[allow(unused_variables)]
 pub fn x0040455e(ctx: &mut Context) -> Cont {
     // 0040455e or byte ptr [eax+409861h],20h
     ctx.memory.write::<u8>(
@@ -20169,7 +19004,6 @@ pub fn x0040455e(ctx: &mut Context) -> Cont {
     Cont(x0040454c)
 }
 
-#[allow(unused_variables)]
 pub fn x0040456c(ctx: &mut Context) -> Cont {
     // 0040456c and byte ptr [eax+409760h],0
     ctx.memory.write::<u8>(
@@ -20189,7 +19023,6 @@ pub fn x0040456c(ctx: &mut Context) -> Cont {
     jb(ctx, Cont(x00404578), Cont(x00404536))
 }
 
-#[allow(unused_variables)]
 pub fn x00404573(ctx: &mut Context) -> Cont {
     // 00404573 inc eax
     ctx.cpu.regs.eax = inc(ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -20199,7 +19032,6 @@ pub fn x00404573(ctx: &mut Context) -> Cont {
     jb(ctx, Cont(x00404578), Cont(x00404536))
 }
 
-#[allow(unused_variables)]
 pub fn x00404578(ctx: &mut Context) -> Cont {
     // 00404578 pop esi
     let x = pop(ctx);
@@ -20210,7 +19042,6 @@ pub fn x00404578(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x0040457b(ctx: &mut Context) -> Cont {
     // 0040457b cmp dword ptr ds:[409AA8h],0
     sub(
@@ -20222,7 +19053,6 @@ pub fn x0040457b(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00404584), Cont(x00404596))
 }
 
-#[allow(unused_variables)]
 pub fn x00404584(ctx: &mut Context) -> Cont {
     // 00404584 push 0FFFFFFFDh
     push(ctx, 0xfffffffdu32);
@@ -20231,7 +19061,6 @@ pub fn x00404584(ctx: &mut Context) -> Cont {
     call(ctx, 0x40458b, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x0040458b(ctx: &mut Context) -> Cont {
     // 0040458b pop ecx
     let x = pop(ctx);
@@ -20242,13 +19071,11 @@ pub fn x0040458b(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00404596(ctx: &mut Context) -> Cont {
     // 00404596 ret
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x004045a0(ctx: &mut Context) -> Cont {
     // 004045a0 push edi
     push(ctx, ctx.cpu.regs.edi);
@@ -20260,7 +19087,6 @@ pub fn x004045a0(ctx: &mut Context) -> Cont {
     Cont(x00404611)
 }
 
-#[allow(unused_variables)]
 pub fn x004045b0(ctx: &mut Context) -> Cont {
     // 004045b0 mov ecx,[esp+4]
     ctx.cpu.regs.ecx = ctx
@@ -20274,7 +19100,6 @@ pub fn x004045b0(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004045bd), Cont(x004045cc))
 }
 
-#[allow(unused_variables)]
 pub fn x004045bd(ctx: &mut Context) -> Cont {
     // 004045bd mov al,[ecx]
     ctx.cpu.regs.set_al(ctx.memory.read::<u8>(ctx.cpu.regs.ecx));
@@ -20290,7 +19115,6 @@ pub fn x004045bd(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004045c4), Cont(x004045ff))
 }
 
-#[allow(unused_variables)]
 pub fn x004045c4(ctx: &mut Context) -> Cont {
     // 004045c4 test ecx,3
     and(ctx.cpu.regs.ecx, 0x3u32, &mut ctx.cpu.flags);
@@ -20298,7 +19122,6 @@ pub fn x004045c4(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004045cc), Cont(x004045bd))
 }
 
-#[allow(unused_variables)]
 pub fn x004045cc(ctx: &mut Context) -> Cont {
     // 004045cc mov eax,[ecx]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(ctx.cpu.regs.ecx);
@@ -20318,7 +19141,6 @@ pub fn x004045cc(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004045e4), Cont(x004045cc))
 }
 
-#[allow(unused_variables)]
 pub fn x004045e4(ctx: &mut Context) -> Cont {
     // 004045e4 mov eax,[ecx-4]
     ctx.cpu.regs.eax = ctx
@@ -20334,7 +19156,6 @@ pub fn x004045e4(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004045eb), Cont(x0040460e))
 }
 
-#[allow(unused_variables)]
 pub fn x004045eb(ctx: &mut Context) -> Cont {
     // 004045eb test ah,ah
     and(
@@ -20346,7 +19167,6 @@ pub fn x004045eb(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004045ef), Cont(x00404609))
 }
 
-#[allow(unused_variables)]
 pub fn x004045ef(ctx: &mut Context) -> Cont {
     // 004045ef test eax,0FF0000h
     and(ctx.cpu.regs.eax, 0xff0000u32, &mut ctx.cpu.flags);
@@ -20354,7 +19174,6 @@ pub fn x004045ef(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004045f6), Cont(x00404604))
 }
 
-#[allow(unused_variables)]
 pub fn x004045f6(ctx: &mut Context) -> Cont {
     // 004045f6 test eax,0FF000000h
     and(ctx.cpu.regs.eax, 0xff000000u32, &mut ctx.cpu.flags);
@@ -20362,13 +19181,11 @@ pub fn x004045f6(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004045fd), Cont(x004045ff))
 }
 
-#[allow(unused_variables)]
 pub fn x004045fd(ctx: &mut Context) -> Cont {
     // 004045fd jmp short 004045CCh
     Cont(x004045cc)
 }
 
-#[allow(unused_variables)]
 pub fn x004045ff(ctx: &mut Context) -> Cont {
     // 004045ff lea edi,[ecx-1]
     ctx.cpu.regs.edi = ctx.cpu.regs.ecx.wrapping_add(0xffffffffu32);
@@ -20376,7 +19193,6 @@ pub fn x004045ff(ctx: &mut Context) -> Cont {
     Cont(x00404611)
 }
 
-#[allow(unused_variables)]
 pub fn x00404604(ctx: &mut Context) -> Cont {
     // 00404604 lea edi,[ecx-2]
     ctx.cpu.regs.edi = ctx.cpu.regs.ecx.wrapping_add(0xfffffffeu32);
@@ -20384,7 +19200,6 @@ pub fn x00404604(ctx: &mut Context) -> Cont {
     Cont(x00404611)
 }
 
-#[allow(unused_variables)]
 pub fn x00404609(ctx: &mut Context) -> Cont {
     // 00404609 lea edi,[ecx-3]
     ctx.cpu.regs.edi = ctx.cpu.regs.ecx.wrapping_add(0xfffffffdu32);
@@ -20392,7 +19207,6 @@ pub fn x00404609(ctx: &mut Context) -> Cont {
     Cont(x00404611)
 }
 
-#[allow(unused_variables)]
 pub fn x0040460e(ctx: &mut Context) -> Cont {
     // 0040460e lea edi,[ecx-4]
     ctx.cpu.regs.edi = ctx.cpu.regs.ecx.wrapping_add(0xfffffffcu32);
@@ -20406,7 +19220,6 @@ pub fn x0040460e(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x0040461d), Cont(x00404636))
 }
 
-#[allow(unused_variables)]
 pub fn x00404611(ctx: &mut Context) -> Cont {
     // 00404611 mov ecx,[esp+0Ch]
     ctx.cpu.regs.ecx = ctx
@@ -20418,7 +19231,6 @@ pub fn x00404611(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x0040461d), Cont(x00404636))
 }
 
-#[allow(unused_variables)]
 pub fn x0040461d(ctx: &mut Context) -> Cont {
     // 0040461d mov dl,[ecx]
     ctx.cpu.regs.set_dl(ctx.memory.read::<u8>(ctx.cpu.regs.ecx));
@@ -20434,7 +19246,6 @@ pub fn x0040461d(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00404624), Cont(x00404688))
 }
 
-#[allow(unused_variables)]
 pub fn x00404624(ctx: &mut Context) -> Cont {
     // 00404624 mov [edi],dl
     ctx.memory
@@ -20447,13 +19258,11 @@ pub fn x00404624(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x0040462f), Cont(x0040461d))
 }
 
-#[allow(unused_variables)]
 pub fn x0040462f(ctx: &mut Context) -> Cont {
     // 0040462f jmp short 00404636h
     Cont(x00404636)
 }
 
-#[allow(unused_variables)]
 pub fn x00404631(ctx: &mut Context) -> Cont {
     // 00404631 mov [edi],edx
     ctx.memory.write::<u32>(ctx.cpu.regs.edi, ctx.cpu.regs.edx);
@@ -20479,7 +19288,6 @@ pub fn x00404631(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00404650), Cont(x00404631))
 }
 
-#[allow(unused_variables)]
 pub fn x00404636(ctx: &mut Context) -> Cont {
     // 00404636 mov edx,7EFEFEFFh
     ctx.cpu.regs.edx = 0x7efefeffu32;
@@ -20501,7 +19309,6 @@ pub fn x00404636(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00404650), Cont(x00404631))
 }
 
-#[allow(unused_variables)]
 pub fn x00404650(ctx: &mut Context) -> Cont {
     // 00404650 test dl,dl
     and(
@@ -20513,7 +19320,6 @@ pub fn x00404650(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00404654), Cont(x00404688))
 }
 
-#[allow(unused_variables)]
 pub fn x00404654(ctx: &mut Context) -> Cont {
     // 00404654 test dh,dh
     and(
@@ -20525,7 +19331,6 @@ pub fn x00404654(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00404658), Cont(x0040467f))
 }
 
-#[allow(unused_variables)]
 pub fn x00404658(ctx: &mut Context) -> Cont {
     // 00404658 test edx,0FF0000h
     and(ctx.cpu.regs.edx, 0xff0000u32, &mut ctx.cpu.flags);
@@ -20533,7 +19338,6 @@ pub fn x00404658(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00404660), Cont(x00404672))
 }
 
-#[allow(unused_variables)]
 pub fn x00404660(ctx: &mut Context) -> Cont {
     // 00404660 test edx,0FF000000h
     and(ctx.cpu.regs.edx, 0xff000000u32, &mut ctx.cpu.flags);
@@ -20541,13 +19345,11 @@ pub fn x00404660(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00404668), Cont(x0040466a))
 }
 
-#[allow(unused_variables)]
 pub fn x00404668(ctx: &mut Context) -> Cont {
     // 00404668 jmp short 00404631h
     Cont(x00404631)
 }
 
-#[allow(unused_variables)]
 pub fn x0040466a(ctx: &mut Context) -> Cont {
     // 0040466a mov [edi],edx
     ctx.memory.write::<u32>(ctx.cpu.regs.edi, ctx.cpu.regs.edx);
@@ -20562,7 +19364,6 @@ pub fn x0040466a(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00404672(ctx: &mut Context) -> Cont {
     // 00404672 mov [edi],dx
     ctx.memory
@@ -20581,7 +19382,6 @@ pub fn x00404672(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x0040467f(ctx: &mut Context) -> Cont {
     // 0040467f mov [edi],dx
     ctx.memory
@@ -20597,7 +19397,6 @@ pub fn x0040467f(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00404688(ctx: &mut Context) -> Cont {
     // 00404688 mov [edi],dl
     ctx.memory
@@ -20613,7 +19412,6 @@ pub fn x00404688(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00404690(ctx: &mut Context) -> Cont {
     // 00404690 mov ecx,[esp+4]
     ctx.cpu.regs.ecx = ctx
@@ -20625,7 +19423,6 @@ pub fn x00404690(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x0040469c), Cont(x004046b0))
 }
 
-#[allow(unused_variables)]
 pub fn x0040469c(ctx: &mut Context) -> Cont {
     // 0040469c mov al,[ecx]
     ctx.cpu.regs.set_al(ctx.memory.read::<u8>(ctx.cpu.regs.ecx));
@@ -20641,7 +19438,6 @@ pub fn x0040469c(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004046a3), Cont(x004046e3))
 }
 
-#[allow(unused_variables)]
 pub fn x004046a3(ctx: &mut Context) -> Cont {
     // 004046a3 test ecx,3
     and(ctx.cpu.regs.ecx, 0x3u32, &mut ctx.cpu.flags);
@@ -20649,7 +19445,6 @@ pub fn x004046a3(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004046ab), Cont(x0040469c))
 }
 
-#[allow(unused_variables)]
 pub fn x004046ab(ctx: &mut Context) -> Cont {
     // 004046ab add eax,0
     ctx.cpu.regs.eax = add(ctx.cpu.regs.eax, 0x0u32, &mut ctx.cpu.flags);
@@ -20671,7 +19466,6 @@ pub fn x004046ab(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004046c8), Cont(x004046b0))
 }
 
-#[allow(unused_variables)]
 pub fn x004046b0(ctx: &mut Context) -> Cont {
     // 004046b0 mov eax,[ecx]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(ctx.cpu.regs.ecx);
@@ -20691,7 +19485,6 @@ pub fn x004046b0(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004046c8), Cont(x004046b0))
 }
 
-#[allow(unused_variables)]
 pub fn x004046c8(ctx: &mut Context) -> Cont {
     // 004046c8 mov eax,[ecx-4]
     ctx.cpu.regs.eax = ctx
@@ -20707,7 +19500,6 @@ pub fn x004046c8(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004046cf), Cont(x00404701))
 }
 
-#[allow(unused_variables)]
 pub fn x004046cf(ctx: &mut Context) -> Cont {
     // 004046cf test ah,ah
     and(
@@ -20719,7 +19511,6 @@ pub fn x004046cf(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004046d3), Cont(x004046f7))
 }
 
-#[allow(unused_variables)]
 pub fn x004046d3(ctx: &mut Context) -> Cont {
     // 004046d3 test eax,0FF0000h
     and(ctx.cpu.regs.eax, 0xff0000u32, &mut ctx.cpu.flags);
@@ -20727,7 +19518,6 @@ pub fn x004046d3(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004046da), Cont(x004046ed))
 }
 
-#[allow(unused_variables)]
 pub fn x004046da(ctx: &mut Context) -> Cont {
     // 004046da test eax,0FF000000h
     and(ctx.cpu.regs.eax, 0xff000000u32, &mut ctx.cpu.flags);
@@ -20735,13 +19525,11 @@ pub fn x004046da(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004046e1), Cont(x004046e3))
 }
 
-#[allow(unused_variables)]
 pub fn x004046e1(ctx: &mut Context) -> Cont {
     // 004046e1 jmp short 004046B0h
     Cont(x004046b0)
 }
 
-#[allow(unused_variables)]
 pub fn x004046e3(ctx: &mut Context) -> Cont {
     // 004046e3 lea eax,[ecx-1]
     ctx.cpu.regs.eax = ctx.cpu.regs.ecx.wrapping_add(0xffffffffu32);
@@ -20755,7 +19543,6 @@ pub fn x004046e3(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x004046ed(ctx: &mut Context) -> Cont {
     // 004046ed lea eax,[ecx-2]
     ctx.cpu.regs.eax = ctx.cpu.regs.ecx.wrapping_add(0xfffffffeu32);
@@ -20769,7 +19556,6 @@ pub fn x004046ed(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x004046f7(ctx: &mut Context) -> Cont {
     // 004046f7 lea eax,[ecx-3]
     ctx.cpu.regs.eax = ctx.cpu.regs.ecx.wrapping_add(0xfffffffdu32);
@@ -20783,7 +19569,6 @@ pub fn x004046f7(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00404701(ctx: &mut Context) -> Cont {
     // 00404701 lea eax,[ecx-4]
     ctx.cpu.regs.eax = ctx.cpu.regs.ecx.wrapping_add(0xfffffffcu32);
@@ -20797,7 +19582,6 @@ pub fn x00404701(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x0040470b(ctx: &mut Context) -> Cont {
     // 0040470b push 0
     push(ctx, 0x0u32);
@@ -20824,7 +19608,6 @@ pub fn x0040470b(ctx: &mut Context) -> Cont {
     call(ctx, 0x40471e, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x0040471e(ctx: &mut Context) -> Cont {
     // 0040471e add esp,10h
     ctx.cpu.regs.esp = add(ctx.cpu.regs.esp, 0x10u32, &mut ctx.cpu.flags);
@@ -20832,7 +19615,6 @@ pub fn x0040471e(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00404722(ctx: &mut Context) -> Cont {
     // 00404722 push ebp
     push(ctx, ctx.cpu.regs.ebp);
@@ -20879,7 +19661,6 @@ pub fn x00404722(ctx: &mut Context) -> Cont {
     jle(ctx, Cont(x00404743), Cont(x00404752))
 }
 
-#[allow(unused_variables)]
 pub fn x0040473a(ctx: &mut Context) -> Cont {
     // 0040473a cmp dword ptr ds:[40953Ch],1
     sub(
@@ -20891,7 +19672,6 @@ pub fn x0040473a(ctx: &mut Context) -> Cont {
     jle(ctx, Cont(x00404743), Cont(x00404752))
 }
 
-#[allow(unused_variables)]
 pub fn x00404743(ctx: &mut Context) -> Cont {
     // 00404743 movzx eax,bl
     ctx.cpu.regs.eax = ctx.cpu.regs.get_bl() as _;
@@ -20904,7 +19684,6 @@ pub fn x00404743(ctx: &mut Context) -> Cont {
     call(ctx, 0x40474e, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x0040474e(ctx: &mut Context) -> Cont {
     // 0040474e pop ecx
     let x = pop(ctx);
@@ -20916,7 +19695,6 @@ pub fn x0040474e(ctx: &mut Context) -> Cont {
     Cont(x00404761)
 }
 
-#[allow(unused_variables)]
 pub fn x00404752(ctx: &mut Context) -> Cont {
     // 00404752 mov ecx,ds:[409330h]
     ctx.cpu.regs.ecx = ctx.memory.read::<u32>(0x409330u32);
@@ -20935,7 +19713,6 @@ pub fn x00404752(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00404765), Cont(x0040476a))
 }
 
-#[allow(unused_variables)]
 pub fn x00404761(ctx: &mut Context) -> Cont {
     // 00404761 test eax,eax
     and(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -20943,7 +19720,6 @@ pub fn x00404761(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00404765), Cont(x0040476a))
 }
 
-#[allow(unused_variables)]
 pub fn x00404765(ctx: &mut Context) -> Cont {
     // 00404765 mov bl,[esi]
     ctx.cpu.regs.set_bl(ctx.memory.read::<u8>(ctx.cpu.regs.esi));
@@ -20953,7 +19729,6 @@ pub fn x00404765(ctx: &mut Context) -> Cont {
     Cont(x0040473a)
 }
 
-#[allow(unused_variables)]
 pub fn x0040476a(ctx: &mut Context) -> Cont {
     // 0040476a cmp bl,2Dh
     sub(ctx.cpu.regs.get_bl(), 0x2du8, &mut ctx.cpu.flags);
@@ -20966,7 +19741,6 @@ pub fn x0040476a(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00404772), Cont(x00404778))
 }
 
-#[allow(unused_variables)]
 pub fn x00404772(ctx: &mut Context) -> Cont {
     // 00404772 or dword ptr [ebp+14h],2
     ctx.memory.write::<u32>(
@@ -20982,7 +19756,6 @@ pub fn x00404772(ctx: &mut Context) -> Cont {
     Cont(x0040477d)
 }
 
-#[allow(unused_variables)]
 pub fn x00404778(ctx: &mut Context) -> Cont {
     // 00404778 cmp bl,2Bh
     sub(ctx.cpu.regs.get_bl(), 0x2bu8, &mut ctx.cpu.flags);
@@ -20990,7 +19763,6 @@ pub fn x00404778(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x0040477d), Cont(x00404783))
 }
 
-#[allow(unused_variables)]
 pub fn x0040477d(ctx: &mut Context) -> Cont {
     // 0040477d mov bl,[esi]
     ctx.cpu.regs.set_bl(ctx.memory.read::<u8>(ctx.cpu.regs.esi));
@@ -21011,7 +19783,6 @@ pub fn x0040477d(ctx: &mut Context) -> Cont {
     jl(ctx, Cont(x0040478e), Cont(x0040491a))
 }
 
-#[allow(unused_variables)]
 pub fn x00404783(ctx: &mut Context) -> Cont {
     // 00404783 mov eax,[ebp+10h]
     ctx.cpu.regs.eax = ctx
@@ -21023,7 +19794,6 @@ pub fn x00404783(ctx: &mut Context) -> Cont {
     jl(ctx, Cont(x0040478e), Cont(x0040491a))
 }
 
-#[allow(unused_variables)]
 pub fn x0040478e(ctx: &mut Context) -> Cont {
     // 0040478e cmp eax,1
     sub(ctx.cpu.regs.eax, 0x1u32, &mut ctx.cpu.flags);
@@ -21031,7 +19801,6 @@ pub fn x0040478e(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00404797), Cont(x0040491a))
 }
 
-#[allow(unused_variables)]
 pub fn x00404797(ctx: &mut Context) -> Cont {
     // 00404797 cmp eax,24h
     sub(ctx.cpu.regs.eax, 0x24u32, &mut ctx.cpu.flags);
@@ -21039,7 +19808,6 @@ pub fn x00404797(ctx: &mut Context) -> Cont {
     jg(ctx, Cont(x004047a0), Cont(x0040491a))
 }
 
-#[allow(unused_variables)]
 pub fn x004047a0(ctx: &mut Context) -> Cont {
     // 004047a0 push 10h
     push(ctx, 0x10u32);
@@ -21052,7 +19820,6 @@ pub fn x004047a0(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004047a7), Cont(x004047cb))
 }
 
-#[allow(unused_variables)]
 pub fn x004047a7(ctx: &mut Context) -> Cont {
     // 004047a7 cmp bl,30h
     sub(ctx.cpu.regs.get_bl(), 0x30u8, &mut ctx.cpu.flags);
@@ -21060,7 +19827,6 @@ pub fn x004047a7(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004047ac), Cont(x004047b5))
 }
 
-#[allow(unused_variables)]
 pub fn x004047ac(ctx: &mut Context) -> Cont {
     // 004047ac mov dword ptr [ebp+10h],0Ah
     ctx.memory
@@ -21069,7 +19835,6 @@ pub fn x004047ac(ctx: &mut Context) -> Cont {
     Cont(x004047e7)
 }
 
-#[allow(unused_variables)]
 pub fn x004047b5(ctx: &mut Context) -> Cont {
     // 004047b5 mov al,[esi]
     ctx.cpu.regs.set_al(ctx.memory.read::<u8>(ctx.cpu.regs.esi));
@@ -21079,7 +19844,6 @@ pub fn x004047b5(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004047bb), Cont(x004047c8))
 }
 
-#[allow(unused_variables)]
 pub fn x004047bb(ctx: &mut Context) -> Cont {
     // 004047bb cmp al,58h
     sub(ctx.cpu.regs.get_al(), 0x58u8, &mut ctx.cpu.flags);
@@ -21087,7 +19851,6 @@ pub fn x004047bb(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004047bf), Cont(x004047c8))
 }
 
-#[allow(unused_variables)]
 pub fn x004047bf(ctx: &mut Context) -> Cont {
     // 004047bf mov dword ptr [ebp+10h],8
     ctx.memory
@@ -21096,7 +19859,6 @@ pub fn x004047bf(ctx: &mut Context) -> Cont {
     Cont(x004047e7)
 }
 
-#[allow(unused_variables)]
 pub fn x004047c8(ctx: &mut Context) -> Cont {
     // 004047c8 mov [ebp+10h],ecx
     ctx.memory
@@ -21112,7 +19874,6 @@ pub fn x004047c8(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004047d0), Cont(x004047e7))
 }
 
-#[allow(unused_variables)]
 pub fn x004047cb(ctx: &mut Context) -> Cont {
     // 004047cb cmp [ebp+10h],ecx
     sub(
@@ -21125,7 +19886,6 @@ pub fn x004047cb(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004047d0), Cont(x004047e7))
 }
 
-#[allow(unused_variables)]
 pub fn x004047d0(ctx: &mut Context) -> Cont {
     // 004047d0 cmp bl,30h
     sub(ctx.cpu.regs.get_bl(), 0x30u8, &mut ctx.cpu.flags);
@@ -21133,7 +19893,6 @@ pub fn x004047d0(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004047d5), Cont(x004047e7))
 }
 
-#[allow(unused_variables)]
 pub fn x004047d5(ctx: &mut Context) -> Cont {
     // 004047d5 mov al,[esi]
     ctx.cpu.regs.set_al(ctx.memory.read::<u8>(ctx.cpu.regs.esi));
@@ -21143,7 +19902,6 @@ pub fn x004047d5(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004047db), Cont(x004047df))
 }
 
-#[allow(unused_variables)]
 pub fn x004047db(ctx: &mut Context) -> Cont {
     // 004047db cmp al,58h
     sub(ctx.cpu.regs.get_al(), 0x58u8, &mut ctx.cpu.flags);
@@ -21151,7 +19909,6 @@ pub fn x004047db(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004047df), Cont(x004047e7))
 }
 
-#[allow(unused_variables)]
 pub fn x004047df(ctx: &mut Context) -> Cont {
     // 004047df mov bl,[esi+1]
     ctx.cpu
@@ -21191,7 +19948,6 @@ pub fn x004047df(ctx: &mut Context) -> Cont {
     jle(ctx, Cont(x00404803), Cont(x0040480f))
 }
 
-#[allow(unused_variables)]
 pub fn x004047e7(ctx: &mut Context) -> Cont {
     // 004047e7 or eax,0FFFFFFFFh
     ctx.cpu.regs.eax = or(ctx.cpu.regs.eax, 0xffffffffu32, &mut ctx.cpu.flags);
@@ -21218,7 +19974,6 @@ pub fn x004047e7(ctx: &mut Context) -> Cont {
     jle(ctx, Cont(x00404803), Cont(x0040480f))
 }
 
-#[allow(unused_variables)]
 pub fn x004047f7(ctx: &mut Context) -> Cont {
     // 004047f7 cmp dword ptr ds:[40953Ch],1
     sub(
@@ -21232,7 +19987,6 @@ pub fn x004047f7(ctx: &mut Context) -> Cont {
     jle(ctx, Cont(x00404803), Cont(x0040480f))
 }
 
-#[allow(unused_variables)]
 pub fn x00404803(ctx: &mut Context) -> Cont {
     // 00404803 push 4
     push(ctx, 0x4u32);
@@ -21243,7 +19997,6 @@ pub fn x00404803(ctx: &mut Context) -> Cont {
     call(ctx, 0x40480b, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x0040480b(ctx: &mut Context) -> Cont {
     // 0040480b pop ecx
     let x = pop(ctx);
@@ -21255,7 +20008,6 @@ pub fn x0040480b(ctx: &mut Context) -> Cont {
     Cont(x0040481a)
 }
 
-#[allow(unused_variables)]
 pub fn x0040480f(ctx: &mut Context) -> Cont {
     // 0040480f mov eax,ds:[409330h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x409330u32);
@@ -21272,7 +20024,6 @@ pub fn x0040480f(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x0040481e), Cont(x00404826))
 }
 
-#[allow(unused_variables)]
 pub fn x0040481a(ctx: &mut Context) -> Cont {
     // 0040481a test eax,eax
     and(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -21280,7 +20031,6 @@ pub fn x0040481a(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x0040481e), Cont(x00404826))
 }
 
-#[allow(unused_variables)]
 pub fn x0040481e(ctx: &mut Context) -> Cont {
     // 0040481e movsx ecx,bl
     ctx.cpu.regs.ecx = ctx.cpu.regs.get_bl() as i8 as i32 as u32;
@@ -21290,7 +20040,6 @@ pub fn x0040481e(ctx: &mut Context) -> Cont {
     Cont(x00404858)
 }
 
-#[allow(unused_variables)]
 pub fn x00404826(ctx: &mut Context) -> Cont {
     // 00404826 cmp dword ptr ds:[40953Ch],1
     sub(
@@ -21302,7 +20051,6 @@ pub fn x00404826(ctx: &mut Context) -> Cont {
     jle(ctx, Cont(x0040482f), Cont(x0040483a))
 }
 
-#[allow(unused_variables)]
 pub fn x0040482f(ctx: &mut Context) -> Cont {
     // 0040482f push edi
     push(ctx, ctx.cpu.regs.edi);
@@ -21313,7 +20061,6 @@ pub fn x0040482f(ctx: &mut Context) -> Cont {
     call(ctx, 0x404836, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00404836(ctx: &mut Context) -> Cont {
     // 00404836 pop ecx
     let x = pop(ctx);
@@ -21325,7 +20072,6 @@ pub fn x00404836(ctx: &mut Context) -> Cont {
     Cont(x00404845)
 }
 
-#[allow(unused_variables)]
 pub fn x0040483a(ctx: &mut Context) -> Cont {
     // 0040483a mov eax,ds:[409330h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x409330u32);
@@ -21342,7 +20088,6 @@ pub fn x0040483a(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00404849), Cont(x00404893))
 }
 
-#[allow(unused_variables)]
 pub fn x00404845(ctx: &mut Context) -> Cont {
     // 00404845 test eax,eax
     and(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -21350,7 +20095,6 @@ pub fn x00404845(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00404849), Cont(x00404893))
 }
 
-#[allow(unused_variables)]
 pub fn x00404849(ctx: &mut Context) -> Cont {
     // 00404849 movsx eax,bl
     ctx.cpu.regs.eax = ctx.cpu.regs.get_bl() as i8 as i32 as u32;
@@ -21361,7 +20105,6 @@ pub fn x00404849(ctx: &mut Context) -> Cont {
     call(ctx, 0x404852, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00404852(ctx: &mut Context) -> Cont {
     // 00404852 pop ecx
     let x = pop(ctx);
@@ -21381,7 +20124,6 @@ pub fn x00404852(ctx: &mut Context) -> Cont {
     jae(ctx, Cont(x0040485d), Cont(x00404893))
 }
 
-#[allow(unused_variables)]
 pub fn x00404858(ctx: &mut Context) -> Cont {
     // 00404858 cmp ecx,[ebp+10h]
     sub(
@@ -21394,7 +20136,6 @@ pub fn x00404858(ctx: &mut Context) -> Cont {
     jae(ctx, Cont(x0040485d), Cont(x00404893))
 }
 
-#[allow(unused_variables)]
 pub fn x0040485d(ctx: &mut Context) -> Cont {
     // 0040485d mov esi,[ebp-8]
     ctx.cpu.regs.esi = ctx
@@ -21421,13 +20162,11 @@ pub fn x0040485d(ctx: &mut Context) -> Cont {
     jb(ctx, Cont(x00404869), Cont(x0040487d))
 }
 
-#[allow(unused_variables)]
 pub fn x00404869(ctx: &mut Context) -> Cont {
     // 00404869 jne short 00404877h
     jne(ctx, Cont(x0040486b), Cont(x00404877))
 }
 
-#[allow(unused_variables)]
 pub fn x0040486b(ctx: &mut Context) -> Cont {
     // 0040486b or eax,0FFFFFFFFh
     ctx.cpu.regs.eax = or(ctx.cpu.regs.eax, 0xffffffffu32, &mut ctx.cpu.flags);
@@ -21441,7 +20180,6 @@ pub fn x0040486b(ctx: &mut Context) -> Cont {
     jbe(ctx, Cont(x00404877), Cont(x0040487d))
 }
 
-#[allow(unused_variables)]
 pub fn x00404877(ctx: &mut Context) -> Cont {
     // 00404877 or dword ptr [ebp+14h],4
     ctx.memory.write::<u32>(
@@ -21457,15 +20195,16 @@ pub fn x00404877(ctx: &mut Context) -> Cont {
     Cont(x00404886)
 }
 
-#[allow(unused_variables)]
 pub fn x0040487d(ctx: &mut Context) -> Cont {
     // 0040487d imul esi,[ebp+10h]
-    ctx.cpu.regs.esi = imul(
-        ctx.cpu.regs.esi as i32,
-        ctx.memory
-            .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0x10u32)) as i32,
-        &mut ctx.cpu.flags,
-    ) as u32;
+    let x = ctx.cpu.regs.esi as i32;
+    let y = ctx
+        .memory
+        .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0x10u32)) as i32;
+    let (res, overflow) = x.overflowing_mul(y);
+    ctx.cpu.flags.set(Flags::CF, overflow);
+    ctx.cpu.flags.set(Flags::OF, overflow);
+    ctx.cpu.regs.esi = res as u32;
     // 00404881 add esi,ecx
     ctx.cpu.regs.esi = add(ctx.cpu.regs.esi, ctx.cpu.regs.ecx, &mut ctx.cpu.flags);
     // 00404883 mov [ebp-8],esi
@@ -21492,7 +20231,6 @@ pub fn x0040487d(ctx: &mut Context) -> Cont {
     Cont(x004047f7)
 }
 
-#[allow(unused_variables)]
 pub fn x00404886(ctx: &mut Context) -> Cont {
     // 00404886 mov eax,[ebp-4]
     ctx.cpu.regs.eax = ctx
@@ -21513,7 +20251,6 @@ pub fn x00404886(ctx: &mut Context) -> Cont {
     Cont(x004047f7)
 }
 
-#[allow(unused_variables)]
 pub fn x00404893(ctx: &mut Context) -> Cont {
     // 00404893 mov ecx,[ebp+14h]
     ctx.cpu.regs.ecx = ctx
@@ -21538,7 +20275,6 @@ pub fn x00404893(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004048a1), Cont(x004048b1))
 }
 
-#[allow(unused_variables)]
 pub fn x004048a1(ctx: &mut Context) -> Cont {
     // 004048a1 test edx,edx
     and(ctx.cpu.regs.edx, ctx.cpu.regs.edx, &mut ctx.cpu.flags);
@@ -21546,7 +20282,6 @@ pub fn x004048a1(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004048a5), Cont(x004048ab))
 }
 
-#[allow(unused_variables)]
 pub fn x004048a5(ctx: &mut Context) -> Cont {
     // 004048a5 mov eax,[ebp+8]
     ctx.cpu.regs.eax = ctx
@@ -21571,7 +20306,6 @@ pub fn x004048a5(ctx: &mut Context) -> Cont {
     Cont(x004048fe)
 }
 
-#[allow(unused_variables)]
 pub fn x004048ab(ctx: &mut Context) -> Cont {
     // 004048ab and dword ptr [ebp-8],0
     ctx.memory.write::<u32>(
@@ -21587,7 +20321,6 @@ pub fn x004048ab(ctx: &mut Context) -> Cont {
     Cont(x004048fe)
 }
 
-#[allow(unused_variables)]
 pub fn x004048b1(ctx: &mut Context) -> Cont {
     // 004048b1 test cl,4
     and(ctx.cpu.regs.get_cl(), 0x4u8, &mut ctx.cpu.flags);
@@ -21597,7 +20330,6 @@ pub fn x004048b1(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004048bb), Cont(x004048d7))
 }
 
-#[allow(unused_variables)]
 pub fn x004048bb(ctx: &mut Context) -> Cont {
     // 004048bb test cl,1
     and(ctx.cpu.regs.get_cl(), 0x1u8, &mut ctx.cpu.flags);
@@ -21605,7 +20337,6 @@ pub fn x004048bb(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004048c0), Cont(x004048fe))
 }
 
-#[allow(unused_variables)]
 pub fn x004048c0(ctx: &mut Context) -> Cont {
     // 004048c0 and ecx,2
     ctx.cpu.regs.ecx = and(ctx.cpu.regs.ecx, 0x2u32, &mut ctx.cpu.flags);
@@ -21613,7 +20344,6 @@ pub fn x004048c0(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004048c5), Cont(x004048ce))
 }
 
-#[allow(unused_variables)]
 pub fn x004048c5(ctx: &mut Context) -> Cont {
     // 004048c5 cmp dword ptr [ebp-8],80000000h
     sub(
@@ -21626,7 +20356,6 @@ pub fn x004048c5(ctx: &mut Context) -> Cont {
     ja(ctx, Cont(x004048ce), Cont(x004048d7))
 }
 
-#[allow(unused_variables)]
 pub fn x004048ce(ctx: &mut Context) -> Cont {
     // 004048ce test ecx,ecx
     and(ctx.cpu.regs.ecx, ctx.cpu.regs.ecx, &mut ctx.cpu.flags);
@@ -21634,7 +20363,6 @@ pub fn x004048ce(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004048d2), Cont(x004048fe))
 }
 
-#[allow(unused_variables)]
 pub fn x004048d2(ctx: &mut Context) -> Cont {
     // 004048d2 cmp [ebp-8],eax
     sub(
@@ -21647,7 +20375,6 @@ pub fn x004048d2(ctx: &mut Context) -> Cont {
     jbe(ctx, Cont(x004048d7), Cont(x004048fe))
 }
 
-#[allow(unused_variables)]
 pub fn x004048d7(ctx: &mut Context) -> Cont {
     // 004048d7 test byte ptr [ebp+14h],1
     and(
@@ -21662,7 +20389,6 @@ pub fn x004048d7(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004048e7), Cont(x004048ed))
 }
 
-#[allow(unused_variables)]
 pub fn x004048e7(ctx: &mut Context) -> Cont {
     // 004048e7 or dword ptr [ebp-8],0FFFFFFFFh
     ctx.memory.write::<u32>(
@@ -21678,7 +20404,6 @@ pub fn x004048e7(ctx: &mut Context) -> Cont {
     Cont(x004048fe)
 }
 
-#[allow(unused_variables)]
 pub fn x004048ed(ctx: &mut Context) -> Cont {
     // 004048ed mov ecx,[ebp+14h]
     ctx.cpu.regs.ecx = ctx
@@ -21709,7 +20434,6 @@ pub fn x004048ed(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00404902), Cont(x00404907))
 }
 
-#[allow(unused_variables)]
 pub fn x004048fe(ctx: &mut Context) -> Cont {
     // 004048fe test edx,edx
     and(ctx.cpu.regs.edx, ctx.cpu.regs.edx, &mut ctx.cpu.flags);
@@ -21717,7 +20441,6 @@ pub fn x004048fe(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00404902), Cont(x00404907))
 }
 
-#[allow(unused_variables)]
 pub fn x00404902(ctx: &mut Context) -> Cont {
     // 00404902 mov eax,[ebp-4]
     ctx.cpu.regs.eax = ctx
@@ -21736,7 +20459,6 @@ pub fn x00404902(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x0040490d), Cont(x00404915))
 }
 
-#[allow(unused_variables)]
 pub fn x00404907(ctx: &mut Context) -> Cont {
     // 00404907 test byte ptr [ebp+14h],2
     and(
@@ -21749,7 +20471,6 @@ pub fn x00404907(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x0040490d), Cont(x00404915))
 }
 
-#[allow(unused_variables)]
 pub fn x0040490d(ctx: &mut Context) -> Cont {
     // 0040490d mov eax,[ebp-8]
     ctx.cpu.regs.eax = ctx
@@ -21770,7 +20491,6 @@ pub fn x0040490d(ctx: &mut Context) -> Cont {
     Cont(x00404925)
 }
 
-#[allow(unused_variables)]
 pub fn x00404915(ctx: &mut Context) -> Cont {
     // 00404915 mov eax,[ebp-8]
     ctx.cpu.regs.eax = ctx
@@ -21780,7 +20500,6 @@ pub fn x00404915(ctx: &mut Context) -> Cont {
     Cont(x00404925)
 }
 
-#[allow(unused_variables)]
 pub fn x0040491a(ctx: &mut Context) -> Cont {
     // 0040491a mov eax,[ebp+0Ch]
     ctx.cpu.regs.eax = ctx
@@ -21792,7 +20511,6 @@ pub fn x0040491a(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00404921), Cont(x00404923))
 }
 
-#[allow(unused_variables)]
 pub fn x00404921(ctx: &mut Context) -> Cont {
     // 00404921 mov [eax],edi
     ctx.memory.write::<u32>(ctx.cpu.regs.eax, ctx.cpu.regs.edi);
@@ -21813,7 +20531,6 @@ pub fn x00404921(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00404923(ctx: &mut Context) -> Cont {
     // 00404923 xor eax,eax
     ctx.cpu.regs.eax = xor(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -21832,7 +20549,6 @@ pub fn x00404923(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00404925(ctx: &mut Context) -> Cont {
     // 00404925 pop edi
     let x = pop(ctx);
@@ -21849,7 +20565,6 @@ pub fn x00404925(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00404930(ctx: &mut Context) -> Cont {
     // 00404930 lea eax,[edx-1]
     ctx.cpu.regs.eax = ctx.cpu.regs.edx.wrapping_add(0xffffffffu32);
@@ -21860,7 +20575,6 @@ pub fn x00404930(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00404940(ctx: &mut Context) -> Cont {
     // 00404940 xor eax,eax
     ctx.cpu.regs.eax = xor(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -21884,7 +20598,6 @@ pub fn x00404940(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00404958), Cont(x0040496b))
 }
 
-#[allow(unused_variables)]
 pub fn x00404946(ctx: &mut Context) -> Cont {
     // 00404946 push ebx
     push(ctx, ctx.cpu.regs.ebx);
@@ -21902,7 +20615,6 @@ pub fn x00404946(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00404958), Cont(x0040496b))
 }
 
-#[allow(unused_variables)]
 pub fn x00404958(ctx: &mut Context) -> Cont {
     // 00404958 mov cl,[edx]
     ctx.cpu.regs.set_cl(ctx.memory.read::<u8>(ctx.cpu.regs.edx));
@@ -21918,7 +20630,6 @@ pub fn x00404958(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x0040495f), Cont(x00404930))
 }
 
-#[allow(unused_variables)]
 pub fn x0040495f(ctx: &mut Context) -> Cont {
     // 0040495f test cl,cl
     and(
@@ -21930,7 +20641,6 @@ pub fn x0040495f(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00404963), Cont(x004049b4))
 }
 
-#[allow(unused_variables)]
 pub fn x00404963(ctx: &mut Context) -> Cont {
     // 00404963 test edx,3
     and(ctx.cpu.regs.edx, 0x3u32, &mut ctx.cpu.flags);
@@ -21938,7 +20648,6 @@ pub fn x00404963(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x0040496b), Cont(x00404958))
 }
 
-#[allow(unused_variables)]
 pub fn x0040496b(ctx: &mut Context) -> Cont {
     // 0040496b or ebx,eax
     ctx.cpu.regs.ebx = or(ctx.cpu.regs.ebx, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -21982,7 +20691,6 @@ pub fn x0040496b(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x0040499c), Cont(x004049b8))
 }
 
-#[allow(unused_variables)]
 pub fn x00404976(ctx: &mut Context) -> Cont {
     // 00404976 mov ecx,[edx]
     ctx.cpu.regs.ecx = ctx.memory.read::<u32>(ctx.cpu.regs.edx);
@@ -22014,7 +20722,6 @@ pub fn x00404976(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x0040499c), Cont(x004049b8))
 }
 
-#[allow(unused_variables)]
 pub fn x0040499c(ctx: &mut Context) -> Cont {
     // 0040499c and eax,81010100h
     ctx.cpu.regs.eax = and(ctx.cpu.regs.eax, 0x81010100u32, &mut ctx.cpu.flags);
@@ -22022,7 +20729,6 @@ pub fn x0040499c(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004049a3), Cont(x00404976))
 }
 
-#[allow(unused_variables)]
 pub fn x004049a3(ctx: &mut Context) -> Cont {
     // 004049a3 and eax,1010100h
     ctx.cpu.regs.eax = and(ctx.cpu.regs.eax, 0x1010100u32, &mut ctx.cpu.flags);
@@ -22030,7 +20736,6 @@ pub fn x004049a3(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004049aa), Cont(x004049b2))
 }
 
-#[allow(unused_variables)]
 pub fn x004049aa(ctx: &mut Context) -> Cont {
     // 004049aa and esi,80000000h
     ctx.cpu.regs.esi = and(ctx.cpu.regs.esi, 0x80000000u32, &mut ctx.cpu.flags);
@@ -22038,7 +20743,6 @@ pub fn x004049aa(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004049b2), Cont(x00404976))
 }
 
-#[allow(unused_variables)]
 pub fn x004049b2(ctx: &mut Context) -> Cont {
     // 004049b2 pop esi
     let x = pop(ctx);
@@ -22055,7 +20759,6 @@ pub fn x004049b2(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x004049b4(ctx: &mut Context) -> Cont {
     // 004049b4 pop ebx
     let x = pop(ctx);
@@ -22066,7 +20769,6 @@ pub fn x004049b4(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x004049b8(ctx: &mut Context) -> Cont {
     // 004049b8 mov eax,[edx-4]
     ctx.cpu.regs.eax = ctx
@@ -22082,7 +20784,6 @@ pub fn x004049b8(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004049bf), Cont(x004049f5))
 }
 
-#[allow(unused_variables)]
 pub fn x004049bf(ctx: &mut Context) -> Cont {
     // 004049bf test al,al
     and(
@@ -22094,7 +20795,6 @@ pub fn x004049bf(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004049c3), Cont(x004049b2))
 }
 
-#[allow(unused_variables)]
 pub fn x004049c3(ctx: &mut Context) -> Cont {
     // 004049c3 cmp ah,bl
     sub(
@@ -22106,7 +20806,6 @@ pub fn x004049c3(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004049c7), Cont(x004049ee))
 }
 
-#[allow(unused_variables)]
 pub fn x004049c7(ctx: &mut Context) -> Cont {
     // 004049c7 test ah,ah
     and(
@@ -22118,7 +20817,6 @@ pub fn x004049c7(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004049cb), Cont(x004049b2))
 }
 
-#[allow(unused_variables)]
 pub fn x004049cb(ctx: &mut Context) -> Cont {
     // 004049cb shr eax,10h
     ctx.cpu.regs.eax = shr(ctx.cpu.regs.eax, 0x10u8, &mut ctx.cpu.flags);
@@ -22132,7 +20830,6 @@ pub fn x004049cb(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004049d2), Cont(x004049e7))
 }
 
-#[allow(unused_variables)]
 pub fn x004049d2(ctx: &mut Context) -> Cont {
     // 004049d2 test al,al
     and(
@@ -22144,7 +20841,6 @@ pub fn x004049d2(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004049d6), Cont(x004049b2))
 }
 
-#[allow(unused_variables)]
 pub fn x004049d6(ctx: &mut Context) -> Cont {
     // 004049d6 cmp ah,bl
     sub(
@@ -22156,7 +20852,6 @@ pub fn x004049d6(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004049da), Cont(x004049e0))
 }
 
-#[allow(unused_variables)]
 pub fn x004049da(ctx: &mut Context) -> Cont {
     // 004049da test ah,ah
     and(
@@ -22168,13 +20863,11 @@ pub fn x004049da(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004049de), Cont(x004049b2))
 }
 
-#[allow(unused_variables)]
 pub fn x004049de(ctx: &mut Context) -> Cont {
     // 004049de jmp short 00404976h
     Cont(x00404976)
 }
 
-#[allow(unused_variables)]
 pub fn x004049e0(ctx: &mut Context) -> Cont {
     // 004049e0 pop esi
     let x = pop(ctx);
@@ -22191,7 +20884,6 @@ pub fn x004049e0(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x004049e7(ctx: &mut Context) -> Cont {
     // 004049e7 lea eax,[edx-2]
     ctx.cpu.regs.eax = ctx.cpu.regs.edx.wrapping_add(0xfffffffeu32);
@@ -22208,7 +20900,6 @@ pub fn x004049e7(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x004049ee(ctx: &mut Context) -> Cont {
     // 004049ee lea eax,[edx-3]
     ctx.cpu.regs.eax = ctx.cpu.regs.edx.wrapping_add(0xfffffffdu32);
@@ -22225,7 +20916,6 @@ pub fn x004049ee(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x004049f5(ctx: &mut Context) -> Cont {
     // 004049f5 lea eax,[edx-4]
     ctx.cpu.regs.eax = ctx.cpu.regs.edx.wrapping_add(0xfffffffcu32);
@@ -22242,7 +20932,6 @@ pub fn x004049f5(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00404a00(ctx: &mut Context) -> Cont {
     // 00404a00 mov ecx,[esp+8]
     ctx.cpu.regs.ecx = ctx
@@ -22270,7 +20959,6 @@ pub fn x00404a00(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00404a11), Cont(x00404a7a))
 }
 
-#[allow(unused_variables)]
 pub fn x00404a11(ctx: &mut Context) -> Cont {
     // 00404a11 mov dh,[ecx+1]
     ctx.cpu
@@ -22286,7 +20974,6 @@ pub fn x00404a11(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00404a18), Cont(x00404a67))
 }
 
-#[allow(unused_variables)]
 pub fn x00404a18(ctx: &mut Context) -> Cont {
     // 00404a18 mov esi,edi
     ctx.cpu.regs.esi = ctx.cpu.regs.edi;
@@ -22308,7 +20995,6 @@ pub fn x00404a18(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00404a25), Cont(x00404a3a))
 }
 
-#[allow(unused_variables)]
 pub fn x00404a25(ctx: &mut Context) -> Cont {
     // 00404a25 test al,al
     and(
@@ -22320,7 +21006,6 @@ pub fn x00404a25(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00404a29), Cont(x00404a34))
 }
 
-#[allow(unused_variables)]
 pub fn x00404a29(ctx: &mut Context) -> Cont {
     // 00404a29 mov al,[esi]
     ctx.cpu.regs.set_al(ctx.memory.read::<u8>(ctx.cpu.regs.esi));
@@ -22336,7 +21021,6 @@ pub fn x00404a29(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00404a30), Cont(x00404a3a))
 }
 
-#[allow(unused_variables)]
 pub fn x00404a2c(ctx: &mut Context) -> Cont {
     // 00404a2c cmp al,dl
     sub(
@@ -22348,7 +21032,6 @@ pub fn x00404a2c(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00404a30), Cont(x00404a3a))
 }
 
-#[allow(unused_variables)]
 pub fn x00404a30(ctx: &mut Context) -> Cont {
     // 00404a30 test al,al
     and(
@@ -22360,7 +21043,6 @@ pub fn x00404a30(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00404a34), Cont(x00404a29))
 }
 
-#[allow(unused_variables)]
 pub fn x00404a34(ctx: &mut Context) -> Cont {
     // 00404a34 pop esi
     let x = pop(ctx);
@@ -22377,7 +21059,6 @@ pub fn x00404a34(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00404a3a(ctx: &mut Context) -> Cont {
     // 00404a3a mov al,[esi]
     ctx.cpu.regs.set_al(ctx.memory.read::<u8>(ctx.cpu.regs.esi));
@@ -22393,7 +21074,6 @@ pub fn x00404a3a(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00404a41), Cont(x00404a2c))
 }
 
-#[allow(unused_variables)]
 pub fn x00404a41(ctx: &mut Context) -> Cont {
     // 00404a41 lea edi,[esi-1]
     ctx.cpu.regs.edi = ctx.cpu.regs.esi.wrapping_add(0xffffffffu32);
@@ -22411,7 +21091,6 @@ pub fn x00404a41(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00404a4b), Cont(x00404a73))
 }
 
-#[allow(unused_variables)]
 pub fn x00404a44(ctx: &mut Context) -> Cont {
     // 00404a44 mov ah,[ecx+2]
     ctx.cpu
@@ -22427,7 +21106,6 @@ pub fn x00404a44(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00404a4b), Cont(x00404a73))
 }
 
-#[allow(unused_variables)]
 pub fn x00404a4b(ctx: &mut Context) -> Cont {
     // 00404a4b mov al,[esi]
     ctx.cpu.regs.set_al(ctx.memory.read::<u8>(ctx.cpu.regs.esi));
@@ -22443,7 +21121,6 @@ pub fn x00404a4b(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00404a54), Cont(x00404a18))
 }
 
-#[allow(unused_variables)]
 pub fn x00404a54(ctx: &mut Context) -> Cont {
     // 00404a54 mov al,[ecx+3]
     ctx.cpu
@@ -22459,7 +21136,6 @@ pub fn x00404a54(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00404a5b), Cont(x00404a73))
 }
 
-#[allow(unused_variables)]
 pub fn x00404a5b(ctx: &mut Context) -> Cont {
     // 00404a5b mov ah,[esi-1]
     ctx.cpu.regs.set_ah(
@@ -22478,13 +21154,11 @@ pub fn x00404a5b(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00404a65), Cont(x00404a44))
 }
 
-#[allow(unused_variables)]
 pub fn x00404a65(ctx: &mut Context) -> Cont {
     // 00404a65 jmp short 00404A18h
     Cont(x00404a18)
 }
 
-#[allow(unused_variables)]
 pub fn x00404a67(ctx: &mut Context) -> Cont {
     // 00404a67 xor eax,eax
     ctx.cpu.regs.eax = xor(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -22503,7 +21177,6 @@ pub fn x00404a67(ctx: &mut Context) -> Cont {
     Cont(x00404946)
 }
 
-#[allow(unused_variables)]
 pub fn x00404a73(ctx: &mut Context) -> Cont {
     // 00404a73 lea eax,[edi-1]
     ctx.cpu.regs.eax = ctx.cpu.regs.edi.wrapping_add(0xffffffffu32);
@@ -22520,7 +21193,6 @@ pub fn x00404a73(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00404a7a(ctx: &mut Context) -> Cont {
     // 00404a7a mov eax,edi
     ctx.cpu.regs.eax = ctx.cpu.regs.edi;
@@ -22537,7 +21209,6 @@ pub fn x00404a7a(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00404a80(ctx: &mut Context) -> Cont {
     // 00404a80 push ebp
     push(ctx, ctx.cpu.regs.ebp);
@@ -22557,7 +21228,6 @@ pub fn x00404a80(ctx: &mut Context) -> Cont {
     jecxz(ctx, Cont(x00404a8b), Cont(x00404ab1))
 }
 
-#[allow(unused_variables)]
 pub fn x00404a8b(ctx: &mut Context) -> Cont {
     // 00404a8b mov ebx,ecx
     ctx.cpu.regs.ebx = ctx.cpu.regs.ecx;
@@ -22601,13 +21271,11 @@ pub fn x00404a8b(ctx: &mut Context) -> Cont {
     ja(ctx, Cont(x00404aab), Cont(x00404aaf))
 }
 
-#[allow(unused_variables)]
 pub fn x00404aab(ctx: &mut Context) -> Cont {
     // 00404aab je short 00404AB1h
     je(ctx, Cont(x00404aad), Cont(x00404ab1))
 }
 
-#[allow(unused_variables)]
 pub fn x00404aad(ctx: &mut Context) -> Cont {
     // 00404aad dec ecx
     ctx.cpu.regs.ecx = dec(ctx.cpu.regs.ecx, &mut ctx.cpu.flags);
@@ -22632,7 +21300,6 @@ pub fn x00404aad(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00404aaf(ctx: &mut Context) -> Cont {
     // 00404aaf not ecx
     not();
@@ -22653,7 +21320,6 @@ pub fn x00404aaf(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00404ab1(ctx: &mut Context) -> Cont {
     // 00404ab1 mov eax,ecx
     ctx.cpu.regs.eax = ctx.cpu.regs.ecx;
@@ -22672,7 +21338,6 @@ pub fn x00404ab1(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00404ac0(ctx: &mut Context) -> Cont {
     // 00404ac0 push ecx
     push(ctx, ctx.cpu.regs.ecx);
@@ -22684,7 +21349,6 @@ pub fn x00404ac0(ctx: &mut Context) -> Cont {
     jb(ctx, Cont(x00404acc), Cont(x00404ae0))
 }
 
-#[allow(unused_variables)]
 pub fn x00404acc(ctx: &mut Context) -> Cont {
     // 00404acc sub ecx,1000h
     ctx.cpu.regs.ecx = sub(ctx.cpu.regs.ecx, 0x1000u32, &mut ctx.cpu.flags);
@@ -22702,7 +21366,6 @@ pub fn x00404acc(ctx: &mut Context) -> Cont {
     jae(ctx, Cont(x00404ae0), Cont(x00404acc))
 }
 
-#[allow(unused_variables)]
 pub fn x00404ae0(ctx: &mut Context) -> Cont {
     // 00404ae0 sub ecx,eax
     ctx.cpu.regs.ecx = sub(ctx.cpu.regs.ecx, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -22728,7 +21391,6 @@ pub fn x00404ae0(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00404aef(ctx: &mut Context) -> Cont {
     // 00404aef push ebx
     push(ctx, ctx.cpu.regs.ebx);
@@ -22748,7 +21410,6 @@ pub fn x00404aef(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00404afc), Cont(x00404b3e))
 }
 
-#[allow(unused_variables)]
 pub fn x00404afc(ctx: &mut Context) -> Cont {
     // 00404afc push 406484h
     push(ctx, 0x406484u32);
@@ -22757,7 +21418,6 @@ pub fn x00404afc(ctx: &mut Context) -> Cont {
     call(ctx, 0x404b07, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00404b07(ctx: &mut Context) -> Cont {
     // 00404b07 mov edi,eax
     ctx.cpu.regs.edi = ctx.cpu.regs.eax;
@@ -22767,7 +21427,6 @@ pub fn x00404b07(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00404b0d), Cont(x00404b74))
 }
 
-#[allow(unused_variables)]
 pub fn x00404b0d(ctx: &mut Context) -> Cont {
     // 00404b0d mov esi,ds:[40604Ch]
     ctx.cpu.regs.esi = ctx.memory.read::<u32>(0x40604cu32);
@@ -22780,7 +21439,6 @@ pub fn x00404b0d(ctx: &mut Context) -> Cont {
     call(ctx, 0x404b1b, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00404b1b(ctx: &mut Context) -> Cont {
     // 00404b1b test eax,eax
     and(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -22790,7 +21448,6 @@ pub fn x00404b1b(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00404b24), Cont(x00404b74))
 }
 
-#[allow(unused_variables)]
 pub fn x00404b24(ctx: &mut Context) -> Cont {
     // 00404b24 push 406468h
     push(ctx, 0x406468u32);
@@ -22801,7 +21458,6 @@ pub fn x00404b24(ctx: &mut Context) -> Cont {
     call(ctx, 0x404b2c, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00404b2c(ctx: &mut Context) -> Cont {
     // 00404b2c push 406454h
     push(ctx, 0x406454u32);
@@ -22814,7 +21470,6 @@ pub fn x00404b2c(ctx: &mut Context) -> Cont {
     call(ctx, 0x404b39, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00404b39(ctx: &mut Context) -> Cont {
     // 00404b39 mov ds:[40971Ch],eax
     ctx.memory.write::<u32>(0x40971cu32, ctx.cpu.regs.eax);
@@ -22826,7 +21481,6 @@ pub fn x00404b39(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00404b47), Cont(x00404b5d))
 }
 
-#[allow(unused_variables)]
 pub fn x00404b3e(ctx: &mut Context) -> Cont {
     // 00404b3e mov eax,ds:[409718h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x409718u32);
@@ -22836,14 +21490,12 @@ pub fn x00404b3e(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00404b47), Cont(x00404b5d))
 }
 
-#[allow(unused_variables)]
 pub fn x00404b47(ctx: &mut Context) -> Cont {
     // 00404b47 call eax
     let dst = indirect(ctx, ctx.cpu.regs.eax);
     call(ctx, 0x404b49, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00404b49(ctx: &mut Context) -> Cont {
     // 00404b49 mov ebx,eax
     ctx.cpu.regs.ebx = ctx.cpu.regs.eax;
@@ -22853,7 +21505,6 @@ pub fn x00404b49(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00404b4f), Cont(x00404b5d))
 }
 
-#[allow(unused_variables)]
 pub fn x00404b4f(ctx: &mut Context) -> Cont {
     // 00404b4f mov eax,ds:[40971Ch]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x40971cu32);
@@ -22863,7 +21514,6 @@ pub fn x00404b4f(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00404b58), Cont(x00404b5d))
 }
 
-#[allow(unused_variables)]
 pub fn x00404b58(ctx: &mut Context) -> Cont {
     // 00404b58 push ebx
     push(ctx, ctx.cpu.regs.ebx);
@@ -22872,7 +21522,6 @@ pub fn x00404b58(ctx: &mut Context) -> Cont {
     call(ctx, 0x404b5b, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00404b5b(ctx: &mut Context) -> Cont {
     // 00404b5b mov ebx,eax
     ctx.cpu.regs.ebx = ctx.cpu.regs.eax;
@@ -22901,7 +21550,6 @@ pub fn x00404b5b(ctx: &mut Context) -> Cont {
     call(ctx, 0x404b70, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00404b5d(ctx: &mut Context) -> Cont {
     // 00404b5d push dword ptr [esp+18h]
     push(
@@ -22928,7 +21576,6 @@ pub fn x00404b5d(ctx: &mut Context) -> Cont {
     call(ctx, 0x404b70, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00404b70(ctx: &mut Context) -> Cont {
     // 00404b70 pop edi
     let x = pop(ctx);
@@ -22943,7 +21590,6 @@ pub fn x00404b70(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00404b74(ctx: &mut Context) -> Cont {
     // 00404b74 xor eax,eax
     ctx.cpu.regs.eax = xor(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -22951,7 +21597,6 @@ pub fn x00404b74(ctx: &mut Context) -> Cont {
     Cont(x00404b70)
 }
 
-#[allow(unused_variables)]
 pub fn x00404b80(ctx: &mut Context) -> Cont {
     // 00404b80 mov ecx,[esp+0Ch]
     ctx.cpu.regs.ecx = ctx
@@ -22965,7 +21610,6 @@ pub fn x00404b80(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00404b89), Cont(x00404c03))
 }
 
-#[allow(unused_variables)]
 pub fn x00404b89(ctx: &mut Context) -> Cont {
     // 00404b89 push esi
     push(ctx, ctx.cpu.regs.esi);
@@ -22987,7 +21631,6 @@ pub fn x00404b89(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00404b9d), Cont(x00404ba4))
 }
 
-#[allow(unused_variables)]
 pub fn x00404b9d(ctx: &mut Context) -> Cont {
     // 00404b9d shr ecx,2
     ctx.cpu.regs.ecx = shr(ctx.cpu.regs.ecx, 0x2u8, &mut ctx.cpu.flags);
@@ -22995,13 +21638,11 @@ pub fn x00404b9d(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00404ba2), Cont(x00404c11))
 }
 
-#[allow(unused_variables)]
 pub fn x00404ba2(ctx: &mut Context) -> Cont {
     // 00404ba2 jmp short 00404BC5h
     Cont(x00404bc5)
 }
 
-#[allow(unused_variables)]
 pub fn x00404ba4(ctx: &mut Context) -> Cont {
     // 00404ba4 mov al,[esi]
     ctx.cpu.regs.set_al(ctx.memory.read::<u8>(ctx.cpu.regs.esi));
@@ -23018,7 +21659,6 @@ pub fn x00404ba4(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00404bad), Cont(x00404bd2))
 }
 
-#[allow(unused_variables)]
 pub fn x00404bad(ctx: &mut Context) -> Cont {
     // 00404bad test al,al
     and(
@@ -23030,7 +21670,6 @@ pub fn x00404bad(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00404bb1), Cont(x00404bda))
 }
 
-#[allow(unused_variables)]
 pub fn x00404bb1(ctx: &mut Context) -> Cont {
     // 00404bb1 test esi,3
     and(ctx.cpu.regs.esi, 0x3u32, &mut ctx.cpu.flags);
@@ -23038,7 +21677,6 @@ pub fn x00404bb1(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00404bb9), Cont(x00404ba4))
 }
 
-#[allow(unused_variables)]
 pub fn x00404bb9(ctx: &mut Context) -> Cont {
     // 00404bb9 mov ebx,ecx
     ctx.cpu.regs.ebx = ctx.cpu.regs.ecx;
@@ -23048,7 +21686,6 @@ pub fn x00404bb9(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00404bc0), Cont(x00404c11))
 }
 
-#[allow(unused_variables)]
 pub fn x00404bc0(ctx: &mut Context) -> Cont {
     // 00404bc0 and ebx,3
     ctx.cpu.regs.ebx = and(ctx.cpu.regs.ebx, 0x3u32, &mut ctx.cpu.flags);
@@ -23056,7 +21693,6 @@ pub fn x00404bc0(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00404bc5), Cont(x00404bd2))
 }
 
-#[allow(unused_variables)]
 pub fn x00404bc5(ctx: &mut Context) -> Cont {
     // 00404bc5 mov al,[esi]
     ctx.cpu.regs.set_al(ctx.memory.read::<u8>(ctx.cpu.regs.esi));
@@ -23077,7 +21713,6 @@ pub fn x00404bc5(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00404bcf), Cont(x00404bfe))
 }
 
-#[allow(unused_variables)]
 pub fn x00404bcf(ctx: &mut Context) -> Cont {
     // 00404bcf dec ebx
     ctx.cpu.regs.ebx = dec(ctx.cpu.regs.ebx, &mut ctx.cpu.flags);
@@ -23085,7 +21720,6 @@ pub fn x00404bcf(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00404bd2), Cont(x00404bc5))
 }
 
-#[allow(unused_variables)]
 pub fn x00404bd2(ctx: &mut Context) -> Cont {
     // 00404bd2 mov eax,[esp+10h]
     ctx.cpu.regs.eax = ctx
@@ -23104,7 +21738,6 @@ pub fn x00404bd2(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00404bda(ctx: &mut Context) -> Cont {
     // 00404bda test edi,3
     and(ctx.cpu.regs.edi, 0x3u32, &mut ctx.cpu.flags);
@@ -23112,7 +21745,6 @@ pub fn x00404bda(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00404be2), Cont(x00404bf4))
 }
 
-#[allow(unused_variables)]
 pub fn x00404be2(ctx: &mut Context) -> Cont {
     // 00404be2 mov [edi],al
     ctx.memory
@@ -23125,7 +21757,6 @@ pub fn x00404be2(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00404bec), Cont(x00404c76))
 }
 
-#[allow(unused_variables)]
 pub fn x00404bec(ctx: &mut Context) -> Cont {
     // 00404bec test edi,3
     and(ctx.cpu.regs.edi, 0x3u32, &mut ctx.cpu.flags);
@@ -23133,7 +21764,6 @@ pub fn x00404bec(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00404bf4), Cont(x00404be2))
 }
 
-#[allow(unused_variables)]
 pub fn x00404bf4(ctx: &mut Context) -> Cont {
     // 00404bf4 mov ebx,ecx
     ctx.cpu.regs.ebx = ctx.cpu.regs.ecx;
@@ -23143,7 +21773,6 @@ pub fn x00404bf4(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00404bfb), Cont(x00404c67))
 }
 
-#[allow(unused_variables)]
 pub fn x00404bfb(ctx: &mut Context) -> Cont {
     // 00404bfb mov [edi],al
     ctx.memory
@@ -23156,7 +21785,6 @@ pub fn x00404bfb(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00404c01), Cont(x00404bfb))
 }
 
-#[allow(unused_variables)]
 pub fn x00404bfe(ctx: &mut Context) -> Cont {
     // 00404bfe dec ebx
     ctx.cpu.regs.ebx = dec(ctx.cpu.regs.ebx, &mut ctx.cpu.flags);
@@ -23164,7 +21792,6 @@ pub fn x00404bfe(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00404c01), Cont(x00404bfb))
 }
 
-#[allow(unused_variables)]
 pub fn x00404c01(ctx: &mut Context) -> Cont {
     // 00404c01 pop ebx
     let x = pop(ctx);
@@ -23183,7 +21810,6 @@ pub fn x00404c01(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00404c03(ctx: &mut Context) -> Cont {
     // 00404c03 mov eax,[esp+8]
     ctx.cpu.regs.eax = ctx
@@ -23196,7 +21822,6 @@ pub fn x00404c03(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00404c09(ctx: &mut Context) -> Cont {
     // 00404c09 mov [edi],edx
     ctx.memory.write::<u32>(ctx.cpu.regs.edi, ctx.cpu.regs.edx);
@@ -23208,7 +21833,6 @@ pub fn x00404c09(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00404c11), Cont(x00404bc0))
 }
 
-#[allow(unused_variables)]
 pub fn x00404c11(ctx: &mut Context) -> Cont {
     // 00404c11 mov edx,7EFEFEFFh
     ctx.cpu.regs.edx = 0x7efefeffu32;
@@ -23230,7 +21854,6 @@ pub fn x00404c11(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00404c2b), Cont(x00404c09))
 }
 
-#[allow(unused_variables)]
 pub fn x00404c2b(ctx: &mut Context) -> Cont {
     // 00404c2b test dl,dl
     and(
@@ -23242,7 +21865,6 @@ pub fn x00404c2b(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00404c2f), Cont(x00404c5b))
 }
 
-#[allow(unused_variables)]
 pub fn x00404c2f(ctx: &mut Context) -> Cont {
     // 00404c2f test dh,dh
     and(
@@ -23254,7 +21876,6 @@ pub fn x00404c2f(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00404c33), Cont(x00404c51))
 }
 
-#[allow(unused_variables)]
 pub fn x00404c33(ctx: &mut Context) -> Cont {
     // 00404c33 test edx,0FF0000h
     and(ctx.cpu.regs.edx, 0xff0000u32, &mut ctx.cpu.flags);
@@ -23262,7 +21883,6 @@ pub fn x00404c33(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00404c3b), Cont(x00404c47))
 }
 
-#[allow(unused_variables)]
 pub fn x00404c3b(ctx: &mut Context) -> Cont {
     // 00404c3b test edx,0FF000000h
     and(ctx.cpu.regs.edx, 0xff000000u32, &mut ctx.cpu.flags);
@@ -23270,7 +21890,6 @@ pub fn x00404c3b(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00404c43), Cont(x00404c09))
 }
 
-#[allow(unused_variables)]
 pub fn x00404c43(ctx: &mut Context) -> Cont {
     // 00404c43 mov [edi],edx
     ctx.memory.write::<u32>(ctx.cpu.regs.edi, ctx.cpu.regs.edx);
@@ -23278,7 +21897,6 @@ pub fn x00404c43(ctx: &mut Context) -> Cont {
     Cont(x00404c5f)
 }
 
-#[allow(unused_variables)]
 pub fn x00404c47(ctx: &mut Context) -> Cont {
     // 00404c47 and edx,0FFFFh
     ctx.cpu.regs.edx = and(ctx.cpu.regs.edx, 0xffffu32, &mut ctx.cpu.flags);
@@ -23288,7 +21906,6 @@ pub fn x00404c47(ctx: &mut Context) -> Cont {
     Cont(x00404c5f)
 }
 
-#[allow(unused_variables)]
 pub fn x00404c51(ctx: &mut Context) -> Cont {
     // 00404c51 and edx,0FFh
     ctx.cpu.regs.edx = and(ctx.cpu.regs.edx, 0xffu32, &mut ctx.cpu.flags);
@@ -23298,7 +21915,6 @@ pub fn x00404c51(ctx: &mut Context) -> Cont {
     Cont(x00404c5f)
 }
 
-#[allow(unused_variables)]
 pub fn x00404c5b(ctx: &mut Context) -> Cont {
     // 00404c5b xor edx,edx
     ctx.cpu.regs.edx = xor(ctx.cpu.regs.edx, ctx.cpu.regs.edx, &mut ctx.cpu.flags);
@@ -23314,7 +21930,6 @@ pub fn x00404c5b(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00404c67), Cont(x00404c71))
 }
 
-#[allow(unused_variables)]
 pub fn x00404c5f(ctx: &mut Context) -> Cont {
     // 00404c5f add edi,4
     ctx.cpu.regs.edi = add(ctx.cpu.regs.edi, 0x4u32, &mut ctx.cpu.flags);
@@ -23326,7 +21941,6 @@ pub fn x00404c5f(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00404c67), Cont(x00404c71))
 }
 
-#[allow(unused_variables)]
 pub fn x00404c67(ctx: &mut Context) -> Cont {
     // 00404c67 xor eax,eax
     ctx.cpu.regs.eax = xor(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -23340,7 +21954,6 @@ pub fn x00404c67(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00404c71), Cont(x00404c69))
 }
 
-#[allow(unused_variables)]
 pub fn x00404c69(ctx: &mut Context) -> Cont {
     // 00404c69 mov [edi],eax
     ctx.memory.write::<u32>(ctx.cpu.regs.edi, ctx.cpu.regs.eax);
@@ -23352,7 +21965,6 @@ pub fn x00404c69(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00404c71), Cont(x00404c69))
 }
 
-#[allow(unused_variables)]
 pub fn x00404c71(ctx: &mut Context) -> Cont {
     // 00404c71 and ebx,3
     ctx.cpu.regs.ebx = and(ctx.cpu.regs.ebx, 0x3u32, &mut ctx.cpu.flags);
@@ -23360,7 +21972,6 @@ pub fn x00404c71(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00404c76), Cont(x00404bfb))
 }
 
-#[allow(unused_variables)]
 pub fn x00404c76(ctx: &mut Context) -> Cont {
     // 00404c76 mov eax,[esp+10h]
     ctx.cpu.regs.eax = ctx
@@ -23379,7 +21990,6 @@ pub fn x00404c76(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00404c80(ctx: &mut Context) -> Cont {
     // 00404c80 push ebp
     push(ctx, ctx.cpu.regs.ebp);
@@ -23413,7 +22023,6 @@ pub fn x00404c80(ctx: &mut Context) -> Cont {
     jbe(ctx, Cont(x00404c98), Cont(x00404ca0))
 }
 
-#[allow(unused_variables)]
 pub fn x00404c98(ctx: &mut Context) -> Cont {
     // 00404c98 cmp edi,eax
     sub(ctx.cpu.regs.edi, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -23421,7 +22030,6 @@ pub fn x00404c98(ctx: &mut Context) -> Cont {
     jb(ctx, Cont(x00404ca0), Cont(x00404e18))
 }
 
-#[allow(unused_variables)]
 pub fn x00404ca0(ctx: &mut Context) -> Cont {
     // 00404ca0 test edi,3
     and(ctx.cpu.regs.edi, 0x3u32, &mut ctx.cpu.flags);
@@ -23429,7 +22037,6 @@ pub fn x00404ca0(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00404ca8), Cont(x00404cbc))
 }
 
-#[allow(unused_variables)]
 pub fn x00404ca8(ctx: &mut Context) -> Cont {
     // 00404ca8 shr ecx,2
     ctx.cpu.regs.ecx = shr(ctx.cpu.regs.ecx, 0x2u8, &mut ctx.cpu.flags);
@@ -23441,7 +22048,6 @@ pub fn x00404ca8(ctx: &mut Context) -> Cont {
     jb(ctx, Cont(x00404cb3), Cont(x00404cdc))
 }
 
-#[allow(unused_variables)]
 pub fn x00404cb3(ctx: &mut Context) -> Cont {
     // 00404cb3 rep movsd
     rep(ctx, Rep::REP, movsd);
@@ -23453,7 +22059,6 @@ pub fn x00404cb3(ctx: &mut Context) -> Cont {
     )
 }
 
-#[allow(unused_variables)]
 pub fn x00404cbc(ctx: &mut Context) -> Cont {
     // 00404cbc mov eax,edi
     ctx.cpu.regs.eax = ctx.cpu.regs.edi;
@@ -23465,7 +22070,6 @@ pub fn x00404cbc(ctx: &mut Context) -> Cont {
     jb(ctx, Cont(x00404cc8), Cont(x00404cd4))
 }
 
-#[allow(unused_variables)]
 pub fn x00404cc8(ctx: &mut Context) -> Cont {
     // 00404cc8 and eax,3
     ctx.cpu.regs.eax = and(ctx.cpu.regs.eax, 0x3u32, &mut ctx.cpu.flags);
@@ -23479,7 +22083,6 @@ pub fn x00404cc8(ctx: &mut Context) -> Cont {
     )
 }
 
-#[allow(unused_variables)]
 pub fn x00404cd4(ctx: &mut Context) -> Cont {
     // 00404cd4 jmp dword ptr [ecx*4+404DD8h]
     indirect(
@@ -23489,7 +22092,6 @@ pub fn x00404cd4(ctx: &mut Context) -> Cont {
     )
 }
 
-#[allow(unused_variables)]
 pub fn x00404cdc(ctx: &mut Context) -> Cont {
     // 00404cdc jmp dword ptr [ecx*4+404D5Ch]
     indirect(
@@ -23499,7 +22101,6 @@ pub fn x00404cdc(ctx: &mut Context) -> Cont {
     )
 }
 
-#[allow(unused_variables)]
 pub fn x00404e18(ctx: &mut Context) -> Cont {
     // 00404e18 lea esi,[ecx+esi-4]
     ctx.cpu.regs.esi = ctx
@@ -23521,7 +22122,6 @@ pub fn x00404e18(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00404e28), Cont(x00404e4c))
 }
 
-#[allow(unused_variables)]
 pub fn x00404e28(ctx: &mut Context) -> Cont {
     // 00404e28 shr ecx,2
     ctx.cpu.regs.ecx = shr(ctx.cpu.regs.ecx, 0x2u8, &mut ctx.cpu.flags);
@@ -23533,7 +22133,6 @@ pub fn x00404e28(ctx: &mut Context) -> Cont {
     jb(ctx, Cont(x00404e33), Cont(x00404e40))
 }
 
-#[allow(unused_variables)]
 pub fn x00404e33(ctx: &mut Context) -> Cont {
     // 00404e33 std
     std(ctx);
@@ -23549,7 +22148,6 @@ pub fn x00404e33(ctx: &mut Context) -> Cont {
     )
 }
 
-#[allow(unused_variables)]
 pub fn x00404e40(ctx: &mut Context) -> Cont {
     // 00404e40 neg ecx
     ctx.cpu.regs.ecx = neg(ctx.cpu.regs.ecx, &mut ctx.cpu.flags);
@@ -23561,7 +22159,6 @@ pub fn x00404e40(ctx: &mut Context) -> Cont {
     )
 }
 
-#[allow(unused_variables)]
 pub fn x00404e4c(ctx: &mut Context) -> Cont {
     // 00404e4c mov eax,edi
     ctx.cpu.regs.eax = ctx.cpu.regs.edi;
@@ -23573,7 +22170,6 @@ pub fn x00404e4c(ctx: &mut Context) -> Cont {
     jb(ctx, Cont(x00404e58), Cont(x00404e64))
 }
 
-#[allow(unused_variables)]
 pub fn x00404e58(ctx: &mut Context) -> Cont {
     // 00404e58 and eax,3
     ctx.cpu.regs.eax = and(ctx.cpu.regs.eax, 0x3u32, &mut ctx.cpu.flags);
@@ -23587,7 +22183,6 @@ pub fn x00404e58(ctx: &mut Context) -> Cont {
     )
 }
 
-#[allow(unused_variables)]
 pub fn x00404e64(ctx: &mut Context) -> Cont {
     // 00404e64 jmp dword ptr [ecx*4+404F60h]
     indirect(
@@ -23597,7 +22192,6 @@ pub fn x00404e64(ctx: &mut Context) -> Cont {
     )
 }
 
-#[allow(unused_variables)]
 pub fn x00404fc0(ctx: &mut Context) -> Cont {
     // 00404fc0 mov edx,[esp+0Ch]
     ctx.cpu.regs.edx = ctx
@@ -23613,7 +22207,6 @@ pub fn x00404fc0(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00404fcc), Cont(x00405013))
 }
 
-#[allow(unused_variables)]
 pub fn x00404fcc(ctx: &mut Context) -> Cont {
     // 00404fcc xor eax,eax
     ctx.cpu.regs.eax = xor(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -23631,7 +22224,6 @@ pub fn x00404fcc(ctx: &mut Context) -> Cont {
     jb(ctx, Cont(x00404fda), Cont(x00405007))
 }
 
-#[allow(unused_variables)]
 pub fn x00404fda(ctx: &mut Context) -> Cont {
     // 00404fda neg ecx
     ctx.cpu.regs.ecx = neg(ctx.cpu.regs.ecx, &mut ctx.cpu.flags);
@@ -23641,7 +22233,6 @@ pub fn x00404fda(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00404fe1), Cont(x00404fe9))
 }
 
-#[allow(unused_variables)]
 pub fn x00404fe1(ctx: &mut Context) -> Cont {
     // 00404fe1 sub edx,ecx
     ctx.cpu.regs.edx = sub(ctx.cpu.regs.edx, ctx.cpu.regs.ecx, &mut ctx.cpu.flags);
@@ -23656,7 +22247,6 @@ pub fn x00404fe1(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00404fe9), Cont(x00404fe3))
 }
 
-#[allow(unused_variables)]
 pub fn x00404fe3(ctx: &mut Context) -> Cont {
     // 00404fe3 mov [edi],al
     ctx.memory
@@ -23669,7 +22259,6 @@ pub fn x00404fe3(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00404fe9), Cont(x00404fe3))
 }
 
-#[allow(unused_variables)]
 pub fn x00404fe9(ctx: &mut Context) -> Cont {
     // 00404fe9 mov ecx,eax
     ctx.cpu.regs.ecx = ctx.cpu.regs.eax;
@@ -23693,7 +22282,6 @@ pub fn x00404fe9(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00405001), Cont(x00405007))
 }
 
-#[allow(unused_variables)]
 pub fn x00405001(ctx: &mut Context) -> Cont {
     // 00405001 rep stosd
     rep(ctx, Rep::REP, stosd);
@@ -23703,7 +22291,6 @@ pub fn x00405001(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00405007), Cont(x0040500d))
 }
 
-#[allow(unused_variables)]
 pub fn x00405007(ctx: &mut Context) -> Cont {
     // 00405007 mov [edi],al
     ctx.memory
@@ -23716,7 +22303,6 @@ pub fn x00405007(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x0040500d), Cont(x00405007))
 }
 
-#[allow(unused_variables)]
 pub fn x0040500d(ctx: &mut Context) -> Cont {
     // 0040500d mov eax,[esp+8]
     ctx.cpu.regs.eax = ctx
@@ -23729,7 +22315,6 @@ pub fn x0040500d(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00405013(ctx: &mut Context) -> Cont {
     // 00405013 mov eax,[esp+4]
     ctx.cpu.regs.eax = ctx
@@ -23739,7 +22324,6 @@ pub fn x00405013(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00405018(ctx: &mut Context) -> Cont {
     // 00405018 push ebp
     push(ctx, ctx.cpu.regs.ebp);
@@ -23783,7 +22367,6 @@ pub fn x00405018(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00405048), Cont(x0040508e))
 }
 
-#[allow(unused_variables)]
 pub fn x00405048(ctx: &mut Context) -> Cont {
     // 00405048 push edi
     push(ctx, ctx.cpu.regs.edi);
@@ -23809,7 +22392,6 @@ pub fn x00405048(ctx: &mut Context) -> Cont {
     call(ctx, 0x405060, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00405060(ctx: &mut Context) -> Cont {
     // 00405060 test eax,eax
     and(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -23817,7 +22399,6 @@ pub fn x00405060(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00405064), Cont(x0040506c))
 }
 
-#[allow(unused_variables)]
 pub fn x00405064(ctx: &mut Context) -> Cont {
     // 00405064 mov ds:[409740h],ebx
     ctx.memory.write::<u32>(0x409740u32, ctx.cpu.regs.ebx);
@@ -23825,7 +22406,6 @@ pub fn x00405064(ctx: &mut Context) -> Cont {
     Cont(x0040508e)
 }
 
-#[allow(unused_variables)]
 pub fn x0040506c(ctx: &mut Context) -> Cont {
     // 0040506c push edi
     push(ctx, ctx.cpu.regs.edi);
@@ -23844,7 +22424,6 @@ pub fn x0040506c(ctx: &mut Context) -> Cont {
     call(ctx, 0x40507c, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x0040507c(ctx: &mut Context) -> Cont {
     // 0040507c test eax,eax
     and(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -23852,7 +22431,6 @@ pub fn x0040507c(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00405084), Cont(x004051a6))
 }
 
-#[allow(unused_variables)]
 pub fn x00405084(ctx: &mut Context) -> Cont {
     // 00405084 mov dword ptr ds:[409740h],2
     ctx.memory.write::<u32>(0x409740u32, 0x2u32);
@@ -23867,7 +22445,6 @@ pub fn x00405084(ctx: &mut Context) -> Cont {
     jle(ctx, Cont(x00405093), Cont(x004050a3))
 }
 
-#[allow(unused_variables)]
 pub fn x0040508e(ctx: &mut Context) -> Cont {
     // 0040508e cmp [ebp+14h],edi
     sub(
@@ -23880,7 +22457,6 @@ pub fn x0040508e(ctx: &mut Context) -> Cont {
     jle(ctx, Cont(x00405093), Cont(x004050a3))
 }
 
-#[allow(unused_variables)]
 pub fn x00405093(ctx: &mut Context) -> Cont {
     // 00405093 push dword ptr [ebp+14h]
     push(
@@ -23899,7 +22475,6 @@ pub fn x00405093(ctx: &mut Context) -> Cont {
     call(ctx, 0x40509e, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x0040509e(ctx: &mut Context) -> Cont {
     // 0040509e pop ecx
     let x = pop(ctx);
@@ -23918,7 +22493,6 @@ pub fn x0040509e(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004050ad), Cont(x004050ca))
 }
 
-#[allow(unused_variables)]
 pub fn x004050a3(ctx: &mut Context) -> Cont {
     // 004050a3 mov eax,ds:[409740h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x409740u32);
@@ -23928,7 +22502,6 @@ pub fn x004050a3(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004050ad), Cont(x004050ca))
 }
 
-#[allow(unused_variables)]
 pub fn x004050ad(ctx: &mut Context) -> Cont {
     // 004050ad push dword ptr [ebp+1Ch]
     push(
@@ -23971,13 +22544,11 @@ pub fn x004050ad(ctx: &mut Context) -> Cont {
     call(ctx, 0x4050c5, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004050c5(ctx: &mut Context) -> Cont {
     // 004050c5 jmp near ptr 004051A8h
     Cont(x004051a8)
 }
 
-#[allow(unused_variables)]
 pub fn x004050ca(ctx: &mut Context) -> Cont {
     // 004050ca cmp eax,1
     sub(ctx.cpu.regs.eax, 0x1u32, &mut ctx.cpu.flags);
@@ -23985,7 +22556,6 @@ pub fn x004050ca(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004050d3), Cont(x004051a6))
 }
 
-#[allow(unused_variables)]
 pub fn x004050d3(ctx: &mut Context) -> Cont {
     // 004050d3 cmp [ebp+20h],edi
     sub(
@@ -23998,7 +22568,6 @@ pub fn x004050d3(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004050d8), Cont(x004050e0))
 }
 
-#[allow(unused_variables)]
 pub fn x004050d8(ctx: &mut Context) -> Cont {
     // 004050d8 mov eax,ds:[409738h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x409738u32);
@@ -24046,7 +22615,6 @@ pub fn x004050d8(ctx: &mut Context) -> Cont {
     call(ctx, 0x4050fd, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004050e0(ctx: &mut Context) -> Cont {
     // 004050e0 push edi
     push(ctx, ctx.cpu.regs.edi);
@@ -24089,7 +22657,6 @@ pub fn x004050e0(ctx: &mut Context) -> Cont {
     call(ctx, 0x4050fd, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004050fd(ctx: &mut Context) -> Cont {
     // 004050fd mov ebx,eax
     ctx.cpu.regs.ebx = ctx.cpu.regs.eax;
@@ -24104,7 +22671,6 @@ pub fn x004050fd(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x0040510a), Cont(x004051a6))
 }
 
-#[allow(unused_variables)]
 pub fn x0040510a(ctx: &mut Context) -> Cont {
     // 0040510a mov [ebp-4],edi
     ctx.memory.write::<u32>(
@@ -24124,7 +22690,6 @@ pub fn x0040510a(ctx: &mut Context) -> Cont {
     call(ctx, 0x40511a, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x0040511a(ctx: &mut Context) -> Cont {
     // 0040511a mov [ebp-18h],esp
     ctx.memory.write::<u32>(
@@ -24152,7 +22717,6 @@ pub fn x0040511a(ctx: &mut Context) -> Cont {
     Cont(x0040513b)
 }
 
-#[allow(unused_variables)]
 pub fn x00405128(ctx: &mut Context) -> Cont {
     // 00405128 push 1
     push(ctx, 0x1u32);
@@ -24163,7 +22727,6 @@ pub fn x00405128(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x0040512c(ctx: &mut Context) -> Cont {
     // 0040512c mov esp,[ebp-18h]
     ctx.cpu.regs.esp = ctx
@@ -24201,7 +22764,6 @@ pub fn x0040512c(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00405140), Cont(x004051a6))
 }
 
-#[allow(unused_variables)]
 pub fn x0040513b(ctx: &mut Context) -> Cont {
     // 0040513b cmp [ebp-24h],edi
     sub(
@@ -24214,7 +22776,6 @@ pub fn x0040513b(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00405140), Cont(x004051a6))
 }
 
-#[allow(unused_variables)]
 pub fn x00405140(ctx: &mut Context) -> Cont {
     // 00405140 push ebx
     push(ctx, ctx.cpu.regs.ebx);
@@ -24249,7 +22810,6 @@ pub fn x00405140(ctx: &mut Context) -> Cont {
     call(ctx, 0x405155, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00405155(ctx: &mut Context) -> Cont {
     // 00405155 test eax,eax
     and(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -24257,7 +22817,6 @@ pub fn x00405155(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00405159), Cont(x004051a6))
 }
 
-#[allow(unused_variables)]
 pub fn x00405159(ctx: &mut Context) -> Cont {
     // 00405159 push edi
     push(ctx, ctx.cpu.regs.edi);
@@ -24288,7 +22847,6 @@ pub fn x00405159(ctx: &mut Context) -> Cont {
     call(ctx, 0x40516b, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x0040516b(ctx: &mut Context) -> Cont {
     // 0040516b mov esi,eax
     ctx.cpu.regs.esi = ctx.cpu.regs.eax;
@@ -24303,7 +22861,6 @@ pub fn x0040516b(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00405174), Cont(x004051a6))
 }
 
-#[allow(unused_variables)]
 pub fn x00405174(ctx: &mut Context) -> Cont {
     // 00405174 test byte ptr [ebp+0Dh],4
     and(
@@ -24315,7 +22872,6 @@ pub fn x00405174(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x0040517a), Cont(x004051ba))
 }
 
-#[allow(unused_variables)]
 pub fn x0040517a(ctx: &mut Context) -> Cont {
     // 0040517a cmp [ebp+1Ch],edi
     sub(
@@ -24328,7 +22884,6 @@ pub fn x0040517a(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00405183), Cont(x00405235))
 }
 
-#[allow(unused_variables)]
 pub fn x00405183(ctx: &mut Context) -> Cont {
     // 00405183 cmp esi,[ebp+1Ch]
     sub(
@@ -24341,7 +22896,6 @@ pub fn x00405183(ctx: &mut Context) -> Cont {
     jg(ctx, Cont(x00405188), Cont(x004051a6))
 }
 
-#[allow(unused_variables)]
 pub fn x00405188(ctx: &mut Context) -> Cont {
     // 00405188 push dword ptr [ebp+1Ch]
     push(
@@ -24380,7 +22934,6 @@ pub fn x00405188(ctx: &mut Context) -> Cont {
     call(ctx, 0x40519e, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x0040519e(ctx: &mut Context) -> Cont {
     // 0040519e test eax,eax
     and(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -24388,7 +22941,6 @@ pub fn x0040519e(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004051a6), Cont(x00405235))
 }
 
-#[allow(unused_variables)]
 pub fn x004051a6(ctx: &mut Context) -> Cont {
     // 004051a6 xor eax,eax
     ctx.cpu.regs.eax = xor(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -24416,7 +22968,6 @@ pub fn x004051a6(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x004051a8(ctx: &mut Context) -> Cont {
     // 004051a8 lea esp,[ebp-38h]
     ctx.cpu.regs.esp = ctx.cpu.regs.ebp.wrapping_add(0xffffffc8u32);
@@ -24442,7 +22993,6 @@ pub fn x004051a8(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x004051ba(ctx: &mut Context) -> Cont {
     // 004051ba mov dword ptr [ebp-4],1
     ctx.memory
@@ -24460,7 +23010,6 @@ pub fn x004051ba(ctx: &mut Context) -> Cont {
     call(ctx, 0x4051ce, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004051ce(ctx: &mut Context) -> Cont {
     // 004051ce mov [ebp-18h],esp
     ctx.memory.write::<u32>(
@@ -24488,7 +23037,6 @@ pub fn x004051ce(ctx: &mut Context) -> Cont {
     Cont(x004051ee)
 }
 
-#[allow(unused_variables)]
 pub fn x004051dc(ctx: &mut Context) -> Cont {
     // 004051dc push 1
     push(ctx, 0x1u32);
@@ -24499,7 +23047,6 @@ pub fn x004051dc(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x004051e0(ctx: &mut Context) -> Cont {
     // 004051e0 mov esp,[ebp-18h]
     ctx.cpu.regs.esp = ctx
@@ -24529,7 +23076,6 @@ pub fn x004051e0(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004051f2), Cont(x004051a6))
 }
 
-#[allow(unused_variables)]
 pub fn x004051ee(ctx: &mut Context) -> Cont {
     // 004051ee cmp ebx,edi
     sub(ctx.cpu.regs.ebx, ctx.cpu.regs.edi, &mut ctx.cpu.flags);
@@ -24537,7 +23083,6 @@ pub fn x004051ee(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004051f2), Cont(x004051a6))
 }
 
-#[allow(unused_variables)]
 pub fn x004051f2(ctx: &mut Context) -> Cont {
     // 004051f2 push esi
     push(ctx, ctx.cpu.regs.esi);
@@ -24572,7 +23117,6 @@ pub fn x004051f2(ctx: &mut Context) -> Cont {
     call(ctx, 0x405206, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00405206(ctx: &mut Context) -> Cont {
     // 00405206 test eax,eax
     and(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -24580,7 +23124,6 @@ pub fn x00405206(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x0040520a), Cont(x004051a6))
 }
 
-#[allow(unused_variables)]
 pub fn x0040520a(ctx: &mut Context) -> Cont {
     // 0040520a cmp [ebp+1Ch],edi
     sub(
@@ -24597,7 +23140,6 @@ pub fn x0040520a(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00405211), Cont(x00405215))
 }
 
-#[allow(unused_variables)]
 pub fn x00405211(ctx: &mut Context) -> Cont {
     // 00405211 push edi
     push(ctx, ctx.cpu.regs.edi);
@@ -24607,7 +23149,6 @@ pub fn x00405211(ctx: &mut Context) -> Cont {
     Cont(x0040521b)
 }
 
-#[allow(unused_variables)]
 pub fn x00405215(ctx: &mut Context) -> Cont {
     // 00405215 push dword ptr [ebp+1Ch]
     push(
@@ -24638,7 +23179,6 @@ pub fn x00405215(ctx: &mut Context) -> Cont {
     call(ctx, 0x40522b, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x0040521b(ctx: &mut Context) -> Cont {
     // 0040521b push esi
     push(ctx, ctx.cpu.regs.esi);
@@ -24657,7 +23197,6 @@ pub fn x0040521b(ctx: &mut Context) -> Cont {
     call(ctx, 0x40522b, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x0040522b(ctx: &mut Context) -> Cont {
     // 0040522b mov esi,eax
     ctx.cpu.regs.esi = ctx.cpu.regs.eax;
@@ -24667,7 +23206,6 @@ pub fn x0040522b(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00405235), Cont(x004051a6))
 }
 
-#[allow(unused_variables)]
 pub fn x00405235(ctx: &mut Context) -> Cont {
     // 00405235 mov eax,esi
     ctx.cpu.regs.eax = ctx.cpu.regs.esi;
@@ -24675,7 +23213,6 @@ pub fn x00405235(ctx: &mut Context) -> Cont {
     Cont(x004051a8)
 }
 
-#[allow(unused_variables)]
 pub fn x0040523c(ctx: &mut Context) -> Cont {
     // 0040523c mov edx,[esp+8]
     ctx.cpu.regs.edx = ctx
@@ -24695,7 +23232,6 @@ pub fn x0040523c(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x0040524c), Cont(x00405259))
 }
 
-#[allow(unused_variables)]
 pub fn x0040524c(ctx: &mut Context) -> Cont {
     // 0040524c cmp byte ptr [eax],0
     sub(
@@ -24707,7 +23243,6 @@ pub fn x0040524c(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00405251), Cont(x00405259))
 }
 
-#[allow(unused_variables)]
 pub fn x00405251(ctx: &mut Context) -> Cont {
     // 00405251 inc eax
     ctx.cpu.regs.eax = inc(ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -24721,7 +23256,6 @@ pub fn x00405251(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00405259), Cont(x0040524c))
 }
 
-#[allow(unused_variables)]
 pub fn x00405259(ctx: &mut Context) -> Cont {
     // 00405259 cmp byte ptr [eax],0
     sub(
@@ -24736,7 +23270,6 @@ pub fn x00405259(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x0040525f), Cont(x00405264))
 }
 
-#[allow(unused_variables)]
 pub fn x0040525f(ctx: &mut Context) -> Cont {
     // 0040525f sub eax,[esp+4]
     ctx.cpu.regs.eax = sub(
@@ -24749,7 +23282,6 @@ pub fn x0040525f(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00405264(ctx: &mut Context) -> Cont {
     // 00405264 mov eax,edx
     ctx.cpu.regs.eax = ctx.cpu.regs.edx;
@@ -24757,7 +23289,6 @@ pub fn x00405264(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00405267(ctx: &mut Context) -> Cont {
     // 00405267 push ebp
     push(ctx, ctx.cpu.regs.ebp);
@@ -24799,7 +23330,6 @@ pub fn x00405267(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00405298), Cont(x004052d6))
 }
 
-#[allow(unused_variables)]
 pub fn x00405298(ctx: &mut Context) -> Cont {
     // 00405298 lea eax,[ebp-1Ch]
     ctx.cpu.regs.eax = ctx.cpu.regs.ebp.wrapping_add(0xffffffe4u32);
@@ -24821,7 +23351,6 @@ pub fn x00405298(ctx: &mut Context) -> Cont {
     call(ctx, 0x4052ac, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004052ac(ctx: &mut Context) -> Cont {
     // 004052ac test eax,eax
     and(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -24829,7 +23358,6 @@ pub fn x004052ac(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004052b0), Cont(x004052b4))
 }
 
-#[allow(unused_variables)]
 pub fn x004052b0(ctx: &mut Context) -> Cont {
     // 004052b0 mov eax,esi
     ctx.cpu.regs.eax = ctx.cpu.regs.esi;
@@ -24837,7 +23365,6 @@ pub fn x004052b0(ctx: &mut Context) -> Cont {
     Cont(x004052d1)
 }
 
-#[allow(unused_variables)]
 pub fn x004052b4(ctx: &mut Context) -> Cont {
     // 004052b4 lea eax,[ebp-1Ch]
     ctx.cpu.regs.eax = ctx.cpu.regs.ebp.wrapping_add(0xffffffe4u32);
@@ -24856,7 +23383,6 @@ pub fn x004052b4(ctx: &mut Context) -> Cont {
     call(ctx, 0x4052c6, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004052c6(ctx: &mut Context) -> Cont {
     // 004052c6 test eax,eax
     and(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -24864,7 +23390,6 @@ pub fn x004052c6(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004052ce), Cont(x0040539c))
 }
 
-#[allow(unused_variables)]
 pub fn x004052ce(ctx: &mut Context) -> Cont {
     // 004052ce push 2
     push(ctx, 0x2u32);
@@ -24879,7 +23404,6 @@ pub fn x004052ce(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004052db), Cont(x004052ff))
 }
 
-#[allow(unused_variables)]
 pub fn x004052d1(ctx: &mut Context) -> Cont {
     // 004052d1 mov ds:[409744h],eax
     ctx.memory.write::<u32>(0x409744u32, ctx.cpu.regs.eax);
@@ -24889,7 +23413,6 @@ pub fn x004052d1(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004052db), Cont(x004052ff))
 }
 
-#[allow(unused_variables)]
 pub fn x004052d6(ctx: &mut Context) -> Cont {
     // 004052d6 cmp eax,2
     sub(ctx.cpu.regs.eax, 0x2u32, &mut ctx.cpu.flags);
@@ -24897,7 +23420,6 @@ pub fn x004052d6(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004052db), Cont(x004052ff))
 }
 
-#[allow(unused_variables)]
 pub fn x004052db(ctx: &mut Context) -> Cont {
     // 004052db mov eax,[ebp+1Ch]
     ctx.cpu.regs.eax = ctx
@@ -24909,7 +23431,6 @@ pub fn x004052db(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004052e2), Cont(x004052e7))
 }
 
-#[allow(unused_variables)]
 pub fn x004052e2(ctx: &mut Context) -> Cont {
     // 004052e2 mov eax,ds:[409728h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x409728u32);
@@ -24944,7 +23465,6 @@ pub fn x004052e2(ctx: &mut Context) -> Cont {
     call(ctx, 0x4052fa, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004052e7(ctx: &mut Context) -> Cont {
     // 004052e7 push dword ptr [ebp+14h]
     push(
@@ -24977,13 +23497,11 @@ pub fn x004052e7(ctx: &mut Context) -> Cont {
     call(ctx, 0x4052fa, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004052fa(ctx: &mut Context) -> Cont {
     // 004052fa jmp near ptr 0040539Eh
     Cont(x0040539e)
 }
 
-#[allow(unused_variables)]
 pub fn x004052ff(ctx: &mut Context) -> Cont {
     // 004052ff cmp eax,1
     sub(ctx.cpu.regs.eax, 0x1u32, &mut ctx.cpu.flags);
@@ -24991,7 +23509,6 @@ pub fn x004052ff(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00405308), Cont(x0040539c))
 }
 
-#[allow(unused_variables)]
 pub fn x00405308(ctx: &mut Context) -> Cont {
     // 00405308 cmp [ebp+18h],ebx
     sub(
@@ -25004,7 +23521,6 @@ pub fn x00405308(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x0040530d), Cont(x00405315))
 }
 
-#[allow(unused_variables)]
 pub fn x0040530d(ctx: &mut Context) -> Cont {
     // 0040530d mov eax,ds:[409738h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x409738u32);
@@ -25052,7 +23568,6 @@ pub fn x0040530d(ctx: &mut Context) -> Cont {
     call(ctx, 0x405332, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00405315(ctx: &mut Context) -> Cont {
     // 00405315 push ebx
     push(ctx, ctx.cpu.regs.ebx);
@@ -25095,7 +23610,6 @@ pub fn x00405315(ctx: &mut Context) -> Cont {
     call(ctx, 0x405332, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00405332(ctx: &mut Context) -> Cont {
     // 00405332 mov [ebp-20h],eax
     ctx.memory.write::<u32>(
@@ -25108,7 +23622,6 @@ pub fn x00405332(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00405339), Cont(x0040539c))
 }
 
-#[allow(unused_variables)]
 pub fn x00405339(ctx: &mut Context) -> Cont {
     // 00405339 mov [ebp-4],ebx
     ctx.memory.write::<u32>(
@@ -25130,7 +23643,6 @@ pub fn x00405339(ctx: &mut Context) -> Cont {
     call(ctx, 0x40534b, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x0040534b(ctx: &mut Context) -> Cont {
     // 0040534b mov [ebp-18h],esp
     ctx.memory.write::<u32>(
@@ -25155,7 +23667,6 @@ pub fn x0040534b(ctx: &mut Context) -> Cont {
     call(ctx, 0x40535b, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x0040535b(ctx: &mut Context) -> Cont {
     // 0040535b add esp,0Ch
     ctx.cpu.regs.esp = add(ctx.cpu.regs.esp, 0xcu32, &mut ctx.cpu.flags);
@@ -25163,7 +23674,6 @@ pub fn x0040535b(ctx: &mut Context) -> Cont {
     Cont(x0040536b)
 }
 
-#[allow(unused_variables)]
 pub fn x00405360(ctx: &mut Context) -> Cont {
     // 00405360 push 1
     push(ctx, 0x1u32);
@@ -25174,7 +23684,6 @@ pub fn x00405360(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00405364(ctx: &mut Context) -> Cont {
     // 00405364 mov esp,[ebp-18h]
     ctx.cpu.regs.esp = ctx
@@ -25200,7 +23709,6 @@ pub fn x00405364(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00405373), Cont(x0040539c))
 }
 
-#[allow(unused_variables)]
 pub fn x0040536b(ctx: &mut Context) -> Cont {
     // 0040536b or dword ptr [ebp-4],0FFFFFFFFh
     ctx.memory.write::<u32>(
@@ -25218,7 +23726,6 @@ pub fn x0040536b(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00405373), Cont(x0040539c))
 }
 
-#[allow(unused_variables)]
 pub fn x00405373(ctx: &mut Context) -> Cont {
     // 00405373 push dword ptr [ebp-20h]
     push(
@@ -25253,7 +23760,6 @@ pub fn x00405373(ctx: &mut Context) -> Cont {
     call(ctx, 0x405388, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00405388(ctx: &mut Context) -> Cont {
     // 00405388 cmp eax,ebx
     sub(ctx.cpu.regs.eax, ctx.cpu.regs.ebx, &mut ctx.cpu.flags);
@@ -25261,7 +23767,6 @@ pub fn x00405388(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x0040538c), Cont(x0040539c))
 }
 
-#[allow(unused_variables)]
 pub fn x0040538c(ctx: &mut Context) -> Cont {
     // 0040538c push dword ptr [ebp+14h]
     push(
@@ -25284,13 +23789,11 @@ pub fn x0040538c(ctx: &mut Context) -> Cont {
     call(ctx, 0x40539a, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x0040539a(ctx: &mut Context) -> Cont {
     // 0040539a jmp short 0040539Eh
     Cont(x0040539e)
 }
 
-#[allow(unused_variables)]
 pub fn x0040539c(ctx: &mut Context) -> Cont {
     // 0040539c xor eax,eax
     ctx.cpu.regs.eax = xor(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -25318,7 +23821,6 @@ pub fn x0040539c(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x0040539e(ctx: &mut Context) -> Cont {
     // 0040539e lea esp,[ebp-34h]
     ctx.cpu.regs.esp = ctx.cpu.regs.ebp.wrapping_add(0xffffffccu32);
@@ -25344,7 +23846,6 @@ pub fn x0040539e(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x004053b0(ctx: &mut Context) -> Cont {
     // 004053b0 push ebp
     push(ctx, ctx.cpu.regs.ebp);
@@ -25364,7 +23865,6 @@ pub fn x004053b0(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004053be), Cont(x004053db))
 }
 
-#[allow(unused_variables)]
 pub fn x004053be(ctx: &mut Context) -> Cont {
     // 004053be mov eax,[ebp+8]
     ctx.cpu.regs.eax = ctx
@@ -25376,7 +23876,6 @@ pub fn x004053be(ctx: &mut Context) -> Cont {
     jl(ctx, Cont(x004053ca), Cont(x00405479))
 }
 
-#[allow(unused_variables)]
 pub fn x004053ca(ctx: &mut Context) -> Cont {
     // 004053ca cmp eax,7Ah
     sub(ctx.cpu.regs.eax, 0x7au32, &mut ctx.cpu.flags);
@@ -25384,7 +23883,6 @@ pub fn x004053ca(ctx: &mut Context) -> Cont {
     jg(ctx, Cont(x004053d3), Cont(x00405479))
 }
 
-#[allow(unused_variables)]
 pub fn x004053d3(ctx: &mut Context) -> Cont {
     // 004053d3 sub eax,20h
     ctx.cpu.regs.eax = sub(ctx.cpu.regs.eax, 0x20u32, &mut ctx.cpu.flags);
@@ -25392,7 +23890,6 @@ pub fn x004053d3(ctx: &mut Context) -> Cont {
     Cont(x00405479)
 }
 
-#[allow(unused_variables)]
 pub fn x004053db(ctx: &mut Context) -> Cont {
     // 004053db mov ebx,[ebp+8]
     ctx.cpu.regs.ebx = ctx
@@ -25404,7 +23901,6 @@ pub fn x004053db(ctx: &mut Context) -> Cont {
     jge(ctx, Cont(x004053e6), Cont(x0040540e))
 }
 
-#[allow(unused_variables)]
 pub fn x004053e6(ctx: &mut Context) -> Cont {
     // 004053e6 cmp dword ptr ds:[40953Ch],1
     sub(
@@ -25416,7 +23912,6 @@ pub fn x004053e6(ctx: &mut Context) -> Cont {
     jle(ctx, Cont(x004053ef), Cont(x004053fb))
 }
 
-#[allow(unused_variables)]
 pub fn x004053ef(ctx: &mut Context) -> Cont {
     // 004053ef push 2
     push(ctx, 0x2u32);
@@ -25427,7 +23922,6 @@ pub fn x004053ef(ctx: &mut Context) -> Cont {
     call(ctx, 0x4053f7, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004053f7(ctx: &mut Context) -> Cont {
     // 004053f7 pop ecx
     let x = pop(ctx);
@@ -25439,7 +23933,6 @@ pub fn x004053f7(ctx: &mut Context) -> Cont {
     Cont(x00405406)
 }
 
-#[allow(unused_variables)]
 pub fn x004053fb(ctx: &mut Context) -> Cont {
     // 004053fb mov eax,ds:[409330h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x409330u32);
@@ -25456,7 +23949,6 @@ pub fn x004053fb(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x0040540a), Cont(x0040540e))
 }
 
-#[allow(unused_variables)]
 pub fn x00405406(ctx: &mut Context) -> Cont {
     // 00405406 test eax,eax
     and(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -25464,7 +23956,6 @@ pub fn x00405406(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x0040540a), Cont(x0040540e))
 }
 
-#[allow(unused_variables)]
 pub fn x0040540a(ctx: &mut Context) -> Cont {
     // 0040540a mov eax,ebx
     ctx.cpu.regs.eax = ctx.cpu.regs.ebx;
@@ -25472,7 +23963,6 @@ pub fn x0040540a(ctx: &mut Context) -> Cont {
     Cont(x00405479)
 }
 
-#[allow(unused_variables)]
 pub fn x0040540e(ctx: &mut Context) -> Cont {
     // 0040540e mov edx,ds:[409330h]
     ctx.cpu.regs.edx = ctx.memory.read::<u32>(0x409330u32);
@@ -25498,7 +23988,6 @@ pub fn x0040540e(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00405423), Cont(x00405431))
 }
 
-#[allow(unused_variables)]
 pub fn x00405423(ctx: &mut Context) -> Cont {
     // 00405423 and byte ptr [ebp+0Ah],0
     ctx.memory.write::<u8>(
@@ -25521,7 +24010,6 @@ pub fn x00405423(ctx: &mut Context) -> Cont {
     Cont(x0040543a)
 }
 
-#[allow(unused_variables)]
 pub fn x00405431(ctx: &mut Context) -> Cont {
     // 00405431 and byte ptr [ebp+9],0
     ctx.memory.write::<u8>(
@@ -25565,7 +24053,6 @@ pub fn x00405431(ctx: &mut Context) -> Cont {
     call(ctx, 0x40545a, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x0040543a(ctx: &mut Context) -> Cont {
     // 0040543a pop eax
     let x = pop(ctx);
@@ -25595,7 +24082,6 @@ pub fn x0040543a(ctx: &mut Context) -> Cont {
     call(ctx, 0x40545a, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x0040545a(ctx: &mut Context) -> Cont {
     // 0040545a add esp,20h
     ctx.cpu.regs.esp = add(ctx.cpu.regs.esp, 0x20u32, &mut ctx.cpu.flags);
@@ -25605,7 +24091,6 @@ pub fn x0040545a(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00405461), Cont(x0040540a))
 }
 
-#[allow(unused_variables)]
 pub fn x00405461(ctx: &mut Context) -> Cont {
     // 00405461 cmp eax,1
     sub(ctx.cpu.regs.eax, 0x1u32, &mut ctx.cpu.flags);
@@ -25613,7 +24098,6 @@ pub fn x00405461(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00405466), Cont(x0040546c))
 }
 
-#[allow(unused_variables)]
 pub fn x00405466(ctx: &mut Context) -> Cont {
     // 00405466 movzx eax,byte ptr [ebp-4]
     ctx.cpu.regs.eax = ctx
@@ -25623,7 +24107,6 @@ pub fn x00405466(ctx: &mut Context) -> Cont {
     Cont(x00405479)
 }
 
-#[allow(unused_variables)]
 pub fn x0040546c(ctx: &mut Context) -> Cont {
     // 0040546c movzx eax,byte ptr [ebp-3]
     ctx.cpu.regs.eax = ctx
@@ -25646,7 +24129,6 @@ pub fn x0040546c(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00405479(ctx: &mut Context) -> Cont {
     // 00405479 pop ebx
     let x = pop(ctx);
@@ -25657,7 +24139,6 @@ pub fn x00405479(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x0040547c(ctx: &mut Context) -> Cont {
     // 0040547c push ebp
     push(ctx, ctx.cpu.regs.ebp);
@@ -25677,7 +24158,6 @@ pub fn x0040547c(ctx: &mut Context) -> Cont {
     ja(ctx, Cont(x0040548e), Cont(x0040549a))
 }
 
-#[allow(unused_variables)]
 pub fn x0040548e(ctx: &mut Context) -> Cont {
     // 0040548e mov ecx,ds:[409330h]
     ctx.cpu.regs.ecx = ctx.memory.read::<u32>(0x409330u32);
@@ -25689,7 +24169,6 @@ pub fn x0040548e(ctx: &mut Context) -> Cont {
     Cont(x004054ec)
 }
 
-#[allow(unused_variables)]
 pub fn x0040549a(ctx: &mut Context) -> Cont {
     // 0040549a mov ecx,eax
     ctx.cpu.regs.ecx = ctx.cpu.regs.eax;
@@ -25720,7 +24199,6 @@ pub fn x0040549a(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x004054b1), Cont(x004054bf))
 }
 
-#[allow(unused_variables)]
 pub fn x004054b1(ctx: &mut Context) -> Cont {
     // 004054b1 and byte ptr [ebp-2],0
     ctx.memory.write::<u8>(
@@ -25748,7 +24226,6 @@ pub fn x004054b1(ctx: &mut Context) -> Cont {
     Cont(x004054c8)
 }
 
-#[allow(unused_variables)]
 pub fn x004054bf(ctx: &mut Context) -> Cont {
     // 004054bf and byte ptr [ebp-3],0
     ctx.memory.write::<u8>(
@@ -25793,7 +24270,6 @@ pub fn x004054bf(ctx: &mut Context) -> Cont {
     call(ctx, 0x4054df, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004054c8(ctx: &mut Context) -> Cont {
     // 004054c8 pop eax
     let x = pop(ctx);
@@ -25821,7 +24297,6 @@ pub fn x004054c8(ctx: &mut Context) -> Cont {
     call(ctx, 0x4054df, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x004054df(ctx: &mut Context) -> Cont {
     // 004054df add esp,1Ch
     ctx.cpu.regs.esp = add(ctx.cpu.regs.esp, 0x1cu32, &mut ctx.cpu.flags);
@@ -25831,7 +24306,6 @@ pub fn x004054df(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x004054e6), Cont(x004054e8))
 }
 
-#[allow(unused_variables)]
 pub fn x004054e6(ctx: &mut Context) -> Cont {
     // 004054e6 leave
     leave(ctx);
@@ -25839,7 +24313,6 @@ pub fn x004054e6(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x004054e8(ctx: &mut Context) -> Cont {
     // 004054e8 movzx eax,word ptr [ebp+0Ah]
     ctx.cpu.regs.eax = ctx
@@ -25858,7 +24331,6 @@ pub fn x004054e8(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x004054ec(ctx: &mut Context) -> Cont {
     // 004054ec and eax,[ebp+0Ch]
     ctx.cpu.regs.eax = and(
