@@ -22,11 +22,9 @@ pub fn get_reg(r: iced_x86::Register) -> String {
         EAX | ECX | EDX | EBX | ESI | EDI | ESP | EBP => {
             format!("ctx.cpu.regs.{reg}", reg = reg_name(r))
         }
-
         AL | AH | AX | CL | CH | CX | DL | DH | DX | BL | BH | BX | DI | SI => {
             format!("ctx.cpu.regs.get_{reg}()", reg = reg_name(r))
         }
-
         r => todo!("{r:?}"),
     }
 }
@@ -37,7 +35,6 @@ pub fn set_reg(r: iced_x86::Register, expr: String) -> String {
         EAX | ECX | EDX | EBX | ESI | EDI | ESP | EBP => {
             format!("ctx.cpu.regs.{reg} = {expr};", reg = reg_name(r))
         }
-
         AL | AH | AX | CL | CH | CX | DL | DH | DX | BL | BH | BX | DI | SI => {
             format!("ctx.cpu.regs.set_{reg}({expr});", reg = reg_name(r))
         }
@@ -103,10 +100,7 @@ pub fn get_op(instr: &iced_x86::Instruction, n: u32) -> String {
         Immediate32 => format!("{:#x}u32", instr.immediate32()),
         Register => get_reg(instr.op_register(n)),
         Memory => get_mem(format!("u{}", mem_size(instr)), gen_addr(instr)),
-        k => {
-            dbg!(instr);
-            todo!("{:?}", k);
-        }
+        k => todo!("{:?}", k),
     }
 }
 
@@ -143,9 +137,7 @@ pub fn op_size(instr: &iced_x86::Instruction, n: u32) -> usize {
         Memory => mem_size(instr),
         Immediate8to32 => 32,
         Immediate32 => 32,
-        k => {
-            todo!("{k:?}");
-        }
+        k => todo!("{k:?}"),
     }
 }
 
@@ -158,10 +150,7 @@ pub fn set_op(instr: &iced_x86::Instruction, n: u32, expr: String) -> String {
             let size = mem_size(instr);
             set_mem(format!("u{size}"), addr, expr)
         }
-        k => {
-            dbg!(instr);
-            todo!("{:?}", k);
-        }
+        k => todo!("{:?}", k),
     }
 }
 
