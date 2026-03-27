@@ -275,6 +275,18 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
                 ));
             }
 
+            Shld => {
+                assert_eq!(instr.op_count(), 3);
+                let op0 = get_op(instr, 0);
+                let op1 = get_op(instr, 1);
+                let op2 = get_op(instr, 2);
+                w.line(set_op(
+                    instr,
+                    0,
+                    format!("shld({op0}, {op1}, {op2}, &mut ctx.cpu.flags)"),
+                ));
+            }
+
             Cmp => {
                 let op0 = get_op(instr, 0);
                 let op1 = get_op(instr, 1);

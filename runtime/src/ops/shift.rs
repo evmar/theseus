@@ -27,6 +27,22 @@ pub fn shl<I: Int + num_traits::WrappingShl>(x: I, y: u8, flags: &mut Flags) -> 
     val
 }
 
+pub fn shld(x: u32, y: u32, count: u8, flags: &mut Flags) -> u32 {
+    let count = count % 32;
+    if count == 0 {
+        return x;
+    }
+    // "CF flag is filled with the last bit shifted out of the destination operand"
+    flags.set(Flags::CF, ((x >> (32 - count)) & 1) != 0);
+    if count == 1 {
+        // "OF flag is set if a sign change occurred"
+        flags.set(Flags::OF, (x >> 31) != ((x >> 30) & 1));
+    }
+    let result = (x << count) | (y >> (32 - count));
+    flags.set(Flags::PF, result.low_byte().count_ones() % 2 == 0);
+    result
+}
+
 pub fn shr<I: Int>(x: I, y: u8, flags: &mut Flags) -> I {
     assert!(I::bits() < 64);
     let y = y % 32;
