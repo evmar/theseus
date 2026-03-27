@@ -240,7 +240,7 @@ fn gen_instr(w: &mut Writer, state: &State, instr: &iced_x86::Instruction) {
         Mov => w.line(set_op(instr, 0, get_op(instr, 1))),
 
         Call => {
-            // Create a temporary here in case gen_jmp needs to borrow m.
+            // Create a temporary here in case gen_jmp needs to borrow ctx.
             w.line(format!("let dst = {};", gen_jmp(state, instr)));
             w.line(format!("call(ctx, {:#08x}, dst)", instr.next_ip32(),));
         }
@@ -260,9 +260,9 @@ fn gen_instr(w: &mut Writer, state: &State, instr: &iced_x86::Instruction) {
         // Binary operations.
         And | Or | Add | Sub | Sbb | Xor | Shl | Shr | Sar => {
             assert_eq!(instr.op_count(), 2);
+            let func = instr_name(instr);
             let op0 = get_op(instr, 0);
             let op1 = get_op(instr, 1);
-            let func = instr_name(instr);
             w.line(set_op(
                 instr,
                 0,
@@ -274,13 +274,12 @@ fn gen_instr(w: &mut Writer, state: &State, instr: &iced_x86::Instruction) {
             assert_eq!(instr.op_count(), 2);
             let op0 = get_op(instr, 0);
             let op1 = get_op(instr, 1);
+            w.line("let carry = ctx.cpu.flags.contains(Flags::CF) as u32;");
             w.line(set_op(
-                    instr,
-                    0,
-                    format!(
-                        "addc({op0}, {op1}, ctx.cpu.flags.contains(Flags::CF) as u32 as _, &mut ctx.cpu.flags)"
-                    ),
-                ));
+                instr,
+                0,
+                format!("addc({op0}, {op1}, carry as _, &mut ctx.cpu.flags)"),
+            ));
         }
 
         Shld => {
