@@ -51,18 +51,24 @@ pub fn dllexport(_attr: TokenStream, mut tokens: TokenStream) -> TokenStream {
         };
         quote![log::info!(#fmt_string);]
     };
+    let trace_cache = format_ident!("{}_trace", name);
 
     let wrapper_name = format_ident!("{}_stdcall", name);
     let stack_popped = args.len() as u32;
     let mut call_args = args.iter().map(|(arg, _)| arg);
     call_args.next(); // skip return_addr
 
-    let wrapper: TokenStream = quote! {
+    let out: TokenStream = quote! {
+        static mut #trace_cache: crate::trace::Trace = crate::trace::Trace::Unknown;
+        #[allow(static_mut_refs)]
         pub fn #wrapper_name(ctx: &mut crate::Context) -> runtime::Cont {
             use crate::{ABIReturn, FromABIParam};
             use runtime::*;
             #fetch_args
-            #trace
+            let trace = crate::trace::get(unsafe { &mut #trace_cache }, file!());
+            if matches!(trace, crate::trace::Trace::Before) {
+                #trace
+            }
             let ret: ABIReturn = #name(ctx, #(#call_args),*).into();
             ctx.cpu.regs.eax = ret.to_abi_return();
             ctx.cpu.regs.esp += #stack_popped * 4;
@@ -72,7 +78,7 @@ pub fn dllexport(_attr: TokenStream, mut tokens: TokenStream) -> TokenStream {
     .into();
     //eprintln!("wrapper {}", wrapper);
 
-    tokens.extend(wrapper);
+    tokens.extend(out);
     tokens
 }
 

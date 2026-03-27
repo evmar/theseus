@@ -12,6 +12,7 @@ mod heap;
 pub mod kernel32;
 mod point;
 mod rect;
+pub mod trace;
 pub mod user32;
 pub mod winmm;
 
@@ -40,6 +41,8 @@ pub struct EXEData {
 pub fn run(exe: &EXEData) {
     use runtime::Host;
     runtime::HOST.init();
+
+    crate::trace::init(&std::env::var("THESEUS_TRACE").unwrap_or_default());
 
     let mut machine = Machine::default();
     let m = &mut machine;
