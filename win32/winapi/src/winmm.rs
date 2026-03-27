@@ -18,6 +18,7 @@ pub fn state() -> MutexGuard<'static, State> {
 }
 
 struct Timer {
+    period: u32,
     next: u32,
     callback: u32,
     user_data: u32,
@@ -25,8 +26,8 @@ struct Timer {
 
 fn winmm_main(ctx: &mut Context) {
     loop {
-        let mut state = state();
-        let Some(timer) = state.timer.as_mut() else {
+        let mut lock = state();
+        let Some(timer) = lock.timer.as_mut() else {
             return;
         };
 
@@ -38,8 +39,10 @@ fn winmm_main(ctx: &mut Context) {
         let func = runtime::indirect(ctx, timer.callback);
         let timer_id = 1;
         let user_data = timer.user_data;
-        drop(state);
+        timer.next = now + timer.period;
+        drop(lock);
 
+        log::warn!("firing timer");
         // LPTIMECALLBACK
         runtime::call_x86(ctx, func, vec![timer_id, 0, user_data, 0, 0]);
     }
@@ -81,6 +84,7 @@ pub fn timeSetEvent(
     let mut state = state();
     assert!(state.timer.is_none());
     state.timer = Some(Timer {
+        period: uDelay,
         next: get_tick_count() + uDelay,
         callback: lpTimeProc,
         user_data: dwUser,
