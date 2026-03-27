@@ -1,5 +1,6 @@
 #![allow(unreachable_code)]
 #![allow(unused_parens)]
+#![allow(unused_variables)]
 
 use runtime::*;
 use winapi::*;
@@ -24,7 +25,6 @@ fn init_mappings(ctx: &mut Context, mappings: &mut kernel32::Mappings) {
     let out = &mut ctx.memory.bytes[0x403000 as usize..][..bytes.len()];
     out.copy_from_slice(bytes);
 }
-#[allow(unused_variables)]
 pub fn x00401000(ctx: &mut Context) -> Cont {
     // 00401000 push 0FFFFFFF5h
     push(ctx, 0xfffffff5u32);
@@ -33,7 +33,6 @@ pub fn x00401000(ctx: &mut Context) -> Cont {
     call(ctx, 0x401008, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401008(ctx: &mut Context) -> Cont {
     // 00401008 xor ecx,ecx
     ctx.cpu.regs.ecx = xor(ctx.cpu.regs.ecx, ctx.cpu.regs.ecx, &mut ctx.cpu.flags);
@@ -52,7 +51,6 @@ pub fn x00401008(ctx: &mut Context) -> Cont {
     call(ctx, 0x40101a, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x0040101a(ctx: &mut Context) -> Cont {
     // 0040101a ret
     ret(ctx, 0)

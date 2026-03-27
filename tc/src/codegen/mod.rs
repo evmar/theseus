@@ -213,14 +213,16 @@ impl Writer {
 }
 
 fn gen_block(w: &mut Writer, state: &State, ip: AddrAbs, block: &Block) {
-    println!("gen block: {:#08x}", ip.0);
+    log::info!("gen block: {:#08x}", ip.0);
     match block {
         Block::Instrs(instrs) => {
             w.line(format!(
                 "pub fn x{:08x}(ctx: &mut Context) -> Cont {{",
                 ip.0
             ));
-            gen_instrs(w, state, instrs);
+            for instr in instrs {
+                gen_instr(w, state, instr);
+            }
             w.line("}\n");
         }
         Block::Stdcall(_) | Block::Extern(_) => {
@@ -229,273 +231,268 @@ fn gen_block(w: &mut Writer, state: &State, ip: AddrAbs, block: &Block) {
     }
 }
 
-fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
-    for instr in instrs {
-        println!("gen: {}", instr);
-        w.line(format!("// {:08x} {}", AddrAbs(instr.ip32()).0, instr));
-        use iced_x86::Mnemonic::*;
-        match instr.mnemonic() {
-            Push => w.line(format!("push(ctx, {});", get_op(instr, 0))),
-            Pop => {
-                w.line("let x = pop(ctx);");
-                w.line(set_op(instr, 0, "x".into()))
-            }
-            Pushad => w.line("pushad(ctx);"),
-            Popad => w.line("popad(ctx);"),
-            Jmp => w.line(gen_jmp(state, instr)),
-            Mov => w.line(set_op(instr, 0, get_op(instr, 1))),
+fn gen_instr(w: &mut Writer, state: &State, instr: &iced_x86::Instruction) {
+    log::info!("gen: {}", instr);
+    w.line(format!("// {:08x} {}", AddrAbs(instr.ip32()).0, instr));
+    use iced_x86::Mnemonic::*;
+    match instr.mnemonic() {
+        Push => w.line(format!("push(ctx, {});", get_op(instr, 0))),
+        Pop => {
+            w.line("let x = pop(ctx);");
+            w.line(set_op(instr, 0, "x".into()))
+        }
+        Pushad => w.line("pushad(ctx);"),
+        Popad => w.line("popad(ctx);"),
+        Jmp => w.line(gen_jmp(state, instr)),
+        Mov => w.line(set_op(instr, 0, get_op(instr, 1))),
 
-            Call => {
-                // Create a temporary here in case gen_jmp needs to borrow m.
-                w.line(format!("let dst = {};", gen_jmp(state, instr)));
-                w.line(format!("call(ctx, {:#08x}, dst)", instr.next_ip32(),));
-            }
+        Call => {
+            // Create a temporary here in case gen_jmp needs to borrow m.
+            w.line(format!("let dst = {};", gen_jmp(state, instr)));
+            w.line(format!("call(ctx, {:#08x}, dst)", instr.next_ip32(),));
+        }
 
-            Ret => {
-                let n = match instr.op_count() {
-                    0 => 0,
-                    1 => {
-                        assert!(instr.op0_kind() == iced_x86::OpKind::Immediate16);
-                        instr.immediate16()
-                    }
-                    _ => todo!(),
-                };
-                w.line(format!("ret(ctx, {n})"));
-            }
+        Ret => {
+            let n = match instr.op_count() {
+                0 => 0,
+                1 => {
+                    assert!(instr.op0_kind() == iced_x86::OpKind::Immediate16);
+                    instr.immediate16()
+                }
+                _ => todo!(),
+            };
+            w.line(format!("ret(ctx, {n})"));
+        }
 
-            // Binary operations.
-            And | Or | Add | Sub | Sbb | Xor | Shl | Shr | Sar => {
-                assert_eq!(instr.op_count(), 2);
-                let op0 = get_op(instr, 0);
-                let op1 = get_op(instr, 1);
-                let func = format!("{:?}", instr.mnemonic()).to_ascii_lowercase();
-                w.line(set_op(
-                    instr,
-                    0,
-                    format!("{func}({op0}, {op1}, &mut ctx.cpu.flags)"),
-                ));
-            }
+        // Binary operations.
+        And | Or | Add | Sub | Sbb | Xor | Shl | Shr | Sar => {
+            assert_eq!(instr.op_count(), 2);
+            let op0 = get_op(instr, 0);
+            let op1 = get_op(instr, 1);
+            let func = format!("{:?}", instr.mnemonic()).to_ascii_lowercase();
+            w.line(set_op(
+                instr,
+                0,
+                format!("{func}({op0}, {op1}, &mut ctx.cpu.flags)"),
+            ));
+        }
 
-            Adc => {
-                assert_eq!(instr.op_count(), 2);
-                let op0 = get_op(instr, 0);
-                let op1 = get_op(instr, 1);
-                w.line(set_op(
+        Adc => {
+            assert_eq!(instr.op_count(), 2);
+            let op0 = get_op(instr, 0);
+            let op1 = get_op(instr, 1);
+            w.line(set_op(
                     instr,
                     0,
                     format!(
                         "addc({op0}, {op1}, ctx.cpu.flags.contains(Flags::CF) as u32 as _, &mut ctx.cpu.flags)"
                     ),
                 ));
-            }
+        }
 
-            Shld => {
-                assert_eq!(instr.op_count(), 3);
-                let op0 = get_op(instr, 0);
-                let op1 = get_op(instr, 1);
-                let op2 = get_op(instr, 2);
-                w.line(set_op(
-                    instr,
-                    0,
-                    format!("shld({op0}, {op1}, {op2}, &mut ctx.cpu.flags)"),
-                ));
-            }
-            Shrd => w.todo(),
-
-            Cmp => {
-                let op0 = get_op(instr, 0);
-                let op1 = get_op(instr, 1);
-                w.line(format!("sub({op0}, {op1}, &mut ctx.cpu.flags);"));
-            }
-            Test => {
-                w.line(format!(
-                    "and({}, {}, &mut ctx.cpu.flags);",
-                    get_op(instr, 0),
-                    get_op(instr, 1)
-                ));
-            }
-
-            // Conditional jumps.
-            Je | Jne | Jb | Js | Jns | Ja | Jae | Jl | Jg | Jge | Jecxz | Jle | Jbe => {
-                let next = gen_abs_jmp(state, instr.next_ip32());
-                let dst = gen_jmp(state, instr);
-                let func = format!("{:?}", instr.mnemonic()).to_ascii_lowercase();
-                w.line(format!("{func}(ctx, {next}, {dst})"));
-            }
-
-            Lea => w.line(format!("{} = {};", get_op(instr, 0), gen_addr(instr))),
-            Neg => w.line(set_op(
+        Shld => {
+            assert_eq!(instr.op_count(), 3);
+            let op0 = get_op(instr, 0);
+            let op1 = get_op(instr, 1);
+            let op2 = get_op(instr, 2);
+            w.line(set_op(
                 instr,
                 0,
-                format!("neg({}, &mut ctx.cpu.flags)", get_op(instr, 0)),
-            )),
+                format!("shld({op0}, {op1}, {op2}, &mut ctx.cpu.flags)"),
+            ));
+        }
+        Shrd => w.todo(),
 
-            Movzx => {
-                w.line(set_op(instr, 0, format!("{} as _", get_op(instr, 1))));
-            }
-            Movsx => {
-                let read = format!(
-                    "{read} as i{src} as i{dst} as u{dst}",
-                    read = get_op(instr, 1),
-                    src = op_size(instr, 1),
-                    dst = op_size(instr, 0)
-                );
-                w.line(set_op(instr, 0, read));
-            }
+        Cmp => {
+            let op0 = get_op(instr, 0);
+            let op1 = get_op(instr, 1);
+            w.line(format!("sub({op0}, {op1}, &mut ctx.cpu.flags);"));
+        }
+        Test => {
+            w.line(format!(
+                "and({}, {}, &mut ctx.cpu.flags);",
+                get_op(instr, 0),
+                get_op(instr, 1)
+            ));
+        }
 
-            Mul => {
-                assert_eq!(instr.op_count(), 1);
-                match op_size(instr, 0) {
-                    32 => {
-                        w.line("let x = ctx.cpu.regs.eax;");
-                        w.line(format!("let y = {};", get_op(instr, 0)));
-                        w.line("let out = mul(x as u64, y as u64, &mut ctx.cpu.flags);");
-                        w.line("ctx.cpu.regs.edx = (out >> 32) as u32;");
-                        w.line("ctx.cpu.regs.eax = out as u32;");
-                    }
-                    16 => w.todo(),
-                    8 => w.todo(),
-                    size => todo!("{size}"),
+        // Conditional jumps.
+        Je | Jne | Jb | Js | Jns | Ja | Jae | Jl | Jg | Jge | Jecxz | Jle | Jbe => {
+            let next = gen_abs_jmp(state, instr.next_ip32());
+            let dst = gen_jmp(state, instr);
+            let func = format!("{:?}", instr.mnemonic()).to_ascii_lowercase();
+            w.line(format!("{func}(ctx, {next}, {dst})"));
+        }
+
+        Lea => w.line(format!("{} = {};", get_op(instr, 0), gen_addr(instr))),
+        Neg => w.line(set_op(
+            instr,
+            0,
+            format!("neg({}, &mut ctx.cpu.flags)", get_op(instr, 0)),
+        )),
+
+        Movzx => {
+            w.line(set_op(instr, 0, format!("{} as _", get_op(instr, 1))));
+        }
+        Movsx => {
+            let read = format!(
+                "{read} as i{src} as i{dst} as u{dst}",
+                read = get_op(instr, 1),
+                src = op_size(instr, 1),
+                dst = op_size(instr, 0)
+            );
+            w.line(set_op(instr, 0, read));
+        }
+
+        Mul => {
+            assert_eq!(instr.op_count(), 1);
+            match op_size(instr, 0) {
+                32 => {
+                    w.line("let x = ctx.cpu.regs.eax;");
+                    w.line(format!("let y = {};", get_op(instr, 0)));
+                    w.line("let out = mul(x as u64, y as u64, &mut ctx.cpu.flags);");
+                    w.line("ctx.cpu.regs.edx = (out >> 32) as u32;");
+                    w.line("ctx.cpu.regs.eax = out as u32;");
                 }
-            }
-
-            Div => {
-                w.line("div();");
-            }
-            Leave => {
-                w.line("leave(ctx);");
-            }
-            Enter => {
-                assert!(instr.op1_kind() == iced_x86::OpKind::Immediate8_2nd);
-                let op1 = instr.immediate8_2nd();
-                w.line(format!("enter(ctx, {}, {:x});", get_op(instr, 0), op1));
-            }
-
-            Dec => w.line(set_op(
-                instr,
-                0,
-                format!("dec({}, &mut ctx.cpu.flags)", get_op(instr, 0)),
-            )),
-            Inc => w.line(set_op(
-                instr,
-                0,
-                format!("inc({}, &mut ctx.cpu.flags)", get_op(instr, 0)),
-            )),
-            Sete => w.line(set_op(instr, 0, "sete(ctx)".into())),
-
-            Imul => {
-                let size = op_size(instr, 0);
-                let (x, y) = match instr.op_count() {
-                    1 => match op_size(instr, 0) {
-                        8 => (get_reg(iced_x86::Register::AL), get_op(instr, 0)),
-                        16 => (get_reg(iced_x86::Register::AX), get_op(instr, 0)),
-                        _ => todo!(),
-                    },
-                    2 => {
-                        assert_eq!(op_size(instr, 0), op_size(instr, 1));
-                        let op0 = get_op(instr, 0);
-                        let op1 = get_op(instr, 1);
-                        (op0, op1)
-                    }
-                    3 => {
-                        assert_eq!(op_size(instr, 0), op_size(instr, 1));
-                        assert_eq!(op_size(instr, 1), op_size(instr, 2));
-                        let op1 = get_op(instr, 1);
-                        let op2 = get_op(instr, 2);
-                        (op1, op2)
-                    }
-                    _ => todo!(),
-                };
-                w.line(format!("let x = {x} as i{size}; let y = {y} as i{size};",));
-                w.line(
-                    "let (res, overflow) = x.overflowing_mul(y);
-                    ctx.cpu.flags.set(Flags::CF, overflow);
-                    ctx.cpu.flags.set(Flags::OF, overflow);",
-                );
-                w.line(set_op(instr, 0, format!("res as u{size}")));
-            }
-            Not => {
-                w.line("not();");
-            }
-            Setge => {
-                w.line("setge(ctx);");
-            }
-            Int => {
-                w.line("int();");
-            }
-            Cdq => {
-                w.line("let t = ctx.cpu.regs.eax as i32 as i64 as u64;");
-                w.line("ctx.cpu.regs.edx = (t >> 32) as u32;");
-                w.line("ctx.cpu.regs.eax = t as u32;");
-            }
-
-            Idiv => {
-                assert_eq!(instr.op_count(), 1);
-                match op_size(instr, 0) {
-                    8 => {
-                        w.line(
-                            "let x = (((ctx.cpu.regs.get_dl() as u16) << 8) | (ctx.cpu.regs.get_al() as u16)) as i16;",
-                        );
-                        w.line(format!("let y = {} as i16;", get_op(instr, 0)));
-                        w.line("ctx.cpu.regs.set_al((x / y) as i8 as u8);");
-                        w.line("ctx.cpu.regs.set_dl((x % y) as i8 as u8);");
-                    }
-                    16 => {
-                        w.line(
-                            "let x = (((ctx.cpu.regs.get_dx() as u32) << 16) | (ctx.cpu.regs.get_ax() as u32)) as i32;",
-                        );
-                        w.line(format!("let y = {} as i32;", get_op(instr, 0)));
-                        w.line("ctx.cpu.regs.set_ax((x / y) as i16 as u16);");
-                        w.line("ctx.cpu.regs.set_dx((x % y) as i16 as u16);");
-                    }
-                    32 => {
-                        w.line(
-                            "let x = (((ctx.cpu.regs.edx as u64) << 32) | (ctx.cpu.regs.eax as u64)) as i64;",
-                        );
-                        w.line(format!("let y = {} as i64;", get_op(instr, 0)));
-                        w.line("ctx.cpu.regs.eax = (x / y) as i32 as u32;");
-                        w.line("ctx.cpu.regs.edx = (x % y) as i32 as u32;");
-                    }
-                    _ => todo!(),
-                }
-            }
-
-            Int3 => w.line("int3();"),
-            Xchg => {
-                w.line(format!("let t = {};", get_op(instr, 0)));
-                w.line(set_op(instr, 0, get_op(instr, 1)));
-                w.line(set_op(instr, 1, "t".into()));
-            }
-            Cmpxchg => w.line("cmpxchg();"),
-            Pushfd => w.line("pushfd();"),
-            Setne => w.line("setne();"),
-            Cpuid => w.line("cpuid();"),
-            Nop => {}
-            Xgetbv => w.line("xgetbv();"),
-            Setg => w.line("setg();"),
-            Bt => w.line("bt();"),
-
-            Cbw => w.line("ctx.cpu.regs.set_ax(ctx.cpu.regs.get_al() as i8 as i16 as u16);"),
-            Cwde => w.line("ctx.cpu.regs.eax = ctx.cpu.regs.get_ax() as i16 as i32 as u32;"),
-
-            Stc | Clc | Std | Cld | Sahf => {
-                w.line(format!(
-                    "{}(ctx);",
-                    format!("{:?}", instr.mnemonic()).to_ascii_lowercase()
-                ));
-            }
-
-            c => {
-                if fpu::codegen(w, state, instr) {
-                } else if string::codegen(w, state, instr) {
-                } else if mmx::codegen(w, state, instr) {
-                } else {
-                    todo!("{:?} in {}", c, instr);
-                }
+                16 => w.todo(),
+                8 => w.todo(),
+                size => todo!("{size}"),
             }
         }
-        if instr.flow_control() != iced_x86::FlowControl::Next {
-            break;
+
+        Div => {
+            w.line("div();");
+        }
+        Leave => {
+            w.line("leave(ctx);");
+        }
+        Enter => {
+            assert!(instr.op1_kind() == iced_x86::OpKind::Immediate8_2nd);
+            let op1 = instr.immediate8_2nd();
+            w.line(format!("enter(ctx, {}, {:x});", get_op(instr, 0), op1));
+        }
+
+        Dec => w.line(set_op(
+            instr,
+            0,
+            format!("dec({}, &mut ctx.cpu.flags)", get_op(instr, 0)),
+        )),
+        Inc => w.line(set_op(
+            instr,
+            0,
+            format!("inc({}, &mut ctx.cpu.flags)", get_op(instr, 0)),
+        )),
+        Sete => w.line(set_op(instr, 0, "sete(ctx)".into())),
+
+        Imul => {
+            let size = op_size(instr, 0);
+            let (x, y) = match instr.op_count() {
+                1 => match op_size(instr, 0) {
+                    8 => (get_reg(iced_x86::Register::AL), get_op(instr, 0)),
+                    16 => (get_reg(iced_x86::Register::AX), get_op(instr, 0)),
+                    _ => todo!(),
+                },
+                2 => {
+                    assert_eq!(op_size(instr, 0), op_size(instr, 1));
+                    let op0 = get_op(instr, 0);
+                    let op1 = get_op(instr, 1);
+                    (op0, op1)
+                }
+                3 => {
+                    assert_eq!(op_size(instr, 0), op_size(instr, 1));
+                    assert_eq!(op_size(instr, 1), op_size(instr, 2));
+                    let op1 = get_op(instr, 1);
+                    let op2 = get_op(instr, 2);
+                    (op1, op2)
+                }
+                _ => todo!(),
+            };
+            w.line(format!("let x = {x} as i{size}; let y = {y} as i{size};",));
+            w.line(
+                "let (res, overflow) = x.overflowing_mul(y);
+                    ctx.cpu.flags.set(Flags::CF, overflow);
+                    ctx.cpu.flags.set(Flags::OF, overflow);",
+            );
+            w.line(set_op(instr, 0, format!("res as u{size}")));
+        }
+        Not => {
+            w.line("not();");
+        }
+        Setge => {
+            w.line("setge(ctx);");
+        }
+        Int => {
+            w.line("int();");
+        }
+        Cdq => {
+            w.line("let t = ctx.cpu.regs.eax as i32 as i64 as u64;");
+            w.line("ctx.cpu.regs.edx = (t >> 32) as u32;");
+            w.line("ctx.cpu.regs.eax = t as u32;");
+        }
+
+        Idiv => {
+            assert_eq!(instr.op_count(), 1);
+            match op_size(instr, 0) {
+                8 => {
+                    w.line(
+                            "let x = (((ctx.cpu.regs.get_dl() as u16) << 8) | (ctx.cpu.regs.get_al() as u16)) as i16;",
+                        );
+                    w.line(format!("let y = {} as i16;", get_op(instr, 0)));
+                    w.line("ctx.cpu.regs.set_al((x / y) as i8 as u8);");
+                    w.line("ctx.cpu.regs.set_dl((x % y) as i8 as u8);");
+                }
+                16 => {
+                    w.line(
+                            "let x = (((ctx.cpu.regs.get_dx() as u32) << 16) | (ctx.cpu.regs.get_ax() as u32)) as i32;",
+                        );
+                    w.line(format!("let y = {} as i32;", get_op(instr, 0)));
+                    w.line("ctx.cpu.regs.set_ax((x / y) as i16 as u16);");
+                    w.line("ctx.cpu.regs.set_dx((x % y) as i16 as u16);");
+                }
+                32 => {
+                    w.line(
+                            "let x = (((ctx.cpu.regs.edx as u64) << 32) | (ctx.cpu.regs.eax as u64)) as i64;",
+                        );
+                    w.line(format!("let y = {} as i64;", get_op(instr, 0)));
+                    w.line("ctx.cpu.regs.eax = (x / y) as i32 as u32;");
+                    w.line("ctx.cpu.regs.edx = (x % y) as i32 as u32;");
+                }
+                _ => todo!(),
+            }
+        }
+
+        Int3 => w.line("int3();"),
+        Xchg => {
+            w.line(format!("let t = {};", get_op(instr, 0)));
+            w.line(set_op(instr, 0, get_op(instr, 1)));
+            w.line(set_op(instr, 1, "t".into()));
+        }
+        Cmpxchg => w.line("cmpxchg();"),
+        Pushfd => w.line("pushfd();"),
+        Setne => w.line("setne();"),
+        Cpuid => w.line("cpuid();"),
+        Nop => {}
+        Xgetbv => w.line("xgetbv();"),
+        Setg => w.line("setg();"),
+        Bt => w.line("bt();"),
+
+        Cbw => w.line("ctx.cpu.regs.set_ax(ctx.cpu.regs.get_al() as i8 as i16 as u16);"),
+        Cwde => w.line("ctx.cpu.regs.eax = ctx.cpu.regs.get_ax() as i16 as i32 as u32;"),
+
+        Stc | Clc | Std | Cld | Sahf => {
+            w.line(format!(
+                "{}(ctx);",
+                format!("{:?}", instr.mnemonic()).to_ascii_lowercase()
+            ));
+        }
+
+        c => {
+            if fpu::codegen(w, state, instr) {
+            } else if string::codegen(w, state, instr) {
+            } else if mmx::codegen(w, state, instr) {
+            } else {
+                todo!("{:?} in {}", c, instr);
+            }
         }
     }
 }
