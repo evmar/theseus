@@ -214,7 +214,6 @@ fn gen_block(w: &mut Writer, state: &State, ip: AddrAbs, block: &Block) {
     println!("gen block: {:#08x}", ip.0);
     match block {
         Block::Instrs(instrs) => {
-            w.line("#[allow(unused_variables)]");
             w.line(format!(
                 "pub fn x{:08x}(ctx: &mut Context) -> Cont {{",
                 ip.0
@@ -505,6 +504,7 @@ pub fn gen_file(state: &mut State, outdir: &str) -> Result<()> {
     w.line(
         "#![allow(unreachable_code)]
 #![allow(unused_parens)]
+#![allow(unused_variables)]
 
 use runtime::*;
 use winapi::*;
