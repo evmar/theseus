@@ -1,9 +1,11 @@
 use anyhow::{Result, anyhow, bail};
+mod fpu;
+mod mmx;
+mod string;
 
 use crate::{
-    Block, State, fpu, is_abs_memory_ref,
+    Block, State, is_abs_memory_ref,
     memory::{AddrAbs, AddrImage},
-    mmx, string,
 };
 
 pub fn get_reg(r: iced_x86::Register) -> String {
