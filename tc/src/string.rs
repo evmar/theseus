@@ -48,6 +48,7 @@ pub fn codegen(w: &mut Writer, state: &State, instr: &iced_x86::Instruction) -> 
                 w.line("stosb(ctx);");
             };
         }
+        Stosw => w.todo(),
         Stosd => {
             assert!(!instr.has_repne_prefix());
             if instr.has_rep_prefix() {

@@ -283,7 +283,7 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
                     instr,
                     0,
                     format!(
-                        "addc({op0}, {op1}, ctx.cpu.flags.contains(Flags::CF) as u32, &mut ctx.cpu.flags)"
+                        "addc({op0}, {op1}, ctx.cpu.flags.contains(Flags::CF) as u32 as _, &mut ctx.cpu.flags)"
                     ),
                 ));
             }
@@ -299,6 +299,7 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
                     format!("shld({op0}, {op1}, {op2}, &mut ctx.cpu.flags)"),
                 ));
             }
+            Shrd => w.todo(),
 
             Cmp => {
                 let op0 = get_op(instr, 0);
@@ -351,6 +352,8 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
                         w.line("ctx.cpu.regs.edx = (out >> 32) as u32;");
                         w.line("ctx.cpu.regs.eax = out as u32;");
                     }
+                    16 => w.todo(),
+                    8 => w.todo(),
                     size => todo!("{size}"),
                 }
             }
@@ -380,7 +383,13 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
             Sete => w.line(set_op(instr, 0, "sete(ctx)".into())),
 
             Imul => {
+                let size = op_size(instr, 0);
                 let (x, y) = match instr.op_count() {
+                    1 => match op_size(instr, 0) {
+                        8 => (get_reg(iced_x86::Register::AL), get_op(instr, 0)),
+                        16 => (get_reg(iced_x86::Register::AX), get_op(instr, 0)),
+                        _ => todo!(),
+                    },
                     2 => {
                         assert_eq!(op_size(instr, 0), op_size(instr, 1));
                         let op0 = get_op(instr, 0);
@@ -396,14 +405,13 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
                     }
                     _ => todo!(),
                 };
-                w.line(set_op(
-                    instr,
-                    0,
-                    format!(
-                        "imul({x} as i{size}, {y} as i{size}, &mut ctx.cpu.flags) as u{size}",
-                        size = op_size(instr, 0),
-                    ),
-                ));
+                w.line(format!("let x = {x} as i{size}; let y = {y} as i{size};",));
+                w.line(
+                    "let (res, overflow) = x.overflowing_mul(y);
+                    ctx.cpu.flags.set(Flags::CF, overflow);
+                    ctx.cpu.flags.set(Flags::OF, overflow);",
+                );
+                w.line(set_op(instr, 0, format!("res as u{size}")));
             }
             Not => {
                 w.line("not();");
@@ -423,6 +431,22 @@ fn gen_instrs(w: &mut Writer, state: &State, instrs: &[iced_x86::Instruction]) {
             Idiv => {
                 assert_eq!(instr.op_count(), 1);
                 match op_size(instr, 0) {
+                    8 => {
+                        w.line(
+                            "let x = (((ctx.cpu.regs.get_dl() as u16) << 8) | (ctx.cpu.regs.get_al() as u16)) as i16;",
+                        );
+                        w.line(format!("let y = {} as i16;", get_op(instr, 0)));
+                        w.line("ctx.cpu.regs.set_al((x / y) as i8 as u8);");
+                        w.line("ctx.cpu.regs.set_dl((x % y) as i8 as u8);");
+                    }
+                    16 => {
+                        w.line(
+                            "let x = (((ctx.cpu.regs.get_dx() as u32) << 16) | (ctx.cpu.regs.get_ax() as u32)) as i32;",
+                        );
+                        w.line(format!("let y = {} as i32;", get_op(instr, 0)));
+                        w.line("ctx.cpu.regs.set_ax((x / y) as i16 as u16);");
+                        w.line("ctx.cpu.regs.set_dx((x % y) as i16 as u16);");
+                    }
                     32 => {
                         w.line(
                             "let x = (((ctx.cpu.regs.edx as u64) << 32) | (ctx.cpu.regs.eax as u64)) as i64;",

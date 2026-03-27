@@ -113,8 +113,12 @@ pub fn inc<I: Int + num_traits::ops::wrapping::WrappingAdd>(x: I, flags: &mut Fl
     result
 }
 
-pub fn imul(x: i32, y: i32, flags: &mut Flags) -> i32 {
-    let (res, overflow) = x.overflowing_mul(y);
+pub fn imul<I: Int + num_traits::ops::overflowing::OverflowingMul>(
+    x: I,
+    y: I,
+    flags: &mut Flags,
+) -> I {
+    let (res, overflow) = x.overflowing_mul(&y);
     flags.set(Flags::CF, overflow);
     flags.set(Flags::OF, overflow);
     res
