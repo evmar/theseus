@@ -1,10 +1,11 @@
 use anyhow::{Result, anyhow, bail};
+mod control_flow;
 mod fpu;
 mod mmx;
 mod string;
 
 use crate::{
-    Block, State, is_abs_memory_ref,
+    Block, State,
     memory::{AddrAbs, AddrImage},
 };
 
@@ -154,40 +155,6 @@ pub fn set_op(instr: &iced_x86::Instruction, n: u32, expr: String) -> String {
     }
 }
 
-pub fn gen_abs_jmp(state: &State, addr: u32) -> String {
-    if state.blocks.contains_key(&addr) {
-        format!("Cont(x{:08x})", addr)
-    } else {
-        format!("/* TODO */ indirect(ctx, {:#08x}u32)", addr)
-    }
-}
-
-pub fn gen_jmp(state: &State, instr: &iced_x86::Instruction) -> String {
-    match instr.op_kind(0) {
-        iced_x86::OpKind::NearBranch32 => {
-            let addr = instr.near_branch32();
-            gen_abs_jmp(state, addr)
-        }
-        iced_x86::OpKind::Memory => {
-            // If it's like `call [someaddr]` where someaddr is in the IAT, resolve it directly.
-            if let Some(addr) = is_abs_memory_ref(instr) {
-                if let Some(import) = state.imports.get(&addr) {
-                    return format!(
-                        "Cont({dll}::{func}_stdcall)",
-                        dll = import.dll,
-                        func = import.func
-                    );
-                }
-            }
-            format!("indirect(ctx, ctx.memory.read({}))", gen_addr(instr))
-        }
-        iced_x86::OpKind::Register => {
-            format!("indirect(ctx, {})", get_reg(instr.op0_register()))
-        }
-        k => todo!("{:?}", k),
-    }
-}
-
 #[derive(Default)]
 pub struct Writer {
     buf: String,
@@ -236,26 +203,7 @@ fn gen_instr(w: &mut Writer, state: &State, instr: &iced_x86::Instruction) {
         }
         Pushad => w.line("pushad(ctx);"),
         Popad => w.line("popad(ctx);"),
-        Jmp => w.line(gen_jmp(state, instr)),
         Mov => w.line(set_op(instr, 0, get_op(instr, 1))),
-
-        Call => {
-            // Create a temporary here in case gen_jmp needs to borrow ctx.
-            w.line(format!("let dst = {};", gen_jmp(state, instr)));
-            w.line(format!("call(ctx, {:#08x}, dst)", instr.next_ip32(),));
-        }
-
-        Ret => {
-            let n = match instr.op_count() {
-                0 => 0,
-                1 => {
-                    assert!(instr.op0_kind() == iced_x86::OpKind::Immediate16);
-                    instr.immediate16()
-                }
-                _ => todo!(),
-            };
-            w.line(format!("ret(ctx, {n})"));
-        }
 
         // 0-arg instructions.
         //
@@ -309,14 +257,6 @@ fn gen_instr(w: &mut Writer, state: &State, instr: &iced_x86::Instruction) {
                 get_op(instr, 0),
                 get_op(instr, 1)
             ));
-        }
-
-        // Conditional jumps.
-        Je | Jne | Jb | Js | Jns | Ja | Jae | Jl | Jg | Jge | Jecxz | Jle | Jbe => {
-            let next = gen_abs_jmp(state, instr.next_ip32());
-            let dst = gen_jmp(state, instr);
-            let func = instr_name(instr);
-            w.line(format!("{func}(ctx, {next}, {dst})"));
         }
 
         Lea => w.line(format!("{} = {};", get_op(instr, 0), gen_addr(instr))),
@@ -462,7 +402,8 @@ fn gen_instr(w: &mut Writer, state: &State, instr: &iced_x86::Instruction) {
         }
 
         c => {
-            if fpu::codegen(w, state, instr) {
+            if control_flow::codegen(w, state, instr) {
+            } else if fpu::codegen(w, state, instr) {
             } else if string::codegen(w, state, instr) {
             } else if mmx::codegen(w, state, instr) {
             } else {

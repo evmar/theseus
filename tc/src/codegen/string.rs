@@ -1,9 +1,6 @@
-use crate::{
-    State,
-    codegen::{Writer, gen_abs_jmp, gen_jmp},
-};
+use crate::{State, codegen::Writer};
 
-pub fn codegen(w: &mut Writer, state: &State, instr: &iced_x86::Instruction) -> bool {
+pub fn codegen(w: &mut Writer, _state: &State, instr: &iced_x86::Instruction) -> bool {
     use iced_x86::Mnemonic::*;
     match instr.mnemonic() {
         Movsb => {
@@ -80,13 +77,6 @@ pub fn codegen(w: &mut Writer, state: &State, instr: &iced_x86::Instruction) -> 
             };
         }
 
-        Loop => {
-            let next = gen_abs_jmp(state, instr.next_ip32());
-            let dst = gen_jmp(state, instr);
-            w.line("ctx.cpu.regs.ecx = ctx.cpu.regs.ecx.wrapping_sub(1);");
-            w.line(format!("if ctx.cpu.regs.ecx == 0 {{ {next} }}"));
-            w.line(format!("else {{ {dst} }}"));
-        }
         _ => return false,
     }
     true
