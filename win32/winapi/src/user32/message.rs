@@ -1,10 +1,7 @@
 use runtime::Context;
 use std::collections::VecDeque;
 
-use crate::{
-    stub,
-    user32::{HWND, state},
-};
+use crate::user32::{HWND, state};
 
 struct MSG {}
 
@@ -22,8 +19,7 @@ impl MessageQueue {
     }
 
     fn pump(&mut self) {
-        let ev = state().event_pump.borrow_mut().poll_event();
-        dbg!(ev);
+        let _ev = state().event_pump.borrow_mut().poll_event();
     }
 }
 
@@ -46,8 +42,10 @@ pub fn PeekMessageA(
     _wMsgFilterMax: u32,
     _wRemoveMsg: u32, /* PEEK_MESSAGE_REMOVE_TYPE */
 ) -> bool {
-    state().message_queue.borrow_mut().peek();
-    stub!(false)
+    let mut queue = state().message_queue.borrow_mut();
+    let front = queue.peek();
+    assert!(front.is_none()); // TODO
+    false
 }
 
 #[win32_derive::dllexport]
