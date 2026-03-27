@@ -178,7 +178,7 @@ fn traverse(state: &mut State, start: u32) {
         if state.blocks.contains_key(&ip) {
             continue;
         }
-        println!("visit {ip:#08x}");
+        log::info!("visit {ip:#08x}");
 
         let mut instrs = Vec::new();
         let decoder = iced_x86::Decoder::with_ip(
@@ -188,7 +188,7 @@ fn traverse(state: &mut State, start: u32) {
             iced_x86::DecoderOptions::NONE,
         );
         for instr in decoder {
-            println!("{:08x} {}", instr.ip32(), instr);
+            log::info!("{:08x} {}", instr.ip32(), instr);
             instrs.push(instr);
 
             if state.scan_immediates {
@@ -196,7 +196,7 @@ fn traverse(state: &mut State, start: u32) {
                     if instr.op_kind(i) == iced_x86::OpKind::Immediate32 {
                         let imm = instr.immediate32();
                         if state.code_memory.contains(&imm) {
-                            println!("{imm:x} looks like a code pointer");
+                            log::info!("{imm:x} looks like a code pointer");
                             queue.push_back(imm);
                         }
                     }
@@ -217,15 +217,15 @@ fn traverse(state: &mut State, start: u32) {
                                 if state.imports.contains_key(&addr) {
                                     // ok
                                 } else {
-                                    println!("indirect jmp via memory {addr:x}");
+                                    log::info!("indirect jmp via memory {addr:x}");
                                 }
                             } else {
-                                println!("complex indirect jmp");
+                                log::info!("complex indirect jmp");
                             }
                         }
                         iced_x86::OpKind::Register => {
                             let reg = instr.op_register(0);
-                            println!("indirect via register dest: {reg:?}");
+                            log::info!("indirect via register dest: {reg:?}");
                         }
                         d => todo!("dest {d:?}"),
                     };
@@ -237,7 +237,7 @@ fn traverse(state: &mut State, start: u32) {
                 Int => {}  // terminates
                 Int3 => {} // breakpoint
                 INVALID => {
-                    println!("aborting block at {start:x}, invalid code found");
+                    log::error!("aborting block at {start:x}, invalid code found");
                     continue 'queue;
                 }
                 _ => todo!("control flow {}", instr),
@@ -255,12 +255,12 @@ fn scan_for_pointers(state: &mut State) {
         if mapping.addr == state.code_memory.start {
             continue;
         }
-        println!("scanning {:?}", mapping);
+        log::info!("scanning {:?}", mapping);
         let data = state.mem.data[mapping.addr as usize..][..mapping.size as usize].to_vec();
         for w in data.windows(4) {
             let addr = u32::from_le_bytes(w.try_into().unwrap());
             if state.code_memory.contains(&addr) {
-                println!("scan found {addr:x}");
+                log::info!("scan found {addr:x}");
                 traverse(state, addr);
             }
         }
@@ -342,7 +342,7 @@ fn run() -> Result<()> {
 
 fn main() {
     if let Err(err) = run() {
-        println!("error: {err}");
+        log::error!("error: {err}");
         std::process::exit(1);
     }
 }
