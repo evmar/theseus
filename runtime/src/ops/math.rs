@@ -92,10 +92,6 @@ pub fn neg<I: Int + num_traits::ops::overflowing::OverflowingSub>(x: I, flags: &
     result
 }
 
-pub fn div() {
-    todo!("div");
-}
-
 pub fn dec<I: Int + num_traits::ops::overflowing::OverflowingSub + num_traits::WrappingAdd>(
     x: I,
     flags: &mut Flags,
@@ -122,18 +118,6 @@ pub fn imul<I: Int + num_traits::ops::overflowing::OverflowingMul>(
     flags.set(Flags::CF, overflow);
     flags.set(Flags::OF, overflow);
     res
-}
-
-pub fn not() {
-    todo!("not");
-}
-
-pub fn cdq() {
-    todo!("cdq");
-}
-
-pub fn bt() {
-    todo!("bt");
 }
 
 /// xor: Logical Exclusive OR

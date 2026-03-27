@@ -121,15 +121,3 @@ pub fn leave(ctx: &mut Context) {
 pub fn sete(ctx: &Context) -> u8 {
     ctx.cpu.flags.contains(Flags::ZF) as u8
 }
-
-pub fn setge(_ctx: &mut Context) {
-    todo!("setge");
-}
-
-pub fn setne(_ctx: &mut Context) {
-    todo!("setne");
-}
-
-pub fn setg(_ctx: &mut Context) {
-    todo!("setg");
-}

@@ -257,6 +257,9 @@ fn gen_instr(w: &mut Writer, state: &State, instr: &iced_x86::Instruction) {
             w.line(format!("ret(ctx, {n})"));
         }
 
+        // 0-arg instructions.
+        //
+
         // Binary operations.
         And | Or | Add | Sub | Sbb | Xor | Shl | Shr | Sar => {
             assert_eq!(instr.op_count(), 2);
@@ -352,7 +355,6 @@ fn gen_instr(w: &mut Writer, state: &State, instr: &iced_x86::Instruction) {
             }
         }
 
-        Div => w.line("div();"),
         Leave => w.line("leave(ctx);"),
         Enter => {
             assert!(instr.op1_kind() == iced_x86::OpKind::Immediate8_2nd);
@@ -403,9 +405,7 @@ fn gen_instr(w: &mut Writer, state: &State, instr: &iced_x86::Instruction) {
             );
             w.line(set_op(instr, 0, format!("res as u{size}")));
         }
-        Not => w.line("not();"),
-        Setge => w.line("setge(ctx);"),
-        Int => w.line("int();"),
+
         Cdq => {
             w.line("let t = ctx.cpu.regs.eax as i32 as i64 as u64;");
             w.line("ctx.cpu.regs.edx = (t >> 32) as u32;");
@@ -443,20 +443,16 @@ fn gen_instr(w: &mut Writer, state: &State, instr: &iced_x86::Instruction) {
             }
         }
 
-        Int3 => w.line("int3();"),
         Xchg => {
             w.line(format!("let t = {};", get_op(instr, 0)));
             w.line(set_op(instr, 0, get_op(instr, 1)));
             w.line(set_op(instr, 1, "t".into()));
         }
-        Cmpxchg => w.line("cmpxchg();"),
-        Pushfd => w.line("pushfd();"),
-        Setne => w.line("setne();"),
-        Cpuid => w.line("cpuid();"),
         Nop => {}
-        Xgetbv => w.line("xgetbv();"),
-        Setg => w.line("setg();"),
-        Bt => w.line("bt();"),
+
+        Not | Int | Int3 | Cmpxchg | Pushfd | Setne | Cpuid | Xgetbv | Setg | Bt | Div | Setge => {
+            w.todo()
+        }
 
         Cbw => w.line("ctx.cpu.regs.set_ax(ctx.cpu.regs.get_al() as i8 as i16 as u16);"),
         Cwde => w.line("ctx.cpu.regs.eax = ctx.cpu.regs.get_ax() as i16 as i32 as u32;"),

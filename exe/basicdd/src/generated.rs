@@ -9216,7 +9216,7 @@ pub fn x00402cf0(ctx: &mut Context) -> Cont {
         .wrapping_add(ctx.cpu.regs.eax)
         .wrapping_add(0x4u32);
     // 00402cfd not ebx
-    not();
+    todo!();
     // 00402cff and [eax+edi*4+44h],ebx
     ctx.memory.write::<u32>(
         ctx.cpu
@@ -9278,7 +9278,7 @@ pub fn x00402d0e(ctx: &mut Context) -> Cont {
         .wrapping_add(ctx.cpu.regs.eax)
         .wrapping_add(0x4u32);
     // 00402d1c not ebx
-    not();
+    todo!();
     // 00402d1e and [eax+edi*4+0C4h],ebx
     ctx.memory.write::<u32>(
         ctx.cpu
@@ -9636,7 +9636,7 @@ pub fn x00402dae(ctx: &mut Context) -> Cont {
     // 00402db5 shr esi,cl
     ctx.cpu.regs.esi = shr(ctx.cpu.regs.esi, ctx.cpu.regs.get_cl(), &mut ctx.cpu.flags);
     // 00402db7 not esi
-    not();
+    todo!();
     // 00402db9 and [eax+edi*4+44h],esi
     ctx.memory.write::<u32>(
         ctx.cpu
@@ -9704,7 +9704,7 @@ pub fn x00402dca(ctx: &mut Context) -> Cont {
     // 00402dd2 shr esi,cl
     ctx.cpu.regs.esi = shr(ctx.cpu.regs.esi, ctx.cpu.regs.get_cl(), &mut ctx.cpu.flags);
     // 00402dd4 not esi
-    not();
+    todo!();
     // 00402dd6 and [eax+edi*4+0C4h],esi
     ctx.memory.write::<u32>(
         ctx.cpu
@@ -11305,7 +11305,7 @@ pub fn x0040315f(ctx: &mut Context) -> Cont {
         .wrapping_add(ctx.cpu.regs.edi)
         .wrapping_add(0x4u32);
     // 0040316f not ebx
-    not();
+    todo!();
     // 00403171 mov [ebp-14h],ebx
     ctx.memory.write::<u32>(
         ctx.cpu.regs.ebp.wrapping_add(0xffffffecu32),
@@ -11389,7 +11389,7 @@ pub fn x0040318a(ctx: &mut Context) -> Cont {
         .wrapping_add((ctx.cpu.regs.ecx * 4))
         .wrapping_add(0xc4u32);
     // 004031a2 not ebx
-    not();
+    todo!();
     // 004031a4 and [ecx],ebx
     ctx.memory.write::<u32>(
         ctx.cpu.regs.ecx,
@@ -12565,7 +12565,7 @@ pub fn x00403445(ctx: &mut Context) -> Cont {
     // 0040344f shr edx,cl
     ctx.cpu.regs.edx = shr(ctx.cpu.regs.edx, ctx.cpu.regs.get_cl(), &mut ctx.cpu.flags);
     // 00403451 not edx
-    not();
+    todo!();
     // 00403453 and [eax+8],edx
     ctx.memory.write::<u32>(
         ctx.cpu.regs.eax.wrapping_add(0x8u32),
@@ -12601,7 +12601,7 @@ pub fn x00403448(ctx: &mut Context) -> Cont {
     // 0040344f shr edx,cl
     ctx.cpu.regs.edx = shr(ctx.cpu.regs.edx, ctx.cpu.regs.get_cl(), &mut ctx.cpu.flags);
     // 00403451 not edx
-    not();
+    todo!();
     // 00403453 and [eax+8],edx
     ctx.memory.write::<u32>(
         ctx.cpu.regs.eax.wrapping_add(0x8u32),
@@ -12847,7 +12847,7 @@ pub fn x004034e1(ctx: &mut Context) -> Cont {
         .wrapping_add(ctx.cpu.regs.eax)
         .wrapping_add(0x4u32);
     // 004034ef not ebx
-    not();
+    todo!();
     // 004034f1 and [eax+edx*4+44h],ebx
     ctx.memory.write::<u32>(
         ctx.cpu
@@ -12913,7 +12913,7 @@ pub fn x00403500(ctx: &mut Context) -> Cont {
         .wrapping_add(ctx.cpu.regs.eax)
         .wrapping_add(0x4u32);
     // 00403511 not ebx
-    not();
+    todo!();
     // 00403513 and [eax+edx*4+0C4h],ebx
     ctx.memory.write::<u32>(
         ctx.cpu
@@ -13706,7 +13706,7 @@ pub fn x0040365c(ctx: &mut Context) -> Cont {
         .wrapping_add(ctx.cpu.regs.eax)
         .wrapping_add(0x4u32);
     // 00403669 not ebx
-    not();
+    todo!();
     // 0040366b and [eax+edx*4+44h],ebx
     ctx.memory.write::<u32>(
         ctx.cpu
@@ -13768,7 +13768,7 @@ pub fn x0040367a(ctx: &mut Context) -> Cont {
         .wrapping_add(ctx.cpu.regs.eax)
         .wrapping_add(0x4u32);
     // 00403688 not ebx
-    not();
+    todo!();
     // 0040368a and [eax+edx*4+0C4h],ebx
     ctx.memory.write::<u32>(
         ctx.cpu
@@ -14608,7 +14608,7 @@ pub fn x004037e3(ctx: &mut Context) -> Cont {
     // 0040381c cmp ebp,10h
     sub(ctx.cpu.regs.ebp, 0x10u32, &mut ctx.cpu.flags);
     // 0040381f setge dl
-    setge(ctx);
+    todo!();
     // 00403822 dec edx
     ctx.cpu.regs.edx = dec(ctx.cpu.regs.edx, &mut ctx.cpu.flags);
     // 00403823 and edx,ecx
@@ -14658,7 +14658,7 @@ pub fn x004037f8(ctx: &mut Context) -> Cont {
     // 0040381c cmp ebp,10h
     sub(ctx.cpu.regs.ebp, 0x10u32, &mut ctx.cpu.flags);
     // 0040381f setge dl
-    setge(ctx);
+    todo!();
     // 00403822 dec edx
     ctx.cpu.regs.edx = dec(ctx.cpu.regs.edx, &mut ctx.cpu.flags);
     // 00403823 and edx,ecx
@@ -14686,7 +14686,7 @@ pub fn x0040381a(ctx: &mut Context) -> Cont {
     // 0040381c cmp ebp,10h
     sub(ctx.cpu.regs.ebp, 0x10u32, &mut ctx.cpu.flags);
     // 0040381f setge dl
-    setge(ctx);
+    todo!();
     // 00403822 dec edx
     ctx.cpu.regs.edx = dec(ctx.cpu.regs.edx, &mut ctx.cpu.flags);
     // 00403823 and edx,ecx
@@ -19928,7 +19928,7 @@ pub fn x004047df(ctx: &mut Context) -> Cont {
     // 004047ea xor edx,edx
     ctx.cpu.regs.edx = xor(ctx.cpu.regs.edx, ctx.cpu.regs.edx, &mut ctx.cpu.flags);
     // 004047ec div dword ptr [ebp+10h]
-    div();
+    todo!();
     // 004047ef mov edi,103h
     ctx.cpu.regs.edi = 0x103u32;
     // 004047f4 mov [ebp-0Ch],eax
@@ -19954,7 +19954,7 @@ pub fn x004047e7(ctx: &mut Context) -> Cont {
     // 004047ea xor edx,edx
     ctx.cpu.regs.edx = xor(ctx.cpu.regs.edx, ctx.cpu.regs.edx, &mut ctx.cpu.flags);
     // 004047ec div dword ptr [ebp+10h]
-    div();
+    todo!();
     // 004047ef mov edi,103h
     ctx.cpu.regs.edi = 0x103u32;
     // 004047f4 mov [ebp-0Ch],eax
@@ -20173,7 +20173,7 @@ pub fn x0040486b(ctx: &mut Context) -> Cont {
     // 0040486e xor edx,edx
     ctx.cpu.regs.edx = xor(ctx.cpu.regs.edx, ctx.cpu.regs.edx, &mut ctx.cpu.flags);
     // 00404870 div dword ptr [ebp+10h]
-    div();
+    todo!();
     // 00404873 cmp ecx,edx
     sub(ctx.cpu.regs.ecx, ctx.cpu.regs.edx, &mut ctx.cpu.flags);
     // 00404875 jbe short 0040487Dh
@@ -21282,7 +21282,7 @@ pub fn x00404aad(ctx: &mut Context) -> Cont {
     // 00404aae dec ecx
     ctx.cpu.regs.ecx = dec(ctx.cpu.regs.ecx, &mut ctx.cpu.flags);
     // 00404aaf not ecx
-    not();
+    todo!();
     // 00404ab1 mov eax,ecx
     ctx.cpu.regs.eax = ctx.cpu.regs.ecx;
     // 00404ab3 pop ebx
@@ -21302,7 +21302,7 @@ pub fn x00404aad(ctx: &mut Context) -> Cont {
 
 pub fn x00404aaf(ctx: &mut Context) -> Cont {
     // 00404aaf not ecx
-    not();
+    todo!();
     // 00404ab1 mov eax,ecx
     ctx.cpu.regs.eax = ctx.cpu.regs.ecx;
     // 00404ab3 pop ebx

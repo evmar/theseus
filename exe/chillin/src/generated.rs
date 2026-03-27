@@ -43819,18 +43819,14 @@ pub fn x00408e15(ctx: &mut Context) -> Cont {
 
 pub fn x00408e28(ctx: &mut Context) -> Cont {
     // 00408e28 not eax
-    not();
+    todo!();
     // 00408e2a add eax,1
     ctx.cpu.regs.eax = add(ctx.cpu.regs.eax, 0x1u32, &mut ctx.cpu.flags);
     // 00408e2f not ebx
-    not();
+    todo!();
     // 00408e31 adc ebx,0
-    ctx.cpu.regs.ebx = addc(
-        ctx.cpu.regs.ebx,
-        0x0u32,
-        ctx.cpu.flags.contains(Flags::CF) as u32 as _,
-        &mut ctx.cpu.flags,
-    );
+    let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
+    ctx.cpu.regs.ebx = addc(ctx.cpu.regs.ebx, 0x0u32, carry as _, &mut ctx.cpu.flags);
     // 00408e37 mov [ebp+4B87h],ebx
     ctx.memory
         .write::<u32>(ctx.cpu.regs.ebp.wrapping_add(0x4b87u32), ctx.cpu.regs.ebx);
@@ -44170,11 +44166,12 @@ pub fn x00408ea0(ctx: &mut Context) -> Cont {
         .memory
         .read::<u32>(ctx.cpu.regs.esi.wrapping_add(0x19u32));
     // 00408f15 adc eax,[ebp+4B87h]
+    let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
     ctx.cpu.regs.eax = addc(
         ctx.cpu.regs.eax,
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0x4b87u32)),
-        ctx.cpu.flags.contains(Flags::CF) as u32 as _,
+        carry as _,
         &mut ctx.cpu.flags,
     );
     // 00408f1b mov [esi+19h],eax
@@ -44288,11 +44285,12 @@ pub fn x00408eca(ctx: &mut Context) -> Cont {
         .memory
         .read::<u32>(ctx.cpu.regs.esi.wrapping_add(0x19u32));
     // 00408f15 adc eax,[ebp+4B87h]
+    let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
     ctx.cpu.regs.eax = addc(
         ctx.cpu.regs.eax,
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0x4b87u32)),
-        ctx.cpu.flags.contains(Flags::CF) as u32 as _,
+        carry as _,
         &mut ctx.cpu.flags,
     );
     // 00408f1b mov [esi+19h],eax
@@ -44461,11 +44459,12 @@ pub fn x00408f2d(ctx: &mut Context) -> Cont {
         .memory
         .read::<u32>(ctx.cpu.regs.esi.wrapping_add(0x19u32));
     // 00408fa7 adc eax,[ebp+4B87h]
+    let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
     ctx.cpu.regs.eax = addc(
         ctx.cpu.regs.eax,
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0x4b87u32)),
-        ctx.cpu.flags.contains(Flags::CF) as u32 as _,
+        carry as _,
         &mut ctx.cpu.flags,
     );
     // 00408fad mov [esi+19h],eax
@@ -44583,11 +44582,12 @@ pub fn x00408f5d(ctx: &mut Context) -> Cont {
         .memory
         .read::<u32>(ctx.cpu.regs.esi.wrapping_add(0x19u32));
     // 00408fa7 adc eax,[ebp+4B87h]
+    let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
     ctx.cpu.regs.eax = addc(
         ctx.cpu.regs.eax,
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0x4b87u32)),
-        ctx.cpu.flags.contains(Flags::CF) as u32 as _,
+        carry as _,
         &mut ctx.cpu.flags,
     );
     // 00408fad mov [esi+19h],eax
@@ -48184,7 +48184,7 @@ pub fn x00409ea2(ctx: &mut Context) -> Cont {
     // 00409ead xor edx,edx
     ctx.cpu.regs.edx = xor(ctx.cpu.regs.edx, ctx.cpu.regs.edx, &mut ctx.cpu.flags);
     // 00409eaf div ebx
-    div();
+    todo!();
     // 00409eb1 jmp near ptr 00409EC8h
     Cont(x00409ec8)
 }
@@ -48204,7 +48204,7 @@ pub fn x00409ebd(ctx: &mut Context) -> Cont {
     // 00409ec4 xor edx,edx
     ctx.cpu.regs.edx = xor(ctx.cpu.regs.edx, ctx.cpu.regs.edx, &mut ctx.cpu.flags);
     // 00409ec6 div ebx
-    div();
+    todo!();
     // 00409ec8 and al,0FEh
     ctx.cpu
         .regs
@@ -49334,10 +49334,11 @@ pub fn x0040a48a(ctx: &mut Context) -> Cont {
 
 pub fn x0040a4b7(ctx: &mut Context) -> Cont {
     // 0040a4b7 adc al,0
+    let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
     ctx.cpu.regs.set_al(addc(
         ctx.cpu.regs.get_al(),
         0x0u8,
-        ctx.cpu.flags.contains(Flags::CF) as u32 as _,
+        carry as _,
         &mut ctx.cpu.flags,
     ));
     // 0040a4b9 add [eax],al

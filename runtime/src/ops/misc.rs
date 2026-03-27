@@ -11,14 +11,6 @@ pub fn pop(ctx: &mut Context) -> u32 {
     x
 }
 
-pub fn pushfd() {
-    todo!("pushfd");
-}
-
-pub fn cwde(_ctx: &mut Context) {
-    todo!("cwde");
-}
-
 pub fn pushad(ctx: &mut Context) {
     let esp = ctx.cpu.regs.esp;
     push(ctx, ctx.cpu.regs.eax);
