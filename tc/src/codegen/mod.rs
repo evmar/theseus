@@ -360,12 +360,8 @@ fn gen_instr(w: &mut Writer, state: &State, instr: &iced_x86::Instruction) {
             }
         }
 
-        Div => {
-            w.line("div();");
-        }
-        Leave => {
-            w.line("leave(ctx);");
-        }
+        Div => w.line("div();"),
+        Leave => w.line("leave(ctx);"),
         Enter => {
             assert!(instr.op1_kind() == iced_x86::OpKind::Immediate8_2nd);
             let op1 = instr.immediate8_2nd();
@@ -415,15 +411,9 @@ fn gen_instr(w: &mut Writer, state: &State, instr: &iced_x86::Instruction) {
             );
             w.line(set_op(instr, 0, format!("res as u{size}")));
         }
-        Not => {
-            w.line("not();");
-        }
-        Setge => {
-            w.line("setge(ctx);");
-        }
-        Int => {
-            w.line("int();");
-        }
+        Not => w.line("not();"),
+        Setge => w.line("setge(ctx);"),
+        Int => w.line("int();"),
         Cdq => {
             w.line("let t = ctx.cpu.regs.eax as i32 as i64 as u64;");
             w.line("ctx.cpu.regs.edx = (t >> 32) as u32;");
