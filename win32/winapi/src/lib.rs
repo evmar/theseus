@@ -23,7 +23,7 @@ pub use rect::RECT;
 
 macro_rules! stub {
     ($arg:expr) => {{
-        log::warn!("{}:{}: stub: returning {:?}", file!(), line!(), $arg);
+        log::warn!("stub: using {:?}", $arg);
         $arg
     }};
 }
