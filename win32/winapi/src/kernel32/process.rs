@@ -121,8 +121,6 @@ pub fn init_process(ctx: &mut Context, state: &mut kernel32::Lock) {
 
         let peb_addr = (&raw const *peb).byte_offset_from_unsigned(origin) as u32;
         init_thread(ctx, &mut state.mappings, peb_addr);
-
-        state.mappings.dump();
     }
 }
 

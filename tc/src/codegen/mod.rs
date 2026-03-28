@@ -175,7 +175,6 @@ impl Writer {
 }
 
 fn gen_block(w: &mut Writer, state: &State, ip: AddrAbs, block: &Block) {
-    log::info!("gen block: {:#08x}", ip.0);
     match block {
         Block::Instrs(instrs) => {
             w.line(format!(
@@ -194,7 +193,6 @@ fn gen_block(w: &mut Writer, state: &State, ip: AddrAbs, block: &Block) {
 }
 
 fn gen_instr(w: &mut Writer, state: &State, instr: &iced_x86::Instruction) {
-    log::info!("gen: {}", instr);
     w.line(format!("// {:08x} {}", AddrAbs(instr.ip32()).0, instr));
     if control_flow::codegen(w, state, instr) {
     } else if math::codegen(w, state, instr) {
@@ -223,8 +221,6 @@ use winapi::*;
     if state.blocks.values().any(|b| matches!(b, Block::Extern(_))) {
         w.line("use crate::externs::*;");
     }
-
-    state.mem.mappings.dump();
 
     // It would be cool if we could just link a wasm object file that contains data sections
     // like

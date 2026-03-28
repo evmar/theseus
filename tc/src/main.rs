@@ -52,7 +52,6 @@ impl State {
                 code_range = Some(addr.0..(addr.0 + sec.SizeOfRawData));
             }
         }
-        log::info!("code {:x?}", code_range);
 
         let resource_dir = f
             .get_data_directory(pe::IMAGE_DIRECTORY_ENTRY::RESOURCE)
@@ -178,7 +177,6 @@ fn traverse(state: &mut State, start: u32) {
         if state.blocks.contains_key(&ip) {
             continue;
         }
-        log::info!("visit {ip:#08x}");
 
         let mut instrs = Vec::new();
         let decoder = iced_x86::Decoder::with_ip(
@@ -188,7 +186,6 @@ fn traverse(state: &mut State, start: u32) {
             iced_x86::DecoderOptions::NONE,
         );
         for instr in decoder {
-            log::info!("{:08x} {}", instr.ip32(), instr);
             instrs.push(instr);
 
             if state.scan_immediates {
@@ -217,15 +214,15 @@ fn traverse(state: &mut State, start: u32) {
                                 if state.imports.contains_key(&addr) {
                                     // ok
                                 } else {
-                                    log::info!("indirect jmp via memory {addr:x}");
+                                    log::warn!("indirect jmp via memory {addr:x}");
                                 }
                             } else {
-                                log::info!("complex indirect jmp");
+                                log::warn!("complex indirect jmp");
                             }
                         }
                         iced_x86::OpKind::Register => {
                             let reg = instr.op_register(0);
-                            log::info!("indirect via register dest: {reg:?}");
+                            log::warn!("indirect via register dest: {reg:?}");
                         }
                         d => todo!("dest {d:?}"),
                     };
