@@ -203,6 +203,7 @@ fn traverse(state: &mut State, start: u32) {
             if instr.flow_control() == iced_x86::FlowControl::Next {
                 continue;
             }
+            let ip = instr.ip32();
             use iced_x86::Mnemonic::*;
             match instr.mnemonic() {
                 Call | Jmp | Je | Jne | Jb | Js | Jns | Ja | Jae | Jl | Jge | Jecxz | Jg | Jle
@@ -214,15 +215,14 @@ fn traverse(state: &mut State, start: u32) {
                                 if state.imports.contains_key(&addr) {
                                     // ok
                                 } else {
-                                    log::warn!("indirect jmp via memory {addr:x}");
+                                    log::warn!("{ip:08x} {instr}  ; indirect via memory");
                                 }
                             } else {
-                                log::warn!("complex indirect jmp");
+                                log::warn!("{ip:08x} {instr}  ; indirect via memory");
                             }
                         }
                         iced_x86::OpKind::Register => {
-                            let reg = instr.op_register(0);
-                            log::warn!("indirect via register dest: {reg:?}");
+                            log::warn!("{ip:08x} {instr}  ; indirect via register");
                         }
                         d => todo!("dest {d:?}"),
                     };
@@ -249,16 +249,21 @@ fn traverse(state: &mut State, start: u32) {
 fn scan_for_pointers(state: &mut State) {
     for i in 0..state.mem.mappings.vec().len() {
         let mapping = &state.mem.mappings.vec()[i];
-        if mapping.addr == state.code_memory.start {
+        if mapping.addr == 0 || mapping.addr == state.code_memory.start {
             continue;
         }
-        log::info!("scanning {:?}", mapping);
+        log::info!("scanning mapping {:?}", mapping);
+        let mapping_addr = mapping.addr;
         let data = state.mem.data[mapping.addr as usize..][..mapping.size as usize].to_vec();
-        for w in data.windows(4) {
-            let addr = u32::from_le_bytes(w.try_into().unwrap());
-            if state.code_memory.contains(&addr) {
-                log::info!("scan found {addr:x}");
-                traverse(state, addr);
+        for ofs in 0..data.len() - 4 {
+            let value =
+                u32::from_le_bytes([data[ofs], data[ofs + 1], data[ofs + 2], data[ofs + 3]]);
+            if state.code_memory.contains(&value) {
+                log::info!(
+                    "{addr:08x}: found possible code pointer {value:x}",
+                    addr = mapping_addr + ofs as u32
+                );
+                traverse(state, value);
             }
         }
     }
