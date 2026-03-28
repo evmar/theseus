@@ -205,9 +205,6 @@ fn gen_instr(w: &mut Writer, state: &State, instr: &iced_x86::Instruction) {
         Popad => w.line("popad(ctx);"),
         Mov => w.line(set_op(instr, 0, get_op(instr, 1))),
 
-        // 0-arg instructions.
-        //
-
         // Binary operations.
         And | Or | Add | Sub | Sbb | Xor | Shl | Shr | Sar => {
             assert_eq!(instr.op_count(), 2);
