@@ -1,0 +1,16 @@
+[workspace]
+resolver = "2"
+members = [
+    "basicdd",
+    "chillin",
+    "thread",
+    "winapi",
+    "zig_hello",
+]
+
+[workspace.dependencies]
+runtime = { path = "../runtime" }
+winapi = { path = "../win32/winapi" }
+
+[profile.release]
+debug = true
