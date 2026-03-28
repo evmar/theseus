@@ -1,5 +1,6 @@
 #![allow(unreachable_code)]
 #![allow(unused_parens)]
+#![allow(unused_variables)]
 
 use runtime::*;
 use winapi::*;
@@ -25,7 +26,6 @@ fn init_mappings(ctx: &mut Context, mappings: &mut kernel32::Mappings) {
     let out = &mut ctx.memory.bytes[0x404000 as usize..][..bytes.len()];
     out.copy_from_slice(bytes);
 }
-#[allow(unused_variables)]
 pub fn x00401000(ctx: &mut Context) -> Cont {
     // 00401000 push ebp
     push(ctx, ctx.cpu.regs.ebp);
@@ -40,7 +40,6 @@ pub fn x00401000(ctx: &mut Context) -> Cont {
     call(ctx, 0x40100e, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x0040100e(ctx: &mut Context) -> Cont {
     // 0040100e push 0
     push(ctx, 0x0u32);
@@ -49,7 +48,6 @@ pub fn x0040100e(ctx: &mut Context) -> Cont {
     call(ctx, 0x401015, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401015(ctx: &mut Context) -> Cont {
     // 00401015 push ebp
     push(ctx, ctx.cpu.regs.ebp);
@@ -71,7 +69,6 @@ pub fn x00401015(ctx: &mut Context) -> Cont {
     jne(ctx, Cont(x00401023), Cont(x0040102a))
 }
 
-#[allow(unused_variables)]
 pub fn x00401023(ctx: &mut Context) -> Cont {
     // 00401023 mov byte ptr ds:[403000h],1
     ctx.memory.write::<u8>(0x403000u32, 0x1u8);
@@ -106,7 +103,6 @@ pub fn x00401023(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00401045), Cont(x00401068))
 }
 
-#[allow(unused_variables)]
 pub fn x0040102a(ctx: &mut Context) -> Cont {
     // 0040102a mov eax,fs:[18h]
     ctx.cpu.regs.eax = ctx
@@ -139,7 +135,6 @@ pub fn x0040102a(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00401045), Cont(x00401068))
 }
 
-#[allow(unused_variables)]
 pub fn x00401040(ctx: &mut Context) -> Cont {
     // 00401040 cmp edi,0Eh
     sub(ctx.cpu.regs.edi, 0xeu32, &mut ctx.cpu.flags);
@@ -147,7 +142,6 @@ pub fn x00401040(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x00401045), Cont(x00401068))
 }
 
-#[allow(unused_variables)]
 pub fn x00401045(ctx: &mut Context) -> Cont {
     // 00401045 mov ecx,ebx
     ctx.cpu.regs.ecx = ctx.cpu.regs.ebx;
@@ -170,7 +164,6 @@ pub fn x00401045(ctx: &mut Context) -> Cont {
     call(ctx, 0x40105a, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x0040105a(ctx: &mut Context) -> Cont {
     // 0040105a test eax,eax
     and(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
@@ -178,7 +171,6 @@ pub fn x0040105a(ctx: &mut Context) -> Cont {
     je(ctx, Cont(x0040105e), Cont(x00401063))
 }
 
-#[allow(unused_variables)]
 pub fn x0040105e(ctx: &mut Context) -> Cont {
     // 0040105e add edi,[esp]
     ctx.cpu.regs.edi = add(
@@ -190,14 +182,12 @@ pub fn x0040105e(ctx: &mut Context) -> Cont {
     Cont(x00401040)
 }
 
-#[allow(unused_variables)]
 pub fn x00401063(ctx: &mut Context) -> Cont {
     // 00401063 call 0040107Dh
     let dst = Cont(x0040107d);
     call(ctx, 0x401068, dst)
 }
 
-#[allow(unused_variables)]
 pub fn x00401068(ctx: &mut Context) -> Cont {
     // 00401068 mov byte ptr ds:[403000h],0
     ctx.memory.write::<u8>(0x403000u32, 0x0u8);
@@ -219,19 +209,16 @@ pub fn x00401068(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-#[allow(unused_variables)]
 pub fn x00401077(ctx: &mut Context) -> Cont {
     // 00401077 jmp dword ptr ds:[402048h]
     Cont(kernel32::ExitProcess_stdcall)
 }
 
-#[allow(unused_variables)]
 pub fn x0040107d(ctx: &mut Context) -> Cont {
     // 0040107d jmp dword ptr ds:[40204Ch]
     Cont(kernel32::GetLastError_stdcall)
 }
 
-#[allow(unused_variables)]
 pub fn x00401083(ctx: &mut Context) -> Cont {
     // 00401083 jmp dword ptr ds:[402050h]
     Cont(kernel32::WriteFile_stdcall)
