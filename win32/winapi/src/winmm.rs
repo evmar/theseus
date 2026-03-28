@@ -32,17 +32,19 @@ fn winmm_main(ctx: &mut Context) {
         };
 
         let now = get_tick_count();
-        if now > timer.next {
-            std::thread::sleep(std::time::Duration::from_millis((now - timer.next) as u64));
+        if now < timer.next {
+            let delta = timer.next - now;
+            std::thread::sleep(std::time::Duration::from_millis(delta as u64));
         }
 
         let func = runtime::indirect(ctx, timer.callback);
         let timer_id = 1;
         let user_data = timer.user_data;
-        timer.next = now + timer.period;
+        let next = now + timer.period;
+        timer.next = next;
         drop(lock);
 
-        log::warn!("firing timer");
+        log::warn!("firing timer, next {}", next);
         // LPTIMECALLBACK
         runtime::call_x86(ctx, func, vec![timer_id, 0, user_data, 0, 0]);
     }
