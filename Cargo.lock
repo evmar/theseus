@@ -88,6 +88,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "explore"
+version = "0.1.0"
+dependencies = [
+ "iced-x86",
+]
+
+[[package]]
 name = "iced-x86"
 version = "1.21.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"

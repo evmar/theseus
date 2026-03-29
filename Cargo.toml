@@ -1,6 +1,7 @@
 [workspace]
 resolver = "2"
 members = [
+    "explore",
     "tc",
     "runtime",
     "win32/derive",
@@ -18,6 +19,7 @@ winapi = { path = "win32/winapi" }
 zerocopy = { version = "0.8.40", features = ["derive"] }
 log = "0.4.29"
 widestring = "1.2.1"
+iced-x86 = "1.21.0"
 
 [profile.release]
 debug = true
