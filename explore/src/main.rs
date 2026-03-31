@@ -1,7 +1,24 @@
+use std::collections::HashSet;
+
+#[derive(Clone, PartialEq, Eq)]
+enum Var {
+    Global(String),
+    Local(String, usize),
+}
+
+impl std::fmt::Display for Var {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Var::Global(name) => write!(f, "{name}"),
+            Var::Local(name, i) => write!(f, "{name}#{i}"),
+        }
+    }
+}
+
 #[derive(Clone, PartialEq, Eq)]
 enum Expr {
     Const(u32),
-    Var(String),
+    Var(Var),
     Call(Box<Call>),
 }
 
@@ -17,7 +34,7 @@ impl std::fmt::Display for Expr {
 
 impl Expr {
     fn from_reg(r: iced_x86::Register) -> Expr {
-        Expr::Var(format!("{r:?}").to_ascii_lowercase())
+        Expr::Var(Var::Global(format!("{r:?}").to_ascii_lowercase()))
     }
 }
 
@@ -171,6 +188,7 @@ fn decode() -> Vec<Instr> {
 }
 
 struct Block {
+    params: Vec<String>,
     instrs: Vec<Instr>,
 }
 
@@ -184,7 +202,10 @@ fn blocks(instrs: Vec<Instr>) -> Vec<Block> {
         };
         block.push(instr);
         if ends_block {
-            blocks.push(Block { instrs: block });
+            blocks.push(Block {
+                params: vec![],
+                instrs: block,
+            });
             block = vec![];
         }
     }
@@ -192,29 +213,22 @@ fn blocks(instrs: Vec<Instr>) -> Vec<Block> {
     blocks
 }
 
-fn gen_name(name: &str) -> String {
-    match name.rfind('_') {
-        None => format!("{name}_1"),
-        Some(pos) => {
-            let (name, num) = name.split_at(pos);
-            let num = num[1..].parse::<usize>().unwrap() + 1;
-            format!("{name}_{num}")
+fn visit(call: &mut Call, f: &mut impl FnMut(&mut Expr)) {
+    for arg in call.args.iter_mut() {
+        f(arg);
+        if let Expr::Call(c) = arg {
+            visit(c, f);
         }
     }
 }
 
-fn rename(call: &mut Call, from: &str, to: &str) {
-    for arg in call.args.iter_mut() {
-        match arg {
-            Expr::Var(v) if v == from => {
-                *v = to.to_string();
-            }
-            Expr::Call(call) => {
-                rename(call, from, to);
-            }
-            _ => {}
+fn rename(call: &mut Call, from: &Var, to: &Var) {
+    visit(call, &mut |expr| match expr {
+        Expr::Var(v) if v == from => {
+            *v = to.clone();
         }
-    }
+        _ => {}
+    });
 }
 
 fn ssa(instrs: &mut [Instr]) {
@@ -226,15 +240,33 @@ fn ssa(instrs: &mut [Instr]) {
                 let Expr::Var(var) = &call.args[0] else {
                     continue;
                 };
-                let new_name = gen_name(&var);
+                let new_local = match var {
+                    Var::Global(name) => Var::Local(name.clone(), 1),
+                    Var::Local(name, i) => Var::Local(name.clone(), i + 1),
+                };
                 for instr in rest {
-                    rename(&mut instr.call, &var, &new_name);
+                    rename(&mut instr.call, &var, &new_local);
                 }
-                call.args[0] = Expr::Var(new_name);
+                call.args[0] = Expr::Var(new_local);
             }
             _ => {}
         }
     }
+}
+
+fn params(block: &mut Block) {
+    let mut params = HashSet::new();
+    for instr in &mut block.instrs {
+        visit(&mut instr.call, &mut |expr| match expr {
+            Expr::Var(Var::Global(name)) => {
+                params.insert(name.clone());
+            }
+            _ => {}
+        });
+    }
+    let mut params = params.into_iter().collect::<Vec<_>>();
+    params.sort();
+    block.params = params;
 }
 
 fn main() {
@@ -242,11 +274,17 @@ fn main() {
     let blocks = blocks(instrs);
     for mut block in blocks {
         ssa(&mut block.instrs);
+        params(&mut block);
+        println!(
+            "{ip:x} [{params}]",
+            ip = block.instrs[0].ip,
+            params = block.params.join(" ")
+        );
         for instr in &block.instrs {
+            let text = format!("{}", instr.call);
             println!(
-                "{ip:x} {call}  ; {iced}",
+                "{text:40}  ; {ip:x} {iced}",
                 ip = instr.ip,
-                call = instr.call,
                 iced = instr.iced
             );
         }
