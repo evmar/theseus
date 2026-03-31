@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-#[derive(Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 enum Var {
     Global(String),
     Local(String, usize),
@@ -15,7 +15,7 @@ impl std::fmt::Display for Var {
     }
 }
 
-#[derive(Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 enum Expr {
     Const(u32),
     Var(Var),
@@ -76,7 +76,7 @@ macro_rules! call {
 //     ($x:expr, $($arg:expr) +) => { Expr::Call(Box::new(Call { op: $x, args: vec![$($arg),*] })) };
 // }
 
-#[derive(Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 struct Call {
     op: String,
     args: Vec<Expr>,
@@ -128,6 +128,7 @@ impl std::fmt::Display for Call {
     }
 }
 
+#[derive(Debug)]
 struct Instr {
     ip: u32,
     iced: iced_x86::Instruction,
@@ -172,8 +173,12 @@ fn decode() -> Vec<Instr> {
                     call!("set", x, call!(op, x, y))
                 }
             }
-            _ => {
+            Cmp | Test | Jmp | Jne | Jge | Call | Ret => {
                 let op = format!("{:?}", instr.mnemonic()).to_ascii_lowercase();
+                crate::Call { op, args }
+            }
+            _ => {
+                let op = format!("todo:{:?}", instr.mnemonic()).to_ascii_lowercase();
                 crate::Call { op, args }
             }
         };
@@ -190,34 +195,47 @@ fn decode() -> Vec<Instr> {
 struct Block {
     params: Vec<String>,
     instrs: Vec<Instr>,
+    next: Vec<u32>,
 }
 
 fn blocks(instrs: Vec<Instr>) -> Vec<Block> {
     let mut blocks = vec![];
     let mut block = vec![];
     for instr in instrs {
-        let ends_block = match instr.call.op.as_str() {
-            "jmp" | "jne" | "jge" | "call" | "ret" => true,
-            _ => false,
+        let next = match instr.call.op.as_str() {
+            "jmp" | "call" => Some(vec![instr.iced.next_ip32()]),
+            "jne" | "jge" => {
+                let [Expr::Const(addr)] = instr.call.args.as_slice() else {
+                    panic!()
+                };
+                Some(vec![instr.iced.next_ip32(), *addr])
+            }
+            "ret" => Some(vec![0]),
+            _ => None,
         };
         block.push(instr);
-        if ends_block {
+        if let Some(next) = next {
             blocks.push(Block {
                 params: vec![],
                 instrs: block,
+                next,
             });
             block = vec![];
         }
     }
-    assert!(block.is_empty());
+    if !block.is_empty() {
+        println!("{:#?}", block);
+        assert!(block.is_empty());
+    }
     blocks
 }
 
-fn visit(call: &mut Call, f: &mut impl FnMut(&mut Expr)) {
+fn visit(call: &mut Call, f: &mut impl FnMut(&mut Expr) -> bool) {
     for arg in call.args.iter_mut() {
-        f(arg);
-        if let Expr::Call(c) = arg {
-            visit(c, f);
+        if f(arg) {
+            if let Expr::Call(c) = arg {
+                visit(c, f);
+            }
         }
     }
 }
@@ -226,8 +244,9 @@ fn rename(call: &mut Call, from: &Var, to: &Var) {
     visit(call, &mut |expr| match expr {
         Expr::Var(v) if v == from => {
             *v = to.clone();
+            true
         }
-        _ => {}
+        _ => true,
     });
 }
 
@@ -257,12 +276,16 @@ fn ssa(instrs: &mut [Instr]) {
 fn params(block: &mut Block) {
     let mut params = HashSet::new();
     for instr in &mut block.instrs {
+        if instr.call.op.starts_with("todo:") {
+            continue;
+        }
         visit(&mut instr.call, &mut |expr| match expr {
             Expr::Var(Var::Global(name)) => {
                 // XXX this only should be for writes, not reads
                 params.insert(name.clone());
+                true
             }
-            _ => {}
+            _ => true,
         });
     }
     let mut params = params.into_iter().collect::<Vec<_>>();
@@ -289,6 +312,7 @@ fn main() {
                 iced = instr.iced
             );
         }
+        println!("=> {:x?}", block.next);
         println!();
     }
 }
