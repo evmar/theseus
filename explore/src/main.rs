@@ -259,6 +259,7 @@ fn params(block: &mut Block) {
     for instr in &mut block.instrs {
         visit(&mut instr.call, &mut |expr| match expr {
             Expr::Var(Var::Global(name)) => {
+                // XXX this only should be for writes, not reads
                 params.insert(name.clone());
             }
             _ => {}
