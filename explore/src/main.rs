@@ -1,4 +1,4 @@
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 enum Var {
@@ -11,6 +11,15 @@ impl std::fmt::Display for Var {
         match self {
             Var::Global(name) => write!(f, "{name}"),
             Var::Local(name, i) => write!(f, "{name}#{i}"),
+        }
+    }
+}
+
+impl Var {
+    fn base(&self) -> &str {
+        match self {
+            Var::Global(s) => &s,
+            Var::Local(s, _) => &s,
         }
     }
 }
@@ -192,10 +201,22 @@ fn decode() -> Vec<Instr> {
     instrs
 }
 
+#[derive(Debug)]
+struct Link {
+    addr: u32,
+    params: Vec<(String, Var)>,
+}
+
 struct Block {
     params: Vec<String>,
     instrs: Vec<Instr>,
-    next: Vec<u32>,
+    next: Vec<Link>,
+}
+
+impl Block {
+    fn addr(&self) -> u32 {
+        self.instrs[0].ip
+    }
 }
 
 fn blocks(instrs: Vec<Instr>) -> Vec<Block> {
@@ -218,7 +239,13 @@ fn blocks(instrs: Vec<Instr>) -> Vec<Block> {
             blocks.push(Block {
                 params: vec![],
                 instrs: block,
-                next,
+                next: next
+                    .into_iter()
+                    .map(|addr| Link {
+                        addr,
+                        params: vec![],
+                    })
+                    .collect(),
             });
             block = vec![];
         }
@@ -237,6 +264,12 @@ fn visit(call: &mut Call, f: &mut impl FnMut(&mut Expr) -> bool) {
                 visit(c, f);
             }
         }
+    }
+}
+
+fn visit_block(block: &mut Block, f: &mut impl FnMut(&mut Expr) -> bool) {
+    for instr in block.instrs.iter_mut() {
+        visit(&mut instr.call, f);
     }
 }
 
@@ -275,30 +308,60 @@ fn ssa(instrs: &mut [Instr]) {
 
 fn params(block: &mut Block) {
     let mut params = HashSet::new();
-    for instr in &mut block.instrs {
-        if instr.call.op.starts_with("todo:") {
-            continue;
+    visit_block(block, &mut |expr| match expr {
+        Expr::Call(call) if call.op.starts_with("todo:") => false,
+        Expr::Var(Var::Global(name)) => {
+            // XXX this only should be for reads, not writes
+            params.insert(name.clone());
+            true
         }
-        visit(&mut instr.call, &mut |expr| match expr {
-            Expr::Var(Var::Global(name)) => {
-                // XXX this only should be for writes, not reads
-                params.insert(name.clone());
-                true
-            }
-            _ => true,
-        });
-    }
+        _ => true,
+    });
+
     let mut params = params.into_iter().collect::<Vec<_>>();
     params.sort();
     block.params = params;
 }
 
+fn links(blocks: &mut [Block]) {
+    #[derive(Default)]
+    struct IO {
+        outs: Vec<(String, Var)>,
+        ins: Vec<String>,
+    }
+
+    let mut ios = HashMap::new();
+    for block in blocks.iter_mut() {
+        ssa(&mut block.instrs);
+        params(block);
+        ios.insert(block.addr(), IO::default());
+    }
+
+    // let mut changed = true;
+    // while changed {
+    //     changed = false;
+    //     for src in blocks.iter() {
+    //         for link in &src.next {
+    //             let mut new = vec![];
+    //             let Some(dst) = blocks.iter().find(|b| b.addr() == link.addr) else {
+    //                 println!("can't find {:x}", link.addr);
+    //                 continue;
+    //             };
+    //             for param in &dst.params {
+    //                 if !link.params.iter().any(|p| &p.0 == param) {
+    //                     new.push(param.clone());
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
+}
+
 fn main() {
     let instrs = decode();
-    let blocks = blocks(instrs);
-    for mut block in blocks {
-        ssa(&mut block.instrs);
-        params(&mut block);
+    let mut blocks = blocks(instrs);
+    links(&mut blocks);
+    for block in blocks {
         println!(
             "{ip:x} [{params}]",
             ip = block.instrs[0].ip,
@@ -312,7 +375,9 @@ fn main() {
                 iced = instr.iced
             );
         }
-        println!("=> {:x?}", block.next);
+        for link in block.next {
+            println!("=> {:x} {:?}", link.addr, link.params);
+        }
         println!();
     }
 }
