@@ -145,7 +145,7 @@ impl std::fmt::Display for Call {
 enum Effect {
     Set(Expr, Expr),
     Call(Box<Call>),
-    Jmp(String, Vec<u32>),
+    Jmp(String, Vec<Expr>),
 }
 
 impl std::fmt::Display for Effect {
@@ -158,7 +158,7 @@ impl std::fmt::Display for Effect {
                 "{op} {next}",
                 next = next
                     .iter()
-                    .map(|x| format!("{x:x}"))
+                    .map(|x| format!("{x}"))
                     .collect::<Vec<_>>()
                     .join(" ")
             ),
@@ -209,11 +209,14 @@ fn decode() -> Vec<Instr> {
                 };
                 Effect::Set(x, y)
             }
-            Jmp | Call => Effect::Jmp(instr_name, vec![instr.next_ip32()]),
+            Call => {
+                let [x] = args.try_into().unwrap();
+                Effect::Jmp(instr_name, vec![Expr::Const(instr.next_ip32()), x])
+            }
+            Jmp => Effect::Jmp(instr_name, vec![Expr::Const(instr.next_ip32())]),
             Jne | Jge => {
                 let [addr] = args.try_into().unwrap();
-                let Expr::Const(addr) = addr else { todo!() };
-                Effect::Jmp(instr_name, vec![instr.next_ip32(), addr])
+                Effect::Jmp(instr_name, vec![Expr::Const(instr.next_ip32()), addr])
             }
             Ret => Effect::Jmp(instr_name, vec![]),
             Cmp | Test => {
@@ -360,6 +363,41 @@ fn params(block: &mut Block) -> Vec<String> {
     params
 }
 
+/// Expand call instructions into a call effect followed by a jump effect, so that we can treat calls and jumps uniformly in the later analysis.
+fn expand_calls(blocks: &mut Blocks) {
+    for block in blocks.vec.iter_mut() {
+        let mut instrs = vec![];
+        std::mem::swap(&mut instrs, &mut block.instrs);
+        let mut new_instrs = vec![];
+        for instr in instrs.into_iter() {
+            if let Effect::Jmp(op, dsts) = &instr.eff
+                && op == "call"
+            {
+                let [return_addr, dst] = dsts.iter().collect::<Vec<_>>().try_into().unwrap();
+                let iced = instr.iced;
+                new_instrs.push(Instr {
+                    iced,
+                    eff: Effect::Call(Box::new(Call {
+                        op: "call".into(),
+                        args: vec![dst.clone()],
+                    })),
+                });
+                new_instrs.push(Instr {
+                    iced,
+                    eff: Effect::Set(Expr::Var(Var::new("eax".into())), Expr::Const(0)),
+                });
+                new_instrs.push(Instr {
+                    iced,
+                    eff: Effect::Jmp("jmp".into(), vec![return_addr.clone()]),
+                });
+            } else {
+                new_instrs.push(instr);
+            }
+        }
+        block.instrs = new_instrs;
+    }
+}
+
 fn links(blocks: &mut Blocks) {
     let nexts = blocks
         .vec
@@ -370,7 +408,12 @@ fn links(blocks: &mut Blocks) {
             };
             addrs
                 .iter()
-                .flat_map(|&addr| blocks.vec.iter().position(|b| b.addr() == addr))
+                .flat_map(|addr| {
+                    let Expr::Const(addr) = addr else {
+                        return None;
+                    };
+                    blocks.vec.iter().position(|b| b.addr() == *addr)
+                })
                 .collect::<Vec<_>>()
         })
         .collect::<Vec<_>>();
@@ -454,6 +497,7 @@ fn out_vars(block: &mut Block) -> HashMap<String, Var> {
 fn main() {
     let instrs = decode();
     let mut blocks = blocks(instrs);
+    expand_calls(&mut blocks);
     //blocks.vec.truncate(3);
     links(&mut blocks);
     for block in blocks.vec {
