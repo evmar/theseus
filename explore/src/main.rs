@@ -168,7 +168,6 @@ impl std::fmt::Display for Effect {
 
 #[derive(Debug)]
 struct Instr {
-    ip: u32,
     iced: iced_x86::Instruction,
     eff: Effect,
 }
@@ -226,11 +225,7 @@ fn decode() -> Vec<Instr> {
             }
         };
 
-        instrs.push(Instr {
-            ip: instr.ip32(),
-            iced: instr,
-            eff,
-        });
+        instrs.push(Instr { iced: instr, eff });
     }
     instrs
 }
@@ -250,17 +245,12 @@ struct Block {
 
 impl Block {
     fn addr(&self) -> u32 {
-        self.instrs[0].ip
+        self.instrs[0].iced.ip32()
     }
 }
 
 struct Blocks {
     vec: Vec<Block>,
-}
-impl Blocks {
-    fn get(&self, id: usize) -> &Block {
-        &self.vec[id]
-    }
 }
 
 fn blocks(instrs: Vec<Instr>) -> Blocks {
@@ -462,19 +452,19 @@ fn links(blocks: &mut Blocks) {
 fn main() {
     let instrs = decode();
     let mut blocks = blocks(instrs);
-    blocks.vec.truncate(3);
+    //blocks.vec.truncate(3);
     links(&mut blocks);
     for block in blocks.vec {
         println!(
             "{ip:x} [{params}]",
-            ip = block.instrs[0].ip,
+            ip = block.addr(),
             params = block.params.join(" ")
         );
         for instr in &block.instrs {
             let text = format!("{}", instr.eff);
             println!(
                 "{text:40}  ; {ip:x} {iced}",
-                ip = instr.ip,
+                ip = instr.iced.ip32(),
                 iced = instr.iced
             );
         }
