@@ -81,7 +81,7 @@ fn expr_from_iced(instr: iced_x86::Instruction, i: u32) -> Expr {
 }
 
 macro_rules! call {
-    ($x:expr, $($arg:expr),+) => { crate::Call { op: $x.into(), args: vec![$($arg.into()),*] } };
+    ($x:expr, $($arg:expr),+) => { crate::Expr::Call(Box::new(crate::Call { op: $x.into(), args: vec![$($arg.into()),*] })) };
 }
 
 // macro_rules! expr {
@@ -142,10 +142,35 @@ impl std::fmt::Display for Call {
 }
 
 #[derive(Debug)]
+enum Effect {
+    Set(Expr, Expr),
+    Call(Box<Call>),
+    Jmp(String, Vec<u32>),
+}
+
+impl std::fmt::Display for Effect {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Effect::Set(x, y) => write!(f, "{x} = {y}"),
+            Effect::Call(call) => write!(f, "{call}"),
+            Effect::Jmp(op, next) => write!(
+                f,
+                "{op} {next}",
+                next = next
+                    .iter()
+                    .map(|x| format!("{x:x}"))
+                    .collect::<Vec<_>>()
+                    .join(" ")
+            ),
+        }
+    }
+}
+
+#[derive(Debug)]
 struct Instr {
     ip: u32,
     iced: iced_x86::Instruction,
-    call: Call,
+    eff: Effect,
 }
 
 fn decode() -> Vec<Instr> {
@@ -158,16 +183,15 @@ fn decode() -> Vec<Instr> {
         }
 
         use iced_x86::Mnemonic::*;
-        let call = match instr.mnemonic() {
+        let instr_name = format!("{:?}", instr.mnemonic()).to_ascii_lowercase();
+        let eff: Effect = match instr.mnemonic() {
             Inc => {
-                let [x] = args.as_slice() else { unreachable!() };
-                call!("set", x, call!("+", x, Expr::Const(1)))
+                let [x] = args.try_into().unwrap();
+                Effect::Set(x.clone(), call!("+", x, Expr::Const(1)))
             }
             Mov => {
-                let [x, y] = args.as_slice() else {
-                    unreachable!()
-                };
-                call!("set", x, y)
+                let [x, y] = args.try_into().unwrap();
+                Effect::Set(x.clone(), y.clone())
             }
             Add | Sub | Shl | Xor => {
                 let op = match instr.mnemonic() {
@@ -177,29 +201,35 @@ fn decode() -> Vec<Instr> {
                     Xor => "^",
                     _ => unreachable!(),
                 };
-                let [x, y] = args.as_slice() else {
-                    unreachable!()
-                };
-                if op == "^" && x == y {
-                    call!("set", x, 0)
+                let [x, y] = args.try_into().unwrap();
+                let y = if op == "^" && x == y {
+                    0.into()
                 } else {
-                    call!("set", x, call!(op, x, y))
-                }
+                    call!(op, x.clone(), y)
+                };
+                Effect::Set(x, y)
             }
-            Cmp | Test | Jmp | Jne | Jge | Call | Ret => {
+            Jmp | Call => Effect::Jmp(instr_name, vec![instr.next_ip32()]),
+            Jne | Jge => {
+                let [addr] = args.try_into().unwrap();
+                let Expr::Const(addr) = addr else { todo!() };
+                Effect::Jmp(instr_name, vec![instr.next_ip32(), addr])
+            }
+            Ret => Effect::Jmp(instr_name, vec![]),
+            Cmp | Test => {
                 let op = format!("{:?}", instr.mnemonic()).to_ascii_lowercase();
-                crate::Call { op, args }
+                Effect::Call(Box::new(crate::Call { op, args }))
             }
             _ => {
                 let op = format!("todo:{:?}", instr.mnemonic()).to_ascii_lowercase();
-                crate::Call { op, args }
+                Effect::Call(Box::new(crate::Call { op, args }))
             }
         };
 
         instrs.push(Instr {
             ip: instr.ip32(),
             iced: instr,
-            call,
+            eff,
         });
     }
     instrs
@@ -238,26 +268,16 @@ fn blocks(instrs: Vec<Instr>) -> (Blocks, Vec<Vec<u32>>) {
     let mut block = vec![];
     let mut nexts = vec![];
     for instr in instrs {
-        let next = match instr.call.op.as_str() {
-            "jmp" | "call" => Some(vec![instr.iced.next_ip32()]),
-            "jne" | "jge" => {
-                let [Expr::Const(addr)] = instr.call.args.as_slice() else {
-                    panic!()
-                };
-                Some(vec![instr.iced.next_ip32(), *addr])
-            }
-            "ret" => Some(vec![0]),
-            _ => None,
-        };
         block.push(instr);
-        if let Some(next) = next {
+        let instr = block.last().unwrap();
+        if let Effect::Jmp(_, next) = &instr.eff {
+            nexts.push(next.clone());
             blocks.push(Block {
                 id: blocks.len(),
                 instrs: block,
                 params: vec![],
                 links: vec![],
             });
-            nexts.push(next);
             block = vec![];
         }
     }
@@ -268,24 +288,39 @@ fn blocks(instrs: Vec<Instr>) -> (Blocks, Vec<Vec<u32>>) {
     (Blocks { vec: blocks }, nexts)
 }
 
-fn visit(call: &mut Call, f: &mut impl FnMut(&mut Expr) -> bool) {
-    for arg in call.args.iter_mut() {
-        if f(arg) {
-            if let Expr::Call(c) = arg {
-                visit(c, f);
+fn visit_expr(expr: &mut Expr, f: &mut impl FnMut(&mut Expr) -> bool) {
+    if f(expr) {
+        if let Expr::Call(call) = expr {
+            for arg in call.args.iter_mut() {
+                visit_expr(arg, f);
             }
         }
     }
 }
 
-fn visit_block(block: &mut Block, f: &mut impl FnMut(&mut Expr) -> bool) {
-    for instr in block.instrs.iter_mut() {
-        visit(&mut instr.call, f);
+fn visit_effect(effect: &mut Effect, f: &mut impl FnMut(&mut Expr) -> bool) {
+    match effect {
+        Effect::Set(x, y) => {
+            visit_expr(x, f);
+            visit_expr(y, f);
+        }
+        Effect::Call(call) => {
+            for arg in call.args.iter_mut() {
+                visit_expr(arg, f);
+            }
+        }
+        Effect::Jmp(_, _) => {}
     }
 }
 
-fn rename(call: &mut Call, from: &Var, to: &Var) {
-    visit(call, &mut |expr| match expr {
+fn visit_block(block: &mut Block, f: &mut impl FnMut(&mut Expr) -> bool) {
+    for instr in block.instrs.iter_mut() {
+        visit_effect(&mut instr.eff, f);
+    }
+}
+
+fn rename(eff: &mut Effect, from: &Var, to: &Var) {
+    visit_effect(eff, &mut |expr| match expr {
         Expr::Var(v) if v == from => {
             *v = to.clone();
             true
@@ -297,17 +332,17 @@ fn rename(call: &mut Call, from: &Var, to: &Var) {
 fn ssa(instrs: &mut [Instr]) {
     for i in 0..instrs.len() {
         let (instr, rest) = instrs[i..].split_first_mut().unwrap();
-        let call = &mut instr.call;
-        match call.op.as_str() {
-            "set" => {
-                let Expr::Var(var) = &call.args[0] else {
+        let eff = &mut instr.eff;
+        match eff {
+            Effect::Set(expr, _) => {
+                let Expr::Var(var) = expr else {
                     continue;
                 };
                 let new_local = var.next();
                 for instr in rest {
-                    rename(&mut instr.call, &var, &new_local);
+                    rename(&mut instr.eff, &var, &new_local);
                 }
-                call.args[0] = Expr::Var(new_local);
+                *expr = Expr::Var(new_local);
             }
             _ => {}
         }
@@ -317,10 +352,13 @@ fn ssa(instrs: &mut [Instr]) {
 fn params(block: &mut Block) {
     let mut params = HashSet::new();
     for instr in &mut block.instrs {
-        if instr.call.op.starts_with("todo:") {
+        if let Effect::Call(call) = &instr.eff
+            && call.op.starts_with("todo:")
+        {
             continue;
         }
-        visit(&mut instr.call, &mut |expr| match expr {
+
+        visit_effect(&mut instr.eff, &mut |expr| match expr {
             Expr::Var(var) if var.ver == 0 => {
                 // XXX this only should be for reads, not writes
                 params.insert(var.reg.clone());
@@ -431,7 +469,7 @@ fn main() {
             params = block.params.join(" ")
         );
         for instr in &block.instrs {
-            let text = format!("{}", instr.call);
+            let text = format!("{}", instr.eff);
             println!(
                 "{text:40}  ; {ip:x} {iced}",
                 ip = instr.ip,
