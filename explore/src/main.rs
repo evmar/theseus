@@ -172,6 +172,7 @@ struct Instr {
     eff: Effect,
 }
 
+/// Decode the x86 instructions into our Instr type.
 fn decode() -> Vec<Instr> {
     let mut instrs = Vec::new();
     let decoder = iced_x86::Decoder::with_ip(32, ASM, IP as u64, iced_x86::DecoderOptions::NONE);
@@ -253,6 +254,7 @@ struct Blocks {
     vec: Vec<Block>,
 }
 
+/// Split the instructions into basic blocks, where each block ends with a jump.
 fn blocks(instrs: Vec<Instr>) -> Blocks {
     let mut blocks = vec![];
     let mut block = vec![];
@@ -276,17 +278,16 @@ fn blocks(instrs: Vec<Instr>) -> Blocks {
     Blocks { vec: blocks }
 }
 
-fn visit_expr(expr: &mut Expr, f: &mut impl FnMut(&mut Expr) -> bool) {
-    if f(expr) {
-        if let Expr::Call(call) = expr {
-            for arg in call.args.iter_mut() {
-                visit_expr(arg, f);
-            }
+fn visit_expr(expr: &mut Expr, f: &mut impl FnMut(&mut Expr)) {
+    f(expr);
+    if let Expr::Call(call) = expr {
+        for arg in call.args.iter_mut() {
+            visit_expr(arg, f);
         }
     }
 }
 
-fn visit_effect(effect: &mut Effect, f: &mut impl FnMut(&mut Expr) -> bool) {
+fn visit_effect(effect: &mut Effect, f: &mut impl FnMut(&mut Expr)) {
     match effect {
         Effect::Set(x, y) => {
             visit_expr(x, f);
@@ -301,7 +302,7 @@ fn visit_effect(effect: &mut Effect, f: &mut impl FnMut(&mut Expr) -> bool) {
     }
 }
 
-fn visit_block(block: &mut Block, f: &mut impl FnMut(&mut Expr) -> bool) {
+fn visit_block(block: &mut Block, f: &mut impl FnMut(&mut Expr)) {
     for instr in block.instrs.iter_mut() {
         visit_effect(&mut instr.eff, f);
     }
@@ -311,9 +312,8 @@ fn rename(eff: &mut Effect, from: &Var, to: &Var) {
     visit_effect(eff, &mut |expr| match expr {
         Expr::Var(v) if v == from => {
             *v = to.clone();
-            true
         }
-        _ => true,
+        _ => {}
     });
 }
 
@@ -337,7 +337,7 @@ fn ssa(instrs: &mut [Instr]) {
     }
 }
 
-fn params(block: &mut Block) {
+fn params(block: &mut Block) -> Vec<String> {
     let mut params = HashSet::new();
     for instr in &mut block.instrs {
         if let Effect::Call(call) = &instr.eff
@@ -350,15 +350,14 @@ fn params(block: &mut Block) {
             Expr::Var(var) if var.ver == 0 => {
                 // XXX this only should be for reads, not writes
                 params.insert(var.reg.clone());
-                true
             }
-            _ => true,
+            _ => {}
         });
     }
 
     let mut params = params.into_iter().collect::<Vec<_>>();
     params.sort();
-    block.params = params;
+    params
 }
 
 fn links(blocks: &mut Blocks) {
@@ -381,25 +380,10 @@ fn links(blocks: &mut Blocks) {
 
     for block in blocks.vec.iter_mut() {
         ssa(&mut block.instrs);
-
-        let mut outs: HashMap<String, Var> = HashMap::new();
-        visit_block(block, &mut |expr| {
-            match expr {
-                Expr::Var(var) => {
-                    if let Some(prev) = outs.get_mut(&var.reg) {
-                        prev.ver = prev.ver.max(var.ver);
-                    } else {
-                        outs.insert(var.reg.clone(), var.clone());
-                    }
-                }
-                _ => {}
-            };
-            true
-        });
-
-        params(block);
+        let params = params(block);
+        bins.push(HashSet::from_iter(params.into_iter()));
+        let outs = out_vars(block);
         bouts.push(outs);
-        bins.push(HashSet::from_iter(block.params.iter().map(|p| p.clone())));
     }
 
     let mut changed = true;
@@ -447,6 +431,24 @@ fn links(blocks: &mut Blocks) {
         blocks.vec[id].params = params;
         blocks.vec[id].links = next;
     }
+}
+
+/// Find the variables that are live at the end of the block, which will be potential parameters to the next blocks.
+fn out_vars(block: &mut Block) -> HashMap<String, Var> {
+    let mut outs: HashMap<String, Var> = HashMap::new();
+    visit_block(block, &mut |expr| {
+        match expr {
+            Expr::Var(var) => {
+                if let Some(prev) = outs.get_mut(&var.reg) {
+                    prev.ver = prev.ver.max(var.ver);
+                } else {
+                    outs.insert(var.reg.clone(), var.clone());
+                }
+            }
+            _ => {}
+        };
+    });
+    outs
 }
 
 fn main() {
