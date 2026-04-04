@@ -263,15 +263,13 @@ impl Blocks {
     }
 }
 
-fn blocks(instrs: Vec<Instr>) -> (Blocks, Vec<Vec<u32>>) {
+fn blocks(instrs: Vec<Instr>) -> Blocks {
     let mut blocks = vec![];
     let mut block = vec![];
-    let mut nexts = vec![];
     for instr in instrs {
+        let last_in_block = matches!(instr.eff, Effect::Jmp(_, _));
         block.push(instr);
-        let instr = block.last().unwrap();
-        if let Effect::Jmp(_, next) = &instr.eff {
-            nexts.push(next.clone());
+        if last_in_block {
             blocks.push(Block {
                 id: blocks.len(),
                 instrs: block,
@@ -285,7 +283,7 @@ fn blocks(instrs: Vec<Instr>) -> (Blocks, Vec<Vec<u32>>) {
         println!("{:#?}", block);
         assert!(block.is_empty());
     }
-    (Blocks { vec: blocks }, nexts)
+    Blocks { vec: blocks }
 }
 
 fn visit_expr(expr: &mut Expr, f: &mut impl FnMut(&mut Expr) -> bool) {
@@ -373,13 +371,17 @@ fn params(block: &mut Block) {
     block.params = params;
 }
 
-fn links(blocks: &mut Blocks, nexts: Vec<Vec<u32>>) {
-    let nexts = nexts
-        .into_iter()
-        .map(|addrs| {
+fn links(blocks: &mut Blocks) {
+    let nexts = blocks
+        .vec
+        .iter()
+        .map(|block| {
+            let Effect::Jmp(_, addrs) = &block.instrs.last().unwrap().eff else {
+                panic!()
+            };
             addrs
-                .into_iter()
-                .flat_map(|addr| blocks.vec.iter().position(|b| b.addr() == addr))
+                .iter()
+                .flat_map(|&addr| blocks.vec.iter().position(|b| b.addr() == addr))
                 .collect::<Vec<_>>()
         })
         .collect::<Vec<_>>();
@@ -459,9 +461,9 @@ fn links(blocks: &mut Blocks, nexts: Vec<Vec<u32>>) {
 
 fn main() {
     let instrs = decode();
-    let (mut blocks, nexts) = blocks(instrs);
+    let mut blocks = blocks(instrs);
     blocks.vec.truncate(3);
-    links(&mut blocks, nexts);
+    links(&mut blocks);
     for block in blocks.vec {
         println!(
             "{ip:x} [{params}]",
