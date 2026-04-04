@@ -1,25 +1,29 @@
 use std::collections::{HashMap, HashSet};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
-enum Var {
-    Global(String),
-    Local(String, usize),
+struct Var {
+    reg: String,
+    ver: usize,
 }
 
 impl std::fmt::Display for Var {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Var::Global(name) => write!(f, "{name}"),
-            Var::Local(name, i) => write!(f, "{name}#{i}"),
+        if self.ver > 0 {
+            write!(f, "{reg}#{ver}", reg = self.reg, ver = self.ver)
+        } else {
+            write!(f, "{reg}", reg = self.reg)
         }
     }
 }
 
 impl Var {
-    fn base(&self) -> &str {
-        match self {
-            Var::Global(s) => &s,
-            Var::Local(s, _) => &s,
+    fn new(reg: String) -> Self {
+        Var { reg, ver: 0 }
+    }
+    fn next(&self) -> Var {
+        Var {
+            reg: self.reg.clone(),
+            ver: self.ver + 1,
         }
     }
 }
@@ -43,7 +47,7 @@ impl std::fmt::Display for Expr {
 
 impl Expr {
     fn from_reg(r: iced_x86::Register) -> Expr {
-        Expr::Var(Var::Global(format!("{r:?}").to_ascii_lowercase()))
+        Expr::Var(Var::new(format!("{r:?}").to_ascii_lowercase()))
     }
 }
 
@@ -292,10 +296,7 @@ fn ssa(instrs: &mut [Instr]) {
                 let Expr::Var(var) = &call.args[0] else {
                     continue;
                 };
-                let new_local = match var {
-                    Var::Global(name) => Var::Local(name.clone(), 1),
-                    Var::Local(name, i) => Var::Local(name.clone(), i + 1),
-                };
+                let new_local = var.next();
                 for instr in rest {
                     rename(&mut instr.call, &var, &new_local);
                 }
@@ -310,9 +311,9 @@ fn params(block: &mut Block) {
     let mut params = HashSet::new();
     visit_block(block, &mut |expr| match expr {
         Expr::Call(call) if call.op.starts_with("todo:") => false,
-        Expr::Var(Var::Global(name)) => {
+        Expr::Var(var) => {
             // XXX this only should be for reads, not writes
-            params.insert(name.clone());
+            params.insert(var.reg.clone());
             true
         }
         _ => true,
@@ -326,35 +327,95 @@ fn params(block: &mut Block) {
 fn links(blocks: &mut [Block]) {
     #[derive(Default)]
     struct IO {
-        outs: Vec<(String, Var)>,
-        ins: Vec<String>,
+        outs: HashMap<String, Var>,
+        ins: HashSet<String>,
     }
 
     let mut ios = HashMap::new();
     for block in blocks.iter_mut() {
         ssa(&mut block.instrs);
+
+        let mut outs: HashMap<String, Var> = HashMap::new();
+        visit_block(block, &mut |expr| {
+            match expr {
+                Expr::Var(var) => {
+                    if let Some(prev) = outs.get_mut(&var.reg) {
+                        prev.ver = prev.ver.max(var.ver);
+                    } else {
+                        outs.insert(var.reg.clone(), var.clone());
+                    }
+                }
+                _ => {}
+            };
+            true
+        });
+
         params(block);
-        ios.insert(block.addr(), IO::default());
+        ios.insert(
+            block.addr(),
+            IO {
+                outs,
+                ins: HashSet::from_iter(block.params.iter().map(|p| p.clone())),
+            },
+        );
     }
 
-    // let mut changed = true;
-    // while changed {
-    //     changed = false;
-    //     for src in blocks.iter() {
-    //         for link in &src.next {
-    //             let mut new = vec![];
-    //             let Some(dst) = blocks.iter().find(|b| b.addr() == link.addr) else {
-    //                 println!("can't find {:x}", link.addr);
-    //                 continue;
-    //             };
-    //             for param in &dst.params {
-    //                 if !link.params.iter().any(|p| &p.0 == param) {
-    //                     new.push(param.clone());
-    //                 }
-    //             }
-    //         }
-    //     }
-    // }
+    let mut changed = true;
+    while changed {
+        changed = false;
+        for src in blocks.iter() {
+            let outs = &ios.get(&src.addr()).unwrap().outs;
+            let mut add = vec![];
+            for link in &src.next {
+                let Some(dst) = blocks.iter().find(|b| b.addr() == link.addr) else {
+                    println!("can't find {:x}", link.addr);
+                    continue;
+                };
+                for param in &ios.get(&dst.addr()).unwrap().ins {
+                    if !outs.contains_key(param.as_str()) {
+                        add.push(param.clone());
+                    }
+                }
+            }
+
+            if !add.is_empty() {
+                let io = &mut ios.get_mut(&src.addr()).unwrap();
+                for add in add {
+                    io.ins.insert(add.clone());
+                    io.outs.insert(add.clone(), Var::new(add));
+                }
+                changed = true;
+            }
+        }
+    }
+
+    for (&addr, io) in ios.iter() {
+        let block = blocks.iter_mut().find(|b| b.addr() == addr).unwrap();
+        block.params = io.ins.iter().map(|s| s.clone()).collect();
+        block.params.sort();
+        let params = block
+            .next
+            .iter()
+            .map(|link| {
+                let Some(next) = ios.get(&link.addr) else {
+                    return Link {
+                        addr: link.addr,
+                        params: vec![],
+                    };
+                };
+                let params = next
+                    .ins
+                    .iter()
+                    .map(|p| (p.clone(), io.outs.get(p).unwrap().clone()))
+                    .collect();
+                Link {
+                    addr: link.addr,
+                    params,
+                }
+            })
+            .collect();
+        block.next = params;
+    }
 }
 
 fn main() {
@@ -376,7 +437,15 @@ fn main() {
             );
         }
         for link in block.next {
-            println!("=> {:x} {:?}", link.addr, link.params);
+            println!(
+                "=> {:x} {}",
+                link.addr,
+                link.params
+                    .iter()
+                    .map(|(k, v)| format!("{k}={v}"))
+                    .collect::<Vec<_>>()
+                    .join(" ")
+            );
         }
         println!();
     }
