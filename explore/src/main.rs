@@ -212,9 +212,10 @@ struct Link {
 }
 
 struct Block {
-    params: Vec<String>,
+    id: usize,
     instrs: Vec<Instr>,
-    next: Vec<Link>,
+    params: Vec<String>,
+    links: Vec<Link>,
 }
 
 impl Block {
@@ -223,9 +224,19 @@ impl Block {
     }
 }
 
-fn blocks(instrs: Vec<Instr>) -> Vec<Block> {
+struct Blocks {
+    vec: Vec<Block>,
+}
+impl Blocks {
+    fn get(&self, id: usize) -> &Block {
+        &self.vec[id]
+    }
+}
+
+fn blocks(instrs: Vec<Instr>) -> (Blocks, Vec<Vec<u32>>) {
     let mut blocks = vec![];
     let mut block = vec![];
+    let mut nexts = vec![];
     for instr in instrs {
         let next = match instr.call.op.as_str() {
             "jmp" | "call" => Some(vec![instr.iced.next_ip32()]),
@@ -241,16 +252,12 @@ fn blocks(instrs: Vec<Instr>) -> Vec<Block> {
         block.push(instr);
         if let Some(next) = next {
             blocks.push(Block {
-                params: vec![],
+                id: blocks.len(),
                 instrs: block,
-                next: next
-                    .into_iter()
-                    .map(|addr| Link {
-                        addr,
-                        params: vec![],
-                    })
-                    .collect(),
+                params: vec![],
+                links: vec![],
             });
+            nexts.push(next);
             block = vec![];
         }
     }
@@ -258,7 +265,7 @@ fn blocks(instrs: Vec<Instr>) -> Vec<Block> {
         println!("{:#?}", block);
         assert!(block.is_empty());
     }
-    blocks
+    (Blocks { vec: blocks }, nexts)
 }
 
 fn visit(call: &mut Call, f: &mut impl FnMut(&mut Expr) -> bool) {
@@ -309,30 +316,40 @@ fn ssa(instrs: &mut [Instr]) {
 
 fn params(block: &mut Block) {
     let mut params = HashSet::new();
-    visit_block(block, &mut |expr| match expr {
-        Expr::Call(call) if call.op.starts_with("todo:") => false,
-        Expr::Var(var) => {
-            // XXX this only should be for reads, not writes
-            params.insert(var.reg.clone());
-            true
+    for instr in &mut block.instrs {
+        if instr.call.op.starts_with("todo:") {
+            continue;
         }
-        _ => true,
-    });
+        visit(&mut instr.call, &mut |expr| match expr {
+            Expr::Var(var) if var.ver == 0 => {
+                // XXX this only should be for reads, not writes
+                params.insert(var.reg.clone());
+                true
+            }
+            _ => true,
+        });
+    }
 
     let mut params = params.into_iter().collect::<Vec<_>>();
     params.sort();
     block.params = params;
 }
 
-fn links(blocks: &mut [Block]) {
-    #[derive(Default)]
-    struct IO {
-        outs: HashMap<String, Var>,
-        ins: HashSet<String>,
-    }
+fn links(blocks: &mut Blocks, nexts: Vec<Vec<u32>>) {
+    let nexts = nexts
+        .into_iter()
+        .map(|addrs| {
+            addrs
+                .into_iter()
+                .flat_map(|addr| blocks.vec.iter().position(|b| b.addr() == addr))
+                .collect::<Vec<_>>()
+        })
+        .collect::<Vec<_>>();
 
-    let mut ios = HashMap::new();
-    for block in blocks.iter_mut() {
+    let mut bouts: Vec<HashMap<String, Var>> = Default::default();
+    let mut bins: Vec<HashSet<String>> = Default::default();
+
+    for block in blocks.vec.iter_mut() {
         ssa(&mut block.instrs);
 
         let mut outs: HashMap<String, Var> = HashMap::new();
@@ -351,27 +368,18 @@ fn links(blocks: &mut [Block]) {
         });
 
         params(block);
-        ios.insert(
-            block.addr(),
-            IO {
-                outs,
-                ins: HashSet::from_iter(block.params.iter().map(|p| p.clone())),
-            },
-        );
+        bouts.push(outs);
+        bins.push(HashSet::from_iter(block.params.iter().map(|p| p.clone())));
     }
 
     let mut changed = true;
     while changed {
         changed = false;
-        for src in blocks.iter() {
-            let outs = &ios.get(&src.addr()).unwrap().outs;
+        for src in blocks.vec.iter() {
+            let outs = &bouts[src.id];
             let mut add = vec![];
-            for link in &src.next {
-                let Some(dst) = blocks.iter().find(|b| b.addr() == link.addr) else {
-                    println!("can't find {:x}", link.addr);
-                    continue;
-                };
-                for param in &ios.get(&dst.addr()).unwrap().ins {
+            for &next_id in &nexts[src.id] {
+                for param in &bins[next_id] {
                     if !outs.contains_key(param.as_str()) {
                         add.push(param.clone());
                     }
@@ -379,50 +387,44 @@ fn links(blocks: &mut [Block]) {
             }
 
             if !add.is_empty() {
-                let io = &mut ios.get_mut(&src.addr()).unwrap();
                 for add in add {
-                    io.ins.insert(add.clone());
-                    io.outs.insert(add.clone(), Var::new(add));
+                    bins[src.id].insert(add.clone());
+                    bouts[src.id].insert(add.clone(), Var::new(add));
                 }
                 changed = true;
             }
         }
     }
 
-    for (&addr, io) in ios.iter() {
-        let block = blocks.iter_mut().find(|b| b.addr() == addr).unwrap();
-        block.params = io.ins.iter().map(|s| s.clone()).collect();
-        block.params.sort();
-        let params = block
-            .next
+    for id in 0..blocks.vec.len() {
+        let mut params = bins[id].iter().map(|s| s.clone()).collect::<Vec<_>>();
+        params.sort();
+
+        let next = nexts[id]
             .iter()
-            .map(|link| {
-                let Some(next) = ios.get(&link.addr) else {
-                    return Link {
-                        addr: link.addr,
-                        params: vec![],
-                    };
-                };
-                let params = next
-                    .ins
+            .map(|&next_id| {
+                let params = bins[next_id]
                     .iter()
-                    .map(|p| (p.clone(), io.outs.get(p).unwrap().clone()))
+                    .map(|p| (p.clone(), bouts[id].get(p).unwrap().clone()))
                     .collect();
                 Link {
-                    addr: link.addr,
+                    addr: blocks.vec[next_id].addr(),
                     params,
                 }
             })
             .collect();
-        block.next = params;
+
+        blocks.vec[id].params = params;
+        blocks.vec[id].links = next;
     }
 }
 
 fn main() {
     let instrs = decode();
-    let mut blocks = blocks(instrs);
-    links(&mut blocks);
-    for block in blocks {
+    let (mut blocks, nexts) = blocks(instrs);
+    blocks.vec.truncate(3);
+    links(&mut blocks, nexts);
+    for block in blocks.vec {
         println!(
             "{ip:x} [{params}]",
             ip = block.instrs[0].ip,
@@ -436,7 +438,7 @@ fn main() {
                 iced = instr.iced
             );
         }
-        for link in block.next {
+        for link in block.links {
             println!(
                 "=> {:x} {}",
                 link.addr,
