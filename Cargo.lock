@@ -91,6 +91,7 @@ dependencies = [
 name = "explore"
 version = "0.1.0"
 dependencies = [
+ "argh",
  "iced-x86",
  "log",
  "logger",

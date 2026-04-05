@@ -10,6 +10,7 @@ members = [
 ]
 
 [workspace.dependencies]
+argh = { version = "0.1.19", default-features = false, features = ["help"] }
 bitflags = "2.11.0"
 bitflags-derive = "0.0.4"
 pe = { path = "win32/pe" }

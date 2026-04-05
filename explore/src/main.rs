@@ -564,17 +564,29 @@ fn print(blocks: &Blocks) {
     }
 }
 
+#[derive(argh::FromArgs)]
+/// todo
+struct Args {
+    /// output json
+    #[argh(switch)]
+    json: bool,
+}
+
 fn main() {
     logger::init();
+    let args: Args = argh::from_env();
 
     let instrs = decode();
     let mut blocks = blocks(instrs);
     expand_calls(&mut blocks);
     //blocks.vec.truncate(3);
     links(&mut blocks);
-    //print(&blocks);
 
-    println!("{}", serde_json::to_string(&blocks).unwrap());
+    if args.json {
+        println!("{}", serde_json::to_string(&blocks).unwrap());
+    } else {
+        print(&blocks);
+    }
 }
 
 const IP: u32 = 0x401d0f;
