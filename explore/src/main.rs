@@ -305,10 +305,28 @@ struct Blocks {
 
 /// Split the instructions into basic blocks, where each block ends with a jump.
 fn blocks(instrs: Vec<Instr>) -> Blocks {
+    let mut targets = HashSet::new();
+    for instr in &instrs {
+        let Effect::Jmp(jmp) = &instr.eff else {
+            continue;
+        };
+        for dst in &jmp.dsts {
+            let dst = match dst {
+                Expr::Const(dst) => *dst,
+                _ => {
+                    log::warn!("jmp target {}", dst);
+                    continue;
+                }
+            };
+            targets.insert(dst);
+        }
+    }
+
     let mut blocks = vec![];
     let mut block = vec![];
     for instr in instrs {
-        let last_in_block = matches!(instr.eff, Effect::Jmp(_));
+        let last_in_block =
+            matches!(instr.eff, Effect::Jmp(_)) || targets.contains(&instr.iced.next_ip32());
         block.push(instr);
         if last_in_block {
             blocks.push(Block {
@@ -500,17 +518,23 @@ fn links(blocks: &mut Blocks) {
         .vec
         .iter()
         .map(|block| {
-            let Effect::Jmp(jmp) = &block.instrs.last().unwrap().eff else {
-                panic!()
+            let last = block.instrs.last().unwrap();
+            let addrs = match &last.eff {
+                Effect::Jmp(jmp) => jmp
+                    .dsts
+                    .iter()
+                    .flat_map(|addr| {
+                        let Expr::Const(addr) = addr else {
+                            return None;
+                        };
+                        Some(*addr)
+                    })
+                    .collect::<Vec<_>>(),
+                _ => vec![last.iced.next_ip32()],
             };
-            jmp.dsts
-                .iter()
-                .flat_map(|addr| {
-                    let Expr::Const(addr) = addr else {
-                        return None;
-                    };
-                    blocks.vec.iter().position(|b| b.addr() == *addr)
-                })
+            addrs
+                .into_iter()
+                .flat_map(|addr| blocks.vec.iter().position(|b| b.addr() == addr))
                 .collect::<Vec<_>>()
         })
         .collect::<Vec<_>>();
