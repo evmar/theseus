@@ -1,0 +1,114 @@
+import dataRaw from "./data.json" with { type: "json" };
+import * as preact from "preact";
+
+import type { Blocks } from "../bindings/Blocks.js";
+import type { Block } from "../bindings/Block.js";
+import type { Instr } from "../bindings/Instr.js";
+import type { Effect } from "../bindings/Effect.js";
+import type { Expr } from "../bindings/Expr.js";
+import type { Call } from "../bindings/Call.js";
+
+const data: Blocks = dataRaw as any;
+
+function hex(n: number): string {
+  return "0x" + n.toString(16);
+}
+
+function Call(props: { op: string; args: Expr[] }) {
+  const { op, args } = props;
+  return (
+    <span>
+      ({op}{" "}
+      {args.map((e) => (
+        <>
+          {" "}
+          <Expr expr={e} />
+        </>
+      ))}
+      )
+    </span>
+  );
+}
+
+function Expr(props: { expr: Expr }) {
+  const { expr } = props;
+  if ("Const" in expr) {
+    return <span>{hex(expr.Const)}</span>;
+  } else if ("Var" in expr) {
+    const { reg, ver } = expr.Var;
+    return (
+      <span>
+        {reg}
+        {ver == 0 ? "" : `#${ver}`}
+      </span>
+    );
+  } else if ("Call" in expr) {
+    return <Call {...expr.Call} />;
+  }
+  throw new Error(expr);
+}
+
+function Eff(props: { eff: Effect }) {
+  const { eff } = props;
+  if ("Set" in eff) {
+    const [x, y] = eff.Set;
+    return (
+      <span>
+        <Expr expr={x} /> = <Expr expr={y} />
+      </span>
+    );
+  } else if ("Call" in eff) {
+    return <Call {...eff.Call} />;
+  } else if ("Jmp" in eff) {
+    const [op, dsts] = eff.Jmp;
+    return (
+      <span>
+        {op}{" "}
+        {dsts.map((e) => (
+          <>
+            {" "}
+            <Expr expr={e} />
+          </>
+        ))}
+      </span>
+    );
+  }
+  throw new Error(eff);
+}
+
+function Instr(props: { instr: Instr }) {
+  const { addr, iced, eff } = props.instr;
+  return (
+    <div>
+      <Eff eff={eff} />
+    </div>
+  );
+  //  ; {hex(addr)} {iced}
+}
+
+function Block(props: { block: Block }) {
+  const { block } = props;
+  const addr = block.instrs[0]!.addr;
+  return (
+    <div class="block">
+      {addr.toString(16)}
+      {block.instrs.map((instr) => (
+        <Instr instr={instr} />
+      ))}
+    </div>
+  );
+}
+
+function Body() {
+  console.log(data.vec[0]);
+  return (
+    <main>
+      {data.vec.map((block) => (
+        <Block block={block} />
+      ))}
+    </main>
+  );
+  return <div>hello</div>;
+}
+
+preact.render(<Body />, document.body);

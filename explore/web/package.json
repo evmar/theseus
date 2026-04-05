@@ -1,0 +1,11 @@
+{
+  "name": "web",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "preact": "^10.29.1",
+    "typescript": "^6.0.2"
+  }
+}

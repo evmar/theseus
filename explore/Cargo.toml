@@ -7,3 +7,6 @@ edition = "2024"
 iced-x86 = { workspace = true }
 log = { workspace = true }
 logger = { workspace = true }
+serde = { version = "1.0.228", features = ["derive"] }
+serde_json = "1.0.149"
+ts-rs = "12.0.1"

@@ -1,6 +1,6 @@
 use std::collections::{HashMap, HashSet};
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, serde::Serialize, ts_rs::TS)]
 struct Var {
     reg: String,
     ver: usize,
@@ -28,7 +28,7 @@ impl Var {
     }
 }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, serde::Serialize, ts_rs::TS)]
 enum Expr {
     Const(u32),
     Var(Var),
@@ -89,7 +89,7 @@ macro_rules! call {
 //     ($x:expr, $($arg:expr) +) => { Expr::Call(Box::new(Call { op: $x, args: vec![$($arg),*] })) };
 // }
 
-#[derive(Debug, Clone, PartialEq, Eq)]
+#[derive(Debug, Clone, PartialEq, Eq, serde::Serialize, ts_rs::TS)]
 struct Call {
     op: String,
     args: Vec<Expr>,
@@ -141,7 +141,7 @@ impl std::fmt::Display for Call {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, serde::Serialize, ts_rs::TS)]
 enum Effect {
     Set(Expr, Expr),
     Call(Box<Call>),
@@ -166,10 +166,30 @@ impl std::fmt::Display for Effect {
     }
 }
 
-#[derive(Debug)]
+#[derive(ts_rs::TS)]
+#[allow(unused)]
+struct InstrJS {
+    addr: u32,
+    iced: String,
+    eff: Effect,
+}
+
+#[derive(Debug, ts_rs::TS)]
+#[ts(as = "InstrJS")]
 struct Instr {
     iced: iced_x86::Instruction,
     eff: Effect,
+}
+
+impl serde::Serialize for Instr {
+    fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
+        use serde::ser::SerializeStruct;
+        let mut state = serializer.serialize_struct("Instr", 2)?;
+        state.serialize_field("addr", &self.iced.ip32())?;
+        state.serialize_field("iced", &format!("{}", self.iced))?;
+        state.serialize_field("eff", &self.eff)?;
+        state.end()
+    }
 }
 
 /// Decode the x86 instructions into our Instr type.
@@ -238,12 +258,13 @@ fn decode() -> Vec<Instr> {
     instrs
 }
 
-#[derive(Debug)]
+#[derive(Debug, serde::Serialize, ts_rs::TS)]
 struct Link {
     addr: u32,
     params: Vec<(String, Var)>,
 }
 
+#[derive(serde::Serialize, ts_rs::TS)]
 struct Block {
     id: usize,
     instrs: Vec<Instr>,
@@ -257,6 +278,8 @@ impl Block {
     }
 }
 
+#[derive(serde::Serialize, ts_rs::TS)]
+#[ts(export)]
 struct Blocks {
     vec: Vec<Block>,
 }
@@ -549,7 +572,9 @@ fn main() {
     expand_calls(&mut blocks);
     //blocks.vec.truncate(3);
     links(&mut blocks);
-    print(&blocks);
+    //print(&blocks);
+
+    println!("{}", serde_json::to_string(&blocks).unwrap());
 }
 
 const IP: u32 = 0x401d0f;
