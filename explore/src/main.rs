@@ -399,11 +399,11 @@ fn expand_calls(blocks: &mut Blocks) {
                     })),
                 });
                 new_instrs.push(Instr {
-                    iced,
+                    iced: Default::default(),
                     eff: Effect::Set(Expr::Var(Var::new("eax".into())), Expr::Const(0)),
                 });
                 new_instrs.push(Instr {
-                    iced,
+                    iced: Default::default(),
                     eff: Effect::Jmp("jmp".into(), vec![return_addr.clone()]),
                 });
             } else {
@@ -537,7 +537,7 @@ fn main() {
                 link.addr,
                 link.params
                     .iter()
-                    .map(|(k, v)| format!("{k}={v}"))
+                    .map(|(k, v)| format!("{k}:{v}"))
                     .collect::<Vec<_>>()
                     .join(" ")
             );
