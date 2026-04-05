@@ -5,3 +5,5 @@ edition = "2024"
 
 [dependencies]
 iced-x86 = { workspace = true }
+log = { workspace = true }
+logger = { workspace = true }

@@ -279,7 +279,7 @@ fn blocks(instrs: Vec<Instr>) -> Blocks {
         }
     }
     if !block.is_empty() {
-        println!("{:#?}", block);
+        log::error!("{:#?}", block);
         assert!(block.is_empty());
     }
     Blocks { vec: blocks }
@@ -512,6 +512,8 @@ fn out_vars(block: &mut Block) -> HashMap<String, Var> {
 }
 
 fn main() {
+    logger::init();
+
     let instrs = decode();
     let mut blocks = blocks(instrs);
     expand_calls(&mut blocks);
