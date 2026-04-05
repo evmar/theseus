@@ -81,7 +81,7 @@ fn expr_from_iced(instr: iced_x86::Instruction, i: u32) -> Expr {
 }
 
 macro_rules! call {
-    ($x:expr, $($arg:expr),+) => { crate::Expr::Call(Box::new(crate::Call { op: $x.into(), args: vec![$($arg.into()),*] })) };
+    ($x:expr, $($arg:expr),*) => { crate::Expr::Call(Box::new(crate::Call { op: $x.into(), args: vec![$($arg.into()),*] })) };
 }
 
 // macro_rules! expr {
@@ -142,10 +142,28 @@ impl std::fmt::Display for Call {
 }
 
 #[derive(Debug, serde::Serialize, ts_rs::TS)]
+struct Jmp {
+    cond: Call,
+    dsts: Vec<Expr>,
+}
+
+impl Jmp {
+    fn new(cond: impl Into<String>, dsts: Vec<Expr>) -> Self {
+        Jmp {
+            cond: Call {
+                op: cond.into(),
+                args: vec![],
+            },
+            dsts,
+        }
+    }
+}
+
+#[derive(Debug, serde::Serialize, ts_rs::TS)]
 enum Effect {
     Set(Expr, Expr),
     Call(Box<Call>),
-    Jmp(String, Vec<Expr>),
+    Jmp(Box<Jmp>),
 }
 
 impl std::fmt::Display for Effect {
@@ -153,10 +171,12 @@ impl std::fmt::Display for Effect {
         match self {
             Effect::Set(x, y) => write!(f, "{x} = {y}"),
             Effect::Call(call) => write!(f, "{call}"),
-            Effect::Jmp(op, next) => write!(
+            Effect::Jmp(jmp) => write!(
                 f,
-                "{op} {next}",
-                next = next
+                "{cond} {next}",
+                cond = jmp.cond,
+                next = jmp
+                    .dsts
                     .iter()
                     .map(|x| format!("{x}"))
                     .collect::<Vec<_>>()
@@ -203,7 +223,7 @@ fn decode() -> Vec<Instr> {
         }
 
         use iced_x86::Mnemonic::*;
-        let instr_name = format!("{:?}", instr.mnemonic()).to_ascii_lowercase();
+        let op = format!("{:?}", instr.mnemonic()).to_ascii_lowercase();
         let eff: Effect = match instr.mnemonic() {
             Inc => {
                 let [x] = args.try_into().unwrap();
@@ -233,22 +253,21 @@ fn decode() -> Vec<Instr> {
                 let [x, y, z] = args.try_into().unwrap();
                 Effect::Set(x, call!("imul", y, z))
             }
-            Call => {
+            Call | Jne | Jge => {
                 let [x] = args.try_into().unwrap();
-                Effect::Jmp(instr_name, vec![Expr::Const(instr.next_ip32()), x])
+                Effect::Jmp(Box::new(crate::Jmp::new(
+                    op,
+                    vec![x, Expr::Const(instr.next_ip32())],
+                )))
             }
-            Jmp => Effect::Jmp(instr_name, vec![Expr::Const(instr.next_ip32())]),
-            Jne | Jge => {
-                let [addr] = args.try_into().unwrap();
-                Effect::Jmp(instr_name, vec![Expr::Const(instr.next_ip32()), addr])
-            }
-            Ret => Effect::Jmp(instr_name, vec![]),
-            Cmp | Test => {
-                let op = format!("{:?}", instr.mnemonic()).to_ascii_lowercase();
-                Effect::Call(Box::new(crate::Call { op, args }))
-            }
+            Jmp => Effect::Jmp(Box::new(crate::Jmp::new(
+                "jmp",
+                vec![Expr::Const(instr.next_ip32())],
+            ))),
+            Ret => Effect::Jmp(Box::new(crate::Jmp::new("ret", vec![]))),
+            Cmp | Test => Effect::Call(Box::new(crate::Call { op, args })),
             _ => {
-                let op = format!("todo:{:?}", instr.mnemonic()).to_ascii_lowercase();
+                let op = format!("todo:{op}");
                 Effect::Call(Box::new(crate::Call { op, args }))
             }
         };
@@ -289,7 +308,7 @@ fn blocks(instrs: Vec<Instr>) -> Blocks {
     let mut blocks = vec![];
     let mut block = vec![];
     for instr in instrs {
-        let last_in_block = matches!(instr.eff, Effect::Jmp(_, _));
+        let last_in_block = matches!(instr.eff, Effect::Jmp(_));
         block.push(instr);
         if last_in_block {
             blocks.push(Block {
@@ -328,7 +347,14 @@ fn visit_effect(effect: &mut Effect, f: &mut impl FnMut(&mut Expr)) {
                 visit_expr(arg, f);
             }
         }
-        Effect::Jmp(_, _) => {}
+        Effect::Jmp(jmp) => {
+            for arg in jmp.cond.args.iter_mut() {
+                visit_expr(arg, f);
+            }
+            for dst in jmp.dsts.iter_mut() {
+                visit_expr(dst, f);
+            }
+        }
     }
 }
 
@@ -409,10 +435,10 @@ fn expand_calls(blocks: &mut Blocks) {
         std::mem::swap(&mut instrs, &mut block.instrs);
         let mut new_instrs = vec![];
         for instr in instrs.into_iter() {
-            if let Effect::Jmp(op, dsts) = &instr.eff
-                && op == "call"
+            if let Effect::Jmp(jmp) = &instr.eff
+                && jmp.cond.op == "call"
             {
-                let [return_addr, dst] = dsts.iter().collect::<Vec<_>>().try_into().unwrap();
+                let [return_addr, dst] = jmp.dsts.iter().collect::<Vec<_>>().try_into().unwrap();
                 let iced = instr.iced;
                 new_instrs.push(Instr {
                     iced,
@@ -427,7 +453,7 @@ fn expand_calls(blocks: &mut Blocks) {
                 });
                 new_instrs.push(Instr {
                     iced: Default::default(),
-                    eff: Effect::Jmp("jmp".into(), vec![return_addr.clone()]),
+                    eff: Effect::Jmp(Box::new(Jmp::new("jmp", vec![return_addr.clone()]))),
                 });
             } else {
                 new_instrs.push(instr);
@@ -437,15 +463,47 @@ fn expand_calls(blocks: &mut Blocks) {
     }
 }
 
+fn simplify_branches(blocks: &mut Blocks) {
+    for block in blocks.vec.iter_mut() {
+        let mut i = 1;
+        while i < block.instrs.len() {
+            let [cur, prev] = block.instrs.get_disjoint_mut([i, i - 1]).unwrap();
+            i += 1;
+            let Effect::Jmp(jmp) = &mut cur.eff else {
+                continue;
+            };
+            let Effect::Call(test) = &mut prev.eff else {
+                continue;
+            };
+
+            let op = if jmp.cond.op == "jge" && test.op == "cmp" {
+                ">="
+            } else if jmp.cond.op == "jne" && test.op == "cmp" {
+                "!="
+            } else if jmp.cond.op == "jne" && test.op == "test" && test.args[0] == test.args[1] {
+                "!=0"
+            } else {
+                continue;
+            };
+
+            assert!(jmp.cond.args.is_empty());
+            jmp.cond.op = op.into();
+            std::mem::swap(&mut jmp.cond.args, &mut test.args);
+            cur.iced = prev.iced;
+            block.instrs.remove(i - 2);
+        }
+    }
+}
+
 fn links(blocks: &mut Blocks) {
     let nexts = blocks
         .vec
         .iter()
         .map(|block| {
-            let Effect::Jmp(_, addrs) = &block.instrs.last().unwrap().eff else {
+            let Effect::Jmp(jmp) = &block.instrs.last().unwrap().eff else {
                 panic!()
             };
-            addrs
+            jmp.dsts
                 .iter()
                 .flat_map(|addr| {
                     let Expr::Const(addr) = addr else {
@@ -579,6 +637,7 @@ fn main() {
     let instrs = decode();
     let mut blocks = blocks(instrs);
     expand_calls(&mut blocks);
+    simplify_branches(&mut blocks);
     //blocks.vec.truncate(3);
     links(&mut blocks);
 
