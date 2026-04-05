@@ -60,10 +60,10 @@ function Eff(props: { eff: Effect }) {
   } else if ("Call" in eff) {
     return <Call {...eff.Call} />;
   } else if ("Jmp" in eff) {
-    const [op, dsts] = eff.Jmp;
+    const { cond, dsts } = eff.Jmp;
     return (
       <span>
-        {op}{" "}
+        {<Call {...cond} />}{" "}
         {dsts.map((e) => (
           <>
             {" "}
@@ -104,7 +104,9 @@ function Body() {
   return (
     <main>
       {data.vec.map((block) => (
-        <Block block={block} />
+        <div>
+          <Block block={block} />
+        </div>
       ))}
     </main>
   );

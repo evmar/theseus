@@ -2,7 +2,7 @@
   "name": "web",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "serve": "esbuild --bundle --outfile=render.js render.tsx --servedir=."
   },
   "dependencies": {
     "preact": "^10.29.1",
