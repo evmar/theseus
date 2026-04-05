@@ -253,19 +253,19 @@ fn decode() -> Vec<Instr> {
                 let [x, y, z] = args.try_into().unwrap();
                 Effect::Set(x, call!("imul", y, z))
             }
-            Call | Jne | Jge => {
+            Jne | Jge => {
                 let [x] = args.try_into().unwrap();
                 Effect::Jmp(Box::new(crate::Jmp::new(
                     op,
                     vec![x, Expr::Const(instr.next_ip32())],
                 )))
             }
-            Jmp => Effect::Jmp(Box::new(crate::Jmp::new(
-                "jmp",
-                vec![Expr::Const(instr.next_ip32())],
-            ))),
+            Jmp => {
+                let [x] = args.try_into().unwrap();
+                Effect::Jmp(Box::new(crate::Jmp::new(op, vec![x])))
+            }
             Ret => Effect::Jmp(Box::new(crate::Jmp::new("ret", vec![]))),
-            Cmp | Test => Effect::Call(Box::new(crate::Call { op, args })),
+            Cmp | Test | Call => Effect::Call(Box::new(crate::Call { op, args })),
             _ => {
                 let op = format!("todo:{op}");
                 Effect::Call(Box::new(crate::Call { op, args }))
@@ -314,7 +314,11 @@ fn blocks(instrs: Vec<Instr>) -> Blocks {
             let dst = match dst {
                 Expr::Const(dst) => *dst,
                 _ => {
-                    log::warn!("jmp target {}", dst);
+                    log::warn!(
+                        "{addr:x} jmp target {expr}",
+                        addr = instr.iced.ip32(),
+                        expr = dst
+                    );
                     continue;
                 }
             };
@@ -453,25 +457,21 @@ fn expand_calls(blocks: &mut Blocks) {
         std::mem::swap(&mut instrs, &mut block.instrs);
         let mut new_instrs = vec![];
         for instr in instrs.into_iter() {
-            if let Effect::Jmp(jmp) = &instr.eff
-                && jmp.cond.op == "call"
+            if let Effect::Call(call) = &instr.eff
+                && call.op == "call"
             {
-                let [return_addr, dst] = jmp.dsts.iter().collect::<Vec<_>>().try_into().unwrap();
+                let [dst] = call.args.clone().try_into().unwrap();
                 let iced = instr.iced;
                 new_instrs.push(Instr {
                     iced,
                     eff: Effect::Call(Box::new(Call {
                         op: "call".into(),
-                        args: vec![dst.clone()],
+                        args: vec![dst],
                     })),
                 });
                 new_instrs.push(Instr {
-                    iced: Default::default(),
+                    iced,
                     eff: Effect::Set(Expr::Var(Var::new("eax".into())), Expr::Const(0)),
-                });
-                new_instrs.push(Instr {
-                    iced: Default::default(),
-                    eff: Effect::Jmp(Box::new(Jmp::new("jmp", vec![return_addr.clone()]))),
                 });
             } else {
                 new_instrs.push(instr);
