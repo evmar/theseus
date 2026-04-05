@@ -511,15 +511,8 @@ fn out_vars(block: &mut Block) -> HashMap<String, Var> {
     outs
 }
 
-fn main() {
-    logger::init();
-
-    let instrs = decode();
-    let mut blocks = blocks(instrs);
-    expand_calls(&mut blocks);
-    //blocks.vec.truncate(3);
-    links(&mut blocks);
-    for block in blocks.vec {
+fn print(blocks: &Blocks) {
+    for block in &blocks.vec {
         println!(
             "{ip:x} [{params}]",
             ip = block.addr(),
@@ -533,7 +526,7 @@ fn main() {
                 iced = instr.iced
             );
         }
-        for link in block.links {
+        for link in &block.links {
             println!(
                 "=> {:x} {}",
                 link.addr,
@@ -546,6 +539,17 @@ fn main() {
         }
         println!();
     }
+}
+
+fn main() {
+    logger::init();
+
+    let instrs = decode();
+    let mut blocks = blocks(instrs);
+    expand_calls(&mut blocks);
+    //blocks.vec.truncate(3);
+    links(&mut blocks);
+    print(&blocks);
 }
 
 const IP: u32 = 0x401d0f;
