@@ -209,6 +209,10 @@ fn decode() -> Vec<Instr> {
                 };
                 Effect::Set(x, y)
             }
+            Imul => {
+                let [x, y, z] = args.try_into().unwrap();
+                Effect::Set(x, call!("imul", y, z))
+            }
             Call => {
                 let [x] = args.try_into().unwrap();
                 Effect::Jmp(instr_name, vec![Expr::Const(instr.next_ip32()), x])
