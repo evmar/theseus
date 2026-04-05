@@ -324,7 +324,7 @@ fn rename(eff: &mut Effect, from: &Var, to: &Var) {
     });
 }
 
-fn ssa(instrs: &mut [Instr]) {
+fn ssa(instrs: &mut [Instr], used: &mut Vec<Var>) {
     for i in 0..instrs.len() {
         let (instr, rest) = instrs[i..].split_first_mut().unwrap();
         let eff = &mut instr.eff;
@@ -333,7 +333,19 @@ fn ssa(instrs: &mut [Instr]) {
                 let Expr::Var(var) = expr else {
                     continue;
                 };
-                let new_local = var.next();
+
+                let new_local = match used.iter_mut().find(|v| v.reg == var.reg) {
+                    Some(prev) => {
+                        let new_local = prev.next();
+                        *prev = new_local.clone();
+                        new_local
+                    }
+                    None => {
+                        let new_local = var.next();
+                        used.push(new_local.clone());
+                        new_local
+                    }
+                };
                 for instr in rest {
                     rename(&mut instr.eff, &var, &new_local);
                 }
@@ -425,8 +437,9 @@ fn links(blocks: &mut Blocks) {
     let mut bouts: Vec<HashMap<String, Var>> = Default::default();
     let mut bins: Vec<HashSet<String>> = Default::default();
 
+    let mut used = vec![];
     for block in blocks.vec.iter_mut() {
-        ssa(&mut block.instrs);
+        ssa(&mut block.instrs, &mut used);
         let params = params(block);
         bins.push(HashSet::from_iter(params.into_iter()));
         let outs = out_vars(block);
