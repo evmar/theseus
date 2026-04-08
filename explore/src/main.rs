@@ -20,12 +20,6 @@ impl Var {
     fn new(reg: String) -> Self {
         Var { reg, ver: 0 }
     }
-    fn next(&self) -> Var {
-        Var {
-            reg: self.reg.clone(),
-            ver: self.ver + 1,
-        }
-    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, serde::Serialize, ts_rs::TS)]
@@ -442,28 +436,6 @@ fn rename_instrs(instrs: &mut [Instr], from: &Var, to: &Var) {
     }
 }
 
-#[derive(Default)]
-struct NameGen {
-    used: Vec<Var>,
-}
-
-impl NameGen {
-    fn new_local(&mut self, var: &Var) -> Var {
-        match self.used.iter_mut().find(|v| v.reg == var.reg) {
-            Some(prev) => {
-                let new = prev.next();
-                prev.ver = new.ver;
-                new
-            }
-            None => {
-                let new = var.next();
-                self.used.push(new.clone());
-                new
-            }
-        }
-    }
-}
-
 #[derive(Clone, Default, Debug, serde::Serialize, ts_rs::TS)]
 struct VarSet(Vec<Var>);
 impl VarSet {
@@ -483,17 +455,34 @@ impl VarSet {
     fn iter(&self) -> impl Iterator<Item = &Var> {
         self.0.iter()
     }
+
+    fn new_var(&mut self, var: &Var) -> Var {
+        match self.0.iter_mut().find(|v| v.reg == var.reg) {
+            Some(prev) => {
+                prev.ver = prev.ver.max(var.ver) + 1;
+                prev.clone()
+            }
+            None => {
+                let new = Var {
+                    reg: var.reg.clone(),
+                    ver: 1,
+                };
+                self.0.push(new.clone());
+                new
+            }
+        }
+    }
 }
 
-fn ssa_block(block: &mut Block, namegen: &mut NameGen) {
+fn ssa_block(block: &mut Block, used_vars: &mut VarSet) {
     // Gather inputs while we traverse, assigning them names immediate, so that they get assigned the lowest name.
     // But then substitute at the end after all the locals have been renamed.
 
     let mut params = VarSet::default();
-    let mut gather_params = |namegen: &mut NameGen, expr: &mut Expr| match expr {
+    let mut gather_params = |used_vars: &mut VarSet, expr: &mut Expr| match expr {
         Expr::Var(var) => {
             if var.ver == 0 && params.get(&var.reg).is_none() {
-                params.insert(namegen.new_local(var));
+                params.insert(used_vars.new_var(var));
             }
         }
         _ => {}
@@ -504,13 +493,13 @@ fn ssa_block(block: &mut Block, namegen: &mut NameGen) {
         let eff = &mut instr.eff;
         match eff {
             Effect::Set(Expr::Var(var), body) => {
-                visit_expr(body, &mut |expr| gather_params(namegen, expr));
-                let new = namegen.new_local(var);
+                visit_expr(body, &mut |expr| gather_params(used_vars, expr));
+                let new = used_vars.new_var(var);
                 rename_instrs(rest, &var, &new);
                 *eff = Effect::Set(Expr::Var(new), body.clone())
             }
             _ => {
-                visit_effect(eff, &mut |expr| gather_params(namegen, expr));
+                visit_effect(eff, &mut |expr| gather_params(used_vars, expr));
             }
         }
     }
@@ -523,9 +512,9 @@ fn ssa_block(block: &mut Block, namegen: &mut NameGen) {
 }
 
 fn ssa(blocks: &mut Blocks) {
-    let mut namegen = NameGen::default();
+    let mut used_vars = VarSet::default();
     for block in blocks.vec.iter_mut() {
-        ssa_block(block, &mut namegen);
+        ssa_block(block, &mut used_vars);
     }
 }
 
