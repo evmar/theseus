@@ -1,5 +1,6 @@
 import dataRaw from "./data.json" with { type: "json" };
 import * as preact from "preact";
+import * as hooks from "preact/hooks";
 
 import type { Blocks } from "../bindings/Blocks.js";
 import type { Block } from "../bindings/Block.js";
@@ -10,6 +11,8 @@ import type { Call } from "../bindings/Call.js";
 
 const data: Blocks = dataRaw as any;
 
+const HoverContext = preact.createContext<any>(undefined);
+
 function hex(n: number): string {
   return "0x" + n.toString(16);
 }
@@ -18,7 +21,7 @@ function Call(props: { op: string; args: Expr[] }) {
   const { op, args } = props;
   return (
     <span>
-      ({op}{" "}
+      ({op}
       {args.map((e) => (
         <>
           {" "}
@@ -35,9 +38,15 @@ function Expr(props: { expr: Expr }) {
   if ("Const" in expr) {
     return <span>{hex(expr.Const)}</span>;
   } else if ("Var" in expr) {
+    const { hover, setHover } = hooks.useContext(HoverContext);
     const { reg, ver } = expr.Var;
+    const id = `${reg}#${ver}`;
+    const highlight = id === hover;
     return (
-      <span>
+      <span
+        class={highlight ? "highlight" : ""}
+        onMouseOver={() => setHover(id)}
+      >
         {reg}
         {ver == 0 ? "" : `#${ver}`}
       </span>
@@ -100,15 +109,21 @@ function Block(props: { block: Block }) {
 }
 
 function Body() {
-  console.log(data.vec[0]);
+  const [hover, setHover] = hooks.useState(undefined);
+  const hoverState = hooks.useMemo(() => {
+    return { hover, setHover };
+  }, [hover]);
+
   return (
-    <main>
-      {data.vec.map((block) => (
-        <div>
-          <Block block={block} />
-        </div>
-      ))}
-    </main>
+    <HoverContext.Provider value={hoverState}>
+      <main>
+        {data.vec.map((block) => (
+          <div>
+            <Block block={block} />
+          </div>
+        ))}
+      </main>
+    </HoverContext.Provider>
   );
   return <div>hello</div>;
 }
