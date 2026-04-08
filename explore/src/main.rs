@@ -359,10 +359,20 @@ fn blocks(instrs: Vec<Instr>) -> Blocks {
     let mut blocks = vec![];
     let mut block = vec![];
     for instr in instrs {
-        let last_in_block =
-            matches!(instr.eff, Effect::Jmp(_)) || targets.contains(&instr.iced.next_ip32());
+        let is_jmp = matches!(instr.eff, Effect::Jmp(_));
+        let last_in_block = is_jmp || targets.contains(&instr.iced.next_ip32());
         block.push(instr);
         if last_in_block {
+            if !is_jmp {
+                let iced = block.last().unwrap().iced;
+                block.push(Instr {
+                    iced,
+                    eff: Effect::Jmp(Box::new(Jmp::new(
+                        "jmp",
+                        vec![Expr::Const(iced.next_ip32())],
+                    ))),
+                });
+            }
             blocks.push(Block {
                 id: blocks.len(),
                 instrs: block,
@@ -715,7 +725,6 @@ fn main() {
 
     simplify_branches(&mut blocks);
     ssa(&mut blocks);
-    //print(&blocks);
     links(&mut blocks);
 
     if args.json {
