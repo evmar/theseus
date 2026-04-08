@@ -1,6 +1,6 @@
 use std::collections::{HashMap, HashSet};
 
-#[derive(Debug, Clone, PartialEq, Eq, serde::Serialize, ts_rs::TS)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord, serde::Serialize, ts_rs::TS)]
 struct Var {
     reg: String,
     ver: usize,
@@ -287,7 +287,7 @@ struct Link {
 struct Block {
     id: usize,
     instrs: Vec<Instr>,
-    params: Vec<String>,
+    params: Vec<Var>,
     links: Vec<Link>,
 }
 
@@ -386,7 +386,7 @@ fn visit_block(block: &mut Block, f: &mut impl FnMut(&mut Expr)) {
     }
 }
 
-fn rename(eff: &mut Effect, from: &Var, to: &Var) {
+fn rename_effect(eff: &mut Effect, from: &Var, to: &Var) {
     visit_effect(eff, &mut |expr| match expr {
         Expr::Var(v) if v == from => {
             *v = to.clone();
@@ -395,59 +395,76 @@ fn rename(eff: &mut Effect, from: &Var, to: &Var) {
     });
 }
 
-fn ssa(instrs: &mut [Instr], used: &mut Vec<Var>) {
-    for i in 0..instrs.len() {
-        let (instr, rest) = instrs[i..].split_first_mut().unwrap();
-        let eff = &mut instr.eff;
-        match eff {
-            Effect::Set(expr, _) => {
-                let Expr::Var(var) = expr else {
-                    continue;
-                };
+fn rename_instrs(instrs: &mut [Instr], from: &Var, to: &Var) {
+    for instr in instrs {
+        rename_effect(&mut instr.eff, from, to);
+    }
+}
 
-                let new_local = match used.iter_mut().find(|v| v.reg == var.reg) {
-                    Some(prev) => {
-                        let new_local = prev.next();
-                        *prev = new_local.clone();
-                        new_local
-                    }
-                    None => {
-                        let new_local = var.next();
-                        used.push(new_local.clone());
-                        new_local
-                    }
-                };
-                for instr in rest {
-                    rename(&mut instr.eff, &var, &new_local);
-                }
-                *expr = Expr::Var(new_local);
+#[derive(Default)]
+struct NameGen {
+    used: Vec<Var>,
+}
+
+impl NameGen {
+    fn new_local(&mut self, var: &Var) -> Var {
+        match self.used.iter_mut().find(|v| v.reg == var.reg) {
+            Some(prev) => {
+                let new = prev.next();
+                prev.ver = new.ver;
+                new
             }
-            _ => {}
+            None => {
+                let new = var.next();
+                self.used.push(new.clone());
+                new
+            }
         }
     }
 }
 
-fn params(block: &mut Block) -> Vec<String> {
-    let mut params = HashSet::new();
-    for instr in &mut block.instrs {
-        if let Effect::Call(call) = &instr.eff
-            && call.op.starts_with("todo:")
-        {
-            continue;
-        }
+fn ssa_block(block: &mut Block, namegen: &mut NameGen) {
+    // Gather inputs while we traverse, assigning them names immediate, so that they get assigned the lowest name.
+    // But then substitute at the end after all the locals have been renamed.
 
-        visit_effect(&mut instr.eff, &mut |expr| match expr {
-            Expr::Var(var) if var.ver == 0 => {
-                // XXX this only should be for reads, not writes
-                params.insert(var.reg.clone());
+    let mut params = HashMap::new();
+    let mut gather_params = |namegen: &mut NameGen, expr: &mut Expr| match expr {
+        Expr::Var(var) => {
+            if var.ver == 0 {
+                params.insert(var.reg.clone(), namegen.new_local(var));
             }
-            _ => {}
-        });
+        }
+        _ => {}
+    };
+
+    for i in 0..block.instrs.len() {
+        let (instr, rest) = block.instrs[i..].split_first_mut().unwrap();
+        let eff = &mut instr.eff;
+        match eff {
+            Effect::Set(Expr::Var(var), body) => {
+                gather_params(namegen, body);
+                let new = namegen.new_local(var);
+                rename_instrs(rest, &var, &new);
+                *eff = Effect::Set(Expr::Var(new), body.clone())
+            }
+            _ => visit_effect(eff, &mut |expr| gather_params(namegen, expr)),
+        }
     }
 
-    let mut params = params.into_iter().collect::<Vec<_>>();
+    for param in params.values() {
+        rename_instrs(&mut block.instrs, &Var::new(param.reg.clone()), param);
+    }
+
+    let mut params = params.into_values().collect::<Vec<_>>();
     params.sort();
-    params
+    block.params = params;
+}
+
+fn ssa(blocks: &mut Blocks) {
+    let mut namegen = NameGen::default();
+    for block in blocks.vec.iter_mut() {
+        ssa_block(block, &mut namegen);
+    }
 }
 
 /// Expand call instructions into a call effect followed by a jump effect, so that we can treat calls and jumps uniformly in the later analysis.
@@ -540,12 +557,10 @@ fn links(blocks: &mut Blocks) {
         .collect::<Vec<_>>();
 
     let mut bouts: Vec<HashMap<String, Var>> = Default::default();
-    let mut bins: Vec<HashSet<String>> = Default::default();
+    let mut bins: Vec<HashSet<Var>> = Default::default();
 
-    let mut used = vec![];
     for block in blocks.vec.iter_mut() {
-        ssa(&mut block.instrs, &mut used);
-        let params = params(block);
+        let params = block.params.clone();
         bins.push(HashSet::from_iter(params.into_iter()));
         let outs = out_vars(block);
         bouts.push(outs);
@@ -556,19 +571,21 @@ fn links(blocks: &mut Blocks) {
         changed = false;
         for src in blocks.vec.iter() {
             let outs = &bouts[src.id];
-            let mut add = vec![];
+            let mut add: Vec<Var> = vec![];
             for &next_id in &nexts[src.id] {
                 for param in &bins[next_id] {
-                    if !outs.contains_key(param.as_str()) {
-                        add.push(param.clone());
-                    }
+                    // if !outs.contains_key(param.as_str()) {
+                    //     add.push(param.clone());
+                    // }
+                    todo!();
                 }
             }
 
             if !add.is_empty() {
                 for add in add {
                     bins[src.id].insert(add.clone());
-                    bouts[src.id].insert(add.clone(), Var::new(add));
+                    bouts[src.id].insert(add.reg.clone(), Var::new(add.reg));
+                    todo!();
                 }
                 changed = true;
             }
@@ -582,13 +599,14 @@ fn links(blocks: &mut Blocks) {
         let next = nexts[id]
             .iter()
             .map(|&next_id| {
-                let params = bins[next_id]
-                    .iter()
-                    .map(|p| (p.clone(), bouts[id].get(p).unwrap().clone()))
-                    .collect();
+                // let params = bins[next_id]
+                //     .iter()
+                //     .map(|p| (p.clone(), bouts[id].get(p).unwrap().clone()))
+                //     .collect();
+                todo!();
                 Link {
                     addr: blocks.vec[next_id].addr(),
-                    params,
+                    params: vec![],
                 }
             })
             .collect();
@@ -621,7 +639,12 @@ fn print(blocks: &Blocks) {
         println!(
             "{ip:x} [{params}]",
             ip = block.addr(),
-            params = block.params.join(" ")
+            params = block
+                .params
+                .iter()
+                .map(|v| format!("{v}"))
+                .collect::<Vec<_>>()
+                .join(" ")
         );
         for instr in &block.instrs {
             let text = format!("{}", instr.eff);
@@ -660,10 +683,11 @@ fn main() {
 
     let instrs = decode();
     let mut blocks = blocks(instrs);
+    blocks.vec.truncate(3);
     expand_calls(&mut blocks);
     simplify_branches(&mut blocks);
-    //blocks.vec.truncate(3);
-    links(&mut blocks);
+    ssa(&mut blocks);
+    //links(&mut blocks);
 
     if args.json {
         println!("{}", serde_json::to_string(&blocks).unwrap());
