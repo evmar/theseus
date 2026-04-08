@@ -233,6 +233,20 @@ fn decode() -> Vec<Instr> {
                 let [x, y] = args.try_into().unwrap();
                 Effect::Set(x.clone(), y.clone())
             }
+            Pop => {
+                let [dst] = args.try_into().unwrap();
+                instrs.push(Instr {
+                    iced: instr,
+                    eff: Effect::Set(dst, call!("pop",)),
+                });
+                // TODO: stack handling
+                // let esp = Expr::Var(Var::new("esp".into()));
+                // instrs.push(Instr {
+                //     iced: instr,
+                //     eff: Effect::Set(esp.clone(), call!("-", esp, Expr::Const(4))),
+                // });
+                continue;
+            }
             Add | Sub | Shl | Xor => {
                 let op = match instr.mnemonic() {
                     Add => "+",
@@ -253,7 +267,23 @@ fn decode() -> Vec<Instr> {
                 let [x, y, z] = args.try_into().unwrap();
                 Effect::Set(x, call!("imul", y, z))
             }
-            Jne | Jge | Call => {
+            Call => {
+                let [dst] = args.try_into().unwrap();
+                instrs.push(Instr {
+                    iced: instr,
+                    eff: Effect::Call(Box::new(crate::Call {
+                        op: "call".into(),
+                        args: vec![dst],
+                    })),
+                });
+                // assume stdcall
+                instrs.push(Instr {
+                    iced: instr,
+                    eff: Effect::Set(Expr::Var(Var::new("eax".into())), Expr::Const(0)),
+                });
+                continue;
+            }
+            Jne | Jge => {
                 let [x] = args.try_into().unwrap();
                 Effect::Jmp(Box::new(crate::Jmp::new(
                     op,
@@ -489,40 +519,6 @@ fn ssa(blocks: &mut Blocks) {
     }
 }
 
-/// Expand call instructions into a call effect followed by a jump effect, so that we can treat calls and jumps uniformly in the later analysis.
-fn expand_calls(blocks: &mut Blocks) {
-    for block in blocks.vec.iter_mut() {
-        let mut instrs = vec![];
-        std::mem::swap(&mut instrs, &mut block.instrs);
-        let mut new_instrs = vec![];
-        for instr in instrs.into_iter() {
-            match instr.eff {
-                Effect::Jmp(call) if call.cond.op == "call" => {
-                    let [dst, return_addr] = call.dsts.try_into().unwrap();
-                    let iced = instr.iced;
-                    new_instrs.push(Instr {
-                        iced,
-                        eff: Effect::Call(Box::new(Call {
-                            op: "call".into(),
-                            args: vec![dst],
-                        })),
-                    });
-                    new_instrs.push(Instr {
-                        iced,
-                        eff: Effect::Set(Expr::Var(Var::new("eax".into())), Expr::Const(0)),
-                    });
-                    new_instrs.push(Instr {
-                        iced,
-                        eff: Effect::Jmp(Box::new(Jmp::new("jmp", vec![return_addr]))),
-                    });
-                }
-                _ => new_instrs.push(instr),
-            }
-        }
-        block.instrs = new_instrs;
-    }
-}
-
 fn simplify_branches(blocks: &mut Blocks) {
     for block in blocks.vec.iter_mut() {
         let mut i = 1;
@@ -716,7 +712,6 @@ fn main() {
 
     //blocks.vec.truncate(5);
 
-    expand_calls(&mut blocks);
     simplify_branches(&mut blocks);
     ssa(&mut blocks);
     //print(&blocks);
