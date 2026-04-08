@@ -456,15 +456,15 @@ impl VarSet {
         self.0.iter()
     }
 
-    fn new_var(&mut self, var: &Var) -> Var {
-        match self.0.iter_mut().find(|v| v.reg == var.reg) {
+    fn new_var(&mut self, base: &Var) -> Var {
+        match self.0.iter_mut().find(|v| v.reg == base.reg) {
             Some(prev) => {
-                prev.ver = prev.ver.max(var.ver) + 1;
+                prev.ver = prev.ver.max(base.ver) + 1;
                 prev.clone()
             }
             None => {
                 let new = Var {
-                    reg: var.reg.clone(),
+                    reg: base.reg.clone(),
                     ver: 1,
                 };
                 self.0.push(new.clone());
@@ -511,10 +511,9 @@ fn ssa_block(block: &mut Block, used_vars: &mut VarSet) {
     block.params = params;
 }
 
-fn ssa(blocks: &mut Blocks) {
-    let mut used_vars = VarSet::default();
+fn ssa(blocks: &mut Blocks, used_vars: &mut VarSet) {
     for block in blocks.vec.iter_mut() {
-        ssa_block(block, &mut used_vars);
+        ssa_block(block, used_vars);
     }
 }
 
@@ -550,7 +549,7 @@ fn simplify_branches(blocks: &mut Blocks) {
     }
 }
 
-fn links(blocks: &mut Blocks) {
+fn links(blocks: &mut Blocks, used_vars: &mut VarSet) {
     // For each block, ids of following blocks
     let nexts = blocks
         .vec
@@ -601,7 +600,7 @@ fn links(blocks: &mut Blocks) {
             for &next_id in &nexts[src.id] {
                 for param in bins[next_id].iter() {
                     if !outs.contains_key(&param.reg) {
-                        add.push(param.clone());
+                        add.push(used_vars.new_var(param));
                     }
                 }
             }
@@ -681,7 +680,7 @@ fn print_block(block: &Block) {
             link.addr,
             link.params
                 .iter()
-                .map(|(k, v)| format!("{k}:{v}"))
+                .map(|(k, v)| format!("{k}={v}"))
                 .collect::<Vec<_>>()
                 .join(" ")
         );
@@ -713,8 +712,9 @@ fn main() {
     //blocks.vec.truncate(5);
 
     simplify_branches(&mut blocks);
-    ssa(&mut blocks);
-    links(&mut blocks);
+    let mut used_vars = VarSet::default();
+    ssa(&mut blocks, &mut used_vars);
+    links(&mut blocks, &mut used_vars);
 
     if args.json {
         std::fs::write("web/data.json", serde_json::to_string(&blocks).unwrap()).unwrap();
