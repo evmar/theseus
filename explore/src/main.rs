@@ -718,7 +718,7 @@ fn main() {
     links(&mut blocks);
 
     if args.json {
-        println!("{}", serde_json::to_string(&blocks).unwrap());
+        std::fs::write("web/data.json", serde_json::to_string(&blocks).unwrap()).unwrap();
     } else {
         print(&blocks);
     }
