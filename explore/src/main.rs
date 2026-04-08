@@ -634,6 +634,7 @@ fn links(blocks: &mut Blocks) {
             })
             .collect();
 
+        blocks.vec[id].params = bins[id].clone();
         blocks.vec[id].links = next;
     }
 }
