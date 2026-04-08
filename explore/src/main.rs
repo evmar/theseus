@@ -253,7 +253,7 @@ fn decode() -> Vec<Instr> {
                 let [x, y, z] = args.try_into().unwrap();
                 Effect::Set(x, call!("imul", y, z))
             }
-            Jne | Jge => {
+            Jne | Jge | Call => {
                 let [x] = args.try_into().unwrap();
                 Effect::Jmp(Box::new(crate::Jmp::new(
                     op,
@@ -265,7 +265,7 @@ fn decode() -> Vec<Instr> {
                 Effect::Jmp(Box::new(crate::Jmp::new(op, vec![x])))
             }
             Ret => Effect::Jmp(Box::new(crate::Jmp::new("ret", vec![]))),
-            Cmp | Test | Call => Effect::Call(Box::new(crate::Call { op, args })),
+            Cmp | Test => Effect::Call(Box::new(crate::Call { op, args })),
             _ => {
                 let op = format!("todo:{op}");
                 Effect::Call(Box::new(crate::Call { op, args }))
@@ -280,14 +280,14 @@ fn decode() -> Vec<Instr> {
 #[derive(Debug, serde::Serialize, ts_rs::TS)]
 struct Link {
     addr: u32,
-    params: Vec<(String, Var)>,
+    params: Vec<(Var, Var)>,
 }
 
 #[derive(serde::Serialize, ts_rs::TS)]
 struct Block {
     id: usize,
     instrs: Vec<Instr>,
-    params: Vec<Var>,
+    params: VarSet,
     links: Vec<Link>,
 }
 
@@ -315,7 +315,7 @@ fn blocks(instrs: Vec<Instr>) -> Blocks {
                 Expr::Const(dst) => *dst,
                 _ => {
                     log::warn!(
-                        "{addr:x} jmp target {expr}",
+                        "{addr:x} unhandled jmp target {expr}",
                         addr = instr.iced.ip32(),
                         expr = dst
                     );
@@ -336,7 +336,7 @@ fn blocks(instrs: Vec<Instr>) -> Blocks {
             blocks.push(Block {
                 id: blocks.len(),
                 instrs: block,
-                params: vec![],
+                params: Default::default(),
                 links: vec![],
             });
             block = vec![];
@@ -380,6 +380,7 @@ fn visit_effect(effect: &mut Effect, f: &mut impl FnMut(&mut Expr)) {
     }
 }
 
+#[allow(unused)]
 fn visit_block(block: &mut Block, f: &mut impl FnMut(&mut Expr)) {
     for instr in block.instrs.iter_mut() {
         visit_effect(&mut instr.eff, f);
@@ -423,15 +424,36 @@ impl NameGen {
     }
 }
 
+#[derive(Clone, Default, Debug, serde::Serialize, ts_rs::TS)]
+struct VarSet(Vec<Var>);
+impl VarSet {
+    fn get(&mut self, reg: &str) -> Option<&mut Var> {
+        let i = self.0.iter().position(|v| v.reg == reg)?;
+        Some(&mut self.0[i])
+    }
+
+    fn insert(&mut self, var: Var) {
+        if let Some(prev) = self.get(&var.reg) {
+            prev.ver = prev.ver.max(var.ver);
+            return;
+        }
+        self.0.push(var.clone());
+    }
+
+    fn iter(&self) -> impl Iterator<Item = &Var> {
+        self.0.iter()
+    }
+}
+
 fn ssa_block(block: &mut Block, namegen: &mut NameGen) {
     // Gather inputs while we traverse, assigning them names immediate, so that they get assigned the lowest name.
     // But then substitute at the end after all the locals have been renamed.
 
-    let mut params = HashMap::new();
+    let mut params = VarSet::default();
     let mut gather_params = |namegen: &mut NameGen, expr: &mut Expr| match expr {
         Expr::Var(var) => {
-            if var.ver == 0 {
-                params.insert(var.reg.clone(), namegen.new_local(var));
+            if var.ver == 0 && params.get(&var.reg).is_none() {
+                params.insert(namegen.new_local(var));
             }
         }
         _ => {}
@@ -442,21 +464,21 @@ fn ssa_block(block: &mut Block, namegen: &mut NameGen) {
         let eff = &mut instr.eff;
         match eff {
             Effect::Set(Expr::Var(var), body) => {
-                gather_params(namegen, body);
+                visit_expr(body, &mut |expr| gather_params(namegen, expr));
                 let new = namegen.new_local(var);
                 rename_instrs(rest, &var, &new);
                 *eff = Effect::Set(Expr::Var(new), body.clone())
             }
-            _ => visit_effect(eff, &mut |expr| gather_params(namegen, expr)),
+            _ => {
+                visit_effect(eff, &mut |expr| gather_params(namegen, expr));
+            }
         }
     }
 
-    for param in params.values() {
+    for param in params.iter() {
         rename_instrs(&mut block.instrs, &Var::new(param.reg.clone()), param);
     }
 
-    let mut params = params.into_values().collect::<Vec<_>>();
-    params.sort();
     block.params = params;
 }
 
@@ -474,24 +496,27 @@ fn expand_calls(blocks: &mut Blocks) {
         std::mem::swap(&mut instrs, &mut block.instrs);
         let mut new_instrs = vec![];
         for instr in instrs.into_iter() {
-            if let Effect::Call(call) = &instr.eff
-                && call.op == "call"
-            {
-                let [dst] = call.args.clone().try_into().unwrap();
-                let iced = instr.iced;
-                new_instrs.push(Instr {
-                    iced,
-                    eff: Effect::Call(Box::new(Call {
-                        op: "call".into(),
-                        args: vec![dst],
-                    })),
-                });
-                new_instrs.push(Instr {
-                    iced,
-                    eff: Effect::Set(Expr::Var(Var::new("eax".into())), Expr::Const(0)),
-                });
-            } else {
-                new_instrs.push(instr);
+            match instr.eff {
+                Effect::Jmp(call) if call.cond.op == "call" => {
+                    let [dst, return_addr] = call.dsts.try_into().unwrap();
+                    let iced = instr.iced;
+                    new_instrs.push(Instr {
+                        iced,
+                        eff: Effect::Call(Box::new(Call {
+                            op: "call".into(),
+                            args: vec![dst],
+                        })),
+                    });
+                    new_instrs.push(Instr {
+                        iced,
+                        eff: Effect::Set(Expr::Var(Var::new("eax".into())), Expr::Const(0)),
+                    });
+                    new_instrs.push(Instr {
+                        iced,
+                        eff: Effect::Jmp(Box::new(Jmp::new("jmp", vec![return_addr]))),
+                    });
+                }
+                _ => new_instrs.push(instr),
             }
         }
         block.instrs = new_instrs;
@@ -531,24 +556,26 @@ fn simplify_branches(blocks: &mut Blocks) {
 }
 
 fn links(blocks: &mut Blocks) {
+    // For each block, ids of following blocks
     let nexts = blocks
         .vec
         .iter()
         .map(|block| {
             let last = block.instrs.last().unwrap();
-            let addrs = match &last.eff {
-                Effect::Jmp(jmp) => jmp
-                    .dsts
-                    .iter()
-                    .flat_map(|addr| {
-                        let Expr::Const(addr) = addr else {
-                            return None;
-                        };
-                        Some(*addr)
-                    })
-                    .collect::<Vec<_>>(),
-                _ => vec![last.iced.next_ip32()],
+            let Effect::Jmp(jmp) = &last.eff else {
+                log::warn!("block {:x} does not end with jmp", block.addr());
+                return vec![];
             };
+            let addrs = jmp
+                .dsts
+                .iter()
+                .flat_map(|addr| {
+                    let Expr::Const(addr) = addr else {
+                        return None;
+                    };
+                    Some(*addr)
+                })
+                .collect::<Vec<_>>();
             addrs
                 .into_iter()
                 .flat_map(|addr| blocks.vec.iter().position(|b| b.addr() == addr))
@@ -556,16 +583,20 @@ fn links(blocks: &mut Blocks) {
         })
         .collect::<Vec<_>>();
 
+    // For each block, input vars to block
+    let mut bins: Vec<VarSet> = Default::default();
+    // For each block, output vars from block
     let mut bouts: Vec<HashMap<String, Var>> = Default::default();
-    let mut bins: Vec<HashSet<Var>> = Default::default();
 
     for block in blocks.vec.iter_mut() {
-        let params = block.params.clone();
-        bins.push(HashSet::from_iter(params.into_iter()));
+        bins.push(block.params.clone());
         let outs = out_vars(block);
         bouts.push(outs);
     }
 
+    // Handle var passthrough:
+    // If A -> B and B has some input X not in A's outputs,
+    // add X to A's inputs and outputs.
     let mut changed = true;
     while changed {
         changed = false;
@@ -573,19 +604,17 @@ fn links(blocks: &mut Blocks) {
             let outs = &bouts[src.id];
             let mut add: Vec<Var> = vec![];
             for &next_id in &nexts[src.id] {
-                for param in &bins[next_id] {
-                    // if !outs.contains_key(param.as_str()) {
-                    //     add.push(param.clone());
-                    // }
-                    todo!();
+                for param in bins[next_id].iter() {
+                    if !outs.contains_key(&param.reg) {
+                        add.push(param.clone());
+                    }
                 }
             }
 
             if !add.is_empty() {
                 for add in add {
                     bins[src.id].insert(add.clone());
-                    bouts[src.id].insert(add.reg.clone(), Var::new(add.reg));
-                    todo!();
+                    bouts[src.id].insert(add.reg.clone(), add);
                 }
                 changed = true;
             }
@@ -593,25 +622,22 @@ fn links(blocks: &mut Blocks) {
     }
 
     for id in 0..blocks.vec.len() {
-        let mut params = bins[id].iter().map(|s| s.clone()).collect::<Vec<_>>();
-        params.sort();
+        let outs = &bouts[id];
 
         let next = nexts[id]
             .iter()
             .map(|&next_id| {
-                // let params = bins[next_id]
-                //     .iter()
-                //     .map(|p| (p.clone(), bouts[id].get(p).unwrap().clone()))
-                //     .collect();
-                todo!();
+                let params = bins[next_id]
+                    .iter()
+                    .map(|p| (p.clone(), outs.get(&p.reg).unwrap().clone()))
+                    .collect();
                 Link {
                     addr: blocks.vec[next_id].addr(),
-                    params: vec![],
+                    params,
                 }
             })
             .collect();
 
-        blocks.vec[id].params = params;
         blocks.vec[id].links = next;
     }
 }
@@ -634,37 +660,41 @@ fn out_vars(block: &mut Block) -> HashMap<String, Var> {
     outs
 }
 
-fn print(blocks: &Blocks) {
-    for block in &blocks.vec {
+fn print_block(block: &Block) {
+    println!(
+        "{ip:x} [{params}]",
+        ip = block.addr(),
+        params = block
+            .params
+            .iter()
+            .map(|v| format!("{v}"))
+            .collect::<Vec<_>>()
+            .join(" ")
+    );
+    for instr in &block.instrs {
+        let text = format!("{}", instr.eff);
         println!(
-            "{ip:x} [{params}]",
-            ip = block.addr(),
-            params = block
-                .params
+            "{text:40}  ; {ip:x} {iced}",
+            ip = instr.iced.ip32(),
+            iced = instr.iced
+        );
+    }
+    for link in &block.links {
+        println!(
+            "=> {:x} {}",
+            link.addr,
+            link.params
                 .iter()
-                .map(|v| format!("{v}"))
+                .map(|(k, v)| format!("{k}:{v}"))
                 .collect::<Vec<_>>()
                 .join(" ")
         );
-        for instr in &block.instrs {
-            let text = format!("{}", instr.eff);
-            println!(
-                "{text:40}  ; {ip:x} {iced}",
-                ip = instr.iced.ip32(),
-                iced = instr.iced
-            );
-        }
-        for link in &block.links {
-            println!(
-                "=> {:x} {}",
-                link.addr,
-                link.params
-                    .iter()
-                    .map(|(k, v)| format!("{k}:{v}"))
-                    .collect::<Vec<_>>()
-                    .join(" ")
-            );
-        }
+    }
+}
+
+fn print(blocks: &Blocks) {
+    for block in &blocks.vec {
+        print_block(block);
         println!();
     }
 }
@@ -683,11 +713,14 @@ fn main() {
 
     let instrs = decode();
     let mut blocks = blocks(instrs);
-    blocks.vec.truncate(3);
+
+    //blocks.vec.truncate(5);
+
     expand_calls(&mut blocks);
     simplify_branches(&mut blocks);
     ssa(&mut blocks);
-    //links(&mut blocks);
+    //print(&blocks);
+    links(&mut blocks);
 
     if args.json {
         println!("{}", serde_json::to_string(&blocks).unwrap());
