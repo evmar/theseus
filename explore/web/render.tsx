@@ -8,6 +8,7 @@ import type { Instr } from "../bindings/Instr.js";
 import type { Effect } from "../bindings/Effect.js";
 import type { Expr } from "../bindings/Expr.js";
 import type { Call } from "../bindings/Call.js";
+import type { Var } from "../bindings/Var.js";
 
 const data: Blocks = dataRaw as any;
 
@@ -17,7 +18,7 @@ function hex(n: number): string {
   return "0x" + n.toString(16);
 }
 
-function Call(props: { op: string; args: Expr[] }) {
+function Call(props: Call) {
   const { op, args } = props;
   return (
     <span>
@@ -33,24 +34,25 @@ function Call(props: { op: string; args: Expr[] }) {
   );
 }
 
+function Var(props: Var) {
+  const { hover, setHover } = hooks.useContext(HoverContext);
+  const { reg, ver } = props;
+  const id = `${reg}#${ver}`;
+  const highlight = id === hover;
+  return (
+    <span class={highlight ? "highlight" : ""} onMouseOver={() => setHover(id)}>
+      {reg}
+      {ver == 0 ? "" : `#${ver}`}
+    </span>
+  );
+}
+
 function Expr(props: { expr: Expr }) {
   const { expr } = props;
   if ("Const" in expr) {
     return <span>{hex(expr.Const)}</span>;
   } else if ("Var" in expr) {
-    const { hover, setHover } = hooks.useContext(HoverContext);
-    const { reg, ver } = expr.Var;
-    const id = `${reg}#${ver}`;
-    const highlight = id === hover;
-    return (
-      <span
-        class={highlight ? "highlight" : ""}
-        onMouseOver={() => setHover(id)}
-      >
-        {reg}
-        {ver == 0 ? "" : `#${ver}`}
-      </span>
-    );
+    return <Var {...expr.Var} />;
   } else if ("Call" in expr) {
     return <Call {...expr.Call} />;
   }
@@ -100,9 +102,27 @@ function Block(props: { block: Block }) {
   const addr = block.instrs[0]!.addr;
   return (
     <div class="block">
-      {addr.toString(16)}
+      {addr.toString(16)} (
+      {block.params.map((v) => (
+        <>
+          {" "}
+          <Var {...v} />
+        </>
+      ))}
+      )
       {block.instrs.map((instr) => (
         <Instr instr={instr} />
+      ))}
+      {block.links.map((l) => (
+        <div>
+          &rarr; {hex(l.addr)}{" "}
+          {l.params.map(([src, dst]) => (
+            <span>
+              {" "}
+              <Var {...src} />:<Var {...dst} />
+            </span>
+          ))}
+        </div>
       ))}
     </div>
   );
