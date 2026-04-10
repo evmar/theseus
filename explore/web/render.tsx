@@ -18,6 +18,20 @@ function hex(n: number): string {
   return "0x" + n.toString(16);
 }
 
+function Addr(props: { addr: number }) {
+  const { hover, setHover } = hooks.useContext(HoverContext);
+  const { addr } = props;
+  const highlight = addr === hover;
+  return (
+    <span
+      class={highlight ? "highlight" : ""}
+      onMouseOver={() => setHover(addr)}
+    >
+      {hex(addr)}
+    </span>
+  );
+}
+
 function Call(props: Call) {
   const { op, args } = props;
   return (
@@ -102,7 +116,7 @@ function Block(props: { block: Block }) {
   const addr = block.instrs[0]!.addr;
   return (
     <div class="block">
-      {addr.toString(16)} (
+      <Addr addr={addr} /> (
       {block.params.map((v) => (
         <>
           {" "}
@@ -115,7 +129,7 @@ function Block(props: { block: Block }) {
       ))}
       {block.links.map((l) => (
         <div>
-          &rarr; {hex(l.addr)}{" "}
+          &rarr; <Addr addr={l.addr} />
           {l.params.map(([src, dst]) => (
             <span>
               {" "}
