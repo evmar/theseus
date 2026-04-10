@@ -273,7 +273,10 @@ fn decode() -> Vec<Instr> {
                 // assume stdcall
                 instrs.push(Instr {
                     iced: instr,
-                    eff: Effect::Set(Expr::Var(Var::new("eax".into())), Expr::Const(0)),
+                    eff: Effect::Set(
+                        Expr::Var(Var::new("eax".into())),
+                        Expr::Var(Var::new("?".into())),
+                    ),
                 });
                 continue;
             }
@@ -481,6 +484,9 @@ fn ssa_block(block: &mut Block, used_vars: &mut VarSet) {
     let mut params = VarSet::default();
     let mut gather_params = |used_vars: &mut VarSet, expr: &mut Expr| match expr {
         Expr::Var(var) => {
+            if var.reg == "?" {
+                return;
+            }
             if var.ver == 0 && params.get(&var.reg).is_none() {
                 params.insert(used_vars.new_var(var));
             }
