@@ -62,7 +62,7 @@ fn links(blocks: &mut Blocks, used_vars: &mut VarSet) {
         .map(|block| {
             let last = block.instrs.last().unwrap();
             let Effect::Jmp(jmp) = &last.eff else {
-                log::warn!("block {:x} does not end with jmp", block.addr());
+                log::warn!("block {:x} does not end with jmp", block.addr);
                 return vec![];
             };
             let addrs = jmp
@@ -77,7 +77,7 @@ fn links(blocks: &mut Blocks, used_vars: &mut VarSet) {
                 .collect::<Vec<_>>();
             addrs
                 .into_iter()
-                .flat_map(|addr| blocks.vec.iter().position(|b| b.addr() == addr))
+                .flat_map(|addr| blocks.vec.iter().position(|b| b.addr == addr))
                 .collect::<Vec<_>>()
         })
         .collect::<Vec<_>>();
@@ -131,7 +131,7 @@ fn links(blocks: &mut Blocks, used_vars: &mut VarSet) {
                     .map(|p| (p.clone(), outs.get(&p.reg).unwrap().clone()))
                     .collect();
                 Link {
-                    addr: blocks.vec[next_id].addr(),
+                    addr: blocks.vec[next_id].addr,
                     params,
                 }
             })

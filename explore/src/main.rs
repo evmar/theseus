@@ -205,6 +205,7 @@ fn blocks(instrs: Vec<Instr>) -> Blocks {
             }
             blocks.push(Block {
                 id: blocks.len(),
+                addr: block[0].iced.ip32(),
                 instrs: block,
                 params: Default::default(),
                 links: vec![],
@@ -332,7 +333,7 @@ fn inline(blocks: &mut Blocks) {
 fn print_block(block: &Block) {
     println!(
         "{ip:x} [{params}]",
-        ip = block.addr(),
+        ip = block.addr,
         params = block
             .params
             .iter()

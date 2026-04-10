@@ -211,15 +211,10 @@ pub struct Link {
 #[derive(serde::Serialize, ts_rs::TS)]
 pub struct Block {
     pub id: usize,
+    pub addr: u32,
     pub instrs: Vec<Instr>,
     pub params: VarSet,
     pub links: Vec<Link>,
-}
-
-impl Block {
-    pub fn addr(&self) -> u32 {
-        self.instrs[0].iced.ip32()
-    }
 }
 
 #[derive(serde::Serialize, ts_rs::TS)]
