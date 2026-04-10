@@ -1,67 +1,9 @@
 #![allow(dead_code)]
 
+mod ast;
+use ast::*;
+
 use std::collections::{HashMap, HashSet};
-
-#[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord, serde::Serialize, ts_rs::TS)]
-struct Var {
-    reg: String,
-    ver: usize,
-}
-
-impl std::fmt::Display for Var {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        if self.ver > 0 {
-            write!(f, "{reg}#{ver}", reg = self.reg, ver = self.ver)
-        } else {
-            write!(f, "{reg}", reg = self.reg)
-        }
-    }
-}
-
-impl Var {
-    fn new(reg: String) -> Self {
-        Var { reg, ver: 0 }
-    }
-}
-
-#[derive(Debug, Clone, PartialEq, Eq, serde::Serialize, ts_rs::TS)]
-enum Expr {
-    Const(u32),
-    Var(Var),
-    Call(Box<Call>),
-}
-
-impl std::fmt::Display for Expr {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Expr::Const(c) => write!(f, "{c:#x}"),
-            Expr::Var(v) => write!(f, "{v}"),
-            Expr::Call(call) => call.fmt(f),
-        }
-    }
-}
-
-impl Expr {
-    fn from_reg(r: iced_x86::Register) -> Expr {
-        Expr::Var(Var::new(format!("{r:?}").to_ascii_lowercase()))
-    }
-}
-
-impl From<u32> for Expr {
-    fn from(value: u32) -> Self {
-        Expr::Const(value)
-    }
-}
-impl From<Call> for Expr {
-    fn from(value: Call) -> Self {
-        Expr::Call(Box::new(value))
-    }
-}
-impl From<&Expr> for Expr {
-    fn from(value: &Expr) -> Self {
-        value.clone()
-    }
-}
 
 fn expr_from_iced(instr: iced_x86::Instruction, i: u32) -> Expr {
     use iced_x86::OpKind::*;
@@ -84,12 +26,6 @@ macro_rules! call {
 //     ($x:expr) => { Expr::Const($x) };
 //     ($x:expr, $($arg:expr) +) => { Expr::Call(Box::new(Call { op: $x, args: vec![$($arg),*] })) };
 // }
-
-#[derive(Debug, Clone, PartialEq, Eq, serde::Serialize, ts_rs::TS)]
-struct Call {
-    op: String,
-    args: Vec<Expr>,
-}
 
 fn call_from_memory(instr: iced_x86::Instruction) -> Call {
     let mut args = Vec::new();
@@ -124,87 +60,6 @@ fn call_from_memory(instr: iced_x86::Instruction) -> Call {
     Call {
         op: "mem".into(),
         args,
-    }
-}
-
-impl std::fmt::Display for Call {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "({op}", op = self.op)?;
-        for arg in &self.args {
-            write!(f, " {arg}")?;
-        }
-        write!(f, ")")
-    }
-}
-
-#[derive(Debug, serde::Serialize, ts_rs::TS)]
-struct Jmp {
-    cond: Call,
-    dsts: Vec<Expr>,
-}
-
-impl Jmp {
-    fn new(cond: impl Into<String>, dsts: Vec<Expr>) -> Self {
-        Jmp {
-            cond: Call {
-                op: cond.into(),
-                args: vec![],
-            },
-            dsts,
-        }
-    }
-}
-
-#[derive(Debug, serde::Serialize, ts_rs::TS)]
-enum Effect {
-    Set(Expr, Expr),
-    Call(Box<Call>),
-    Jmp(Box<Jmp>),
-}
-
-impl std::fmt::Display for Effect {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        match self {
-            Effect::Set(x, y) => write!(f, "{x} = {y}"),
-            Effect::Call(call) => write!(f, "{call}"),
-            Effect::Jmp(jmp) => write!(
-                f,
-                "{cond} {next}",
-                cond = jmp.cond,
-                next = jmp
-                    .dsts
-                    .iter()
-                    .map(|x| format!("{x}"))
-                    .collect::<Vec<_>>()
-                    .join(" ")
-            ),
-        }
-    }
-}
-
-#[derive(ts_rs::TS)]
-#[allow(unused)]
-struct InstrJS {
-    addr: u32,
-    iced: String,
-    eff: Effect,
-}
-
-#[derive(Debug, ts_rs::TS)]
-#[ts(as = "InstrJS")]
-struct Instr {
-    iced: iced_x86::Instruction,
-    eff: Effect,
-}
-
-impl serde::Serialize for Instr {
-    fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        use serde::ser::SerializeStruct;
-        let mut state = serializer.serialize_struct("Instr", 2)?;
-        state.serialize_field("addr", &self.iced.ip32())?;
-        state.serialize_field("iced", &format!("{}", self.iced))?;
-        state.serialize_field("eff", &self.eff)?;
-        state.end()
     }
 }
 
