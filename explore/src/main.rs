@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use std::collections::{HashMap, HashSet};
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord, serde::Serialize, ts_rs::TS)]
@@ -307,6 +309,7 @@ fn decode() -> Vec<Instr> {
 #[derive(Debug, serde::Serialize, ts_rs::TS)]
 struct Link {
     addr: u32,
+    // key=val pairs
     params: Vec<(Var, Var)>,
 }
 
@@ -439,8 +442,41 @@ fn rename_instrs(instrs: &mut [Instr], from: &Var, to: &Var) {
     }
 }
 
+fn rename_block(block: &mut Block, from: &Var, to: &Var) {
+    for param in block.params.iter_mut() {
+        if param == from {
+            *param = to.clone();
+        }
+    }
+    rename_instrs(&mut block.instrs, from, to);
+    for link in block.links.iter_mut() {
+        for (key, val) in link.params.iter_mut() {
+            if key == from {
+                *key = to.clone();
+            }
+            if val == from {
+                *val = to.clone();
+            }
+        }
+    }
+}
+
 #[derive(Clone, Default, Debug, serde::Serialize, ts_rs::TS)]
 struct VarSet(Vec<Var>);
+
+impl std::fmt::Display for VarSet {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "[")?;
+        for (i, var) in self.0.iter().enumerate() {
+            if i > 0 {
+                write!(f, " ")?;
+            }
+            write!(f, "{}", var)?;
+        }
+        write!(f, "]")
+    }
+}
+
 impl VarSet {
     fn get(&mut self, reg: &str) -> Option<&mut Var> {
         let i = self.0.iter().position(|v| v.reg == reg)?;
@@ -457,6 +493,9 @@ impl VarSet {
 
     fn iter(&self) -> impl Iterator<Item = &Var> {
         self.0.iter()
+    }
+    fn iter_mut(&mut self) -> impl Iterator<Item = &mut Var> {
+        self.0.iter_mut()
     }
 
     fn new_var(&mut self, base: &Var) -> Var {
@@ -661,6 +700,64 @@ fn out_vars(block: &mut Block) -> HashMap<String, Var> {
     outs
 }
 
+/// If a variable is only used once, inline it into where it is used.
+fn inline_block(block: &mut Block) {
+    log::info!("inline {:x}", block.addr());
+
+    // Gather the inlinable new vars introduced by this block
+    let mut new_vars: HashSet<Var> = HashSet::default();
+    // for var in block.params.iter() {
+    //     new_vars.insert(var.clone());
+    // }
+    for instr in block.instrs.iter() {
+        match &instr.eff {
+            Effect::Set(Expr::Var(dst), _) => {
+                new_vars.insert(dst.clone());
+            }
+            _ => {}
+        }
+    }
+    log::info!("new vars {:?}", new_vars);
+
+    // Count the times they are used
+    let mut used_once: HashSet<Var> = HashSet::default();
+    let mut used_multi: HashSet<Var> = HashSet::default();
+    let mut mark_read = |var: &Var| {
+        if !new_vars.contains(var) {
+            return;
+        }
+        if used_once.get(var).is_some() {
+            used_once.remove(var);
+            used_multi.insert(var.clone());
+        } else {
+            used_once.insert(var.clone());
+        }
+    };
+    let visit = &mut |expr: &mut Expr| match expr {
+        Expr::Var(var) => mark_read(var),
+        _ => {}
+    };
+    for instr in block.instrs.iter_mut() {
+        match &mut instr.eff {
+            Effect::Set(_, src) => visit_expr(src, visit),
+            eff => visit_effect(eff, visit),
+        }
+    }
+    for link in block.links.iter() {
+        for (_, val) in link.params.iter() {
+            mark_read(val);
+        }
+    }
+    log::info!("used_once: {:?}", used_once);
+    log::info!("used_multi: {:?}", used_multi);
+}
+
+fn inline(blocks: &mut Blocks) {
+    for block in blocks.vec.iter_mut() {
+        inline_block(block);
+    }
+}
+
 fn print_block(block: &Block) {
     println!(
         "{ip:x} [{params}]",
@@ -721,6 +818,7 @@ fn main() {
     let mut used_vars = VarSet::default();
     ssa(&mut blocks, &mut used_vars);
     links(&mut blocks, &mut used_vars);
+    inline(&mut blocks);
 
     if args.json {
         std::fs::write("web/data.json", serde_json::to_string(&blocks).unwrap()).unwrap();
