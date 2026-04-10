@@ -20,6 +20,61 @@ impl Var {
     }
 }
 
+#[derive(Clone, Default, Debug, serde::Serialize, ts_rs::TS)]
+pub struct VarSet(Vec<Var>);
+
+impl std::fmt::Display for VarSet {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "[")?;
+        for (i, var) in self.0.iter().enumerate() {
+            if i > 0 {
+                write!(f, " ")?;
+            }
+            write!(f, "{}", var)?;
+        }
+        write!(f, "]")
+    }
+}
+
+impl VarSet {
+    pub fn get(&mut self, reg: &str) -> Option<&mut Var> {
+        let i = self.0.iter().position(|v| v.reg == reg)?;
+        Some(&mut self.0[i])
+    }
+
+    pub fn insert(&mut self, var: Var) {
+        if let Some(prev) = self.get(&var.reg) {
+            prev.ver = prev.ver.max(var.ver);
+            return;
+        }
+        self.0.push(var.clone());
+    }
+
+    pub fn iter(&self) -> impl Iterator<Item = &Var> {
+        self.0.iter()
+    }
+    pub fn iter_mut(&mut self) -> impl Iterator<Item = &mut Var> {
+        self.0.iter_mut()
+    }
+
+    pub fn new_var(&mut self, base: &Var) -> Var {
+        match self.0.iter_mut().find(|v| v.reg == base.reg) {
+            Some(prev) => {
+                prev.ver = prev.ver.max(base.ver) + 1;
+                prev.clone()
+            }
+            None => {
+                let new = Var {
+                    reg: base.reg.clone(),
+                    ver: 1,
+                };
+                self.0.push(new.clone());
+                new
+            }
+        }
+    }
+}
+
 #[derive(Debug, Clone, PartialEq, Eq, serde::Serialize, ts_rs::TS)]
 pub enum Expr {
     Const(u32),
@@ -144,4 +199,31 @@ impl serde::Serialize for Instr {
         state.serialize_field("eff", &self.eff)?;
         state.end()
     }
+}
+
+#[derive(Debug, serde::Serialize, ts_rs::TS)]
+pub struct Link {
+    pub addr: u32,
+    // key=val pairs
+    pub params: Vec<(Var, Var)>,
+}
+
+#[derive(serde::Serialize, ts_rs::TS)]
+pub struct Block {
+    pub id: usize,
+    pub instrs: Vec<Instr>,
+    pub params: VarSet,
+    pub links: Vec<Link>,
+}
+
+impl Block {
+    pub fn addr(&self) -> u32 {
+        self.instrs[0].iced.ip32()
+    }
+}
+
+#[derive(serde::Serialize, ts_rs::TS)]
+#[ts(export)]
+pub struct Blocks {
+    pub vec: Vec<Block>,
 }

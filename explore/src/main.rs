@@ -161,33 +161,6 @@ fn decode() -> Vec<Instr> {
     instrs
 }
 
-#[derive(Debug, serde::Serialize, ts_rs::TS)]
-struct Link {
-    addr: u32,
-    // key=val pairs
-    params: Vec<(Var, Var)>,
-}
-
-#[derive(serde::Serialize, ts_rs::TS)]
-struct Block {
-    id: usize,
-    instrs: Vec<Instr>,
-    params: VarSet,
-    links: Vec<Link>,
-}
-
-impl Block {
-    fn addr(&self) -> u32 {
-        self.instrs[0].iced.ip32()
-    }
-}
-
-#[derive(serde::Serialize, ts_rs::TS)]
-#[ts(export)]
-struct Blocks {
-    vec: Vec<Block>,
-}
-
 /// Split the instructions into basic blocks, where each block ends with a jump.
 fn blocks(instrs: Vec<Instr>) -> Blocks {
     let mut targets = HashSet::new();
@@ -311,61 +284,6 @@ fn rename_block(block: &mut Block, from: &Var, to: &Var) {
             }
             if val == from {
                 *val = to.clone();
-            }
-        }
-    }
-}
-
-#[derive(Clone, Default, Debug, serde::Serialize, ts_rs::TS)]
-struct VarSet(Vec<Var>);
-
-impl std::fmt::Display for VarSet {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "[")?;
-        for (i, var) in self.0.iter().enumerate() {
-            if i > 0 {
-                write!(f, " ")?;
-            }
-            write!(f, "{}", var)?;
-        }
-        write!(f, "]")
-    }
-}
-
-impl VarSet {
-    fn get(&mut self, reg: &str) -> Option<&mut Var> {
-        let i = self.0.iter().position(|v| v.reg == reg)?;
-        Some(&mut self.0[i])
-    }
-
-    fn insert(&mut self, var: Var) {
-        if let Some(prev) = self.get(&var.reg) {
-            prev.ver = prev.ver.max(var.ver);
-            return;
-        }
-        self.0.push(var.clone());
-    }
-
-    fn iter(&self) -> impl Iterator<Item = &Var> {
-        self.0.iter()
-    }
-    fn iter_mut(&mut self) -> impl Iterator<Item = &mut Var> {
-        self.0.iter_mut()
-    }
-
-    fn new_var(&mut self, base: &Var) -> Var {
-        match self.0.iter_mut().find(|v| v.reg == base.reg) {
-            Some(prev) => {
-                prev.ver = prev.ver.max(base.ver) + 1;
-                prev.clone()
-            }
-            None => {
-                let new = Var {
-                    reg: base.reg.clone(),
-                    ver: 1,
-                };
-                self.0.push(new.clone());
-                new
             }
         }
     }
