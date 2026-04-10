@@ -175,30 +175,22 @@ impl std::fmt::Display for Effect {
     }
 }
 
-#[derive(ts_rs::TS)]
-#[allow(unused)]
-struct InstrJS {
-    addr: u32,
-    iced: String,
-    eff: Effect,
-}
-
-#[derive(Debug, ts_rs::TS)]
-#[ts(as = "InstrJS")]
+#[derive(serde::Serialize, Debug, ts_rs::TS)]
 pub struct Instr {
-    pub iced: iced_x86::Instruction,
+    pub src: usize,
     pub eff: Effect,
 }
 
-impl serde::Serialize for Instr {
-    fn serialize<S: serde::Serializer>(&self, serializer: S) -> Result<S::Ok, S::Error> {
-        use serde::ser::SerializeStruct;
-        let mut state = serializer.serialize_struct("Instr", 2)?;
-        state.serialize_field("addr", &self.iced.ip32())?;
-        state.serialize_field("iced", &format!("{}", self.iced))?;
-        state.serialize_field("eff", &self.eff)?;
-        state.end()
+fn ser_iced<S: serde::Serializer>(
+    instr: &Vec<iced_x86::Instruction>,
+    serializer: S,
+) -> Result<S::Ok, S::Error> {
+    use serde::ser::SerializeSeq;
+    let mut state = serializer.serialize_seq(Some(instr.len()))?;
+    for instr in instr.iter() {
+        state.serialize_element(&format!("{}", instr))?;
     }
+    state.end()
 }
 
 #[derive(Debug, serde::Serialize, ts_rs::TS)]
@@ -213,6 +205,9 @@ pub struct Block {
     pub id: usize,
     pub addr: u32,
     pub instrs: Vec<Instr>,
+    #[serde(serialize_with = "ser_iced")]
+    #[ts(as = "Vec<String>")]
+    pub iced: Vec<iced_x86::Instruction>,
     pub params: VarSet,
     pub links: Vec<Link>,
 }

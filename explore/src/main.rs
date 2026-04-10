@@ -66,11 +66,13 @@ fn call_from_memory(instr: iced_x86::Instruction) -> Call {
 }
 
 /// Decode the x86 instructions into our Instr type.
-fn decode() -> Vec<Instr> {
-    let mut instrs = Vec::new();
+fn decode() -> (Vec<Instr>, Vec<iced_x86::Instruction>) {
+    let mut instrs = vec![];
+    let mut iced = vec![];
     let decoder = iced_x86::Decoder::with_ip(32, ASM, IP as u64, iced_x86::DecoderOptions::NONE);
     for instr in decoder {
-        let mut args = Vec::new();
+        iced.push(instr);
+        let mut args = vec![];
         for i in 0..instr.op_count() {
             args.push(expr_from_iced(instr, i));
         }
@@ -89,7 +91,7 @@ fn decode() -> Vec<Instr> {
             Pop => {
                 let [dst] = args.try_into().unwrap();
                 instrs.push(Instr {
-                    iced: instr,
+                    src: iced.len() - 1,
                     eff: Effect::Set(dst, call!("pop",)),
                 });
                 // TODO: stack handling
@@ -123,7 +125,7 @@ fn decode() -> Vec<Instr> {
             Call => {
                 let [dst] = args.try_into().unwrap();
                 instrs.push(Instr {
-                    iced: instr,
+                    src: iced.len() - 1,
                     eff: Effect::Call(Box::new(crate::Call {
                         op: "call".into(),
                         args: vec![dst],
@@ -131,7 +133,7 @@ fn decode() -> Vec<Instr> {
                 });
                 // assume stdcall
                 instrs.push(Instr {
-                    iced: instr,
+                    src: iced.len() - 1,
                     eff: Effect::Set(
                         Expr::Var(Var::new("eax".into())),
                         Expr::Var(Var::new("?".into())),
@@ -158,13 +160,16 @@ fn decode() -> Vec<Instr> {
             }
         };
 
-        instrs.push(Instr { iced: instr, eff });
+        instrs.push(Instr {
+            src: iced.len() - 1,
+            eff,
+        });
     }
-    instrs
+    (instrs, iced)
 }
 
 /// Split the instructions into basic blocks, where each block ends with a jump.
-fn blocks(instrs: Vec<Instr>) -> Blocks {
+fn blocks(instrs: Vec<Instr>, iced: Vec<iced_x86::Instruction>) -> Blocks {
     let mut targets = HashSet::new();
     for instr in &instrs {
         let Effect::Jmp(jmp) = &instr.eff else {
@@ -176,7 +181,7 @@ fn blocks(instrs: Vec<Instr>) -> Blocks {
                 _ => {
                     log::warn!(
                         "{addr:x} unhandled jmp target {expr}",
-                        addr = instr.iced.ip32(),
+                        addr = iced[instr.src].ip32(),
                         expr = dst
                     );
                     continue;
@@ -187,26 +192,31 @@ fn blocks(instrs: Vec<Instr>) -> Blocks {
     }
 
     let mut blocks = vec![];
-    let mut block = vec![];
+    let mut block: Vec<Instr> = vec![];
     for instr in instrs {
         let is_jmp = matches!(instr.eff, Effect::Jmp(_));
-        let last_in_block = is_jmp || targets.contains(&instr.iced.next_ip32());
+        let src = instr.src;
+        let iced_instr = &iced[src];
+        let last_in_block = is_jmp || targets.contains(&iced_instr.next_ip32());
         block.push(instr);
         if last_in_block {
             if !is_jmp {
-                let iced = block.last().unwrap().iced;
+                let next_ip = iced_instr.next_ip32();
                 block.push(Instr {
-                    iced,
-                    eff: Effect::Jmp(Box::new(Jmp::new(
-                        "jmp",
-                        vec![Expr::Const(iced.next_ip32())],
-                    ))),
+                    src,
+                    eff: Effect::Jmp(Box::new(Jmp::new("jmp", vec![Expr::Const(next_ip)]))),
                 });
+            }
+            let iced = iced[block[0].src..block[block.len() - 1].src + 1].to_vec();
+            let offset = block[0].src;
+            for instr in block.iter_mut() {
+                instr.src -= offset;
             }
             blocks.push(Block {
                 id: blocks.len(),
-                addr: block[0].iced.ip32(),
+                addr: iced_instr.ip32(),
                 instrs: block,
+                iced,
                 params: Default::default(),
                 links: vec![],
             });
@@ -246,7 +256,7 @@ fn simplify_branches(blocks: &mut Blocks) {
             assert!(jmp.cond.args.is_empty());
             jmp.cond.op = op.into();
             std::mem::swap(&mut jmp.cond.args, &mut test.args);
-            cur.iced = prev.iced;
+            cur.src = prev.src;
             block.instrs.remove(i - 2);
         }
     }
@@ -343,11 +353,8 @@ fn print_block(block: &Block) {
     );
     for instr in &block.instrs {
         let text = format!("{}", instr.eff);
-        println!(
-            "{text:40}  ; {ip:x} {iced}",
-            ip = instr.iced.ip32(),
-            iced = instr.iced
-        );
+        let iced = block.iced[instr.src];
+        println!("{text:40}  ; {ip:x} {iced}", ip = iced.ip32(), iced = iced);
     }
     for link in &block.links {
         println!(
@@ -381,8 +388,8 @@ fn main() {
     logger::init();
     let args: Args = argh::from_env();
 
-    let instrs = decode();
-    let mut blocks = blocks(instrs);
+    let (instrs, iced) = decode();
+    let mut blocks = blocks(instrs, iced);
 
     //blocks.vec.truncate(5);
 
