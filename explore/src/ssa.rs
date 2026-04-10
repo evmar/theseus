@@ -2,37 +2,15 @@ use std::collections::HashMap;
 
 use super::ast::*;
 
-fn rename_effect(eff: &mut Effect, from: &Var, to: &Var) {
-    visit_effect(eff, &mut |expr| match expr {
-        Expr::Var(v) if v == from => {
-            *v = to.clone();
-        }
-        _ => {}
-    });
-}
-
 fn rename_instrs(instrs: &mut [Instr], from: &Var, to: &Var) {
     for instr in instrs {
-        rename_effect(&mut instr.eff, from, to);
-    }
-}
-
-fn rename_block(block: &mut Block, from: &Var, to: &Var) {
-    for param in block.params.iter_mut() {
-        if param == from {
-            *param = to.clone();
-        }
-    }
-    rename_instrs(&mut block.instrs, from, to);
-    for link in block.links.iter_mut() {
-        for (key, val) in link.params.iter_mut() {
-            if key == from {
-                *key = to.clone();
+        visit_effect(&mut instr.eff, &mut |expr| {
+            if let Expr::Var(v) = expr {
+                if v == from {
+                    *v = to.clone();
+                }
             }
-            if val == from {
-                *val = to.clone();
-            }
-        }
+        });
     }
 }
 
@@ -76,13 +54,7 @@ fn ssa_block(block: &mut Block, used_vars: &mut VarSet) {
     block.params = params;
 }
 
-pub fn ssa(blocks: &mut Blocks, used_vars: &mut VarSet) {
-    for block in blocks.vec.iter_mut() {
-        ssa_block(block, used_vars);
-    }
-}
-
-pub fn links(blocks: &mut Blocks, used_vars: &mut VarSet) {
+fn links(blocks: &mut Blocks, used_vars: &mut VarSet) {
     // For each block, ids of following blocks
     let nexts = blocks
         .vec
@@ -186,4 +158,12 @@ fn out_vars(block: &mut Block) -> HashMap<String, Var> {
         };
     });
     outs
+}
+
+pub fn ssa(blocks: &mut Blocks) {
+    let mut used_vars = VarSet::default();
+    for block in blocks.vec.iter_mut() {
+        ssa_block(block, &mut used_vars);
+    }
+    links(blocks, &mut used_vars);
 }

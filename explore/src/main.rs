@@ -386,9 +386,7 @@ fn main() {
     //blocks.vec.truncate(5);
 
     simplify_branches(&mut blocks);
-    let mut used_vars = VarSet::default();
-    ssa(&mut blocks, &mut used_vars);
-    links(&mut blocks, &mut used_vars);
+    ssa(&mut blocks);
     inline(&mut blocks);
 
     if args.json {
