@@ -475,8 +475,6 @@ fn out_vars(block: &mut Block) -> HashMap<String, Var> {
 
 /// If a variable is only used once, inline it into where it is used.
 fn inline_block(block: &mut Block) {
-    log::info!("inline {:x}", block.addr());
-
     // Gather the inlinable new vars introduced by this block
     let mut new_vars: HashSet<Var> = HashSet::default();
     // for var in block.params.iter() {
@@ -490,21 +488,14 @@ fn inline_block(block: &mut Block) {
             _ => {}
         }
     }
-    log::info!("new vars {:?}", new_vars);
 
     // Count the times they are used
-    let mut used_once: HashSet<Var> = HashSet::default();
-    let mut used_multi: HashSet<Var> = HashSet::default();
+    let mut used: HashMap<Var, usize> = Default::default();
     let mut mark_read = |var: &Var| {
         if !new_vars.contains(var) {
             return;
         }
-        if used_once.get(var).is_some() {
-            used_once.remove(var);
-            used_multi.insert(var.clone());
-        } else {
-            used_once.insert(var.clone());
-        }
+        *used.entry(var.clone()).or_default() += 1;
     };
     let visit = &mut |expr: &mut Expr| match expr {
         Expr::Var(var) => mark_read(var),
@@ -521,8 +512,37 @@ fn inline_block(block: &mut Block) {
             mark_read(val);
         }
     }
-    log::info!("used_once: {:?}", used_once);
-    log::info!("used_multi: {:?}", used_multi);
+
+    for var in used
+        .iter()
+        .filter(|&(_, &count)| count == 1)
+        .map(|(var, _)| var)
+    {
+        let set = block
+            .instrs
+            .iter()
+            .position(|instr| {
+                if let Effect::Set(Expr::Var(dst), _) = &instr.eff {
+                    dst == var
+                } else {
+                    false
+                }
+            })
+            .unwrap();
+        let Effect::Set(_, val) = block.instrs.remove(set).eff else {
+            unreachable!()
+        };
+
+        for instr in block.instrs.iter_mut() {
+            visit_effect(&mut instr.eff, &mut |expr| {
+                if let Expr::Var(dst) = expr {
+                    if dst == var {
+                        *expr = val.clone();
+                    }
+                }
+            });
+        }
+    }
 }
 
 fn inline(blocks: &mut Blocks) {
