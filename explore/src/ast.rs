@@ -227,3 +227,41 @@ impl Block {
 pub struct Blocks {
     pub vec: Vec<Block>,
 }
+
+pub fn visit_expr(expr: &mut Expr, f: &mut impl FnMut(&mut Expr)) {
+    f(expr);
+    if let Expr::Call(call) = expr {
+        for arg in call.args.iter_mut() {
+            visit_expr(arg, f);
+        }
+    }
+}
+
+pub fn visit_effect(effect: &mut Effect, f: &mut impl FnMut(&mut Expr)) {
+    match effect {
+        Effect::Set(x, y) => {
+            visit_expr(x, f);
+            visit_expr(y, f);
+        }
+        Effect::Call(call) => {
+            for arg in call.args.iter_mut() {
+                visit_expr(arg, f);
+            }
+        }
+        Effect::Jmp(jmp) => {
+            for arg in jmp.cond.args.iter_mut() {
+                visit_expr(arg, f);
+            }
+            for dst in jmp.dsts.iter_mut() {
+                visit_expr(dst, f);
+            }
+        }
+    }
+}
+
+#[allow(unused)]
+pub fn visit_block(block: &mut Block, f: &mut impl FnMut(&mut Expr)) {
+    for instr in block.instrs.iter_mut() {
+        visit_effect(&mut instr.eff, f);
+    }
+}
