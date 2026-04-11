@@ -195,33 +195,34 @@ fn blocks(instrs: Vec<Instr>, iced: Vec<iced_x86::Instruction>) -> Blocks {
     let mut block: Vec<Instr> = vec![];
     for instr in instrs {
         let is_jmp = matches!(instr.eff, Effect::Jmp(_));
-        let src = instr.src;
-        let iced_instr = &iced[src];
-        let last_in_block = is_jmp || targets.contains(&iced_instr.next_ip32());
-        block.push(instr);
-        if last_in_block {
-            if !is_jmp {
-                let next_ip = iced_instr.next_ip32();
-                block.push(Instr {
-                    src,
-                    eff: Effect::Jmp(Box::new(Jmp::new("jmp", vec![Expr::Const(next_ip)]))),
-                });
-            }
-            let iced = iced[block[0].src..block[block.len() - 1].src + 1].to_vec();
-            let offset = block[0].src;
-            for instr in block.iter_mut() {
-                instr.src -= offset;
-            }
-            blocks.push(Block {
-                id: blocks.len(),
-                addr: iced_instr.ip32(),
-                instrs: block,
-                iced,
-                params: Default::default(),
-                links: vec![],
-            });
-            block = vec![];
+        let next_ip = iced[instr.src].next_ip32();
+        let last_in_block = is_jmp || targets.contains(&next_ip);
+        if !last_in_block {
+            block.push(instr);
+            continue;
         }
+
+        if !is_jmp {
+            block.push(Instr {
+                src: instr.src,
+                eff: Effect::Jmp(Box::new(Jmp::new("jmp", vec![Expr::Const(next_ip)]))),
+            });
+        }
+        block.push(instr);
+        let iced = iced[block[0].src..block[block.len() - 1].src + 1].to_vec();
+        let offset = block[0].src;
+        for instr in block.iter_mut() {
+            instr.src -= offset;
+        }
+        blocks.push(Block {
+            id: blocks.len(),
+            addr: iced[0].ip32(),
+            instrs: block,
+            iced,
+            params: Default::default(),
+            links: vec![],
+        });
+        block = vec![];
     }
     if !block.is_empty() {
         log::error!("{:#?}", block);
