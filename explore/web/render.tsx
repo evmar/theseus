@@ -102,7 +102,7 @@ function Eff(props: { eff: Effect }) {
 }
 
 function Instr(props: { instr: Instr }) {
-  const { addr, iced, eff } = props.instr;
+  const { src, eff } = props.instr;
   return (
     <div>
       <Eff eff={eff} />
@@ -113,31 +113,40 @@ function Instr(props: { instr: Instr }) {
 
 function Block(props: { block: Block }) {
   const { block } = props;
-  const addr = block.instrs[0]!.addr;
+  const addr = block.addr;
   return (
     <div class="block">
-      <Addr addr={addr} /> (
-      {block.params.map((v) => (
-        <>
-          {" "}
-          <Var {...v} />
-        </>
-      ))}
-      )
-      {block.instrs.map((instr) => (
-        <Instr instr={instr} />
-      ))}
-      {block.links.map((l) => (
+      <div class="block-content">
         <div>
-          &rarr; <Addr addr={l.addr} />
-          {l.params.map(([src, dst]) => (
-            <span>
-              {" "}
-              <Var {...src} />:<Var {...dst} />
-            </span>
+          <Addr addr={addr} /> (
+          {block.params.map((v, i) => (
+            <>
+              {i > 0 && " "}
+              <Var {...v} />
+            </>
+          ))}
+          )
+          {block.instrs.map((instr) => (
+            <Instr instr={instr} />
+          ))}
+          {block.links.map((l) => (
+            <div>
+              &rarr; <Addr addr={l.addr} />
+              {l.params.map(([src, dst]) => (
+                <span>
+                  {" "}
+                  <Var {...src} />:<Var {...dst} />
+                </span>
+              ))}
+            </div>
           ))}
         </div>
-      ))}
+        <div>
+          {block.iced.map((i) => (
+            <div>{i}</div>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }
