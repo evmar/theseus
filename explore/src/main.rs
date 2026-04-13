@@ -291,7 +291,7 @@ fn inline_block(block: &mut Block) {
         }
         *used.entry(var.clone()).or_default() += 1;
     };
-    let visit = &mut |expr: &mut Expr| match expr {
+    let visit = &mut |expr: &Expr| match expr {
         Expr::Var(var) => mark_read(var),
         _ => {}
     };
@@ -335,11 +335,11 @@ fn inline_block(block: &mut Block) {
             }
         };
         for instr in block.instrs.iter_mut() {
-            visit_effect(&mut instr.eff, &mut do_inline);
+            visit_effect_mut(&mut instr.eff, &mut do_inline);
         }
         for link in block.links.iter_mut() {
             for (_, val) in link.params.iter_mut() {
-                visit_expr(val, &mut do_inline);
+                visit_expr_mut(val, &mut do_inline);
             }
         }
     }

@@ -4,7 +4,7 @@ use super::ast::*;
 
 fn rename_instrs(instrs: &mut [Instr], from: &Var, to: &Var) {
     for instr in instrs {
-        visit_effect(&mut instr.eff, &mut |expr| {
+        visit_effect_mut(&mut instr.eff, &mut |expr| {
             if let Expr::Var(v) = expr {
                 if v == from {
                     *v = to.clone();
@@ -19,7 +19,7 @@ fn ssa_block(block: &mut Block, used_vars: &mut VarSet) {
     // But then substitute at the end after all the locals have been renamed.
 
     let mut params = VarSet::default();
-    let mut gather_params = |used_vars: &mut VarSet, expr: &mut Expr| match expr {
+    let mut gather_params = |used_vars: &mut VarSet, expr: &Expr| match expr {
         Expr::Var(var) => {
             if var.ver == 0 && params.get(&var.reg).is_none() {
                 params.insert(used_vars.new_var(var));

@@ -218,40 +218,71 @@ pub struct Blocks {
     pub vec: Vec<Block>,
 }
 
-pub fn visit_expr(expr: &mut Expr, f: &mut impl FnMut(&mut Expr)) {
+pub fn visit_expr(expr: &Expr, f: &mut impl FnMut(&Expr)) {
     f(expr);
     if let Expr::Call(call) = expr {
-        for arg in call.args.iter_mut() {
+        for arg in call.args.iter() {
             visit_expr(arg, f);
         }
     }
 }
 
-pub fn visit_effect(effect: &mut Effect, f: &mut impl FnMut(&mut Expr)) {
+pub fn visit_expr_mut(expr: &mut Expr, f: &mut impl FnMut(&mut Expr)) {
+    f(expr);
+    if let Expr::Call(call) = expr {
+        for arg in call.args.iter_mut() {
+            visit_expr_mut(arg, f);
+        }
+    }
+}
+
+pub fn visit_effect(effect: &Effect, f: &mut impl FnMut(&Expr)) {
     match effect {
         Effect::Set(x, y) => {
             visit_expr(x, f);
             visit_expr(y, f);
         }
         Effect::Call(call) => {
-            for arg in call.args.iter_mut() {
+            for arg in call.args.iter() {
                 visit_expr(arg, f);
             }
         }
         Effect::Jmp(jmp) => {
-            for arg in jmp.cond.args.iter_mut() {
+            for arg in jmp.cond.args.iter() {
                 visit_expr(arg, f);
             }
-            for dst in jmp.dsts.iter_mut() {
+            for dst in jmp.dsts.iter() {
                 visit_expr(dst, f);
             }
         }
     }
 }
 
+pub fn visit_effect_mut(effect: &mut Effect, f: &mut impl FnMut(&mut Expr)) {
+    match effect {
+        Effect::Set(x, y) => {
+            visit_expr_mut(x, f);
+            visit_expr_mut(y, f);
+        }
+        Effect::Call(call) => {
+            for arg in call.args.iter_mut() {
+                visit_expr_mut(arg, f);
+            }
+        }
+        Effect::Jmp(jmp) => {
+            for arg in jmp.cond.args.iter_mut() {
+                visit_expr_mut(arg, f);
+            }
+            for dst in jmp.dsts.iter_mut() {
+                visit_expr_mut(dst, f);
+            }
+        }
+    }
+}
+
 #[allow(unused)]
-pub fn visit_block(block: &mut Block, f: &mut impl FnMut(&mut Expr)) {
-    for instr in block.instrs.iter_mut() {
-        visit_effect(&mut instr.eff, f);
+pub fn visit_block(block: &mut Block, f: &mut impl FnMut(&Expr)) {
+    for instr in block.instrs.iter() {
+        visit_effect(&instr.eff, f);
     }
 }
