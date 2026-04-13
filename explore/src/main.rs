@@ -284,14 +284,14 @@ fn inline_block(block: &mut Block) {
 
     // Count the times they are used
     let mut used: HashMap<Var, usize> = Default::default();
-    let mut mark_read = |var: &Var| {
+    let mut mark_read = |var: &Var, count: usize| {
         if !new_vars.contains(var) {
             return;
         }
-        *used.entry(var.clone()).or_default() += 1;
+        *used.entry(var.clone()).or_default() += count;
     };
     let visit = &mut |expr: &mut Expr| match expr {
-        Expr::Var(var) => mark_read(var),
+        Expr::Var(var) => mark_read(var, 1),
         _ => {}
     };
     for instr in block.instrs.iter_mut() {
@@ -302,7 +302,8 @@ fn inline_block(block: &mut Block) {
     }
     for link in block.links.iter() {
         for (_, val) in link.params.iter() {
-            mark_read(val);
+            // count as 2 to prevent inlining
+            mark_read(val, 2);
         }
     }
 
