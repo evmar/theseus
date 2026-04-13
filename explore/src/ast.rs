@@ -281,7 +281,7 @@ pub fn visit_effect_mut(effect: &mut Effect, f: &mut impl FnMut(&mut Expr)) {
 }
 
 #[allow(unused)]
-pub fn visit_block(block: &mut Block, f: &mut impl FnMut(&Expr)) {
+pub fn visit_block(block: &Block, f: &mut impl FnMut(&Expr)) {
     for instr in block.instrs.iter() {
         visit_effect(&instr.eff, f);
     }

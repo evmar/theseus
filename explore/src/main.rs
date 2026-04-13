@@ -295,14 +295,14 @@ fn inline_block(block: &mut Block) {
         Expr::Var(var) => mark_read(var),
         _ => {}
     };
-    for instr in block.instrs.iter_mut() {
-        match &mut instr.eff {
+    for instr in block.instrs.iter() {
+        match &instr.eff {
             Effect::Set(_, src) => visit_expr(src, visit),
             eff => visit_effect(eff, visit),
         }
     }
-    for link in block.links.iter_mut() {
-        for (_, val) in link.params.iter_mut() {
+    for link in block.links.iter() {
+        for (_, val) in link.params.iter() {
             visit_expr(val, visit);
         }
     }

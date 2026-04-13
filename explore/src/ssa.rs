@@ -84,7 +84,7 @@ fn link(blocks: &mut Blocks, used_vars: &mut VarSet) {
     // For each block, output vars from block
     let mut bouts: Vec<HashMap<String, Var>> = Default::default();
 
-    for block in blocks.vec.iter_mut() {
+    for block in blocks.vec.iter() {
         bins.push(block.params.clone());
         let outs = out_vars(block);
         bouts.push(outs);
@@ -140,7 +140,7 @@ fn link(blocks: &mut Blocks, used_vars: &mut VarSet) {
 }
 
 /// Find the variables that are live at the end of the block, which will be potential parameters to the next blocks.
-fn out_vars(block: &mut Block) -> HashMap<String, Var> {
+fn out_vars(block: &Block) -> HashMap<String, Var> {
     let mut outs: HashMap<String, Var> = HashMap::new();
     visit_block(block, &mut |expr| {
         match expr {
