@@ -51,7 +51,7 @@ fn ssa_block(block: &mut Block, used_vars: &mut VarSet) {
     block.params = params;
 }
 
-fn links(blocks: &mut Blocks, used_vars: &mut VarSet) {
+fn link(blocks: &mut Blocks, used_vars: &mut VarSet) {
     // For each block, ids of following blocks
     let nexts = blocks
         .vec
@@ -162,5 +162,5 @@ pub fn ssa(blocks: &mut Blocks) {
     for block in blocks.vec.iter_mut() {
         ssa_block(block, &mut used_vars);
     }
-    links(blocks, &mut used_vars);
+    link(blocks, &mut used_vars);
 }
