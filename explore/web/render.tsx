@@ -135,7 +135,7 @@ function Block(props: { block: Block }) {
               {l.params.map(([src, dst]) => (
                 <span>
                   {" "}
-                  <Var {...src} />:<Var {...dst} />
+                  <Var {...src} />:<Expr expr={dst} />
                 </span>
               ))}
             </div>

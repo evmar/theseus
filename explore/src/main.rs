@@ -285,14 +285,14 @@ fn inline_block(block: &mut Block) {
 
     // Count the times they are used
     let mut used: HashMap<Var, usize> = Default::default();
-    let mut mark_read = |var: &Var, count: usize| {
+    let mut mark_read = |var: &Var| {
         if !new_vars.contains(var) {
             return;
         }
-        *used.entry(var.clone()).or_default() += count;
+        *used.entry(var.clone()).or_default() += 1;
     };
     let visit = &mut |expr: &mut Expr| match expr {
-        Expr::Var(var) => mark_read(var, 1),
+        Expr::Var(var) => mark_read(var),
         _ => {}
     };
     for instr in block.instrs.iter_mut() {
@@ -301,10 +301,9 @@ fn inline_block(block: &mut Block) {
             eff => visit_effect(eff, visit),
         }
     }
-    for link in block.links.iter() {
-        for (_, val) in link.params.iter() {
-            // count as 2 to prevent inlining
-            mark_read(val, 2);
+    for link in block.links.iter_mut() {
+        for (_, val) in link.params.iter_mut() {
+            visit_expr(val, visit);
         }
     }
 
@@ -328,14 +327,20 @@ fn inline_block(block: &mut Block) {
             unreachable!()
         };
 
-        for instr in block.instrs.iter_mut() {
-            visit_effect(&mut instr.eff, &mut |expr| {
-                if let Expr::Var(dst) = expr {
-                    if dst == var {
-                        *expr = val.clone();
-                    }
+        let mut do_inline = |expr: &mut Expr| {
+            if let Expr::Var(dst) = expr {
+                if dst == var {
+                    *expr = val.clone();
                 }
-            });
+            }
+        };
+        for instr in block.instrs.iter_mut() {
+            visit_effect(&mut instr.eff, &mut do_inline);
+        }
+        for link in block.links.iter_mut() {
+            for (_, val) in link.params.iter_mut() {
+                visit_expr(val, &mut do_inline);
+            }
         }
     }
 }

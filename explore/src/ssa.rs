@@ -125,7 +125,7 @@ fn links(blocks: &mut Blocks, used_vars: &mut VarSet) {
             .map(|&next_id| {
                 let params = bins[next_id]
                     .iter()
-                    .map(|p| (p.clone(), outs.get(&p.reg).unwrap().clone()))
+                    .map(|p| (p.clone(), Expr::Var(outs.get(&p.reg).unwrap().clone())))
                     .collect();
                 Link {
                     addr: blocks.vec[next_id].addr,
