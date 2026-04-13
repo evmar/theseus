@@ -51,34 +51,39 @@ fn ssa_block(block: &mut Block, used_vars: &mut VarSet) {
     block.params = params;
 }
 
-fn link(blocks: &mut Blocks, used_vars: &mut VarSet) {
-    // For each block, ids of following blocks
-    let nexts = blocks
+fn link_blocks(blocks: &mut Blocks) {
+    let addr_to_id: HashMap<u32, usize> = blocks
         .vec
         .iter()
-        .map(|block| {
-            let last = block.instrs.last().unwrap();
-            let Effect::Jmp(jmp) = &last.eff else {
-                log::warn!("block {:x} does not end with jmp", block.addr);
-                return vec![];
-            };
-            let addrs = jmp
-                .dsts
-                .iter()
-                .flat_map(|addr| {
-                    let Expr::Const(addr) = addr else {
-                        return None;
-                    };
-                    Some(*addr)
-                })
-                .collect::<Vec<_>>();
-            addrs
-                .into_iter()
-                .flat_map(|addr| blocks.vec.iter().position(|b| b.addr == addr))
-                .collect::<Vec<_>>()
-        })
-        .collect::<Vec<_>>();
+        .enumerate()
+        .map(|(i, block)| (block.addr, i))
+        .collect();
 
+    for block in blocks.vec.iter_mut() {
+        let last = block.instrs.last().unwrap();
+        let Effect::Jmp(jmp) = &last.eff else {
+            log::warn!("block {:x} does not end with jmp", block.addr);
+            continue;
+        };
+
+        let mut links = vec![];
+        for addr in jmp.dsts.iter() {
+            let Expr::Const(addr) = addr else {
+                continue;
+            };
+            let Some(&next_id) = addr_to_id.get(&addr) else {
+                continue;
+            };
+            links.push(Link {
+                id: next_id,
+                params: vec![],
+            });
+        }
+        block.links = links;
+    }
+}
+
+fn link_vars(blocks: &mut Blocks, used_vars: &mut VarSet) {
     // For each block, input vars to block
     let mut bins: Vec<VarSet> = Default::default();
     // For each block, output vars from block
@@ -99,8 +104,8 @@ fn link(blocks: &mut Blocks, used_vars: &mut VarSet) {
         for src in blocks.vec.iter() {
             let outs = &bouts[src.id];
             let mut add: Vec<Var> = vec![];
-            for &next_id in &nexts[src.id] {
-                for param in bins[next_id].iter() {
+            for link in src.links.iter() {
+                for param in bins[link.id].iter() {
                     if !outs.contains_key(&param.reg) {
                         add.push(used_vars.new_var(param));
                     }
@@ -117,25 +122,16 @@ fn link(blocks: &mut Blocks, used_vars: &mut VarSet) {
         }
     }
 
-    for id in 0..blocks.vec.len() {
+    for (id, block) in blocks.vec.iter_mut().enumerate() {
+        block.params = bins[id].clone();
+
         let outs = &bouts[id];
-
-        let next = nexts[id]
-            .iter()
-            .map(|&next_id| {
-                let params = bins[next_id]
-                    .iter()
-                    .map(|p| (p.clone(), Expr::Var(outs.get(&p.reg).unwrap().clone())))
-                    .collect();
-                Link {
-                    addr: blocks.vec[next_id].addr,
-                    params,
-                }
-            })
-            .collect();
-
-        blocks.vec[id].params = bins[id].clone();
-        blocks.vec[id].links = next;
+        for link in block.links.iter_mut() {
+            link.params = bins[link.id]
+                .iter()
+                .map(|p| (p.clone(), Expr::Var(outs.get(&p.reg).unwrap().clone())))
+                .collect();
+        }
     }
 }
 
@@ -162,5 +158,6 @@ pub fn ssa(blocks: &mut Blocks) {
     for block in blocks.vec.iter_mut() {
         ssa_block(block, &mut used_vars);
     }
-    link(blocks, &mut used_vars);
+    link_blocks(blocks);
+    link_vars(blocks, &mut used_vars);
 }

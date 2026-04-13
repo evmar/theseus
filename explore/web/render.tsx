@@ -111,8 +111,8 @@ function Instr(props: { instr: Instr }) {
   //  ; {hex(addr)} {iced}
 }
 
-function Block(props: { block: Block }) {
-  const { block } = props;
+function Block(props: { blocks: Array<Block>; block: Block }) {
+  const { blocks, block } = props;
   const addr = block.addr;
   return (
     <div class="block">
@@ -131,7 +131,7 @@ function Block(props: { block: Block }) {
           ))}
           {block.links.map((l) => (
             <div>
-              &rarr; <Addr addr={l.addr} />
+              &rarr; <Addr addr={blocks[l.id].addr} />
               {l.params.map(([src, dst]) => (
                 <span>
                   {" "}
@@ -162,7 +162,7 @@ function Body() {
       <main>
         {data.vec.map((block) => (
           <div>
-            <Block block={block} />
+            <Block blocks={data.vec} block={block} />
           </div>
         ))}
       </main>

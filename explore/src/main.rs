@@ -351,7 +351,7 @@ fn inline(blocks: &mut Blocks) {
     }
 }
 
-fn print_block(block: &Block) {
+fn print_block(blocks: &Blocks, block: &Block) {
     println!(
         "{ip:x} [{params}]",
         ip = block.addr,
@@ -370,7 +370,7 @@ fn print_block(block: &Block) {
     for link in &block.links {
         println!(
             "=> {:x} {}",
-            link.addr,
+            blocks.vec[link.id].addr,
             link.params
                 .iter()
                 .map(|(k, v)| format!("{k}={v}"))
@@ -382,7 +382,7 @@ fn print_block(block: &Block) {
 
 fn print(blocks: &Blocks) {
     for block in &blocks.vec {
-        print_block(block);
+        print_block(&blocks, block);
         println!();
     }
 }
