@@ -136,7 +136,10 @@ fn decode() -> (Vec<Instr>, Vec<iced_x86::Instruction>) {
                     src: iced.len() - 1,
                     eff: Effect::Set(
                         Expr::Var(Var::new("eax".into())),
-                        Expr::Var(Var::new("?".into())),
+                        Expr::Var(Var {
+                            reg: "?".into(),
+                            ver: instr.ip32() as usize,
+                        }),
                     ),
                 });
                 continue;
