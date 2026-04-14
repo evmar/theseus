@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::collections::{HashMap, HashSet};
 
 use super::ast::*;
 
@@ -48,7 +48,7 @@ fn ssa_block(block: &mut Block, used_vars: &mut VarSet) {
         rename_instrs(&mut block.instrs, &Var::new(param.reg.clone()), param);
     }
 
-    block.params = params;
+    block.params = params.0.into_iter().map(|var| (var, vec![])).collect();
 }
 
 fn link_blocks(blocks: &mut Blocks) {
@@ -85,67 +85,76 @@ fn link_blocks(blocks: &mut Blocks) {
 
 fn link_vars(blocks: &mut Blocks, used_vars: &mut VarSet) {
     // For each block, input vars to block
-    let mut bins: Vec<VarSet> = Default::default();
+    let mut bins: Vec<HashMap<Var, HashSet<Var>>> = Default::default();
     // For each block, output vars from block
-    let mut bouts: Vec<HashMap<String, Var>> = Default::default();
+    let mut bouts: Vec<VarSet> = Default::default();
 
     for block in blocks.vec.iter() {
-        bins.push(block.params.clone());
+        bins.push(
+            block
+                .params
+                .iter()
+                .map(|(param, _)| (param.clone(), HashSet::new()))
+                .collect(),
+        );
         let outs = out_vars(block);
         bouts.push(outs);
     }
 
-    // Handle var passthrough:
-    // If A -> B and B has some input X not in A's outputs,
-    // add X to A's inputs and outputs.
     let mut changed = true;
     while changed {
         changed = false;
         for src in blocks.vec.iter() {
-            let outs = &bouts[src.id];
-            let mut add: Vec<Var> = vec![];
             for link in src.links.iter() {
-                for param in bins[link.id].iter() {
-                    if !outs.contains_key(&param.reg) {
-                        add.push(used_vars.new_var(param));
+                let [src_ins, dst_ins] = bins.get_disjoint_mut([src.id, link.id]).unwrap();
+                let src_outs = &mut bouts[src.id];
+                for (param, values) in dst_ins.iter_mut() {
+                    let out = match src_outs.get(&param.reg) {
+                        Some(var) => var.clone(),
+                        None => {
+                            // Handle var passthrough:
+                            // If src -> dst and dst has some param X not in src's outputs,
+                            // add X to src's inputs and outputs.
+
+                            let new = used_vars.new_var(param);
+                            src_ins.insert(new.clone(), HashSet::new());
+                            src_outs.insert(new.clone());
+                            changed = true;
+                            new
+                        }
+                    };
+
+                    if values.insert(out) {
+                        changed = true;
                     }
                 }
-            }
-
-            if !add.is_empty() {
-                for add in add {
-                    bins[src.id].insert(add.clone());
-                    bouts[src.id].insert(add.reg.clone(), add);
-                }
-                changed = true;
             }
         }
     }
 
     for (id, block) in blocks.vec.iter_mut().enumerate() {
-        block.params = bins[id].clone();
+        block.params = bins[id]
+            .drain()
+            .map(|(param, mut values)| (param, values.drain().map(|val| Expr::Var(val)).collect()))
+            .collect();
 
-        let outs = &bouts[id];
-        for link in block.links.iter_mut() {
-            link.params = bins[link.id]
-                .iter()
-                .map(|p| (p.clone(), Expr::Var(outs.get(&p.reg).unwrap().clone())))
-                .collect();
-        }
+        //     let outs = &bouts[id];
+        //     for link in block.links.iter_mut() {
+        //         link.params = bins[link.id]
+        //             .iter()
+        //             .map(|p| (p.clone(), Expr::Var(outs.get(&p.reg).unwrap().clone())))
+        //             .collect();
+        //     }
     }
 }
 
 /// Find the variables that are live at the end of the block, which will be potential parameters to the next blocks.
-fn out_vars(block: &Block) -> HashMap<String, Var> {
-    let mut outs: HashMap<String, Var> = HashMap::new();
+fn out_vars(block: &Block) -> VarSet {
+    let mut outs = VarSet::default();
     visit_block(block, &mut |expr| {
         match expr {
             Expr::Var(var) => {
-                if let Some(prev) = outs.get_mut(&var.reg) {
-                    prev.ver = prev.ver.max(var.ver);
-                } else {
-                    outs.insert(var.reg.clone(), var.clone());
-                }
+                outs.insert(var.clone());
             }
             _ => {}
         };

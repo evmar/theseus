@@ -21,7 +21,7 @@ impl Var {
 }
 
 #[derive(Clone, Default, Debug, serde::Serialize, ts_rs::TS)]
-pub struct VarSet(Vec<Var>);
+pub struct VarSet(pub Vec<Var>);
 
 impl std::fmt::Display for VarSet {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -37,13 +37,17 @@ impl std::fmt::Display for VarSet {
 }
 
 impl VarSet {
-    pub fn get(&mut self, reg: &str) -> Option<&mut Var> {
+    pub fn get(&self, reg: &str) -> Option<&Var> {
+        self.0.iter().find(|v| v.reg == reg)
+    }
+
+    pub fn get_mut(&mut self, reg: &str) -> Option<&mut Var> {
         let i = self.0.iter().position(|v| v.reg == reg)?;
         Some(&mut self.0[i])
     }
 
     pub fn insert(&mut self, var: Var) {
-        if let Some(prev) = self.get(&var.reg) {
+        if let Some(prev) = self.get_mut(&var.reg) {
             prev.ver = prev.ver.max(var.ver);
             return;
         }
@@ -208,7 +212,7 @@ pub struct Block {
     #[serde(serialize_with = "ser_iced")]
     #[ts(as = "Vec<String>")]
     pub iced: Vec<iced_x86::Instruction>,
-    pub params: VarSet,
+    pub params: Vec<(Var, Vec<Expr>)>,
     pub links: Vec<Link>,
 }
 

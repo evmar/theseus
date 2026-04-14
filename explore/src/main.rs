@@ -358,7 +358,14 @@ fn print_block(blocks: &Blocks, block: &Block) {
         params = block
             .params
             .iter()
-            .map(|v| format!("{v}"))
+            .map(|(var, vals)| format!(
+                "{var}=[{vals}]",
+                vals = vals
+                    .iter()
+                    .map(|e| format!("{e}"))
+                    .collect::<Vec<_>>()
+                    .join(" | ")
+            ))
             .collect::<Vec<_>>()
             .join(" ")
     );
