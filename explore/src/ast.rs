@@ -20,10 +20,11 @@ impl Var {
     }
 }
 
+/// Holds a set of vars, but only one entry per var name, keeping the latest version.
 #[derive(Clone, Default, Debug, serde::Serialize, ts_rs::TS)]
-pub struct VarSet(pub Vec<Var>);
+pub struct MaxVarSet(pub Vec<Var>);
 
-impl std::fmt::Display for VarSet {
+impl std::fmt::Display for MaxVarSet {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "[")?;
         for (i, var) in self.0.iter().enumerate() {
@@ -36,7 +37,7 @@ impl std::fmt::Display for VarSet {
     }
 }
 
-impl VarSet {
+impl MaxVarSet {
     pub fn get(&self, reg: &str) -> Option<&Var> {
         self.0.iter().find(|v| v.reg == reg)
     }

@@ -14,12 +14,12 @@ fn rename_instrs(instrs: &mut [Instr], from: &Var, to: &Var) {
     }
 }
 
-fn ssa_block(block: &mut Block, used_vars: &mut VarSet) {
+fn ssa_block(block: &mut Block, used_vars: &mut MaxVarSet) {
     // Gather inputs while we traverse, assigning them names immediate, so that they get assigned the lowest name.
     // But then substitute at the end after all the locals have been renamed.
 
-    let mut params = VarSet::default();
-    let mut gather_params = |used_vars: &mut VarSet, expr: &Expr| match expr {
+    let mut params = MaxVarSet::default();
+    let mut gather_params = |used_vars: &mut MaxVarSet, expr: &Expr| match expr {
         Expr::Var(var) => {
             if var.ver == 0 && params.get(&var.reg).is_none() {
                 params.insert(used_vars.new_var(var));
@@ -80,11 +80,11 @@ fn link_blocks(blocks: &mut Blocks) {
     }
 }
 
-fn link_vars(blocks: &mut Blocks, used_vars: &mut VarSet) {
+fn link_vars(blocks: &mut Blocks, used_vars: &mut MaxVarSet) {
     // For each block, input vars to block
     let mut bins: Vec<HashMap<Var, HashSet<Var>>> = Default::default();
     // For each block, output vars from block
-    let mut bouts: Vec<VarSet> = Default::default();
+    let mut bouts: Vec<MaxVarSet> = Default::default();
 
     for block in blocks.vec.iter() {
         bins.push(
@@ -146,8 +146,8 @@ fn link_vars(blocks: &mut Blocks, used_vars: &mut VarSet) {
 }
 
 /// Find the variables that are live at the end of the block, which will be potential parameters to the next blocks.
-fn out_vars(block: &Block) -> VarSet {
-    let mut outs = VarSet::default();
+fn out_vars(block: &Block) -> MaxVarSet {
+    let mut outs = MaxVarSet::default();
     visit_block(block, &mut |expr| {
         match expr {
             Expr::Var(var) => {
@@ -160,7 +160,7 @@ fn out_vars(block: &Block) -> VarSet {
 }
 
 pub fn ssa(blocks: &mut Blocks) {
-    let mut used_vars = VarSet::default();
+    let mut used_vars = MaxVarSet::default();
     for block in blocks.vec.iter_mut() {
         ssa_block(block, &mut used_vars);
     }
