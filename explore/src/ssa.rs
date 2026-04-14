@@ -74,10 +74,7 @@ fn link_blocks(blocks: &mut Blocks) {
             let Some(&next_id) = addr_to_id.get(&addr) else {
                 continue;
             };
-            links.push(Link {
-                id: next_id,
-                params: vec![],
-            });
+            links.push(Link { id: next_id });
         }
         block.links = links;
     }

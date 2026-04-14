@@ -200,8 +200,6 @@ fn ser_iced<S: serde::Serializer>(
 #[derive(Debug, serde::Serialize, ts_rs::TS)]
 pub struct Link {
     pub id: usize,
-    // key=val pairs
-    pub params: Vec<(Var, Expr)>,
 }
 
 #[derive(serde::Serialize, ts_rs::TS)]

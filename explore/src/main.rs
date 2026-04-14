@@ -301,11 +301,6 @@ fn inline_block(block: &mut Block) {
             eff => visit_effect(eff, visit),
         }
     }
-    for link in block.links.iter() {
-        for (_, val) in link.params.iter() {
-            visit_expr(val, visit);
-        }
-    }
 
     for var in used
         .iter()
@@ -336,11 +331,6 @@ fn inline_block(block: &mut Block) {
         };
         for instr in block.instrs.iter_mut() {
             visit_effect_mut(&mut instr.eff, &mut do_inline);
-        }
-        for link in block.links.iter_mut() {
-            for (_, val) in link.params.iter_mut() {
-                visit_expr_mut(val, &mut do_inline);
-            }
         }
     }
 }
@@ -375,15 +365,7 @@ fn print_block(blocks: &Blocks, block: &Block) {
         println!("{text:40}  ; {ip:x} {iced}", ip = iced.ip32(), iced = iced);
     }
     for link in &block.links {
-        println!(
-            "=> {:x} {}",
-            blocks.vec[link.id].addr,
-            link.params
-                .iter()
-                .map(|(k, v)| format!("{k}={v}"))
-                .collect::<Vec<_>>()
-                .join(" ")
-        );
+        println!("=> {:x}", blocks.vec[link.id].addr);
     }
 }
 

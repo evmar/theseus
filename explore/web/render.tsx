@@ -138,12 +138,6 @@ function Block(props: { blocks: Array<Block>; block: Block }) {
           {block.links.map((l) => (
             <div>
               &rarr; <Addr addr={blocks[l.id].addr} />
-              {l.params.map(([src, dst]) => (
-                <span>
-                  {" "}
-                  <Var {...src} />:<Expr expr={dst} />
-                </span>
-              ))}
             </div>
           ))}
         </div>
