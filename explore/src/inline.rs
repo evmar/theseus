@@ -108,9 +108,9 @@ pub fn inline_block(block: &mut Block) {
     let mut changed = true;
     while changed {
         changed = false;
-        if simplify_phi(block) {
-            changed = true;
-        }
+        // if simplify_phi(block) {
+        //     changed = true;
+        // }
         log::info!("phi simp {:?}", changed);
 
         let used = count_uses(block);

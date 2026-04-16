@@ -152,6 +152,7 @@ fn link_vars(blocks: &mut Blocks, used_vars: &mut MaxVarSet) {
         }
     }
 
+    // update phis with computed incoming values
     for (id, block) in blocks.vec.iter_mut().enumerate() {
         for instr in block.instrs.iter_mut() {
             match &mut instr.eff {
