@@ -53,19 +53,14 @@ fn count_uses(blocks: &Blocks) -> HashMap<Var, usize> {
     let mut mark_read = |var: &Var| {
         *used.entry(var.clone()).or_default() += 1;
     };
-    let visit = &mut |expr: &Expr| {
-        log::info!("visit {}", expr);
-        match expr {
-            Expr::Var(var) => mark_read(var),
-            _ => {}
-        }
+    let visit = &mut |expr: &Expr| match expr {
+        Expr::Var(var) => mark_read(var),
+        _ => {}
     };
     for block in blocks.vec.iter() {
-        log::info!("block {:x}", block.addr);
         for instr in block.instrs.iter() {
             visit_effect(&instr.eff, visit);
         }
-        log::info!("block {:x}", block.addr,);
     }
     log::info!(
         "used {}",
@@ -123,16 +118,16 @@ fn inline_var(blocks: &mut Blocks, var: &Var) -> bool {
 }
 
 pub fn inline(blocks: &mut Blocks) {
+    return;
     let mut changed = true;
     while changed {
         changed = false;
-        // if simplify_phi(blocks) {
-        //     changed = true;
-        // }
-        // log::info!("phi simp {:?}", changed);
+        if simplify_phi(blocks) {
+            changed = true;
+        }
+        log::info!("phi simp {:?}", changed);
 
         let used = count_uses(blocks);
-        break;
         let used_once = used
             .iter()
             .filter(|&(_, &count)| count == 1)
