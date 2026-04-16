@@ -20,6 +20,7 @@ fn expr_from_iced(instr: iced_x86::Instruction, i: u32) -> Expr {
     }
 }
 
+#[macro_export]
 macro_rules! call {
     ($x:expr, $($arg:expr),*) => { crate::Expr::Call(Box::new(crate::Call { op: $x.into(), args: vec![$($arg.into()),*] })) };
 }
@@ -271,9 +272,6 @@ fn simplify_branches(blocks: &mut Blocks) {
 fn inline_block(block: &mut Block) {
     // Gather the inlinable new vars introduced by this block
     let mut new_vars: HashSet<Var> = HashSet::default();
-    // for var in block.params.iter() {
-    //     new_vars.insert(var.clone());
-    // }
     for instr in block.instrs.iter() {
         match &instr.eff {
             Effect::Set(Expr::Var(dst), _) => {
@@ -348,14 +346,7 @@ fn print_block(blocks: &Blocks, block: &Block) {
         params = block
             .params
             .iter()
-            .map(|(var, vals)| format!(
-                "{var}=[{vals}]",
-                vals = vals
-                    .iter()
-                    .map(|e| format!("{e}"))
-                    .collect::<Vec<_>>()
-                    .join(" | ")
-            ))
+            .map(|var| format!("{var}"))
             .collect::<Vec<_>>()
             .join(" ")
     );
@@ -395,7 +386,7 @@ fn main() {
 
     simplify_branches(&mut blocks);
     ssa(&mut blocks);
-    inline(&mut blocks);
+    //inline(&mut blocks);
 
     if args.json {
         std::fs::write("web/data.json", serde_json::to_string(&blocks).unwrap()).unwrap();

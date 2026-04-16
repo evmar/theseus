@@ -1,5 +1,7 @@
 use std::collections::{HashMap, HashSet};
 
+use crate::call;
+
 use super::ast::*;
 
 fn rename_instrs(instrs: &mut [Instr], from: &Var, to: &Var) {
@@ -15,7 +17,8 @@ fn rename_instrs(instrs: &mut [Instr], from: &Var, to: &Var) {
 }
 
 fn ssa_block(block: &mut Block, used_vars: &mut MaxVarSet) {
-    // Gather inputs while we traverse, assigning them names immediate, so that they get assigned the lowest name.
+    // Gather inputs while we traverse, assigning them names immediately
+    // so that they get assigned the lowest name.
     // But then substitute at the end after all the locals have been renamed.
 
     let mut params = MaxVarSet::default();
@@ -45,10 +48,17 @@ fn ssa_block(block: &mut Block, used_vars: &mut MaxVarSet) {
     }
 
     for param in params.iter() {
+        block.instrs.insert(
+            0,
+            Instr {
+                src: 0,
+                eff: Effect::Set(Expr::Var(param.clone()), call!("phi",)),
+            },
+        );
         rename_instrs(&mut block.instrs, &Var::new(param.reg.clone()), param);
     }
 
-    block.params = params.0.into_iter().map(|var| (var, vec![])).collect();
+    block.params = params;
 }
 
 fn link_blocks(blocks: &mut Blocks) {
@@ -91,7 +101,7 @@ fn link_vars(blocks: &mut Blocks, used_vars: &mut MaxVarSet) {
             block
                 .params
                 .iter()
-                .map(|(param, _)| (param.clone(), HashSet::new()))
+                .map(|param| (param.clone(), HashSet::new()))
                 .collect(),
         );
         let outs = out_vars(block);
@@ -101,7 +111,8 @@ fn link_vars(blocks: &mut Blocks, used_vars: &mut MaxVarSet) {
     let mut changed = true;
     while changed {
         changed = false;
-        for src in blocks.vec.iter() {
+        for src in blocks.vec.iter_mut() {
+            let mut new_vars = vec![];
             for link in src.links.iter() {
                 let [src_ins, dst_ins] = bins.get_disjoint_mut([src.id, link.id]).unwrap();
                 let src_outs = &mut bouts[src.id];
@@ -114,6 +125,7 @@ fn link_vars(blocks: &mut Blocks, used_vars: &mut MaxVarSet) {
                             // add X to src's inputs and outputs.
 
                             let new = used_vars.new_var(param);
+                            new_vars.push(new.clone());
                             src_ins.insert(new.clone(), HashSet::new());
                             src_outs.insert(new.clone());
                             changed = true;
@@ -126,14 +138,36 @@ fn link_vars(blocks: &mut Blocks, used_vars: &mut MaxVarSet) {
                     }
                 }
             }
+            for new_var in new_vars {
+                src.instrs.insert(
+                    0,
+                    Instr {
+                        src: 0,
+                        eff: Effect::Set(Expr::Var(new_var), call!("phi",)),
+                    },
+                );
+            }
         }
     }
 
     for (id, block) in blocks.vec.iter_mut().enumerate() {
-        block.params = bins[id]
-            .drain()
-            .map(|(param, mut values)| (param, values.drain().map(|val| Expr::Var(val)).collect()))
-            .collect();
+        for instr in block.instrs.iter_mut() {
+            match &mut instr.eff {
+                Effect::Set(Expr::Var(var), Expr::Call(call)) if call.op == "phi" => {
+                    let exprs = bins[id].get(var).unwrap();
+                    call.args = exprs
+                        .iter()
+                        .map(|val| Expr::Var(val.clone()))
+                        .collect::<Vec<_>>();
+                }
+                _ => break, // phis at top
+            }
+        }
+
+        // block.params = bins[id]
+        //     .drain()
+        //     .map(|(param, mut values)| (param, values.drain().map(|val| Expr::Var(val)).collect()))
+        //     .collect();
 
         //     let outs = &bouts[id];
         //     for link in block.links.iter_mut() {

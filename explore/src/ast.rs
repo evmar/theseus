@@ -211,7 +211,7 @@ pub struct Block {
     #[serde(serialize_with = "ser_iced")]
     #[ts(as = "Vec<String>")]
     pub iced: Vec<iced_x86::Instruction>,
-    pub params: Vec<(Var, Vec<Expr>)>,
+    pub params: MaxVarSet,
     pub links: Vec<Link>,
 }
 
