@@ -222,21 +222,21 @@ pub struct Blocks {
 }
 
 pub fn visit_expr(expr: &Expr, f: &mut impl FnMut(&Expr)) {
-    f(expr);
     if let Expr::Call(call) = expr {
         for arg in call.args.iter() {
             visit_expr(arg, f);
         }
     }
+    f(expr);
 }
 
 pub fn visit_expr_mut(expr: &mut Expr, f: &mut impl FnMut(&mut Expr)) {
-    f(expr);
     if let Expr::Call(call) = expr {
         for arg in call.args.iter_mut() {
             visit_expr_mut(arg, f);
         }
     }
+    f(expr);
 }
 
 pub fn visit_effect(effect: &Effect, f: &mut impl FnMut(&Expr)) {
