@@ -32,21 +32,19 @@ fn simplify_phi_expr(expr: &mut Expr) -> bool {
     false
 }
 
-fn simplify_phi(blocks: &mut Blocks) -> bool {
+fn simplify_phi(block: &mut Block) -> bool {
     let mut changed = false;
-    for block in blocks.vec.iter_mut() {
-        for instr in block.instrs.iter_mut() {
-            visit_effect_mut(&mut instr.eff, &mut |expr| {
-                if simplify_phi_expr(expr) {
-                    changed = true;
-                }
-            });
-        }
+    for instr in block.instrs.iter_mut() {
+        visit_effect_mut(&mut instr.eff, &mut |expr| {
+            if simplify_phi_expr(expr) {
+                changed = true;
+            }
+        });
     }
     changed
 }
 
-fn count_uses(blocks: &Blocks) -> HashMap<Var, usize> {
+fn count_uses(block: &Block) -> HashMap<Var, usize> {
     let mut used: HashMap<Var, usize> = Default::default();
     let mut mark_read = |var: &Var| {
         *used.entry(var.clone()).or_default() += 1;
@@ -55,10 +53,8 @@ fn count_uses(blocks: &Blocks) -> HashMap<Var, usize> {
         Expr::Var(var) => mark_read(var),
         _ => {}
     };
-    for block in blocks.vec.iter() {
-        for instr in block.instrs.iter() {
-            visit_effect(&instr.eff, visit);
-        }
+    for instr in block.instrs.iter() {
+        visit_effect(&instr.eff, visit);
     }
     log::info!(
         "used {}",
@@ -71,31 +67,26 @@ fn count_uses(blocks: &Blocks) -> HashMap<Var, usize> {
     used
 }
 
-fn remove_def(blocks: &mut Blocks, var: &Var) -> Option<Expr> {
-    for block in blocks.vec.iter_mut() {
-        let Some(set) = block
-            .instrs
-            .extract_if(.., |instr| {
-                if let Effect::Def(dst, _) = &instr.eff {
-                    dst == var
-                } else {
-                    false
-                }
-            })
-            .next()
-        else {
-            continue;
-        };
-        let Effect::Def(_, val) = set.eff else {
-            unreachable!();
-        };
-        return Some(val);
-    }
-    None
+fn remove_def(block: &mut Block, var: &Var) -> Option<Expr> {
+    let set = block
+        .instrs
+        .extract_if(.., |instr| {
+            if let Effect::Def(dst, _) = &instr.eff {
+                dst == var
+            } else {
+                false
+            }
+        })
+        .next()?;
+
+    let Effect::Def(_, val) = set.eff else {
+        unreachable!();
+    };
+    return Some(val);
 }
 
-fn inline_var(blocks: &mut Blocks, var: &Var) -> bool {
-    let Some(val) = remove_def(blocks, var) else {
+fn inline_var(block: &mut Block, var: &Var) -> bool {
+    let Some(val) = remove_def(block, var) else {
         return false;
     };
     log::info!("inlining {} = {}", var, val);
@@ -107,34 +98,37 @@ fn inline_var(blocks: &mut Blocks, var: &Var) -> bool {
             }
         }
     };
-    for block in blocks.vec.iter_mut() {
-        for instr in block.instrs.iter_mut() {
-            visit_effect_mut(&mut instr.eff, &mut do_inline);
-        }
+    for instr in block.instrs.iter_mut() {
+        visit_effect_mut(&mut instr.eff, &mut do_inline);
     }
     true
 }
 
-pub fn inline(blocks: &mut Blocks) {
-    // return;
+pub fn inline_block(block: &mut Block) {
     let mut changed = true;
     while changed {
         changed = false;
-        if simplify_phi(blocks) {
+        if simplify_phi(block) {
             changed = true;
         }
         log::info!("phi simp {:?}", changed);
 
-        let used = count_uses(blocks);
+        let used = count_uses(block);
         let used_once = used
             .iter()
             .filter(|&(_, &count)| count == 1)
             .map(|(var, _)| var)
             .collect::<Vec<_>>();
         for var in used_once {
-            if inline_var(blocks, var) {
+            if inline_var(block, var) {
                 changed = true;
             }
         }
+    }
+}
+
+pub fn inline(blocks: &mut Blocks) {
+    for block in blocks.vec.iter_mut() {
+        inline_block(block);
     }
 }
