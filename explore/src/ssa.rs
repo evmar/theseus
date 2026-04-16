@@ -39,8 +39,10 @@ fn ssa_block(block: &mut Block, used_vars: &mut MaxVarSet) {
                 visit_expr(body, &mut |expr| gather_params(used_vars, expr));
                 let new = used_vars.new_var(var);
                 rename_instrs(rest, &var, &new);
-                *eff = Effect::Set(Expr::Var(new), body.clone())
+                *eff = Effect::Def(new, body.clone())
             }
+            // shouldn't hit any defs, we are introducing them now
+            Effect::Def(_, _) => unreachable!(),
             _ => {
                 visit_effect(eff, &mut |expr| gather_params(used_vars, expr));
             }
@@ -52,7 +54,7 @@ fn ssa_block(block: &mut Block, used_vars: &mut MaxVarSet) {
             0,
             Instr {
                 src: 0,
-                eff: Effect::Set(Expr::Var(param.clone()), call!("phi",)),
+                eff: Effect::Def(param.clone(), call!("phi",)),
             },
         );
         rename_instrs(&mut block.instrs, &Var::new(param.reg.clone()), param);
@@ -143,7 +145,7 @@ fn link_vars(blocks: &mut Blocks, used_vars: &mut MaxVarSet) {
                     0,
                     Instr {
                         src: 0,
-                        eff: Effect::Set(Expr::Var(new_var), call!("phi",)),
+                        eff: Effect::Def(new_var, call!("phi",)),
                     },
                 );
             }
@@ -153,7 +155,7 @@ fn link_vars(blocks: &mut Blocks, used_vars: &mut MaxVarSet) {
     for (id, block) in blocks.vec.iter_mut().enumerate() {
         for instr in block.instrs.iter_mut() {
             match &mut instr.eff {
-                Effect::Set(Expr::Var(var), Expr::Call(call)) if call.op == "phi" => {
+                Effect::Def(var, Expr::Call(call)) if call.op == "phi" => {
                     let exprs = bins[id].get(var).unwrap();
                     call.args = exprs
                         .iter()

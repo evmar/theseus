@@ -155,6 +155,7 @@ impl Jmp {
 
 #[derive(Debug, serde::Serialize, ts_rs::TS)]
 pub enum Effect {
+    Def(Var, Expr),
     Set(Expr, Expr),
     Call(Box<Call>),
     Jmp(Box<Jmp>),
@@ -163,6 +164,7 @@ pub enum Effect {
 impl std::fmt::Display for Effect {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
+            Effect::Def(var, expr) => write!(f, "{var} := {expr}"),
             Effect::Set(x, y) => write!(f, "{x} = {y}"),
             Effect::Call(call) => write!(f, "{call}"),
             Effect::Jmp(jmp) => write!(
@@ -241,6 +243,9 @@ pub fn visit_expr_mut(expr: &mut Expr, f: &mut impl FnMut(&mut Expr)) {
 
 pub fn visit_effect(effect: &Effect, f: &mut impl FnMut(&Expr)) {
     match effect {
+        Effect::Def(_, y) => {
+            visit_expr(y, f);
+        }
         Effect::Set(x, y) => {
             visit_expr(x, f);
             visit_expr(y, f);
@@ -263,6 +268,9 @@ pub fn visit_effect(effect: &Effect, f: &mut impl FnMut(&Expr)) {
 
 pub fn visit_effect_mut(effect: &mut Effect, f: &mut impl FnMut(&mut Expr)) {
     match effect {
+        Effect::Def(_, y) => {
+            visit_expr_mut(y, f);
+        }
         Effect::Set(x, y) => {
             visit_expr_mut(x, f);
             visit_expr_mut(y, f);

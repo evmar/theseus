@@ -63,10 +63,7 @@ fn count_uses(blocks: &Blocks) -> HashMap<Var, usize> {
     for block in blocks.vec.iter() {
         log::info!("block {:x}", block.addr);
         for instr in block.instrs.iter() {
-            match &instr.eff {
-                Effect::Set(_, src) => visit_expr(src, visit),
-                eff => visit_effect(eff, visit),
-            }
+            visit_effect(&instr.eff, visit);
         }
         log::info!("block {:x}", block.addr,);
     }
@@ -81,12 +78,12 @@ fn count_uses(blocks: &Blocks) -> HashMap<Var, usize> {
     used
 }
 
-fn remove_set(blocks: &mut Blocks, var: &Var) -> Option<Expr> {
+fn remove_def(blocks: &mut Blocks, var: &Var) -> Option<Expr> {
     for block in blocks.vec.iter_mut() {
         let Some(set) = block
             .instrs
             .extract_if(.., |instr| {
-                if let Effect::Set(Expr::Var(dst), _) = &instr.eff {
+                if let Effect::Def(dst, _) = &instr.eff {
                     dst == var
                 } else {
                     false
@@ -96,7 +93,7 @@ fn remove_set(blocks: &mut Blocks, var: &Var) -> Option<Expr> {
         else {
             continue;
         };
-        let Effect::Set(_, val) = set.eff else {
+        let Effect::Def(_, val) = set.eff else {
             unreachable!();
         };
         return Some(val);
@@ -105,7 +102,7 @@ fn remove_set(blocks: &mut Blocks, var: &Var) -> Option<Expr> {
 }
 
 fn inline_var(blocks: &mut Blocks, var: &Var) -> bool {
-    let Some(val) = remove_set(blocks, var) else {
+    let Some(val) = remove_def(blocks, var) else {
         return false;
     };
     log::info!("inlining {} = {}", var, val);

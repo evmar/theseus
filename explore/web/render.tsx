@@ -75,7 +75,14 @@ function Expr(props: { expr: Expr }) {
 
 function Eff(props: { eff: Effect }) {
   const { eff } = props;
-  if ("Set" in eff) {
+  if ("Def" in eff) {
+    const [x, y] = eff.Def;
+    return (
+      <span>
+        <Var {...x} /> := <Expr expr={y} />
+      </span>
+    );
+  } else if ("Set" in eff) {
     const [x, y] = eff.Set;
     return (
       <span>
