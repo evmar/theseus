@@ -9,20 +9,18 @@ fn simplify_phi_expr(expr: &mut Expr) -> bool {
         return false;
     }
 
-    let vals = call
-        .args
-        .iter()
-        .filter_map(|arg| {
-            if let Expr::Var(var) = arg {
-                Some(var.clone())
-            } else {
-                None
-            }
-        })
-        .collect::<HashSet<_>>();
+    let mut vals = HashSet::new();
+    for arg in call.args.iter() {
+        if let Expr::Var(var) = arg {
+            vals.insert(var.clone());
+        } else {
+            return false;
+        }
+    }
 
     if vals.len() == 1 {
-        *expr = Expr::Var(vals.into_iter().next().unwrap());
+        let new = vals.into_iter().next().unwrap();
+        *expr = Expr::Var(new);
         return true;
     } else if vals.len() != call.args.len() {
         *expr = Expr::Call(Box::new(Call {
@@ -118,7 +116,7 @@ fn inline_var(blocks: &mut Blocks, var: &Var) -> bool {
 }
 
 pub fn inline(blocks: &mut Blocks) {
-    return;
+    // return;
     let mut changed = true;
     while changed {
         changed = false;

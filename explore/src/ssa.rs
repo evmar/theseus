@@ -181,17 +181,17 @@ fn link_vars(blocks: &mut Blocks, used_vars: &mut MaxVarSet) {
     }
 }
 
-/// Find the variables that are live at the end of the block, which will be potential parameters to the next blocks.
+/// Find the max versions of vars at the end of the block, which will be potential parameters to the next blocks.
 fn out_vars(block: &Block) -> MaxVarSet {
     let mut outs = MaxVarSet::default();
-    visit_block(block, &mut |expr| {
-        match expr {
-            Expr::Var(var) => {
+    for instr in block.instrs.iter() {
+        match &instr.eff {
+            Effect::Def(var, _) => {
                 outs.insert(var.clone());
             }
             _ => {}
         };
-    });
+    }
     outs
 }
 
