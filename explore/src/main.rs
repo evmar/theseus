@@ -6,6 +6,8 @@ mod ssa;
 use ssa::*;
 mod inline;
 use inline::*;
+mod union;
+use union::*;
 
 use std::collections::{HashMap, HashSet};
 
@@ -306,52 +308,6 @@ struct Args {
     json: bool,
 }
 
-#[derive(Default)]
-struct Union {
-    map: HashMap<Var, Var>,
-}
-
-impl Union {
-    fn insert(&mut self, v: &Var) {
-        if !self.map.contains_key(v) {
-            self.map.insert(v.clone(), v.clone());
-        }
-    }
-
-    fn join(&mut self, v1: &Var, v2: &Var) {
-        let v1 = self.find(v1);
-        let v2 = self.find(v2);
-        if v1 < v2 {
-            self.map.insert(v2.clone(), v1.clone());
-        } else if v1 > v2 {
-            self.map.insert(v1.clone(), v2.clone());
-        }
-    }
-
-    fn find<'a>(&'a self, v: &Var) -> &'a Var {
-        let mut v = v;
-        loop {
-            let next = self.map.get(v).unwrap();
-            if next == v {
-                return next;
-            }
-            v = next;
-        }
-    }
-
-    fn sets(&self) -> Vec<Vec<Var>> {
-        let mut sets: HashMap<&Var, HashSet<Var>> = HashMap::new();
-        for (v, u) in self.map.iter() {
-            let u = self.find(u);
-            log::info!("{} -> {}", v, u);
-            sets.entry(u).or_default().insert(v.clone());
-        }
-        sets.into_values()
-            .map(|set| set.into_iter().collect())
-            .collect()
-    }
-}
-
 // gather sets of all vars used together in phi
 fn union(blocks: &mut Blocks) {
     let mut unions = Union::default();
@@ -417,7 +373,7 @@ fn main() {
     simplify_branches(&mut blocks);
     ssa(&mut blocks);
     //inline(&mut blocks);
-    // union(&mut blocks);
+    union(&mut blocks);
 
     if args.json {
         std::fs::write("web/data.json", serde_json::to_string(&blocks).unwrap()).unwrap();
