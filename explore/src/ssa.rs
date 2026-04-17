@@ -134,33 +134,26 @@ fn link_vars(blocks: &mut Blocks, used_vars: &mut MaxVarSet) {
         }
     }
 
-    for (id, ins) in bins.iter().enumerate() {
-        for (var, values) in ins.iter() {
+    // insert phis for block inputs
+    for (block, ins) in blocks.vec.iter_mut().zip(bins.into_iter()) {
+        let mut ins = ins.into_iter().collect::<Vec<_>>();
+        ins.sort_by_key(|(var, _)| var.clone()); // stability
+        for (var, values) in ins.into_iter() {
             let mut values = values.into_iter().collect::<Vec<_>>();
-            if values.len() == 1 && false {
-                let val = values.pop().unwrap();
-                log::info!("renaming {} = {}", var, val);
-                for block in blocks.vec.iter_mut() {
-                    rename_instrs(&mut block.instrs, var, &val);
-                }
-            } else {
-                blocks.vec[id].instrs.insert(
-                    0,
-                    Instr {
-                        src: 0,
-                        eff: Effect::Def(
-                            var.clone(),
-                            Expr::Call(Box::new(Call {
-                                op: "phi".into(),
-                                args: values
-                                    .iter()
-                                    .map(|&v| Expr::Var(v.clone()))
-                                    .collect::<Vec<_>>(),
-                            })),
-                        ),
-                    },
-                );
-            }
+            values.sort(); // stability
+            block.instrs.insert(
+                0,
+                Instr {
+                    src: 0,
+                    eff: Effect::Def(
+                        var.clone(),
+                        Expr::Call(Box::new(Call {
+                            op: "phi".into(),
+                            args: values.into_iter().map(|v| Expr::Var(v)).collect::<Vec<_>>(),
+                        })),
+                    ),
+                },
+            );
         }
     }
 }
