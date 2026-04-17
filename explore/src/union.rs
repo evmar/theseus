@@ -1,4 +1,4 @@
-use std::collections::{HashMap, HashSet};
+use std::collections::HashMap;
 
 use crate::ast::Var;
 
@@ -36,14 +36,12 @@ impl Union {
     }
 
     pub fn sets(&self) -> Vec<Vec<Var>> {
-        let mut sets: HashMap<&Var, HashSet<Var>> = HashMap::new();
+        let mut sets: HashMap<&Var, Vec<Var>> = HashMap::new();
         for (v, u) in self.map.iter() {
             let u = self.find(u);
             log::info!("{} -> {}", v, u);
-            sets.entry(u).or_default().insert(v.clone());
+            sets.entry(u).or_default().push(v.clone());
         }
-        sets.into_values()
-            .map(|set| set.into_iter().collect())
-            .collect()
+        sets.into_values().collect()
     }
 }
