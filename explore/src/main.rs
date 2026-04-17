@@ -417,7 +417,7 @@ fn main() {
     simplify_branches(&mut blocks);
     ssa(&mut blocks);
     //inline(&mut blocks);
-    union(&mut blocks);
+    // union(&mut blocks);
 
     if args.json {
         std::fs::write("web/data.json", serde_json::to_string(&blocks).unwrap()).unwrap();

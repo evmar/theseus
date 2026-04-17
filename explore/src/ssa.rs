@@ -1,7 +1,5 @@
 use std::collections::{HashMap, HashSet};
 
-use crate::call;
-
 use super::ast::*;
 
 fn rename_instrs(instrs: &mut [Instr], from: &Var, to: &Var) {
@@ -50,13 +48,6 @@ fn ssa_block(block: &mut Block, used_vars: &mut MaxVarSet) {
     }
 
     for param in params.iter() {
-        block.instrs.insert(
-            0,
-            Instr {
-                src: 0,
-                eff: Effect::Def(param.clone(), call!("phi",)),
-            },
-        );
         rename_instrs(&mut block.instrs, &Var::new(param.reg.clone()), param);
     }
 
@@ -140,45 +131,37 @@ fn link_vars(blocks: &mut Blocks, used_vars: &mut MaxVarSet) {
                     }
                 }
             }
-            for new_var in new_vars {
-                src.instrs.insert(
+        }
+    }
+
+    for (id, ins) in bins.iter().enumerate() {
+        for (var, values) in ins.iter() {
+            let mut values = values.into_iter().collect::<Vec<_>>();
+            if values.len() == 1 && false {
+                let val = values.pop().unwrap();
+                log::info!("renaming {} = {}", var, val);
+                for block in blocks.vec.iter_mut() {
+                    rename_instrs(&mut block.instrs, var, &val);
+                }
+            } else {
+                blocks.vec[id].instrs.insert(
                     0,
                     Instr {
                         src: 0,
-                        eff: Effect::Def(new_var, call!("phi",)),
+                        eff: Effect::Def(
+                            var.clone(),
+                            Expr::Call(Box::new(Call {
+                                op: "phi".into(),
+                                args: values
+                                    .iter()
+                                    .map(|&v| Expr::Var(v.clone()))
+                                    .collect::<Vec<_>>(),
+                            })),
+                        ),
                     },
                 );
             }
         }
-    }
-
-    // update phis with computed incoming values
-    for (id, block) in blocks.vec.iter_mut().enumerate() {
-        for instr in block.instrs.iter_mut() {
-            match &mut instr.eff {
-                Effect::Def(var, Expr::Call(call)) if call.op == "phi" => {
-                    let exprs = bins[id].get(var).unwrap();
-                    call.args = exprs
-                        .iter()
-                        .map(|val| Expr::Var(val.clone()))
-                        .collect::<Vec<_>>();
-                }
-                _ => break, // phis at top
-            }
-        }
-
-        // block.params = bins[id]
-        //     .drain()
-        //     .map(|(param, mut values)| (param, values.drain().map(|val| Expr::Var(val)).collect()))
-        //     .collect();
-
-        //     let outs = &bouts[id];
-        //     for link in block.links.iter_mut() {
-        //         link.params = bins[link.id]
-        //             .iter()
-        //             .map(|p| (p.clone(), Expr::Var(outs.get(&p.reg).unwrap().clone())))
-        //             .collect();
-        //     }
     }
 }
 
