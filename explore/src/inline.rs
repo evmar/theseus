@@ -91,15 +91,14 @@ fn inline_var(block: &mut Block, var: &Var) -> bool {
     };
     log::info!("inlining {} = {}", var, val);
 
-    let mut do_inline = |expr: &mut Expr| {
-        if let Expr::Var(dst) = expr {
-            if dst == var {
-                *expr = val.clone();
-            }
-        }
-    };
     for instr in block.instrs.iter_mut() {
-        visit_effect_mut(&mut instr.eff, &mut do_inline);
+        visit_effect_mut(&mut instr.eff, &mut |expr: &mut Expr| {
+            if let Expr::Var(dst) = expr {
+                if dst == var {
+                    *expr = val.clone();
+                }
+            }
+        });
     }
     true
 }
