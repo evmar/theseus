@@ -110,7 +110,7 @@ pub mod IDirectDraw7 {
         _pUnkOuter: u32,
     ) -> DD {
         let mut ddraw = state().get_ddraw(this);
-        let desc = <DDSURFACEDESC2>::read_from_prefix(ctx.memory.slice_from(lpDDSurfaceDesc2))
+        let desc = <DDSURFACEDESC2>::read_from_prefix(&ctx.memory[lpDDSurfaceDesc2..])
             .unwrap()
             .0;
 
@@ -324,7 +324,7 @@ pub mod IDirectDraw7 {
             EvaluateMode: func_addr + 29,
         };
         vtable
-            .write_to_prefix(&mut ctx.memory.bytes[vtable_addr as usize..])
+            .write_to_prefix(&mut ctx.memory[vtable_addr..])
             .unwrap();
         vtable_addr
     }
@@ -455,9 +455,7 @@ pub mod IDirectDrawSurface7 {
     ) -> DD {
         let surfaces = state().surf.borrow_mut();
         let mut dst_surface = surfaces.get(&this).unwrap().borrow_mut();
-        let src_rect = <RECT>::ref_from_prefix(ctx.memory.slice_from(lpSrcRect))
-            .unwrap()
-            .0;
+        let src_rect = <RECT>::ref_from_prefix(&ctx.memory[lpSrcRect..]).unwrap().0;
         let src_surface = surfaces.get(&lpDDSrcSurface).unwrap().borrow();
 
         let Target::Texture(dst_texture) = &mut dst_surface.target else {
@@ -871,7 +869,7 @@ pub mod IDirectDrawSurface7 {
             GetLOD: func_addr + 48,
         };
         vtable
-            .write_to_prefix(&mut ctx.memory.bytes[vtable_addr as usize..])
+            .write_to_prefix(&mut ctx.memory[vtable_addr..])
             .unwrap();
         vtable_addr
     }

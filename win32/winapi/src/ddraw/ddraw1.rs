@@ -77,7 +77,7 @@ pub mod IDirectDraw {
         _pUnkOuter: u32,
     ) -> DD {
         let mut ddraw = state().get_ddraw(this);
-        let desc = <DDSURFACEDESC>::ref_from_prefix(ctx.memory.slice_from(desc))
+        let desc = <DDSURFACEDESC>::ref_from_prefix(&ctx.memory[desc..])
             .unwrap()
             .0;
         let desc2 = DDSURFACEDESC2::from_desc(&desc);
@@ -207,7 +207,7 @@ pub mod IDirectDraw {
             WaitForVerticalBlank: func_addr + 22,
         };
         vtable
-            .write_to_prefix(&mut ctx.memory.bytes[vtable_addr as usize..])
+            .write_to_prefix(&mut ctx.memory[vtable_addr..])
             .unwrap();
         vtable_addr
     }
@@ -432,8 +432,7 @@ pub mod IDirectDrawSurface {
             lpSurface: pixels,
             ..DDSURFACEDESC::default()
         };
-        desc.write_to_prefix(ctx.memory.slice_mut_from(lpDesc))
-            .unwrap();
+        desc.write_to_prefix(&mut ctx.memory[lpDesc..]).unwrap();
         DD::OK
     }
 
@@ -532,7 +531,7 @@ pub mod IDirectDrawSurface {
             UpdateOverlayZOrder: func_addr + 35,
         };
         vtable
-            .write_to_prefix(&mut ctx.memory.bytes[vtable_addr as usize..])
+            .write_to_prefix(&mut ctx.memory[vtable_addr..])
             .unwrap();
         vtable_addr
     }

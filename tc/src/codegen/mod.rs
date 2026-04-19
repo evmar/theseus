@@ -246,7 +246,7 @@ use winapi::*;
         if !zeroed {
             w.line(format!(
                 "let bytes = include_bytes!(\"../data/{addr:08x}.raw\").as_slice();
-let out = &mut ctx.memory.bytes[{addr:#x} as usize..][..bytes.len()];
+let out = &mut ctx.memory[{addr:#x}..][..bytes.len()];
 out.copy_from_slice(bytes);",
             ));
         }

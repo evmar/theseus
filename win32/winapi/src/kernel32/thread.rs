@@ -49,7 +49,7 @@ pub fn init_thread(ctx: &mut Context, mappings: &mut Mappings, peb_addr: u32) {
         None,
         std::mem::size_of::<TEB>() as u32,
     );
-    let buf = &mut ctx.memory.bytes[teb_addr as usize..][..std::mem::size_of::<TEB>()];
+    let buf = &mut ctx.memory[teb_addr..][..std::mem::size_of::<TEB>()];
     let teb = TEB::mut_from_bytes(buf).unwrap();
     teb.Peb = peb_addr;
     teb.Tib._Self = teb_addr;
@@ -65,19 +65,15 @@ pub fn init_thread(ctx: &mut Context, mappings: &mut Mappings, peb_addr: u32) {
 #[allow(unused)]
 pub fn teb<'a>(ctx: &'a mut Context) -> &'a TEB {
     let teb_addr = ctx.cpu.regs.fs_base;
-    let teb =
-        TEB::ref_from_bytes(&ctx.memory.bytes[teb_addr as usize..][..std::mem::size_of::<TEB>()])
-            .unwrap();
+    let teb = TEB::ref_from_bytes(&ctx.memory[teb_addr..][..std::mem::size_of::<TEB>()]).unwrap();
     teb
 }
 
 #[allow(unused)]
 pub fn teb_mut<'a>(ctx: &'a mut Context) -> &'a mut TEB {
     let teb_addr = ctx.cpu.regs.fs_base;
-    let teb = TEB::mut_from_bytes(
-        &mut ctx.memory.bytes[teb_addr as usize..][..std::mem::size_of::<TEB>()],
-    )
-    .unwrap();
+    let teb =
+        TEB::mut_from_bytes(&mut ctx.memory[teb_addr..][..std::mem::size_of::<TEB>()]).unwrap();
     teb
 }
 

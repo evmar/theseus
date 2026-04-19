@@ -10,23 +10,23 @@ fn init_mappings(ctx: &mut Context, mappings: &mut kernel32::Mappings) {
     mappings.alloc("imported functions".to_string(), Some(0x1000), 0x1000);
     mappings.alloc("exe header".to_string(), Some(0x400000), 0x1000);
     let bytes = include_bytes!("../data/00400000.raw").as_slice();
-    let out = &mut ctx.memory.bytes[0x400000 as usize..][..bytes.len()];
+    let out = &mut ctx.memory[0x400000..][..bytes.len()];
     out.copy_from_slice(bytes);
     mappings.alloc(".text".to_string(), Some(0x401000), 0x5000);
     let bytes = include_bytes!("../data/00401000.raw").as_slice();
-    let out = &mut ctx.memory.bytes[0x401000 as usize..][..bytes.len()];
+    let out = &mut ctx.memory[0x401000..][..bytes.len()];
     out.copy_from_slice(bytes);
     mappings.alloc(".rdata".to_string(), Some(0x406000), 0x1000);
     let bytes = include_bytes!("../data/00406000.raw").as_slice();
-    let out = &mut ctx.memory.bytes[0x406000 as usize..][..bytes.len()];
+    let out = &mut ctx.memory[0x406000..][..bytes.len()];
     out.copy_from_slice(bytes);
     mappings.alloc(".data".to_string(), Some(0x407000), 0x3000);
     let bytes = include_bytes!("../data/00407000.raw").as_slice();
-    let out = &mut ctx.memory.bytes[0x407000 as usize..][..bytes.len()];
+    let out = &mut ctx.memory[0x407000..][..bytes.len()];
     out.copy_from_slice(bytes);
     mappings.alloc(".rsrc".to_string(), Some(0x40a000), 0x67000);
     let bytes = include_bytes!("../data/0040a000.raw").as_slice();
-    let out = &mut ctx.memory.bytes[0x40a000 as usize..][..bytes.len()];
+    let out = &mut ctx.memory[0x40a000..][..bytes.len()];
     out.copy_from_slice(bytes);
 }
 pub fn x00401000(ctx: &mut Context) -> Cont {

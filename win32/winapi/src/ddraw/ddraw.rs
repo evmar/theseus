@@ -135,14 +135,14 @@ impl Surface {
         let size = self.width * self.height * 4;
         let pixels = kernel32::lock().process_heap.alloc(mem, size);
         // scribble on pixels so we can see it
-        mem.slice_mut(pixels..pixels + size).fill(0x8F);
+        mem[pixels..][..size as usize].fill(0x8F);
         self.pixels = Some(pixels);
         pixels
     }
 
     pub fn unlock(&mut self, mem: &mut Memory) {
         let pixels = self.pixels.unwrap();
-        let pixel_data = mem.slice(pixels..pixels + (self.width * self.height * 4));
+        let pixel_data = &mem[pixels..][..(self.width * self.height * 4) as usize];
         match &mut self.target {
             Target::Window(_) => unreachable!(),
             Target::Texture(texture) => {

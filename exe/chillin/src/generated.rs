@@ -11,25 +11,25 @@ fn init_mappings(ctx: &mut Context, mappings: &mut kernel32::Mappings) {
     mappings.alloc("imported functions".to_string(), Some(0x1000), 0x1000);
     mappings.alloc("exe header".to_string(), Some(0x400000), 0x1000);
     let bytes = include_bytes!("../data/00400000.raw").as_slice();
-    let out = &mut ctx.memory.bytes[0x400000 as usize..][..bytes.len()];
+    let out = &mut ctx.memory[0x400000 as usize..][..bytes.len()];
     out.copy_from_slice(bytes);
     mappings.alloc("AUTO".to_string(), Some(0x401000), 0xa000);
     let bytes = include_bytes!("../data/00401000.raw").as_slice();
-    let out = &mut ctx.memory.bytes[0x401000 as usize..][..bytes.len()];
+    let out = &mut ctx.memory[0x401000 as usize..][..bytes.len()];
     out.copy_from_slice(bytes);
     mappings.alloc(".idata".to_string(), Some(0x40b000), 0x1000);
     let bytes = include_bytes!("../data/0040b000.raw").as_slice();
-    let out = &mut ctx.memory.bytes[0x40b000 as usize..][..bytes.len()];
+    let out = &mut ctx.memory[0x40b000 as usize..][..bytes.len()];
     out.copy_from_slice(bytes);
     mappings.alloc("DGROUP".to_string(), Some(0x40c000), 0x27000);
     let bytes = include_bytes!("../data/0040c000.raw").as_slice();
-    let out = &mut ctx.memory.bytes[0x40c000 as usize..][..bytes.len()];
+    let out = &mut ctx.memory[0x40c000 as usize..][..bytes.len()];
     out.copy_from_slice(bytes);
     mappings.alloc(".bss".to_string(), Some(0x433000), 0x95000);
     mappings.alloc(".reloc".to_string(), Some(0x4c8000), 0x1000);
     mappings.alloc(".rsrc".to_string(), Some(0x4c9000), 0x1000);
     let bytes = include_bytes!("../data/004c9000.raw").as_slice();
-    let out = &mut ctx.memory.bytes[0x4c9000 as usize..][..bytes.len()];
+    let out = &mut ctx.memory[0x4c9000 as usize..][..bytes.len()];
     out.copy_from_slice(bytes);
 }
 pub fn x00401000(ctx: &mut Context) -> Cont {

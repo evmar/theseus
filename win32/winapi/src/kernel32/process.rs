@@ -79,8 +79,8 @@ fn align_to_4(x: usize) -> usize {
 pub fn init_process(ctx: &mut Context, state: &mut kernel32::Lock) {
     let process_data_addr = state.mappings.alloc("process data".into(), None, 0x1000);
 
-    let origin = ctx.memory.bytes.as_ptr() as usize;
-    let buf = &mut ctx.memory.bytes[process_data_addr as usize..][..0x1000];
+    let origin = ctx.memory.as_ptr() as usize;
+    let buf = &mut ctx.memory[process_data_addr..][..0x1000];
 
     let command_line = "TODO\0";
 
@@ -131,7 +131,7 @@ pub fn GetCurrentProcess(_ctx: &mut Context) -> HANDLE {
 #[allow(unused)]
 fn peb_mut<'a>(ctx: &'a mut Context) -> &'a mut PEB {
     let peb_addr = teb(ctx).Peb;
-    let (peb, _) = PEB::mut_from_prefix(&mut ctx.memory.bytes[peb_addr as usize..]).unwrap();
+    let (peb, _) = PEB::mut_from_prefix(&mut ctx.memory[peb_addr..]).unwrap();
     peb
 }
 

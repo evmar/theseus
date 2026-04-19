@@ -8,7 +8,7 @@ use zerocopy::{FromBytes, IntoBytes};
 ///
 /// To support this unsafe sharing we also leak the array.
 pub struct Memory {
-    pub bytes: &'static mut [u8],
+    bytes: &'static mut [u8],
 }
 
 impl Memory {
@@ -56,31 +56,67 @@ impl Memory {
         std::str::from_utf8(buf).unwrap()
     }
 
-    pub fn slice(&self, r: std::ops::Range<u32>) -> &[u8] {
-        if r.start < 0x1000 {
-            log::error!("null slice");
-        }
-        &self.bytes[r.start as usize..r.end as usize]
+    pub fn as_ptr(&self) -> *const u8 {
+        self.bytes.as_ptr()
     }
+}
 
-    pub fn slice_mut(&mut self, r: std::ops::Range<u32>) -> &mut [u8] {
-        if r.start < 0x1000 {
-            log::error!("null slice");
+impl std::ops::Index<u32> for Memory {
+    type Output = u8;
+
+    fn index(&self, index: u32) -> &Self::Output {
+        if index < 0x1000 {
+            log::error!("null index");
         }
-        &mut self.bytes[r.start as usize..r.end as usize]
+        &self.bytes[index as usize]
     }
+}
 
-    pub fn slice_from(&self, start: u32) -> &[u8] {
-        if start < 0x1000 {
-            log::error!("null slice");
+impl std::ops::IndexMut<u32> for Memory {
+    fn index_mut(&mut self, index: u32) -> &mut Self::Output {
+        if index < 0x1000 {
+            log::error!("null index");
         }
-        &self.bytes[start as usize..]
+        &mut self.bytes[index as usize]
     }
+}
 
-    pub fn slice_mut_from(&mut self, start: u32) -> &mut [u8] {
-        if start < 0x1000 {
-            log::error!("null slice");
+impl std::ops::Index<std::ops::RangeFrom<u32>> for Memory {
+    type Output = [u8];
+
+    fn index(&self, index: std::ops::RangeFrom<u32>) -> &Self::Output {
+        if index.start < 0x1000 {
+            log::error!("null index");
         }
-        &mut self.bytes[start as usize..]
+        &self.bytes[index.start as usize..]
+    }
+}
+
+impl std::ops::IndexMut<std::ops::RangeFrom<u32>> for Memory {
+    fn index_mut(&mut self, index: std::ops::RangeFrom<u32>) -> &mut Self::Output {
+        if index.start < 0x1000 {
+            log::error!("null index");
+        }
+        &mut self.bytes[index.start as usize..]
+    }
+}
+
+impl std::ops::Index<std::ops::Range<u32>> for Memory {
+    type Output = [u8];
+
+    fn index(&self, index: std::ops::Range<u32>) -> &Self::Output {
+        if index.start < 0x1000 {
+            log::error!("null index");
+        }
+        &self.bytes[index.start as usize..index.end as usize]
+    }
+}
+
+impl std::ops::IndexMut<std::ops::Range<u32>> for Memory {
+    fn index_mut(&mut self, index: std::ops::Range<u32>) -> &mut Self::Output {
+        if index.start < 0x1000 {
+            log::error!("null index");
+        }
+        &mut self.bytes[index.start as usize..index.end as usize]
     }
 }

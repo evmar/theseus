@@ -63,7 +63,7 @@ pub fn LoadImageA(
 
     let span = {
         let state = kernel32::lock();
-        let section = ctx.memory.slice(state.resources.clone());
+        let section = &ctx.memory[state.resources.clone()];
         let Some(span) = pe::find_resource(section, typ, name) else {
             log::warn!("LoadImage: resource not found");
             return HANDLE::null();
@@ -72,7 +72,7 @@ pub fn LoadImageA(
         image_base + span.start..image_base + span.end
     };
 
-    let buf = ctx.memory.slice(span);
+    let buf = &ctx.memory[span];
     let bitmap = gdi32::parse_bitmap(buf);
 
     let BitmapType::DDB(ddb) = &bitmap.typ else {

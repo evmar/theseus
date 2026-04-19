@@ -38,9 +38,8 @@ pub fn StretchBlt(
     let BitmapType::DIB(dib_dst) = &bmp_dst.typ else {
         todo!()
     };
-    let pixels_dst = ctx
-        .memory
-        .slice_mut(dib_dst.pixels..dib_dst.pixels + (dib_dst.width * dib_dst.height * 4));
+    let pixels_dst =
+        &mut ctx.memory[dib_dst.pixels..][..(dib_dst.width * dib_dst.height * 4) as usize];
 
     assert_eq!(wDest, wSrc);
     assert_eq!(hDest, hSrc);
