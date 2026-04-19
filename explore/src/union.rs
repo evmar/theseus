@@ -3,43 +3,43 @@ use std::collections::HashMap;
 use crate::ast::Var;
 
 #[derive(Default)]
-pub struct Union {
-    map: HashMap<Var, Var>,
+pub struct Union<'a> {
+    map: HashMap<&'a Var, &'a Var>,
 }
 
-impl Union {
-    pub fn insert(&mut self, v: &Var) {
+impl<'a> Union<'a> {
+    pub fn insert(&mut self, v: &'a Var) {
         if !self.map.contains_key(v) {
-            self.map.insert(v.clone(), v.clone());
+            self.map.insert(v, v);
         }
     }
 
-    pub fn join(&mut self, v1: &Var, v2: &Var) {
+    pub fn join(&mut self, v1: &'a Var, v2: &'a Var) {
         let v1 = self.find(v1);
         let v2 = self.find(v2);
         if v1 < v2 {
-            self.map.insert(v2.clone(), v1.clone());
+            self.map.insert(v2, v1);
         } else if v1 > v2 {
-            self.map.insert(v1.clone(), v2.clone());
+            self.map.insert(v1, v2);
         }
     }
 
-    pub fn find<'a>(&'a self, v: &Var) -> &'a Var {
+    pub fn find(&self, v: &'a Var) -> &'a Var {
         let mut v = v;
         loop {
             let next = self.map.get(v).unwrap();
-            if next == v {
+            if *next == v {
                 return next;
             }
             v = next;
         }
     }
 
-    pub fn sets(&self) -> Vec<Vec<Var>> {
-        let mut sets: HashMap<&Var, Vec<Var>> = HashMap::new();
+    pub fn sets(&self) -> Vec<Vec<&'a Var>> {
+        let mut sets: HashMap<&Var, Vec<&Var>> = HashMap::new();
         for (v, u) in self.map.iter() {
             let u = self.find(u);
-            sets.entry(u).or_default().push(v.clone());
+            sets.entry(u).or_default().push(v);
         }
         sets.into_values().collect()
     }

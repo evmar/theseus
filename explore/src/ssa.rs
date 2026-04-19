@@ -173,7 +173,7 @@ fn link_vars(blocks: &mut Blocks, used_vars: &mut MaxVarSet) {
             reg: "var".into(),
             ver,
         };
-        for var in set {
+        for &var in set.iter() {
             for block in blocks.vec.iter_mut() {
                 for instr in block.instrs.iter_mut() {
                     match &mut instr.eff {
