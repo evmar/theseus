@@ -1,5 +1,8 @@
 #!/bin/sh
 
+echo 'this has bitrotted'
+exit 1
+
 set -e
 
 # cargo run -p fc ~/win/rs/exe/winapi/winapi.exe exe/winapi
