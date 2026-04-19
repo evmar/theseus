@@ -141,17 +141,19 @@ fn link_vars(blocks: &mut Blocks, used_vars: &mut MaxVarSet) {
 
     // find equivalence classes
     // TODO: `mov eax,edx` => `eax := edx` is also an equiv class
-    let mut unionx = Union::default();
+    // for reasons unclear rust-analyzer is unable to infer the type of `union` here;
+    // I tried renaming the var and mod in case it was about the keyword but it still happened.
+    let mut union: Union = Union::default();
     for ins in bins.iter() {
         for (var, values) in ins.iter() {
-            unionx.insert(var);
+            union.insert(var);
             for value in values {
-                unionx.insert(value);
-                unionx.join(var, value);
+                union.insert(value);
+                union.join(var, value);
             }
         }
     }
-    let mut classes = unionx.sets();
+    let mut classes = union.sets();
     for set in classes.iter_mut() {
         set.sort();
         log::info!(
