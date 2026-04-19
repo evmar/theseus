@@ -44,13 +44,15 @@ pub fn run(exe: &EXEData) {
 
     crate::trace::init(&std::env::var("THESEUS_TRACE").unwrap_or_default());
 
-    let mut machine = Machine::default();
+    let mut machine: Machine = Machine::default();
     let m = &mut machine;
-    unsafe {
+    m.memory.bytes = unsafe {
+        // Allocate the memory using manual allocation so we can align it to a page boundary,
+        // just to make pointers easier to read.
         let size = 32 << 20;
         let mem = std::alloc::alloc(std::alloc::Layout::from_size_align(size, 0x1000).unwrap());
-        m.memory.bytes = std::slice::from_raw_parts_mut(mem, size);
-    }
+        std::slice::from_raw_parts_mut(mem, size)
+    };
     m.blocks = exe.blocks;
     kernel32::init_state(exe.image_base, exe.resources.clone());
 

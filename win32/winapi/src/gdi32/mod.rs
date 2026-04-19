@@ -21,6 +21,7 @@ pub struct State {
     pub objects: RefCell<Handles<Rc<Bitmap>>>,
 }
 
+// TODO: reuse locking pattern from kernel32
 struct StaticState(OnceCell<State>);
 unsafe impl Sync for StaticState {}
 

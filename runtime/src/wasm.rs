@@ -30,6 +30,8 @@ pub static HOST: WasmHost = WasmHost {};
 fn panic(info: &core::panic::PanicInfo) -> ! {
     let buf = format!("{}", info);
     HOST.panic(&buf);
+    // safety: we're already in the panic handler; if the host doesn't properly handle the panic
+    // it's not like panicking would do anything.
     unsafe {
         core::hint::unreachable_unchecked();
     }

@@ -216,20 +216,23 @@ pub fn RtlUnwind(
 }
 
 /// GetTickCount wants the ticks since the process started.
-/// To make this fast, we unsafely store the current instant during initialization.
+/// To make this a simple read, we unsafely store the current instant during initialization.
 /// Note that this is never mutated after process startup, so it is correctly Sync
 /// after that point.
 pub struct UnsafeTickCount(std::time::Instant);
 unsafe impl Sync for UnsafeTickCount {}
+
 impl UnsafeTickCount {
     pub const fn new_uninitialized() -> Self {
         unsafe { UnsafeTickCount(std::mem::MaybeUninit::zeroed().assume_init()) }
     }
+
     pub fn init() {
         unsafe {
             START_TICK_COUNT.0 = std::time::Instant::now();
         }
     }
+
     pub fn get() -> std::time::Instant {
         unsafe { START_TICK_COUNT.0 }
     }

@@ -39,6 +39,8 @@ pub fn init_state(image_base: u32, resources: std::ops::Range<u32>) {
     });
 }
 
+// We want to lock Mutex<Option<State>> and return a MutexGuard<State>,
+// but MutexGuard::map is not yet stable, so use this workaround for now.
 pub struct LockedState {
     _lock: MutexGuard<'static, Option<State>>,
     ptr: NonNull<State>,
@@ -48,12 +50,14 @@ impl std::ops::Deref for LockedState {
     type Target = State;
 
     fn deref(&self) -> &Self::Target {
+        // safety: _lock is holding the lock
         unsafe { self.ptr.as_ref() }
     }
 }
 
 impl std::ops::DerefMut for LockedState {
     fn deref_mut(&mut self) -> &mut Self::Target {
+        // safety: _lock is holding the lock
         unsafe { self.ptr.as_mut() }
     }
 }

@@ -193,6 +193,7 @@ impl State {
     }
 }
 
+// TODO: reuse locking pattern from kernel32
 struct StaticState(OnceCell<State>);
 unsafe impl Sync for StaticState {}
 
