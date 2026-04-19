@@ -1,4 +1,5 @@
-This crate is currently me playing around with decompilation, nothing to see yet.
+This crate is currently me playing around with decompilation, nothing to see
+yet.
 
 Some reference notes:
 
