@@ -39,7 +39,6 @@ impl Union {
         let mut sets: HashMap<&Var, Vec<Var>> = HashMap::new();
         for (v, u) in self.map.iter() {
             let u = self.find(u);
-            log::info!("{} -> {}", v, u);
             sets.entry(u).or_default().push(v.clone());
         }
         sets.into_values().collect()

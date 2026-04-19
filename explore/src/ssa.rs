@@ -1,5 +1,7 @@
 use std::collections::{HashMap, HashSet};
 
+use crate::union::Union;
+
 use super::ast::*;
 
 fn rename_instrs(instrs: &mut [Instr], from: &Var, to: &Var) {
@@ -134,27 +136,64 @@ fn link_vars(blocks: &mut Blocks, used_vars: &mut MaxVarSet) {
         }
     }
 
-    // insert phis for block inputs
-    for (block, ins) in blocks.vec.iter_mut().zip(bins.into_iter()) {
-        let mut ins = ins.into_iter().collect::<Vec<_>>();
-        ins.sort_by_key(|(var, _)| var.clone()); // stability
-        for (var, values) in ins.into_iter() {
-            let mut values = values.into_iter().collect::<Vec<_>>();
-            values.sort(); // stability
-            block.instrs.insert(
-                0,
-                Instr {
-                    src: 0,
-                    eff: Effect::Def(
-                        var.clone(),
-                        Expr::Call(Box::new(Call {
-                            op: "phi".into(),
-                            args: values.into_iter().map(|v| Expr::Var(v)).collect::<Vec<_>>(),
-                        })),
-                    ),
-                },
-            );
+    // bins is effectively phi nodes of block inputs, but rather than emitting phis
+    // we canonicalize to a single equivalence class here
+
+    // find equivalence classes
+    // TODO: `mov eax,edx` => `eax := edx` is also an equiv class
+    let mut unionx = Union::default();
+    for ins in bins.iter() {
+        for (var, values) in ins.iter() {
+            unionx.insert(var);
+            for value in values {
+                unionx.insert(value);
+                unionx.join(var, value);
+            }
         }
+    }
+    let mut classes = unionx.sets();
+    for set in classes.iter_mut() {
+        set.sort();
+        log::info!(
+            "equiv class: {}",
+            set.into_iter()
+                .map(|v| format!("{}", v))
+                .collect::<Vec<_>>()
+                .join(" ")
+        );
+    }
+
+    let mut ver = 1;
+    for set in classes.iter() {
+        if set.len() == 1 {
+            continue;
+        }
+
+        let new = Var {
+            reg: "var".into(),
+            ver,
+        };
+        for var in set {
+            for block in blocks.vec.iter_mut() {
+                for instr in block.instrs.iter_mut() {
+                    match &mut instr.eff {
+                        Effect::Def(dst, body) if dst == var => {
+                            instr.eff = Effect::Set(Expr::Var(new.clone()), body.clone());
+                        }
+                        _ => {}
+                    }
+
+                    visit_effect_mut(&mut instr.eff, &mut |expr: &mut Expr| {
+                        if let Expr::Var(dst) = expr {
+                            if dst == var {
+                                *expr = Expr::Var(new.clone());
+                            }
+                        }
+                    });
+                }
+            }
+        }
+        ver += 1;
     }
 }
 

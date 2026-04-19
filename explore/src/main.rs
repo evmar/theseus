@@ -7,9 +7,8 @@ use ssa::*;
 mod inline;
 use inline::*;
 mod union;
-use union::*;
 
-use std::collections::{HashMap, HashSet};
+use std::collections::HashSet;
 
 fn expr_from_iced(instr: iced_x86::Instruction, i: u32) -> Expr {
     use iced_x86::OpKind::*;
@@ -308,59 +307,6 @@ struct Args {
     json: bool,
 }
 
-// gather sets of all vars used together in phi
-fn union(blocks: &mut Blocks) {
-    let mut unions = Union::default();
-    let gather_phi = &mut |expr: &Expr, vars: &mut HashSet<Var>| {
-        let Expr::Call(call) = &expr else {
-            return;
-        };
-        if call.op != "phi" {
-            return;
-        }
-        for arg in call.args.iter() {
-            if let Expr::Var(var) = arg {
-                vars.insert(var.clone());
-            }
-        }
-    };
-    for block in blocks.vec.iter() {
-        for instr in block.instrs.iter() {
-            let mut vars = HashSet::new();
-            match &instr.eff {
-                Effect::Def(var, phi) => {
-                    vars.insert(var.clone());
-                    if let Expr::Var(v) = phi {
-                        vars.insert(v.clone());
-                    }
-                    gather_phi(phi, &mut vars);
-                }
-                _ => visit_effect(&instr.eff, &mut |expr| gather_phi(expr, &mut vars)),
-            }
-            let mut iter = vars.iter();
-            if let Some(v1) = iter.next() {
-                unions.insert(v1);
-                for v2 in iter {
-                    unions.insert(v2);
-                    log::info!("{}+{} from {}", v1, v2, instr.eff);
-                    unions.join(v1, v2);
-                }
-            }
-        }
-    }
-
-    for mut set in unions.sets() {
-        set.sort();
-        log::info!(
-            "union: {}",
-            set.iter()
-                .map(|v| format!("{v}"))
-                .collect::<Vec<_>>()
-                .join(" ")
-        );
-    }
-}
-
 fn main() {
     logger::init();
     let args: Args = argh::from_env();
@@ -372,8 +318,8 @@ fn main() {
 
     simplify_branches(&mut blocks);
     ssa(&mut blocks);
-    //inline(&mut blocks);
-    union(&mut blocks);
+    inline(&mut blocks);
+    // union(&mut blocks);
 
     if args.json {
         std::fs::write("web/data.json", serde_json::to_string(&blocks).unwrap()).unwrap();

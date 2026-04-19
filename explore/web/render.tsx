@@ -125,14 +125,7 @@ function Block(props: { blocks: Array<Block>; block: Block }) {
     <div class="block">
       <div class="block-content">
         <div>
-          <Addr addr={addr} /> (
-          {block.params.map((v, i) => (
-            <>
-              {i > 0 && " "}
-              <Var {...v} />
-            </>
-          ))}
-          )
+          <Addr addr={addr} />
           {block.instrs.map((instr) => (
             <Instr instr={instr} />
           ))}

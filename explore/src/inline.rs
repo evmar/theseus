@@ -1,48 +1,5 @@
 use super::ast::*;
-use std::collections::{HashMap, HashSet};
-
-fn simplify_phi_expr(expr: &mut Expr) -> bool {
-    let Expr::Call(call) = expr else {
-        return false;
-    };
-    if call.op != "phi" {
-        return false;
-    }
-
-    let mut vals = HashSet::new();
-    for arg in call.args.iter() {
-        if let Expr::Var(var) = arg {
-            vals.insert(var.clone());
-        } else {
-            return false;
-        }
-    }
-
-    if vals.len() == 1 {
-        let new = vals.into_iter().next().unwrap();
-        *expr = Expr::Var(new);
-        return true;
-    } else if vals.len() != call.args.len() {
-        *expr = Expr::Call(Box::new(Call {
-            op: "phi".to_string(),
-            args: vals.into_iter().map(|var| Expr::Var(var)).collect(),
-        }));
-        return true;
-    }
-    false
-}
-
-fn simplify_phi(block: &mut Block) -> bool {
-    let mut changed = false;
-    for instr in block.instrs.iter_mut() {
-        visit_effect_mut(&mut instr.eff, &mut |expr| {
-            if simplify_phi_expr(expr) {
-                changed = true;
-            }
-        });
-    }
-    changed
-}
+use std::collections::HashMap;
 
 fn count_uses(block: &Block) -> HashMap<Var, usize> {
     let mut used: HashMap<Var, usize> = Default::default();
@@ -85,12 +42,7 @@ fn remove_def(block: &mut Block, var: &Var) -> Option<Expr> {
     return Some(val);
 }
 
-fn inline_var(block: &mut Block, var: &Var) -> bool {
-    let Some(val) = remove_def(block, var) else {
-        return false;
-    };
-    log::info!("inlining {} = {}", var, val);
-
+fn replace_var(block: &mut Block, var: &Var, val: Expr) {
     for instr in block.instrs.iter_mut() {
         visit_effect_mut(&mut instr.eff, &mut |expr: &mut Expr| {
             if let Expr::Var(dst) = expr {
@@ -100,6 +52,14 @@ fn inline_var(block: &mut Block, var: &Var) -> bool {
             }
         });
     }
+}
+
+fn inline_var(block: &mut Block, var: &Var) -> bool {
+    let Some(val) = remove_def(block, var) else {
+        return false;
+    };
+    log::info!("inlining {} = {}", var, val);
+    replace_var(block, var, val);
     true
 }
 
@@ -107,10 +67,6 @@ pub fn inline_block(block: &mut Block) {
     let mut changed = true;
     while changed {
         changed = false;
-        // if simplify_phi(block) {
-        //     changed = true;
-        // }
-        log::info!("phi simp {:?}", changed);
 
         let used = count_uses(block);
         let used_once = used
