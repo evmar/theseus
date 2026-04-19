@@ -90,8 +90,7 @@ pub fn create_thread(
     let mut new_ctx = Context {
         cpu: runtime::CPU::default(),
         thread_id: lock.next_thread_id,
-        // TODO: feels like multi-threaded access to memory is inherently unsafe,
-        // but we also don't care if the emulated process stomps on its own memory.
+        // See docstring on Memory about the unsafety of sharing memory in this way.
         memory: ctx.memory.unsafe_clone(),
         blocks: ctx.blocks,
     };

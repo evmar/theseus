@@ -1,18 +1,28 @@
 use zerocopy::{FromBytes, IntoBytes};
 
+/// Memory represents the inner machine's memory, as a flat byte array (no paging etc.).
+///
+/// It is unsafely mutably shared across multiple threads.  In principle any mangling
+/// that multi-threaded access can do could just as well be done by single-threaded code,
+/// since it is fully under the control of the target executable.
+///
+/// To support this unsafe sharing we also leak the array.
 pub struct Memory {
-    // TODO: this could be a slice owned by Memory, except that
-    // we want to store a Machine in a static.
     pub bytes: &'static mut [u8],
 }
 
-impl Default for Memory {
-    fn default() -> Self {
-        Memory { bytes: &mut [] }
-    }
-}
-
 impl Memory {
+    pub fn alloc(size: usize) -> Self {
+        let bytes = unsafe {
+            // Allocate the memory using manual allocation so we can align it to a page boundary,
+            // just to make pointers easier to read.
+            let align = 0x1000;
+            let mem = std::alloc::alloc(std::alloc::Layout::from_size_align(size, align).unwrap());
+            std::slice::from_raw_parts_mut(mem, size)
+        };
+        Memory { bytes }
+    }
+
     pub fn unsafe_clone(&mut self) -> Memory {
         Memory {
             bytes: unsafe {
