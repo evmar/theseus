@@ -24,6 +24,7 @@ pub fn indirect(ctx: &mut Context, addr: u32) -> Cont {
     if addr == 0 {
         panic!("jmp to null ptr");
     }
+    // TODO: this would be faster as a hash table, or even a perfect hash if we really cared.
     let index = ctx
         .blocks
         .binary_search_by_key(&addr, |(addr, _)| *addr)
