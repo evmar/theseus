@@ -1,13 +1,13 @@
-import dataRaw from "./data.json" with { type: "json" };
 import * as preact from "preact";
 import * as hooks from "preact/hooks";
+import dataRaw from "./data.json" with { type: "json" };
 
-import type { Blocks } from "../bindings/Blocks.js";
 import type { Block } from "../bindings/Block.js";
-import type { Instr } from "../bindings/Instr.js";
+import type { Blocks } from "../bindings/Blocks.js";
+import type { Call } from "../bindings/Call.js";
 import type { Effect } from "../bindings/Effect.js";
 import type { Expr } from "../bindings/Expr.js";
-import type { Call } from "../bindings/Call.js";
+import type { Instr } from "../bindings/Instr.js";
 import type { Var } from "../bindings/Var.js";
 
 const data: Blocks = dataRaw as any;
@@ -95,8 +95,7 @@ function Eff(props: { eff: Effect }) {
     const { cond, dsts } = eff.Jmp;
     return (
       <span>
-        {<Call {...cond} />}{" "}
-        {dsts.map((e) => (
+        {<Call {...cond} />} {dsts.map((e) => (
           <>
             {" "}
             <Expr expr={e} />
@@ -126,9 +125,7 @@ function Block(props: { blocks: Array<Block>; block: Block }) {
       <div class="block-content">
         <div>
           <Addr addr={addr} />
-          {block.instrs.map((instr) => (
-            <Instr instr={instr} />
-          ))}
+          {block.instrs.map((instr) => <Instr instr={instr} />)}
           {block.links.map((l) => (
             <div>
               &rarr; <Addr addr={blocks[l.id].addr} />
@@ -136,9 +133,7 @@ function Block(props: { blocks: Array<Block>; block: Block }) {
           ))}
         </div>
         <div>
-          {block.iced.map((i) => (
-            <div>{i}</div>
-          ))}
+          {block.iced.map((i) => <div>{i}</div>)}
         </div>
       </div>
     </div>

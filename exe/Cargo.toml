@@ -1,11 +1,11 @@
 [workspace]
 resolver = "2"
 members = [
-    "basicdd",
-    "chillin",
-    "thread",
-    "winapi",
-    "zig_hello",
+  "basicdd",
+  "chillin",
+  "thread",
+  "winapi",
+  "zig_hello",
 ]
 
 [workspace.dependencies]

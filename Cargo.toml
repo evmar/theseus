@@ -1,26 +1,26 @@
 [workspace]
 resolver = "2"
 members = [
-    "explore",
-    "tc",
-    "runtime",
-    "win32/derive",
-    "win32/winapi",
-    "logger",
+  "explore",
+  "logger",
+  "runtime",
+  "tc",
+  "win32/derive",
+  "win32/winapi",
 ]
 
 [workspace.dependencies]
 argh = { version = "0.1.19", default-features = false, features = ["help"] }
 bitflags = "2.11.0"
 bitflags-derive = "0.0.4"
+iced-x86 = "1.21.0"
+log = "0.4.29"
+logger = { path = "logger" }
 pe = { path = "win32/pe" }
 runtime = { path = "runtime" }
-logger = { path = "logger" }
+widestring = "1.2.1"
 winapi = { path = "win32/winapi" }
 zerocopy = { version = "0.8.40", features = ["derive"] }
-log = "0.4.29"
-widestring = "1.2.1"
-iced-x86 = "1.21.0"
 
 [profile.release]
 debug = true

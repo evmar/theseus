@@ -7,8 +7,8 @@ edition = "2024"
 anyhow = "1.0.102"
 argh = { workspace = true }
 iced-x86 = { workspace = true }
+log = { workspace = true }
+logger = { workspace = true }
 pe = { workspace = true }
 winapi = { workspace = true }
 zerocopy = { workspace = true }
-log = { workspace = true }
-logger = { workspace = true }

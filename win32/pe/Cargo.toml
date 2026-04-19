@@ -8,9 +8,9 @@ log = { workspace = true }
 
 anyhow = "1.0"
 bitflags = { workspace = true }
-zerocopy = { workspace = true }
 serde = { version = "1.0", optional = true, features = ["derive"] }
 widestring = { workspace = true }
+zerocopy = { workspace = true }
 
 [features]
 serde = ["dep:serde", "bitflags/serde"]

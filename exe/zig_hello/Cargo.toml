@@ -10,5 +10,5 @@ edition = "2024"
 wasm = ["runtime/wasm"]
 
 [dependencies]
-winapi = { workspace = true }
 runtime = { workspace = true }
+winapi = { workspace = true }

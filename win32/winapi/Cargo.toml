@@ -6,9 +6,9 @@ edition = "2024"
 [dependencies]
 bitflags = { workspace = true }
 bitflags-derive = { workspace = true }
-runtime = { workspace = true }
-zerocopy = { workspace = true }
-win32-derive = { path = "../derive" }
 log = { workspace = true }
 pe = { workspace = true }
-sdl3 = { version = "0.17.3", features = [ "unsafe_textures" ] }
+runtime = { workspace = true }
+sdl3 = { version = "0.17.3", features = ["unsafe_textures"] }
+win32-derive = { path = "../derive" }
+zerocopy = { workspace = true }
