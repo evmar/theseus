@@ -9,6 +9,7 @@ mod string;
 use crate::{
     Block, State,
     memory::{AddrAbs, AddrImage},
+    write_if_changed,
 };
 
 fn reg_name(r: iced_x86::Register) -> String {
@@ -294,7 +295,7 @@ out.copy_from_slice(bytes);",
     std::fs::create_dir_all(format!("{outdir}/src"))?;
     let path = format!("{outdir}/src/generated.rs");
     let text = rustfmt(&w.buf)?;
-    std::fs::write(&path, text).map_err(|err| anyhow!("write {path}: {err}"))?;
+    write_if_changed(&path, text.as_bytes()).map_err(|err| anyhow!("write {path}: {err}"))?;
     Ok(())
 }
 

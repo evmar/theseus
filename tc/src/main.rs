@@ -305,6 +305,14 @@ struct Args {
     externs: Vec<u32>,
 }
 
+pub fn write_if_changed(path: &str, contents: &[u8]) -> Result<()> {
+    let existing = std::fs::read(&path).unwrap_or_default();
+    if existing != contents {
+        std::fs::write(path, contents)?;
+    }
+    Ok(())
+}
+
 fn run() -> Result<()> {
     logger::init();
     let args: Args = argh::from_env();
@@ -342,7 +350,7 @@ fn run() -> Result<()> {
         if buf.iter().all(|&b| b == 0) {
             continue;
         }
-        std::fs::write(format!("{outdir}/data/{:08x}.raw", map.addr), buf)?;
+        write_if_changed(&format!("{outdir}/data/{:08x}.raw", map.addr), buf)?;
     }
     Ok(())
 }
