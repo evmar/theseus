@@ -8,6 +8,8 @@ Theseus is:
 Together, Theseus takes in a `.exe` file and turns it into a native binary that
 doesn't depend on x86 or Windows.
 
+[I wrote a longer blog post motivating the project](https://neugierig.org/software/blog/2026/04/theseus.html).
+
 Theseus is very experimental and probably won't work on a program you try.
 
 ## Project layout
