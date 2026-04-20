@@ -6,6 +6,7 @@ use crate::heap::Heap;
 use crate::kernel32;
 use crate::locked_state::LockedState;
 use crate::stub;
+use crate::user32;
 use runtime::Context;
 use zerocopy::FromBytes;
 use zerocopy::IntoBytes;
@@ -19,18 +20,31 @@ const DSERR_NODRIVER: u32 = make_dhsresult(120);
 
 const DS_OK: u32 = 0;
 
+struct AudioStream(sdl3::audio::AudioStreamOwner);
+unsafe impl Send for AudioStream {}
+
 struct Buffer {
     addr: u32,
     size: u32,
+    stream: AudioStream,
     lock: Option<BufferLock>,
 }
 struct BufferLock {
     // TODO: track locked portion, match in unlock
 }
 
-#[derive(Default)]
+// We need a sdl3::AudioSubsystem to make audio calls.
+// The underlying SDL3 audio APIs are thread-safe and don't depend on any audio system pointer.
+// But sdl3::AudioSubsystem is not send because it must be shut down on the main thread.
+// So we hackily init it on the main thread (currently in user32), then init it a second time here
+// (getting refcount=2) so this ref will never be shut down.
+// TODO: we should move all of this kind of management to a Host abstraction.
+struct SDLHack(sdl3::AudioSubsystem);
+unsafe impl Send for SDLHack {}
+
 struct State {
     buffers: HashMap<u32, Buffer>,
+    audio: SDLHack,
 }
 static STATE: Mutex<Option<State>> = Mutex::new(None);
 type Lock = LockedState<State>;
@@ -41,7 +55,10 @@ fn lock() -> Lock {
 fn init() {
     let mut state = STATE.lock().unwrap();
     if state.is_none() {
-        *state = Some(State::default());
+        *state = Some(State {
+            buffers: HashMap::default(),
+            audio: SDLHack(user32::state().sdl.audio().unwrap()),
+        });
     }
 }
 
@@ -120,14 +137,32 @@ pub mod IDirectSound {
                 .unwrap()
                 .0;
             log::info!("new buffer fmt {:#x?}", fmt);
+
+            let mut lock = lock();
+            let stream = lock
+                .audio
+                .0
+                .default_playback_device()
+                .open_device_stream(Some(&sdl3::audio::AudioSpec {
+                    freq: Some(fmt.nSamplesPerSec as i32),
+                    channels: Some(fmt.nChannels as i32),
+                    format: Some(match fmt.wBitsPerSample {
+                        16 => sdl3::audio::AudioFormat::S16LE,
+                        _ => todo!(),
+                    }),
+                }))
+                .unwrap();
+
             let buffer = Buffer {
                 addr: kernel32
                     .process_heap
                     .alloc(&mut ctx.memory, desc.dwBufferBytes),
                 size: desc.dwBufferBytes,
+                stream: AudioStream(stream),
                 lock: None,
             };
-            lock().buffers.insert(addr, buffer);
+
+            lock.buffers.insert(addr, buffer);
         }
 
         ctx.memory.write(lplpDirectSoundBuffer, addr);
@@ -250,11 +285,17 @@ pub mod IDirectSoundBuffer {
 
     #[win32_derive::dllexport]
     pub fn GetCurrentPosition(
-        _ctx: &mut Context,
+        ctx: &mut Context,
         _this: u32,
-        _pdwCurrentPlayCursor: u32,
-        _pdwCurrentWriteCursor: u32,
+        pdwCurrentPlayCursor: u32,
+        pdwCurrentWriteCursor: u32,
     ) -> u32 {
+        if pdwCurrentPlayCursor != 0 {
+            ctx.memory.write(pdwCurrentPlayCursor, 0);
+        }
+        if pdwCurrentWriteCursor != 0 {
+            ctx.memory.write(pdwCurrentWriteCursor, 0);
+        }
         stub!(DS_OK)
     }
 
@@ -300,16 +341,19 @@ pub mod IDirectSoundBuffer {
         pdwAudioBytes2: u32,
         dwFlags: DSBLOCK,
     ) -> u32 {
-        assert_eq!(dwOffset, 0);
-        assert_eq!(dwBytes, 0);
-        assert!(dwFlags.contains(DSBLOCK::ENTIREBUFFER));
-
         let mut lock = lock();
         let buffer = lock.buffers.get_mut(&this).unwrap();
         assert!(buffer.lock.is_none());
 
+        let len = if dwFlags.contains(DSBLOCK::ENTIREBUFFER) {
+            assert_eq!(dwOffset, 0);
+            assert_eq!(dwBytes, 0);
+            buffer.size
+        } else {
+            dwBytes
+        };
         ctx.memory.write(ppvAudioPtr1, buffer.addr);
-        ctx.memory.write(pdwAudioBytes1, buffer.size);
+        ctx.memory.write(pdwAudioBytes1, len);
         if ppvAudioPtr2 != 0 {
             ctx.memory.write(ppvAudioPtr2, 0);
             ctx.memory.write(pdwAudioBytes2, 0);
@@ -322,12 +366,15 @@ pub mod IDirectSoundBuffer {
     #[win32_derive::dllexport]
     pub fn Play(
         _ctx: &mut Context,
-        _this: u32,
+        this: u32,
         _dwReserved1: u32,
         _dwPriority: u32,
         _dwFlags: u32,
     ) -> u32 {
-        stub!(DS_OK)
+        let mut lock = lock();
+        let buffer = lock.buffers.get_mut(&this).unwrap();
+        buffer.stream.0.resume().unwrap();
+        DS_OK
     }
 
     #[win32_derive::dllexport]
@@ -366,13 +413,22 @@ pub mod IDirectSoundBuffer {
 
     #[win32_derive::dllexport]
     pub fn Unlock(
-        _ctx: &mut Context,
-        _this: u32,
+        ctx: &mut Context,
+        this: u32,
         _pvAudioPtr1: u32,
         _dwAudioBytes1: u32,
         _pvAudioPtr2: u32,
         _dwAudioBytes2: u32,
     ) -> u32 {
+        let mut lock = lock();
+        let buffer = lock.buffers.get_mut(&this).unwrap();
+        assert!(buffer.lock.is_some());
+        buffer.lock = None;
+
+        let data = &ctx.memory[buffer.addr..][..buffer.size as usize];
+        log::info!("writing data {:x?}", &data[..100]);
+        buffer.stream.0.put_data(data).unwrap();
+
         stub!(DS_OK)
     }
 
