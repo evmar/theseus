@@ -242,13 +242,29 @@ pub mod IDirectSoundBuffer {
     }
 
     #[win32_derive::dllexport]
-    pub fn Lock(_ctx: &mut Context, _this: u32) -> u32 {
-        todo!()
+    pub fn Lock(
+        _ctx: &mut Context,
+        _this: u32,
+        _dwOffset: u32,
+        _dwBytes: u32,
+        _ppvAudioPtr1: u32,
+        _pdwAudioBytes1: u32,
+        _ppvAudioPtr2: u32,
+        _pdwAudioBytes2: u32,
+        _dwFlags: u32,
+    ) -> u32 {
+        stub!(DS_OK)
     }
 
     #[win32_derive::dllexport]
-    pub fn Play(_ctx: &mut Context, _this: u32) -> u32 {
-        todo!()
+    pub fn Play(
+        _ctx: &mut Context,
+        _this: u32,
+        _dwReserved1: u32,
+        _dwPriority: u32,
+        _dwFlags: u32,
+    ) -> u32 {
+        stub!(DS_OK)
     }
 
     #[win32_derive::dllexport]
@@ -257,8 +273,12 @@ pub mod IDirectSoundBuffer {
     }
 
     #[win32_derive::dllexport]
-    pub fn SetFormat(_ctx: &mut Context, _this: u32) -> u32 {
-        todo!()
+    pub fn SetFormat(ctx: &mut Context, _this: u32, pcfxFormat: u32) -> u32 {
+        let fmt = <WAVEFORMATEX>::read_from_prefix(&ctx.memory[pcfxFormat..])
+            .unwrap()
+            .0;
+        log::warn!("fmt {:#x?}", fmt);
+        stub!(DS_OK)
     }
 
     #[win32_derive::dllexport]
@@ -282,8 +302,15 @@ pub mod IDirectSoundBuffer {
     }
 
     #[win32_derive::dllexport]
-    pub fn Unlock(_ctx: &mut Context, _this: u32) -> u32 {
-        todo!()
+    pub fn Unlock(
+        _ctx: &mut Context,
+        _this: u32,
+        _pvAudioPtr1: u32,
+        _dwAudioBytes1: u32,
+        _pvAudioPtr2: u32,
+        _dwAudioBytes2: u32,
+    ) -> u32 {
+        stub!(DS_OK)
     }
 
     #[win32_derive::dllexport]

@@ -4,6 +4,7 @@ use zerocopy::FromBytes as _;
 use crate::{
     HANDLE,
     kernel32::{self, Mappings, lock},
+    stub,
 };
 
 #[repr(C)]
@@ -148,5 +149,5 @@ pub fn SetThreadPriority(
     _hThread: HANDLE,
     _nPriority: u32, /* THREAD_PRIORITY */
 ) -> bool {
-    todo!()
+    stub!(true)
 }
