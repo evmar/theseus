@@ -49464,7 +49464,7 @@ pub fn x0040a56e(ctx: &mut Context) -> Cont {
     Cont(ddraw::DirectDrawCreate_stdcall)
 }
 
-const BLOCKS: [(u32, fn(&mut Context) -> Cont); 1750] = [
+const BLOCKS: [(u32, fn(&mut Context) -> Cont); 1761] = [
     (0x001000, winmm::timeKillEvent_stdcall),
     (0x001001, winmm::timeSetEvent_stdcall),
     (0x001002, user32::CheckDlgButton_stdcall),
@@ -49703,6 +49703,17 @@ const BLOCKS: [(u32, fn(&mut Context) -> Cont); 1750] = [
     (0x0010a3, ddraw::IDirectDrawSurface7::GetPriority_stdcall),
     (0x0010a4, ddraw::IDirectDrawSurface7::SetLOD_stdcall),
     (0x0010a5, ddraw::IDirectDrawSurface7::GetLOD_stdcall),
+    (0x0010a6, dsound::IDirectSound::QueryInterface_stdcall),
+    (0x0010a7, dsound::IDirectSound::AddRef_stdcall),
+    (0x0010a8, dsound::IDirectSound::Release_stdcall),
+    (0x0010a9, dsound::IDirectSound::CreateSoundBuffer_stdcall),
+    (0x0010aa, dsound::IDirectSound::GetCaps_stdcall),
+    (0x0010ab, dsound::IDirectSound::DuplicateSoundBuffer_stdcall),
+    (0x0010ac, dsound::IDirectSound::SetCooperativeLevel_stdcall),
+    (0x0010ad, dsound::IDirectSound::Compact_stdcall),
+    (0x0010ae, dsound::IDirectSound::GetSpeakerConfig_stdcall),
+    (0x0010af, dsound::IDirectSound::SetSpeakerConfig_stdcall),
+    (0x0010b0, dsound::IDirectSound::Initialize_stdcall),
     (0x401000, x00401000),
     (0x401015, x00401015),
     (0x401017, x00401017),

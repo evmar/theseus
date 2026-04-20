@@ -120,13 +120,18 @@ impl State {
             );
         }
 
-        if imports.iter().find(|i| i.dll == "ddraw").is_some() {
-            for func in winapi::ddraw::EXPORTS {
-                self.blocks.insert(
-                    import_func_addr,
-                    Block::Stdcall(format!("ddraw::{}", func.to_string())),
-                );
-                import_func_addr += 1;
+        for (lib, exports) in [
+            ("ddraw", winapi::ddraw::EXPORTS.as_slice()),
+            ("dsound", winapi::dsound::EXPORTS.as_slice()),
+        ] {
+            if imports.iter().find(|i| i.dll == lib).is_some() {
+                for func in exports {
+                    self.blocks.insert(
+                        import_func_addr,
+                        Block::Stdcall(format!("{lib}::{}", func.to_string())),
+                    );
+                    import_func_addr += 1;
+                }
             }
         }
     }
