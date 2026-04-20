@@ -1,6 +1,10 @@
+use std::collections::HashMap;
+use std::sync::Mutex;
+
 use crate::dllexport::win32flags;
 use crate::heap::Heap;
 use crate::kernel32;
+use crate::locked_state::LockedState;
 use crate::stub;
 use runtime::Context;
 use zerocopy::FromBytes;
@@ -15,10 +19,38 @@ const DSERR_NODRIVER: u32 = make_dhsresult(120);
 
 const DS_OK: u32 = 0;
 
+struct Buffer {
+    addr: u32,
+    size: u32,
+    lock: Option<BufferLock>,
+}
+struct BufferLock {
+    // TODO: track locked portion, match in unlock
+}
+
+#[derive(Default)]
+struct State {
+    buffers: HashMap<u32, Buffer>,
+}
+static STATE: Mutex<Option<State>> = Mutex::new(None);
+type Lock = LockedState<State>;
+fn lock() -> Lock {
+    LockedState::from(&STATE)
+}
+
+fn init() {
+    let mut state = STATE.lock().unwrap();
+    if state.is_none() {
+        *state = Some(State::default());
+    }
+}
+
 #[win32_derive::dllexport]
 pub fn DirectSoundCreate(ctx: &mut Context, lpGuid: u32, ppDS: u32, pUnkOuter: u32) -> u32 {
     assert_eq!(lpGuid, 0);
     assert_eq!(pUnkOuter, 0);
+
+    init();
 
     let mut kernel32 = kernel32::lock();
     let addr = IDirectSound::new(ctx, &mut kernel32.process_heap);
@@ -77,17 +109,27 @@ pub mod IDirectSound {
         let desc = <DSBUFFERDESC>::read_from_prefix(&ctx.memory[lpcDSBufferDesc..])
             .unwrap()
             .0;
-        log::warn!("desc {:#x?}", desc);
+        assert_eq!(desc.dwSize, std::mem::size_of::<DSBUFFERDESC>() as u32);
+        log::info!("new buffer flags {:#x?}", desc.dwFlags);
+
+        let mut kernel32 = kernel32::lock();
+        let addr = IDirectSoundBuffer::new(ctx, &mut kernel32.process_heap);
 
         if !desc.dwFlags.contains(DSBCAPS::PRIMARYBUFFER) {
             let fmt = <WAVEFORMATEX>::read_from_prefix(&ctx.memory[desc.lpwfxFormat..])
                 .unwrap()
                 .0;
-            log::warn!("fmt {:#x?}", fmt);
+            log::info!("new buffer fmt {:#x?}", fmt);
+            let buffer = Buffer {
+                addr: kernel32
+                    .process_heap
+                    .alloc(&mut ctx.memory, desc.dwBufferBytes),
+                size: desc.dwBufferBytes,
+                lock: None,
+            };
+            lock().buffers.insert(addr, buffer);
         }
 
-        let mut kernel32 = kernel32::lock();
-        let addr = IDirectSoundBuffer::new(ctx, &mut kernel32.process_heap);
         ctx.memory.write(lplpDirectSoundBuffer, addr);
         DS_OK
     }
@@ -243,17 +285,33 @@ pub mod IDirectSoundBuffer {
 
     #[win32_derive::dllexport]
     pub fn Lock(
-        _ctx: &mut Context,
-        _this: u32,
-        _dwOffset: u32,
-        _dwBytes: u32,
-        _ppvAudioPtr1: u32,
-        _pdwAudioBytes1: u32,
-        _ppvAudioPtr2: u32,
-        _pdwAudioBytes2: u32,
-        _dwFlags: u32,
+        ctx: &mut Context,
+        this: u32,
+        dwOffset: u32,
+        dwBytes: u32,
+        ppvAudioPtr1: u32,
+        pdwAudioBytes1: u32,
+        ppvAudioPtr2: u32,
+        pdwAudioBytes2: u32,
+        dwFlags: DSBLOCK,
     ) -> u32 {
-        stub!(DS_OK)
+        assert_eq!(dwOffset, 0);
+        assert_eq!(dwBytes, 0);
+        assert!(dwFlags.contains(DSBLOCK::ENTIREBUFFER));
+
+        let mut lock = lock();
+        let buffer = lock.buffers.get_mut(&this).unwrap();
+        assert!(buffer.lock.is_none());
+
+        ctx.memory.write(ppvAudioPtr1, buffer.addr);
+        ctx.memory.write(pdwAudioBytes1, buffer.size);
+        if ppvAudioPtr2 != 0 {
+            ctx.memory.write(ppvAudioPtr2, 0);
+            ctx.memory.write(pdwAudioBytes2, 0);
+        }
+
+        buffer.lock = Some(BufferLock {});
+        DS_OK
     }
 
     #[win32_derive::dllexport]
