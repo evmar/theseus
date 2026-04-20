@@ -249,8 +249,13 @@ pub mod IDirectSoundBuffer {
     }
 
     #[win32_derive::dllexport]
-    pub fn GetCurrentPosition(_ctx: &mut Context, _this: u32) -> u32 {
-        todo!()
+    pub fn GetCurrentPosition(
+        _ctx: &mut Context,
+        _this: u32,
+        _pdwCurrentPlayCursor: u32,
+        _pdwCurrentWriteCursor: u32,
+    ) -> u32 {
+        stub!(DS_OK)
     }
 
     #[win32_derive::dllexport]
