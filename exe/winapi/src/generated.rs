@@ -62,7 +62,7 @@ const BLOCKS: [(u32, fn(&mut Context) -> Cont); 6] = [
     (0x401000, x00401000),
     (0x401008, x00401008),
     (0x40101a, x0040101a),
-    (0xf000_0000, runtime::return_from_x86),
+    (runtime::RETURN_FROM_X86_ADDR, runtime::return_from_x86),
 ];
 
 pub const EXEDATA: EXEData = EXEData {

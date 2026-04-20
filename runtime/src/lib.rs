@@ -33,18 +33,19 @@ pub fn call_x86(ctx: &mut Context, mut f: Cont, args: Vec<u32>) {
         push(ctx, arg);
     }
     // Note that return_from_x86 is never called.  When the x86 code returns
-    // it, the stack will have been popped so that esp matches our initial
+    // to it, the stack will have been popped so that esp matches our initial
     // esp and we abort the loop before invoking the continuation.
-    let return_addr = proc_addr(ctx, return_from_x86);
-    push(ctx, return_addr);
+    push(ctx, RETURN_FROM_X86_ADDR);
     while ctx.cpu.regs.esp != esp {
         f = f.0(ctx);
     }
 }
 
 /// When making a call from host to to x86 code, we need a valid return address
-/// so that the final 'ret' from the called function succeeds,
-/// but we never invoke it.
+/// that is associated with a real function so that the final 'ret' from the
+/// called function succeeds, but we never invoke it.
+pub const RETURN_FROM_X86_ADDR: u32 = 0xf000_000;
+
 pub fn return_from_x86(_ctx: &mut Context) -> Cont {
     panic!();
 }

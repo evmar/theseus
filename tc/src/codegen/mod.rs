@@ -269,7 +269,7 @@ out.copy_from_slice(bytes);",
         let block = state.blocks.get(&ip).unwrap();
         w.line(format!("({ip:#08x}, {}),", block.name()));
     }
-    w.line("(0xf000_0000, runtime::return_from_x86),");
+    w.line("(runtime::RETURN_FROM_X86_ADDR, runtime::return_from_x86),");
     w.line("];\n");
 
     let resources = match state.resources {
