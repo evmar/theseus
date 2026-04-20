@@ -10,6 +10,7 @@ pub mod gdi32;
 mod handle;
 mod heap;
 pub mod kernel32;
+mod locked_state;
 mod point;
 mod rect;
 pub mod trace;

@@ -1,13 +1,9 @@
 use crate::{
     heap::Heap,
     kernel32::{CommandLine, Mappings, UnsafeTickCount},
+    locked_state::LockedState,
 };
-use std::{
-    cell::Cell,
-    collections::HashMap,
-    ptr::NonNull,
-    sync::{Mutex, MutexGuard},
-};
+use std::{cell::Cell, collections::HashMap, sync::Mutex};
 
 pub struct State {
     pub mappings: Mappings,
@@ -39,35 +35,7 @@ pub fn init_state(image_base: u32, resources: std::ops::Range<u32>) {
     });
 }
 
-// We want to lock Mutex<Option<State>> and return a MutexGuard<State>,
-// but MutexGuard::map is not yet stable, so use this workaround for now.
-pub struct LockedState {
-    _lock: MutexGuard<'static, Option<State>>,
-    ptr: NonNull<State>,
-}
-
-impl std::ops::Deref for LockedState {
-    type Target = State;
-
-    fn deref(&self) -> &Self::Target {
-        // safety: _lock is holding the lock
-        unsafe { self.ptr.as_ref() }
-    }
-}
-
-impl std::ops::DerefMut for LockedState {
-    fn deref_mut(&mut self) -> &mut Self::Target {
-        // safety: _lock is holding the lock
-        unsafe { self.ptr.as_mut() }
-    }
-}
-
-pub type Lock = LockedState;
+pub type Lock = LockedState<State>;
 pub fn lock() -> Lock {
-    let mut lock = STATE.lock().unwrap();
-    let state = NonNull::from_mut(lock.as_mut().unwrap());
-    LockedState {
-        _lock: lock,
-        ptr: state,
-    }
+    LockedState::from(&STATE)
 }
