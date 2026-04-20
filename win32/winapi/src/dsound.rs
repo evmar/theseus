@@ -145,7 +145,7 @@ pub mod IDirectSound {
     }
 
     #[win32_derive::dllexport]
-    pub fn SetCooperativeLevel(_ctx: &mut Context, _this: u32, _dwLevel: u32) -> u32 {
+    pub fn SetCooperativeLevel(_ctx: &mut Context, _this: u32, _hwnd: u32, _dwLevel: u32) -> u32 {
         stub!(0)
     }
 
