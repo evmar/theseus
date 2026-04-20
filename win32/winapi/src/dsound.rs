@@ -13,6 +13,8 @@ const fn make_dhsresult(code: u32) -> u32 {
 #[allow(dead_code)]
 const DSERR_NODRIVER: u32 = make_dhsresult(120);
 
+const DS_OK: u32 = 0;
+
 #[win32_derive::dllexport]
 pub fn DirectSoundCreate(ctx: &mut Context, lpGuid: u32, ppDS: u32, pUnkOuter: u32) -> u32 {
     assert_eq!(lpGuid, 0);
@@ -21,7 +23,7 @@ pub fn DirectSoundCreate(ctx: &mut Context, lpGuid: u32, ppDS: u32, pUnkOuter: u
     let mut kernel32 = kernel32::lock();
     let addr = IDirectSound::new(ctx, &mut kernel32.process_heap);
     ctx.memory.write(ppDS, addr);
-    0
+    DS_OK
 }
 
 #[win32_derive::dllexport]
@@ -68,7 +70,7 @@ pub mod IDirectSound {
         ctx: &mut Context,
         _this: u32,
         lpcDSBufferDesc: u32,
-        _lplpDirectSoundBuffer: u32,
+        lplpDirectSoundBuffer: u32,
         pUnkOuter: u32,
     ) -> u32 {
         assert_eq!(pUnkOuter, 0);
@@ -84,8 +86,10 @@ pub mod IDirectSound {
             log::warn!("fmt {:#x?}", fmt);
         }
 
-        todo!();
-        stub!(0)
+        let mut kernel32 = kernel32::lock();
+        let addr = IDirectSoundBuffer::new(ctx, &mut kernel32.process_heap);
+        ctx.memory.write(lplpDirectSoundBuffer, addr);
+        DS_OK
     }
 
     #[win32_derive::dllexport]
@@ -153,6 +157,180 @@ pub mod IDirectSound {
     }
 }
 
+pub mod IDirectSoundBuffer {
+    use super::*;
+
+    #[derive(Default, zerocopy::IntoBytes, zerocopy::Immutable)]
+    #[repr(C)]
+    pub struct VTable {
+        QueryInterface: u32,
+        AddRef: u32,
+        Release: u32,
+        GetCaps: u32,
+        GetCurrentPosition: u32,
+        GetFormat: u32,
+        GetVolume: u32,
+        GetPan: u32,
+        GetFrequency: u32,
+        GetStatus: u32,
+        Initialize: u32,
+        Lock: u32,
+        Play: u32,
+        SetCurrentPosition: u32,
+        SetFormat: u32,
+        SetVolume: u32,
+        SetPan: u32,
+        SetFrequency: u32,
+        Stop: u32,
+        Unlock: u32,
+        Restore: u32,
+    }
+
+    #[win32_derive::dllexport]
+    pub fn QueryInterface(_ctx: &mut Context, _this: u32) -> u32 {
+        todo!()
+    }
+
+    #[win32_derive::dllexport]
+    pub fn AddRef(_ctx: &mut Context, _this: u32) -> u32 {
+        todo!()
+    }
+
+    #[win32_derive::dllexport]
+    pub fn Release(_ctx: &mut Context, _this: u32) -> u32 {
+        todo!()
+    }
+
+    #[win32_derive::dllexport]
+    pub fn GetCaps(_ctx: &mut Context, _this: u32) -> u32 {
+        todo!()
+    }
+
+    #[win32_derive::dllexport]
+    pub fn GetCurrentPosition(_ctx: &mut Context, _this: u32) -> u32 {
+        todo!()
+    }
+
+    #[win32_derive::dllexport]
+    pub fn GetFormat(_ctx: &mut Context, _this: u32) -> u32 {
+        todo!()
+    }
+
+    #[win32_derive::dllexport]
+    pub fn GetVolume(_ctx: &mut Context, _this: u32) -> u32 {
+        todo!()
+    }
+
+    #[win32_derive::dllexport]
+    pub fn GetPan(_ctx: &mut Context, _this: u32) -> u32 {
+        todo!()
+    }
+
+    #[win32_derive::dllexport]
+    pub fn GetFrequency(_ctx: &mut Context, _this: u32) -> u32 {
+        todo!()
+    }
+
+    #[win32_derive::dllexport]
+    pub fn GetStatus(_ctx: &mut Context, _this: u32) -> u32 {
+        todo!()
+    }
+
+    #[win32_derive::dllexport]
+    pub fn Initialize(_ctx: &mut Context, _this: u32) -> u32 {
+        todo!()
+    }
+
+    #[win32_derive::dllexport]
+    pub fn Lock(_ctx: &mut Context, _this: u32) -> u32 {
+        todo!()
+    }
+
+    #[win32_derive::dllexport]
+    pub fn Play(_ctx: &mut Context, _this: u32) -> u32 {
+        todo!()
+    }
+
+    #[win32_derive::dllexport]
+    pub fn SetCurrentPosition(_ctx: &mut Context, _this: u32) -> u32 {
+        todo!()
+    }
+
+    #[win32_derive::dllexport]
+    pub fn SetFormat(_ctx: &mut Context, _this: u32) -> u32 {
+        todo!()
+    }
+
+    #[win32_derive::dllexport]
+    pub fn SetVolume(_ctx: &mut Context, _this: u32) -> u32 {
+        todo!()
+    }
+
+    #[win32_derive::dllexport]
+    pub fn SetPan(_ctx: &mut Context, _this: u32) -> u32 {
+        todo!()
+    }
+
+    #[win32_derive::dllexport]
+    pub fn SetFrequency(_ctx: &mut Context, _this: u32) -> u32 {
+        todo!()
+    }
+
+    #[win32_derive::dllexport]
+    pub fn Stop(_ctx: &mut Context, _this: u32) -> u32 {
+        todo!()
+    }
+
+    #[win32_derive::dllexport]
+    pub fn Unlock(_ctx: &mut Context, _this: u32) -> u32 {
+        todo!()
+    }
+
+    #[win32_derive::dllexport]
+    pub fn Restore(_ctx: &mut Context, _this: u32) -> u32 {
+        todo!()
+    }
+
+    fn vtable(ctx: &mut Context, heap: &mut Heap) -> u32 {
+        let vtable_addr = heap.alloc(&mut ctx.memory, std::mem::size_of::<VTable>() as u32);
+        let func_addr = runtime::proc_addr(ctx, QueryInterface_stdcall);
+        let vtable = VTable {
+            QueryInterface: func_addr + 0,
+            AddRef: func_addr + 1,
+            Release: func_addr + 2,
+            GetCaps: func_addr + 3,
+            GetCurrentPosition: func_addr + 4,
+            GetFormat: func_addr + 5,
+            GetVolume: func_addr + 6,
+            GetPan: func_addr + 7,
+            GetFrequency: func_addr + 8,
+            GetStatus: func_addr + 9,
+            Initialize: func_addr + 10,
+            Lock: func_addr + 11,
+            Play: func_addr + 12,
+            SetCurrentPosition: func_addr + 13,
+            SetFormat: func_addr + 14,
+            SetVolume: func_addr + 15,
+            SetPan: func_addr + 16,
+            SetFrequency: func_addr + 17,
+            Stop: func_addr + 18,
+            Unlock: func_addr + 19,
+            Restore: func_addr + 20,
+        };
+        vtable
+            .write_to_prefix(&mut ctx.memory[vtable_addr..])
+            .unwrap();
+        vtable_addr
+    }
+
+    pub fn new(ctx: &mut Context, heap: &mut Heap) -> u32 {
+        let addr = heap.alloc(&mut ctx.memory, 4);
+        let vtable = vtable(ctx, heap);
+        ctx.memory.write(addr, vtable);
+        addr
+    }
+}
+
 win32flags! {
     pub struct DSBCAPS {
         const PRIMARYBUFFER       = 0x00000001;
@@ -205,7 +383,7 @@ pub struct WAVEFORMATEX {
     pub cbSize: u16,
 }
 
-pub const EXPORTS: [&'static str; 11] = [
+pub const EXPORTS: [&'static str; 32] = [
     // IDirectSound
     "IDirectSound::QueryInterface",
     "IDirectSound::AddRef",
@@ -218,4 +396,26 @@ pub const EXPORTS: [&'static str; 11] = [
     "IDirectSound::GetSpeakerConfig",
     "IDirectSound::SetSpeakerConfig",
     "IDirectSound::Initialize",
+    // IDirectSoundBuffer
+    "IDirectSoundBuffer::QueryInterface",
+    "IDirectSoundBuffer::AddRef",
+    "IDirectSoundBuffer::Release",
+    "IDirectSoundBuffer::GetCaps",
+    "IDirectSoundBuffer::GetCurrentPosition",
+    "IDirectSoundBuffer::GetFormat",
+    "IDirectSoundBuffer::GetVolume",
+    "IDirectSoundBuffer::GetPan",
+    "IDirectSoundBuffer::GetFrequency",
+    "IDirectSoundBuffer::GetStatus",
+    "IDirectSoundBuffer::Initialize",
+    "IDirectSoundBuffer::Lock",
+    "IDirectSoundBuffer::Play",
+    "IDirectSoundBuffer::SetCurrentPosition",
+    "IDirectSoundBuffer::SetFormat",
+    "IDirectSoundBuffer::SetVolume",
+    "IDirectSoundBuffer::SetPan",
+    "IDirectSoundBuffer::SetFrequency",
+    "IDirectSoundBuffer::Stop",
+    "IDirectSoundBuffer::Unlock",
+    "IDirectSoundBuffer::Restore",
 ];

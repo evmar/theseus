@@ -49464,7 +49464,7 @@ pub fn x0040a56e(ctx: &mut Context) -> Cont {
     Cont(ddraw::DirectDrawCreate_stdcall)
 }
 
-const BLOCKS: [(u32, fn(&mut Context) -> Cont); 1761] = [
+const BLOCKS: [(u32, fn(&mut Context) -> Cont); 1782] = [
     (0x001000, winmm::timeKillEvent_stdcall),
     (0x001001, winmm::timeSetEvent_stdcall),
     (0x001002, user32::CheckDlgButton_stdcall),
@@ -49714,6 +49714,33 @@ const BLOCKS: [(u32, fn(&mut Context) -> Cont); 1761] = [
     (0x0010ae, dsound::IDirectSound::GetSpeakerConfig_stdcall),
     (0x0010af, dsound::IDirectSound::SetSpeakerConfig_stdcall),
     (0x0010b0, dsound::IDirectSound::Initialize_stdcall),
+    (0x0010b1, dsound::IDirectSoundBuffer::QueryInterface_stdcall),
+    (0x0010b2, dsound::IDirectSoundBuffer::AddRef_stdcall),
+    (0x0010b3, dsound::IDirectSoundBuffer::Release_stdcall),
+    (0x0010b4, dsound::IDirectSoundBuffer::GetCaps_stdcall),
+    (
+        0x0010b5,
+        dsound::IDirectSoundBuffer::GetCurrentPosition_stdcall,
+    ),
+    (0x0010b6, dsound::IDirectSoundBuffer::GetFormat_stdcall),
+    (0x0010b7, dsound::IDirectSoundBuffer::GetVolume_stdcall),
+    (0x0010b8, dsound::IDirectSoundBuffer::GetPan_stdcall),
+    (0x0010b9, dsound::IDirectSoundBuffer::GetFrequency_stdcall),
+    (0x0010ba, dsound::IDirectSoundBuffer::GetStatus_stdcall),
+    (0x0010bb, dsound::IDirectSoundBuffer::Initialize_stdcall),
+    (0x0010bc, dsound::IDirectSoundBuffer::Lock_stdcall),
+    (0x0010bd, dsound::IDirectSoundBuffer::Play_stdcall),
+    (
+        0x0010be,
+        dsound::IDirectSoundBuffer::SetCurrentPosition_stdcall,
+    ),
+    (0x0010bf, dsound::IDirectSoundBuffer::SetFormat_stdcall),
+    (0x0010c0, dsound::IDirectSoundBuffer::SetVolume_stdcall),
+    (0x0010c1, dsound::IDirectSoundBuffer::SetPan_stdcall),
+    (0x0010c2, dsound::IDirectSoundBuffer::SetFrequency_stdcall),
+    (0x0010c3, dsound::IDirectSoundBuffer::Stop_stdcall),
+    (0x0010c4, dsound::IDirectSoundBuffer::Unlock_stdcall),
+    (0x0010c5, dsound::IDirectSoundBuffer::Restore_stdcall),
     (0x401000, x00401000),
     (0x401015, x00401015),
     (0x401017, x00401017),
