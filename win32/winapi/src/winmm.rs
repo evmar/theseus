@@ -44,7 +44,6 @@ fn winmm_main(ctx: &mut Context) {
         timer.next = next;
         drop(lock);
 
-        log::warn!("firing timer, next {}", next);
         // LPTIMECALLBACK
         runtime::call_x86(ctx, func, vec![timer_id, 0, user_data, 0, 0]);
     }
