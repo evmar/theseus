@@ -91,7 +91,7 @@ pub fn timeSetEvent(
         callback: lpTimeProc,
         user_data: dwUser,
     });
-    kernel32::create_thread(ctx, &mut kernel32::lock(), "winmm".into(), |ctx| {
+    kernel32::lock().create_thread(ctx, "winmm".into(), |ctx| {
         winmm_main(ctx);
     });
 

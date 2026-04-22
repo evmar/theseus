@@ -1,11 +1,7 @@
 use runtime::Context;
 use zerocopy::FromBytes as _;
 
-use crate::{
-    HANDLE,
-    kernel32::{self, Mappings, lock},
-    stub,
-};
+use crate::{HANDLE, kernel32, stub};
 
 #[repr(C)]
 #[derive(zerocopy::FromBytes, zerocopy::Immutable, zerocopy::IntoBytes)]
@@ -44,25 +40,6 @@ pub struct TEB {
     pub TlsSlots: [u32; 64],
 }
 
-pub fn init_thread(ctx: &mut Context, mappings: &mut Mappings, peb_addr: u32) {
-    let teb_addr = mappings.alloc(
-        format!("thread {} TEB", ctx.thread_id),
-        None,
-        std::mem::size_of::<TEB>() as u32,
-    );
-    let buf = &mut ctx.memory[teb_addr..][..std::mem::size_of::<TEB>()];
-    let teb = TEB::mut_from_bytes(buf).unwrap();
-    teb.Peb = peb_addr;
-    teb.Tib._Self = teb_addr;
-    ctx.cpu.regs.fs_base = teb_addr;
-
-    let stack_size = 64 << 10;
-    let stack_addr = mappings.alloc(format!("thread {} stack", ctx.thread_id), None, stack_size);
-    let stack_pointer = stack_addr + stack_size;
-    ctx.cpu.regs.esp = stack_pointer;
-    ctx.cpu.regs.ebp = stack_pointer;
-}
-
 #[allow(unused)]
 pub fn teb<'a>(ctx: &'a mut Context) -> &'a TEB {
     let teb_addr = ctx.cpu.regs.fs_base;
@@ -78,26 +55,50 @@ pub fn teb_mut<'a>(ctx: &'a mut Context) -> &'a mut TEB {
     teb
 }
 
-pub fn create_thread(
-    ctx: &mut Context,
-    lock: &mut kernel32::Lock,
-    name: String,
-    proc: impl FnOnce(&mut Context) + Send + Sync + 'static,
-) {
-    let mut new_ctx = Context {
-        cpu: runtime::CPU::default(),
-        thread_id: lock.next_thread_id,
-        // See docstring on Memory about the unsafety of sharing memory in this way.
-        memory: ctx.memory.unsafe_clone(),
-        blocks: ctx.blocks,
-        recent: [runtime::return_from_x86; 4],
-    };
-    lock.next_thread_id += 1;
-    init_thread(&mut new_ctx, &mut lock.mappings, teb(ctx).Peb);
-    std::thread::Builder::new()
-        .name(name)
-        .spawn(move || proc(&mut new_ctx))
-        .unwrap();
+impl kernel32::State {
+    pub fn create_thread(
+        &mut self,
+        ctx: &mut Context,
+        name: String,
+        proc: impl FnOnce(&mut Context) + Send + Sync + 'static,
+    ) {
+        let mut new_ctx = Context {
+            cpu: runtime::CPU::default(),
+            thread_id: self.next_thread_id,
+            // See docstring on Memory about the unsafety of sharing memory in this way.
+            memory: ctx.memory.unsafe_clone(),
+            blocks: ctx.blocks,
+            recent: [runtime::return_from_x86; 4],
+        };
+        self.next_thread_id += 1;
+        self.init_thread(&mut new_ctx, teb(ctx).Peb);
+        std::thread::Builder::new()
+            .name(name)
+            .spawn(move || proc(&mut new_ctx))
+            .unwrap();
+    }
+
+    // shared between the process initial thread and create_thread
+    pub fn init_thread(&mut self, ctx: &mut Context, peb_addr: u32) {
+        let teb_addr = self.mappings.alloc(
+            format!("thread {} TEB", ctx.thread_id),
+            None,
+            std::mem::size_of::<TEB>() as u32,
+        );
+        let buf = &mut ctx.memory[teb_addr..][..std::mem::size_of::<TEB>()];
+        let teb = TEB::mut_from_bytes(buf).unwrap();
+        teb.Peb = peb_addr;
+        teb.Tib._Self = teb_addr;
+        ctx.cpu.regs.fs_base = teb_addr;
+
+        let stack_size = 64 << 10;
+        let stack_addr =
+            self.mappings
+                .alloc(format!("thread {} stack", ctx.thread_id), None, stack_size);
+        let stack_pointer = stack_addr + stack_size;
+        ctx.cpu.regs.esp = stack_pointer;
+        ctx.cpu.regs.ebp = stack_pointer;
+    }
 }
 
 #[win32_derive::dllexport]
@@ -113,7 +114,7 @@ pub fn CreateThread(
     let mut lock = kernel32::lock();
     let id = lock.next_thread_id;
     let name = format!("thread {}@{:x}", id, lpStartAddress);
-    create_thread(ctx, &mut lock, name, move |ctx| {
+    lock.create_thread(ctx, name, move |ctx| {
         let f = runtime::indirect(ctx, lpStartAddress);
         runtime::call_x86(ctx, f, vec![lpParameter]);
     });
@@ -127,7 +128,7 @@ pub fn GetCurrentThreadId(ctx: &mut Context) -> u32 {
 
 #[win32_derive::dllexport]
 pub fn TlsAlloc(_ctx: &mut Context) -> u32 {
-    let mut state = lock();
+    let mut state = kernel32::lock();
     let index = state.next_tls_index;
     state.next_tls_index += 1;
     index

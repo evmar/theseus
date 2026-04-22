@@ -17,5 +17,5 @@ pub use mapping::*;
 pub use misc::*;
 pub use nls::*;
 pub use process::*;
-pub use state::{Lock, init_state, lock};
+pub use state::{Lock, State, init_state, lock};
 pub use thread::*;

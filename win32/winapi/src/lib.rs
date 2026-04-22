@@ -65,7 +65,7 @@ pub fn run(exe: &EXEData) {
     {
         let mut lock = kernel32::lock();
         (exe.init_mappings)(ctx, &mut lock.mappings);
-        kernel32::init_process(ctx, &mut lock);
+        lock.init_process(ctx);
     }
 
     runtime::call_x86(ctx, exe.entry_point, vec![]);
