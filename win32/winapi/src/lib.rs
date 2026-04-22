@@ -28,7 +28,7 @@ macro_rules! stub {
         $arg
     }};
 }
-use runtime::{CPU, Context, Machine, Memory};
+use runtime::{CPU, Context, Memory};
 pub(crate) use stub;
 
 pub struct EXEData {
@@ -45,18 +45,20 @@ pub fn run(exe: &EXEData) {
 
     crate::trace::init(&std::env::var("THESEUS_TRACE").unwrap_or_default());
 
-    let mut machine = Machine {
-        memory: Memory::alloc(32 << 20),
-        blocks: exe.blocks,
-    };
-    let m = &mut machine;
+    let memory_size = 32 << 10;
+    // safety: safe to assume_init on zeroed u8
+    let mut memory: Box<[u8]> = unsafe { Box::<[u8]>::new_zeroed_slice(memory_size).assume_init() };
+    // safety: see discussion of lifetime in Memory docstring
+    let static_memory: &'static mut [u8] = unsafe { std::mem::transmute(memory.as_mut()) };
+    let memory = Memory::new(static_memory);
+
     kernel32::init_state(exe.image_base, exe.resources.clone());
 
     let mut ctx = Context {
         cpu: CPU::default(),
         thread_id: 1,
-        memory: m.memory.unsafe_clone(),
-        blocks: m.blocks,
+        memory,
+        blocks: exe.blocks,
         recent: [runtime::return_from_x86; 4],
     };
     let ctx = &mut ctx;

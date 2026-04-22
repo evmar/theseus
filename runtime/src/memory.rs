@@ -6,20 +6,15 @@ use zerocopy::{FromBytes, IntoBytes};
 /// that multi-threaded access can do could just as well be done by single-threaded code,
 /// since it is fully under the control of the target executable.
 ///
-/// To support this unsafe sharing we also leak the array.
+/// TODO: to support this unsafe sharing we also use a static lifetime, because otherwise
+/// we need to figure out how to guarantee the memory outlives the threads.
+/// Maybe by sticking a std::thread::scope in some outer structure?
 pub struct Memory {
     bytes: &'static mut [u8],
 }
 
 impl Memory {
-    pub fn alloc(size: usize) -> Self {
-        let bytes = unsafe {
-            // Allocate the memory using manual allocation so we can align it to a page boundary,
-            // just to make pointers easier to read.
-            let align = 0x1000;
-            let mem = std::alloc::alloc(std::alloc::Layout::from_size_align(size, align).unwrap());
-            std::slice::from_raw_parts_mut(mem, size)
-        };
+    pub fn new(bytes: &'static mut [u8]) -> Self {
         Memory { bytes }
     }
 

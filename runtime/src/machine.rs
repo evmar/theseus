@@ -1,10 +1,5 @@
 use crate::{Cont, Flags, Memory, Regs, fpu::FPU, mmx::MMX};
 
-pub struct Machine {
-    pub memory: Memory,
-    pub blocks: &'static [(u32, fn(&mut Context) -> Cont)],
-}
-
 #[derive(Default)]
 pub struct CPU {
     pub regs: Regs,
