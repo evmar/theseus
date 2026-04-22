@@ -36,7 +36,11 @@ pub fn call_x86(ctx: &mut Context, mut f: Cont, args: Vec<u32>) {
     // to it, the stack will have been popped so that esp matches our initial
     // esp and we abort the loop before invoking the continuation.
     push(ctx, RETURN_FROM_X86_ADDR);
+
+    let mut i = 0;
     while ctx.cpu.regs.esp != esp {
+        ctx.recent[i] = f.0;
+        i = (i + 1) % ctx.recent.len();
         f = f.0(ctx);
     }
 }

@@ -57,6 +57,7 @@ pub fn run(exe: &EXEData) {
         thread_id: 1,
         memory: m.memory.unsafe_clone(),
         blocks: m.blocks,
+        recent: [runtime::return_from_x86; 4],
     };
     let ctx = &mut ctx;
     {

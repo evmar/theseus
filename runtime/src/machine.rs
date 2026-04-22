@@ -18,6 +18,7 @@ pub struct Context {
     pub thread_id: u32,
     pub memory: Memory,
     pub blocks: &'static [(u32, fn(&mut Context) -> Cont)],
+    pub recent: [fn(&mut Context) -> Cont; 4],
 }
 
 pub fn indirect(ctx: &mut Context, addr: u32) -> Cont {

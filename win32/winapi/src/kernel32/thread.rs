@@ -90,6 +90,7 @@ pub fn create_thread(
         // See docstring on Memory about the unsafety of sharing memory in this way.
         memory: ctx.memory.unsafe_clone(),
         blocks: ctx.blocks,
+        recent: [runtime::return_from_x86; 4],
     };
     lock.next_thread_id += 1;
     init_thread(&mut new_ctx, &mut lock.mappings, teb(ctx).Peb);
