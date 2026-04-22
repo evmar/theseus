@@ -21,8 +21,8 @@ struct Import {
 
 #[derive(Default)]
 pub struct State {
-    image_base: AddrAbs,
-    entry_point: AddrImage,
+    image_base: u32,
+    entry_point: u32,
     mem: Memory,
     code_memory: std::ops::Range<u32>,
     imports: HashMap<u32, Import>,
@@ -121,8 +121,8 @@ fn run() -> Result<()> {
     let buf = std::fs::read(args.exe).unwrap();
     load_pe(&mut state, buf);
 
-    let ip = state.entry_point.to_abs(state.image_base);
-    let mut traverse = Traverse::new(&mut state, ip.0);
+    let start = state.entry_point;
+    let mut traverse = Traverse::new(&mut state, start);
     if args.scan {
         traverse.scan_for_pointers();
     }
@@ -134,7 +134,7 @@ fn run() -> Result<()> {
     let data_dir = format!("{outdir}/data");
     std::fs::create_dir_all(&data_dir)?;
     for map in state.mem.mappings.vec().iter() {
-        let buf = state.mem.slice(AddrAbs(map.addr), map.size);
+        let buf = state.mem.slice(map.addr, map.size);
         if buf.iter().all(|&b| b == 0) {
             continue;
         }

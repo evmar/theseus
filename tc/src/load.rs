@@ -1,18 +1,18 @@
 //! PE loading.
 
-use crate::{Block, Import, State, memory::*};
+use crate::{Block, Import, State};
 
 pub fn load_pe(state: &mut State, buf: Vec<u8>) {
     let f = pe::File::parse(&buf).unwrap();
 
-    state.entry_point = AddrImage(f.opt_header.AddressOfEntryPoint);
-    let image_base = AddrAbs(f.opt_header.ImageBase);
+    let image_base = f.opt_header.ImageBase;
+    state.entry_point = image_base + f.opt_header.AddressOfEntryPoint;
     state.image_base = image_base;
     state.mem.alloc("exe header".into(), image_base, 0x1000);
     state.mem.put(image_base, &buf[..0x1000.min(buf.len())]);
     let mut code_range = None;
     for sec in &f.sections {
-        let addr = AddrImage(sec.VirtualAddress).to_abs(image_base);
+        let addr = image_base + sec.VirtualAddress;
         let size = winapi::kernel32::round_to_page(sec.SizeOfRawData.max(sec.VirtualSize));
         state.mem.alloc(sec.name().unwrap().into(), addr, size);
 
@@ -25,10 +25,10 @@ pub fn load_pe(state: &mut State, buf: Vec<u8>) {
         }
         if flags.contains(pe::IMAGE_SCN::CODE) || flags.contains(pe::IMAGE_SCN::MEM_EXECUTE) {
             match &mut code_range {
-                None => code_range = Some(addr.0..addr.0 + sec.SizeOfRawData),
+                None => code_range = Some(addr..addr + sec.SizeOfRawData),
                 Some(range) => {
-                    range.start = range.start.min(addr.0);
-                    range.end = range.end.max(addr.0 + sec.SizeOfRawData);
+                    range.start = range.start.min(addr);
+                    range.end = range.end.max(addr + sec.SizeOfRawData);
                 }
             }
         }
@@ -37,7 +37,7 @@ pub fn load_pe(state: &mut State, buf: Vec<u8>) {
 
     state.resources = f
         .get_data_directory(pe::IMAGE_DIRECTORY_ENTRY::RESOURCE)
-        .map(|dir| (AddrImage(dir.VirtualAddress).to_abs(image_base).0, dir.Size));
+        .map(|dir| (image_base + dir.VirtualAddress, dir.Size));
 
     read_imports(&f, state);
 }
@@ -46,7 +46,7 @@ fn read_imports(pe_file: &pe::File, state: &mut State) {
     let Some(imports) = pe_file.get_data_directory(pe::IMAGE_DIRECTORY_ENTRY::IMPORT) else {
         return;
     };
-    let image_base = AddrAbs(pe_file.opt_header.ImageBase);
+    let image_base = pe_file.opt_header.ImageBase;
     let image = state.mem.slice_all(image_base);
     for imp in pe::read_imports(imports.as_slice(image).unwrap()) {
         let name = std::str::from_utf8(imp.image_name(image))
@@ -54,9 +54,9 @@ fn read_imports(pe_file: &pe::File, state: &mut State) {
             .to_lowercase();
         let name = name.trim_end_matches(".dll");
         for (addr, entry) in imp.iat_iter(image) {
-            let addr = AddrImage(addr).to_abs(image_base);
+            let addr = image_base + addr;
             state.imports.insert(
-                addr.0,
+                addr,
                 Import {
                     dll: name.to_string(),
                     func: match entry.as_import_symbol(image) {
@@ -65,7 +65,7 @@ fn read_imports(pe_file: &pe::File, state: &mut State) {
                         }
                         pe::ImportSymbol::Ordinal(n) => format!("ordinal{n}"),
                     },
-                    iat_addr: addr.0,
+                    iat_addr: addr,
                     func_addr: 0,
                 },
             );

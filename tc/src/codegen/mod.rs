@@ -6,7 +6,7 @@ mod misc;
 mod mmx;
 mod string;
 
-use crate::{Block, State, memory::*, write_if_changed};
+use crate::{Block, State, write_if_changed};
 
 fn reg_name(r: iced_x86::Register) -> String {
     format!("{r:?}").to_ascii_lowercase()
@@ -171,13 +171,10 @@ impl Writer {
     }
 }
 
-fn gen_block(w: &mut Writer, state: &State, ip: AddrAbs, block: &Block) {
+fn gen_block(w: &mut Writer, state: &State, ip: u32, block: &Block) {
     match block {
         Block::Instrs(instrs) => {
-            w.line(format!(
-                "pub fn x{:08x}(ctx: &mut Context) -> Cont {{",
-                ip.0
-            ));
+            w.line(format!("pub fn x{ip:08x}(ctx: &mut Context) -> Cont {{"));
             for instr in instrs {
                 gen_instr(w, state, instr);
             }
@@ -190,7 +187,7 @@ fn gen_block(w: &mut Writer, state: &State, ip: AddrAbs, block: &Block) {
 }
 
 fn gen_instr(w: &mut Writer, state: &State, instr: &iced_x86::Instruction) {
-    w.line(format!("// {:08x} {}", AddrAbs(instr.ip32()).0, instr));
+    w.line(format!("// {:08x} {}", instr.ip32(), instr));
     if control_flow::codegen(w, state, instr) {
     } else if math::codegen(w, state, instr) {
     } else if string::codegen(w, state, instr) {
@@ -228,7 +225,7 @@ use winapi::*;
     w.line("fn init_mappings(ctx: &mut Context, mappings: &mut kernel32::Mappings) {");
     for map in state.mem.mappings.vec().iter() {
         let addr = map.addr;
-        let buf = state.mem.slice(AddrAbs(map.addr), map.size);
+        let buf = state.mem.slice(map.addr, map.size);
         let zeroed = buf.iter().all(|&b| b == 0);
 
         w.line(format!(
@@ -255,7 +252,7 @@ out.copy_from_slice(bytes);",
     ips.sort();
     for &ip in &ips {
         let block = state.blocks.get(&ip).unwrap();
-        gen_block(&mut w, &state, AddrAbs(ip), &block);
+        gen_block(&mut w, &state, ip, &block);
     }
 
     w.line(format!(
@@ -282,8 +279,8 @@ out.copy_from_slice(bytes);",
             init_mappings,
             entry_point: Cont(x{entry_point:08x}),
         }};\n\n",
-        image_base = state.image_base.0,
-        entry_point = state.entry_point.to_abs(state.image_base).0,
+        image_base = state.image_base,
+        entry_point = state.entry_point,
     ));
 
     std::fs::create_dir_all(format!("{outdir}/src"))?;

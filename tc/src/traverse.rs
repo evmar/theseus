@@ -2,7 +2,7 @@
 
 use std::collections::{HashSet, VecDeque};
 
-use crate::{Block, State, is_abs_memory_ref, memory::*};
+use crate::{Block, State, is_abs_memory_ref};
 
 pub struct Traverse<'a> {
     state: &'a mut State,
@@ -43,7 +43,7 @@ impl<'a> Traverse<'a> {
     }
 
     fn decode_one(&mut self, ip: u32) -> anyhow::Result<Block> {
-        let data = self.state.mem.slice_all(AddrAbs(ip));
+        let data = self.state.mem.slice_all(ip);
         if data[..0x10].iter().all(|&b| b == 0) {
             anyhow::bail!("block appears zero-filled");
         }
