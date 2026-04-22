@@ -1,6 +1,6 @@
 use runtime::Context;
 
-use crate::kernel32::{HMODULE, lock};
+use crate::kernel32::lock;
 
 #[win32_derive::dllexport]
 pub fn GetLastError(_ctx: &mut Context) -> u32 {
@@ -195,12 +195,6 @@ pub fn GetOEMCP(_ctx: &mut Context) -> u32 {
 
 #[win32_derive::dllexport]
 pub fn OutputDebugStringA(_ctx: &mut Context, _lpOutputString: u32) {
-    todo!()
-}
-
-#[win32_derive::dllexport]
-pub fn GetProcAddress(_ctx: &mut Context, _hModule: HMODULE, _lpProcName: u32) -> u32 /* FARPROC */
-{
     todo!()
 }
 
