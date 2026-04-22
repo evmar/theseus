@@ -18,7 +18,8 @@ elif [[ $1 == "chillin" ]]; then
 elif [[ $1 == "chillin-unpack" ]]; then
     cargo run -p tc -- \
         --exe ~/win/rs/scratch/demo/chillin.exe \
-        --out exe/chillin-unpack
+        --out exe/chillin-unpack \
+        --extern 0x004085dd
     cargo run -p chillin-unpack
 elif [[ $1 == "thread" ]]; then
     cargo run -p tc -- --exe ~/win/rs/exe/cpp/thread.exe --out exe/thread --scan-immediates
