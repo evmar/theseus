@@ -1,5 +1,6 @@
-use runtime::Context;
 use std::sync::{Mutex, MutexGuard};
+
+use runtime::Context;
 
 use crate::{
     kernel32::{self, get_tick_count},

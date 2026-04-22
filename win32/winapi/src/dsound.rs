@@ -1,15 +1,9 @@
-use std::collections::HashMap;
-use std::sync::Mutex;
+use std::{collections::HashMap, sync::Mutex};
 
-use crate::dllexport::win32flags;
-use crate::heap::Heap;
-use crate::kernel32;
-use crate::locked_state::LockedState;
-use crate::stub;
-use crate::user32;
 use runtime::Context;
-use zerocopy::FromBytes;
-use zerocopy::IntoBytes;
+use zerocopy::{FromBytes, IntoBytes};
+
+use crate::{dllexport::win32flags, heap::Heap, kernel32, locked_state::LockedState, stub, user32};
 
 const fn make_dhsresult(code: u32) -> u32 {
     (1 << 31) | (0x878 << 16) | code

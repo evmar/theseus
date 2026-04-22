@@ -1,5 +1,6 @@
-use super::ast::*;
 use std::collections::HashMap;
+
+use super::ast::*;
 
 fn count_uses(block: &Block) -> HashMap<Var, usize> {
     let mut used: HashMap<Var, usize> = Default::default();

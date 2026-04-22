@@ -1,8 +1,7 @@
 use std::collections::{HashMap, HashSet};
 
-use crate::union::Union;
-
 use super::ast::*;
+use crate::union::Union;
 
 fn rename_instrs(instrs: &mut [Instr], from: &Var, to: &Var) {
     for instr in instrs {

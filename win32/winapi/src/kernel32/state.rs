@@ -1,9 +1,10 @@
+use std::{cell::Cell, collections::HashMap, sync::Mutex};
+
 use crate::{
     heap::Heap,
     kernel32::{CommandLine, Mappings, UnsafeTickCount},
     locked_state::LockedState,
 };
-use std::{cell::Cell, collections::HashMap, sync::Mutex};
 
 pub struct State {
     pub mappings: Mappings,

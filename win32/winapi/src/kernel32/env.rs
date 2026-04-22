@@ -1,5 +1,6 @@
-use crate::{kernel32::lock, stub};
 use runtime::Context;
+
+use crate::{kernel32::lock, stub};
 
 #[win32_derive::dllexport]
 pub fn GetEnvironmentStrings(_ctx: &mut Context) -> u32 {

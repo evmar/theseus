@@ -1,5 +1,6 @@
-use crate::stub;
 use runtime::Context;
+
+use crate::stub;
 
 pub type HMODULE = u32;
 

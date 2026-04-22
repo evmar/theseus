@@ -1,4 +1,3 @@
-use crate::heap::Heap;
 use std::cell::RefMut;
 
 use runtime::*;
@@ -9,6 +8,7 @@ use crate::{
     ddraw::{GUID, Target, state, types::*},
     gdi32,
     gdi32::{DIB, HDC},
+    heap::Heap,
     kernel32, stub,
     user32::HWND,
 };

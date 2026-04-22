@@ -1,5 +1,6 @@
-use runtime::Context;
 use std::collections::VecDeque;
+
+use runtime::Context;
 
 use crate::user32::{HWND, state};
 

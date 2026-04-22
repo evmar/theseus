@@ -1,5 +1,6 @@
-use runtime::Context;
 use std::{cell::RefCell, rc::Rc};
+
+use runtime::Context;
 
 use crate::{
     stub,

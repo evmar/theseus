@@ -1,9 +1,9 @@
-use crate::heap::Heap;
 use runtime::Context;
 use zerocopy::{FromBytes, IntoBytes};
 
 use crate::{
     ddraw::{DD, get_pixel_format, state, types::*},
+    heap::Heap,
     kernel32, stub,
     user32::HWND,
 };

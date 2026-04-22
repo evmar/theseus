@@ -1,5 +1,4 @@
-use runtime::Context;
-use runtime::{HOST, Host};
+use runtime::{Context, HOST, Host};
 
 use crate::kernel32::HANDLE;
 
