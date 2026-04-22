@@ -6,11 +6,7 @@ mod misc;
 mod mmx;
 mod string;
 
-use crate::{
-    Block, State,
-    memory::{AddrAbs, AddrImage},
-    write_if_changed,
-};
+use crate::{Block, State, memory::*, write_if_changed};
 
 fn reg_name(r: iced_x86::Register) -> String {
     format!("{r:?}").to_ascii_lowercase()
@@ -286,10 +282,8 @@ out.copy_from_slice(bytes);",
             init_mappings,
             entry_point: Cont(x{entry_point:08x}),
         }};\n\n",
-        image_base = state.image_base().0,
-        entry_point = AddrImage(state.pe_file.opt_header.AddressOfEntryPoint)
-            .to_abs(state.image_base())
-            .0,
+        image_base = state.image_base.0,
+        entry_point = state.entry_point.to_abs(state.image_base).0,
     ));
 
     std::fs::create_dir_all(format!("{outdir}/src"))?;

@@ -52,7 +52,7 @@ impl std::fmt::Debug for Memory {
     }
 }
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Default)]
 pub struct AddrAbs(pub u32);
 impl std::fmt::LowerHex for AddrAbs {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
@@ -66,7 +66,7 @@ impl std::fmt::Debug for AddrAbs {
     }
 }
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, Default)]
 pub struct AddrImage(pub u32);
 impl AddrImage {
     pub fn to_abs(self, image_base: AddrAbs) -> AddrAbs {
