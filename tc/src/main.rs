@@ -34,7 +34,7 @@ impl State {
         let image_base = AddrAbs(f.opt_header.ImageBase);
         mem.alloc("exe header".into(), image_base, 0x1000);
         mem.put(image_base, &buf[..0x1000.min(buf.len())]);
-        let mut code_range = 0u32..0u32;
+        let mut code_range = None;
         for sec in &f.sections {
             let addr = AddrImage(sec.VirtualAddress).to_abs(image_base);
             let size = winapi::kernel32::round_to_page(sec.SizeOfRawData.max(sec.VirtualSize));
@@ -48,8 +48,13 @@ impl State {
                 mem.put(addr, data);
             }
             if flags.contains(pe::IMAGE_SCN::CODE) || flags.contains(pe::IMAGE_SCN::MEM_EXECUTE) {
-                code_range.start = code_range.start.min(addr.0);
-                code_range.end = code_range.end.max(addr.0 + sec.SizeOfRawData);
+                match &mut code_range {
+                    None => code_range = Some(addr.0..addr.0 + sec.SizeOfRawData),
+                    Some(range) => {
+                        range.start = range.start.min(addr.0);
+                        range.end = range.end.max(addr.0 + sec.SizeOfRawData);
+                    }
+                }
             }
         }
 
@@ -60,7 +65,7 @@ impl State {
         State {
             pe_file: f,
             mem,
-            code_memory: code_range,
+            code_memory: code_range.unwrap(),
             imports: Default::default(),
             blocks: Default::default(),
             resources: resource_dir,
