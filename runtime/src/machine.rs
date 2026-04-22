@@ -51,11 +51,12 @@ fn dump_stack(memory: &Memory, esp: u32) {
 
 impl Context {
     pub fn dump_stack(&self) {
-        dump_stack(&self.memory, self.cpu.regs.esp);
+        dump_stack(&self.memory, self.cpu.regs.esp - 4);
     }
 }
 
 #[unsafe(no_mangle)]
 pub extern "C" fn dump_ctx(ctx: &Context) {
+    ctx.cpu.regs.dump();
     ctx.dump_stack();
 }
