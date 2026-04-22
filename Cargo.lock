@@ -43,6 +43,14 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c08606f8c3cbf4ce6ec8e28fb0014a2c086708fe954eaa885384a6165172e7e8"
 
 [[package]]
+name = "basicdd-exe"
+version = "0.1.0"
+dependencies = [
+ "runtime",
+ "winapi 0.1.0",
+]
+
+[[package]]
 name = "bitflags"
 version = "2.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -77,6 +85,14 @@ name = "cfg-if"
 version = "0.1.10"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4785bdd1c96b2a846b2bd7cc02e86b6b3dbf14e7e53446c4f54c92a361040822"
+
+[[package]]
+name = "chillin-exe"
+version = "0.1.0"
+dependencies = [
+ "runtime",
+ "winapi 0.1.0",
+]
 
 [[package]]
 name = "colored"
@@ -320,6 +336,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "thread-exe"
+version = "0.1.0"
+dependencies = [
+ "runtime",
+ "winapi 0.1.0",
+]
+
+[[package]]
 name = "ts-rs"
 version = "12.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -400,6 +424,14 @@ dependencies = [
 ]
 
 [[package]]
+name = "winapi-exe"
+version = "0.1.0"
+dependencies = [
+ "runtime",
+ "winapi 0.1.0",
+]
+
+[[package]]
 name = "winapi-i686-pc-windows-gnu"
 version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -453,6 +485,14 @@ dependencies = [
  "proc-macro2",
  "quote",
  "syn",
+]
+
+[[package]]
+name = "zig-hello-exe"
+version = "0.1.0"
+dependencies = [
+ "runtime",
+ "winapi 0.1.0",
 ]
 
 [[package]]
