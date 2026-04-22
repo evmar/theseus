@@ -57,7 +57,7 @@ pub fn init_thread(ctx: &mut Context, mappings: &mut Mappings, peb_addr: u32) {
     ctx.cpu.regs.fs_base = teb_addr;
 
     let stack_size = 64 << 10;
-    let stack_addr = mappings.alloc(format!("thread 0 stack"), None, stack_size);
+    let stack_addr = mappings.alloc(format!("thread {} stack", ctx.thread_id), None, stack_size);
     let stack_pointer = stack_addr + stack_size;
     ctx.cpu.regs.esp = stack_pointer;
     ctx.cpu.regs.ebp = stack_pointer;
@@ -111,7 +111,7 @@ pub fn CreateThread(
 ) -> HANDLE {
     let mut lock = kernel32::lock();
     let id = lock.next_thread_id;
-    let name = format!("thread {}@{}", id, lpStartAddress);
+    let name = format!("thread {}@{:x}", id, lpStartAddress);
     create_thread(ctx, &mut lock, name, move |ctx| {
         let f = runtime::indirect(ctx, lpStartAddress);
         runtime::call_x86(ctx, f, vec![lpParameter]);
