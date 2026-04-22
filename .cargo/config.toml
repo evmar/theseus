@@ -1,0 +1,3 @@
+[build]
+# expose symbols to lldb
+rustflags = ["-C", "link-args=-rdynamic"]

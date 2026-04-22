@@ -40,12 +40,21 @@ pub fn proc_addr(ctx: &mut Context, func: fn(&mut Context) -> Cont) -> u32 {
         .0
 }
 
-impl Machine {
-    pub fn dump_stack(&self, esp: u32) {
-        println!("stack:");
-        for i in 0..8 {
-            let addr = esp + i * 4;
-            println!("{addr:#08x} {:#08x}", self.memory.read::<u32>(addr));
-        }
+fn dump_stack(memory: &Memory, esp: u32) {
+    println!("stack:");
+    for i in 0..8 {
+        let addr = esp + i * 4;
+        println!("{addr:#08x} {:#08x}", memory.read::<u32>(addr));
     }
+}
+
+impl Context {
+    pub fn dump_stack(&self) {
+        dump_stack(&self.memory, self.cpu.regs.esp);
+    }
+}
+
+#[unsafe(no_mangle)]
+pub extern "C" fn dump_ctx(ctx: &Context) {
+    ctx.dump_stack();
 }
