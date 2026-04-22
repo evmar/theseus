@@ -177,6 +177,7 @@ impl Writer {
 
 fn gen_block(w: &mut Writer, state: &State, ip: AddrAbs, block: &Block) {
     match block {
+        Block::Invalid => {}
         Block::Instrs(instrs) => {
             w.line(format!(
                 "pub fn x{:08x}(ctx: &mut Context) -> Cont {{",

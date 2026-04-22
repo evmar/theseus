@@ -34,7 +34,7 @@ impl State {
         let image_base = AddrAbs(f.opt_header.ImageBase);
         mem.alloc("exe header".into(), image_base, 0x1000);
         mem.put(image_base, &buf[..0x1000.min(buf.len())]);
-        let mut code_range = None;
+        let mut code_range = 0u32..0u32;
         for sec in &f.sections {
             let addr = AddrImage(sec.VirtualAddress).to_abs(image_base);
             let size = winapi::kernel32::round_to_page(sec.SizeOfRawData.max(sec.VirtualSize));
@@ -47,9 +47,9 @@ impl State {
                 let data = &buf[sec.PointerToRawData as usize..][..sec.SizeOfRawData as usize];
                 mem.put(addr, data);
             }
-            if flags.contains(pe::IMAGE_SCN::CODE) {
-                assert!(code_range.is_none());
-                code_range = Some(addr.0..(addr.0 + sec.SizeOfRawData));
+            if flags.contains(pe::IMAGE_SCN::CODE) || flags.contains(pe::IMAGE_SCN::MEM_EXECUTE) {
+                code_range.start = code_range.start.min(addr.0);
+                code_range.end = code_range.end.max(addr.0 + sec.SizeOfRawData);
             }
         }
 
@@ -60,7 +60,7 @@ impl State {
         State {
             pe_file: f,
             mem,
-            code_memory: code_range.unwrap(),
+            code_memory: code_range,
             imports: Default::default(),
             blocks: Default::default(),
             resources: resource_dir,
@@ -155,6 +155,7 @@ fn is_abs_memory_ref(instr: &iced_x86::Instruction) -> Option<u32> {
 }
 
 enum Block {
+    Invalid, // used to negatively cache invalid locations
     Instrs(Vec<iced_x86::Instruction>),
     Stdcall(String),
     Extern(u32),
@@ -163,6 +164,7 @@ enum Block {
 impl Block {
     pub fn name(&self) -> String {
         match self {
+            Block::Invalid => unimplemented!(),
             Block::Instrs(instrs) => format!("x{:08x}", instrs[0].ip32()),
             Block::Stdcall(func) => format!("{}_stdcall", func),
             Block::Extern(ip) => format!("x{:08x}", ip),
@@ -179,17 +181,21 @@ fn traverse(state: &mut State, start: u32) {
     queue.push_back(start);
 
     'queue: while let Some(ip) = queue.pop_front() {
-        if state.blocks.contains_key(&ip) {
+        let block_ip = ip;
+        if state.blocks.contains_key(&block_ip) {
+            continue;
+        }
+
+        let data = state.mem.slice_all(AddrAbs(ip));
+        if data[..0x10].iter().all(|&b| b == 0) {
+            log::warn!("{ip:08x} appears zero-filled, omitting");
+            state.blocks.insert(block_ip, Block::Invalid);
             continue;
         }
 
         let mut instrs = Vec::new();
-        let decoder = iced_x86::Decoder::with_ip(
-            32,
-            state.mem.slice_all(AddrAbs(ip)),
-            ip as u64,
-            iced_x86::DecoderOptions::NONE,
-        );
+        let decoder =
+            iced_x86::Decoder::with_ip(32, data, ip as u64, iced_x86::DecoderOptions::NONE);
         for instr in decoder {
             instrs.push(instr);
 
@@ -212,9 +218,9 @@ fn traverse(state: &mut State, start: u32) {
             use iced_x86::Mnemonic::*;
             match instr.mnemonic() {
                 Call | Jmp | Je | Jne | Jb | Js | Jns | Ja | Jae | Jl | Jge | Jecxz | Jg | Jle
-                | Jno | Jnp | Jbe | Loop => {
-                    match instr.op0_kind() {
-                        iced_x86::OpKind::NearBranch32 => queue.push_back(instr.near_branch32()),
+                | Jo | Jno | Jp | Jnp | Jbe | Loop => {
+                    let next = match instr.op0_kind() {
+                        iced_x86::OpKind::NearBranch32 => Some(instr.near_branch32()),
                         iced_x86::OpKind::Memory => {
                             if let Some(addr) = is_abs_memory_ref(&instr) {
                                 if state.imports.contains_key(&addr) {
@@ -225,21 +231,29 @@ fn traverse(state: &mut State, start: u32) {
                             } else {
                                 log::warn!("{ip:08x} {instr}  ; indirect via memory");
                             }
+                            None
                         }
                         iced_x86::OpKind::Register => {
                             log::warn!("{ip:08x} {instr}  ; indirect via register");
+                            None
                         }
                         d => todo!("dest {d:?}"),
                     };
+
+                    if let Some(next) = next {
+                        queue.push_back(next);
+                    }
                     if instr.mnemonic() != Jmp {
-                        queue.push_back(instr.next_ip32());
+                        let next = instr.next_ip32();
+                        queue.push_back(next);
                     }
                 }
                 Ret => {}
                 Int => {}  // terminates
                 Int3 => {} // breakpoint
                 INVALID => {
-                    log::error!("aborting block at {start:x}, invalid code found");
+                    log::error!("aborting block at {block_ip:x}, invalid code found");
+                    state.blocks.insert(block_ip, Block::Invalid);
                     continue 'queue;
                 }
                 _ => todo!("control flow {}", instr),
@@ -247,7 +261,7 @@ fn traverse(state: &mut State, start: u32) {
             break;
         }
 
-        state.blocks.insert(ip, Block::Instrs(instrs));
+        state.blocks.insert(block_ip, Block::Instrs(instrs));
     }
 }
 
