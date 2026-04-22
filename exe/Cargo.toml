@@ -12,5 +12,8 @@ members = [
 runtime = { path = "../runtime" }
 winapi = { path = "../win32/winapi" }
 
-[profile.release]
-debug = true
+[profile.fast]
+inherits = "dev"
+opt-level = 2
+debug-assertions = false
+overflow-checks = false
