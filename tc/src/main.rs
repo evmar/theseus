@@ -1,7 +1,7 @@
 mod codegen;
 mod memory;
 
-use std::collections::{HashMap, VecDeque};
+use std::collections::{HashMap, HashSet, VecDeque};
 
 use anyhow::Result;
 use memory::*;
@@ -155,7 +155,6 @@ fn is_abs_memory_ref(instr: &iced_x86::Instruction) -> Option<u32> {
 }
 
 enum Block {
-    Invalid, // used to negatively cache invalid locations
     Instrs(Vec<iced_x86::Instruction>),
     Stdcall(String),
     Extern(u32),
@@ -164,7 +163,6 @@ enum Block {
 impl Block {
     pub fn name(&self) -> String {
         match self {
-            Block::Invalid => unimplemented!(),
             Block::Instrs(instrs) => format!("x{:08x}", instrs[0].ip32()),
             Block::Stdcall(func) => format!("{}_stdcall", func),
             Block::Extern(ip) => format!("x{:08x}", ip),
@@ -175,6 +173,7 @@ impl Block {
 pub struct Traverse<'a> {
     state: &'a mut State,
     queue: VecDeque<u32>,
+    invalid: HashSet<u32>,
 }
 
 impl<'a> Traverse<'a> {
@@ -182,6 +181,7 @@ impl<'a> Traverse<'a> {
         let mut traverse = Traverse {
             state,
             queue: VecDeque::new(),
+            invalid: HashSet::new(),
         };
         Self::enqueue(&mut traverse.queue, start);
         traverse
@@ -194,7 +194,7 @@ impl<'a> Traverse<'a> {
     fn run(&mut self) {
         while let Some(ip) = self.queue.pop_front() {
             let block_ip = ip;
-            if self.state.blocks.contains_key(&block_ip) {
+            if self.state.blocks.contains_key(&block_ip) || self.invalid.contains(&block_ip) {
                 continue;
             }
             match self.decode_one(block_ip) {
@@ -203,7 +203,7 @@ impl<'a> Traverse<'a> {
                 }
                 Err(e) => {
                     log::warn!("omitting {block_ip:08x}: {e}");
-                    self.state.blocks.insert(block_ip, Block::Invalid);
+                    self.invalid.insert(block_ip);
                 }
             }
         }

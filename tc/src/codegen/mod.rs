@@ -177,7 +177,6 @@ impl Writer {
 
 fn gen_block(w: &mut Writer, state: &State, ip: AddrAbs, block: &Block) {
     match block {
-        Block::Invalid => {}
         Block::Instrs(instrs) => {
             w.line(format!(
                 "pub fn x{:08x}(ctx: &mut Context) -> Cont {{",
@@ -269,9 +268,6 @@ out.copy_from_slice(bytes);",
     ));
     for &ip in &ips {
         let block = state.blocks.get(&ip).unwrap();
-        if matches!(block, Block::Invalid) {
-            continue;
-        }
         w.line(format!("({ip:#08x}, {}),", block.name()));
     }
     w.line("(runtime::RETURN_FROM_X86_ADDR, runtime::return_from_x86),");
