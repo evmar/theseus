@@ -10,7 +10,7 @@ use zerocopy::{FromBytes, IntoBytes};
 /// we need to figure out how to guarantee the memory outlives the threads.
 /// Maybe by sticking a std::thread::scope in some outer structure?
 pub struct Memory {
-    bytes: &'static mut [u8],
+    pub bytes: &'static mut [u8],
 }
 
 impl Memory {

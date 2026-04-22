@@ -4,6 +4,8 @@ pub struct Mapping {
     pub desc: String,
     pub addr: u32,
     pub size: u32,
+    // If true, created at a fixed address (not dynamically chosen)
+    pub fixed: bool,
 }
 
 impl Mapping {
@@ -46,6 +48,7 @@ impl Mappings {
             desc,
             addr: addr.unwrap_or(0),
             size,
+            fixed: addr.is_some(),
         };
 
         let mut prev_end = 0;
@@ -84,5 +87,9 @@ impl Mappings {
 
     pub fn vec(&self) -> &Vec<Mapping> {
         &self.mappings
+    }
+
+    pub fn from(mappings: Vec<Mapping>) -> Self {
+        Self { mappings }
     }
 }

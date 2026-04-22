@@ -9,7 +9,7 @@ mod memory;
 mod traverse;
 pub use traverse::Traverse;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Import {
     pub dll: String,
     pub func: String,
@@ -78,6 +78,12 @@ pub fn generate(state: &mut State, outdir: &str) -> anyhow::Result<()> {
         if buf.iter().all(|&b| b == 0) {
             continue;
         }
+        log::info!(
+            "section {:?} @{:x} ({:x} bytes)",
+            map.desc,
+            map.addr,
+            map.size
+        );
         write_if_changed(&format!("{outdir}/data/{:08x}.raw", map.addr), buf)?;
     }
     Ok(())

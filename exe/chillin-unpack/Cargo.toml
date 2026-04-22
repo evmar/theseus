@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+log = { workspace = true }
 runtime = { workspace = true }
 tc = { workspace = true }
 winapi = { workspace = true }
