@@ -79,3 +79,15 @@ pub fn sar<I: Int>(x: I, y: u8, flags: &mut Flags) -> I {
     flags.set(Flags::PF, result.low_byte().count_ones() % 2 == 0);
     result
 }
+
+pub fn rol<I: Int>(x: I, y: u8, flags: &mut Flags) -> I {
+    if y == 0 {
+        return x;
+    }
+    let result = x.rotate_left(y as u32);
+    let carry = (result & I::one()).is_one();
+    flags.set(Flags::CF, carry);
+    // Note: OF only defined for 1-bit rotates.
+    flags.set(Flags::OF, carry ^ (result.high_bit()).is_one());
+    result
+}
