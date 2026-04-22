@@ -7,7 +7,7 @@ pub fn codegen(w: &mut Writer, _state: &State, instr: &iced_x86::Instruction) ->
     use iced_x86::Mnemonic::*;
     match instr.mnemonic() {
         // Binary operations.
-        And | Or | Add | Sub | Sbb | Xor | Shl | Shr | Sar => {
+        And | Or | Add | Sub | Sbb | Xor | Shl | Shr | Sar | Rol => {
             assert_eq!(instr.op_count(), 2);
             let func = instr_name(instr);
             let op0 = get_op(instr, 0);
