@@ -9,6 +9,7 @@ mod memory;
 mod traverse;
 pub use traverse::Traverse;
 
+#[derive(Debug)]
 pub struct Import {
     pub dll: String,
     pub func: String,
@@ -24,6 +25,7 @@ pub struct State {
     pub entry_point: u32,
     pub mem: Memory,
     pub code_memory: std::ops::Range<u32>,
+    /// iat addr => Import
     pub imports: HashMap<u32, Import>,
     pub blocks: HashMap<u32, Block>,
     pub resources: Option<(u32, u32)>,

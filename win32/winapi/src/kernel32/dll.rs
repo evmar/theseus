@@ -63,6 +63,10 @@ pub fn LoadLibraryA(ctx: &mut Context, lpLibFileName: u32) -> HMODULE {
 
 #[win32_derive::dllexport]
 pub fn GetProcAddress(ctx: &mut Context, hModule: HMODULE, lpProcName: u32) -> u32 {
-    let name = ctx.memory.read_str(lpProcName);
-    lock().dll_loader.get_proc_address(hModule, name)
+    let name = if lpProcName < 0x1000 {
+        format!("ordinal{}", lpProcName)
+    } else {
+        ctx.memory.read_str(lpProcName).to_owned()
+    };
+    lock().dll_loader.get_proc_address(hModule, &name)
 }

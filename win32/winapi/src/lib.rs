@@ -39,7 +39,7 @@ pub struct EXEData {
     pub entry_point: runtime::Cont,
 }
 
-pub fn run(exe: &EXEData) {
+pub fn load(exe: &EXEData) -> Context {
     use runtime::Host;
     runtime::HOST.init();
 
@@ -61,13 +61,19 @@ pub fn run(exe: &EXEData) {
         blocks: exe.blocks,
         recent: [runtime::return_from_x86; 4],
     };
-    let ctx = &mut ctx;
-    {
-        let mut lock = kernel32::lock();
-        (exe.init_mappings)(ctx, &mut lock.mappings);
-        lock.init_process(ctx);
-    }
 
+    let mut lock = kernel32::lock();
+    (exe.init_mappings)(&mut ctx, &mut lock.mappings);
+    lock.init_process(&mut ctx);
+    ctx
+}
+
+pub fn start(ctx: &mut Context, exe: &EXEData) {
     runtime::call_x86(ctx, exe.entry_point, vec![]);
     // TODO: per Windows, we need to join any spawned threads here.
+}
+
+pub fn run(exe: &EXEData) {
+    let mut ctx = load(exe);
+    start(&mut ctx, exe);
 }
