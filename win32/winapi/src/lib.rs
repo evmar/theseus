@@ -47,9 +47,8 @@ pub fn load(exe: &EXEData) -> Context {
 
     let memory_size = 32 << 20;
     // safety: safe to assume_init on zeroed u8
-    let mut memory: Box<[u8]> = unsafe { Box::<[u8]>::new_zeroed_slice(memory_size).assume_init() };
-    // safety: see discussion of lifetime in Memory docstring
-    let static_memory: &'static mut [u8] = unsafe { std::mem::transmute(memory.as_mut()) };
+    let memory: Box<[u8]> = unsafe { Box::<[u8]>::new_zeroed_slice(memory_size).assume_init() };
+    let static_memory: &'static mut [u8] = Box::leak(memory);
     let memory = Memory::new(static_memory);
 
     kernel32::init_state(exe.image_base, exe.resources.clone());
