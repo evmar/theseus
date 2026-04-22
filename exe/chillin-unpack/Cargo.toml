@@ -5,4 +5,5 @@ edition = "2024"
 
 [dependencies]
 runtime = { workspace = true }
+tc = { workspace = true }
 winapi = { workspace = true }

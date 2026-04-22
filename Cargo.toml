@@ -1,19 +1,18 @@
 [workspace]
 resolver = "2"
 members = [
-  "explore",
-  "logger",
-  "runtime",
-  "tc",
-  "win32/derive",
-  "win32/winapi",
-
   "exe/basicdd",
   "exe/chillin",
   "exe/chillin-unpack",
   "exe/thread",
   "exe/winapi",
   "exe/zig_hello",
+  "explore",
+  "logger",
+  "runtime",
+  "tc",
+  "win32/derive",
+  "win32/winapi",
 ]
 
 [workspace.dependencies]
@@ -25,6 +24,7 @@ log = "0.4.29"
 logger = { path = "logger" }
 pe = { path = "win32/pe" }
 runtime = { path = "runtime" }
+tc = { path = "tc" }
 widestring = "1.2.1"
 winapi = { path = "win32/winapi" }
 zerocopy = { version = "0.8.40", features = ["derive"] }

@@ -99,6 +99,7 @@ name = "chillin-unpack"
 version = "0.1.0"
 dependencies = [
  "runtime",
+ "tc",
  "winapi 0.1.0",
 ]
 
