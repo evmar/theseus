@@ -172,25 +172,47 @@ impl Block {
     }
 }
 
-fn traverse(state: &mut State, start: u32) {
-    if state.blocks.contains_key(&start) {
-        return;
+pub struct Traverse<'a> {
+    state: &'a mut State,
+    queue: VecDeque<u32>,
+}
+
+impl<'a> Traverse<'a> {
+    fn new(state: &'a mut State, start: u32) -> Traverse<'a> {
+        let mut traverse = Traverse {
+            state,
+            queue: VecDeque::new(),
+        };
+        Self::enqueue(&mut traverse.queue, start);
+        traverse
     }
 
-    let mut queue = VecDeque::<u32>::new();
-    queue.push_back(start);
+    fn enqueue(queue: &mut VecDeque<u32>, ip: u32) {
+        queue.push_back(ip);
+    }
 
-    'queue: while let Some(ip) = queue.pop_front() {
-        let block_ip = ip;
-        if state.blocks.contains_key(&block_ip) {
-            continue;
+    fn run(&mut self) {
+        while let Some(ip) = self.queue.pop_front() {
+            let block_ip = ip;
+            if self.state.blocks.contains_key(&block_ip) {
+                continue;
+            }
+            match self.decode_one(block_ip) {
+                Ok(block) => {
+                    self.state.blocks.insert(block_ip, block);
+                }
+                Err(e) => {
+                    log::warn!("omitting {block_ip:08x}: {e}");
+                    self.state.blocks.insert(block_ip, Block::Invalid);
+                }
+            }
         }
+    }
 
-        let data = state.mem.slice_all(AddrAbs(ip));
+    fn decode_one(&mut self, ip: u32) -> anyhow::Result<Block> {
+        let data = self.state.mem.slice_all(AddrAbs(ip));
         if data[..0x10].iter().all(|&b| b == 0) {
-            log::warn!("{ip:08x} appears zero-filled, omitting");
-            state.blocks.insert(block_ip, Block::Invalid);
-            continue;
+            anyhow::bail!("block appears zero-filled");
         }
 
         let mut instrs = Vec::new();
@@ -199,13 +221,13 @@ fn traverse(state: &mut State, start: u32) {
         for instr in decoder {
             instrs.push(instr);
 
-            if state.scan_immediates {
+            if self.state.scan_immediates {
                 for i in 0..instr.op_count() {
                     if instr.op_kind(i) == iced_x86::OpKind::Immediate32 {
                         let imm = instr.immediate32();
-                        if state.code_memory.contains(&imm) {
+                        if self.state.code_memory.contains(&imm) {
                             log::info!("{imm:x} looks like a code pointer");
-                            queue.push_back(imm);
+                            Self::enqueue(&mut self.queue, imm);
                         }
                     }
                 }
@@ -219,11 +241,13 @@ fn traverse(state: &mut State, start: u32) {
             match instr.mnemonic() {
                 Call | Jmp | Je | Jne | Jb | Js | Jns | Ja | Jae | Jl | Jge | Jecxz | Jg | Jle
                 | Jo | Jno | Jp | Jnp | Jbe | Loop => {
-                    let next = match instr.op0_kind() {
-                        iced_x86::OpKind::NearBranch32 => Some(instr.near_branch32()),
+                    match instr.op0_kind() {
+                        iced_x86::OpKind::NearBranch32 => {
+                            Self::enqueue(&mut self.queue, instr.near_branch32())
+                        }
                         iced_x86::OpKind::Memory => {
                             if let Some(addr) = is_abs_memory_ref(&instr) {
-                                if state.imports.contains_key(&addr) {
+                                if self.state.imports.contains_key(&addr) {
                                     // ok
                                 } else {
                                     log::warn!("{ip:08x} {instr}  ; indirect via memory");
@@ -231,58 +255,50 @@ fn traverse(state: &mut State, start: u32) {
                             } else {
                                 log::warn!("{ip:08x} {instr}  ; indirect via memory");
                             }
-                            None
                         }
                         iced_x86::OpKind::Register => {
                             log::warn!("{ip:08x} {instr}  ; indirect via register");
-                            None
                         }
                         d => todo!("dest {d:?}"),
-                    };
-
-                    if let Some(next) = next {
-                        queue.push_back(next);
                     }
                     if instr.mnemonic() != Jmp {
-                        let next = instr.next_ip32();
-                        queue.push_back(next);
+                        Self::enqueue(&mut self.queue, instr.next_ip32());
                     }
                 }
                 Ret => {}
                 Int => {}  // terminates
                 Int3 => {} // breakpoint
                 INVALID => {
-                    log::error!("aborting block at {block_ip:x}, invalid code found");
-                    state.blocks.insert(block_ip, Block::Invalid);
-                    continue 'queue;
+                    anyhow::bail!("invalid code found");
                 }
                 _ => todo!("control flow {}", instr),
             }
             break;
         }
 
-        state.blocks.insert(block_ip, Block::Instrs(instrs));
+        Ok(Block::Instrs(instrs))
     }
-}
 
-fn scan_for_pointers(state: &mut State) {
-    for i in 0..state.mem.mappings.vec().len() {
-        let mapping = &state.mem.mappings.vec()[i];
-        if mapping.addr == 0 || mapping.addr == state.code_memory.start {
-            continue;
-        }
-        log::info!("scanning mapping {:?}", mapping);
-        let mapping_addr = mapping.addr;
-        let data = state.mem.data[mapping.addr as usize..][..mapping.size as usize].to_vec();
-        for ofs in 0..data.len() - 4 {
-            let value =
-                u32::from_le_bytes([data[ofs], data[ofs + 1], data[ofs + 2], data[ofs + 3]]);
-            if state.code_memory.contains(&value) {
-                log::info!(
-                    "{addr:08x}: found possible code pointer {value:x}",
-                    addr = mapping_addr + ofs as u32
-                );
-                traverse(state, value);
+    fn scan_for_pointers(&mut self) {
+        for i in 0..self.state.mem.mappings.vec().len() {
+            let mapping = &self.state.mem.mappings.vec()[i];
+            if mapping.addr == 0 || mapping.addr == self.state.code_memory.start {
+                continue;
+            }
+            log::info!("scanning mapping {:?}", mapping);
+            let mapping_addr = mapping.addr;
+            let data =
+                self.state.mem.data[mapping.addr as usize..][..mapping.size as usize].to_vec();
+            for ofs in 0..data.len() - 4 {
+                let value =
+                    u32::from_le_bytes([data[ofs], data[ofs + 1], data[ofs + 2], data[ofs + 3]]);
+                if self.state.code_memory.contains(&value) {
+                    log::info!(
+                        "{addr:08x}: found possible code pointer {value:x}",
+                        addr = mapping_addr + ofs as u32
+                    );
+                    Self::enqueue(&mut self.queue, value);
+                }
             }
         }
     }
@@ -349,10 +365,11 @@ fn run() -> Result<()> {
     state.read_imports();
 
     let ip = AddrImage(state.pe_file.opt_header.AddressOfEntryPoint).to_abs(state.image_base());
-    traverse(&mut state, ip.0);
+    let mut traverse = Traverse::new(&mut state, ip.0);
     if args.scan {
-        scan_for_pointers(&mut state);
+        traverse.scan_for_pointers();
     }
+    traverse.run();
 
     let outdir = &args.out;
     codegen::gen_file(&mut state, outdir)?;
