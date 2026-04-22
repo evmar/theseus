@@ -28,8 +28,6 @@ pub struct State {
     imports: HashMap<u32, Import>,
     blocks: HashMap<u32, Block>,
     resources: Option<(u32, u32)>,
-
-    scan_immediates: bool,
 }
 
 pub fn is_abs_memory_ref(instr: &iced_x86::Instruction) -> Option<u32> {
@@ -109,9 +107,6 @@ fn run() -> Result<()> {
         .mem
         .mappings
         .alloc("null page".into(), Some(0), 0x1000);
-    if args.scan_immediates {
-        state.scan_immediates = true;
-    }
 
     for addr in args.externs {
         log::info!("extern: {addr:#x}");
@@ -122,7 +117,7 @@ fn run() -> Result<()> {
     load_pe(&mut state, buf);
 
     let start = state.entry_point;
-    let mut traverse = Traverse::new(&mut state, start);
+    let mut traverse = Traverse::new(&mut state, args.scan_immediates, start);
     if args.scan {
         traverse.scan_for_pointers();
     }

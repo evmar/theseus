@@ -6,14 +6,16 @@ use crate::{Block, State, is_abs_memory_ref};
 
 pub struct Traverse<'a> {
     state: &'a mut State,
+    scan_immediates: bool,
     queue: VecDeque<u32>,
     invalid: HashSet<u32>,
 }
 
 impl<'a> Traverse<'a> {
-    pub fn new(state: &'a mut State, start: u32) -> Traverse<'a> {
+    pub fn new(state: &'a mut State, scan_immediates: bool, start: u32) -> Traverse<'a> {
         let mut traverse = Traverse {
             state,
+            scan_immediates,
             queue: VecDeque::new(),
             invalid: HashSet::new(),
         };
@@ -54,7 +56,7 @@ impl<'a> Traverse<'a> {
         for instr in decoder {
             instrs.push(instr);
 
-            if self.state.scan_immediates {
+            if self.scan_immediates {
                 for i in 0..instr.op_count() {
                     if instr.op_kind(i) == iced_x86::OpKind::Immediate32 {
                         let imm = instr.immediate32();
