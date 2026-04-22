@@ -45,7 +45,7 @@ pub fn run(exe: &EXEData) {
 
     crate::trace::init(&std::env::var("THESEUS_TRACE").unwrap_or_default());
 
-    let memory_size = 32 << 10;
+    let memory_size = 32 << 20;
     // safety: safe to assume_init on zeroed u8
     let mut memory: Box<[u8]> = unsafe { Box::<[u8]>::new_zeroed_slice(memory_size).assume_init() };
     // safety: see discussion of lifetime in Memory docstring
