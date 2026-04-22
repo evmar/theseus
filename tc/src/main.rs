@@ -193,17 +193,16 @@ impl<'a> Traverse<'a> {
 
     fn run(&mut self) {
         while let Some(ip) = self.queue.pop_front() {
-            let block_ip = ip;
-            if self.state.blocks.contains_key(&block_ip) || self.invalid.contains(&block_ip) {
+            if self.state.blocks.contains_key(&ip) || self.invalid.contains(&ip) {
                 continue;
             }
-            match self.decode_one(block_ip) {
+            match self.decode_one(ip) {
                 Ok(block) => {
-                    self.state.blocks.insert(block_ip, block);
+                    self.state.blocks.insert(ip, block);
                 }
                 Err(e) => {
-                    log::warn!("omitting {block_ip:08x}: {e}");
-                    self.invalid.insert(block_ip);
+                    log::warn!("omitting {ip:08x}: {e}");
+                    self.invalid.insert(ip);
                 }
             }
         }
