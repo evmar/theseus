@@ -1,6 +1,6 @@
 //! PE loading.
 
-use crate::{Block, Import, State};
+use crate::{Import, State, memory::Memory};
 
 pub fn load_pe(state: &mut State, buf: Vec<u8>) {
     let f = pe::File::parse(&buf).unwrap();
@@ -39,71 +39,74 @@ pub fn load_pe(state: &mut State, buf: Vec<u8>) {
         .get_data_directory(pe::IMAGE_DIRECTORY_ENTRY::RESOURCE)
         .map(|dir| (image_base + dir.VirtualAddress, dir.Size));
 
-    read_imports(&f, state);
+    let mut imports = read_imports(&f, &state.mem);
+    resolve_iat(&mut imports, &mut state.mem);
+    state.imports = imports.into_iter().map(|imp| (imp.iat_addr, imp)).collect();
 }
 
-fn read_imports(pe_file: &pe::File, state: &mut State) {
-    let Some(imports) = pe_file.get_data_directory(pe::IMAGE_DIRECTORY_ENTRY::IMPORT) else {
-        return;
+/// Read the file's imported symbols.
+fn read_imports(pe_file: &pe::File, mem: &Memory) -> Vec<Import> {
+    let mut imports = vec![];
+    let Some(dir) = pe_file.get_data_directory(pe::IMAGE_DIRECTORY_ENTRY::IMPORT) else {
+        return imports;
     };
     let image_base = pe_file.opt_header.ImageBase;
-    let image = state.mem.slice_all(image_base);
-    for imp in pe::read_imports(imports.as_slice(image).unwrap()) {
+    let image = mem.slice_all(image_base);
+    for imp in pe::read_imports(dir.as_slice(image).unwrap()) {
         let name = std::str::from_utf8(imp.image_name(image))
             .unwrap()
             .to_lowercase();
         let name = name.trim_end_matches(".dll");
         for (addr, entry) in imp.iat_iter(image) {
-            let addr = image_base + addr;
-            state.imports.insert(
-                addr,
-                Import {
-                    dll: name.to_string(),
-                    func: match entry.as_import_symbol(image) {
-                        pe::ImportSymbol::Name(name) => {
-                            std::str::from_utf8(name).unwrap().to_string()
-                        }
-                        pe::ImportSymbol::Ordinal(n) => format!("ordinal{n}"),
-                    },
-                    iat_addr: addr,
-                    func_addr: 0,
+            imports.push(Import {
+                dll: name.to_string(),
+                func: match entry.as_import_symbol(image) {
+                    pe::ImportSymbol::Name(name) => std::str::from_utf8(name).unwrap().to_string(),
+                    pe::ImportSymbol::Ordinal(n) => format!("ordinal{n}"),
                 },
-            );
+                iat_addr: image_base + addr,
+                func_addr: 0,
+            });
         }
     }
 
-    // Reserve some fake addresses for imported functions so they can be assigned addresses.
-    // If we never write to the memory it stays zero and doesn't end up in the output.
-    let mut import_func_addr = state.mem.mappings.alloc(
-        "imported functions".into(),
-        None,
-        state.imports.len() as u32,
-    );
-
-    let mut imports = state.imports.values_mut().collect::<Vec<_>>();
-    imports.sort_by_key(|i| i.iat_addr);
-    for import in imports.iter_mut() {
-        import.func_addr = import_func_addr;
-        import_func_addr += 1;
-        state.mem.write::<u32>(import.iat_addr, import.func_addr);
-        state.blocks.insert(
-            import.func_addr,
-            Block::Stdcall(format!("{}::{}", import.dll, import.func)),
-        );
-    }
-
+    // If the file imports these libraries, we need to ensure their vtable entries
+    // get assigned addresses too.
     for (lib, exports) in [
         ("ddraw", winapi::ddraw::EXPORTS.as_slice()),
         ("dsound", winapi::dsound::EXPORTS.as_slice()),
     ] {
-        if imports.iter().find(|i| i.dll == lib).is_some() {
-            for func in exports {
-                state.blocks.insert(
-                    import_func_addr,
-                    Block::Stdcall(format!("{lib}::{}", func.to_string())),
-                );
-                import_func_addr += 1;
-            }
+        if imports.iter().find(|i| i.dll == lib).is_none() {
+            continue;
+        }
+        for func in exports {
+            imports.push(Import {
+                dll: lib.to_string(),
+                func: func.to_string(),
+                iat_addr: 0,
+                func_addr: 0,
+            });
+        }
+    }
+    imports
+}
+
+/// Assign addresses to the imported functions, and write those addresses to the IAT.
+fn resolve_iat(imports: &mut [Import], mem: &mut Memory) {
+    // Reserve some fake addresses for imported functions so they can be assigned addresses.
+    // If we never write to the memory it stays zero and doesn't end up in the output.
+    let mut import_func_addr =
+        mem.mappings
+            .alloc("imported functions".into(), None, imports.len() as u32);
+
+    for import in imports.iter_mut() {
+        import.func_addr = import_func_addr;
+        import_func_addr += 1;
+        if import.iat_addr != 0 {
+            mem.write::<u32>(import.iat_addr, import.func_addr);
+        } else {
+            // hack: assign an unused iat addr just to ensure it has a unique key in state.imports.
+            import.iat_addr = import_func_addr;
         }
     }
 }
