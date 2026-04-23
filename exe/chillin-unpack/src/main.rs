@@ -119,6 +119,32 @@ pub fn do_unpack(ctx: &mut runtime::Context) {
         .map(|imp| (imp.iat_addr, imp.clone()))
         .collect();
 
+    let mut next_addr = syms.next_addr;
+    for (lib, exports) in [
+        ("ddraw", winapi::ddraw::EXPORTS.as_slice()),
+        ("dsound", winapi::dsound::EXPORTS.as_slice()),
+    ] {
+        for func in exports {
+            state.imports.insert(
+                next_addr,
+                tc::Import {
+                    dll: lib.to_string(),
+                    func: func.to_string(),
+                    iat_addr: 0,
+                    func_addr: next_addr,
+                },
+            );
+            next_addr += 1;
+        }
+    }
+
+    for import in state.imports.values() {
+        state.blocks.insert(
+            import.func_addr,
+            tc::Block::Stdcall(format!("{}::{}", import.dll, import.func)),
+        );
+    }
+
     let mut traverse = tc::Traverse::new(&mut state, false, 0x0040_85dd);
     traverse.run();
 

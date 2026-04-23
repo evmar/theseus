@@ -76,7 +76,7 @@ fn read_imports(pe_file: &pe::File, mem: &Memory) -> Vec<Import> {
         ("ddraw", winapi::ddraw::EXPORTS.as_slice()),
         ("dsound", winapi::dsound::EXPORTS.as_slice()),
     ] {
-        if imports.iter().find(|i| i.dll == lib).is_none() {
+        if !imports.iter().any(|i| i.dll == lib) {
             continue;
         }
         for func in exports {
