@@ -6,9 +6,9 @@ use crate::{
 
 fn gen_abs_jmp(state: &State, addr: u32) -> String {
     if state.blocks.contains_key(&addr) {
-        format!("Cont(x{:08x})", addr)
+        format!("Cont(x{:x})", addr)
     } else {
-        format!("/* TODO */ indirect(ctx, {:#08x}u32)", addr)
+        format!("/* TODO */ indirect(ctx, {:#x}u32)", addr)
     }
 }
 
@@ -45,7 +45,7 @@ pub fn codegen(w: &mut Writer, state: &State, instr: &iced_x86::Instruction) -> 
         Call => {
             // Create a temporary here in case gen_jmp needs to borrow ctx.
             w.line(format!("let dst = {};", gen_jmp(state, instr)));
-            w.line(format!("call(ctx, {:#08x}, dst)", instr.next_ip32()));
+            w.line(format!("call(ctx, {:#x}, dst)", instr.next_ip32()));
         }
         Ret => {
             let n = match instr.op_count() {

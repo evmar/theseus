@@ -53,9 +53,9 @@ pub enum Block {
 impl Block {
     pub fn name(&self) -> String {
         match self {
-            Block::Instrs(instrs) => format!("x{:08x}", instrs[0].ip32()),
+            Block::Instrs(instrs) => format!("x{:x}", instrs[0].ip32()),
             Block::Stdcall(func) => format!("{}_stdcall", func),
-            Block::Extern(ip) => format!("x{:08x}", ip),
+            Block::Extern(ip) => format!("x{:x}", ip),
         }
     }
 }

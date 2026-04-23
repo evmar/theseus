@@ -174,7 +174,7 @@ impl Writer {
 fn gen_block(w: &mut Writer, state: &State, ip: u32, block: &Block) {
     match block {
         Block::Instrs(instrs) => {
-            w.line(format!("pub fn x{ip:08x}(ctx: &mut Context) -> Cont {{"));
+            w.line(format!("pub fn x{ip:x}(ctx: &mut Context) -> Cont {{"));
             for instr in instrs {
                 gen_instr(w, state, instr);
             }
@@ -261,7 +261,7 @@ out.copy_from_slice(bytes);",
     ));
     for &ip in &ips {
         let block = state.blocks.get(&ip).unwrap();
-        w.line(format!("({ip:#08x}, {}),", block.name()));
+        w.line(format!("({ip:#x}, {}),", block.name()));
     }
     w.line("(runtime::RETURN_FROM_X86_ADDR, runtime::return_from_x86),");
     w.line("];\n");
@@ -277,7 +277,7 @@ out.copy_from_slice(bytes);",
             resources: {resources},
             blocks: &BLOCKS,
             init_mappings,
-            entry_point: Cont(x{entry_point:08x}),
+            entry_point: Cont(x{entry_point:x}),
         }};\n\n",
         image_base = state.image_base,
         entry_point = state.entry_point,
