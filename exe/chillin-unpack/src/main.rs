@@ -121,6 +121,4 @@ pub fn do_unpack(ctx: &mut runtime::Context) {
     traverse.run();
 
     tc.generate("exe/chillin").unwrap();
-
-    std::process::exit(0);
 }
