@@ -5,36 +5,42 @@ use std::sync::{LazyLock, Mutex};
 
 use winapi::kernel32;
 
+/// State gathered while running the unpacker.
 #[derive(Default)]
-struct Symbols {
-    next_addr: u32,
+struct State {
+    /// DLLs loaded using LoadLibrary.
+    /// modules[i] = the name of the DLL for HMODULE i+1.
     modules: Vec<String>,
-    functions: Vec<tc::Import>,
+    /// symbols imported using GetProcAddress
+    syms: Vec<tc::Import>,
+    /// address to assign to the next symbol imported
+    next_addr: u32,
 }
 
-static SYMS: LazyLock<Mutex<Symbols>> = LazyLock::new(|| Mutex::new(Symbols::default()));
+static STATE: LazyLock<Mutex<State>> = LazyLock::new(|| Mutex::new(State::default()));
 
+/// Implementation of kernel32::DLLLoader (hooking LoadLibrary/GetProcAddress) that
+/// succeeds and records the imports in the global STATE.
 struct Loader;
-
 impl kernel32::DLLLoader for Loader {
     fn load_library(&mut self, filename: &str) -> kernel32::HMODULE {
         let name = filename.to_lowercase();
         let name = name.trim_end_matches(".dll");
-        let mut syms = SYMS.lock().unwrap();
-        syms.modules.push(name.to_owned());
-        syms.modules.len() as u32
+        let mut state = STATE.lock().unwrap();
+        state.modules.push(name.to_owned());
+        state.modules.len() as u32
     }
 
     fn get_proc_address(&mut self, hmodule: kernel32::HMODULE, proc_name: &str) -> u32 {
-        let mut syms = SYMS.lock().unwrap();
-        let dll = syms.modules[hmodule as usize - 1].clone();
+        let mut state = STATE.lock().unwrap();
+        let dll = state.modules[hmodule as usize - 1].clone();
         assert!(proc_name.len() > 0);
-        let func_addr = syms.next_addr;
-        syms.next_addr += 1;
-        syms.functions.push(tc::Import {
+        let func_addr = state.next_addr;
+        state.next_addr += 1;
+        state.syms.push(tc::Import {
             dll,
             func: proc_name.to_owned(),
-            iat_addr: 0,
+            iat_addr: 0, // not known yet
             func_addr,
         });
         func_addr
@@ -44,11 +50,11 @@ impl kernel32::DLLLoader for Loader {
 fn main() {
     let mut ctx = winapi::load(&generated::EXEDATA);
 
-    // Give the imports an arbitrary strange address so they are easier to find in memory.
+    kernel32::lock().dll_loader = Box::new(Loader);
     {
-        let mut syms = SYMS.lock().unwrap();
-        syms.next_addr = 0xFAFB_FC00;
-        kernel32::lock().dll_loader = Box::new(Loader);
+        // Give the imports an arbitrary strange address so they are easier to find in memory.
+        let mut state = STATE.lock().unwrap();
+        state.next_addr = 0xFAFB_FC00;
     }
     winapi::start(&mut ctx, &generated::EXEDATA);
 }
@@ -56,7 +62,6 @@ fn main() {
 /// Fill in the .iat_addr on functions by searching the memory for their addresses.
 fn find_iat(functions: &mut [tc::Import], mappings: &[kernel32::Mapping], memory: &[u8]) {
     for sym in functions.iter_mut() {
-        log::info!("finding: {}!{}", sym.dll, sym.func);
         let addr_bytes = sym.func_addr.to_le_bytes();
         let mut iat_addr = None;
         for mapping in mappings.iter() {
@@ -76,49 +81,46 @@ fn find_iat(functions: &mut [tc::Import], mappings: &[kernel32::Mapping], memory
             }
         }
         if let Some(ofs) = iat_addr {
+            log::info!("{}!{}: found at {:x}", sym.dll, sym.func, ofs);
             sym.iat_addr = ofs;
-            log::info!("found: {:x}", ofs);
         } else {
-            log::error!("not found");
+            log::info!("{}!{}: not found", sym.dll, sym.func);
         }
     }
 }
 
 pub fn do_unpack(ctx: &mut runtime::Context) {
-    let mut syms = SYMS.lock().unwrap();
-    let mut syms = std::mem::take(&mut *syms);
+    let mut syms = std::mem::take(&mut STATE.lock().unwrap().syms);
 
-    let mut state = tc::State::default();
+    let mut tc = tc::State::default();
 
-    {
-        let kernel32 = kernel32::lock();
-        state.mem.mappings = kernel32::Mappings::from(
-            kernel32
-                .mappings
-                .vec()
-                .iter()
-                .filter(|m| m.fixed)
-                .map(|m| m.clone())
-                .collect::<Vec<_>>(),
-        );
-    }
-
-    find_iat(
-        &mut syms.functions,
-        &state.mem.mappings.vec(),
-        &ctx.memory.bytes,
+    // Use the same mappings as the input file as sections of the output.
+    // Filter to "fixed" sections to avoid serializing out the process heap etc.
+    tc.mem.mappings = kernel32::Mappings::from(
+        kernel32::lock()
+            .mappings
+            .vec()
+            .iter()
+            .filter(|m| m.fixed)
+            .cloned()
+            .collect::<Vec<_>>(),
     );
 
-    state.image_base = 0x0040_0000;
-    state.entry_point = 0x0040_85dd;
-    state.mem.data.resize(ctx.memory.bytes.len(), 0);
-    state.mem.data.copy_from_slice(ctx.memory.bytes);
+    find_iat(&mut syms, &tc.mem.mappings.vec(), &ctx.memory.bytes);
 
-    tc::State::add_dll_imports(&mut syms.functions);
-    state.add_imports(syms.functions);
+    let entry_point = 0x0040_85dd;
+    tc.image_base = 0x0040_0000;
+    tc.entry_point = entry_point;
+    tc.mem.bytes.resize(ctx.memory.bytes.len(), 0);
+    tc.mem.bytes.copy_from_slice(ctx.memory.bytes);
 
-    let mut traverse = tc::Traverse::new(&mut state, false, 0x0040_85dd);
+    tc::State::add_dll_imports(&mut syms);
+    tc.add_imports(syms);
+
+    let mut traverse = tc::Traverse::new(&mut tc, false, entry_point);
     traverse.run();
 
-    tc::generate(&mut state, "exe/chillin").unwrap();
+    tc.generate("exe/chillin").unwrap();
+
+    std::process::exit(0);
 }

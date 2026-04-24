@@ -101,23 +101,25 @@ pub fn write_if_changed(path: &str, contents: &[u8]) -> anyhow::Result<()> {
     Ok(())
 }
 
-pub fn generate(state: &mut State, outdir: &str) -> anyhow::Result<()> {
-    codegen::gen_file(state, outdir)?;
+impl State {
+    pub fn generate(&mut self, outdir: &str) -> anyhow::Result<()> {
+        codegen::gen_file(self, outdir)?;
 
-    let data_dir = format!("{outdir}/data");
-    std::fs::create_dir_all(&data_dir)?;
-    for map in state.mem.mappings.vec().iter() {
-        let buf = state.mem.slice(map.addr, map.size);
-        if buf.iter().all(|&b| b == 0) {
-            continue;
+        let data_dir = format!("{outdir}/data");
+        std::fs::create_dir_all(&data_dir)?;
+        for map in self.mem.mappings.vec().iter() {
+            let buf = self.mem.slice(map.addr, map.size);
+            if buf.iter().all(|&b| b == 0) {
+                continue;
+            }
+            log::info!(
+                "section {:?} @{:x} ({:x} bytes)",
+                map.desc,
+                map.addr,
+                map.size
+            );
+            write_if_changed(&format!("{outdir}/data/{:08x}.raw", map.addr), buf)?;
         }
-        log::info!(
-            "section {:?} @{:x} ({:x} bytes)",
-            map.desc,
-            map.addr,
-            map.size
-        );
-        write_if_changed(&format!("{outdir}/data/{:08x}.raw", map.addr), buf)?;
+        Ok(())
     }
-    Ok(())
 }

@@ -123,7 +123,7 @@ impl<'a> Traverse<'a> {
             log::info!("scanning mapping {:?}", mapping);
             let mapping_addr = mapping.addr;
             let data =
-                self.state.mem.data[mapping.addr as usize..][..mapping.size as usize].to_vec();
+                self.state.mem.bytes[mapping.addr as usize..][..mapping.size as usize].to_vec();
             for ofs in 0..data.len() - 4 {
                 let value =
                     u32::from_le_bytes([data[ofs], data[ofs + 1], data[ofs + 2], data[ofs + 3]]);

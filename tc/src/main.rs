@@ -54,7 +54,7 @@ fn run() -> anyhow::Result<()> {
     }
     traverse.run();
 
-    tc::generate(&mut state, &args.out)
+    state.generate(&args.out)
 }
 
 fn main() {

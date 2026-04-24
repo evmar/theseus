@@ -7,15 +7,15 @@ pub use winapi::kernel32::Mapping;
 // TODO: this is maybe redundant with runtime's memory, should they be merged?
 pub struct Memory {
     pub mappings: winapi::kernel32::Mappings,
-    pub data: Vec<u8>,
+    pub bytes: Vec<u8>,
 }
 
 impl Memory {
     pub fn alloc(&mut self, name: String, addr: u32, size: u32) {
         let addr = self.mappings.alloc(name, Some(addr), size);
         let len = (addr + size) as usize;
-        if len > self.data.len() {
-            self.data.resize(len, 0);
+        if len > self.bytes.len() {
+            self.bytes.resize(len, 0);
         }
     }
 
@@ -25,20 +25,20 @@ impl Memory {
     }
 
     pub fn write<T: zerocopy::IntoBytes + zerocopy::Immutable>(&mut self, addr: u32, val: T) {
-        val.write_to_prefix(&mut self.data[addr as usize..])
+        val.write_to_prefix(&mut self.bytes[addr as usize..])
             .unwrap();
     }
 
     pub fn slice(&self, addr: u32, len: u32) -> &[u8] {
-        &self.data[addr as usize..][..len as usize]
+        &self.bytes[addr as usize..][..len as usize]
     }
 
     pub fn slice_all(&self, addr: u32) -> &[u8] {
-        &self.data[addr as usize..]
+        &self.bytes[addr as usize..]
     }
 
     pub fn slice_mut(&mut self, addr: u32, len: u32) -> &mut [u8] {
-        &mut self.data[addr as usize..][..len as usize]
+        &mut self.bytes[addr as usize..][..len as usize]
     }
 }
 
