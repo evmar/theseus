@@ -49,6 +49,15 @@ impl Regs {
     pub fn get_di(&self) -> u16 {
         self.edi as u16
     }
+    pub fn get_es(&self) -> u16 {
+        todo!()
+    }
+    pub fn get_sp(&self) -> u16 {
+        todo!()
+    }
+    pub fn get_bp(&self) -> u16 {
+        todo!()
+    }
 
     pub fn set_ax(&mut self, val: u16) {
         self.eax = (self.eax & 0xFFFF_0000) | (val as u32);

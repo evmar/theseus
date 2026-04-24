@@ -22,7 +22,7 @@ pub fn get_reg(r: iced_x86::Register) -> String {
         EAX | ECX | EDX | EBX | ESI | EDI | ESP | EBP => {
             format!("ctx.cpu.regs.{reg}", reg = reg_name(r))
         }
-        AL | AH | AX | CL | CH | CX | DL | DH | DX | BL | BH | BX | DI | SI => {
+        AL | AH | AX | CL | CH | CX | DL | DH | DX | BL | BH | BX | DI | SI | ES | SP | BP => {
             format!("ctx.cpu.regs.get_{reg}()", reg = reg_name(r))
         }
         r => todo!("{r:?}"),
@@ -35,7 +35,7 @@ pub fn set_reg(r: iced_x86::Register, expr: String) -> String {
         EAX | ECX | EDX | EBX | ESI | EDI | ESP | EBP => {
             format!("ctx.cpu.regs.{reg} = {expr};", reg = reg_name(r))
         }
-        AL | AH | AX | CL | CH | CX | DL | DH | DX | BL | BH | BX | DI | SI => {
+        AL | AH | AX | CL | CH | CX | DL | DH | DX | BL | BH | BX | DI | SI | ES | SP | BP => {
             format!("ctx.cpu.regs.set_{reg}({expr});", reg = reg_name(r))
         }
         r => todo!("{r:?}"),
@@ -45,14 +45,22 @@ pub fn set_reg(r: iced_x86::Register, expr: String) -> String {
 pub fn gen_addr(instr: &iced_x86::Instruction) -> String {
     let mut expr = Vec::new();
     match instr.memory_segment() {
-        iced_x86::Register::DS | iced_x86::Register::SS => {}
+        iced_x86::Register::CS
+        | iced_x86::Register::DS
+        | iced_x86::Register::SS
+        | iced_x86::Register::GS => {}
         iced_x86::Register::FS => expr.push(format!("ctx.cpu.regs.fs_base")),
         iced_x86::Register::None => {}
         r => todo!("{r:?}"),
     }
     match instr.memory_base() {
         iced_x86::Register::None => {}
-        r => expr.push(get_reg(r)),
+        r => {
+            if reg_size(r) != 32 {
+                return format!("todo!()");
+            }
+            expr.push(get_reg(r))
+        }
     }
     if instr.memory_index() != iced_x86::Register::None {
         if instr.memory_index_scale() != 1 {
@@ -108,7 +116,7 @@ pub fn reg_size(r: iced_x86::Register) -> usize {
     use iced_x86::Register::*;
     match r {
         AL | AH | BL | BH | CL | CH | DL | DH => 8,
-        AX | BX | CX | DX | SI | DI | BP | SP => 16,
+        AX | BX | CX | DX | SI | DI | BP | SP | ES => 16,
         EAX | EBX | ECX | EDX | ESI | EDI | ESP | EBP => 32,
         MM0 | MM1 | MM2 | MM3 | MM4 | MM5 | MM6 | MM7 => 64,
         r => todo!("{r:?}"),
@@ -135,6 +143,7 @@ pub fn op_size(instr: &iced_x86::Instruction, n: u32) -> usize {
     match instr.op_kind(n) {
         Register => reg_size(instr.op_register(n)),
         Memory => mem_size(instr),
+        Immediate16 => 16,
         Immediate8to32 => 32,
         Immediate32 => 32,
         k => todo!("{k:?}"),
@@ -176,7 +185,11 @@ fn gen_block(w: &mut Writer, state: &State, ip: u32, block: &Block) {
         Block::Instrs(instrs) => {
             w.line(format!("pub fn x{ip:x}(ctx: &mut Context) -> Cont {{"));
             for instr in instrs {
-                gen_instr(w, state, instr);
+                if let Err(e) = gen_instr(w, state, instr) {
+                    w.line(format!("// {}", e));
+                    w.todo();
+                    break;
+                }
             }
             w.line("}\n");
         }
@@ -186,7 +199,7 @@ fn gen_block(w: &mut Writer, state: &State, ip: u32, block: &Block) {
     }
 }
 
-fn gen_instr(w: &mut Writer, state: &State, instr: &iced_x86::Instruction) {
+fn gen_instr(w: &mut Writer, state: &State, instr: &iced_x86::Instruction) -> anyhow::Result<()> {
     w.line(format!("// {:08x} {}", instr.ip32(), instr));
     if control_flow::codegen(w, state, instr) {
     } else if math::codegen(w, state, instr) {
@@ -195,8 +208,9 @@ fn gen_instr(w: &mut Writer, state: &State, instr: &iced_x86::Instruction) {
     } else if fpu::codegen(w, state, instr) {
     } else if mmx::codegen(w, state, instr) {
     } else {
-        todo!("{:?} in {}", instr.mnemonic(), instr);
+        anyhow::bail!("{:?} not implemented", instr.mnemonic());
     }
+    Ok(())
 }
 
 pub fn gen_file(state: &mut State, outdir: &str) -> Result<()> {

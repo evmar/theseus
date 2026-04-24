@@ -6,9 +6,21 @@ use crate::{
 pub fn codegen(w: &mut Writer, _state: &State, instr: &iced_x86::Instruction) -> bool {
     use iced_x86::Mnemonic::*;
     match instr.mnemonic() {
-        Push => w.line(format!("push(ctx, {});", get_op(instr, 0))),
+        Push => {
+            let func = match op_size(instr, 0) {
+                16 => "push16",
+                32 => "push",
+                _ => return false,
+            };
+            w.line(format!("{func}(ctx, {});", get_op(instr, 0)));
+        }
         Pop => {
-            w.line("let x = pop(ctx);");
+            let func = match op_size(instr, 0) {
+                16 => "pop16",
+                32 => "pop",
+                _ => return false,
+            };
+            w.line(format!("let x = {func}(ctx);"));
             w.line(set_op(instr, 0, "x".into()))
         }
         Pushad => w.line("pushad(ctx);"),

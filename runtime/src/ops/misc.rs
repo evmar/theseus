@@ -5,10 +5,18 @@ pub fn push(ctx: &mut Context, x: u32) {
     ctx.memory.write::<u32>(ctx.cpu.regs.esp, x);
 }
 
+pub fn push16(_ctx: &mut Context, _x: u16) {
+    todo!();
+}
+
 pub fn pop(ctx: &mut Context) -> u32 {
     let x = ctx.memory.read::<u32>(ctx.cpu.regs.esp);
     ctx.cpu.regs.esp += 4;
     x
+}
+
+pub fn pop16(_ctx: &mut Context) -> u16 {
+    todo!();
 }
 
 pub fn pushad(ctx: &mut Context) {

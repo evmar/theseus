@@ -113,11 +113,13 @@ pub fn do_unpack(ctx: &mut runtime::Context) {
     tc.entry_point = entry_point;
     tc.mem.bytes.resize(ctx.memory.bytes.len(), 0);
     tc.mem.bytes.copy_from_slice(ctx.memory.bytes);
+    tc.code_memory = 0x40_0000..tc.mem.bytes.len() as u32;
 
     tc::State::add_dll_imports(&mut syms);
     tc.add_imports(syms);
 
-    let mut traverse = tc::Traverse::new(&mut tc, false, entry_point);
+    let scan_immediates = true;
+    let mut traverse = tc::Traverse::new(&mut tc, scan_immediates, entry_point);
     traverse.run();
 
     tc.generate("exe/chillin").unwrap();

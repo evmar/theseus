@@ -60,6 +60,9 @@ impl<'a> Traverse<'a> {
                 for i in 0..instr.op_count() {
                     if instr.op_kind(i) == iced_x86::OpKind::Immediate32 {
                         let imm = instr.immediate32();
+                        if imm == 0x401bff {
+                            log::info!("found, {:x?}", self.state.code_memory);
+                        }
                         if self.state.code_memory.contains(&imm) {
                             log::info!("{imm:x} looks like a code pointer");
                             Self::enqueue(&mut self.queue, imm);
@@ -69,13 +72,17 @@ impl<'a> Traverse<'a> {
             }
 
             if instr.flow_control() == iced_x86::FlowControl::Next {
+                let next_bytes = &data[(instr.next_ip32() - ip) as usize..][..0x10];
+                if next_bytes.iter().all(|&b| b == 0) {
+                    anyhow::bail!("suspicious block of 0");
+                }
                 continue;
             }
             let ip = instr.ip32();
             use iced_x86::Mnemonic::*;
             match instr.mnemonic() {
                 Call | Jmp | Je | Jne | Jb | Js | Jns | Ja | Jae | Jl | Jge | Jecxz | Jg | Jle
-                | Jo | Jno | Jp | Jnp | Jbe | Loop => {
+                | Jo | Jno | Jp | Jnp | Jbe | Loop | Loope | Loopne => {
                     match instr.op0_kind() {
                         iced_x86::OpKind::NearBranch32 => {
                             Self::enqueue(&mut self.queue, instr.near_branch32())
@@ -94,15 +101,15 @@ impl<'a> Traverse<'a> {
                         iced_x86::OpKind::Register => {
                             log::warn!("{ip:08x} {instr}  ; indirect via register");
                         }
-                        d => todo!("dest {d:?}"),
+                        d => anyhow::bail!("unhandled jmp {d:?}"),
                     }
                     if instr.mnemonic() != Jmp {
                         Self::enqueue(&mut self.queue, instr.next_ip32());
                     }
                 }
                 Ret => {}
-                Int => {}  // terminates
-                Int3 => {} // breakpoint
+                Int => {}         // terminates
+                Int1 | Int3 => {} // breakpoint
                 INVALID => {
                     anyhow::bail!("invalid code found");
                 }

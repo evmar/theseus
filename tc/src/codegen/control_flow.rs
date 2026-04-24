@@ -8,7 +8,7 @@ fn gen_abs_jmp(state: &State, addr: u32) -> String {
     if state.blocks.contains_key(&addr) {
         format!("Cont(x{:x})", addr)
     } else {
-        format!("/* TODO */ indirect(ctx, {:#x}u32)", addr)
+        format!("todo!(\"indirect jmp to {:#x}?\")", addr)
     }
 }
 
