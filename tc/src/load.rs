@@ -41,7 +41,9 @@ pub fn load_pe(state: &mut State, buf: Vec<u8>) {
 
     let mut imports = read_imports(&f, &state.mem);
     resolve_iat(&mut imports, &mut state.mem);
-    state.imports = imports.into_iter().map(|imp| (imp.iat_addr, imp)).collect();
+
+    State::add_dll_imports(&mut imports);
+    state.add_imports(imports);
 }
 
 /// Read the file's imported symbols.
@@ -65,25 +67,6 @@ fn read_imports(pe_file: &pe::File, mem: &Memory) -> Vec<Import> {
                     pe::ImportSymbol::Ordinal(n) => format!("ordinal{n}"),
                 },
                 iat_addr: image_base + addr,
-                func_addr: 0,
-            });
-        }
-    }
-
-    // If the file imports these libraries, we need to ensure their vtable entries
-    // get assigned addresses too.
-    for (lib, exports) in [
-        ("ddraw", winapi::ddraw::EXPORTS.as_slice()),
-        ("dsound", winapi::dsound::EXPORTS.as_slice()),
-    ] {
-        if !imports.iter().any(|i| i.dll == lib) {
-            continue;
-        }
-        for func in exports {
-            imports.push(Import {
-                dll: lib.to_string(),
-                func: func.to_string(),
-                iat_addr: 0,
                 func_addr: 0,
             });
         }

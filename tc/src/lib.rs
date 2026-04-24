@@ -25,10 +25,43 @@ pub struct State {
     pub entry_point: u32,
     pub mem: Memory,
     pub code_memory: std::ops::Range<u32>,
-    /// iat addr => Import
-    pub imports: HashMap<u32, Import>,
+    /// iat addr => function to call, e.g. "kernel32::ExitProcess"
+    iat_refs: HashMap<u32, String>,
     pub blocks: HashMap<u32, Block>,
     pub resources: Option<(u32, u32)>,
+}
+
+impl State {
+    /// If any of the imports are from a DLL with exports, add the DLL's exports too.
+    pub fn add_dll_imports(imports: &mut Vec<Import>) {
+        let mut next_addr = imports.last().unwrap().func_addr + 1;
+        for (lib, exports) in [
+            ("ddraw", winapi::ddraw::EXPORTS.as_slice()),
+            ("dsound", winapi::dsound::EXPORTS.as_slice()),
+        ] {
+            if !imports.iter().any(|i| i.dll == lib) {
+                continue;
+            }
+            for func in exports {
+                imports.push(Import {
+                    dll: lib.to_string(),
+                    func: func.to_string(),
+                    iat_addr: 0,
+                    func_addr: next_addr,
+                });
+                next_addr += 1;
+            }
+        }
+    }
+
+    pub fn add_imports(&mut self, imports: Vec<Import>) {
+        for import in imports {
+            let func = format!("{}::{}", import.dll, import.func);
+            self.blocks
+                .insert(import.func_addr, Block::Stdcall(func.clone()));
+            self.iat_refs.insert(import.iat_addr, func);
+        }
+    }
 }
 
 pub fn is_abs_memory_ref(instr: &iced_x86::Instruction) -> Option<u32> {

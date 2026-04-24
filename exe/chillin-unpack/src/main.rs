@@ -86,7 +86,7 @@ fn find_iat(functions: &mut [tc::Import], mappings: &[kernel32::Mapping], memory
 
 pub fn do_unpack(ctx: &mut runtime::Context) {
     let mut syms = SYMS.lock().unwrap();
-    let syms = &mut *syms;
+    let mut syms = std::mem::take(&mut *syms);
 
     let mut state = tc::State::default();
 
@@ -113,37 +113,9 @@ pub fn do_unpack(ctx: &mut runtime::Context) {
     state.entry_point = 0x0040_85dd;
     state.mem.data.resize(ctx.memory.bytes.len(), 0);
     state.mem.data.copy_from_slice(ctx.memory.bytes);
-    state.imports = syms
-        .functions
-        .iter()
-        .map(|imp| (imp.iat_addr, imp.clone()))
-        .collect();
 
-    let mut next_addr = syms.next_addr;
-    for (lib, exports) in [
-        ("ddraw", winapi::ddraw::EXPORTS.as_slice()),
-        ("dsound", winapi::dsound::EXPORTS.as_slice()),
-    ] {
-        for func in exports {
-            state.imports.insert(
-                next_addr,
-                tc::Import {
-                    dll: lib.to_string(),
-                    func: func.to_string(),
-                    iat_addr: 0,
-                    func_addr: next_addr,
-                },
-            );
-            next_addr += 1;
-        }
-    }
-
-    for import in state.imports.values() {
-        state.blocks.insert(
-            import.func_addr,
-            tc::Block::Stdcall(format!("{}::{}", import.dll, import.func)),
-        );
-    }
+    tc::State::add_dll_imports(&mut syms.functions);
+    state.add_imports(syms.functions);
 
     let mut traverse = tc::Traverse::new(&mut state, false, 0x0040_85dd);
     traverse.run();

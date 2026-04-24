@@ -47,13 +47,6 @@ fn run() -> anyhow::Result<()> {
     let buf = std::fs::read(args.exe).unwrap();
     tc::load_pe(&mut state, buf);
 
-    for import in state.imports.values() {
-        state.blocks.insert(
-            import.func_addr,
-            tc::Block::Stdcall(format!("{}::{}", import.dll, import.func)),
-        );
-    }
-
     let start = state.entry_point;
     let mut traverse = tc::Traverse::new(&mut state, args.scan_immediates, start);
     if args.scan {

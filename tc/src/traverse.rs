@@ -82,7 +82,7 @@ impl<'a> Traverse<'a> {
                         }
                         iced_x86::OpKind::Memory => {
                             if let Some(addr) = is_abs_memory_ref(&instr) {
-                                if self.state.imports.contains_key(&addr) {
+                                if self.state.iat_refs.contains_key(&addr) {
                                     // ok
                                 } else {
                                     log::warn!("{ip:08x} {instr}  ; indirect via memory");
