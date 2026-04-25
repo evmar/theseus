@@ -74,9 +74,6 @@ impl<'a> Traverse<'a> {
                 for i in 0..instr.op_count() {
                     if instr.op_kind(i) == iced_x86::OpKind::Immediate32 {
                         let imm = instr.immediate32();
-                        if imm == 0x401bff {
-                            log::info!("found, {:x?}", self.module.code_memory);
-                        }
                         if self.module.code_memory.contains(&imm) {
                             log::info!("{imm:x} looks like a code pointer");
                             self.enqueue(imm);
