@@ -112,18 +112,7 @@ pub fn x4cbcd4(ctx: &mut Context) -> Cont {
         carry as _,
         &mut ctx.cpu.flags,
     );
-    // 004cbcdb adc eax,eax
-    let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
-    ctx.cpu.regs.eax = addc(
-        ctx.cpu.regs.eax,
-        ctx.cpu.regs.eax,
-        carry as _,
-        &mut ctx.cpu.flags,
-    );
-    // 004cbcdd add ebx,ebx
-    ctx.cpu.regs.ebx = add(ctx.cpu.regs.ebx, ctx.cpu.regs.ebx, &mut ctx.cpu.flags);
-    // 004cbcdf jae short 004CBCD0h
-    jae(ctx, Cont(x4cbce1), Cont(x4cbcd0))
+    Cont(x4cbcdb)
 }
 
 pub fn x4cbcdb(ctx: &mut Context) -> Cont {
@@ -188,10 +177,7 @@ pub fn x4cbcf3(ctx: &mut Context) -> Cont {
 pub fn x4cbcfe(ctx: &mut Context) -> Cont {
     // 004cbcfe mov ebp,eax
     ctx.cpu.regs.ebp = ctx.cpu.regs.eax;
-    // 004cbd00 add ebx,ebx
-    ctx.cpu.regs.ebx = add(ctx.cpu.regs.ebx, ctx.cpu.regs.ebx, &mut ctx.cpu.flags);
-    // 004cbd02 jne short 004CBD0Bh
-    jne(ctx, Cont(x4cbd04), Cont(x4cbd0b))
+    Cont(x4cbd00)
 }
 
 pub fn x4cbd00(ctx: &mut Context) -> Cont {
@@ -214,18 +200,7 @@ pub fn x4cbd04(ctx: &mut Context) -> Cont {
         carry as _,
         &mut ctx.cpu.flags,
     );
-    // 004cbd0b adc ecx,ecx
-    let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
-    ctx.cpu.regs.ecx = addc(
-        ctx.cpu.regs.ecx,
-        ctx.cpu.regs.ecx,
-        carry as _,
-        &mut ctx.cpu.flags,
-    );
-    // 004cbd0d add ebx,ebx
-    ctx.cpu.regs.ebx = add(ctx.cpu.regs.ebx, ctx.cpu.regs.ebx, &mut ctx.cpu.flags);
-    // 004cbd0f jne short 004CBD18h
-    jne(ctx, Cont(x4cbd11), Cont(x4cbd18))
+    Cont(x4cbd0b)
 }
 
 pub fn x4cbd0b(ctx: &mut Context) -> Cont {
@@ -256,16 +231,7 @@ pub fn x4cbd11(ctx: &mut Context) -> Cont {
         carry as _,
         &mut ctx.cpu.flags,
     );
-    // 004cbd18 adc ecx,ecx
-    let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
-    ctx.cpu.regs.ecx = addc(
-        ctx.cpu.regs.ecx,
-        ctx.cpu.regs.ecx,
-        carry as _,
-        &mut ctx.cpu.flags,
-    );
-    // 004cbd1a jne short 004CBD3Ch
-    jne(ctx, Cont(x4cbd1c), Cont(x4cbd3c))
+    Cont(x4cbd18)
 }
 
 pub fn x4cbd18(ctx: &mut Context) -> Cont {
@@ -310,18 +276,7 @@ pub fn x4cbd21(ctx: &mut Context) -> Cont {
         carry as _,
         &mut ctx.cpu.flags,
     );
-    // 004cbd28 adc ecx,ecx
-    let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
-    ctx.cpu.regs.ecx = addc(
-        ctx.cpu.regs.ecx,
-        ctx.cpu.regs.ecx,
-        carry as _,
-        &mut ctx.cpu.flags,
-    );
-    // 004cbd2a add ebx,ebx
-    ctx.cpu.regs.ebx = add(ctx.cpu.regs.ebx, ctx.cpu.regs.ebx, &mut ctx.cpu.flags);
-    // 004cbd2c jae short 004CBD1Dh
-    jae(ctx, Cont(x4cbd2e), Cont(x4cbd1d))
+    Cont(x4cbd28)
 }
 
 pub fn x4cbd28(ctx: &mut Context) -> Cont {
@@ -364,17 +319,7 @@ pub fn x4cbd30(ctx: &mut Context) -> Cont {
 pub fn x4cbd39(ctx: &mut Context) -> Cont {
     // 004cbd39 add ecx,2
     ctx.cpu.regs.ecx = add(ctx.cpu.regs.ecx, 0x2u32, &mut ctx.cpu.flags);
-    // 004cbd3c cmp ebp,0FFFFF300h
-    sub(ctx.cpu.regs.ebp, 0xfffff300u32, &mut ctx.cpu.flags);
-    // 004cbd42 adc ecx,1
-    let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
-    ctx.cpu.regs.ecx = addc(ctx.cpu.regs.ecx, 0x1u32, carry as _, &mut ctx.cpu.flags);
-    // 004cbd45 lea edx,[edi+ebp]
-    ctx.cpu.regs.edx = ctx.cpu.regs.edi.wrapping_add(ctx.cpu.regs.ebp);
-    // 004cbd48 cmp ebp,0FFFFFFFCh
-    sub(ctx.cpu.regs.ebp, 0xfffffffcu32, &mut ctx.cpu.flags);
-    // 004cbd4b jbe short 004CBD5Ch
-    jbe(ctx, Cont(x4cbd4d), Cont(x4cbd5c))
+    Cont(x4cbd3c)
 }
 
 pub fn x4cbd3c(ctx: &mut Context) -> Cont {

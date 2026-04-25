@@ -64,6 +64,10 @@ impl<'a> Traverse<'a> {
         let decoder =
             iced_x86::Decoder::with_ip(32, data, ip as u64, iced_x86::DecoderOptions::NONE);
         for instr in decoder {
+            if self.blocks.contains_key(&instr.ip32()) {
+                // Hit a point covered by another block, e.g. a jump target
+                break;
+            }
             instrs.push(instr);
 
             if self.scan_immediates {

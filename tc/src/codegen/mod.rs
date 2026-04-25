@@ -206,6 +206,12 @@ impl<'a> CodeGen<'a> {
                         break;
                     }
                 }
+
+                let last = instrs.last().unwrap();
+                if last.flow_control() == iced_x86::FlowControl::Next {
+                    self.line(format!("Cont(x{:x})", last.next_ip32()));
+                }
+
                 self.line("}\n");
             }
             Block::Stdcall(_) | Block::Extern(_) => {
