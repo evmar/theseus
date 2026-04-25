@@ -25,12 +25,12 @@ impl<'a> Traverse<'a> {
             queue: VecDeque::new(),
             invalid: HashSet::new(),
         };
-        Self::enqueue(&mut traverse.queue, start);
+        traverse.enqueue(start);
         traverse
     }
 
-    fn enqueue(queue: &mut VecDeque<u32>, ip: u32) {
-        queue.push_back(ip);
+    fn enqueue(&mut self, ip: u32) {
+        self.queue.push_back(ip);
     }
 
     pub fn run(&mut self) {
@@ -71,7 +71,7 @@ impl<'a> Traverse<'a> {
                         }
                         if self.module.code_memory.contains(&imm) {
                             log::info!("{imm:x} looks like a code pointer");
-                            Self::enqueue(&mut self.queue, imm);
+                            self.enqueue(imm);
                         }
                     }
                 }
@@ -90,9 +90,7 @@ impl<'a> Traverse<'a> {
                 Call | Jmp | Je | Jne | Jb | Js | Jns | Ja | Jae | Jl | Jge | Jecxz | Jg | Jle
                 | Jo | Jno | Jp | Jnp | Jbe | Loop | Loope | Loopne => {
                     match instr.op0_kind() {
-                        iced_x86::OpKind::NearBranch32 => {
-                            Self::enqueue(&mut self.queue, instr.near_branch32())
-                        }
+                        iced_x86::OpKind::NearBranch32 => self.enqueue(instr.near_branch32()),
                         iced_x86::OpKind::Memory => {
                             if let Some(addr) = is_abs_memory_ref(&instr) {
                                 if self.iat_refs.contains_key(&addr) {
@@ -110,7 +108,7 @@ impl<'a> Traverse<'a> {
                         d => anyhow::bail!("unhandled jmp {d:?}"),
                     }
                     if instr.mnemonic() != Jmp {
-                        Self::enqueue(&mut self.queue, instr.next_ip32());
+                        self.enqueue(instr.next_ip32());
                     }
                 }
                 Ret => {}
@@ -144,7 +142,7 @@ impl<'a> Traverse<'a> {
                         "{addr:08x}: found possible code pointer {value:x}",
                         addr = mapping_addr + ofs as u32
                     );
-                    Self::enqueue(&mut self.queue, value);
+                    self.enqueue(value);
                 }
             }
         }
