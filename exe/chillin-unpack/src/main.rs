@@ -107,15 +107,20 @@ pub fn do_unpack(ctx: &mut runtime::Context) {
     );
 
     find_iat(&mut syms, &tc.mem.mappings.vec(), &ctx.memory.bytes);
+    tc::add_dll_imports(&mut syms);
 
-    tc.module.image_base = 0x0040_0000;
-    tc.module.entry_point = 0x0040_85dd;
     tc.mem.bytes.resize(ctx.memory.bytes.len(), 0);
     tc.mem.bytes.copy_from_slice(ctx.memory.bytes);
-    tc.module.code_memory = 0x40_0000..tc.mem.bytes.len() as u32;
 
-    tc::State::add_dll_imports(&mut syms);
-    tc.add_imports(syms);
+    let module = tc::Module {
+        image_base: 0x0040_0000,
+        entry_point: 0x0040_85dd,
+        code_memory: 0x40_0000..tc.mem.bytes.len() as u32,
+        resources: None,
+        imports: syms,
+    };
+
+    tc.set_module(module);
 
     let scan_immediates = true;
     let mut traverse = tc::Traverse::new(&mut tc, scan_immediates);

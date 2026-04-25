@@ -1,27 +1,25 @@
 //! PE loading.
 
-use crate::{Import, State, memory::Memory};
+use crate::{Import, Module, add_dll_imports, memory::Memory};
 
-pub fn load_pe(state: &mut State, buf: Vec<u8>) {
+pub fn load_pe(mem: &mut Memory, buf: Vec<u8>) -> Module {
     let f = pe::File::parse(&buf).unwrap();
 
     let image_base = f.opt_header.ImageBase;
-    state.module.entry_point = image_base + f.opt_header.AddressOfEntryPoint;
-    state.module.image_base = image_base;
-    state.mem.alloc("exe header".into(), image_base, 0x1000);
-    state.mem.put(image_base, &buf[..0x1000.min(buf.len())]);
+    mem.alloc("exe header".into(), image_base, 0x1000);
+    mem.put(image_base, &buf[..0x1000.min(buf.len())]);
     let mut code_range = None;
     for sec in &f.sections {
         let addr = image_base + sec.VirtualAddress;
         let size = winapi::kernel32::round_to_page(sec.SizeOfRawData.max(sec.VirtualSize));
-        state.mem.alloc(sec.name().unwrap().into(), addr, size);
+        mem.alloc(sec.name().unwrap().into(), addr, size);
 
         let flags = sec.characteristics().unwrap();
         let load_data =
             flags.contains(pe::IMAGE_SCN::CODE) || flags.contains(pe::IMAGE_SCN::INITIALIZED_DATA);
         if load_data {
             let data = &buf[sec.PointerToRawData as usize..][..sec.SizeOfRawData as usize];
-            state.mem.put(addr, data);
+            mem.put(addr, data);
         }
         if flags.contains(pe::IMAGE_SCN::CODE) || flags.contains(pe::IMAGE_SCN::MEM_EXECUTE) {
             match &mut code_range {
@@ -33,17 +31,22 @@ pub fn load_pe(state: &mut State, buf: Vec<u8>) {
             }
         }
     }
-    state.module.code_memory = code_range.unwrap();
 
-    state.module.resources = f
+    let resources = f
         .get_data_directory(pe::IMAGE_DIRECTORY_ENTRY::RESOURCE)
         .map(|dir| (image_base + dir.VirtualAddress, dir.Size));
 
-    let mut imports = read_imports(&f, &state.mem);
-    resolve_iat(&mut imports, &mut state.mem);
+    let mut imports = read_imports(&f, mem);
+    resolve_iat(&mut imports, mem);
+    add_dll_imports(&mut imports);
 
-    State::add_dll_imports(&mut imports);
-    state.add_imports(imports);
+    Module {
+        imports,
+        image_base,
+        entry_point: image_base + f.opt_header.AddressOfEntryPoint,
+        code_memory: code_range.unwrap(),
+        resources,
+    }
 }
 
 /// Read the file's imported symbols.

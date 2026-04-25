@@ -40,7 +40,9 @@ fn run() -> anyhow::Result<()> {
         .alloc("null page".into(), Some(0), 0x1000);
 
     let buf = std::fs::read(args.exe).unwrap();
-    tc::load_pe(&mut state, buf);
+    let module = tc::load_pe(&mut state.mem, buf);
+
+    state.set_module(module);
 
     let mut traverse = tc::Traverse::new(&mut state, args.scan_immediates);
     for addr in args.externs {

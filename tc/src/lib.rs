@@ -25,6 +25,7 @@ pub struct Module {
     pub entry_point: u32,
     pub code_memory: std::ops::Range<u32>,
     pub resources: Option<(u32, u32)>,
+    pub imports: Vec<Import>,
 }
 
 #[derive(Default)]
@@ -36,36 +37,37 @@ pub struct State {
     pub blocks: HashMap<u32, Block>,
 }
 
-impl State {
-    /// If any of the imports are from a DLL with exports, add the DLL's exports too.
-    pub fn add_dll_imports(imports: &mut Vec<Import>) {
-        let mut next_addr = imports.last().unwrap().func_addr + 1;
-        for (lib, exports) in [
-            ("ddraw", winapi::ddraw::EXPORTS.as_slice()),
-            ("dsound", winapi::dsound::EXPORTS.as_slice()),
-        ] {
-            if !imports.iter().any(|i| i.dll == lib) {
-                continue;
-            }
-            for func in exports {
-                imports.push(Import {
-                    dll: lib.to_string(),
-                    func: func.to_string(),
-                    iat_addr: 0,
-                    func_addr: next_addr,
-                });
-                next_addr += 1;
-            }
+/// If any of the imports are from a DLL with exports, add the DLL's exports too.
+pub fn add_dll_imports(imports: &mut Vec<Import>) {
+    let mut next_addr = imports.last().unwrap().func_addr + 1;
+    for (lib, exports) in [
+        ("ddraw", winapi::ddraw::EXPORTS.as_slice()),
+        ("dsound", winapi::dsound::EXPORTS.as_slice()),
+    ] {
+        if !imports.iter().any(|i| i.dll == lib) {
+            continue;
+        }
+        for func in exports {
+            imports.push(Import {
+                dll: lib.to_string(),
+                func: func.to_string(),
+                iat_addr: 0,
+                func_addr: next_addr,
+            });
+            next_addr += 1;
         }
     }
+}
 
-    pub fn add_imports(&mut self, imports: Vec<Import>) {
-        for import in imports {
+impl State {
+    pub fn set_module(&mut self, module: Module) {
+        for import in &module.imports {
             let func = format!("{}::{}", import.dll, import.func);
             self.blocks
                 .insert(import.func_addr, Block::Stdcall(func.clone()));
             self.iat_refs.insert(import.iat_addr, func);
         }
+        self.module = module;
     }
 }
 
