@@ -109,11 +109,11 @@ pub fn do_unpack(ctx: &mut runtime::Context) {
     find_iat(&mut syms, &tc.mem.mappings.vec(), &ctx.memory.bytes);
 
     let entry_point = 0x0040_85dd;
-    tc.image_base = 0x0040_0000;
-    tc.entry_point = entry_point;
+    tc.module.image_base = 0x0040_0000;
+    tc.module.entry_point = entry_point;
     tc.mem.bytes.resize(ctx.memory.bytes.len(), 0);
     tc.mem.bytes.copy_from_slice(ctx.memory.bytes);
-    tc.code_memory = 0x40_0000..tc.mem.bytes.len() as u32;
+    tc.module.code_memory = 0x40_0000..tc.mem.bytes.len() as u32;
 
     tc::State::add_dll_imports(&mut syms);
     tc.add_imports(syms);

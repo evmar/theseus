@@ -61,9 +61,9 @@ impl<'a> Traverse<'a> {
                     if instr.op_kind(i) == iced_x86::OpKind::Immediate32 {
                         let imm = instr.immediate32();
                         if imm == 0x401bff {
-                            log::info!("found, {:x?}", self.state.code_memory);
+                            log::info!("found, {:x?}", self.state.module.code_memory);
                         }
-                        if self.state.code_memory.contains(&imm) {
+                        if self.state.module.code_memory.contains(&imm) {
                             log::info!("{imm:x} looks like a code pointer");
                             Self::enqueue(&mut self.queue, imm);
                         }
@@ -124,7 +124,7 @@ impl<'a> Traverse<'a> {
     pub fn scan_for_pointers(&mut self) {
         for i in 0..self.state.mem.mappings.vec().len() {
             let mapping = &self.state.mem.mappings.vec()[i];
-            if mapping.addr == 0 || mapping.addr == self.state.code_memory.start {
+            if mapping.addr == 0 || mapping.addr == self.state.module.code_memory.start {
                 continue;
             }
             log::info!("scanning mapping {:?}", mapping);
@@ -134,7 +134,7 @@ impl<'a> Traverse<'a> {
             for ofs in 0..data.len() - 4 {
                 let value =
                     u32::from_le_bytes([data[ofs], data[ofs + 1], data[ofs + 2], data[ofs + 3]]);
-                if self.state.code_memory.contains(&value) {
+                if self.state.module.code_memory.contains(&value) {
                     log::info!(
                         "{addr:08x}: found possible code pointer {value:x}",
                         addr = mapping_addr + ofs as u32

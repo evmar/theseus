@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use anyhow::{Result, anyhow, bail};
 mod control_flow;
 mod fpu;
@@ -6,7 +8,7 @@ mod misc;
 mod mmx;
 mod string;
 
-use crate::{Block, State, write_if_changed};
+use crate::{Block, Module, State, memory::Memory, write_if_changed};
 
 fn reg_name(r: iced_x86::Register) -> String {
     format!("{r:?}").to_ascii_lowercase()
@@ -180,128 +182,148 @@ impl Writer {
     }
 }
 
-fn gen_block(w: &mut Writer, state: &State, ip: u32, block: &Block) {
-    match block {
-        Block::Instrs(instrs) => {
-            w.line(format!("pub fn x{ip:x}(ctx: &mut Context) -> Cont {{"));
-            for instr in instrs {
-                if let Err(e) = gen_instr(w, state, instr) {
-                    w.line(format!("// {}", e));
-                    w.todo();
-                    break;
+pub struct CodeGen<'a> {
+    mem: &'a Memory,
+    blocks: &'a HashMap<u32, Block>,
+    iat_refs: &'a HashMap<u32, String>,
+    module: &'a Module,
+}
+
+impl<'a> CodeGen<'a> {
+    pub fn new(state: &'a State) -> Self {
+        Self {
+            mem: &state.mem,
+            blocks: &state.blocks,
+            iat_refs: &state.iat_refs,
+            module: &state.module,
+        }
+    }
+}
+
+impl<'a> CodeGen<'a> {
+    fn gen_block(&self, w: &mut Writer, ip: u32, block: &Block) {
+        match block {
+            Block::Instrs(instrs) => {
+                w.line(format!("pub fn x{ip:x}(ctx: &mut Context) -> Cont {{"));
+                for instr in instrs {
+                    if let Err(e) = self.gen_instr(w, instr) {
+                        w.line(format!("// {}", e));
+                        w.todo();
+                        break;
+                    }
                 }
+                w.line("}\n");
             }
-            w.line("}\n");
-        }
-        Block::Stdcall(_) | Block::Extern(_) => {
-            // no emit
+            Block::Stdcall(_) | Block::Extern(_) => {
+                // no emit
+            }
         }
     }
-}
 
-fn gen_instr(w: &mut Writer, state: &State, instr: &iced_x86::Instruction) -> anyhow::Result<()> {
-    w.line(format!("// {:08x} {}", instr.ip32(), instr));
-    if control_flow::codegen(w, state, instr) {
-    } else if math::codegen(w, state, instr) {
-    } else if string::codegen(w, state, instr) {
-    } else if misc::codegen(w, state, instr) {
-    } else if fpu::codegen(w, state, instr) {
-    } else if mmx::codegen(w, state, instr) {
-    } else {
-        anyhow::bail!("{:?} not implemented", instr.mnemonic());
+    fn gen_instr(&self, w: &mut Writer, instr: &iced_x86::Instruction) -> anyhow::Result<()> {
+        w.line(format!("// {:08x} {}", instr.ip32(), instr));
+        if self.codegen_control_flow(w, instr) {
+        } else if self.codegen_math(w, instr) {
+        } else if self.codegen_string(w, instr) {
+        } else if self.codegen_misc(w, instr) {
+        } else if self.codegen_fpu(w, instr) {
+        } else if self.codegen_mmx(w, instr) {
+        } else {
+            anyhow::bail!("{:?} not implemented", instr.mnemonic());
+        }
+        Ok(())
     }
-    Ok(())
-}
 
-pub fn gen_file(state: &mut State, outdir: &str) -> Result<()> {
-    let mut w = Writer::default();
+    pub fn gen_file(&self, outdir: &str) -> Result<()> {
+        let mut w = Writer::default();
 
-    w.line(
-        "#![allow(unreachable_code)]
+        w.line(
+            "#![allow(unreachable_code)]
 #![allow(unused_parens)]
 #![allow(unused_variables)]
 
 use runtime::*;
 use winapi::*;
 ",
-    );
+        );
 
-    if state.blocks.values().any(|b| matches!(b, Block::Extern(_))) {
-        w.line("use crate::externs::*;");
-    }
+        if self.blocks.values().any(|b| matches!(b, Block::Extern(_))) {
+            w.line("use crate::externs::*;");
+        }
 
-    // It would be cool if we could just link a wasm object file that contains data sections
-    // like
-    //   (data (i32.const 0x400000) "....")
-    // Unfortunately, wasm-lld only supports "relocatable" object files which means it moves
-    // the location of such data at link time.  We could do it by postprocessing the wasm
-    // file, maybe.
-    w.line("fn init_mappings(ctx: &mut Context, mappings: &mut kernel32::Mappings) {");
-    for map in state.mem.mappings.vec().iter() {
-        let addr = map.addr;
-        let buf = state.mem.slice(map.addr, map.size);
-        let zeroed = buf.iter().all(|&b| b == 0);
+        // It would be cool if we could just link a wasm object file that contains data sections
+        // like
+        //   (data (i32.const 0x400000) "....")
+        // Unfortunately, wasm-lld only supports "relocatable" object files which means it moves
+        // the location of such data at link time.  We could do it by postprocessing the wasm
+        // file, maybe.
+        w.line("fn init_mappings(ctx: &mut Context, mappings: &mut kernel32::Mappings) {");
+        for map in self.mem.mappings.vec().iter() {
+            let addr = map.addr;
+            let buf = self.mem.slice(map.addr, map.size);
+            let zeroed = buf.iter().all(|&b| b == 0);
 
-        w.line(format!(
-            "mappings.alloc(
+            w.line(format!(
+                "mappings.alloc(
                 {desc:?}.to_string(),
                 Some({addr:#x}),
                 {size:#x}
             );",
-            desc = map.desc,
-            size = buf.len(),
-        ));
-        if !zeroed {
-            w.line(format!(
-                "let bytes = include_bytes!(\"../data/{addr:08x}.raw\").as_slice();
+                desc = map.desc,
+                size = buf.len(),
+            ));
+            if !zeroed {
+                w.line(format!(
+                    "let bytes = include_bytes!(\"../data/{addr:08x}.raw\").as_slice();
 let out = &mut ctx.memory[{addr:#x}..][..bytes.len()];
 out.copy_from_slice(bytes);",
-            ));
+                ));
+            }
         }
-    }
 
-    w.line("}");
+        w.line("}");
 
-    let mut ips = state.blocks.keys().copied().collect::<Vec<_>>();
-    ips.sort();
-    for &ip in &ips {
-        let block = state.blocks.get(&ip).unwrap();
-        gen_block(&mut w, &state, ip, &block);
-    }
+        let mut ips = self.blocks.keys().copied().collect::<Vec<_>>();
+        ips.sort();
+        for &ip in &ips {
+            let block = self.blocks.get(&ip).unwrap();
+            self.gen_block(&mut w, ip, &block);
+        }
 
-    w.line(format!(
-        "const BLOCKS: [(u32, fn(&mut Context) -> Cont); {}] = [\n",
-        ips.len() + 1,
-    ));
-    for &ip in &ips {
-        let block = state.blocks.get(&ip).unwrap();
-        w.line(format!("({ip:#x}, {}),", block.name()));
-    }
-    w.line("(runtime::RETURN_FROM_X86_ADDR, runtime::return_from_x86),");
-    w.line("];\n");
+        w.line(format!(
+            "const BLOCKS: [(u32, fn(&mut Context) -> Cont); {}] = [\n",
+            ips.len() + 1,
+        ));
+        for &ip in &ips {
+            let block = self.blocks.get(&ip).unwrap();
+            w.line(format!("({ip:#x}, {}),", block.name()));
+        }
+        w.line("(runtime::RETURN_FROM_X86_ADDR, runtime::return_from_x86),");
+        w.line("];\n");
 
-    let resources = match state.resources {
-        Some((addr, size)) => format!("{addr:#x}..{end:#x}", end = addr + size),
-        None => "0..0".to_string(),
-    };
+        let resources = match self.module.resources {
+            Some((addr, size)) => format!("{addr:#x}..{end:#x}", end = addr + size),
+            None => "0..0".to_string(),
+        };
 
-    w.line(format!(
-        "pub const EXEDATA: EXEData = EXEData {{
+        w.line(format!(
+            "pub const EXEDATA: EXEData = EXEData {{
             image_base: {image_base:#x},
             resources: {resources},
             blocks: &BLOCKS,
             init_mappings,
             entry_point: Cont(x{entry_point:x}),
         }};\n\n",
-        image_base = state.image_base,
-        entry_point = state.entry_point,
-    ));
+            image_base = self.module.image_base,
+            entry_point = self.module.entry_point,
+        ));
 
-    std::fs::create_dir_all(format!("{outdir}/src"))?;
-    let path = format!("{outdir}/src/generated.rs");
-    let text = rustfmt(&w.buf)?;
-    write_if_changed(&path, text.as_bytes()).map_err(|err| anyhow!("write {path}: {err}"))?;
-    Ok(())
+        std::fs::create_dir_all(format!("{outdir}/src"))?;
+        let path = format!("{outdir}/src/generated.rs");
+        let text = rustfmt(&w.buf)?;
+        write_if_changed(&path, text.as_bytes()).map_err(|err| anyhow!("write {path}: {err}"))?;
+        Ok(())
+    }
 }
 
 fn rustfmt(text: &str) -> Result<String> {

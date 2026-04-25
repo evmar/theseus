@@ -6,8 +6,8 @@ pub fn load_pe(state: &mut State, buf: Vec<u8>) {
     let f = pe::File::parse(&buf).unwrap();
 
     let image_base = f.opt_header.ImageBase;
-    state.entry_point = image_base + f.opt_header.AddressOfEntryPoint;
-    state.image_base = image_base;
+    state.module.entry_point = image_base + f.opt_header.AddressOfEntryPoint;
+    state.module.image_base = image_base;
     state.mem.alloc("exe header".into(), image_base, 0x1000);
     state.mem.put(image_base, &buf[..0x1000.min(buf.len())]);
     let mut code_range = None;
@@ -33,9 +33,9 @@ pub fn load_pe(state: &mut State, buf: Vec<u8>) {
             }
         }
     }
-    state.code_memory = code_range.unwrap();
+    state.module.code_memory = code_range.unwrap();
 
-    state.resources = f
+    state.module.resources = f
         .get_data_directory(pe::IMAGE_DIRECTORY_ENTRY::RESOURCE)
         .map(|dir| (image_base + dir.VirtualAddress, dir.Size));
 

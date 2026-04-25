@@ -47,7 +47,7 @@ fn run() -> anyhow::Result<()> {
     let buf = std::fs::read(args.exe).unwrap();
     tc::load_pe(&mut state, buf);
 
-    let start = state.entry_point;
+    let start = state.module.entry_point;
     let mut traverse = tc::Traverse::new(&mut state, args.scan_immediates, start);
     if args.scan {
         traverse.scan_for_pointers();

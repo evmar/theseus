@@ -20,15 +20,20 @@ pub struct Import {
 }
 
 #[derive(Default)]
-pub struct State {
+pub struct Module {
     pub image_base: u32,
     pub entry_point: u32,
-    pub mem: Memory,
     pub code_memory: std::ops::Range<u32>,
+    pub resources: Option<(u32, u32)>,
+}
+
+#[derive(Default)]
+pub struct State {
+    pub module: Module,
+    pub mem: Memory,
     /// iat addr => function to call, e.g. "kernel32::ExitProcess"
     iat_refs: HashMap<u32, String>,
     pub blocks: HashMap<u32, Block>,
-    pub resources: Option<(u32, u32)>,
 }
 
 impl State {
@@ -103,7 +108,8 @@ pub fn write_if_changed(path: &str, contents: &[u8]) -> anyhow::Result<()> {
 
 impl State {
     pub fn generate(&mut self, outdir: &str) -> anyhow::Result<()> {
-        codegen::gen_file(self, outdir)?;
+        let codegen = codegen::CodeGen::new(self);
+        codegen.gen_file(outdir)?;
 
         let data_dir = format!("{outdir}/data");
         std::fs::create_dir_all(&data_dir)?;

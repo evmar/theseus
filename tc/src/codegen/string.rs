@@ -1,83 +1,85 @@
-use crate::{State, codegen::Writer};
+use crate::codegen::{CodeGen, Writer};
 
-pub fn codegen(w: &mut Writer, _state: &State, instr: &iced_x86::Instruction) -> bool {
-    use iced_x86::Mnemonic::*;
-    match instr.mnemonic() {
-        Movsb => {
-            assert!(!instr.has_repne_prefix());
-            if instr.has_rep_prefix() {
-                w.line("rep(ctx, Rep::REP, movsb);");
-            } else {
-                w.line("movsb(ctx);");
+impl<'a> CodeGen<'a> {
+    pub fn codegen_string(&self, w: &mut Writer, instr: &iced_x86::Instruction) -> bool {
+        use iced_x86::Mnemonic::*;
+        match instr.mnemonic() {
+            Movsb => {
+                assert!(!instr.has_repne_prefix());
+                if instr.has_rep_prefix() {
+                    w.line("rep(ctx, Rep::REP, movsb);");
+                } else {
+                    w.line("movsb(ctx);");
+                }
             }
-        }
-        Movsd => {
-            assert!(!instr.has_repne_prefix());
-            if instr.has_rep_prefix() {
-                w.line("rep(ctx, Rep::REP, movsd);");
-            } else {
-                w.line("movsd(ctx);");
+            Movsd => {
+                assert!(!instr.has_repne_prefix());
+                if instr.has_rep_prefix() {
+                    w.line("rep(ctx, Rep::REP, movsd);");
+                } else {
+                    w.line("movsd(ctx);");
+                }
             }
-        }
 
-        Lodsb => {
-            assert!(!instr.has_repne_prefix());
-            if instr.has_rep_prefix() {
-                w.line("rep(ctx, Rep::REP, lodsb);");
-            } else {
-                w.line("lodsb(ctx);");
-            };
-        }
-        Lodsd => {
-            assert!(!instr.has_repne_prefix());
-            if instr.has_rep_prefix() {
-                w.line("rep(ctx, Rep::REP, lodsd);");
-            } else {
-                w.line("lodsd(ctx);");
-            };
-        }
+            Lodsb => {
+                assert!(!instr.has_repne_prefix());
+                if instr.has_rep_prefix() {
+                    w.line("rep(ctx, Rep::REP, lodsb);");
+                } else {
+                    w.line("lodsb(ctx);");
+                };
+            }
+            Lodsd => {
+                assert!(!instr.has_repne_prefix());
+                if instr.has_rep_prefix() {
+                    w.line("rep(ctx, Rep::REP, lodsd);");
+                } else {
+                    w.line("lodsd(ctx);");
+                };
+            }
 
-        Stosb => {
-            assert!(!instr.has_repne_prefix());
-            if instr.has_rep_prefix() {
-                w.line("rep(ctx, Rep::REP, stosb);");
-            } else {
-                w.line("stosb(ctx);");
-            };
-        }
-        Stosw => w.todo(),
-        Stosd => {
-            assert!(!instr.has_repne_prefix());
-            if instr.has_rep_prefix() {
-                w.line("rep(ctx, Rep::REP, stosd);");
-            } else {
-                w.line("stosd(ctx);");
-            };
-        }
+            Stosb => {
+                assert!(!instr.has_repne_prefix());
+                if instr.has_rep_prefix() {
+                    w.line("rep(ctx, Rep::REP, stosb);");
+                } else {
+                    w.line("stosb(ctx);");
+                };
+            }
+            Stosw => w.todo(),
+            Stosd => {
+                assert!(!instr.has_repne_prefix());
+                if instr.has_rep_prefix() {
+                    w.line("rep(ctx, Rep::REP, stosd);");
+                } else {
+                    w.line("stosd(ctx);");
+                };
+            }
 
-        // XXX: cmps/scas use repe, not rep
-        Cmpsb => {
-            if instr.has_repe_prefix() {
-                w.line("rep(ctx, Rep::REPE, cmpsb);");
-            } else if instr.has_repne_prefix() {
-                w.line("rep(ctx, Rep::REPNE, cmpsb);");
-            } else {
-                w.line("cmpsb(ctx);");
-            };
-        }
+            // XXX: cmps/scas use repe, not rep
+            Cmpsb => {
+                if instr.has_repe_prefix() {
+                    w.line("rep(ctx, Rep::REPE, cmpsb);");
+                } else if instr.has_repne_prefix() {
+                    w.line("rep(ctx, Rep::REPNE, cmpsb);");
+                } else {
+                    w.line("cmpsb(ctx);");
+                };
+            }
 
-        // XXX: cmps/scas use repe, not rep
-        Scasb => {
-            if instr.has_repe_prefix() {
-                w.line("rep(ctx, Rep::REPE, scasb);");
-            } else if instr.has_repne_prefix() {
-                w.line("rep(ctx, Rep::REPNE, scasb);");
-            } else {
-                w.line("scasb(ctx);");
-            };
-        }
+            // XXX: cmps/scas use repe, not rep
+            Scasb => {
+                if instr.has_repe_prefix() {
+                    w.line("rep(ctx, Rep::REPE, scasb);");
+                } else if instr.has_repne_prefix() {
+                    w.line("rep(ctx, Rep::REPNE, scasb);");
+                } else {
+                    w.line("scasb(ctx);");
+                };
+            }
 
-        _ => return false,
+            _ => return false,
+        }
+        true
     }
-    true
 }
