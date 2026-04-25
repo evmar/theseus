@@ -1,4 +1,4 @@
-use crate::codegen::{self, CodeGen, Writer};
+use crate::codegen::{self, CodeGen};
 
 fn is_mmx_reg(reg: iced_x86::Register) -> bool {
     use iced_x86::Register::*;
@@ -69,14 +69,14 @@ fn mmx_set_32(instr: &iced_x86::Instruction, n: u32, expr: String) -> String {
 }
 
 impl<'a> CodeGen<'a> {
-    pub fn codegen_mmx(&self, w: &mut Writer, instr: &iced_x86::Instruction) -> bool {
+    pub fn codegen_mmx(&mut self, instr: &iced_x86::Instruction) -> bool {
         use iced_x86::Mnemonic::*;
         match instr.mnemonic() {
-            Movd => w.line(mmx_set_32(instr, 0, mmx_get_32(instr, 1))),
-            Movq => w.line(mmx_set(instr, 0, mmx_get(instr, 1))),
+            Movd => self.line(mmx_set_32(instr, 0, mmx_get_32(instr, 1))),
+            Movq => self.line(mmx_set(instr, 0, mmx_get(instr, 1))),
 
             Pxor => {
-                w.line(mmx_set(
+                self.line(mmx_set(
                     instr,
                     0,
                     format!("{} ^ {}", mmx_get(instr, 0), mmx_get(instr, 1)),
@@ -86,7 +86,7 @@ impl<'a> CodeGen<'a> {
             // Binary operations, all implemented with same name as mnemonic.
             Paddsb | Paddsw | Paddusb | Pmullw | Psrlw | Packuswb | Psubusb | Psubw | Psraw => {
                 let func = format!("{:?}", instr.mnemonic()).to_ascii_lowercase();
-                w.line(mmx_set(
+                self.line(mmx_set(
                     instr,
                     0,
                     format!("{func}({}, {})", mmx_get(instr, 0), mmx_get(instr, 1)),
@@ -96,7 +96,7 @@ impl<'a> CodeGen<'a> {
             // Punpcklbw special because it only reads 4 bytes of memory.
             Punpcklbw => {
                 let func = format!("{:?}", instr.mnemonic()).to_ascii_lowercase();
-                w.line(mmx_set(
+                self.line(mmx_set(
                     instr,
                     0,
                     format!("{func}({}, {})", mmx_get_32(instr, 0), mmx_get_32(instr, 1)),
@@ -104,7 +104,7 @@ impl<'a> CodeGen<'a> {
             }
 
             Emms => {
-                w.line("// no-op");
+                self.line("// no-op");
             }
 
             _ => return false,

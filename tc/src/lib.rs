@@ -108,7 +108,7 @@ pub fn write_if_changed(path: &str, contents: &[u8]) -> anyhow::Result<()> {
 
 impl State {
     pub fn generate(&mut self, outdir: &str) -> anyhow::Result<()> {
-        let codegen = codegen::CodeGen::new(self);
+        let mut codegen = codegen::CodeGen::new(self);
         codegen.gen_file(outdir)?;
 
         let data_dir = format!("{outdir}/data");

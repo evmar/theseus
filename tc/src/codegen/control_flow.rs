@@ -1,5 +1,5 @@
 use crate::{
-    codegen::{CodeGen, Writer, gen_addr, get_reg, instr_name},
+    codegen::{CodeGen, gen_addr, get_reg, instr_name},
     is_abs_memory_ref,
 };
 
@@ -34,14 +34,14 @@ impl<'a> CodeGen<'a> {
         }
     }
 
-    pub fn codegen_control_flow(&self, w: &mut Writer, instr: &iced_x86::Instruction) -> bool {
+    pub fn codegen_control_flow(&mut self, instr: &iced_x86::Instruction) -> bool {
         use iced_x86::Mnemonic::*;
         match instr.mnemonic() {
-            Jmp => w.line(self.gen_jmp(instr)),
+            Jmp => self.line(self.gen_jmp(instr)),
             Call => {
                 // Create a temporary here in case gen_jmp needs to borrow ctx.
-                w.line(format!("let dst = {};", self.gen_jmp(instr)));
-                w.line(format!("call(ctx, {:#x}, dst)", instr.next_ip32()));
+                self.line(format!("let dst = {};", self.gen_jmp(instr)));
+                self.line(format!("call(ctx, {:#x}, dst)", instr.next_ip32()));
             }
             Ret => {
                 let n = match instr.op_count() {
@@ -52,21 +52,21 @@ impl<'a> CodeGen<'a> {
                     }
                     _ => todo!(),
                 };
-                w.line(format!("ret(ctx, {n})"));
+                self.line(format!("ret(ctx, {n})"));
             }
             Je | Jne | Jb | Js | Jns | Ja | Jae | Jl | Jg | Jge | Jecxz | Jle | Jbe => {
                 let next = self.gen_abs_jmp(instr.next_ip32());
                 let dst = self.gen_jmp(instr);
                 let func = instr_name(instr);
-                w.line(format!("{func}(ctx, {next}, {dst})"));
+                self.line(format!("{func}(ctx, {next}, {dst})"));
             }
 
             Loop => {
                 let next = self.gen_abs_jmp(instr.next_ip32());
                 let dst = self.gen_jmp(instr);
-                w.line("ctx.cpu.regs.ecx = ctx.cpu.regs.ecx.wrapping_sub(1);");
-                w.line(format!("if ctx.cpu.regs.ecx == 0 {{ {next} }}"));
-                w.line(format!("else {{ {dst} }}"));
+                self.line("ctx.cpu.regs.ecx = ctx.cpu.regs.ecx.wrapping_sub(1);");
+                self.line(format!("if ctx.cpu.regs.ecx == 0 {{ {next} }}"));
+                self.line(format!("else {{ {dst} }}"));
             }
 
             _ => return false,

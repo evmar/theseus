@@ -165,54 +165,48 @@ pub fn set_op(instr: &iced_x86::Instruction, n: u32, expr: String) -> String {
     }
 }
 
-#[derive(Default)]
-pub struct Writer {
-    buf: String,
-}
-
-impl Writer {
-    pub fn line(&mut self, s: impl AsRef<str>) {
-        self.buf.push_str(s.as_ref());
-        self.buf.push('\n');
-    }
-
-    #[allow(unused)]
-    pub fn todo(&mut self) {
-        self.line("todo!();");
-    }
-}
-
 pub struct CodeGen<'a> {
+    module: &'a Module,
     mem: &'a Memory,
     blocks: &'a HashMap<u32, Block>,
     iat_refs: &'a HashMap<u32, String>,
-    module: &'a Module,
+    buf: String,
 }
 
 impl<'a> CodeGen<'a> {
     pub fn new(state: &'a State) -> Self {
         Self {
+            module: &state.module,
             mem: &state.mem,
             blocks: &state.blocks,
             iat_refs: &state.iat_refs,
-            module: &state.module,
+            buf: Default::default(),
         }
+    }
+
+    pub fn line(&mut self, s: impl AsRef<str>) {
+        self.buf.push_str(s.as_ref());
+        self.buf.push('\n');
+    }
+
+    pub fn todo(&mut self) {
+        self.line("todo!();");
     }
 }
 
 impl<'a> CodeGen<'a> {
-    fn gen_block(&self, w: &mut Writer, ip: u32, block: &Block) {
+    fn gen_block(&mut self, ip: u32, block: &Block) {
         match block {
             Block::Instrs(instrs) => {
-                w.line(format!("pub fn x{ip:x}(ctx: &mut Context) -> Cont {{"));
+                self.line(format!("pub fn x{ip:x}(ctx: &mut Context) -> Cont {{"));
                 for instr in instrs {
-                    if let Err(e) = self.gen_instr(w, instr) {
-                        w.line(format!("// {}", e));
-                        w.todo();
+                    if let Err(e) = self.gen_instr(instr) {
+                        self.line(format!("// {}", e));
+                        self.todo();
                         break;
                     }
                 }
-                w.line("}\n");
+                self.line("}\n");
             }
             Block::Stdcall(_) | Block::Extern(_) => {
                 // no emit
@@ -220,24 +214,22 @@ impl<'a> CodeGen<'a> {
         }
     }
 
-    fn gen_instr(&self, w: &mut Writer, instr: &iced_x86::Instruction) -> anyhow::Result<()> {
-        w.line(format!("// {:08x} {}", instr.ip32(), instr));
-        if self.codegen_control_flow(w, instr) {
-        } else if self.codegen_math(w, instr) {
-        } else if self.codegen_string(w, instr) {
-        } else if self.codegen_misc(w, instr) {
-        } else if self.codegen_fpu(w, instr) {
-        } else if self.codegen_mmx(w, instr) {
+    fn gen_instr(&mut self, instr: &iced_x86::Instruction) -> anyhow::Result<()> {
+        self.line(format!("// {:08x} {}", instr.ip32(), instr));
+        if self.codegen_control_flow(instr) {
+        } else if self.codegen_math(instr) {
+        } else if self.codegen_string(instr) {
+        } else if self.codegen_misc(instr) {
+        } else if self.codegen_fpu(instr) {
+        } else if self.codegen_mmx(instr) {
         } else {
             anyhow::bail!("{:?} not implemented", instr.mnemonic());
         }
         Ok(())
     }
 
-    pub fn gen_file(&self, outdir: &str) -> Result<()> {
-        let mut w = Writer::default();
-
-        w.line(
+    pub fn gen_file(&mut self, outdir: &str) -> Result<()> {
+        self.line(
             "#![allow(unreachable_code)]
 #![allow(unused_parens)]
 #![allow(unused_variables)]
@@ -248,7 +240,7 @@ use winapi::*;
         );
 
         if self.blocks.values().any(|b| matches!(b, Block::Extern(_))) {
-            w.line("use crate::externs::*;");
+            self.line("use crate::externs::*;");
         }
 
         // It would be cool if we could just link a wasm object file that contains data sections
@@ -257,13 +249,13 @@ use winapi::*;
         // Unfortunately, wasm-lld only supports "relocatable" object files which means it moves
         // the location of such data at link time.  We could do it by postprocessing the wasm
         // file, maybe.
-        w.line("fn init_mappings(ctx: &mut Context, mappings: &mut kernel32::Mappings) {");
+        self.line("fn init_mappings(ctx: &mut Context, mappings: &mut kernel32::Mappings) {");
         for map in self.mem.mappings.vec().iter() {
             let addr = map.addr;
             let buf = self.mem.slice(map.addr, map.size);
             let zeroed = buf.iter().all(|&b| b == 0);
 
-            w.line(format!(
+            self.line(format!(
                 "mappings.alloc(
                 {desc:?}.to_string(),
                 Some({addr:#x}),
@@ -273,7 +265,7 @@ use winapi::*;
                 size = buf.len(),
             ));
             if !zeroed {
-                w.line(format!(
+                self.line(format!(
                     "let bytes = include_bytes!(\"../data/{addr:08x}.raw\").as_slice();
 let out = &mut ctx.memory[{addr:#x}..][..bytes.len()];
 out.copy_from_slice(bytes);",
@@ -281,32 +273,32 @@ out.copy_from_slice(bytes);",
             }
         }
 
-        w.line("}");
+        self.line("}");
 
         let mut ips = self.blocks.keys().copied().collect::<Vec<_>>();
         ips.sort();
         for &ip in &ips {
             let block = self.blocks.get(&ip).unwrap();
-            self.gen_block(&mut w, ip, &block);
+            self.gen_block(ip, &block);
         }
 
-        w.line(format!(
+        self.line(format!(
             "const BLOCKS: [(u32, fn(&mut Context) -> Cont); {}] = [\n",
             ips.len() + 1,
         ));
         for &ip in &ips {
             let block = self.blocks.get(&ip).unwrap();
-            w.line(format!("({ip:#x}, {}),", block.name()));
+            self.line(format!("({ip:#x}, {}),", block.name()));
         }
-        w.line("(runtime::RETURN_FROM_X86_ADDR, runtime::return_from_x86),");
-        w.line("];\n");
+        self.line("(runtime::RETURN_FROM_X86_ADDR, runtime::return_from_x86),");
+        self.line("];\n");
 
         let resources = match self.module.resources {
             Some((addr, size)) => format!("{addr:#x}..{end:#x}", end = addr + size),
             None => "0..0".to_string(),
         };
 
-        w.line(format!(
+        self.line(format!(
             "pub const EXEDATA: EXEData = EXEData {{
             image_base: {image_base:#x},
             resources: {resources},
@@ -320,7 +312,7 @@ out.copy_from_slice(bytes);",
 
         std::fs::create_dir_all(format!("{outdir}/src"))?;
         let path = format!("{outdir}/src/generated.rs");
-        let text = rustfmt(&w.buf)?;
+        let text = rustfmt(&self.buf)?;
         write_if_changed(&path, text.as_bytes()).map_err(|err| anyhow!("write {path}: {err}"))?;
         Ok(())
     }

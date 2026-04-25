@@ -1,80 +1,80 @@
-use crate::codegen::{CodeGen, Writer};
+use crate::codegen::CodeGen;
 
 impl<'a> CodeGen<'a> {
-    pub fn codegen_string(&self, w: &mut Writer, instr: &iced_x86::Instruction) -> bool {
+    pub fn codegen_string(&mut self, instr: &iced_x86::Instruction) -> bool {
         use iced_x86::Mnemonic::*;
         match instr.mnemonic() {
             Movsb => {
                 assert!(!instr.has_repne_prefix());
                 if instr.has_rep_prefix() {
-                    w.line("rep(ctx, Rep::REP, movsb);");
+                    self.line("rep(ctx, Rep::REP, movsb);");
                 } else {
-                    w.line("movsb(ctx);");
+                    self.line("movsb(ctx);");
                 }
             }
             Movsd => {
                 assert!(!instr.has_repne_prefix());
                 if instr.has_rep_prefix() {
-                    w.line("rep(ctx, Rep::REP, movsd);");
+                    self.line("rep(ctx, Rep::REP, movsd);");
                 } else {
-                    w.line("movsd(ctx);");
+                    self.line("movsd(ctx);");
                 }
             }
 
             Lodsb => {
                 assert!(!instr.has_repne_prefix());
                 if instr.has_rep_prefix() {
-                    w.line("rep(ctx, Rep::REP, lodsb);");
+                    self.line("rep(ctx, Rep::REP, lodsb);");
                 } else {
-                    w.line("lodsb(ctx);");
+                    self.line("lodsb(ctx);");
                 };
             }
             Lodsd => {
                 assert!(!instr.has_repne_prefix());
                 if instr.has_rep_prefix() {
-                    w.line("rep(ctx, Rep::REP, lodsd);");
+                    self.line("rep(ctx, Rep::REP, lodsd);");
                 } else {
-                    w.line("lodsd(ctx);");
+                    self.line("lodsd(ctx);");
                 };
             }
 
             Stosb => {
                 assert!(!instr.has_repne_prefix());
                 if instr.has_rep_prefix() {
-                    w.line("rep(ctx, Rep::REP, stosb);");
+                    self.line("rep(ctx, Rep::REP, stosb);");
                 } else {
-                    w.line("stosb(ctx);");
+                    self.line("stosb(ctx);");
                 };
             }
-            Stosw => w.todo(),
+            Stosw => self.todo(),
             Stosd => {
                 assert!(!instr.has_repne_prefix());
                 if instr.has_rep_prefix() {
-                    w.line("rep(ctx, Rep::REP, stosd);");
+                    self.line("rep(ctx, Rep::REP, stosd);");
                 } else {
-                    w.line("stosd(ctx);");
+                    self.line("stosd(ctx);");
                 };
             }
 
             // XXX: cmps/scas use repe, not rep
             Cmpsb => {
                 if instr.has_repe_prefix() {
-                    w.line("rep(ctx, Rep::REPE, cmpsb);");
+                    self.line("rep(ctx, Rep::REPE, cmpsb);");
                 } else if instr.has_repne_prefix() {
-                    w.line("rep(ctx, Rep::REPNE, cmpsb);");
+                    self.line("rep(ctx, Rep::REPNE, cmpsb);");
                 } else {
-                    w.line("cmpsb(ctx);");
+                    self.line("cmpsb(ctx);");
                 };
             }
 
             // XXX: cmps/scas use repe, not rep
             Scasb => {
                 if instr.has_repe_prefix() {
-                    w.line("rep(ctx, Rep::REPE, scasb);");
+                    self.line("rep(ctx, Rep::REPE, scasb);");
                 } else if instr.has_repne_prefix() {
-                    w.line("rep(ctx, Rep::REPNE, scasb);");
+                    self.line("rep(ctx, Rep::REPNE, scasb);");
                 } else {
-                    w.line("scasb(ctx);");
+                    self.line("scasb(ctx);");
                 };
             }
 
