@@ -15,7 +15,7 @@ pub struct Traverse<'a> {
 }
 
 impl<'a> Traverse<'a> {
-    pub fn new(state: &'a mut State, scan_immediates: bool, start: u32) -> Traverse<'a> {
+    pub fn new(state: &'a mut State, scan_immediates: bool) -> Traverse<'a> {
         let mut traverse = Traverse {
             module: &state.module,
             blocks: &mut state.blocks,
@@ -25,8 +25,12 @@ impl<'a> Traverse<'a> {
             queue: VecDeque::new(),
             invalid: HashSet::new(),
         };
-        traverse.enqueue(start);
+        traverse.enqueue(state.module.entry_point);
         traverse
+    }
+
+    pub fn add_extern(&mut self, addr: u32) {
+        self.blocks.insert(addr, Block::Extern(addr));
     }
 
     fn enqueue(&mut self, ip: u32) {

@@ -39,16 +39,13 @@ fn run() -> anyhow::Result<()> {
         .mappings
         .alloc("null page".into(), Some(0), 0x1000);
 
-    for addr in args.externs {
-        log::info!("extern: {addr:#x}");
-        state.blocks.insert(addr, tc::Block::Extern(addr));
-    }
-
     let buf = std::fs::read(args.exe).unwrap();
     tc::load_pe(&mut state, buf);
 
-    let start = state.module.entry_point;
-    let mut traverse = tc::Traverse::new(&mut state, args.scan_immediates, start);
+    let mut traverse = tc::Traverse::new(&mut state, args.scan_immediates);
+    for addr in args.externs {
+        traverse.add_extern(addr);
+    }
     if args.scan {
         traverse.scan_for_pointers();
     }

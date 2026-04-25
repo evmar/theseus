@@ -108,9 +108,8 @@ pub fn do_unpack(ctx: &mut runtime::Context) {
 
     find_iat(&mut syms, &tc.mem.mappings.vec(), &ctx.memory.bytes);
 
-    let entry_point = 0x0040_85dd;
     tc.module.image_base = 0x0040_0000;
-    tc.module.entry_point = entry_point;
+    tc.module.entry_point = 0x0040_85dd;
     tc.mem.bytes.resize(ctx.memory.bytes.len(), 0);
     tc.mem.bytes.copy_from_slice(ctx.memory.bytes);
     tc.module.code_memory = 0x40_0000..tc.mem.bytes.len() as u32;
@@ -119,7 +118,7 @@ pub fn do_unpack(ctx: &mut runtime::Context) {
     tc.add_imports(syms);
 
     let scan_immediates = true;
-    let mut traverse = tc::Traverse::new(&mut tc, scan_immediates, entry_point);
+    let mut traverse = tc::Traverse::new(&mut tc, scan_immediates);
     traverse.run();
 
     tc.generate("exe/chillin").unwrap();
