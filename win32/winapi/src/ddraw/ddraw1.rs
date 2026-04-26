@@ -68,7 +68,8 @@ pub mod IDirectDraw {
     pub fn CreatePalette(
         _ctx: &mut Context,
         _this: u32,
-        _lppe: u32,
+        _flags: u32,
+        _lpEntries: u32,
         _lplpPal: u32,
         _pUnkOuter: u32,
     ) -> DD {
