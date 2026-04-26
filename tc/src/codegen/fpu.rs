@@ -165,11 +165,14 @@ impl<'a> CodeGen<'a> {
             }
 
             Fcom | Fcomp => {
-                assert_eq!(instr.op_count(), 1);
+                let (arg0, arg1) = match instr.op_count() {
+                    1 => (fpu_get_reg(0), fpu_get_op(instr, 0)),
+                    2 => (fpu_get_op(instr, 0), fpu_get_op(instr, 1)),
+                    _ => unreachable!(),
+                };
                 self.line(format!(
                     "ctx.cpu.fpu.cmp = {}.total_cmp(&({}));",
-                    fpu_get_reg(0),
-                    fpu_get_op(instr, 0)
+                    arg0, arg1
                 ));
                 if instr.mnemonic() == Fcomp {
                     self.line("ctx.cpu.fpu.pop();");

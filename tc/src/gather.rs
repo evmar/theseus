@@ -93,6 +93,9 @@ impl<'a> Traverse<'a> {
     }
 
     fn decode_one(&mut self, ip: u32) -> anyhow::Result<Block> {
+        if ip > self.mem.bytes.len() as u32 {
+            anyhow::bail!("ip out of bounds");
+        }
         let data = self.mem.slice_all(ip);
         if data[..0x10].iter().all(|&b| b == 0) {
             anyhow::bail!("block appears zero-filled");
@@ -155,7 +158,7 @@ impl<'a> Traverse<'a> {
                     }
                 }
                 Ret => {}
-                Int => {}         // terminates
+                Int | Into => {}  // terminates
                 Int1 | Int3 => {} // breakpoint
                 INVALID => {
                     anyhow::bail!("invalid code found");
