@@ -120,10 +120,10 @@ pub fn do_unpack(ctx: &mut runtime::Context) {
         imports: syms,
     };
 
-    let scan_immediates = true;
-    let mut traverse = tc::Traverse::new(&mut tc, scan_immediates);
-    traverse.run();
-    tc.blocks = traverse.blocks;
+    tc.gather(tc::Gather {
+        scan_immediates: true,
+        ..Default::default()
+    });
 
     tc.generate("exe/chillin").unwrap();
 }

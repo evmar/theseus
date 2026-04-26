@@ -42,15 +42,11 @@ fn run() -> anyhow::Result<()> {
     let buf = std::fs::read(args.exe).unwrap();
     state.module = tc::load_pe(&mut state.mem, buf);
 
-    let mut traverse = tc::Traverse::new(&mut state, args.scan_immediates);
-    for addr in args.externs {
-        traverse.add_extern(addr);
-    }
-    if args.scan {
-        traverse.scan_for_pointers();
-    }
-    traverse.run();
-    state.blocks = traverse.blocks;
+    state.gather(tc::Gather {
+        scan_immediates: args.scan_immediates,
+        scan_memory: args.scan,
+        externs: args.externs,
+    });
 
     state.generate(&args.out)
 }
