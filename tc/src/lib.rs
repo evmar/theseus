@@ -5,9 +5,9 @@ use crate::memory::Memory;
 mod codegen;
 mod load;
 pub use load::load_pe;
+mod gather;
 mod memory;
-mod traverse;
-pub use traverse::Gather;
+pub use gather::Gather;
 
 #[derive(Debug, Clone)]
 pub struct Import {
