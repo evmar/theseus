@@ -14,6 +14,7 @@ use crate::{
 
 pub struct DirectDraw {
     pub addr: u32,
+    pub bytes_per_pixel: u32,
     pub window: Option<Rc<RefCell<user32::Window>>>,
 }
 
@@ -28,6 +29,7 @@ struct SurfaceParams {
     is_primary: bool,
     width: u32,
     height: u32,
+    bytes_per_pixel: u32,
 }
 
 impl DirectDraw {
@@ -36,6 +38,9 @@ impl DirectDraw {
         desc: &DDSURFACEDESC2,
         new_pointer: &mut dyn FnMut() -> u32,
     ) -> Rc<RefCell<Surface>> {
+        let is_primary = desc.dwFlags.contains(DDSD::CAPS)
+            && desc.ddsCaps.dwCaps.contains(DDSCAPS::PRIMARYSURFACE);
+
         let window = self.window.as_ref().unwrap().borrow();
         let width = if desc.dwFlags.contains(DDSD::WIDTH) {
             desc.dwWidth
@@ -49,13 +54,20 @@ impl DirectDraw {
         };
         drop(window);
 
+        let bytes_per_pixel = if is_primary {
+            self.bytes_per_pixel
+        } else {
+            log::warn!("creating surface assuming 32bpp");
+            4
+        };
+
         let surface = self.create_one_surface(
             new_pointer(),
             &SurfaceParams {
-                is_primary: desc.dwFlags.contains(DDSD::CAPS)
-                    && desc.ddsCaps.dwCaps.contains(DDSCAPS::PRIMARYSURFACE),
+                is_primary,
                 width,
                 height,
+                bytes_per_pixel,
             },
         );
 
@@ -67,6 +79,7 @@ impl DirectDraw {
                     is_primary: false,
                     width,
                     height,
+                    bytes_per_pixel,
                 },
             );
             back.borrow_mut().primary.replace(surface.clone());
@@ -94,6 +107,7 @@ impl DirectDraw {
             addr,
             width: params.width,
             height: params.height,
+            bytes_per_pixel: params.bytes_per_pixel,
             target,
             primary: Default::default(),
             attached: Default::default(),
@@ -114,6 +128,7 @@ pub struct Surface {
     pub addr: u32,
     pub width: u32,
     pub height: u32,
+    pub bytes_per_pixel: u32,
     pub target: Target,
 
     // How does surface attachment actually work?
@@ -130,22 +145,37 @@ pub struct Surface {
 impl Surface {
     pub fn lock(&mut self, mem: &mut Memory) -> u32 {
         assert_eq!(self.pixels, None);
-        let size = self.width * self.height * 4;
-        let pixels = kernel32::lock().process_heap.alloc(mem, size);
+        let size = self.width * self.height * self.bytes_per_pixel;
+        let addr = kernel32::lock().process_heap.alloc(mem, size);
         // scribble on pixels so we can see it
-        mem[pixels..][..size as usize].fill(0x8F);
-        self.pixels = Some(pixels);
-        pixels
+        mem[addr..][..size as usize].fill(0x8F);
+        self.pixels = Some(addr);
+        addr
     }
 
     pub fn unlock(&mut self, mem: &mut Memory) {
-        let pixels = self.pixels.unwrap();
-        let pixel_data = &mem[pixels..][..(self.width * self.height * 4) as usize];
+        let addr = self.pixels.unwrap();
+        let size = self.width * self.height * self.bytes_per_pixel;
+        let pixels = &mem[addr..][..size as usize];
+        let mut buf = vec![];
+        let pixels32 = match self.bytes_per_pixel {
+            1 => {
+                for &p in pixels {
+                    buf.push(p);
+                    buf.push(p);
+                    buf.push(p);
+                    buf.push(p);
+                }
+                buf.as_slice()
+            }
+            4 => pixels,
+            _ => todo!(),
+        };
         match &mut self.target {
             Target::Window(_) => unreachable!(),
             Target::Texture(texture) => {
                 texture
-                    .update(None, pixel_data, self.width as usize * 4)
+                    .update(None, pixels32, self.width as usize * 4)
                     .unwrap();
             }
         }
@@ -222,7 +252,11 @@ pub fn DirectDrawCreateEx(
 
     let mut ddraw = state().ddraw.borrow_mut();
     assert!(ddraw.is_none());
-    *ddraw = Some(DirectDraw { addr, window: None });
+    *ddraw = Some(DirectDraw {
+        addr,
+        bytes_per_pixel: 4,
+        window: None,
+    });
 
     ctx.memory.write(lplpDD, addr);
     DD::OK

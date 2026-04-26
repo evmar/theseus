@@ -170,14 +170,16 @@ pub mod IDirectDraw {
     }
 
     #[win32_derive::dllexport]
-    pub fn SetDisplayMode(_ctx: &mut Context, this: u32, width: u32, height: u32, _bpp: u32) -> DD {
-        let ddraw = state().get_ddraw(this);
+    pub fn SetDisplayMode(_ctx: &mut Context, this: u32, width: u32, height: u32, bpp: u32) -> DD {
+        let mut ddraw = state().get_ddraw(this);
         ddraw
             .window
             .as_ref()
             .unwrap()
             .borrow_mut()
             .resize(width, height);
+        assert!(bpp % 8 == 0);
+        ddraw.bytes_per_pixel = bpp / 8;
         stub!(DD::OK)
     }
 
@@ -436,7 +438,7 @@ pub mod IDirectDrawSurface {
         let pixels = surface.lock(&mut ctx.memory);
         let desc = DDSURFACEDESC {
             dwSize: std::mem::size_of::<DDSURFACEDESC>() as u32,
-            lPitch_dwLinearSize: surface.width * 4,
+            lPitch_dwLinearSize: surface.width * surface.bytes_per_pixel,
             lpSurface: pixels,
             ..DDSURFACEDESC::default()
         };
