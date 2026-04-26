@@ -7,6 +7,7 @@ mod load;
 pub use load::load_pe;
 mod memory;
 mod traverse;
+pub use traverse::Gather;
 
 #[derive(Debug, Clone)]
 pub struct Import {
@@ -93,24 +94,9 @@ pub fn write_if_changed(path: &str, contents: &[u8]) -> anyhow::Result<()> {
     Ok(())
 }
 
-#[derive(Default)]
-pub struct Gather {
-    pub scan_immediates: bool,
-    pub scan_memory: bool,
-    pub externs: Vec<u32>,
-}
-
 impl State {
     pub fn gather(&mut self, gather: Gather) {
-        let mut traverse = traverse::Traverse::new(self, gather.scan_immediates);
-        for addr in gather.externs {
-            traverse.add_extern(addr);
-        }
-        if gather.scan_memory {
-            traverse.scan_for_pointers();
-        }
-        traverse.run();
-        self.blocks = traverse.blocks;
+        self.blocks = gather.run(self);
     }
 
     pub fn generate(&mut self, outdir: &str) -> anyhow::Result<()> {

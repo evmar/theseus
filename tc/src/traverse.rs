@@ -4,41 +4,44 @@ use std::collections::{HashMap, HashSet, VecDeque};
 
 use crate::{Block, Module, State, is_abs_memory_ref, memory::Memory};
 
-pub struct Traverse<'a> {
+#[derive(Default)]
+pub struct Gather {
+    pub scan_immediates: bool,
+    pub scan_memory: bool,
+    pub externs: Vec<u32>,
+}
+
+impl Gather {
+    pub fn run(self, state: &mut State) -> HashMap<u32, Block> {
+        let mut traverse = Traverse::new(state, self);
+        traverse.run();
+        traverse.blocks
+    }
+}
+
+struct Traverse<'a> {
+    gather: Gather,
     module: &'a Module,
     mem: &'a Memory,
+
     iat_refs: HashSet<u32>,
-    scan_immediates: bool,
     queue: VecDeque<u32>,
     invalid: HashSet<u32>,
-    pub blocks: HashMap<u32, Block>,
+    blocks: HashMap<u32, Block>,
 }
 
 impl<'a> Traverse<'a> {
-    pub fn new(state: &'a mut State, scan_immediates: bool) -> Traverse<'a> {
-        let mut traverse = Traverse {
+    pub fn new(state: &'a mut State, gather: Gather) -> Traverse<'a> {
+        Traverse {
+            gather,
             module: &state.module,
-            blocks: Default::default(),
-            iat_refs: Default::default(),
             mem: &state.mem,
-            scan_immediates,
+
+            iat_refs: Default::default(),
             queue: VecDeque::new(),
             invalid: HashSet::new(),
-        };
-        for import in &state.module.imports {
-            let func = format!("{}::{}", import.dll, import.func);
-            traverse
-                .blocks
-                .insert(import.func_addr, Block::Stdcall(func.clone()));
-            traverse.iat_refs.insert(import.iat_addr);
+            blocks: Default::default(),
         }
-
-        traverse.enqueue(state.module.entry_point);
-        traverse
-    }
-
-    pub fn add_extern(&mut self, addr: u32) {
-        self.blocks.insert(addr, Block::Extern(addr));
     }
 
     fn enqueue(&mut self, ip: u32) {
@@ -46,6 +49,21 @@ impl<'a> Traverse<'a> {
     }
 
     pub fn run(&mut self) {
+        for import in &self.module.imports {
+            let func = format!("{}::{}", import.dll, import.func);
+            self.blocks
+                .insert(import.func_addr, Block::Stdcall(func.clone()));
+            self.iat_refs.insert(import.iat_addr);
+        }
+
+        for &addr in self.gather.externs.iter() {
+            self.blocks.insert(addr, Block::Extern(addr));
+        }
+        if self.gather.scan_memory {
+            self.scan_for_pointers();
+        }
+
+        self.enqueue(self.module.entry_point);
         while let Some(ip) = self.queue.pop_front() {
             if self.blocks.contains_key(&ip) || self.invalid.contains(&ip) {
                 continue;
@@ -78,7 +96,7 @@ impl<'a> Traverse<'a> {
             }
             instrs.push(instr);
 
-            if self.scan_immediates {
+            if self.gather.scan_immediates {
                 for i in 0..instr.op_count() {
                     if instr.op_kind(i) == iced_x86::OpKind::Immediate32 {
                         let imm = instr.immediate32();
@@ -138,7 +156,7 @@ impl<'a> Traverse<'a> {
         Ok(Block::Instrs(instrs))
     }
 
-    pub fn scan_for_pointers(&mut self) {
+    fn scan_for_pointers(&mut self) {
         for i in 0..self.mem.mappings.vec().len() {
             let mapping = &self.mem.mappings.vec()[i];
             if mapping.addr == 0 || mapping.addr == self.module.code_memory.start {
