@@ -78,3 +78,22 @@ pub fn IsDlgButtonChecked(_ctx: &mut Context, _hDlg: HWND, _nIDButton: i32) -> u
 pub fn ValidateRect(_ctx: &mut Context, _hWnd: HWND, _lpRect: u32) -> bool {
     todo!()
 }
+
+#[win32_derive::dllexport]
+pub fn CreateCursor(
+    _ctx: &mut Context,
+    _hInst: HINSTANCE,
+    _xHotSpot: i32,
+    _yHotSpot: i32,
+    _nWidth: i32,
+    _nHeight: i32,
+    _pvANDPlane: u32,
+    _pvXORPlane: u32,
+) -> HCURSOR {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn DestroyWindow(_ctx: &mut Context, _hWnd: HWND) -> bool {
+    todo!()
+}

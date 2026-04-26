@@ -252,3 +252,47 @@ pub fn WaitForSingleObject(_ctx: &mut Context, _hHandle: HANDLE, _dwMilliseconds
 pub fn Sleep(_ctx: &mut Context, dwMilliseconds: u32) {
     std::thread::sleep(std::time::Duration::from_millis(dwMilliseconds as u64));
 }
+
+#[win32_derive::dllexport]
+pub fn SetPriorityClass(
+    _ctx: &mut Context,
+    _hProcess: HANDLE,
+    _dwPriorityClass: u32, /* PROCESS_CREATION_FLAGS */
+) -> bool {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn GlobalAlloc(
+    _ctx: &mut Context,
+    _uFlags: u32, /* GLOBAL_ALLOC_FLAGS */
+    _dwBytes: u32,
+) -> u32 {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn GlobalFree(_ctx: &mut Context, _hMem: u32) -> u32 {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn CreateEventA(
+    _ctx: &mut Context,
+    _lpEventAttributes: u32,
+    _bManualReset: bool,
+    _bInitialState: bool,
+    _lpName: u32,
+) -> HANDLE {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn GetCurrentThread(_ctx: &mut Context) -> HANDLE {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn SetEvent(_ctx: &mut Context, _hEvent: HANDLE) -> bool {
+    todo!()
+}
