@@ -56,7 +56,7 @@ impl Regs {
         todo!()
     }
     pub fn get_bp(&self) -> u16 {
-        todo!()
+        self.ebp as u16
     }
 
     pub fn set_ax(&mut self, val: u16) {
@@ -77,8 +77,8 @@ impl Regs {
     pub fn set_di(&mut self, val: u16) {
         self.edi = (self.edi & 0xFFFF_0000) | (val as u32);
     }
-    pub fn set_bp(&self, _val: u16) {
-        todo!()
+    pub fn set_bp(&mut self, val: u16) {
+        self.ebp = (self.ebp & 0xFFFF_0000) | (val as u32);
     }
 
     pub fn get_al(&self) -> u8 {
