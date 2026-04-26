@@ -1,6 +1,6 @@
 //! Instruction stream traversal, scanning for basic blocks.
 
-use std::collections::{HashMap, HashSet, VecDeque};
+use std::collections::{BTreeMap, HashMap, HashSet, VecDeque};
 
 use crate::{Block, Module, State, is_abs_memory_ref, memory::Memory};
 
@@ -15,7 +15,7 @@ impl Gather {
     pub fn run(self, state: &mut State) -> HashMap<u32, Block> {
         let mut traverse = Traverse::new(state, self);
         traverse.run();
-        traverse.blocks
+        traverse.blocks.into_iter().collect()
     }
 }
 
@@ -27,7 +27,7 @@ struct Traverse<'a> {
     iat_refs: HashSet<u32>,
     queue: VecDeque<u32>,
     invalid: HashSet<u32>,
-    blocks: HashMap<u32, Block>,
+    blocks: BTreeMap<u32, Block>,
 }
 
 impl<'a> Traverse<'a> {
@@ -68,6 +68,18 @@ impl<'a> Traverse<'a> {
             if self.blocks.contains_key(&ip) || self.invalid.contains(&ip) {
                 continue;
             }
+
+            // If this ip is contained within an existing block, it means it is a
+            // jmp within some other code.
+            // Re-queue the other block for re-parsing after this one so that it can be split.
+            if let Some((&addr, Block::Instrs(instrs))) = self.blocks.range(0..ip).last() {
+                let range = instrs.first().unwrap().ip32()..instrs.last().unwrap().next_ip32();
+                if range.contains(&ip) {
+                    self.blocks.remove(&addr);
+                    self.enqueue(addr);
+                }
+            }
+
             match self.decode_one(ip) {
                 Ok(block) => {
                     self.blocks.insert(ip, block);

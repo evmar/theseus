@@ -48,10 +48,7 @@ pub fn x4cbcb8(ctx: &mut Context) -> Cont {
         .write::<u8>(ctx.cpu.regs.edi, ctx.cpu.regs.get_al());
     // 004cbcbd inc edi
     ctx.cpu.regs.edi = inc(ctx.cpu.regs.edi, &mut ctx.cpu.flags);
-    // 004cbcbe add ebx,ebx
-    ctx.cpu.regs.ebx = add(ctx.cpu.regs.ebx, ctx.cpu.regs.ebx, &mut ctx.cpu.flags);
-    // 004cbcc0 jne short 004CBCC9h
-    jne(ctx, Cont(x4cbcc2), Cont(x4cbcc9))
+    Cont(x4cbcbe)
 }
 
 pub fn x4cbcbe(ctx: &mut Context) -> Cont {
@@ -74,8 +71,7 @@ pub fn x4cbcc2(ctx: &mut Context) -> Cont {
         carry as _,
         &mut ctx.cpu.flags,
     );
-    // 004cbcc9 jb short 004CBCB8h
-    jb(ctx, Cont(x4cbccb), Cont(x4cbcb8))
+    Cont(x4cbcc9)
 }
 
 pub fn x4cbcc9(ctx: &mut Context) -> Cont {
@@ -86,10 +82,7 @@ pub fn x4cbcc9(ctx: &mut Context) -> Cont {
 pub fn x4cbccb(ctx: &mut Context) -> Cont {
     // 004cbccb mov eax,1
     ctx.cpu.regs.eax = 0x1u32;
-    // 004cbcd0 add ebx,ebx
-    ctx.cpu.regs.ebx = add(ctx.cpu.regs.ebx, ctx.cpu.regs.ebx, &mut ctx.cpu.flags);
-    // 004cbcd2 jne short 004CBCDBh
-    jne(ctx, Cont(x4cbcd4), Cont(x4cbcdb))
+    Cont(x4cbcd0)
 }
 
 pub fn x4cbcd0(ctx: &mut Context) -> Cont {
@@ -250,10 +243,7 @@ pub fn x4cbd18(ctx: &mut Context) -> Cont {
 pub fn x4cbd1c(ctx: &mut Context) -> Cont {
     // 004cbd1c inc ecx
     ctx.cpu.regs.ecx = inc(ctx.cpu.regs.ecx, &mut ctx.cpu.flags);
-    // 004cbd1d add ebx,ebx
-    ctx.cpu.regs.ebx = add(ctx.cpu.regs.ebx, ctx.cpu.regs.ebx, &mut ctx.cpu.flags);
-    // 004cbd1f jne short 004CBD28h
-    jne(ctx, Cont(x4cbd21), Cont(x4cbd28))
+    Cont(x4cbd1d)
 }
 
 pub fn x4cbd1d(ctx: &mut Context) -> Cont {
@@ -387,18 +377,7 @@ pub fn x4cbd72(ctx: &mut Context) -> Cont {
     ctx.cpu.regs.edi = ctx.cpu.regs.esi;
     // 004cbd75 mov ecx,193h
     ctx.cpu.regs.ecx = 0x193u32;
-    // 004cbd7a mov al,[edi]
-    ctx.cpu.regs.set_al(ctx.memory.read::<u8>(ctx.cpu.regs.edi));
-    // 004cbd7c inc edi
-    ctx.cpu.regs.edi = inc(ctx.cpu.regs.edi, &mut ctx.cpu.flags);
-    // 004cbd7d sub al,0E8h
-    ctx.cpu
-        .regs
-        .set_al(sub(ctx.cpu.regs.get_al(), 0xe8u8, &mut ctx.cpu.flags));
-    // 004cbd7f cmp al,1
-    sub(ctx.cpu.regs.get_al(), 0x1u8, &mut ctx.cpu.flags);
-    // 004cbd81 ja short 004CBD7Ah
-    ja(ctx, Cont(x4cbd83), Cont(x4cbd7a))
+    Cont(x4cbd7a)
 }
 
 pub fn x4cbd7a(ctx: &mut Context) -> Cont {
@@ -410,10 +389,7 @@ pub fn x4cbd7a(ctx: &mut Context) -> Cont {
     ctx.cpu
         .regs
         .set_al(sub(ctx.cpu.regs.get_al(), 0xe8u8, &mut ctx.cpu.flags));
-    // 004cbd7f cmp al,1
-    sub(ctx.cpu.regs.get_al(), 0x1u8, &mut ctx.cpu.flags);
-    // 004cbd81 ja short 004CBD7Ah
-    ja(ctx, Cont(x4cbd83), Cont(x4cbd7a))
+    Cont(x4cbd7f)
 }
 
 pub fn x4cbd7f(ctx: &mut Context) -> Cont {
@@ -477,12 +453,7 @@ pub fn x4cbd88(ctx: &mut Context) -> Cont {
 pub fn x4cbda6(ctx: &mut Context) -> Cont {
     // 004cbda6 lea edi,[esi+0C9000h]
     ctx.cpu.regs.edi = ctx.cpu.regs.esi.wrapping_add(0xc9000u32);
-    // 004cbdac mov eax,[edi]
-    ctx.cpu.regs.eax = ctx.memory.read::<u32>(ctx.cpu.regs.edi);
-    // 004cbdae or eax,eax
-    ctx.cpu.regs.eax = or(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
-    // 004cbdb0 je short 004CBDF3h
-    je(ctx, Cont(x4cbdb2), Cont(x4cbdf3))
+    Cont(x4cbdac)
 }
 
 pub fn x4cbdac(ctx: &mut Context) -> Cont {
@@ -525,18 +496,7 @@ pub fn x4cbdc8(ctx: &mut Context) -> Cont {
     let t = ctx.cpu.regs.ebp;
     ctx.cpu.regs.ebp = ctx.cpu.regs.eax;
     ctx.cpu.regs.eax = t;
-    // 004cbdc9 mov al,[edi]
-    ctx.cpu.regs.set_al(ctx.memory.read::<u8>(ctx.cpu.regs.edi));
-    // 004cbdcb inc edi
-    ctx.cpu.regs.edi = inc(ctx.cpu.regs.edi, &mut ctx.cpu.flags);
-    // 004cbdcc or al,al
-    ctx.cpu.regs.set_al(or(
-        ctx.cpu.regs.get_al(),
-        ctx.cpu.regs.get_al(),
-        &mut ctx.cpu.flags,
-    ));
-    // 004cbdce je short 004CBDACh
-    je(ctx, Cont(x4cbdd0), Cont(x4cbdac))
+    Cont(x4cbdc9)
 }
 
 pub fn x4cbdc9(ctx: &mut Context) -> Cont {
@@ -627,16 +587,7 @@ pub fn x4cbdf3(ctx: &mut Context) -> Cont {
     ctx.cpu.regs.edi = add(ctx.cpu.regs.edi, 0x4u32, &mut ctx.cpu.flags);
     // 004cbdf6 lea ebx,[esi-4]
     ctx.cpu.regs.ebx = ctx.cpu.regs.esi.wrapping_add(0xfffffffcu32);
-    // 004cbdf9 xor eax,eax
-    ctx.cpu.regs.eax = xor(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
-    // 004cbdfb mov al,[edi]
-    ctx.cpu.regs.set_al(ctx.memory.read::<u8>(ctx.cpu.regs.edi));
-    // 004cbdfd inc edi
-    ctx.cpu.regs.edi = inc(ctx.cpu.regs.edi, &mut ctx.cpu.flags);
-    // 004cbdfe or eax,eax
-    ctx.cpu.regs.eax = or(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
-    // 004cbe00 je short 004CBE24h
-    je(ctx, Cont(x4cbe02), Cont(x4cbe24))
+    Cont(x4cbdf9)
 }
 
 pub fn x4cbdf9(ctx: &mut Context) -> Cont {
