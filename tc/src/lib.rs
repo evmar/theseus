@@ -32,8 +32,6 @@ pub struct Module {
 pub struct State {
     pub module: Module,
     pub mem: Memory,
-    /// iat addr => function to call, e.g. "kernel32::ExitProcess"
-    iat_refs: HashMap<u32, String>,
     pub blocks: HashMap<u32, Block>,
 }
 
@@ -56,18 +54,6 @@ pub fn add_dll_imports(imports: &mut Vec<Import>) {
             });
             next_addr += 1;
         }
-    }
-}
-
-impl State {
-    pub fn set_module(&mut self, module: Module) {
-        for import in &module.imports {
-            let func = format!("{}::{}", import.dll, import.func);
-            self.blocks
-                .insert(import.func_addr, Block::Stdcall(func.clone()));
-            self.iat_refs.insert(import.iat_addr, func);
-        }
-        self.module = module;
     }
 }
 

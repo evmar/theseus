@@ -112,7 +112,7 @@ pub fn do_unpack(ctx: &mut runtime::Context) {
     tc.mem.bytes.resize(ctx.memory.bytes.len(), 0);
     tc.mem.bytes.copy_from_slice(ctx.memory.bytes);
 
-    let module = tc::Module {
+    tc.module = tc::Module {
         image_base: 0x0040_0000,
         entry_point: 0x0040_85dd,
         code_memory: 0x40_0000..tc.mem.bytes.len() as u32,
@@ -120,11 +120,10 @@ pub fn do_unpack(ctx: &mut runtime::Context) {
         imports: syms,
     };
 
-    tc.set_module(module);
-
     let scan_immediates = true;
     let mut traverse = tc::Traverse::new(&mut tc, scan_immediates);
     traverse.run();
+    tc.blocks = traverse.blocks;
 
     tc.generate("exe/chillin").unwrap();
 }

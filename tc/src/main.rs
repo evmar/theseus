@@ -40,9 +40,7 @@ fn run() -> anyhow::Result<()> {
         .alloc("null page".into(), Some(0), 0x1000);
 
     let buf = std::fs::read(args.exe).unwrap();
-    let module = tc::load_pe(&mut state.mem, buf);
-
-    state.set_module(module);
+    state.module = tc::load_pe(&mut state.mem, buf);
 
     let mut traverse = tc::Traverse::new(&mut state, args.scan_immediates);
     for addr in args.externs {
@@ -52,6 +50,7 @@ fn run() -> anyhow::Result<()> {
         traverse.scan_for_pointers();
     }
     traverse.run();
+    state.blocks = traverse.blocks;
 
     state.generate(&args.out)
 }

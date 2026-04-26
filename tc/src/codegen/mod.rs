@@ -169,7 +169,8 @@ pub struct CodeGen<'a> {
     module: &'a Module,
     mem: &'a Memory,
     blocks: &'a HashMap<u32, Block>,
-    iat_refs: &'a HashMap<u32, String>,
+    /// iat addr => function to call, e.g. "kernel32::ExitProcess"
+    iat_refs: HashMap<u32, String>,
     buf: String,
 }
 
@@ -179,7 +180,12 @@ impl<'a> CodeGen<'a> {
             module: &state.module,
             mem: &state.mem,
             blocks: &state.blocks,
-            iat_refs: &state.iat_refs,
+            iat_refs: state
+                .module
+                .imports
+                .iter()
+                .map(|i| (i.iat_addr, format!("{}::{}", i.dll, i.func)))
+                .collect(),
             buf: Default::default(),
         }
     }

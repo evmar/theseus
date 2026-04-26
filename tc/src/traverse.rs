@@ -7,24 +7,32 @@ use crate::{Block, Module, State, is_abs_memory_ref, memory::Memory};
 pub struct Traverse<'a> {
     module: &'a Module,
     mem: &'a Memory,
-    iat_refs: &'a HashMap<u32, String>,
+    iat_refs: HashSet<u32>,
     scan_immediates: bool,
     queue: VecDeque<u32>,
     invalid: HashSet<u32>,
-    blocks: &'a mut HashMap<u32, Block>,
+    pub blocks: HashMap<u32, Block>,
 }
 
 impl<'a> Traverse<'a> {
     pub fn new(state: &'a mut State, scan_immediates: bool) -> Traverse<'a> {
         let mut traverse = Traverse {
             module: &state.module,
-            blocks: &mut state.blocks,
-            iat_refs: &state.iat_refs,
+            blocks: Default::default(),
+            iat_refs: Default::default(),
             mem: &state.mem,
             scan_immediates,
             queue: VecDeque::new(),
             invalid: HashSet::new(),
         };
+        for import in &state.module.imports {
+            let func = format!("{}::{}", import.dll, import.func);
+            traverse
+                .blocks
+                .insert(import.func_addr, Block::Stdcall(func.clone()));
+            traverse.iat_refs.insert(import.iat_addr);
+        }
+
         traverse.enqueue(state.module.entry_point);
         traverse
     }
@@ -98,7 +106,7 @@ impl<'a> Traverse<'a> {
                         iced_x86::OpKind::NearBranch32 => self.enqueue(instr.near_branch32()),
                         iced_x86::OpKind::Memory => {
                             if let Some(addr) = is_abs_memory_ref(&instr) {
-                                if self.iat_refs.contains_key(&addr) {
+                                if self.iat_refs.contains(&addr) {
                                     // ok
                                 } else {
                                     log::warn!("{ip:08x} {instr}  ; indirect via memory");
