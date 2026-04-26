@@ -109,17 +109,6 @@ pub fn inc<I: Int + num_traits::ops::wrapping::WrappingAdd>(x: I, flags: &mut Fl
     result
 }
 
-pub fn imul<I: Int + num_traits::ops::overflowing::OverflowingMul>(
-    x: I,
-    y: I,
-    flags: &mut Flags,
-) -> I {
-    let (res, overflow) = x.overflowing_mul(&y);
-    flags.set(Flags::CF, overflow);
-    flags.set(Flags::OF, overflow);
-    res
-}
-
 /// xor: Logical Exclusive OR
 pub fn xor<I: Int>(x: I, y: I, flags: &mut Flags) -> I {
     let result = x ^ y;
