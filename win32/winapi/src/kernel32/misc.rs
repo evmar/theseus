@@ -263,20 +263,6 @@ pub fn SetPriorityClass(
 }
 
 #[win32_derive::dllexport]
-pub fn GlobalAlloc(
-    _ctx: &mut Context,
-    _uFlags: u32, /* GLOBAL_ALLOC_FLAGS */
-    _dwBytes: u32,
-) -> u32 {
-    todo!()
-}
-
-#[win32_derive::dllexport]
-pub fn GlobalFree(_ctx: &mut Context, _hMem: u32) -> u32 {
-    todo!()
-}
-
-#[win32_derive::dllexport]
 pub fn CreateEventA(
     _ctx: &mut Context,
     _lpEventAttributes: u32,

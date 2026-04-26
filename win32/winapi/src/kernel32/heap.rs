@@ -3,7 +3,7 @@ use runtime::Context;
 use crate::{
     dllexport::win32flags,
     heap::Heap,
-    kernel32::{self, HANDLE},
+    kernel32::{self, HANDLE, lock},
     stub,
 };
 
@@ -111,4 +111,36 @@ pub fn HeapReAlloc(
     heap.free(mem, lpMem);
     new_addr
     */
+}
+
+win32flags! {
+    pub struct GMEM {
+        const MOVEABLE    = 0x0002;
+        // const NOCOMPACT   = 0x0010;
+        // const NODISCARD   = 0x0020;
+        const ZEROINIT    = 0x0040;
+        // const MODIFY      = 0x0080;
+        // const DISCARDABLE = 0x0100;
+        // const NOT_BANKED  = 0x1000;
+        // const SHARE       = 0x2000;
+        // const DDESHARE    = 0x2000;
+        // const NOTIFY      = 0x4000;
+        // Lots of obsolete flags, ignore them
+        const _ = !0;
+    }
+}
+
+#[win32_derive::dllexport]
+pub fn GlobalAlloc(ctx: &mut Context, uFlags: GMEM, dwBytes: u32) -> u32 {
+    assert!(!uFlags.contains(GMEM::MOVEABLE));
+    let ptr = lock().process_heap.alloc(&mut ctx.memory, dwBytes);
+    if uFlags.contains(GMEM::ZEROINIT) {
+        ctx.memory[ptr..][..dwBytes as usize].fill(0);
+    }
+    ptr
+}
+
+#[win32_derive::dllexport]
+pub fn GlobalFree(_ctx: &mut Context, _hMem: u32) -> u32 {
+    todo!()
 }
