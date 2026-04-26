@@ -4,6 +4,8 @@ members = [
   "exe/basicdd",
   "exe/chillin",
   "exe/chillin-unpack",
+  "exe/mofo",
+  "exe/mofo-unpack",
   "exe/thread",
   "exe/winapi",
   "exe/zig_hello",
