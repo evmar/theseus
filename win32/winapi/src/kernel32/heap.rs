@@ -141,6 +141,7 @@ pub fn GlobalAlloc(ctx: &mut Context, uFlags: GMEM, dwBytes: u32) -> u32 {
 }
 
 #[win32_derive::dllexport]
-pub fn GlobalFree(_ctx: &mut Context, _hMem: u32) -> u32 {
-    todo!()
+pub fn GlobalFree(ctx: &mut Context, hMem: u32) -> u32 {
+    lock().process_heap.free(&mut ctx.memory, hMem);
+    0 // success
 }
