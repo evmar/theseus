@@ -90,7 +90,7 @@ pub fn CreateCursor(
     _pvANDPlane: u32,
     _pvXORPlane: u32,
 ) -> HCURSOR {
-    todo!()
+    stub!(0)
 }
 
 #[win32_derive::dllexport]

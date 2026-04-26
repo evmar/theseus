@@ -63,9 +63,16 @@ pub mod IDirectDraw {
     pub fn CreateClipper(_ctx: &mut Context, _this: u32) -> DD {
         todo!()
     }
+
     #[win32_derive::dllexport]
-    pub fn CreatePalette(_ctx: &mut Context, _this: u32) -> DD {
-        todo!()
+    pub fn CreatePalette(
+        _ctx: &mut Context,
+        _this: u32,
+        _lppe: u32,
+        _lplpPal: u32,
+        _pUnkOuter: u32,
+    ) -> DD {
+        stub!(DD::OK)
     }
 
     #[win32_derive::dllexport]
@@ -462,8 +469,8 @@ pub mod IDirectDrawSurface {
     }
 
     #[win32_derive::dllexport]
-    pub fn SetPalette(_ctx: &mut Context, _this: u32) -> DD {
-        todo!()
+    pub fn SetPalette(_ctx: &mut Context, _this: u32, _lpPalette: u32) -> DD {
+        stub!(DD::OK)
     }
 
     #[win32_derive::dllexport]

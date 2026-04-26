@@ -1,6 +1,6 @@
 use runtime::Context;
 
-use crate::kernel32::lock;
+use crate::{kernel32::lock, stub};
 
 #[win32_derive::dllexport]
 pub fn GetLastError(_ctx: &mut Context) -> u32 {
@@ -259,7 +259,7 @@ pub fn SetPriorityClass(
     _hProcess: HANDLE,
     _dwPriorityClass: u32, /* PROCESS_CREATION_FLAGS */
 ) -> bool {
-    todo!()
+    stub!(true)
 }
 
 #[win32_derive::dllexport]

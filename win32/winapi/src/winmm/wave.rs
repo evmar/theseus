@@ -1,5 +1,7 @@
 use runtime::Context;
 
+use crate::stub;
+
 #[win32_derive::dllexport]
 pub fn waveOutOpen(
     _ctx: &mut Context,
@@ -10,7 +12,8 @@ pub fn waveOutOpen(
     _dwInstance: u32,
     _fdwOpen: u32, /* MIDI_WAVE_OPEN_TYPE */
 ) -> u32 {
-    todo!()
+    const MMSYSERR_NODRIVER: u32 = 0x00000002;
+    stub!(MMSYSERR_NODRIVER)
 }
 
 #[win32_derive::dllexport]
@@ -25,7 +28,7 @@ pub fn waveOutClose(_ctx: &mut Context, _hwo: u32) -> u32 {
 
 #[win32_derive::dllexport]
 pub fn waveOutGetNumDevs(_ctx: &mut Context) -> u32 {
-    todo!()
+    stub!(0)
 }
 
 // module: USER32.dll
