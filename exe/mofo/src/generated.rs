@@ -25112,8 +25112,12 @@ pub fn x41f114(ctx: &mut Context) -> Cont {
     ctx.cpu.fpu.set(0, ctx.cpu.fpu.get(1));
     ctx.cpu.fpu.set(1, t);
     // 0041f116 fprem
-    // Fprem not implemented
-    todo!();
+    ctx.cpu.fpu.set(0, ctx.cpu.fpu.get(0) % ctx.cpu.fpu.get(1));
+    // 0041f118 fstp st(1)
+    ctx.cpu.fpu.set(1, ctx.cpu.fpu.get(0));
+    ctx.cpu.fpu.pop();
+    // 0041f11a ret
+    ret(ctx, 0)
 }
 
 pub fn x41f11c(ctx: &mut Context) -> Cont {

@@ -143,6 +143,13 @@ impl<'a> CodeGen<'a> {
                 }
             }
 
+            Fprem => {
+                self.line(fpu_set_reg(
+                    0,
+                    format!("{} % {}", fpu_get_reg(0), fpu_get_reg(1)),
+                ));
+            }
+
             Fchs => {
                 self.line(fpu_set_reg(0, format!("-{}", fpu_get_reg(0))));
             }
