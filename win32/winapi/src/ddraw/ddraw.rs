@@ -112,6 +112,7 @@ impl DirectDraw {
             primary: Default::default(),
             attached: Default::default(),
             pixels: None,
+            palette: None,
         }));
         // TODO: move surf to ddraw
         state().surf.borrow_mut().insert(addr, surf.clone());
@@ -140,6 +141,8 @@ pub struct Surface {
 
     /// Address of pixel data, when locked.
     pub pixels: Option<u32>,
+
+    pub palette: Option<Rc<RefCell<Palette>>>,
 }
 
 impl Surface {

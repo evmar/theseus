@@ -1,4 +1,5 @@
 use runtime::Context;
+use std::{cell::RefCell, rc::Rc};
 use zerocopy::{FromBytes, IntoBytes};
 
 use crate::{
@@ -9,8 +10,6 @@ use crate::{
 };
 
 pub mod IDirectDraw {
-    use std::cell::RefCell;
-
     use crate::ddraw::Palette;
 
     use super::*;
@@ -88,9 +87,9 @@ pub mod IDirectDraw {
             .0;
         state().palette.borrow_mut().insert(
             ptr,
-            RefCell::new(Palette {
+            Rc::new(RefCell::new(Palette {
                 entries: entries.into_iter().cloned().collect(),
-            }),
+            })),
         );
         ctx.memory.write::<u32>(lplpPal, ptr);
 
@@ -490,8 +489,14 @@ pub mod IDirectDrawSurface {
     }
 
     #[win32_derive::dllexport]
-    pub fn SetPalette(_ctx: &mut Context, _this: u32, _lpPalette: u32) -> DD {
-        stub!(DD::OK)
+    pub fn SetPalette(_ctx: &mut Context, this: u32, lpPalette: u32) -> DD {
+        let state = state();
+        let surfaces = state.surf.borrow_mut();
+        let mut surface = surfaces.get(&this).unwrap().borrow_mut();
+        let palettes = state.palette.borrow_mut();
+        let palette = palettes.get(&lpPalette).unwrap();
+        surface.palette = Some(palette.clone());
+        DD::OK
     }
 
     #[win32_derive::dllexport]

@@ -191,7 +191,7 @@ impl std::fmt::Debug for GUID {
 pub struct State {
     pub ddraw: RefCell<Option<DirectDraw>>,
     pub surf: RefCell<HashMap<u32, Rc<RefCell<Surface>>>>,
-    pub palette: RefCell<HashMap<u32, RefCell<Palette>>>,
+    pub palette: RefCell<HashMap<u32, Rc<RefCell<Palette>>>>,
 }
 
 impl State {
