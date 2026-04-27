@@ -25121,7 +25121,7 @@ pub fn x41f11c(ctx: &mut Context) -> Cont {
     Cont(kernel32::ExitProcess_stdcall)
 }
 
-const BLOCKS: [(u32, fn(&mut Context) -> Cont); 1314] = [
+const BLOCKS: [(u32, fn(&mut Context) -> Cont); 1321] = [
     (0x401000, x401000),
     (0x40118e, x40118e),
     (0x401195, x401195),
@@ -26552,6 +26552,16 @@ const BLOCKS: [(u32, fn(&mut Context) -> Cont); 1314] = [
     (0xfafbfca8, ddraw::IDirectDrawSurface7::GetPriority_stdcall),
     (0xfafbfca9, ddraw::IDirectDrawSurface7::SetLOD_stdcall),
     (0xfafbfcaa, ddraw::IDirectDrawSurface7::GetLOD_stdcall),
+    (
+        0xfafbfcab,
+        ddraw::IDirectDrawPalette::QueryInterface_stdcall,
+    ),
+    (0xfafbfcac, ddraw::IDirectDrawPalette::AddRef_stdcall),
+    (0xfafbfcad, ddraw::IDirectDrawPalette::Release_stdcall),
+    (0xfafbfcae, ddraw::IDirectDrawPalette::GetCaps_stdcall),
+    (0xfafbfcaf, ddraw::IDirectDrawPalette::GetEntries_stdcall),
+    (0xfafbfcb0, ddraw::IDirectDrawPalette::Initialize_stdcall),
+    (0xfafbfcb1, ddraw::IDirectDrawPalette::SetEntries_stdcall),
     (runtime::RETURN_FROM_X86_ADDR, runtime::return_from_x86),
 ];
 

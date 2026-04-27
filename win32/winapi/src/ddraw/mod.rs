@@ -14,7 +14,7 @@ pub use ddraw1::*;
 pub use ddraw7::*;
 pub use types::DD;
 
-pub const EXPORTS: [&'static str; 138] = [
+pub const EXPORTS: [&'static str; 145] = [
     // IDirectDraw
     "IDirectDraw::QueryInterface",
     "IDirectDraw::AddRef",
@@ -156,6 +156,14 @@ pub const EXPORTS: [&'static str; 138] = [
     "IDirectDrawSurface7::GetPriority",
     "IDirectDrawSurface7::SetLOD",
     "IDirectDrawSurface7::GetLOD",
+    // IDirectDrawPalette
+    "IDirectDrawPalette::QueryInterface",
+    "IDirectDrawPalette::AddRef",
+    "IDirectDrawPalette::Release",
+    "IDirectDrawPalette::GetCaps",
+    "IDirectDrawPalette::GetEntries",
+    "IDirectDrawPalette::Initialize",
+    "IDirectDrawPalette::SetEntries",
 ];
 
 #[repr(C)]
@@ -183,6 +191,7 @@ impl std::fmt::Debug for GUID {
 pub struct State {
     pub ddraw: RefCell<Option<DirectDraw>>,
     pub surf: RefCell<HashMap<u32, Rc<RefCell<Surface>>>>,
+    pub palette: RefCell<HashMap<u32, RefCell<Palette>>>,
 }
 
 impl State {

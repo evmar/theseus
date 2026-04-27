@@ -488,3 +488,12 @@ win32flags! {
         const ZBUFFERBASEDEST = 0x100;
     }
 }
+
+#[repr(C)]
+#[derive(Debug, Clone, zerocopy::FromBytes, zerocopy::Immutable, zerocopy::KnownLayout)]
+pub struct PALETTEENTRY {
+    pub peRed: u8,
+    pub peGreen: u8,
+    pub peBlue: u8,
+    pub peFlags: u8,
+}

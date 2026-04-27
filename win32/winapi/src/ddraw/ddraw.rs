@@ -208,6 +208,10 @@ impl Surface {
     }
 }
 
+pub struct Palette {
+    pub entries: Vec<PALETTEENTRY>,
+}
+
 pub fn get_pixel_format() -> DDPIXELFORMAT {
     DDPIXELFORMAT {
         dwSize: std::mem::size_of::<DDPIXELFORMAT>() as u32,

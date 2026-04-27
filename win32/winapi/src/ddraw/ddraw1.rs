@@ -9,6 +9,10 @@ use crate::{
 };
 
 pub mod IDirectDraw {
+    use std::cell::RefCell;
+
+    use crate::ddraw::Palette;
+
     use super::*;
 
     #[derive(Default, zerocopy::IntoBytes, zerocopy::Immutable)]
@@ -66,14 +70,31 @@ pub mod IDirectDraw {
 
     #[win32_derive::dllexport]
     pub fn CreatePalette(
-        _ctx: &mut Context,
+        ctx: &mut Context,
         _this: u32,
-        _flags: u32,
-        _lpEntries: u32,
-        _lplpPal: u32,
-        _pUnkOuter: u32,
+        flags: DDPCAPS,
+        lpEntries: u32,
+        lplpPal: u32,
+        pUnkOuter: u32,
     ) -> DD {
-        stub!(DD::OK)
+        assert_eq!(pUnkOuter, 0);
+        assert!(flags.contains(DDPCAPS::_8BIT));
+
+        let mut kernel32 = kernel32::lock();
+        let ptr = IDirectDrawPalette::new(ctx, &mut kernel32.process_heap);
+
+        let entries = <[PALETTEENTRY]>::ref_from_prefix_with_elems(&ctx.memory[lpEntries..], 256)
+            .unwrap()
+            .0;
+        state().palette.borrow_mut().insert(
+            ptr,
+            RefCell::new(Palette {
+                entries: entries.into_iter().cloned().collect(),
+            }),
+        );
+        ctx.memory.write::<u32>(lplpPal, ptr);
+
+        DD::OK
     }
 
     #[win32_derive::dllexport]
@@ -231,9 +252,6 @@ pub mod IDirectDraw {
 }
 
 pub mod IDirectDrawSurface {
-
-    use runtime::Context;
-
     use super::*;
 
     #[derive(Default, zerocopy::IntoBytes, zerocopy::Immutable)]
@@ -539,6 +557,82 @@ pub mod IDirectDrawSurface {
             UpdateOverlay: func_addr + 33,
             UpdateOverlayDisplay: func_addr + 34,
             UpdateOverlayZOrder: func_addr + 35,
+        };
+        vtable
+            .write_to_prefix(&mut ctx.memory[vtable_addr..])
+            .unwrap();
+        vtable_addr
+    }
+
+    pub fn new(ctx: &mut Context, heap: &mut Heap) -> u32 {
+        let addr = heap.alloc(&mut ctx.memory, 4);
+        let vtable = vtable(ctx, heap);
+        ctx.memory.write(addr, vtable);
+        addr
+    }
+}
+
+pub mod IDirectDrawPalette {
+    use super::*;
+
+    #[derive(Default, zerocopy::IntoBytes, zerocopy::Immutable)]
+    #[repr(C)]
+    pub struct VTable {
+        QueryInterface: u32,
+        AddRef: u32,
+        Release: u32,
+        GetCaps: u32,
+        GetEntries: u32,
+        Initialize: u32,
+        SetEntries: u32,
+    }
+
+    #[win32_derive::dllexport]
+    pub fn QueryInterface(_ctx: &mut Context, _this: u32) -> DD {
+        todo!()
+    }
+
+    #[win32_derive::dllexport]
+    pub fn AddRef(_ctx: &mut Context, _this: u32) -> DD {
+        todo!()
+    }
+
+    #[win32_derive::dllexport]
+    pub fn Release(_ctx: &mut Context, _this: u32) -> DD {
+        todo!()
+    }
+
+    #[win32_derive::dllexport]
+    pub fn GetCaps(_ctx: &mut Context, _this: u32) -> DD {
+        todo!()
+    }
+
+    #[win32_derive::dllexport]
+    pub fn GetEntries(_ctx: &mut Context, _this: u32) -> DD {
+        todo!()
+    }
+
+    #[win32_derive::dllexport]
+    pub fn Initialize(_ctx: &mut Context, _this: u32) -> DD {
+        todo!()
+    }
+
+    #[win32_derive::dllexport]
+    pub fn SetEntries(_ctx: &mut Context, _this: u32) -> DD {
+        todo!()
+    }
+
+    fn vtable(ctx: &mut Context, heap: &mut Heap) -> u32 {
+        let vtable_addr = heap.alloc(&mut ctx.memory, std::mem::size_of::<VTable>() as u32);
+        let func_addr = runtime::proc_addr(ctx, QueryInterface_stdcall);
+        let vtable = VTable {
+            QueryInterface: func_addr + 0,
+            AddRef: func_addr + 1,
+            Release: func_addr + 2,
+            GetCaps: func_addr + 3,
+            GetEntries: func_addr + 4,
+            Initialize: func_addr + 5,
+            SetEntries: func_addr + 6,
         };
         vtable
             .write_to_prefix(&mut ctx.memory[vtable_addr..])
