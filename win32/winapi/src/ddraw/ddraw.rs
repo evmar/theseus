@@ -139,7 +139,7 @@ pub struct Surface {
     /// Present on Target::Window, TODO should be vec
     pub attached: Option<Rc<RefCell<Surface>>>,
 
-    /// Address of pixel data, when locked.
+    /// Address of pixel data.
     pub pixels: Option<u32>,
 
     pub palette: Option<Rc<RefCell<Palette>>>,
@@ -147,27 +147,38 @@ pub struct Surface {
 
 impl Surface {
     pub fn lock(&mut self, mem: &mut Memory) -> u32 {
-        assert_eq!(self.pixels, None);
-        let size = self.width * self.height * self.bytes_per_pixel;
-        let addr = kernel32::lock().process_heap.alloc(mem, size);
-        // scribble on pixels so we can see it
-        mem[addr..][..size as usize].fill(0x8F);
-        self.pixels = Some(addr);
-        addr
+        match self.pixels {
+            Some(addr) => addr,
+            None => {
+                let size = self.width * self.height * self.bytes_per_pixel;
+                let addr = kernel32::lock().process_heap.alloc(mem, size);
+                // scribble on pixels so we can see it
+                mem[addr..][..size as usize].fill(0x8F);
+                self.pixels = Some(addr);
+                addr
+            }
+        }
     }
 
-    pub fn unlock(&mut self, mem: &mut Memory) {
+    pub fn unlock(&mut self) {}
+
+    // App can write pixels to back buffer but attach palette to front buffer,
+    // so take palette as an argument.
+    fn update_texture(&mut self, mem: &mut Memory, palette: &Option<Rc<RefCell<Palette>>>) {
         let addr = self.pixels.unwrap();
         let size = self.width * self.height * self.bytes_per_pixel;
         let pixels = &mem[addr..][..size as usize];
         let mut buf = vec![];
         let pixels32 = match self.bytes_per_pixel {
             1 => {
+                let palette = palette.as_ref().unwrap().borrow();
+                let entries = &palette.entries;
                 for &p in pixels {
-                    buf.push(p);
-                    buf.push(p);
-                    buf.push(p);
-                    buf.push(p);
+                    let entry = &entries[p as usize];
+                    buf.push(entry.peBlue);
+                    buf.push(entry.peGreen);
+                    buf.push(entry.peRed);
+                    buf.push(0);
                 }
                 buf.as_slice()
             }
@@ -182,23 +193,20 @@ impl Surface {
                     .unwrap();
             }
         }
-
-        kernel32::lock()
-            .process_heap
-            .free(mem, self.pixels.unwrap());
-        self.pixels = None;
     }
 
-    pub fn flip(&mut self) {
+    pub fn flip(&mut self, mem: &mut Memory) {
         // "Flip can be called only for a surface that has the DDSCAPS_FLIP and DDSCAPS_FRONTBUFFER capabilities."
         let Target::Window(window) = &self.target else {
             unreachable!()
         };
 
         let mut back = self.attached.as_ref().unwrap().borrow_mut();
+        back.update_texture(mem, &self.palette);
         let Target::Texture(texture) = &mut back.target else {
             unreachable!()
         };
+
         // Ignore any alpha in the input when doing the final render copy.
         texture.set_blend_mode(sdl3::render::BlendMode::None);
 

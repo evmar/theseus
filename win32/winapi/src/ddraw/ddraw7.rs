@@ -538,14 +538,14 @@ pub mod IDirectDrawSurface7 {
 
     #[win32_derive::dllexport]
     pub fn Flip(
-        _ctx: &mut Context,
+        ctx: &mut Context,
         this: u32,
         _lpDDSurfaceTargetOverride: u32,
         _dwFlags: u32,
     ) -> DD {
         let surfaces = state().surf.borrow_mut();
         let mut surface = surfaces.get(&this).unwrap().borrow_mut();
-        surface.flip();
+        surface.flip(&mut ctx.memory);
         DD::OK
     }
 
@@ -665,11 +665,11 @@ pub mod IDirectDrawSurface7 {
     }
 
     #[win32_derive::dllexport]
-    pub fn ReleaseDC(ctx: &mut Context, this: u32, hDC: u32) -> DD {
+    pub fn ReleaseDC(_ctx: &mut Context, this: u32, hDC: u32) -> DD {
         let surfaces = state().surf.borrow_mut();
         let mut surface = surfaces.get(&this).unwrap().borrow_mut();
         gdi32::state().dcs.borrow_mut().remove(HDC::from_raw(hDC));
-        surface.unlock(&mut ctx.memory);
+        surface.unlock();
         DD::OK
     }
 
