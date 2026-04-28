@@ -143,6 +143,11 @@ impl<'a> CodeGen<'a> {
                 }
             }
 
+            Fimul => {
+                let expr = format!("{} * {} as f64", fpu_get_reg(0), get_op(instr, 0));
+                self.line(fpu_set_reg(0, expr));
+            }
+
             Fprem => {
                 self.line(fpu_set_reg(
                     0,

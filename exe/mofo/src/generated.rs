@@ -24303,8 +24303,53 @@ pub fn x41e75c(ctx: &mut Context) -> Cont {
     ctx.memory
         .write::<u32>(ctx.cpu.regs.esp.wrapping_add(0x10u32), ctx.cpu.regs.eax);
     // 0041e774 fimul dword ptr [esp+10h]
-    // Fimul not implemented
-    todo!();
+    ctx.cpu.fpu.set(
+        0,
+        ctx.cpu.fpu.get(0)
+            * ctx
+                .memory
+                .read::<u32>(ctx.cpu.regs.esp.wrapping_add(0x10u32)) as f64,
+    );
+    // 0041e778 fmul dword ptr ds:[4204CCh]
+    ctx.cpu.fpu.set(
+        0,
+        ctx.cpu.fpu.get(0) * ctx.memory.read::<f32>(0x4204ccu32) as f64,
+    );
+    // 0041e77e fld st(0)
+    ctx.cpu.fpu.push(ctx.cpu.fpu.get(0));
+    // 0041e780 fmul dword ptr [edx*4+421A34h]
+    ctx.cpu.fpu.set(
+        0,
+        ctx.cpu.fpu.get(0)
+            * ctx
+                .memory
+                .read::<f32>((ctx.cpu.regs.edx * 4).wrapping_add(0x421a34u32)) as f64,
+    );
+    // 0041e787 fadd dword ptr [esp+20h]
+    ctx.cpu.fpu.set(
+        0,
+        ctx.cpu.fpu.get(0)
+            + ctx
+                .memory
+                .read::<f32>(ctx.cpu.regs.esp.wrapping_add(0x20u32)) as f64,
+    );
+    // 0041e78b fstp dword ptr [esp+20h]
+    ctx.memory.write::<f32>(
+        ctx.cpu.regs.esp.wrapping_add(0x20u32),
+        ctx.cpu.fpu.get(0) as f32,
+    );
+    ctx.cpu.fpu.pop();
+    // 0041e78f fmul dword ptr [edx*4+421A44h]
+    ctx.cpu.fpu.set(
+        0,
+        ctx.cpu.fpu.get(0)
+            * ctx
+                .memory
+                .read::<f32>((ctx.cpu.regs.edx * 4).wrapping_add(0x421a44u32)) as f64,
+    );
+    // 0041e796 faddp
+    ctx.cpu.fpu.set(1, ctx.cpu.fpu.get(1) + ctx.cpu.fpu.get(0));
+    ctx.cpu.fpu.pop();
     Cont(x41e798)
 }
 
