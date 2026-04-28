@@ -4,6 +4,7 @@ use zerocopy::FromBytes;
 use crate::{
     heap::Heap,
     kernel32::{self, HANDLE, lock, teb},
+    stub,
 };
 
 #[win32_derive::dllexport]
@@ -145,4 +146,13 @@ pub fn GetProcessHeap(_ctx: &mut Context) -> HANDLE {
 #[win32_derive::dllexport]
 pub fn TerminateProcess(_ctx: &mut Context, _hProcess: HANDLE, _uExitCode: u32) -> bool {
     todo!();
+}
+
+#[win32_derive::dllexport]
+pub fn SetPriorityClass(
+    _ctx: &mut Context,
+    _hProcess: HANDLE,
+    _dwPriorityClass: u32, /* PROCESS_CREATION_FLAGS */
+) -> bool {
+    stub!(true)
 }

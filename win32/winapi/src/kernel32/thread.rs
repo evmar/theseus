@@ -122,6 +122,11 @@ pub fn CreateThread(
 }
 
 #[win32_derive::dllexport]
+pub fn GetCurrentThread(_ctx: &mut Context) -> HANDLE {
+    todo!()
+}
+
+#[win32_derive::dllexport]
 pub fn GetCurrentThreadId(ctx: &mut Context) -> u32 {
     ctx.thread_id
 }

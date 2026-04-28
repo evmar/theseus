@@ -8,6 +8,7 @@ mod nls;
 mod process;
 mod state;
 mod thread;
+mod time;
 
 pub use dll::*;
 pub use env::*;
@@ -19,3 +20,4 @@ pub use nls::*;
 pub use process::*;
 pub use state::{Lock, State, init_state, lock};
 pub use thread::*;
+pub use time::*;

@@ -1,6 +1,6 @@
 use runtime::Context;
 
-use crate::{kernel32::lock, stub};
+use crate::kernel32::lock;
 
 #[win32_derive::dllexport]
 pub fn GetLastError(_ctx: &mut Context) -> u32 {
@@ -137,63 +137,6 @@ pub fn VirtualFree(
 }
 
 #[win32_derive::dllexport]
-pub fn WideCharToMultiByte(
-    _ctx: &mut Context,
-    _CodePage: u32,
-    _dwFlags: u32,
-    _lpWideCharStr: u32,
-    _cchWideChar: i32,
-    _lpMultiByteStr: u32,
-    _cbMultiByte: i32,
-    _lpDefaultChar: u32,
-    _lpUsedDefaultChar: u32,
-) -> i32 {
-    0
-    /*
-    match CodePage {
-        Err(value) => unimplemented!("WideCharToMultiByte code page {value}"),
-        _ => {} // treat all others as ansi for now
-    }
-    dwFlags.unwrap();
-
-    let src = {
-        let len = match cchWideChar {
-            0 => todo!(),
-            -1 => strlen16(sys.mem().slice(lpWideCharStr..)) + 1, // include nul
-            len => len as usize,
-        };
-        sys.mem().sub32(lpWideCharStr, len as u32 * 2)
-    };
-
-    let dst = if cbMultiByte > 0 {
-        sys.mem().sub32_mut(lpMultiByteStr, cbMultiByte as u32)
-    } else {
-        &mut []
-    };
-
-    for (i, c) in src.into_iter_pod::<u16>().enumerate() {
-        if c > 0x7f {
-            unimplemented!("unicode");
-        }
-        if i < dst.len() {
-            dst[i] = c as u8;
-        }
-    }
-
-    if let Some(used) = lpUsedDefaultChar {
-        *used = 0;
-    }
-
-    src.len() as u32 / 2
-    */
-}
-
-#[win32_derive::dllexport]
-pub fn GetOEMCP(_ctx: &mut Context) -> u32 {
-    todo!()
-}
-
-#[win32_derive::dllexport]
 pub fn OutputDebugStringA(_ctx: &mut Context, _lpOutputString: u32) {
     todo!()
 }
@@ -209,57 +152,10 @@ pub fn RtlUnwind(
     todo!()
 }
 
-/// GetTickCount wants the ticks since the process started.
-/// To make this a simple read, we unsafely store the current instant during initialization.
-/// Note that this is never mutated after process startup, so it is correctly Sync
-/// after that point.
-pub struct UnsafeTickCount(std::time::Instant);
-unsafe impl Sync for UnsafeTickCount {}
-
-impl UnsafeTickCount {
-    pub const fn new_uninitialized() -> Self {
-        unsafe { UnsafeTickCount(std::mem::MaybeUninit::zeroed().assume_init()) }
-    }
-
-    pub fn init() {
-        unsafe {
-            START_TICK_COUNT.0 = std::time::Instant::now();
-        }
-    }
-
-    pub fn get() -> std::time::Instant {
-        unsafe { START_TICK_COUNT.0 }
-    }
-}
-static mut START_TICK_COUNT: UnsafeTickCount = UnsafeTickCount::new_uninitialized();
-
-pub fn get_tick_count() -> u32 {
-    UnsafeTickCount::get().elapsed().as_millis() as u32
-}
-
-#[win32_derive::dllexport]
-pub fn GetTickCount(_ctx: &mut Context) -> u32 {
-    get_tick_count()
-}
-
 #[win32_derive::dllexport]
 pub fn WaitForSingleObject(_ctx: &mut Context, _hHandle: HANDLE, _dwMilliseconds: u32) -> u32 /* WAIT_EVENT */
 {
     todo!()
-}
-
-#[win32_derive::dllexport]
-pub fn Sleep(_ctx: &mut Context, dwMilliseconds: u32) {
-    std::thread::sleep(std::time::Duration::from_millis(dwMilliseconds as u64));
-}
-
-#[win32_derive::dllexport]
-pub fn SetPriorityClass(
-    _ctx: &mut Context,
-    _hProcess: HANDLE,
-    _dwPriorityClass: u32, /* PROCESS_CREATION_FLAGS */
-) -> bool {
-    stub!(true)
 }
 
 #[win32_derive::dllexport]
@@ -270,11 +166,6 @@ pub fn CreateEventA(
     _bInitialState: bool,
     _lpName: u32,
 ) -> HANDLE {
-    todo!()
-}
-
-#[win32_derive::dllexport]
-pub fn GetCurrentThread(_ctx: &mut Context) -> HANDLE {
     todo!()
 }
 
