@@ -23996,6 +23996,127 @@ pub fn x41e647(ctx: &mut Context) -> Cont {
     )
 }
 
+pub fn x41e64e(ctx: &mut Context) -> Cont {
+    // 0041e64e mov al,[edi+4]
+    ctx.cpu
+        .regs
+        .set_al(ctx.memory.read::<u8>(ctx.cpu.regs.edi.wrapping_add(0x4u32)));
+    // 0041e651 test al,0Fh
+    and(ctx.cpu.regs.get_al(), 0xfu8, &mut ctx.cpu.flags);
+    // 0041e653 je short 0041E662h
+    je(ctx, Cont(x41e655), Cont(x41e662))
+}
+
+pub fn x41e655(ctx: &mut Context) -> Cont {
+    // 0041e655 mov cl,[esi+15h]
+    ctx.cpu.regs.set_cl(
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.esi.wrapping_add(0x15u32)),
+    );
+    // 0041e658 shr al,4
+    ctx.cpu
+        .regs
+        .set_al(shr(ctx.cpu.regs.get_al(), 0x4u8, &mut ctx.cpu.flags));
+    // 0041e65b add cl,al
+    ctx.cpu.regs.set_cl(add(
+        ctx.cpu.regs.get_cl(),
+        ctx.cpu.regs.get_al(),
+        &mut ctx.cpu.flags,
+    ));
+    // 0041e65d mov [esi+15h],cl
+    ctx.memory.write::<u8>(
+        ctx.cpu.regs.esi.wrapping_add(0x15u32),
+        ctx.cpu.regs.get_cl(),
+    );
+    // 0041e660 jmp short 0041E6A6h
+    Cont(x41e6a6)
+}
+
+pub fn x41e662(ctx: &mut Context) -> Cont {
+    // 0041e662 mov dl,[esi+15h]
+    ctx.cpu.regs.set_dl(
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.esi.wrapping_add(0x15u32)),
+    );
+    // 0041e665 mov [esi+15h],dl
+    ctx.memory.write::<u8>(
+        ctx.cpu.regs.esi.wrapping_add(0x15u32),
+        ctx.cpu.regs.get_dl(),
+    );
+    // 0041e668 jmp short 0041E6A6h
+    Cont(x41e6a6)
+}
+
+pub fn x41e66a(ctx: &mut Context) -> Cont {
+    // 0041e66a mov al,[edi+4]
+    ctx.cpu
+        .regs
+        .set_al(ctx.memory.read::<u8>(ctx.cpu.regs.edi.wrapping_add(0x4u32)));
+    // 0041e66d mov [esi+15h],al
+    ctx.memory.write::<u8>(
+        ctx.cpu.regs.esi.wrapping_add(0x15u32),
+        ctx.cpu.regs.get_al(),
+    );
+    // 0041e670 jmp short 0041E6A6h
+    Cont(x41e6a6)
+}
+
+pub fn x41e672(ctx: &mut Context) -> Cont {
+    // 0041e672 mov al,[edi+4]
+    ctx.cpu
+        .regs
+        .set_al(ctx.memory.read::<u8>(ctx.cpu.regs.edi.wrapping_add(0x4u32)));
+    // 0041e675 cmp al,20h
+    sub(ctx.cpu.regs.get_al(), 0x20u8, &mut ctx.cpu.flags);
+    // 0041e677 jae short 0041E68Ah
+    jae(ctx, Cont(x41e679), Cont(x41e68a))
+}
+
+pub fn x41e679(ctx: &mut Context) -> Cont {
+    // 0041e679 and eax,0FFh
+    ctx.cpu.regs.eax = and(ctx.cpu.regs.eax, 0xffu32, &mut ctx.cpu.flags);
+    // 0041e67e mov ds:[425BD4h],eax
+    ctx.memory.write::<u32>(0x425bd4u32, ctx.cpu.regs.eax);
+    // 0041e683 call 0041E510h
+    let dst = Cont(x41e510);
+    call(ctx, 0x41e688, dst)
+}
+
+pub fn x41e688(ctx: &mut Context) -> Cont {
+    // 0041e688 jmp short 0041E6A6h
+    Cont(x41e6a6)
+}
+
+pub fn x41e68a(ctx: &mut Context) -> Cont {
+    // 0041e68a and eax,0FFh
+    ctx.cpu.regs.eax = and(ctx.cpu.regs.eax, 0xffu32, &mut ctx.cpu.flags);
+    // 0041e68f mov ds:[425BD0h],eax
+    ctx.memory.write::<u32>(0x425bd0u32, ctx.cpu.regs.eax);
+    // 0041e694 call 0041E510h
+    let dst = Cont(x41e510);
+    call(ctx, 0x41e699, dst)
+}
+
+pub fn x41e699(ctx: &mut Context) -> Cont {
+    // 0041e699 jmp short 0041E6A6h
+    Cont(x41e6a6)
+}
+
+pub fn x41e69b(ctx: &mut Context) -> Cont {
+    // 0041e69b xor ecx,ecx
+    ctx.cpu.regs.ecx = xor(ctx.cpu.regs.ecx, ctx.cpu.regs.ecx, &mut ctx.cpu.flags);
+    // 0041e69d mov cl,[edi+4]
+    ctx.cpu
+        .regs
+        .set_cl(ctx.memory.read::<u8>(ctx.cpu.regs.edi.wrapping_add(0x4u32)));
+    // 0041e6a0 shl ecx,12h
+    ctx.cpu.regs.ecx = shl(ctx.cpu.regs.ecx, 0x12u8, &mut ctx.cpu.flags);
+    // 0041e6a3 mov [esi+4],ecx
+    ctx.memory
+        .write::<u32>(ctx.cpu.regs.esi.wrapping_add(0x4u32), ctx.cpu.regs.ecx);
+    Cont(x41e6a6)
+}
+
 pub fn x41e6a6(ctx: &mut Context) -> Cont {
     // 0041e6a6 mov ecx,ds:[425BD8h]
     ctx.cpu.regs.ecx = ctx.memory.read::<u32>(0x425bd8u32);
@@ -26460,7 +26581,7 @@ pub fn x41f11c(ctx: &mut Context) -> Cont {
     Cont(kernel32::ExitProcess_stdcall)
 }
 
-const BLOCKS: [(u32, fn(&mut Context) -> Cont); 1415] = [
+const BLOCKS: [(u32, fn(&mut Context) -> Cont); 1425] = [
     (0x401000, x401000),
     (0x40118e, x40118e),
     (0x401195, x401195),
@@ -27481,6 +27602,16 @@ const BLOCKS: [(u32, fn(&mut Context) -> Cont); 1415] = [
     (0x41e622, x41e622),
     (0x41e63a, x41e63a),
     (0x41e647, x41e647),
+    (0x41e64e, x41e64e),
+    (0x41e655, x41e655),
+    (0x41e662, x41e662),
+    (0x41e66a, x41e66a),
+    (0x41e672, x41e672),
+    (0x41e679, x41e679),
+    (0x41e688, x41e688),
+    (0x41e68a, x41e68a),
+    (0x41e699, x41e699),
+    (0x41e69b, x41e69b),
     (0x41e6a6, x41e6a6),
     (0x41e6b8, x41e6b8),
     (0x41e6cd, x41e6cd),

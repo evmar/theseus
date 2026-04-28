@@ -9,6 +9,7 @@ pub struct Gather {
     pub scan_immediates: bool,
     pub scan_memory: bool,
     pub entry_points: Vec<u32>,
+    pub jump_tables: Vec<std::ops::RangeInclusive<u32>>,
     pub externs: Vec<u32>,
 }
 
@@ -59,6 +60,12 @@ impl<'a> Traverse<'a> {
         self.queue.push_back(self.module.entry_point);
         for &addr in self.gather.entry_points.iter() {
             self.queue.push_back(addr);
+        }
+        for range in self.gather.jump_tables.iter() {
+            for addr in range.clone().step_by(4) {
+                let addr = self.mem.read::<u32>(addr);
+                self.queue.push_back(addr);
+            }
         }
         if self.gather.scan_memory {
             self.scan_for_pointers();

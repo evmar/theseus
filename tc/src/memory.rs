@@ -24,6 +24,12 @@ impl Memory {
             .copy_from_slice(data);
     }
 
+    pub fn read<T: zerocopy::FromBytes>(&self, addr: u32) -> T {
+        <T>::read_from_prefix(&self.bytes[addr as usize..])
+            .unwrap()
+            .0
+    }
+
     pub fn write<T: zerocopy::IntoBytes + zerocopy::Immutable>(&mut self, addr: u32, val: T) {
         val.write_to_prefix(&mut self.bytes[addr as usize..])
             .unwrap();

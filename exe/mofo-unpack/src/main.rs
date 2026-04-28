@@ -125,6 +125,7 @@ pub fn do_unpack(ctx: &mut runtime::Context) {
         entry_points: vec![
             0x0041ec70, // sound thread proc
         ],
+        jump_tables: vec![0x0041e8d4..=0x0041e8ec],
         ..Default::default()
     });
 
