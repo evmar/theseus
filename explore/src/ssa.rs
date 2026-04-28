@@ -15,7 +15,12 @@ fn rename_instrs(instrs: &mut [Instr], from: &Var, to: &Var) {
     }
 }
 
-fn ssa_block(block: &mut Block, used_vars: &mut MaxVarSet) {
+fn ssa_block(
+    ctx: &Context,
+    block: &mut Block,
+    used_vars: &mut MaxVarSet,
+    var_hints: &mut HashMap<Var, &'static str>,
+) {
     // Gather inputs while we traverse, assigning them names immediately
     // so that they get assigned the lowest name.
     // But then substitute at the end after all the locals have been renamed.
@@ -38,6 +43,9 @@ fn ssa_block(block: &mut Block, used_vars: &mut MaxVarSet) {
                 visit_expr(body, &mut |expr| gather_params(used_vars, expr));
                 let new = used_vars.new_var(var);
                 rename_instrs(rest, &var, &new);
+                if let Some(hint) = ctx.hints.get(&ctx.iced[instr.src].ip32()) {
+                    var_hints.insert(new.clone(), &*hint);
+                }
                 *eff = Effect::Def(new, body.clone())
             }
             // shouldn't hit any defs, we are introducing them now
@@ -84,7 +92,7 @@ fn link_blocks(blocks: &mut Blocks) {
     }
 }
 
-fn link_vars(blocks: &mut Blocks, used_vars: &mut MaxVarSet) {
+fn link_vars(blocks: &mut Blocks, used_vars: &mut MaxVarSet, var_hints: &HashMap<Var, &str>) {
     // For each block, input vars to block
     let mut bins: Vec<HashMap<Var, HashSet<Var>>> = Default::default();
     // For each block, output vars from block
@@ -184,12 +192,20 @@ fn link_vars(blocks: &mut Blocks, used_vars: &mut MaxVarSet) {
 
     let mut ver = 1;
     for set in classes.iter() {
-        if set.len() == 1 {
+        let hint_names: HashSet<_> = set
+            .iter()
+            .filter_map(|var| var_hints.get(var))
+            .copied()
+            .collect();
+        if hint_names.len() > 1 {
+            panic!("{:?}", hint_names);
+        }
+        if set.len() == 1 && hint_names.is_empty() {
             continue;
         }
 
         let new = Var {
-            reg: "var".into(),
+            reg: hint_names.into_iter().next().unwrap_or("var").into(),
             ver,
         };
         for &var in set.iter() {
@@ -230,11 +246,17 @@ fn out_vars(block: &Block) -> MaxVarSet {
     outs
 }
 
-pub fn ssa(blocks: &mut Blocks) {
+pub struct Context<'a> {
+    pub iced: &'a [iced_x86::Instruction],
+    pub hints: &'a HashMap<u32, &'static str>,
+}
+
+pub fn ssa(ctx: &Context, blocks: &mut Blocks) {
     let mut used_vars = MaxVarSet::default();
+    let mut var_hints: HashMap<Var, &str> = HashMap::default();
     for block in blocks.vec.iter_mut() {
-        ssa_block(block, &mut used_vars);
+        ssa_block(ctx, block, &mut used_vars, &mut var_hints);
     }
     link_blocks(blocks);
-    link_vars(blocks, &mut used_vars);
+    link_vars(blocks, &mut used_vars, &var_hints);
 }
