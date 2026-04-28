@@ -8,6 +8,7 @@ use crate::{Block, Module, State, is_abs_memory_ref, memory::Memory};
 pub struct Gather {
     pub scan_immediates: bool,
     pub scan_memory: bool,
+    pub entry_points: Vec<u32>,
     pub externs: Vec<u32>,
 }
 
@@ -44,10 +45,6 @@ impl<'a> Traverse<'a> {
         }
     }
 
-    fn enqueue(&mut self, ip: u32) {
-        self.queue.push_back(ip);
-    }
-
     pub fn run(&mut self) {
         for import in &self.module.imports {
             let func = format!("{}::{}", import.dll, import.func);
@@ -59,11 +56,14 @@ impl<'a> Traverse<'a> {
         for &addr in self.gather.externs.iter() {
             self.blocks.insert(addr, Block::Extern(addr));
         }
+        self.queue.push_back(self.module.entry_point);
+        for &addr in self.gather.entry_points.iter() {
+            self.queue.push_back(addr);
+        }
         if self.gather.scan_memory {
             self.scan_for_pointers();
         }
 
-        self.enqueue(self.module.entry_point);
         while let Some(ip) = self.queue.pop_front() {
             if self.blocks.contains_key(&ip) || self.invalid.contains(&ip) {
                 continue;
@@ -76,7 +76,7 @@ impl<'a> Traverse<'a> {
                 let range = instrs.first().unwrap().ip32()..instrs.last().unwrap().next_ip32();
                 if range.contains(&ip) {
                     self.blocks.remove(&addr);
-                    self.enqueue(addr);
+                    self.queue.push_back(addr);
                 }
             }
 
@@ -117,7 +117,7 @@ impl<'a> Traverse<'a> {
                         let imm = instr.immediate32();
                         if self.module.code_memory.contains(&imm) {
                             log::info!("{imm:x} looks like a code pointer");
-                            self.enqueue(imm);
+                            self.queue.push_back(imm);
                         }
                     }
                 }
@@ -136,7 +136,9 @@ impl<'a> Traverse<'a> {
                 Call | Jmp | Je | Jne | Jb | Js | Jns | Ja | Jae | Jl | Jge | Jecxz | Jg | Jle
                 | Jo | Jno | Jp | Jnp | Jbe | Loop | Loope | Loopne => {
                     match instr.op0_kind() {
-                        iced_x86::OpKind::NearBranch32 => self.enqueue(instr.near_branch32()),
+                        iced_x86::OpKind::NearBranch32 => {
+                            self.queue.push_back(instr.near_branch32())
+                        }
                         iced_x86::OpKind::Memory => {
                             if let Some(addr) = is_abs_memory_ref(&instr) {
                                 if self.iat_refs.contains(&addr) {
@@ -154,16 +156,16 @@ impl<'a> Traverse<'a> {
                         d => anyhow::bail!("unhandled jmp {d:?}"),
                     }
                     if instr.mnemonic() != Jmp {
-                        self.enqueue(instr.next_ip32());
+                        self.queue.push_back(instr.next_ip32());
                     }
                 }
-                Ret => {}
+                Ret | Retf => {}
                 Int | Into => {}  // terminates
                 Int1 | Int3 => {} // breakpoint
                 INVALID => {
                     anyhow::bail!("invalid code found");
                 }
-                _ => todo!("control flow {}", instr),
+                _ => todo!("{ip:08x} control flow {}", instr),
             }
             break;
         }
@@ -188,7 +190,7 @@ impl<'a> Traverse<'a> {
                         "{addr:08x}: found possible code pointer {value:x}",
                         addr = mapping_addr + ofs as u32
                     );
-                    self.enqueue(value);
+                    self.queue.push_back(value);
                 }
             }
         }

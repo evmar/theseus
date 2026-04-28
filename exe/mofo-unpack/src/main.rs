@@ -122,6 +122,9 @@ pub fn do_unpack(ctx: &mut runtime::Context) {
 
     tc.gather(tc::Gather {
         //scan_immediates: true,
+        entry_points: vec![
+            0x0041ec70, // sound thread proc
+        ],
         ..Default::default()
     });
 

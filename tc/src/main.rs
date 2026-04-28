@@ -45,6 +45,7 @@ fn run() -> anyhow::Result<()> {
     state.gather(tc::Gather {
         scan_immediates: args.scan_immediates,
         scan_memory: args.scan,
+        entry_points: vec![],
         externs: args.externs,
     });
 
