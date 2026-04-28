@@ -1,3 +1,4 @@
+mod dialog;
 mod message;
 mod misc;
 mod resource;
@@ -8,6 +9,7 @@ use std::{
     rc::Rc,
 };
 
+pub use dialog::*;
 pub use message::*;
 pub use misc::*;
 pub use resource::*;

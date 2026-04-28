@@ -75,6 +75,11 @@ pub fn CreateWindowExA(
 }
 
 #[win32_derive::dllexport]
+pub fn DestroyWindow(_ctx: &mut Context, _hWnd: HWND) -> bool {
+    todo!()
+}
+
+#[win32_derive::dllexport]
 pub fn ShowWindow(
     _ctx: &mut Context,
     _hWnd: HWND,
@@ -97,4 +102,14 @@ pub fn DefWindowProcA(
     _lParam: u32,
 ) -> u32 {
     todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn SetFocus(_ctx: &mut Context, _hWnd: HWND) -> HWND {
+    stub!(0)
+}
+
+#[win32_derive::dllexport]
+pub fn RegisterClassA(_ctx: &mut Context, _lpWndClass: u32) -> u16 {
+    stub!(1)
 }
