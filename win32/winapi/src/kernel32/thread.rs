@@ -1,7 +1,11 @@
 use runtime::Context;
 use zerocopy::FromBytes as _;
 
-use crate::{HANDLE, kernel32, stub};
+use crate::{
+    HANDLE,
+    kernel32::{self, Object},
+    stub,
+};
 
 #[repr(C)]
 #[derive(zerocopy::FromBytes, zerocopy::Immutable, zerocopy::IntoBytes)]
@@ -62,8 +66,10 @@ impl kernel32::State {
         name: String,
         proc: impl FnOnce(&mut Context) + Send + Sync + 'static,
     ) {
+        let handle = self.objects.add(Object::Thread);
         let mut new_ctx = Context {
             cpu: runtime::CPU::default(),
+            thread_handle: handle.to_raw(),
             thread_id: self.next_thread_id,
             // See docstring on Memory about the unsafety of sharing memory in this way.
             memory: ctx.memory.unsafe_clone(),
@@ -123,7 +129,7 @@ pub fn CreateThread(
 
 #[win32_derive::dllexport]
 pub fn GetCurrentThread(ctx: &mut Context) -> HANDLE {
-    HANDLE::from_raw(ctx.thread_id)
+    HANDLE::from_raw(ctx.thread_handle)
 }
 
 #[win32_derive::dllexport]

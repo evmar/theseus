@@ -1,6 +1,6 @@
 use runtime::{Context, HOST, Host};
 
-use crate::kernel32::HANDLE;
+pub type HANDLE = u32;
 
 const STDIN_HFILE: HANDLE = 0xF11E_0001;
 const STDOUT_HFILE: HANDLE = 0xF11E_0002;

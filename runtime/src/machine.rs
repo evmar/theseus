@@ -10,6 +10,7 @@ pub struct CPU {
 
 pub struct Context {
     pub cpu: CPU,
+    pub thread_handle: u32,
     pub thread_id: u32,
     pub memory: Memory,
     pub blocks: &'static [(u32, fn(&mut Context) -> Cont)],

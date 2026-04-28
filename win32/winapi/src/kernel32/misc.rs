@@ -7,8 +7,6 @@ pub fn GetLastError(_ctx: &mut Context) -> u32 {
     0
 }
 
-pub type HANDLE = u32;
-
 #[repr(C)]
 #[derive(Debug, Default, zerocopy::IntoBytes, zerocopy::Immutable)]
 pub struct STARTUPINFOA {

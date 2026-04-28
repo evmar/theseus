@@ -52,16 +52,17 @@ pub fn load(exe: &EXEData) -> Context {
     let memory = Memory::new(static_memory);
 
     kernel32::init_state(exe.image_base, exe.resources.clone());
+    let mut lock = kernel32::lock();
 
     let mut ctx = Context {
         cpu: CPU::default(),
+        thread_handle: lock.objects.add(kernel32::Object::Thread).to_raw(),
         thread_id: 1,
         memory,
         blocks: exe.blocks,
         recent: [runtime::return_from_x86; 4],
     };
 
-    let mut lock = kernel32::lock();
     (exe.init_mappings)(&mut ctx, &mut lock.mappings);
     lock.init_process(&mut ctx);
     ctx
