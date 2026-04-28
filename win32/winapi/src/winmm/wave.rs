@@ -95,9 +95,24 @@ pub fn waveOutClose(_ctx: &mut Context, _hwo: u32) -> u32 {
     stub!(MMSYSERR_NOERROR)
 }
 
+#[repr(C)]
+pub struct WAVEHDR {
+    lpData: u32,
+    dwBufferLength: u32,
+    dwBytesRecorded: u32,
+    dwUser: u32,
+    dwFlags: u32,
+    dwLoops: u32,
+    lpNext: u32,
+    reserved: u32,
+}
+
 #[win32_derive::dllexport]
-pub fn waveOutPrepareHeader(_ctx: &mut Context, _hwo: u32, _pwh: u32, _cbwh: u32) -> u32 {
-    todo!()
+pub fn waveOutPrepareHeader(_ctx: &mut Context, _hwo: u32, _pwh: u32, cbwh: u32) -> u32 {
+    assert_eq!(cbwh, std::mem::size_of::<WAVEHDR>() as u32);
+    // This function is supposed to fill in fields in the WAVEHDR, but there's nothing
+    // for us to do here.
+    MMSYSERR_NOERROR
 }
 
 #[win32_derive::dllexport]
