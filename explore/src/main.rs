@@ -311,14 +311,29 @@ fn simplify_branches(blocks: &mut Blocks) {
                 continue;
             };
 
-            let op = if jmp.cond.op == "jge" && test.op == "cmp" {
-                ">="
-            } else if jmp.cond.op == "jne" && test.op == "cmp" {
-                "!="
-            } else if jmp.cond.op == "jne" && test.op == "test" && test.args[0] == test.args[1] {
-                "!=0"
-            } else {
-                continue;
+            let op = match jmp.cond.op.as_str() {
+                "je" => match test.op.as_str() {
+                    "cmp" => "==",
+                    "test" if test.args[0] == test.args[1] => {
+                        test.args.truncate(1);
+                        "==0"
+                    }
+                    _ => continue,
+                },
+                "jge" if test.op == "cmp" => ">=",
+                "jne" => match test.op.as_str() {
+                    "cmp" => "!=",
+                    "test" if test.args[0] == test.args[1] => {
+                        test.args.truncate(1);
+                        "!=0"
+                    }
+                    _ => continue,
+                },
+                "jle" if test.op == "test" && test.args[0] == test.args[1] => {
+                    test.args.truncate(1);
+                    "<=0"
+                }
+                _ => continue,
             };
 
             assert!(jmp.cond.args.is_empty());
