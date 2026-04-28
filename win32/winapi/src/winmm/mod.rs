@@ -12,9 +12,13 @@ use crate::kernel32::get_tick_count;
 #[derive(Default)]
 pub struct State {
     timer: Option<Timer>,
+    wave_callback: Option<(u32, u32)>,
 }
 
-static STATE: Mutex<State> = Mutex::new(State { timer: None });
+static STATE: Mutex<State> = Mutex::new(State {
+    timer: None,
+    wave_callback: None,
+});
 
 pub fn state() -> MutexGuard<'static, State> {
     STATE.lock().unwrap()

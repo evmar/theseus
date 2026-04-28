@@ -1,6 +1,6 @@
 use runtime::Context;
 
-use crate::{FromABIParam, stub};
+use crate::{FromABIParam, stub, winmm::state};
 
 const MMSYSERR_NOERROR: u32 = 0;
 
@@ -63,18 +63,23 @@ pub fn waveOutOpen(
     phwo: u32,
     _uDeviceID: u32,
     _pwfx: u32,
-    _dwCallback: u32,
-    _dwInstance: u32,
+    dwCallback: u32,
+    dwInstance: u32,
     fdwOpen: u32,
 ) -> u32 {
-    if fdwOpen & 0x000F_0000 != 0 {
-        todo!();
+    if fdwOpen & !0x000F_0000 != 0 {
+        todo!("{fdwOpen:x?}");
     }
+
     let callback = CALLBACK::from_abi(fdwOpen);
-    log::warn!("waveOutOpen: callback={:?}", callback);
-    if callback != CALLBACK::NULL {
-        todo!();
+    match callback {
+        CALLBACK::NULL => {}
+        CALLBACK::FUNCTION => {
+            state().wave_callback = Some((dwCallback, dwInstance));
+        }
+        _ => todo!("{callback:?}"),
     }
+
     ctx.memory.write::<u32>(phwo, 1);
 
     MMSYSERR_NOERROR

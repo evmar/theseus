@@ -122,8 +122,8 @@ pub fn CreateThread(
 }
 
 #[win32_derive::dllexport]
-pub fn GetCurrentThread(_ctx: &mut Context) -> HANDLE {
-    todo!()
+pub fn GetCurrentThread(ctx: &mut Context) -> HANDLE {
+    HANDLE::from_raw(ctx.thread_id)
 }
 
 #[win32_derive::dllexport]
