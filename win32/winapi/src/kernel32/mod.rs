@@ -1,5 +1,6 @@
 mod dll;
 mod env;
+mod event;
 mod file;
 mod heap;
 mod mapping;
@@ -12,6 +13,7 @@ mod time;
 
 pub use dll::*;
 pub use env::*;
+pub use event::*;
 pub use file::*;
 pub use heap::*;
 pub use mapping::*;
