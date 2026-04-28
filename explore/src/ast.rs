@@ -205,7 +205,7 @@ pub struct Link {
     pub id: usize,
 }
 
-#[derive(serde::Serialize, ts_rs::TS)]
+#[derive(Debug, serde::Serialize, ts_rs::TS)]
 pub struct Block {
     pub id: usize,
     pub addr: u32,

@@ -108,6 +108,24 @@ fn link_vars(blocks: &mut Blocks, used_vars: &mut MaxVarSet) {
         for src in blocks.vec.iter_mut() {
             let mut new_vars = vec![];
             for link in src.links.iter() {
+                if src.id == link.id {
+                    // block links to itself, e.g. a loop
+                    let ins = bins.get_mut(src.id).unwrap();
+                    let outs = bouts.get(src.id).unwrap();
+                    for (param, values) in ins.iter_mut() {
+                        let Some(out) = outs.get(&param.reg) else {
+                            continue;
+                        };
+                        if out == param {
+                            // didn't modify input
+                            continue;
+                        }
+                        if values.insert(out.clone()) {
+                            changed = true;
+                        }
+                    }
+                    continue;
+                }
                 let [src_ins, dst_ins] = bins.get_disjoint_mut([src.id, link.id]).unwrap();
                 let src_outs = &mut bouts[src.id];
                 for (param, values) in dst_ins.iter_mut() {
