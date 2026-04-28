@@ -124,6 +124,7 @@ pub fn do_unpack(ctx: &mut runtime::Context) {
         //scan_immediates: true,
         entry_points: vec![
             0x0041ec70, // sound thread proc
+            0x0041e8f0, // waveOutOpen callback
         ],
         jump_tables: vec![0x0041e8d4..=0x0041e8ec],
         ..Default::default()

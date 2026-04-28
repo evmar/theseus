@@ -24725,6 +24725,33 @@ pub fn x41e8cd(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
+pub fn x41e8f0(ctx: &mut Context) -> Cont {
+    // 0041e8f0 cmp dword ptr [esp+8],3BDh
+    sub(
+        ctx.memory
+            .read::<u32>(ctx.cpu.regs.esp.wrapping_add(0x8u32)),
+        0x3bdu32,
+        &mut ctx.cpu.flags,
+    );
+    // 0041e8f8 jne short 0041E906h
+    jne(ctx, Cont(x41e8fa), Cont(x41e906))
+}
+
+pub fn x41e8fa(ctx: &mut Context) -> Cont {
+    // 0041e8fa mov eax,ds:[425BA4h]
+    ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x425ba4u32);
+    // 0041e8ff push eax
+    push(ctx, ctx.cpu.regs.eax);
+    // 0041e900 call dword ptr ds:[420030h]
+    let dst = Cont(kernel32::SetEvent_stdcall);
+    call(ctx, 0x41e906, dst)
+}
+
+pub fn x41e906(ctx: &mut Context) -> Cont {
+    // 0041e906 ret 14h
+    ret(ctx, 20)
+}
+
 pub fn x41e910(ctx: &mut Context) -> Cont {
     // 0041e910 sub esp,14h
     ctx.cpu.regs.esp = sub(ctx.cpu.regs.esp, 0x14u32, &mut ctx.cpu.flags);
@@ -26626,7 +26653,7 @@ pub fn x41f11c(ctx: &mut Context) -> Cont {
     Cont(kernel32::ExitProcess_stdcall)
 }
 
-const BLOCKS: [(u32, fn(&mut Context) -> Cont); 1425] = [
+const BLOCKS: [(u32, fn(&mut Context) -> Cont); 1428] = [
     (0x401000, x401000),
     (0x40118e, x40118e),
     (0x401195, x401195),
@@ -27699,6 +27726,9 @@ const BLOCKS: [(u32, fn(&mut Context) -> Cont); 1425] = [
     (0x41e8ba, x41e8ba),
     (0x41e8c9, x41e8c9),
     (0x41e8cd, x41e8cd),
+    (0x41e8f0, x41e8f0),
+    (0x41e8fa, x41e8fa),
+    (0x41e906, x41e906),
     (0x41e910, x41e910),
     (0x41e983, x41e983),
     (0x41e990, x41e990),
