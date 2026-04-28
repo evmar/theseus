@@ -207,7 +207,8 @@ fn decode() -> (Vec<Instr>, Vec<iced_x86::Instruction>) {
                 });
                 continue;
             }
-            Je | Jle | Jl | Jne | Jge => {
+            Je | Jne | Jl | Jle | Jg | Jge | Jb | Jbe | Ja | Jae | Js | Jns | Jo | Jno
+            | Jp | Jnp => {
                 let [x] = args.try_into().unwrap();
                 Effect::Jmp(Box::new(crate::Jmp::new(
                     op,
@@ -311,28 +312,95 @@ fn simplify_branches(blocks: &mut Blocks) {
                 continue;
             };
 
+            let is_self_test = test.op == "test" && test.args[0] == test.args[1];
+
             let op = match jmp.cond.op.as_str() {
                 "je" => match test.op.as_str() {
                     "cmp" => "==",
-                    "test" if test.args[0] == test.args[1] => {
+                    "test" if is_self_test => {
                         test.args.truncate(1);
                         "==0"
                     }
                     _ => continue,
                 },
-                "jge" if test.op == "cmp" => ">=",
-                "jne" => match test.op.as_str() {
-                    "cmp" => "!=",
-                    "test" if test.args[0] == test.args[1] => {
+                "ja" => match test.op.as_str() {
+                    "cmp" => "u>",
+                    "test" if is_self_test => {
                         test.args.truncate(1);
                         "!=0"
                     }
                     _ => continue,
                 },
-                "jle" if test.op == "test" && test.args[0] == test.args[1] => {
-                    test.args.truncate(1);
-                    "<=0"
-                }
+                "jae" => match test.op.as_str() {
+                    "cmp" => "u>=",
+                    _ => continue,
+                },
+                "jb" => match test.op.as_str() {
+                    "cmp" => "u<",
+                    _ => continue,
+                },
+                "jbe" => match test.op.as_str() {
+                    "cmp" => "u<=",
+                    "test" if is_self_test => {
+                        test.args.truncate(1);
+                        "==0"
+                    }
+                    _ => continue,
+                },
+                "jge" => match test.op.as_str() {
+                    "cmp" => ">=",
+                    "test" if is_self_test => {
+                        test.args.truncate(1);
+                        ">=0"
+                    }
+                    _ => continue,
+                },
+                "jg" => match test.op.as_str() {
+                    "cmp" => ">",
+                    "test" if is_self_test => {
+                        test.args.truncate(1);
+                        ">0"
+                    }
+                    _ => continue,
+                },
+                "jl" => match test.op.as_str() {
+                    "cmp" => "<",
+                    "test" if is_self_test => {
+                        test.args.truncate(1);
+                        "<0"
+                    }
+                    _ => continue,
+                },
+                "jne" => match test.op.as_str() {
+                    "cmp" => "!=",
+                    "test" if is_self_test => {
+                        test.args.truncate(1);
+                        "!=0"
+                    }
+                    _ => continue,
+                },
+                "jns" => match test.op.as_str() {
+                    "test" if is_self_test => {
+                        test.args.truncate(1);
+                        ">=0"
+                    }
+                    _ => continue,
+                },
+                "js" => match test.op.as_str() {
+                    "test" if is_self_test => {
+                        test.args.truncate(1);
+                        "<0"
+                    }
+                    _ => continue,
+                },
+                "jle" => match test.op.as_str() {
+                    "cmp" => "<=",
+                    "test" if is_self_test => {
+                        test.args.truncate(1);
+                        "<=0"
+                    }
+                    _ => continue,
+                },
                 _ => continue,
             };
 
