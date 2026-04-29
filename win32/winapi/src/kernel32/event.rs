@@ -2,7 +2,7 @@ use std::sync::{Arc, Condvar, Mutex};
 
 use runtime::Context;
 
-use crate::{HANDLE, kernel32::lock, stub};
+use crate::{HANDLE, kernel32::lock};
 
 pub enum Object {
     Thread,
@@ -10,7 +10,7 @@ pub enum Object {
 }
 
 pub struct Event {
-    name: String,
+    _name: String,
     manual_reset: bool,
     signaled: Mutex<bool>,
     cond: Condvar,
@@ -38,6 +38,9 @@ pub fn WaitForSingleObject(_ctx: &mut Context, hHandle: HANDLE, dwMilliseconds: 
             .unwrap()
             .0;
     }
+    if !event.manual_reset {
+        *signaled = false;
+    }
     0
 }
 
@@ -51,7 +54,7 @@ pub fn CreateEventA(
 ) -> HANDLE {
     let name = ctx.memory.read_str(lpName);
     let event = Event {
-        name: name.to_string(),
+        _name: name.to_string(),
         manual_reset: bManualReset,
         signaled: Mutex::new(bInitialState),
         cond: Condvar::new(),
@@ -67,6 +70,8 @@ pub fn SetEvent(_ctx: &mut Context, hEvent: HANDLE) -> bool {
         panic!()
     };
     *event.signaled.lock().unwrap() = true;
-    event.cond.notify_all();
+    // TODO: the number of threads notified are different between manual reset and auto reset events!
+    assert!(!event.manual_reset);
+    event.cond.notify_one();
     true
 }
