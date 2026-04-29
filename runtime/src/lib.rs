@@ -48,7 +48,7 @@ pub fn call_x86(ctx: &mut Context, mut f: Cont, args: Vec<u32>) {
 /// When making a call from host to to x86 code, we need a valid return address
 /// that is associated with a real function so that the final 'ret' from the
 /// called function succeeds, but we never invoke it.
-pub const RETURN_FROM_X86_ADDR: u32 = 0xf000_000;
+pub const RETURN_FROM_X86_ADDR: u32 = 0xffff_fffe;
 
 pub fn return_from_x86(_ctx: &mut Context) -> Cont {
     panic!();

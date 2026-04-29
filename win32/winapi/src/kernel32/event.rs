@@ -28,5 +28,5 @@ pub fn CreateEventA(
 
 #[win32_derive::dllexport]
 pub fn SetEvent(_ctx: &mut Context, _hEvent: HANDLE) -> bool {
-    todo!()
+    stub!(true)
 }

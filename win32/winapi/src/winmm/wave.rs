@@ -1,8 +1,16 @@
 use runtime::Context;
+use zerocopy::FromBytes;
 
-use crate::{FromABIParam, stub, winmm::state};
+use crate::{FromABIParam, dllexport::win32flags, kernel32, stub, user32, winmm::state};
 
 const MMSYSERR_NOERROR: u32 = 0;
+
+pub struct State {
+    stream: sdl3::audio::AudioStreamOwner,
+}
+// TODO: sdl has wacky safety requirements; the audio objects are Send
+// but the subsystem itself is not because it must be freed on main thread.
+unsafe impl Send for State {}
 
 #[win32_derive::dllexport]
 pub fn waveOutGetNumDevs(_ctx: &mut Context) -> u32 {
@@ -47,6 +55,18 @@ pub fn waveOutGetDevCapsA(ctx: &mut Context, _uDeviceID: u32, pwoc: u32, cbwoc: 
     MMSYSERR_NOERROR
 }
 
+#[repr(C)]
+#[derive(Debug, zerocopy::FromBytes)]
+pub struct WAVEFORMATEX {
+    pub wFormatTag: u16,
+    pub nChannels: u16,
+    pub nSamplesPerSec: u32,
+    pub nAvgBytesPerSec: u32,
+    pub nBlockAlign: u16,
+    pub wBitsPerSample: u16,
+    pub cbSize: u16,
+}
+
 /// The types of callbacks that can be used with waveOutOpen.
 #[derive(Debug, PartialEq, Eq, win32_derive::ABIEnum)]
 pub enum CALLBACK {
@@ -57,12 +77,50 @@ pub enum CALLBACK {
     EVENT = 0x00050000,
 }
 
+enum MM_WOM {
+    // OPEN = 0x3BB,
+    // CLOSE = 0x3BC,
+    DONE = 0x3BD,
+}
+
+fn thread_proc(ctx: &mut Context, callback: u32, callback_data: u32) {
+    let f = runtime::indirect(ctx, callback);
+    loop {
+        let pending = {
+            let mut state = state();
+            let state = state.wave.as_mut().unwrap();
+            let pending = state.stream.queued_bytes().unwrap();
+            log::info!("pending {} bytes", pending);
+            if pending > (8 << 10) {
+                std::thread::sleep(std::time::Duration::from_millis(10));
+                continue;
+            }
+            pending
+        };
+
+        log::info!("requesting more data");
+        let hwo = 1u32; // XXX
+        let uMsg = MM_WOM::DONE as u32;
+        // waveOutProc
+        runtime::call_x86(ctx, f, vec![hwo, uMsg, callback_data, 0, 0]);
+        log::info!("requesting more data done");
+
+        let mut state = state();
+        let state = state.wave.as_mut().unwrap();
+        let pending2 = state.stream.queued_bytes().unwrap();
+        if pending2 == pending {
+            log::warn!("winmm: called callback, but no data pending");
+            std::thread::sleep(std::time::Duration::from_millis(100));
+        }
+    }
+}
+
 #[win32_derive::dllexport]
 pub fn waveOutOpen(
     ctx: &mut Context,
     phwo: u32,
     _uDeviceID: u32,
-    _pwfx: u32,
+    pwfx: u32,
     dwCallback: u32,
     dwInstance: u32,
     fdwOpen: u32,
@@ -71,11 +129,34 @@ pub fn waveOutOpen(
         todo!("{fdwOpen:x?}");
     }
 
+    let fmt = <WAVEFORMATEX>::read_from_prefix(&ctx.memory[pwfx..])
+        .unwrap()
+        .0;
+
+    let audio = user32::state().sdl.audio().unwrap();
+    let device = audio.default_playback_device();
+    let stream = device
+        .open_device_stream(Some(&sdl3::audio::AudioSpec {
+            freq: Some(fmt.nSamplesPerSec as i32),
+            channels: Some(fmt.nChannels as i32),
+            format: Some(if fmt.wBitsPerSample == 16 {
+                sdl3::audio::AudioFormat::S16LE
+            } else {
+                todo!()
+            }),
+        }))
+        .unwrap();
+    stream.resume().unwrap();
+
+    state().wave = Some(State { stream });
+
     let callback = CALLBACK::from_abi(fdwOpen);
     match callback {
         CALLBACK::NULL => {}
         CALLBACK::FUNCTION => {
-            state().wave_callback = Some((dwCallback, dwInstance));
+            kernel32::lock().create_thread(ctx, format!("winmm thread"), move |ctx| {
+                thread_proc(ctx, dwCallback, dwInstance)
+            });
         }
         _ => todo!("{callback:?}"),
     }
@@ -96,31 +177,57 @@ pub fn waveOutClose(_ctx: &mut Context, _hwo: u32) -> u32 {
 }
 
 #[repr(C)]
+#[derive(
+    Debug, zerocopy::FromBytes, zerocopy::Immutable, zerocopy::KnownLayout, zerocopy::IntoBytes,
+)]
 pub struct WAVEHDR {
     lpData: u32,
     dwBufferLength: u32,
     dwBytesRecorded: u32,
     dwUser: u32,
-    dwFlags: u32,
+    dwFlags: WHDR,
     dwLoops: u32,
     lpNext: u32,
     reserved: u32,
 }
 
+win32flags! {
+    pub struct WHDR {
+        const DONE      = 0x00000001;
+        const PREPARED  = 0x00000002;
+        const BEGINLOOP = 0x00000004;
+        const ENDLOOP   = 0x00000008;
+        const INQUEUE   = 0x00000010;
+    }
+}
+
 #[win32_derive::dllexport]
-pub fn waveOutPrepareHeader(_ctx: &mut Context, _hwo: u32, _pwh: u32, cbwh: u32) -> u32 {
+pub fn waveOutPrepareHeader(ctx: &mut Context, _hwo: u32, pwh: u32, cbwh: u32) -> u32 {
     assert_eq!(cbwh, std::mem::size_of::<WAVEHDR>() as u32);
-    // This function is supposed to fill in fields in the WAVEHDR, but there's nothing
-    // for us to do here.
+    let header = <WAVEHDR>::mut_from_prefix(&mut ctx.memory[pwh..])
+        .unwrap()
+        .0;
+    header.dwFlags.remove(WHDR::DONE);
     MMSYSERR_NOERROR
 }
 
 #[win32_derive::dllexport]
 pub fn waveOutUnprepareHeader(_ctx: &mut Context, _hwo: u32, _pwh: u32, _cbwh: u32) -> u32 {
-    todo!()
+    MMSYSERR_NOERROR
 }
 
 #[win32_derive::dllexport]
-pub fn waveOutWrite(_ctx: &mut Context, _hwo: u32, _pwh: u32, _cbwh: u32) -> u32 {
-    todo!()
+pub fn waveOutWrite(ctx: &mut Context, _hwo: u32, pwh: u32, cbwh: u32) -> u32 {
+    assert_eq!(cbwh, std::mem::size_of::<WAVEHDR>() as u32);
+    let mut state = state();
+    let state = state.wave.as_mut().unwrap();
+    let header = <WAVEHDR>::ref_from_prefix(&ctx.memory[pwh..]).unwrap().0;
+    let buf = &ctx.memory[header.lpData..][..header.dwBufferLength as usize];
+    state.stream.put_data(buf).unwrap();
+    let header = <WAVEHDR>::mut_from_prefix(&mut ctx.memory[pwh..])
+        .unwrap()
+        .0;
+    header.dwFlags.insert(WHDR::DONE);
+
+    MMSYSERR_NOERROR
 }
