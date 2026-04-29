@@ -1,7 +1,7 @@
 use std::cell::RefMut;
 
 use runtime::*;
-use zerocopy::{FromBytes as _, IntoBytes};
+use zerocopy::FromBytes;
 
 use crate::{
     RECT,
@@ -23,40 +23,38 @@ pub const IID_IDirectDraw7: GUID = GUID((
 pub mod IDirectDraw7 {
     use super::*;
 
-    #[derive(Default, zerocopy::IntoBytes, zerocopy::Immutable)]
-    #[repr(C)]
-    pub struct VTable {
-        QueryInterface: u32,
-        AddRef: u32,
-        Release: u32,
-        Compact: u32,
-        CreateClipper: u32,
-        CreatePalette: u32,
-        CreateSurface: u32,
-        DuplicateSurface: u32,
-        EnumDisplayModes: u32,
-        EnumSurfaces: u32,
-        FlipToGDISurface: u32,
-        GetCaps: u32,
-        GetDisplayMode: u32,
-        GetFourCCCodes: u32,
-        GetGDISurface: u32,
-        GetMonitorFrequency: u32,
-        GetScanLine: u32,
-        GetVerticalBlankStatus: u32,
-        Initialize: u32,
-        RestoreDisplayMode: u32,
-        SetCooperativeLevel: u32,
-        SetDisplayMode: u32,
-        WaitForVerticalBlank: u32,
-        GetAvailableVidMem: u32,
-        GetSurfaceFromDC: u32,
-        RestoreAllSurfaces: u32,
-        TestCooperativeLevel: u32,
-        GetDeviceIdentifier: u32,
-        StartModeTest: u32,
-        EvaluateMode: u32,
-    }
+    pub const VTABLE_ENTRIES: [&str; 30] = [
+        "QueryInterface",
+        "AddRef",
+        "Release",
+        "Compact",
+        "CreateClipper",
+        "CreatePalette",
+        "CreateSurface",
+        "DuplicateSurface",
+        "EnumDisplayModes",
+        "EnumSurfaces",
+        "FlipToGDISurface",
+        "GetCaps",
+        "GetDisplayMode",
+        "GetFourCCCodes",
+        "GetGDISurface",
+        "GetMonitorFrequency",
+        "GetScanLine",
+        "GetVerticalBlankStatus",
+        "Initialize",
+        "RestoreDisplayMode",
+        "SetCooperativeLevel",
+        "SetDisplayMode",
+        "WaitForVerticalBlank",
+        "GetAvailableVidMem",
+        "GetSurfaceFromDC",
+        "RestoreAllSurfaces",
+        "TestCooperativeLevel",
+        "GetDeviceIdentifier",
+        "StartModeTest",
+        "EvaluateMode",
+    ];
 
     #[win32_derive::dllexport]
     pub fn QueryInterface(_ctx: &mut Context, _this: u32, _riid: u32, _ppv: u32) -> DD {
@@ -288,51 +286,11 @@ pub mod IDirectDraw7 {
         todo!()
     }
 
-    fn vtable(ctx: &mut Context, heap: &mut Heap) -> u32 {
-        let vtable_addr = heap.alloc(&mut ctx.memory, std::mem::size_of::<VTable>() as u32);
-        let func_addr = runtime::proc_addr(ctx, QueryInterface_stdcall);
-        let vtable = VTable {
-            QueryInterface: func_addr + 0,
-            AddRef: func_addr + 1,
-            Release: func_addr + 2,
-            Compact: func_addr + 3,
-            CreateClipper: func_addr + 4,
-            CreatePalette: func_addr + 5,
-            CreateSurface: func_addr + 6,
-            DuplicateSurface: func_addr + 7,
-            EnumDisplayModes: func_addr + 8,
-            EnumSurfaces: func_addr + 9,
-            FlipToGDISurface: func_addr + 10,
-            GetCaps: func_addr + 11,
-            GetDisplayMode: func_addr + 12,
-            GetFourCCCodes: func_addr + 13,
-            GetGDISurface: func_addr + 14,
-            GetMonitorFrequency: func_addr + 15,
-            GetScanLine: func_addr + 16,
-            GetVerticalBlankStatus: func_addr + 17,
-            Initialize: func_addr + 18,
-            RestoreDisplayMode: func_addr + 19,
-            SetCooperativeLevel: func_addr + 20,
-            SetDisplayMode: func_addr + 21,
-            WaitForVerticalBlank: func_addr + 22,
-            GetAvailableVidMem: func_addr + 23,
-            GetSurfaceFromDC: func_addr + 24,
-            RestoreAllSurfaces: func_addr + 25,
-            TestCooperativeLevel: func_addr + 26,
-            GetDeviceIdentifier: func_addr + 27,
-            StartModeTest: func_addr + 28,
-            EvaluateMode: func_addr + 29,
-        };
-        vtable
-            .write_to_prefix(&mut ctx.memory[vtable_addr..])
-            .unwrap();
-        vtable_addr
-    }
+    pub static mut VTABLE: u32 = 0;
 
     pub fn new(ctx: &mut Context, heap: &mut Heap) -> u32 {
         let addr = heap.alloc(&mut ctx.memory, 4);
-        let vtable = vtable(ctx, heap);
-        ctx.memory.write(addr, vtable);
+        ctx.memory.write(addr, unsafe { VTABLE });
         addr
     }
 }
@@ -340,59 +298,57 @@ pub mod IDirectDraw7 {
 pub mod IDirectDrawSurface7 {
     use super::*;
 
-    #[derive(Default, zerocopy::IntoBytes, zerocopy::Immutable)]
-    #[repr(C)]
-    pub struct VTable {
-        QueryInterface: u32,
-        AddRef: u32,
-        Release: u32,
-        AddAttachedSurface: u32,
-        AddOverlayDirtyRect: u32,
-        Blt: u32,
-        BltBatch: u32,
-        BltFast: u32,
-        DeleteAttachedSurface: u32,
-        EnumAttachedSurfaces: u32,
-        EnumOverlayZOrders: u32,
-        Flip: u32,
-        GetAttachedSurface: u32,
-        GetBltStatus: u32,
-        GetCaps: u32,
-        GetClipper: u32,
-        GetColorKey: u32,
-        GetDC: u32,
-        GetFlipStatus: u32,
-        GetOverlayPosition: u32,
-        GetPalette: u32,
-        GetPixelFormat: u32,
-        GetSurfaceDesc: u32,
-        Initialize: u32,
-        IsLost: u32,
-        Lock: u32,
-        ReleaseDC: u32,
-        Restore: u32,
-        SetClipper: u32,
-        SetColorKey: u32,
-        SetOverlayPosition: u32,
-        SetPalette: u32,
-        Unlock: u32,
-        UpdateOverlay: u32,
-        UpdateOverlayDisplay: u32,
-        UpdateOverlayZOrder: u32,
-        GetDDInterface: u32,
-        PageLock: u32,
-        PageUnlock: u32,
-        SetSurfaceDesc: u32,
-        SetPrivateData: u32,
-        GetPrivateData: u32,
-        FreePrivateData: u32,
-        GetUniquenessValue: u32,
-        ChangeUniquenessValue: u32,
-        SetPriority: u32,
-        GetPriority: u32,
-        SetLOD: u32,
-        GetLOD: u32,
-    }
+    pub const VTABLE_ENTRIES: [&str; 49] = [
+        "QueryInterface",
+        "AddRef",
+        "Release",
+        "AddAttachedSurface",
+        "AddOverlayDirtyRect",
+        "Blt",
+        "BltBatch",
+        "BltFast",
+        "DeleteAttachedSurface",
+        "EnumAttachedSurfaces",
+        "EnumOverlayZOrders",
+        "Flip",
+        "GetAttachedSurface",
+        "GetBltStatus",
+        "GetCaps",
+        "GetClipper",
+        "GetColorKey",
+        "GetDC",
+        "GetFlipStatus",
+        "GetOverlayPosition",
+        "GetPalette",
+        "GetPixelFormat",
+        "GetSurfaceDesc",
+        "Initialize",
+        "IsLost",
+        "Lock",
+        "ReleaseDC",
+        "Restore",
+        "SetClipper",
+        "SetColorKey",
+        "SetOverlayPosition",
+        "SetPalette",
+        "Unlock",
+        "UpdateOverlay",
+        "UpdateOverlayDisplay",
+        "UpdateOverlayZOrder",
+        "GetDDInterface",
+        "PageLock",
+        "PageUnlock",
+        "SetSurfaceDesc",
+        "SetPrivateData",
+        "GetPrivateData",
+        "FreePrivateData",
+        "GetUniquenessValue",
+        "ChangeUniquenessValue",
+        "SetPriority",
+        "GetPriority",
+        "SetLOD",
+        "GetLOD",
+    ];
 
     #[win32_derive::dllexport]
     pub fn QueryInterface(_ctx: &mut Context, _this: u32, _riid: u32, _ppv: u32) -> DD {
@@ -814,70 +770,10 @@ pub mod IDirectDrawSurface7 {
         todo!()
     }
 
-    fn vtable(ctx: &mut Context, heap: &mut Heap) -> u32 {
-        let vtable_addr = heap.alloc(&mut ctx.memory, std::mem::size_of::<VTable>() as u32);
-        let func_addr = runtime::proc_addr(ctx, QueryInterface_stdcall);
-        let vtable = VTable {
-            QueryInterface: func_addr + 0,
-            AddRef: func_addr + 1,
-            Release: func_addr + 2,
-            AddAttachedSurface: func_addr + 3,
-            AddOverlayDirtyRect: func_addr + 4,
-            Blt: func_addr + 5,
-            BltBatch: func_addr + 6,
-            BltFast: func_addr + 7,
-            DeleteAttachedSurface: func_addr + 8,
-            EnumAttachedSurfaces: func_addr + 9,
-            EnumOverlayZOrders: func_addr + 10,
-            Flip: func_addr + 11,
-            GetAttachedSurface: func_addr + 12,
-            GetBltStatus: func_addr + 13,
-            GetCaps: func_addr + 14,
-            GetClipper: func_addr + 15,
-            GetColorKey: func_addr + 16,
-            GetDC: func_addr + 17,
-            GetFlipStatus: func_addr + 18,
-            GetOverlayPosition: func_addr + 19,
-            GetPalette: func_addr + 20,
-            GetPixelFormat: func_addr + 21,
-            GetSurfaceDesc: func_addr + 22,
-            Initialize: func_addr + 23,
-            IsLost: func_addr + 24,
-            Lock: func_addr + 25,
-            ReleaseDC: func_addr + 26,
-            Restore: func_addr + 27,
-            SetClipper: func_addr + 28,
-            SetColorKey: func_addr + 29,
-            SetOverlayPosition: func_addr + 30,
-            SetPalette: func_addr + 31,
-            Unlock: func_addr + 32,
-            UpdateOverlay: func_addr + 33,
-            UpdateOverlayDisplay: func_addr + 34,
-            UpdateOverlayZOrder: func_addr + 35,
-            GetDDInterface: func_addr + 36,
-            PageLock: func_addr + 37,
-            PageUnlock: func_addr + 38,
-            SetSurfaceDesc: func_addr + 39,
-            SetPrivateData: func_addr + 40,
-            GetPrivateData: func_addr + 41,
-            FreePrivateData: func_addr + 42,
-            GetUniquenessValue: func_addr + 43,
-            ChangeUniquenessValue: func_addr + 44,
-            SetPriority: func_addr + 45,
-            GetPriority: func_addr + 46,
-            SetLOD: func_addr + 47,
-            GetLOD: func_addr + 48,
-        };
-        vtable
-            .write_to_prefix(&mut ctx.memory[vtable_addr..])
-            .unwrap();
-        vtable_addr
-    }
-
+    pub static mut VTABLE: u32 = 0;
     pub fn new(ctx: &mut Context, heap: &mut Heap) -> u32 {
         let addr = heap.alloc(&mut ctx.memory, 4);
-        let vtable = vtable(ctx, heap);
-        ctx.memory.write(addr, vtable);
+        ctx.memory.write(addr, unsafe { VTABLE });
         addr
     }
 }

@@ -1,7 +1,7 @@
 use std::{collections::HashMap, sync::Mutex};
 
 use runtime::Context;
-use zerocopy::{FromBytes, IntoBytes};
+use zerocopy::FromBytes;
 
 use crate::{dllexport::win32flags, heap::Heap, kernel32, locked_state::LockedState, stub, user32};
 
@@ -77,21 +77,19 @@ pub fn ordinal1(ctx: &mut Context, lpGuid: u32, ppDS: u32, pUnkOuter: u32) -> u3
 pub mod IDirectSound {
     use super::*;
 
-    #[derive(Default, zerocopy::IntoBytes, zerocopy::Immutable)]
-    #[repr(C)]
-    pub struct VTable {
-        QueryInterface: u32,
-        AddRef: u32,
-        Release: u32,
-        CreateSoundBuffer: u32,
-        GetCaps: u32,
-        DuplicateSoundBuffer: u32,
-        SetCooperativeLevel: u32,
-        Compact: u32,
-        GetSpeakerConfig: u32,
-        SetSpeakerConfig: u32,
-        Initialize: u32,
-    }
+    pub const VTABLE_ENTRIES: [&'static str; 11] = [
+        "QueryInterface",
+        "AddRef",
+        "Release",
+        "CreateSoundBuffer",
+        "GetCaps",
+        "DuplicateSoundBuffer",
+        "SetCooperativeLevel",
+        "Compact",
+        "GetSpeakerConfig",
+        "SetSpeakerConfig",
+        "Initialize",
+    ];
 
     #[win32_derive::dllexport]
     pub fn QueryInterface(_ctx: &mut Context, _this: u32) -> u32 {
@@ -198,32 +196,11 @@ pub mod IDirectSound {
         todo!()
     }
 
-    fn vtable(ctx: &mut Context, heap: &mut Heap) -> u32 {
-        let vtable_addr = heap.alloc(&mut ctx.memory, std::mem::size_of::<VTable>() as u32);
-        let func_addr = runtime::proc_addr(ctx, QueryInterface_stdcall);
-        let vtable = VTable {
-            QueryInterface: func_addr + 0,
-            AddRef: func_addr + 1,
-            Release: func_addr + 2,
-            CreateSoundBuffer: func_addr + 3,
-            GetCaps: func_addr + 4,
-            DuplicateSoundBuffer: func_addr + 5,
-            SetCooperativeLevel: func_addr + 6,
-            Compact: func_addr + 7,
-            GetSpeakerConfig: func_addr + 8,
-            SetSpeakerConfig: func_addr + 9,
-            Initialize: func_addr + 10,
-        };
-        vtable
-            .write_to_prefix(&mut ctx.memory[vtable_addr..])
-            .unwrap();
-        vtable_addr
-    }
+    pub static mut VTABLE: u32 = 0;
 
     pub fn new(ctx: &mut Context, heap: &mut Heap) -> u32 {
         let addr = heap.alloc(&mut ctx.memory, 4);
-        let vtable = vtable(ctx, heap);
-        ctx.memory.write(addr, vtable);
+        ctx.memory.write(addr, unsafe { VTABLE });
         addr
     }
 }
@@ -231,31 +208,29 @@ pub mod IDirectSound {
 pub mod IDirectSoundBuffer {
     use super::*;
 
-    #[derive(Default, zerocopy::IntoBytes, zerocopy::Immutable)]
-    #[repr(C)]
-    pub struct VTable {
-        QueryInterface: u32,
-        AddRef: u32,
-        Release: u32,
-        GetCaps: u32,
-        GetCurrentPosition: u32,
-        GetFormat: u32,
-        GetVolume: u32,
-        GetPan: u32,
-        GetFrequency: u32,
-        GetStatus: u32,
-        Initialize: u32,
-        Lock: u32,
-        Play: u32,
-        SetCurrentPosition: u32,
-        SetFormat: u32,
-        SetVolume: u32,
-        SetPan: u32,
-        SetFrequency: u32,
-        Stop: u32,
-        Unlock: u32,
-        Restore: u32,
-    }
+    pub const VTABLE_ENTRIES: [&'static str; 21] = [
+        "QueryInterface",
+        "AddRef",
+        "Release",
+        "GetCaps",
+        "GetCurrentPosition",
+        "GetFormat",
+        "GetVolume",
+        "GetPan",
+        "GetFrequency",
+        "GetStatus",
+        "Initialize",
+        "Lock",
+        "Play",
+        "SetCurrentPosition",
+        "SetFormat",
+        "SetVolume",
+        "SetPan",
+        "SetFrequency",
+        "Stop",
+        "Unlock",
+        "Restore",
+    ];
 
     #[win32_derive::dllexport]
     pub fn QueryInterface(_ctx: &mut Context, _this: u32) -> u32 {
@@ -431,42 +406,10 @@ pub mod IDirectSoundBuffer {
         todo!()
     }
 
-    fn vtable(ctx: &mut Context, heap: &mut Heap) -> u32 {
-        let vtable_addr = heap.alloc(&mut ctx.memory, std::mem::size_of::<VTable>() as u32);
-        let func_addr = runtime::proc_addr(ctx, QueryInterface_stdcall);
-        let vtable = VTable {
-            QueryInterface: func_addr + 0,
-            AddRef: func_addr + 1,
-            Release: func_addr + 2,
-            GetCaps: func_addr + 3,
-            GetCurrentPosition: func_addr + 4,
-            GetFormat: func_addr + 5,
-            GetVolume: func_addr + 6,
-            GetPan: func_addr + 7,
-            GetFrequency: func_addr + 8,
-            GetStatus: func_addr + 9,
-            Initialize: func_addr + 10,
-            Lock: func_addr + 11,
-            Play: func_addr + 12,
-            SetCurrentPosition: func_addr + 13,
-            SetFormat: func_addr + 14,
-            SetVolume: func_addr + 15,
-            SetPan: func_addr + 16,
-            SetFrequency: func_addr + 17,
-            Stop: func_addr + 18,
-            Unlock: func_addr + 19,
-            Restore: func_addr + 20,
-        };
-        vtable
-            .write_to_prefix(&mut ctx.memory[vtable_addr..])
-            .unwrap();
-        vtable_addr
-    }
-
+    pub static mut VTABLE: u32 = 0;
     pub fn new(ctx: &mut Context, heap: &mut Heap) -> u32 {
         let addr = heap.alloc(&mut ctx.memory, 4);
-        let vtable = vtable(ctx, heap);
-        ctx.memory.write(addr, vtable);
+        ctx.memory.write(addr, unsafe { VTABLE });
         addr
     }
 }
@@ -523,39 +466,10 @@ pub struct WAVEFORMATEX {
     pub cbSize: u16,
 }
 
-pub const EXPORTS: [&'static str; 32] = [
-    // IDirectSound
-    "IDirectSound::QueryInterface",
-    "IDirectSound::AddRef",
-    "IDirectSound::Release",
-    "IDirectSound::CreateSoundBuffer",
-    "IDirectSound::GetCaps",
-    "IDirectSound::DuplicateSoundBuffer",
-    "IDirectSound::SetCooperativeLevel",
-    "IDirectSound::Compact",
-    "IDirectSound::GetSpeakerConfig",
-    "IDirectSound::SetSpeakerConfig",
-    "IDirectSound::Initialize",
-    // IDirectSoundBuffer
-    "IDirectSoundBuffer::QueryInterface",
-    "IDirectSoundBuffer::AddRef",
-    "IDirectSoundBuffer::Release",
-    "IDirectSoundBuffer::GetCaps",
-    "IDirectSoundBuffer::GetCurrentPosition",
-    "IDirectSoundBuffer::GetFormat",
-    "IDirectSoundBuffer::GetVolume",
-    "IDirectSoundBuffer::GetPan",
-    "IDirectSoundBuffer::GetFrequency",
-    "IDirectSoundBuffer::GetStatus",
-    "IDirectSoundBuffer::Initialize",
-    "IDirectSoundBuffer::Lock",
-    "IDirectSoundBuffer::Play",
-    "IDirectSoundBuffer::SetCurrentPosition",
-    "IDirectSoundBuffer::SetFormat",
-    "IDirectSoundBuffer::SetVolume",
-    "IDirectSoundBuffer::SetPan",
-    "IDirectSoundBuffer::SetFrequency",
-    "IDirectSoundBuffer::Stop",
-    "IDirectSoundBuffer::Unlock",
-    "IDirectSoundBuffer::Restore",
+pub const VTABLES: [(&'static str, &[&str]); 2] = [
+    ("IDirectSound", IDirectSound::VTABLE_ENTRIES.as_slice()),
+    (
+        "IDirectSoundBuffer",
+        IDirectSoundBuffer::VTABLE_ENTRIES.as_slice(),
+    ),
 ];

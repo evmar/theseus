@@ -26,6 +26,7 @@ pub struct Module {
     pub code_memory: std::ops::Range<u32>,
     pub resources: Option<(u32, u32)>,
     pub imports: Vec<Import>,
+    pub vtables: Vec<(String, u32)>,
 }
 
 #[derive(Default)]
@@ -33,28 +34,6 @@ pub struct State {
     pub module: Module,
     pub mem: Memory,
     pub blocks: HashMap<u32, Block>,
-}
-
-/// If any of the imports are from a DLL with exports, add the DLL's exports too.
-pub fn add_dll_imports(imports: &mut Vec<Import>) {
-    let mut next_addr = imports.last().unwrap().func_addr + 1;
-    for (lib, exports) in [
-        ("ddraw", winapi::ddraw::EXPORTS.as_slice()),
-        ("dsound", winapi::dsound::EXPORTS.as_slice()),
-    ] {
-        if !imports.iter().any(|i| i.dll == lib) {
-            continue;
-        }
-        for func in exports {
-            imports.push(Import {
-                dll: lib.to_string(),
-                func: func.to_string(),
-                iat_addr: 0,
-                func_addr: next_addr,
-            });
-            next_addr += 1;
-        }
-    }
 }
 
 pub fn is_abs_memory_ref(instr: &iced_x86::Instruction) -> Option<u32> {
@@ -95,6 +74,50 @@ pub fn write_if_changed(path: &str, contents: &[u8]) -> anyhow::Result<()> {
 }
 
 impl State {
+    /// For any dll used by the module, write its vtables to the executable memory.
+    fn add_vtables(&mut self) {
+        let vtables_addr = self.mem.mappings.alloc("vtables".into(), Some(0), 0x1000);
+        let mut iat_addr = vtables_addr;
+        for (dll, vtables) in [
+            ("ddraw", winapi::ddraw::VTABLES.as_slice()),
+            ("dsound", winapi::dsound::VTABLES.as_slice()),
+        ] {
+            if !self.module.imports.iter().any(|imp| imp.dll == dll) {
+                continue;
+            }
+            for (interface, entries) in vtables {
+                self.module
+                    .vtables
+                    .push((format!("{dll}::{interface}"), iat_addr));
+                for func in entries.iter() {
+                    self.module.imports.push(Import {
+                        dll: dll.to_string(),
+                        func: format!("{interface}::{func}"),
+                        iat_addr,
+                        func_addr: 0,
+                    });
+                    iat_addr += 4;
+                }
+            }
+        }
+    }
+
+    fn write_iat(&mut self) {
+        let mut func_addr = 0xfafbfc00;
+        for import in self.module.imports.iter_mut() {
+            assert_eq!(import.func_addr, 0); // should not be assigned yet
+            assert!(import.iat_addr != 0); // should be assigned yet
+            import.func_addr = func_addr;
+            func_addr += 1;
+            self.mem.write::<u32>(import.iat_addr, import.func_addr);
+        }
+    }
+
+    pub fn init_imports(&mut self) {
+        self.add_vtables();
+        self.write_iat();
+    }
+
     pub fn gather(&mut self, gather: Gather) {
         self.blocks = gather.run(self);
     }

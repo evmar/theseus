@@ -8,6 +8,10 @@ use winapi::*;
 fn init_mappings(ctx: &mut Context, mappings: &mut kernel32::Mappings) {
     mappings.alloc("null page".to_string(), Some(0x0), 0x1000);
     mappings.alloc("imported functions".to_string(), Some(0x1000), 0x1000);
+    mappings.alloc("vtables".to_string(), Some(0x2000), 0x1000);
+    let bytes = include_bytes!("../data/00002000.raw").as_slice();
+    let out = &mut ctx.memory[0x2000..][..bytes.len()];
+    out.copy_from_slice(bytes);
     mappings.alloc("exe header".to_string(), Some(0x400000), 0x1000);
     let bytes = include_bytes!("../data/00400000.raw").as_slice();
     let out = &mut ctx.memory[0x400000..][..bytes.len()];
@@ -24,6 +28,13 @@ fn init_mappings(ctx: &mut Context, mappings: &mut kernel32::Mappings) {
     let bytes = include_bytes!("../data/0044e000.raw").as_slice();
     let out = &mut ctx.memory[0x44e000..][..bytes.len()];
     out.copy_from_slice(bytes);
+    unsafe {
+        winapi::ddraw::IDirectDraw::VTABLE = 0x2000;
+        winapi::ddraw::IDirectDrawSurface::VTABLE = 0x205c;
+        winapi::ddraw::IDirectDraw7::VTABLE = 0x20ec;
+        winapi::ddraw::IDirectDrawSurface7::VTABLE = 0x2164;
+        winapi::ddraw::IDirectDrawPalette::VTABLE = 0x2228;
+    }
 }
 pub fn x401000(ctx: &mut Context) -> Cont {
     // 00401000 sub esp,8Ch

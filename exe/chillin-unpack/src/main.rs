@@ -107,7 +107,6 @@ pub fn do_unpack(ctx: &mut runtime::Context) {
     );
 
     find_iat(&mut syms, &tc.mem.mappings.vec(), &ctx.memory.bytes);
-    tc::add_dll_imports(&mut syms);
 
     tc.mem.bytes.resize(ctx.memory.bytes.len(), 0);
     tc.mem.bytes.copy_from_slice(ctx.memory.bytes);

@@ -42,6 +42,8 @@ fn run() -> anyhow::Result<()> {
     let buf = std::fs::read(args.exe).unwrap();
     state.module = tc::load_pe(&mut state.mem, buf);
 
+    state.init_imports();
+
     state.gather(tc::Gather {
         scan_immediates: args.scan_immediates,
         scan_memory: args.scan,

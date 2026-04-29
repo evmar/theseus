@@ -1,6 +1,6 @@
 //! PE loading.
 
-use crate::{Import, Module, add_dll_imports, memory::Memory};
+use crate::{Import, Module, memory::Memory};
 
 pub fn load_pe(mem: &mut Memory, buf: Vec<u8>) -> Module {
     let f = pe::File::parse(&buf).unwrap();
@@ -36,9 +36,7 @@ pub fn load_pe(mem: &mut Memory, buf: Vec<u8>) -> Module {
         .get_data_directory(pe::IMAGE_DIRECTORY_ENTRY::RESOURCE)
         .map(|dir| (image_base + dir.VirtualAddress, dir.Size));
 
-    let mut imports = read_imports(&f, mem);
-    resolve_iat(&mut imports, mem);
-    add_dll_imports(&mut imports);
+    let imports = read_imports(&f, mem);
 
     Module {
         imports,
@@ -46,6 +44,7 @@ pub fn load_pe(mem: &mut Memory, buf: Vec<u8>) -> Module {
         entry_point: image_base + f.opt_header.AddressOfEntryPoint,
         code_memory: code_range.unwrap(),
         resources,
+        vtables: Default::default(),
     }
 }
 
@@ -75,24 +74,4 @@ fn read_imports(pe_file: &pe::File, mem: &Memory) -> Vec<Import> {
         }
     }
     imports
-}
-
-/// Assign addresses to the imported functions, and write those addresses to the IAT.
-fn resolve_iat(imports: &mut [Import], mem: &mut Memory) {
-    // Reserve some fake addresses for imported functions so they can be assigned addresses.
-    // If we never write to the memory it stays zero and doesn't end up in the output.
-    let mut import_func_addr =
-        mem.mappings
-            .alloc("imported functions".into(), None, imports.len() as u32);
-
-    for import in imports.iter_mut() {
-        import.func_addr = import_func_addr;
-        import_func_addr += 1;
-        if import.iat_addr != 0 {
-            mem.write::<u32>(import.iat_addr, import.func_addr);
-        } else {
-            // hack: assign an unused iat addr just to ensure it has a unique key in state.imports.
-            import.iat_addr = import_func_addr;
-        }
-    }
 }

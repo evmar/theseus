@@ -83,6 +83,7 @@ fn find_iat(functions: &mut [tc::Import], mappings: &[kernel32::Mapping], memory
         if let Some(ofs) = iat_addr {
             log::info!("{}!{}: found at {:x}", sym.dll, sym.func, ofs);
             sym.iat_addr = ofs;
+            sym.func_addr = 0;
         } else {
             log::info!("{}!{}: not found", sym.dll, sym.func);
         }
@@ -107,7 +108,6 @@ pub fn do_unpack(ctx: &mut runtime::Context) {
     );
 
     find_iat(&mut syms, &tc.mem.mappings.vec(), &ctx.memory.bytes);
-    tc::add_dll_imports(&mut syms);
 
     tc.mem.bytes.resize(ctx.memory.bytes.len(), 0);
     tc.mem.bytes.copy_from_slice(ctx.memory.bytes);
@@ -118,7 +118,9 @@ pub fn do_unpack(ctx: &mut runtime::Context) {
         code_memory: 0x40_0000..tc.mem.bytes.len() as u32,
         resources: None,
         imports: syms,
+        vtables: vec![],
     };
+    tc.init_imports();
 
     tc.gather(tc::Gather {
         //scan_immediates: true,

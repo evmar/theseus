@@ -285,6 +285,12 @@ out.copy_from_slice(bytes);",
             }
         }
 
+        self.line("unsafe {");
+        for (module, val) in &self.module.vtables {
+            self.line(format!("winapi::{module}::VTABLE = {val:#x};"));
+        }
+        self.line("}");
+
         self.line("}");
 
         let mut ips = self.blocks.keys().copied().collect::<Vec<_>>();
