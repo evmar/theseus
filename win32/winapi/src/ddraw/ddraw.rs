@@ -95,9 +95,10 @@ impl DirectDraw {
             Target::Window(window.clone())
         } else {
             let texture_creator = window.borrow().canvas.texture_creator();
-            let texture = texture_creator
+            let mut texture = texture_creator
                 .create_texture_target(None, params.width, params.height)
                 .unwrap();
+            texture.set_scale_mode(sdl3::render::ScaleMode::Nearest);
             // FML, this means BGRA in memory order
             assert_eq!(texture.format(), sdl3::pixels::PixelFormat::ARGB8888);
             Target::Texture(texture)
