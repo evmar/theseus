@@ -155,23 +155,32 @@ impl Surface {
                 // scribble on pixels so we can see it
                 mem[addr..][..size as usize].fill(0x8F);
                 self.pixels = Some(addr);
+                log::error!("surf {:x} pixels {:x}", self.addr, addr);
                 addr
             }
         }
     }
 
-    pub fn unlock(&mut self) {}
+    pub fn unlock(&mut self, mem: &mut Memory) {
+        self.update_texture(mem, &None);
+    }
 
     // App can write pixels to back buffer but attach palette to front buffer,
     // so take palette as an argument.
     fn update_texture(&mut self, mem: &mut Memory, palette: &Option<Rc<RefCell<Palette>>>) {
-        let addr = self.pixels.unwrap();
+        let Some(addr) = self.pixels else {
+            return;
+        };
         let size = self.width * self.height * self.bytes_per_pixel;
         let pixels = &mem[addr..][..size as usize];
         let mut buf = vec![];
         let pixels32 = match self.bytes_per_pixel {
             1 => {
-                let palette = palette.as_ref().unwrap().borrow();
+                let Some(palette) = palette.as_ref() else {
+                    // e.g. unlock on a back buffer with no palette attached
+                    return;
+                };
+                let palette = palette.borrow();
                 let entries = &palette.entries;
                 for &p in pixels {
                     let entry = &entries[p as usize];
@@ -202,7 +211,9 @@ impl Surface {
         };
 
         let mut back = self.attached.as_ref().unwrap().borrow_mut();
-        back.update_texture(mem, &self.palette);
+        if self.palette.is_some() {
+            back.update_texture(mem, &self.palette);
+        }
         let Target::Texture(texture) = &mut back.target else {
             unreachable!()
         };

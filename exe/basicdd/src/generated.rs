@@ -20957,7 +20957,7 @@ pub fn x4054ec(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-const BLOCKS: [(u32, fn(&mut Context) -> Cont); 1773] = [
+const BLOCKS: [(u32, fn(&mut Context) -> Cont); 1780] = [
     (0x1000, kernel32::OutputDebugStringA_stdcall),
     (0x1001, kernel32::HeapAlloc_stdcall),
     (0x1002, kernel32::GetModuleFileNameA_stdcall),
@@ -21225,6 +21225,13 @@ const BLOCKS: [(u32, fn(&mut Context) -> Cont); 1773] = [
     (0x10c6, ddraw::IDirectDrawSurface7::GetPriority_stdcall),
     (0x10c7, ddraw::IDirectDrawSurface7::SetLOD_stdcall),
     (0x10c8, ddraw::IDirectDrawSurface7::GetLOD_stdcall),
+    (0x10c9, ddraw::IDirectDrawPalette::QueryInterface_stdcall),
+    (0x10ca, ddraw::IDirectDrawPalette::AddRef_stdcall),
+    (0x10cb, ddraw::IDirectDrawPalette::Release_stdcall),
+    (0x10cc, ddraw::IDirectDrawPalette::GetCaps_stdcall),
+    (0x10cd, ddraw::IDirectDrawPalette::GetEntries_stdcall),
+    (0x10ce, ddraw::IDirectDrawPalette::Initialize_stdcall),
+    (0x10cf, ddraw::IDirectDrawPalette::SetEntries_stdcall),
     (0x401000, x401000),
     (0x401005, x401005),
     (0x401010, x401010),

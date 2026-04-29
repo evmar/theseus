@@ -500,10 +500,10 @@ pub mod IDirectDrawSurface {
     }
 
     #[win32_derive::dllexport]
-    pub fn Unlock(_ctx: &mut Context, this: u32, _lpRect: u32) -> DD {
+    pub fn Unlock(ctx: &mut Context, this: u32, _lpRect: u32) -> DD {
         let surfaces = state().surf.borrow_mut();
         let mut surface = surfaces.get(&this).unwrap().borrow_mut();
-        surface.unlock();
+        surface.unlock(&mut ctx.memory);
         DD::OK
     }
 
