@@ -40,6 +40,8 @@ pub fn shld(x: u32, y: u32, count: u8, flags: &mut Flags) -> u32 {
     }
     let result = (x << count) | (y >> (32 - count));
     flags.set(Flags::PF, result.low_byte().count_ones() % 2 == 0);
+    flags.set(Flags::SF, (result >> 31) != 0);
+    flags.set(Flags::ZF, result == 0);
     result
 }
 
@@ -81,6 +83,7 @@ pub fn sar<I: Int>(x: I, y: u8, flags: &mut Flags) -> I {
 }
 
 pub fn rol<I: Int>(x: I, y: u8, flags: &mut Flags) -> I {
+    let y = y % 32;
     if y == 0 {
         return x;
     }
