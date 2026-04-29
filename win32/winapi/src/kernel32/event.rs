@@ -19,10 +19,14 @@ pub struct Event {
 #[win32_derive::dllexport]
 pub fn WaitForSingleObject(_ctx: &mut Context, hHandle: HANDLE, dwMilliseconds: u32) -> u32 /* WAIT_EVENT */
 {
-    let kernel32 = lock();
-    let Object::Event(event) = kernel32.objects.get(hHandle).unwrap() else {
-        panic!()
+    let event = {
+        let kernel32 = lock();
+        let Object::Event(event) = kernel32.objects.get(hHandle).unwrap() else {
+            panic!()
+        };
+        event.clone()
     };
+
     let mut signaled = event.signaled.lock().unwrap();
     while !*signaled {
         signaled = event

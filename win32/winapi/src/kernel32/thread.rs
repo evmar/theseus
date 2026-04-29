@@ -64,7 +64,7 @@ impl kernel32::State {
         &mut self,
         ctx: &mut Context,
         name: String,
-        proc: impl FnOnce(&mut Context) + Send + Sync + 'static,
+        proc: impl FnOnce(&mut Context) + Send + 'static,
     ) {
         let handle = self.objects.add(Object::Thread);
         let mut new_ctx = Context {

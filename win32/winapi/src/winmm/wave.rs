@@ -1,3 +1,5 @@
+use std::collections::VecDeque;
+
 use runtime::Context;
 use zerocopy::FromBytes;
 
@@ -6,11 +8,13 @@ use crate::{FromABIParam, dllexport::win32flags, kernel32, stub, user32, winmm::
 const MMSYSERR_NOERROR: u32 = 0;
 
 pub struct State {
-    stream: sdl3::audio::AudioStreamOwner,
+    sender: std::sync::mpsc::Sender<u32>,
 }
+
 // TODO: sdl has wacky safety requirements; the audio objects are Send
 // but the subsystem itself is not because it must be freed on main thread.
-unsafe impl Send for State {}
+struct StreamHack(sdl3::audio::AudioStreamOwner);
+unsafe impl Send for StreamHack {}
 
 #[win32_derive::dllexport]
 pub fn waveOutGetNumDevs(_ctx: &mut Context) -> u32 {
@@ -83,32 +87,69 @@ enum MM_WOM {
     DONE = 0x3BD,
 }
 
-fn thread_proc(ctx: &mut Context, callback: u32, callback_data: u32) {
+/// Thread procedure to pass data from wave APIs to SDL.
+/// We use a win32 thread here because the callbacks to the executable
+/// that indicate more data is needed come from a thread.
+///
+/// Strategy: waveOutWrite pushes the pointer to the buffer to the queue,
+/// and we pull it out here and pass it to SDL.
+fn thread_proc(
+    ctx: &mut Context,
+    stream: StreamHack,
+    receiver: std::sync::mpsc::Receiver<u32>,
+    callback: u32,
+    callback_data: u32,
+) {
+    let stream = stream.0;
+
+    // We need to notify when a queued block is done, but SDL doesn't make that easy.
+    // We keep track of how much data we have passed to SDL, then compare it against
+    // how much data SDL says is yet to be processed, and use the difference to decide
+    // whether a given block has been fully processed.
+    // total_pending is the total number of bytes that have been submitted to SDL,
+    // and is the sum of the lengths of all queued blocks.
+    let mut total_pending = 0u32;
+    struct QueuedBlock {
+        addr: u32,
+        len: u32,
+    }
+    let mut queued_blocks: VecDeque<QueuedBlock> = VecDeque::new();
+
     let f = runtime::indirect(ctx, callback);
     loop {
-        let pending = {
-            let mut state = state();
-            let state = state.wave.as_mut().unwrap();
-            let pending = state.stream.queued_bytes().unwrap();
-            if pending >= (16 << 10) {
-                std::thread::sleep(std::time::Duration::from_millis(50));
-                continue;
-            }
-            pending
-        };
-
-        let hwo = 1u32; // XXX
-        let uMsg = MM_WOM::DONE as u32;
-        // waveOutProc
-        runtime::call_x86(ctx, f, vec![hwo, uMsg, callback_data, 0, 0]);
-
-        let mut state = state();
-        let state = state.wave.as_mut().unwrap();
-        let pending2 = state.stream.queued_bytes().unwrap();
-        if pending2 == pending {
-            log::warn!("called callback, but no data pending");
-            std::thread::sleep(std::time::Duration::from_millis(100));
+        while stream.queued_bytes().unwrap() < 8 << 10 {
+            let addr = receiver.recv().unwrap();
+            let header = <WAVEHDR>::ref_from_prefix(&ctx.memory[addr..]).unwrap().0;
+            let buf = &ctx.memory[header.lpData..][..header.dwBufferLength as usize];
+            stream.put_data(buf).unwrap();
+            total_pending += header.dwBufferLength;
+            queued_blocks.push_back(QueuedBlock {
+                addr,
+                len: header.dwBufferLength,
+            });
         }
+
+        if let Some(block) = queued_blocks.front() {
+            let queued_bytes = stream.queued_bytes().unwrap() as u32;
+            let consumed = total_pending - queued_bytes;
+            if consumed >= block.len {
+                let QueuedBlock { addr, len } = *block;
+                total_pending -= len;
+                queued_blocks.pop_front();
+
+                let header = <WAVEHDR>::mut_from_prefix(&mut ctx.memory[addr..])
+                    .unwrap()
+                    .0;
+                header.dwFlags.insert(WHDR::DONE);
+
+                let hwo = 1u32; // XXX
+                let uMsg = MM_WOM::DONE as u32;
+                // waveOutProc, WOM_DONE message
+                runtime::call_x86(ctx, f, vec![hwo, uMsg, callback_data, addr, 0]);
+            }
+        }
+
+        std::thread::sleep(std::time::Duration::from_millis(50));
     }
 }
 
@@ -144,15 +185,17 @@ pub fn waveOutOpen(
         }))
         .unwrap();
     stream.resume().unwrap();
+    let stream_hack = StreamHack(stream);
 
-    state().wave = Some(State { stream });
+    let (sender, receiver) = std::sync::mpsc::channel::<u32>();
+    state().wave = Some(State { sender });
 
     let callback = CALLBACK::from_abi(fdwOpen);
     match callback {
         CALLBACK::NULL => {}
         CALLBACK::FUNCTION => {
             kernel32::lock().create_thread(ctx, format!("winmm thread"), move |ctx| {
-                thread_proc(ctx, dwCallback, dwInstance)
+                thread_proc(ctx, stream_hack, receiver, dwCallback, dwInstance)
             });
         }
         _ => todo!("{callback:?}"),
@@ -214,17 +257,10 @@ pub fn waveOutUnprepareHeader(_ctx: &mut Context, _hwo: u32, _pwh: u32, _cbwh: u
 }
 
 #[win32_derive::dllexport]
-pub fn waveOutWrite(ctx: &mut Context, _hwo: u32, pwh: u32, cbwh: u32) -> u32 {
+pub fn waveOutWrite(_ctx: &mut Context, _hwo: u32, pwh: u32, cbwh: u32) -> u32 {
     assert_eq!(cbwh, std::mem::size_of::<WAVEHDR>() as u32);
     let mut state = state();
     let state = state.wave.as_mut().unwrap();
-    let header = <WAVEHDR>::ref_from_prefix(&ctx.memory[pwh..]).unwrap().0;
-    let buf = &ctx.memory[header.lpData..][..header.dwBufferLength as usize];
-    state.stream.put_data(buf).unwrap();
-    let header = <WAVEHDR>::mut_from_prefix(&mut ctx.memory[pwh..])
-        .unwrap()
-        .0;
-    header.dwFlags.insert(WHDR::DONE);
-
+    state.sender.send(pwh).unwrap();
     MMSYSERR_NOERROR
 }
