@@ -1,32 +1,68 @@
+use std::sync::{Arc, Condvar, Mutex};
+
 use runtime::Context;
 
 use crate::{HANDLE, kernel32::lock, stub};
 
 pub enum Object {
     Thread,
-    Event,
+    Event(Arc<Event>),
+}
+
+pub struct Event {
+    name: String,
+    manual_reset: bool,
+    signaled: Mutex<bool>,
+    cond: Condvar,
 }
 
 #[win32_derive::dllexport]
-pub fn WaitForSingleObject(_ctx: &mut Context, _hHandle: HANDLE, _dwMilliseconds: u32) -> u32 /* WAIT_EVENT */
+pub fn WaitForSingleObject(_ctx: &mut Context, hHandle: HANDLE, dwMilliseconds: u32) -> u32 /* WAIT_EVENT */
 {
-    todo!()
+    let kernel32 = lock();
+    let Object::Event(event) = kernel32.objects.get(hHandle).unwrap() else {
+        panic!()
+    };
+    let mut signaled = event.signaled.lock().unwrap();
+    while !*signaled {
+        signaled = event
+            .cond
+            .wait_timeout(
+                signaled,
+                std::time::Duration::from_millis(dwMilliseconds as u64),
+            )
+            .unwrap()
+            .0;
+    }
+    0
 }
 
 #[win32_derive::dllexport]
 pub fn CreateEventA(
-    _ctx: &mut Context,
+    ctx: &mut Context,
     _lpEventAttributes: u32,
-    _bManualReset: bool,
-    _bInitialState: bool,
-    _lpName: u32,
+    bManualReset: bool,
+    bInitialState: bool,
+    lpName: u32,
 ) -> HANDLE {
+    let name = ctx.memory.read_str(lpName);
+    let event = Event {
+        name: name.to_string(),
+        manual_reset: bManualReset,
+        signaled: Mutex::new(bInitialState),
+        cond: Condvar::new(),
+    };
     let mut kernel32 = lock();
-    let handle = kernel32.objects.add(Object::Event);
-    stub!(handle)
+    kernel32.objects.add(Object::Event(Arc::new(event)))
 }
 
 #[win32_derive::dllexport]
-pub fn SetEvent(_ctx: &mut Context, _hEvent: HANDLE) -> bool {
-    stub!(true)
+pub fn SetEvent(_ctx: &mut Context, hEvent: HANDLE) -> bool {
+    let kernel32 = lock();
+    let Object::Event(event) = kernel32.objects.get(hEvent).unwrap() else {
+        panic!()
+    };
+    *event.signaled.lock().unwrap() = true;
+    event.cond.notify_all();
+    true
 }

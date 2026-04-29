@@ -90,26 +90,23 @@ fn thread_proc(ctx: &mut Context, callback: u32, callback_data: u32) {
             let mut state = state();
             let state = state.wave.as_mut().unwrap();
             let pending = state.stream.queued_bytes().unwrap();
-            log::info!("pending {} bytes", pending);
-            if pending > (8 << 10) {
-                std::thread::sleep(std::time::Duration::from_millis(10));
+            if pending >= (16 << 10) {
+                std::thread::sleep(std::time::Duration::from_millis(50));
                 continue;
             }
             pending
         };
 
-        log::info!("requesting more data");
         let hwo = 1u32; // XXX
         let uMsg = MM_WOM::DONE as u32;
         // waveOutProc
         runtime::call_x86(ctx, f, vec![hwo, uMsg, callback_data, 0, 0]);
-        log::info!("requesting more data done");
 
         let mut state = state();
         let state = state.wave.as_mut().unwrap();
         let pending2 = state.stream.queued_bytes().unwrap();
         if pending2 == pending {
-            log::warn!("winmm: called callback, but no data pending");
+            log::warn!("called callback, but no data pending");
             std::thread::sleep(std::time::Duration::from_millis(100));
         }
     }
