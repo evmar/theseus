@@ -60,11 +60,19 @@ fn main() {
 }
 
 /// Fill in the .iat_addr on functions by searching the memory for their addresses.
-fn find_iat(functions: &mut [tc::Import], mappings: &[kernel32::Mapping], memory: &[u8]) {
+fn find_iat(
+    functions: &mut [tc::Import],
+    mappings: &[kernel32::Mapping],
+    memory: &[u8],
+    image_base: u32,
+) {
     for sym in functions.iter_mut() {
         let addr_bytes = sym.func_addr.to_le_bytes();
         let mut iat_addr = None;
         for mapping in mappings.iter() {
+            if mapping.addr < image_base {
+                continue;
+            }
             for (ofs, _) in memory[mapping.addr as usize..][..mapping.size as usize]
                 .windows(4)
                 .enumerate()
@@ -107,13 +115,19 @@ pub fn do_unpack(ctx: &mut runtime::Context) {
             .collect::<Vec<_>>(),
     );
 
-    find_iat(&mut syms, &tc.mem.mappings.vec(), &ctx.memory.bytes);
+    let image_base = 0x40_0000;
+    find_iat(
+        &mut syms,
+        &tc.mem.mappings.vec(),
+        &ctx.memory.bytes,
+        image_base,
+    );
 
     tc.mem.bytes.resize(ctx.memory.bytes.len(), 0);
     tc.mem.bytes.copy_from_slice(ctx.memory.bytes);
 
     tc.module = tc::Module {
-        image_base: 0x0040_0000,
+        image_base,
         entry_point: 0x0041f079,
         code_memory: 0x40_0000..tc.mem.bytes.len() as u32,
         resources: None,

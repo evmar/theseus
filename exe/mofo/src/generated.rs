@@ -7,7 +7,10 @@ use winapi::*;
 
 fn init_memory(ctx: &mut Context, mappings: &mut kernel32::Mappings) {
     mappings.alloc("null page".to_string(), Some(0x0), 0x1000);
-    mappings.alloc("imported functions".to_string(), Some(0x1000), 0x1000);
+    mappings.alloc("vtables".to_string(), Some(0x1000), 0x1000);
+    let bytes = include_bytes!("../data/00001000.raw").as_slice();
+    let out = &mut ctx.memory[0x1000..][..bytes.len()];
+    out.copy_from_slice(bytes);
     mappings.alloc("vtables".to_string(), Some(0x2000), 0x1000);
     let bytes = include_bytes!("../data/00002000.raw").as_slice();
     let out = &mut ctx.memory[0x2000..][..bytes.len()];
