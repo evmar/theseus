@@ -261,7 +261,7 @@ use winapi::*;
         // Unfortunately, wasm-lld only supports "relocatable" object files which means it moves
         // the location of such data at link time.  We could do it by postprocessing the wasm
         // file, maybe.
-        self.line("fn init_mappings(ctx: &mut Context, mappings: &mut kernel32::Mappings) {");
+        self.line("fn init_memory(ctx: &mut Context, mappings: &mut kernel32::Mappings) {");
         for map in self.mem.mappings.vec().iter() {
             let addr = map.addr;
             let buf = self.mem.slice(map.addr, map.size);
@@ -321,7 +321,7 @@ out.copy_from_slice(bytes);",
             image_base: {image_base:#x},
             resources: {resources},
             blocks: &BLOCKS,
-            init_mappings,
+            init_memory,
             entry_point: Cont(x{entry_point:x}),
         }};\n\n",
             image_base = self.module.image_base,

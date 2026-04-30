@@ -5,7 +5,7 @@
 use runtime::*;
 use winapi::*;
 
-fn init_mappings(ctx: &mut Context, mappings: &mut kernel32::Mappings) {
+fn init_memory(ctx: &mut Context, mappings: &mut kernel32::Mappings) {
     mappings.alloc("null page".to_string(), Some(0x0), 0x1000);
     mappings.alloc("imported functions".to_string(), Some(0x1000), 0x1000);
     mappings.alloc("vtables".to_string(), Some(0x2000), 0x1000);
@@ -28219,6 +28219,6 @@ pub const EXEDATA: EXEData = EXEData {
     image_base: 0x400000,
     resources: 0..0,
     blocks: &BLOCKS,
-    init_mappings,
+    init_memory,
     entry_point: Cont(x41f079),
 };

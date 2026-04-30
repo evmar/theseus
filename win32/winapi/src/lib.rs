@@ -35,7 +35,7 @@ pub struct EXEData {
     pub image_base: u32,
     pub resources: std::ops::Range<u32>,
     pub blocks: &'static [(u32, fn(&mut Context) -> runtime::Cont)],
-    pub init_mappings: fn(&mut Context, &mut kernel32::Mappings),
+    pub init_memory: fn(&mut Context, &mut kernel32::Mappings),
     pub entry_point: runtime::Cont,
 }
 
@@ -63,7 +63,7 @@ pub fn load(exe: &EXEData) -> Context {
         recent: [runtime::return_from_x86; 4],
     };
 
-    (exe.init_mappings)(&mut ctx, &mut lock.mappings);
+    (exe.init_memory)(&mut ctx, &mut lock.mappings);
     lock.init_process(&mut ctx);
     ctx
 }
