@@ -34,7 +34,10 @@ pub fn load_pe(mem: &mut Memory, buf: Vec<u8>) -> Module {
 
     let resources = f
         .get_data_directory(pe::IMAGE_DIRECTORY_ENTRY::RESOURCE)
-        .map(|dir| (image_base + dir.VirtualAddress, dir.Size));
+        .map(|dir| {
+            let addr = image_base + dir.VirtualAddress;
+            addr..(addr + dir.Size)
+        });
 
     let imports = read_imports(&f, mem);
 

@@ -24,7 +24,7 @@ pub struct Module {
     pub image_base: u32,
     pub entry_point: u32,
     pub code_memory: std::ops::Range<u32>,
-    pub resources: Option<(u32, u32)>,
+    pub resources: Option<std::ops::Range<u32>>,
     pub imports: Vec<Import>,
     pub vtables: Vec<(String, u32)>,
 }

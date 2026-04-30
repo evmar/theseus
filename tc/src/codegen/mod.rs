@@ -240,28 +240,16 @@ impl<'a> CodeGen<'a> {
         Ok(())
     }
 
-    pub fn gen_file(&mut self, outdir: &str) -> Result<()> {
-        self.line(
-            "#![allow(unreachable_code)]
-#![allow(unused_parens)]
-#![allow(unused_variables)]
-
-use runtime::*;
-use winapi::*;
-",
-        );
-
-        if self.blocks.values().any(|b| matches!(b, Block::Extern(_))) {
-            self.line("use crate::externs::*;");
-        }
-
+    fn gen_init_memory(&mut self) {
         // It would be cool if we could just link a wasm object file that contains data sections
         // like
         //   (data (i32.const 0x400000) "....")
         // Unfortunately, wasm-lld only supports "relocatable" object files which means it moves
         // the location of such data at link time.  We could do it by postprocessing the wasm
         // file, maybe.
+
         self.line("fn init_memory(ctx: &mut Context, mappings: &mut kernel32::Mappings) {");
+
         for map in self.mem.mappings.vec().iter() {
             let addr = map.addr;
             let buf = self.mem.slice(map.addr, map.size);
@@ -285,14 +273,19 @@ out.copy_from_slice(bytes);",
             }
         }
 
-        self.line("unsafe {");
-        for (module, val) in &self.module.vtables {
-            self.line(format!("winapi::{module}::VTABLE = {val:#x};"));
+        if !self.module.vtables.is_empty() {
+            self.line("unsafe {");
+            for (module, val) in &self.module.vtables {
+                self.line(format!("winapi::{module}::VTABLE = {val:#x};"));
+            }
+            self.line("}");
         }
-        self.line("}");
 
         self.line("}");
+        self.line("");
+    }
 
+    fn gen_blocks(&mut self) {
         let mut ips = self.blocks.keys().copied().collect::<Vec<_>>();
         ips.sort();
         for &ip in &ips {
@@ -309,22 +302,43 @@ out.copy_from_slice(bytes);",
             self.line(format!("({ip:#x}, {}),", block.name()));
         }
         self.line("(runtime::RETURN_FROM_X86_ADDR, runtime::return_from_x86),");
-        self.line("];\n");
+        self.line("];");
+        self.line("");
+    }
 
-        let resources = match self.module.resources {
-            Some((addr, size)) => format!("{addr:#x}..{end:#x}", end = addr + size),
-            None => "0..0".to_string(),
-        };
+    pub fn gen_file(&mut self, outdir: &str) -> Result<()> {
+        self.line(
+            "#![allow(unreachable_code)]
+#![allow(unused_parens)]
+#![allow(unused_variables)]
+
+use runtime::*;
+use winapi::*;
+",
+        );
+
+        if self.blocks.values().any(|b| matches!(b, Block::Extern(_))) {
+            self.line("use crate::externs::*;");
+        }
+        self.line("");
+
+        self.gen_init_memory();
+
+        self.gen_blocks();
+
+        let resources = self.module.resources.clone().unwrap_or(0..0);
 
         self.line(format!(
             "pub const EXEDATA: EXEData = EXEData {{
             image_base: {image_base:#x},
-            resources: {resources},
+            resources: {res_start:#x}..{res_end:#x},
             blocks: &BLOCKS,
             init_memory,
             entry_point: Cont(x{entry_point:x}),
         }};\n\n",
             image_base = self.module.image_base,
+            res_start = resources.start,
+            res_end = resources.end,
             entry_point = self.module.entry_point,
         ));
 

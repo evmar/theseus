@@ -39,6 +39,7 @@ fn init_memory(ctx: &mut Context, mappings: &mut kernel32::Mappings) {
         winapi::ddraw::IDirectDrawPalette::VTABLE = 0x2228;
     }
 }
+
 pub fn x401000(ctx: &mut Context) -> Cont {
     // 00401000 sub esp,8Ch
     ctx.cpu.regs.esp = sub(ctx.cpu.regs.esp, 0x8cu32, &mut ctx.cpu.flags);
@@ -28101,7 +28102,7 @@ const BLOCKS: [(u32, fn(&mut Context) -> Cont); 1428] = [
 
 pub const EXEDATA: EXEData = EXEData {
     image_base: 0x400000,
-    resources: 0..0,
+    resources: 0x0..0x0,
     blocks: &BLOCKS,
     init_memory,
     entry_point: Cont(x41f079),
