@@ -115,8 +115,8 @@ pub fn do_unpack(ctx: &mut runtime::Context) {
         image_base: 0x0040_0000,
         entry_point: 0x0040_85dd,
         code_memory: 0x40_0000..tc.mem.bytes.len() as u32,
-        resources: None,
         imports: syms,
+        ..Default::default()
     };
 
     tc.gather(tc::Gather {
