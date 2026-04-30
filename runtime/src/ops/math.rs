@@ -153,6 +153,17 @@ pub fn imul1_16(x: u16, y: u16, flags: &mut Flags) -> u32 {
     res
 }
 
+/// One-argument imul, 8 bit inputs.
+pub fn imul1_8(x: u8, y: u8, flags: &mut Flags) -> u16 {
+    let x = x as i8;
+    let y = y as i8;
+    let res = (x as i16 * y as i16) as u16;
+    let flag = res != (res as u8 as i8 as i16 as u16);
+    flags.set(Flags::CF, flag);
+    flags.set(Flags::OF, flag);
+    res
+}
+
 /// Two or three-argument imul, 32 bit inputs.
 pub fn imul2_32(x: u32, y: u32, flags: &mut Flags) -> u32 {
     let x = x as i32;

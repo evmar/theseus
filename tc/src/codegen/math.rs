@@ -62,7 +62,7 @@ impl<'a> CodeGen<'a> {
                 let size = op_size(instr, 0);
                 if instr.op_count() == 1 {
                     // one-op imul has different in/out reg and overflow behavior from others
-                    let x = get_reg(iced_x86::Register::EAX);
+                    let x = format!("{} as u{size}", get_reg(iced_x86::Register::EAX));
                     let y = get_op(instr, 0);
                     let res = format!("imul1_{size}({x}, {y}, &mut ctx.cpu.flags)");
                     match size {
