@@ -39,6 +39,7 @@ fn init_memory(ctx: &mut Context, mappings: &mut kernel32::Mappings) {
         winapi::ddraw::IDirectDrawPalette::VTABLE = 0x1228;
     }
 }
+
 pub fn x401000(ctx: &mut Context) -> Cont {
     // 00401000 call 00401010h
     let dst = Cont(x401010);
@@ -8224,12 +8225,7 @@ pub fn x402c7f(ctx: &mut Context) -> Cont {
     // 00402c9c mov ecx,edi
     ctx.cpu.regs.ecx = ctx.cpu.regs.edi;
     // 00402c9e imul ecx,204h
-    let x = ctx.cpu.regs.ecx as i32;
-    let y = 0x204u32 as i32;
-    let (res, overflow) = x.overflowing_mul(y);
-    ctx.cpu.flags.set(Flags::CF, overflow);
-    ctx.cpu.flags.set(Flags::OF, overflow);
-    ctx.cpu.regs.ecx = res as u32;
+    ctx.cpu.regs.ecx = imul2_32(ctx.cpu.regs.ecx, 0x204u32, &mut ctx.cpu.flags);
     // 00402ca4 lea ecx,[ecx+eax+144h]
     ctx.cpu.regs.ecx = ctx
         .cpu
@@ -9896,12 +9892,7 @@ pub fn x4030fb(ctx: &mut Context) -> Cont {
     // 004030fd xor edi,edi
     ctx.cpu.regs.edi = xor(ctx.cpu.regs.edi, ctx.cpu.regs.edi, &mut ctx.cpu.flags);
     // 004030ff imul ecx,204h
-    let x = ctx.cpu.regs.ecx as i32;
-    let y = 0x204u32 as i32;
-    let (res, overflow) = x.overflowing_mul(y);
-    ctx.cpu.flags.set(Flags::CF, overflow);
-    ctx.cpu.flags.set(Flags::OF, overflow);
-    ctx.cpu.regs.ecx = res as u32;
+    ctx.cpu.regs.ecx = imul2_32(ctx.cpu.regs.ecx, 0x204u32, &mut ctx.cpu.flags);
     // 00403105 lea ecx,[ecx+eax+144h]
     ctx.cpu.regs.ecx = ctx
         .cpu
@@ -10838,12 +10829,7 @@ pub fn x40337d(ctx: &mut Context) -> Cont {
     // 0040337f push 3Fh
     push(ctx, 0x3fu32);
     // 00403381 imul eax,204h
-    let x = ctx.cpu.regs.eax as i32;
-    let y = 0x204u32 as i32;
-    let (res, overflow) = x.overflowing_mul(y);
-    ctx.cpu.flags.set(Flags::CF, overflow);
-    ctx.cpu.flags.set(Flags::OF, overflow);
-    ctx.cpu.regs.eax = res as u32;
+    ctx.cpu.regs.eax = imul2_32(ctx.cpu.regs.eax, 0x204u32, &mut ctx.cpu.flags);
     // 00403387 pop edx
     let x = pop(ctx);
     ctx.cpu.regs.edx = x;
@@ -11164,12 +11150,7 @@ pub fn x40345d(ctx: &mut Context) -> Cont {
     // 00403480 mov ecx,edx
     ctx.cpu.regs.ecx = ctx.cpu.regs.edx;
     // 00403482 imul ecx,204h
-    let x = ctx.cpu.regs.ecx as i32;
-    let y = 0x204u32 as i32;
-    let (res, overflow) = x.overflowing_mul(y);
-    ctx.cpu.flags.set(Flags::CF, overflow);
-    ctx.cpu.flags.set(Flags::OF, overflow);
-    ctx.cpu.regs.ecx = res as u32;
+    ctx.cpu.regs.ecx = imul2_32(ctx.cpu.regs.ecx, 0x204u32, &mut ctx.cpu.flags);
     // 00403488 lea ecx,[ecx+eax+144h]
     ctx.cpu.regs.ecx = ctx
         .cpu
@@ -14458,12 +14439,7 @@ pub fn x403d61(ctx: &mut Context) -> Cont {
 
 pub fn x403d66(ctx: &mut Context) -> Cont {
     // 00403d66 imul ecx,0Fh
-    let x = ctx.cpu.regs.ecx as i32;
-    let y = 0xfu32 as i32;
-    let (res, overflow) = x.overflowing_mul(y);
-    ctx.cpu.flags.set(Flags::CF, overflow);
-    ctx.cpu.flags.set(Flags::OF, overflow);
-    ctx.cpu.regs.ecx = res as u32;
+    ctx.cpu.regs.ecx = imul2_32(ctx.cpu.regs.ecx, 0xfu32, &mut ctx.cpu.flags);
     // 00403d69 shl eax,4
     ctx.cpu.regs.eax = shl(ctx.cpu.regs.eax, 0x4u8, &mut ctx.cpu.flags);
     // 00403d6c sub eax,ecx
@@ -17314,14 +17290,12 @@ pub fn x404877(ctx: &mut Context) -> Cont {
 
 pub fn x40487d(ctx: &mut Context) -> Cont {
     // 0040487d imul esi,[ebp+10h]
-    let x = ctx.cpu.regs.esi as i32;
-    let y = ctx
-        .memory
-        .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0x10u32)) as i32;
-    let (res, overflow) = x.overflowing_mul(y);
-    ctx.cpu.flags.set(Flags::CF, overflow);
-    ctx.cpu.flags.set(Flags::OF, overflow);
-    ctx.cpu.regs.esi = res as u32;
+    ctx.cpu.regs.esi = imul2_32(
+        ctx.cpu.regs.esi,
+        ctx.memory
+            .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0x10u32)),
+        &mut ctx.cpu.flags,
+    );
     // 00404881 add esi,ecx
     ctx.cpu.regs.esi = add(ctx.cpu.regs.esi, ctx.cpu.regs.ecx, &mut ctx.cpu.flags);
     // 00404883 mov [ebp-8],esi

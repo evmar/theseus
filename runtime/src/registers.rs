@@ -133,6 +133,16 @@ impl Regs {
         self.ebx = (self.ebx & 0xFFFF_00FF) | ((val as u32) << 8)
     }
 
+    pub fn set_edx_eax(&mut self, val: u64) {
+        self.edx = (val >> 32) as u32;
+        self.eax = val as u32;
+    }
+
+    pub fn set_dx_ax(&mut self, val: u32) {
+        self.set_dx((val >> 16) as u16);
+        self.set_ax(val as u16);
+    }
+
     pub fn dump(&self) {
         println!(
             "eax={:08x} ecx={:08x} edx={:08x} ebx={:08x}\nesi={:08x} edi={:08x} esp={:08x} ebp={:08x}",

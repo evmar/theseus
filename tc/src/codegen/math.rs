@@ -1,4 +1,4 @@
-use crate::codegen::{CodeGen, get_op, get_reg, instr_name, op_size, set_op, set_reg};
+use crate::codegen::{CodeGen, get_op, get_reg, instr_name, op_size, set_op};
 
 impl<'a> CodeGen<'a> {
     pub fn codegen_math(&mut self, instr: &iced_x86::Instruction) -> bool {
@@ -62,49 +62,33 @@ impl<'a> CodeGen<'a> {
                 let size = op_size(instr, 0);
                 if instr.op_count() == 1 {
                     // one-op imul has different in/out reg and overflow behavior from others
-                    self.line(format!(
-                        "let x = {} as u{size} as i{size};",
-                        get_reg(iced_x86::Register::EAX)
-                    ));
-                    self.line(format!("let y = {} as i{size};", get_op(instr, 0)));
-                    let s2 = size * 2;
-                    self.line(format!("let res = (x as i{s2} * y as i{s2}) as u{s2};"));
-                    self.line(format!(
-                        "let flag = res != (res as u{size} as i{size} as i{s2} as u{s2});
-                        ctx.cpu.flags.set(Flags::CF, flag);
-                        ctx.cpu.flags.set(Flags::OF, flag);"
-                    ));
+                    let x = get_reg(iced_x86::Register::EAX);
+                    let y = get_op(instr, 0);
+                    let res = format!("imul1_{size}({x}, {y}, &mut ctx.cpu.flags)");
                     match size {
-                        32 => {
-                            self.line(set_reg(
-                                iced_x86::Register::EDX,
-                                "(res >> 32) as u32".into(),
-                            ));
-                            self.line(set_reg(iced_x86::Register::EAX, "res as u32".into()));
-                        }
-                        _ => todo!("{size}"),
+                        8 => self.line(format!("ctx.cpu.regs.set_ax({res});")),
+                        16 => self.line(format!("ctx.cpu.regs.set_dx_ax({res});")),
+                        32 => self.line(format!("ctx.cpu.regs.set_edx_eax({res});")),
+                        _ => unreachable!(),
                     }
                 } else {
                     let (x, y) = match instr.op_count() {
                         2 => {
                             assert_eq!(op_size(instr, 0), op_size(instr, 1));
-                            (0, 1)
+                            (get_op(instr, 0), get_op(instr, 1))
                         }
                         3 => {
                             assert_eq!(op_size(instr, 0), op_size(instr, 1));
                             assert_eq!(op_size(instr, 1), op_size(instr, 2));
-                            (1, 2)
+                            (get_op(instr, 1), get_op(instr, 2))
                         }
                         _ => unreachable!(),
                     };
-                    self.line(format!("let x = {} as i{size};", get_op(instr, x)));
-                    self.line(format!("let y = {} as i{size};", get_op(instr, y)));
-                    self.line(
-                        "let (res, overflow) = x.overflowing_mul(y);
-                    ctx.cpu.flags.set(Flags::CF, overflow);
-                    ctx.cpu.flags.set(Flags::OF, overflow);",
-                    );
-                    self.line(set_op(instr, 0, format!("res as u{size}")));
+                    self.line(set_op(
+                        instr,
+                        0,
+                        format!("imul2_{size}({x}, {y}, &mut ctx.cpu.flags)"),
+                    ));
                 }
             }
 

@@ -130,3 +130,45 @@ pub fn mul<I: Int>(x: I, y: I, flags: &mut Flags) -> I {
     flags.set(Flags::CF, !tophalf.is_zero());
     res
 }
+
+/// One-argument imul, 32 bit inputs.
+pub fn imul1_32(x: u32, y: u32, flags: &mut Flags) -> u64 {
+    let x = x as i32;
+    let y = y as i32;
+    let res = (x as i64 * y as i64) as u64;
+    let flag = res != (res as u32 as i32 as i64 as u64);
+    flags.set(Flags::CF, flag);
+    flags.set(Flags::OF, flag);
+    res
+}
+
+/// One-argument imul, 16 bit inputs.
+pub fn imul1_16(x: u16, y: u16, flags: &mut Flags) -> u32 {
+    let x = x as i16;
+    let y = y as i16;
+    let res = (x as i32 * y as i32) as u32;
+    let flag = res != (res as u16 as i16 as i32 as u32);
+    flags.set(Flags::CF, flag);
+    flags.set(Flags::OF, flag);
+    res
+}
+
+/// Two or three-argument imul, 32 bit inputs.
+pub fn imul2_32(x: u32, y: u32, flags: &mut Flags) -> u32 {
+    let x = x as i32;
+    let y = y as i32;
+    let (res, overflow) = x.overflowing_mul(y);
+    flags.set(Flags::CF, overflow);
+    flags.set(Flags::OF, overflow);
+    res as u32
+}
+
+/// Two or three-argument imul, 16 bit inputs.
+pub fn imul2_16(x: u16, y: u16, flags: &mut Flags) -> u16 {
+    let x = x as i16;
+    let y = y as i16;
+    let (res, overflow) = x.overflowing_mul(y);
+    flags.set(Flags::CF, overflow);
+    flags.set(Flags::OF, overflow);
+    res as u16
+}
