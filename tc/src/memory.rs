@@ -11,8 +11,13 @@ pub struct Memory {
 }
 
 impl Memory {
-    pub fn alloc(&mut self, name: String, addr: u32, size: u32) {
-        let addr = self.mappings.alloc(name, Some(addr), size);
+    pub fn reserve(&mut self, name: String, addr: u32, size: u32) {
+        let addr = self.mappings.reserve(Mapping {
+            desc: name,
+            addr,
+            section: true,
+            size,
+        });
         let len = (addr + size) as usize;
         if len > self.bytes.len() {
             self.bytes.resize(len, 0);

@@ -6,22 +6,53 @@ use runtime::*;
 use winapi::*;
 
 use crate::externs::*;
+
 fn init_memory(ctx: &mut Context, mappings: &mut kernel32::Mappings) {
-    mappings.alloc("null page".to_string(), Some(0x0), 0x1000);
-    mappings.alloc("vtables".to_string(), Some(0x1000), 0x1000);
+    mappings.reserve(winapi::kernel32::Mapping {
+        desc: "null page".to_string(),
+        addr: 0x0,
+        size: 0x1000,
+        section: false,
+    });
+    mappings.reserve(winapi::kernel32::Mapping {
+        desc: "vtables".to_string(),
+        addr: 0x1000,
+        size: 0x1000,
+        section: false,
+    });
     let bytes = include_bytes!("../data/00001000.raw").as_slice();
     let out = &mut ctx.memory[0x1000..][..bytes.len()];
     out.copy_from_slice(bytes);
-    mappings.alloc("exe header".to_string(), Some(0x400000), 0x1000);
+    mappings.reserve(winapi::kernel32::Mapping {
+        desc: "exe header".to_string(),
+        addr: 0x400000,
+        size: 0x1000,
+        section: true,
+    });
     let bytes = include_bytes!("../data/00400000.raw").as_slice();
     let out = &mut ctx.memory[0x400000..][..bytes.len()];
     out.copy_from_slice(bytes);
-    mappings.alloc("UPX0".to_string(), Some(0x401000), 0x3f000);
-    mappings.alloc("UPX1".to_string(), Some(0x440000), 0xe000);
+    mappings.reserve(winapi::kernel32::Mapping {
+        desc: "UPX0".to_string(),
+        addr: 0x401000,
+        size: 0x3f000,
+        section: true,
+    });
+    mappings.reserve(winapi::kernel32::Mapping {
+        desc: "UPX1".to_string(),
+        addr: 0x440000,
+        size: 0xe000,
+        section: true,
+    });
     let bytes = include_bytes!("../data/00440000.raw").as_slice();
     let out = &mut ctx.memory[0x440000..][..bytes.len()];
     out.copy_from_slice(bytes);
-    mappings.alloc(".rsrc".to_string(), Some(0x44e000), 0x2000);
+    mappings.reserve(winapi::kernel32::Mapping {
+        desc: ".rsrc".to_string(),
+        addr: 0x44e000,
+        size: 0x2000,
+        section: true,
+    });
     let bytes = include_bytes!("../data/0044e000.raw").as_slice();
     let out = &mut ctx.memory[0x44e000..][..bytes.len()];
     out.copy_from_slice(bytes);
@@ -33,6 +64,7 @@ fn init_memory(ctx: &mut Context, mappings: &mut kernel32::Mappings) {
         winapi::ddraw::IDirectDrawPalette::VTABLE = 0x1228;
     }
 }
+
 pub fn x44d840(ctx: &mut Context) -> Cont {
     // 0044d840 pusha
     pushad(ctx);

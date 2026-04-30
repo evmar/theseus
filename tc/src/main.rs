@@ -34,10 +34,7 @@ fn run() -> anyhow::Result<()> {
     let args: Args = argh::from_env();
 
     let mut state = tc::State::default();
-    state
-        .mem
-        .mappings
-        .alloc("null page".into(), Some(0), 0x1000);
+    state.mem.mappings.alloc("null page".into(), 0x1000);
 
     let buf = std::fs::read(args.exe).unwrap();
     state.module = tc::load_pe(&mut state.mem, buf);

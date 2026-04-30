@@ -76,8 +76,9 @@ pub fn write_if_changed(path: &str, contents: &[u8]) -> anyhow::Result<()> {
 impl State {
     /// For any dll used by the module, write its vtables to the executable memory.
     fn add_vtables(&mut self) {
-        let vtables_addr = self.mem.mappings.alloc("vtables".into(), Some(0), 0x1000);
+        let vtables_addr = self.mem.mappings.alloc("vtables".into(), 0x1000);
         let mut iat_addr = vtables_addr;
+        assert!(iat_addr != 0);
         for (dll, vtables) in [
             ("ddraw", winapi::ddraw::VTABLES.as_slice()),
             ("dsound", winapi::dsound::VTABLES.as_slice()),
@@ -105,7 +106,9 @@ impl State {
     fn write_iat(&mut self) {
         let mut func_addr = 0xfafbfc00;
         for import in self.module.imports.iter_mut() {
-            assert!(import.iat_addr != 0); // should be assigned yet
+            if import.iat_addr == 0 {
+                panic!("{import:#x?}");
+            }
             import.func_addr = func_addr;
             func_addr += 1;
             self.mem.write::<u32>(import.iat_addr, import.func_addr);

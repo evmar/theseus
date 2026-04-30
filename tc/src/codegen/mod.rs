@@ -256,13 +256,15 @@ impl<'a> CodeGen<'a> {
             let zeroed = buf.iter().all(|&b| b == 0);
 
             self.line(format!(
-                "mappings.alloc(
-                {desc:?}.to_string(),
-                Some({addr:#x}),
-                {size:#x}
-            );",
+                "mappings.reserve(winapi::kernel32::Mapping {{
+                    desc: {desc:?}.to_string(),
+                    addr: {addr:#x},
+                    size: {size:#x},
+                    section: {section},
+                }});",
                 desc = map.desc,
                 size = buf.len(),
+                section = map.section,
             ));
             if !zeroed {
                 self.line(format!(

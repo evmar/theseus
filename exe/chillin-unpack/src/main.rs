@@ -73,8 +73,8 @@ fn find_iat(functions: &mut [tc::Import], mappings: &[kernel32::Mapping], memory
                 let ofs = mapping.addr + ofs as u32;
                 match iat_addr {
                     None => iat_addr = Some(ofs),
-                    Some(_) => {
-                        log::error!("multiple matches: {:x} and {:x}", ofs, iat_addr.unwrap());
+                    Some(addr) => {
+                        log::error!("found additional match after {:x} at {:x}", addr, ofs);
                         break;
                     }
                 }
@@ -96,13 +96,13 @@ pub fn do_unpack(ctx: &mut runtime::Context) {
     let mut tc = tc::State::default();
 
     // Use the same mappings as the input file as sections of the output.
-    // Filter to "fixed" sections to avoid serializing out the process heap etc.
+    // Filter to sections to avoid serializing out the process heap etc.
     tc.mem.mappings = kernel32::Mappings::from(
         kernel32::lock()
             .mappings
             .vec()
             .iter()
-            .filter(|m| m.fixed)
+            .filter(|m| m.addr == 0 || m.section)
             .cloned()
             .collect::<Vec<_>>(),
     );

@@ -94,7 +94,7 @@ pub fn VirtualAlloc(
     _flProtect: u32,        /* PAGE_PROTECTION_FLAGS */
 ) -> u32 {
     assert_eq!(lpAddress, 0);
-    lock().mappings.alloc("VirtualAlloc".into(), None, dwSize)
+    lock().mappings.alloc("VirtualAlloc".into(), dwSize)
     /*
     let memory = sys.memory_mut();
     if lpAddress != 0 {

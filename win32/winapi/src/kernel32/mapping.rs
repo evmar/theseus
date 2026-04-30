@@ -1,11 +1,10 @@
 #[derive(Default, Clone)]
 pub struct Mapping {
-    #[allow(unused)]
     pub desc: String,
     pub addr: u32,
     pub size: u32,
-    // If true, created at a fixed address (not dynamically chosen)
-    pub fixed: bool,
+    // If true, created from a file section (not dynamically created)
+    pub section: bool,
 }
 
 impl Mapping {
@@ -42,15 +41,30 @@ pub fn round_to_page(size: u32) -> u32 {
 }
 
 impl Mappings {
-    pub fn alloc(&mut self, desc: String, addr: Option<u32>, size: u32) -> u32 {
+    pub fn reserve(&mut self, mut mapping: Mapping) -> u32 {
+        let index = self.insert_index(&mut mapping);
+        let addr = mapping.addr;
+        self.mappings.insert(index, mapping);
+        return addr;
+    }
+
+    pub fn alloc(&mut self, desc: String, size: u32) -> u32 {
         let size = round_to_page(size);
         let mut new_mapping = Mapping {
             desc,
-            addr: addr.unwrap_or(0),
+            addr: 0,
+            section: false,
             size,
-            fixed: addr.is_some(),
         };
 
+        let index = self.insert_index(&mut new_mapping);
+        let addr = new_mapping.addr;
+        self.mappings.insert(index, new_mapping);
+        return addr;
+    }
+
+    /// Choose the index into self.mappings to add this mapping, potentially assigning it an address.
+    fn insert_index(&self, new_mapping: &mut Mapping) -> usize {
         let mut prev_end = 0;
         for (i, mapping) in self.mappings.iter().enumerate() {
             let space = mapping.addr - prev_end;
@@ -59,14 +73,12 @@ impl Mappings {
                     if space < new_mapping.size {
                         panic!("no space for {new_mapping:#x?}");
                     }
-                    self.mappings.insert(i, new_mapping);
-                    return prev_end;
+                    return i;
                 }
             } else {
-                if space >= size {
+                if space >= new_mapping.size {
                     new_mapping.addr = prev_end;
-                    self.mappings.insert(i, new_mapping);
-                    return prev_end;
+                    return i;
                 }
             }
             prev_end = mapping.addr + mapping.size;
@@ -76,9 +88,7 @@ impl Mappings {
         } else {
             new_mapping.addr = prev_end;
         }
-        let addr = new_mapping.addr;
-        self.mappings.push(new_mapping);
-        return addr;
+        self.mappings.len()
     }
 
     pub fn dump(&self) {

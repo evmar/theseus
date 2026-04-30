@@ -88,7 +88,6 @@ impl kernel32::State {
     pub fn init_thread(&mut self, ctx: &mut Context, peb_addr: u32) {
         let teb_addr = self.mappings.alloc(
             format!("thread {} TEB", ctx.thread_id),
-            None,
             std::mem::size_of::<TEB>() as u32,
         );
         let buf = &mut ctx.memory[teb_addr..][..std::mem::size_of::<TEB>()];
@@ -98,9 +97,9 @@ impl kernel32::State {
         ctx.cpu.regs.fs_base = teb_addr;
 
         let stack_size = 64 << 10;
-        let stack_addr =
-            self.mappings
-                .alloc(format!("thread {} stack", ctx.thread_id), None, stack_size);
+        let stack_addr = self
+            .mappings
+            .alloc(format!("thread {} stack", ctx.thread_id), stack_size);
         let stack_pointer = stack_addr + stack_size;
         ctx.cpu.regs.esp = stack_pointer;
         ctx.cpu.regs.ebp = stack_pointer;

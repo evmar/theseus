@@ -110,7 +110,7 @@ pub fn do_unpack(ctx: &mut runtime::Context) {
             .mappings
             .vec()
             .iter()
-            .filter(|m| m.fixed)
+            .filter(|m| m.addr == 0 || m.section)
             .cloned()
             .collect::<Vec<_>>(),
     );

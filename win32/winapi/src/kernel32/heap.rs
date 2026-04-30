@@ -40,7 +40,7 @@ pub fn HeapCreate(
     // with exceptions or threads support...
     let size = dwInitialSize.max(20 << 20);
     let mut state = kernel32::lock();
-    let addr = state.mappings.alloc("HeapCreate".into(), None, size);
+    let addr = state.mappings.alloc("HeapCreate".into(), size);
     let heap = Heap::new(addr, size);
     state.heaps.insert(addr, heap);
     addr

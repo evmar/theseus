@@ -6,26 +6,57 @@ use runtime::*;
 use winapi::*;
 
 fn init_memory(ctx: &mut Context, mappings: &mut kernel32::Mappings) {
-    mappings.alloc("null page".to_string(), Some(0x0), 0x1000);
-    mappings.alloc("imported functions".to_string(), Some(0x1000), 0x1000);
-    mappings.alloc("exe header".to_string(), Some(0x400000), 0x1000);
+    mappings.reserve(winapi::kernel32::Mapping {
+        desc: "null page".to_string(),
+        addr: 0x0,
+        size: 0x1000,
+        section: false,
+    });
+    mappings.reserve(winapi::kernel32::Mapping {
+        desc: "vtables".to_string(),
+        addr: 0x1000,
+        size: 0x1000,
+        section: false,
+    });
+    mappings.reserve(winapi::kernel32::Mapping {
+        desc: "exe header".to_string(),
+        addr: 0x400000,
+        size: 0x1000,
+        section: true,
+    });
     let bytes = include_bytes!("../data/00400000.raw").as_slice();
     let out = &mut ctx.memory[0x400000..][..bytes.len()];
     out.copy_from_slice(bytes);
-    mappings.alloc(".text".to_string(), Some(0x401000), 0x1000);
+    mappings.reserve(winapi::kernel32::Mapping {
+        desc: ".text".to_string(),
+        addr: 0x401000,
+        size: 0x1000,
+        section: true,
+    });
     let bytes = include_bytes!("../data/00401000.raw").as_slice();
     let out = &mut ctx.memory[0x401000..][..bytes.len()];
     out.copy_from_slice(bytes);
-    mappings.alloc(".rdata".to_string(), Some(0x402000), 0x1000);
+    mappings.reserve(winapi::kernel32::Mapping {
+        desc: ".rdata".to_string(),
+        addr: 0x402000,
+        size: 0x1000,
+        section: true,
+    });
     let bytes = include_bytes!("../data/00402000.raw").as_slice();
     let out = &mut ctx.memory[0x402000..][..bytes.len()];
     out.copy_from_slice(bytes);
-    mappings.alloc(".reloc".to_string(), Some(0x403000), 0x1000);
+    mappings.reserve(winapi::kernel32::Mapping {
+        desc: ".reloc".to_string(),
+        addr: 0x403000,
+        size: 0x1000,
+        section: true,
+    });
     let bytes = include_bytes!("../data/00403000.raw").as_slice();
     let out = &mut ctx.memory[0x403000..][..bytes.len()];
     out.copy_from_slice(bytes);
 }
-pub fn x00401000(ctx: &mut Context) -> Cont {
+
+pub fn x401000(ctx: &mut Context) -> Cont {
     // 00401000 push 0FFFFFFF5h
     push(ctx, 0xfffffff5u32);
     // 00401002 call dword ptr ds:[402058h]
@@ -33,7 +64,7 @@ pub fn x00401000(ctx: &mut Context) -> Cont {
     call(ctx, 0x401008, dst)
 }
 
-pub fn x00401008(ctx: &mut Context) -> Cont {
+pub fn x401008(ctx: &mut Context) -> Cont {
     // 00401008 xor ecx,ecx
     ctx.cpu.regs.ecx = xor(ctx.cpu.regs.ecx, ctx.cpu.regs.ecx, &mut ctx.cpu.flags);
     // 0040100a push ecx
@@ -51,24 +82,24 @@ pub fn x00401008(ctx: &mut Context) -> Cont {
     call(ctx, 0x40101a, dst)
 }
 
-pub fn x0040101a(ctx: &mut Context) -> Cont {
+pub fn x40101a(ctx: &mut Context) -> Cont {
     // 0040101a ret
     ret(ctx, 0)
 }
 
 const BLOCKS: [(u32, fn(&mut Context) -> Cont); 6] = [
-    (0x001000, kernel32::GetStdHandle_stdcall),
-    (0x001001, kernel32::WriteFile_stdcall),
-    (0x401000, x00401000),
-    (0x401008, x00401008),
-    (0x40101a, x0040101a),
+    (0x401000, x401000),
+    (0x401008, x401008),
+    (0x40101a, x40101a),
+    (0xfafbfc00, kernel32::GetStdHandle_stdcall),
+    (0xfafbfc01, kernel32::WriteFile_stdcall),
     (runtime::RETURN_FROM_X86_ADDR, runtime::return_from_x86),
 ];
 
 pub const EXEDATA: EXEData = EXEData {
     image_base: 0x400000,
-    resources: 0..0,
+    resources: 0x0..0x0,
     blocks: &BLOCKS,
     init_memory,
-    entry_point: Cont(x00401000),
+    entry_point: Cont(x401000),
 };

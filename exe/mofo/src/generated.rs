@@ -6,37 +6,63 @@ use runtime::*;
 use winapi::*;
 
 fn init_memory(ctx: &mut Context, mappings: &mut kernel32::Mappings) {
-    mappings.alloc("null page".to_string(), Some(0x0), 0x1000);
-    mappings.alloc("vtables".to_string(), Some(0x1000), 0x1000);
+    mappings.reserve(winapi::kernel32::Mapping {
+        desc: "null page".to_string(),
+        addr: 0x0,
+        size: 0x1000,
+        section: false,
+    });
+    mappings.reserve(winapi::kernel32::Mapping {
+        desc: "vtables".to_string(),
+        addr: 0x1000,
+        size: 0x1000,
+        section: false,
+    });
     let bytes = include_bytes!("../data/00001000.raw").as_slice();
     let out = &mut ctx.memory[0x1000..][..bytes.len()];
     out.copy_from_slice(bytes);
-    mappings.alloc("vtables".to_string(), Some(0x2000), 0x1000);
-    let bytes = include_bytes!("../data/00002000.raw").as_slice();
-    let out = &mut ctx.memory[0x2000..][..bytes.len()];
-    out.copy_from_slice(bytes);
-    mappings.alloc("exe header".to_string(), Some(0x400000), 0x1000);
+    mappings.reserve(winapi::kernel32::Mapping {
+        desc: "exe header".to_string(),
+        addr: 0x400000,
+        size: 0x1000,
+        section: true,
+    });
     let bytes = include_bytes!("../data/00400000.raw").as_slice();
     let out = &mut ctx.memory[0x400000..][..bytes.len()];
     out.copy_from_slice(bytes);
-    mappings.alloc("UPX0".to_string(), Some(0x401000), 0x3f000);
+    mappings.reserve(winapi::kernel32::Mapping {
+        desc: "UPX0".to_string(),
+        addr: 0x401000,
+        size: 0x3f000,
+        section: true,
+    });
     let bytes = include_bytes!("../data/00401000.raw").as_slice();
     let out = &mut ctx.memory[0x401000..][..bytes.len()];
     out.copy_from_slice(bytes);
-    mappings.alloc("UPX1".to_string(), Some(0x440000), 0xe000);
+    mappings.reserve(winapi::kernel32::Mapping {
+        desc: "UPX1".to_string(),
+        addr: 0x440000,
+        size: 0xe000,
+        section: true,
+    });
     let bytes = include_bytes!("../data/00440000.raw").as_slice();
     let out = &mut ctx.memory[0x440000..][..bytes.len()];
     out.copy_from_slice(bytes);
-    mappings.alloc(".rsrc".to_string(), Some(0x44e000), 0x2000);
+    mappings.reserve(winapi::kernel32::Mapping {
+        desc: ".rsrc".to_string(),
+        addr: 0x44e000,
+        size: 0x2000,
+        section: true,
+    });
     let bytes = include_bytes!("../data/0044e000.raw").as_slice();
     let out = &mut ctx.memory[0x44e000..][..bytes.len()];
     out.copy_from_slice(bytes);
     unsafe {
-        winapi::ddraw::IDirectDraw::VTABLE = 0x2000;
-        winapi::ddraw::IDirectDrawSurface::VTABLE = 0x205c;
-        winapi::ddraw::IDirectDraw7::VTABLE = 0x20ec;
-        winapi::ddraw::IDirectDrawSurface7::VTABLE = 0x2164;
-        winapi::ddraw::IDirectDrawPalette::VTABLE = 0x2228;
+        winapi::ddraw::IDirectDraw::VTABLE = 0x1000;
+        winapi::ddraw::IDirectDrawSurface::VTABLE = 0x105c;
+        winapi::ddraw::IDirectDraw7::VTABLE = 0x10ec;
+        winapi::ddraw::IDirectDrawSurface7::VTABLE = 0x1164;
+        winapi::ddraw::IDirectDrawPalette::VTABLE = 0x1228;
     }
 }
 
@@ -12475,7 +12501,7 @@ pub fn x40599c(ctx: &mut Context) -> Cont {
     push(ctx, 0x40b3c0u32);
     // 004059a6 imul ecx
     ctx.cpu.regs.set_edx_eax(imul1_32(
-        ctx.cpu.regs.eax,
+        ctx.cpu.regs.eax as u32,
         ctx.cpu.regs.ecx,
         &mut ctx.cpu.flags,
     ));
@@ -18065,7 +18091,7 @@ pub fn x406ea8(ctx: &mut Context) -> Cont {
     ctx.cpu.regs.eax = 0x66666667u32;
     // 00406ebf imul edx
     ctx.cpu.regs.set_edx_eax(imul1_32(
-        ctx.cpu.regs.eax,
+        ctx.cpu.regs.eax as u32,
         ctx.cpu.regs.edx,
         &mut ctx.cpu.flags,
     ));
@@ -18098,7 +18124,7 @@ pub fn x406ea8(ctx: &mut Context) -> Cont {
         .read::<u32>(ctx.cpu.regs.ecx.wrapping_add(0x8u32));
     // 00406ee2 imul edx
     ctx.cpu.regs.set_edx_eax(imul1_32(
-        ctx.cpu.regs.eax,
+        ctx.cpu.regs.eax as u32,
         ctx.cpu.regs.edx,
         &mut ctx.cpu.flags,
     ));
@@ -18130,7 +18156,7 @@ pub fn x406ea8(ctx: &mut Context) -> Cont {
         .write::<u32>(ctx.cpu.regs.esp.wrapping_add(0x38u32), ctx.cpu.regs.ebp);
     // 00406f06 imul edx
     ctx.cpu.regs.set_edx_eax(imul1_32(
-        ctx.cpu.regs.eax,
+        ctx.cpu.regs.eax as u32,
         ctx.cpu.regs.edx,
         &mut ctx.cpu.flags,
     ));
@@ -18155,7 +18181,7 @@ pub fn x406ea8(ctx: &mut Context) -> Cont {
     ctx.cpu.regs.edx = sub(ctx.cpu.regs.edx, ctx.cpu.regs.ebp, &mut ctx.cpu.flags);
     // 00406f23 imul edx
     ctx.cpu.regs.set_edx_eax(imul1_32(
-        ctx.cpu.regs.eax,
+        ctx.cpu.regs.eax as u32,
         ctx.cpu.regs.edx,
         &mut ctx.cpu.flags,
     ));
@@ -18187,7 +18213,7 @@ pub fn x406ea8(ctx: &mut Context) -> Cont {
     ctx.cpu.regs.eax = 0x66666667u32;
     // 00406f47 imul edx
     ctx.cpu.regs.set_edx_eax(imul1_32(
-        ctx.cpu.regs.eax,
+        ctx.cpu.regs.eax as u32,
         ctx.cpu.regs.edx,
         &mut ctx.cpu.flags,
     ));
@@ -18219,7 +18245,7 @@ pub fn x406ea8(ctx: &mut Context) -> Cont {
     ctx.cpu.regs.eax = 0x66666667u32;
     // 00406f6b imul edx
     ctx.cpu.regs.set_edx_eax(imul1_32(
-        ctx.cpu.regs.eax,
+        ctx.cpu.regs.eax as u32,
         ctx.cpu.regs.edx,
         &mut ctx.cpu.flags,
     ));
@@ -18251,7 +18277,7 @@ pub fn x406ea8(ctx: &mut Context) -> Cont {
     ctx.cpu.regs.eax = 0x66666667u32;
     // 00406f8f imul edx
     ctx.cpu.regs.set_edx_eax(imul1_32(
-        ctx.cpu.regs.eax,
+        ctx.cpu.regs.eax as u32,
         ctx.cpu.regs.edx,
         &mut ctx.cpu.flags,
     ));
@@ -18283,7 +18309,7 @@ pub fn x406ea8(ctx: &mut Context) -> Cont {
     ctx.cpu.regs.eax = 0x66666667u32;
     // 00406fb3 imul edx
     ctx.cpu.regs.set_edx_eax(imul1_32(
-        ctx.cpu.regs.eax,
+        ctx.cpu.regs.eax as u32,
         ctx.cpu.regs.edx,
         &mut ctx.cpu.flags,
     ));
@@ -18318,7 +18344,7 @@ pub fn x406fcb(ctx: &mut Context) -> Cont {
         .write::<u32>(ctx.cpu.regs.esp.wrapping_add(0x4cu32), ctx.cpu.regs.esi);
     // 00406fda imul edx
     ctx.cpu.regs.set_edx_eax(imul1_32(
-        ctx.cpu.regs.eax,
+        ctx.cpu.regs.eax as u32,
         ctx.cpu.regs.edx,
         &mut ctx.cpu.flags,
     ));
@@ -18349,7 +18375,7 @@ pub fn x406fcb(ctx: &mut Context) -> Cont {
         .write::<u32>(ctx.cpu.regs.esp.wrapping_add(0x54u32), ctx.cpu.regs.ebx);
     // 00406ffd imul edx
     ctx.cpu.regs.set_edx_eax(imul1_32(
-        ctx.cpu.regs.eax,
+        ctx.cpu.regs.eax as u32,
         ctx.cpu.regs.edx,
         &mut ctx.cpu.flags,
     ));
@@ -18380,7 +18406,7 @@ pub fn x406fcb(ctx: &mut Context) -> Cont {
         .write::<u32>(ctx.cpu.regs.esp.wrapping_add(0x1cu32), 0x14u32);
     // 00407027 imul edx
     ctx.cpu.regs.set_edx_eax(imul1_32(
-        ctx.cpu.regs.eax,
+        ctx.cpu.regs.eax as u32,
         ctx.cpu.regs.edx,
         &mut ctx.cpu.flags,
     ));
@@ -18405,7 +18431,7 @@ pub fn x406fcb(ctx: &mut Context) -> Cont {
     ctx.cpu.regs.edx = sub(ctx.cpu.regs.edx, ctx.cpu.regs.ebp, &mut ctx.cpu.flags);
     // 00407045 imul edx
     ctx.cpu.regs.set_edx_eax(imul1_32(
-        ctx.cpu.regs.eax,
+        ctx.cpu.regs.eax as u32,
         ctx.cpu.regs.edx,
         &mut ctx.cpu.flags,
     ));
@@ -22061,7 +22087,7 @@ pub fn x407db1(ctx: &mut Context) -> Cont {
     ctx.cpu.regs.ecx = add(ctx.cpu.regs.ecx, ctx.cpu.regs.edx, &mut ctx.cpu.flags);
     // 00407ddb imul ecx
     ctx.cpu.regs.set_edx_eax(imul1_32(
-        ctx.cpu.regs.eax,
+        ctx.cpu.regs.eax as u32,
         ctx.cpu.regs.ecx,
         &mut ctx.cpu.flags,
     ));

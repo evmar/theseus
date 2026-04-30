@@ -79,7 +79,7 @@ fn align_to_4(x: usize) -> usize {
 
 impl kernel32::State {
     pub fn init_process(&mut self, ctx: &mut Context) {
-        let process_data_addr = self.mappings.alloc("process data".into(), None, 0x1000);
+        let process_data_addr = self.mappings.alloc("process data".into(), 0x1000);
 
         let origin = ctx.memory.as_ptr() as usize;
         let buf = &mut ctx.memory[process_data_addr..][..0x1000];
@@ -113,7 +113,7 @@ impl kernel32::State {
         peb.ProcessParameters = (params as *const _ as usize - origin) as u32;
 
         let heap_size = 4 << 20;
-        let heap_addr = self.mappings.alloc("process heap".into(), None, heap_size);
+        let heap_addr = self.mappings.alloc("process heap".into(), heap_size);
         let process_heap = Heap::new(heap_addr, heap_size);
         peb.ProcessHeap = process_heap.addr;
         self.process_heap = process_heap;

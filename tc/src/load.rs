@@ -6,13 +6,13 @@ pub fn load_pe(mem: &mut Memory, buf: Vec<u8>) -> Module {
     let f = pe::File::parse(&buf).unwrap();
 
     let image_base = f.opt_header.ImageBase;
-    mem.alloc("exe header".into(), image_base, 0x1000);
+    mem.reserve("exe header".into(), image_base, 0x1000);
     mem.put(image_base, &buf[..0x1000.min(buf.len())]);
     let mut code_range = None;
     for sec in &f.sections {
         let addr = image_base + sec.VirtualAddress;
         let size = winapi::kernel32::round_to_page(sec.SizeOfRawData.max(sec.VirtualSize));
-        mem.alloc(sec.name().unwrap().into(), addr, size);
+        mem.reserve(sec.name().unwrap().into(), addr, size);
 
         let flags = sec.characteristics().unwrap();
         let load_data =
