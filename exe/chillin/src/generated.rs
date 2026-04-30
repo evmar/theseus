@@ -8,6 +8,10 @@ use winapi::*;
 fn init_memory(ctx: &mut Context, mappings: &mut kernel32::Mappings) {
     mappings.alloc("null page".to_string(), Some(0x0), 0x1000);
     mappings.alloc("imported functions".to_string(), Some(0x1000), 0x1000);
+    mappings.alloc("vtables".to_string(), Some(0x2000), 0x1000);
+    let bytes = include_bytes!("../data/00002000.raw").as_slice();
+    let out = &mut ctx.memory[0x2000..][..bytes.len()];
+    out.copy_from_slice(bytes);
     mappings.alloc("exe header".to_string(), Some(0x400000), 0x1000);
     let bytes = include_bytes!("../data/00400000.raw").as_slice();
     let out = &mut ctx.memory[0x400000..][..bytes.len()];
@@ -24,6 +28,15 @@ fn init_memory(ctx: &mut Context, mappings: &mut kernel32::Mappings) {
     let bytes = include_bytes!("../data/004cc000.raw").as_slice();
     let out = &mut ctx.memory[0x4cc000..][..bytes.len()];
     out.copy_from_slice(bytes);
+    unsafe {
+        winapi::ddraw::IDirectDraw::VTABLE = 0x2000;
+        winapi::ddraw::IDirectDrawSurface::VTABLE = 0x205c;
+        winapi::ddraw::IDirectDraw7::VTABLE = 0x20ec;
+        winapi::ddraw::IDirectDrawSurface7::VTABLE = 0x2164;
+        winapi::ddraw::IDirectDrawPalette::VTABLE = 0x2228;
+        winapi::dsound::IDirectSound::VTABLE = 0x2244;
+        winapi::dsound::IDirectSoundBuffer::VTABLE = 0x2270;
+    }
 }
 
 pub fn x401000(ctx: &mut Context) -> Cont {
@@ -40707,7 +40720,7 @@ pub fn x41c17d(ctx: &mut Context) -> Cont {
     todo!();
 }
 
-const BLOCKS: [(u32, fn(&mut Context) -> Cont); 1828] = [
+const BLOCKS: [(u32, fn(&mut Context) -> Cont); 2005] = [
     (0x401000, x401000),
     (0x401015, x401015),
     (0x401017, x401017),
@@ -42535,6 +42548,318 @@ const BLOCKS: [(u32, fn(&mut Context) -> Cont); 1828] = [
     (0xfafbfc19, user32::ValidateRect_stdcall),
     (0xfafbfc1a, winmm::timeKillEvent_stdcall),
     (0xfafbfc1b, winmm::timeSetEvent_stdcall),
+    (0xfafbfc1c, ddraw::IDirectDraw::QueryInterface_stdcall),
+    (0xfafbfc1d, ddraw::IDirectDraw::AddRef_stdcall),
+    (0xfafbfc1e, ddraw::IDirectDraw::Release_stdcall),
+    (0xfafbfc1f, ddraw::IDirectDraw::Compact_stdcall),
+    (0xfafbfc20, ddraw::IDirectDraw::CreateClipper_stdcall),
+    (0xfafbfc21, ddraw::IDirectDraw::CreatePalette_stdcall),
+    (0xfafbfc22, ddraw::IDirectDraw::CreateSurface_stdcall),
+    (0xfafbfc23, ddraw::IDirectDraw::DuplicateSurface_stdcall),
+    (0xfafbfc24, ddraw::IDirectDraw::EnumDisplayModes_stdcall),
+    (0xfafbfc25, ddraw::IDirectDraw::EnumSurfaces_stdcall),
+    (0xfafbfc26, ddraw::IDirectDraw::FlipToGDISurface_stdcall),
+    (0xfafbfc27, ddraw::IDirectDraw::GetCaps_stdcall),
+    (0xfafbfc28, ddraw::IDirectDraw::GetDisplayMode_stdcall),
+    (0xfafbfc29, ddraw::IDirectDraw::GetFourCCCodes_stdcall),
+    (0xfafbfc2a, ddraw::IDirectDraw::GetGDISurface_stdcall),
+    (0xfafbfc2b, ddraw::IDirectDraw::GetMonitorFrequency_stdcall),
+    (0xfafbfc2c, ddraw::IDirectDraw::GetScanLine_stdcall),
+    (
+        0xfafbfc2d,
+        ddraw::IDirectDraw::GetVerticalBlankStatus_stdcall,
+    ),
+    (0xfafbfc2e, ddraw::IDirectDraw::Initialize_stdcall),
+    (0xfafbfc2f, ddraw::IDirectDraw::RestoreDisplayMode_stdcall),
+    (0xfafbfc30, ddraw::IDirectDraw::SetCooperativeLevel_stdcall),
+    (0xfafbfc31, ddraw::IDirectDraw::SetDisplayMode_stdcall),
+    (0xfafbfc32, ddraw::IDirectDraw::WaitForVerticalBlank_stdcall),
+    (
+        0xfafbfc33,
+        ddraw::IDirectDrawSurface::QueryInterface_stdcall,
+    ),
+    (0xfafbfc34, ddraw::IDirectDrawSurface::AddRef_stdcall),
+    (0xfafbfc35, ddraw::IDirectDrawSurface::Release_stdcall),
+    (
+        0xfafbfc36,
+        ddraw::IDirectDrawSurface::AddAttachedSurface_stdcall,
+    ),
+    (
+        0xfafbfc37,
+        ddraw::IDirectDrawSurface::AddOverlayDirtyRect_stdcall,
+    ),
+    (0xfafbfc38, ddraw::IDirectDrawSurface::Blt_stdcall),
+    (0xfafbfc39, ddraw::IDirectDrawSurface::BltBatch_stdcall),
+    (0xfafbfc3a, ddraw::IDirectDrawSurface::BltFast_stdcall),
+    (
+        0xfafbfc3b,
+        ddraw::IDirectDrawSurface::DeleteAttachedSurface_stdcall,
+    ),
+    (
+        0xfafbfc3c,
+        ddraw::IDirectDrawSurface::EnumAttachedSurfaces_stdcall,
+    ),
+    (
+        0xfafbfc3d,
+        ddraw::IDirectDrawSurface::EnumOverlayZOrders_stdcall,
+    ),
+    (0xfafbfc3e, ddraw::IDirectDrawSurface::Flip_stdcall),
+    (
+        0xfafbfc3f,
+        ddraw::IDirectDrawSurface::GetAttachedSurface_stdcall,
+    ),
+    (0xfafbfc40, ddraw::IDirectDrawSurface::GetBltStatus_stdcall),
+    (0xfafbfc41, ddraw::IDirectDrawSurface::GetCaps_stdcall),
+    (0xfafbfc42, ddraw::IDirectDrawSurface::GetClipper_stdcall),
+    (0xfafbfc43, ddraw::IDirectDrawSurface::GetColorKey_stdcall),
+    (0xfafbfc44, ddraw::IDirectDrawSurface::GetDC_stdcall),
+    (0xfafbfc45, ddraw::IDirectDrawSurface::GetFlipStatus_stdcall),
+    (
+        0xfafbfc46,
+        ddraw::IDirectDrawSurface::GetOverlayPosition_stdcall,
+    ),
+    (0xfafbfc47, ddraw::IDirectDrawSurface::GetPalette_stdcall),
+    (
+        0xfafbfc48,
+        ddraw::IDirectDrawSurface::GetPixelFormat_stdcall,
+    ),
+    (
+        0xfafbfc49,
+        ddraw::IDirectDrawSurface::GetSurfaceDesc_stdcall,
+    ),
+    (0xfafbfc4a, ddraw::IDirectDrawSurface::Initialize_stdcall),
+    (0xfafbfc4b, ddraw::IDirectDrawSurface::IsLost_stdcall),
+    (0xfafbfc4c, ddraw::IDirectDrawSurface::Lock_stdcall),
+    (0xfafbfc4d, ddraw::IDirectDrawSurface::ReleaseDC_stdcall),
+    (0xfafbfc4e, ddraw::IDirectDrawSurface::Restore_stdcall),
+    (0xfafbfc4f, ddraw::IDirectDrawSurface::SetClipper_stdcall),
+    (0xfafbfc50, ddraw::IDirectDrawSurface::SetColorKey_stdcall),
+    (
+        0xfafbfc51,
+        ddraw::IDirectDrawSurface::SetOverlayPosition_stdcall,
+    ),
+    (0xfafbfc52, ddraw::IDirectDrawSurface::SetPalette_stdcall),
+    (0xfafbfc53, ddraw::IDirectDrawSurface::Unlock_stdcall),
+    (0xfafbfc54, ddraw::IDirectDrawSurface::UpdateOverlay_stdcall),
+    (
+        0xfafbfc55,
+        ddraw::IDirectDrawSurface::UpdateOverlayDisplay_stdcall,
+    ),
+    (
+        0xfafbfc56,
+        ddraw::IDirectDrawSurface::UpdateOverlayZOrder_stdcall,
+    ),
+    (0xfafbfc57, ddraw::IDirectDraw7::QueryInterface_stdcall),
+    (0xfafbfc58, ddraw::IDirectDraw7::AddRef_stdcall),
+    (0xfafbfc59, ddraw::IDirectDraw7::Release_stdcall),
+    (0xfafbfc5a, ddraw::IDirectDraw7::Compact_stdcall),
+    (0xfafbfc5b, ddraw::IDirectDraw7::CreateClipper_stdcall),
+    (0xfafbfc5c, ddraw::IDirectDraw7::CreatePalette_stdcall),
+    (0xfafbfc5d, ddraw::IDirectDraw7::CreateSurface_stdcall),
+    (0xfafbfc5e, ddraw::IDirectDraw7::DuplicateSurface_stdcall),
+    (0xfafbfc5f, ddraw::IDirectDraw7::EnumDisplayModes_stdcall),
+    (0xfafbfc60, ddraw::IDirectDraw7::EnumSurfaces_stdcall),
+    (0xfafbfc61, ddraw::IDirectDraw7::FlipToGDISurface_stdcall),
+    (0xfafbfc62, ddraw::IDirectDraw7::GetCaps_stdcall),
+    (0xfafbfc63, ddraw::IDirectDraw7::GetDisplayMode_stdcall),
+    (0xfafbfc64, ddraw::IDirectDraw7::GetFourCCCodes_stdcall),
+    (0xfafbfc65, ddraw::IDirectDraw7::GetGDISurface_stdcall),
+    (0xfafbfc66, ddraw::IDirectDraw7::GetMonitorFrequency_stdcall),
+    (0xfafbfc67, ddraw::IDirectDraw7::GetScanLine_stdcall),
+    (
+        0xfafbfc68,
+        ddraw::IDirectDraw7::GetVerticalBlankStatus_stdcall,
+    ),
+    (0xfafbfc69, ddraw::IDirectDraw7::Initialize_stdcall),
+    (0xfafbfc6a, ddraw::IDirectDraw7::RestoreDisplayMode_stdcall),
+    (0xfafbfc6b, ddraw::IDirectDraw7::SetCooperativeLevel_stdcall),
+    (0xfafbfc6c, ddraw::IDirectDraw7::SetDisplayMode_stdcall),
+    (
+        0xfafbfc6d,
+        ddraw::IDirectDraw7::WaitForVerticalBlank_stdcall,
+    ),
+    (0xfafbfc6e, ddraw::IDirectDraw7::GetAvailableVidMem_stdcall),
+    (0xfafbfc6f, ddraw::IDirectDraw7::GetSurfaceFromDC_stdcall),
+    (0xfafbfc70, ddraw::IDirectDraw7::RestoreAllSurfaces_stdcall),
+    (
+        0xfafbfc71,
+        ddraw::IDirectDraw7::TestCooperativeLevel_stdcall,
+    ),
+    (0xfafbfc72, ddraw::IDirectDraw7::GetDeviceIdentifier_stdcall),
+    (0xfafbfc73, ddraw::IDirectDraw7::StartModeTest_stdcall),
+    (0xfafbfc74, ddraw::IDirectDraw7::EvaluateMode_stdcall),
+    (
+        0xfafbfc75,
+        ddraw::IDirectDrawSurface7::QueryInterface_stdcall,
+    ),
+    (0xfafbfc76, ddraw::IDirectDrawSurface7::AddRef_stdcall),
+    (0xfafbfc77, ddraw::IDirectDrawSurface7::Release_stdcall),
+    (
+        0xfafbfc78,
+        ddraw::IDirectDrawSurface7::AddAttachedSurface_stdcall,
+    ),
+    (
+        0xfafbfc79,
+        ddraw::IDirectDrawSurface7::AddOverlayDirtyRect_stdcall,
+    ),
+    (0xfafbfc7a, ddraw::IDirectDrawSurface7::Blt_stdcall),
+    (0xfafbfc7b, ddraw::IDirectDrawSurface7::BltBatch_stdcall),
+    (0xfafbfc7c, ddraw::IDirectDrawSurface7::BltFast_stdcall),
+    (
+        0xfafbfc7d,
+        ddraw::IDirectDrawSurface7::DeleteAttachedSurface_stdcall,
+    ),
+    (
+        0xfafbfc7e,
+        ddraw::IDirectDrawSurface7::EnumAttachedSurfaces_stdcall,
+    ),
+    (
+        0xfafbfc7f,
+        ddraw::IDirectDrawSurface7::EnumOverlayZOrders_stdcall,
+    ),
+    (0xfafbfc80, ddraw::IDirectDrawSurface7::Flip_stdcall),
+    (
+        0xfafbfc81,
+        ddraw::IDirectDrawSurface7::GetAttachedSurface_stdcall,
+    ),
+    (0xfafbfc82, ddraw::IDirectDrawSurface7::GetBltStatus_stdcall),
+    (0xfafbfc83, ddraw::IDirectDrawSurface7::GetCaps_stdcall),
+    (0xfafbfc84, ddraw::IDirectDrawSurface7::GetClipper_stdcall),
+    (0xfafbfc85, ddraw::IDirectDrawSurface7::GetColorKey_stdcall),
+    (0xfafbfc86, ddraw::IDirectDrawSurface7::GetDC_stdcall),
+    (
+        0xfafbfc87,
+        ddraw::IDirectDrawSurface7::GetFlipStatus_stdcall,
+    ),
+    (
+        0xfafbfc88,
+        ddraw::IDirectDrawSurface7::GetOverlayPosition_stdcall,
+    ),
+    (0xfafbfc89, ddraw::IDirectDrawSurface7::GetPalette_stdcall),
+    (
+        0xfafbfc8a,
+        ddraw::IDirectDrawSurface7::GetPixelFormat_stdcall,
+    ),
+    (
+        0xfafbfc8b,
+        ddraw::IDirectDrawSurface7::GetSurfaceDesc_stdcall,
+    ),
+    (0xfafbfc8c, ddraw::IDirectDrawSurface7::Initialize_stdcall),
+    (0xfafbfc8d, ddraw::IDirectDrawSurface7::IsLost_stdcall),
+    (0xfafbfc8e, ddraw::IDirectDrawSurface7::Lock_stdcall),
+    (0xfafbfc8f, ddraw::IDirectDrawSurface7::ReleaseDC_stdcall),
+    (0xfafbfc90, ddraw::IDirectDrawSurface7::Restore_stdcall),
+    (0xfafbfc91, ddraw::IDirectDrawSurface7::SetClipper_stdcall),
+    (0xfafbfc92, ddraw::IDirectDrawSurface7::SetColorKey_stdcall),
+    (
+        0xfafbfc93,
+        ddraw::IDirectDrawSurface7::SetOverlayPosition_stdcall,
+    ),
+    (0xfafbfc94, ddraw::IDirectDrawSurface7::SetPalette_stdcall),
+    (0xfafbfc95, ddraw::IDirectDrawSurface7::Unlock_stdcall),
+    (
+        0xfafbfc96,
+        ddraw::IDirectDrawSurface7::UpdateOverlay_stdcall,
+    ),
+    (
+        0xfafbfc97,
+        ddraw::IDirectDrawSurface7::UpdateOverlayDisplay_stdcall,
+    ),
+    (
+        0xfafbfc98,
+        ddraw::IDirectDrawSurface7::UpdateOverlayZOrder_stdcall,
+    ),
+    (
+        0xfafbfc99,
+        ddraw::IDirectDrawSurface7::GetDDInterface_stdcall,
+    ),
+    (0xfafbfc9a, ddraw::IDirectDrawSurface7::PageLock_stdcall),
+    (0xfafbfc9b, ddraw::IDirectDrawSurface7::PageUnlock_stdcall),
+    (
+        0xfafbfc9c,
+        ddraw::IDirectDrawSurface7::SetSurfaceDesc_stdcall,
+    ),
+    (
+        0xfafbfc9d,
+        ddraw::IDirectDrawSurface7::SetPrivateData_stdcall,
+    ),
+    (
+        0xfafbfc9e,
+        ddraw::IDirectDrawSurface7::GetPrivateData_stdcall,
+    ),
+    (
+        0xfafbfc9f,
+        ddraw::IDirectDrawSurface7::FreePrivateData_stdcall,
+    ),
+    (
+        0xfafbfca0,
+        ddraw::IDirectDrawSurface7::GetUniquenessValue_stdcall,
+    ),
+    (
+        0xfafbfca1,
+        ddraw::IDirectDrawSurface7::ChangeUniquenessValue_stdcall,
+    ),
+    (0xfafbfca2, ddraw::IDirectDrawSurface7::SetPriority_stdcall),
+    (0xfafbfca3, ddraw::IDirectDrawSurface7::GetPriority_stdcall),
+    (0xfafbfca4, ddraw::IDirectDrawSurface7::SetLOD_stdcall),
+    (0xfafbfca5, ddraw::IDirectDrawSurface7::GetLOD_stdcall),
+    (
+        0xfafbfca6,
+        ddraw::IDirectDrawPalette::QueryInterface_stdcall,
+    ),
+    (0xfafbfca7, ddraw::IDirectDrawPalette::AddRef_stdcall),
+    (0xfafbfca8, ddraw::IDirectDrawPalette::Release_stdcall),
+    (0xfafbfca9, ddraw::IDirectDrawPalette::GetCaps_stdcall),
+    (0xfafbfcaa, ddraw::IDirectDrawPalette::GetEntries_stdcall),
+    (0xfafbfcab, ddraw::IDirectDrawPalette::Initialize_stdcall),
+    (0xfafbfcac, ddraw::IDirectDrawPalette::SetEntries_stdcall),
+    (0xfafbfcad, dsound::IDirectSound::QueryInterface_stdcall),
+    (0xfafbfcae, dsound::IDirectSound::AddRef_stdcall),
+    (0xfafbfcaf, dsound::IDirectSound::Release_stdcall),
+    (0xfafbfcb0, dsound::IDirectSound::CreateSoundBuffer_stdcall),
+    (0xfafbfcb1, dsound::IDirectSound::GetCaps_stdcall),
+    (
+        0xfafbfcb2,
+        dsound::IDirectSound::DuplicateSoundBuffer_stdcall,
+    ),
+    (
+        0xfafbfcb3,
+        dsound::IDirectSound::SetCooperativeLevel_stdcall,
+    ),
+    (0xfafbfcb4, dsound::IDirectSound::Compact_stdcall),
+    (0xfafbfcb5, dsound::IDirectSound::GetSpeakerConfig_stdcall),
+    (0xfafbfcb6, dsound::IDirectSound::SetSpeakerConfig_stdcall),
+    (0xfafbfcb7, dsound::IDirectSound::Initialize_stdcall),
+    (
+        0xfafbfcb8,
+        dsound::IDirectSoundBuffer::QueryInterface_stdcall,
+    ),
+    (0xfafbfcb9, dsound::IDirectSoundBuffer::AddRef_stdcall),
+    (0xfafbfcba, dsound::IDirectSoundBuffer::Release_stdcall),
+    (0xfafbfcbb, dsound::IDirectSoundBuffer::GetCaps_stdcall),
+    (
+        0xfafbfcbc,
+        dsound::IDirectSoundBuffer::GetCurrentPosition_stdcall,
+    ),
+    (0xfafbfcbd, dsound::IDirectSoundBuffer::GetFormat_stdcall),
+    (0xfafbfcbe, dsound::IDirectSoundBuffer::GetVolume_stdcall),
+    (0xfafbfcbf, dsound::IDirectSoundBuffer::GetPan_stdcall),
+    (0xfafbfcc0, dsound::IDirectSoundBuffer::GetFrequency_stdcall),
+    (0xfafbfcc1, dsound::IDirectSoundBuffer::GetStatus_stdcall),
+    (0xfafbfcc2, dsound::IDirectSoundBuffer::Initialize_stdcall),
+    (0xfafbfcc3, dsound::IDirectSoundBuffer::Lock_stdcall),
+    (0xfafbfcc4, dsound::IDirectSoundBuffer::Play_stdcall),
+    (
+        0xfafbfcc5,
+        dsound::IDirectSoundBuffer::SetCurrentPosition_stdcall,
+    ),
+    (0xfafbfcc6, dsound::IDirectSoundBuffer::SetFormat_stdcall),
+    (0xfafbfcc7, dsound::IDirectSoundBuffer::SetVolume_stdcall),
+    (0xfafbfcc8, dsound::IDirectSoundBuffer::SetPan_stdcall),
+    (0xfafbfcc9, dsound::IDirectSoundBuffer::SetFrequency_stdcall),
+    (0xfafbfcca, dsound::IDirectSoundBuffer::Stop_stdcall),
+    (0xfafbfccb, dsound::IDirectSoundBuffer::Unlock_stdcall),
+    (0xfafbfccc, dsound::IDirectSoundBuffer::Restore_stdcall),
     (runtime::RETURN_FROM_X86_ADDR, runtime::return_from_x86),
 ];
 

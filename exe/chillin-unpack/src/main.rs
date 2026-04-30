@@ -83,6 +83,7 @@ fn find_iat(functions: &mut [tc::Import], mappings: &[kernel32::Mapping], memory
         if let Some(ofs) = iat_addr {
             log::info!("{}!{}: found at {:x}", sym.dll, sym.func, ofs);
             sym.iat_addr = ofs;
+            sym.func_addr = 0; // let tc assign an address later
         } else {
             log::info!("{}!{}: not found", sym.dll, sym.func);
         }
@@ -118,6 +119,7 @@ pub fn do_unpack(ctx: &mut runtime::Context) {
         imports: syms,
         ..Default::default()
     };
+    tc.init_imports();
 
     tc.gather(tc::Gather {
         scan_immediates: true,

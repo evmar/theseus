@@ -105,7 +105,6 @@ impl State {
     fn write_iat(&mut self) {
         let mut func_addr = 0xfafbfc00;
         for import in self.module.imports.iter_mut() {
-            assert_eq!(import.func_addr, 0); // should not be assigned yet
             assert!(import.iat_addr != 0); // should be assigned yet
             import.func_addr = func_addr;
             func_addr += 1;
