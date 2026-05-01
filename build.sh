@@ -14,7 +14,7 @@ elif [[ $1 == "chillin" ]]; then
         --out exe/chillin \
         --extern 0x40a3b4 \
         --scan-immediates
-    cargo run --profile fast -p chillin-exe
+    cargo build --profile fast -p chillin
 elif [[ $1 == "chillin-unpack" ]]; then
     cargo run -p tc -- \
         --exe ~/win/rs/scratch/demo/chillin.exe \
