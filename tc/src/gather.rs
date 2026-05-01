@@ -170,6 +170,7 @@ impl<'a> Traverse<'a> {
                                 if let Some(imp) = self.iat_refs.get(&addr) {
                                     new_instr.hint =
                                         Some(format!("{}::{}_stdcall", imp.dll, imp.func));
+                                    continue; // don't end block here
                                 } else {
                                     log::warn!("{ip:08x} {instr}  ; indirect via memory");
                                 }

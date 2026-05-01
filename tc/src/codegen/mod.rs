@@ -206,7 +206,9 @@ impl<'a> CodeGen<'a> {
                 }
 
                 let last = instrs.last().unwrap();
-                if last.iced.flow_control() == iced_x86::FlowControl::Next {
+                if last.iced.flow_control() == iced_x86::FlowControl::Next
+                    || (last.iced.mnemonic() == iced_x86::Mnemonic::Call && last.hint.is_some())
+                {
                     self.line(format!("Cont(x{:x})", last.next_ip()));
                 }
 
