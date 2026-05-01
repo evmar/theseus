@@ -23,8 +23,10 @@ pub trait Host {
     fn print(&self, text: &[u8]);
 }
 
+pub type ContFn = fn(&mut Context) -> Cont;
+
 #[derive(Clone, Copy)]
-pub struct Cont(pub fn(&mut Context) -> Cont);
+pub struct Cont(pub ContFn);
 
 /// Call an x86 stdcall function, only returning once the function returns.
 pub fn call_x86(ctx: &mut Context, mut f: Cont, args: Vec<u32>) {

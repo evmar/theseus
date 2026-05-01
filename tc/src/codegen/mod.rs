@@ -296,7 +296,7 @@ out.copy_from_slice(bytes);",
         }
 
         self.line(format!(
-            "const BLOCKS: [(u32, fn(&mut Context) -> Cont); {}] = [\n",
+            "const BLOCKS: [(u32, ContFn); {}] = [\n",
             ips.len() + 1,
         ));
         for &ip in &ips {

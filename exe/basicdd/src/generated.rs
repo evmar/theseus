@@ -20976,7 +20976,7 @@ pub fn x4054ec(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-const BLOCKS: [(u32, fn(&mut Context) -> Cont); 1780] = [
+const BLOCKS: [(u32, ContFn); 1780] = [
     (0x401000, x401000),
     (0x401005, x401005),
     (0x401010, x401010),

@@ -1,4 +1,4 @@
-use crate::{Cont, Flags, Memory, Regs, fpu::FPU, mmx::MMX};
+use crate::{Cont, ContFn, Flags, Memory, Regs, fpu::FPU, mmx::MMX};
 
 #[derive(Default)]
 pub struct CPU {
@@ -13,8 +13,8 @@ pub struct Context {
     pub thread_handle: u32,
     pub thread_id: u32,
     pub memory: Memory,
-    pub blocks: &'static [(u32, fn(&mut Context) -> Cont)],
-    pub recent: [fn(&mut Context) -> Cont; 4],
+    pub blocks: &'static [(u32, ContFn)],
+    pub recent: [ContFn; 4],
 }
 
 pub fn indirect(ctx: &mut Context, addr: u32) -> Cont {
@@ -29,7 +29,7 @@ pub fn indirect(ctx: &mut Context, addr: u32) -> Cont {
     Cont(ctx.blocks[index].1)
 }
 
-pub fn proc_addr(ctx: &mut Context, func: fn(&mut Context) -> Cont) -> u32 {
+pub fn proc_addr(ctx: &mut Context, func: ContFn) -> u32 {
     ctx.blocks
         .iter()
         .find(|&(_, f)| std::ptr::fn_addr_eq(*f, func))
