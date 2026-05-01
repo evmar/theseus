@@ -1,0 +1,14 @@
+[
+  {
+    "label": "basicdd",
+    "build": {
+      "command": "./build.sh",
+      //"args": ["build"]
+    },
+    "program": "$ZED_WORKTREE_ROOT/target/debug/basicdd-exe",
+    // sourceLanguages is required for CodeLLDB (not GDB) when using Rust
+    "sourceLanguages": ["rust"],
+    "request": "launch",
+    "adapter": "CodeLLDB"
+  }
+]

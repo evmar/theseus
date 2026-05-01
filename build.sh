@@ -26,5 +26,5 @@ elif [[ $1 == "thread" ]]; then
     cargo run -p thread-exe
 else
     cargo run -p tc -- --scan --exe ~/win/rs/deploy/archive/BasicDD.exe --out exe/basicdd
-    cargo run -p basicdd-exe
+    echo cargo run -p basicdd-exe
 fi
