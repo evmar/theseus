@@ -8,7 +8,7 @@ mod misc;
 mod mmx;
 mod string;
 
-use crate::{Block, Module, State, memory::Memory, write_if_changed};
+use crate::{Block, Instr, Module, State, memory::Memory, write_if_changed};
 
 fn reg_name(r: iced_x86::Register) -> String {
     format!("{r:?}").to_ascii_lowercase()
@@ -169,8 +169,6 @@ pub struct CodeGen<'a> {
     module: &'a Module,
     mem: &'a Memory,
     blocks: &'a HashMap<u32, Block>,
-    /// iat addr => function to call, e.g. "kernel32::ExitProcess"
-    iat_refs: HashMap<u32, String>,
     buf: String,
 }
 
@@ -180,12 +178,6 @@ impl<'a> CodeGen<'a> {
             module: &state.module,
             mem: &state.mem,
             blocks: &state.blocks,
-            iat_refs: state
-                .module
-                .imports
-                .iter()
-                .map(|i| (i.iat_addr, format!("{}::{}", i.dll, i.func)))
-                .collect(),
             buf: Default::default(),
         }
     }
@@ -214,8 +206,8 @@ impl<'a> CodeGen<'a> {
                 }
 
                 let last = instrs.last().unwrap();
-                if last.flow_control() == iced_x86::FlowControl::Next {
-                    self.line(format!("Cont(x{:x})", last.next_ip32()));
+                if last.iced.flow_control() == iced_x86::FlowControl::Next {
+                    self.line(format!("Cont(x{:x})", last.next_ip()));
                 }
 
                 self.line("}\n");
@@ -226,16 +218,16 @@ impl<'a> CodeGen<'a> {
         }
     }
 
-    fn gen_instr(&mut self, instr: &iced_x86::Instruction) -> anyhow::Result<()> {
-        self.line(format!("// {:08x} {}", instr.ip32(), instr));
+    fn gen_instr(&mut self, instr: &Instr) -> anyhow::Result<()> {
+        self.line(format!("// {:08x} {}", instr.iced.ip32(), instr.iced));
         if self.codegen_control_flow(instr) {
-        } else if self.codegen_math(instr) {
-        } else if self.codegen_string(instr) {
-        } else if self.codegen_misc(instr) {
-        } else if self.codegen_fpu(instr) {
-        } else if self.codegen_mmx(instr) {
+        } else if self.codegen_math(&instr.iced) {
+        } else if self.codegen_string(&instr.iced) {
+        } else if self.codegen_misc(&instr.iced) {
+        } else if self.codegen_fpu(&instr.iced) {
+        } else if self.codegen_mmx(&instr.iced) {
         } else {
-            anyhow::bail!("{:?} not implemented", instr.mnemonic());
+            anyhow::bail!("{:?} not implemented", instr.iced.mnemonic());
         }
         Ok(())
     }

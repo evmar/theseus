@@ -36,24 +36,19 @@ pub struct State {
     pub blocks: HashMap<u32, Block>,
 }
 
-/// If the instruction looks like
-///   foo [x]
-/// where x is a constant, return the value of x.
-pub fn is_abs_memory_ref(instr: &iced_x86::Instruction) -> Option<u32> {
-    let iced_x86::OpKind::Memory = instr.op0_kind() else {
-        return None;
-    };
-    let iced_x86::Register::None = instr.memory_base() else {
-        return None;
-    };
-    let iced_x86::Register::None = instr.memory_index() else {
-        return None;
-    };
-    Some(instr.memory_displacement32())
+pub struct Instr {
+    pub iced: iced_x86::Instruction,
+    pub hint: Option<String>,
+}
+
+impl Instr {
+    pub fn next_ip(&self) -> u32 {
+        self.iced.next_ip32()
+    }
 }
 
 pub enum Block {
-    Instrs(Vec<iced_x86::Instruction>),
+    Instrs(Vec<Instr>),
     Stdcall(String),
     Extern(u32),
 }
@@ -61,7 +56,7 @@ pub enum Block {
 impl Block {
     pub fn name(&self) -> String {
         match self {
-            Block::Instrs(instrs) => format!("x{:x}", instrs[0].ip32()),
+            Block::Instrs(instrs) => format!("x{:x}", instrs[0].iced.ip32()),
             Block::Stdcall(func) => format!("{}_stdcall", func),
             Block::Extern(ip) => format!("x{:x}", ip),
         }

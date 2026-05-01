@@ -2,7 +2,23 @@
 
 use std::collections::{BTreeMap, HashMap, HashSet, VecDeque};
 
-use crate::{Block, Module, State, is_abs_memory_ref, memory::Memory};
+use crate::{Block, Import, Instr, Module, State, memory::Memory};
+
+/// If the instruction looks like
+///   foo [x]
+/// where x is a constant, return the value of x.
+pub fn is_abs_memory_ref(instr: &iced_x86::Instruction) -> Option<u32> {
+    let iced_x86::OpKind::Memory = instr.op0_kind() else {
+        return None;
+    };
+    let iced_x86::Register::None = instr.memory_base() else {
+        return None;
+    };
+    let iced_x86::Register::None = instr.memory_index() else {
+        return None;
+    };
+    Some(instr.memory_displacement32())
+}
 
 #[derive(Default)]
 pub struct Gather {
@@ -26,7 +42,7 @@ struct Traverse<'a> {
     module: &'a Module,
     mem: &'a Memory,
 
-    iat_refs: HashSet<u32>,
+    iat_refs: HashMap<u32, &'a Import>,
     queue: VecDeque<u32>,
     invalid: HashSet<u32>,
     blocks: BTreeMap<u32, Block>,
@@ -51,7 +67,7 @@ impl<'a> Traverse<'a> {
             let func = format!("{}::{}", import.dll, import.func);
             self.blocks
                 .insert(import.func_addr, Block::Stdcall(func.clone()));
-            self.iat_refs.insert(import.iat_addr);
+            self.iat_refs.insert(import.iat_addr, &import);
         }
 
         for &addr in self.gather.externs.iter() {
@@ -80,7 +96,7 @@ impl<'a> Traverse<'a> {
             // jmp within some other code.
             // Re-queue the other block for re-parsing after this one so that it can be split.
             if let Some((&addr, Block::Instrs(instrs))) = self.blocks.range(0..ip).last() {
-                let range = instrs.first().unwrap().ip32()..instrs.last().unwrap().next_ip32();
+                let range = instrs.first().unwrap().iced.ip32()..instrs.last().unwrap().next_ip();
                 if range.contains(&ip) {
                     self.blocks.remove(&addr);
                     self.queue.push_back(addr);
@@ -116,7 +132,10 @@ impl<'a> Traverse<'a> {
                 // Hit a point covered by another block, e.g. a jump target
                 break;
             }
-            instrs.push(instr);
+            let new_instr = instrs.push_mut(Instr {
+                iced: instr,
+                hint: None,
+            });
 
             if self.gather.scan_immediates {
                 for i in 0..instr.op_count() {
@@ -148,8 +167,9 @@ impl<'a> Traverse<'a> {
                         }
                         iced_x86::OpKind::Memory => {
                             if let Some(addr) = is_abs_memory_ref(&instr) {
-                                if self.iat_refs.contains(&addr) {
-                                    // ok
+                                if let Some(imp) = self.iat_refs.get(&addr) {
+                                    new_instr.hint =
+                                        Some(format!("{}::{}_stdcall", imp.dll, imp.func));
                                 } else {
                                     log::warn!("{ip:08x} {instr}  ; indirect via memory");
                                 }
