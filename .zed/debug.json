@@ -10,10 +10,24 @@
     "adapter": "CodeLLDB",
   },
   {
-    "label": "chillin",
+    "label": "chillin-tc",
     "build": {
       "command": "./build.sh",
       "args": ["chillin"],
+    },
+    "program": "$ZED_WORKTREE_ROOT/target/fast/chillin",
+    "sourceLanguages": ["rust"],
+    "request": "launch",
+    "adapter": "CodeLLDB",
+  },
+  {
+    "label": "chillin",
+    "build": {
+      "command": "cargo",
+      "args": ["build", "-p", "chillin", "--profile", "fast"],
+    },
+    "env": {
+      "THESEUS_TRACE": "dsound,kernel32/time",
     },
     "program": "$ZED_WORKTREE_ROOT/target/fast/chillin",
     "sourceLanguages": ["rust"],

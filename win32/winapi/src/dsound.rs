@@ -20,11 +20,8 @@ unsafe impl Send for AudioStream {}
 struct Buffer {
     addr: u32,
     size: u32,
+    total_written: u32,
     stream: AudioStream,
-    lock: Option<BufferLock>,
-}
-struct BufferLock {
-    // TODO: track locked portion, match in unlock
 }
 
 // We need a sdl3::AudioSubsystem to make audio calls.
@@ -150,8 +147,8 @@ pub mod IDirectSound {
                     .process_heap
                     .alloc(&mut ctx.memory, desc.dwBufferBytes),
                 size: desc.dwBufferBytes,
+                total_written: 0,
                 stream: AudioStream(stream),
-                lock: None,
             };
 
             lock.buffers.insert(addr, buffer);
@@ -255,17 +252,22 @@ pub mod IDirectSoundBuffer {
     #[win32_derive::dllexport]
     pub fn GetCurrentPosition(
         ctx: &mut Context,
-        _this: u32,
+        this: u32,
         pdwCurrentPlayCursor: u32,
         pdwCurrentWriteCursor: u32,
     ) -> u32 {
+        let mut lock = lock();
+        let buffer = lock.buffers.get_mut(&this).unwrap();
         if pdwCurrentPlayCursor != 0 {
-            ctx.memory.write(pdwCurrentPlayCursor, 0);
+            let unplayed = buffer.stream.0.queued_bytes().unwrap() as u32;
+            let play_cursor = (buffer.total_written - unplayed) % buffer.size;
+            ctx.memory.write(pdwCurrentPlayCursor, play_cursor);
         }
         if pdwCurrentWriteCursor != 0 {
-            ctx.memory.write(pdwCurrentWriteCursor, 0);
+            let write_cursor = buffer.total_written % buffer.size;
+            ctx.memory.write(pdwCurrentWriteCursor, write_cursor);
         }
-        stub!(DS_OK)
+        DS_OK
     }
 
     #[win32_derive::dllexport]
@@ -312,10 +314,21 @@ pub mod IDirectSoundBuffer {
     ) -> u32 {
         let mut lock = lock();
         let buffer = lock.buffers.get_mut(&this).unwrap();
-        assert!(buffer.lock.is_none());
 
+        if buffer.stream.0.queued_bytes().unwrap() as u32 == buffer.size {
+            log::warn!("buffer full?");
+            // it appears chillin relies on getting null back in this case
+            ctx.memory.write(ppvAudioPtr1, 0u32);
+            ctx.memory.write(pdwAudioBytes1, 0u32);
+            if ppvAudioPtr2 != 0 {
+                ctx.memory.write(ppvAudioPtr2, 0u32);
+                ctx.memory.write(pdwAudioBytes2, 0u32);
+            }
+            return DS_OK;
+        }
+
+        assert_eq!(dwOffset, 0);
         let len = if dwFlags.contains(DSBLOCK::ENTIREBUFFER) {
-            assert_eq!(dwOffset, 0);
             assert_eq!(dwBytes, 0);
             buffer.size
         } else {
@@ -324,11 +337,10 @@ pub mod IDirectSoundBuffer {
         ctx.memory.write(ppvAudioPtr1, buffer.addr);
         ctx.memory.write(pdwAudioBytes1, len);
         if ppvAudioPtr2 != 0 {
-            ctx.memory.write(ppvAudioPtr2, 0);
-            ctx.memory.write(pdwAudioBytes2, 0);
+            ctx.memory.write(ppvAudioPtr2, 0u32);
+            ctx.memory.write(pdwAudioBytes2, 0u32);
         }
 
-        buffer.lock = Some(BufferLock {});
         DS_OK
     }
 
@@ -385,18 +397,23 @@ pub mod IDirectSoundBuffer {
         ctx: &mut Context,
         this: u32,
         _pvAudioPtr1: u32,
-        _dwAudioBytes1: u32,
-        _pvAudioPtr2: u32,
-        _dwAudioBytes2: u32,
+        dwAudioBytes1: u32,
+        pvAudioPtr2: u32,
+        dwAudioBytes2: u32,
     ) -> u32 {
-        let mut lock = lock();
-        let buffer = lock.buffers.get_mut(&this).unwrap();
-        assert!(buffer.lock.is_some());
-        buffer.lock = None;
+        let mut state = lock();
+        let buffer = state.buffers.get_mut(&this).unwrap();
+        assert!(pvAudioPtr2 == 0);
+        assert!(dwAudioBytes2 == 0);
 
-        let data = &ctx.memory[buffer.addr..][..buffer.size as usize];
-        log::info!("writing data {:x?}", &data[..100]);
+        let data = &ctx.memory[buffer.addr..][..dwAudioBytes1 as usize];
+        log::info!(
+            "writing {:#x} bytes of data {:x?}",
+            data.len(),
+            &data[..100.min(data.len())]
+        );
         buffer.stream.0.put_data(data).unwrap();
+        buffer.total_written += data.len() as u32;
 
         stub!(DS_OK)
     }

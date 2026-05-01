@@ -172,8 +172,8 @@ pub fn waveOutOpen(
         .0;
 
     let audio = user32::state().sdl.audio().unwrap();
-    let device = audio.default_playback_device();
-    let stream = device
+    let stream = audio
+        .default_playback_device()
         .open_device_stream(Some(&sdl3::audio::AudioSpec {
             freq: Some(fmt.nSamplesPerSec as i32),
             channels: Some(fmt.nChannels as i32),
