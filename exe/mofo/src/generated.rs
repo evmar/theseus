@@ -16834,8 +16834,9 @@ pub fn x406960(ctx: &mut Context) -> Cont {
     // 0040696b push ebx
     push(ctx, ctx.cpu.regs.ebx);
     // 0040696c call dword ptr ds:[420028h]
-    let dst = Cont(kernel32::GetModuleHandleA_stdcall);
-    call(ctx, 0x406972, dst)
+    runtime::push(ctx, 0xffff_fffe);
+    kernel32::GetModuleHandleA_stdcall(ctx);
+    Cont(x406972)
 }
 
 pub fn x406972(ctx: &mut Context) -> Cont {
@@ -16876,8 +16877,9 @@ pub fn x406972(ctx: &mut Context) -> Cont {
     // 004069a5 push esi
     push(ctx, ctx.cpu.regs.esi);
     // 004069a6 call dword ptr ds:[42004Ch]
-    let dst = Cont(user32::CreateCursor_stdcall);
-    call(ctx, 0x4069ac, dst)
+    runtime::push(ctx, 0xffff_fffe);
+    user32::CreateCursor_stdcall(ctx);
+    Cont(x4069ac)
 }
 
 pub fn x4069ac(ctx: &mut Context) -> Cont {
@@ -16918,8 +16920,9 @@ pub fn x4069ac(ctx: &mut Context) -> Cont {
     ctx.memory
         .write::<u32>(ctx.cpu.regs.esp.wrapping_add(0x38u32), ctx.cpu.regs.edi);
     // 004069ea call dword ptr ds:[420068h]
-    let dst = Cont(user32::RegisterClassA_stdcall);
-    call(ctx, 0x4069f0, dst)
+    runtime::push(ctx, 0xffff_fffe);
+    user32::RegisterClassA_stdcall(ctx);
+    Cont(x4069f0)
 }
 
 pub fn x4069f0(ctx: &mut Context) -> Cont {
@@ -16943,8 +16946,9 @@ pub fn x4069f5(ctx: &mut Context) -> Cont {
     // 004069fd push ebx
     push(ctx, ctx.cpu.regs.ebx);
     // 004069fe call dword ptr ds:[420040h]
-    let dst = Cont(user32::MessageBoxA_stdcall);
-    call(ctx, 0x406a04, dst)
+    runtime::push(ctx, 0xffff_fffe);
+    user32::MessageBoxA_stdcall(ctx);
+    Cont(x406a04)
 }
 
 pub fn x406a04(ctx: &mut Context) -> Cont {
@@ -16991,8 +16995,9 @@ pub fn x406a10(ctx: &mut Context) -> Cont {
     // 00406a27 push 8
     push(ctx, 0x8u32);
     // 00406a29 call dword ptr ds:[42003Ch]
-    let dst = Cont(user32::CreateWindowExA_stdcall);
-    call(ctx, 0x406a2f, dst)
+    runtime::push(ctx, 0xffff_fffe);
+    user32::CreateWindowExA_stdcall(ctx);
+    Cont(x406a2f)
 }
 
 pub fn x406a2f(ctx: &mut Context) -> Cont {
@@ -17003,8 +17008,9 @@ pub fn x406a2f(ctx: &mut Context) -> Cont {
     // 00406a32 mov ds:[428D70h],eax
     ctx.memory.write::<u32>(0x428d70u32, ctx.cpu.regs.eax);
     // 00406a37 call dword ptr ds:[420044h]
-    let dst = Cont(user32::ShowWindow_stdcall);
-    call(ctx, 0x406a3d, dst)
+    runtime::push(ctx, 0xffff_fffe);
+    user32::ShowWindow_stdcall(ctx);
+    Cont(x406a3d)
 }
 
 pub fn x406a3d(ctx: &mut Context) -> Cont {
@@ -17013,8 +17019,9 @@ pub fn x406a3d(ctx: &mut Context) -> Cont {
     // 00406a42 push eax
     push(ctx, ctx.cpu.regs.eax);
     // 00406a43 call dword ptr ds:[420060h]
-    let dst = Cont(user32::UpdateWindow_stdcall);
-    call(ctx, 0x406a49, dst)
+    runtime::push(ctx, 0xffff_fffe);
+    user32::UpdateWindow_stdcall(ctx);
+    Cont(x406a49)
 }
 
 pub fn x406a49(ctx: &mut Context) -> Cont {
@@ -17046,8 +17053,9 @@ pub fn x406a59(ctx: &mut Context) -> Cont {
     // 00406a61 push ebx
     push(ctx, ctx.cpu.regs.ebx);
     // 00406a62 call dword ptr ds:[420040h]
-    let dst = Cont(user32::MessageBoxA_stdcall);
-    call(ctx, 0x406a68, dst)
+    runtime::push(ctx, 0xffff_fffe);
+    user32::MessageBoxA_stdcall(ctx);
+    Cont(x406a68)
 }
 
 pub fn x406a68(ctx: &mut Context) -> Cont {
@@ -17147,8 +17155,9 @@ pub fn x406ae1(ctx: &mut Context) -> Cont {
     // 00406ae9 push ebx
     push(ctx, ctx.cpu.regs.ebx);
     // 00406aea call dword ptr ds:[420040h]
-    let dst = Cont(user32::MessageBoxA_stdcall);
-    call(ctx, 0x406af0, dst)
+    runtime::push(ctx, 0xffff_fffe);
+    user32::MessageBoxA_stdcall(ctx);
+    Cont(x406af0)
 }
 
 pub fn x406af0(ctx: &mut Context) -> Cont {
@@ -17426,8 +17435,9 @@ pub fn x406c21(ctx: &mut Context) -> Cont {
     // 00406c27 push edx
     push(ctx, ctx.cpu.regs.edx);
     // 00406c28 call dword ptr ds:[420048h]
-    let dst = Cont(user32::DestroyWindow_stdcall);
-    call(ctx, 0x406c2e, dst)
+    runtime::push(ctx, 0xffff_fffe);
+    user32::DestroyWindow_stdcall(ctx);
+    Cont(x406c2e)
 }
 
 pub fn x406c2e(ctx: &mut Context) -> Cont {
@@ -17675,8 +17685,9 @@ pub fn x406d21(ctx: &mut Context) -> Cont {
     // 00406d2c push edx
     push(ctx, ctx.cpu.regs.edx);
     // 00406d2d call dword ptr ds:[420058h]
-    let dst = Cont(user32::PeekMessageA_stdcall);
-    call(ctx, 0x406d33, dst)
+    runtime::push(ctx, 0xffff_fffe);
+    user32::PeekMessageA_stdcall(ctx);
+    Cont(x406d33)
 }
 
 pub fn x406d33(ctx: &mut Context) -> Cont {
@@ -17707,8 +17718,9 @@ pub fn x406d3a(ctx: &mut Context) -> Cont {
     // 00406d43 push eax
     push(ctx, ctx.cpu.regs.eax);
     // 00406d44 call dword ptr ds:[420054h]
-    let dst = Cont(user32::GetMessageA_stdcall);
-    call(ctx, 0x406d4a, dst)
+    runtime::push(ctx, 0xffff_fffe);
+    user32::GetMessageA_stdcall(ctx);
+    Cont(x406d4a)
 }
 
 pub fn x406d4a(ctx: &mut Context) -> Cont {
@@ -17717,8 +17729,9 @@ pub fn x406d4a(ctx: &mut Context) -> Cont {
     // 00406d4d push ecx
     push(ctx, ctx.cpu.regs.ecx);
     // 00406d4e call dword ptr ds:[420050h]
-    let dst = Cont(user32::DispatchMessageA_stdcall);
-    call(ctx, 0x406d54, dst)
+    runtime::push(ctx, 0xffff_fffe);
+    user32::DispatchMessageA_stdcall(ctx);
+    Cont(x406d54)
 }
 
 pub fn x406d54(ctx: &mut Context) -> Cont {
@@ -22302,8 +22315,9 @@ pub fn x407ea4(ctx: &mut Context) -> Cont {
 
 pub fn x407eb0(ctx: &mut Context) -> Cont {
     // 00407eb0 call dword ptr ds:[420008h]
-    let dst = Cont(kernel32::GetTickCount_stdcall);
-    call(ctx, 0x407eb6, dst)
+    runtime::push(ctx, 0xffff_fffe);
+    kernel32::GetTickCount_stdcall(ctx);
+    Cont(x407eb6)
 }
 
 pub fn x407eb6(ctx: &mut Context) -> Cont {
@@ -22317,8 +22331,9 @@ pub fn x407ec0(ctx: &mut Context) -> Cont {
     // 00407ec0 sub esp,8
     ctx.cpu.regs.esp = sub(ctx.cpu.regs.esp, 0x8u32, &mut ctx.cpu.flags);
     // 00407ec3 call dword ptr ds:[420008h]
-    let dst = Cont(kernel32::GetTickCount_stdcall);
-    call(ctx, 0x407ec9, dst)
+    runtime::push(ctx, 0xffff_fffe);
+    kernel32::GetTickCount_stdcall(ctx);
+    Cont(x407ec9)
 }
 
 pub fn x407ec9(ctx: &mut Context) -> Cont {
@@ -24675,8 +24690,9 @@ pub fn x41e8fa(ctx: &mut Context) -> Cont {
     // 0041e8ff push eax
     push(ctx, ctx.cpu.regs.eax);
     // 0041e900 call dword ptr ds:[420030h]
-    let dst = Cont(kernel32::SetEvent_stdcall);
-    call(ctx, 0x41e906, dst)
+    runtime::push(ctx, 0xffff_fffe);
+    kernel32::SetEvent_stdcall(ctx);
+    Cont(x41e906)
 }
 
 pub fn x41e906(ctx: &mut Context) -> Cont {
@@ -24769,8 +24785,9 @@ pub fn x41e910(ctx: &mut Context) -> Cont {
     ctx.memory
         .write::<u16>(ctx.cpu.regs.esp.wrapping_add(0x2cu32), 0x0u16);
     // 0041e97d call dword ptr ds:[420084h]
-    let dst = Cont(winmm::waveOutOpen_stdcall);
-    call(ctx, 0x41e983, dst)
+    runtime::push(ctx, 0xffff_fffe);
+    winmm::waveOutOpen_stdcall(ctx);
+    Cont(x41e983)
 }
 
 pub fn x41e983(ctx: &mut Context) -> Cont {
@@ -24783,8 +24800,9 @@ pub fn x41e983(ctx: &mut Context) -> Cont {
     // 0041e989 push ecx
     push(ctx, ctx.cpu.regs.ecx);
     // 0041e98a call dword ptr ds:[420088h]
-    let dst = Cont(winmm::waveOutReset_stdcall);
-    call(ctx, 0x41e990, dst)
+    runtime::push(ctx, 0xffff_fffe);
+    winmm::waveOutReset_stdcall(ctx);
+    Cont(x41e990)
 }
 
 pub fn x41e990(ctx: &mut Context) -> Cont {
@@ -24795,8 +24813,9 @@ pub fn x41e990(ctx: &mut Context) -> Cont {
     // 0041e994 push edx
     push(ctx, ctx.cpu.regs.edx);
     // 0041e995 call dword ptr ds:[42008Ch]
-    let dst = Cont(winmm::waveOutClose_stdcall);
-    call(ctx, 0x41e99b, dst)
+    runtime::push(ctx, 0xffff_fffe);
+    winmm::waveOutClose_stdcall(ctx);
+    Cont(x41e99b)
 }
 
 pub fn x41e99b(ctx: &mut Context) -> Cont {
@@ -24837,8 +24856,9 @@ pub fn x41e9c0(ctx: &mut Context) -> Cont {
     // 0041e9c4 push edi
     push(ctx, ctx.cpu.regs.edi);
     // 0041e9c5 call dword ptr ds:[42007Ch]
-    let dst = Cont(winmm::waveOutGetNumDevs_stdcall);
-    call(ctx, 0x41e9cb, dst)
+    runtime::push(ctx, 0xffff_fffe);
+    winmm::waveOutGetNumDevs_stdcall(ctx);
+    Cont(x41e9cb)
 }
 
 pub fn x41e9cb(ctx: &mut Context) -> Cont {
@@ -25469,16 +25489,18 @@ pub fn x41ec89(ctx: &mut Context) -> Cont {
     // 0041ec8d push 2
     push(ctx, 0x2u32);
     // 0041ec8f call dword ptr ds:[42001Ch]
-    let dst = Cont(kernel32::GetCurrentThread_stdcall);
-    call(ctx, 0x41ec95, dst)
+    runtime::push(ctx, 0xffff_fffe);
+    kernel32::GetCurrentThread_stdcall(ctx);
+    Cont(x41ec95)
 }
 
 pub fn x41ec95(ctx: &mut Context) -> Cont {
     // 0041ec95 push eax
     push(ctx, ctx.cpu.regs.eax);
     // 0041ec96 call dword ptr ds:[420018h]
-    let dst = Cont(kernel32::SetThreadPriority_stdcall);
-    call(ctx, 0x41ec9c, dst)
+    runtime::push(ctx, 0xffff_fffe);
+    kernel32::SetThreadPriority_stdcall(ctx);
+    Cont(x41ec9c)
 }
 
 pub fn x41ec9c(ctx: &mut Context) -> Cont {
@@ -25526,8 +25548,9 @@ pub fn x41ec9c(ctx: &mut Context) -> Cont {
         ctx.cpu.regs.get_bp(),
     );
     // 0041ecf1 call dword ptr ds:[420084h]
-    let dst = Cont(winmm::waveOutOpen_stdcall);
-    call(ctx, 0x41ecf7, dst)
+    runtime::push(ctx, 0xffff_fffe);
+    winmm::waveOutOpen_stdcall(ctx);
+    Cont(x41ecf7)
 }
 
 pub fn x41ecf7(ctx: &mut Context) -> Cont {
@@ -25540,8 +25563,9 @@ pub fn x41ecf7(ctx: &mut Context) -> Cont {
     // 0041ecfe push ebp
     push(ctx, ctx.cpu.regs.ebp);
     // 0041ecff call dword ptr ds:[420014h]
-    let dst = Cont(kernel32::CreateEventA_stdcall);
-    call(ctx, 0x41ed05, dst)
+    runtime::push(ctx, 0xffff_fffe);
+    kernel32::CreateEventA_stdcall(ctx);
+    Cont(x41ed05)
 }
 
 pub fn x41ed05(ctx: &mut Context) -> Cont {
@@ -25552,8 +25576,9 @@ pub fn x41ed05(ctx: &mut Context) -> Cont {
     // 0041ed0f mov ds:[425BA4h],eax
     ctx.memory.write::<u32>(0x425ba4u32, ctx.cpu.regs.eax);
     // 0041ed14 call dword ptr ds:[420010h]
-    let dst = Cont(kernel32::GlobalAlloc_stdcall);
-    call(ctx, 0x41ed1a, dst)
+    runtime::push(ctx, 0xffff_fffe);
+    kernel32::GlobalAlloc_stdcall(ctx);
+    Cont(x41ed1a)
 }
 
 pub fn x41ed1a(ctx: &mut Context) -> Cont {
@@ -25586,8 +25611,9 @@ pub fn x41ed22(ctx: &mut Context) -> Cont {
     ctx.memory
         .write::<u32>(ctx.cpu.regs.esi.wrapping_add(0x4u32), 0x8000u32);
     // 0041ed3a call dword ptr ds:[420078h]
-    let dst = Cont(winmm::waveOutPrepareHeader_stdcall);
-    call(ctx, 0x41ed40, dst)
+    runtime::push(ctx, 0xffff_fffe);
+    winmm::waveOutPrepareHeader_stdcall(ctx);
+    Cont(x41ed40)
 }
 
 pub fn x41ed40(ctx: &mut Context) -> Cont {
@@ -25624,8 +25650,9 @@ pub fn x41ed55(ctx: &mut Context) -> Cont {
     // 0041ed61 push edx
     push(ctx, ctx.cpu.regs.edx);
     // 0041ed62 call dword ptr ds:[420074h]
-    let dst = Cont(winmm::waveOutWrite_stdcall);
-    call(ctx, 0x41ed68, dst)
+    runtime::push(ctx, 0xffff_fffe);
+    winmm::waveOutWrite_stdcall(ctx);
+    Cont(x41ed68)
 }
 
 pub fn x41ed68(ctx: &mut Context) -> Cont {
@@ -25671,8 +25698,9 @@ pub fn x41ed8c(ctx: &mut Context) -> Cont {
     // 0041ed97 mov ds:[425BA0h],edi
     ctx.memory.write::<u32>(0x425ba0u32, ctx.cpu.regs.edi);
     // 0041ed9d call dword ptr ds:[42000Ch]
-    let dst = Cont(kernel32::WaitForSingleObject_stdcall);
-    call(ctx, 0x41eda3, dst)
+    runtime::push(ctx, 0xffff_fffe);
+    kernel32::WaitForSingleObject_stdcall(ctx);
+    Cont(x41eda3)
 }
 
 pub fn x41eda3(ctx: &mut Context) -> Cont {
@@ -25720,8 +25748,9 @@ pub fn x41edc1(ctx: &mut Context) -> Cont {
     // 0041edca push ecx
     push(ctx, ctx.cpu.regs.ecx);
     // 0041edcb call dword ptr ds:[420070h]
-    let dst = Cont(winmm::waveOutUnprepareHeader_stdcall);
-    call(ctx, 0x41edd1, dst)
+    runtime::push(ctx, 0xffff_fffe);
+    winmm::waveOutUnprepareHeader_stdcall(ctx);
+    Cont(x41edd1)
 }
 
 pub fn x41edd1(ctx: &mut Context) -> Cont {
@@ -25758,8 +25787,9 @@ pub fn x41ede6(ctx: &mut Context) -> Cont {
     // 0041edf1 push eax
     push(ctx, ctx.cpu.regs.eax);
     // 0041edf2 call dword ptr ds:[420078h]
-    let dst = Cont(winmm::waveOutPrepareHeader_stdcall);
-    call(ctx, 0x41edf8, dst)
+    runtime::push(ctx, 0xffff_fffe);
+    winmm::waveOutPrepareHeader_stdcall(ctx);
+    Cont(x41edf8)
 }
 
 pub fn x41edf8(ctx: &mut Context) -> Cont {
@@ -25772,8 +25802,9 @@ pub fn x41edf8(ctx: &mut Context) -> Cont {
     // 0041ee01 push ecx
     push(ctx, ctx.cpu.regs.ecx);
     // 0041ee02 call dword ptr ds:[420074h]
-    let dst = Cont(winmm::waveOutWrite_stdcall);
-    call(ctx, 0x41ee08, dst)
+    runtime::push(ctx, 0xffff_fffe);
+    winmm::waveOutWrite_stdcall(ctx);
+    Cont(x41ee08)
 }
 
 pub fn x41ee08(ctx: &mut Context) -> Cont {
@@ -25850,8 +25881,9 @@ pub fn x41ee4f(ctx: &mut Context) -> Cont {
     // 0041ee57 push eax
     push(ctx, ctx.cpu.regs.eax);
     // 0041ee58 call dword ptr ds:[420070h]
-    let dst = Cont(winmm::waveOutUnprepareHeader_stdcall);
-    call(ctx, 0x41ee5e, dst)
+    runtime::push(ctx, 0xffff_fffe);
+    winmm::waveOutUnprepareHeader_stdcall(ctx);
+    Cont(x41ee5e)
 }
 
 pub fn x41ee5e(ctx: &mut Context) -> Cont {
@@ -25879,8 +25911,9 @@ pub fn x41ee6d(ctx: &mut Context) -> Cont {
     // 0041ee73 push edx
     push(ctx, ctx.cpu.regs.edx);
     // 0041ee74 call dword ptr ds:[42008Ch]
-    let dst = Cont(winmm::waveOutClose_stdcall);
-    call(ctx, 0x41ee7a, dst)
+    runtime::push(ctx, 0xffff_fffe);
+    winmm::waveOutClose_stdcall(ctx);
+    Cont(x41ee7a)
 }
 
 pub fn x41ee7a(ctx: &mut Context) -> Cont {
@@ -25937,8 +25970,9 @@ pub fn x41eeaa(ctx: &mut Context) -> Cont {
     // 0041eec4 push 0
     push(ctx, 0x0u32);
     // 0041eec6 call dword ptr ds:[420020h]
-    let dst = Cont(kernel32::CreateThread_stdcall);
-    call(ctx, 0x41eecc, dst)
+    runtime::push(ctx, 0xffff_fffe);
+    kernel32::CreateThread_stdcall(ctx);
+    Cont(x41eecc)
 }
 
 pub fn x41eecc(ctx: &mut Context) -> Cont {
@@ -26005,16 +26039,18 @@ pub fn x41ef05(ctx: &mut Context) -> Cont {
     // 0041ef0a push 0
     push(ctx, 0x0u32);
     // 0041ef0c call dword ptr ds:[420028h]
-    let dst = Cont(kernel32::GetModuleHandleA_stdcall);
-    call(ctx, 0x41ef12, dst)
+    runtime::push(ctx, 0xffff_fffe);
+    kernel32::GetModuleHandleA_stdcall(ctx);
+    Cont(x41ef12)
 }
 
 pub fn x41ef12(ctx: &mut Context) -> Cont {
     // 0041ef12 push eax
     push(ctx, ctx.cpu.regs.eax);
     // 0041ef13 call dword ptr ds:[420024h]
-    let dst = Cont(kernel32::SetPriorityClass_stdcall);
-    call(ctx, 0x41ef19, dst)
+    runtime::push(ctx, 0xffff_fffe);
+    kernel32::SetPriorityClass_stdcall(ctx);
+    Cont(x41ef19)
 }
 
 pub fn x41ef19(ctx: &mut Context) -> Cont {
@@ -26509,8 +26545,9 @@ pub fn x41f0b0(ctx: &mut Context) -> Cont {
     // 0041f0bb push 1000h
     push(ctx, 0x1000u32);
     // 0041f0c0 call dword ptr ds:[420010h]
-    let dst = Cont(kernel32::GlobalAlloc_stdcall);
-    call(ctx, 0x41f0c6, dst)
+    runtime::push(ctx, 0xffff_fffe);
+    kernel32::GlobalAlloc_stdcall(ctx);
+    Cont(x41f0c6)
 }
 
 pub fn x41f0c6(ctx: &mut Context) -> Cont {
@@ -26544,8 +26581,9 @@ pub fn x41f0d0(ctx: &mut Context) -> Cont {
     // 0041f0d6 push eax
     push(ctx, ctx.cpu.regs.eax);
     // 0041f0d7 call dword ptr ds:[420034h]
-    let dst = Cont(kernel32::GlobalFree_stdcall);
-    call(ctx, 0x41f0dd, dst)
+    runtime::push(ctx, 0xffff_fffe);
+    kernel32::GlobalFree_stdcall(ctx);
+    Cont(x41f0dd)
 }
 
 pub fn x41f0dd(ctx: &mut Context) -> Cont {

@@ -1,8 +1,15 @@
-use crate::{Cont, Context, Flags, indirect};
+use crate::{Cont, ContFn, Context, Flags, RETURN_FROM_X86_ADDR, indirect};
 
 pub fn call(ctx: &mut Context, ret: u32, addr: Cont) -> Cont {
     super::push(ctx, ret);
     addr
+}
+
+/// Call a ContFn (builtin implementation) synchronously, without returning a continuation.
+pub fn call_builtin(ctx: &mut Context, func: ContFn) {
+    // Because ContFn is stdcall it expects to pop a return address off the stack.
+    super::push(ctx, RETURN_FROM_X86_ADDR);
+    func(ctx); // pops the above return address; ignore it
 }
 
 pub fn je(ctx: &mut Context, from: Cont, x: Cont) -> Cont {

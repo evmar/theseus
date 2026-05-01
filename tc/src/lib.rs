@@ -36,6 +36,9 @@ pub struct State {
     pub blocks: HashMap<u32, Block>,
 }
 
+/// If the instruction looks like
+///   foo [x]
+/// where x is a constant, return the value of x.
 pub fn is_abs_memory_ref(instr: &iced_x86::Instruction) -> Option<u32> {
     let iced_x86::OpKind::Memory = instr.op0_kind() else {
         return None;
