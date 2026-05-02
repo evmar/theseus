@@ -261,6 +261,7 @@ pub mod IDirectSoundBuffer {
         if pdwCurrentPlayCursor != 0 {
             let unplayed = buffer.stream.0.queued_bytes().unwrap() as u32;
             let play_cursor = (buffer.total_written - unplayed) % buffer.size;
+            log::info!("play cursor {play_cursor:#x}");
             ctx.memory.write(pdwCurrentPlayCursor, play_cursor);
         }
         if pdwCurrentWriteCursor != 0 {
@@ -327,14 +328,13 @@ pub mod IDirectSoundBuffer {
             return DS_OK;
         }
 
-        assert_eq!(dwOffset, 0);
         let len = if dwFlags.contains(DSBLOCK::ENTIREBUFFER) {
             assert_eq!(dwBytes, 0);
             buffer.size
         } else {
-            dwBytes
+            dwBytes.min(buffer.size - dwOffset)
         };
-        ctx.memory.write(ppvAudioPtr1, buffer.addr);
+        ctx.memory.write(ppvAudioPtr1, buffer.addr + dwOffset);
         ctx.memory.write(pdwAudioBytes1, len);
         if ppvAudioPtr2 != 0 {
             ctx.memory.write(ppvAudioPtr2, 0u32);
