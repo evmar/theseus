@@ -131,6 +131,12 @@ pub fn mul<I: Int>(x: I, y: I, flags: &mut Flags) -> I {
     res
 }
 
+/// Shared impl of div_rmXX. The caller passes a doubled-width dividend and
+/// a widened divisor and receives quotient and remainder separately.
+pub fn div<I: Int>(x: I, y: I) -> (I, I) {
+    (x / y, x % y)
+}
+
 /// One-argument imul, 32 bit inputs.
 pub fn imul1_32(x: u32, y: u32, flags: &mut Flags) -> u64 {
     let x = x as i32;

@@ -57,6 +57,45 @@ impl<'a> CodeGen<'a> {
                 }
             }
 
+            Div => {
+                assert_eq!(instr.op_count(), 1);
+                let size = op_size(instr, 0);
+                let size2 = size * 2;
+                let x = match size {
+                    8 => get_reg(iced_x86::Register::AX),
+                    16 => {
+                        format!(
+                            "(({} as u32) << 16) | ({}) as u32)",
+                            get_reg(iced_x86::Register::DX),
+                            get_reg(iced_x86::Register::AX)
+                        )
+                    }
+                    32 => format!(
+                        "(({} as u64) << 32) | ({}) as u64",
+                        get_reg(iced_x86::Register::EDX),
+                        get_reg(iced_x86::Register::EAX)
+                    ),
+                    _ => unreachable!(),
+                };
+                let y = get_op(instr, 0);
+                self.line(format!("let (quot, rem) = div({x}, {y} as u{size2});",));
+                match size {
+                    8 => {
+                        self.line("ctx.cpu.regs.set_al(quot as u8);");
+                        self.line("ctx.cpu.regs.set_ah(rem as u8);");
+                    }
+                    16 => {
+                        self.line("ctx.cpu.regs.set_ax(quot as u16);");
+                        self.line("ctx.cpu.regs.set_dx(rem as u16);");
+                    }
+                    32 => {
+                        self.line("ctx.cpu.regs.eax = quot as u32;");
+                        self.line("ctx.cpu.regs.edx = rem as u32;");
+                    }
+                    _ => unreachable!(),
+                }
+            }
+
             Imul => {
                 let size = op_size(instr, 0);
                 if instr.op_count() == 1 {

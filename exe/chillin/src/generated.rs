@@ -37855,7 +37855,12 @@ pub fn x409ea2(ctx: &mut Context) -> Cont {
     // 00409ead xor edx,edx
     ctx.cpu.regs.edx = xor(ctx.cpu.regs.edx, ctx.cpu.regs.edx, &mut ctx.cpu.flags);
     // 00409eaf div ebx
-    todo!();
+    let (quot, rem) = div(
+        ((ctx.cpu.regs.edx as u64) << 32) | (ctx.cpu.regs.eax) as u64,
+        ctx.cpu.regs.ebx as u64,
+    );
+    ctx.cpu.regs.eax = quot as u32;
+    ctx.cpu.regs.edx = rem as u32;
     // 00409eb1 jmp near ptr 00409EC8h
     Cont(x409ec8)
 }
@@ -37875,7 +37880,12 @@ pub fn x409ebd(ctx: &mut Context) -> Cont {
     // 00409ec4 xor edx,edx
     ctx.cpu.regs.edx = xor(ctx.cpu.regs.edx, ctx.cpu.regs.edx, &mut ctx.cpu.flags);
     // 00409ec6 div ebx
-    todo!();
+    let (quot, rem) = div(
+        ((ctx.cpu.regs.edx as u64) << 32) | (ctx.cpu.regs.eax) as u64,
+        ctx.cpu.regs.ebx as u64,
+    );
+    ctx.cpu.regs.eax = quot as u32;
+    ctx.cpu.regs.edx = rem as u32;
     Cont(x409ec8)
 }
 
