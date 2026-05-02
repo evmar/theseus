@@ -1,4 +1,4 @@
-use crate::codegen::CodeGen;
+use crate::codegen::{CodeGen, instr_name};
 
 impl<'a> CodeGen<'a> {
     pub fn codegen_string(&mut self, instr: &iced_x86::Instruction) -> bool {
@@ -39,7 +39,7 @@ impl<'a> CodeGen<'a> {
             }
 
             Stosb | Stosw | Stosd => {
-                let op = format!("{:?}", instr.mnemonic()).to_ascii_lowercase();
+                let op = instr_name(instr);
                 assert!(!instr.has_repne_prefix());
                 if instr.has_rep_prefix() {
                     self.line(format!("rep(ctx, Rep::REP, {op});"));

@@ -1,4 +1,4 @@
-use crate::codegen::{self, CodeGen};
+use crate::codegen::{self, CodeGen, instr_name};
 
 fn is_mmx_reg(reg: iced_x86::Register) -> bool {
     use iced_x86::Register::*;
@@ -85,7 +85,7 @@ impl<'a> CodeGen<'a> {
 
             // Binary operations, all implemented with same name as mnemonic.
             Paddsb | Paddsw | Paddusb | Pmullw | Psrlw | Packuswb | Psubusb | Psubw | Psraw => {
-                let func = format!("{:?}", instr.mnemonic()).to_ascii_lowercase();
+                let func = instr_name(instr);
                 self.line(mmx_set(
                     instr,
                     0,
@@ -95,11 +95,14 @@ impl<'a> CodeGen<'a> {
 
             // Punpcklbw special because it only reads 4 bytes of memory.
             Punpcklbw => {
-                let func = format!("{:?}", instr.mnemonic()).to_ascii_lowercase();
                 self.line(mmx_set(
                     instr,
                     0,
-                    format!("{func}({}, {})", mmx_get_32(instr, 0), mmx_get_32(instr, 1)),
+                    format!(
+                        "punpcklbw({}, {})",
+                        mmx_get_32(instr, 0),
+                        mmx_get_32(instr, 1)
+                    ),
                 ));
             }
 
