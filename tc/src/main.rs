@@ -10,7 +10,7 @@ fn hex(val: &str) -> Result<u32, String> {
 struct Args {
     /// scan data sections for code-looking pointers
     #[argh(switch)]
-    scan: bool,
+    scan_memory: bool,
 
     /// scan immediates for code-looking pointers
     #[argh(switch)]
@@ -43,7 +43,7 @@ fn run() -> anyhow::Result<()> {
 
     state.gather(tc::Gather {
         scan_immediates: args.scan_immediates,
-        scan_memory: args.scan,
+        scan_memory: args.scan_memory,
         externs: args.externs,
         ..Default::default() // todo: entry_points, jump_tables?
     });

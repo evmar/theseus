@@ -13,7 +13,7 @@ elif [[ $1 == "chillin" ]]; then
         --exe ~/win/rs/scratch/demo/chillin-unpacked.exe \
         --out exe/chillin \
         --extern 0x40a3b4 \
-        --scan-immediates
+        --scan-immediates --scan-memory
     cargo build --profile fast -p chillin
 elif [[ $1 == "chillin-unpack" ]]; then
     cargo run -p tc -- \
@@ -25,6 +25,6 @@ elif [[ $1 == "thread" ]]; then
     cargo run -p tc -- --exe ~/win/rs/exe/cpp/thread.exe --out exe/thread --scan-immediates
     cargo run -p thread-exe
 else
-    cargo run -p tc -- --scan --exe ~/win/rs/deploy/archive/BasicDD.exe --out exe/basicdd
+    cargo run -p tc -- --scan-memory --exe ~/win/rs/deploy/archive/BasicDD.exe --out exe/basicdd
     echo cargo run -p basicdd-exe
 fi
