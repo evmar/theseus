@@ -261,7 +261,6 @@ pub mod IDirectSoundBuffer {
         if pdwCurrentPlayCursor != 0 {
             let unplayed = buffer.stream.0.queued_bytes().unwrap() as u32;
             let play_cursor = (buffer.total_written - unplayed) % buffer.size;
-            log::info!("play cursor {play_cursor:#x}");
             ctx.memory.write(pdwCurrentPlayCursor, play_cursor);
         }
         if pdwCurrentWriteCursor != 0 {
@@ -406,16 +405,16 @@ pub mod IDirectSoundBuffer {
         assert!(pvAudioPtr2 == 0);
         assert!(dwAudioBytes2 == 0);
 
+        if dwAudioBytes1 == 0 {
+            return DS_OK;
+        }
+
         let data = &ctx.memory[buffer.addr..][..dwAudioBytes1 as usize];
-        log::info!(
-            "writing {:#x} bytes of data {:x?}",
-            data.len(),
-            &data[..100.min(data.len())]
-        );
+        log::info!("writing {:#x} bytes of data", data.len(),);
         buffer.stream.0.put_data(data).unwrap();
         buffer.total_written += data.len() as u32;
 
-        stub!(DS_OK)
+        DS_OK
     }
 
     #[win32_derive::dllexport]
