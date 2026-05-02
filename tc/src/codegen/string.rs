@@ -38,21 +38,13 @@ impl<'a> CodeGen<'a> {
                 };
             }
 
-            Stosb => {
+            Stosb | Stosw | Stosd => {
+                let op = format!("{:?}", instr.mnemonic()).to_ascii_lowercase();
                 assert!(!instr.has_repne_prefix());
                 if instr.has_rep_prefix() {
-                    self.line("rep(ctx, Rep::REP, stosb);");
+                    self.line(format!("rep(ctx, Rep::REP, {op});"));
                 } else {
-                    self.line("stosb(ctx);");
-                };
-            }
-            Stosw => self.todo(),
-            Stosd => {
-                assert!(!instr.has_repne_prefix());
-                if instr.has_rep_prefix() {
-                    self.line("rep(ctx, Rep::REP, stosd);");
-                } else {
-                    self.line("stosd(ctx);");
+                    self.line(format!("{op}(ctx);"));
                 };
             }
 

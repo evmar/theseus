@@ -37128,7 +37128,7 @@ pub fn x40a279(ctx: &mut Context) -> Cont {
 
 pub fn x40a27b(ctx: &mut Context) -> Cont {
     // 0040a27b stosw
-    todo!();
+    stosw(ctx);
     // 0040a27d loop 0040A26Eh
     ctx.cpu.regs.ecx = ctx.cpu.regs.ecx.wrapping_sub(1);
     if ctx.cpu.regs.ecx == 0 {

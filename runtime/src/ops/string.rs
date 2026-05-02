@@ -58,6 +58,16 @@ pub fn stosb(ctx: &mut Context) {
     }
 }
 
+pub fn stosw(ctx: &mut Context) {
+    let addr = ctx.cpu.regs.edi;
+    ctx.memory.write::<u16>(addr, ctx.cpu.regs.eax as u16);
+    if ctx.cpu.flags.contains(Flags::DF) {
+        ctx.cpu.regs.edi = addr.wrapping_sub(2);
+    } else {
+        ctx.cpu.regs.edi = addr.wrapping_add(2);
+    }
+}
+
 pub fn stosd(ctx: &mut Context) {
     let addr = ctx.cpu.regs.edi;
     ctx.memory.write::<u32>(addr, ctx.cpu.regs.eax);
