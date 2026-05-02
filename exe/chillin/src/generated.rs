@@ -34362,11 +34362,11 @@ pub fn x408e15(ctx: &mut Context) -> Cont {
 
 pub fn x408e28(ctx: &mut Context) -> Cont {
     // 00408e28 not eax
-    todo!();
+    ctx.cpu.regs.eax = !ctx.cpu.regs.eax;
     // 00408e2a add eax,1
     ctx.cpu.regs.eax = add(ctx.cpu.regs.eax, 0x1u32, &mut ctx.cpu.flags);
     // 00408e2f not ebx
-    todo!();
+    ctx.cpu.regs.ebx = !ctx.cpu.regs.ebx;
     // 00408e31 adc ebx,0
     let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
     ctx.cpu.regs.ebx = addc(ctx.cpu.regs.ebx, 0x0u32, carry as _, &mut ctx.cpu.flags);

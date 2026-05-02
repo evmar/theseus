@@ -68,8 +68,11 @@ impl<'a> CodeGen<'a> {
             }
             Nop => {}
 
-            Not | Int | Int3 | Cmpxchg | Pushfd | Setne | Cpuid | Xgetbv | Setg | Bt | Div
-            | Setge => self.todo(),
+            Not => self.line(set_op(instr, 0, format!("!{}", get_op(instr, 0)))),
+
+            Int | Int3 | Cmpxchg | Pushfd | Setne | Cpuid | Xgetbv | Setg | Bt | Div | Setge => {
+                self.todo()
+            }
 
             Cbw => self.line("ctx.cpu.regs.set_ax(ctx.cpu.regs.get_al() as i8 as i16 as u16);"),
             Cwde => self.line("ctx.cpu.regs.eax = ctx.cpu.regs.get_ax() as i16 as i32 as u32;"),
