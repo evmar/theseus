@@ -140,9 +140,17 @@ impl Regs {
         self.ebx = (self.ebx & 0xFFFF_00FF) | ((val as u32) << 8)
     }
 
+    pub fn get_edx_eax(&self) -> u64 {
+        ((self.edx as u64) << 32) | self.eax as u64
+    }
+
     pub fn set_edx_eax(&mut self, val: u64) {
         self.edx = (val >> 32) as u32;
         self.eax = val as u32;
+    }
+
+    pub fn get_dx_ax(&self) -> u32 {
+        ((self.edx as u32) << 16) | self.eax as u32
     }
 
     pub fn set_dx_ax(&mut self, val: u32) {

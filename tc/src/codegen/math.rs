@@ -63,22 +63,12 @@ impl<'a> CodeGen<'a> {
                 let size2 = size * 2;
                 let x = match size {
                     8 => get_reg(iced_x86::Register::AX),
-                    16 => {
-                        format!(
-                            "(({} as u32) << 16) | ({}) as u32)",
-                            get_reg(iced_x86::Register::DX),
-                            get_reg(iced_x86::Register::AX)
-                        )
-                    }
-                    32 => format!(
-                        "(({} as u64) << 32) | ({}) as u64",
-                        get_reg(iced_x86::Register::EDX),
-                        get_reg(iced_x86::Register::EAX)
-                    ),
+                    16 => format!("ctx.cpu.regs.get_dx_ax()"),
+                    32 => format!("ctx.cpu.regs.get_edx_eax()"),
                     _ => unreachable!(),
                 };
-                let y = get_op(instr, 0);
-                self.line(format!("let (quot, rem) = div({x}, {y} as u{size2});",));
+                let y = format!("{} as u{size2}", get_op(instr, 0));
+                self.line(format!("let (quot, rem) = div({x}, {y});"));
                 match size {
                     8 => {
                         self.line("ctx.cpu.regs.set_al(quot as u8);");
@@ -132,32 +122,33 @@ impl<'a> CodeGen<'a> {
 
             Idiv => {
                 assert_eq!(instr.op_count(), 1);
-                match op_size(instr, 0) {
+                let size = op_size(instr, 0);
+                let size2 = size * 2;
+                let x = match size {
+                    8 => format!("ctx.cpu.regs.get_ax() as i16"),
+                    16 => format!("ctx.cpu.regs.get_dx_ax() as i32"),
+                    32 => format!("ctx.cpu.regs.get_edx_eax() as i64"),
+                    _ => unreachable!(),
+                };
+                let y = format!("{} as i{size} as i{size2}", get_op(instr, 0));
+                self.line(format!("let x = {x};"));
+                self.line(format!("let y = {y};"));
+                let quot = format!("(x / y) as i{size} as u{size}");
+                let rem = format!("(x % y) as u{size}");
+                match size {
                     8 => {
-                        self.line(
-                            "let x = (((ctx.cpu.regs.get_dl() as u16) << 8) | (ctx.cpu.regs.get_al() as u16)) as i16;",
-                        );
-                        self.line(format!("let y = {} as i16;", get_op(instr, 0)));
-                        self.line("ctx.cpu.regs.set_al((x / y) as i8 as u8);");
-                        self.line("ctx.cpu.regs.set_dl((x % y) as i8 as u8);");
+                        self.line(format!("ctx.cpu.regs.set_al({quot});"));
+                        self.line(format!("ctx.cpu.regs.set_ah({rem});"));
                     }
                     16 => {
-                        self.line(
-                            "let x = (((ctx.cpu.regs.get_dx() as u32) << 16) | (ctx.cpu.regs.get_ax() as u32)) as i32;",
-                        );
-                        self.line(format!("let y = {} as i32;", get_op(instr, 0)));
-                        self.line("ctx.cpu.regs.set_ax((x / y) as i16 as u16);");
-                        self.line("ctx.cpu.regs.set_dx((x % y) as i16 as u16);");
+                        self.line(format!("ctx.cpu.regs.set_ax({quot});"));
+                        self.line(format!("ctx.cpu.regs.set_dx({rem});"));
                     }
                     32 => {
-                        self.line(
-                            "let x = (((ctx.cpu.regs.edx as u64) << 32) | (ctx.cpu.regs.eax as u64)) as i64;",
-                        );
-                        self.line(format!("let y = {} as i64;", get_op(instr, 0)));
-                        self.line("ctx.cpu.regs.eax = (x / y) as i32 as u32;");
-                        self.line("ctx.cpu.regs.edx = (x % y) as i32 as u32;");
+                        self.line(format!("ctx.cpu.regs.eax = {quot};"));
+                        self.line(format!("ctx.cpu.regs.edx = {rem};"));
                     }
-                    _ => todo!(),
+                    _ => unreachable!(),
                 }
             }
 
