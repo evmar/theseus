@@ -44,17 +44,14 @@ impl<'a> CodeGen<'a> {
 
             Mul => {
                 assert_eq!(instr.op_count(), 1);
-                match op_size(instr, 0) {
-                    32 => {
-                        self.line("let x = ctx.cpu.regs.eax;");
-                        self.line(format!("let y = {};", get_op(instr, 0)));
-                        self.line("let out = mul(x as u64, y as u64, &mut ctx.cpu.flags);");
-                        self.line("ctx.cpu.regs.edx = (out >> 32) as u32;");
-                        self.line("ctx.cpu.regs.eax = out as u32;");
-                    }
-                    16 => self.todo(),
-                    8 => self.todo(),
-                    size => todo!("{size}"),
+                let size = op_size(instr, 0);
+                let size2 = size * 2;
+                self.line(format!("let res = mul(ctx.cpu.regs.eax as u{size2}, {} as u{size2}, &mut ctx.cpu.flags);", get_op(instr, 0)));
+                match size {
+                    8 => self.line(format!("ctx.cpu.regs.set_ax(res);")),
+                    16 => self.line(format!("ctx.cpu.regs.set_dx_ax(res);")),
+                    32 => self.line(format!("ctx.cpu.regs.set_edx_eax(res);")),
+                    _ => unreachable!(),
                 }
             }
 

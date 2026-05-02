@@ -35593,27 +35593,30 @@ pub fn x4091f5(ctx: &mut Context) -> Cont {
         ctx.memory
             .read::<u16>(ctx.cpu.regs.esi.wrapping_add((ctx.cpu.regs.ecx * 2))) as _;
     // 0040920e mul edx
-    let x = ctx.cpu.regs.eax;
-    let y = ctx.cpu.regs.edx;
-    let out = mul(x as u64, y as u64, &mut ctx.cpu.flags);
-    ctx.cpu.regs.edx = (out >> 32) as u32;
-    ctx.cpu.regs.eax = out as u32;
+    let res = mul(
+        ctx.cpu.regs.eax as u64,
+        ctx.cpu.regs.edx as u64,
+        &mut ctx.cpu.flags,
+    );
+    ctx.cpu.regs.set_edx_eax(res);
     // 00409210 shrd eax,edx,0Fh
     todo!();
     // 00409214 mul ebx
-    let x = ctx.cpu.regs.eax;
-    let y = ctx.cpu.regs.ebx;
-    let out = mul(x as u64, y as u64, &mut ctx.cpu.flags);
-    ctx.cpu.regs.edx = (out >> 32) as u32;
-    ctx.cpu.regs.eax = out as u32;
+    let res = mul(
+        ctx.cpu.regs.eax as u64,
+        ctx.cpu.regs.ebx as u64,
+        &mut ctx.cpu.flags,
+    );
+    ctx.cpu.regs.set_edx_eax(res);
     // 00409216 shrd eax,edx,0Fh
     todo!();
     // 0040921a mul ecx
-    let x = ctx.cpu.regs.eax;
-    let y = ctx.cpu.regs.ecx;
-    let out = mul(x as u64, y as u64, &mut ctx.cpu.flags);
-    ctx.cpu.regs.edx = (out >> 32) as u32;
-    ctx.cpu.regs.eax = out as u32;
+    let res = mul(
+        ctx.cpu.regs.eax as u64,
+        ctx.cpu.regs.ecx as u64,
+        &mut ctx.cpu.flags,
+    );
+    ctx.cpu.regs.set_edx_eax(res);
     // 0040921c shrd eax,edx,0Fh
     todo!();
     // 00409220 pop edi
@@ -37161,13 +37164,29 @@ pub fn x409d1b(ctx: &mut Context) -> Cont {
         .memory
         .read::<u8>(ctx.cpu.regs.edi.wrapping_add(0x22u32)) as _;
     // 00409d1f mul byte ptr [ebp+1]
-    todo!();
+    let res = mul(
+        ctx.cpu.regs.eax as u16,
+        ctx.memory.read::<u8>(ctx.cpu.regs.ebp.wrapping_add(0x1u32)) as u16,
+        &mut ctx.cpu.flags,
+    );
+    ctx.cpu.regs.set_ax(res);
     // 00409d22 shr eax,6
     ctx.cpu.regs.eax = shr(ctx.cpu.regs.eax, 0x6u8, &mut ctx.cpu.flags);
     // 00409d25 mul byte ptr [ebp]
-    todo!();
+    let res = mul(
+        ctx.cpu.regs.eax as u16,
+        ctx.memory.read::<u8>(ctx.cpu.regs.ebp) as u16,
+        &mut ctx.cpu.flags,
+    );
+    ctx.cpu.regs.set_ax(res);
     // 00409d28 mul word ptr [edi+35h]
-    todo!();
+    let res = mul(
+        ctx.cpu.regs.eax as u32,
+        ctx.memory
+            .read::<u16>(ctx.cpu.regs.edi.wrapping_add(0x35u32)) as u32,
+        &mut ctx.cpu.flags,
+    );
+    ctx.cpu.regs.set_dx_ax(res);
     // 00409d2c shr edx,4
     ctx.cpu.regs.edx = shr(ctx.cpu.regs.edx, 0x4u8, &mut ctx.cpu.flags);
     // 00409d2f mov [edi+22h],dl
@@ -37304,7 +37323,13 @@ pub fn x409d67(ctx: &mut Context) -> Cont {
         &mut ctx.cpu.flags,
     ));
     // 00409d7b mul byte ptr [edi+22h]
-    todo!();
+    let res = mul(
+        ctx.cpu.regs.eax as u16,
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.edi.wrapping_add(0x22u32)) as u16,
+        &mut ctx.cpu.flags,
+    );
+    ctx.cpu.regs.set_ax(res);
     // 00409d7e shr eax,6
     ctx.cpu.regs.eax = shr(ctx.cpu.regs.eax, 0x6u8, &mut ctx.cpu.flags);
     // 00409d81 mov [edi+22h],al
@@ -37395,7 +37420,13 @@ pub fn x409db0(ctx: &mut Context) -> Cont {
         .regs
         .set_al(ctx.memory.read::<u8>(ctx.cpu.regs.esi.wrapping_add(0x2u32)));
     // 00409db3 mul byte ptr [edi+22h]
-    todo!();
+    let res = mul(
+        ctx.cpu.regs.eax as u16,
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.edi.wrapping_add(0x22u32)) as u16,
+        &mut ctx.cpu.flags,
+    );
+    ctx.cpu.regs.set_ax(res);
     // 00409db6 shr eax,6
     ctx.cpu.regs.eax = shr(ctx.cpu.regs.eax, 0x6u8, &mut ctx.cpu.flags);
     // 00409db9 mov [edi+22h],al
