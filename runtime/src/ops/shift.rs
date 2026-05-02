@@ -111,3 +111,22 @@ pub fn rol<I: Int>(x: I, y: u8, flags: &mut Flags) -> I {
     flags.set(Flags::OF, carry ^ (result.high_bit()).is_one());
     result
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn shrd() {
+        let mut flags = Flags::default();
+        assert_eq!(super::shrd(0x8000_0001, 0, 1, &mut flags), 0x4000_0000);
+        assert_eq!("CF PF OF", flags.to_string());
+
+        let mut flags = Flags::default();
+        assert_eq!(
+            super::shrd(0x1234_5678, 0xfedc_ba98, 4, &mut flags),
+            0x8123_4567
+        );
+        assert_eq!("CF SF", flags.to_string());
+    }
+}

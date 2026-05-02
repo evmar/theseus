@@ -20,3 +20,12 @@ bitflags::bitflags! {
         const ALL = !0;
     }
 }
+
+impl Flags {
+    pub fn to_string(&self) -> String {
+        self.iter_names()
+            .map(|(name, _)| name)
+            .collect::<Vec<_>>()
+            .join(" ")
+    }
+}
