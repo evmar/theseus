@@ -36490,6 +36490,26 @@ pub fn x4094c2(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
+pub fn x4094e0(ctx: &mut Context) -> Cont {
+    // 004094e0 mov al,[ebp+23h]
+    ctx.cpu.regs.set_al(
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.ebp.wrapping_add(0x23u32)),
+    );
+    // 004094e3 mov [edi+23h],al
+    ctx.memory.write::<u8>(
+        ctx.cpu.regs.edi.wrapping_add(0x23u32),
+        ctx.cpu.regs.get_al(),
+    );
+    // 004094e6 mov [edi+24h],al
+    ctx.memory.write::<u8>(
+        ctx.cpu.regs.edi.wrapping_add(0x24u32),
+        ctx.cpu.regs.get_al(),
+    );
+    // 004094e9 ret
+    ret(ctx, 0)
+}
+
 pub fn x40950a(ctx: &mut Context) -> Cont {
     // 0040950a movzx eax,byte ptr [ebp+23h]
     ctx.cpu.regs.eax = ctx
@@ -36529,6 +36549,54 @@ pub fn x409516(ctx: &mut Context) -> Cont {
         ctx.cpu.regs.get_al(),
     );
     // 00409526 ret
+    ret(ctx, 0)
+}
+
+pub fn x40969e(ctx: &mut Context) -> Cont {
+    // 0040969e add byte ptr [ebp+21h],10h
+    ctx.memory.write::<u8>(
+        ctx.cpu.regs.ebp.wrapping_add(0x21u32),
+        add(
+            ctx.memory
+                .read::<u8>(ctx.cpu.regs.ebp.wrapping_add(0x21u32)),
+            0x10u8,
+            &mut ctx.cpu.flags,
+        ),
+    );
+    Cont(x4096a2)
+}
+
+pub fn x4096a2(ctx: &mut Context) -> Cont {
+    // 004096a2 add byte ptr [ebp+21h],10h
+    ctx.memory.write::<u8>(
+        ctx.cpu.regs.ebp.wrapping_add(0x21u32),
+        add(
+            ctx.memory
+                .read::<u8>(ctx.cpu.regs.ebp.wrapping_add(0x21u32)),
+            0x10u8,
+            &mut ctx.cpu.flags,
+        ),
+    );
+    Cont(x4096a6)
+}
+
+pub fn x4096a6(ctx: &mut Context) -> Cont {
+    // 004096a6 mov al,[ebp+21h]
+    ctx.cpu.regs.set_al(
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.ebp.wrapping_add(0x21u32)),
+    );
+    // 004096a9 mov [edi+21h],al
+    ctx.memory.write::<u8>(
+        ctx.cpu.regs.edi.wrapping_add(0x21u32),
+        ctx.cpu.regs.get_al(),
+    );
+    // 004096ac mov [edi+22h],al
+    ctx.memory.write::<u8>(
+        ctx.cpu.regs.edi.wrapping_add(0x22u32),
+        ctx.cpu.regs.get_al(),
+    );
+    // 004096af ret
     ret(ctx, 0)
 }
 
@@ -39092,7 +39160,7 @@ pub fn x40a56e(ctx: &mut Context) -> Cont {
     Cont(ddraw::DirectDrawCreate_stdcall)
 }
 
-const BLOCKS: [(u32, ContFn); 1778] = [
+const BLOCKS: [(u32, ContFn); 1782] = [
     (0x401000, x401000),
     (0x401015, x401015),
     (0x401017, x401017),
@@ -40499,9 +40567,13 @@ const BLOCKS: [(u32, ContFn); 1778] = [
     (0x4094ba, x4094ba),
     (0x4094bf, x4094bf),
     (0x4094c2, x4094c2),
+    (0x4094e0, x4094e0),
     (0x40950a, x40950a),
     (0x409512, x409512),
     (0x409516, x409516),
+    (0x40969e, x40969e),
+    (0x4096a2, x4096a2),
+    (0x4096a6, x4096a6),
     (0x409739, x409739),
     (0x409b42, x409b42),
     (0x409b47, x409b47),
