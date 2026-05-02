@@ -37,7 +37,7 @@ pub fn set_reg(r: iced_x86::Register, expr: String) -> String {
         EAX | ECX | EDX | EBX | ESI | EDI | ESP | EBP => {
             format!("ctx.cpu.regs.{reg} = {expr};", reg = reg_name(r))
         }
-        AL | AH | AX | CL | CH | CX | DL | DH | DX | BL | BH | BX | DI | SI | ES | SP | BP => {
+        AL | AH | AX | CL | CH | CX | DL | DH | DX | BL | BH | BX | DI | SI | ES | SS | SP | BP => {
             format!("ctx.cpu.regs.set_{reg}({expr});", reg = reg_name(r))
         }
         r => todo!("{r:?}"),
@@ -118,7 +118,8 @@ pub fn reg_size(r: iced_x86::Register) -> usize {
     use iced_x86::Register::*;
     match r {
         AL | AH | BL | BH | CL | CH | DL | DH => 8,
-        AX | BX | CX | DX | SI | DI | BP | SP | ES => 16,
+        AX | BX | CX | DX | SI | DI | BP | SP => 16,
+        CS | DS | ES | FS | GS | SS => 16,
         EAX | EBX | ECX | EDX | ESI | EDI | ESP | EBP => 32,
         MM0 | MM1 | MM2 | MM3 | MM4 | MM5 | MM6 | MM7 => 64,
         r => todo!("{r:?}"),

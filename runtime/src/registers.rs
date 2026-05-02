@@ -81,6 +81,13 @@ impl Regs {
         self.ebp = (self.ebp & 0xFFFF_0000) | (val as u32);
     }
 
+    pub fn set_es(&mut self, _val: u16) {
+        todo!();
+    }
+    pub fn set_ss(&mut self, _val: u16) {
+        todo!();
+    }
+
     pub fn get_al(&self) -> u8 {
         self.eax as u8
     }

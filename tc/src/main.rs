@@ -16,6 +16,10 @@ struct Args {
     #[argh(switch)]
     scan_immediates: bool,
 
+    /// additional addresses to scan for code
+    #[argh(option, from_str_fn(hex))]
+    entry_point: Vec<u32>,
+
     /// path to input executable
     #[argh(option)]
     exe: String,
@@ -45,6 +49,7 @@ fn run() -> anyhow::Result<()> {
         scan_immediates: args.scan_immediates,
         scan_memory: args.scan_memory,
         externs: args.externs,
+        entry_points: args.entry_point,
         ..Default::default() // todo: entry_points, jump_tables?
     });
 
