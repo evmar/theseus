@@ -156,7 +156,6 @@ impl Surface {
                 // scribble on pixels so we can see it
                 mem[addr..][..size as usize].fill(0x8F);
                 self.pixels = Some(addr);
-                log::error!("surf {:x} pixels {:x}", self.addr, addr);
                 addr
             }
         }
