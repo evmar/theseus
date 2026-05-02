@@ -45,6 +45,23 @@ pub fn shld(x: u32, y: u32, count: u8, flags: &mut Flags) -> u32 {
     result
 }
 
+pub fn shrd(x: u32, y: u32, count: u8, flags: &mut Flags) -> u32 {
+    let count = count % 32;
+    if count == 0 {
+        return x;
+    }
+    flags.set(Flags::CF, ((x >> (count - 1)) & 1) != 0);
+    let result = (x >> count) | (y << (32 - count));
+    if count == 1 {
+        // For a 1-bit shrd, OF is set if the sign bit changed.
+        flags.set(Flags::OF, ((x >> 31) & 1) != ((result >> 31) & 1));
+    }
+    flags.set(Flags::PF, result.low_byte().count_ones() % 2 == 0);
+    flags.set(Flags::SF, (result >> 31) != 0);
+    flags.set(Flags::ZF, result == 0);
+    result
+}
+
 pub fn shr<I: Int>(x: I, y: u8, flags: &mut Flags) -> I {
     assert!(I::bits() < 64);
     let y = y % 32;

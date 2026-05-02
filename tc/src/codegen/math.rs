@@ -29,7 +29,7 @@ impl<'a> CodeGen<'a> {
                 ));
             }
 
-            Shld => {
+            Shld | Shrd => {
                 assert_eq!(instr.op_count(), 3);
                 let op0 = get_op(instr, 0);
                 let op1 = get_op(instr, 1);
@@ -37,10 +37,12 @@ impl<'a> CodeGen<'a> {
                 self.line(set_op(
                     instr,
                     0,
-                    format!("shld({op0}, {op1}, {op2}, &mut ctx.cpu.flags)"),
+                    format!(
+                        "{op}({op0}, {op1}, {op2}, &mut ctx.cpu.flags)",
+                        op = instr_name(instr)
+                    ),
                 ));
             }
-            Shrd => self.todo(),
 
             Mul => {
                 assert_eq!(instr.op_count(), 1);

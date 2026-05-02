@@ -34401,7 +34401,12 @@ pub fn x408e37(ctx: &mut Context) -> Cont {
         &mut ctx.cpu.flags,
     );
     // 00408e4e shrd eax,edx,16h
-    todo!();
+    ctx.cpu.regs.eax = shrd(
+        ctx.cpu.regs.eax,
+        ctx.cpu.regs.edx,
+        0x16u8,
+        &mut ctx.cpu.flags,
+    );
     // 00408e52 sar edx,16h
     ctx.cpu.regs.edx = sar(ctx.cpu.regs.edx, 0x16u8, &mut ctx.cpu.flags);
     // 00408e55 movzx ebx,word ptr [esi+14h]
@@ -35600,7 +35605,12 @@ pub fn x4091f5(ctx: &mut Context) -> Cont {
     );
     ctx.cpu.regs.set_edx_eax(res);
     // 00409210 shrd eax,edx,0Fh
-    todo!();
+    ctx.cpu.regs.eax = shrd(
+        ctx.cpu.regs.eax,
+        ctx.cpu.regs.edx,
+        0xfu8,
+        &mut ctx.cpu.flags,
+    );
     // 00409214 mul ebx
     let res = mul(
         ctx.cpu.regs.eax as u64,
@@ -35609,7 +35619,12 @@ pub fn x4091f5(ctx: &mut Context) -> Cont {
     );
     ctx.cpu.regs.set_edx_eax(res);
     // 00409216 shrd eax,edx,0Fh
-    todo!();
+    ctx.cpu.regs.eax = shrd(
+        ctx.cpu.regs.eax,
+        ctx.cpu.regs.edx,
+        0xfu8,
+        &mut ctx.cpu.flags,
+    );
     // 0040921a mul ecx
     let res = mul(
         ctx.cpu.regs.eax as u64,
@@ -35618,7 +35633,12 @@ pub fn x4091f5(ctx: &mut Context) -> Cont {
     );
     ctx.cpu.regs.set_edx_eax(res);
     // 0040921c shrd eax,edx,0Fh
-    todo!();
+    ctx.cpu.regs.eax = shrd(
+        ctx.cpu.regs.eax,
+        ctx.cpu.regs.edx,
+        0xfu8,
+        &mut ctx.cpu.flags,
+    );
     // 00409220 pop edi
     let x = pop(ctx);
     ctx.cpu.regs.edi = x;
