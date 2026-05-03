@@ -16,13 +16,14 @@ elif [[ $1 == "chillin" ]]; then
         --out exe/chillin \
         --extern 0x40a3b4 \
         --entry-point 0x409435 \
-        --entry-point 0x409739 \
-        --entry-point 0x40950a \
         --entry-point 0x4094ad \
-        --entry-point 0x40969e \
         --entry-point 0x4094e0 \
+        --entry-point 0x4094fa \
+        --entry-point 0x40950a \
+        --entry-point 0x40969e \
         --entry-point 0x4096a2 \
         --entry-point 0x4096a6 \
+        --entry-point 0x409739 \
         --scan-immediates --scan-memory
     cargo build --profile fast -p chillin
 elif [[ $1 == "chillin-unpack" ]]; then
