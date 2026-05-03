@@ -410,7 +410,6 @@ pub mod IDirectSoundBuffer {
         }
 
         let data = &ctx.memory[buffer.addr..][..dwAudioBytes1 as usize];
-        log::info!("writing {:#x} bytes of data", data.len(),);
         buffer.stream.0.put_data(data).unwrap();
         buffer.total_written += data.len() as u32;
 
