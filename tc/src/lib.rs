@@ -7,7 +7,7 @@ mod load;
 pub use load::load_pe;
 mod gather;
 mod memory;
-pub use gather::Gather;
+pub use gather::{EntryPoint, Gather};
 
 #[derive(Debug, Clone)]
 pub struct Import {

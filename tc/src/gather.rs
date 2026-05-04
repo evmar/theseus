@@ -20,25 +20,31 @@ pub fn is_abs_memory_ref(instr: &iced_x86::Instruction) -> Option<u32> {
     Some(instr.memory_displacement32())
 }
 
+#[derive(Clone)]
+pub enum EntryPoint {
+    Single(u32),
+    Range(std::ops::Range<u32>),
+}
+
 #[derive(Default)]
 pub struct Gather {
+    pub externs: Vec<u32>,
     pub scan_immediates: bool,
     pub scan_memory: bool,
-    pub entry_points: Vec<u32>,
-    pub jump_tables: Vec<std::ops::RangeInclusive<u32>>,
-    pub externs: Vec<u32>,
+
+    pub entry_points: Vec<EntryPoint>,
 }
 
 impl Gather {
     pub fn run(self, state: &mut State) -> HashMap<u32, Block> {
-        let mut traverse = Traverse::new(state, self);
+        let mut traverse = Traverse::new(state, &self);
         traverse.run();
         traverse.blocks.into_iter().collect()
     }
 }
 
 struct Traverse<'a> {
-    gather: Gather,
+    gather: &'a Gather,
     module: &'a Module,
     mem: &'a Memory,
 
@@ -49,7 +55,7 @@ struct Traverse<'a> {
 }
 
 impl<'a> Traverse<'a> {
-    pub fn new(state: &'a mut State, gather: Gather) -> Traverse<'a> {
+    pub fn new(state: &'a mut State, gather: &'a Gather) -> Traverse<'a> {
         Traverse {
             gather,
             module: &state.module,
@@ -74,13 +80,24 @@ impl<'a> Traverse<'a> {
             self.blocks.insert(addr, Block::Extern(addr));
         }
         self.queue.push_back(self.module.entry_point);
-        for &addr in self.gather.entry_points.iter() {
-            self.queue.push_back(addr);
-        }
-        for range in self.gather.jump_tables.iter() {
-            for addr in range.clone().step_by(4) {
-                let addr = self.mem.read::<u32>(addr);
-                self.queue.push_back(addr);
+        for entry_point in self.gather.entry_points.iter() {
+            match entry_point {
+                EntryPoint::Single(addr) => self.queue.push_back(*addr),
+                EntryPoint::Range(r) => {
+                    let mut ip = r.start;
+                    while ip < r.end {
+                        let Ok(block) = self.decode_one(ip) else {
+                            log::warn!("failed to decode range {r:#x?} at {:#x}", ip);
+                            break;
+                        };
+                        let Block::Instrs(instrs) = &block else {
+                            unreachable!();
+                        };
+                        let next = instrs.last().unwrap().next_ip();
+                        self.blocks.insert(ip, block);
+                        ip = next;
+                    }
+                }
             }
         }
         if self.gather.scan_memory {

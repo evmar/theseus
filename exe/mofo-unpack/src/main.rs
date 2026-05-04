@@ -138,11 +138,19 @@ pub fn do_unpack(ctx: &mut runtime::Context) {
 
     tc.gather(tc::Gather {
         //scan_immediates: true,
-        entry_points: vec![
-            0x0041ec70, // sound thread proc
-            0x0041e8f0, // waveOutOpen callback
-        ],
-        jump_tables: vec![0x0041e8d4..=0x0041e8ec],
+        entry_points: [
+            vec![
+                tc::EntryPoint::Single(0x0041ec70), // sound thread proc
+                tc::EntryPoint::Single(0x0041e8f0), // waveOutOpen callback
+            ],
+            // jump table
+            (0x0041e8d4..=0x0041e8ec)
+                .step_by(4)
+                .map(|addr| tc::EntryPoint::Single(tc.mem.read::<u32>(addr)))
+                .collect(),
+        ]
+        .concat()
+        .to_vec(),
         ..Default::default()
     });
 
