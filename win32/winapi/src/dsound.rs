@@ -315,25 +315,20 @@ pub mod IDirectSoundBuffer {
         let mut lock = lock();
         let buffer = lock.buffers.get_mut(&this).unwrap();
 
-        if buffer.stream.0.queued_bytes().unwrap() as u32 == buffer.size {
-            log::warn!("buffer full?");
-            // it appears chillin relies on getting null back in this case
-            ctx.memory.write(ppvAudioPtr1, 0u32);
-            ctx.memory.write(pdwAudioBytes1, 0u32);
-            if ppvAudioPtr2 != 0 {
-                ctx.memory.write(ppvAudioPtr2, 0u32);
-                ctx.memory.write(pdwAudioBytes2, 0u32);
-            }
-            return DS_OK;
-        }
-
         let len = if dwFlags.contains(DSBLOCK::ENTIREBUFFER) {
             assert_eq!(dwBytes, 0);
             buffer.size
         } else {
             dwBytes.min(buffer.size - dwOffset)
         };
-        ctx.memory.write(ppvAudioPtr1, buffer.addr + dwOffset);
+
+        let addr = if len == 0 {
+            // it appears chillin relies on getting null back in this case
+            0
+        } else {
+            buffer.addr + dwOffset
+        };
+        ctx.memory.write(ppvAudioPtr1, addr);
         ctx.memory.write(pdwAudioBytes1, len);
         if ppvAudioPtr2 != 0 {
             ctx.memory.write(ppvAudioPtr2, 0u32);
