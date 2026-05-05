@@ -2,7 +2,7 @@
 
 use std::collections::{BTreeMap, HashMap, HashSet, VecDeque};
 
-use crate::{Block, Import, Instr, Module, State, memory::Memory};
+use crate::{Block, BlockType, Import, Instr, Module, State, memory::Memory};
 
 /// If the instruction looks like
 ///   foo [x]
@@ -47,6 +47,7 @@ struct Traverse<'a> {
     gather: &'a Gather,
     module: &'a Module,
     mem: &'a Memory,
+    symbol_names: &'a HashMap<u32, String>,
 
     iat_refs: HashMap<u32, &'a Import>,
     queue: VecDeque<u32>,
@@ -60,6 +61,7 @@ impl<'a> Traverse<'a> {
             gather,
             module: &state.module,
             mem: &state.mem,
+            symbol_names: &state.symbol_names,
 
             iat_refs: Default::default(),
             queue: VecDeque::new(),
@@ -71,14 +73,26 @@ impl<'a> Traverse<'a> {
     pub fn run(&mut self) {
         for import in &self.module.imports {
             let func = format!("{}::{}", import.dll, import.func);
-            self.blocks
-                .insert(import.func_addr, Block::Stdcall(func.clone()));
+            self.blocks.insert(
+                import.func_addr,
+                Block {
+                    name: None, // block.name() will use the stdcall name
+                    ty: BlockType::Stdcall(func),
+                },
+            );
             self.iat_refs.insert(import.iat_addr, &import);
         }
 
         for &addr in self.gather.externs.iter() {
-            self.blocks.insert(addr, Block::Extern(addr));
+            self.blocks.insert(
+                addr,
+                Block {
+                    name: self.symbol_names.get(&addr).cloned(),
+                    ty: BlockType::Extern(addr),
+                },
+            );
         }
+
         self.queue.push_back(self.module.entry_point);
         for entry_point in self.gather.entry_points.iter() {
             match entry_point {
@@ -90,7 +104,7 @@ impl<'a> Traverse<'a> {
                             log::warn!("failed to decode range {r:#x?} at {:#x}", ip);
                             break;
                         };
-                        let Block::Instrs(instrs) = &block else {
+                        let BlockType::Instrs(instrs) = &block.ty else {
                             unreachable!();
                         };
                         let next = instrs.last().unwrap().next_ip();
@@ -112,11 +126,14 @@ impl<'a> Traverse<'a> {
             // If this ip is contained within an existing block, it means it is a
             // jmp within some other code.
             // Re-queue the other block for re-parsing after this one so that it can be split.
-            if let Some((&addr, Block::Instrs(instrs))) = self.blocks.range(0..ip).last() {
-                let range = instrs.first().unwrap().iced.ip32()..instrs.last().unwrap().next_ip();
-                if range.contains(&ip) {
-                    self.blocks.remove(&addr);
-                    self.queue.push_back(addr);
+            if let Some((&addr, block)) = self.blocks.range(0..ip).last() {
+                if let BlockType::Instrs(instrs) = &block.ty {
+                    let range =
+                        instrs.first().unwrap().iced.ip32()..instrs.last().unwrap().next_ip();
+                    if range.contains(&ip) {
+                        self.blocks.remove(&addr);
+                        self.queue.push_back(addr);
+                    }
                 }
             }
 
@@ -217,7 +234,10 @@ impl<'a> Traverse<'a> {
             break;
         }
 
-        Ok(Block::Instrs(instrs))
+        Ok(Block {
+            name: self.symbol_names.get(&instrs[0].iced.ip32()).cloned(),
+            ty: BlockType::Instrs(instrs),
+        })
     }
 
     fn scan_for_pointers(&mut self) {

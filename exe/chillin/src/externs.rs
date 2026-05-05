@@ -1,6 +1,6 @@
 use runtime::{Cont, Context, ret};
 
-pub fn x40a3b4(ctx: &mut Context) -> Cont {
+pub fn release(ctx: &mut Context) -> Cont {
     // code is like
     //   mov edi, 0x403a3b4
     //   call edi

@@ -5,8 +5,8 @@ use crate::{
 
 impl<'a> CodeGen<'a> {
     fn gen_abs_jmp(&self, addr: u32) -> String {
-        if self.blocks.contains_key(&addr) {
-            format!("Cont(x{:x})", addr)
+        if let Some(block) = self.blocks.get(&addr) {
+            format!("Cont({})", block.name())
         } else {
             format!("todo!(\"indirect jmp to {:#x}?\")", addr)
         }

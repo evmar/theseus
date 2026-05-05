@@ -48,7 +48,12 @@ impl Instr {
     }
 }
 
-pub enum Block {
+pub struct Block {
+    name: Option<String>,
+    ty: BlockType,
+}
+
+pub enum BlockType {
     Instrs(Vec<Instr>),
     Stdcall(String),
     Extern(u32),
@@ -56,10 +61,13 @@ pub enum Block {
 
 impl Block {
     pub fn name(&self) -> String {
-        match self {
-            Block::Instrs(instrs) => format!("x{:x}", instrs[0].iced.ip32()),
-            Block::Stdcall(func) => format!("{}_stdcall", func),
-            Block::Extern(ip) => format!("x{:x}", ip),
+        if let Some(name) = &self.name {
+            return name.clone();
+        }
+        match &self.ty {
+            BlockType::Instrs(instrs) => format!("x{:x}", instrs[0].iced.ip32()),
+            BlockType::Stdcall(func) => format!("{}_stdcall", func),
+            BlockType::Extern(ip) => format!("x{:x}", ip),
         }
     }
 }

@@ -113,7 +113,7 @@
 "FUN_00408d65","00408d65","Function","Global","Default","1","0"
 "FUN_00408db0","00408db0","Function","Global","Default","1","0"
 "FUN_00409039","00409039","Function","Global","Default","1","0"
-"use_thisptr","004090c7","Thunk Function","Global","Default","6","0"
+"use_thisptr_thunk","004090c7","Thunk Function","Global","User Defined","6","0"
 "use_thisptr","004090cc","Function","Global","User Defined","2","0"
 "thunk_FUN_004090d9","004090d4","Thunk Function","Global","Default","1","0"
 "FUN_004090d9","004090d9","Function","Global","Default","2","0"

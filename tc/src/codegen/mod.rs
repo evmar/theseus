@@ -8,7 +8,7 @@ mod misc;
 mod mmx;
 mod string;
 
-use crate::{Block, Instr, Module, State, memory::Memory, write_if_changed};
+use crate::{Block, BlockType, Instr, Module, State, memory::Memory, write_if_changed};
 
 fn reg_name(r: iced_x86::Register) -> String {
     format!("{r:?}").to_ascii_lowercase()
@@ -169,7 +169,6 @@ pub fn set_op(instr: &iced_x86::Instruction, n: u32, expr: String) -> String {
 pub struct CodeGen<'a> {
     module: &'a Module,
     mem: &'a Memory,
-    symbol_names: &'a HashMap<u32, String>,
     blocks: &'a HashMap<u32, Block>,
     buf: String,
 }
@@ -179,7 +178,6 @@ impl<'a> CodeGen<'a> {
         Self {
             module: &state.module,
             mem: &state.mem,
-            symbol_names: &state.symbol_names,
             blocks: &state.blocks,
             buf: Default::default(),
         }
@@ -196,13 +194,13 @@ impl<'a> CodeGen<'a> {
 }
 
 impl<'a> CodeGen<'a> {
-    fn gen_block(&mut self, ip: u32, block: &Block) {
-        match block {
-            Block::Instrs(instrs) => {
-                if let Some(name) = self.symbol_names.get(&ip) {
-                    self.line(format!("// {name}"));
-                }
-                self.line(format!("pub fn x{ip:x}(ctx: &mut Context) -> Cont {{"));
+    fn gen_block(&mut self, block: &Block) {
+        match &block.ty {
+            BlockType::Instrs(instrs) => {
+                self.line(format!(
+                    "pub fn {name}(ctx: &mut Context) -> Cont {{",
+                    name = block.name()
+                ));
                 for instr in instrs {
                     if let Err(e) = self.gen_instr(instr) {
                         self.line(format!("// {}", e));
@@ -220,7 +218,7 @@ impl<'a> CodeGen<'a> {
 
                 self.line("}\n");
             }
-            Block::Stdcall(_) | Block::Extern(_) => {
+            BlockType::Stdcall(_) | BlockType::Extern(_) => {
                 // no emit
             }
         }
@@ -292,7 +290,7 @@ out.copy_from_slice(bytes);",
         ips.sort();
         for &ip in &ips {
             let block = self.blocks.get(&ip).unwrap();
-            self.gen_block(ip, &block);
+            self.gen_block(&block);
         }
 
         self.line(format!(
@@ -301,7 +299,7 @@ out.copy_from_slice(bytes);",
         ));
         for &ip in &ips {
             let block = self.blocks.get(&ip).unwrap();
-            self.line(format!("({ip:#x}, {}),", block.name()));
+            self.line(format!("({ip:#x}, {name}),", name = block.name()));
         }
         self.line("(runtime::RETURN_FROM_X86_ADDR, runtime::return_from_x86),");
         self.line("];");
@@ -313,13 +311,18 @@ out.copy_from_slice(bytes);",
             "#![allow(unreachable_code)]
 #![allow(unused_parens)]
 #![allow(unused_variables)]
+#![allow(non_snake_case)]
 
 use runtime::*;
 use winapi::*;
 ",
         );
 
-        if self.blocks.values().any(|b| matches!(b, Block::Extern(_))) {
+        if self
+            .blocks
+            .values()
+            .any(|b| matches!(b.ty, BlockType::Extern(_)))
+        {
             self.line("use crate::externs::*;");
         }
         self.line("");
@@ -330,18 +333,19 @@ use winapi::*;
 
         let resources = self.module.resources.clone().unwrap_or(0..0);
 
+        let entry_point = self.blocks.get(&self.module.entry_point).unwrap();
         self.line(format!(
             "pub const EXEDATA: EXEData = EXEData {{
             image_base: {image_base:#x},
             resources: {res_start:#x}..{res_end:#x},
             blocks: &BLOCKS,
             init_memory,
-            entry_point: Cont(x{entry_point:x}),
+            entry_point: Cont({entry_point}),
         }};\n\n",
             image_base = self.module.image_base,
             res_start = resources.start,
             res_end = resources.end,
-            entry_point = self.module.entry_point,
+            entry_point = entry_point.name(),
         ));
 
         std::fs::create_dir_all(format!("{outdir}/src"))?;

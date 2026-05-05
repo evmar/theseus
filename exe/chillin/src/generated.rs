@@ -1,6 +1,7 @@
 #![allow(unreachable_code)]
 #![allow(unused_parens)]
 #![allow(unused_variables)]
+#![allow(non_snake_case)]
 
 use runtime::*;
 use winapi::*;
@@ -91,8 +92,7 @@ fn init_memory(ctx: &mut Context, mappings: &mut kernel32::Mappings) {
     }
 }
 
-// dlgproc
-pub fn x401000(ctx: &mut Context) -> Cont {
+pub fn dlgproc(ctx: &mut Context) -> Cont {
     // 00401000 push ebx
     push(ctx, ctx.cpu.regs.ebx);
     // 00401001 push ebp
@@ -360,8 +360,7 @@ pub fn x40114f(ctx: &mut Context) -> Cont {
     ret(ctx, 16)
 }
 
-// init_ddraw
-pub fn x401156(ctx: &mut Context) -> Cont {
+pub fn init_ddraw(ctx: &mut Context) -> Cont {
     // 00401156 push esi
     push(ctx, ctx.cpu.regs.esi);
     // 00401157 push edi
@@ -403,7 +402,7 @@ pub fn x401156(ctx: &mut Context) -> Cont {
     // 0040118f push 0
     push(ctx, 0x0u32);
     // 00401191 call 0040A56Eh
-    let dst = Cont(x40a56e);
+    let dst = Cont(DirectDrawCreate);
     call(ctx, 0x401196, dst)
 }
 
@@ -949,7 +948,7 @@ pub fn x4013c8(ctx: &mut Context) -> Cont {
     // 004013d2 push eax
     push(ctx, ctx.cpu.regs.eax);
     // 004013d3 call 00401A60h
-    let dst = Cont(x401a60);
+    let dst = Cont(alloc);
     call(ctx, 0x4013d8, dst)
 }
 
@@ -1080,8 +1079,7 @@ pub fn x40146a(ctx: &mut Context) -> Cont {
     Cont(x40125f)
 }
 
-// ddraw_shutdown
-pub fn x40148c(ctx: &mut Context) -> Cont {
+pub fn ddraw_shutdown(ctx: &mut Context) -> Cont {
     // 0040148c push ebx
     push(ctx, ctx.cpu.regs.ebx);
     // 0040148d push ecx
@@ -1245,8 +1243,7 @@ pub fn x401525(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-// draw
-pub fn x401529(ctx: &mut Context) -> Cont {
+pub fn draw(ctx: &mut Context) -> Cont {
     // 00401529 push ebx
     push(ctx, ctx.cpu.regs.ebx);
     // 0040152a push ecx
@@ -2833,8 +2830,7 @@ pub fn x401a5a(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-// alloc
-pub fn x401a60(ctx: &mut Context) -> Cont {
+pub fn alloc(ctx: &mut Context) -> Cont {
     // 00401a60 push ebp
     push(ctx, ctx.cpu.regs.ebp);
     // 00401a61 mov ebp,esp
@@ -3023,8 +3019,7 @@ pub fn x401adc(ctx: &mut Context) -> Cont {
     ret(ctx, 16)
 }
 
-// create_window2
-pub fn x401af2(ctx: &mut Context) -> Cont {
+pub fn create_window2(ctx: &mut Context) -> Cont {
     // 00401af2 push ecx
     push(ctx, ctx.cpu.regs.ecx);
     // 00401af3 push edx
@@ -3075,8 +3070,7 @@ pub fn x401af2(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-// create_window
-pub fn x401b35(ctx: &mut Context) -> Cont {
+pub fn create_window(ctx: &mut Context) -> Cont {
     // 00401b35 push ecx
     push(ctx, ctx.cpu.regs.ecx);
     // 00401b36 push edx
@@ -3110,7 +3104,7 @@ pub fn x401b35(ctx: &mut Context) -> Cont {
     // 00401ba4 call dword ptr cs:[40B12Ch]
     call_builtin(ctx, user32::RegisterClassA_stdcall);
     // 00401bab call 00401AF2h
-    let dst = Cont(x401af2);
+    let dst = Cont(create_window2);
     call(ctx, 0x401bb0, dst)
 }
 
@@ -3125,8 +3119,7 @@ pub fn x401bb0(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-// pump_messages
-pub fn x401bb3(ctx: &mut Context) -> Cont {
+pub fn pump_messages(ctx: &mut Context) -> Cont {
     // 00401bb3 push ecx
     push(ctx, ctx.cpu.regs.ecx);
     // 00401bb4 push edx
@@ -3194,8 +3187,7 @@ pub fn x401bfb(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-// timer_proc
-pub fn x401bff(ctx: &mut Context) -> Cont {
+pub fn timer_proc(ctx: &mut Context) -> Cont {
     // 00401bff push ebp
     push(ctx, ctx.cpu.regs.ebp);
     // 00401c00 mov ebp,esp
@@ -3345,8 +3337,7 @@ pub fn x401cc5(ctx: &mut Context) -> Cont {
     ret(ctx, 20)
 }
 
-// init_timer
-pub fn x401cc9(ctx: &mut Context) -> Cont {
+pub fn init_timer(ctx: &mut Context) -> Cont {
     // 00401cc9 push ebx
     push(ctx, ctx.cpu.regs.ebx);
     // 00401cca push ecx
@@ -3394,8 +3385,7 @@ pub fn x401cc9(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-// state_from_timer
-pub fn x401d0f(ctx: &mut Context) -> Cont {
+pub fn state_from_timer(ctx: &mut Context) -> Cont {
     // 00401d0f push ebx
     push(ctx, ctx.cpu.regs.ebx);
     // 00401d10 push ecx
@@ -15012,7 +15002,7 @@ pub fn x4047e9(ctx: &mut Context) -> Cont {
     // 004047f2 push 100h
     push(ctx, 0x100u32);
     // 004047f7 call 00401A60h
-    let dst = Cont(x401a60);
+    let dst = Cont(alloc);
     call(ctx, 0x4047fc, dst)
 }
 
@@ -15034,7 +15024,7 @@ pub fn x4047fc(ctx: &mut Context) -> Cont {
     // 00404813 push eax
     push(ctx, ctx.cpu.regs.eax);
     // 00404814 call 00401A60h
-    let dst = Cont(x401a60);
+    let dst = Cont(alloc);
     call(ctx, 0x404819, dst)
 }
 
@@ -15054,7 +15044,7 @@ pub fn x404819(ctx: &mut Context) -> Cont {
     // 0040482d push eax
     push(ctx, ctx.cpu.regs.eax);
     // 0040482e call 00401A60h
-    let dst = Cont(x401a60);
+    let dst = Cont(alloc);
     call(ctx, 0x404833, dst)
 }
 
@@ -15072,7 +15062,7 @@ pub fn x404833(ctx: &mut Context) -> Cont {
     // 00404846 push eax
     push(ctx, ctx.cpu.regs.eax);
     // 00404847 call 00401A60h
-    let dst = Cont(x401a60);
+    let dst = Cont(alloc);
     call(ctx, 0x40484c, dst)
 }
 
@@ -15100,7 +15090,7 @@ pub fn x40484c(ctx: &mut Context) -> Cont {
     // 0040486a push eax
     push(ctx, ctx.cpu.regs.eax);
     // 0040486b call 00401A60h
-    let dst = Cont(x401a60);
+    let dst = Cont(alloc);
     call(ctx, 0x404870, dst)
 }
 
@@ -15128,7 +15118,7 @@ pub fn x404870(ctx: &mut Context) -> Cont {
     // 0040488e push eax
     push(ctx, ctx.cpu.regs.eax);
     // 0040488f call 00401A60h
-    let dst = Cont(x401a60);
+    let dst = Cont(alloc);
     call(ctx, 0x404894, dst)
 }
 
@@ -15156,7 +15146,7 @@ pub fn x404894(ctx: &mut Context) -> Cont {
     // 004048b2 push eax
     push(ctx, ctx.cpu.regs.eax);
     // 004048b3 call 00401A60h
-    let dst = Cont(x401a60);
+    let dst = Cont(alloc);
     call(ctx, 0x4048b8, dst)
 }
 
@@ -18703,7 +18693,7 @@ pub fn x405337(ctx: &mut Context) -> Cont {
     // 0040534e push eax
     push(ctx, ctx.cpu.regs.eax);
     // 0040534f call 00401A60h
-    let dst = Cont(x401a60);
+    let dst = Cont(alloc);
     call(ctx, 0x405354, dst)
 }
 
@@ -18715,7 +18705,7 @@ pub fn x405354(ctx: &mut Context) -> Cont {
     // 0040535c mov ds:[433F4Ch],eax
     ctx.memory.write::<u32>(0x433f4cu32, ctx.cpu.regs.eax);
     // 00405361 call 00401A60h
-    let dst = Cont(x401a60);
+    let dst = Cont(alloc);
     call(ctx, 0x405366, dst)
 }
 
@@ -20190,7 +20180,7 @@ pub fn x405771(ctx: &mut Context) -> Cont {
     // 00405781 mov ds:[433F44h],ecx
     ctx.memory.write::<u32>(0x433f44u32, ctx.cpu.regs.ecx);
     // 00405787 call 00401A60h
-    let dst = Cont(x401a60);
+    let dst = Cont(alloc);
     call(ctx, 0x40578c, dst)
 }
 
@@ -20202,7 +20192,7 @@ pub fn x40578c(ctx: &mut Context) -> Cont {
     // 00405794 mov ds:[433F34h],eax
     ctx.memory.write::<u32>(0x433f34u32, ctx.cpu.regs.eax);
     // 00405799 call 00401A60h
-    let dst = Cont(x401a60);
+    let dst = Cont(alloc);
     call(ctx, 0x40579e, dst)
 }
 
@@ -20214,7 +20204,7 @@ pub fn x40579e(ctx: &mut Context) -> Cont {
     // 004057a6 mov ds:[433F24h],eax
     ctx.memory.write::<u32>(0x433f24u32, ctx.cpu.regs.eax);
     // 004057ab call 00401A60h
-    let dst = Cont(x401a60);
+    let dst = Cont(alloc);
     call(ctx, 0x4057b0, dst)
 }
 
@@ -20226,7 +20216,7 @@ pub fn x4057b0(ctx: &mut Context) -> Cont {
     // 004057b8 mov ds:[433F38h],eax
     ctx.memory.write::<u32>(0x433f38u32, ctx.cpu.regs.eax);
     // 004057bd call 00401A60h
-    let dst = Cont(x401a60);
+    let dst = Cont(alloc);
     call(ctx, 0x4057c2, dst)
 }
 
@@ -20238,7 +20228,7 @@ pub fn x4057c2(ctx: &mut Context) -> Cont {
     // 004057ca mov ds:[433F3Ch],eax
     ctx.memory.write::<u32>(0x433f3cu32, ctx.cpu.regs.eax);
     // 004057cf call 00401A60h
-    let dst = Cont(x401a60);
+    let dst = Cont(alloc);
     call(ctx, 0x4057d4, dst)
 }
 
@@ -22408,7 +22398,7 @@ pub fn x405e69(ctx: &mut Context) -> Cont {
     // 00405e71 push eax
     push(ctx, ctx.cpu.regs.eax);
     // 00405e72 call 00401A60h
-    let dst = Cont(x401a60);
+    let dst = Cont(alloc);
     call(ctx, 0x405e77, dst)
 }
 
@@ -22427,7 +22417,7 @@ pub fn x405e77(ctx: &mut Context) -> Cont {
     // 00405e80 push eax
     push(ctx, ctx.cpu.regs.eax);
     // 00405e81 call 00401A60h
-    let dst = Cont(x401a60);
+    let dst = Cont(alloc);
     call(ctx, 0x405e86, dst)
 }
 
@@ -22446,7 +22436,7 @@ pub fn x405e86(ctx: &mut Context) -> Cont {
     // 00405e92 push eax
     push(ctx, ctx.cpu.regs.eax);
     // 00405e93 call 00401A60h
-    let dst = Cont(x401a60);
+    let dst = Cont(alloc);
     call(ctx, 0x405e98, dst)
 }
 
@@ -22463,7 +22453,7 @@ pub fn x405e98(ctx: &mut Context) -> Cont {
     // 00405ea3 push eax
     push(ctx, ctx.cpu.regs.eax);
     // 00405ea4 call 00401A60h
-    let dst = Cont(x401a60);
+    let dst = Cont(alloc);
     call(ctx, 0x405ea9, dst)
 }
 
@@ -22482,7 +22472,7 @@ pub fn x405ea9(ctx: &mut Context) -> Cont {
     // 00405eb5 push eax
     push(ctx, ctx.cpu.regs.eax);
     // 00405eb6 call 00401A60h
-    let dst = Cont(x401a60);
+    let dst = Cont(alloc);
     call(ctx, 0x405ebb, dst)
 }
 
@@ -25371,7 +25361,7 @@ pub fn x406889(ctx: &mut Context) -> Cont {
     // 0040688e inc ebx
     ctx.cpu.regs.ebx = inc(ctx.cpu.regs.ebx, &mut ctx.cpu.flags);
     // 0040688f call 00401A60h
-    let dst = Cont(x401a60);
+    let dst = Cont(alloc);
     call(ctx, 0x406894, dst)
 }
 
@@ -29378,8 +29368,7 @@ pub fn x407acb(ctx: &mut Context) -> Cont {
     ret(ctx, 20)
 }
 
-// math
-pub fn x407ad4(ctx: &mut Context) -> Cont {
+pub fn math(ctx: &mut Context) -> Cont {
     // 00407ad4 push ebx
     push(ctx, ctx.cpu.regs.ebx);
     // 00407ad5 push ecx
@@ -32257,14 +32246,12 @@ pub fn x4085cf(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-// entry
-pub fn x4085dd(ctx: &mut Context) -> Cont {
+pub fn entry(ctx: &mut Context) -> Cont {
     // 004085dd jmp near ptr 0040874Ch
     Cont(x40874c)
 }
 
-// allocs_computes
-pub fn x4085e2(ctx: &mut Context) -> Cont {
+pub fn allocs_computes(ctx: &mut Context) -> Cont {
     // 004085e2 push ebx
     push(ctx, ctx.cpu.regs.ebx);
     // 004085e3 push ecx
@@ -32292,7 +32279,7 @@ pub fn x4085ea(ctx: &mut Context) -> Cont {
     // 004085fe push eax
     push(ctx, ctx.cpu.regs.eax);
     // 004085ff call 00401A60h
-    let dst = Cont(x401a60);
+    let dst = Cont(alloc);
     call(ctx, 0x408604, dst)
 }
 
@@ -32316,7 +32303,7 @@ pub fn x408604(ctx: &mut Context) -> Cont {
     // 0040861c xor ebx,ebx
     ctx.cpu.regs.ebx = xor(ctx.cpu.regs.ebx, ctx.cpu.regs.ebx, &mut ctx.cpu.flags);
     // 0040861e call 00401A60h
-    let dst = Cont(x401a60);
+    let dst = Cont(alloc);
     call(ctx, 0x408623, dst)
 }
 
@@ -32344,7 +32331,7 @@ pub fn x40862b(ctx: &mut Context) -> Cont {
     // 0040863b inc ebx
     ctx.cpu.regs.ebx = inc(ctx.cpu.regs.ebx, &mut ctx.cpu.flags);
     // 0040863c call 00401A60h
-    let dst = Cont(x401a60);
+    let dst = Cont(alloc);
     call(ctx, 0x408641, dst)
 }
 
@@ -32374,7 +32361,7 @@ pub fn x408652(ctx: &mut Context) -> Cont {
     // 00408657 inc ebx
     ctx.cpu.regs.ebx = inc(ctx.cpu.regs.ebx, &mut ctx.cpu.flags);
     // 00408658 call 00401A60h
-    let dst = Cont(x401a60);
+    let dst = Cont(alloc);
     call(ctx, 0x40865d, dst)
 }
 
@@ -32410,7 +32397,7 @@ pub fn x408685(ctx: &mut Context) -> Cont {
     // 00408685 push 100h
     push(ctx, 0x100u32);
     // 0040868a call 00401A60h
-    let dst = Cont(x401a60);
+    let dst = Cont(alloc);
     call(ctx, 0x40868f, dst)
 }
 
@@ -32600,7 +32587,7 @@ pub fn x40874c(ctx: &mut Context) -> Cont {
     // 0040874e push edx
     push(ctx, ctx.cpu.regs.edx);
     // 0040874f call 00401B35h
-    let dst = Cont(x401b35);
+    let dst = Cont(create_window);
     call(ctx, 0x408754, dst)
 }
 
@@ -32618,7 +32605,7 @@ pub fn x408759(ctx: &mut Context) -> Cont {
     // 00408760 xor ebx,ebx
     ctx.cpu.regs.ebx = xor(ctx.cpu.regs.ebx, ctx.cpu.regs.ebx, &mut ctx.cpu.flags);
     // 00408762 call 0040A281h
-    let dst = Cont(x40a281);
+    let dst = Cont(init_sound);
     call(ctx, 0x408767, dst)
 }
 
@@ -32632,7 +32619,7 @@ pub fn x408767(ctx: &mut Context) -> Cont {
     // 00408779 mov eax,ds:[40C724h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x40c724u32);
     // 0040877e call 00401156h
-    let dst = Cont(x401156);
+    let dst = Cont(init_ddraw);
     call(ctx, 0x408783, dst)
 }
 
@@ -32649,7 +32636,7 @@ pub fn x40878b(ctx: &mut Context) -> Cont {
     // 0040878c call dword ptr cs:[40B130h]
     call_builtin(ctx, user32::ShowCursor_stdcall);
     // 00408793 call 004085E2h
-    let dst = Cont(x4085e2);
+    let dst = Cont(allocs_computes);
     call(ctx, 0x408798, dst)
 }
 
@@ -32659,7 +32646,7 @@ pub fn x408798(ctx: &mut Context) -> Cont {
     // 0040879a mov edx,1
     ctx.cpu.regs.edx = 0x1u32;
     // 0040879f call 00409EDFh
-    let dst = Cont(x409edf);
+    let dst = Cont(init_this);
     call(ctx, 0x4087a4, dst)
 }
 
@@ -32667,7 +32654,7 @@ pub fn x4087a4(ctx: &mut Context) -> Cont {
     // 004087a4 mov eax,1Eh
     ctx.cpu.regs.eax = 0x1eu32;
     // 004087a9 call 00401CC9h
-    let dst = Cont(x401cc9);
+    let dst = Cont(init_timer);
     call(ctx, 0x4087ae, dst)
 }
 
@@ -32684,7 +32671,7 @@ pub fn x4087ae(ctx: &mut Context) -> Cont {
 
 pub fn x4087b7(ctx: &mut Context) -> Cont {
     // 004087b7 call 00401D0Fh
-    let dst = Cont(x401d0f);
+    let dst = Cont(state_from_timer);
     call(ctx, 0x4087bc, dst)
 }
 
@@ -32694,13 +32681,13 @@ pub fn x4087bc(ctx: &mut Context) -> Cont {
     // 004087c2 mov eax,ds:[433F84h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x433f84u32);
     // 004087c7 call 00407AD4h
-    let dst = Cont(x407ad4);
+    let dst = Cont(math);
     call(ctx, 0x4087cc, dst)
 }
 
 pub fn x4087cc(ctx: &mut Context) -> Cont {
     // 004087cc call 00401529h
-    let dst = Cont(x401529);
+    let dst = Cont(draw);
     call(ctx, 0x4087d1, dst)
 }
 
@@ -32734,7 +32721,7 @@ pub fn x4087e3(ctx: &mut Context) -> Cont {
 
 pub fn x4087ed(ctx: &mut Context) -> Cont {
     // 004087ed call 00401BB3h
-    let dst = Cont(x401bb3);
+    let dst = Cont(pump_messages);
     call(ctx, 0x4087f2, dst)
 }
 
@@ -32771,13 +32758,13 @@ pub fn x408814(ctx: &mut Context) -> Cont {
     // 00408814 mov eax,ds:[40C73Bh]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x40c73bu32);
     // 00408819 call 0040148Ch
-    let dst = Cont(x40148c);
+    let dst = Cont(ddraw_shutdown);
     call(ctx, 0x40881e, dst)
 }
 
 pub fn x40881e(ctx: &mut Context) -> Cont {
     // 0040881e call 0040A38Ah
-    let dst = Cont(x40a38a);
+    let dst = Cont(sound_shutdown);
     call(ctx, 0x408823, dst)
 }
 
@@ -33864,7 +33851,7 @@ pub fn x408c4f(ctx: &mut Context) -> Cont {
     // 00408c68 push eax
     push(ctx, ctx.cpu.regs.eax);
     // 00408c69 call 00401A60h
-    let dst = Cont(x401a60);
+    let dst = Cont(alloc);
     call(ctx, 0x408c6e, dst)
 }
 
@@ -34197,7 +34184,7 @@ pub fn x408d65(ctx: &mut Context) -> Cont {
     // 00408d6e push 100000h
     push(ctx, 0x100000u32);
     // 00408d73 call 00401A60h
-    let dst = Cont(x401a60);
+    let dst = Cont(alloc);
     call(ctx, 0x408d78, dst)
 }
 
@@ -35006,7 +34993,7 @@ pub fn x409039(ctx: &mut Context) -> Cont {
     // 00409039 pusha
     pushad(ctx);
     // 0040903a call 004090C7h
-    let dst = Cont(x4090c7);
+    let dst = Cont(use_thisptr_thunk);
     call(ctx, 0x40903f, dst)
 }
 
@@ -35169,15 +35156,13 @@ pub fn x4090c5(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-// use_thisptr
-pub fn x4090c7(ctx: &mut Context) -> Cont {
+pub fn use_thisptr_thunk(ctx: &mut Context) -> Cont {
     // 004090c7 call 004090CCh
-    let dst = Cont(x4090cc);
+    let dst = Cont(use_thisptr);
     call(ctx, 0x4090cc, dst)
 }
 
-// use_thisptr
-pub fn x4090cc(ctx: &mut Context) -> Cont {
+pub fn use_thisptr(ctx: &mut Context) -> Cont {
     // 004090cc pop ebp
     let x = pop(ctx);
     ctx.cpu.regs.ebp = x;
@@ -35187,8 +35172,7 @@ pub fn x4090cc(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-// thunk_FUN_004090d9
-pub fn x4090d4(ctx: &mut Context) -> Cont {
+pub fn thunk_FUN_004090d9(ctx: &mut Context) -> Cont {
     // 004090d4 call 004090D9h
     let dst = Cont(x4090d9);
     call(ctx, 0x4090d9, dst)
@@ -35511,7 +35495,7 @@ pub fn x4091a5(ctx: &mut Context) -> Cont {
     // 004091b0 add esi,eax
     ctx.cpu.regs.esi = add(ctx.cpu.regs.esi, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
     // 004091b2 call 004090D4h
-    let dst = Cont(x4090d4);
+    let dst = Cont(thunk_FUN_004090d9);
     call(ctx, 0x4091b7, dst)
 }
 
@@ -36378,7 +36362,7 @@ pub fn x40940b(ctx: &mut Context) -> Cont {
     // 0040940b push ebp
     push(ctx, ctx.cpu.regs.ebp);
     // 0040940c call 004090C7h
-    let dst = Cont(x4090c7);
+    let dst = Cont(use_thisptr_thunk);
     call(ctx, 0x409411, dst)
 }
 
@@ -36398,7 +36382,7 @@ pub fn x409416(ctx: &mut Context) -> Cont {
     // 00409416 push ebp
     push(ctx, ctx.cpu.regs.ebp);
     // 00409417 call 004090C7h
-    let dst = Cont(x4090c7);
+    let dst = Cont(use_thisptr_thunk);
     call(ctx, 0x40941c, dst)
 }
 
@@ -37882,8 +37866,7 @@ pub fn x409739(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-// thunk_FUN_00409b47
-pub fn x409b42(ctx: &mut Context) -> Cont {
+pub fn thunk_FUN_00409b47(ctx: &mut Context) -> Cont {
     // 00409b42 call 00409B47h
     let dst = Cont(x409b47);
     call(ctx, 0x409b47, dst)
@@ -38415,7 +38398,7 @@ pub fn x409ca8(ctx: &mut Context) -> Cont {
     // 00409cb6 add eax,68h
     ctx.cpu.regs.eax = add(ctx.cpu.regs.eax, 0x68u32, &mut ctx.cpu.flags);
     // 00409cbb call 00409B42h
-    let dst = Cont(x409b42);
+    let dst = Cont(thunk_FUN_00409b47);
     call(ctx, 0x409cc0, dst)
 }
 
@@ -38437,7 +38420,7 @@ pub fn x409cc8(ctx: &mut Context) -> Cont {
         ctx.cpu.regs.get_al(),
     );
     // 00409ccb call 00409B42h
-    let dst = Cont(x409b42);
+    let dst = Cont(thunk_FUN_00409b47);
     call(ctx, 0x409cd0, dst)
 }
 
@@ -38482,7 +38465,7 @@ pub fn x409cec(ctx: &mut Context) -> Cont {
     // 00409cf0 add eax,78h
     ctx.cpu.regs.eax = add(ctx.cpu.regs.eax, 0x78u32, &mut ctx.cpu.flags);
     // 00409cf5 call 00409B42h
-    let dst = Cont(x409b42);
+    let dst = Cont(thunk_FUN_00409b47);
     call(ctx, 0x409cfa, dst)
 }
 
@@ -38501,7 +38484,7 @@ pub fn x409d02(ctx: &mut Context) -> Cont {
     // 00409d02 add eax,34h
     ctx.cpu.regs.eax = add(ctx.cpu.regs.eax, 0x34u32, &mut ctx.cpu.flags);
     // 00409d07 call 00409B42h
-    let dst = Cont(x409b42);
+    let dst = Cont(thunk_FUN_00409b47);
     call(ctx, 0x409d0c, dst)
 }
 
@@ -39251,12 +39234,11 @@ pub fn x409ede(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-// init_this
-pub fn x409edf(ctx: &mut Context) -> Cont {
+pub fn init_this(ctx: &mut Context) -> Cont {
     // 00409edf push ebp
     push(ctx, ctx.cpu.regs.ebp);
     // 00409ee0 call 004090C7h
-    let dst = Cont(x4090c7);
+    let dst = Cont(use_thisptr_thunk);
     call(ctx, 0x409ee5, dst)
 }
 
@@ -39382,7 +39364,7 @@ pub fn x409f49(ctx: &mut Context) -> Cont {
     // 00409f49 push ebp
     push(ctx, ctx.cpu.regs.ebp);
     // 00409f4a call 004090C7h
-    let dst = Cont(x4090c7);
+    let dst = Cont(use_thisptr_thunk);
     call(ctx, 0x409f4f, dst)
 }
 
@@ -39508,8 +39490,7 @@ pub fn x40a07e(ctx: &mut Context) -> Cont {
     todo!();
 }
 
-// sound_pushad
-pub fn x40a260(ctx: &mut Context) -> Cont {
+pub fn sound_pushad(ctx: &mut Context) -> Cont {
     // 0040a260 pusha
     pushad(ctx);
     // 0040a261 shr ecx,1
@@ -39579,8 +39560,7 @@ pub fn x40a280(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-// init_sound
-pub fn x40a281(ctx: &mut Context) -> Cont {
+pub fn init_sound(ctx: &mut Context) -> Cont {
     // 0040a281 pusha
     pushad(ctx);
     // 0040a282 mov ebx,4377B8h
@@ -39614,7 +39594,7 @@ pub fn x40a29e(ctx: &mut Context) -> Cont {
     // 0040a2a3 push eax
     push(ctx, ctx.cpu.regs.eax);
     // 0040a2a4 call 0040A556h
-    let dst = Cont(x40a556);
+    let dst = Cont(DSoundCreate);
     call(ctx, 0x40a2a9, dst)
 }
 
@@ -39883,7 +39863,7 @@ pub fn x40a35c(ctx: &mut Context) -> Cont {
     // 0040a368 push eax
     push(ctx, ctx.cpu.regs.eax);
     // 0040a369 call 0040A568h
-    let dst = Cont(x40a568);
+    let dst = Cont(CreateThread);
     call(ctx, 0x40a36e, dst)
 }
 
@@ -39899,7 +39879,7 @@ pub fn x40a36e(ctx: &mut Context) -> Cont {
     // 0040a374 push eax
     push(ctx, ctx.cpu.regs.eax);
     // 0040a375 call 0040A550h
-    let dst = Cont(x40a550);
+    let dst = Cont(SetThreadPriority);
     call(ctx, 0x40a37a, dst)
 }
 
@@ -39914,7 +39894,7 @@ pub fn x40a37a(ctx: &mut Context) -> Cont {
 
 pub fn x40a37e(ctx: &mut Context) -> Cont {
     // 0040a37e call 0040A38Ah
-    let dst = Cont(x40a38a);
+    let dst = Cont(sound_shutdown);
     call(ctx, 0x40a383, dst)
 }
 
@@ -39933,8 +39913,7 @@ pub fn x40a385(ctx: &mut Context) -> Cont {
     ret(ctx, 8)
 }
 
-// sound_shutdown
-pub fn x40a38a(ctx: &mut Context) -> Cont {
+pub fn sound_shutdown(ctx: &mut Context) -> Cont {
     // 0040a38a pusha
     pushad(ctx);
     // 0040a38b mov ebx,4377B8h
@@ -39964,7 +39943,7 @@ pub fn x40a39a(ctx: &mut Context) -> Cont {
     // 0040a39f push eax
     push(ctx, ctx.cpu.regs.eax);
     // 0040a3a0 call 0040A562h
-    let dst = Cont(x40a562);
+    let dst = Cont(WaitForSingleObject);
     call(ctx, 0x40a3a5, dst)
 }
 
@@ -40018,8 +39997,7 @@ pub fn x40a3bf(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
-// sound_thread_proc
-pub fn x40a3c1(ctx: &mut Context) -> Cont {
+pub fn sound_thread_proc(ctx: &mut Context) -> Cont {
     // 0040a3c1 pusha
     pushad(ctx);
     // 0040a3c2 mov ebx,4377B8h
@@ -40055,7 +40033,7 @@ pub fn x40a3d3(ctx: &mut Context) -> Cont {
     // 0040a3d8 push edx
     push(ctx, ctx.cpu.regs.edx);
     // 0040a3d9 call 0040A55Ch
-    let dst = Cont(x40a55c);
+    let dst = Cont(Sleep);
     call(ctx, 0x40a3de, dst)
 }
 
@@ -40399,44 +40377,38 @@ pub fn x40a4b7(ctx: &mut Context) -> Cont {
     Cont(user32::ShowCursor_stdcall)
 }
 
-// SetThreadPriority
-pub fn x40a550(ctx: &mut Context) -> Cont {
+pub fn SetThreadPriority(ctx: &mut Context) -> Cont {
     // 0040a550 jmp dword ptr ds:[40B160h]
     Cont(kernel32::SetThreadPriority_stdcall)
 }
 
-// DSoundCreate
-pub fn x40a556(ctx: &mut Context) -> Cont {
+pub fn DSoundCreate(ctx: &mut Context) -> Cont {
     // 0040a556 jmp dword ptr ds:[40B144h]
     Cont(dsound::ordinal1_stdcall)
 }
 
-// Sleep
-pub fn x40a55c(ctx: &mut Context) -> Cont {
+pub fn Sleep(ctx: &mut Context) -> Cont {
     // 0040a55c jmp dword ptr ds:[40B164h]
     Cont(kernel32::Sleep_stdcall)
 }
 
-// WaitForSingleObject
-pub fn x40a562(ctx: &mut Context) -> Cont {
+pub fn WaitForSingleObject(ctx: &mut Context) -> Cont {
     // 0040a562 jmp dword ptr ds:[40B170h]
     Cont(kernel32::WaitForSingleObject_stdcall)
 }
 
-// CreateThread
-pub fn x40a568(ctx: &mut Context) -> Cont {
+pub fn CreateThread(ctx: &mut Context) -> Cont {
     // 0040a568 jmp dword ptr ds:[40B14Ch]
     Cont(kernel32::CreateThread_stdcall)
 }
 
-// DirectDrawCreate
-pub fn x40a56e(ctx: &mut Context) -> Cont {
+pub fn DirectDrawCreate(ctx: &mut Context) -> Cont {
     // 0040a56e jmp dword ptr ds:[40B178h]
     Cont(ddraw::DirectDrawCreate_stdcall)
 }
 
 const BLOCKS: [(u32, ContFn); 1876] = [
-    (0x401000, x401000),
+    (0x401000, dlgproc),
     (0x401015, x401015),
     (0x401017, x401017),
     (0x401022, x401022),
@@ -40460,7 +40432,7 @@ const BLOCKS: [(u32, ContFn); 1876] = [
     (0x4010ec, x4010ec),
     (0x401148, x401148),
     (0x40114f, x40114f),
-    (0x401156, x401156),
+    (0x401156, init_ddraw),
     (0x401196, x401196),
     (0x40119e, x40119e),
     (0x4011ac, x4011ac),
@@ -40522,7 +40494,7 @@ const BLOCKS: [(u32, ContFn); 1876] = [
     (0x40145c, x40145c),
     (0x401461, x401461),
     (0x40146a, x40146a),
-    (0x40148c, x40148c),
+    (0x40148c, ddraw_shutdown),
     (0x40149a, x40149a),
     (0x4014a5, x4014a5),
     (0x4014af, x4014af),
@@ -40537,7 +40509,7 @@ const BLOCKS: [(u32, ContFn); 1876] = [
     (0x40150d, x40150d),
     (0x401518, x401518),
     (0x401525, x401525),
-    (0x401529, x401529),
+    (0x401529, draw),
     (0x401554, x401554),
     (0x40155c, x40155c),
     (0x401565, x401565),
@@ -40621,7 +40593,7 @@ const BLOCKS: [(u32, ContFn); 1876] = [
     (0x401a4c, x401a4c),
     (0x401a55, x401a55),
     (0x401a5a, x401a5a),
-    (0x401a60, x401a60),
+    (0x401a60, alloc),
     (0x401a78, x401a78),
     (0x401a8e, x401a8e),
     (0x401a9a, x401a9a),
@@ -40636,13 +40608,13 @@ const BLOCKS: [(u32, ContFn); 1876] = [
     (0x401ac4, x401ac4),
     (0x401ad0, x401ad0),
     (0x401adc, x401adc),
-    (0x401af2, x401af2),
-    (0x401b35, x401b35),
+    (0x401af2, create_window2),
+    (0x401b35, create_window),
     (0x401bb0, x401bb0),
-    (0x401bb3, x401bb3),
+    (0x401bb3, pump_messages),
     (0x401bd0, x401bd0),
     (0x401bfb, x401bfb),
-    (0x401bff, x401bff),
+    (0x401bff, timer_proc),
     (0x401c07, x401c07),
     (0x401c12, x401c12),
     (0x401c1b, x401c1b),
@@ -40652,8 +40624,8 @@ const BLOCKS: [(u32, ContFn); 1876] = [
     (0x401c77, x401c77),
     (0x401cbb, x401cbb),
     (0x401cc5, x401cc5),
-    (0x401cc9, x401cc9),
-    (0x401d0f, x401d0f),
+    (0x401cc9, init_timer),
+    (0x401d0f, state_from_timer),
     (0x401d2f, x401d2f),
     (0x401d39, x401d39),
     (0x401d43, x401d43),
@@ -41459,7 +41431,7 @@ const BLOCKS: [(u32, ContFn); 1876] = [
     (0x407ab1, x407ab1),
     (0x407ab6, x407ab6),
     (0x407acb, x407acb),
-    (0x407ad4, x407ad4),
+    (0x407ad4, math),
     (0x407ae7, x407ae7),
     (0x407af0, x407af0),
     (0x407afb, x407afb),
@@ -41581,8 +41553,8 @@ const BLOCKS: [(u32, ContFn); 1876] = [
     (0x40858d, x40858d),
     (0x4085b9, x4085b9),
     (0x4085cf, x4085cf),
-    (0x4085dd, x4085dd),
-    (0x4085e2, x4085e2),
+    (0x4085dd, entry),
+    (0x4085e2, allocs_computes),
     (0x4085ea, x4085ea),
     (0x408604, x408604),
     (0x408623, x408623),
@@ -41755,9 +41727,9 @@ const BLOCKS: [(u32, ContFn); 1876] = [
     (0x4090aa, x4090aa),
     (0x4090c0, x4090c0),
     (0x4090c5, x4090c5),
-    (0x4090c7, x4090c7),
-    (0x4090cc, x4090cc),
-    (0x4090d4, x4090d4),
+    (0x4090c7, use_thisptr_thunk),
+    (0x4090cc, use_thisptr),
+    (0x4090d4, thunk_FUN_004090d9),
     (0x4090d9, x4090d9),
     (0x4090f2, x4090f2),
     (0x4090fa, x4090fa),
@@ -41944,7 +41916,7 @@ const BLOCKS: [(u32, ContFn); 1876] = [
     (0x409730, x409730),
     (0x409732, x409732),
     (0x409739, x409739),
-    (0x409b42, x409b42),
+    (0x409b42, thunk_FUN_00409b47),
     (0x409b47, x409b47),
     (0x409b58, x409b58),
     (0x409b64, x409b64),
@@ -42025,7 +41997,7 @@ const BLOCKS: [(u32, ContFn); 1876] = [
     (0x409ebd, x409ebd),
     (0x409ec8, x409ec8),
     (0x409ede, x409ede),
-    (0x409edf, x409edf),
+    (0x409edf, init_this),
     (0x409ee5, x409ee5),
     (0x409eee, x409eee),
     (0x409f10, x409f10),
@@ -42037,7 +42009,7 @@ const BLOCKS: [(u32, ContFn); 1876] = [
     (0x409f5e, x409f5e),
     (0x40a000, x40a000),
     (0x40a07e, x40a07e),
-    (0x40a260, x40a260),
+    (0x40a260, sound_pushad),
     (0x40a265, x40a265),
     (0x40a26e, x40a26e),
     (0x40a273, x40a273),
@@ -42046,7 +42018,7 @@ const BLOCKS: [(u32, ContFn); 1876] = [
     (0x40a27b, x40a27b),
     (0x40a27f, x40a27f),
     (0x40a280, x40a280),
-    (0x40a281, x40a281),
+    (0x40a281, init_sound),
     (0x40a29e, x40a29e),
     (0x40a2a9, x40a2a9),
     (0x40a2ad, x40a2ad),
@@ -42070,15 +42042,15 @@ const BLOCKS: [(u32, ContFn); 1876] = [
     (0x40a37e, x40a37e),
     (0x40a383, x40a383),
     (0x40a385, x40a385),
-    (0x40a38a, x40a38a),
+    (0x40a38a, sound_shutdown),
     (0x40a39a, x40a39a),
     (0x40a3a5, x40a3a5),
     (0x40a3af, x40a3af),
     (0x40a3b2, x40a3b2),
-    (0x40a3b4, x40a3b4),
+    (0x40a3b4, release),
     (0x40a3b9, x40a3b9),
     (0x40a3bf, x40a3bf),
-    (0x40a3c1, x40a3c1),
+    (0x40a3c1, sound_thread_proc),
     (0x40a3c7, x40a3c7),
     (0x40a3cd, x40a3cd),
     (0x40a3d3, x40a3d3),
@@ -42100,12 +42072,12 @@ const BLOCKS: [(u32, ContFn); 1876] = [
     (0x40a476, x40a476),
     (0x40a48a, x40a48a),
     (0x40a4b7, x40a4b7),
-    (0x40a550, x40a550),
-    (0x40a556, x40a556),
-    (0x40a55c, x40a55c),
-    (0x40a562, x40a562),
-    (0x40a568, x40a568),
-    (0x40a56e, x40a56e),
+    (0x40a550, SetThreadPriority),
+    (0x40a556, DSoundCreate),
+    (0x40a55c, Sleep),
+    (0x40a562, WaitForSingleObject),
+    (0x40a568, CreateThread),
+    (0x40a56e, DirectDrawCreate),
     (0xfafbfc00, kernel32::CreateThread_stdcall),
     (0xfafbfc01, kernel32::ExitProcess_stdcall),
     (0xfafbfc02, kernel32::GetModuleHandleA_stdcall),
@@ -42454,5 +42426,5 @@ pub const EXEDATA: EXEData = EXEData {
     resources: 0x4c9000..0x4c9400,
     blocks: &BLOCKS,
     init_memory,
-    entry_point: Cont(x4085dd),
+    entry_point: Cont(entry),
 };
