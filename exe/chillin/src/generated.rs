@@ -91,6 +91,7 @@ fn init_memory(ctx: &mut Context, mappings: &mut kernel32::Mappings) {
     }
 }
 
+// dlgproc
 pub fn x401000(ctx: &mut Context) -> Cont {
     // 00401000 push ebx
     push(ctx, ctx.cpu.regs.ebx);
@@ -359,6 +360,7 @@ pub fn x40114f(ctx: &mut Context) -> Cont {
     ret(ctx, 16)
 }
 
+// init_ddraw
 pub fn x401156(ctx: &mut Context) -> Cont {
     // 00401156 push esi
     push(ctx, ctx.cpu.regs.esi);
@@ -1078,6 +1080,7 @@ pub fn x40146a(ctx: &mut Context) -> Cont {
     Cont(x40125f)
 }
 
+// ddraw_shutdown
 pub fn x40148c(ctx: &mut Context) -> Cont {
     // 0040148c push ebx
     push(ctx, ctx.cpu.regs.ebx);
@@ -1242,6 +1245,7 @@ pub fn x401525(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
+// draw
 pub fn x401529(ctx: &mut Context) -> Cont {
     // 00401529 push ebx
     push(ctx, ctx.cpu.regs.ebx);
@@ -2829,6 +2833,7 @@ pub fn x401a5a(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
+// alloc
 pub fn x401a60(ctx: &mut Context) -> Cont {
     // 00401a60 push ebp
     push(ctx, ctx.cpu.regs.ebp);
@@ -3018,6 +3023,7 @@ pub fn x401adc(ctx: &mut Context) -> Cont {
     ret(ctx, 16)
 }
 
+// create_window2
 pub fn x401af2(ctx: &mut Context) -> Cont {
     // 00401af2 push ecx
     push(ctx, ctx.cpu.regs.ecx);
@@ -3069,6 +3075,7 @@ pub fn x401af2(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
+// create_window
 pub fn x401b35(ctx: &mut Context) -> Cont {
     // 00401b35 push ecx
     push(ctx, ctx.cpu.regs.ecx);
@@ -3118,6 +3125,7 @@ pub fn x401bb0(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
+// pump_messages
 pub fn x401bb3(ctx: &mut Context) -> Cont {
     // 00401bb3 push ecx
     push(ctx, ctx.cpu.regs.ecx);
@@ -3186,6 +3194,7 @@ pub fn x401bfb(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
+// timer_proc
 pub fn x401bff(ctx: &mut Context) -> Cont {
     // 00401bff push ebp
     push(ctx, ctx.cpu.regs.ebp);
@@ -3336,6 +3345,7 @@ pub fn x401cc5(ctx: &mut Context) -> Cont {
     ret(ctx, 20)
 }
 
+// init_timer
 pub fn x401cc9(ctx: &mut Context) -> Cont {
     // 00401cc9 push ebx
     push(ctx, ctx.cpu.regs.ebx);
@@ -3384,6 +3394,7 @@ pub fn x401cc9(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
+// state_from_timer
 pub fn x401d0f(ctx: &mut Context) -> Cont {
     // 00401d0f push ebx
     push(ctx, ctx.cpu.regs.ebx);
@@ -29367,6 +29378,7 @@ pub fn x407acb(ctx: &mut Context) -> Cont {
     ret(ctx, 20)
 }
 
+// math
 pub fn x407ad4(ctx: &mut Context) -> Cont {
     // 00407ad4 push ebx
     push(ctx, ctx.cpu.regs.ebx);
@@ -32245,11 +32257,13 @@ pub fn x4085cf(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
+// entry
 pub fn x4085dd(ctx: &mut Context) -> Cont {
     // 004085dd jmp near ptr 0040874Ch
     Cont(x40874c)
 }
 
+// allocs_computes
 pub fn x4085e2(ctx: &mut Context) -> Cont {
     // 004085e2 push ebx
     push(ctx, ctx.cpu.regs.ebx);
@@ -35155,12 +35169,14 @@ pub fn x4090c5(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
+// use_thisptr
 pub fn x4090c7(ctx: &mut Context) -> Cont {
     // 004090c7 call 004090CCh
     let dst = Cont(x4090cc);
     call(ctx, 0x4090cc, dst)
 }
 
+// use_thisptr
 pub fn x4090cc(ctx: &mut Context) -> Cont {
     // 004090cc pop ebp
     let x = pop(ctx);
@@ -35171,6 +35187,7 @@ pub fn x4090cc(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
+// thunk_FUN_004090d9
 pub fn x4090d4(ctx: &mut Context) -> Cont {
     // 004090d4 call 004090D9h
     let dst = Cont(x4090d9);
@@ -37865,6 +37882,7 @@ pub fn x409739(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
+// thunk_FUN_00409b47
 pub fn x409b42(ctx: &mut Context) -> Cont {
     // 00409b42 call 00409B47h
     let dst = Cont(x409b47);
@@ -39233,6 +39251,7 @@ pub fn x409ede(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
+// init_this
 pub fn x409edf(ctx: &mut Context) -> Cont {
     // 00409edf push ebp
     push(ctx, ctx.cpu.regs.ebp);
@@ -39489,6 +39508,7 @@ pub fn x40a07e(ctx: &mut Context) -> Cont {
     todo!();
 }
 
+// sound_pushad
 pub fn x40a260(ctx: &mut Context) -> Cont {
     // 0040a260 pusha
     pushad(ctx);
@@ -39559,6 +39579,7 @@ pub fn x40a280(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
+// init_sound
 pub fn x40a281(ctx: &mut Context) -> Cont {
     // 0040a281 pusha
     pushad(ctx);
@@ -39912,6 +39933,7 @@ pub fn x40a385(ctx: &mut Context) -> Cont {
     ret(ctx, 8)
 }
 
+// sound_shutdown
 pub fn x40a38a(ctx: &mut Context) -> Cont {
     // 0040a38a pusha
     pushad(ctx);
@@ -39996,6 +40018,7 @@ pub fn x40a3bf(ctx: &mut Context) -> Cont {
     ret(ctx, 0)
 }
 
+// sound_thread_proc
 pub fn x40a3c1(ctx: &mut Context) -> Cont {
     // 0040a3c1 pusha
     pushad(ctx);
@@ -40376,31 +40399,37 @@ pub fn x40a4b7(ctx: &mut Context) -> Cont {
     Cont(user32::ShowCursor_stdcall)
 }
 
+// SetThreadPriority
 pub fn x40a550(ctx: &mut Context) -> Cont {
     // 0040a550 jmp dword ptr ds:[40B160h]
     Cont(kernel32::SetThreadPriority_stdcall)
 }
 
+// DSoundCreate
 pub fn x40a556(ctx: &mut Context) -> Cont {
     // 0040a556 jmp dword ptr ds:[40B144h]
     Cont(dsound::ordinal1_stdcall)
 }
 
+// Sleep
 pub fn x40a55c(ctx: &mut Context) -> Cont {
     // 0040a55c jmp dword ptr ds:[40B164h]
     Cont(kernel32::Sleep_stdcall)
 }
 
+// WaitForSingleObject
 pub fn x40a562(ctx: &mut Context) -> Cont {
     // 0040a562 jmp dword ptr ds:[40B170h]
     Cont(kernel32::WaitForSingleObject_stdcall)
 }
 
+// CreateThread
 pub fn x40a568(ctx: &mut Context) -> Cont {
     // 0040a568 jmp dword ptr ds:[40B14Ch]
     Cont(kernel32::CreateThread_stdcall)
 }
 
+// DirectDrawCreate
 pub fn x40a56e(ctx: &mut Context) -> Cont {
     // 0040a56e jmp dword ptr ds:[40B178h]
     Cont(ddraw::DirectDrawCreate_stdcall)

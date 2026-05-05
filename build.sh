@@ -19,7 +19,8 @@ elif [[ $1 == "chillin" ]]; then
         --entry-point 0x40969e \
         --entry-point 0x4096a2 \
         --entry-point 0x4096a6 \
-        --scan-immediates --scan-memory
+        --scan-immediates --scan-memory \
+        --symbols-csv exe/chillin/ghidra.csv
     cargo build --profile fast -p chillin
 elif [[ $1 == "chillin-unpack" ]]; then
     cargo run -p tc -- \

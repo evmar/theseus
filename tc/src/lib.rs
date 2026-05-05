@@ -33,6 +33,7 @@ pub struct Module {
 pub struct State {
     pub module: Module,
     pub mem: Memory,
+    symbol_names: HashMap<u32, String>,
     pub blocks: HashMap<u32, Block>,
 }
 
@@ -72,6 +73,25 @@ pub fn write_if_changed(path: &str, contents: &[u8]) -> anyhow::Result<()> {
 }
 
 impl State {
+    pub fn load_symbols(&mut self, csv: impl std::io::Read) -> anyhow::Result<()> {
+        let mut rdr = csv::Reader::from_reader(csv);
+        for result in rdr.records() {
+            let record = result?;
+            let name = &record[0];
+            if name.starts_with("FUN_") {
+                continue;
+            }
+            let addr = &record[1];
+            if !addr.starts_with('0') {
+                continue;
+            }
+            let addr = u32::from_str_radix(&addr, 16)
+                .map_err(|err| anyhow::anyhow!(format!("{addr:?}: {err}")))?;
+            self.symbol_names.insert(addr, name.to_string());
+        }
+        Ok(())
+    }
+
     /// For any dll used by the module, write its vtables to the executable memory.
     fn add_vtables(&mut self) {
         let vtables_addr = self.mem.mappings.alloc("vtables".into(), 0x1000);

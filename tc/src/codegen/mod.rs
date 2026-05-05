@@ -169,6 +169,7 @@ pub fn set_op(instr: &iced_x86::Instruction, n: u32, expr: String) -> String {
 pub struct CodeGen<'a> {
     module: &'a Module,
     mem: &'a Memory,
+    symbol_names: &'a HashMap<u32, String>,
     blocks: &'a HashMap<u32, Block>,
     buf: String,
 }
@@ -178,6 +179,7 @@ impl<'a> CodeGen<'a> {
         Self {
             module: &state.module,
             mem: &state.mem,
+            symbol_names: &state.symbol_names,
             blocks: &state.blocks,
             buf: Default::default(),
         }
@@ -197,6 +199,9 @@ impl<'a> CodeGen<'a> {
     fn gen_block(&mut self, ip: u32, block: &Block) {
         match block {
             Block::Instrs(instrs) => {
+                if let Some(name) = self.symbol_names.get(&ip) {
+                    self.line(format!("// {name}"));
+                }
                 self.line(format!("pub fn x{ip:x}(ctx: &mut Context) -> Cont {{"));
                 for instr in instrs {
                     if let Err(e) = self.gen_instr(instr) {

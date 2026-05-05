@@ -33,6 +33,10 @@ struct Args {
     #[argh(option, from_str_fn(hex_range))]
     entry_points: Vec<std::ops::Range<u32>>,
 
+    /// ghidra symbols csv
+    #[argh(option)]
+    symbols_csv: Option<String>,
+
     /// path to input executable
     #[argh(option)]
     exe: String,
@@ -52,6 +56,10 @@ fn run() -> anyhow::Result<()> {
 
     let mut state = tc::State::default();
     state.mem.mappings.alloc("null page".into(), 0x1000);
+
+    if let Some(path) = &args.symbols_csv {
+        state.load_symbols(std::fs::File::open(path)?)?;
+    }
 
     let buf = std::fs::read(args.exe).unwrap();
     state.module = tc::load_pe(&mut state.mem, buf);
