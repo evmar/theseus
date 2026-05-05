@@ -2,7 +2,7 @@ use std::collections::VecDeque;
 
 use runtime::Context;
 
-use crate::user32::{HWND, state};
+use crate::user32::{HWND, State, state};
 
 struct MSG {}
 
@@ -21,6 +21,13 @@ impl MessageQueue {
 
     fn pump(&mut self) {
         let _ev = state().event_pump.borrow_mut().poll_event();
+    }
+}
+
+impl State {
+    pub fn pump_messages(&self) {
+        let mut queue = self.message_queue.borrow_mut();
+        queue.pump();
     }
 }
 
