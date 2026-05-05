@@ -27,3 +27,9 @@ The two halves of Theseus are:
    source code under `exe/`.
 2. Building an exe relies on `runtime` for support for x86 operations and
    `win32` for Windows API.
+
+## Profiling
+
+```
+cargo instruments -t time -p chillin --profile release --time-limit 10000
+```
