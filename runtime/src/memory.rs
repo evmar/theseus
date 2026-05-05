@@ -26,24 +26,31 @@ impl Memory {
         }
     }
 
+    #[inline(never)]
+    fn null_ptr(&self) {
+        log::error!("null page read/write");
+    }
+
     pub fn read<T: FromBytes>(&self, addr: u32) -> T {
         if addr < 0x1000 {
-            log::error!("null read");
+            self.null_ptr();
         }
-        T::read_from_prefix(&self.bytes[addr as usize..]).unwrap().0
+        let addr = addr as usize;
+        T::read_from_bytes(&self.bytes[addr..addr + std::mem::size_of::<T>()]).unwrap()
     }
 
     pub fn write<T: IntoBytes + zerocopy::Immutable>(&mut self, addr: u32, val: T) {
         if addr < 0x1000 {
-            log::error!("null write");
+            self.null_ptr();
         }
-        val.write_to_prefix(&mut self.bytes[addr as usize..])
+        let addr = addr as usize;
+        val.write_to(&mut self.bytes[addr..addr + std::mem::size_of::<T>()])
             .unwrap();
     }
 
     pub fn read_str(&self, addr: u32) -> &str {
         if addr < 0x1000 {
-            log::error!("null read");
+            self.null_ptr();
         }
         let buf = &self.bytes[addr as usize..];
         let nul = buf.iter().position(|&c| c == 0).unwrap();
