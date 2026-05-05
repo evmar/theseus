@@ -134,7 +134,7 @@ impl<'a> CodeGen<'a> {
                 self.line(format!("let x = {x};"));
                 self.line(format!("let y = {y};"));
                 let quot = format!("(x / y) as i{size} as u{size}");
-                let rem = format!("(x % y) as u{size}");
+                let rem = format!("(x % y) as i{size} as u{size}");
                 match size {
                     8 => {
                         self.line(format!("ctx.cpu.regs.set_al({quot});"));
