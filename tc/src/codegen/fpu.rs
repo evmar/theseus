@@ -95,7 +95,10 @@ impl<'a> CodeGen<'a> {
                 self.line(set_op(
                     instr,
                     0,
-                    format!("{}.round() as i{size} as u{size}", fpu_get_reg(0)),
+                    format!(
+                        "ctx.cpu.fpu.round({}) as i{size} as u{size}",
+                        fpu_get_reg(0)
+                    ),
                 ));
                 if instr.mnemonic() == Fistp {
                     self.line("ctx.cpu.fpu.pop();");

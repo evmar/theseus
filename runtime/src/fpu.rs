@@ -98,4 +98,15 @@ impl FPU {
         status |= (self.st_top as u16 & 0b111) << 11;
         status
     }
+
+    pub fn round(&self, val: f64) -> f64 {
+        // TODO: rounding modes?
+        // This implements default rounding mode of round towards even.
+        let floor = val.floor();
+        if val - floor < 0.5 {
+            floor
+        } else {
+            floor + 1.0
+        }
+    }
 }
