@@ -48,7 +48,7 @@ impl<'a> CodeGen<'a> {
                 assert_eq!(instr.op_count(), 1);
                 let size = op_size(instr, 0);
                 let size2 = size * 2;
-                self.line(format!("let res = mul(ctx.cpu.regs.eax as u{size2}, {} as u{size2}, &mut ctx.cpu.flags);", get_op(instr, 0)));
+                self.line(format!("let res = mul(ctx.cpu.regs.eax as u{size} as u{size2}, {} as u{size2}, &mut ctx.cpu.flags);", get_op(instr, 0)));
                 match size {
                     8 => self.line(format!("ctx.cpu.regs.set_ax(res);")),
                     16 => self.line(format!("ctx.cpu.regs.set_dx_ax(res);")),
