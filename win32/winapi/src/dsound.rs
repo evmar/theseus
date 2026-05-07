@@ -199,7 +199,7 @@ pub mod IDirectSound {
             .unwrap()
             .0;
         assert_eq!(desc.dwSize, std::mem::size_of::<DSBUFFERDESC>() as u32);
-        log::info!("new buffer flags {:#x?}", desc.dwFlags);
+        // log::info!("new buffer flags {:#x?}", desc.dwFlags);
 
         let mut kernel32 = kernel32::lock();
         let addr = IDirectSoundBuffer::new(ctx, &mut kernel32.process_heap);
@@ -208,7 +208,8 @@ pub mod IDirectSound {
             let fmt = <WAVEFORMATEX>::read_from_prefix(&ctx.memory[desc.lpwfxFormat..])
                 .unwrap()
                 .0;
-            log::info!("new buffer fmt {:#x?}", fmt);
+            const WAVE_FORMAT_PCM: u16 = 1;
+            assert_eq!(fmt.wFormatTag, WAVE_FORMAT_PCM);
 
             let mut lock = lock();
             let stream = lock
@@ -445,10 +446,11 @@ pub mod IDirectSoundBuffer {
 
     #[win32_derive::dllexport]
     pub fn SetFormat(ctx: &mut Context, _this: u32, pcfxFormat: u32) -> u32 {
-        let fmt = <WAVEFORMATEX>::read_from_prefix(&ctx.memory[pcfxFormat..])
+        let _fmt = <WAVEFORMATEX>::read_from_prefix(&ctx.memory[pcfxFormat..])
             .unwrap()
             .0;
-        log::warn!("fmt {:#x?}", fmt);
+        // TODO: verify format is as expected, possibly change format?
+        // log::warn!("fmt {:#x?}", fmt);
         stub!(DS_OK)
     }
 
