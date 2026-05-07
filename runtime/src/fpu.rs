@@ -88,13 +88,12 @@ impl FPU {
     }
 
     pub fn status(&self) -> u16 {
+        let status = match self.cmp {
+            std::cmp::Ordering::Less => Status::C0,
+            std::cmp::Ordering::Equal => Status::C3,
+            std::cmp::Ordering::Greater => Status::empty(),
+        };
         // Our status register impl doesn't include st_top so include it here.
-        let mut status = Status::empty();
-        match self.cmp {
-            std::cmp::Ordering::Less => status |= Status::C0,
-            std::cmp::Ordering::Equal => status |= Status::C3,
-            std::cmp::Ordering::Greater => {}
-        }
         let mut status = status.bits();
         status |= (self.st_top as u16 & 0b111) << 11;
         status
