@@ -17,11 +17,94 @@ const DS_OK: u32 = 0;
 struct AudioStream(sdl3::audio::AudioStreamOwner);
 unsafe impl Send for AudioStream {}
 
+struct WavWrite {
+    f: std::fs::File,
+}
+
+impl WavWrite {
+    fn new(path: &str) -> Self {
+        let f = std::fs::File::create(path).unwrap();
+        let mut w = Self { f };
+        w.write_header().unwrap();
+        w
+    }
+
+    fn write_header(&mut self) -> std::io::Result<()> {
+        use std::io::Write;
+        use zerocopy::IntoBytes;
+
+        #[repr(C)]
+        #[derive(zerocopy::IntoBytes, zerocopy::Immutable)]
+        struct Chunk {
+            id: [u8; 4],
+            chunk_size: u32,
+        }
+
+        #[repr(C)]
+        #[derive(zerocopy::IntoBytes, zerocopy::Immutable, Default)]
+        struct Fmt {
+            format: u16,
+            channels: u16,
+            sample_rate: u32,
+            byte_per_sec: u32,
+            byte_per_block: u16,
+            bits_per_sample: u16,
+        }
+
+        #[repr(C)]
+        #[derive(zerocopy::IntoBytes, zerocopy::Immutable)]
+        struct Header {
+            file_header: Chunk,
+            format: [u8; 4],
+            fmt_header: Chunk,
+            fmt: Fmt,
+            data_header: Chunk,
+        }
+
+        let mut header = Header {
+            file_header: Chunk {
+                id: *b"RIFF",
+                chunk_size: 0xffff_ffff,
+            },
+            format: *b"WAVE",
+            fmt_header: Chunk {
+                id: *b"fmt ",
+                chunk_size: std::mem::size_of::<Fmt>() as u32,
+            },
+            fmt: Fmt {
+                format: 1,
+                channels: 2,
+                sample_rate: 44100,
+                bits_per_sample: 16,
+                ..Default::default()
+            },
+            data_header: Chunk {
+                id: *b"data",
+                chunk_size: 0xffff_ffff,
+            },
+        };
+
+        let fmt = &mut header.fmt;
+        fmt.byte_per_block = fmt.channels * fmt.bits_per_sample / 8;
+        fmt.byte_per_sec = fmt.sample_rate * fmt.byte_per_block as u32;
+
+        self.f.write_all(header.as_bytes())?;
+
+        Ok(())
+    }
+
+    fn write(&mut self, data: &[u8]) {
+        use std::io::Write;
+        self.f.write_all(data).unwrap();
+    }
+}
+
 struct Buffer {
     addr: u32,
     size: u32,
     total_written: u32,
     stream: AudioStream,
+    write: WavWrite,
 }
 
 // We need a sdl3::AudioSubsystem to make audio calls.
@@ -142,6 +225,8 @@ pub mod IDirectSound {
                 }))
                 .unwrap();
 
+            let write = WavWrite::new("out.wav");
+
             let buffer = Buffer {
                 addr: kernel32
                     .process_heap
@@ -149,6 +234,7 @@ pub mod IDirectSound {
                 size: desc.dwBufferBytes,
                 total_written: 0,
                 stream: AudioStream(stream),
+                write,
             };
 
             lock.buffers.insert(addr, buffer);
@@ -406,6 +492,7 @@ pub mod IDirectSoundBuffer {
 
         let data = &ctx.memory[buffer.addr..][..dwAudioBytes1 as usize];
         buffer.stream.0.put_data(data).unwrap();
+        buffer.write.write(data);
         buffer.total_written += data.len() as u32;
 
         DS_OK
