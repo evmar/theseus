@@ -28161,7 +28161,7 @@ const BLOCKS: [(u32, fn(&mut Context) -> Cont); 1428] = [
     (0xfafbfcaf, ddraw::IDirectDrawPalette::GetEntries_stdcall),
     (0xfafbfcb0, ddraw::IDirectDrawPalette::Initialize_stdcall),
     (0xfafbfcb1, ddraw::IDirectDrawPalette::SetEntries_stdcall),
-    (runtime::RETURN_FROM_X86_ADDR, runtime::return_from_x86),
+    (runtime::RETURN_FROM_X86_ADDR, Context::return_from_x86),
 ];
 
 pub const EXEDATA: EXEData = EXEData {

@@ -74,7 +74,7 @@ impl kernel32::State {
             // See docstring on Memory about the unsafety of sharing memory in this way.
             memory: ctx.memory.unsafe_clone(),
             blocks: ctx.blocks,
-            recent: [runtime::return_from_x86; 4],
+            recent: [Context::return_from_x86; 4],
         };
         self.next_thread_id += 1;
         self.init_thread(&mut new_ctx, teb(ctx).Peb);
@@ -121,7 +121,7 @@ pub fn CreateThread(
     let name = format!("thread {}@{:x}", id, lpStartAddress);
     lock.create_thread(ctx, name, move |ctx| {
         let f = ctx.indirect(lpStartAddress);
-        runtime::call_x86(ctx, f, vec![lpParameter]);
+        ctx.call_x86(f, vec![lpParameter]);
     });
     HANDLE::from_raw(id)
 }

@@ -250,7 +250,7 @@ const BLOCKS: [(u32, ContFn); 18] = [
     (0xfafbfc00, kernel32::ExitProcess_stdcall),
     (0xfafbfc01, kernel32::GetLastError_stdcall),
     (0xfafbfc02, kernel32::WriteFile_stdcall),
-    (runtime::RETURN_FROM_X86_ADDR, runtime::return_from_x86),
+    (runtime::RETURN_FROM_X86_ADDR, Context::return_from_x86),
 ];
 
 pub const EXEDATA: EXEData = EXEData {

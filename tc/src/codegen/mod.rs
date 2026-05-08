@@ -304,7 +304,7 @@ out.copy_from_slice(bytes);",
             let block = self.blocks.get(&ip).unwrap();
             self.line(format!("({ip:#x}, {name}),", name = block.name()));
         }
-        self.line("(runtime::RETURN_FROM_X86_ADDR, runtime::return_from_x86),");
+        self.line("(runtime::RETURN_FROM_X86_ADDR, Context::return_from_x86),");
         self.line("];");
         self.line("");
     }

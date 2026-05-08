@@ -526,10 +526,7 @@ pub fn x4cbdb2(ctx: &mut Context) -> Cont {
     // 004cbdbf add edi,8
     ctx.cpu.regs.edi = add(ctx.cpu.regs.edi, 0x8u32, &mut ctx.cpu.flags);
     // 004cbdc2 call dword ptr [esi+0CB0E4h]
-    let dst = indirect(
-        ctx,
-        ctx.memory.read(ctx.cpu.regs.esi.wrapping_add(0xcb0e4u32)),
-    );
+    let dst = ctx.indirect(ctx.memory.read(ctx.cpu.regs.esi.wrapping_add(0xcb0e4u32)));
     ctx.call(0x4cbdc8, dst)
 }
 
@@ -577,10 +574,7 @@ pub fn x4cbdd4(ctx: &mut Context) -> Cont {
     // 004cbddf push ebp
     ctx.push(ctx.cpu.regs.ebp);
     // 004cbde0 call dword ptr [esi+0CB0E8h]
-    let dst = indirect(
-        ctx,
-        ctx.memory.read(ctx.cpu.regs.esi.wrapping_add(0xcb0e8u32)),
-    );
+    let dst = ctx.indirect(ctx.memory.read(ctx.cpu.regs.esi.wrapping_add(0xcb0e8u32)));
     ctx.call(0x4cbde6, dst)
 }
 
@@ -590,14 +584,11 @@ pub fn x4cbddb(ctx: &mut Context) -> Cont {
     // 004cbddc dec eax
     ctx.cpu.regs.eax = dec(ctx.cpu.regs.eax, &mut ctx.cpu.flags);
     // 004cbddd repne scasb
-    rep(ctx, Rep::REPNE, scasb);
+    ctx.rep(Rep::REPNE, Context::scasb);
     // 004cbddf push ebp
     ctx.push(ctx.cpu.regs.ebp);
     // 004cbde0 call dword ptr [esi+0CB0E8h]
-    let dst = indirect(
-        ctx,
-        ctx.memory.read(ctx.cpu.regs.esi.wrapping_add(0xcb0e8u32)),
-    );
+    let dst = ctx.indirect(ctx.memory.read(ctx.cpu.regs.esi.wrapping_add(0xcb0e8u32)));
     ctx.call(0x4cbde6, dst)
 }
 
@@ -1072,7 +1063,7 @@ const BLOCKS: [(u32, ContFn); 238] = [
     (0xfafbfcb4, dsound::IDirectSoundBuffer::Stop_stdcall),
     (0xfafbfcb5, dsound::IDirectSoundBuffer::Unlock_stdcall),
     (0xfafbfcb6, dsound::IDirectSoundBuffer::Restore_stdcall),
-    (runtime::RETURN_FROM_X86_ADDR, runtime::return_from_x86),
+    (runtime::RETURN_FROM_X86_ADDR, Context::return_from_x86),
 ];
 
 pub const EXEDATA: EXEData = EXEData {

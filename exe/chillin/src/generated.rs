@@ -44319,7 +44319,7 @@ const BLOCKS: [(u32, ContFn); 2034] = [
     (0xfafbfcca, dsound::IDirectSoundBuffer::Stop_stdcall),
     (0xfafbfccb, dsound::IDirectSoundBuffer::Unlock_stdcall),
     (0xfafbfccc, dsound::IDirectSoundBuffer::Restore_stdcall),
-    (runtime::RETURN_FROM_X86_ADDR, runtime::return_from_x86),
+    (runtime::RETURN_FROM_X86_ADDR, Context::return_from_x86),
 ];
 
 pub const EXEDATA: EXEData = EXEData {

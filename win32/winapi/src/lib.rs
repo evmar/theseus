@@ -60,7 +60,7 @@ pub fn load(exe: &EXEData) -> Context {
         thread_id: 1,
         memory,
         blocks: exe.blocks,
-        recent: [runtime::return_from_x86; 4],
+        recent: [Context::return_from_x86; 4],
     };
 
     (exe.init_memory)(&mut ctx, &mut lock.mappings);
@@ -69,7 +69,7 @@ pub fn load(exe: &EXEData) -> Context {
 }
 
 pub fn start(ctx: &mut Context, exe: &EXEData) {
-    runtime::call_x86(ctx, exe.entry_point, vec![]);
+    ctx.call_x86(exe.entry_point, vec![]);
     // TODO: per Windows, we need to join any spawned threads here.
 }
 

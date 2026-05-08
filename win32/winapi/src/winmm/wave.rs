@@ -145,7 +145,7 @@ fn thread_proc(
                 let hwo = 1u32; // XXX
                 let uMsg = MM_WOM::DONE as u32;
                 // waveOutProc, WOM_DONE message
-                runtime::call_x86(ctx, f, vec![hwo, uMsg, callback_data, addr, 0]);
+                ctx.call_x86(f, vec![hwo, uMsg, callback_data, addr, 0]);
             }
         }
 

@@ -86,7 +86,7 @@ const BLOCKS: [(u32, ContFn); 4] = [
     (0x401000, x401000),
     (0xfafbfc00, kernel32::GetStdHandle_stdcall),
     (0xfafbfc01, kernel32::WriteFile_stdcall),
-    (runtime::RETURN_FROM_X86_ADDR, runtime::return_from_x86),
+    (runtime::RETURN_FROM_X86_ADDR, Context::return_from_x86),
 ];
 
 pub const EXEDATA: EXEData = EXEData {

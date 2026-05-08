@@ -45,6 +45,6 @@ fn winmm_main(ctx: &mut Context) {
         drop(lock);
 
         // LPTIMECALLBACK
-        runtime::call_x86(ctx, func, vec![timer_id, 0, user_data, 0, 0]);
+        ctx.call_x86(func, vec![timer_id, 0, user_data, 0, 0]);
     }
 }
