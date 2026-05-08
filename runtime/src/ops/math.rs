@@ -14,8 +14,8 @@ fn sbb_impl<I: Int + num_traits::ops::overflowing::OverflowingSub + num_traits::
     flags.set(Flags::SF, result.high_bit().is_one());
     // Overflow is true exactly when the high (sign) bits are like:
     //   x  y  result
-    //   0  1  1
-    //   1  0  0
+    //   0  1  1  (pos + pos => negative)
+    //   1  0  0  (neg - pos => positive)
     let of = ((x ^ y) & (x ^ result)).high_bit().is_one();
     flags.set(Flags::OF, of);
     flags.set(Flags::PF, result.low_byte().count_ones() % 2 == 0);
@@ -188,4 +188,35 @@ pub fn imul2_16(x: u16, y: u16, flags: &mut Flags) -> u16 {
     flags.set(Flags::CF, overflow);
     flags.set(Flags::OF, overflow);
     res as u16
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn sbb8(x: u8, y: u8, carry: bool) -> (u8, Flags) {
+        let mut flags = Flags::default();
+        flags.set(Flags::CF, carry);
+        let result = sbb(x, y, &mut flags);
+        (result, flags)
+    }
+
+    #[test]
+    fn sbb_edge_cases() {
+        let (result, flags) = sbb8(0x00, 0x7f, true);
+        assert_eq!(result, 0x80);
+        assert_eq!(flags.to_string(), "CF SF");
+
+        let (result, flags) = sbb8(0x80, 0x00, true);
+        assert_eq!(result, 0x7f);
+        assert_eq!(flags.to_string(), "OF");
+
+        let (result, flags) = sbb8(0x00, 0xff, true);
+        assert_eq!(result, 0x00);
+        assert_eq!(flags.to_string(), "CF PF ZF");
+
+        let (result, flags) = sbb8(0x01, 0x00, true);
+        assert_eq!(result, 0x00);
+        assert_eq!(flags.to_string(), "PF ZF");
+    }
 }
