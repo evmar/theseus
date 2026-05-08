@@ -39,11 +39,11 @@ impl<'a> CodeGen<'a> {
             Jmp => self.line(self.gen_jmp(instr)),
             Call => {
                 if let Some(func) = &instr.hint {
-                    self.line(format!("call_builtin(ctx, {func});",));
+                    self.line(format!("ctx.call_builtin({func});"));
                 } else {
                     // Create a temporary here in case gen_jmp needs to borrow ctx.
                     self.line(format!("let dst = {};", self.gen_jmp(instr)));
-                    self.line(format!("call(ctx, {:#x}, dst)", instr.next_ip()));
+                    self.line(format!("ctx.call({:#x}, dst)", instr.next_ip()));
                 }
             }
             Ret => {
@@ -55,21 +55,13 @@ impl<'a> CodeGen<'a> {
                     }
                     _ => todo!(),
                 };
-                self.line(format!("ret(ctx, {n})"));
+                self.line(format!("ctx.ret({n})"));
             }
-            Je | Jne | Jb | Js | Jns | Ja | Jae | Jl | Jg | Jge | Jecxz | Jle | Jbe => {
+            Je | Jne | Jb | Js | Jns | Ja | Jae | Jl | Jg | Jge | Jecxz | Jle | Jbe | Loop => {
                 let next = self.gen_abs_jmp(instr.next_ip());
                 let dst = self.gen_jmp(instr);
                 let func = instr_name(&instr.iced);
-                self.line(format!("{func}(ctx, {next}, {dst})"));
-            }
-
-            Loop => {
-                let next = self.gen_abs_jmp(instr.next_ip());
-                let dst = self.gen_jmp(instr);
-                self.line("ctx.cpu.regs.ecx = ctx.cpu.regs.ecx.wrapping_sub(1);");
-                self.line(format!("if ctx.cpu.regs.ecx == 0 {{ {next} }}"));
-                self.line(format!("else {{ {dst} }}"));
+                self.line(format!("ctx.{func}({next}, {dst})"));
             }
 
             _ => return false,

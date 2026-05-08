@@ -1,4 +1,4 @@
-use crate::Context;
+use crate::{Context, Flags};
 
 impl Context {
     pub fn push(&mut self, x: u32) {
@@ -41,5 +41,21 @@ impl Context {
         self.cpu.regs.edx = self.pop();
         self.cpu.regs.ecx = self.pop();
         self.cpu.regs.eax = self.pop();
+    }
+
+    pub fn enter(&mut self, bytes: u16, nesting: u8) {
+        assert_eq!(nesting, 0);
+        self.push(self.cpu.regs.ebp);
+        self.cpu.regs.ebp = self.cpu.regs.esp;
+        self.cpu.regs.esp -= bytes as u32;
+    }
+
+    pub fn leave(self: &mut Context) {
+        self.cpu.regs.esp = self.cpu.regs.ebp;
+        self.cpu.regs.ebp = self.pop();
+    }
+
+    pub fn sete(self: &Context) -> u8 {
+        self.cpu.flags.contains(Flags::ZF) as u8
     }
 }

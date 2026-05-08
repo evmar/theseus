@@ -15,6 +15,9 @@ fn reg_name(r: iced_x86::Register) -> String {
 }
 
 fn instr_name(instr: &iced_x86::Instruction) -> String {
+    if instr.mnemonic() == iced_x86::Mnemonic::Loop {
+        return "loop_".to_string();
+    }
     format!("{:?}", instr.mnemonic()).to_ascii_lowercase()
 }
 

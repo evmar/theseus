@@ -1,4 +1,4 @@
-use runtime::{Cont, Context, ret};
+use runtime::{Cont, Context};
 
 pub fn release(ctx: &mut Context) -> Cont {
     // code is like
@@ -11,5 +11,5 @@ pub fn release(ctx: &mut Context) -> Cont {
     // where 403ab4 is in the middle of that?
     // maybe some unpacker failure?
     // It's in directsound shutdown anyway.
-    ret(ctx, 0)
+    ctx.ret(0)
 }

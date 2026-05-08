@@ -7,7 +7,6 @@ mod mmx;
 mod shift;
 mod string;
 
-pub use control_flow::*;
 pub use flags::*;
 pub use math::*;
 pub use mmx::*;

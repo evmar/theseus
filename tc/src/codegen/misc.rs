@@ -25,7 +25,7 @@ impl<'a> CodeGen<'a> {
             Popad => self.line("ctx.popad();"),
             Mov => self.line(set_op(instr, 0, get_op(instr, 1))),
 
-            Sete => self.line(set_op(instr, 0, "sete(ctx)".into())),
+            Sete => self.line(set_op(instr, 0, "ctx.sete()".into())),
             Cmp => {
                 let op0 = get_op(instr, 0);
                 let op1 = get_op(instr, 1);
@@ -54,11 +54,11 @@ impl<'a> CodeGen<'a> {
                 self.line(set_op(instr, 0, read));
             }
 
-            Leave => self.line("leave(ctx);"),
+            Leave => self.line("ctx.leave();"),
             Enter => {
                 assert!(instr.op1_kind() == iced_x86::OpKind::Immediate8_2nd);
                 let op1 = instr.immediate8_2nd();
-                self.line(format!("enter(ctx, {}, {:x});", get_op(instr, 0), op1));
+                self.line(format!("ctx.enter({}, {:x});", get_op(instr, 0), op1));
             }
 
             Xchg => {

@@ -1,130 +1,121 @@
 use crate::{Cont, ContFn, Context, Flags, RETURN_FROM_X86_ADDR, indirect};
 
-pub fn call(ctx: &mut Context, ret: u32, addr: Cont) -> Cont {
-    ctx.push(ret);
-    addr
-}
-
-/// Call a ContFn (builtin implementation) synchronously, without returning a continuation.
-pub fn call_builtin(ctx: &mut Context, func: ContFn) {
-    // Because ContFn is stdcall it expects to pop a return address off the stack.
-    ctx.push(RETURN_FROM_X86_ADDR);
-    func(ctx); // pops the above return address; ignore it
-}
-
-pub fn je(ctx: &mut Context, from: Cont, x: Cont) -> Cont {
-    if ctx.cpu.flags.contains(Flags::ZF) {
-        return x;
+impl Context {
+    pub fn call(&mut self, ret: u32, addr: Cont) -> Cont {
+        self.push(ret);
+        addr
     }
-    from
-}
 
-pub fn jne(ctx: &mut Context, from: Cont, x: Cont) -> Cont {
-    if !ctx.cpu.flags.contains(Flags::ZF) {
-        return x;
+    /// Call a ContFn (builtin implementation) synchronously, without returning a continuation.
+    pub fn call_builtin(&mut self, func: ContFn) {
+        // Because ContFn is stdcall it expects to pop a return address off the stack.
+        self.push(RETURN_FROM_X86_ADDR);
+        func(self); // pops the above return address; ignore it
     }
-    from
-}
 
-pub fn jb(ctx: &mut Context, from: Cont, x: Cont) -> Cont {
-    if ctx.cpu.flags.contains(Flags::CF) {
-        return x;
+    pub fn je(&mut self, from: Cont, x: Cont) -> Cont {
+        if self.cpu.flags.contains(Flags::ZF) {
+            return x;
+        }
+        from
     }
-    from
-}
 
-pub fn js(ctx: &mut Context, from: Cont, x: Cont) -> Cont {
-    if ctx.cpu.flags.contains(Flags::SF) {
-        return x;
+    pub fn jne(&mut self, from: Cont, x: Cont) -> Cont {
+        if !self.cpu.flags.contains(Flags::ZF) {
+            return x;
+        }
+        from
     }
-    from
-}
 
-pub fn jns(ctx: &mut Context, from: Cont, x: Cont) -> Cont {
-    if !ctx.cpu.flags.contains(Flags::SF) {
-        return x;
+    pub fn jb(&mut self, from: Cont, x: Cont) -> Cont {
+        if self.cpu.flags.contains(Flags::CF) {
+            return x;
+        }
+        from
     }
-    from
-}
 
-pub fn ja(ctx: &mut Context, from: Cont, x: Cont) -> Cont {
-    if !ctx.cpu.flags.contains(Flags::CF) && !ctx.cpu.flags.contains(Flags::ZF) {
-        return x;
+    pub fn js(&mut self, from: Cont, x: Cont) -> Cont {
+        if self.cpu.flags.contains(Flags::SF) {
+            return x;
+        }
+        from
     }
-    from
-}
 
-pub fn jae(ctx: &mut Context, from: Cont, x: Cont) -> Cont {
-    if !ctx.cpu.flags.contains(Flags::CF) {
-        return x;
+    pub fn jns(&mut self, from: Cont, x: Cont) -> Cont {
+        if !self.cpu.flags.contains(Flags::SF) {
+            return x;
+        }
+        from
     }
-    from
-}
 
-pub fn jl(ctx: &mut Context, from: Cont, x: Cont) -> Cont {
-    if ctx.cpu.flags.contains(Flags::SF) != ctx.cpu.flags.contains(Flags::OF) {
-        return x;
+    pub fn ja(&mut self, from: Cont, x: Cont) -> Cont {
+        if !self.cpu.flags.contains(Flags::CF) && !self.cpu.flags.contains(Flags::ZF) {
+            return x;
+        }
+        from
     }
-    from
-}
 
-pub fn jge(ctx: &mut Context, from: Cont, x: Cont) -> Cont {
-    if ctx.cpu.flags.contains(Flags::SF) == ctx.cpu.flags.contains(Flags::OF) {
-        return x;
+    pub fn jae(&mut self, from: Cont, x: Cont) -> Cont {
+        if !self.cpu.flags.contains(Flags::CF) {
+            return x;
+        }
+        from
     }
-    from
-}
 
-pub fn jecxz(ctx: &mut Context, from: Cont, x: Cont) -> Cont {
-    if ctx.cpu.regs.ecx == 0 {
-        return x;
+    pub fn jl(&mut self, from: Cont, x: Cont) -> Cont {
+        if self.cpu.flags.contains(Flags::SF) != self.cpu.flags.contains(Flags::OF) {
+            return x;
+        }
+        from
     }
-    from
-}
 
-pub fn jg(ctx: &mut Context, from: Cont, x: Cont) -> Cont {
-    if !ctx.cpu.flags.contains(Flags::ZF)
-        && ctx.cpu.flags.contains(Flags::SF) == ctx.cpu.flags.contains(Flags::OF)
-    {
-        return x;
+    pub fn jge(&mut self, from: Cont, x: Cont) -> Cont {
+        if self.cpu.flags.contains(Flags::SF) == self.cpu.flags.contains(Flags::OF) {
+            return x;
+        }
+        from
     }
-    from
-}
 
-pub fn jle(ctx: &mut Context, from: Cont, x: Cont) -> Cont {
-    if ctx.cpu.flags.contains(Flags::ZF)
-        || ctx.cpu.flags.contains(Flags::SF) != ctx.cpu.flags.contains(Flags::OF)
-    {
-        return x;
+    pub fn jecxz(&mut self, from: Cont, x: Cont) -> Cont {
+        if self.cpu.regs.ecx == 0 {
+            return x;
+        }
+        from
     }
-    from
-}
 
-pub fn jbe(ctx: &mut Context, from: Cont, x: Cont) -> Cont {
-    if ctx.cpu.flags.contains(Flags::CF) || ctx.cpu.flags.contains(Flags::ZF) {
-        return x;
+    pub fn jg(&mut self, from: Cont, x: Cont) -> Cont {
+        if !self.cpu.flags.contains(Flags::ZF)
+            && self.cpu.flags.contains(Flags::SF) == self.cpu.flags.contains(Flags::OF)
+        {
+            return x;
+        }
+        from
     }
-    from
-}
 
-pub fn ret(ctx: &mut Context, n: u16) -> Cont {
-    let ret = ctx.pop();
-    ctx.cpu.regs.esp += n as u32;
-    indirect(ctx, ret)
-}
+    pub fn jle(&mut self, from: Cont, x: Cont) -> Cont {
+        if self.cpu.flags.contains(Flags::ZF)
+            || self.cpu.flags.contains(Flags::SF) != self.cpu.flags.contains(Flags::OF)
+        {
+            return x;
+        }
+        from
+    }
 
-pub fn enter(ctx: &mut Context, bytes: u16, nesting: u8) {
-    assert_eq!(nesting, 0);
-    ctx.push(ctx.cpu.regs.ebp);
-    ctx.cpu.regs.ebp = ctx.cpu.regs.esp;
-    ctx.cpu.regs.esp -= bytes as u32;
-}
+    pub fn jbe(&mut self, from: Cont, x: Cont) -> Cont {
+        if self.cpu.flags.contains(Flags::CF) || self.cpu.flags.contains(Flags::ZF) {
+            return x;
+        }
+        from
+    }
 
-pub fn leave(ctx: &mut Context) {
-    ctx.cpu.regs.esp = ctx.cpu.regs.ebp;
-    ctx.cpu.regs.ebp = ctx.pop();
-}
+    pub fn ret(&mut self, n: u16) -> Cont {
+        let ret = self.pop();
+        self.cpu.regs.esp += n as u32;
+        indirect(self, ret)
+    }
 
-pub fn sete(ctx: &Context) -> u8 {
-    ctx.cpu.flags.contains(Flags::ZF) as u8
+    pub fn loop_(&mut self, from: Cont, x: Cont) -> Cont {
+        self.cpu.regs.ecx = self.cpu.regs.ecx.wrapping_sub(1);
+        if self.cpu.regs.ecx == 0 { from } else { x }
+    }
 }
