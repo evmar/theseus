@@ -7,34 +7,34 @@ impl<'a> CodeGen<'a> {
             Movsb => {
                 assert!(!instr.has_repne_prefix());
                 if instr.has_rep_prefix() {
-                    self.line("rep(ctx, Rep::REP, movsb);");
+                    self.line("ctx.rep(Rep::REP, Context::movsb);");
                 } else {
-                    self.line("movsb(ctx);");
+                    self.line("ctx.movsb();");
                 }
             }
             Movsd => {
                 assert!(!instr.has_repne_prefix());
                 if instr.has_rep_prefix() {
-                    self.line("rep(ctx, Rep::REP, movsd);");
+                    self.line("ctx.rep(Rep::REP, Context::movsd);");
                 } else {
-                    self.line("movsd(ctx);");
+                    self.line("ctx.movsd();");
                 }
             }
 
             Lodsb => {
                 assert!(!instr.has_repne_prefix());
                 if instr.has_rep_prefix() {
-                    self.line("rep(ctx, Rep::REP, lodsb);");
+                    self.line("ctx.rep(Rep::REP, Context::lodsb);");
                 } else {
-                    self.line("lodsb(ctx);");
+                    self.line("ctx.lodsb();");
                 };
             }
             Lodsd => {
                 assert!(!instr.has_repne_prefix());
                 if instr.has_rep_prefix() {
-                    self.line("rep(ctx, Rep::REP, lodsd);");
+                    self.line("ctx.rep(Rep::REP, Context::lodsd);");
                 } else {
-                    self.line("lodsd(ctx);");
+                    self.line("ctx.lodsd();");
                 };
             }
 
@@ -42,31 +42,31 @@ impl<'a> CodeGen<'a> {
                 let op = instr_name(instr);
                 assert!(!instr.has_repne_prefix());
                 if instr.has_rep_prefix() {
-                    self.line(format!("rep(ctx, Rep::REP, {op});"));
+                    self.line(format!("ctx.rep(Rep::REP, Context::{op});"));
                 } else {
-                    self.line(format!("{op}(ctx);"));
+                    self.line(format!("ctx.{op}();"));
                 };
             }
 
             // XXX: cmps/scas use repe, not rep
             Cmpsb => {
                 if instr.has_repe_prefix() {
-                    self.line("rep(ctx, Rep::REPE, cmpsb);");
+                    self.line("ctx.rep(Rep::REPE, Context::cmpsb);");
                 } else if instr.has_repne_prefix() {
-                    self.line("rep(ctx, Rep::REPNE, cmpsb);");
+                    self.line("ctx.rep(Rep::REPNE, Context::cmpsb);");
                 } else {
-                    self.line("cmpsb(ctx);");
+                    self.line("ctx.cmpsb();");
                 };
             }
 
             // XXX: cmps/scas use repe, not rep
             Scasb => {
                 if instr.has_repe_prefix() {
-                    self.line("rep(ctx, Rep::REPE, scasb);");
+                    self.line("ctx.rep(Rep::REPE, Context::scasb);");
                 } else if instr.has_repne_prefix() {
-                    self.line("rep(ctx, Rep::REPNE, scasb);");
+                    self.line("ctx.rep(Rep::REPNE, Context::scasb);");
                 } else {
-                    self.line("scasb(ctx);");
+                    self.line("ctx.scasb();");
                 };
             }
 
