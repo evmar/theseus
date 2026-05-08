@@ -227,7 +227,6 @@ pub mod IDirectSound {
                 .unwrap();
 
             let write = WavWrite::new("out.wav");
-
             let buffer = Buffer {
                 addr: kernel32
                     .process_heap
@@ -478,7 +477,7 @@ pub mod IDirectSoundBuffer {
     pub fn Unlock(
         ctx: &mut Context,
         this: u32,
-        _pvAudioPtr1: u32,
+        pvAudioPtr1: u32,
         dwAudioBytes1: u32,
         pvAudioPtr2: u32,
         dwAudioBytes2: u32,
@@ -492,7 +491,7 @@ pub mod IDirectSoundBuffer {
             return DS_OK;
         }
 
-        let data = &ctx.memory[buffer.addr..][..dwAudioBytes1 as usize];
+        let data = &ctx.memory[pvAudioPtr1..][..dwAudioBytes1 as usize];
         buffer.stream.0.put_data(data).unwrap();
         buffer.write.write(data);
         buffer.total_written += data.len() as u32;
