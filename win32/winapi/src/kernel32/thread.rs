@@ -120,7 +120,7 @@ pub fn CreateThread(
     let id = lock.next_thread_id;
     let name = format!("thread {}@{:x}", id, lpStartAddress);
     lock.create_thread(ctx, name, move |ctx| {
-        let f = runtime::indirect(ctx, lpStartAddress);
+        let f = ctx.indirect(lpStartAddress);
         runtime::call_x86(ctx, f, vec![lpParameter]);
     });
     HANDLE::from_raw(id)

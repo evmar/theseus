@@ -11,7 +11,7 @@ mod ops;
 mod registers;
 
 pub use flags::Flags;
-pub use machine::{CPU, Context, indirect, proc_addr};
+pub use machine::{CPU, Context};
 pub use memory::Memory;
 pub use native::HOST;
 pub use ops::*;

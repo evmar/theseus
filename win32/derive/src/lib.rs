@@ -72,7 +72,7 @@ pub fn dllexport(_attr: TokenStream, mut tokens: TokenStream) -> TokenStream {
             let ret: ABIReturn = #name(ctx, #(#call_args),*).into();
             ctx.cpu.regs.eax = ret.to_abi_return();
             ctx.cpu.regs.esp += #stack_popped * 4;
-            runtime::indirect(ctx, return_addr)
+            ctx.indirect(return_addr)
         }
     }
     .into();

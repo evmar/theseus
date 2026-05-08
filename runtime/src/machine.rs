@@ -17,23 +17,26 @@ pub struct Context {
     pub recent: [ContFn; 4],
 }
 
-pub fn indirect(ctx: &mut Context, addr: u32) -> Cont {
-    if addr == 0 {
-        panic!("jmp to null ptr");
+impl Context {
+    /// Given an address (jump target), look up the Cont registerd for it.
+    pub fn indirect(&mut self, addr: u32) -> Cont {
+        if addr == 0 {
+            panic!("jmp to null ptr");
+        }
+        // TODO: this would be faster as a hash table, or even a perfect hash if we really cared.
+        let Ok(index) = self.blocks.binary_search_by_key(&addr, |(addr, _)| *addr) else {
+            panic!("jmp to unknown addr {addr:#08x}");
+        };
+        Cont(self.blocks[index].1)
     }
-    // TODO: this would be faster as a hash table, or even a perfect hash if we really cared.
-    let Ok(index) = ctx.blocks.binary_search_by_key(&addr, |(addr, _)| *addr) else {
-        panic!("jmp to unknown addr {addr:#08x}");
-    };
-    Cont(ctx.blocks[index].1)
-}
 
-pub fn proc_addr(ctx: &mut Context, func: ContFn) -> u32 {
-    ctx.blocks
-        .iter()
-        .find(|&(_, f)| std::ptr::fn_addr_eq(*f, func))
-        .unwrap()
-        .0
+    pub fn proc_addr(&mut self, func: ContFn) -> u32 {
+        self.blocks
+            .iter()
+            .find(|&(_, f)| std::ptr::fn_addr_eq(*f, func))
+            .unwrap()
+            .0
+    }
 }
 
 fn dump_stack(memory: &Memory, esp: u32) {

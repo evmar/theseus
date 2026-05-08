@@ -24,10 +24,10 @@ impl<'a> CodeGen<'a> {
                 if let Some(func) = &instr.hint {
                     return format!("Cont({func})");
                 }
-                format!("indirect(ctx, ctx.memory.read({}))", gen_addr(&instr.iced))
+                format!("ctx.indirect(ctx.memory.read({}))", gen_addr(&instr.iced))
             }
             iced_x86::OpKind::Register => {
-                format!("indirect(ctx, {})", get_reg(instr.iced.op0_register()))
+                format!("ctx.indirect({})", get_reg(instr.iced.op0_register()))
             }
             k => todo!("{:?}", k),
         }

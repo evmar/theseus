@@ -1,4 +1,4 @@
-use crate::{Cont, ContFn, Context, Flags, RETURN_FROM_X86_ADDR, indirect};
+use crate::{Cont, ContFn, Context, Flags, RETURN_FROM_X86_ADDR};
 
 impl Context {
     pub fn call(&mut self, ret: u32, addr: Cont) -> Cont {
@@ -111,7 +111,7 @@ impl Context {
     pub fn ret(&mut self, n: u16) -> Cont {
         let ret = self.pop();
         self.cpu.regs.esp += n as u32;
-        indirect(self, ret)
+        self.indirect(ret)
     }
 
     pub fn loop_(&mut self, from: Cont, x: Cont) -> Cont {
