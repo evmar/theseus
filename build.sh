@@ -16,6 +16,7 @@ elif [[ $1 == "chillin" ]]; then
         --out exe/chillin \
         --extern 0x40a3b4 \
         --entry-points 0x409435..0x409b42 \
+        --entry-point 0x40969a \
         --entry-point 0x40969e \
         --entry-point 0x4096a2 \
         --entry-point 0x4096a6 \

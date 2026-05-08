@@ -37428,6 +37428,10 @@ pub fn x409696(ctx: &mut Context) -> Cont {
     // 00409696 mov byte ptr [ebp+21h],10h
     ctx.memory
         .write::<u8>(ctx.cpu.regs.ebp.wrapping_add(0x21u32), 0x10u8);
+    Cont(x40969a)
+}
+
+pub fn x40969a(ctx: &mut Context) -> Cont {
     // 0040969a add byte ptr [ebp+21h],10h
     ctx.memory.write::<u8>(
         ctx.cpu.regs.ebp.wrapping_add(0x21u32),
@@ -42150,7 +42154,7 @@ pub fn DirectDrawCreate(ctx: &mut Context) -> Cont {
     Cont(ddraw::DirectDrawCreate_stdcall)
 }
 
-const BLOCKS: [(u32, ContFn); 2034] = [
+const BLOCKS: [(u32, ContFn); 2035] = [
     (0x401000, dlgproc),
     (0x401015, x401015),
     (0x401017, x401017),
@@ -43632,6 +43636,7 @@ const BLOCKS: [(u32, ContFn); 2034] = [
     (0x40968d, x40968d),
     (0x40968f, x40968f),
     (0x409696, x409696),
+    (0x40969a, x40969a),
     (0x40969e, x40969e),
     (0x4096a2, x4096a2),
     (0x4096a6, x4096a6),
