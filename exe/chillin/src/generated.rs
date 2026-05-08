@@ -96,9 +96,9 @@ fn init_memory(ctx: &mut Context, mappings: &mut kernel32::Mappings) {
 
 pub fn dlgproc(ctx: &mut Context) -> Cont {
     // 00401000 push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 00401001 push ebp
-    push(ctx, ctx.cpu.regs.ebp);
+    ctx.push(ctx.cpu.regs.ebp);
     // 00401002 mov ebp,esp
     ctx.cpu.regs.ebp = ctx.cpu.regs.esp;
     // 00401004 mov ebx,[ebp+0Ch]
@@ -148,9 +148,9 @@ pub fn x40102f(ctx: &mut Context) -> Cont {
 
 pub fn x401036(ctx: &mut Context) -> Cont {
     // 00401036 push 0C9h
-    push(ctx, 0xc9u32);
+    ctx.push(0xc9u32);
     // 0040103b push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 0040103c call dword ptr cs:[40B124h]
     call_builtin(ctx, user32::IsDlgButtonChecked_stdcall);
     // 00401043 test eax,eax
@@ -167,9 +167,9 @@ pub fn x401047(ctx: &mut Context) -> Cont {
 
 pub fn x401051(ctx: &mut Context) -> Cont {
     // 00401051 push 0CAh
-    push(ctx, 0xcau32);
+    ctx.push(0xcau32);
     // 00401056 push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 00401057 call dword ptr cs:[40B124h]
     call_builtin(ctx, user32::IsDlgButtonChecked_stdcall);
     // 0040105e test eax,eax
@@ -186,9 +186,9 @@ pub fn x401062(ctx: &mut Context) -> Cont {
 
 pub fn x40106c(ctx: &mut Context) -> Cont {
     // 0040106c push 0CBh
-    push(ctx, 0xcbu32);
+    ctx.push(0xcbu32);
     // 00401071 push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 00401072 call dword ptr cs:[40B124h]
     call_builtin(ctx, user32::IsDlgButtonChecked_stdcall);
     // 00401079 test eax,eax
@@ -211,9 +211,9 @@ pub fn x401080(ctx: &mut Context) -> Cont {
 
 pub fn x401087(ctx: &mut Context) -> Cont {
     // 00401087 push 0CCh
-    push(ctx, 0xccu32);
+    ctx.push(0xccu32);
     // 0040108c push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 0040108d call dword ptr cs:[40B124h]
     call_builtin(ctx, user32::IsDlgButtonChecked_stdcall);
     // 00401094 test eax,eax
@@ -230,9 +230,9 @@ pub fn x401098(ctx: &mut Context) -> Cont {
 
 pub fn x4010a2(ctx: &mut Context) -> Cont {
     // 004010a2 push 12Dh
-    push(ctx, 0x12du32);
+    ctx.push(0x12du32);
     // 004010a7 push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 004010a8 call dword ptr cs:[40B124h]
     call_builtin(ctx, user32::IsDlgButtonChecked_stdcall);
     // 004010af test eax,eax
@@ -249,9 +249,9 @@ pub fn x4010b3(ctx: &mut Context) -> Cont {
 
 pub fn x4010bd(ctx: &mut Context) -> Cont {
     // 004010bd push 12Eh
-    push(ctx, 0x12eu32);
+    ctx.push(0x12eu32);
     // 004010c2 push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 004010c3 call dword ptr cs:[40B124h]
     call_builtin(ctx, user32::IsDlgButtonChecked_stdcall);
     // 004010ca test eax,eax
@@ -280,9 +280,9 @@ pub fn x4010d8(ctx: &mut Context) -> Cont {
 
 pub fn x4010e0(ctx: &mut Context) -> Cont {
     // 004010e0 push 1
-    push(ctx, 0x1u32);
+    ctx.push(0x1u32);
     // 004010e2 push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 004010e3 call dword ptr cs:[40B11Ch]
     call_builtin(ctx, user32::EndDialog_stdcall);
     // 004010ea jmp short 0040114Fh
@@ -291,51 +291,51 @@ pub fn x4010e0(ctx: &mut Context) -> Cont {
 
 pub fn x4010ec(ctx: &mut Context) -> Cont {
     // 004010ec push 1
-    push(ctx, 0x1u32);
+    ctx.push(0x1u32);
     // 004010ee push 0C9h
-    push(ctx, 0xc9u32);
+    ctx.push(0xc9u32);
     // 004010f3 push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 004010f4 call dword ptr cs:[40B108h]
     call_builtin(ctx, user32::CheckDlgButton_stdcall);
     // 004010fb push 0
-    push(ctx, 0x0u32);
+    ctx.push(0x0u32);
     // 004010fd push 0CAh
-    push(ctx, 0xcau32);
+    ctx.push(0xcau32);
     // 00401102 push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 00401103 call dword ptr cs:[40B108h]
     call_builtin(ctx, user32::CheckDlgButton_stdcall);
     // 0040110a push 0
-    push(ctx, 0x0u32);
+    ctx.push(0x0u32);
     // 0040110c push 0CBh
-    push(ctx, 0xcbu32);
+    ctx.push(0xcbu32);
     // 00401111 push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 00401112 call dword ptr cs:[40B108h]
     call_builtin(ctx, user32::CheckDlgButton_stdcall);
     // 00401119 push 0
-    push(ctx, 0x0u32);
+    ctx.push(0x0u32);
     // 0040111b push 0CCh
-    push(ctx, 0xccu32);
+    ctx.push(0xccu32);
     // 00401120 push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 00401121 call dword ptr cs:[40B108h]
     call_builtin(ctx, user32::CheckDlgButton_stdcall);
     // 00401128 push 1
-    push(ctx, 0x1u32);
+    ctx.push(0x1u32);
     // 0040112a push 12Dh
-    push(ctx, 0x12du32);
+    ctx.push(0x12du32);
     // 0040112f push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 00401130 call dword ptr cs:[40B108h]
     call_builtin(ctx, user32::CheckDlgButton_stdcall);
     // 00401137 push 0
-    push(ctx, 0x0u32);
+    ctx.push(0x0u32);
     // 00401139 push 12Eh
-    push(ctx, 0x12eu32);
+    ctx.push(0x12eu32);
     // 0040113e push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 0040113f call dword ptr cs:[40B108h]
     call_builtin(ctx, user32::CheckDlgButton_stdcall);
     // 00401146 jmp short 0040114Fh
@@ -353,10 +353,10 @@ pub fn x40114f(ctx: &mut Context) -> Cont {
     // 0040114f xor eax,eax
     ctx.cpu.regs.eax = xor(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
     // 00401151 pop ebp
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ebp = x;
     // 00401152 pop ebx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ebx = x;
     // 00401153 ret 10h
     ret(ctx, 16)
@@ -364,32 +364,31 @@ pub fn x40114f(ctx: &mut Context) -> Cont {
 
 pub fn init_ddraw(ctx: &mut Context) -> Cont {
     // 00401156 push esi
-    push(ctx, ctx.cpu.regs.esi);
+    ctx.push(ctx.cpu.regs.esi);
     // 00401157 push edi
-    push(ctx, ctx.cpu.regs.edi);
+    ctx.push(ctx.cpu.regs.edi);
     // 00401158 enter 90h,0
     enter(ctx, 0x90u16, 0);
     // 0040115c push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 0040115d push edx
-    push(ctx, ctx.cpu.regs.edx);
+    ctx.push(ctx.cpu.regs.edx);
     // 0040115e sub ebp,7Eh
     ctx.cpu.regs.ebp = sub(ctx.cpu.regs.ebp, 0x7eu32, &mut ctx.cpu.flags);
     // 00401161 mov ebx,ecx
     ctx.cpu.regs.ebx = ctx.cpu.regs.ecx;
     // 00401163 push 0
-    push(ctx, 0x0u32);
+    ctx.push(0x0u32);
     // 00401165 push 401000h
-    push(ctx, 0x401000u32);
+    ctx.push(0x401000u32);
     // 0040116a push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 0040116b push 40C000h
-    push(ctx, 0x40c000u32);
+    ctx.push(0x40c000u32);
     // 00401170 mov ds:[433014h],eax
     ctx.memory.write::<u32>(0x433014u32, ctx.cpu.regs.eax);
     // 00401175 push dword ptr [ebp+8Eh]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0x8eu32)),
     );
@@ -398,11 +397,11 @@ pub fn init_ddraw(ctx: &mut Context) -> Cont {
     // 00401181 call dword ptr cs:[40B114h]
     call_builtin(ctx, user32::DialogBoxParamA_stdcall);
     // 00401188 push 0
-    push(ctx, 0x0u32);
+    ctx.push(0x0u32);
     // 0040118a push 433024h
-    push(ctx, 0x433024u32);
+    ctx.push(0x433024u32);
     // 0040118f push 0
-    push(ctx, 0x0u32);
+    ctx.push(0x0u32);
     // 00401191 call 0040A56Eh
     let dst = Cont(DirectDrawCreate);
     call(ctx, 0x401196, dst)
@@ -417,15 +416,15 @@ pub fn x401196(ctx: &mut Context) -> Cont {
 
 pub fn x40119e(ctx: &mut Context) -> Cont {
     // 0040119e push 11h
-    push(ctx, 0x11u32);
+    ctx.push(0x11u32);
     // 004011a0 mov eax,ds:[433024h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x433024u32);
     // 004011a5 push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 004011a6 mov edx,[eax]
     ctx.cpu.regs.edx = ctx.memory.read::<u32>(ctx.cpu.regs.eax);
     // 004011a8 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 004011a9 call dword ptr [edx+50h]
     let dst = indirect(ctx, ctx.memory.read(ctx.cpu.regs.edx.wrapping_add(0x50u32)));
     call(ctx, 0x4011ac, dst)
@@ -466,7 +465,7 @@ pub fn x4011cd(ctx: &mut Context) -> Cont {
 
 pub fn x4011d2(ctx: &mut Context) -> Cont {
     // 004011d2 push 0Fh
-    push(ctx, 0xfu32);
+    ctx.push(0xfu32);
     Cont(x4011d4)
 }
 
@@ -474,23 +473,21 @@ pub fn x4011d4(ctx: &mut Context) -> Cont {
     // 004011d4 mov ds:[433010h],eax
     ctx.memory.write::<u32>(0x433010u32, ctx.cpu.regs.eax);
     // 004011d9 push dword ptr [ebp-1Ah]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0xffffffe6u32)),
     );
     // 004011dc mov eax,ds:[433024h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x433024u32);
     // 004011e1 push dword ptr [ebp-16h]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0xffffffeau32)),
     );
     // 004011e4 mov edx,[eax]
     ctx.cpu.regs.edx = ctx.memory.read::<u32>(ctx.cpu.regs.eax);
     // 004011e6 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     Cont(x4011e7)
 }
 
@@ -507,25 +504,23 @@ pub fn x4011ea(ctx: &mut Context) -> Cont {
 
 pub fn x4011ef(ctx: &mut Context) -> Cont {
     // 004011ef push 10h
-    push(ctx, 0x10u32);
+    ctx.push(0x10u32);
     // 004011f1 push dword ptr [ebp-1Ah]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0xffffffe6u32)),
     );
     // 004011f4 mov eax,ds:[433024h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x433024u32);
     // 004011f9 push dword ptr [ebp-16h]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0xffffffeau32)),
     );
     // 004011fc mov edx,[eax]
     ctx.cpu.regs.edx = ctx.memory.read::<u32>(ctx.cpu.regs.eax);
     // 004011fe push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 004011ff mov dword ptr ds:[433010h],10h
     ctx.memory.write::<u32>(0x433010u32, 0x10u32);
     // 00401209 jmp short 004011E7h
@@ -534,25 +529,23 @@ pub fn x4011ef(ctx: &mut Context) -> Cont {
 
 pub fn x40120b(ctx: &mut Context) -> Cont {
     // 0040120b push 18h
-    push(ctx, 0x18u32);
+    ctx.push(0x18u32);
     // 0040120d push dword ptr [ebp-1Ah]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0xffffffe6u32)),
     );
     // 00401210 mov eax,ds:[433024h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x433024u32);
     // 00401215 push dword ptr [ebp-16h]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0xffffffeau32)),
     );
     // 00401218 mov edx,[eax]
     ctx.cpu.regs.edx = ctx.memory.read::<u32>(ctx.cpu.regs.eax);
     // 0040121a push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 0040121b mov dword ptr ds:[433010h],18h
     ctx.memory.write::<u32>(0x433010u32, 0x18u32);
     // 00401225 jmp short 004011E7h
@@ -561,7 +554,7 @@ pub fn x40120b(ctx: &mut Context) -> Cont {
 
 pub fn x401227(ctx: &mut Context) -> Cont {
     // 00401227 push 20h
-    push(ctx, 0x20u32);
+    ctx.push(0x20u32);
     // 00401229 jmp short 004011D4h
     Cont(x4011d4)
 }
@@ -615,7 +608,7 @@ pub fn x401256(ctx: &mut Context) -> Cont {
 
 pub fn x40125f(ctx: &mut Context) -> Cont {
     // 0040125f push 40C00Ah
-    push(ctx, 0x40c00au32);
+    ctx.push(0x40c00au32);
     // 00401264 call dword ptr cs:[40B15Ch]
     call_builtin(ctx, kernel32::OutputDebugStringA_stdcall);
     // 0040126b cmp dword ptr ds:[43302Ch],0
@@ -632,7 +625,7 @@ pub fn x401274(ctx: &mut Context) -> Cont {
     // 00401274 mov eax,ds:[43302Ch]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x43302cu32);
     // 00401279 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 0040127a mov edx,[eax]
     ctx.cpu.regs.edx = ctx.memory.read::<u32>(ctx.cpu.regs.eax);
     // 0040127c call dword ptr [edx+8]
@@ -661,7 +654,7 @@ pub fn x401292(ctx: &mut Context) -> Cont {
     // 00401292 mov eax,ds:[433028h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x433028u32);
     // 00401297 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 00401298 mov edx,[eax]
     ctx.cpu.regs.edx = ctx.memory.read::<u32>(ctx.cpu.regs.eax);
     // 0040129a call dword ptr [edx+8]
@@ -688,15 +681,15 @@ pub fn x4012a7(ctx: &mut Context) -> Cont {
 
 pub fn x4012b0(ctx: &mut Context) -> Cont {
     // 004012b0 push 8
-    push(ctx, 0x8u32);
+    ctx.push(0x8u32);
     // 004012b2 mov eax,ds:[433024h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x433024u32);
     // 004012b7 push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 004012b8 mov edx,[eax]
     ctx.cpu.regs.edx = ctx.memory.read::<u32>(ctx.cpu.regs.eax);
     // 004012ba push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 004012bb call dword ptr [edx+50h]
     let dst = indirect(ctx, ctx.memory.read(ctx.cpu.regs.edx.wrapping_add(0x50u32)));
     call(ctx, 0x4012be, dst)
@@ -706,7 +699,7 @@ pub fn x4012be(ctx: &mut Context) -> Cont {
     // 004012be mov eax,ds:[433024h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x433024u32);
     // 004012c3 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 004012c4 mov edx,[eax]
     ctx.cpu.regs.edx = ctx.memory.read::<u32>(ctx.cpu.regs.eax);
     // 004012c6 call dword ptr [edx+4Ch]
@@ -718,7 +711,7 @@ pub fn x4012c9(ctx: &mut Context) -> Cont {
     // 004012c9 mov eax,ds:[433024h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x433024u32);
     // 004012ce push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 004012cf mov edx,[eax]
     ctx.cpu.regs.edx = ctx.memory.read::<u32>(ctx.cpu.regs.eax);
     // 004012d1 call dword ptr [edx+8]
@@ -745,7 +738,7 @@ pub fn x4012de(ctx: &mut Context) -> Cont {
 
 pub fn x4012e7(ctx: &mut Context) -> Cont {
     // 004012e7 push dword ptr ds:[433020h]
-    push(ctx, ctx.memory.read::<u32>(0x433020u32));
+    ctx.push(ctx.memory.read::<u32>(0x433020u32));
     // 004012ed call 00401A78h
     let dst = Cont(x401a78);
     call(ctx, 0x4012f2, dst)
@@ -769,13 +762,13 @@ pub fn x401304(ctx: &mut Context) -> Cont {
     // 00401304 lea esp,[ebp+7Eh]
     ctx.cpu.regs.esp = ctx.cpu.regs.ebp.wrapping_add(0x7eu32);
     // 00401307 pop ebp
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ebp = x;
     // 00401308 pop edi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edi = x;
     // 00401309 pop esi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.esi = x;
     // 0040130a ret 4
     ret(ctx, 4)
@@ -783,23 +776,23 @@ pub fn x401304(ctx: &mut Context) -> Cont {
 
 pub fn x40130d(ctx: &mut Context) -> Cont {
     // 0040130d push 0Fh
-    push(ctx, 0xfu32);
+    ctx.push(0xfu32);
     Cont(x40130f)
 }
 
 pub fn x40130f(ctx: &mut Context) -> Cont {
     // 0040130f push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 00401310 mov ds:[433010h],eax
     ctx.memory.write::<u32>(0x433010u32, ctx.cpu.regs.eax);
     // 00401315 mov eax,ds:[433024h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x433024u32);
     // 0040131a push edx
-    push(ctx, ctx.cpu.regs.edx);
+    ctx.push(ctx.cpu.regs.edx);
     // 0040131b mov esi,[eax]
     ctx.cpu.regs.esi = ctx.memory.read::<u32>(ctx.cpu.regs.eax);
     // 0040131d push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     Cont(x40131e)
 }
 
@@ -832,25 +825,25 @@ pub fn x401329(ctx: &mut Context) -> Cont {
     ctx.memory
         .write::<u32>(ctx.cpu.regs.ebp.wrapping_add(0xfffffff2u32), 0x21u32);
     // 00401343 push 0
-    push(ctx, 0x0u32);
+    ctx.push(0x0u32);
     // 00401345 mov dword ptr [ebp+2],1
     ctx.memory
         .write::<u32>(ctx.cpu.regs.ebp.wrapping_add(0x2u32), 0x1u32);
     // 0040134c lea ecx,[ebp-12h]
     ctx.cpu.regs.ecx = ctx.cpu.regs.ebp.wrapping_add(0xffffffeeu32);
     // 0040134f push 433028h
-    push(ctx, 0x433028u32);
+    ctx.push(0x433028u32);
     // 00401354 mov eax,ds:[433024h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x433024u32);
     // 00401359 mov dword ptr [ebp+56h],4218h
     ctx.memory
         .write::<u32>(ctx.cpu.regs.ebp.wrapping_add(0x56u32), 0x4218u32);
     // 00401360 push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 00401361 mov edx,[eax]
     ctx.cpu.regs.edx = ctx.memory.read::<u32>(ctx.cpu.regs.eax);
     // 00401363 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 00401364 call dword ptr [edx+18h]
     let dst = indirect(ctx, ctx.memory.read(ctx.cpu.regs.edx.wrapping_add(0x18u32)));
     call(ctx, 0x401367, dst)
@@ -873,7 +866,7 @@ pub fn x40136f(ctx: &mut Context) -> Cont {
     // 00401379 rep stosb
     rep(ctx, Rep::REP, stosb);
     // 0040137b push 43302Ch
-    push(ctx, 0x43302cu32);
+    ctx.push(0x43302cu32);
     // 00401380 lea ecx,[ebp+7Ah]
     ctx.cpu.regs.ecx = ctx.cpu.regs.ebp.wrapping_add(0x7au32);
     // 00401383 mov eax,ds:[433028h]
@@ -882,11 +875,11 @@ pub fn x40136f(ctx: &mut Context) -> Cont {
     ctx.memory
         .write::<u32>(ctx.cpu.regs.ebp.wrapping_add(0x7au32), 0x4u32);
     // 0040138f push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 00401390 mov edx,[eax]
     ctx.cpu.regs.edx = ctx.memory.read::<u32>(ctx.cpu.regs.eax);
     // 00401392 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 00401393 call dword ptr [edx+30h]
     let dst = indirect(ctx, ctx.memory.read(ctx.cpu.regs.edx.wrapping_add(0x30u32)));
     call(ctx, 0x401396, dst)
@@ -916,11 +909,11 @@ pub fn x40139e(ctx: &mut Context) -> Cont {
     ctx.memory
         .write::<u32>(ctx.cpu.regs.ebp.wrapping_add(0x5au32), 0x20u32);
     // 004013b9 push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 004013ba mov edx,[eax]
     ctx.cpu.regs.edx = ctx.memory.read::<u32>(ctx.cpu.regs.eax);
     // 004013bc push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 004013bd call dword ptr [edx+54h]
     let dst = indirect(ctx, ctx.memory.read(ctx.cpu.regs.edx.wrapping_add(0x54u32)));
     call(ctx, 0x4013c0, dst)
@@ -948,7 +941,7 @@ pub fn x4013c8(ctx: &mut Context) -> Cont {
     // 004013cf shl eax,2
     ctx.cpu.regs.eax = shl(ctx.cpu.regs.eax, 0x2u8, &mut ctx.cpu.flags);
     // 004013d2 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 004013d3 call 00401A60h
     let dst = Cont(alloc);
     call(ctx, 0x4013d8, dst)
@@ -974,17 +967,17 @@ pub fn x4013e8(ctx: &mut Context) -> Cont {
 
 pub fn x4013ef(ctx: &mut Context) -> Cont {
     // 004013ef push 10h
-    push(ctx, 0x10u32);
+    ctx.push(0x10u32);
     // 004013f1 push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 004013f2 mov eax,ds:[433024h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x433024u32);
     // 004013f7 push edx
-    push(ctx, ctx.cpu.regs.edx);
+    ctx.push(ctx.cpu.regs.edx);
     // 004013f8 mov esi,[eax]
     ctx.cpu.regs.esi = ctx.memory.read::<u32>(ctx.cpu.regs.eax);
     // 004013fa push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 004013fb mov dword ptr ds:[433010h],10h
     ctx.memory.write::<u32>(0x433010u32, 0x10u32);
     // 00401405 jmp near ptr 0040131Eh
@@ -993,17 +986,17 @@ pub fn x4013ef(ctx: &mut Context) -> Cont {
 
 pub fn x40140a(ctx: &mut Context) -> Cont {
     // 0040140a push 18h
-    push(ctx, 0x18u32);
+    ctx.push(0x18u32);
     // 0040140c push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 0040140d mov eax,ds:[433024h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x433024u32);
     // 00401412 push edx
-    push(ctx, ctx.cpu.regs.edx);
+    ctx.push(ctx.cpu.regs.edx);
     // 00401413 mov esi,[eax]
     ctx.cpu.regs.esi = ctx.memory.read::<u32>(ctx.cpu.regs.eax);
     // 00401415 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 00401416 mov dword ptr ds:[433010h],18h
     ctx.memory.write::<u32>(0x433010u32, 0x18u32);
     // 00401420 jmp near ptr 0040131Eh
@@ -1012,7 +1005,7 @@ pub fn x40140a(ctx: &mut Context) -> Cont {
 
 pub fn x401425(ctx: &mut Context) -> Cont {
     // 00401425 push 20h
-    push(ctx, 0x20u32);
+    ctx.push(0x20u32);
     // 00401427 jmp near ptr 0040130Fh
     Cont(x40130f)
 }
@@ -1083,11 +1076,11 @@ pub fn x40146a(ctx: &mut Context) -> Cont {
 
 pub fn ddraw_shutdown(ctx: &mut Context) -> Cont {
     // 0040148c push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 0040148d push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 0040148e push edx
-    push(ctx, ctx.cpu.regs.edx);
+    ctx.push(ctx.cpu.regs.edx);
     // 0040148f mov ebx,eax
     ctx.cpu.regs.ebx = ctx.cpu.regs.eax;
     // 00401491 cmp dword ptr ds:[43302Ch],0
@@ -1104,7 +1097,7 @@ pub fn x40149a(ctx: &mut Context) -> Cont {
     // 0040149a mov eax,ds:[43302Ch]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x43302cu32);
     // 0040149f push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 004014a0 mov edx,[eax]
     ctx.cpu.regs.edx = ctx.memory.read::<u32>(ctx.cpu.regs.eax);
     // 004014a2 call dword ptr [edx+8]
@@ -1133,7 +1126,7 @@ pub fn x4014b8(ctx: &mut Context) -> Cont {
     // 004014b8 mov eax,ds:[433028h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x433028u32);
     // 004014bd push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 004014be mov edx,[eax]
     ctx.cpu.regs.edx = ctx.memory.read::<u32>(ctx.cpu.regs.eax);
     // 004014c0 call dword ptr [edx+8]
@@ -1160,15 +1153,15 @@ pub fn x4014cd(ctx: &mut Context) -> Cont {
 
 pub fn x4014d6(ctx: &mut Context) -> Cont {
     // 004014d6 push 8
-    push(ctx, 0x8u32);
+    ctx.push(0x8u32);
     // 004014d8 mov eax,ds:[433024h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x433024u32);
     // 004014dd push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 004014de mov edx,[eax]
     ctx.cpu.regs.edx = ctx.memory.read::<u32>(ctx.cpu.regs.eax);
     // 004014e0 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 004014e1 call dword ptr [edx+50h]
     let dst = indirect(ctx, ctx.memory.read(ctx.cpu.regs.edx.wrapping_add(0x50u32)));
     call(ctx, 0x4014e4, dst)
@@ -1178,7 +1171,7 @@ pub fn x4014e4(ctx: &mut Context) -> Cont {
     // 004014e4 mov eax,ds:[433024h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x433024u32);
     // 004014e9 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 004014ea mov edx,[eax]
     ctx.cpu.regs.edx = ctx.memory.read::<u32>(ctx.cpu.regs.eax);
     // 004014ec call dword ptr [edx+4Ch]
@@ -1190,7 +1183,7 @@ pub fn x4014ef(ctx: &mut Context) -> Cont {
     // 004014ef mov eax,ds:[433024h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x433024u32);
     // 004014f4 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 004014f5 mov edx,[eax]
     ctx.cpu.regs.edx = ctx.memory.read::<u32>(ctx.cpu.regs.eax);
     // 004014f7 call dword ptr [edx+8]
@@ -1217,7 +1210,7 @@ pub fn x401504(ctx: &mut Context) -> Cont {
 
 pub fn x40150d(ctx: &mut Context) -> Cont {
     // 0040150d push dword ptr ds:[433020h]
-    push(ctx, ctx.memory.read::<u32>(0x433020u32));
+    ctx.push(ctx.memory.read::<u32>(0x433020u32));
     // 00401513 call 00401A78h
     let dst = Cont(x401a78);
     call(ctx, 0x401518, dst)
@@ -1233,13 +1226,13 @@ pub fn x401518(ctx: &mut Context) -> Cont {
 
 pub fn x401525(ctx: &mut Context) -> Cont {
     // 00401525 pop edx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edx = x;
     // 00401526 pop ecx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ecx = x;
     // 00401527 pop ebx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ebx = x;
     // 00401528 ret
     ret(ctx, 0)
@@ -1247,38 +1240,38 @@ pub fn x401525(ctx: &mut Context) -> Cont {
 
 pub fn draw(ctx: &mut Context) -> Cont {
     // 00401529 push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 0040152a push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 0040152b push edx
-    push(ctx, ctx.cpu.regs.edx);
+    ctx.push(ctx.cpu.regs.edx);
     // 0040152c push esi
-    push(ctx, ctx.cpu.regs.esi);
+    ctx.push(ctx.cpu.regs.esi);
     // 0040152d push edi
-    push(ctx, ctx.cpu.regs.edi);
+    ctx.push(ctx.cpu.regs.edi);
     // 0040152e enter 90h,0
     enter(ctx, 0x90u16, 0);
     // 00401532 sub ebp,82h
     ctx.cpu.regs.ebp = sub(ctx.cpu.regs.ebp, 0x82u32, &mut ctx.cpu.flags);
     // 00401538 push 0
-    push(ctx, 0x0u32);
+    ctx.push(0x0u32);
     // 0040153a push 1
-    push(ctx, 0x1u32);
+    ctx.push(0x1u32);
     // 0040153c lea ecx,[ebp-0Eh]
     ctx.cpu.regs.ecx = ctx.cpu.regs.ebp.wrapping_add(0xfffffff2u32);
     // 0040153f push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 00401540 mov eax,ds:[43302Ch]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x43302cu32);
     // 00401545 mov dword ptr [ebp-0Eh],6Ch
     ctx.memory
         .write::<u32>(ctx.cpu.regs.ebp.wrapping_add(0xfffffff2u32), 0x6cu32);
     // 0040154c push 0
-    push(ctx, 0x0u32);
+    ctx.push(0x0u32);
     // 0040154e mov edx,[eax]
     ctx.cpu.regs.edx = ctx.memory.read::<u32>(ctx.cpu.regs.eax);
     // 00401550 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 00401551 call dword ptr [edx+64h]
     let dst = indirect(ctx, ctx.memory.read(ctx.cpu.regs.edx.wrapping_add(0x64u32)));
     call(ctx, 0x401554, dst)
@@ -1451,11 +1444,11 @@ pub fn x4015d7(ctx: &mut Context) -> Cont {
 
 pub fn x4015e0(ctx: &mut Context) -> Cont {
     // 004015e0 push 0
-    push(ctx, 0x0u32);
+    ctx.push(0x0u32);
     // 004015e2 mov eax,ds:[43302Ch]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x43302cu32);
     // 004015e7 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 004015e8 mov edx,[eax]
     ctx.cpu.regs.edx = ctx.memory.read::<u32>(ctx.cpu.regs.eax);
     // 004015ea call dword ptr [edx+80h]
@@ -1472,7 +1465,7 @@ pub fn x4015f0(ctx: &mut Context) -> Cont {
 
 pub fn x4015f4(ctx: &mut Context) -> Cont {
     // 004015f4 push 40C016h
-    push(ctx, 0x40c016u32);
+    ctx.push(0x40c016u32);
     // 004015f9 call dword ptr cs:[40B15Ch]
     call_builtin(ctx, kernel32::OutputDebugStringA_stdcall);
     Cont(x401600)
@@ -1480,15 +1473,15 @@ pub fn x4015f4(ctx: &mut Context) -> Cont {
 
 pub fn x401600(ctx: &mut Context) -> Cont {
     // 00401600 push 1
-    push(ctx, 0x1u32);
+    ctx.push(0x1u32);
     // 00401602 mov eax,ds:[433028h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x433028u32);
     // 00401607 push 0
-    push(ctx, 0x0u32);
+    ctx.push(0x0u32);
     // 00401609 mov edx,[eax]
     ctx.cpu.regs.edx = ctx.memory.read::<u32>(ctx.cpu.regs.eax);
     // 0040160b push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 0040160c call dword ptr [edx+2Ch]
     let dst = indirect(ctx, ctx.memory.read(ctx.cpu.regs.edx.wrapping_add(0x2cu32)));
     call(ctx, 0x40160f, dst)
@@ -1503,7 +1496,7 @@ pub fn x40160f(ctx: &mut Context) -> Cont {
 
 pub fn x401613(ctx: &mut Context) -> Cont {
     // 00401613 push 40C033h
-    push(ctx, 0x40c033u32);
+    ctx.push(0x40c033u32);
     // 00401618 call dword ptr cs:[40B15Ch]
     call_builtin(ctx, kernel32::OutputDebugStringA_stdcall);
     Cont(x40161f)
@@ -1513,22 +1506,22 @@ pub fn x40161f(ctx: &mut Context) -> Cont {
     // 0040161f lea esp,[ebp+82h]
     ctx.cpu.regs.esp = ctx.cpu.regs.ebp.wrapping_add(0x82u32);
     // 00401625 pop ebp
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ebp = x;
     // 00401626 pop edi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edi = x;
     // 00401627 pop esi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.esi = x;
     // 00401628 pop edx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edx = x;
     // 00401629 pop ecx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ecx = x;
     // 0040162a pop ebx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ebx = x;
     // 0040162b ret
     ret(ctx, 0)
@@ -2834,25 +2827,24 @@ pub fn x401a5a(ctx: &mut Context) -> Cont {
 
 pub fn alloc(ctx: &mut Context) -> Cont {
     // 00401a60 push ebp
-    push(ctx, ctx.cpu.regs.ebp);
+    ctx.push(ctx.cpu.regs.ebp);
     // 00401a61 mov ebp,esp
     ctx.cpu.regs.ebp = ctx.cpu.regs.esp;
     // 00401a63 push 40h
-    push(ctx, 0x40u32);
+    ctx.push(0x40u32);
     // 00401a65 push 1000h
-    push(ctx, 0x1000u32);
+    ctx.push(0x1000u32);
     // 00401a6a push dword ptr [ebp+8]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0x8u32)),
     );
     // 00401a6d push 0
-    push(ctx, 0x0u32);
+    ctx.push(0x0u32);
     // 00401a6f call dword ptr cs:[40B168h]
     call_builtin(ctx, kernel32::VirtualAlloc_stdcall);
     // 00401a76 pop ebp
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ebp = x;
     // 00401a77 ret
     ret(ctx, 0)
@@ -2860,23 +2852,22 @@ pub fn alloc(ctx: &mut Context) -> Cont {
 
 pub fn x401a78(ctx: &mut Context) -> Cont {
     // 00401a78 push ebp
-    push(ctx, ctx.cpu.regs.ebp);
+    ctx.push(ctx.cpu.regs.ebp);
     // 00401a79 mov ebp,esp
     ctx.cpu.regs.ebp = ctx.cpu.regs.esp;
     // 00401a7b push 8000h
-    push(ctx, 0x8000u32);
+    ctx.push(0x8000u32);
     // 00401a80 push 0
-    push(ctx, 0x0u32);
+    ctx.push(0x0u32);
     // 00401a82 push dword ptr [ebp+8]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0x8u32)),
     );
     // 00401a85 call dword ptr cs:[40B16Ch]
     call_builtin(ctx, kernel32::VirtualFree_stdcall);
     // 00401a8c pop ebp
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ebp = x;
     // 00401a8d ret
     ret(ctx, 0)
@@ -2884,9 +2875,9 @@ pub fn x401a78(ctx: &mut Context) -> Cont {
 
 pub fn x401a8e(ctx: &mut Context) -> Cont {
     // 00401a8e push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 00401a8f push ebp
-    push(ctx, ctx.cpu.regs.ebp);
+    ctx.push(ctx.cpu.regs.ebp);
     // 00401a90 mov ebp,esp
     ctx.cpu.regs.ebp = ctx.cpu.regs.esp;
     // 00401a92 mov ebx,[ebp+10h]
@@ -2946,10 +2937,10 @@ pub fn x401ab7(ctx: &mut Context) -> Cont {
     // 00401ab7 xor eax,eax
     ctx.cpu.regs.eax = xor(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
     // 00401ab9 pop ebp
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ebp = x;
     // 00401aba pop ebx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ebx = x;
     // 00401abb ret 10h
     ret(ctx, 16)
@@ -2976,10 +2967,9 @@ pub fn x401ac4(ctx: &mut Context) -> Cont {
 
 pub fn x401ad0(ctx: &mut Context) -> Cont {
     // 00401ad0 push 0
-    push(ctx, 0x0u32);
+    ctx.push(0x0u32);
     // 00401ad2 push dword ptr [ebp+0Ch]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0xcu32)),
     );
@@ -2990,32 +2980,29 @@ pub fn x401ad0(ctx: &mut Context) -> Cont {
 
 pub fn x401adc(ctx: &mut Context) -> Cont {
     // 00401adc push dword ptr [ebp+18h]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0x18u32)),
     );
     // 00401adf push dword ptr [ebp+14h]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0x14u32)),
     );
     // 00401ae2 push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 00401ae3 push dword ptr [ebp+0Ch]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0xcu32)),
     );
     // 00401ae6 call dword ptr cs:[40B110h]
     call_builtin(ctx, user32::DefWindowProcA_stdcall);
     // 00401aed pop ebp
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ebp = x;
     // 00401aee pop ebx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ebx = x;
     // 00401aef ret 10h
     ret(ctx, 16)
@@ -3023,50 +3010,50 @@ pub fn x401adc(ctx: &mut Context) -> Cont {
 
 pub fn create_window2(ctx: &mut Context) -> Cont {
     // 00401af2 push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 00401af3 push edx
-    push(ctx, ctx.cpu.regs.edx);
+    ctx.push(ctx.cpu.regs.edx);
     // 00401af4 push 0
-    push(ctx, 0x0u32);
+    ctx.push(0x0u32);
     // 00401af6 mov eax,ds:[433E10h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x433e10u32);
     // 00401afb push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 00401afc push 0
-    push(ctx, 0x0u32);
+    ctx.push(0x0u32);
     // 00401afe push 0
-    push(ctx, 0x0u32);
+    ctx.push(0x0u32);
     // 00401b00 push 0
-    push(ctx, 0x0u32);
+    ctx.push(0x0u32);
     // 00401b02 push 0
-    push(ctx, 0x0u32);
+    ctx.push(0x0u32);
     // 00401b04 push 0
-    push(ctx, 0x0u32);
+    ctx.push(0x0u32);
     // 00401b06 push 0
-    push(ctx, 0x0u32);
+    ctx.push(0x0u32);
     // 00401b08 push 0CF0000h
-    push(ctx, 0xcf0000u32);
+    ctx.push(0xcf0000u32);
     // 00401b0d push 40C730h
-    push(ctx, 0x40c730u32);
+    ctx.push(0x40c730u32);
     // 00401b12 push 40C730h
-    push(ctx, 0x40c730u32);
+    ctx.push(0x40c730u32);
     // 00401b17 push 0
-    push(ctx, 0x0u32);
+    ctx.push(0x0u32);
     // 00401b19 mov ds:[433F88h],eax
     ctx.memory.write::<u32>(0x433f88u32, ctx.cpu.regs.eax);
     // 00401b1e call dword ptr cs:[40B10Ch]
     call_builtin(ctx, user32::CreateWindowExA_stdcall);
     // 00401b25 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 00401b26 mov ds:[40C73Bh],eax
     ctx.memory.write::<u32>(0x40c73bu32, ctx.cpu.regs.eax);
     // 00401b2b call dword ptr cs:[40B138h]
     call_builtin(ctx, user32::UpdateWindow_stdcall);
     // 00401b32 pop edx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edx = x;
     // 00401b33 pop ecx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ecx = x;
     // 00401b34 ret
     ret(ctx, 0)
@@ -3074,15 +3061,15 @@ pub fn create_window2(ctx: &mut Context) -> Cont {
 
 pub fn create_window(ctx: &mut Context) -> Cont {
     // 00401b35 push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 00401b36 push edx
-    push(ctx, ctx.cpu.regs.edx);
+    ctx.push(ctx.cpu.regs.edx);
     // 00401b37 mov dword ptr ds:[433E00h],3
     ctx.memory.write::<u32>(0x433e00u32, 0x3u32);
     // 00401b41 mov dword ptr ds:[433E04h],401A8Eh
     ctx.memory.write::<u32>(0x433e04u32, 0x401a8eu32);
     // 00401b4b push 0
-    push(ctx, 0x0u32);
+    ctx.push(0x0u32);
     // 00401b4d mov dword ptr ds:[433E08h],0
     ctx.memory.write::<u32>(0x433e08u32, 0x0u32);
     // 00401b57 mov dword ptr ds:[433E0Ch],0
@@ -3098,7 +3085,7 @@ pub fn create_window(ctx: &mut Context) -> Cont {
     // 00401b86 mov dword ptr ds:[433E20h],40C730h
     ctx.memory.write::<u32>(0x433e20u32, 0x40c730u32);
     // 00401b90 push 433E00h
-    push(ctx, 0x433e00u32);
+    ctx.push(0x433e00u32);
     // 00401b95 mov dword ptr ds:[433E24h],40C730h
     ctx.memory.write::<u32>(0x433e24u32, 0x40c730u32);
     // 00401b9f mov ds:[433E10h],eax
@@ -3112,10 +3099,10 @@ pub fn create_window(ctx: &mut Context) -> Cont {
 
 pub fn x401bb0(ctx: &mut Context) -> Cont {
     // 00401bb0 pop edx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edx = x;
     // 00401bb1 pop ecx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ecx = x;
     // 00401bb2 ret
     ret(ctx, 0)
@@ -3123,23 +3110,23 @@ pub fn x401bb0(ctx: &mut Context) -> Cont {
 
 pub fn pump_messages(ctx: &mut Context) -> Cont {
     // 00401bb3 push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 00401bb4 push edx
-    push(ctx, ctx.cpu.regs.edx);
+    ctx.push(ctx.cpu.regs.edx);
     // 00401bb5 enter 1Ch,0
     enter(ctx, 0x1cu16, 0);
     // 00401bb9 push 0
-    push(ctx, 0x0u32);
+    ctx.push(0x0u32);
     // 00401bbb push 0
-    push(ctx, 0x0u32);
+    ctx.push(0x0u32);
     // 00401bbd push 0
-    push(ctx, 0x0u32);
+    ctx.push(0x0u32);
     // 00401bbf push 0
-    push(ctx, 0x0u32);
+    ctx.push(0x0u32);
     // 00401bc1 lea eax,[ebp-1Ch]
     ctx.cpu.regs.eax = ctx.cpu.regs.ebp.wrapping_add(0xffffffe4u32);
     // 00401bc4 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 00401bc5 call dword ptr cs:[40B128h]
     call_builtin(ctx, user32::PeekMessageA_stdcall);
     // 00401bcc test eax,eax
@@ -3150,27 +3137,27 @@ pub fn pump_messages(ctx: &mut Context) -> Cont {
 
 pub fn x401bd0(ctx: &mut Context) -> Cont {
     // 00401bd0 push 0
-    push(ctx, 0x0u32);
+    ctx.push(0x0u32);
     // 00401bd2 push 0
-    push(ctx, 0x0u32);
+    ctx.push(0x0u32);
     // 00401bd4 push dword ptr ds:[40C73Bh]
-    push(ctx, ctx.memory.read::<u32>(0x40c73bu32));
+    ctx.push(ctx.memory.read::<u32>(0x40c73bu32));
     // 00401bda lea eax,[ebp-1Ch]
     ctx.cpu.regs.eax = ctx.cpu.regs.ebp.wrapping_add(0xffffffe4u32);
     // 00401bdd push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 00401bde call dword ptr cs:[40B120h]
     call_builtin(ctx, user32::GetMessageA_stdcall);
     // 00401be5 lea eax,[ebp-1Ch]
     ctx.cpu.regs.eax = ctx.cpu.regs.ebp.wrapping_add(0xffffffe4u32);
     // 00401be8 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 00401be9 call dword ptr cs:[40B134h]
     call_builtin(ctx, user32::TranslateMessage_stdcall);
     // 00401bf0 lea eax,[ebp-1Ch]
     ctx.cpu.regs.eax = ctx.cpu.regs.ebp.wrapping_add(0xffffffe4u32);
     // 00401bf3 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 00401bf4 call dword ptr cs:[40B118h]
     call_builtin(ctx, user32::DispatchMessageA_stdcall);
     Cont(x401bfb)
@@ -3180,10 +3167,10 @@ pub fn x401bfb(ctx: &mut Context) -> Cont {
     // 00401bfb leave
     leave(ctx);
     // 00401bfc pop edx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edx = x;
     // 00401bfd pop ecx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ecx = x;
     // 00401bfe ret
     ret(ctx, 0)
@@ -3191,7 +3178,7 @@ pub fn x401bfb(ctx: &mut Context) -> Cont {
 
 pub fn timer_proc(ctx: &mut Context) -> Cont {
     // 00401bff push ebp
-    push(ctx, ctx.cpu.regs.ebp);
+    ctx.push(ctx.cpu.regs.ebp);
     // 00401c00 mov ebp,esp
     ctx.cpu.regs.ebp = ctx.cpu.regs.esp;
     // 00401c02 call 0040940Bh
@@ -3333,7 +3320,7 @@ pub fn x401cbb(ctx: &mut Context) -> Cont {
 
 pub fn x401cc5(ctx: &mut Context) -> Cont {
     // 00401cc5 pop ebp
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ebp = x;
     // 00401cc6 ret 14h
     ret(ctx, 20)
@@ -3341,11 +3328,11 @@ pub fn x401cc5(ctx: &mut Context) -> Cont {
 
 pub fn init_timer(ctx: &mut Context) -> Cont {
     // 00401cc9 push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 00401cca push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 00401ccb push esi
-    push(ctx, ctx.cpu.regs.esi);
+    ctx.push(ctx.cpu.regs.esi);
     // 00401ccc mov ebx,eax
     ctx.cpu.regs.ebx = ctx.cpu.regs.eax;
     // 00401cce mov esi,edx
@@ -3359,29 +3346,29 @@ pub fn init_timer(ctx: &mut Context) -> Cont {
     // 00401cde shl eax,10h
     ctx.cpu.regs.eax = shl(ctx.cpu.regs.eax, 0x10u8, &mut ctx.cpu.flags);
     // 00401ce1 push 1
-    push(ctx, 0x1u32);
+    ctx.push(0x1u32);
     // 00401ce3 or eax,esi
     ctx.cpu.regs.eax = or(ctx.cpu.regs.eax, ctx.cpu.regs.esi, &mut ctx.cpu.flags);
     // 00401ce5 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 00401ce6 push 401BFFh
-    push(ctx, 0x401bffu32);
+    ctx.push(0x401bffu32);
     // 00401ceb push esi
-    push(ctx, ctx.cpu.regs.esi);
+    ctx.push(ctx.cpu.regs.esi);
     // 00401cec push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 00401ced call dword ptr cs:[40B100h]
     call_builtin(ctx, winmm::timeSetEvent_stdcall);
     // 00401cf4 mov ds:[433F80h],eax
     ctx.memory.write::<u32>(0x433f80u32, ctx.cpu.regs.eax);
     // 00401cf9 pop esi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.esi = x;
     // 00401cfa pop ecx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ecx = x;
     // 00401cfb pop ebx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ebx = x;
     // 00401cfc ret
     ret(ctx, 0)
@@ -3389,13 +3376,13 @@ pub fn init_timer(ctx: &mut Context) -> Cont {
 
 pub fn state_from_timer(ctx: &mut Context) -> Cont {
     // 00401d0f push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 00401d10 push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 00401d11 push edx
-    push(ctx, ctx.cpu.regs.edx);
+    ctx.push(ctx.cpu.regs.edx);
     // 00401d12 push esi
-    push(ctx, ctx.cpu.regs.esi);
+    ctx.push(ctx.cpu.regs.esi);
     // 00401d13 call dword ptr cs:[40B158h]
     call_builtin(ctx, kernel32::GetTickCount_stdcall);
     // 00401d1a mov edx,ds:[433F7Ch]
@@ -3556,16 +3543,16 @@ pub fn x401db9(ctx: &mut Context) -> Cont {
 
 pub fn x401de6(ctx: &mut Context) -> Cont {
     // 00401de6 pop esi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.esi = x;
     // 00401de7 pop edx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edx = x;
     // 00401de8 pop ecx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ecx = x;
     // 00401de9 pop ebx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ebx = x;
     // 00401dea ret
     ret(ctx, 0)
@@ -3573,19 +3560,19 @@ pub fn x401de6(ctx: &mut Context) -> Cont {
 
 pub fn x401deb(ctx: &mut Context) -> Cont {
     // 00401deb push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 00401dec push esi
-    push(ctx, ctx.cpu.regs.esi);
+    ctx.push(ctx.cpu.regs.esi);
     // 00401ded push edi
-    push(ctx, ctx.cpu.regs.edi);
+    ctx.push(ctx.cpu.regs.edi);
     // 00401dee enter 20h,0
     enter(ctx, 0x20u16, 0);
     // 00401df2 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 00401df3 push edx
-    push(ctx, ctx.cpu.regs.edx);
+    ctx.push(ctx.cpu.regs.edx);
     // 00401df4 push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 00401df5 cmp eax,1
     sub(ctx.cpu.regs.eax, 0x1u32, &mut ctx.cpu.flags);
     // 00401df8 jge short 00401E15h
@@ -3612,13 +3599,13 @@ pub fn x401dfa(ctx: &mut Context) -> Cont {
     // 00401e10 leave
     leave(ctx);
     // 00401e11 pop edi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edi = x;
     // 00401e12 pop esi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.esi = x;
     // 00401e13 pop ecx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ecx = x;
     // 00401e14 ret
     ret(ctx, 0)
@@ -4165,13 +4152,13 @@ pub fn x401ff1(ctx: &mut Context) -> Cont {
     // 00401ff1 leave
     leave(ctx);
     // 00401ff2 pop edi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edi = x;
     // 00401ff3 pop esi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.esi = x;
     // 00401ff4 pop ecx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ecx = x;
     // 00401ff5 ret
     ret(ctx, 0)
@@ -4179,19 +4166,19 @@ pub fn x401ff1(ctx: &mut Context) -> Cont {
 
 pub fn x401ff6(ctx: &mut Context) -> Cont {
     // 00401ff6 push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 00401ff7 push esi
-    push(ctx, ctx.cpu.regs.esi);
+    ctx.push(ctx.cpu.regs.esi);
     // 00401ff8 push edi
-    push(ctx, ctx.cpu.regs.edi);
+    ctx.push(ctx.cpu.regs.edi);
     // 00401ff9 enter 1Ch,0
     enter(ctx, 0x1cu16, 0);
     // 00401ffd push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 00401ffe push edx
-    push(ctx, ctx.cpu.regs.edx);
+    ctx.push(ctx.cpu.regs.edx);
     // 00401fff push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     Cont(x402000)
 }
 
@@ -4222,13 +4209,13 @@ pub fn x402005(ctx: &mut Context) -> Cont {
     // 0040201b leave
     leave(ctx);
     // 0040201c pop edi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edi = x;
     // 0040201d pop esi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.esi = x;
     // 0040201e pop ecx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ecx = x;
     // 0040201f ret
     ret(ctx, 0)
@@ -4759,13 +4746,13 @@ pub fn x4021fa(ctx: &mut Context) -> Cont {
     // 004021fa leave
     leave(ctx);
     // 004021fb pop edi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edi = x;
     // 004021fc pop esi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.esi = x;
     // 004021fd pop ecx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ecx = x;
     // 004021fe ret
     ret(ctx, 0)
@@ -4773,19 +4760,19 @@ pub fn x4021fa(ctx: &mut Context) -> Cont {
 
 pub fn x4021ff(ctx: &mut Context) -> Cont {
     // 004021ff push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 00402200 push esi
-    push(ctx, ctx.cpu.regs.esi);
+    ctx.push(ctx.cpu.regs.esi);
     // 00402201 push edi
-    push(ctx, ctx.cpu.regs.edi);
+    ctx.push(ctx.cpu.regs.edi);
     // 00402202 enter 24h,0
     enter(ctx, 0x24u16, 0);
     // 00402206 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 00402207 push edx
-    push(ctx, ctx.cpu.regs.edx);
+    ctx.push(ctx.cpu.regs.edx);
     // 00402208 push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 00402209 cmp eax,1
     sub(ctx.cpu.regs.eax, 0x1u32, &mut ctx.cpu.flags);
     // 0040220c jge short 00402229h
@@ -4826,13 +4813,13 @@ pub fn x402224(ctx: &mut Context) -> Cont {
     // 00402224 leave
     leave(ctx);
     // 00402225 pop edi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edi = x;
     // 00402226 pop esi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.esi = x;
     // 00402227 pop ecx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ecx = x;
     // 00402228 ret
     ret(ctx, 0)
@@ -6750,13 +6737,13 @@ pub fn x40288e(ctx: &mut Context) -> Cont {
     // 0040288e leave
     leave(ctx);
     // 0040288f pop edi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edi = x;
     // 00402890 pop esi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.esi = x;
     // 00402891 pop ecx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ecx = x;
     // 00402892 ret
     ret(ctx, 0)
@@ -6764,19 +6751,19 @@ pub fn x40288e(ctx: &mut Context) -> Cont {
 
 pub fn x402893(ctx: &mut Context) -> Cont {
     // 00402893 push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 00402894 push esi
-    push(ctx, ctx.cpu.regs.esi);
+    ctx.push(ctx.cpu.regs.esi);
     // 00402895 push edi
-    push(ctx, ctx.cpu.regs.edi);
+    ctx.push(ctx.cpu.regs.edi);
     // 00402896 enter 24h,0
     enter(ctx, 0x24u16, 0);
     // 0040289a push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 0040289b push edx
-    push(ctx, ctx.cpu.regs.edx);
+    ctx.push(ctx.cpu.regs.edx);
     // 0040289c push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 0040289d cmp eax,1
     sub(ctx.cpu.regs.eax, 0x1u32, &mut ctx.cpu.flags);
     // 004028a0 jge short 004028BDh
@@ -6803,13 +6790,13 @@ pub fn x4028a2(ctx: &mut Context) -> Cont {
     // 004028b8 leave
     leave(ctx);
     // 004028b9 pop edi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edi = x;
     // 004028ba pop esi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.esi = x;
     // 004028bb pop ecx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ecx = x;
     // 004028bc ret
     ret(ctx, 0)
@@ -8684,13 +8671,13 @@ pub fn x402efe(ctx: &mut Context) -> Cont {
     // 00402efe leave
     leave(ctx);
     // 00402eff pop edi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edi = x;
     // 00402f00 pop esi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.esi = x;
     // 00402f01 pop ecx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ecx = x;
     // 00402f02 ret
     ret(ctx, 0)
@@ -8698,13 +8685,13 @@ pub fn x402efe(ctx: &mut Context) -> Cont {
 
 pub fn x402f03(ctx: &mut Context) -> Cont {
     // 00402f03 push esi
-    push(ctx, ctx.cpu.regs.esi);
+    ctx.push(ctx.cpu.regs.esi);
     // 00402f04 push edi
-    push(ctx, ctx.cpu.regs.edi);
+    ctx.push(ctx.cpu.regs.edi);
     // 00402f05 enter 8,0
     enter(ctx, 0x8u16, 0);
     // 00402f09 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 00402f0a mov esi,edx
     ctx.cpu.regs.esi = ctx.cpu.regs.edx;
     // 00402f0c mov eax,ebx
@@ -8882,10 +8869,10 @@ pub fn x402fb6(ctx: &mut Context) -> Cont {
     // 00402fb8 leave
     leave(ctx);
     // 00402fb9 pop edi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edi = x;
     // 00402fba pop esi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.esi = x;
     // 00402fbb ret
     ret(ctx, 0)
@@ -9073,10 +9060,10 @@ pub fn x40307b(ctx: &mut Context) -> Cont {
     // 0040307d leave
     leave(ctx);
     // 0040307e pop edi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edi = x;
     // 0040307f pop esi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.esi = x;
     // 00403080 ret 8
     ret(ctx, 8)
@@ -9097,17 +9084,17 @@ pub fn x403200(ctx: &mut Context) -> Cont {
 
 pub fn x403202(ctx: &mut Context) -> Cont {
     // 00403202 push esi
-    push(ctx, ctx.cpu.regs.esi);
+    ctx.push(ctx.cpu.regs.esi);
     // 00403203 push edi
-    push(ctx, ctx.cpu.regs.edi);
+    ctx.push(ctx.cpu.regs.edi);
     // 00403204 enter 4,0
     enter(ctx, 0x4u16, 0);
     // 00403208 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 00403209 push edx
-    push(ctx, ctx.cpu.regs.edx);
+    ctx.push(ctx.cpu.regs.edx);
     // 0040320a push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 0040320b mov edx,ecx
     ctx.cpu.regs.edx = ctx.cpu.regs.ecx;
     // 0040320d test ecx,ecx
@@ -9276,10 +9263,10 @@ pub fn x4032b2(ctx: &mut Context) -> Cont {
     // 004032b4 leave
     leave(ctx);
     // 004032b5 pop edi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edi = x;
     // 004032b6 pop esi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.esi = x;
     // 004032b7 ret
     ret(ctx, 0)
@@ -9287,13 +9274,13 @@ pub fn x4032b2(ctx: &mut Context) -> Cont {
 
 pub fn x403340(ctx: &mut Context) -> Cont {
     // 00403340 push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 00403341 push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 00403342 push esi
-    push(ctx, ctx.cpu.regs.esi);
+    ctx.push(ctx.cpu.regs.esi);
     // 00403343 push edi
-    push(ctx, ctx.cpu.regs.edi);
+    ctx.push(ctx.cpu.regs.edi);
     // 00403344 mov ecx,eax
     ctx.cpu.regs.ecx = ctx.cpu.regs.eax;
     // 00403346 mov esi,edx
@@ -9345,16 +9332,16 @@ pub fn x40335b(ctx: &mut Context) -> Cont {
 
 pub fn x403372(ctx: &mut Context) -> Cont {
     // 00403372 pop edi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edi = x;
     // 00403373 pop esi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.esi = x;
     // 00403374 pop ecx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ecx = x;
     // 00403375 pop ebx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ebx = x;
     // 00403376 ret
     ret(ctx, 0)
@@ -9362,13 +9349,13 @@ pub fn x403372(ctx: &mut Context) -> Cont {
 
 pub fn x403377(ctx: &mut Context) -> Cont {
     // 00403377 push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 00403378 push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 00403379 push esi
-    push(ctx, ctx.cpu.regs.esi);
+    ctx.push(ctx.cpu.regs.esi);
     // 0040337a push edi
-    push(ctx, ctx.cpu.regs.edi);
+    ctx.push(ctx.cpu.regs.edi);
     // 0040337b mov edi,eax
     ctx.cpu.regs.edi = ctx.cpu.regs.eax;
     // 0040337d mov esi,edx
@@ -9426,16 +9413,16 @@ pub fn x4033b2(ctx: &mut Context) -> Cont {
     // 004033b2 emms
     // no-op
     // 004033b4 pop edi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edi = x;
     // 004033b5 pop esi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.esi = x;
     // 004033b6 pop ecx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ecx = x;
     // 004033b7 pop ebx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ebx = x;
     // 004033b8 ret
     ret(ctx, 0)
@@ -9443,17 +9430,17 @@ pub fn x4033b2(ctx: &mut Context) -> Cont {
 
 pub fn x4033b9(ctx: &mut Context) -> Cont {
     // 004033b9 push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 004033ba push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 004033bb push esi
-    push(ctx, ctx.cpu.regs.esi);
+    ctx.push(ctx.cpu.regs.esi);
     // 004033bc push ebp
-    push(ctx, ctx.cpu.regs.ebp);
+    ctx.push(ctx.cpu.regs.ebp);
     // 004033bd mov ebp,esp
     ctx.cpu.regs.ebp = ctx.cpu.regs.esp;
     // 004033bf push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 004033c0 mov esi,edx
     ctx.cpu.regs.esi = ctx.cpu.regs.edx;
     // 004033c2 xor ecx,ecx
@@ -9516,13 +9503,13 @@ pub fn x4033f5(ctx: &mut Context) -> Cont {
     // 004033f7 leave
     leave(ctx);
     // 004033f8 pop esi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.esi = x;
     // 004033f9 pop ecx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ecx = x;
     // 004033fa pop ebx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ebx = x;
     // 004033fb ret
     ret(ctx, 0)
@@ -9530,9 +9517,9 @@ pub fn x4033f5(ctx: &mut Context) -> Cont {
 
 pub fn x4033fc(ctx: &mut Context) -> Cont {
     // 004033fc push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 004033fd push esi
-    push(ctx, ctx.cpu.regs.esi);
+    ctx.push(ctx.cpu.regs.esi);
     // 004033fe enter 8,0
     enter(ctx, 0x8u16, 0);
     // 00403402 mov esi,eax
@@ -9760,10 +9747,10 @@ pub fn x4034b9(ctx: &mut Context) -> Cont {
     // 004034b9 leave
     leave(ctx);
     // 004034ba pop esi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.esi = x;
     // 004034bb pop ecx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ecx = x;
     // 004034bc ret
     ret(ctx, 0)
@@ -9771,11 +9758,11 @@ pub fn x4034b9(ctx: &mut Context) -> Cont {
 
 pub fn x4034bd(ctx: &mut Context) -> Cont {
     // 004034bd push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 004034be push esi
-    push(ctx, ctx.cpu.regs.esi);
+    ctx.push(ctx.cpu.regs.esi);
     // 004034bf push edi
-    push(ctx, ctx.cpu.regs.edi);
+    ctx.push(ctx.cpu.regs.edi);
     // 004034c0 enter 8,0
     enter(ctx, 0x8u16, 0);
     // 004034c4 mov edi,edx
@@ -9895,13 +9882,13 @@ pub fn x403533(ctx: &mut Context) -> Cont {
     // 00403535 leave
     leave(ctx);
     // 00403536 pop edi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edi = x;
     // 00403537 pop esi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.esi = x;
     // 00403538 pop ecx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ecx = x;
     // 00403539 ret
     ret(ctx, 0)
@@ -9909,9 +9896,9 @@ pub fn x403533(ctx: &mut Context) -> Cont {
 
 pub fn x403737(ctx: &mut Context) -> Cont {
     // 00403737 push esi
-    push(ctx, ctx.cpu.regs.esi);
+    ctx.push(ctx.cpu.regs.esi);
     // 00403738 push edi
-    push(ctx, ctx.cpu.regs.edi);
+    ctx.push(ctx.cpu.regs.edi);
     // 00403739 enter 8,0
     enter(ctx, 0x8u16, 0);
     // 0040373d mov edi,eax
@@ -10259,10 +10246,10 @@ pub fn x403833(ctx: &mut Context) -> Cont {
     // 00403833 leave
     leave(ctx);
     // 00403834 pop edi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edi = x;
     // 00403835 pop esi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.esi = x;
     // 00403836 ret
     ret(ctx, 0)
@@ -10270,13 +10257,13 @@ pub fn x403833(ctx: &mut Context) -> Cont {
 
 pub fn x403837(ctx: &mut Context) -> Cont {
     // 00403837 push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 00403838 push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 00403839 push esi
-    push(ctx, ctx.cpu.regs.esi);
+    ctx.push(ctx.cpu.regs.esi);
     // 0040383a push edi
-    push(ctx, ctx.cpu.regs.edi);
+    ctx.push(ctx.cpu.regs.edi);
     // 0040383b enter 30h,0
     enter(ctx, 0x30u16, 0);
     // 0040383f mov ebx,eax
@@ -10297,7 +10284,7 @@ pub fn x403837(ctx: &mut Context) -> Cont {
         ctx.cpu.fpu.get(0) * ctx.memory.read::<f32>(0x423214u32) as f64,
     );
     // 0040384d push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 0040384e fistp dword ptr [esp]
     ctx.memory.write::<u32>(
         ctx.cpu.regs.esp,
@@ -10305,7 +10292,7 @@ pub fn x403837(ctx: &mut Context) -> Cont {
     );
     ctx.cpu.fpu.pop();
     // 00403851 pop eax
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.eax = x;
     // 00403852 add eax,0FFFFh
     ctx.cpu.regs.eax = add(ctx.cpu.regs.eax, 0xffffu32, &mut ctx.cpu.flags);
@@ -10327,7 +10314,7 @@ pub fn x403837(ctx: &mut Context) -> Cont {
         ctx.cpu.fpu.get(0) * ctx.memory.read::<f32>(0x423214u32) as f64,
     );
     // 00403866 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 00403867 fistp dword ptr [esp]
     ctx.memory.write::<u32>(
         ctx.cpu.regs.esp,
@@ -10335,7 +10322,7 @@ pub fn x403837(ctx: &mut Context) -> Cont {
     );
     ctx.cpu.fpu.pop();
     // 0040386a pop eax
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.eax = x;
     // 0040386b add eax,0FFFFh
     ctx.cpu.regs.eax = add(ctx.cpu.regs.eax, 0xffffu32, &mut ctx.cpu.flags);
@@ -10357,7 +10344,7 @@ pub fn x403837(ctx: &mut Context) -> Cont {
         ctx.cpu.fpu.get(0) * ctx.memory.read::<f32>(0x423214u32) as f64,
     );
     // 0040387f push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 00403880 fistp dword ptr [esp]
     ctx.memory.write::<u32>(
         ctx.cpu.regs.esp,
@@ -10365,7 +10352,7 @@ pub fn x403837(ctx: &mut Context) -> Cont {
     );
     ctx.cpu.fpu.pop();
     // 00403883 pop eax
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.eax = x;
     // 00403884 add eax,0FFFFh
     ctx.cpu.regs.eax = add(ctx.cpu.regs.eax, 0xffffu32, &mut ctx.cpu.flags);
@@ -10386,7 +10373,7 @@ pub fn x403837(ctx: &mut Context) -> Cont {
         ctx.cpu.fpu.get(0) * ctx.memory.read::<f32>(0x423214u32) as f64,
     );
     // 00403899 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 0040389a fistp dword ptr [esp]
     ctx.memory.write::<u32>(
         ctx.cpu.regs.esp,
@@ -10394,7 +10381,7 @@ pub fn x403837(ctx: &mut Context) -> Cont {
     );
     ctx.cpu.fpu.pop();
     // 0040389d pop eax
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.eax = x;
     // 0040389e add eax,0FFFFh
     ctx.cpu.regs.eax = add(ctx.cpu.regs.eax, 0xffffu32, &mut ctx.cpu.flags);
@@ -10944,16 +10931,16 @@ pub fn x403a56(ctx: &mut Context) -> Cont {
     // 00403a56 leave
     leave(ctx);
     // 00403a57 pop edi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edi = x;
     // 00403a58 pop esi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.esi = x;
     // 00403a59 pop ecx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ecx = x;
     // 00403a5a pop ebx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ebx = x;
     // 00403a5b ret 10h
     ret(ctx, 16)
@@ -10961,9 +10948,9 @@ pub fn x403a56(ctx: &mut Context) -> Cont {
 
 pub fn x403a5e(ctx: &mut Context) -> Cont {
     // 00403a5e push edx
-    push(ctx, ctx.cpu.regs.edx);
+    ctx.push(ctx.cpu.regs.edx);
     // 00403a5f push ebp
-    push(ctx, ctx.cpu.regs.ebp);
+    ctx.push(ctx.cpu.regs.ebp);
     // 00403a60 mov ebp,esp
     ctx.cpu.regs.ebp = ctx.cpu.regs.esp;
     // 00403a62 fld dword ptr [ebp+0Ch]
@@ -11859,14 +11846,12 @@ pub fn x403cb1(ctx: &mut Context) -> Cont {
 
 pub fn x403cba(ctx: &mut Context) -> Cont {
     // 00403cba push dword ptr [ebp+18h]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0x18u32)),
     );
     // 00403cbd push dword ptr [ebp+14h]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0x14u32)),
     );
@@ -11875,8 +11860,7 @@ pub fn x403cba(ctx: &mut Context) -> Cont {
         .memory
         .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0x1cu32));
     // 00403cc3 push dword ptr [ebp+10h]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0x10u32)),
     );
@@ -11885,8 +11869,7 @@ pub fn x403cba(ctx: &mut Context) -> Cont {
         .memory
         .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0x20u32));
     // 00403cc9 push dword ptr [ebp+0Ch]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0xcu32)),
     );
@@ -11897,10 +11880,10 @@ pub fn x403cba(ctx: &mut Context) -> Cont {
 
 pub fn x403cd1(ctx: &mut Context) -> Cont {
     // 00403cd1 pop ebp
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ebp = x;
     // 00403cd2 pop edx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edx = x;
     // 00403cd3 ret 18h
     ret(ctx, 24)
@@ -11908,19 +11891,19 @@ pub fn x403cd1(ctx: &mut Context) -> Cont {
 
 pub fn x403d06(ctx: &mut Context) -> Cont {
     // 00403d06 push esi
-    push(ctx, ctx.cpu.regs.esi);
+    ctx.push(ctx.cpu.regs.esi);
     // 00403d07 push edi
-    push(ctx, ctx.cpu.regs.edi);
+    ctx.push(ctx.cpu.regs.edi);
     // 00403d08 enter 48h,0
     enter(ctx, 0x48u16, 0);
     // 00403d0c push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 00403d0d push edx
-    push(ctx, ctx.cpu.regs.edx);
+    ctx.push(ctx.cpu.regs.edx);
     // 00403d0e push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 00403d0f push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 00403d10 mov edx,ds:[40C724h]
     ctx.cpu.regs.edx = ctx.memory.read::<u32>(0x40c724u32);
     // 00403d16 imul edx,ds:[40C728h]
@@ -12206,7 +12189,7 @@ pub fn x403e00(ctx: &mut Context) -> Cont {
 
 pub fn x403e03(ctx: &mut Context) -> Cont {
     // 00403e03 pop es
-    let x = pop16(ctx);
+    let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     Cont(x403e04)
 }
@@ -13825,7 +13808,7 @@ pub fn x40441f(ctx: &mut Context) -> Cont {
 
 pub fn x40445f(ctx: &mut Context) -> Cont {
     // 0040445f pusha
-    pushad(ctx);
+    ctx.pushad();
     // 00404460 pushfd
     todo!();
     // 00404461 sahf
@@ -14072,10 +14055,10 @@ pub fn x404568(ctx: &mut Context) -> Cont {
     // 0040456a leave
     leave(ctx);
     // 0040456b pop edi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edi = x;
     // 0040456c pop esi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.esi = x;
     // 0040456d ret 8
     ret(ctx, 8)
@@ -14083,7 +14066,7 @@ pub fn x404568(ctx: &mut Context) -> Cont {
 
 pub fn x404570(ctx: &mut Context) -> Cont {
     // 00404570 push edx
-    push(ctx, ctx.cpu.regs.edx);
+    ctx.push(ctx.cpu.regs.edx);
     // 00404571 enter 4,0
     enter(ctx, 0x4u16, 0);
     // 00404575 mov edx,eax
@@ -14169,7 +14152,7 @@ pub fn x404570(ctx: &mut Context) -> Cont {
     // 004045a9 leave
     leave(ctx);
     // 004045aa pop edx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edx = x;
     // 004045ab ret
     ret(ctx, 0)
@@ -14663,11 +14646,11 @@ pub fn x4046e0(ctx: &mut Context) -> Cont {
 
 pub fn x4046ea(ctx: &mut Context) -> Cont {
     // 004046ea push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 004046eb push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 004046ec push edx
-    push(ctx, ctx.cpu.regs.edx);
+    ctx.push(ctx.cpu.regs.edx);
     // 004046ed enter 28h,0
     enter(ctx, 0x28u16, 0);
     // 004046f1 fld dword ptr [ebp+14h]
@@ -14930,7 +14913,7 @@ pub fn x404772(ctx: &mut Context) -> Cont {
         .memory
         .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0xfffffff4u32));
     // 004047bc push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 004047bd fadd qword ptr [ebp-28h]
     ctx.cpu.fpu.set(
         0,
@@ -14956,7 +14939,7 @@ pub fn x4047c9(ctx: &mut Context) -> Cont {
     );
     ctx.cpu.fpu.pop();
     // 004047cc push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 004047cd mov ebx,[ebp-10h]
     ctx.cpu.regs.ebx = ctx
         .memory
@@ -14986,13 +14969,13 @@ pub fn x4047e2(ctx: &mut Context) -> Cont {
     // 004047e2 leave
     leave(ctx);
     // 004047e3 pop edx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edx = x;
     // 004047e4 pop ecx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ecx = x;
     // 004047e5 pop ebx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ebx = x;
     // 004047e6 ret 0Ch
     ret(ctx, 12)
@@ -15000,19 +14983,19 @@ pub fn x4047e2(ctx: &mut Context) -> Cont {
 
 pub fn x4047e9(ctx: &mut Context) -> Cont {
     // 004047e9 push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 004047ea push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 004047eb push edx
-    push(ctx, ctx.cpu.regs.edx);
+    ctx.push(ctx.cpu.regs.edx);
     // 004047ec push esi
-    push(ctx, ctx.cpu.regs.esi);
+    ctx.push(ctx.cpu.regs.esi);
     // 004047ed push edi
-    push(ctx, ctx.cpu.regs.edi);
+    ctx.push(ctx.cpu.regs.edi);
     // 004047ee enter 30h,0
     enter(ctx, 0x30u16, 0);
     // 004047f2 push 100h
-    push(ctx, 0x100u32);
+    ctx.push(0x100u32);
     // 004047f7 call 00401A60h
     let dst = Cont(alloc);
     call(ctx, 0x4047fc, dst)
@@ -15034,7 +15017,7 @@ pub fn x4047fc(ctx: &mut Context) -> Cont {
     // 00404810 shl eax,2
     ctx.cpu.regs.eax = shl(ctx.cpu.regs.eax, 0x2u8, &mut ctx.cpu.flags);
     // 00404813 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 00404814 call 00401A60h
     let dst = Cont(alloc);
     call(ctx, 0x404819, dst)
@@ -15054,7 +15037,7 @@ pub fn x404819(ctx: &mut Context) -> Cont {
     // 0040482a add esp,4
     ctx.cpu.regs.esp = add(ctx.cpu.regs.esp, 0x4u32, &mut ctx.cpu.flags);
     // 0040482d push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 0040482e call 00401A60h
     let dst = Cont(alloc);
     call(ctx, 0x404833, dst)
@@ -15072,7 +15055,7 @@ pub fn x404833(ctx: &mut Context) -> Cont {
     // 00404843 shl eax,2
     ctx.cpu.regs.eax = shl(ctx.cpu.regs.eax, 0x2u8, &mut ctx.cpu.flags);
     // 00404846 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 00404847 call 00401A60h
     let dst = Cont(alloc);
     call(ctx, 0x40484c, dst)
@@ -15100,7 +15083,7 @@ pub fn x40484c(ctx: &mut Context) -> Cont {
     // 00404865 add eax,100h
     ctx.cpu.regs.eax = add(ctx.cpu.regs.eax, 0x100u32, &mut ctx.cpu.flags);
     // 0040486a push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 0040486b call 00401A60h
     let dst = Cont(alloc);
     call(ctx, 0x404870, dst)
@@ -15128,7 +15111,7 @@ pub fn x404870(ctx: &mut Context) -> Cont {
     // 00404889 add eax,100h
     ctx.cpu.regs.eax = add(ctx.cpu.regs.eax, 0x100u32, &mut ctx.cpu.flags);
     // 0040488e push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 0040488f call 00401A60h
     let dst = Cont(alloc);
     call(ctx, 0x404894, dst)
@@ -15156,7 +15139,7 @@ pub fn x404894(ctx: &mut Context) -> Cont {
     // 004048ad add eax,100h
     ctx.cpu.regs.eax = add(ctx.cpu.regs.eax, 0x100u32, &mut ctx.cpu.flags);
     // 004048b2 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 004048b3 call 00401A60h
     let dst = Cont(alloc);
     call(ctx, 0x4048b8, dst)
@@ -15555,19 +15538,19 @@ pub fn x4049f9(ctx: &mut Context) -> Cont {
     // 004049f9 leave
     leave(ctx);
     // 004049fa pop edi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edi = x;
     // 004049fb pop esi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.esi = x;
     // 004049fc pop edx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edx = x;
     // 004049fd pop ecx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ecx = x;
     // 004049fe pop ebx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ebx = x;
     // 004049ff ret
     ret(ctx, 0)
@@ -15575,84 +15558,84 @@ pub fn x4049f9(ctx: &mut Context) -> Cont {
 
 pub fn x404a00(ctx: &mut Context) -> Cont {
     // 00404a00 push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 00404a01 push edx
-    push(ctx, ctx.cpu.regs.edx);
+    ctx.push(ctx.cpu.regs.edx);
     // 00404a02 push 8000h
-    push(ctx, 0x8000u32);
+    ctx.push(0x8000u32);
     // 00404a07 push 0
-    push(ctx, 0x0u32);
+    ctx.push(0x0u32);
     // 00404a09 mov eax,ds:[433F58h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x433f58u32);
     // 00404a0e push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 00404a0f call dword ptr cs:[40B16Ch]
     call_builtin(ctx, kernel32::VirtualFree_stdcall);
     // 00404a16 push 8000h
-    push(ctx, 0x8000u32);
+    ctx.push(0x8000u32);
     // 00404a1b push 0
-    push(ctx, 0x0u32);
+    ctx.push(0x0u32);
     // 00404a1d mov eax,ds:[433F54h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x433f54u32);
     // 00404a22 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 00404a23 call dword ptr cs:[40B16Ch]
     call_builtin(ctx, kernel32::VirtualFree_stdcall);
     // 00404a2a push 8000h
-    push(ctx, 0x8000u32);
+    ctx.push(0x8000u32);
     // 00404a2f push 0
-    push(ctx, 0x0u32);
+    ctx.push(0x0u32);
     // 00404a31 mov eax,ds:[433F68h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x433f68u32);
     // 00404a36 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 00404a37 call dword ptr cs:[40B16Ch]
     call_builtin(ctx, kernel32::VirtualFree_stdcall);
     // 00404a3e push 8000h
-    push(ctx, 0x8000u32);
+    ctx.push(0x8000u32);
     // 00404a43 push 0
-    push(ctx, 0x0u32);
+    ctx.push(0x0u32);
     // 00404a45 mov eax,ds:[433F50h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x433f50u32);
     // 00404a4a push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 00404a4b call dword ptr cs:[40B16Ch]
     call_builtin(ctx, kernel32::VirtualFree_stdcall);
     // 00404a52 push 8000h
-    push(ctx, 0x8000u32);
+    ctx.push(0x8000u32);
     // 00404a57 push 0
-    push(ctx, 0x0u32);
+    ctx.push(0x0u32);
     // 00404a59 mov eax,ds:[433F64h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x433f64u32);
     // 00404a5e push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 00404a5f call dword ptr cs:[40B16Ch]
     call_builtin(ctx, kernel32::VirtualFree_stdcall);
     // 00404a66 push 8000h
-    push(ctx, 0x8000u32);
+    ctx.push(0x8000u32);
     // 00404a6b push 0
-    push(ctx, 0x0u32);
+    ctx.push(0x0u32);
     // 00404a6d mov eax,ds:[433F60h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x433f60u32);
     // 00404a72 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 00404a73 call dword ptr cs:[40B16Ch]
     call_builtin(ctx, kernel32::VirtualFree_stdcall);
     // 00404a7a push 8000h
-    push(ctx, 0x8000u32);
+    ctx.push(0x8000u32);
     // 00404a7f push 0
-    push(ctx, 0x0u32);
+    ctx.push(0x0u32);
     // 00404a81 mov eax,ds:[433F5Ch]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x433f5cu32);
     // 00404a86 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 00404a87 call dword ptr cs:[40B16Ch]
     call_builtin(ctx, kernel32::VirtualFree_stdcall);
     // 00404a8e pop edx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edx = x;
     // 00404a8f pop ecx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ecx = x;
     // 00404a90 ret
     ret(ctx, 0)
@@ -15660,13 +15643,13 @@ pub fn x404a00(ctx: &mut Context) -> Cont {
 
 pub fn x404a91(ctx: &mut Context) -> Cont {
     // 00404a91 push esi
-    push(ctx, ctx.cpu.regs.esi);
+    ctx.push(ctx.cpu.regs.esi);
     // 00404a92 push edi
-    push(ctx, ctx.cpu.regs.edi);
+    ctx.push(ctx.cpu.regs.edi);
     // 00404a93 enter 30h,0
     enter(ctx, 0x30u16, 0);
     // 00404a97 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 00404a98 mov edi,edx
     ctx.cpu.regs.edi = ctx.cpu.regs.edx;
     // 00404a9a mov eax,edx
@@ -16357,10 +16340,10 @@ pub fn x404ce5(ctx: &mut Context) -> Cont {
     // 00404ce5 leave
     leave(ctx);
     // 00404ce6 pop edi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edi = x;
     // 00404ce7 pop esi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.esi = x;
     // 00404ce8 ret 8
     ret(ctx, 8)
@@ -16368,19 +16351,19 @@ pub fn x404ce5(ctx: &mut Context) -> Cont {
 
 pub fn x404ceb(ctx: &mut Context) -> Cont {
     // 00404ceb push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 00404cec push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 00404ced push esi
-    push(ctx, ctx.cpu.regs.esi);
+    ctx.push(ctx.cpu.regs.esi);
     // 00404cee push edi
-    push(ctx, ctx.cpu.regs.edi);
+    ctx.push(ctx.cpu.regs.edi);
     // 00404cef enter 88h,0
     enter(ctx, 0x88u16, 0);
     // 00404cf3 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 00404cf4 push edx
-    push(ctx, ctx.cpu.regs.edx);
+    ctx.push(ctx.cpu.regs.edx);
     // 00404cf5 sub ebp,82h
     ctx.cpu.regs.ebp = sub(ctx.cpu.regs.ebp, 0x82u32, &mut ctx.cpu.flags);
     // 00404cfb xor ch,ch
@@ -17181,19 +17164,19 @@ pub fn x404f9f(ctx: &mut Context) -> Cont {
     // 00404fa1 lea esp,[ebp+82h]
     ctx.cpu.regs.esp = ctx.cpu.regs.ebp.wrapping_add(0x82u32);
     // 00404fa7 pop ebp
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ebp = x;
     // 00404fa8 pop edi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edi = x;
     // 00404fa9 pop esi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.esi = x;
     // 00404faa pop ecx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ecx = x;
     // 00404fab pop ebx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ebx = x;
     // 00404fac ret
     ret(ctx, 0)
@@ -17201,19 +17184,19 @@ pub fn x404f9f(ctx: &mut Context) -> Cont {
 
 pub fn x404fad(ctx: &mut Context) -> Cont {
     // 00404fad push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 00404fae push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 00404faf push edx
-    push(ctx, ctx.cpu.regs.edx);
+    ctx.push(ctx.cpu.regs.edx);
     // 00404fb0 push esi
-    push(ctx, ctx.cpu.regs.esi);
+    ctx.push(ctx.cpu.regs.esi);
     // 00404fb1 push edi
-    push(ctx, ctx.cpu.regs.edi);
+    ctx.push(ctx.cpu.regs.edi);
     // 00404fb2 enter 48h,0
     enter(ctx, 0x48u16, 0);
     // 00404fb6 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 00404fb7 fld dword ptr [ebp+1Ch]
     ctx.cpu.fpu.push(
         ctx.memory
@@ -17995,8 +17978,7 @@ pub fn x405107(ctx: &mut Context) -> Cont {
         .fpu
         .set(0, ctx.cpu.fpu.get(0) * ctx.memory.read::<f64>(0x40c1a8u32));
     // 00405185 push dword ptr [ebp-40h]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0xffffffc0u32)),
     );
@@ -18007,32 +17989,27 @@ pub fn x405107(ctx: &mut Context) -> Cont {
     );
     ctx.cpu.fpu.pop();
     // 0040518b push dword ptr [ebp-44h]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0xffffffbcu32)),
     );
     // 0040518e push dword ptr [ebp-48h]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0xffffffb8u32)),
     );
     // 00405191 push dword ptr [ebp-34h]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0xffffffccu32)),
     );
     // 00405194 push dword ptr [ebp-38h]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0xffffffc8u32)),
     );
     // 00405197 push dword ptr [ebp-3Ch]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0xffffffc4u32)),
     );
@@ -18045,8 +18022,7 @@ pub fn x405180(ctx: &mut Context) -> Cont {
     // 00405180 or eax,40C1A8h
     ctx.cpu.regs.eax = or(ctx.cpu.regs.eax, 0x40c1a8u32, &mut ctx.cpu.flags);
     // 00405185 push dword ptr [ebp-40h]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0xffffffc0u32)),
     );
@@ -18057,32 +18033,27 @@ pub fn x405180(ctx: &mut Context) -> Cont {
     );
     ctx.cpu.fpu.pop();
     // 0040518b push dword ptr [ebp-44h]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0xffffffbcu32)),
     );
     // 0040518e push dword ptr [ebp-48h]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0xffffffb8u32)),
     );
     // 00405191 push dword ptr [ebp-34h]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0xffffffccu32)),
     );
     // 00405194 push dword ptr [ebp-38h]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0xffffffc8u32)),
     );
     // 00405197 push dword ptr [ebp-3Ch]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0xffffffc4u32)),
     );
@@ -18143,19 +18114,19 @@ pub fn x4051cc(ctx: &mut Context) -> Cont {
     // 004051cc leave
     leave(ctx);
     // 004051cd pop edi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edi = x;
     // 004051ce pop esi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.esi = x;
     // 004051cf pop edx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edx = x;
     // 004051d0 pop ecx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ecx = x;
     // 004051d1 pop ebx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ebx = x;
     // 004051d2 ret 0Ch
     ret(ctx, 12)
@@ -18163,9 +18134,9 @@ pub fn x4051cc(ctx: &mut Context) -> Cont {
 
 pub fn x4051d5(ctx: &mut Context) -> Cont {
     // 004051d5 push esi
-    push(ctx, ctx.cpu.regs.esi);
+    ctx.push(ctx.cpu.regs.esi);
     // 004051d6 push edi
-    push(ctx, ctx.cpu.regs.edi);
+    ctx.push(ctx.cpu.regs.edi);
     // 004051d7 enter 38h,0
     enter(ctx, 0x38u16, 0);
     // 004051db mov [ebp-8],ebx
@@ -18672,10 +18643,10 @@ pub fn x40532f(ctx: &mut Context) -> Cont {
     // 00405331 leave
     leave(ctx);
     // 00405332 pop edi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edi = x;
     // 00405333 pop esi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.esi = x;
     // 00405334 ret 8
     ret(ctx, 8)
@@ -18683,13 +18654,13 @@ pub fn x40532f(ctx: &mut Context) -> Cont {
 
 pub fn x405337(ctx: &mut Context) -> Cont {
     // 00405337 push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 00405338 push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 00405339 push edx
-    push(ctx, ctx.cpu.regs.edx);
+    ctx.push(ctx.cpu.regs.edx);
     // 0040533a push esi
-    push(ctx, ctx.cpu.regs.esi);
+    ctx.push(ctx.cpu.regs.esi);
     // 0040533b enter 8,0
     enter(ctx, 0x8u16, 0);
     // 0040533f mov eax,ds:[40C724h]
@@ -18703,7 +18674,7 @@ pub fn x405337(ctx: &mut Context) -> Cont {
     // 0040534b shl eax,2
     ctx.cpu.regs.eax = shl(ctx.cpu.regs.eax, 0x2u8, &mut ctx.cpu.flags);
     // 0040534e push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 0040534f call 00401A60h
     let dst = Cont(alloc);
     call(ctx, 0x405354, dst)
@@ -18713,7 +18684,7 @@ pub fn x405354(ctx: &mut Context) -> Cont {
     // 00405354 add esp,4
     ctx.cpu.regs.esp = add(ctx.cpu.regs.esp, 0x4u32, &mut ctx.cpu.flags);
     // 00405357 push 40000h
-    push(ctx, 0x40000u32);
+    ctx.push(0x40000u32);
     // 0040535c mov ds:[433F4Ch],eax
     ctx.memory.write::<u32>(0x433f4cu32, ctx.cpu.regs.eax);
     // 00405361 call 00401A60h
@@ -18887,16 +18858,16 @@ pub fn x4053f6(ctx: &mut Context) -> Cont {
     // 004053f6 leave
     leave(ctx);
     // 004053f7 pop esi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.esi = x;
     // 004053f8 pop edx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edx = x;
     // 004053f9 pop ecx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ecx = x;
     // 004053fa pop ebx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ebx = x;
     // 004053fb ret
     ret(ctx, 0)
@@ -18904,19 +18875,19 @@ pub fn x4053f6(ctx: &mut Context) -> Cont {
 
 pub fn x4053fc(ctx: &mut Context) -> Cont {
     // 004053fc push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 004053fd push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 004053fe push edx
-    push(ctx, ctx.cpu.regs.edx);
+    ctx.push(ctx.cpu.regs.edx);
     // 004053ff push esi
-    push(ctx, ctx.cpu.regs.esi);
+    ctx.push(ctx.cpu.regs.esi);
     // 00405400 push edi
-    push(ctx, ctx.cpu.regs.edi);
+    ctx.push(ctx.cpu.regs.edi);
     // 00405401 enter 4Ch,0
     enter(ctx, 0x4cu16, 0);
     // 00405405 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 00405406 fld dword ptr [ebp+24h]
     ctx.cpu.fpu.push(
         ctx.memory
@@ -19767,19 +19738,19 @@ pub fn x405647(ctx: &mut Context) -> Cont {
     // 00405647 leave
     leave(ctx);
     // 00405648 pop edi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edi = x;
     // 00405649 pop esi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.esi = x;
     // 0040564a pop edx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edx = x;
     // 0040564b pop ecx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ecx = x;
     // 0040564c pop ebx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ebx = x;
     // 0040564d ret 10h
     ret(ctx, 16)
@@ -19787,19 +19758,19 @@ pub fn x405647(ctx: &mut Context) -> Cont {
 
 pub fn x405650(ctx: &mut Context) -> Cont {
     // 00405650 push esi
-    push(ctx, ctx.cpu.regs.esi);
+    ctx.push(ctx.cpu.regs.esi);
     // 00405651 push edi
-    push(ctx, ctx.cpu.regs.edi);
+    ctx.push(ctx.cpu.regs.edi);
     // 00405652 enter 0Ch,0
     enter(ctx, 0xcu16, 0);
     // 00405656 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 00405657 push edx
-    push(ctx, ctx.cpu.regs.edx);
+    ctx.push(ctx.cpu.regs.edx);
     // 00405658 push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 00405659 push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 0040565a xor ebx,ebx
     ctx.cpu.regs.ebx = xor(ctx.cpu.regs.ebx, ctx.cpu.regs.ebx, &mut ctx.cpu.flags);
     // 0040565c xor edi,edi
@@ -19991,10 +19962,10 @@ pub fn x4056dd(ctx: &mut Context) -> Cont {
     // 004056dd leave
     leave(ctx);
     // 004056de pop edi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edi = x;
     // 004056df pop esi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.esi = x;
     // 004056e0 ret 0Ch
     ret(ctx, 12)
@@ -20002,19 +19973,19 @@ pub fn x4056dd(ctx: &mut Context) -> Cont {
 
 pub fn x4056e3(ctx: &mut Context) -> Cont {
     // 004056e3 push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 004056e4 push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 004056e5 push esi
-    push(ctx, ctx.cpu.regs.esi);
+    ctx.push(ctx.cpu.regs.esi);
     // 004056e6 push edi
-    push(ctx, ctx.cpu.regs.edi);
+    ctx.push(ctx.cpu.regs.edi);
     // 004056e7 enter 4,0
     enter(ctx, 0x4u16, 0);
     // 004056eb push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 004056ec push edx
-    push(ctx, ctx.cpu.regs.edx);
+    ctx.push(ctx.cpu.regs.edx);
     // 004056ed mov ecx,ds:[40C724h]
     ctx.cpu.regs.ecx = ctx.memory.read::<u32>(0x40c724u32);
     // 004056f3 imul ecx,ds:[40C728h]
@@ -20037,15 +20008,14 @@ pub fn x4056e3(ctx: &mut Context) -> Cont {
     // 00405708 rep stosb
     rep(ctx, Rep::REP, stosb);
     // 0040570a push 1
-    push(ctx, 0x1u32);
+    ctx.push(0x1u32);
     // 0040570c fild dword ptr [ebp-4]
     ctx.cpu.fpu.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0xfffffffcu32)) as i32 as f64,
     );
     // 0040570f push dword ptr [ebp+18h]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0x18u32)),
     );
@@ -20084,7 +20054,7 @@ pub fn x4056e3(ctx: &mut Context) -> Cont {
 
 pub fn x405731(ctx: &mut Context) -> Cont {
     // 00405731 push edx
-    push(ctx, ctx.cpu.regs.edx);
+    ctx.push(ctx.cpu.regs.edx);
     // 00405732 mov ebx,[ebp+24h]
     ctx.cpu.regs.ebx = ctx
         .memory
@@ -20094,8 +20064,7 @@ pub fn x405731(ctx: &mut Context) -> Cont {
         .memory
         .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0x1cu32));
     // 00405738 push dword ptr [ebp-8]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0xfffffff8u32)),
     );
@@ -20104,8 +20073,7 @@ pub fn x405731(ctx: &mut Context) -> Cont {
         .memory
         .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0x2cu32));
     // 0040573e push dword ptr [ebp+20h]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0x20u32)),
     );
@@ -20118,8 +20086,7 @@ pub fn x405731(ctx: &mut Context) -> Cont {
 
 pub fn x40574c(ctx: &mut Context) -> Cont {
     // 0040574c push dword ptr [ebp-0Ch]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0xfffffff4u32)),
     );
@@ -20132,8 +20099,7 @@ pub fn x40574c(ctx: &mut Context) -> Cont {
         .memory
         .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0x28u32));
     // 00405755 push dword ptr [ebp-8]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0xfffffff8u32)),
     );
@@ -20142,8 +20108,7 @@ pub fn x40574c(ctx: &mut Context) -> Cont {
         .memory
         .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0x30u32));
     // 0040575b push dword ptr [ebp+20h]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0x20u32)),
     );
@@ -20158,16 +20123,16 @@ pub fn x405769(ctx: &mut Context) -> Cont {
     // 00405769 leave
     leave(ctx);
     // 0040576a pop edi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edi = x;
     // 0040576b pop esi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.esi = x;
     // 0040576c pop ecx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ecx = x;
     // 0040576d pop ebx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ebx = x;
     // 0040576e ret 1Ch
     ret(ctx, 28)
@@ -20175,9 +20140,9 @@ pub fn x405769(ctx: &mut Context) -> Cont {
 
 pub fn x405771(ctx: &mut Context) -> Cont {
     // 00405771 push esi
-    push(ctx, ctx.cpu.regs.esi);
+    ctx.push(ctx.cpu.regs.esi);
     // 00405772 push edi
-    push(ctx, ctx.cpu.regs.edi);
+    ctx.push(ctx.cpu.regs.edi);
     // 00405773 enter 4,0
     enter(ctx, 0x4u16, 0);
     // 00405777 mov esi,eax
@@ -20188,7 +20153,7 @@ pub fn x405771(ctx: &mut Context) -> Cont {
         ctx.cpu.regs.edx,
     );
     // 0040577c push 100h
-    push(ctx, 0x100u32);
+    ctx.push(0x100u32);
     // 00405781 mov ds:[433F44h],ecx
     ctx.memory.write::<u32>(0x433f44u32, ctx.cpu.regs.ecx);
     // 00405787 call 00401A60h
@@ -20200,7 +20165,7 @@ pub fn x40578c(ctx: &mut Context) -> Cont {
     // 0040578c add esp,4
     ctx.cpu.regs.esp = add(ctx.cpu.regs.esp, 0x4u32, &mut ctx.cpu.flags);
     // 0040578f push 100h
-    push(ctx, 0x100u32);
+    ctx.push(0x100u32);
     // 00405794 mov ds:[433F34h],eax
     ctx.memory.write::<u32>(0x433f34u32, ctx.cpu.regs.eax);
     // 00405799 call 00401A60h
@@ -20212,7 +20177,7 @@ pub fn x40579e(ctx: &mut Context) -> Cont {
     // 0040579e add esp,4
     ctx.cpu.regs.esp = add(ctx.cpu.regs.esp, 0x4u32, &mut ctx.cpu.flags);
     // 004057a1 push 0FA00h
-    push(ctx, 0xfa00u32);
+    ctx.push(0xfa00u32);
     // 004057a6 mov ds:[433F24h],eax
     ctx.memory.write::<u32>(0x433f24u32, ctx.cpu.regs.eax);
     // 004057ab call 00401A60h
@@ -20224,7 +20189,7 @@ pub fn x4057b0(ctx: &mut Context) -> Cont {
     // 004057b0 add esp,4
     ctx.cpu.regs.esp = add(ctx.cpu.regs.esp, 0x4u32, &mut ctx.cpu.flags);
     // 004057b3 push 100h
-    push(ctx, 0x100u32);
+    ctx.push(0x100u32);
     // 004057b8 mov ds:[433F38h],eax
     ctx.memory.write::<u32>(0x433f38u32, ctx.cpu.regs.eax);
     // 004057bd call 00401A60h
@@ -20236,7 +20201,7 @@ pub fn x4057c2(ctx: &mut Context) -> Cont {
     // 004057c2 add esp,4
     ctx.cpu.regs.esp = add(ctx.cpu.regs.esp, 0x4u32, &mut ctx.cpu.flags);
     // 004057c5 push 200h
-    push(ctx, 0x200u32);
+    ctx.push(0x200u32);
     // 004057ca mov ds:[433F3Ch],eax
     ctx.memory.write::<u32>(0x433f3cu32, ctx.cpu.regs.eax);
     // 004057cf call 00401A60h
@@ -20290,10 +20255,10 @@ pub fn x405804(ctx: &mut Context) -> Cont {
     // 00405804 leave
     leave(ctx);
     // 00405805 pop edi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edi = x;
     // 00405806 pop esi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.esi = x;
     // 00405807 ret
     ret(ctx, 0)
@@ -20301,64 +20266,64 @@ pub fn x405804(ctx: &mut Context) -> Cont {
 
 pub fn x405808(ctx: &mut Context) -> Cont {
     // 00405808 push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 00405809 push edx
-    push(ctx, ctx.cpu.regs.edx);
+    ctx.push(ctx.cpu.regs.edx);
     // 0040580a push 8000h
-    push(ctx, 0x8000u32);
+    ctx.push(0x8000u32);
     // 0040580f push 0
-    push(ctx, 0x0u32);
+    ctx.push(0x0u32);
     // 00405811 mov eax,ds:[433F24h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x433f24u32);
     // 00405816 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 00405817 call dword ptr cs:[40B16Ch]
     call_builtin(ctx, kernel32::VirtualFree_stdcall);
     // 0040581e push 8000h
-    push(ctx, 0x8000u32);
+    ctx.push(0x8000u32);
     // 00405823 push 0
-    push(ctx, 0x0u32);
+    ctx.push(0x0u32);
     // 00405825 mov eax,ds:[433F3Ch]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x433f3cu32);
     // 0040582a push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 0040582b call dword ptr cs:[40B16Ch]
     call_builtin(ctx, kernel32::VirtualFree_stdcall);
     // 00405832 push 8000h
-    push(ctx, 0x8000u32);
+    ctx.push(0x8000u32);
     // 00405837 push 0
-    push(ctx, 0x0u32);
+    ctx.push(0x0u32);
     // 00405839 mov eax,ds:[433F34h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x433f34u32);
     // 0040583e push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 0040583f call dword ptr cs:[40B16Ch]
     call_builtin(ctx, kernel32::VirtualFree_stdcall);
     // 00405846 push 8000h
-    push(ctx, 0x8000u32);
+    ctx.push(0x8000u32);
     // 0040584b push 0
-    push(ctx, 0x0u32);
+    ctx.push(0x0u32);
     // 0040584d mov eax,ds:[433F20h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x433f20u32);
     // 00405852 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 00405853 call dword ptr cs:[40B16Ch]
     call_builtin(ctx, kernel32::VirtualFree_stdcall);
     // 0040585a push 8000h
-    push(ctx, 0x8000u32);
+    ctx.push(0x8000u32);
     // 0040585f push 0
-    push(ctx, 0x0u32);
+    ctx.push(0x0u32);
     // 00405861 mov eax,ds:[433F38h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x433f38u32);
     // 00405866 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 00405867 call dword ptr cs:[40B16Ch]
     call_builtin(ctx, kernel32::VirtualFree_stdcall);
     // 0040586e pop edx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edx = x;
     // 0040586f pop ecx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ecx = x;
     // 00405870 ret
     ret(ctx, 0)
@@ -20366,15 +20331,15 @@ pub fn x405808(ctx: &mut Context) -> Cont {
 
 pub fn x405889(ctx: &mut Context) -> Cont {
     // 00405889 push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 0040588a push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 0040588b push edx
-    push(ctx, ctx.cpu.regs.edx);
+    ctx.push(ctx.cpu.regs.edx);
     // 0040588c push esi
-    push(ctx, ctx.cpu.regs.esi);
+    ctx.push(ctx.cpu.regs.esi);
     // 0040588d push edi
-    push(ctx, ctx.cpu.regs.edi);
+    ctx.push(ctx.cpu.regs.edi);
     // 0040588e mov ecx,100h
     ctx.cpu.regs.ecx = 0x100u32;
     // 00405893 mov edi,ds:[433F3Ch]
@@ -20439,19 +20404,19 @@ pub fn x4058bd(ctx: &mut Context) -> Cont {
 
 pub fn x4058d2(ctx: &mut Context) -> Cont {
     // 004058d2 pop edi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edi = x;
     // 004058d3 pop esi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.esi = x;
     // 004058d4 pop edx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edx = x;
     // 004058d5 pop ecx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ecx = x;
     // 004058d6 pop ebx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ebx = x;
     // 004058d7 ret
     ret(ctx, 0)
@@ -20459,21 +20424,21 @@ pub fn x4058d2(ctx: &mut Context) -> Cont {
 
 pub fn x4058d8(ctx: &mut Context) -> Cont {
     // 004058d8 push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 004058d9 push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 004058da push edx
-    push(ctx, ctx.cpu.regs.edx);
+    ctx.push(ctx.cpu.regs.edx);
     // 004058db push esi
-    push(ctx, ctx.cpu.regs.esi);
+    ctx.push(ctx.cpu.regs.esi);
     // 004058dc push edi
-    push(ctx, ctx.cpu.regs.edi);
+    ctx.push(ctx.cpu.regs.edi);
     // 004058dd push ebp
-    push(ctx, ctx.cpu.regs.ebp);
+    ctx.push(ctx.cpu.regs.ebp);
     // 004058de mov ebp,esp
     ctx.cpu.regs.ebp = ctx.cpu.regs.esp;
     // 004058e0 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 004058e1 mov ecx,100h
     ctx.cpu.regs.ecx = 0x100u32;
     // 004058e6 mov edi,ds:[433F34h]
@@ -20625,19 +20590,19 @@ pub fn x405958(ctx: &mut Context) -> Cont {
     // 00405958 leave
     leave(ctx);
     // 00405959 pop edi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edi = x;
     // 0040595a pop esi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.esi = x;
     // 0040595b pop edx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edx = x;
     // 0040595c pop ecx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ecx = x;
     // 0040595d pop ebx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ebx = x;
     // 0040595e ret
     ret(ctx, 0)
@@ -20645,15 +20610,15 @@ pub fn x405958(ctx: &mut Context) -> Cont {
 
 pub fn x40595f(ctx: &mut Context) -> Cont {
     // 0040595f push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 00405960 push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 00405961 push edx
-    push(ctx, ctx.cpu.regs.edx);
+    ctx.push(ctx.cpu.regs.edx);
     // 00405962 push esi
-    push(ctx, ctx.cpu.regs.esi);
+    ctx.push(ctx.cpu.regs.esi);
     // 00405963 push edi
-    push(ctx, ctx.cpu.regs.edi);
+    ctx.push(ctx.cpu.regs.edi);
     // 00405964 enter 4,0
     enter(ctx, 0x4u16, 0);
     // 00405968 mov esi,eax
@@ -20829,19 +20794,19 @@ pub fn x405a0e(ctx: &mut Context) -> Cont {
     // 00405a0e leave
     leave(ctx);
     // 00405a0f pop edi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edi = x;
     // 00405a10 pop esi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.esi = x;
     // 00405a11 pop edx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edx = x;
     // 00405a12 pop ecx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ecx = x;
     // 00405a13 pop ebx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ebx = x;
     // 00405a14 ret
     ret(ctx, 0)
@@ -20849,19 +20814,19 @@ pub fn x405a0e(ctx: &mut Context) -> Cont {
 
 pub fn x405a15(ctx: &mut Context) -> Cont {
     // 00405a15 push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 00405a16 push edx
-    push(ctx, ctx.cpu.regs.edx);
+    ctx.push(ctx.cpu.regs.edx);
     // 00405a17 push esi
-    push(ctx, ctx.cpu.regs.esi);
+    ctx.push(ctx.cpu.regs.esi);
     // 00405a18 push edi
-    push(ctx, ctx.cpu.regs.edi);
+    ctx.push(ctx.cpu.regs.edi);
     // 00405a19 push ebp
-    push(ctx, ctx.cpu.regs.ebp);
+    ctx.push(ctx.cpu.regs.ebp);
     // 00405a1a mov ebp,esp
     ctx.cpu.regs.ebp = ctx.cpu.regs.esp;
     // 00405a1c push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 00405a1d mov ecx,100h
     ctx.cpu.regs.ecx = 0x100u32;
     // 00405a22 mov edi,ds:[433F24h]
@@ -20913,16 +20878,16 @@ pub fn x405a48(ctx: &mut Context) -> Cont {
     // 00405a48 leave
     leave(ctx);
     // 00405a49 pop edi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edi = x;
     // 00405a4a pop esi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.esi = x;
     // 00405a4b pop edx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edx = x;
     // 00405a4c pop ecx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ecx = x;
     // 00405a4d ret
     ret(ctx, 0)
@@ -20930,13 +20895,13 @@ pub fn x405a48(ctx: &mut Context) -> Cont {
 
 pub fn x405a4e(ctx: &mut Context) -> Cont {
     // 00405a4e push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 00405a4f push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 00405a50 push esi
-    push(ctx, ctx.cpu.regs.esi);
+    ctx.push(ctx.cpu.regs.esi);
     // 00405a51 push edi
-    push(ctx, ctx.cpu.regs.edi);
+    ctx.push(ctx.cpu.regs.edi);
     // 00405a52 enter 0Ch,0
     enter(ctx, 0xcu16, 0);
     // 00405a56 mov edi,eax
@@ -21125,16 +21090,16 @@ pub fn x405afc(ctx: &mut Context) -> Cont {
     // 00405b08 leave
     leave(ctx);
     // 00405b09 pop edi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edi = x;
     // 00405b0a pop esi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.esi = x;
     // 00405b0b pop ecx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ecx = x;
     // 00405b0c pop ebx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ebx = x;
     // 00405b0d ret
     ret(ctx, 0)
@@ -21142,9 +21107,9 @@ pub fn x405afc(ctx: &mut Context) -> Cont {
 
 pub fn x405b0e(ctx: &mut Context) -> Cont {
     // 00405b0e push esi
-    push(ctx, ctx.cpu.regs.esi);
+    ctx.push(ctx.cpu.regs.esi);
     // 00405b0f push edi
-    push(ctx, ctx.cpu.regs.edi);
+    ctx.push(ctx.cpu.regs.edi);
     // 00405b10 enter 14h,0
     enter(ctx, 0x14u16, 0);
     // 00405b14 mov esi,eax
@@ -21372,10 +21337,10 @@ pub fn x405bd5(ctx: &mut Context) -> Cont {
     // 00405bd5 leave
     leave(ctx);
     // 00405bd6 pop edi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edi = x;
     // 00405bd7 pop esi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.esi = x;
     // 00405bd8 ret 4
     ret(ctx, 4)
@@ -21383,13 +21348,13 @@ pub fn x405bd5(ctx: &mut Context) -> Cont {
 
 pub fn x405bdb(ctx: &mut Context) -> Cont {
     // 00405bdb push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 00405bdc push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 00405bdd push esi
-    push(ctx, ctx.cpu.regs.esi);
+    ctx.push(ctx.cpu.regs.esi);
     // 00405bde push edi
-    push(ctx, ctx.cpu.regs.edi);
+    ctx.push(ctx.cpu.regs.edi);
     // 00405bdf enter 10h,0
     enter(ctx, 0x10u16, 0);
     // 00405be3 mov ebx,eax
@@ -21820,16 +21785,16 @@ pub fn x405cf5(ctx: &mut Context) -> Cont {
     // 00405cf5 leave
     leave(ctx);
     // 00405cf6 pop edi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edi = x;
     // 00405cf7 pop esi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.esi = x;
     // 00405cf8 pop ecx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ecx = x;
     // 00405cf9 pop ebx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ebx = x;
     // 00405cfa ret
     ret(ctx, 0)
@@ -21837,7 +21802,7 @@ pub fn x405cf5(ctx: &mut Context) -> Cont {
 
 pub fn x405cfb(ctx: &mut Context) -> Cont {
     // 00405cfb push esi
-    push(ctx, ctx.cpu.regs.esi);
+    ctx.push(ctx.cpu.regs.esi);
     // 00405cfc enter 38h,0
     enter(ctx, 0x38u16, 0);
     // 00405d00 mov esi,eax
@@ -22386,7 +22351,7 @@ pub fn x405e64(ctx: &mut Context) -> Cont {
     // 00405e64 leave
     leave(ctx);
     // 00405e65 pop esi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.esi = x;
     // 00405e66 ret 14h
     ret(ctx, 20)
@@ -22394,11 +22359,11 @@ pub fn x405e64(ctx: &mut Context) -> Cont {
 
 pub fn x405e69(ctx: &mut Context) -> Cont {
     // 00405e69 push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 00405e6a push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 00405e6b push edx
-    push(ctx, ctx.cpu.regs.edx);
+    ctx.push(ctx.cpu.regs.edx);
     // 00405e6c mov ebx,eax
     ctx.cpu.regs.ebx = ctx.cpu.regs.eax;
     // 00405e6e imul eax,[eax],0Ch
@@ -22408,7 +22373,7 @@ pub fn x405e69(ctx: &mut Context) -> Cont {
         &mut ctx.cpu.flags,
     );
     // 00405e71 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 00405e72 call 00401A60h
     let dst = Cont(alloc);
     call(ctx, 0x405e77, dst)
@@ -22427,7 +22392,7 @@ pub fn x405e77(ctx: &mut Context) -> Cont {
     // 00405e7d add esp,4
     ctx.cpu.regs.esp = add(ctx.cpu.regs.esp, 0x4u32, &mut ctx.cpu.flags);
     // 00405e80 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 00405e81 call 00401A60h
     let dst = Cont(alloc);
     call(ctx, 0x405e86, dst)
@@ -22446,7 +22411,7 @@ pub fn x405e86(ctx: &mut Context) -> Cont {
     // 00405e8f shl eax,5
     ctx.cpu.regs.eax = shl(ctx.cpu.regs.eax, 0x5u8, &mut ctx.cpu.flags);
     // 00405e92 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 00405e93 call 00401A60h
     let dst = Cont(alloc);
     call(ctx, 0x405e98, dst)
@@ -22463,7 +22428,7 @@ pub fn x405e98(ctx: &mut Context) -> Cont {
     // 00405ea0 shl eax,3
     ctx.cpu.regs.eax = shl(ctx.cpu.regs.eax, 0x3u8, &mut ctx.cpu.flags);
     // 00405ea3 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 00405ea4 call 00401A60h
     let dst = Cont(alloc);
     call(ctx, 0x405ea9, dst)
@@ -22482,7 +22447,7 @@ pub fn x405ea9(ctx: &mut Context) -> Cont {
     // 00405eb2 shl eax,3
     ctx.cpu.regs.eax = shl(ctx.cpu.regs.eax, 0x3u8, &mut ctx.cpu.flags);
     // 00405eb5 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 00405eb6 call 00401A60h
     let dst = Cont(alloc);
     call(ctx, 0x405ebb, dst)
@@ -22522,13 +22487,13 @@ pub fn x405ebb(ctx: &mut Context) -> Cont {
     ctx.memory
         .write::<u32>(ctx.cpu.regs.ebx.wrapping_add(0x40u32), ctx.cpu.regs.eax);
     // 00405f00 pop edx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edx = x;
     // 00405f01 pop ecx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ecx = x;
     // 00405f02 pop ebx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ebx = x;
     // 00405f03 ret
     ret(ctx, 0)
@@ -22536,13 +22501,13 @@ pub fn x405ebb(ctx: &mut Context) -> Cont {
 
 pub fn x405f04(ctx: &mut Context) -> Cont {
     // 00405f04 push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 00405f05 push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 00405f06 push esi
-    push(ctx, ctx.cpu.regs.esi);
+    ctx.push(ctx.cpu.regs.esi);
     // 00405f07 push edi
-    push(ctx, ctx.cpu.regs.edi);
+    ctx.push(ctx.cpu.regs.edi);
     // 00405f08 enter 8,0
     enter(ctx, 0x8u16, 0);
     // 00405f0c mov ecx,eax
@@ -22993,16 +22958,16 @@ pub fn x40604a(ctx: &mut Context) -> Cont {
     // 0040604a leave
     leave(ctx);
     // 0040604b pop edi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edi = x;
     // 0040604c pop esi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.esi = x;
     // 0040604d pop ecx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ecx = x;
     // 0040604e pop ebx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ebx = x;
     // 0040604f ret
     ret(ctx, 0)
@@ -23010,81 +22975,81 @@ pub fn x40604a(ctx: &mut Context) -> Cont {
 
 pub fn x406050(ctx: &mut Context) -> Cont {
     // 00406050 push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 00406051 push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 00406052 push edx
-    push(ctx, ctx.cpu.regs.edx);
+    ctx.push(ctx.cpu.regs.edx);
     // 00406053 mov ebx,eax
     ctx.cpu.regs.ebx = ctx.cpu.regs.eax;
     // 00406055 push 8000h
-    push(ctx, 0x8000u32);
+    ctx.push(0x8000u32);
     // 0040605a push 0
-    push(ctx, 0x0u32);
+    ctx.push(0x0u32);
     // 0040605c mov eax,[eax+34h]
     ctx.cpu.regs.eax = ctx
         .memory
         .read::<u32>(ctx.cpu.regs.eax.wrapping_add(0x34u32));
     // 0040605f push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 00406060 call dword ptr cs:[40B16Ch]
     call_builtin(ctx, kernel32::VirtualFree_stdcall);
     // 00406067 push 8000h
-    push(ctx, 0x8000u32);
+    ctx.push(0x8000u32);
     // 0040606c push 0
-    push(ctx, 0x0u32);
+    ctx.push(0x0u32);
     // 0040606e mov eax,[ebx+40h]
     ctx.cpu.regs.eax = ctx
         .memory
         .read::<u32>(ctx.cpu.regs.ebx.wrapping_add(0x40u32));
     // 00406071 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 00406072 call dword ptr cs:[40B16Ch]
     call_builtin(ctx, kernel32::VirtualFree_stdcall);
     // 00406079 push 8000h
-    push(ctx, 0x8000u32);
+    ctx.push(0x8000u32);
     // 0040607e push 0
-    push(ctx, 0x0u32);
+    ctx.push(0x0u32);
     // 00406080 mov eax,[ebx+3Ch]
     ctx.cpu.regs.eax = ctx
         .memory
         .read::<u32>(ctx.cpu.regs.ebx.wrapping_add(0x3cu32));
     // 00406083 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 00406084 call dword ptr cs:[40B16Ch]
     call_builtin(ctx, kernel32::VirtualFree_stdcall);
     // 0040608b push 8000h
-    push(ctx, 0x8000u32);
+    ctx.push(0x8000u32);
     // 00406090 push 0
-    push(ctx, 0x0u32);
+    ctx.push(0x0u32);
     // 00406092 mov eax,[ebx+30h]
     ctx.cpu.regs.eax = ctx
         .memory
         .read::<u32>(ctx.cpu.regs.ebx.wrapping_add(0x30u32));
     // 00406095 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 00406096 call dword ptr cs:[40B16Ch]
     call_builtin(ctx, kernel32::VirtualFree_stdcall);
     // 0040609d push 8000h
-    push(ctx, 0x8000u32);
+    ctx.push(0x8000u32);
     // 004060a2 push 0
-    push(ctx, 0x0u32);
+    ctx.push(0x0u32);
     // 004060a4 mov eax,[ebx+38h]
     ctx.cpu.regs.eax = ctx
         .memory
         .read::<u32>(ctx.cpu.regs.ebx.wrapping_add(0x38u32));
     // 004060a7 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 004060a8 call dword ptr cs:[40B16Ch]
     call_builtin(ctx, kernel32::VirtualFree_stdcall);
     // 004060af pop edx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edx = x;
     // 004060b0 pop ecx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ecx = x;
     // 004060b1 pop ebx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ebx = x;
     // 004060b2 ret
     ret(ctx, 0)
@@ -23092,17 +23057,17 @@ pub fn x406050(ctx: &mut Context) -> Cont {
 
 pub fn x4060b3(ctx: &mut Context) -> Cont {
     // 004060b3 push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 004060b4 push esi
-    push(ctx, ctx.cpu.regs.esi);
+    ctx.push(ctx.cpu.regs.esi);
     // 004060b5 push edi
-    push(ctx, ctx.cpu.regs.edi);
+    ctx.push(ctx.cpu.regs.edi);
     // 004060b6 enter 10h,0
     enter(ctx, 0x10u16, 0);
     // 004060ba push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 004060bb push edx
-    push(ctx, ctx.cpu.regs.edx);
+    ctx.push(ctx.cpu.regs.edx);
     // 004060bc mov ecx,ebx
     ctx.cpu.regs.ecx = ctx.cpu.regs.ebx;
     Cont(x4060be)
@@ -23364,13 +23329,13 @@ pub fn x40615b(ctx: &mut Context) -> Cont {
     // 0040615b leave
     leave(ctx);
     // 0040615c pop edi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edi = x;
     // 0040615d pop esi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.esi = x;
     // 0040615e pop ecx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ecx = x;
     // 0040615f ret
     ret(ctx, 0)
@@ -23378,11 +23343,11 @@ pub fn x40615b(ctx: &mut Context) -> Cont {
 
 pub fn x406160(ctx: &mut Context) -> Cont {
     // 00406160 push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 00406161 push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 00406162 push edx
-    push(ctx, ctx.cpu.regs.edx);
+    ctx.push(ctx.cpu.regs.edx);
     // 00406163 enter 18h,0
     enter(ctx, 0x18u16, 0);
     // 00406167 fld dword ptr [eax+20h]
@@ -23476,7 +23441,7 @@ pub fn x40619c(ctx: &mut Context) -> Cont {
 
 pub fn x4061a3(ctx: &mut Context) -> Cont {
     // 004061a3 push dword ptr [eax]
-    push(ctx, ctx.memory.read::<u32>(ctx.cpu.regs.eax));
+    ctx.push(ctx.memory.read::<u32>(ctx.cpu.regs.eax));
     // 004061a5 fxch st(4)
     let t = ctx.cpu.fpu.get(0);
     ctx.cpu.fpu.set(0, ctx.cpu.fpu.get(4));
@@ -23526,8 +23491,7 @@ pub fn x4061a3(ctx: &mut Context) -> Cont {
     );
     ctx.cpu.fpu.pop();
     // 004061bd push dword ptr [eax+38h]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.eax.wrapping_add(0x38u32)),
     );
@@ -23536,8 +23500,7 @@ pub fn x4061a3(ctx: &mut Context) -> Cont {
         .memory
         .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0xfffffff0u32));
     // 004061c3 push dword ptr [eax+30h]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.eax.wrapping_add(0x30u32)),
     );
@@ -23546,8 +23509,7 @@ pub fn x4061a3(ctx: &mut Context) -> Cont {
         .memory
         .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0xfffffff4u32));
     // 004061c9 push dword ptr [ebp-18h]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0xffffffe8u32)),
     );
@@ -23556,8 +23518,7 @@ pub fn x4061a3(ctx: &mut Context) -> Cont {
         .memory
         .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0xfffffff8u32));
     // 004061cf push dword ptr [ebp-14h]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0xffffffecu32)),
     );
@@ -23574,13 +23535,13 @@ pub fn x4061da(ctx: &mut Context) -> Cont {
     // 004061da leave
     leave(ctx);
     // 004061db pop edx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edx = x;
     // 004061dc pop ecx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ecx = x;
     // 004061dd pop ebx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ebx = x;
     // 004061de ret
     ret(ctx, 0)
@@ -23588,13 +23549,13 @@ pub fn x4061da(ctx: &mut Context) -> Cont {
 
 pub fn x4061df(ctx: &mut Context) -> Cont {
     // 004061df push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 004061e0 push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 004061e1 push esi
-    push(ctx, ctx.cpu.regs.esi);
+    ctx.push(ctx.cpu.regs.esi);
     // 004061e2 push edi
-    push(ctx, ctx.cpu.regs.edi);
+    ctx.push(ctx.cpu.regs.edi);
     // 004061e3 enter 28h,0
     enter(ctx, 0x28u16, 0);
     // 004061e7 mov ecx,eax
@@ -23848,14 +23809,14 @@ pub fn x406246(ctx: &mut Context) -> Cont {
         .memory
         .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0xffffffe4u32));
     // 0040628c push esi
-    push(ctx, ctx.cpu.regs.esi);
+    ctx.push(ctx.cpu.regs.esi);
     // 0040628d mov [ebp-4],eax
     ctx.memory.write::<u32>(
         ctx.cpu.regs.ebp.wrapping_add(0xfffffffcu32),
         ctx.cpu.regs.eax,
     );
     // 00406290 push 111111h
-    push(ctx, 0x111111u32);
+    ctx.push(0x111111u32);
     // 00406295 fild dword ptr [ebp-4]
     ctx.cpu.fpu.push(
         ctx.memory
@@ -23877,8 +23838,7 @@ pub fn x406246(ctx: &mut Context) -> Cont {
         ctx.cpu.regs.eax,
     );
     // 004062a1 push dword ptr [ebp-18h]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0xffffffe8u32)),
     );
@@ -23898,8 +23858,7 @@ pub fn x406246(ctx: &mut Context) -> Cont {
     );
     ctx.cpu.fpu.pop();
     // 004062ad push dword ptr [ebp-14h]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0xffffffecu32)),
     );
@@ -23967,9 +23926,9 @@ pub fn x4062c0(ctx: &mut Context) -> Cont {
 
 pub fn x4062d0(ctx: &mut Context) -> Cont {
     // 004062d0 push esi
-    push(ctx, ctx.cpu.regs.esi);
+    ctx.push(ctx.cpu.regs.esi);
     // 004062d1 push 111111h
-    push(ctx, 0x111111u32);
+    ctx.push(0x111111u32);
     // 004062d6 mov [ebp-4],edx
     ctx.memory.write::<u32>(
         ctx.cpu.regs.ebp.wrapping_add(0xfffffffcu32),
@@ -24003,14 +23962,12 @@ pub fn x4062d0(ctx: &mut Context) -> Cont {
         .write::<f32>(ctx.cpu.regs.esp, ctx.cpu.fpu.get(0) as f32);
     ctx.cpu.fpu.pop();
     // 004062ee push dword ptr [ebp-18h]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0xffffffe8u32)),
     );
     // 004062f1 push dword ptr [ebp-14h]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0xffffffecu32)),
     );
@@ -24030,16 +23987,16 @@ pub fn x4062ff(ctx: &mut Context) -> Cont {
     // 004062ff leave
     leave(ctx);
     // 00406300 pop edi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edi = x;
     // 00406301 pop esi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.esi = x;
     // 00406302 pop ecx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ecx = x;
     // 00406303 pop ebx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ebx = x;
     // 00406304 ret
     ret(ctx, 0)
@@ -24047,11 +24004,11 @@ pub fn x4062ff(ctx: &mut Context) -> Cont {
 
 pub fn x406305(ctx: &mut Context) -> Cont {
     // 00406305 push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 00406306 push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 00406307 push edx
-    push(ctx, ctx.cpu.regs.edx);
+    ctx.push(ctx.cpu.regs.edx);
     // 00406308 enter 10h,0
     enter(ctx, 0x10u16, 0);
     // 0040630c mov edx,[ebp+28h]
@@ -24371,13 +24328,13 @@ pub fn x4063af(ctx: &mut Context) -> Cont {
     // 004063af leave
     leave(ctx);
     // 004063b0 pop edx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edx = x;
     // 004063b1 pop ecx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ecx = x;
     // 004063b2 pop ebx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ebx = x;
     // 004063b3 ret 18h
     ret(ctx, 24)
@@ -24385,13 +24342,13 @@ pub fn x4063af(ctx: &mut Context) -> Cont {
 
 pub fn x406452(ctx: &mut Context) -> Cont {
     // 00406452 push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 00406453 push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 00406454 push edx
-    push(ctx, ctx.cpu.regs.edx);
+    ctx.push(ctx.cpu.regs.edx);
     // 00406455 push esi
-    push(ctx, ctx.cpu.regs.esi);
+    ctx.push(ctx.cpu.regs.esi);
     // 00406456 enter 18h,0
     enter(ctx, 0x18u16, 0);
     // 0040645a xor ecx,ecx
@@ -24943,16 +24900,16 @@ pub fn x40664e(ctx: &mut Context) -> Cont {
     // 0040664e leave
     leave(ctx);
     // 0040664f pop esi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.esi = x;
     // 00406650 pop edx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edx = x;
     // 00406651 pop ecx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ecx = x;
     // 00406652 pop ebx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ebx = x;
     // 00406653 ret
     ret(ctx, 0)
@@ -24960,7 +24917,7 @@ pub fn x40664e(ctx: &mut Context) -> Cont {
 
 pub fn x406654(ctx: &mut Context) -> Cont {
     // 00406654 push edx
-    push(ctx, ctx.cpu.regs.edx);
+    ctx.push(ctx.cpu.regs.edx);
     // 00406655 mov edx,433E54h
     ctx.cpu.regs.edx = 0x433e54u32;
     // 0040665a mov eax,423238h
@@ -24988,7 +24945,7 @@ pub fn x406673(ctx: &mut Context) -> Cont {
 
 pub fn x406678(ctx: &mut Context) -> Cont {
     // 00406678 pop edx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edx = x;
     // 00406679 ret
     ret(ctx, 0)
@@ -24996,9 +24953,9 @@ pub fn x406678(ctx: &mut Context) -> Cont {
 
 pub fn x406684(ctx: &mut Context) -> Cont {
     // 00406684 push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 00406685 push edx
-    push(ctx, ctx.cpu.regs.edx);
+    ctx.push(ctx.cpu.regs.edx);
     // 00406686 enter 10h,0
     enter(ctx, 0x10u16, 0);
     // 0040668a mov ecx,eax
@@ -25180,7 +25137,7 @@ pub fn x40678d(ctx: &mut Context) -> Cont {
         .memory
         .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0xfffffff0u32));
     // 00406793 push 433E54h
-    push(ctx, 0x433e54u32);
+    ctx.push(0x433e54u32);
     // 00406798 mov [ebp-4],eax
     ctx.memory.write::<u32>(
         ctx.cpu.regs.ebp.wrapping_add(0xfffffffcu32),
@@ -25238,9 +25195,9 @@ pub fn x40678d(ctx: &mut Context) -> Cont {
         .write::<f32>(ctx.cpu.regs.esp, ctx.cpu.fpu.get(0) as f32);
     ctx.cpu.fpu.pop();
     // 004067c2 push 41200000h
-    push(ctx, 0x41200000u32);
+    ctx.push(0x41200000u32);
     // 004067c7 push 4684D000h
-    push(ctx, 0x4684d000u32);
+    ctx.push(0x4684d000u32);
     // 004067cc mov edx,433198h
     ctx.cpu.regs.edx = 0x433198u32;
     // 004067d1 call 00406305h
@@ -25270,10 +25227,10 @@ pub fn x4067ec(ctx: &mut Context) -> Cont {
     // 004067ec leave
     leave(ctx);
     // 004067ed pop edx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edx = x;
     // 004067ee pop ecx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ecx = x;
     // 004067ef ret
     ret(ctx, 0)
@@ -25281,9 +25238,9 @@ pub fn x4067ec(ctx: &mut Context) -> Cont {
 
 pub fn x4067f0(ctx: &mut Context) -> Cont {
     // 004067f0 push edx
-    push(ctx, ctx.cpu.regs.edx);
+    ctx.push(ctx.cpu.regs.edx);
     // 004067f1 push ebp
-    push(ctx, ctx.cpu.regs.ebp);
+    ctx.push(ctx.cpu.regs.ebp);
     // 004067f2 mov ebp,esp
     ctx.cpu.regs.ebp = ctx.cpu.regs.esp;
     // 004067f4 fld dword ptr [ebp+0Ch]
@@ -25346,10 +25303,10 @@ pub fn x406872(ctx: &mut Context) -> Cont {
 
 pub fn x40687f(ctx: &mut Context) -> Cont {
     // 0040687f pop ebp
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ebp = x;
     // 00406880 pop edx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edx = x;
     // 00406881 ret 8
     ret(ctx, 8)
@@ -25357,11 +25314,11 @@ pub fn x40687f(ctx: &mut Context) -> Cont {
 
 pub fn x406884(ctx: &mut Context) -> Cont {
     // 00406884 push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 00406885 push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 00406886 push edx
-    push(ctx, ctx.cpu.regs.edx);
+    ctx.push(ctx.cpu.regs.edx);
     // 00406887 xor ebx,ebx
     ctx.cpu.regs.ebx = xor(ctx.cpu.regs.ebx, ctx.cpu.regs.ebx, &mut ctx.cpu.flags);
     Cont(x406889)
@@ -25369,7 +25326,7 @@ pub fn x406884(ctx: &mut Context) -> Cont {
 
 pub fn x406889(ctx: &mut Context) -> Cont {
     // 00406889 push 100h
-    push(ctx, 0x100u32);
+    ctx.push(0x100u32);
     // 0040688e inc ebx
     ctx.cpu.regs.ebx = inc(ctx.cpu.regs.ebx, &mut ctx.cpu.flags);
     // 0040688f call 00401A60h
@@ -25573,13 +25530,13 @@ pub fn x4068a3(ctx: &mut Context) -> Cont {
     // 00406c1d mov dword ptr ds:[433160h],40C3E0h
     ctx.memory.write::<u32>(0x433160u32, 0x40c3e0u32);
     // 00406c27 pop edx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edx = x;
     // 00406c28 pop ecx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ecx = x;
     // 00406c29 pop ebx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ebx = x;
     // 00406c2a ret
     ret(ctx, 0)
@@ -25587,11 +25544,11 @@ pub fn x4068a3(ctx: &mut Context) -> Cont {
 
 pub fn x406c2b(ctx: &mut Context) -> Cont {
     // 00406c2b push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 00406c2c push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 00406c2d push edx
-    push(ctx, ctx.cpu.regs.edx);
+    ctx.push(ctx.cpu.regs.edx);
     // 00406c2e xor ebx,ebx
     ctx.cpu.regs.ebx = xor(ctx.cpu.regs.ebx, ctx.cpu.regs.ebx, &mut ctx.cpu.flags);
     Cont(x406c30)
@@ -25599,15 +25556,15 @@ pub fn x406c2b(ctx: &mut Context) -> Cont {
 
 pub fn x406c30(ctx: &mut Context) -> Cont {
     // 00406c30 push 8000h
-    push(ctx, 0x8000u32);
+    ctx.push(0x8000u32);
     // 00406c35 push 0
-    push(ctx, 0x0u32);
+    ctx.push(0x0u32);
     // 00406c37 mov eax,[ebx*4+433030h]
     ctx.cpu.regs.eax = ctx
         .memory
         .read::<u32>((ctx.cpu.regs.ebx * 4).wrapping_add(0x433030u32));
     // 00406c3e push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 00406c3f inc ebx
     ctx.cpu.regs.ebx = inc(ctx.cpu.regs.ebx, &mut ctx.cpu.flags);
     // 00406c40 call dword ptr cs:[40B16Ch]
@@ -25620,13 +25577,13 @@ pub fn x406c30(ctx: &mut Context) -> Cont {
 
 pub fn x406c4f(ctx: &mut Context) -> Cont {
     // 00406c4f pop edx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edx = x;
     // 00406c50 pop ecx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ecx = x;
     // 00406c51 pop ebx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ebx = x;
     // 00406c52 ret
     ret(ctx, 0)
@@ -25634,19 +25591,19 @@ pub fn x406c4f(ctx: &mut Context) -> Cont {
 
 pub fn x406c53(ctx: &mut Context) -> Cont {
     // 00406c53 push esi
-    push(ctx, ctx.cpu.regs.esi);
+    ctx.push(ctx.cpu.regs.esi);
     // 00406c54 push edi
-    push(ctx, ctx.cpu.regs.edi);
+    ctx.push(ctx.cpu.regs.edi);
     // 00406c55 push ebp
-    push(ctx, ctx.cpu.regs.ebp);
+    ctx.push(ctx.cpu.regs.ebp);
     // 00406c56 mov ebp,esp
     ctx.cpu.regs.ebp = ctx.cpu.regs.esp;
     // 00406c58 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 00406c59 push edx
-    push(ctx, ctx.cpu.regs.edx);
+    ctx.push(ctx.cpu.regs.edx);
     // 00406c5a push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 00406c5b mov esi,ecx
     ctx.cpu.regs.esi = ctx.cpu.regs.ecx;
     // 00406c5d xor edx,edx
@@ -25727,10 +25684,10 @@ pub fn x406c96(ctx: &mut Context) -> Cont {
     // 00406c96 leave
     leave(ctx);
     // 00406c97 pop edi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edi = x;
     // 00406c98 pop esi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.esi = x;
     // 00406c99 ret
     ret(ctx, 0)
@@ -25738,15 +25695,15 @@ pub fn x406c96(ctx: &mut Context) -> Cont {
 
 pub fn x406c9a(ctx: &mut Context) -> Cont {
     // 00406c9a push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 00406c9b push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 00406c9c push edx
-    push(ctx, ctx.cpu.regs.edx);
+    ctx.push(ctx.cpu.regs.edx);
     // 00406c9d push esi
-    push(ctx, ctx.cpu.regs.esi);
+    ctx.push(ctx.cpu.regs.esi);
     // 00406c9e push edi
-    push(ctx, ctx.cpu.regs.edi);
+    ctx.push(ctx.cpu.regs.edi);
     // 00406c9f enter 14h,0
     enter(ctx, 0x14u16, 0);
     // 00406ca3 xor edi,edi
@@ -26229,7 +26186,7 @@ pub fn x406e6c(ctx: &mut Context) -> Cont {
         ctx.cpu.regs.ecx,
     );
     // 00406e6f push dword ptr ds:[433E30h]
-    push(ctx, ctx.memory.read::<u32>(0x433e30u32));
+    ctx.push(ctx.memory.read::<u32>(0x433e30u32));
     // 00406e75 fild dword ptr [ebp-4]
     ctx.cpu.fpu.push(
         ctx.memory
@@ -26245,7 +26202,7 @@ pub fn x406e6c(ctx: &mut Context) -> Cont {
         .fpu
         .set(0, ctx.cpu.fpu.get(0) * ctx.memory.read::<f64>(0x40c440u32));
     // 00406e81 push 151515h
-    push(ctx, 0x151515u32);
+    ctx.push(0x151515u32);
     // 00406e86 fcos
     ctx.cpu.fpu.set(0, ctx.cpu.fpu.get(0).cos());
     // 00406e88 mov eax,ds:[40C728h]
@@ -26982,19 +26939,19 @@ pub fn x4071c3(ctx: &mut Context) -> Cont {
     // 004071c3 leave
     leave(ctx);
     // 004071c4 pop edi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edi = x;
     // 004071c5 pop esi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.esi = x;
     // 004071c6 pop edx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edx = x;
     // 004071c7 pop ecx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ecx = x;
     // 004071c8 pop ebx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ebx = x;
     // 004071c9 ret
     ret(ctx, 0)
@@ -27002,7 +26959,7 @@ pub fn x4071c3(ctx: &mut Context) -> Cont {
 
 pub fn x407315(ctx: &mut Context) -> Cont {
     // 00407315 push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 00407316 enter 38h,0
     enter(ctx, 0x38u16, 0);
     // 0040731a mov ecx,eax
@@ -27018,8 +26975,7 @@ pub fn x407315(ctx: &mut Context) -> Cont {
         ctx.cpu.fpu.get(0) + ctx.memory.read::<f32>(0x40c518u32) as f64,
     );
     // 00407325 push dword ptr [ebp+18h]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0x18u32)),
     );
@@ -27033,8 +26989,7 @@ pub fn x407315(ctx: &mut Context) -> Cont {
         .fpu
         .set(0, ctx.cpu.fpu.get(0) * ctx.memory.read::<f64>(0x40c520u32));
     // 00407331 push dword ptr [ebp+14h]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0x14u32)),
     );
@@ -27233,8 +27188,7 @@ pub fn x4073ad(ctx: &mut Context) -> Cont {
             .read::<f32>(ctx.cpu.regs.ebp.wrapping_add(0x10u32)) as f64,
     );
     // 004073b0 push dword ptr [ebp+18h]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0x18u32)),
     );
@@ -27253,8 +27207,7 @@ pub fn x4073ad(ctx: &mut Context) -> Cont {
         .fpu
         .set(0, ctx.cpu.fpu.get(0) * ctx.memory.read::<f64>(0x40c520u32));
     // 004073c2 push dword ptr [ebp+14h]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0x14u32)),
     );
@@ -27410,8 +27363,7 @@ pub fn x407423(ctx: &mut Context) -> Cont {
         ctx.cpu.fpu.get(0) + ctx.memory.read::<f32>(0x40c52cu32) as f64,
     );
     // 0040742c push dword ptr [ebp+18h]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0x18u32)),
     );
@@ -27425,8 +27377,7 @@ pub fn x407423(ctx: &mut Context) -> Cont {
         .fpu
         .set(0, ctx.cpu.fpu.get(0) * ctx.memory.read::<f64>(0x40c520u32));
     // 00407438 push dword ptr [ebp+14h]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0x14u32)),
     );
@@ -27577,8 +27528,7 @@ pub fn x407499(ctx: &mut Context) -> Cont {
             .read::<f64>(ctx.cpu.regs.ebp.wrapping_add(0xffffffc8u32)),
     );
     // 0040749c push dword ptr [ebp+18h]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0x18u32)),
     );
@@ -27587,8 +27537,7 @@ pub fn x407499(ctx: &mut Context) -> Cont {
         .fpu
         .set(0, ctx.cpu.fpu.get(0) * ctx.memory.read::<f64>(0x40c520u32));
     // 004074a5 push dword ptr [ebp+14h]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0x14u32)),
     );
@@ -27736,7 +27685,7 @@ pub fn x407506(ctx: &mut Context) -> Cont {
     // 00407506 leave
     leave(ctx);
     // 00407507 pop ecx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ecx = x;
     // 00407508 ret 10h
     ret(ctx, 16)
@@ -27744,13 +27693,13 @@ pub fn x407506(ctx: &mut Context) -> Cont {
 
 pub fn x40750b(ctx: &mut Context) -> Cont {
     // 0040750b push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 0040750c push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 0040750d push esi
-    push(ctx, ctx.cpu.regs.esi);
+    ctx.push(ctx.cpu.regs.esi);
     // 0040750e push edi
-    push(ctx, ctx.cpu.regs.edi);
+    ctx.push(ctx.cpu.regs.edi);
     // 0040750f enter 28h,0
     enter(ctx, 0x28u16, 0);
     // 00407513 mov esi,eax
@@ -27975,9 +27924,9 @@ pub fn x407568(ctx: &mut Context) -> Cont {
     // 004075c9 sar eax,1
     ctx.cpu.regs.eax = sar(ctx.cpu.regs.eax, 0x1u8, &mut ctx.cpu.flags);
     // 004075cb push edi
-    push(ctx, ctx.cpu.regs.edi);
+    ctx.push(ctx.cpu.regs.edi);
     // 004075cc push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 004075cd mov ebx,eax
     ctx.cpu.regs.ebx = ctx.cpu.regs.eax;
     // 004075cf mov eax,ds:[40C724h]
@@ -28013,14 +27962,12 @@ pub fn x407568(ctx: &mut Context) -> Cont {
     );
     ctx.cpu.fpu.pop();
     // 004075ed push dword ptr [ebp-0Ch]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0xfffffff4u32)),
     );
     // 004075f0 push dword ptr [ebp-10h]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0xfffffff0u32)),
     );
@@ -28046,16 +27993,16 @@ pub fn x407605(ctx: &mut Context) -> Cont {
     // 00407605 leave
     leave(ctx);
     // 00407606 pop edi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edi = x;
     // 00407607 pop esi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.esi = x;
     // 00407608 pop ecx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ecx = x;
     // 00407609 pop ebx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ebx = x;
     // 0040760a ret
     ret(ctx, 0)
@@ -28063,11 +28010,11 @@ pub fn x407605(ctx: &mut Context) -> Cont {
 
 pub fn x40760b(ctx: &mut Context) -> Cont {
     // 0040760b push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 0040760c push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 0040760d push edx
-    push(ctx, ctx.cpu.regs.edx);
+    ctx.push(ctx.cpu.regs.edx);
     // 0040760e enter 2Ch,0
     enter(ctx, 0x2cu16, 0);
     // 00407612 fld dword ptr [ebp+14h]
@@ -28160,8 +28107,7 @@ pub fn x40765b(ctx: &mut Context) -> Cont {
         .fpu
         .set(0, ctx.cpu.fpu.get(0) * ctx.memory.read::<f64>(0x40c5b0u32));
     // 00407666 push dword ptr [ebp+1Ch]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0x1cu32)),
     );
@@ -28170,8 +28116,7 @@ pub fn x40765b(ctx: &mut Context) -> Cont {
         .memory
         .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0xfffffff4u32));
     // 0040766c push dword ptr [ebp+18h]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0x18u32)),
     );
@@ -28362,13 +28307,13 @@ pub fn x4076e3(ctx: &mut Context) -> Cont {
     // 004076e3 leave
     leave(ctx);
     // 004076e4 pop edx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edx = x;
     // 004076e5 pop ecx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ecx = x;
     // 004076e6 pop ebx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ebx = x;
     // 004076e7 ret 0Ch
     ret(ctx, 12)
@@ -28376,15 +28321,15 @@ pub fn x4076e3(ctx: &mut Context) -> Cont {
 
 pub fn x4076ea(ctx: &mut Context) -> Cont {
     // 004076ea push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 004076eb push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 004076ec push edx
-    push(ctx, ctx.cpu.regs.edx);
+    ctx.push(ctx.cpu.regs.edx);
     // 004076ed push esi
-    push(ctx, ctx.cpu.regs.esi);
+    ctx.push(ctx.cpu.regs.esi);
     // 004076ee push edi
-    push(ctx, ctx.cpu.regs.edi);
+    ctx.push(ctx.cpu.regs.edi);
     // 004076ef enter 28h,0
     enter(ctx, 0x28u16, 0);
     // 004076f3 mov edi,[ebp+2Ch]
@@ -28674,8 +28619,7 @@ pub fn x4077b5(ctx: &mut Context) -> Cont {
             .read::<f64>(ctx.cpu.regs.ebp.wrapping_add(0xffffffd8u32)),
     );
     // 004077e3 push dword ptr [ebp+28h]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0x28u32)),
     );
@@ -28684,7 +28628,7 @@ pub fn x4077b5(ctx: &mut Context) -> Cont {
         .fpu
         .set(0, ctx.cpu.fpu.get(0) * ctx.memory.read::<f64>(0x40c600u32));
     // 004077ec push edi
-    push(ctx, ctx.cpu.regs.edi);
+    ctx.push(ctx.cpu.regs.edi);
     // 004077ed fxch
     let t = ctx.cpu.fpu.get(0);
     ctx.cpu.fpu.set(0, ctx.cpu.fpu.get(1));
@@ -28698,8 +28642,7 @@ pub fn x4077b5(ctx: &mut Context) -> Cont {
                 .read::<f64>(ctx.cpu.regs.ebp.wrapping_add(0xffffffe0u32)),
     );
     // 004077f2 push dword ptr [ebp+24h]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0x24u32)),
     );
@@ -28710,8 +28653,7 @@ pub fn x4077b5(ctx: &mut Context) -> Cont {
 
 pub fn x4077fa(ctx: &mut Context) -> Cont {
     // 004077fa push dword ptr [ebp+20h]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0x20u32)),
     );
@@ -28753,8 +28695,7 @@ pub fn x407818(ctx: &mut Context) -> Cont {
     );
     ctx.cpu.fpu.pop();
     // 0040781b push dword ptr [ebp-14h]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0xffffffecu32)),
     );
@@ -28790,8 +28731,7 @@ pub fn x407831(ctx: &mut Context) -> Cont {
     );
     ctx.cpu.fpu.pop();
     // 00407837 push dword ptr [ebp-14h]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0xffffffecu32)),
     );
@@ -29259,7 +29199,7 @@ pub fn x40784e(ctx: &mut Context) -> Cont {
         .memory
         .read::<u32>(ctx.cpu.regs.edx.wrapping_add(0xfffffff4u32));
     // 00407a46 push 40800000h
-    push(ctx, 0x40800000u32);
+    ctx.push(0x40800000u32);
     // 00407a4b mov ecx,eax
     ctx.cpu.regs.ecx = ctx.cpu.regs.eax;
     // 00407a4d mov ebx,eax
@@ -29317,7 +29257,7 @@ pub fn x40784e(ctx: &mut Context) -> Cont {
     // 00407a9b mov eax,edi
     ctx.cpu.regs.eax = ctx.cpu.regs.edi;
     // 00407a9d push 3DCCCCCDh
-    push(ctx, 0x3dcccccdu32);
+    ctx.push(0x3dcccccdu32);
     // 00407aa2 call 00403D06h
     let dst = Cont(x403d06);
     call(ctx, 0x407aa7, dst)
@@ -29362,19 +29302,19 @@ pub fn x407acb(ctx: &mut Context) -> Cont {
     // 00407acb leave
     leave(ctx);
     // 00407acc pop edi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edi = x;
     // 00407acd pop esi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.esi = x;
     // 00407ace pop edx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edx = x;
     // 00407acf pop ecx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ecx = x;
     // 00407ad0 pop ebx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ebx = x;
     // 00407ad1 ret 14h
     ret(ctx, 20)
@@ -29382,19 +29322,19 @@ pub fn x407acb(ctx: &mut Context) -> Cont {
 
 pub fn math(ctx: &mut Context) -> Cont {
     // 00407ad4 push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 00407ad5 push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 00407ad6 push esi
-    push(ctx, ctx.cpu.regs.esi);
+    ctx.push(ctx.cpu.regs.esi);
     // 00407ad7 push edi
-    push(ctx, ctx.cpu.regs.edi);
+    ctx.push(ctx.cpu.regs.edi);
     // 00407ad8 enter 44h,0
     enter(ctx, 0x44u16, 0);
     // 00407adc push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 00407add push edx
-    push(ctx, ctx.cpu.regs.edx);
+    ctx.push(ctx.cpu.regs.edx);
     // 00407ade cmp dword ptr ds:[40C753h],1
     sub(
         ctx.memory.read::<u32>(0x40c753u32),
@@ -29945,8 +29885,7 @@ pub fn x407ce1(ctx: &mut Context) -> Cont {
         .memory
         .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0xffffffb8u32));
     // 00407ce4 push dword ptr [ebp-4Ch]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0xffffffb4u32)),
     );
@@ -29956,7 +29895,7 @@ pub fn x407ce1(ctx: &mut Context) -> Cont {
         ctx.cpu.regs.eax,
     );
     // 00407cea push dword ptr ds:[433F98h]
-    push(ctx, ctx.memory.read::<u32>(0x433f98u32));
+    ctx.push(ctx.memory.read::<u32>(0x433f98u32));
     // 00407cf0 fild dword ptr [ebp-4]
     ctx.cpu.fpu.push(
         ctx.memory
@@ -30319,7 +30258,7 @@ pub fn x407ddc(ctx: &mut Context) -> Cont {
                 .read::<f64>(ctx.cpu.regs.ebp.wrapping_add(0xffffffd4u32)),
     );
     // 00407e25 push 0
-    push(ctx, 0x0u32);
+    ctx.push(0x0u32);
     // 00407e27 fadd qword ptr ds:[40C6D8h]
     ctx.cpu
         .fpu
@@ -30345,7 +30284,7 @@ pub fn x407e35(ctx: &mut Context) -> Cont {
         .memory
         .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0xfffffff8u32));
     // 00407e3b push 3E0F5C29h
-    push(ctx, 0x3e0f5c29u32);
+    ctx.push(0x3e0f5c29u32);
     // 00407e40 call 00403D06h
     let dst = Cont(x403d06);
     call(ctx, 0x407e45, dst)
@@ -30512,8 +30451,7 @@ pub fn x407ed4(ctx: &mut Context) -> Cont {
         .memory
         .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0xffffffb8u32));
     // 00407ed7 push dword ptr [ebp-4Ch]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0xffffffb4u32)),
     );
@@ -30523,7 +30461,7 @@ pub fn x407ed4(ctx: &mut Context) -> Cont {
         ctx.cpu.regs.eax,
     );
     // 00407edd push dword ptr ds:[433F98h]
-    push(ctx, ctx.memory.read::<u32>(0x433f98u32));
+    ctx.push(ctx.memory.read::<u32>(0x433f98u32));
     // 00407ee3 fild dword ptr [ebp-4]
     ctx.cpu.fpu.push(
         ctx.memory
@@ -30885,7 +30823,7 @@ pub fn x407ff0(ctx: &mut Context) -> Cont {
                 .read::<f64>(ctx.cpu.regs.ebp.wrapping_add(0xffffffd4u32)),
     );
     // 00408015 push 3F800000h
-    push(ctx, 0x3f800000u32);
+    ctx.push(0x3f800000u32);
     // 0040801a fadd qword ptr ds:[40C6D8h]
     ctx.cpu
         .fpu
@@ -30911,7 +30849,7 @@ pub fn x408028(ctx: &mut Context) -> Cont {
         .memory
         .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0xfffffff8u32));
     // 0040802e push 3E0F5C29h
-    push(ctx, 0x3e0f5c29u32);
+    ctx.push(0x3e0f5c29u32);
     // 00408033 call 00403D06h
     let dst = Cont(x403d06);
     call(ctx, 0x408038, dst)
@@ -31035,13 +30973,13 @@ pub fn x4080b1(ctx: &mut Context) -> Cont {
 
 pub fn x4080c1(ctx: &mut Context) -> Cont {
     // 004080c1 push dword ptr ds:[433FACh]
-    push(ctx, ctx.memory.read::<u32>(0x433facu32));
+    ctx.push(ctx.memory.read::<u32>(0x433facu32));
     // 004080c7 mov eax,[ebp-48h]
     ctx.cpu.regs.eax = ctx
         .memory
         .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0xffffffb8u32));
     // 004080ca push dword ptr ds:[433E48h]
-    push(ctx, ctx.memory.read::<u32>(0x433e48u32));
+    ctx.push(ctx.memory.read::<u32>(0x433e48u32));
     // 004080d0 mov [ebp-4],eax
     ctx.memory.write::<u32>(
         ctx.cpu.regs.ebp.wrapping_add(0xfffffffcu32),
@@ -31233,13 +31171,12 @@ pub fn x40819e(ctx: &mut Context) -> Cont {
 
 pub fn x4081ac(ctx: &mut Context) -> Cont {
     // 004081ac push dword ptr [ebp-4Ch]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0xffffffb4u32)),
     );
     // 004081af push dword ptr ds:[425002h]
-    push(ctx, ctx.memory.read::<u32>(0x425002u32));
+    ctx.push(ctx.memory.read::<u32>(0x425002u32));
     // 004081b5 call 004067F0h
     let dst = Cont(x4067f0);
     call(ctx, 0x4081ba, dst)
@@ -31317,12 +31254,11 @@ pub fn x408201(ctx: &mut Context) -> Cont {
     // 00408201 mov eax,ds:[424FFEh]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x424ffeu32);
     // 00408206 push dword ptr ds:[433FACh]
-    push(ctx, ctx.memory.read::<u32>(0x433facu32));
+    ctx.push(ctx.memory.read::<u32>(0x433facu32));
     // 0040820c and eax,1
     ctx.cpu.regs.eax = and(ctx.cpu.regs.eax, 0x1u32, &mut ctx.cpu.flags);
     // 0040820f push dword ptr [eax*4+433E48h]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>((ctx.cpu.regs.eax * 4).wrapping_add(0x433e48u32)),
     );
@@ -31601,7 +31537,7 @@ pub fn x408307(ctx: &mut Context) -> Cont {
     ctx.cpu.regs.eax = (x / y) as i32 as u32;
     ctx.cpu.regs.edx = (x % y) as i32 as u32;
     // 00408314 push 140h
-    push(ctx, 0x140u32);
+    ctx.push(0x140u32);
     // 00408319 mov ecx,5
     ctx.cpu.regs.ecx = 0x5u32;
     // 0040831e mov eax,[edx*4+433030h]
@@ -31667,8 +31603,7 @@ pub fn x408356(ctx: &mut Context) -> Cont {
         .memory
         .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0xffffffb8u32));
     // 00408359 push dword ptr [ebp-4Ch]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0xffffffb4u32)),
     );
@@ -31678,7 +31613,7 @@ pub fn x408356(ctx: &mut Context) -> Cont {
         ctx.cpu.regs.edx,
     );
     // 0040835f push dword ptr ds:[433F94h]
-    push(ctx, ctx.memory.read::<u32>(0x433f94u32));
+    ctx.push(ctx.memory.read::<u32>(0x433f94u32));
     // 00408365 fild dword ptr [ebp-4]
     ctx.cpu.fpu.push(
         ctx.memory
@@ -31792,16 +31727,14 @@ pub fn x4083d6(ctx: &mut Context) -> Cont {
     // 004083d6 mov eax,ds:[424FFEh]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x424ffeu32);
     // 004083db push dword ptr [ebp-4Ch]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0xffffffb4u32)),
     );
     // 004083de and eax,1
     ctx.cpu.regs.eax = and(ctx.cpu.regs.eax, 0x1u32, &mut ctx.cpu.flags);
     // 004083e1 push dword ptr [eax*4+433E48h]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>((ctx.cpu.regs.eax * 4).wrapping_add(0x433e48u32)),
     );
@@ -31901,19 +31834,18 @@ pub fn x408449(ctx: &mut Context) -> Cont {
 
 pub fn x408454(ctx: &mut Context) -> Cont {
     // 00408454 push dword ptr [ebp-4Ch]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0xffffffb4u32)),
     );
     // 00408457 push dword ptr ds:[433FACh]
-    push(ctx, ctx.memory.read::<u32>(0x433facu32));
+    ctx.push(ctx.memory.read::<u32>(0x433facu32));
     // 0040845d push dword ptr ds:[433FA0h]
-    push(ctx, ctx.memory.read::<u32>(0x433fa0u32));
+    ctx.push(ctx.memory.read::<u32>(0x433fa0u32));
     // 00408463 fld dword ptr ds:[425006h]
     ctx.cpu.fpu.push(ctx.memory.read::<f32>(0x425006u32) as f64);
     // 00408469 push dword ptr ds:[433FA4h]
-    push(ctx, ctx.memory.read::<u32>(0x433fa4u32));
+    ctx.push(ctx.memory.read::<u32>(0x433fa4u32));
     // 0040846f fmul qword ptr ds:[40C658h]
     ctx.cpu
         .fpu
@@ -31990,7 +31922,7 @@ pub fn x4084a5(ctx: &mut Context) -> Cont {
     ctx.cpu.regs.eax = (x / y) as i32 as u32;
     ctx.cpu.regs.edx = (x % y) as i32 as u32;
     // 004084b5 push 140h
-    push(ctx, 0x140u32);
+    ctx.push(0x140u32);
     // 004084ba xor ebx,ebx
     ctx.cpu.regs.ebx = xor(ctx.cpu.regs.ebx, ctx.cpu.regs.ebx, &mut ctx.cpu.flags);
     // 004084bc mov ecx,0DCh
@@ -32062,14 +31994,14 @@ pub fn x408502(ctx: &mut Context) -> Cont {
         .memory
         .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0xffffffb8u32));
     // 00408505 push dword ptr ds:[433FACh]
-    push(ctx, ctx.memory.read::<u32>(0x433facu32));
+    ctx.push(ctx.memory.read::<u32>(0x433facu32));
     // 0040850b mov [ebp-4],eax
     ctx.memory.write::<u32>(
         ctx.cpu.regs.ebp.wrapping_add(0xfffffffcu32),
         ctx.cpu.regs.eax,
     );
     // 0040850e push dword ptr ds:[433F94h]
-    push(ctx, ctx.memory.read::<u32>(0x433f94u32));
+    ctx.push(ctx.memory.read::<u32>(0x433f94u32));
     // 00408514 fild dword ptr [ebp-4]
     ctx.cpu.fpu.push(
         ctx.memory
@@ -32181,12 +32113,11 @@ pub fn x40858d(ctx: &mut Context) -> Cont {
     // 0040858d mov eax,ds:[424FFEh]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x424ffeu32);
     // 00408592 push dword ptr ds:[433FACh]
-    push(ctx, ctx.memory.read::<u32>(0x433facu32));
+    ctx.push(ctx.memory.read::<u32>(0x433facu32));
     // 00408598 and eax,1
     ctx.cpu.regs.eax = and(ctx.cpu.regs.eax, 0x1u32, &mut ctx.cpu.flags);
     // 0040859b push dword ptr [eax*4+433E48h]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>((ctx.cpu.regs.eax * 4).wrapping_add(0x433e48u32)),
     );
@@ -32243,16 +32174,16 @@ pub fn x4085cf(ctx: &mut Context) -> Cont {
     // 004085d7 leave
     leave(ctx);
     // 004085d8 pop edi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edi = x;
     // 004085d9 pop esi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.esi = x;
     // 004085da pop ecx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ecx = x;
     // 004085db pop ebx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ebx = x;
     // 004085dc ret
     ret(ctx, 0)
@@ -32265,11 +32196,11 @@ pub fn entry(ctx: &mut Context) -> Cont {
 
 pub fn allocs_computes(ctx: &mut Context) -> Cont {
     // 004085e2 push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 004085e3 push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 004085e4 push edx
-    push(ctx, ctx.cpu.regs.edx);
+    ctx.push(ctx.cpu.regs.edx);
     // 004085e5 call 00401A5Ah
     let dst = Cont(x401a5a);
     call(ctx, 0x4085ea, dst)
@@ -32289,7 +32220,7 @@ pub fn x4085ea(ctx: &mut Context) -> Cont {
     // 004085fb shl eax,2
     ctx.cpu.regs.eax = shl(ctx.cpu.regs.eax, 0x2u8, &mut ctx.cpu.flags);
     // 004085fe push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 004085ff call 00401A60h
     let dst = Cont(alloc);
     call(ctx, 0x408604, dst)
@@ -32311,7 +32242,7 @@ pub fn x408604(ctx: &mut Context) -> Cont {
     // 00408618 shl eax,2
     ctx.cpu.regs.eax = shl(ctx.cpu.regs.eax, 0x2u8, &mut ctx.cpu.flags);
     // 0040861b push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 0040861c xor ebx,ebx
     ctx.cpu.regs.ebx = xor(ctx.cpu.regs.ebx, ctx.cpu.regs.ebx, &mut ctx.cpu.flags);
     // 0040861e call 00401A60h
@@ -32339,7 +32270,7 @@ pub fn x40862b(ctx: &mut Context) -> Cont {
     // 00408637 shl eax,2
     ctx.cpu.regs.eax = shl(ctx.cpu.regs.eax, 0x2u8, &mut ctx.cpu.flags);
     // 0040863a push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 0040863b inc ebx
     ctx.cpu.regs.ebx = inc(ctx.cpu.regs.ebx, &mut ctx.cpu.flags);
     // 0040863c call 00401A60h
@@ -32369,7 +32300,7 @@ pub fn x408650(ctx: &mut Context) -> Cont {
 
 pub fn x408652(ctx: &mut Context) -> Cont {
     // 00408652 push 40000h
-    push(ctx, 0x40000u32);
+    ctx.push(0x40000u32);
     // 00408657 inc ebx
     ctx.cpu.regs.ebx = inc(ctx.cpu.regs.ebx, &mut ctx.cpu.flags);
     // 00408658 call 00401A60h
@@ -32407,7 +32338,7 @@ pub fn x40866c(ctx: &mut Context) -> Cont {
 
 pub fn x408685(ctx: &mut Context) -> Cont {
     // 00408685 push 100h
-    push(ctx, 0x100u32);
+    ctx.push(0x100u32);
     // 0040868a call 00401A60h
     let dst = Cont(alloc);
     call(ctx, 0x40868f, dst)
@@ -32449,13 +32380,13 @@ pub fn x4086ab(ctx: &mut Context) -> Cont {
 
 pub fn x4086b0(ctx: &mut Context) -> Cont {
     // 004086b0 pop edx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edx = x;
     // 004086b1 pop ecx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ecx = x;
     // 004086b2 pop ebx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ebx = x;
     // 004086b3 ret
     ret(ctx, 0)
@@ -32463,11 +32394,11 @@ pub fn x4086b0(ctx: &mut Context) -> Cont {
 
 pub fn x4086b4(ctx: &mut Context) -> Cont {
     // 004086b4 push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 004086b5 push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 004086b6 push edx
-    push(ctx, ctx.cpu.regs.edx);
+    ctx.push(ctx.cpu.regs.edx);
     // 004086b7 call 00405808h
     let dst = Cont(x405808);
     call(ctx, 0x4086bc, dst)
@@ -32475,13 +32406,13 @@ pub fn x4086b4(ctx: &mut Context) -> Cont {
 
 pub fn x4086bc(ctx: &mut Context) -> Cont {
     // 004086bc push 8000h
-    push(ctx, 0x8000u32);
+    ctx.push(0x8000u32);
     // 004086c1 push 0
-    push(ctx, 0x0u32);
+    ctx.push(0x0u32);
     // 004086c3 mov eax,ds:[433F78h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x433f78u32);
     // 004086c8 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 004086c9 call dword ptr cs:[40B16Ch]
     call_builtin(ctx, kernel32::VirtualFree_stdcall);
     // 004086d0 mov eax,433E54h
@@ -32505,23 +32436,23 @@ pub fn x4086df(ctx: &mut Context) -> Cont {
 
 pub fn x4086e4(ctx: &mut Context) -> Cont {
     // 004086e4 push 8000h
-    push(ctx, 0x8000u32);
+    ctx.push(0x8000u32);
     // 004086e9 push 0
-    push(ctx, 0x0u32);
+    ctx.push(0x0u32);
     // 004086eb mov eax,ds:[433FACh]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x433facu32);
     // 004086f0 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 004086f1 call dword ptr cs:[40B16Ch]
     call_builtin(ctx, kernel32::VirtualFree_stdcall);
     // 004086f8 push 8000h
-    push(ctx, 0x8000u32);
+    ctx.push(0x8000u32);
     // 004086fd push 0
-    push(ctx, 0x0u32);
+    ctx.push(0x0u32);
     // 004086ff mov eax,ds:[433FA8h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x433fa8u32);
     // 00408704 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 00408705 xor ebx,ebx
     ctx.cpu.regs.ebx = xor(ctx.cpu.regs.ebx, ctx.cpu.regs.ebx, &mut ctx.cpu.flags);
     // 00408707 call dword ptr cs:[40B16Ch]
@@ -32531,15 +32462,15 @@ pub fn x4086e4(ctx: &mut Context) -> Cont {
 
 pub fn x40870e(ctx: &mut Context) -> Cont {
     // 0040870e push 8000h
-    push(ctx, 0x8000u32);
+    ctx.push(0x8000u32);
     // 00408713 push 0
-    push(ctx, 0x0u32);
+    ctx.push(0x0u32);
     // 00408715 mov eax,[ebx*4+433E28h]
     ctx.cpu.regs.eax = ctx
         .memory
         .read::<u32>((ctx.cpu.regs.ebx * 4).wrapping_add(0x433e28u32));
     // 0040871c push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 0040871d inc ebx
     ctx.cpu.regs.ebx = inc(ctx.cpu.regs.ebx, &mut ctx.cpu.flags);
     // 0040871e call dword ptr cs:[40B16Ch]
@@ -32558,15 +32489,15 @@ pub fn x40872a(ctx: &mut Context) -> Cont {
 
 pub fn x40872c(ctx: &mut Context) -> Cont {
     // 0040872c push 8000h
-    push(ctx, 0x8000u32);
+    ctx.push(0x8000u32);
     // 00408731 push 0
-    push(ctx, 0x0u32);
+    ctx.push(0x0u32);
     // 00408733 mov eax,[ebx*4+433F8Ch]
     ctx.cpu.regs.eax = ctx
         .memory
         .read::<u32>((ctx.cpu.regs.ebx * 4).wrapping_add(0x433f8cu32));
     // 0040873a push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 0040873b inc ebx
     ctx.cpu.regs.ebx = inc(ctx.cpu.regs.ebx, &mut ctx.cpu.flags);
     // 0040873c call dword ptr cs:[40B16Ch]
@@ -32579,13 +32510,13 @@ pub fn x40872c(ctx: &mut Context) -> Cont {
 
 pub fn x408748(ctx: &mut Context) -> Cont {
     // 00408748 pop edx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edx = x;
     // 00408749 pop ecx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ecx = x;
     // 0040874a pop ebx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ebx = x;
     // 0040874b ret
     ret(ctx, 0)
@@ -32593,11 +32524,11 @@ pub fn x408748(ctx: &mut Context) -> Cont {
 
 pub fn x40874c(ctx: &mut Context) -> Cont {
     // 0040874c push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 0040874d push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 0040874e push edx
-    push(ctx, ctx.cpu.regs.edx);
+    ctx.push(ctx.cpu.regs.edx);
     // 0040874f call 00401B35h
     let dst = Cont(create_window);
     call(ctx, 0x408754, dst)
@@ -32611,9 +32542,9 @@ pub fn x408754(ctx: &mut Context) -> Cont {
 
 pub fn x408759(ctx: &mut Context) -> Cont {
     // 00408759 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 0040875a push dword ptr ds:[40C73Bh]
-    push(ctx, ctx.memory.read::<u32>(0x40c73bu32));
+    ctx.push(ctx.memory.read::<u32>(0x40c73bu32));
     // 00408760 xor ebx,ebx
     ctx.cpu.regs.ebx = xor(ctx.cpu.regs.ebx, ctx.cpu.regs.ebx, &mut ctx.cpu.flags);
     // 00408762 call 0040A281h
@@ -32623,7 +32554,7 @@ pub fn x408759(ctx: &mut Context) -> Cont {
 
 pub fn x408767(ctx: &mut Context) -> Cont {
     // 00408767 push dword ptr ds:[433F88h]
-    push(ctx, ctx.memory.read::<u32>(0x433f88u32));
+    ctx.push(ctx.memory.read::<u32>(0x433f88u32));
     // 0040876d mov ecx,ds:[40C73Bh]
     ctx.cpu.regs.ecx = ctx.memory.read::<u32>(0x40c73bu32);
     // 00408773 mov edx,ds:[40C728h]
@@ -32644,7 +32575,7 @@ pub fn x408783(ctx: &mut Context) -> Cont {
 
 pub fn x40878b(ctx: &mut Context) -> Cont {
     // 0040878b push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 0040878c call dword ptr cs:[40B130h]
     call_builtin(ctx, user32::ShowCursor_stdcall);
     // 00408793 call 004085E2h
@@ -32744,7 +32675,7 @@ pub fn x4087f2(ctx: &mut Context) -> Cont {
 
 pub fn x4087f4(ctx: &mut Context) -> Cont {
     // 004087f4 push dword ptr ds:[433F80h]
-    push(ctx, ctx.memory.read::<u32>(0x433f80u32));
+    ctx.push(ctx.memory.read::<u32>(0x433f80u32));
     // 004087fa call dword ptr cs:[40B0FCh]
     call_builtin(ctx, winmm::timeKillEvent_stdcall);
     // 00408801 call 00409F49h
@@ -32760,7 +32691,7 @@ pub fn x408806(ctx: &mut Context) -> Cont {
 
 pub fn x40880b(ctx: &mut Context) -> Cont {
     // 0040880b push 1
-    push(ctx, 0x1u32);
+    ctx.push(0x1u32);
     // 0040880d call dword ptr cs:[40B130h]
     call_builtin(ctx, user32::ShowCursor_stdcall);
     Cont(x408814)
@@ -32782,19 +32713,19 @@ pub fn x40881e(ctx: &mut Context) -> Cont {
 
 pub fn x408823(ctx: &mut Context) -> Cont {
     // 00408823 push 0
-    push(ctx, 0x0u32);
+    ctx.push(0x0u32);
     // 00408825 call dword ptr cs:[40B150h]
     call_builtin(ctx, kernel32::ExitProcess_stdcall);
     // 0040882c xor eax,eax
     ctx.cpu.regs.eax = xor(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
     // 0040882e pop edx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edx = x;
     // 0040882f pop ecx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ecx = x;
     // 00408830 pop ebx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ebx = x;
     // 00408831 ret
     ret(ctx, 0)
@@ -32807,15 +32738,15 @@ pub fn x408838(ctx: &mut Context) -> Cont {
 
 pub fn x408860(ctx: &mut Context) -> Cont {
     // 00408860 push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 00408861 push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 00408862 push edx
-    push(ctx, ctx.cpu.regs.edx);
+    ctx.push(ctx.cpu.regs.edx);
     // 00408863 push esi
-    push(ctx, ctx.cpu.regs.esi);
+    ctx.push(ctx.cpu.regs.esi);
     // 00408864 push edi
-    push(ctx, ctx.cpu.regs.edi);
+    ctx.push(ctx.cpu.regs.edi);
     // 00408865 enter 4,0
     enter(ctx, 0x4u16, 0);
     // 00408869 fld dword ptr [ebp+1Ch]
@@ -32836,19 +32767,19 @@ pub fn x408860(ctx: &mut Context) -> Cont {
     // 00408878 leave
     leave(ctx);
     // 00408879 pop edi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edi = x;
     // 0040887a pop esi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.esi = x;
     // 0040887b pop edx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edx = x;
     // 0040887c pop ecx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ecx = x;
     // 0040887d pop ebx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ebx = x;
     // 0040887e ret 4
     ret(ctx, 4)
@@ -32856,17 +32787,17 @@ pub fn x408860(ctx: &mut Context) -> Cont {
 
 pub fn x4088a6(ctx: &mut Context) -> Cont {
     // 004088a6 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 004088a7 push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 004088a8 push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 004088a9 push edx
-    push(ctx, ctx.cpu.regs.edx);
+    ctx.push(ctx.cpu.regs.edx);
     // 004088aa push esi
-    push(ctx, ctx.cpu.regs.esi);
+    ctx.push(ctx.cpu.regs.esi);
     // 004088ab push edi
-    push(ctx, ctx.cpu.regs.edi);
+    ctx.push(ctx.cpu.regs.edi);
     // 004088ac enter 4,0
     enter(ctx, 0x4u16, 0);
     // 004088b0 fld dword ptr [ebp+20h]
@@ -32890,22 +32821,22 @@ pub fn x4088a6(ctx: &mut Context) -> Cont {
     // 004088c1 leave
     leave(ctx);
     // 004088c2 pop edi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edi = x;
     // 004088c3 pop esi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.esi = x;
     // 004088c4 pop edx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edx = x;
     // 004088c5 pop ecx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ecx = x;
     // 004088c6 pop ebx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ebx = x;
     // 004088c7 pop eax
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.eax = x;
     // 004088c8 ret 4
     ret(ctx, 4)
@@ -32913,15 +32844,15 @@ pub fn x4088a6(ctx: &mut Context) -> Cont {
 
 pub fn x4089ad(ctx: &mut Context) -> Cont {
     // 004089ad push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 004089ae push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 004089af push edx
-    push(ctx, ctx.cpu.regs.edx);
+    ctx.push(ctx.cpu.regs.edx);
     // 004089b0 push esi
-    push(ctx, ctx.cpu.regs.esi);
+    ctx.push(ctx.cpu.regs.esi);
     // 004089b1 push edi
-    push(ctx, ctx.cpu.regs.edi);
+    ctx.push(ctx.cpu.regs.edi);
     // 004089b2 enter 0Ch,0
     enter(ctx, 0xcu16, 0);
     // 004089b6 mov ebx,eax
@@ -33155,19 +33086,19 @@ pub fn x408a60(ctx: &mut Context) -> Cont {
     // 00408a6f leave
     leave(ctx);
     // 00408a70 pop edi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edi = x;
     // 00408a71 pop esi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.esi = x;
     // 00408a72 pop edx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edx = x;
     // 00408a73 pop ecx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ecx = x;
     // 00408a74 pop ebx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ebx = x;
     // 00408a75 ret
     ret(ctx, 0)
@@ -33175,17 +33106,17 @@ pub fn x408a60(ctx: &mut Context) -> Cont {
 
 pub fn x408a76(ctx: &mut Context) -> Cont {
     // 00408a76 push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 00408a77 push esi
-    push(ctx, ctx.cpu.regs.esi);
+    ctx.push(ctx.cpu.regs.esi);
     // 00408a78 push edi
-    push(ctx, ctx.cpu.regs.edi);
+    ctx.push(ctx.cpu.regs.edi);
     // 00408a79 enter 24h,0
     enter(ctx, 0x24u16, 0);
     // 00408a7d push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 00408a7e push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 00408a7f mov [ebp-1Ch],edx
     ctx.memory.write::<u32>(
         ctx.cpu.regs.ebp.wrapping_add(0xffffffe4u32),
@@ -33648,13 +33579,13 @@ pub fn x408bd2(ctx: &mut Context) -> Cont {
     // 00408bd7 leave
     leave(ctx);
     // 00408bd8 pop edi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edi = x;
     // 00408bd9 pop esi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.esi = x;
     // 00408bda pop ecx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ecx = x;
     // 00408bdb ret
     ret(ctx, 0)
@@ -33662,13 +33593,13 @@ pub fn x408bd2(ctx: &mut Context) -> Cont {
 
 pub fn x408bdc(ctx: &mut Context) -> Cont {
     // 00408bdc push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 00408bdd push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 00408bde push esi
-    push(ctx, ctx.cpu.regs.esi);
+    ctx.push(ctx.cpu.regs.esi);
     // 00408bdf push edi
-    push(ctx, ctx.cpu.regs.edi);
+    ctx.push(ctx.cpu.regs.edi);
     // 00408be0 enter 4,0
     enter(ctx, 0x4u16, 0);
     // 00408be4 mov ebx,eax
@@ -33816,16 +33747,16 @@ pub fn x408c49(ctx: &mut Context) -> Cont {
     // 00408c49 leave
     leave(ctx);
     // 00408c4a pop edi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edi = x;
     // 00408c4b pop esi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.esi = x;
     // 00408c4c pop ecx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ecx = x;
     // 00408c4d pop ebx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ebx = x;
     // 00408c4e ret
     ret(ctx, 0)
@@ -33833,11 +33764,11 @@ pub fn x408c49(ctx: &mut Context) -> Cont {
 
 pub fn x408c4f(ctx: &mut Context) -> Cont {
     // 00408c4f push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 00408c50 push esi
-    push(ctx, ctx.cpu.regs.esi);
+    ctx.push(ctx.cpu.regs.esi);
     // 00408c51 push edi
-    push(ctx, ctx.cpu.regs.edi);
+    ctx.push(ctx.cpu.regs.edi);
     // 00408c52 enter 10h,0
     enter(ctx, 0x10u16, 0);
     // 00408c56 mov esi,eax
@@ -33861,7 +33792,7 @@ pub fn x408c4f(ctx: &mut Context) -> Cont {
     // 00408c65 shl eax,5
     ctx.cpu.regs.eax = shl(ctx.cpu.regs.eax, 0x5u8, &mut ctx.cpu.flags);
     // 00408c68 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 00408c69 call 00401A60h
     let dst = Cont(alloc);
     call(ctx, 0x408c6e, dst)
@@ -34152,8 +34083,7 @@ pub fn x408d43(ctx: &mut Context) -> Cont {
     // 00408d53 rep movsb
     rep(ctx, Rep::REP, movsb);
     // 00408d55 push dword ptr [ebp-4]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0xfffffffcu32)),
     );
@@ -34168,13 +34098,13 @@ pub fn x408d5d(ctx: &mut Context) -> Cont {
     // 00408d60 leave
     leave(ctx);
     // 00408d61 pop edi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edi = x;
     // 00408d62 pop esi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.esi = x;
     // 00408d63 pop ecx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ecx = x;
     // 00408d64 ret
     ret(ctx, 0)
@@ -34182,19 +34112,19 @@ pub fn x408d5d(ctx: &mut Context) -> Cont {
 
 pub fn x408d65(ctx: &mut Context) -> Cont {
     // 00408d65 push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 00408d66 push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 00408d67 push edx
-    push(ctx, ctx.cpu.regs.edx);
+    ctx.push(ctx.cpu.regs.edx);
     // 00408d68 push esi
-    push(ctx, ctx.cpu.regs.esi);
+    ctx.push(ctx.cpu.regs.esi);
     // 00408d69 push edi
-    push(ctx, ctx.cpu.regs.edi);
+    ctx.push(ctx.cpu.regs.edi);
     // 00408d6a enter 4,0
     enter(ctx, 0x4u16, 0);
     // 00408d6e push 100000h
-    push(ctx, 0x100000u32);
+    ctx.push(0x100000u32);
     // 00408d73 call 00401A60h
     let dst = Cont(alloc);
     call(ctx, 0x408d78, dst)
@@ -34239,19 +34169,19 @@ pub fn x408da4(ctx: &mut Context) -> Cont {
     // 00408da7 leave
     leave(ctx);
     // 00408da8 pop edi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edi = x;
     // 00408da9 pop esi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.esi = x;
     // 00408daa pop edx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edx = x;
     // 00408dab pop ecx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ecx = x;
     // 00408dac pop ebx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ebx = x;
     // 00408dad ret
     ret(ctx, 0)
@@ -34279,9 +34209,9 @@ pub fn x408db0(ctx: &mut Context) -> Cont {
 
 pub fn x408dcd(ctx: &mut Context) -> Cont {
     // 00408dcd push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 00408dce push esi
-    push(ctx, ctx.cpu.regs.esi);
+    ctx.push(ctx.cpu.regs.esi);
     // 00408dcf cmp byte ptr [esi],0
     sub(
         ctx.memory.read::<u8>(ctx.cpu.regs.esi),
@@ -34555,7 +34485,7 @@ pub fn x408ea0(ctx: &mut Context) -> Cont {
 
 pub fn x408eca(ctx: &mut Context) -> Cont {
     // 00408eca push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 00408ecb mov ecx,[esi+1Dh]
     ctx.cpu.regs.ecx = ctx
         .memory
@@ -34653,7 +34583,7 @@ pub fn x408eca(ctx: &mut Context) -> Cont {
     ctx.memory
         .write::<u32>(ctx.cpu.regs.esi.wrapping_add(0x19u32), ctx.cpu.regs.eax);
     // 00408f1e pop ecx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ecx = x;
     // 00408f1f add edi,8
     ctx.cpu.regs.edi = add(ctx.cpu.regs.edi, 0x8u32, &mut ctx.cpu.flags);
@@ -34710,7 +34640,7 @@ pub fn x408f2d(ctx: &mut Context) -> Cont {
 
 pub fn x408f5d(ctx: &mut Context) -> Cont {
     // 00408f5d push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 00408f5e mov ecx,[esi+1Dh]
     ctx.cpu.regs.ecx = ctx
         .memory
@@ -34812,7 +34742,7 @@ pub fn x408f5d(ctx: &mut Context) -> Cont {
     ctx.memory
         .write::<u32>(ctx.cpu.regs.esi.wrapping_add(0x19u32), ctx.cpu.regs.eax);
     // 00408fb0 pop ecx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ecx = x;
     // 00408fb1 add edi,8
     ctx.cpu.regs.edi = add(ctx.cpu.regs.edi, 0x8u32, &mut ctx.cpu.flags);
@@ -34973,10 +34903,10 @@ pub fn x409017(ctx: &mut Context) -> Cont {
 
 pub fn x40901a(ctx: &mut Context) -> Cont {
     // 0040901a pop esi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.esi = x;
     // 0040901b pop ecx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ecx = x;
     // 0040901c add esi,100h
     ctx.cpu.regs.esi = add(ctx.cpu.regs.esi, 0x100u32, &mut ctx.cpu.flags);
@@ -35003,7 +34933,7 @@ pub fn x409029(ctx: &mut Context) -> Cont {
 
 pub fn x409039(ctx: &mut Context) -> Cont {
     // 00409039 pusha
-    pushad(ctx);
+    ctx.pushad();
     // 0040903a call 004090C7h
     let dst = Cont(use_thisptr_thunk);
     call(ctx, 0x40903f, dst)
@@ -35063,7 +34993,7 @@ pub fn x409066(ctx: &mut Context) -> Cont {
 
 pub fn x409074(ctx: &mut Context) -> Cont {
     // 00409074 pusha
-    pushad(ctx);
+    ctx.pushad();
     // 00409075 call 00409B58h
     let dst = Cont(x409b58);
     call(ctx, 0x40907a, dst)
@@ -35096,7 +35026,7 @@ pub fn x40907a(ctx: &mut Context) -> Cont {
         ),
     );
     // 00409092 popa
-    popad(ctx);
+    ctx.popad();
     Cont(x409093)
 }
 
@@ -35163,7 +35093,7 @@ pub fn x4090c0(ctx: &mut Context) -> Cont {
 
 pub fn x4090c5(ctx: &mut Context) -> Cont {
     // 004090c5 popa
-    popad(ctx);
+    ctx.popad();
     // 004090c6 ret
     ret(ctx, 0)
 }
@@ -35176,7 +35106,7 @@ pub fn use_thisptr_thunk(ctx: &mut Context) -> Cont {
 
 pub fn use_thisptr(ctx: &mut Context) -> Cont {
     // 004090cc pop ebp
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ebp = x;
     // 004090cd mov ebp,ds:[4377B4h]
     ctx.cpu.regs.ebp = ctx.memory.read::<u32>(0x4377b4u32);
@@ -35192,7 +35122,7 @@ pub fn thunk_FUN_004090d9(ctx: &mut Context) -> Cont {
 
 pub fn x4090d9(ctx: &mut Context) -> Cont {
     // 004090d9 pop esi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.esi = x;
     // 004090da add esi,0E87h
     ctx.cpu.regs.esi = add(ctx.cpu.regs.esi, 0xe87u32, &mut ctx.cpu.flags);
@@ -35317,7 +35247,7 @@ pub fn x409129(ctx: &mut Context) -> Cont {
 
 pub fn x40912a(ctx: &mut Context) -> Cont {
     // 0040912a pusha
-    pushad(ctx);
+    ctx.pushad();
     // 0040912b mov ds:[4377B4h],edi
     ctx.memory.write::<u32>(0x4377b4u32, ctx.cpu.regs.edi);
     // 00409131 xchg ebp,edi
@@ -35531,22 +35461,22 @@ pub fn x4091c1(ctx: &mut Context) -> Cont {
     ctx.memory
         .write::<u8>(ctx.cpu.regs.ebp.wrapping_add(0x4b9fu32), 0x0u8);
     // 004091c8 popa
-    popad(ctx);
+    ctx.popad();
     // 004091c9 ret
     ret(ctx, 0)
 }
 
 pub fn x4091ca(ctx: &mut Context) -> Cont {
     // 004091ca push edx
-    push(ctx, ctx.cpu.regs.edx);
+    ctx.push(ctx.cpu.regs.edx);
     // 004091cb push ebx
-    push(ctx, ctx.cpu.regs.ebx);
+    ctx.push(ctx.cpu.regs.ebx);
     // 004091cc push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 004091cd push esi
-    push(ctx, ctx.cpu.regs.esi);
+    ctx.push(ctx.cpu.regs.esi);
     // 004091ce push edi
-    push(ctx, ctx.cpu.regs.edi);
+    ctx.push(ctx.cpu.regs.edi);
     // 004091cf add eax,8000h
     ctx.cpu.regs.eax = add(ctx.cpu.regs.eax, 0x8000u32, &mut ctx.cpu.flags);
     // 004091d4 mov edi,0Fh
@@ -35578,7 +35508,7 @@ pub fn x4091ca(ctx: &mut Context) -> Cont {
 
 pub fn x4091f5(ctx: &mut Context) -> Cont {
     // 004091f5 pop esi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.esi = x;
     // 004091f6 add esi,0DABh
     ctx.cpu.regs.esi = add(ctx.cpu.regs.esi, 0xdabu32, &mut ctx.cpu.flags);
@@ -35653,19 +35583,19 @@ pub fn x4091f5(ctx: &mut Context) -> Cont {
         &mut ctx.cpu.flags,
     );
     // 00409220 pop edi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edi = x;
     // 00409221 pop esi
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.esi = x;
     // 00409222 pop ecx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ecx = x;
     // 00409223 pop ebx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ebx = x;
     // 00409224 pop edx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edx = x;
     // 00409225 ret
     ret(ctx, 0)
@@ -35956,7 +35886,7 @@ pub fn x4092d5(ctx: &mut Context) -> Cont {
     ctx.memory
         .write::<u8>(ctx.cpu.regs.edi.wrapping_add(0xfu32), 0x1u8);
     // 004092e6 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 004092e7 movzx eax,word ptr [ebx+0Dh]
     ctx.cpu.regs.eax = ctx
         .memory
@@ -35992,7 +35922,7 @@ pub fn x4092d5(ctx: &mut Context) -> Cont {
     ctx.memory
         .write::<u8>(ctx.cpu.regs.edi.wrapping_add(0xdu32), ctx.cpu.regs.get_al());
     // 00409306 pop eax
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.eax = x;
     // 00409307 cmp byte ptr [ebp+20h],0
     sub(
@@ -36372,7 +36302,7 @@ pub fn x4093ff(ctx: &mut Context) -> Cont {
 
 pub fn x40940b(ctx: &mut Context) -> Cont {
     // 0040940b push ebp
-    push(ctx, ctx.cpu.regs.ebp);
+    ctx.push(ctx.cpu.regs.ebp);
     // 0040940c call 004090C7h
     let dst = Cont(use_thisptr_thunk);
     call(ctx, 0x409411, dst)
@@ -36384,7 +36314,7 @@ pub fn x409411(ctx: &mut Context) -> Cont {
         .regs
         .set_al(ctx.memory.read::<u8>(ctx.cpu.regs.ebp.wrapping_add(0x2u32)));
     // 00409414 pop ebp
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ebp = x;
     // 00409415 ret
     ret(ctx, 0)
@@ -36392,7 +36322,7 @@ pub fn x409411(ctx: &mut Context) -> Cont {
 
 pub fn x409416(ctx: &mut Context) -> Cont {
     // 00409416 push ebp
-    push(ctx, ctx.cpu.regs.ebp);
+    ctx.push(ctx.cpu.regs.ebp);
     // 00409417 call 004090C7h
     let dst = Cont(use_thisptr_thunk);
     call(ctx, 0x40941c, dst)
@@ -36409,7 +36339,7 @@ pub fn x40941c(ctx: &mut Context) -> Cont {
             .read::<u8>(ctx.cpu.regs.ebp.wrapping_add(0x12u32)),
     );
     // 00409422 pop ebp
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ebp = x;
     // 00409423 ret
     ret(ctx, 0)
@@ -36917,7 +36847,7 @@ pub fn x40954a(ctx: &mut Context) -> Cont {
 
 pub fn x40954f(ctx: &mut Context) -> Cont {
     // 0040954f pop edx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.edx = x;
     // 00409550 mov ax,[edx+eax*2+0A91h]
     ctx.cpu.regs.set_ax(
@@ -38546,7 +38476,7 @@ pub fn x4098b1(ctx: &mut Context) -> Cont {
     // 004098b3 mov ebx,eax
     ctx.cpu.regs.ebx = ctx.cpu.regs.eax;
     // 004098b5 push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 004098b6 mov ecx,0FFFFFFFFh
     ctx.cpu.regs.ecx = 0xffffffffu32;
     // 004098bb mov eax,0FFFFD000h
@@ -38556,7 +38486,7 @@ pub fn x4098b1(ctx: &mut Context) -> Cont {
 
 pub fn x4098c0(ctx: &mut Context) -> Cont {
     // 004098c0 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 004098c1 add ax,[edi+32h]
     ctx.cpu.regs.set_ax(add(
         ctx.cpu.regs.get_ax(),
@@ -38618,7 +38548,7 @@ pub fn x4098e8(ctx: &mut Context) -> Cont {
 
 pub fn x4098ea(ctx: &mut Context) -> Cont {
     // 004098ea pop eax
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.eax = x;
     // 004098eb inc ah
     ctx.cpu
@@ -38632,7 +38562,7 @@ pub fn x4098ea(ctx: &mut Context) -> Cont {
 
 pub fn x4098f2(ctx: &mut Context) -> Cont {
     // 004098f2 pop ecx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ecx = x;
     // 004098f3 mov eax,ebx
     ctx.cpu.regs.eax = ctx.cpu.regs.ebx;
@@ -39717,7 +39647,7 @@ pub fn thunk_FUN_00409b47(ctx: &mut Context) -> Cont {
 
 pub fn x409b47(ctx: &mut Context) -> Cont {
     // 00409b47 pop ebx
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ebx = x;
     // 00409b48 mov eax,[ebx+eax*4+4F9h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(
@@ -41079,7 +41009,7 @@ pub fn x409ede(ctx: &mut Context) -> Cont {
 
 pub fn init_this(ctx: &mut Context) -> Cont {
     // 00409edf push ebp
-    push(ctx, ctx.cpu.regs.ebp);
+    ctx.push(ctx.cpu.regs.ebp);
     // 00409ee0 call 004090C7h
     let dst = Cont(use_thisptr_thunk);
     call(ctx, 0x409ee5, dst)
@@ -41197,7 +41127,7 @@ pub fn x409f23(ctx: &mut Context) -> Cont {
 
 pub fn x409f47(ctx: &mut Context) -> Cont {
     // 00409f47 pop ebp
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ebp = x;
     // 00409f48 ret
     ret(ctx, 0)
@@ -41205,7 +41135,7 @@ pub fn x409f47(ctx: &mut Context) -> Cont {
 
 pub fn x409f49(ctx: &mut Context) -> Cont {
     // 00409f49 push ebp
-    push(ctx, ctx.cpu.regs.ebp);
+    ctx.push(ctx.cpu.regs.ebp);
     // 00409f4a call 004090C7h
     let dst = Cont(use_thisptr_thunk);
     call(ctx, 0x409f4f, dst)
@@ -41238,7 +41168,7 @@ pub fn x409f58(ctx: &mut Context) -> Cont {
 
 pub fn x409f5e(ctx: &mut Context) -> Cont {
     // 00409f5e pop ebp
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ebp = x;
     // 00409f5f ret
     ret(ctx, 0)
@@ -41246,7 +41176,7 @@ pub fn x409f5e(ctx: &mut Context) -> Cont {
 
 pub fn x40a000(ctx: &mut Context) -> Cont {
     // 0040a000 pop ss
-    let x = pop16(ctx);
+    let x = ctx.pop16();
     ctx.cpu.regs.set_ss(x);
     // 0040a001 fisubr dword ptr [ecx+4367E100h]
     // Fisubr not implemented
@@ -41335,7 +41265,7 @@ pub fn x40a07e(ctx: &mut Context) -> Cont {
 
 pub fn sound_pushad(ctx: &mut Context) -> Cont {
     // 0040a260 pusha
-    pushad(ctx);
+    ctx.pushad();
     // 0040a261 shr ecx,1
     ctx.cpu.regs.ecx = shr(ctx.cpu.regs.ecx, 0x1u8, &mut ctx.cpu.flags);
     // 0040a263 je short 0040A280h
@@ -41394,7 +41324,7 @@ pub fn x40a27b(ctx: &mut Context) -> Cont {
 
 pub fn x40a27f(ctx: &mut Context) -> Cont {
     // 0040a27f popa
-    popad(ctx);
+    ctx.popad();
     Cont(x40a280)
 }
 
@@ -41405,7 +41335,7 @@ pub fn x40a280(ctx: &mut Context) -> Cont {
 
 pub fn init_sound(ctx: &mut Context) -> Cont {
     // 0040a281 pusha
-    pushad(ctx);
+    ctx.pushad();
     // 0040a282 mov ebx,4377B8h
     ctx.cpu.regs.ebx = 0x4377b8u32;
     // 0040a287 mov ecx,90046h
@@ -41429,13 +41359,13 @@ pub fn init_sound(ctx: &mut Context) -> Cont {
 
 pub fn x40a29e(ctx: &mut Context) -> Cont {
     // 0040a29e push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 0040a29f lea ecx,[ebx+8]
     ctx.cpu.regs.ecx = ctx.cpu.regs.ebx.wrapping_add(0x8u32);
     // 0040a2a2 push ecx
-    push(ctx, ctx.cpu.regs.ecx);
+    ctx.push(ctx.cpu.regs.ecx);
     // 0040a2a3 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 0040a2a4 call 0040A556h
     let dst = Cont(DSoundCreate);
     call(ctx, 0x40a2a9, dst)
@@ -41452,10 +41382,9 @@ pub fn x40a2ad(ctx: &mut Context) -> Cont {
     // 0040a2ad mov al,3
     ctx.cpu.regs.set_al(0x3u8);
     // 0040a2af push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 0040a2b0 push dword ptr [esp+28h]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.esp.wrapping_add(0x28u32)),
     );
@@ -41464,7 +41393,7 @@ pub fn x40a2ad(ctx: &mut Context) -> Cont {
         .memory
         .read::<u32>(ctx.cpu.regs.ebx.wrapping_add(0x8u32));
     // 0040a2b7 push esi
-    push(ctx, ctx.cpu.regs.esi);
+    ctx.push(ctx.cpu.regs.esi);
     // 0040a2b8 mov edi,[esi]
     ctx.cpu.regs.edi = ctx.memory.read::<u32>(ctx.cpu.regs.esi);
     // 0040a2ba call dword ptr [edi+18h]
@@ -41481,15 +41410,15 @@ pub fn x40a2bd(ctx: &mut Context) -> Cont {
 
 pub fn x40a2c1(ctx: &mut Context) -> Cont {
     // 0040a2c1 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 0040a2c2 lea ebp,[ebx+4]
     ctx.cpu.regs.ebp = ctx.cpu.regs.ebx.wrapping_add(0x4u32);
     // 0040a2c5 push ebp
-    push(ctx, ctx.cpu.regs.ebp);
+    ctx.push(ctx.cpu.regs.ebp);
     // 0040a2c6 push 40A4B7h
-    push(ctx, 0x40a4b7u32);
+    ctx.push(0x40a4b7u32);
     // 0040a2cb push esi
-    push(ctx, ctx.cpu.regs.esi);
+    ctx.push(ctx.cpu.regs.esi);
     // 0040a2cc call dword ptr [edi+0Ch]
     let dst = indirect(ctx, ctx.memory.read(ctx.cpu.regs.edi.wrapping_add(0xcu32)));
     call(ctx, 0x40a2cf, dst)
@@ -41508,15 +41437,15 @@ pub fn x40a2d1(ctx: &mut Context) -> Cont {
 
 pub fn x40a2d3(ctx: &mut Context) -> Cont {
     // 0040a2d3 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 0040a2d4 lea edx,[ebx]
     ctx.cpu.regs.edx = ctx.cpu.regs.ebx;
     // 0040a2d6 push edx
-    push(ctx, ctx.cpu.regs.edx);
+    ctx.push(ctx.cpu.regs.edx);
     // 0040a2d7 push 40A4A3h
-    push(ctx, 0x40a4a3u32);
+    ctx.push(0x40a4a3u32);
     // 0040a2dc push esi
-    push(ctx, ctx.cpu.regs.esi);
+    ctx.push(ctx.cpu.regs.esi);
     // 0040a2dd call dword ptr [edi+0Ch]
     let dst = indirect(ctx, ctx.memory.read(ctx.cpu.regs.edi.wrapping_add(0xcu32)));
     call(ctx, 0x40a2e0, dst)
@@ -41537,7 +41466,7 @@ pub fn x40a2e8(ctx: &mut Context) -> Cont {
     // 0040a2e8 lea edi,[ebx+34h]
     ctx.cpu.regs.edi = ctx.cpu.regs.ebx.wrapping_add(0x34u32);
     // 0040a2eb push edi
-    push(ctx, ctx.cpu.regs.edi);
+    ctx.push(ctx.cpu.regs.edi);
     // 0040a2ec lea esi,ds:[40A48Fh]
     ctx.cpu.regs.esi = 0x40a48fu32;
     // 0040a2f2 lea ecx,[eax+12h]
@@ -41547,7 +41476,7 @@ pub fn x40a2e8(ctx: &mut Context) -> Cont {
     // 0040a2f7 mov esi,[ebp]
     ctx.cpu.regs.esi = ctx.memory.read::<u32>(ctx.cpu.regs.ebp);
     // 0040a2fa push esi
-    push(ctx, ctx.cpu.regs.esi);
+    ctx.push(ctx.cpu.regs.esi);
     // 0040a2fb mov edi,[esi]
     ctx.cpu.regs.edi = ctx.memory.read::<u32>(ctx.cpu.regs.esi);
     // 0040a2fd call dword ptr [edi+38h]
@@ -41559,33 +41488,33 @@ pub fn x40a300(ctx: &mut Context) -> Cont {
     // 0040a300 xor esi,esi
     ctx.cpu.regs.esi = xor(ctx.cpu.regs.esi, ctx.cpu.regs.esi, &mut ctx.cpu.flags);
     // 0040a302 push 2
-    push(ctx, 0x2u32);
+    ctx.push(0x2u32);
     // 0040a307 lea edx,[ebx+20h]
     ctx.cpu.regs.edx = ctx.cpu.regs.ebx.wrapping_add(0x20u32);
     // 0040a30a push edx
-    push(ctx, ctx.cpu.regs.edx);
+    ctx.push(ctx.cpu.regs.edx);
     // 0040a30b lea edx,[ebx+1Ch]
     ctx.cpu.regs.edx = ctx.cpu.regs.ebx.wrapping_add(0x1cu32);
     // 0040a30e push edx
-    push(ctx, ctx.cpu.regs.edx);
+    ctx.push(ctx.cpu.regs.edx);
     // 0040a30f lea edx,[ebx+18h]
     ctx.cpu.regs.edx = ctx.cpu.regs.ebx.wrapping_add(0x18u32);
     // 0040a312 push edx
-    push(ctx, ctx.cpu.regs.edx);
+    ctx.push(ctx.cpu.regs.edx);
     // 0040a313 lea edx,[ebx+14h]
     ctx.cpu.regs.edx = ctx.cpu.regs.ebx.wrapping_add(0x14u32);
     // 0040a316 push edx
-    push(ctx, ctx.cpu.regs.edx);
+    ctx.push(ctx.cpu.regs.edx);
     // 0040a317 push esi
-    push(ctx, ctx.cpu.regs.esi);
+    ctx.push(ctx.cpu.regs.esi);
     // 0040a318 push esi
-    push(ctx, ctx.cpu.regs.esi);
+    ctx.push(ctx.cpu.regs.esi);
     // 0040a319 mov ebp,[ebx]
     ctx.cpu.regs.ebp = ctx.memory.read::<u32>(ctx.cpu.regs.ebx);
     // 0040a31b mov esi,[ebp]
     ctx.cpu.regs.esi = ctx.memory.read::<u32>(ctx.cpu.regs.ebp);
     // 0040a31e push ebp
-    push(ctx, ctx.cpu.regs.ebp);
+    ctx.push(ctx.cpu.regs.ebp);
     // 0040a31f call dword ptr [esi+2Ch]
     let dst = indirect(ctx, ctx.memory.read(ctx.cpu.regs.esi.wrapping_add(0x2cu32)));
     call(ctx, 0x40a322, dst)
@@ -41620,31 +41549,27 @@ pub fn x40a326(ctx: &mut Context) -> Cont {
     // 0040a334 rep stosb
     rep(ctx, Rep::REP, stosb);
     // 0040a336 push dword ptr [ebx+20h]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebx.wrapping_add(0x20u32)),
     );
     // 0040a339 push dword ptr [ebx+1Ch]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebx.wrapping_add(0x1cu32)),
     );
     // 0040a33c push dword ptr [ebx+18h]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebx.wrapping_add(0x18u32)),
     );
     // 0040a33f push dword ptr [ebx+14h]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebx.wrapping_add(0x14u32)),
     );
     // 0040a342 push ebp
-    push(ctx, ctx.cpu.regs.ebp);
+    ctx.push(ctx.cpu.regs.ebp);
     // 0040a343 call dword ptr [esi+4Ch]
     let dst = indirect(ctx, ctx.memory.read(ctx.cpu.regs.esi.wrapping_add(0x4cu32)));
     call(ctx, 0x40a346, dst)
@@ -41665,19 +41590,19 @@ pub fn x40a34a(ctx: &mut Context) -> Cont {
         .regs
         .set_al(inc(ctx.cpu.regs.get_al(), &mut ctx.cpu.flags));
     // 0040a34e push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 0040a34f push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 0040a350 dec al
     ctx.cpu
         .regs
         .set_al(dec(ctx.cpu.regs.get_al(), &mut ctx.cpu.flags));
     // 0040a352 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 0040a353 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 0040a354 push ebp
-    push(ctx, ctx.cpu.regs.ebp);
+    ctx.push(ctx.cpu.regs.ebp);
     // 0040a355 call dword ptr [esi+30h]
     let dst = indirect(ctx, ctx.memory.read(ctx.cpu.regs.esi.wrapping_add(0x30u32)));
     call(ctx, 0x40a358, dst)
@@ -41694,17 +41619,17 @@ pub fn x40a35c(ctx: &mut Context) -> Cont {
     // 0040a35c lea edx,[ebx+30h]
     ctx.cpu.regs.edx = ctx.cpu.regs.ebx.wrapping_add(0x30u32);
     // 0040a35f push edx
-    push(ctx, ctx.cpu.regs.edx);
+    ctx.push(ctx.cpu.regs.edx);
     // 0040a360 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 0040a361 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 0040a362 push 40A3C1h
-    push(ctx, 0x40a3c1u32);
+    ctx.push(0x40a3c1u32);
     // 0040a367 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 0040a368 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 0040a369 call 0040A568h
     let dst = Cont(CreateThread);
     call(ctx, 0x40a36e, dst)
@@ -41720,7 +41645,7 @@ pub fn x40a36e(ctx: &mut Context) -> Cont {
         inc(ctx.memory.read::<u32>(ctx.cpu.regs.esp), &mut ctx.cpu.flags),
     );
     // 0040a374 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 0040a375 call 0040A550h
     let dst = Cont(SetThreadPriority);
     call(ctx, 0x40a37a, dst)
@@ -41728,7 +41653,7 @@ pub fn x40a36e(ctx: &mut Context) -> Cont {
 
 pub fn x40a37a(ctx: &mut Context) -> Cont {
     // 0040a37a popa
-    popad(ctx);
+    ctx.popad();
     // 0040a37b stc
     stc(ctx);
     // 0040a37c jmp short 0040A385h
@@ -41743,7 +41668,7 @@ pub fn x40a37e(ctx: &mut Context) -> Cont {
 
 pub fn x40a383(ctx: &mut Context) -> Cont {
     // 0040a383 popa
-    popad(ctx);
+    ctx.popad();
     // 0040a384 clc
     clc(ctx);
     Cont(x40a385)
@@ -41758,7 +41683,7 @@ pub fn x40a385(ctx: &mut Context) -> Cont {
 
 pub fn sound_shutdown(ctx: &mut Context) -> Cont {
     // 0040a38a pusha
-    pushad(ctx);
+    ctx.pushad();
     // 0040a38b mov ebx,4377B8h
     ctx.cpu.regs.ebx = 0x4377b8u32;
     // 0040a390 inc dword ptr [ebx+0Ch]
@@ -41782,9 +41707,9 @@ pub fn sound_shutdown(ctx: &mut Context) -> Cont {
 
 pub fn x40a39a(ctx: &mut Context) -> Cont {
     // 0040a39a push 3E8h
-    push(ctx, 0x3e8u32);
+    ctx.push(0x3e8u32);
     // 0040a39f push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 0040a3a0 call 0040A562h
     let dst = Cont(WaitForSingleObject);
     call(ctx, 0x40a3a5, dst)
@@ -41827,7 +41752,7 @@ pub fn x40a3b9(ctx: &mut Context) -> Cont {
     // 0040a3b9 mov edx,[eax]
     ctx.cpu.regs.edx = ctx.memory.read::<u32>(ctx.cpu.regs.eax);
     // 0040a3bb push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 0040a3bc call dword ptr [edx+8]
     let dst = indirect(ctx, ctx.memory.read(ctx.cpu.regs.edx.wrapping_add(0x8u32)));
     call(ctx, 0x40a3bf, dst)
@@ -41835,14 +41760,14 @@ pub fn x40a3b9(ctx: &mut Context) -> Cont {
 
 pub fn x40a3bf(ctx: &mut Context) -> Cont {
     // 0040a3bf popa
-    popad(ctx);
+    ctx.popad();
     // 0040a3c0 ret
     ret(ctx, 0)
 }
 
 pub fn sound_thread_proc(ctx: &mut Context) -> Cont {
     // 0040a3c1 pusha
-    pushad(ctx);
+    ctx.pushad();
     // 0040a3c2 mov ebx,4377B8h
     ctx.cpu.regs.ebx = 0x4377b8u32;
     Cont(x40a3c7)
@@ -41861,7 +41786,7 @@ pub fn x40a3c7(ctx: &mut Context) -> Cont {
 
 pub fn x40a3cd(ctx: &mut Context) -> Cont {
     // 0040a3cd popa
-    popad(ctx);
+    ctx.popad();
     // 0040a3ce xor eax,eax
     ctx.cpu.regs.eax = xor(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
     // 0040a3d0 ret 4
@@ -41874,7 +41799,7 @@ pub fn x40a3d3(ctx: &mut Context) -> Cont {
     // 0040a3d5 lea edx,[ebp+14h]
     ctx.cpu.regs.edx = ctx.cpu.regs.ebp.wrapping_add(0x14u32);
     // 0040a3d8 push edx
-    push(ctx, ctx.cpu.regs.edx);
+    ctx.push(ctx.cpu.regs.edx);
     // 0040a3d9 call 0040A55Ch
     let dst = Cont(Sleep);
     call(ctx, 0x40a3de, dst)
@@ -41894,15 +41819,15 @@ pub fn x40a3e4(ctx: &mut Context) -> Cont {
     // 0040a3e4 xor eax,eax
     ctx.cpu.regs.eax = xor(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
     // 0040a3e6 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 0040a3e7 lea eax,[ebx+28h]
     ctx.cpu.regs.eax = ctx.cpu.regs.ebx.wrapping_add(0x28u32);
     // 0040a3ea push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 0040a3eb mov ebp,[ebx]
     ctx.cpu.regs.ebp = ctx.memory.read::<u32>(ctx.cpu.regs.ebx);
     // 0040a3ed push ebp
-    push(ctx, ctx.cpu.regs.ebp);
+    ctx.push(ctx.cpu.regs.ebp);
     // 0040a3ee mov edx,[ebp]
     ctx.cpu.regs.edx = ctx.memory.read::<u32>(ctx.cpu.regs.ebp);
     // 0040a3f1 call dword ptr [edx+10h]
@@ -41949,28 +41874,27 @@ pub fn x40a40f(ctx: &mut Context) -> Cont {
     // 0040a411 xor esi,esi
     ctx.cpu.regs.esi = xor(ctx.cpu.regs.esi, ctx.cpu.regs.esi, &mut ctx.cpu.flags);
     // 0040a413 push esi
-    push(ctx, ctx.cpu.regs.esi);
+    ctx.push(ctx.cpu.regs.esi);
     // 0040a414 lea edx,[ebx+20h]
     ctx.cpu.regs.edx = ctx.cpu.regs.ebx.wrapping_add(0x20u32);
     // 0040a417 push edx
-    push(ctx, ctx.cpu.regs.edx);
+    ctx.push(ctx.cpu.regs.edx);
     // 0040a418 lea edx,[ebx+1Ch]
     ctx.cpu.regs.edx = ctx.cpu.regs.ebx.wrapping_add(0x1cu32);
     // 0040a41b push edx
-    push(ctx, ctx.cpu.regs.edx);
+    ctx.push(ctx.cpu.regs.edx);
     // 0040a41c lea edx,[ebx+18h]
     ctx.cpu.regs.edx = ctx.cpu.regs.ebx.wrapping_add(0x18u32);
     // 0040a41f push edx
-    push(ctx, ctx.cpu.regs.edx);
+    ctx.push(ctx.cpu.regs.edx);
     // 0040a420 lea edx,[ebx+14h]
     ctx.cpu.regs.edx = ctx.cpu.regs.ebx.wrapping_add(0x14u32);
     // 0040a423 push edx
-    push(ctx, ctx.cpu.regs.edx);
+    ctx.push(ctx.cpu.regs.edx);
     // 0040a424 push eax
-    push(ctx, ctx.cpu.regs.eax);
+    ctx.push(ctx.cpu.regs.eax);
     // 0040a425 push dword ptr [ebx+2Ch]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebx.wrapping_add(0x2cu32)),
     );
@@ -41980,7 +41904,7 @@ pub fn x40a40f(ctx: &mut Context) -> Cont {
     // 0040a42b mov edx,[ebp]
     ctx.cpu.regs.edx = ctx.memory.read::<u32>(ctx.cpu.regs.ebp);
     // 0040a42e push ebp
-    push(ctx, ctx.cpu.regs.ebp);
+    ctx.push(ctx.cpu.regs.ebp);
     // 0040a42f call dword ptr [edx+2Ch]
     let dst = indirect(ctx, ctx.memory.read(ctx.cpu.regs.edx.wrapping_add(0x2cu32)));
     call(ctx, 0x40a432, dst)
@@ -41997,7 +41921,7 @@ pub fn x40a439(ctx: &mut Context) -> Cont {
     // 0040a439 mov edx,[ebp]
     ctx.cpu.regs.edx = ctx.memory.read::<u32>(ctx.cpu.regs.ebp);
     // 0040a43c push ebp
-    push(ctx, ctx.cpu.regs.ebp);
+    ctx.push(ctx.cpu.regs.ebp);
     // 0040a43d call dword ptr [edx+50h]
     let dst = indirect(ctx, ctx.memory.read(ctx.cpu.regs.edx.wrapping_add(0x50u32)));
     call(ctx, 0x40a440, dst)
@@ -42024,7 +41948,7 @@ pub fn x40a452(ctx: &mut Context) -> Cont {
     // 0040a452 mov esi,edi
     ctx.cpu.regs.esi = ctx.cpu.regs.edi;
     // 0040a454 push ebp
-    push(ctx, ctx.cpu.regs.ebp);
+    ctx.push(ctx.cpu.regs.ebp);
     // 0040a455 mov ebp,40A260h
     ctx.cpu.regs.ebp = 0x40a260u32;
     // 0040a45a mov edi,[ebx+14h]
@@ -42078,34 +42002,30 @@ pub fn x40a471(ctx: &mut Context) -> Cont {
 
 pub fn x40a476(ctx: &mut Context) -> Cont {
     // 0040a476 pop ebp
-    let x = pop(ctx);
+    let x = ctx.pop();
     ctx.cpu.regs.ebp = x;
     // 0040a477 push dword ptr [ebx+20h]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebx.wrapping_add(0x20u32)),
     );
     // 0040a47a push dword ptr [ebx+1Ch]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebx.wrapping_add(0x1cu32)),
     );
     // 0040a47d push dword ptr [ebx+18h]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebx.wrapping_add(0x18u32)),
     );
     // 0040a480 push dword ptr [ebx+14h]
-    push(
-        ctx,
+    ctx.push(
         ctx.memory
             .read::<u32>(ctx.cpu.regs.ebx.wrapping_add(0x14u32)),
     );
     // 0040a483 push ebp
-    push(ctx, ctx.cpu.regs.ebp);
+    ctx.push(ctx.cpu.regs.ebp);
     // 0040a484 mov esi,[ebp]
     ctx.cpu.regs.esi = ctx.memory.read::<u32>(ctx.cpu.regs.ebp);
     // 0040a487 call dword ptr [esi+4Ch]

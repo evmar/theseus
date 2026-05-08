@@ -10,7 +10,7 @@ impl<'a> CodeGen<'a> {
                     32 => "push",
                     _ => return false,
                 };
-                self.line(format!("{func}(ctx, {});", get_op(instr, 0)));
+                self.line(format!("ctx.{func}({});", get_op(instr, 0)));
             }
             Pop => {
                 let func = match op_size(instr, 0) {
@@ -18,11 +18,11 @@ impl<'a> CodeGen<'a> {
                     32 => "pop",
                     _ => return false,
                 };
-                self.line(format!("let x = {func}(ctx);"));
+                self.line(format!("let x = ctx.{func}();"));
                 self.line(set_op(instr, 0, "x".into()))
             }
-            Pushad => self.line("pushad(ctx);"),
-            Popad => self.line("popad(ctx);"),
+            Pushad => self.line("ctx.pushad();"),
+            Popad => self.line("ctx.popad();"),
             Mov => self.line(set_op(instr, 0, get_op(instr, 1))),
 
             Sete => self.line(set_op(instr, 0, "sete(ctx)".into())),

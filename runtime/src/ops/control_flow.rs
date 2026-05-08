@@ -1,14 +1,14 @@
 use crate::{Cont, ContFn, Context, Flags, RETURN_FROM_X86_ADDR, indirect};
 
 pub fn call(ctx: &mut Context, ret: u32, addr: Cont) -> Cont {
-    super::push(ctx, ret);
+    ctx.push(ret);
     addr
 }
 
 /// Call a ContFn (builtin implementation) synchronously, without returning a continuation.
 pub fn call_builtin(ctx: &mut Context, func: ContFn) {
     // Because ContFn is stdcall it expects to pop a return address off the stack.
-    super::push(ctx, RETURN_FROM_X86_ADDR);
+    ctx.push(RETURN_FROM_X86_ADDR);
     func(ctx); // pops the above return address; ignore it
 }
 
@@ -108,21 +108,21 @@ pub fn jbe(ctx: &mut Context, from: Cont, x: Cont) -> Cont {
 }
 
 pub fn ret(ctx: &mut Context, n: u16) -> Cont {
-    let ret = super::pop(ctx);
+    let ret = ctx.pop();
     ctx.cpu.regs.esp += n as u32;
     indirect(ctx, ret)
 }
 
 pub fn enter(ctx: &mut Context, bytes: u16, nesting: u8) {
     assert_eq!(nesting, 0);
-    super::push(ctx, ctx.cpu.regs.ebp);
+    ctx.push(ctx.cpu.regs.ebp);
     ctx.cpu.regs.ebp = ctx.cpu.regs.esp;
     ctx.cpu.regs.esp -= bytes as u32;
 }
 
 pub fn leave(ctx: &mut Context) {
     ctx.cpu.regs.esp = ctx.cpu.regs.ebp;
-    ctx.cpu.regs.ebp = super::pop(ctx);
+    ctx.cpu.regs.ebp = ctx.pop();
 }
 
 pub fn sete(ctx: &Context) -> u8 {

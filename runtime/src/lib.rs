@@ -32,12 +32,12 @@ pub struct Cont(pub ContFn);
 pub fn call_x86(ctx: &mut Context, mut f: Cont, args: Vec<u32>) {
     let esp = ctx.cpu.regs.esp;
     for arg in args.into_iter().rev() {
-        push(ctx, arg);
+        ctx.push(arg);
     }
     // Note that return_from_x86 is never called.  When the x86 code returns
     // to it, the stack will have been popped so that esp matches our initial
     // esp and we abort the loop before invoking the continuation.
-    push(ctx, RETURN_FROM_X86_ADDR);
+    ctx.push(RETURN_FROM_X86_ADDR);
 
     let mut i = 0;
     while ctx.cpu.regs.esp != esp {
