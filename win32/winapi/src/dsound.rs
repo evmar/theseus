@@ -5,6 +5,9 @@ use zerocopy::FromBytes;
 
 use crate::{dllexport::win32flags, heap::Heap, kernel32, locked_state::LockedState, stub, user32};
 
+/// When true, write a debug `out.wav` containing the audio data.
+const WRITE_WAV: bool = false;
+
 const fn make_dhsresult(code: u32) -> u32 {
     (1 << 31) | (0x878 << 16) | code
 }
@@ -104,7 +107,7 @@ struct Buffer {
     size: u32,
     total_written: u32,
     stream: AudioStream,
-    write: WavWrite,
+    write: Option<WavWrite>,
 }
 
 // We need a sdl3::AudioSubsystem to make audio calls.
@@ -226,7 +229,12 @@ pub mod IDirectSound {
                 }))
                 .unwrap();
 
-            let write = WavWrite::new("out.wav");
+            let write = if WRITE_WAV {
+                Some(WavWrite::new("out.wav"))
+            } else {
+                None
+            };
+
             let buffer = Buffer {
                 addr: kernel32
                     .process_heap
@@ -493,7 +501,7 @@ pub mod IDirectSoundBuffer {
 
         let data = &ctx.memory[pvAudioPtr1..][..dwAudioBytes1 as usize];
         buffer.stream.0.put_data(data).unwrap();
-        buffer.write.write(data);
+        buffer.write.as_mut().map(|w| w.write(data));
         buffer.total_written += data.len() as u32;
 
         DS_OK
