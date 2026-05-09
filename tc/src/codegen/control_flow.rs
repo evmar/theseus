@@ -12,23 +12,28 @@ impl<'a> CodeGen<'a> {
         }
     }
 
-    fn gen_jmp(&self, instr: &Instr) -> String {
+    /// Returns (code, uses_ctx) where uses_ctx is true if code uses ctx.
+    fn gen_jmp(&self, instr: &Instr) -> (String, bool) {
         match instr.iced.op_kind(0) {
             iced_x86::OpKind::NearBranch32 => {
                 let addr = instr.iced.near_branch32();
-                self.gen_abs_jmp(addr)
+                (self.gen_abs_jmp(addr), false)
             }
             iced_x86::OpKind::Memory => {
                 // If it's like `jmp [someaddr]` where someaddr is in the IAT, resolve it directly.
                 // (Note that `call [someaddr@IAT]` is generated as a direct function call.)
                 if let Some(func) = &instr.hint {
-                    return format!("Cont({func})");
+                    return (format!("Cont({func})"), false);
                 }
-                format!("ctx.indirect(ctx.memory.read({}))", gen_addr(&instr.iced))
+                (
+                    format!("ctx.indirect(ctx.memory.read({}))", gen_addr(&instr.iced)),
+                    true,
+                )
             }
-            iced_x86::OpKind::Register => {
-                format!("ctx.indirect({})", get_reg(instr.iced.op0_register()))
-            }
+            iced_x86::OpKind::Register => (
+                format!("ctx.indirect({})", get_reg(instr.iced.op0_register())),
+                true,
+            ),
             k => todo!("{:?}", k),
         }
     }
@@ -36,14 +41,18 @@ impl<'a> CodeGen<'a> {
     pub fn codegen_control_flow(&mut self, instr: &Instr) -> bool {
         use iced_x86::Mnemonic::*;
         match instr.iced.mnemonic() {
-            Jmp => self.line(self.gen_jmp(instr)),
+            Jmp => self.line(self.gen_jmp(instr).0),
             Call => {
                 if let Some(func) = &instr.hint {
                     self.line(format!("ctx.call_builtin({func});"));
                 } else {
-                    // Create a temporary here in case gen_jmp needs to borrow ctx.
-                    self.line(format!("let dst = {};", self.gen_jmp(instr)));
-                    self.line(format!("ctx.call({:#x}, dst)", instr.next_ip()));
+                    let (dst, uses_ctx) = self.gen_jmp(instr);
+                    if uses_ctx {
+                        self.line(format!("let dst = {};", dst));
+                        self.line(format!("ctx.call({:#x}, dst)", instr.next_ip()));
+                    } else {
+                        self.line(format!("ctx.call({:#x}, {dst})", instr.next_ip()));
+                    }
                 }
             }
             Ret => {
@@ -59,7 +68,7 @@ impl<'a> CodeGen<'a> {
             }
             Je | Jne | Jb | Js | Jns | Ja | Jae | Jl | Jg | Jge | Jecxz | Jle | Jbe | Loop => {
                 let next = self.gen_abs_jmp(instr.next_ip());
-                let dst = self.gen_jmp(instr);
+                let dst = self.gen_jmp(instr).0;
                 let func = instr_name(&instr.iced);
                 self.line(format!("ctx.{func}({next}, {dst})"));
             }
