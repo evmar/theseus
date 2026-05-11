@@ -5,6 +5,7 @@ members = [
   "exe/chillin",
   "exe/chillin-unpack",
   "exe/mofo",
+  "exe/mine",
   "exe/mofo-unpack",
   "exe/thread",
   "exe/winapi",
