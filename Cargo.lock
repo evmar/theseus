@@ -456,6 +456,13 @@ dependencies = [
 ]
 
 [[package]]
+name = "win32-extract"
+version = "0.1.0"
+dependencies = [
+ "windows-metadata",
+]
+
+[[package]]
 name = "winapi"
 version = "0.1.0"
 dependencies = [
@@ -513,6 +520,12 @@ name = "windows-link"
 version = "0.2.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f0805222e57f7521d6a62e36fa9163bc891acd422f971defe97d64e70d0a4fe5"
+
+[[package]]
+name = "windows-metadata"
+version = "0.58.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2e837f3c3012cfe9e7086302a93f441a7999439be1ad4c530d55d2f6d2921809"
 
 [[package]]
 name = "windows-sys"

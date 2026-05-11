@@ -14,6 +14,7 @@ members = [
   "runtime",
   "tc",
   "win32/derive",
+  "win32/extract",
   "win32/winapi",
 ]
 
