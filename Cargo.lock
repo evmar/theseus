@@ -480,6 +480,7 @@ dependencies = [
  "pe",
  "runtime",
  "sdl3",
+ "widestring",
  "win32-derive",
  "zerocopy",
 ]

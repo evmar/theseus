@@ -234,58 +234,6 @@ pub fn KillTimer(_ctx: &mut Context, _hWnd: HWND, _uIDEvent: u32) -> bool {
     todo!()
 }
 
-pub type HACCEL = u32;
-pub type HCURSOR = u32;
-pub type HICON = u32;
-pub type HMENU = u32;
-
-#[win32_derive::dllexport]
-pub fn LoadAcceleratorsW(
-    _ctx: &mut Context,
-    _hInstance: HINSTANCE,
-    _lpTableName: u32, /* WSTR */
-) -> HACCEL {
-    todo!()
-}
-
-#[win32_derive::dllexport]
-pub fn LoadCursorW(
-    _ctx: &mut Context,
-    _hInstance: HINSTANCE,
-    _lpCursorName: u32, /* WSTR */
-) -> HCURSOR {
-    todo!()
-}
-
-#[win32_derive::dllexport]
-pub fn LoadIconW(
-    _ctx: &mut Context,
-    _hInstance: HINSTANCE,
-    _lpIconName: u32, /* WSTR */
-) -> HICON {
-    todo!()
-}
-
-#[win32_derive::dllexport]
-pub fn LoadMenuW(
-    _ctx: &mut Context,
-    _hInstance: HINSTANCE,
-    _lpMenuName: u32, /* WSTR */
-) -> HMENU {
-    todo!()
-}
-
-#[win32_derive::dllexport]
-pub fn LoadStringW(
-    _ctx: &mut Context,
-    _hInstance: HINSTANCE,
-    _uID: u32,
-    _lpBuffer: u32, /* WSTR */
-    _cchBufferMax: i32,
-) -> i32 {
-    todo!()
-}
-
 #[win32_derive::dllexport]
 pub fn MessageBoxW(
     _ctx: &mut Context,

@@ -10,5 +10,6 @@ log = { workspace = true }
 pe = { workspace = true }
 runtime = { workspace = true }
 sdl3 = { version = "0.17.3", features = ["unsafe_textures"] }
+widestring = { workspace = true }
 win32-derive = { path = "../derive" }
 zerocopy = { workspace = true }
