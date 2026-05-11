@@ -100,7 +100,7 @@ pub fn LoadAcceleratorsW(
     _hInstance: HINSTANCE,
     _lpTableName: u32, /* WSTR */
 ) -> HACCEL {
-    todo!()
+    stub!(0)
 }
 
 #[win32_derive::dllexport]
@@ -109,7 +109,7 @@ pub fn LoadCursorW(
     _hInstance: HINSTANCE,
     _lpCursorName: u32, /* WSTR */
 ) -> HCURSOR {
-    todo!()
+    stub!(0)
 }
 
 #[win32_derive::dllexport]
@@ -118,7 +118,7 @@ pub fn LoadIconW(
     _hInstance: HINSTANCE,
     _lpIconName: u32, /* WSTR */
 ) -> HICON {
-    todo!()
+    stub!(0)
 }
 
 #[win32_derive::dllexport]
@@ -127,7 +127,7 @@ pub fn LoadMenuW(
     _hInstance: HINSTANCE,
     _lpMenuName: u32, /* WSTR */
 ) -> HMENU {
-    todo!()
+    stub!(0)
 }
 
 fn find_string(ctx: &Context, uID: u32) -> Option<&[u8]> {
