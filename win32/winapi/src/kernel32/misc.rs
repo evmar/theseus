@@ -1,6 +1,11 @@
 use runtime::Context;
 
-use crate::kernel32::{HMODULE, lock};
+use crate::{
+    kernel32::{HMODULE, lock},
+    stub,
+};
+
+const ERROR_FILE_NOT_FOUND: u32 = 2;
 
 #[win32_derive::dllexport]
 pub fn GetLastError(_ctx: &mut Context) -> u32 {
@@ -193,10 +198,10 @@ pub fn GetPrivateProfileIntW(
     _ctx: &mut Context,
     _lpAppName: u32, /* WSTR */
     _lpKeyName: u32, /* WSTR */
-    _nDefault: i32,
+    nDefault: i32,
     _lpFileName: u32, /* WSTR */
 ) -> i32 {
-    todo!()
+    stub!(nDefault)
 }
 
 #[win32_derive::dllexport]
@@ -209,5 +214,5 @@ pub fn GetPrivateProfileStringW(
     _nSize: u32,
     _lpFileName: u32, /* WSTR */
 ) -> u32 {
-    todo!()
+    stub!(ERROR_FILE_NOT_FOUND)
 }
