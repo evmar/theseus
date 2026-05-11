@@ -2,6 +2,7 @@
 #![allow(non_camel_case_types)]
 #![allow(non_upper_case_globals)]
 
+pub mod advapi32;
 pub mod bitmap;
 pub mod ddraw;
 mod dllexport;
@@ -11,8 +12,10 @@ mod handle;
 mod heap;
 pub mod kernel32;
 mod locked_state;
+pub mod msvcrt;
 mod point;
 mod rect;
+pub mod shell32;
 pub mod trace;
 pub mod user32;
 pub mod winmm;
