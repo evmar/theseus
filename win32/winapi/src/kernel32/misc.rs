@@ -1,6 +1,6 @@
 use runtime::Context;
 
-use crate::kernel32::lock;
+use crate::kernel32::{HMODULE, lock};
 
 #[win32_derive::dllexport]
 pub fn GetLastError(_ctx: &mut Context) -> u32 {
@@ -147,5 +147,67 @@ pub fn RtlUnwind(
     _ExceptionRecord: u32,
     _ReturnValue: u32,
 ) {
+    todo!()
+}
+
+// KERNEL32.dll
+#[win32_derive::dllexport]
+pub fn lstrcpyW(
+    _ctx: &mut Context,
+    _lpString1: u32, /* WSTR */
+    _lpString2: u32, /* WSTR */
+) -> u32 /* WSTR */ {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn lstrlenW(_ctx: &mut Context, _lpString: u32 /* WSTR */) -> i32 {
+    todo!()
+}
+
+pub type HRSRC = u32;
+pub type HGLOBAL = u32;
+
+#[win32_derive::dllexport]
+pub fn FindResourceW(
+    _ctx: &mut Context,
+    _hModule: HMODULE,
+    _lpName: u32, /* WSTR */
+    _lpType: u32, /* WSTR */
+) -> HRSRC {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn LoadResource(_ctx: &mut Context, _hModule: HMODULE, _hResInfo: HRSRC) -> HGLOBAL {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn LockResource(_ctx: &mut Context, _hResData: HGLOBAL) -> () {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn GetPrivateProfileIntW(
+    _ctx: &mut Context,
+    _lpAppName: u32, /* WSTR */
+    _lpKeyName: u32, /* WSTR */
+    _nDefault: i32,
+    _lpFileName: u32, /* WSTR */
+) -> i32 {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn GetPrivateProfileStringW(
+    _ctx: &mut Context,
+    _lpAppName: u32,        /* WSTR */
+    _lpKeyName: u32,        /* WSTR */
+    _lpDefault: u32,        /* WSTR */
+    _lpReturnedString: u32, /* WSTR */
+    _nSize: u32,
+    _lpFileName: u32, /* WSTR */
+) -> u32 {
     todo!()
 }

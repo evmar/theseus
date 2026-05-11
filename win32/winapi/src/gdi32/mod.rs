@@ -6,11 +6,12 @@ use std::{
 use crate::{HANDLE, handle::Handles};
 
 mod bitmap;
-mod dc;
-mod object;
-
 pub use bitmap::*;
+mod dc;
 pub use dc::*;
+mod misc;
+pub use misc::*;
+mod object;
 pub use object::*;
 
 pub type HDC = HANDLE;

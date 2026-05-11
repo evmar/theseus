@@ -1,7 +1,7 @@
 use runtime::Context;
 
 use super::*;
-use crate::stub;
+use crate::{gdi32::HDC, stub};
 
 #[win32_derive::dllexport]
 pub fn GetSystemMetrics(_ctx: &mut Context, nIndex: u32 /* SYSTEM_METRICS_INDEX */) -> i32 {
@@ -38,4 +38,370 @@ pub fn CreateCursor(
     _pvXORPlane: u32,
 ) -> HCURSOR {
     stub!(0)
+}
+
+#[win32_derive::dllexport]
+pub fn BeginPaint(_ctx: &mut Context, _hWnd: HWND, _lpPaint: u32 /* PAINTSTRUCT */) -> HDC {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn EndPaint(_ctx: &mut Context, _hWnd: HWND, _lpPaint: u32 /* PAINTSTRUCT */) -> bool {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn GetDC(_ctx: &mut Context, _hWnd: HWND) -> HDC {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn InvalidateRect(
+    _ctx: &mut Context,
+    _hWnd: HWND,
+    _lpRect: u32, /* RECT */
+    _bErase: bool,
+) -> bool {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn MapWindowPoints(
+    _ctx: &mut Context,
+    _hWndFrom: HWND,
+    _hWndTo: HWND,
+    _lpPoints: u32, /* POINT */
+    _cPoints: u32,
+) -> i32 {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn PtInRect(_ctx: &mut Context, _lprc: u32 /* RECT */, _pt: u32 /* POINT */) -> bool {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn ReleaseDC(_ctx: &mut Context, _hWnd: HWND, _hDC: HDC) -> i32 {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn SetRect(
+    _ctx: &mut Context,
+    _lprc: u32, /* RECT */
+    _xLeft: i32,
+    _yTop: i32,
+    _xRight: i32,
+    _yBottom: i32,
+) -> bool {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn ReleaseCapture(_ctx: &mut Context) -> bool {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn SetCapture(_ctx: &mut Context, _hWnd: HWND) -> HWND {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn WinHelpW(
+    _ctx: &mut Context,
+    _hWndMain: HWND,
+    _lpszHelp: u32, /* WSTR */
+    _uCommand: u32,
+    _dwData: u32,
+) -> bool {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn CheckMenuItem(_ctx: &mut Context, _hMenu: HMENU, _uIDCheckItem: u32, _uCheck: u32) -> u32 {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn CreateWindowExW(
+    _ctx: &mut Context,
+    _dwExStyle: u32,    /* WINDOW_EX_STYLE */
+    _lpClassName: u32,  /* WSTR */
+    _lpWindowName: u32, /* WSTR */
+    _dwStyle: u32,      /* WINDOW_STYLE */
+    _X: i32,
+    _Y: i32,
+    _nWidth: i32,
+    _nHeight: i32,
+    _hWndParent: HWND,
+    _hMenu: HMENU,
+    _hInstance: HINSTANCE,
+    _lpParam: u32,
+) -> HWND {
+    todo!()
+}
+
+pub type WPARAM = u32;
+pub type LPARAM = u32;
+pub type LRESULT = i32;
+
+#[win32_derive::dllexport]
+pub fn DefWindowProcW(
+    _ctx: &mut Context,
+    _hWnd: HWND,
+    _Msg: u32,
+    _wParam: WPARAM,
+    _lParam: LPARAM,
+) -> LRESULT {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn DialogBoxParamW(
+    _ctx: &mut Context,
+    _hInstance: HINSTANCE,
+    _lpTemplateName: u32, /* WSTR */
+    _hWndParent: HWND,
+    _lpDialogFunc: u32, /* DLGPROC */
+    _dwInitParam: LPARAM,
+) -> i32 {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn DispatchMessageW(_ctx: &mut Context, _lpMsg: u32 /* MSG */) -> LRESULT {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn GetDesktopWindow(_ctx: &mut Context) -> HWND {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn GetDlgItem(_ctx: &mut Context, _hDlg: HWND, _nIDDlgItem: i32) -> HWND {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn GetDlgItemInt(
+    _ctx: &mut Context,
+    _hDlg: HWND,
+    _nIDDlgItem: i32,
+    _lpTranslated: bool,
+    _bSigned: bool,
+) -> u32 {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn GetDlgItemTextW(
+    _ctx: &mut Context,
+    _hDlg: HWND,
+    _nIDDlgItem: i32,
+    _lpString: u32, /* WSTR */
+    _cchMax: i32,
+) -> u32 {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn GetMenuItemRect(
+    _ctx: &mut Context,
+    _hWnd: HWND,
+    _hMenu: HMENU,
+    _uItem: u32,
+    _lprcItem: u32, /* RECT */
+) -> bool {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn GetMessageW(
+    _ctx: &mut Context,
+    _lpMsg: u32, /* MSG */
+    _hWnd: HWND,
+    _wMsgFilterMin: u32,
+    _wMsgFilterMax: u32,
+) -> bool {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn KillTimer(_ctx: &mut Context, _hWnd: HWND, _uIDEvent: u32) -> bool {
+    todo!()
+}
+
+pub type HACCEL = u32;
+pub type HCURSOR = u32;
+pub type HICON = u32;
+pub type HMENU = u32;
+
+#[win32_derive::dllexport]
+pub fn LoadAcceleratorsW(
+    _ctx: &mut Context,
+    _hInstance: HINSTANCE,
+    _lpTableName: u32, /* WSTR */
+) -> HACCEL {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn LoadCursorW(
+    _ctx: &mut Context,
+    _hInstance: HINSTANCE,
+    _lpCursorName: u32, /* WSTR */
+) -> HCURSOR {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn LoadIconW(
+    _ctx: &mut Context,
+    _hInstance: HINSTANCE,
+    _lpIconName: u32, /* WSTR */
+) -> HICON {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn LoadMenuW(
+    _ctx: &mut Context,
+    _hInstance: HINSTANCE,
+    _lpMenuName: u32, /* WSTR */
+) -> HMENU {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn LoadStringW(
+    _ctx: &mut Context,
+    _hInstance: HINSTANCE,
+    _uID: u32,
+    _lpBuffer: u32, /* WSTR */
+    _cchBufferMax: i32,
+) -> i32 {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn MessageBoxW(
+    _ctx: &mut Context,
+    _hWnd: HWND,
+    _lpText: u32,    /* WSTR */
+    _lpCaption: u32, /* WSTR */
+    _uType: u32,     /* MESSAGEBOX_STYLE */
+) -> u32 /* MESSAGEBOX_RESULT */ {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn MoveWindow(
+    _ctx: &mut Context,
+    _hWnd: HWND,
+    _X: i32,
+    _Y: i32,
+    _nWidth: i32,
+    _nHeight: i32,
+    _bRepaint: bool,
+) -> bool {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn PeekMessageW(
+    _ctx: &mut Context,
+    _lpMsg: u32, /*MSG*/
+    _hWnd: HWND,
+    _wMsgFilterMin: u32,
+    _wMsgFilterMax: u32,
+    _wRemoveMsg: u32, /* PEEK_MESSAGE_REMOVE_TYPE */
+) -> bool {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn PostMessageW(
+    _ctx: &mut Context,
+    _hWnd: HWND,
+    _Msg: u32,
+    _wParam: WPARAM,
+    _lParam: LPARAM,
+) -> bool {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn RegisterClassW(_ctx: &mut Context, _lpWndClass: u32 /* WNDCLASSW */) -> u16 {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn SendMessageW(
+    _ctx: &mut Context,
+    _hWnd: HWND,
+    _Msg: u32,
+    _wParam: WPARAM,
+    _lParam: LPARAM,
+) -> LRESULT {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn SetDlgItemInt(
+    _ctx: &mut Context,
+    _hDlg: HWND,
+    _nIDDlgItem: i32,
+    _uValue: u32,
+    _bSigned: bool,
+) -> bool {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn SetDlgItemTextW(
+    _ctx: &mut Context,
+    _hDlg: HWND,
+    _nIDDlgItem: i32,
+    _lpString: u32, /* WSTR */
+) -> bool {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn SetMenu(_ctx: &mut Context, _hWnd: HWND, _hMenu: HMENU) -> bool {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn SetTimer(
+    _ctx: &mut Context,
+    _hWnd: HWND,
+    _nIDEvent: u32,
+    _uElapse: u32,
+    _lpTimerFunc: u32, /* TIMERPROC */
+) -> u32 {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn TranslateAcceleratorW(
+    _ctx: &mut Context,
+    _hWnd: HWND,
+    _hAccTable: HACCEL,
+    _lpMsg: u32, /* MSG */
+) -> i32 {
+    todo!()
+}
+
+// XXX: cdecl
+#[win32_derive::dllexport]
+pub fn wsprintfW(
+    _ctx: &mut Context,
+    _param0: u32, /* WSTR */
+    _param1: u32, /* WSTR */
+) -> i32 {
+    todo!()
 }

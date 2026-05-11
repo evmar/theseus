@@ -6,6 +6,8 @@ mod time;
 pub use time::*;
 mod wave;
 pub use wave::*;
+mod misc;
+pub use misc::*;
 
 use crate::kernel32::get_tick_count;
 
