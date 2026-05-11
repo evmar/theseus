@@ -1,10 +1,14 @@
 use runtime::Context;
 
+use crate::stub;
+
 pub type HKEY = u32;
+
+const ERROR_FILE_NOT_FOUND: u32 = 2;
 
 #[win32_derive::dllexport]
 pub fn RegCloseKey(_ctx: &mut Context, _hKey: HKEY) -> u32 /* WIN32_ERROR */ {
-    todo!()
+    stub!(0)
 }
 
 #[win32_derive::dllexport]
@@ -20,7 +24,7 @@ pub fn RegCreateKeyExW(
     _phkResult: HKEY,
     _lpdwDisposition: u32, /* REG_CREATE_KEY_DISPOSITION */
 ) -> u32 /* WIN32_ERROR */ {
-    todo!()
+    stub!(0)
 }
 
 #[win32_derive::dllexport]
@@ -32,7 +36,7 @@ pub fn RegOpenKeyExA(
     _samDesired: u32, /* REG_SAM_FLAGS */
     _phkResult: HKEY,
 ) -> u32 /* WIN32_ERROR */ {
-    todo!()
+    stub!(0)
 }
 
 #[win32_derive::dllexport]
@@ -45,7 +49,7 @@ pub fn RegQueryValueExA(
     _lpData: u32,
     _lpcbData: u32,
 ) -> u32 /* WIN32_ERROR */ {
-    todo!()
+    stub!(ERROR_FILE_NOT_FOUND)
 }
 
 #[win32_derive::dllexport]
@@ -58,7 +62,7 @@ pub fn RegQueryValueExW(
     _lpData: u32,
     _lpcbData: u32,
 ) -> u32 /* WIN32_ERROR */ {
-    todo!()
+    stub!(ERROR_FILE_NOT_FOUND)
 }
 
 #[win32_derive::dllexport]
@@ -71,5 +75,5 @@ pub fn RegSetValueExW(
     _lpData: u32,
     _cbData: u32,
 ) -> u32 /* WIN32_ERROR */ {
-    todo!()
+    stub!(0)
 }
