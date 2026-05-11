@@ -31,5 +31,7 @@ The two halves of Theseus are:
 ## Profiling
 
 ```
-cargo instruments -t time -p chillin --profile release --time-limit 10000
+$ cargo instruments -t time -p chillin --profile release --time-limit 10000
 ```
+
+Run `dsymutil target/release/chillin` to get source info in the profile output.
