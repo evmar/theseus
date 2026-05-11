@@ -113,3 +113,8 @@ pub fn SetFocus(_ctx: &mut Context, _hWnd: HWND) -> HWND {
 pub fn RegisterClassA(_ctx: &mut Context, _lpWndClass: u32) -> u16 {
     stub!(1)
 }
+
+#[win32_derive::dllexport]
+pub fn RegisterClassW(_ctx: &mut Context, _lpWndClass: u32 /* WNDCLASSW */) -> u16 {
+    stub!(1)
+}

@@ -282,11 +282,6 @@ pub fn PostMessageW(
 }
 
 #[win32_derive::dllexport]
-pub fn RegisterClassW(_ctx: &mut Context, _lpWndClass: u32 /* WNDCLASSW */) -> u16 {
-    todo!()
-}
-
-#[win32_derive::dllexport]
 pub fn SendMessageW(
     _ctx: &mut Context,
     _hWnd: HWND,
