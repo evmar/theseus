@@ -40,6 +40,7 @@ pub fn load_pe(mem: &mut Memory, buf: Vec<u8>) -> Module {
         });
 
     let imports = read_imports(&f, mem);
+    log::info!("imp {:#x?}", imports);
 
     Module {
         imports,
@@ -49,6 +50,13 @@ pub fn load_pe(mem: &mut Memory, buf: Vec<u8>) -> Module {
         resources,
         vtables: Default::default(),
     }
+}
+
+fn is_data(dll: &str, func: &str) -> bool {
+    if dll == "msvcrt" {
+        return matches!(func, "_adjust_fdiv" | "_acmdln");
+    }
+    false
 }
 
 /// Read the file's imported symbols.
@@ -65,14 +73,17 @@ fn read_imports(pe_file: &pe::File, mem: &Memory) -> Vec<Import> {
             .to_lowercase();
         let name = name.trim_end_matches(".dll");
         for (addr, entry) in imp.iat_iter(image) {
+            let func = match entry.as_import_symbol(image) {
+                pe::ImportSymbol::Name(name) => std::str::from_utf8(name).unwrap().to_string(),
+                pe::ImportSymbol::Ordinal(n) => format!("ordinal{n}"),
+            };
+            let data = is_data(name, &func);
             imports.push(Import {
                 dll: name.to_string(),
-                func: match entry.as_import_symbol(image) {
-                    pe::ImportSymbol::Name(name) => std::str::from_utf8(name).unwrap().to_string(),
-                    pe::ImportSymbol::Ordinal(n) => format!("ordinal{n}"),
-                },
+                func,
                 iat_addr: image_base + addr,
-                func_addr: 0,
+                addr: 0,
+                data,
             });
         }
     }

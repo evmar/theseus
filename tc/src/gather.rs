@@ -72,14 +72,16 @@ impl<'a> Traverse<'a> {
 
     pub fn run(&mut self) {
         for import in &self.module.imports {
-            let func = format!("{}::{}", import.dll, import.func);
-            self.blocks.insert(
-                import.func_addr,
-                Block {
-                    name: None, // block.name() will use the stdcall name
-                    ty: BlockType::Stdcall(func),
-                },
-            );
+            if !import.data {
+                let func = format!("{}::{}", import.dll, import.func);
+                self.blocks.insert(
+                    import.addr,
+                    Block {
+                        name: None, // block.name() will use the stdcall name
+                        ty: BlockType::Stdcall(func),
+                    },
+                );
+            }
             self.iat_refs.insert(import.iat_addr, &import);
         }
 

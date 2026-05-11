@@ -8,8 +8,8 @@ pub fn _XcptFilter(_ctx: &mut Context) {
 }
 
 #[win32_derive::dllexport]
-pub fn __getmainargs(_ctx: &mut Context) {
-    todo!()
+pub fn __getmainargs(_ctx: &mut Context) -> i32 {
+    0
 }
 
 #[win32_derive::dllexport]
@@ -30,19 +30,13 @@ pub fn __setusermatherr(_ctx: &mut Context) {
     todo!()
 }
 
-#[win32_derive::dllexport]
-pub fn _acmdln(_ctx: &mut Context) {
-    todo!()
-}
+// data:
+// _acmdln
+// _adjust_fdiv
 
 #[win32_derive::dllexport]
-pub fn _adjust_fdiv(_ctx: &mut Context) {
-    todo!()
-}
-
-#[win32_derive::dllexport]
-pub fn _controlfp(_ctx: &mut Context) {
-    todo!()
+pub fn _controlfp(_ctx: &mut Context) -> u32 {
+    stub!(0)
 }
 
 #[win32_derive::dllexport]
@@ -56,9 +50,7 @@ pub fn _exit(_ctx: &mut Context) {
 }
 
 #[win32_derive::dllexport]
-pub fn _initterm(_ctx: &mut Context) {
-    todo!()
-}
+pub fn _initterm(_ctx: &mut Context) {}
 
 #[win32_derive::dllexport]
 pub fn exit(_ctx: &mut Context) {
@@ -71,6 +63,4 @@ pub fn rand(_ctx: &mut Context) {
 }
 
 #[win32_derive::dllexport]
-pub fn srand(_ctx: &mut Context) {
-    todo!()
-}
+pub fn srand(_ctx: &mut Context) {}

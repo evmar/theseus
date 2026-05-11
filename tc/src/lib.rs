@@ -15,8 +15,10 @@ pub struct Import {
     pub func: String,
     /// address to write func_addr to
     pub iat_addr: u32,
-    /// address of code
-    pub func_addr: u32,
+    /// address of code/data
+    pub addr: u32,
+    /// when true, data, not code
+    pub data: bool,
 }
 
 #[derive(Default)]
@@ -101,10 +103,10 @@ impl State {
     }
 
     /// For any dll used by the module, write its vtables to the executable memory.
-    fn add_vtables(&mut self) {
+    fn add_vtables(&mut self) -> u32 {
         let vtables_addr = self.mem.mappings.alloc("vtables".into(), 0x1000);
-        let mut iat_addr = vtables_addr;
-        assert!(iat_addr != 0);
+        let mut addr = vtables_addr;
+        assert!(addr != 0);
         for (dll, vtables) in [
             ("ddraw", winapi::ddraw::VTABLES.as_slice()),
             ("dsound", winapi::dsound::VTABLES.as_slice()),
@@ -115,35 +117,43 @@ impl State {
             for (interface, entries) in vtables {
                 self.module
                     .vtables
-                    .push((format!("{dll}::{interface}"), iat_addr));
+                    .push((format!("{dll}::{interface}"), addr));
                 for func in entries.iter() {
                     self.module.imports.push(Import {
                         dll: dll.to_string(),
                         func: format!("{interface}::{func}"),
-                        iat_addr,
-                        func_addr: 0,
+                        iat_addr: addr,
+                        addr: 0,
+                        data: false,
                     });
-                    iat_addr += 4;
+                    addr += 4;
                 }
             }
         }
+        addr
     }
 
-    fn write_iat(&mut self) {
+    fn write_iat(&mut self, data_addr: u32) {
+        let mut data_addr = data_addr;
         let mut func_addr = 0xfafbfc00;
         for import in self.module.imports.iter_mut() {
             if import.iat_addr == 0 {
                 panic!("{import:#x?}");
             }
-            import.func_addr = func_addr;
-            func_addr += 1;
-            self.mem.write::<u32>(import.iat_addr, import.func_addr);
+            if import.data {
+                import.addr = data_addr;
+                data_addr += 4;
+            } else {
+                import.addr = func_addr;
+                func_addr += 1;
+            }
+            self.mem.write::<u32>(import.iat_addr, import.addr);
         }
     }
 
     pub fn init_imports(&mut self) {
-        self.add_vtables();
-        self.write_iat();
+        let data_addr = self.add_vtables();
+        self.write_iat(data_addr);
     }
 
     pub fn gather(&mut self, gather: Gather) {

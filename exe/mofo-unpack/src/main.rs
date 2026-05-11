@@ -35,15 +35,16 @@ impl kernel32::DLLLoader for Loader {
         let mut state = STATE.lock().unwrap();
         let dll = state.modules[hmodule as usize - 1].clone();
         assert!(proc_name.len() > 0);
-        let func_addr = state.next_addr;
+        let addr = state.next_addr;
         state.next_addr += 1;
         state.syms.push(tc::Import {
             dll,
             func: proc_name.to_owned(),
             iat_addr: 0, // not known yet
-            func_addr,
+            addr,
+            data: false,
         });
-        func_addr
+        addr
     }
 }
 
@@ -67,7 +68,7 @@ fn find_iat(
     image_base: u32,
 ) {
     for sym in functions.iter_mut() {
-        let addr_bytes = sym.func_addr.to_le_bytes();
+        let addr_bytes = sym.addr.to_le_bytes();
         let mut iat_addr = None;
         for mapping in mappings.iter() {
             if mapping.addr < image_base {
@@ -91,7 +92,7 @@ fn find_iat(
         if let Some(ofs) = iat_addr {
             log::info!("{}!{}: found at {:x}", sym.dll, sym.func, ofs);
             sym.iat_addr = ofs;
-            sym.func_addr = 0;
+            sym.addr = 0;
         } else {
             log::info!("{}!{}: not found", sym.dll, sym.func);
         }

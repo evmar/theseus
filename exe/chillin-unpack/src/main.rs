@@ -41,7 +41,8 @@ impl kernel32::DLLLoader for Loader {
             dll,
             func: proc_name.to_owned(),
             iat_addr: 0, // not known yet
-            func_addr,
+            addr: func_addr,
+            data: false,
         });
         func_addr
     }
@@ -62,7 +63,7 @@ fn main() {
 /// Fill in the .iat_addr on functions by searching the memory for their addresses.
 fn find_iat(functions: &mut [tc::Import], mappings: &[kernel32::Mapping], memory: &[u8]) {
     for sym in functions.iter_mut() {
-        let addr_bytes = sym.func_addr.to_le_bytes();
+        let addr_bytes = sym.addr.to_le_bytes();
         let mut iat_addr = None;
         for mapping in mappings.iter() {
             for (ofs, _) in memory[mapping.addr as usize..][..mapping.size as usize]
@@ -83,7 +84,7 @@ fn find_iat(functions: &mut [tc::Import], mappings: &[kernel32::Mapping], memory
         if let Some(ofs) = iat_addr {
             log::info!("{}!{}: found at {:x}", sym.dll, sym.func, ofs);
             sym.iat_addr = ofs;
-            sym.func_addr = 0; // let tc assign an address later
+            sym.addr = 0; // let tc assign an address later
         } else {
             log::info!("{}!{}: not found", sym.dll, sym.func);
         }
