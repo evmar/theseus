@@ -1,5 +1,7 @@
 use runtime::Context;
 
+use crate::stub;
+
 #[win32_derive::dllexport]
 pub fn _XcptFilter(_ctx: &mut Context) {
     todo!()
@@ -11,19 +13,17 @@ pub fn __getmainargs(_ctx: &mut Context) {
 }
 
 #[win32_derive::dllexport]
-pub fn __p__commode(_ctx: &mut Context) {
-    todo!()
+pub fn __p__commode(_ctx: &mut Context) -> u32 {
+    stub!(0)
 }
 
 #[win32_derive::dllexport]
-pub fn __p__fmode(_ctx: &mut Context) {
-    todo!()
+pub fn __p__fmode(_ctx: &mut Context) -> u32 {
+    stub!(0)
 }
 
 #[win32_derive::dllexport]
-pub fn __set_app_type(_ctx: &mut Context) {
-    todo!()
-}
+pub fn __set_app_type(_ctx: &mut Context, _at: i32) {}
 
 #[win32_derive::dllexport]
 pub fn __setusermatherr(_ctx: &mut Context) {
