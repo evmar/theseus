@@ -57,9 +57,16 @@ pub fn exit(_ctx: &mut Context) {
     todo!()
 }
 
+// MSDN: "Calling rand before any call to srand generates the same sequence as calling srand with seed passed as 1."
+static mut RAND_STATE: u32 = 1;
+
 #[win32_derive::dllexport]
-pub fn rand(_ctx: &mut Context) {
-    todo!()
+pub fn rand(_ctx: &mut Context) -> u32 {
+    const RAND_MAX: u32 = 0xFFFF;
+    unsafe {
+        RAND_STATE = ((RAND_STATE.wrapping_mul(134775813)).wrapping_add(1)) % (1 << 31);
+        RAND_STATE % RAND_MAX
+    }
 }
 
 #[win32_derive::dllexport]
