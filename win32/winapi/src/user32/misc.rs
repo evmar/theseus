@@ -162,7 +162,7 @@ pub fn DispatchMessageW(_ctx: &mut Context, _lpMsg: u32 /* MSG */) -> LRESULT {
 
 #[win32_derive::dllexport]
 pub fn GetDesktopWindow(_ctx: &mut Context) -> HWND {
-    stub!(0)
+    stub!(HWND::null())
 }
 
 #[win32_derive::dllexport]

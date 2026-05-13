@@ -3,7 +3,6 @@ use std::{cell::RefCell, rc::Rc};
 use runtime::Context;
 
 use crate::{
-    HANDLE,
     gdi32::{self, HDC},
     stub,
     user32::{HINSTANCE, HMENU, HWND, state},
@@ -73,7 +72,7 @@ pub fn CreateWindowExA(
     };
     window.canvas.clear();
     *state().window.borrow_mut() = Some(Rc::new(RefCell::new(window)));
-    stub!(1)
+    stub!(HWND::from_raw(1))
 }
 
 #[win32_derive::dllexport]
@@ -108,7 +107,7 @@ pub fn DefWindowProcA(
 
 #[win32_derive::dllexport]
 pub fn SetFocus(_ctx: &mut Context, _hWnd: HWND) -> HWND {
-    stub!(0)
+    stub!(HWND::null())
 }
 
 #[win32_derive::dllexport]
@@ -133,9 +132,9 @@ pub fn EndPaint(_ctx: &mut Context, _hWnd: HWND, _lpPaint: u32 /* PAINTSTRUCT */
 
 #[win32_derive::dllexport]
 pub fn GetDC(_ctx: &mut Context, hWnd: HWND) -> HDC {
-    if hWnd == 0 {
+    if hWnd.is_null() {
         // desktop window
-        return stub!(HANDLE::null());
+        return stub!(HDC::null());
     }
 
     let state = state();

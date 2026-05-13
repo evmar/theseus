@@ -15,7 +15,9 @@ pub use misc::*;
 pub use resource::*;
 pub use window::*;
 
-pub type HWND = u32;
+use crate::HANDLE;
+
+pub type HWND = HANDLE;
 pub type HMENU = u32;
 pub type HINSTANCE = u32;
 pub type HCURSOR = u32;
