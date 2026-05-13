@@ -1,7 +1,8 @@
 use runtime::Context;
 
 use super::*;
-use crate::stub;
+use crate::{RECT, stub};
+use zerocopy::IntoBytes;
 
 #[win32_derive::dllexport]
 pub fn GetSystemMetrics(_ctx: &mut Context, nIndex: u32 /* SYSTEM_METRICS_INDEX */) -> i32 {
@@ -68,14 +69,22 @@ pub fn PtInRect(_ctx: &mut Context, _lprc: u32 /* RECT */, _pt: u32 /* POINT */)
 
 #[win32_derive::dllexport]
 pub fn SetRect(
-    _ctx: &mut Context,
-    _lprc: u32, /* RECT */
-    _xLeft: i32,
-    _yTop: i32,
-    _xRight: i32,
-    _yBottom: i32,
+    ctx: &mut Context,
+    lprc: u32, /* RECT */
+    xLeft: i32,
+    yTop: i32,
+    xRight: i32,
+    yBottom: i32,
 ) -> bool {
-    todo!()
+    RECT {
+        left: xLeft,
+        top: yTop,
+        right: xRight,
+        bottom: yBottom,
+    }
+    .write_to_prefix(&mut ctx.memory[lprc..])
+    .unwrap();
+    true
 }
 
 #[win32_derive::dllexport]
