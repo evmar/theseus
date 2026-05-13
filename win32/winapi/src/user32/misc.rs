@@ -42,16 +42,6 @@ pub fn CreateCursor(
 }
 
 #[win32_derive::dllexport]
-pub fn InvalidateRect(
-    _ctx: &mut Context,
-    _hWnd: HWND,
-    _lpRect: u32, /* RECT */
-    _bErase: bool,
-) -> bool {
-    todo!()
-}
-
-#[win32_derive::dllexport]
 pub fn MapWindowPoints(
     _ctx: &mut Context,
     _hWndFrom: HWND,

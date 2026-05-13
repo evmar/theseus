@@ -233,3 +233,13 @@ pub fn ReleaseDC(_ctx: &mut Context, _hWnd: HWND, hDC: HDC) -> i32 {
     gdi32::state().release_dc(hDC);
     1 // success
 }
+
+#[win32_derive::dllexport]
+pub fn InvalidateRect(
+    _ctx: &mut Context,
+    _hWnd: HWND,
+    _lpRect: u32, /* RECT */
+    _bErase: bool,
+) -> bool {
+    stub!(true)
+}
