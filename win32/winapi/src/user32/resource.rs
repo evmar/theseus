@@ -36,18 +36,6 @@ fn is_intresource(x: u32) -> bool {
     x >> 16 == 0
 }
 
-fn find_resource<'ctx>(
-    ctx: &'ctx Context,
-    typ: pe::ResourceName,
-    name: pe::ResourceName,
-) -> Option<&'ctx [u8]> {
-    let state = kernel32::lock();
-    let section = &ctx.memory[state.resources.clone()];
-    let span = pe::find_resource(section, typ, name)?;
-    let image_base = state.image_base;
-    Some(&ctx.memory[image_base + span.start..image_base + span.end])
-}
-
 #[win32_derive::dllexport]
 pub fn LoadImageA(
     ctx: &mut Context,
@@ -74,7 +62,7 @@ pub fn LoadImageA(
     // assert!(cy == 0);
     assert!(fuLoad.is_empty());
 
-    let Some(buf) = find_resource(ctx, typ, name) else {
+    let Some(buf) = kernel32::lock().find_resource(ctx, typ, name) else {
         log::warn!("LoadImage: resource not found");
         return HANDLE::null();
     };
@@ -134,7 +122,7 @@ fn find_string(ctx: &Context, uID: u32) -> Option<&[u8]> {
     // Strings are stored as blocks of 16 consecutive strings.
     let (resource_id, index) = ((uID >> 4) + 1, uID & 0xF);
 
-    let mut block = find_resource(
+    let mut block = kernel32::lock().find_resource(
         ctx,
         pe::ResourceName::Id(pe::RT::STRING as u32),
         pe::ResourceName::Id(resource_id),

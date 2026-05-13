@@ -1,9 +1,6 @@
 use runtime::Context;
 
-use crate::{
-    kernel32::{HMODULE, lock},
-    stub,
-};
+use crate::{kernel32::lock, stub};
 
 const ERROR_FILE_NOT_FOUND: u32 = 2;
 
@@ -175,29 +172,6 @@ pub fn lstrcpyW(
 pub fn lstrlenW(ctx: &mut Context, lpString: u32 /* WSTR */) -> i32 {
     let buf = &ctx.memory[lpString..];
     buf.chunks_exact(2).position(|c| c == &[0, 0]).unwrap() as i32
-}
-
-pub type HRSRC = u32;
-pub type HGLOBAL = u32;
-
-#[win32_derive::dllexport]
-pub fn FindResourceW(
-    _ctx: &mut Context,
-    _hModule: HMODULE,
-    _lpName: u32, /* WSTR */
-    _lpType: u32, /* WSTR */
-) -> HRSRC {
-    todo!()
-}
-
-#[win32_derive::dllexport]
-pub fn LoadResource(_ctx: &mut Context, _hModule: HMODULE, _hResInfo: HRSRC) -> HGLOBAL {
-    todo!()
-}
-
-#[win32_derive::dllexport]
-pub fn LockResource(_ctx: &mut Context, _hResData: HGLOBAL) -> () {
-    todo!()
 }
 
 #[win32_derive::dllexport]
