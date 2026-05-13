@@ -4,11 +4,17 @@ use runtime::Context;
 
 use crate::{
     HANDLE,
-    gdi32::{Bitmap, BitmapType, DIB, state},
+    gdi32::{Bitmap, BitmapType, DIB, State, state},
     stub,
 };
 
 pub type HDC = HANDLE;
+
+impl State {
+    pub fn release_dc(&self, hdc: HDC) {
+        self.dcs.borrow_mut().remove(hdc);
+    }
+}
 
 #[derive(Default)]
 pub struct DC {

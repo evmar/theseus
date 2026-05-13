@@ -148,3 +148,9 @@ pub fn GetDC(_ctx: &mut Context, hWnd: HWND) -> HDC {
         .add(gdi32::new_memory_dc(bitmap));
     stub!(hdc)
 }
+
+#[win32_derive::dllexport]
+pub fn ReleaseDC(_ctx: &mut Context, _hWnd: HWND, hDC: HDC) -> i32 {
+    gdi32::state().release_dc(hDC);
+    1 // success
+}

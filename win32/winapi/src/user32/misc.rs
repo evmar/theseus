@@ -1,7 +1,7 @@
 use runtime::Context;
 
 use super::*;
-use crate::{gdi32::HDC, stub};
+use crate::stub;
 
 #[win32_derive::dllexport]
 pub fn GetSystemMetrics(_ctx: &mut Context, nIndex: u32 /* SYSTEM_METRICS_INDEX */) -> i32 {
@@ -63,11 +63,6 @@ pub fn MapWindowPoints(
 
 #[win32_derive::dllexport]
 pub fn PtInRect(_ctx: &mut Context, _lprc: u32 /* RECT */, _pt: u32 /* POINT */) -> bool {
-    todo!()
-}
-
-#[win32_derive::dllexport]
-pub fn ReleaseDC(_ctx: &mut Context, _hWnd: HWND, _hDC: HDC) -> i32 {
     todo!()
 }
 

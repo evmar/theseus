@@ -621,10 +621,10 @@ pub mod IDirectDrawSurface7 {
     }
 
     #[win32_derive::dllexport]
-    pub fn ReleaseDC(ctx: &mut Context, this: u32, hDC: u32) -> DD {
+    pub fn ReleaseDC(ctx: &mut Context, this: u32, hDC: HDC) -> DD {
         let surfaces = state().surf.borrow_mut();
         let mut surface = surfaces.get(&this).unwrap().borrow_mut();
-        gdi32::state().dcs.borrow_mut().remove(HDC::from_raw(hDC));
+        gdi32::state().release_dc(hDC);
         surface.unlock(&mut ctx.memory);
         DD::OK
     }
