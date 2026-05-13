@@ -34,7 +34,7 @@ pub fn CreatePen(
 
 #[win32_derive::dllexport]
 pub fn DeleteObject(_ctx: &mut Context, _ho: HGDIOBJ) -> bool {
-    todo!()
+    stub!(true)
 }
 
 #[derive(Debug, win32_derive::ABIEnum)]
