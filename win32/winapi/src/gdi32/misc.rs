@@ -110,25 +110,6 @@ pub fn MoveToEx(
 }
 
 #[win32_derive::dllexport]
-pub fn SetDIBitsToDevice(
-    _ctx: &mut Context,
-    _hdc: HDC,
-    _xDest: i32,
-    _yDest: i32,
-    _w: u32,
-    _h: u32,
-    _xSrc: i32,
-    _ySrc: i32,
-    _StartScan: u32,
-    _cLines: u32,
-    _lpvBits: u32,
-    _lpbmi: u32,    /* BITMAPINFO */
-    _ColorUse: u32, /* DIB_USAGE */
-) -> i32 {
-    todo!()
-}
-
-#[win32_derive::dllexport]
 pub fn SetLayout(_ctx: &mut Context, _hdc: HDC, _l: u32 /* DC_LAYOUT */) -> u32 {
     todo!()
 }

@@ -1,9 +1,11 @@
 use std::rc::Rc;
 
 use runtime::Context;
+use zerocopy::FromBytes;
 
 use crate::{
     HANDLE,
+    bitmap::BITMAPINFOHEADER,
     gdi32::{HDC, State, state},
 };
 
@@ -115,4 +117,35 @@ pub fn CreateCompatibleBitmap(_ctx: &mut Context, hdc: HDC, cx: i32, cy: i32) ->
         BitmapType::DIB(_) => BitmapType::DIB(DIB::new(cx as u32, cy as u32)),
     };
     state().new_bitmap(bitmap)
+}
+
+#[win32_derive::dllexport]
+pub fn SetDIBitsToDevice(
+    ctx: &mut Context,
+    _hdc: HDC,
+    _xDest: i32,
+    _yDest: i32,
+    _w: u32,
+    _h: u32,
+    _xSrc: i32,
+    _ySrc: i32,
+    StartScan: u32,
+    cLines: u32,
+    lpvBits: u32,
+    lpbmi: u32,    /* BITMAPINFO */
+    ColorUse: u32, /* DIB_USAGE */
+) -> u32 {
+    let (header, rest) = <BITMAPINFOHEADER>::read_from_prefix(&ctx.memory[lpbmi..]).unwrap();
+    log::info!("{:#x?}", header);
+    assert_eq!(header.biCompression, 0); // BI_RGB
+    assert_eq!(ColorUse, 0); // DIB_RGB_COLORS
+
+    assert_eq!(header.biClrUsed, 0);
+    let palette_size = 2usize.pow(header.biBitCount as u32);
+    let _palette = &rest[..palette_size];
+    let _pixels = &ctx.memory[lpvBits..];
+
+    assert_eq!(StartScan, 0);
+
+    cLines
 }
