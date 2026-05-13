@@ -149,6 +149,26 @@ pub fn ShowWindow(
 }
 
 #[win32_derive::dllexport]
+pub fn MoveWindow(
+    _ctx: &mut Context,
+    _hWnd: HWND,
+    _X: i32,
+    _Y: i32,
+    nWidth: i32,
+    nHeight: i32,
+    bRepaint: bool,
+) -> bool {
+    let state = state();
+    let window = state.window.borrow();
+    let mut window = window.as_ref().unwrap().borrow_mut();
+    window.resize(nWidth as u32, nHeight as u32);
+    if bRepaint {
+        // ...
+    };
+    true // sucess
+}
+
+#[win32_derive::dllexport]
 pub fn UpdateWindow(_ctx: &mut Context, _hWnd: HWND) -> bool {
     stub!(true)
 }

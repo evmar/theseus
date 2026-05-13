@@ -101,7 +101,7 @@ pub fn WinHelpW(
 
 #[win32_derive::dllexport]
 pub fn CheckMenuItem(_ctx: &mut Context, _hMenu: HMENU, _uIDCheckItem: u32, _uCheck: u32) -> u32 {
-    todo!()
+    stub!(0) // previously unchecked
 }
 
 pub type WPARAM = u32;
@@ -207,19 +207,6 @@ pub fn MessageBoxW(
 }
 
 #[win32_derive::dllexport]
-pub fn MoveWindow(
-    _ctx: &mut Context,
-    _hWnd: HWND,
-    _X: i32,
-    _Y: i32,
-    _nWidth: i32,
-    _nHeight: i32,
-    _bRepaint: bool,
-) -> bool {
-    todo!()
-}
-
-#[win32_derive::dllexport]
 pub fn PeekMessageW(
     _ctx: &mut Context,
     _lpMsg: u32, /*MSG*/
@@ -276,7 +263,7 @@ pub fn SetDlgItemTextW(
 
 #[win32_derive::dllexport]
 pub fn SetMenu(_ctx: &mut Context, _hWnd: HWND, _hMenu: HMENU) -> bool {
-    todo!()
+    stub!(true) // success
 }
 
 #[win32_derive::dllexport]
