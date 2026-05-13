@@ -36,7 +36,8 @@ pub fn CreateCompatibleDC(_ctx: &mut Context, hdc: HDC) -> HDC {
         // memory DC compatible with screen
         state().dcs.borrow_mut().add(DC::default())
     } else {
-        todo!()
+        // memory DC compatible with hdc
+        state().dcs.borrow_mut().add(DC::default())
     }
 }
 

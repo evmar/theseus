@@ -1,6 +1,6 @@
 use runtime::Context;
 
-use crate::gdi32::HDC;
+use crate::{gdi32::HDC, stub};
 
 #[win32_derive::dllexport]
 pub fn BitBlt(
@@ -36,7 +36,7 @@ pub fn CreatePen(
     _cWidth: i32,
     _color: COLORREF,
 ) -> HPEN {
-    todo!()
+    stub!(0)
 }
 
 #[win32_derive::dllexport]
