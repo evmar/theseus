@@ -1488,7 +1488,7 @@ pub fn x1002516(ctx: &mut Context) -> Cont {
     // 0100252d cmp eax,2
     sub(ctx.cpu.regs.eax, 0x2u32, &mut ctx.cpu.flags);
     // 01002530 setne cl
-    todo!();
+    ctx.cpu.regs.set_cl(ctx.setne());
     // 01002533 push ecx
     ctx.push(ctx.cpu.regs.ecx);
     // 01002534 push 0Ah
@@ -3846,7 +3846,7 @@ pub fn x1003ba9(ctx: &mut Context) -> Cont {
     // 01003bbf cmp eax,2
     sub(ctx.cpu.regs.eax, 0x2u32, &mut ctx.cpu.flags);
     // 01003bc2 setne cl
-    todo!();
+    ctx.cpu.regs.set_cl(ctx.setne());
     // 01003bc5 push ecx
     ctx.push(ctx.cpu.regs.ecx);
     // 01003bc6 push 0Ah

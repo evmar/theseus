@@ -25,7 +25,10 @@ impl<'a> CodeGen<'a> {
             Popad => self.line("ctx.popad();"),
             Mov => self.line(set_op(instr, 0, get_op(instr, 1))),
 
-            Sete => self.line(set_op(instr, 0, "ctx.sete()".into())),
+            Sete | Setg | Setge | Setne => {
+                self.line(set_op(instr, 0, format!("ctx.{}()", instr_name(instr))))
+            }
+
             Cmp => {
                 let op0 = get_op(instr, 0);
                 let op1 = get_op(instr, 1);
@@ -70,9 +73,7 @@ impl<'a> CodeGen<'a> {
 
             Not => self.line(set_op(instr, 0, format!("!{}", get_op(instr, 0)))),
 
-            Int | Int3 | Cmpxchg | Pushfd | Setne | Cpuid | Xgetbv | Setg | Bt | Div | Setge => {
-                self.todo()
-            }
+            Int | Int3 | Cmpxchg | Pushfd | Cpuid | Xgetbv | Bt | Div => self.todo(),
 
             Cbw => self.line("ctx.cpu.regs.set_ax(ctx.cpu.regs.get_al() as i8 as i16 as u16);"),
             Cwde => self.line("ctx.cpu.regs.eax = ctx.cpu.regs.get_ax() as i16 as i32 as u32;"),
