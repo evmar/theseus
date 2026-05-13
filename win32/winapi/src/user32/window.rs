@@ -81,8 +81,10 @@ impl State {
                 .into_canvas(),
         };
         window.canvas.clear();
+        let hwnd = HWND::from_raw(1);
         *self.window.borrow_mut() = Some(Rc::new(RefCell::new(window)));
-        stub!(HWND::from_raw(1))
+        self.message_queue.borrow_mut().hwnd = hwnd;
+        stub!(hwnd)
     }
 }
 

@@ -103,8 +103,6 @@ pub fn CheckMenuItem(_ctx: &mut Context, _hMenu: HMENU, _uIDCheckItem: u32, _uCh
     stub!(0) // previously unchecked
 }
 
-pub type WPARAM = u32;
-pub type LPARAM = u32;
 pub type LRESULT = i32;
 
 #[win32_derive::dllexport]
@@ -174,17 +172,6 @@ pub fn GetMenuItemRect(
     _hMenu: HMENU,
     _uItem: u32,
     _lprcItem: u32, /* RECT */
-) -> bool {
-    todo!()
-}
-
-#[win32_derive::dllexport]
-pub fn GetMessageW(
-    _ctx: &mut Context,
-    _lpMsg: u32, /* MSG */
-    _hWnd: HWND,
-    _wMsgFilterMin: u32,
-    _wMsgFilterMax: u32,
 ) -> bool {
     todo!()
 }
@@ -273,16 +260,6 @@ pub fn SetTimer(
     _uElapse: u32,
     _lpTimerFunc: u32, /* TIMERPROC */
 ) -> u32 {
-    todo!()
-}
-
-#[win32_derive::dllexport]
-pub fn TranslateAcceleratorW(
-    _ctx: &mut Context,
-    _hWnd: HWND,
-    _hAccTable: HACCEL,
-    _lpMsg: u32, /* MSG */
-) -> i32 {
     todo!()
 }
 

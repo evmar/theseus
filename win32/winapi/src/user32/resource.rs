@@ -68,7 +68,6 @@ pub fn LoadImageA(
     gdi32::state().new_bitmap(gdi32::BitmapType::DDB(bitmap))
 }
 
-pub type HACCEL = u32;
 pub type HCURSOR = u32;
 pub type HICON = u32;
 pub type HMENU = u32;
