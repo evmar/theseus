@@ -18,13 +18,6 @@ pub fn BitBlt(
     todo!()
 }
 
-pub type HBITMAP = u32;
-
-#[win32_derive::dllexport]
-pub fn CreateCompatibleBitmap(_ctx: &mut Context, _hdc: HDC, _cx: i32, _cy: i32) -> HBITMAP {
-    todo!()
-}
-
 pub type COLORREF = u32;
 pub type HGDIOBJ = u32;
 pub type HPEN = u32;

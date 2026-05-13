@@ -4,9 +4,10 @@ use runtime::Context;
 
 use crate::{
     HANDLE,
-    bitmap::DDB,
-    gdi32::{HDC, state},
+    gdi32::{HDC, State, state},
 };
+
+pub use crate::bitmap::DDB;
 
 #[win32_derive::dllexport]
 pub fn StretchBlt(
@@ -89,16 +90,29 @@ pub struct Bitmap {
     pub typ: BitmapType,
 }
 
-pub fn parse_bitmap(buf: &[u8]) -> Rc<Bitmap> {
-    let ddb = DDB::parse(buf);
-    println!("loaded bitmap {:#x?}", ddb);
+impl State {
+    pub fn new_bitmap(&self, bitmap: BitmapType) -> HBITMAP {
+        let mut objects = self.objects.borrow_mut();
+        let handle = objects.reserve();
+        let bitmap = Rc::new(Bitmap {
+            handle,
+            typ: bitmap,
+        });
+        objects.set(handle, bitmap.clone());
+        handle
+    }
+}
 
-    let mut objects = state().objects.borrow_mut();
-    let handle = objects.reserve();
-    let bitmap = Rc::new(Bitmap {
-        handle,
-        typ: BitmapType::DDB(ddb),
-    });
-    objects.set(handle, bitmap.clone());
-    bitmap
+pub type HBITMAP = HANDLE;
+
+#[win32_derive::dllexport]
+pub fn CreateCompatibleBitmap(_ctx: &mut Context, hdc: HDC, cx: i32, cy: i32) -> HBITMAP {
+    let dcs = state().dcs.borrow();
+    let dc = dcs.get(hdc).unwrap();
+    let bitmap = dc.bitmap.as_ref().unwrap();
+    let bitmap = match &bitmap.typ {
+        BitmapType::DDB(_) => todo!("ddb"),
+        BitmapType::DIB(_) => BitmapType::DIB(DIB::new(cx as u32, cy as u32)),
+    };
+    state().new_bitmap(bitmap)
 }
