@@ -14,7 +14,6 @@ pub use misc::*;
 mod object;
 pub use object::*;
 
-pub type HDC = HANDLE;
 pub type HGDIOBJ = HANDLE;
 
 pub struct State {

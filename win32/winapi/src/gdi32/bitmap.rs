@@ -63,7 +63,18 @@ pub fn StretchBlt(
 pub struct DIB {
     pub width: u32,
     pub height: u32,
+    /// pointer to pixel data
     pub pixels: u32,
+}
+
+impl DIB {
+    pub fn new(width: u32, height: u32) -> Self {
+        Self {
+            width,
+            height,
+            pixels: 0,
+        }
+    }
 }
 
 #[derive(Debug)]

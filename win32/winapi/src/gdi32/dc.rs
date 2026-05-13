@@ -4,9 +4,11 @@ use runtime::Context;
 
 use crate::{
     HANDLE,
-    gdi32::{Bitmap, BitmapType, DIB, HDC, state},
+    gdi32::{Bitmap, BitmapType, DIB, state},
     stub,
 };
+
+pub type HDC = HANDLE;
 
 #[derive(Default)]
 pub struct DC {

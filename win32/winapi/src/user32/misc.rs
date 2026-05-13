@@ -41,21 +41,6 @@ pub fn CreateCursor(
 }
 
 #[win32_derive::dllexport]
-pub fn BeginPaint(_ctx: &mut Context, _hWnd: HWND, _lpPaint: u32 /* PAINTSTRUCT */) -> HDC {
-    todo!()
-}
-
-#[win32_derive::dllexport]
-pub fn EndPaint(_ctx: &mut Context, _hWnd: HWND, _lpPaint: u32 /* PAINTSTRUCT */) -> bool {
-    todo!()
-}
-
-#[win32_derive::dllexport]
-pub fn GetDC(_ctx: &mut Context, _hWnd: HWND) -> HDC {
-    todo!()
-}
-
-#[win32_derive::dllexport]
 pub fn InvalidateRect(
     _ctx: &mut Context,
     _hWnd: HWND,

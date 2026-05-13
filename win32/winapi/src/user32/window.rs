@@ -3,6 +3,8 @@ use std::{cell::RefCell, rc::Rc};
 use runtime::Context;
 
 use crate::{
+    HANDLE,
+    gdi32::{self, HDC},
     stub,
     user32::{HINSTANCE, HMENU, HWND, state},
 };
@@ -117,4 +119,33 @@ pub fn RegisterClassA(_ctx: &mut Context, _lpWndClass: u32) -> u16 {
 #[win32_derive::dllexport]
 pub fn RegisterClassW(_ctx: &mut Context, _lpWndClass: u32 /* WNDCLASSW */) -> u16 {
     stub!(1)
+}
+
+#[win32_derive::dllexport]
+pub fn BeginPaint(_ctx: &mut Context, _hWnd: HWND, _lpPaint: u32 /* PAINTSTRUCT */) -> HDC {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn EndPaint(_ctx: &mut Context, _hWnd: HWND, _lpPaint: u32 /* PAINTSTRUCT */) -> bool {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn GetDC(_ctx: &mut Context, hWnd: HWND) -> HDC {
+    if hWnd == 0 {
+        // desktop window
+        return stub!(HANDLE::null());
+    }
+
+    let state = state();
+    let window = state.window.borrow();
+    let window = window.as_ref().unwrap().borrow();
+
+    let bitmap = gdi32::DIB::new(window.width, window.height);
+    let hdc = gdi32::state()
+        .dcs
+        .borrow_mut()
+        .add(gdi32::new_memory_dc(bitmap));
+    stub!(hdc)
 }
