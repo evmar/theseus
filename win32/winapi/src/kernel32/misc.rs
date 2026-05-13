@@ -155,19 +155,26 @@ pub fn RtlUnwind(
     todo!()
 }
 
-// KERNEL32.dll
 #[win32_derive::dllexport]
 pub fn lstrcpyW(
-    _ctx: &mut Context,
-    _lpString1: u32, /* WSTR */
-    _lpString2: u32, /* WSTR */
+    ctx: &mut Context,
+    lpString1: u32, /* WSTR */
+    lpString2: u32, /* WSTR */
 ) -> u32 /* WSTR */ {
-    todo!()
+    let buf = &ctx.memory[lpString2..];
+    let len = buf.chunks_exact(2).position(|c| c == &[0, 0]).unwrap();
+    let src = lpString2 as usize;
+    let dst = lpString1 as usize;
+    ctx.memory
+        .bytes
+        .copy_within(src..src + len + 2, dst as usize);
+    lpString1
 }
 
 #[win32_derive::dllexport]
-pub fn lstrlenW(_ctx: &mut Context, _lpString: u32 /* WSTR */) -> i32 {
-    todo!()
+pub fn lstrlenW(ctx: &mut Context, lpString: u32 /* WSTR */) -> i32 {
+    let buf = &ctx.memory[lpString..];
+    buf.chunks_exact(2).position(|c| c == &[0, 0]).unwrap() as i32
 }
 
 pub type HRSRC = u32;
