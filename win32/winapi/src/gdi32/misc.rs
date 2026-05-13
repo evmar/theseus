@@ -89,11 +89,6 @@ pub fn GetDeviceCaps(_ctx: &mut Context, _hdc: HDC, index: GetDeviceCapsArg) -> 
 }
 
 #[win32_derive::dllexport]
-pub fn GetLayout(_ctx: &mut Context, _hdc: HDC) -> u32 {
-    todo!()
-}
-
-#[win32_derive::dllexport]
 pub fn LineTo(_ctx: &mut Context, _hdc: HDC, _x: i32, _y: i32) -> bool {
     todo!()
 }

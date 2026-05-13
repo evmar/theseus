@@ -45,3 +45,8 @@ pub fn CreateCompatibleDC(_ctx: &mut Context, hdc: HDC) -> HDC {
 pub fn DeleteDC(_ctx: &mut Context, _hdc: HDC) -> bool {
     stub!(true)
 }
+
+#[win32_derive::dllexport]
+pub fn GetLayout(_ctx: &mut Context, _hdc: HDC) -> u32 {
+    0 // LTR
+}
