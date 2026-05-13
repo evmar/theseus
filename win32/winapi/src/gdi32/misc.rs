@@ -44,9 +44,55 @@ pub fn DeleteObject(_ctx: &mut Context, _ho: HGDIOBJ) -> bool {
     todo!()
 }
 
+#[derive(Debug, win32_derive::ABIEnum)]
+pub enum GetDeviceCapsArg {
+    DRIVERVERSION = 0,
+    TECHNOLOGY = 2,
+    HORZSIZE = 4,
+    VERTSIZE = 6,
+    HORZRES = 8,
+    VERTRES = 10,
+    BITSPIXEL = 12,
+    PLANES = 14,
+    NUMBRUSHES = 16,
+    NUMPENS = 18,
+    NUMMARKERS = 20,
+    NUMFONTS = 22,
+    NUMCOLORS = 24,
+    PDEVICESIZE = 26,
+    CURVECAPS = 28,
+    LINECAPS = 30,
+    POLYGONALCAPS = 32,
+    TEXTCAPS = 34,
+    CLIPCAPS = 36,
+    RASTERCAPS = 38,
+    ASPECTX = 40,
+    ASPECTY = 42,
+    ASPECTXY = 44,
+    LOGPIXELSX = 88,
+    LOGPIXELSY = 90,
+    SIZEPALETTE = 104,
+    NUMRESERVED = 106,
+    COLORRES = 108,
+    PHYSICALWIDTH = 110,
+    PHYSICALHEIGHT = 111,
+    PHYSICALOFFSETX = 112,
+    PHYSICALOFFSETY = 113,
+    SCALINGFACTORX = 114,
+    SCALINGFACTORY = 115,
+    VREFRESH = 116,
+    DESKTOPVERTRES = 117,
+    DESKTOPHORZRES = 118,
+    BLTALIGNMENT = 119,
+}
+
 #[win32_derive::dllexport]
-pub fn GetDeviceCaps(_ctx: &mut Context, _hdc: HDC, _index: i32) -> i32 {
-    todo!()
+pub fn GetDeviceCaps(_ctx: &mut Context, _hdc: HDC, index: GetDeviceCapsArg) -> i32 {
+    use GetDeviceCapsArg::*;
+    match index {
+        NUMCOLORS => -1i32, // true color
+        _ => todo!("{:?}", index),
+    }
 }
 
 #[win32_derive::dllexport]
