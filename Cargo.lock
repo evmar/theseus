@@ -274,6 +274,7 @@ dependencies = [
  "logger",
  "num-traits",
  "wee_alloc",
+ "widestring",
  "zerocopy",
 ]
 

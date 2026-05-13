@@ -3,9 +3,10 @@ use std::{cell::RefCell, rc::Rc};
 use runtime::Context;
 
 use crate::{
+    FromABIParam,
     gdi32::{self, HDC},
     stub,
-    user32::{HINSTANCE, HMENU, HWND, state},
+    user32::{HINSTANCE, HMENU, HWND, State, state},
 };
 
 pub struct Window {
@@ -29,6 +30,62 @@ impl Window {
     }
 }
 
+#[derive(Default)]
+struct CreateWindowArgs {
+    name: String,
+    width: Option<u32>,
+    height: Option<u32>,
+}
+
+const CW_USEDEFAULT: u32 = 0x8000_0000;
+
+pub struct CW(u32);
+impl CW {
+    fn value(&self) -> Option<u32> {
+        if self.0 == CW_USEDEFAULT {
+            None
+        } else {
+            Some(self.0)
+        }
+    }
+}
+impl FromABIParam for CW {
+    fn from_abi(val: u32) -> Self {
+        Self(val)
+    }
+}
+impl std::fmt::Debug for CW {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        if self.0 == CW_USEDEFAULT {
+            write!(f, "CW_USEDEFAULT")
+        } else {
+            write!(f, "{:#x}", self.0)
+        }
+    }
+}
+
+impl State {
+    fn create_window(&self, args: CreateWindowArgs) -> HWND {
+        let width = args.width.unwrap_or(640);
+        let height = args.height.unwrap_or(480);
+
+        let mut window = Window {
+            width,
+            height,
+            canvas: state()
+                .video
+                .window(&args.name, width, height)
+                .high_pixel_density()
+                .build()
+                .unwrap()
+                .into_canvas(),
+        };
+        window.canvas.clear();
+        *self.window.borrow_mut() = Some(Rc::new(RefCell::new(window)));
+        stub!(HWND::from_raw(1))
+    }
+}
+
 #[win32_derive::dllexport]
 pub fn CreateWindowExA(
     ctx: &mut Context,
@@ -38,41 +95,43 @@ pub fn CreateWindowExA(
     _dwStyle: u32, /* WINDOW_STYLE */
     _X: i32,
     _Y: i32,
-    nWidth: i32,
-    nHeight: i32,
+    nWidth: CW,
+    nHeight: CW,
     _hWndParent: HWND,
     _hMenu: HMENU,
     _hInstance: HINSTANCE,
     _lpParam: u32,
 ) -> HWND {
     let name = ctx.memory.read_str(lpWindowName);
+    state().create_window(CreateWindowArgs {
+        name: name.into(),
+        width: nWidth.value(),
+        height: nHeight.value(),
+    })
+}
 
-    const CW_USEDEFAULT: i32 = 0x8000_0000u32 as i32;
-    let width = if nWidth == CW_USEDEFAULT {
-        640
-    } else {
-        nWidth as u32
-    };
-    let height = if nHeight == CW_USEDEFAULT {
-        480
-    } else {
-        nHeight as u32
-    };
-
-    let mut window = Window {
-        width,
-        height,
-        canvas: state()
-            .video
-            .window(name, width, height)
-            .high_pixel_density()
-            .build()
-            .unwrap()
-            .into_canvas(),
-    };
-    window.canvas.clear();
-    *state().window.borrow_mut() = Some(Rc::new(RefCell::new(window)));
-    stub!(HWND::from_raw(1))
+#[win32_derive::dllexport]
+pub fn CreateWindowExW(
+    ctx: &mut Context,
+    _dwExStyle: u32,   /* WINDOW_EX_STYLE */
+    _lpClassName: u32, /* WSTR */
+    lpWindowName: u32, /* WSTR */
+    _dwStyle: u32,     /* WINDOW_STYLE */
+    _X: i32,
+    _Y: i32,
+    nWidth: CW,
+    nHeight: CW,
+    _hWndParent: HWND,
+    _hMenu: HMENU,
+    _hInstance: HINSTANCE,
+    _lpParam: u32,
+) -> HWND {
+    let name = ctx.memory.read_wstr(lpWindowName);
+    state().create_window(CreateWindowArgs {
+        name: name.to_string_lossy(),
+        width: nWidth.value(),
+        height: nHeight.value(),
+    })
 }
 
 #[win32_derive::dllexport]

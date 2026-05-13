@@ -1,3 +1,4 @@
+use widestring::U16String;
 use zerocopy::{FromBytes, IntoBytes};
 
 /// Memory represents the inner machine's memory, as a flat byte array (no paging etc.).
@@ -56,6 +57,22 @@ impl Memory {
         let nul = buf.iter().position(|&c| c == 0).unwrap();
         let buf = &buf[..nul];
         std::str::from_utf8(buf).unwrap()
+    }
+
+    /// This returns an allocated string rather than a reference due to alignment.
+    pub fn read_wstr(&self, addr: u32) -> U16String {
+        if addr < 0x1000 {
+            self.null_ptr();
+        }
+        let buf = &self.bytes[addr as usize..];
+        let mut str: Vec<u16> = vec![];
+        for chunk in buf.chunks_exact(2) {
+            if chunk == &[0, 0] {
+                break;
+            }
+            str.push(u16::from_le_bytes([chunk[0], chunk[1]]));
+        }
+        U16String::from_vec(str)
     }
 
     pub fn as_ptr(&self) -> *const u8 {

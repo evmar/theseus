@@ -104,25 +104,6 @@ pub fn CheckMenuItem(_ctx: &mut Context, _hMenu: HMENU, _uIDCheckItem: u32, _uCh
     todo!()
 }
 
-#[win32_derive::dllexport]
-pub fn CreateWindowExW(
-    _ctx: &mut Context,
-    _dwExStyle: u32,    /* WINDOW_EX_STYLE */
-    _lpClassName: u32,  /* WSTR */
-    _lpWindowName: u32, /* WSTR */
-    _dwStyle: u32,      /* WINDOW_STYLE */
-    _X: i32,
-    _Y: i32,
-    _nWidth: i32,
-    _nHeight: i32,
-    _hWndParent: HWND,
-    _hMenu: HMENU,
-    _hInstance: HINSTANCE,
-    _lpParam: u32,
-) -> HWND {
-    todo!()
-}
-
 pub type WPARAM = u32;
 pub type LPARAM = u32;
 pub type LRESULT = i32;
