@@ -98,7 +98,6 @@ pub fn SetDIBitsToDevice(
     ColorUse: u32, /* DIB_USAGE */
 ) -> u32 {
     let (header, rest) = <BITMAPINFOHEADER>::read_from_prefix(&ctx.memory[lpbmi..]).unwrap();
-    log::info!("{:#x?}", header);
     assert_eq!(header.biCompression, 0); // BI_RGB
     assert_eq!(ColorUse, 0); // DIB_RGB_COLORS
 
