@@ -80,8 +80,7 @@ fn init_memory(ctx: &mut Context, mappings: &mut kernel32::Mappings) {
 
 pub fn x401000(ctx: &mut Context) -> Cont {
     // 00401000 call 00401010h
-    let dst = Cont(x401010);
-    ctx.call(0x401005, dst)
+    ctx.call(0x401005, Cont(x401010))
 }
 
 pub fn x401005(ctx: &mut Context) -> Cont {
@@ -100,8 +99,7 @@ pub fn x401020(ctx: &mut Context) -> Cont {
     // 00401020 push 401030h
     ctx.push(0x401030u32);
     // 00401025 call 00401873h
-    let dst = Cont(x401873);
-    ctx.call(0x40102a, dst)
+    ctx.call(0x40102a, Cont(x401873))
 }
 
 pub fn x40102a(ctx: &mut Context) -> Cont {
@@ -128,8 +126,7 @@ pub fn x401040(ctx: &mut Context) -> Cont {
     // 00401050 push ecx
     ctx.push(ctx.cpu.regs.ecx);
     // 00401051 call 00401200h
-    let dst = Cont(x401200);
-    ctx.call(0x401056, dst)
+    ctx.call(0x401056, Cont(x401200))
 }
 
 pub fn x401056(ctx: &mut Context) -> Cont {
@@ -154,8 +151,7 @@ pub fn x401062(ctx: &mut Context) -> Cont {
 
 pub fn x40106b(ctx: &mut Context) -> Cont {
     // 0040106b call 00401310h
-    let dst = Cont(x401310);
-    ctx.call(0x401070, dst)
+    ctx.call(0x401070, Cont(x401310))
 }
 
 pub fn x401070(ctx: &mut Context) -> Cont {
@@ -167,8 +163,7 @@ pub fn x401070(ctx: &mut Context) -> Cont {
 
 pub fn x401074(ctx: &mut Context) -> Cont {
     // 00401074 call 00401420h
-    let dst = Cont(x401420);
-    ctx.call(0x401079, dst)
+    ctx.call(0x401079, Cont(x401420))
 }
 
 pub fn x401079(ctx: &mut Context) -> Cont {
@@ -212,8 +207,7 @@ pub fn x40109a(ctx: &mut Context) -> Cont {
     // 004010af mov ecx,409550h
     ctx.cpu.regs.ecx = 0x409550u32;
     // 004010b4 call 00401640h
-    let dst = Cont(x401640);
-    ctx.call(0x4010b9, dst)
+    ctx.call(0x4010b9, Cont(x401640))
 }
 
 pub fn x4010b9(ctx: &mut Context) -> Cont {
@@ -234,8 +228,7 @@ pub fn x4010b9(ctx: &mut Context) -> Cont {
     // 004010d0 mov ecx,409550h
     ctx.cpu.regs.ecx = 0x409550u32;
     // 004010d5 call 004014D0h
-    let dst = Cont(x4014d0);
-    ctx.call(0x4010da, dst)
+    ctx.call(0x4010da, Cont(x4014d0))
 }
 
 pub fn x4010da(ctx: &mut Context) -> Cont {
@@ -312,8 +305,7 @@ pub fn x401114(ctx: &mut Context) -> Cont {
 
 pub fn x401116(ctx: &mut Context) -> Cont {
     // 00401116 call 00401130h
-    let dst = Cont(x401130);
-    ctx.call(0x40111b, dst)
+    ctx.call(0x40111b, Cont(x401130))
 }
 
 pub fn x40111b(ctx: &mut Context) -> Cont {
@@ -323,8 +315,7 @@ pub fn x40111b(ctx: &mut Context) -> Cont {
 
 pub fn x40111d(ctx: &mut Context) -> Cont {
     // 0040111d call 00401420h
-    let dst = Cont(x401420);
-    ctx.call(0x401122, dst)
+    ctx.call(0x401122, Cont(x401420))
 }
 
 pub fn x401122(ctx: &mut Context) -> Cont {
@@ -392,8 +383,7 @@ pub fn x401148(ctx: &mut Context) -> Cont {
     // 00401170 mov ecx,409550h
     ctx.cpu.regs.ecx = 0x409550u32;
     // 00401175 call 00401730h
-    let dst = Cont(x401730);
-    ctx.call(0x40117a, dst)
+    ctx.call(0x40117a, Cont(x401730))
 }
 
 pub fn x40117a(ctx: &mut Context) -> Cont {
@@ -652,8 +642,7 @@ pub fn x401310(ctx: &mut Context) -> Cont {
     // 00401322 push 0
     ctx.push(0x0u32);
     // 00401324 call 00401800h
-    let dst = Cont(x401800);
-    ctx.call(0x401329, dst)
+    ctx.call(0x401329, Cont(x401800))
 }
 
 pub fn x401329(ctx: &mut Context) -> Cont {
@@ -853,8 +842,7 @@ pub fn x401420(ctx: &mut Context) -> Cont {
     // 00401420 mov ecx,409550h
     ctx.cpu.regs.ecx = 0x409550u32;
     // 00401425 call 004017D0h
-    let dst = Cont(x4017d0);
-    ctx.call(0x40142a, dst)
+    ctx.call(0x40142a, Cont(x4017d0))
 }
 
 pub fn x40142a(ctx: &mut Context) -> Cont {
@@ -940,8 +928,7 @@ pub fn x401480(ctx: &mut Context) -> Cont {
     // 00401481 mov esi,ecx
     ctx.cpu.regs.esi = ctx.cpu.regs.ecx;
     // 00401483 call 004014A0h
-    let dst = Cont(x4014a0);
-    ctx.call(0x401488, dst)
+    ctx.call(0x401488, Cont(x4014a0))
 }
 
 pub fn x401488(ctx: &mut Context) -> Cont {
@@ -959,8 +946,7 @@ pub fn x40148f(ctx: &mut Context) -> Cont {
     // 0040148f push esi
     ctx.push(ctx.cpu.regs.esi);
     // 00401490 call 004018B4h
-    let dst = Cont(x4018b4);
-    ctx.call(0x401495, dst)
+    ctx.call(0x401495, Cont(x4018b4))
 }
 
 pub fn x401495(ctx: &mut Context) -> Cont {
@@ -1721,8 +1707,7 @@ pub fn x4017a0(ctx: &mut Context) -> Cont {
     // 004017a0 mov ecx,edi
     ctx.cpu.regs.ecx = ctx.cpu.regs.edi;
     // 004017a2 call 004017F0h
-    let dst = Cont(x4017f0);
-    ctx.call(0x4017a7, dst)
+    ctx.call(0x4017a7, Cont(x4017f0))
 }
 
 pub fn x4017a7(ctx: &mut Context) -> Cont {
@@ -1849,8 +1834,7 @@ pub fn x401806(ctx: &mut Context) -> Cont {
     // 00401807 push dword ptr ds:[409AB0h]
     ctx.push(ctx.memory.read::<u32>(0x409ab0u32));
     // 0040180d call 00401DA0h
-    let dst = Cont(x401da0);
-    ctx.call(0x401812, dst)
+    ctx.call(0x401812, Cont(x401da0))
 }
 
 pub fn x401812(ctx: &mut Context) -> Cont {
@@ -1880,8 +1864,7 @@ pub fn x40182b(ctx: &mut Context) -> Cont {
     // 0040182b push edx
     ctx.push(ctx.cpu.regs.edx);
     // 0040182c call 00401DA0h
-    let dst = Cont(x401da0);
-    ctx.call(0x401831, dst)
+    ctx.call(0x401831, Cont(x401da0))
 }
 
 pub fn x401831(ctx: &mut Context) -> Cont {
@@ -1892,8 +1875,7 @@ pub fn x401831(ctx: &mut Context) -> Cont {
     // 00401835 push dword ptr ds:[409AB0h]
     ctx.push(ctx.memory.read::<u32>(0x409ab0u32));
     // 0040183b call 004019FEh
-    let dst = Cont(x4019fe);
-    ctx.call(0x401840, dst)
+    ctx.call(0x401840, Cont(x4019fe))
 }
 
 pub fn x401840(ctx: &mut Context) -> Cont {
@@ -1957,8 +1939,7 @@ pub fn x401873(ctx: &mut Context) -> Cont {
             .read::<u32>(ctx.cpu.regs.esp.wrapping_add(0x4u32)),
     );
     // 00401877 call 00401806h
-    let dst = Cont(x401806);
-    ctx.call(0x40187c, dst)
+    ctx.call(0x40187c, Cont(x401806))
 }
 
 pub fn x40187c(ctx: &mut Context) -> Cont {
@@ -1981,8 +1962,7 @@ pub fn x401885(ctx: &mut Context) -> Cont {
     // 00401885 push 80h
     ctx.push(0x80u32);
     // 0040188a call 00401E01h
-    let dst = Cont(x401e01);
-    ctx.call(0x40188f, dst)
+    ctx.call(0x40188f, Cont(x401e01))
 }
 
 pub fn x40188f(ctx: &mut Context) -> Cont {
@@ -2001,8 +1981,7 @@ pub fn x401899(ctx: &mut Context) -> Cont {
     // 00401899 push 18h
     ctx.push(0x18u32);
     // 0040189b call 004019B5h
-    let dst = Cont(x4019b5);
-    ctx.call(0x4018a0, dst)
+    ctx.call(0x4018a0, Cont(x4019b5))
 }
 
 pub fn x4018a0(ctx: &mut Context) -> Cont {
@@ -2039,8 +2018,7 @@ pub fn x4018b4(ctx: &mut Context) -> Cont {
             .read::<u32>(ctx.cpu.regs.esp.wrapping_add(0x4u32)),
     );
     // 004018b8 call 00401EB3h
-    let dst = Cont(x401eb3);
-    ctx.call(0x4018bd, dst)
+    ctx.call(0x4018bd, Cont(x401eb3))
 }
 
 pub fn x4018bd(ctx: &mut Context) -> Cont {
@@ -2111,8 +2089,7 @@ pub fn x4018bf(ctx: &mut Context) -> Cont {
     // 00401918 push esi
     ctx.push(ctx.cpu.regs.esi);
     // 00401919 call 00402850h
-    let dst = Cont(x402850);
-    ctx.call(0x40191e, dst)
+    ctx.call(0x40191e, Cont(x402850))
 }
 
 pub fn x40191e(ctx: &mut Context) -> Cont {
@@ -2129,8 +2106,7 @@ pub fn x401923(ctx: &mut Context) -> Cont {
     // 00401923 push 1Ch
     ctx.push(0x1cu32);
     // 00401925 call 004019DAh
-    let dst = Cont(x4019da);
-    ctx.call(0x40192a, dst)
+    ctx.call(0x40192a, Cont(x4019da))
 }
 
 pub fn x40192a(ctx: &mut Context) -> Cont {
@@ -2147,8 +2123,7 @@ pub fn x40192b(ctx: &mut Context) -> Cont {
         ctx.cpu.regs.esi,
     );
     // 0040192e call 00402530h
-    let dst = Cont(x402530);
-    ctx.call(0x401933, dst)
+    ctx.call(0x401933, Cont(x402530))
 }
 
 pub fn x401933(ctx: &mut Context) -> Cont {
@@ -2157,28 +2132,24 @@ pub fn x401933(ctx: &mut Context) -> Cont {
     // 00401939 mov ds:[409AB8h],eax
     ctx.memory.write::<u32>(0x409ab8u32, ctx.cpu.regs.eax);
     // 0040193e call 004023FEh
-    let dst = Cont(x4023fe);
-    ctx.call(0x401943, dst)
+    ctx.call(0x401943, Cont(x4023fe))
 }
 
 pub fn x401943(ctx: &mut Context) -> Cont {
     // 00401943 mov ds:[40959Ch],eax
     ctx.memory.write::<u32>(0x40959cu32, ctx.cpu.regs.eax);
     // 00401948 call 004021B1h
-    let dst = Cont(x4021b1);
-    ctx.call(0x40194d, dst)
+    ctx.call(0x40194d, Cont(x4021b1))
 }
 
 pub fn x40194d(ctx: &mut Context) -> Cont {
     // 0040194d call 004020F8h
-    let dst = Cont(x4020f8);
-    ctx.call(0x401952, dst)
+    ctx.call(0x401952, Cont(x4020f8))
 }
 
 pub fn x401952(ctx: &mut Context) -> Cont {
     // 00401952 call 00401C9Eh
-    let dst = Cont(x401c9e);
-    ctx.call(0x401957, dst)
+    ctx.call(0x401957, Cont(x401c9e))
 }
 
 pub fn x401957(ctx: &mut Context) -> Cont {
@@ -2194,8 +2165,7 @@ pub fn x401957(ctx: &mut Context) -> Cont {
     // 0040195e call dword ptr ds:[40606Ch]
     ctx.call_builtin(kernel32::GetStartupInfoA_stdcall);
     // 00401964 call 004020A0h
-    let dst = Cont(x4020a0);
-    ctx.call(0x401969, dst)
+    ctx.call(0x401969, Cont(x4020a0))
 }
 
 pub fn x401969(ctx: &mut Context) -> Cont {
@@ -2250,8 +2220,7 @@ pub fn x40197b(ctx: &mut Context) -> Cont {
     // 00401987 push eax
     ctx.push(ctx.cpu.regs.eax);
     // 00401988 call 00401040h
-    let dst = Cont(x401040);
-    ctx.call(0x40198d, dst)
+    ctx.call(0x40198d, Cont(x401040))
 }
 
 pub fn x40198d(ctx: &mut Context) -> Cont {
@@ -2263,8 +2232,7 @@ pub fn x40198d(ctx: &mut Context) -> Cont {
     // 00401990 push eax
     ctx.push(ctx.cpu.regs.eax);
     // 00401991 call 00401CCBh
-    let dst = Cont(x401ccb);
-    ctx.call(0x401996, dst)
+    ctx.call(0x401996, Cont(x401ccb))
 }
 
 pub fn x401996(ctx: &mut Context) -> Cont {
@@ -2286,8 +2254,7 @@ pub fn x401996(ctx: &mut Context) -> Cont {
     // 004019a1 push ecx
     ctx.push(ctx.cpu.regs.ecx);
     // 004019a2 call 00401F1Ch
-    let dst = Cont(x401f1c);
-    ctx.call(0x4019a7, dst)
+    ctx.call(0x4019a7, Cont(x401f1c))
 }
 
 pub fn x4019a7(ctx: &mut Context) -> Cont {
@@ -2312,8 +2279,7 @@ pub fn x4019aa(ctx: &mut Context) -> Cont {
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0xffffff98u32)),
     );
     // 004019b0 call 00401CDCh
-    let dst = Cont(x401cdc);
-    ctx.call(0x4019b5, dst)
+    ctx.call(0x4019b5, Cont(x401cdc))
 }
 
 pub fn x4019b5(ctx: &mut Context) -> Cont {
@@ -2329,8 +2295,7 @@ pub fn x4019b5(ctx: &mut Context) -> Cont {
 
 pub fn x4019be(ctx: &mut Context) -> Cont {
     // 004019be call 00402A80h
-    let dst = Cont(x402a80);
-    ctx.call(0x4019c3, dst)
+    ctx.call(0x4019c3, Cont(x402a80))
 }
 
 pub fn x4019c3(ctx: &mut Context) -> Cont {
@@ -2340,8 +2305,7 @@ pub fn x4019c3(ctx: &mut Context) -> Cont {
             .read::<u32>(ctx.cpu.regs.esp.wrapping_add(0x4u32)),
     );
     // 004019c7 call 00402AB9h
-    let dst = Cont(x402ab9);
-    ctx.call(0x4019cc, dst)
+    ctx.call(0x4019cc, Cont(x402ab9))
 }
 
 pub fn x4019cc(ctx: &mut Context) -> Cont {
@@ -2376,8 +2340,7 @@ pub fn x4019da(ctx: &mut Context) -> Cont {
 
 pub fn x4019e3(ctx: &mut Context) -> Cont {
     // 004019e3 call 00402A80h
-    let dst = Cont(x402a80);
-    ctx.call(0x4019e8, dst)
+    ctx.call(0x4019e8, Cont(x402a80))
 }
 
 pub fn x4019e8(ctx: &mut Context) -> Cont {
@@ -2387,8 +2350,7 @@ pub fn x4019e8(ctx: &mut Context) -> Cont {
             .read::<u32>(ctx.cpu.regs.esp.wrapping_add(0x4u32)),
     );
     // 004019ec call 00402AB9h
-    let dst = Cont(x402ab9);
-    ctx.call(0x4019f1, dst)
+    ctx.call(0x4019f1, Cont(x402ab9))
 }
 
 pub fn x4019f1(ctx: &mut Context) -> Cont {
@@ -2434,8 +2396,7 @@ pub fn x401a0b(ctx: &mut Context) -> Cont {
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0xcu32)),
     );
     // 00401a0e call 00401E01h
-    let dst = Cont(x401e01);
-    ctx.call(0x401a13, dst)
+    ctx.call(0x401a13, Cont(x401e01))
 }
 
 pub fn x401a13(ctx: &mut Context) -> Cont {
@@ -2464,8 +2425,7 @@ pub fn x401a20(ctx: &mut Context) -> Cont {
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0x8u32)),
     );
     // 00401a23 call 00401EB3h
-    let dst = Cont(x401eb3);
-    ctx.call(0x401a28, dst)
+    ctx.call(0x401a28, Cont(x401eb3))
 }
 
 pub fn x401a28(ctx: &mut Context) -> Cont {
@@ -2501,8 +2461,7 @@ pub fn x401a47(ctx: &mut Context) -> Cont {
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0x8u32)),
     );
     // 00401a4a call 00402C54h
-    let dst = Cont(x402c54);
-    ctx.call(0x401a4f, dst)
+    ctx.call(0x401a4f, Cont(x402c54))
 }
 
 pub fn x401a4f(ctx: &mut Context) -> Cont {
@@ -2540,8 +2499,7 @@ pub fn x401a62(ctx: &mut Context) -> Cont {
     // 00401a67 push ebx
     ctx.push(ctx.cpu.regs.ebx);
     // 00401a68 call 0040345Dh
-    let dst = Cont(x40345d);
-    ctx.call(0x401a6d, dst)
+    ctx.call(0x401a6d, Cont(x40345d))
 }
 
 pub fn x401a6d(ctx: &mut Context) -> Cont {
@@ -2557,8 +2515,7 @@ pub fn x401a74(ctx: &mut Context) -> Cont {
     // 00401a74 push esi
     ctx.push(ctx.cpu.regs.esi);
     // 00401a75 call 00402FA8h
-    let dst = Cont(x402fa8);
-    ctx.call(0x401a7a, dst)
+    ctx.call(0x401a7a, Cont(x402fa8))
 }
 
 pub fn x401a7a(ctx: &mut Context) -> Cont {
@@ -2604,16 +2561,14 @@ pub fn x401a8e(ctx: &mut Context) -> Cont {
     // 00401a90 push edi
     ctx.push(ctx.cpu.regs.edi);
     // 00401a91 call 00403E40h
-    let dst = Cont(x403e40);
-    ctx.call(0x401a96, dst)
+    ctx.call(0x401a96, Cont(x403e40))
 }
 
 pub fn x401a96(ctx: &mut Context) -> Cont {
     // 00401a96 push ebx
     ctx.push(ctx.cpu.regs.ebx);
     // 00401a97 call 00402C54h
-    let dst = Cont(x402c54);
-    ctx.call(0x401a9c, dst)
+    ctx.call(0x401a9c, Cont(x402c54))
 }
 
 pub fn x401a9c(ctx: &mut Context) -> Cont {
@@ -2627,8 +2582,7 @@ pub fn x401a9c(ctx: &mut Context) -> Cont {
     // 00401aa1 push ebx
     ctx.push(ctx.cpu.regs.ebx);
     // 00401aa2 call 00402C7Fh
-    let dst = Cont(x402c7f);
-    ctx.call(0x401aa7, dst)
+    ctx.call(0x401aa7, Cont(x402c7f))
 }
 
 pub fn x401aa7(ctx: &mut Context) -> Cont {
@@ -2712,8 +2666,7 @@ pub fn x401add(ctx: &mut Context) -> Cont {
     // 00401adf push edi
     ctx.push(ctx.cpu.regs.edi);
     // 00401ae0 call 00403E40h
-    let dst = Cont(x403e40);
-    ctx.call(0x401ae5, dst)
+    ctx.call(0x401ae5, Cont(x403e40))
 }
 
 pub fn x401ae5(ctx: &mut Context) -> Cont {
@@ -2725,8 +2678,7 @@ pub fn x401ae5(ctx: &mut Context) -> Cont {
     // 00401ae8 push ebx
     ctx.push(ctx.cpu.regs.ebx);
     // 00401ae9 call 00402C7Fh
-    let dst = Cont(x402c7f);
-    ctx.call(0x401aee, dst)
+    ctx.call(0x401aee, Cont(x402c7f))
 }
 
 pub fn x401aee(ctx: &mut Context) -> Cont {
@@ -2803,8 +2755,7 @@ pub fn x401b23(ctx: &mut Context) -> Cont {
     // 00401b23 push esi
     ctx.push(ctx.cpu.regs.esi);
     // 00401b24 call 00403E20h
-    let dst = Cont(x403e20);
-    ctx.call(0x401b29, dst)
+    ctx.call(0x401b29, Cont(x403e20))
 }
 
 pub fn x401b29(ctx: &mut Context) -> Cont {
@@ -2892,8 +2843,7 @@ pub fn x401b66(ctx: &mut Context) -> Cont {
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0x8u32)),
     );
     // 00401b71 call 004039AFh
-    let dst = Cont(x4039af);
-    ctx.call(0x401b76, dst)
+    ctx.call(0x401b76, Cont(x4039af))
 }
 
 pub fn x401b76(ctx: &mut Context) -> Cont {
@@ -2938,8 +2888,7 @@ pub fn x401b8b(ctx: &mut Context) -> Cont {
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0xfffffffcu32)),
     );
     // 00401b98 call 00403D77h
-    let dst = Cont(x403d77);
-    ctx.call(0x401b9d, dst)
+    ctx.call(0x401b9d, Cont(x403d77))
 }
 
 pub fn x401b9d(ctx: &mut Context) -> Cont {
@@ -2964,8 +2913,7 @@ pub fn x401ba9(ctx: &mut Context) -> Cont {
     // 00401ba9 push edi
     ctx.push(ctx.cpu.regs.edi);
     // 00401baa call 00403A4Bh
-    let dst = Cont(x403a4b);
-    ctx.call(0x401baf, dst)
+    ctx.call(0x401baf, Cont(x403a4b))
 }
 
 pub fn x401baf(ctx: &mut Context) -> Cont {
@@ -3008,8 +2956,7 @@ pub fn x401bc2(ctx: &mut Context) -> Cont {
     // 00401bc6 push edi
     ctx.push(ctx.cpu.regs.edi);
     // 00401bc7 call 00403E40h
-    let dst = Cont(x403e40);
-    ctx.call(0x401bcc, dst)
+    ctx.call(0x401bcc, Cont(x403e40))
 }
 
 pub fn x401bcc(ctx: &mut Context) -> Cont {
@@ -3026,8 +2973,7 @@ pub fn x401bcc(ctx: &mut Context) -> Cont {
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0xfffffffcu32)),
     );
     // 00401bd3 call 00403A06h
-    let dst = Cont(x403a06);
-    ctx.call(0x401bd8, dst)
+    ctx.call(0x401bd8, Cont(x403a06))
 }
 
 pub fn x401bd8(ctx: &mut Context) -> Cont {
@@ -3088,8 +3034,7 @@ pub fn x401c04(ctx: &mut Context) -> Cont {
     // 00401c08 push edi
     ctx.push(ctx.cpu.regs.edi);
     // 00401c09 call 00403E40h
-    let dst = Cont(x403e40);
-    ctx.call(0x401c0e, dst)
+    ctx.call(0x401c0e, Cont(x403e40))
 }
 
 pub fn x401c0e(ctx: &mut Context) -> Cont {
@@ -3106,8 +3051,7 @@ pub fn x401c0e(ctx: &mut Context) -> Cont {
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0xfffffffcu32)),
     );
     // 00401c15 call 00403A06h
-    let dst = Cont(x403a06);
-    ctx.call(0x401c1a, dst)
+    ctx.call(0x401c1a, Cont(x403a06))
 }
 
 pub fn x401c1a(ctx: &mut Context) -> Cont {
@@ -3158,8 +3102,7 @@ pub fn x401c48(ctx: &mut Context) -> Cont {
     // 00401c48 push esi
     ctx.push(ctx.cpu.regs.esi);
     // 00401c49 call 00403E20h
-    let dst = Cont(x403e20);
-    ctx.call(0x401c4e, dst)
+    ctx.call(0x401c4e, Cont(x403e20))
 }
 
 pub fn x401c4e(ctx: &mut Context) -> Cont {
@@ -3241,8 +3184,7 @@ pub fn x401c8c(ctx: &mut Context) -> Cont {
     // 00401c8c push esi
     ctx.push(ctx.cpu.regs.esi);
     // 00401c8d call 00403E20h
-    let dst = Cont(x403e20);
-    ctx.call(0x401c92, dst)
+    ctx.call(0x401c92, Cont(x403e20))
 }
 
 pub fn x401c92(ctx: &mut Context) -> Cont {
@@ -3298,8 +3240,7 @@ pub fn x401ca9(ctx: &mut Context) -> Cont {
     // 00401cae push 40700Ch
     ctx.push(0x40700cu32);
     // 00401cb3 call 00401D86h
-    let dst = Cont(x401d86);
-    ctx.call(0x401cb8, dst)
+    ctx.call(0x401cb8, Cont(x401d86))
 }
 
 pub fn x401cb8(ctx: &mut Context) -> Cont {
@@ -3308,8 +3249,7 @@ pub fn x401cb8(ctx: &mut Context) -> Cont {
     // 00401cbd push 407000h
     ctx.push(0x407000u32);
     // 00401cc2 call 00401D86h
-    let dst = Cont(x401d86);
-    ctx.call(0x401cc7, dst)
+    ctx.call(0x401cc7, Cont(x401d86))
 }
 
 pub fn x401cc7(ctx: &mut Context) -> Cont {
@@ -3330,8 +3270,7 @@ pub fn x401ccb(ctx: &mut Context) -> Cont {
             .read::<u32>(ctx.cpu.regs.esp.wrapping_add(0xcu32)),
     );
     // 00401cd3 call 00401CEDh
-    let dst = Cont(x401ced);
-    ctx.call(0x401cd8, dst)
+    ctx.call(0x401cd8, Cont(x401ced))
 }
 
 pub fn x401cd8(ctx: &mut Context) -> Cont {
@@ -3352,8 +3291,7 @@ pub fn x401cdc(ctx: &mut Context) -> Cont {
             .read::<u32>(ctx.cpu.regs.esp.wrapping_add(0xcu32)),
     );
     // 00401ce4 call 00401CEDh
-    let dst = Cont(x401ced);
-    ctx.call(0x401ce9, dst)
+    ctx.call(0x401ce9, Cont(x401ced))
 }
 
 pub fn x401ce9(ctx: &mut Context) -> Cont {
@@ -3481,8 +3419,7 @@ pub fn x401d4d(ctx: &mut Context) -> Cont {
     // 00401d52 push 40701Ch
     ctx.push(0x40701cu32);
     // 00401d57 call 00401D86h
-    let dst = Cont(x401d86);
-    ctx.call(0x401d5c, dst)
+    ctx.call(0x401d5c, Cont(x401d86))
 }
 
 pub fn x401d5c(ctx: &mut Context) -> Cont {
@@ -3501,8 +3438,7 @@ pub fn x401d5e(ctx: &mut Context) -> Cont {
     // 00401d63 push 407024h
     ctx.push(0x407024u32);
     // 00401d68 call 00401D86h
-    let dst = Cont(x401d86);
-    ctx.call(0x401d6d, dst)
+    ctx.call(0x401d6d, Cont(x401d86))
 }
 
 pub fn x401d6d(ctx: &mut Context) -> Cont {
@@ -3621,8 +3557,7 @@ pub fn x401db0(ctx: &mut Context) -> Cont {
     // 00401db3 push esi
     ctx.push(ctx.cpu.regs.esi);
     // 00401db4 call 00402C54h
-    let dst = Cont(x402c54);
-    ctx.call(0x401db9, dst)
+    ctx.call(0x401db9, Cont(x402c54))
 }
 
 pub fn x401db9(ctx: &mut Context) -> Cont {
@@ -3675,8 +3610,7 @@ pub fn x401dce(ctx: &mut Context) -> Cont {
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0x8u32)),
     );
     // 00401dd9 call 004039AFh
-    let dst = Cont(x4039af);
-    ctx.call(0x401dde, dst)
+    ctx.call(0x401dde, Cont(x4039af))
 }
 
 pub fn x401dde(ctx: &mut Context) -> Cont {
@@ -3735,8 +3669,7 @@ pub fn x401e01(ctx: &mut Context) -> Cont {
             .read::<u32>(ctx.cpu.regs.esp.wrapping_add(0x8u32)),
     );
     // 00401e0b call 00401E13h
-    let dst = Cont(x401e13);
-    ctx.call(0x401e10, dst)
+    ctx.call(0x401e10, Cont(x401e13))
 }
 
 pub fn x401e10(ctx: &mut Context) -> Cont {
@@ -3769,8 +3702,7 @@ pub fn x401e1a(ctx: &mut Context) -> Cont {
             .read::<u32>(ctx.cpu.regs.esp.wrapping_add(0x4u32)),
     );
     // 00401e1e call 00401E3Fh
-    let dst = Cont(x401e3f);
-    ctx.call(0x401e23, dst)
+    ctx.call(0x401e23, Cont(x401e3f))
 }
 
 pub fn x401e23(ctx: &mut Context) -> Cont {
@@ -3802,8 +3734,7 @@ pub fn x401e2e(ctx: &mut Context) -> Cont {
             .read::<u32>(ctx.cpu.regs.esp.wrapping_add(0x4u32)),
     );
     // 00401e32 call 00403E20h
-    let dst = Cont(x403e20);
-    ctx.call(0x401e37, dst)
+    ctx.call(0x401e37, Cont(x403e20))
 }
 
 pub fn x401e37(ctx: &mut Context) -> Cont {
@@ -3857,8 +3788,7 @@ pub fn x401e56(ctx: &mut Context) -> Cont {
     // 00401e56 push esi
     ctx.push(ctx.cpu.regs.esi);
     // 00401e57 call 00402FA8h
-    let dst = Cont(x402fa8);
-    ctx.call(0x401e5c, dst)
+    ctx.call(0x401e5c, Cont(x402fa8))
 }
 
 pub fn x401e5c(ctx: &mut Context) -> Cont {
@@ -3934,8 +3864,7 @@ pub fn x401e83(ctx: &mut Context) -> Cont {
     // 00401e88 push eax
     ctx.push(ctx.cpu.regs.eax);
     // 00401e89 call 00403A4Bh
-    let dst = Cont(x403a4b);
-    ctx.call(0x401e8e, dst)
+    ctx.call(0x401e8e, Cont(x403a4b))
 }
 
 pub fn x401e8e(ctx: &mut Context) -> Cont {
@@ -4029,8 +3958,7 @@ pub fn x401ec9(ctx: &mut Context) -> Cont {
     // 00401ec9 push esi
     ctx.push(ctx.cpu.regs.esi);
     // 00401eca call 00402C54h
-    let dst = Cont(x402c54);
-    ctx.call(0x401ecf, dst)
+    ctx.call(0x401ecf, Cont(x402c54))
 }
 
 pub fn x401ecf(ctx: &mut Context) -> Cont {
@@ -4049,8 +3977,7 @@ pub fn x401ed5(ctx: &mut Context) -> Cont {
     // 00401ed5 push eax
     ctx.push(ctx.cpu.regs.eax);
     // 00401ed6 call 00402C7Fh
-    let dst = Cont(x402c7f);
-    ctx.call(0x401edb, dst)
+    ctx.call(0x401edb, Cont(x402c7f))
 }
 
 pub fn x401edb(ctx: &mut Context) -> Cont {
@@ -4083,8 +4010,7 @@ pub fn x401ee4(ctx: &mut Context) -> Cont {
     // 00401eec push esi
     ctx.push(ctx.cpu.regs.esi);
     // 00401eed call 004039AFh
-    let dst = Cont(x4039af);
-    ctx.call(0x401ef2, dst)
+    ctx.call(0x401ef2, Cont(x4039af))
 }
 
 pub fn x401ef2(ctx: &mut Context) -> Cont {
@@ -4110,8 +4036,7 @@ pub fn x401ef9(ctx: &mut Context) -> Cont {
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0xfffffffcu32)),
     );
     // 00401f00 call 00403A06h
-    let dst = Cont(x403a06);
-    ctx.call(0x401f05, dst)
+    ctx.call(0x401f05, Cont(x403a06))
 }
 
 pub fn x401f05(ctx: &mut Context) -> Cont {
@@ -4160,8 +4085,7 @@ pub fn x401f1c(ctx: &mut Context) -> Cont {
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0x8u32)),
     );
     // 00401f23 call 0040205Dh
-    let dst = Cont(x40205d);
-    ctx.call(0x401f28, dst)
+    ctx.call(0x401f28, Cont(x40205d))
 }
 
 pub fn x401f28(ctx: &mut Context) -> Cont {
@@ -4573,8 +4497,7 @@ pub fn x4020a0(ctx: &mut Context) -> Cont {
 
 pub fn x4020a9(ctx: &mut Context) -> Cont {
     // 004020a9 call 0040457Bh
-    let dst = Cont(x40457b);
-    ctx.call(0x4020ae, dst)
+    ctx.call(0x4020ae, Cont(x40457b))
 }
 
 pub fn x4020ae(ctx: &mut Context) -> Cont {
@@ -4620,8 +4543,7 @@ pub fn x4020c7(ctx: &mut Context) -> Cont {
     // 004020ca push eax
     ctx.push(ctx.cpu.regs.eax);
     // 004020cb call 00404175h
-    let dst = Cont(x404175);
-    ctx.call(0x4020d0, dst)
+    ctx.call(0x4020d0, Cont(x404175))
 }
 
 pub fn x4020d0(ctx: &mut Context) -> Cont {
@@ -4730,8 +4652,7 @@ pub fn x4020f8(ctx: &mut Context) -> Cont {
 
 pub fn x402105(ctx: &mut Context) -> Cont {
     // 00402105 call 0040457Bh
-    let dst = Cont(x40457b);
-    ctx.call(0x40210a, dst)
+    ctx.call(0x40210a, Cont(x40457b))
 }
 
 pub fn x40210a(ctx: &mut Context) -> Cont {
@@ -4772,8 +4693,7 @@ pub fn x40211d(ctx: &mut Context) -> Cont {
     // 0040211d push esi
     ctx.push(ctx.cpu.regs.esi);
     // 0040211e call 00404690h
-    let dst = Cont(x404690);
-    ctx.call(0x402123, dst)
+    ctx.call(0x402123, Cont(x404690))
 }
 
 pub fn x402123(ctx: &mut Context) -> Cont {
@@ -4797,8 +4717,7 @@ pub fn x40212a(ctx: &mut Context) -> Cont {
     // 00402131 push eax
     ctx.push(ctx.cpu.regs.eax);
     // 00402132 call 00401E01h
-    let dst = Cont(x401e01);
-    ctx.call(0x402137, dst)
+    ctx.call(0x402137, Cont(x401e01))
 }
 
 pub fn x402137(ctx: &mut Context) -> Cont {
@@ -4819,8 +4738,7 @@ pub fn x402144(ctx: &mut Context) -> Cont {
     // 00402144 push 9
     ctx.push(0x9u32);
     // 00402146 call 004019B5h
-    let dst = Cont(x4019b5);
-    ctx.call(0x40214b, dst)
+    ctx.call(0x40214b, Cont(x4019b5))
 }
 
 pub fn x40214b(ctx: &mut Context) -> Cont {
@@ -4853,8 +4771,7 @@ pub fn x402157(ctx: &mut Context) -> Cont {
     // 00402157 push edi
     ctx.push(ctx.cpu.regs.edi);
     // 00402158 call 00404690h
-    let dst = Cont(x404690);
-    ctx.call(0x40215d, dst)
+    ctx.call(0x40215d, Cont(x404690))
 }
 
 pub fn x40215d(ctx: &mut Context) -> Cont {
@@ -4879,8 +4796,7 @@ pub fn x402166(ctx: &mut Context) -> Cont {
     // 00402166 push ebp
     ctx.push(ctx.cpu.regs.ebp);
     // 00402167 call 00401E01h
-    let dst = Cont(x401e01);
-    ctx.call(0x40216c, dst)
+    ctx.call(0x40216c, Cont(x401e01))
 }
 
 pub fn x40216c(ctx: &mut Context) -> Cont {
@@ -4899,8 +4815,7 @@ pub fn x402173(ctx: &mut Context) -> Cont {
     // 00402173 push 9
     ctx.push(0x9u32);
     // 00402175 call 004019B5h
-    let dst = Cont(x4019b5);
-    ctx.call(0x40217a, dst)
+    ctx.call(0x40217a, Cont(x4019b5))
 }
 
 pub fn x40217a(ctx: &mut Context) -> Cont {
@@ -4916,8 +4831,7 @@ pub fn x40217b(ctx: &mut Context) -> Cont {
     // 0040217c push dword ptr [esi]
     ctx.push(ctx.memory.read::<u32>(ctx.cpu.regs.esi));
     // 0040217e call 004045A0h
-    let dst = Cont(x4045a0);
-    ctx.call(0x402183, dst)
+    ctx.call(0x402183, Cont(x4045a0))
 }
 
 pub fn x402183(ctx: &mut Context) -> Cont {
@@ -4956,8 +4870,7 @@ pub fn x40218f(ctx: &mut Context) -> Cont {
     // 0040218f push dword ptr ds:[40959Ch]
     ctx.push(ctx.memory.read::<u32>(0x40959cu32));
     // 00402195 call 00401EB3h
-    let dst = Cont(x401eb3);
-    ctx.call(0x40219a, dst)
+    ctx.call(0x40219a, Cont(x401eb3))
 }
 
 pub fn x40219a(ctx: &mut Context) -> Cont {
@@ -5012,8 +4925,7 @@ pub fn x4021b1(ctx: &mut Context) -> Cont {
 
 pub fn x4021c3(ctx: &mut Context) -> Cont {
     // 004021c3 call 0040457Bh
-    let dst = Cont(x40457b);
-    ctx.call(0x4021c8, dst)
+    ctx.call(0x4021c8, Cont(x40457b))
 }
 
 pub fn x4021c8(ctx: &mut Context) -> Cont {
@@ -5065,8 +4977,7 @@ pub fn x4021ed(ctx: &mut Context) -> Cont {
     // 004021f7 push edi
     ctx.push(ctx.cpu.regs.edi);
     // 004021f8 call 0040224Ah
-    let dst = Cont(x40224a);
-    ctx.call(0x4021fd, dst)
+    ctx.call(0x4021fd, Cont(x40224a))
 }
 
 pub fn x4021fd(ctx: &mut Context) -> Cont {
@@ -5083,8 +4994,7 @@ pub fn x4021fd(ctx: &mut Context) -> Cont {
     // 00402206 push eax
     ctx.push(ctx.cpu.regs.eax);
     // 00402207 call 00401E01h
-    let dst = Cont(x401e01);
-    ctx.call(0x40220c, dst)
+    ctx.call(0x40220c, Cont(x401e01))
 }
 
 pub fn x40220c(ctx: &mut Context) -> Cont {
@@ -5102,8 +5012,7 @@ pub fn x402215(ctx: &mut Context) -> Cont {
     // 00402215 push 8
     ctx.push(0x8u32);
     // 00402217 call 004019B5h
-    let dst = Cont(x4019b5);
-    ctx.call(0x40221c, dst)
+    ctx.call(0x40221c, Cont(x4019b5))
 }
 
 pub fn x40221c(ctx: &mut Context) -> Cont {
@@ -5135,8 +5044,7 @@ pub fn x40221d(ctx: &mut Context) -> Cont {
     // 0040222d push edi
     ctx.push(ctx.cpu.regs.edi);
     // 0040222e call 0040224Ah
-    let dst = Cont(x40224a);
-    ctx.call(0x402233, dst)
+    ctx.call(0x402233, Cont(x40224a))
 }
 
 pub fn x402233(ctx: &mut Context) -> Cont {
@@ -6159,8 +6067,7 @@ pub fn x402499(ctx: &mut Context) -> Cont {
     // 00402499 push ebp
     ctx.push(ctx.cpu.regs.ebp);
     // 0040249a call 00401E01h
-    let dst = Cont(x401e01);
-    ctx.call(0x40249f, dst)
+    ctx.call(0x40249f, Cont(x401e01))
 }
 
 pub fn x40249f(ctx: &mut Context) -> Cont {
@@ -6215,8 +6122,7 @@ pub fn x4024b9(ctx: &mut Context) -> Cont {
             .read::<u32>(ctx.cpu.regs.esp.wrapping_add(0x10u32)),
     );
     // 004024bd call 00401EB3h
-    let dst = Cont(x401eb3);
-    ctx.call(0x4024c2, dst)
+    ctx.call(0x4024c2, Cont(x401eb3))
 }
 
 pub fn x4024c2(ctx: &mut Context) -> Cont {
@@ -6322,8 +6228,7 @@ pub fn x4024fb(ctx: &mut Context) -> Cont {
     // 00402500 push ebp
     ctx.push(ctx.cpu.regs.ebp);
     // 00402501 call 00401E01h
-    let dst = Cont(x401e01);
-    ctx.call(0x402506, dst)
+    ctx.call(0x402506, Cont(x401e01))
 }
 
 pub fn x402506(ctx: &mut Context) -> Cont {
@@ -6353,8 +6258,7 @@ pub fn x402511(ctx: &mut Context) -> Cont {
     // 00402513 push esi
     ctx.push(ctx.cpu.regs.esi);
     // 00402514 call 00403E40h
-    let dst = Cont(x403e40);
-    ctx.call(0x402519, dst)
+    ctx.call(0x402519, Cont(x403e40))
 }
 
 pub fn x402519(ctx: &mut Context) -> Cont {
@@ -6417,8 +6321,7 @@ pub fn x402530(ctx: &mut Context) -> Cont {
     // 00402537 push 100h
     ctx.push(0x100u32);
     // 0040253c call 00401E01h
-    let dst = Cont(x401e01);
-    ctx.call(0x402541, dst)
+    ctx.call(0x402541, Cont(x401e01))
 }
 
 pub fn x402541(ctx: &mut Context) -> Cont {
@@ -6437,8 +6340,7 @@ pub fn x402548(ctx: &mut Context) -> Cont {
     // 00402548 push 1Bh
     ctx.push(0x1bu32);
     // 0040254a call 004019B5h
-    let dst = Cont(x4019b5);
-    ctx.call(0x40254f, dst)
+    ctx.call(0x40254f, Cont(x4019b5))
 }
 
 pub fn x40254f(ctx: &mut Context) -> Cont {
@@ -6568,8 +6470,7 @@ pub fn x4025c7(ctx: &mut Context) -> Cont {
     // 004025c7 push 100h
     ctx.push(0x100u32);
     // 004025cc call 00401E01h
-    let dst = Cont(x401e01);
-    ctx.call(0x4025d1, dst)
+    ctx.call(0x4025d1, Cont(x401e01))
 }
 
 pub fn x4025d1(ctx: &mut Context) -> Cont {
@@ -6997,8 +6898,7 @@ pub fn x402708(ctx: &mut Context) -> Cont {
     // 0040270b mov eax,122Ch
     ctx.cpu.regs.eax = 0x122cu32;
     // 00402710 call 00404AC0h
-    let dst = Cont(x404ac0);
-    ctx.call(0x402715, dst)
+    ctx.call(0x402715, Cont(x404ac0))
 }
 
 pub fn x402715(ctx: &mut Context) -> Cont {
@@ -7136,8 +7036,7 @@ pub fn x40278d(ctx: &mut Context) -> Cont {
     // 00402796 push 406134h
     ctx.push(0x406134u32);
     // 0040279b call 00404A80h
-    let dst = Cont(x404a80);
-    ctx.call(0x4027a0, dst)
+    ctx.call(0x4027a0, Cont(x404a80))
 }
 
 pub fn x4027a0(ctx: &mut Context) -> Cont {
@@ -7230,8 +7129,7 @@ pub fn x4027e3(ctx: &mut Context) -> Cont {
     // 004027f0 push eax
     ctx.push(ctx.cpu.regs.eax);
     // 004027f1 call 00404A00h
-    let dst = Cont(x404a00);
-    ctx.call(0x4027f6, dst)
+    ctx.call(0x4027f6, Cont(x404a00))
 }
 
 pub fn x4027f6(ctx: &mut Context) -> Cont {
@@ -7257,8 +7155,7 @@ pub fn x4027fc(ctx: &mut Context) -> Cont {
     // 004027fe push eax
     ctx.push(ctx.cpu.regs.eax);
     // 004027ff call 00404940h
-    let dst = Cont(x404940);
-    ctx.call(0x402804, dst)
+    ctx.call(0x402804, Cont(x404940))
 }
 
 pub fn x402804(ctx: &mut Context) -> Cont {
@@ -7333,8 +7230,7 @@ pub fn x40281f(ctx: &mut Context) -> Cont {
     // 00402822 push eax
     ctx.push(ctx.cpu.regs.eax);
     // 00402823 call 0040470Bh
-    let dst = Cont(x40470b);
-    ctx.call(0x402828, dst)
+    ctx.call(0x402828, Cont(x40470b))
 }
 
 pub fn x402828(ctx: &mut Context) -> Cont {
@@ -7366,8 +7262,7 @@ pub fn x40283a(ctx: &mut Context) -> Cont {
     // 0040283d push eax
     ctx.push(ctx.cpu.regs.eax);
     // 0040283e call 004026DBh
-    let dst = Cont(x4026db);
-    ctx.call(0x402843, dst)
+    ctx.call(0x402843, Cont(x4026db))
 }
 
 pub fn x402843(ctx: &mut Context) -> Cont {
@@ -7428,8 +7323,7 @@ pub fn x402850(ctx: &mut Context) -> Cont {
 
 pub fn x402870(ctx: &mut Context) -> Cont {
     // 00402870 call 00402708h
-    let dst = Cont(x402708);
-    ctx.call(0x402875, dst)
+    ctx.call(0x402875, Cont(x402708))
 }
 
 pub fn x402875(ctx: &mut Context) -> Cont {
@@ -7445,8 +7339,7 @@ pub fn x40287f(ctx: &mut Context) -> Cont {
     // 0040287f push 3F8h
     ctx.push(0x3f8u32);
     // 00402884 call 00402C0Ch
-    let dst = Cont(x402c0c);
-    ctx.call(0x402889, dst)
+    ctx.call(0x402889, Cont(x402c0c))
 }
 
 pub fn x402889(ctx: &mut Context) -> Cont {
@@ -7466,8 +7359,7 @@ pub fn x40288c(ctx: &mut Context) -> Cont {
 
 pub fn x402891(ctx: &mut Context) -> Cont {
     // 00402891 call 00403753h
-    let dst = Cont(x403753);
-    ctx.call(0x402896, dst)
+    ctx.call(0x402896, Cont(x403753))
 }
 
 pub fn x402896(ctx: &mut Context) -> Cont {
@@ -7533,8 +7425,7 @@ pub fn x402a97(ctx: &mut Context) -> Cont {
     // 00402a97 push 0FCh
     ctx.push(0xfcu32);
     // 00402a9c call 00402AB9h
-    let dst = Cont(x402ab9);
-    ctx.call(0x402aa1, dst)
+    ctx.call(0x402aa1, Cont(x402ab9))
 }
 
 pub fn x402aa1(ctx: &mut Context) -> Cont {
@@ -7559,8 +7450,7 @@ pub fn x402aad(ctx: &mut Context) -> Cont {
     // 00402aad push 0FFh
     ctx.push(0xffu32);
     // 00402ab2 call 00402AB9h
-    let dst = Cont(x402ab9);
-    ctx.call(0x402ab7, dst)
+    ctx.call(0x402ab7, Cont(x402ab9))
 }
 
 pub fn x402ab7(ctx: &mut Context) -> Cont {
@@ -7692,8 +7582,7 @@ pub fn x402b30(ctx: &mut Context) -> Cont {
     // 00402b3b push eax
     ctx.push(ctx.cpu.regs.eax);
     // 00402b3c call 004045A0h
-    let dst = Cont(x4045a0);
-    ctx.call(0x402b41, dst)
+    ctx.call(0x402b41, Cont(x4045a0))
 }
 
 pub fn x402b41(ctx: &mut Context) -> Cont {
@@ -7716,8 +7605,7 @@ pub fn x402b43(ctx: &mut Context) -> Cont {
     // 00402b4b lea edi,[ebp-1A4h]
     ctx.cpu.regs.edi = ctx.cpu.regs.ebp.wrapping_add(0xfffffe5cu32);
     // 00402b51 call 00404690h
-    let dst = Cont(x404690);
-    ctx.call(0x402b56, dst)
+    ctx.call(0x402b56, Cont(x404690))
 }
 
 pub fn x402b56(ctx: &mut Context) -> Cont {
@@ -7738,8 +7626,7 @@ pub fn x402b5d(ctx: &mut Context) -> Cont {
     // 00402b63 push eax
     ctx.push(ctx.cpu.regs.eax);
     // 00402b64 call 00404690h
-    let dst = Cont(x404690);
-    ctx.call(0x402b69, dst)
+    ctx.call(0x402b69, Cont(x404690))
 }
 
 pub fn x402b69(ctx: &mut Context) -> Cont {
@@ -7758,8 +7645,7 @@ pub fn x402b69(ctx: &mut Context) -> Cont {
     // 00402b7d push edi
     ctx.push(ctx.cpu.regs.edi);
     // 00402b7e call 00404B80h
-    let dst = Cont(x404b80);
-    ctx.call(0x402b83, dst)
+    ctx.call(0x402b83, Cont(x404b80))
 }
 
 pub fn x402b83(ctx: &mut Context) -> Cont {
@@ -7776,8 +7662,7 @@ pub fn x402b86(ctx: &mut Context) -> Cont {
     // 00402b91 push eax
     ctx.push(ctx.cpu.regs.eax);
     // 00402b92 call 004045A0h
-    let dst = Cont(x4045a0);
-    ctx.call(0x402b97, dst)
+    ctx.call(0x402b97, Cont(x4045a0))
 }
 
 pub fn x402b97(ctx: &mut Context) -> Cont {
@@ -7788,8 +7673,7 @@ pub fn x402b97(ctx: &mut Context) -> Cont {
     // 00402b9e push eax
     ctx.push(ctx.cpu.regs.eax);
     // 00402b9f call 004045B0h
-    let dst = Cont(x4045b0);
-    ctx.call(0x402ba4, dst)
+    ctx.call(0x402ba4, Cont(x4045b0))
 }
 
 pub fn x402ba4(ctx: &mut Context) -> Cont {
@@ -7800,8 +7684,7 @@ pub fn x402ba4(ctx: &mut Context) -> Cont {
     // 00402baf push eax
     ctx.push(ctx.cpu.regs.eax);
     // 00402bb0 call 004045B0h
-    let dst = Cont(x4045b0);
-    ctx.call(0x402bb5, dst)
+    ctx.call(0x402bb5, Cont(x4045b0))
 }
 
 pub fn x402bb5(ctx: &mut Context) -> Cont {
@@ -7815,8 +7698,7 @@ pub fn x402bb5(ctx: &mut Context) -> Cont {
     // 00402bc1 push eax
     ctx.push(ctx.cpu.regs.eax);
     // 00402bc2 call 004045B0h
-    let dst = Cont(x4045b0);
-    ctx.call(0x402bc7, dst)
+    ctx.call(0x402bc7, Cont(x4045b0))
 }
 
 pub fn x402bc7(ctx: &mut Context) -> Cont {
@@ -7829,8 +7711,7 @@ pub fn x402bc7(ctx: &mut Context) -> Cont {
     // 00402bd7 push eax
     ctx.push(ctx.cpu.regs.eax);
     // 00402bd8 call 00404AEFh
-    let dst = Cont(x404aef);
-    ctx.call(0x402bdd, dst)
+    ctx.call(0x402bdd, Cont(x404aef))
 }
 
 pub fn x402bdd(ctx: &mut Context) -> Cont {
@@ -7855,8 +7736,7 @@ pub fn x402be3(ctx: &mut Context) -> Cont {
     // 00402bef push dword ptr [esi]
     ctx.push(ctx.memory.read::<u32>(ctx.cpu.regs.esi));
     // 00402bf1 call 00404690h
-    let dst = Cont(x404690);
-    ctx.call(0x402bf6, dst)
+    ctx.call(0x402bf6, Cont(x404690))
 }
 
 pub fn x402bf6(ctx: &mut Context) -> Cont {
@@ -9112,8 +8992,7 @@ pub fn x402f34(ctx: &mut Context) -> Cont {
     // 00402f6d push eax
     ctx.push(ctx.cpu.regs.eax);
     // 00402f6e call 00404C80h
-    let dst = Cont(x404c80);
-    ctx.call(0x402f73, dst)
+    ctx.call(0x402f73, Cont(x404c80))
 }
 
 pub fn x402f73(ctx: &mut Context) -> Cont {
@@ -9502,8 +9381,7 @@ pub fn x403072(ctx: &mut Context) -> Cont {
 
 pub fn x403074(ctx: &mut Context) -> Cont {
     // 00403074 call 004032B1h
-    let dst = Cont(x4032b1);
-    ctx.call(0x403079, dst)
+    ctx.call(0x403079, Cont(x4032b1))
 }
 
 pub fn x403079(ctx: &mut Context) -> Cont {
@@ -9522,8 +9400,7 @@ pub fn x403082(ctx: &mut Context) -> Cont {
     // 00403082 push ebx
     ctx.push(ctx.cpu.regs.ebx);
     // 00403083 call 00403362h
-    let dst = Cont(x403362);
-    ctx.call(0x403088, dst)
+    ctx.call(0x403088, Cont(x403362))
 }
 
 pub fn x403088(ctx: &mut Context) -> Cont {
@@ -12286,7 +12163,7 @@ pub fn x40381a(ctx: &mut Context) -> Cont {
     // 0040381c cmp ebp,10h
     sub(ctx.cpu.regs.ebp, 0x10u32, &mut ctx.cpu.flags);
     // 0040381f setge dl
-    todo!();
+    ctx.cpu.regs.set_dl(ctx.setge());
     // 00403822 dec edx
     ctx.cpu.regs.edx = dec(ctx.cpu.regs.edx, &mut ctx.cpu.flags);
     // 00403823 and edx,ecx
@@ -12316,8 +12193,7 @@ pub fn x403837(ctx: &mut Context) -> Cont {
     // 0040383a push edi
     ctx.push(ctx.cpu.regs.edi);
     // 0040383b call 00404FC0h
-    let dst = Cont(x404fc0);
-    ctx.call(0x403840, dst)
+    ctx.call(0x403840, Cont(x404fc0))
 }
 
 pub fn x403840(ctx: &mut Context) -> Cont {
@@ -12749,8 +12625,7 @@ pub fn x403991(ctx: &mut Context) -> Cont {
     // 00403991 push ecx
     ctx.push(ctx.cpu.regs.ecx);
     // 00403992 call 00403897h
-    let dst = Cont(x403897);
-    ctx.call(0x403997, dst)
+    ctx.call(0x403997, Cont(x403897))
 }
 
 pub fn x403997(ctx: &mut Context) -> Cont {
@@ -13002,8 +12877,7 @@ pub fn x403a42(ctx: &mut Context) -> Cont {
     // 00403a42 push 10h
     ctx.push(0x10u32);
     // 00403a44 call 004038EDh
-    let dst = Cont(x4038ed);
-    ctx.call(0x403a49, dst)
+    ctx.call(0x403a49, Cont(x4038ed))
 }
 
 pub fn x403a49(ctx: &mut Context) -> Cont {
@@ -13112,8 +12986,7 @@ pub fn x403a92(ctx: &mut Context) -> Cont {
     // 00403a94 push eax
     ctx.push(ctx.cpu.regs.eax);
     // 00403a95 call 00403C53h
-    let dst = Cont(x403c53);
-    ctx.call(0x403a9a, dst)
+    ctx.call(0x403a9a, Cont(x403c53))
 }
 
 pub fn x403a9a(ctx: &mut Context) -> Cont {
@@ -13226,8 +13099,7 @@ pub fn x403adf(ctx: &mut Context) -> Cont {
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0xfffffffcu32)),
     );
     // 00403ae4 call 00403C53h
-    let dst = Cont(x403c53);
-    ctx.call(0x403ae9, dst)
+    ctx.call(0x403ae9, Cont(x403c53))
 }
 
 pub fn x403ae9(ctx: &mut Context) -> Cont {
@@ -13483,8 +13355,7 @@ pub fn x403b94(ctx: &mut Context) -> Cont {
     // 00403b99 push esi
     ctx.push(ctx.cpu.regs.esi);
     // 00403b9a call 00404FC0h
-    let dst = Cont(x404fc0);
-    ctx.call(0x403b9f, dst)
+    ctx.call(0x403b9f, Cont(x404fc0))
 }
 
 pub fn x403b9f(ctx: &mut Context) -> Cont {
@@ -13650,8 +13521,7 @@ pub fn x403bf7(ctx: &mut Context) -> Cont {
 
 pub fn x403c1a(ctx: &mut Context) -> Cont {
     // 00403c1a call 00403753h
-    let dst = Cont(x403753);
-    ctx.call(0x403c1f, dst)
+    ctx.call(0x403c1f, Cont(x403753))
 }
 
 pub fn x403c1f(ctx: &mut Context) -> Cont {
@@ -14784,8 +14654,7 @@ pub fn x404175(ctx: &mut Context) -> Cont {
             .read::<u32>(ctx.cpu.regs.esp.wrapping_add(0xcu32)),
     );
     // 0040417d call 00404186h
-    let dst = Cont(x404186);
-    ctx.call(0x404182, dst)
+    ctx.call(0x404182, Cont(x404186))
 }
 
 pub fn x404182(ctx: &mut Context) -> Cont {
@@ -14888,8 +14757,7 @@ pub fn x4041b7(ctx: &mut Context) -> Cont {
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0x8u32)),
     );
     // 004041c3 call 00404350h
-    let dst = Cont(x404350);
-    ctx.call(0x4041c8, dst)
+    ctx.call(0x4041c8, Cont(x404350))
 }
 
 pub fn x4041c8(ctx: &mut Context) -> Cont {
@@ -15208,8 +15076,7 @@ pub fn x4042bc(ctx: &mut Context) -> Cont {
     // 004042ca mov ds:[409748h],eax
     ctx.memory.write::<u32>(0x409748u32, ctx.cpu.regs.eax);
     // 004042cf call 0040439Ah
-    let dst = Cont(x40439a);
-    ctx.call(0x4042d4, dst)
+    ctx.call(0x4042d4, Cont(x40439a))
 }
 
 pub fn x4042d4(ctx: &mut Context) -> Cont {
@@ -15280,8 +15147,7 @@ pub fn x404308(ctx: &mut Context) -> Cont {
     // 00404308 push esi
     ctx.push(ctx.cpu.regs.esi);
     // 00404309 call 0040439Ah
-    let dst = Cont(x40439a);
-    ctx.call(0x40430e, dst)
+    ctx.call(0x40430e, Cont(x40439a))
 }
 
 pub fn x40430e(ctx: &mut Context) -> Cont {
@@ -15330,14 +15196,12 @@ pub fn x404332(ctx: &mut Context) -> Cont {
 
 pub fn x40433a(ctx: &mut Context) -> Cont {
     // 0040433a call 004043CDh
-    let dst = Cont(x4043cd);
-    ctx.call(0x40433f, dst)
+    ctx.call(0x40433f, Cont(x4043cd))
 }
 
 pub fn x40433f(ctx: &mut Context) -> Cont {
     // 0040433f call 004043F6h
-    let dst = Cont(x4043f6);
-    ctx.call(0x404344, dst)
+    ctx.call(0x404344, Cont(x4043f6))
 }
 
 pub fn x404344(ctx: &mut Context) -> Cont {
@@ -15704,8 +15568,7 @@ pub fn x404471(ctx: &mut Context) -> Cont {
     // 0040448e push 1
     ctx.push(0x1u32);
     // 00404490 call 00405267h
-    let dst = Cont(x405267);
-    ctx.call(0x404495, dst)
+    ctx.call(0x404495, Cont(x405267))
 }
 
 pub fn x404495(ctx: &mut Context) -> Cont {
@@ -15730,8 +15593,7 @@ pub fn x404495(ctx: &mut Context) -> Cont {
     // 004044ae push dword ptr ds:[409964h]
     ctx.push(ctx.memory.read::<u32>(0x409964u32));
     // 004044b4 call 00405018h
-    let dst = Cont(x405018);
-    ctx.call(0x4044b9, dst)
+    ctx.call(0x4044b9, Cont(x405018))
 }
 
 pub fn x4044b9(ctx: &mut Context) -> Cont {
@@ -15756,8 +15618,7 @@ pub fn x4044b9(ctx: &mut Context) -> Cont {
     // 004044d6 push dword ptr ds:[409964h]
     ctx.push(ctx.memory.read::<u32>(0x409964u32));
     // 004044dc call 00405018h
-    let dst = Cont(x405018);
-    ctx.call(0x4044e1, dst)
+    ctx.call(0x4044e1, Cont(x405018))
 }
 
 pub fn x4044e1(ctx: &mut Context) -> Cont {
@@ -16014,8 +15875,7 @@ pub fn x404584(ctx: &mut Context) -> Cont {
     // 00404584 push 0FFFFFFFDh
     ctx.push(0xfffffffdu32);
     // 00404586 call 004041B7h
-    let dst = Cont(x4041b7);
-    ctx.call(0x40458b, dst)
+    ctx.call(0x40458b, Cont(x4041b7))
 }
 
 pub fn x40458b(ctx: &mut Context) -> Cont {
@@ -16518,8 +16378,7 @@ pub fn x40470b(ctx: &mut Context) -> Cont {
             .read::<u32>(ctx.cpu.regs.esp.wrapping_add(0x10u32)),
     );
     // 00404719 call 00404722h
-    let dst = Cont(x404722);
-    ctx.call(0x40471e, dst)
+    ctx.call(0x40471e, Cont(x404722))
 }
 
 pub fn x40471e(ctx: &mut Context) -> Cont {
@@ -16587,8 +16446,7 @@ pub fn x404743(ctx: &mut Context) -> Cont {
     // 00404748 push eax
     ctx.push(ctx.cpu.regs.eax);
     // 00404749 call 0040547Ch
-    let dst = Cont(x40547c);
-    ctx.call(0x40474e, dst)
+    ctx.call(0x40474e, Cont(x40547c))
 }
 
 pub fn x40474e(ctx: &mut Context) -> Cont {
@@ -16857,8 +16715,7 @@ pub fn x404803(ctx: &mut Context) -> Cont {
     // 00404805 push esi
     ctx.push(ctx.cpu.regs.esi);
     // 00404806 call 0040547Ch
-    let dst = Cont(x40547c);
-    ctx.call(0x40480b, dst)
+    ctx.call(0x40480b, Cont(x40547c))
 }
 
 pub fn x40480b(ctx: &mut Context) -> Cont {
@@ -16918,8 +16775,7 @@ pub fn x40482f(ctx: &mut Context) -> Cont {
     // 00404830 push esi
     ctx.push(ctx.cpu.regs.esi);
     // 00404831 call 0040547Ch
-    let dst = Cont(x40547c);
-    ctx.call(0x404836, dst)
+    ctx.call(0x404836, Cont(x40547c))
 }
 
 pub fn x404836(ctx: &mut Context) -> Cont {
@@ -16959,8 +16815,7 @@ pub fn x404849(ctx: &mut Context) -> Cont {
     // 0040484c push eax
     ctx.push(ctx.cpu.regs.eax);
     // 0040484d call 004053B0h
-    let dst = Cont(x4053b0);
-    ctx.call(0x404852, dst)
+    ctx.call(0x404852, Cont(x4053b0))
 }
 
 pub fn x404852(ctx: &mut Context) -> Cont {
@@ -19069,8 +18924,7 @@ pub fn x405093(ctx: &mut Context) -> Cont {
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0x10u32)),
     );
     // 00405099 call 0040523Ch
-    let dst = Cont(x40523c);
-    ctx.call(0x40509e, dst)
+    ctx.call(0x40509e, Cont(x40523c))
 }
 
 pub fn x40509e(ctx: &mut Context) -> Cont {
@@ -19224,8 +19078,7 @@ pub fn x40510a(ctx: &mut Context) -> Cont {
         .regs
         .set_al(and(ctx.cpu.regs.get_al(), 0xfcu8, &mut ctx.cpu.flags));
     // 00405115 call 00404AC0h
-    let dst = Cont(x404ac0);
-    ctx.call(0x40511a, dst)
+    ctx.call(0x40511a, Cont(x404ac0))
 }
 
 pub fn x40511a(ctx: &mut Context) -> Cont {
@@ -19491,8 +19344,7 @@ pub fn x4051ba(ctx: &mut Context) -> Cont {
         .regs
         .set_al(and(ctx.cpu.regs.get_al(), 0xfcu8, &mut ctx.cpu.flags));
     // 004051c9 call 00404AC0h
-    let dst = Cont(x404ac0);
-    ctx.call(0x4051ce, dst)
+    ctx.call(0x4051ce, Cont(x404ac0))
 }
 
 pub fn x4051ce(ctx: &mut Context) -> Cont {
@@ -19995,8 +19847,7 @@ pub fn x405339(ctx: &mut Context) -> Cont {
         .regs
         .set_al(and(ctx.cpu.regs.get_al(), 0xfcu8, &mut ctx.cpu.flags));
     // 00405346 call 00404AC0h
-    let dst = Cont(x404ac0);
-    ctx.call(0x40534b, dst)
+    ctx.call(0x40534b, Cont(x404ac0))
 }
 
 pub fn x40534b(ctx: &mut Context) -> Cont {
@@ -20019,8 +19870,7 @@ pub fn x40534b(ctx: &mut Context) -> Cont {
     // 00405355 push esi
     ctx.push(ctx.cpu.regs.esi);
     // 00405356 call 00404FC0h
-    let dst = Cont(x404fc0);
-    ctx.call(0x40535b, dst)
+    ctx.call(0x40535b, Cont(x404fc0))
 }
 
 pub fn x40535b(ctx: &mut Context) -> Cont {
@@ -20226,8 +20076,7 @@ pub fn x4053ef(ctx: &mut Context) -> Cont {
     // 004053f1 push ebx
     ctx.push(ctx.cpu.regs.ebx);
     // 004053f2 call 0040547Ch
-    let dst = Cont(x40547c);
-    ctx.call(0x4053f7, dst)
+    ctx.call(0x4053f7, Cont(x40547c))
 }
 
 pub fn x4053f7(ctx: &mut Context) -> Cont {
@@ -20358,8 +20207,7 @@ pub fn x40543a(ctx: &mut Context) -> Cont {
     // 0040544f push dword ptr ds:[409728h]
     ctx.push(ctx.memory.read::<u32>(0x409728u32));
     // 00405455 call 00405018h
-    let dst = Cont(x405018);
-    ctx.call(0x40545a, dst)
+    ctx.call(0x40545a, Cont(x405018))
 }
 
 pub fn x40545a(ctx: &mut Context) -> Cont {
@@ -20544,8 +20392,7 @@ pub fn x4054c8(ctx: &mut Context) -> Cont {
     // 004054d8 push 1
     ctx.push(0x1u32);
     // 004054da call 00405267h
-    let dst = Cont(x405267);
-    ctx.call(0x4054df, dst)
+    ctx.call(0x4054df, Cont(x405267))
 }
 
 pub fn x4054df(ctx: &mut Context) -> Cont {
