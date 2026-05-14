@@ -66,8 +66,14 @@ pub fn SetROP2(_ctx: &mut Context, _hdc: HDC, _rop2: u32 /* R2_MODE */) -> i32 {
 }
 
 #[win32_derive::dllexport]
-pub fn LineTo(_ctx: &mut Context, _hdc: HDC, _x: i32, _y: i32) -> bool {
-    todo!()
+pub fn LineTo(ctx: &mut Context, hdc: HDC, _x: i32, _y: i32) -> bool {
+    let mut state = gdi32::lock();
+    let dc = state.dcs.get_mut(hdc).unwrap();
+    assert!(dc.bitmap.is_simple());
+
+    let _pixels = dc.bitmap.pixels_mut(&mut ctx.memory);
+
+    stub!(true)
 }
 
 #[win32_derive::dllexport]

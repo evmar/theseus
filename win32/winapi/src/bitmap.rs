@@ -116,6 +116,10 @@ impl Bitmap {
         }
     }
 
+    pub fn is_simple(&self) -> bool {
+        self.is_bottom_up == false && self.bit_count == 32 && self.palette.len() == 0
+    }
+
     pub fn stride(&self) -> usize {
         // Bitmap row stride is padded out to 4 bytes per row.
         (((self.width as usize * self.bit_count as usize) + 31) & !31) / 8
@@ -127,6 +131,10 @@ impl Bitmap {
 
     pub fn pixels_range(&self) -> std::ops::Range<usize> {
         self.pixels as usize..self.pixels as usize + self.pixels_len()
+    }
+
+    pub fn pixels_mut<'a>(&self, memory: &'a mut runtime::Memory) -> &'a mut [u8] {
+        &mut memory.bytes[self.pixels_range()]
     }
 
     // TODO: when parsing a bitmap from memory it's unclear how much memory we'll need
