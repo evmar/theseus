@@ -18,7 +18,7 @@ pub struct Window {
 }
 
 impl Window {
-    pub fn resize(&mut self, width: u32, height: u32) {
+    pub fn resize(&mut self, ctx: &mut Context, width: u32, height: u32) {
         self.width = width;
         self.height = height;
         let window = self.canvas.window_mut();
@@ -29,6 +29,10 @@ impl Window {
                 (height as f32 * scale) as u32,
             )
             .unwrap();
+        if let Some(pixels) = self.pixels {
+            kernel32::lock().process_heap.free(&mut ctx.memory, pixels);
+            self.pixels = None;
+        }
     }
 
     pub fn rect(&self) -> RECT {
@@ -42,9 +46,11 @@ impl Window {
 
     pub fn ensure_pixels(&mut self, ctx: &mut Context) -> u32 {
         *self.pixels.get_or_insert_with(|| {
-            kernel32::lock()
+            let addr = kernel32::lock()
                 .process_heap
-                .alloc(&mut ctx.memory, self.width * self.height * 4)
+                .alloc(&mut ctx.memory, self.width * self.height * 4);
+            log::info!("new pixels {:x}", addr);
+            addr
         })
     }
 }
@@ -172,7 +178,7 @@ pub fn ShowWindow(
 
 #[win32_derive::dllexport]
 pub fn MoveWindow(
-    _ctx: &mut Context,
+    ctx: &mut Context,
     _hWnd: HWND,
     _X: i32,
     _Y: i32,
@@ -183,7 +189,7 @@ pub fn MoveWindow(
     let state = state();
     let window = state.window.borrow();
     let mut window = window.as_ref().unwrap().borrow_mut();
-    window.resize(nWidth as u32, nHeight as u32);
+    window.resize(ctx, nWidth as u32, nHeight as u32);
     if bRepaint {
         // ...
     };
