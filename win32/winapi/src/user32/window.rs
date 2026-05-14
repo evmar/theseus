@@ -248,7 +248,8 @@ pub fn BeginPaint(ctx: &mut Context, hWnd: HWND, lpPaint: u32 /* PAINTSTRUCT */)
     let hdc = GetDC(ctx, hWnd);
     PAINTSTRUCT {
         hdc,
-        fErase: stub!(0),
+        // TODO: this should be based on whether the wndclass has a background brush
+        fErase: true as u32,
         rcPaint: Default::default(),
         reserved: [0; 10],
     }
