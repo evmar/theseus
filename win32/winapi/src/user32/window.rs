@@ -235,7 +235,7 @@ pub fn RegisterClassW(ctx: &mut Context, lpWndClass: u32 /* WNDCLASSW */) -> u16
 }
 
 #[repr(C)]
-#[derive(Debug, zerocopy::IntoBytes, zerocopy::Immutable)]
+#[derive(Debug, zerocopy::IntoBytes, zerocopy::Immutable, zerocopy::FromBytes)]
 struct PAINTSTRUCT {
     hdc: HDC,
     fErase: u32,
@@ -258,8 +258,12 @@ pub fn BeginPaint(ctx: &mut Context, hWnd: HWND, lpPaint: u32 /* PAINTSTRUCT */)
 }
 
 #[win32_derive::dllexport]
-pub fn EndPaint(_ctx: &mut Context, _hWnd: HWND, _lpPaint: u32 /* PAINTSTRUCT */) -> bool {
-    todo!()
+pub fn EndPaint(ctx: &mut Context, _hWnd: HWND, lpPaint: u32 /* PAINTSTRUCT */) -> bool {
+    let paint = <PAINTSTRUCT>::read_from_prefix(&ctx.memory[lpPaint..])
+        .unwrap()
+        .0;
+    gdi32::lock().release_dc(paint.hdc);
+    true
 }
 
 #[win32_derive::dllexport]
