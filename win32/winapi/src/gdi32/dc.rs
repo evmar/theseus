@@ -1,9 +1,10 @@
 use std::sync::Arc;
 
 use runtime::Context;
+use zerocopy::IntoBytes;
 
 use crate::{
-    HANDLE,
+    HANDLE, POINT,
     gdi32::{self, Bitmap, COLORREF, State},
     stub,
 };
@@ -18,10 +19,14 @@ impl State {
 
 pub struct DC {
     pub bitmap: Arc<Bitmap>,
+    pos: POINT,
 }
 
 pub fn new_memory_dc(bitmap: Arc<Bitmap>) -> DC {
-    DC { bitmap }
+    DC {
+        bitmap,
+        pos: POINT::default(),
+    }
 }
 
 #[win32_derive::dllexport]
@@ -66,14 +71,15 @@ pub fn LineTo(_ctx: &mut Context, _hdc: HDC, _x: i32, _y: i32) -> bool {
 }
 
 #[win32_derive::dllexport]
-pub fn MoveToEx(
-    _ctx: &mut Context,
-    _hdc: HDC,
-    _x: i32,
-    _y: i32,
-    _lppt: u32, /* POINT */
-) -> bool {
-    todo!()
+pub fn MoveToEx(ctx: &mut Context, hdc: HDC, x: i32, y: i32, lppt: u32 /* POINT */) -> bool {
+    let mut state = gdi32::lock();
+    let dc = state.dcs.get_mut(hdc).unwrap();
+    dc.pos.x = x;
+    dc.pos.y = y;
+    if lppt != 0 {
+        dc.pos.write_to_prefix(&mut ctx.memory[lppt..]).unwrap();
+    }
+    true
 }
 
 #[win32_derive::dllexport]
