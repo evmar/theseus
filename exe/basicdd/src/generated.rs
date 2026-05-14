@@ -630,6 +630,71 @@ pub fn x401291(ctx: &mut Context) -> Cont {
     ctx.ret(0)
 }
 
+pub fn x4012d0(ctx: &mut Context) -> Cont {
+    // 004012d0 mov ecx,[esp+8]
+    ctx.cpu.regs.ecx = ctx
+        .memory
+        .read::<u32>(ctx.cpu.regs.esp.wrapping_add(0x8u32));
+    // 004012d4 mov eax,ecx
+    ctx.cpu.regs.eax = ctx.cpu.regs.ecx;
+    // 004012d6 sub eax,2
+    ctx.cpu.regs.eax = sub(ctx.cpu.regs.eax, 0x2u32, &mut ctx.cpu.flags);
+    // 004012d9 je short 00401300h
+    ctx.je(Cont(x4012db), Cont(x401300))
+}
+
+pub fn x4012db(ctx: &mut Context) -> Cont {
+    // 004012db sub eax,0FEh
+    ctx.cpu.regs.eax = sub(ctx.cpu.regs.eax, 0xfeu32, &mut ctx.cpu.flags);
+    // 004012e0 mov eax,[esp+0Ch]
+    ctx.cpu.regs.eax = ctx
+        .memory
+        .read::<u32>(ctx.cpu.regs.esp.wrapping_add(0xcu32));
+    // 004012e4 jne short 004012EBh
+    ctx.jne(Cont(x4012e6), Cont(x4012eb))
+}
+
+pub fn x4012e6(ctx: &mut Context) -> Cont {
+    // 004012e6 cmp eax,1Bh
+    sub(ctx.cpu.regs.eax, 0x1bu32, &mut ctx.cpu.flags);
+    // 004012e9 je short 00401300h
+    ctx.je(Cont(x4012eb), Cont(x401300))
+}
+
+pub fn x4012eb(ctx: &mut Context) -> Cont {
+    // 004012eb mov edx,[esp+10h]
+    ctx.cpu.regs.edx = ctx
+        .memory
+        .read::<u32>(ctx.cpu.regs.esp.wrapping_add(0x10u32));
+    // 004012ef push edx
+    ctx.push(ctx.cpu.regs.edx);
+    // 004012f0 push eax
+    ctx.push(ctx.cpu.regs.eax);
+    // 004012f1 mov eax,[esp+0Ch]
+    ctx.cpu.regs.eax = ctx
+        .memory
+        .read::<u32>(ctx.cpu.regs.esp.wrapping_add(0xcu32));
+    // 004012f5 push ecx
+    ctx.push(ctx.cpu.regs.ecx);
+    // 004012f6 push eax
+    ctx.push(ctx.cpu.regs.eax);
+    // 004012f7 call dword ptr ds:[4060F4h]
+    ctx.call_builtin(user32::DefWindowProcA_stdcall);
+    // 004012fd ret 10h
+    ctx.ret(16)
+}
+
+pub fn x401300(ctx: &mut Context) -> Cont {
+    // 00401300 push 0
+    ctx.push(0x0u32);
+    // 00401302 call dword ptr ds:[4060F8h]
+    ctx.call_builtin(user32::PostQuitMessage_stdcall);
+    // 00401308 xor eax,eax
+    ctx.cpu.regs.eax = xor(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
+    // 0040130a ret 10h
+    ctx.ret(16)
+}
+
 pub fn x401310(ctx: &mut Context) -> Cont {
     // 00401310 sub esp,8Ch
     ctx.cpu.regs.esp = sub(ctx.cpu.regs.esp, 0x8cu32, &mut ctx.cpu.flags);
@@ -20433,7 +20498,7 @@ pub fn x4054ec(ctx: &mut Context) -> Cont {
     ctx.ret(0)
 }
 
-const BLOCKS: [(u32, ContFn); 1707] = [
+const BLOCKS: [(u32, ContFn); 1712] = [
     (0x401000, x401000),
     (0x401005, x401005),
     (0x401010, x401010),
@@ -20477,6 +20542,11 @@ const BLOCKS: [(u32, ContFn); 1707] = [
     (0x401200, x401200),
     (0x40128c, x40128c),
     (0x401291, x401291),
+    (0x4012d0, x4012d0),
+    (0x4012db, x4012db),
+    (0x4012e6, x4012e6),
+    (0x4012eb, x4012eb),
+    (0x401300, x401300),
     (0x401310, x401310),
     (0x401329, x401329),
     (0x40132d, x40132d),

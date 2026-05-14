@@ -29,11 +29,8 @@ pub struct MessageQueue {
 }
 
 impl MessageQueue {
-    fn peek(&mut self) -> Option<&MSG> {
-        if self.messages.is_empty() {
-            self.poll();
-        }
-        self.messages.front()
+    fn pop(&mut self) -> Option<MSG> {
+        self.messages.pop_front()
     }
 
     fn get(&mut self) -> MSG {
@@ -106,8 +103,8 @@ impl MessageQueue {
 }
 
 #[win32_derive::dllexport]
-pub fn DispatchMessageA(_ctx: &mut Context, _lpMsg: u32) -> u32 {
-    todo!()
+pub fn DispatchMessageA(ctx: &mut Context, lpMsg: u32) -> u32 {
+    DispatchMessageW(ctx, lpMsg)
 }
 
 #[win32_derive::dllexport]
@@ -129,17 +126,29 @@ pub fn TranslateMessage(_ctx: &mut Context, _lpMsg: u32) -> bool {
 
 #[win32_derive::dllexport]
 pub fn PeekMessageA(
-    _ctx: &mut Context,
-    _lpMsg: u32,
-    _hWnd: HWND,
+    ctx: &mut Context,
+    lpMsg: u32, /* MSG */
+    hWnd: HWND,
     _wMsgFilterMin: u32,
     _wMsgFilterMax: u32,
     _wRemoveMsg: u32, /* PEEK_MESSAGE_REMOVE_TYPE */
 ) -> bool {
     let mut queue = state().message_queue.borrow_mut();
-    let front = queue.peek();
-    assert!(front.is_none()); // TODO
-    false
+    queue.poll();
+    if let Some(msg) = queue.pop() {
+        if hWnd.is_null() {
+            msg.write_to_prefix(&mut ctx.memory[lpMsg..]).unwrap();
+        } else if hWnd.is_invalid() {
+            // TODO: only null hwnd messages
+            assert!(msg.hwnd.is_null());
+        } else {
+            // TODO: only matching messages
+            assert_eq!(msg.hwnd, hWnd);
+        }
+        true
+    } else {
+        false
+    }
 }
 
 #[win32_derive::dllexport]

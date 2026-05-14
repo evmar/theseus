@@ -59,6 +59,10 @@ impl Context {
         self.cpu.flags.contains(Flags::ZF) as u8
     }
 
+    pub fn setge(self: &Context) -> u8 {
+        (self.cpu.flags.contains(Flags::ZF) == self.cpu.flags.contains(Flags::OF)) as u8
+    }
+
     pub fn setne(self: &Context) -> u8 {
         !self.cpu.flags.contains(Flags::ZF) as u8
     }

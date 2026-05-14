@@ -33,6 +33,6 @@ elif [[ $1 == "thread" ]]; then
     cargo run -p tc -- --exe ~/win/rs/exe/cpp/thread.exe --out exe/thread --scan-immediates
     cargo run -p thread-exe
 else
-    cargo run -p tc -- --scan-memory --exe ~/win/rs/deploy/archive/BasicDD.exe --out exe/basicdd
+    cargo run -p tc -- --scan-memory --exe ~/win/rs/deploy/archive/BasicDD.exe --out exe/basicdd --entry-point 0x4012d0
     echo cargo run -p basicdd-exe
 fi

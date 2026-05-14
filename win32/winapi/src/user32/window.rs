@@ -184,7 +184,7 @@ pub fn DefWindowProcA(
     _wParam: u32,
     _lParam: u32,
 ) -> u32 {
-    todo!()
+    0
 }
 
 #[win32_derive::dllexport]
@@ -219,8 +219,8 @@ impl State {
 }
 
 #[win32_derive::dllexport]
-pub fn RegisterClassA(_ctx: &mut Context, _lpWndClass: u32) -> u16 {
-    stub!(1)
+pub fn RegisterClassA(ctx: &mut Context, lpWndClass: u32) -> u16 {
+    RegisterClassW(ctx, lpWndClass)
 }
 
 #[win32_derive::dllexport]
