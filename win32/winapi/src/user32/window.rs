@@ -13,6 +13,7 @@ pub struct Window {
     pub width: u32,
     pub height: u32,
     pub canvas: sdl3::render::WindowCanvas,
+    pub wndproc: Option<runtime::Cont>,
 }
 
 impl Window {
@@ -79,6 +80,7 @@ impl State {
                 .build()
                 .unwrap()
                 .into_canvas(),
+            wndproc: None,
         };
         window.canvas.clear();
         let hwnd = HWND::from_raw(1);

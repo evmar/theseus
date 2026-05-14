@@ -129,11 +129,6 @@ pub fn DialogBoxParamW(
 }
 
 #[win32_derive::dllexport]
-pub fn DispatchMessageW(_ctx: &mut Context, _lpMsg: u32 /* MSG */) -> LRESULT {
-    todo!()
-}
-
-#[win32_derive::dllexport]
 pub fn GetDesktopWindow(_ctx: &mut Context) -> HWND {
     stub!(HWND::null())
 }

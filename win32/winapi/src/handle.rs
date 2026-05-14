@@ -6,7 +6,17 @@ use std::collections::HashMap;
 /// Option<HWND> instead etc. for two reasons:
 /// 1. Many Windows APIs are not especially clear on nullability.
 /// 2. Handles can be either null or invalid, two different states!
-#[derive(Copy, Clone, Default, Hash, Eq, PartialEq, zerocopy::IntoBytes, zerocopy::Immutable)]
+#[derive(
+    Copy,
+    Clone,
+    Default,
+    Hash,
+    Eq,
+    PartialEq,
+    zerocopy::FromBytes,
+    zerocopy::IntoBytes,
+    zerocopy::Immutable,
+)]
 pub struct HANDLE(u32);
 
 impl HANDLE {

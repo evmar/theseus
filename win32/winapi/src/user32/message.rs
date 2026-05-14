@@ -1,5 +1,5 @@
 use std::collections::VecDeque;
-use zerocopy::IntoBytes;
+use zerocopy::{FromBytes, IntoBytes};
 
 use runtime::Context;
 
@@ -12,7 +12,7 @@ pub type WPARAM = u32;
 pub type LPARAM = u32;
 
 #[repr(C)]
-#[derive(zerocopy::IntoBytes, zerocopy::Immutable)]
+#[derive(zerocopy::FromBytes, zerocopy::IntoBytes, zerocopy::Immutable)]
 struct MSG {
     hwnd: HWND,
     message: u32,
@@ -111,8 +111,21 @@ pub fn DispatchMessageA(_ctx: &mut Context, _lpMsg: u32) -> u32 {
 }
 
 #[win32_derive::dllexport]
+pub fn DispatchMessageW(ctx: &mut Context, lpMsg: u32 /* MSG */) -> u32 {
+    let window = state().window.borrow();
+    let window = window.as_ref().unwrap().borrow();
+    let msg = <MSG>::read_from_prefix(&ctx.memory[lpMsg..]).unwrap().0;
+    // WNDPROC
+    ctx.call_x86(
+        window.wndproc.unwrap(),
+        vec![msg.hwnd.to_raw(), msg.message, msg.wParam, msg.lParam],
+    );
+    0
+}
+
+#[win32_derive::dllexport]
 pub fn TranslateMessage(_ctx: &mut Context, _lpMsg: u32) -> bool {
-    todo!()
+    false // no translation
 }
 
 #[win32_derive::dllexport]
@@ -171,7 +184,7 @@ pub fn TranslateAcceleratorW(
     _hAccTable: HACCEL,
     _lpMsg: u32, /* MSG */
 ) -> i32 {
-    stub!(1) // success
+    stub!(0) // no translation
 }
 
 #[win32_derive::dllexport]
