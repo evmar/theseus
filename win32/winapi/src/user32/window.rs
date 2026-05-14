@@ -1,10 +1,10 @@
 use std::{cell::RefCell, rc::Rc};
 
 use runtime::Context;
-use zerocopy::FromBytes;
+use zerocopy::{FromBytes, IntoBytes};
 
 use crate::{
-    FromABIParam,
+    FromABIParam, RECT,
     gdi32::{self, HDC},
     stub,
     user32::{HCURSOR, HICON, HINSTANCE, HMENU, HWND, State, state},
@@ -234,9 +234,27 @@ pub fn RegisterClassW(ctx: &mut Context, lpWndClass: u32 /* WNDCLASSW */) -> u16
     stub!(1)
 }
 
+#[repr(C)]
+#[derive(Debug, zerocopy::IntoBytes, zerocopy::Immutable)]
+struct PAINTSTRUCT {
+    hdc: HDC,
+    fErase: u32,
+    rcPaint: RECT,
+    reserved: [u32; 10],
+}
+
 #[win32_derive::dllexport]
-pub fn BeginPaint(_ctx: &mut Context, _hWnd: HWND, _lpPaint: u32 /* PAINTSTRUCT */) -> HDC {
-    todo!()
+pub fn BeginPaint(ctx: &mut Context, _hWnd: HWND, lpPaint: u32 /* PAINTSTRUCT */) -> HDC {
+    let hdc = stub!(HDC::null());
+    PAINTSTRUCT {
+        hdc,
+        fErase: stub!(0),
+        rcPaint: Default::default(),
+        reserved: [0; 10],
+    }
+    .write_to_prefix(&mut ctx.memory[lpPaint..])
+    .unwrap();
+    hdc
 }
 
 #[win32_derive::dllexport]

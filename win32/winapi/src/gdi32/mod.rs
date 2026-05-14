@@ -15,6 +15,7 @@ mod object;
 pub use object::*;
 
 pub type HGDIOBJ = HANDLE;
+pub type COLORREF = u32;
 
 pub struct State {
     pub dcs: RefCell<Handles<DC>>,
