@@ -5,28 +5,32 @@ use zerocopy::IntoBytes;
 
 use crate::{
     HANDLE, POINT,
-    gdi32::{self, Bitmap, COLORREF, State},
+    gdi32::{self, Bitmap, COLORREF, HBITMAP, State},
     stub,
 };
 
 pub type HDC = HANDLE;
 
 impl State {
+    pub fn new_memory_dc(&mut self, bitmap: Bitmap) -> HDC {
+        let bitmap = Arc::new(bitmap);
+        let hbitmap = self.objects.add(bitmap.clone());
+        let dc = DC {
+            bitmap: (hbitmap, bitmap),
+            pos: POINT::default(),
+        };
+        self.dcs.add(dc)
+    }
+
     pub fn release_dc(&mut self, hdc: HDC) {
         self.dcs.remove(hdc);
     }
 }
 
 pub struct DC {
-    pub bitmap: Arc<Bitmap>,
+    /// Store the HBITMAP as well as the Bitmap itself so that when it is switched via SelectObject we can return it.
+    pub bitmap: (HBITMAP, Arc<Bitmap>),
     pos: POINT,
-}
-
-pub fn new_memory_dc(bitmap: Arc<Bitmap>) -> DC {
-    DC {
-        bitmap,
-        pos: POINT::default(),
-    }
 }
 
 #[win32_derive::dllexport]
@@ -40,13 +44,13 @@ pub fn CreateCompatibleDC(_ctx: &mut Context, hdc: HDC) -> HDC {
         palette: Box::new([[0; 4]]),
         pixels: 0,
     };
-    let dc = new_memory_dc(Arc::new(bitmap));
+    let new_hdc = gdi32::lock().new_memory_dc(bitmap);
     if hdc.is_null() {
         // memory DC compatible with screen
-        gdi32::lock().dcs.add(dc)
+        new_hdc
     } else {
         // memory DC compatible with hdc
-        gdi32::lock().dcs.add(dc)
+        new_hdc
     }
 }
 
@@ -69,9 +73,10 @@ pub fn SetROP2(_ctx: &mut Context, _hdc: HDC, _rop2: u32 /* R2_MODE */) -> i32 {
 pub fn LineTo(ctx: &mut Context, hdc: HDC, _x: i32, _y: i32) -> bool {
     let mut state = gdi32::lock();
     let dc = state.dcs.get_mut(hdc).unwrap();
-    assert!(dc.bitmap.is_simple());
+    let bitmap = &dc.bitmap.1;
+    assert!(bitmap.is_simple());
 
-    let _pixels = dc.bitmap.pixels_mut(&mut ctx.memory);
+    let _pixels = bitmap.pixels_mut(&mut ctx.memory);
 
     stub!(true)
 }

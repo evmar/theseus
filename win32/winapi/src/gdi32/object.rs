@@ -42,10 +42,14 @@ pub fn GetStockObject(_ctx: &mut Context, _i: u32 /* GET_STOCK_OBJECT_FLAGS */) 
 
 #[win32_derive::dllexport]
 pub fn SelectObject(_ctx: &mut Context, hdc: HDC, h: HGDIOBJ) -> HGDIOBJ {
-    let mut state = gdi32::lock();
-    let object = state.objects.get(h).unwrap().clone();
+    if h.is_null_or_invalid() {
+        log::warn!("SelectObject: ignoring null select, likely from a prior stub");
+        return HGDIOBJ::null();
+    }
+    let state = &mut *gdi32::lock();
+    let bitmap = state.objects.get(h).unwrap();
     let dc = state.dcs.get_mut(hdc).unwrap();
-    // let prev = dc.bitmap;
-    dc.bitmap = object;
-    stub!(HGDIOBJ::null())
+    let prev = dc.bitmap.0;
+    dc.bitmap = (h, bitmap.clone());
+    prev
 }

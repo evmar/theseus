@@ -1,5 +1,4 @@
 use std::cell::RefMut;
-use std::sync::Arc;
 
 use runtime::*;
 use zerocopy::FromBytes;
@@ -547,13 +546,11 @@ pub mod IDirectDrawSurface7 {
         let surfaces = state().surf.borrow_mut();
         let mut surface = surfaces.get(&this).unwrap().borrow_mut();
         let pixels = surface.lock(&mut ctx.memory);
-        let dc = gdi32::lock()
-            .dcs
-            .add(gdi32::new_memory_dc(Arc::new(gdi32::Bitmap::new_simple(
-                surface.width,
-                surface.height,
-                pixels,
-            ))));
+        let dc = gdi32::lock().new_memory_dc(gdi32::Bitmap::new_simple(
+            surface.width,
+            surface.height,
+            pixels,
+        ));
         ctx.memory.write(lphDC, dc.to_raw());
         stub!(DD::OK)
     }

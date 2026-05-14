@@ -31,10 +31,10 @@ pub fn StretchBlt(
 
     let state = gdi32::lock();
     let dc_src = state.dcs.get(hdcSrc).unwrap();
-    let bmp_src = &dc_src.bitmap;
+    let bmp_src = &dc_src.bitmap.1;
 
     let dc_dst = state.dcs.get(hdcDest).unwrap();
-    let bmp_dst = &dc_dst.bitmap;
+    let bmp_dst = &dc_dst.bitmap.1;
 
     let [pixels_src, pixels_dst] = ctx
         .memory
