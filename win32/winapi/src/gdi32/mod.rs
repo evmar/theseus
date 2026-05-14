@@ -43,8 +43,9 @@ impl Into<ABIReturn> for COLORREF {
 }
 
 impl COLORREF {
-    pub fn as_u32(&self) -> u32 {
-        self.0
+    pub fn as_argb8888(&self) -> u32 {
+        let [r, g, b, _] = self.0.to_le_bytes();
+        u32::from_le_bytes([b, g, r, 0xff])
     }
 
     pub fn from_rgb(r: u8, g: u8, b: u8) -> Self {

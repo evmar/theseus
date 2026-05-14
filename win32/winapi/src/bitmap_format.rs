@@ -121,13 +121,13 @@ impl Bitmap {
         self.is_bottom_up == false && self.bit_count == 32 && self.palette.len() == 0
     }
 
-    pub fn stride(&self) -> usize {
+    pub fn stride(&self) -> u32 {
         // Bitmap row stride is padded out to 4 bytes per row.
-        (((self.width as usize * self.bit_count as usize) + 31) & !31) / 8
+        (((self.width * self.bit_count as u32) + 31) & !31) / 8
     }
 
     pub fn pixels_len(&self) -> usize {
-        self.height as usize * self.stride()
+        (self.height * self.stride()) as usize
     }
 
     pub fn pixels_range(&self) -> std::ops::Range<usize> {
@@ -223,7 +223,7 @@ impl Bitmap {
         match self.bit_count {
             32 => {
                 let len = ((x2 - x1) * 4) as usize;
-                dst[..len].copy_from_slice(&pixels[(y * self.width + x1) as usize..][..len]);
+                dst[..len].copy_from_slice(&pixels[(y * self.stride() + x1 * 4) as usize..][..len]);
             }
             8 => {
                 let src = &pixels[(y * self.width + x1) as usize..][..(x2 - x1) as usize];

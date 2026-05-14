@@ -48,9 +48,11 @@ pub fn StretchBlt(
     let state = gdi32::lock();
     let dc_src = state.dcs.get(hdcSrc).unwrap();
     let bmp_src = &dc_src.bitmap.1;
+    assert!(bmp_src.is_simple());
 
     let dc_dst = state.dcs.get(hdcDest).unwrap();
     let bmp_dst = &dc_dst.bitmap.1;
+    assert!(bmp_dst.is_simple());
 
     let [pixels_src, pixels_dst] = ctx
         .memory
@@ -61,16 +63,16 @@ pub fn StretchBlt(
     assert_eq!(wDest, wSrc);
     assert_eq!(hDest, hSrc);
 
-    let w = wDest as u32;
+    let xSrc = xSrc as u32;
+    let ySrc = ySrc as u32;
+    let xDst = xDest as u32;
+    let yDst = yDest as u32;
+    let wSrc = wSrc as u32;
+    let wDst = wDest as u32;
     for y in 0..hDest as u32 {
-        bmp_src.read_pixels(
-            &pixels_src,
-            ySrc as u32 + y,
-            xSrc as u32,
-            (xSrc + wSrc) as u32,
-            &mut pixels_dst[(((yDest as u32 + y) * w + xDest as u32) * 4) as usize..]
-                [..w as usize * 4],
-        );
+        let dst = &mut pixels_dst[(((yDst + y) * bmp_dst.stride()) + (xDst * 4)) as usize..]
+            [..wDst as usize * 4];
+        bmp_src.read_pixels(&pixels_src, ySrc + y, xSrc, xSrc + wSrc, dst);
     }
 
     true

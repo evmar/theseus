@@ -15,6 +15,7 @@ pub struct Window {
     pub height: u32,
     pub canvas: sdl3::render::WindowCanvas,
     pub pixels: Option<u32>,
+    pub texture: Option<sdl3::render::Texture>,
 }
 
 impl Window {
@@ -32,6 +33,7 @@ impl Window {
         if let Some(pixels) = self.pixels {
             kernel32::lock().process_heap.free(&mut ctx.memory, pixels);
             self.pixels = None;
+            self.texture = None;
         }
     }
 
@@ -49,9 +51,28 @@ impl Window {
             let addr = kernel32::lock()
                 .process_heap
                 .alloc(&mut ctx.memory, self.width * self.height * 4);
-            log::info!("new pixels {:x}", addr);
             addr
         })
+    }
+
+    pub fn flush(&mut self, ctx: &mut Context) {
+        let stride = self.width * 4;
+        let pixels = self.pixels.unwrap();
+        let pixels = &mut ctx.memory[pixels..][..(self.height * stride) as usize];
+        let texture = self.texture.get_or_insert_with(|| {
+            let texture_creator = self.canvas.texture_creator();
+            let mut texture = texture_creator
+                .create_texture_target(None, self.width, self.height)
+                .unwrap();
+            texture.set_scale_mode(sdl3::render::ScaleMode::Nearest);
+            // FML, this means BGRA in memory order
+            assert_eq!(texture.format(), sdl3::pixels::PixelFormat::ARGB8888);
+            texture
+        });
+        texture.update(None, pixels, stride as usize).unwrap();
+        self.canvas.copy(texture, None, None).unwrap();
+        self.canvas.present();
+        log::info!("flush");
     }
 }
 
@@ -105,6 +126,7 @@ impl State {
                 .unwrap()
                 .into_canvas(),
             pixels: None,
+            texture: None,
         };
         window.canvas.clear();
         let hwnd = HWND::from_raw(1);
@@ -291,13 +313,13 @@ pub fn BeginPaint(ctx: &mut Context, hWnd: HWND, lpPaint: u32 /* PAINTSTRUCT */)
     if let Some(background) = &wndclass.background {
         // TODO: send WM_ERASEBKGND, let DefWindowProc handle it
         let pixels = window.ensure_pixels(ctx);
-        let pixel_count = (window.width * window.height) as usize;
+        let pixel_count = (window.width * (window.height)) as usize;
         let pixels = <[u32]>::mut_from_bytes_with_elems(
             &mut ctx.memory[pixels..][..pixel_count * 4],
             pixel_count,
         )
         .unwrap();
-        pixels.fill(background.0.as_u32());
+        pixels.fill(background.0.as_argb8888());
     };
     let rcPaint = window.rect();
     drop(window);
@@ -316,10 +338,13 @@ pub fn BeginPaint(ctx: &mut Context, hWnd: HWND, lpPaint: u32 /* PAINTSTRUCT */)
 
 #[win32_derive::dllexport]
 pub fn EndPaint(ctx: &mut Context, _hWnd: HWND, lpPaint: u32 /* PAINTSTRUCT */) -> bool {
+    let window = state().window.borrow();
+    let mut window = window.as_ref().unwrap().borrow_mut();
     let paint = <PAINTSTRUCT>::read_from_prefix(&ctx.memory[lpPaint..])
         .unwrap()
         .0;
     gdi32::lock().release_dc(paint.hdc);
+    window.flush(ctx);
     true
 }
 
