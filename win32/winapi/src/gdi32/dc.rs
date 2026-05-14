@@ -5,7 +5,7 @@ use zerocopy::IntoBytes;
 
 use crate::{
     HANDLE, POINT,
-    gdi32::{self, Bitmap, COLORREF, HBITMAP, State},
+    gdi32::{self, Bitmap, COLORREF, HBITMAP, Object, State},
     stub,
 };
 
@@ -14,7 +14,7 @@ pub type HDC = HANDLE;
 impl State {
     pub fn new_memory_dc(&mut self, bitmap: Bitmap) -> HDC {
         let bitmap = Arc::new(bitmap);
-        let hbitmap = self.objects.add(bitmap.clone());
+        let hbitmap = self.objects.add(Object::Bitmap(bitmap.clone()));
         let dc = DC {
             bitmap: (hbitmap, bitmap),
             pos: POINT::default(),

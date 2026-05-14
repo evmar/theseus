@@ -109,7 +109,7 @@ pub fn DispatchMessageA(ctx: &mut Context, lpMsg: u32) -> u32 {
 
 #[win32_derive::dllexport]
 pub fn DispatchMessageW(ctx: &mut Context, lpMsg: u32 /* MSG */) -> u32 {
-    let wndproc = state().wnd_class.borrow().as_ref().unwrap().wndproc.clone();
+    let wndproc = state().wndclass.borrow().as_ref().unwrap().wndproc.clone();
     let msg = <MSG>::read_from_prefix(&ctx.memory[lpMsg..]).unwrap().0;
     // WNDPROC
     ctx.call_x86(

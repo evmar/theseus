@@ -1,9 +1,23 @@
+use std::sync::Arc;
+
 use runtime::Context;
 
-use crate::{
-    gdi32::{self, HDC, HGDIOBJ},
-    stub,
-};
+use crate::gdi32::{self, Bitmap, COLORREF, HDC, HGDIOBJ};
+
+#[derive(Debug, Clone)]
+pub struct Brush(COLORREF);
+
+pub enum Object {
+    Bitmap(Arc<Bitmap>),
+    Brush(Brush),
+}
+
+impl Object {
+    pub fn unwrap_brush(&self) -> Brush {
+        let Object::Brush(brush) = self else { panic!() };
+        brush.clone()
+    }
+}
 
 #[repr(C)]
 #[derive(zerocopy::Immutable, zerocopy::IntoBytes)]
@@ -20,7 +34,10 @@ struct BITMAP {
 #[win32_derive::dllexport]
 pub fn GetObjectA(ctx: &mut Context, handle: HGDIOBJ, size: u32, lpOut: u32) -> u32 {
     let state = gdi32::lock();
-    let bitmap = state.objects.get(handle).unwrap();
+    let object = state.objects.get(handle).unwrap();
+    let Object::Bitmap(bitmap) = object else {
+        panic!();
+    };
     assert!(size == std::mem::size_of::<BITMAP>() as u32);
     let fields = BITMAP {
         bmType: 0,
@@ -35,9 +52,37 @@ pub fn GetObjectA(ctx: &mut Context, handle: HGDIOBJ, size: u32, lpOut: u32) -> 
     size
 }
 
+#[derive(Debug, win32_derive::ABIEnum)]
+pub enum GetStockObjectArg {
+    WHITE_BRUSH = 0,
+    LTGRAY_BRUSH = 1,
+    GRAY_BRUSH = 2,
+    DKGRAY_BRUSH = 3,
+    BLACK_BRUSH = 4,
+    NULL_BRUSH = 5,
+    WHITE_PEN = 6,
+    BLACK_PEN = 7,
+    NULL_PEN = 8,
+    OEM_FIXED_FONT = 10,
+    ANSI_FIXED_FONT = 11,
+    ANSI_VAR_FONT = 12,
+    SYSTEM_FONT = 13,
+    DEVICE_DEFAULT_FONT = 14,
+    DEFAULT_PALETTE = 15,
+    SYSTEM_FIXED_FONT = 16,
+    DEFAULT_GUI_FONT = 17,
+    DC_BRUSH = 18,
+    DC_PEN = 19,
+}
+
 #[win32_derive::dllexport]
-pub fn GetStockObject(_ctx: &mut Context, _i: u32 /* GET_STOCK_OBJECT_FLAGS */) -> HGDIOBJ {
-    stub!(HGDIOBJ::null())
+pub fn GetStockObject(_ctx: &mut Context, i: GetStockObjectArg) -> HGDIOBJ {
+    use GetStockObjectArg::*;
+    let object = match i {
+        LTGRAY_BRUSH => Object::Brush(Brush(COLORREF::from_rgb(0xc0, 0xc0, 0xc0))),
+        _ => todo!("{:?}", i),
+    };
+    gdi32::lock().objects.add(object)
 }
 
 #[win32_derive::dllexport]
@@ -47,7 +92,10 @@ pub fn SelectObject(_ctx: &mut Context, hdc: HDC, h: HGDIOBJ) -> HGDIOBJ {
         return HGDIOBJ::null();
     }
     let state = &mut *gdi32::lock();
-    let bitmap = state.objects.get(h).unwrap();
+    let object = state.objects.get(h).unwrap();
+    let Object::Bitmap(bitmap) = object else {
+        panic!();
+    };
     let dc = state.dcs.get_mut(hdc).unwrap();
     let prev = dc.bitmap.0;
     dc.bitmap = (h, bitmap.clone());

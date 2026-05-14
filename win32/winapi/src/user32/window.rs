@@ -5,7 +5,7 @@ use zerocopy::{FromBytes, IntoBytes};
 
 use crate::{
     FromABIParam, RECT,
-    gdi32::{self, HDC},
+    gdi32::{self, HBRUSH, HDC},
     kernel32, stub,
     user32::{HCURSOR, HICON, HINSTANCE, HMENU, HWND, State, state},
 };
@@ -28,6 +28,15 @@ impl Window {
                 (height as f32 * scale) as u32,
             )
             .unwrap();
+    }
+
+    pub fn rect(&self) -> RECT {
+        RECT {
+            left: 0,
+            top: 0,
+            right: self.width as i32,
+            bottom: self.height as i32,
+        }
     }
 }
 
@@ -202,18 +211,19 @@ struct WNDCLASS {
     hInstance: HINSTANCE,
     hIcon: HICON,
     hCursor: HCURSOR,
-    hbrBackground: u32,
+    hbrBackground: HBRUSH,
     lpszMenuName: u32,
     lpszClassName: u32,
 }
 
 pub struct WndClass {
     pub wndproc: runtime::Cont,
+    pub background: Option<gdi32::Brush>,
 }
 
 impl State {
     pub fn register_class(&self, wnd_class: WndClass) -> u16 {
-        *self.wnd_class.borrow_mut() = Some(wnd_class);
+        *self.wndclass.borrow_mut() = Some(wnd_class);
         0
     }
 }
@@ -228,8 +238,20 @@ pub fn RegisterClassW(ctx: &mut Context, lpWndClass: u32 /* WNDCLASSW */) -> u16
     let wndclass = <WNDCLASS>::read_from_prefix(&ctx.memory[lpWndClass..])
         .unwrap()
         .0;
+    let background = if wndclass.hbrBackground.is_null() {
+        None
+    } else {
+        Some(
+            gdi32::lock()
+                .objects
+                .get(wndclass.hbrBackground)
+                .unwrap()
+                .unwrap_brush(),
+        )
+    };
     state().register_class(WndClass {
         wndproc: ctx.indirect(wndclass.lpfnWndProc),
+        background,
     });
     stub!(1)
 }
@@ -245,12 +267,20 @@ struct PAINTSTRUCT {
 
 #[win32_derive::dllexport]
 pub fn BeginPaint(ctx: &mut Context, hWnd: HWND, lpPaint: u32 /* PAINTSTRUCT */) -> HDC {
+    let wndclass = state().wndclass.borrow();
+    let wndclass = wndclass.as_ref().unwrap();
+    if wndclass.background.is_some() {
+        // TODO: send WM_ERASEBKGND, let DefWindowProc handle it
+    };
+
+    let window = state().window.borrow();
+    let window = window.as_ref().unwrap().borrow();
+
     let hdc = GetDC(ctx, hWnd);
     PAINTSTRUCT {
         hdc,
-        // TODO: this should be based on whether the wndclass has a background brush
-        fErase: true as u32,
-        rcPaint: Default::default(),
+        fErase: wndclass.background.is_none() as u32,
+        rcPaint: window.rect(),
         reserved: [0; 10],
     }
     .write_to_prefix(&mut ctx.memory[lpPaint..])

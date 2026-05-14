@@ -6,7 +6,7 @@ use zerocopy::FromBytes;
 use crate::{
     HANDLE,
     bitmap_format::BITMAPINFOHEADER,
-    gdi32::{self, HDC, State},
+    gdi32::{self, HDC, Object, State},
     kernel32,
 };
 
@@ -79,7 +79,7 @@ pub fn StretchBlt(
 impl State {
     pub fn new_hbitmap(&mut self, bitmap: Arc<Bitmap>) -> HBITMAP {
         let handle = self.objects.reserve();
-        self.objects.set(handle, bitmap);
+        self.objects.set(handle, Object::Bitmap(bitmap));
         handle
     }
 }

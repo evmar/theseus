@@ -30,7 +30,7 @@ pub struct State {
     // here for lifetime reasons; see comments in dsound about this
     _audio: sdl3::AudioSubsystem,
     event_pump: RefCell<sdl3::EventPump>,
-    pub wnd_class: RefCell<Option<WndClass>>,
+    pub wndclass: RefCell<Option<WndClass>>,
     pub window: RefCell<Option<Rc<RefCell<Window>>>>,
     message_queue: RefCell<MessageQueue>,
 }
@@ -56,7 +56,7 @@ pub fn state() -> &'static State {
             _audio: audio,
             event_pump,
             window: Default::default(),
-            wnd_class: Default::default(),
+            wndclass: Default::default(),
             message_queue: Default::default(),
         }
     })
