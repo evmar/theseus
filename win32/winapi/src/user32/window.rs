@@ -14,6 +14,7 @@ pub struct Window {
     pub width: u32,
     pub height: u32,
     pub canvas: sdl3::render::WindowCanvas,
+    pub pixels: Option<u32>,
 }
 
 impl Window {
@@ -37,6 +38,14 @@ impl Window {
             right: self.width as i32,
             bottom: self.height as i32,
         }
+    }
+
+    pub fn ensure_pixels(&mut self, ctx: &mut Context) -> u32 {
+        *self.pixels.get_or_insert_with(|| {
+            kernel32::lock()
+                .process_heap
+                .alloc(&mut ctx.memory, self.width * self.height * 4)
+        })
     }
 }
 
@@ -89,6 +98,7 @@ impl State {
                 .build()
                 .unwrap()
                 .into_canvas(),
+            pixels: None,
         };
         window.canvas.clear();
         let hwnd = HWND::from_raw(1);
@@ -267,20 +277,30 @@ struct PAINTSTRUCT {
 
 #[win32_derive::dllexport]
 pub fn BeginPaint(ctx: &mut Context, hWnd: HWND, lpPaint: u32 /* PAINTSTRUCT */) -> HDC {
+    let window = state().window.borrow();
+    let mut window = window.as_ref().unwrap().borrow_mut();
+
     let wndclass = state().wndclass.borrow();
     let wndclass = wndclass.as_ref().unwrap();
-    if wndclass.background.is_some() {
+    if let Some(background) = &wndclass.background {
         // TODO: send WM_ERASEBKGND, let DefWindowProc handle it
+        let pixels = window.ensure_pixels(ctx);
+        let pixel_count = (window.width * window.height) as usize;
+        let pixels = <[u32]>::mut_from_bytes_with_elems(
+            &mut ctx.memory[pixels..][..pixel_count * 4],
+            pixel_count,
+        )
+        .unwrap();
+        pixels.fill(background.0.as_u32());
     };
-
-    let window = state().window.borrow();
-    let window = window.as_ref().unwrap().borrow();
+    let rcPaint = window.rect();
+    drop(window);
 
     let hdc = GetDC(ctx, hWnd);
     PAINTSTRUCT {
         hdc,
         fErase: wndclass.background.is_none() as u32,
-        rcPaint: window.rect(),
+        rcPaint,
         reserved: [0; 10],
     }
     .write_to_prefix(&mut ctx.memory[lpPaint..])
@@ -306,11 +326,9 @@ pub fn GetDC(ctx: &mut Context, hWnd: HWND) -> HDC {
 
     let state = state();
     let window = state.window.borrow();
-    let window = window.as_ref().unwrap().borrow();
+    let mut window = window.as_ref().unwrap().borrow_mut();
 
-    let pixels = kernel32::lock()
-        .process_heap
-        .alloc(&mut ctx.memory, window.width * window.height * 4);
+    let pixels = window.ensure_pixels(ctx);
     let bitmap = gdi32::Bitmap::new_simple(window.width, window.height, pixels);
     gdi32::lock().new_memory_dc(bitmap)
 }

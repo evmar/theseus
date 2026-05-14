@@ -5,7 +5,7 @@ use runtime::Context;
 use crate::gdi32::{self, Bitmap, COLORREF, HDC, HGDIOBJ};
 
 #[derive(Debug, Clone)]
-pub struct Brush(COLORREF);
+pub struct Brush(pub COLORREF);
 
 pub enum Object {
     Bitmap(Arc<Bitmap>),

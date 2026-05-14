@@ -33,6 +33,12 @@ pub struct DC {
     pos: POINT,
 }
 
+impl DC {
+    pub fn bitmap(&self) -> &Arc<Bitmap> {
+        &self.bitmap.1
+    }
+}
+
 #[win32_derive::dllexport]
 pub fn CreateCompatibleDC(_ctx: &mut Context, hdc: HDC) -> HDC {
     // 1x1 monochrome bitmap
@@ -73,7 +79,7 @@ pub fn SetROP2(_ctx: &mut Context, _hdc: HDC, _rop2: u32 /* R2_MODE */) -> i32 {
 pub fn LineTo(ctx: &mut Context, hdc: HDC, _x: i32, _y: i32) -> bool {
     let mut state = gdi32::lock();
     let dc = state.dcs.get_mut(hdc).unwrap();
-    let bitmap = &dc.bitmap.1;
+    let bitmap = dc.bitmap();
     assert!(bitmap.is_simple());
 
     let _pixels = bitmap.pixels_mut(&mut ctx.memory);
