@@ -244,8 +244,8 @@ struct PAINTSTRUCT {
 }
 
 #[win32_derive::dllexport]
-pub fn BeginPaint(ctx: &mut Context, _hWnd: HWND, lpPaint: u32 /* PAINTSTRUCT */) -> HDC {
-    let hdc = stub!(HDC::null());
+pub fn BeginPaint(ctx: &mut Context, hWnd: HWND, lpPaint: u32 /* PAINTSTRUCT */) -> HDC {
+    let hdc = GetDC(ctx, hWnd);
     PAINTSTRUCT {
         hdc,
         fErase: stub!(0),
