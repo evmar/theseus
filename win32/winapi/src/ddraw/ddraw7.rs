@@ -1,4 +1,5 @@
 use std::cell::RefMut;
+use std::sync::Arc;
 
 use runtime::*;
 use zerocopy::FromBytes;
@@ -296,8 +297,6 @@ pub mod IDirectDraw7 {
 }
 
 pub mod IDirectDrawSurface7 {
-    use std::rc::Rc;
-
     use super::*;
 
     pub const VTABLE_ENTRIES: [&str; 49] = [
@@ -548,10 +547,10 @@ pub mod IDirectDrawSurface7 {
         let surfaces = state().surf.borrow_mut();
         let mut surface = surfaces.get(&this).unwrap().borrow_mut();
         let pixels = surface.lock(&mut ctx.memory);
-        let dc = gdi32::state()
+        let dc = gdi32::lock()
             .dcs
             .borrow_mut()
-            .add(gdi32::new_memory_dc(Rc::new(gdi32::Bitmap::new_simple(
+            .add(gdi32::new_memory_dc(Arc::new(gdi32::Bitmap::new_simple(
                 surface.width,
                 surface.height,
                 pixels,
@@ -626,7 +625,7 @@ pub mod IDirectDrawSurface7 {
     pub fn ReleaseDC(ctx: &mut Context, this: u32, hDC: HDC) -> DD {
         let surfaces = state().surf.borrow_mut();
         let mut surface = surfaces.get(&this).unwrap().borrow_mut();
-        gdi32::state().release_dc(hDC);
+        gdi32::lock().release_dc(hDC);
         surface.unlock(&mut ctx.memory);
         DD::OK
     }

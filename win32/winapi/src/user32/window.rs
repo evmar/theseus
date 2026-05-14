@@ -1,4 +1,4 @@
-use std::{cell::RefCell, rc::Rc};
+use std::{cell::RefCell, rc::Rc, sync::Arc};
 
 use runtime::Context;
 use zerocopy::{FromBytes, IntoBytes};
@@ -277,15 +277,15 @@ pub fn GetDC(ctx: &mut Context, hWnd: HWND) -> HDC {
         .process_heap
         .alloc(&mut ctx.memory, window.width * window.height * 4);
     let bitmap = gdi32::Bitmap::new_simple(window.width, window.height, pixels);
-    gdi32::state()
+    gdi32::lock()
         .dcs
         .borrow_mut()
-        .add(gdi32::new_memory_dc(Rc::new(bitmap)))
+        .add(gdi32::new_memory_dc(Arc::new(bitmap)))
 }
 
 #[win32_derive::dllexport]
 pub fn ReleaseDC(_ctx: &mut Context, _hWnd: HWND, hDC: HDC) -> i32 {
-    gdi32::state().release_dc(hDC);
+    gdi32::lock().release_dc(hDC);
     1 // success
 }
 

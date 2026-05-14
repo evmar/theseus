@@ -1,4 +1,4 @@
-use std::rc::Rc;
+use std::sync::Arc;
 
 use runtime::Context;
 use zerocopy::FromBytes;
@@ -6,7 +6,7 @@ use zerocopy::FromBytes;
 use crate::{
     HANDLE,
     bitmap::BITMAPINFOHEADER,
-    gdi32::{HDC, State, state},
+    gdi32::{self, HDC, State},
     kernel32,
 };
 
@@ -29,7 +29,8 @@ pub fn StretchBlt(
 ) -> bool {
     assert_eq!(rop, 0xcc0020);
 
-    let dcs = state().dcs.borrow();
+    let state = gdi32::lock();
+    let dcs = state.dcs.borrow();
     let dc_src = dcs.get(hdcSrc).unwrap();
     let bmp_src = &dc_src.bitmap;
 
@@ -61,7 +62,7 @@ pub fn StretchBlt(
 }
 
 impl State {
-    pub fn new_hbitmap(&self, bitmap: Rc<Bitmap>) -> HBITMAP {
+    pub fn new_hbitmap(&self, bitmap: Arc<Bitmap>) -> HBITMAP {
         let mut objects = self.objects.borrow_mut();
         let handle = objects.reserve();
         objects.set(handle, bitmap);
@@ -79,7 +80,7 @@ pub fn CreateCompatibleBitmap(ctx: &mut Context, _hdc: HDC, cx: i32, cy: i32) ->
         .process_heap
         .alloc(&mut ctx.memory, w * h * 4);
     let bitmap = Bitmap::new_simple(w, h, pixels);
-    state().new_hbitmap(Rc::new(bitmap))
+    gdi32::lock().new_hbitmap(Arc::new(bitmap))
 }
 
 #[win32_derive::dllexport]

@@ -1,10 +1,10 @@
-use std::rc::Rc;
+use std::sync::Arc;
 
 use runtime::Context;
 
 use crate::{
     HANDLE,
-    gdi32::{Bitmap, COLORREF, State, state},
+    gdi32::{self, Bitmap, COLORREF, State},
     stub,
 };
 
@@ -17,10 +17,10 @@ impl State {
 }
 
 pub struct DC {
-    pub bitmap: Rc<Bitmap>,
+    pub bitmap: Arc<Bitmap>,
 }
 
-pub fn new_memory_dc(bitmap: Rc<Bitmap>) -> DC {
+pub fn new_memory_dc(bitmap: Arc<Bitmap>) -> DC {
     DC { bitmap }
 }
 
@@ -35,13 +35,13 @@ pub fn CreateCompatibleDC(_ctx: &mut Context, hdc: HDC) -> HDC {
         palette: Box::new([[0; 4]]),
         pixels: 0,
     };
-    let dc = new_memory_dc(Rc::new(bitmap));
+    let dc = new_memory_dc(Arc::new(bitmap));
     if hdc.is_null() {
         // memory DC compatible with screen
-        state().dcs.borrow_mut().add(dc)
+        gdi32::lock().dcs.borrow_mut().add(dc)
     } else {
         // memory DC compatible with hdc
-        state().dcs.borrow_mut().add(dc)
+        gdi32::lock().dcs.borrow_mut().add(dc)
     }
 }
 

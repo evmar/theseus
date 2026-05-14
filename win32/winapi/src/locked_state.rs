@@ -16,6 +16,16 @@ impl<S> LockedState<S> {
         let ptr = NonNull::from_mut(lock.as_mut().unwrap());
         Self { _lock: lock, ptr }
     }
+
+    pub fn from_or_init(lock: &'static Mutex<Option<S>>, init: impl FnOnce() -> S) -> Self {
+        let mut lock = lock.lock().unwrap();
+        let v = match lock.as_mut() {
+            Some(value) => value,
+            None => lock.get_or_insert_with(init),
+        };
+        let ptr = NonNull::from_mut(v);
+        Self { _lock: lock, ptr }
+    }
 }
 
 impl<S> std::ops::Deref for LockedState<S> {

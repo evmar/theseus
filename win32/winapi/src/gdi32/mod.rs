@@ -1,9 +1,9 @@
 use std::{
-    cell::{OnceCell, RefCell},
-    rc::Rc,
+    cell::RefCell,
+    sync::{Arc, Mutex},
 };
 
-use crate::{HANDLE, handle::Handles};
+use crate::{HANDLE, handle::Handles, locked_state::LockedState};
 
 mod bitmap;
 pub use bitmap::*;
@@ -17,20 +17,15 @@ pub use object::*;
 pub type HGDIOBJ = HANDLE;
 pub type COLORREF = u32;
 
+#[derive(Default)]
 pub struct State {
     pub dcs: RefCell<Handles<DC>>,
-    pub objects: RefCell<Handles<Rc<Bitmap>>>,
+    pub objects: RefCell<Handles<Arc<Bitmap>>>,
 }
 
-// TODO: reuse locking pattern from kernel32
-struct StaticState(OnceCell<State>);
-unsafe impl Sync for StaticState {}
+static STATE: Mutex<Option<State>> = Mutex::new(None);
 
-static STATE: StaticState = StaticState(OnceCell::new());
-
-pub fn state() -> &'static State {
-    STATE.0.get_or_init(|| State {
-        dcs: Default::default(),
-        objects: Default::default(),
-    })
+pub type Lock = LockedState<State>;
+pub fn lock() -> Lock {
+    LockedState::from_or_init(&STATE, Default::default)
 }
