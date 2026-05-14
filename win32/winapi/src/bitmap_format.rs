@@ -93,12 +93,13 @@ impl std::fmt::Debug for Bitmap {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(
             f,
-            "Bitmap {{ {w}x{h} {bpp}bpp bottom_up:{is_bottom_up} palette:{entries} }}",
+            "Bitmap {{ {w}x{h} {bpp}bpp bottom_up:{is_bottom_up} palette:{entries} pixels:{pixels:0x} }}",
             w = self.width,
             h = self.height,
             bpp = self.bit_count,
             is_bottom_up = self.is_bottom_up,
             entries = self.palette.len(),
+            pixels = self.pixels,
         )
     }
 }
