@@ -220,6 +220,10 @@ impl Bitmap {
             y
         };
         match self.bit_count {
+            32 => {
+                let len = ((x2 - x1) * 4) as usize;
+                dst[..len].copy_from_slice(&pixels[(y * self.width + x1) as usize..][..len]);
+            }
             8 => {
                 let src = &pixels[(y * self.width + x1) as usize..][..(x2 - x1) as usize];
                 for i in 0..(x2 - x1) as usize {
