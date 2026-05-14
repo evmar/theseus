@@ -7,9 +7,10 @@ use crate::{
     HANDLE,
     bitmap::BITMAPINFOHEADER,
     gdi32::{HDC, State, state},
+    kernel32,
 };
 
-pub use crate::bitmap::DDB;
+pub use crate::bitmap::Bitmap;
 
 #[win32_derive::dllexport]
 pub fn StretchBlt(
@@ -30,27 +31,24 @@ pub fn StretchBlt(
 
     let dcs = state().dcs.borrow();
     let dc_src = dcs.get(hdcSrc).unwrap();
-    let bmp_src = dc_src.bitmap.as_ref().unwrap();
-    let BitmapType::DDB(ddb_src) = &bmp_src.typ else {
-        todo!()
-    };
-
-    log::info!("src {:?}", bmp_src);
+    let bmp_src = &dc_src.bitmap;
 
     let dc_dst = dcs.get(hdcDest).unwrap();
-    let bmp_dst = dc_dst.bitmap.as_ref().unwrap();
-    let BitmapType::DIB(dib_dst) = &bmp_dst.typ else {
-        todo!()
-    };
-    let pixels_dst =
-        &mut ctx.memory[dib_dst.pixels..][..(dib_dst.width * dib_dst.height * 4) as usize];
+    let bmp_dst = &dc_dst.bitmap;
+
+    let [pixels_src, pixels_dst] = ctx
+        .memory
+        .bytes
+        .get_disjoint_mut([bmp_src.pixels_range(), bmp_dst.pixels_range()])
+        .unwrap();
 
     assert_eq!(wDest, wSrc);
     assert_eq!(hDest, hSrc);
 
     let w = wDest as u32;
     for y in 0..hDest as u32 {
-        ddb_src.read_pixels(
+        bmp_src.read_pixels(
+            &pixels_src,
             ySrc as u32 + y,
             xSrc as u32,
             (xSrc + wSrc) as u32,
@@ -62,45 +60,11 @@ pub fn StretchBlt(
     true
 }
 
-#[derive(Debug)]
-pub struct DIB {
-    pub width: u32,
-    pub height: u32,
-    /// pointer to pixel data
-    pub pixels: u32,
-}
-
-impl DIB {
-    pub fn new(width: u32, height: u32) -> Self {
-        Self {
-            width,
-            height,
-            pixels: 0,
-        }
-    }
-}
-
-#[derive(Debug)]
-pub enum BitmapType {
-    DDB(DDB),
-    DIB(DIB),
-}
-
-#[derive(Debug)]
-pub struct Bitmap {
-    pub handle: HANDLE,
-    pub typ: BitmapType,
-}
-
 impl State {
-    pub fn new_bitmap(&self, bitmap: BitmapType) -> HBITMAP {
+    pub fn new_hbitmap(&self, bitmap: Rc<Bitmap>) -> HBITMAP {
         let mut objects = self.objects.borrow_mut();
         let handle = objects.reserve();
-        let bitmap = Rc::new(Bitmap {
-            handle,
-            typ: bitmap,
-        });
-        objects.set(handle, bitmap.clone());
+        objects.set(handle, bitmap);
         handle
     }
 }
@@ -108,15 +72,14 @@ impl State {
 pub type HBITMAP = HANDLE;
 
 #[win32_derive::dllexport]
-pub fn CreateCompatibleBitmap(_ctx: &mut Context, hdc: HDC, cx: i32, cy: i32) -> HBITMAP {
-    let dcs = state().dcs.borrow();
-    let dc = dcs.get(hdc).unwrap();
-    let bitmap = dc.bitmap.as_ref().unwrap();
-    let bitmap = match &bitmap.typ {
-        BitmapType::DDB(_) => todo!("ddb"),
-        BitmapType::DIB(_) => BitmapType::DIB(DIB::new(cx as u32, cy as u32)),
-    };
-    state().new_bitmap(bitmap)
+pub fn CreateCompatibleBitmap(ctx: &mut Context, _hdc: HDC, cx: i32, cy: i32) -> HBITMAP {
+    let w = cx as u32;
+    let h = cy as u32;
+    let pixels = kernel32::lock()
+        .process_heap
+        .alloc(&mut ctx.memory, w * h * 4);
+    let bitmap = Bitmap::new_simple(w, h, pixels);
+    state().new_hbitmap(Rc::new(bitmap))
 }
 
 #[win32_derive::dllexport]

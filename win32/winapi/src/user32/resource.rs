@@ -61,11 +61,14 @@ pub fn LoadImageA(
         log::warn!("LoadImage: resource not found");
         return HANDLE::null();
     };
-    let bitmap = gdi32::DDB::parse(buf);
+    let (mut bitmap, pixels) = gdi32::Bitmap::parse(buf);
     assert_eq!(bitmap.width, cx);
     assert_eq!(bitmap.height, cy);
 
-    gdi32::state().new_bitmap(gdi32::BitmapType::DDB(bitmap))
+    let pixels = unsafe { pixels.as_ptr().offset_from_unsigned(ctx.memory.as_ptr()) };
+    bitmap.pixels = pixels as u32;
+
+    gdi32::state().new_hbitmap(Rc::new(bitmap))
 }
 
 pub type HCURSOR = u32;

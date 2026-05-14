@@ -4,7 +4,7 @@ use runtime::Context;
 
 use crate::{
     HANDLE,
-    gdi32::{Bitmap, BitmapType, COLORREF, DIB, State, state},
+    gdi32::{Bitmap, COLORREF, State, state},
     stub,
 };
 
@@ -16,28 +16,32 @@ impl State {
     }
 }
 
-#[derive(Default)]
 pub struct DC {
-    pub bitmap: Option<Rc<Bitmap>>,
+    pub bitmap: Rc<Bitmap>,
 }
 
-pub fn new_memory_dc(dib: DIB) -> DC {
-    DC {
-        bitmap: Some(Rc::new(Bitmap {
-            handle: HANDLE::null(),
-            typ: BitmapType::DIB(dib),
-        })),
-    }
+pub fn new_memory_dc(bitmap: Rc<Bitmap>) -> DC {
+    DC { bitmap }
 }
 
 #[win32_derive::dllexport]
 pub fn CreateCompatibleDC(_ctx: &mut Context, hdc: HDC) -> HDC {
+    // 1x1 monochrome bitmap
+    let bitmap = Bitmap {
+        width: 1,
+        height: 1,
+        is_bottom_up: false,
+        bit_count: 1,
+        palette: Box::new([[0; 4]]),
+        pixels: 0,
+    };
+    let dc = new_memory_dc(Rc::new(bitmap));
     if hdc.is_null() {
         // memory DC compatible with screen
-        state().dcs.borrow_mut().add(DC::default())
+        state().dcs.borrow_mut().add(dc)
     } else {
         // memory DC compatible with hdc
-        state().dcs.borrow_mut().add(DC::default())
+        state().dcs.borrow_mut().add(dc)
     }
 }
 

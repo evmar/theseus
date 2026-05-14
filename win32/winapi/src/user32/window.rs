@@ -6,7 +6,7 @@ use zerocopy::{FromBytes, IntoBytes};
 use crate::{
     FromABIParam, RECT,
     gdi32::{self, HDC},
-    stub,
+    kernel32, stub,
     user32::{HCURSOR, HICON, HINSTANCE, HMENU, HWND, State, state},
 };
 
@@ -263,7 +263,7 @@ pub fn EndPaint(_ctx: &mut Context, _hWnd: HWND, _lpPaint: u32 /* PAINTSTRUCT */
 }
 
 #[win32_derive::dllexport]
-pub fn GetDC(_ctx: &mut Context, hWnd: HWND) -> HDC {
+pub fn GetDC(ctx: &mut Context, hWnd: HWND) -> HDC {
     if hWnd.is_null() {
         // desktop window
         return stub!(HDC::null());
@@ -273,12 +273,14 @@ pub fn GetDC(_ctx: &mut Context, hWnd: HWND) -> HDC {
     let window = state.window.borrow();
     let window = window.as_ref().unwrap().borrow();
 
-    let bitmap = gdi32::DIB::new(window.width, window.height);
-    let hdc = gdi32::state()
+    let pixels = kernel32::lock()
+        .process_heap
+        .alloc(&mut ctx.memory, window.width * window.height * 4);
+    let bitmap = gdi32::Bitmap::new_simple(window.width, window.height, pixels);
+    gdi32::state()
         .dcs
         .borrow_mut()
-        .add(gdi32::new_memory_dc(bitmap));
-    stub!(hdc)
+        .add(gdi32::new_memory_dc(Rc::new(bitmap)))
 }
 
 #[win32_derive::dllexport]

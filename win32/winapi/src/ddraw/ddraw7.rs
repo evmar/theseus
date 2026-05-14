@@ -7,7 +7,7 @@ use crate::{
     RECT,
     ddraw::{GUID, Target, state, types::*},
     gdi32,
-    gdi32::{DIB, HDC},
+    gdi32::HDC,
     heap::Heap,
     kernel32, stub,
     user32::HWND,
@@ -296,6 +296,8 @@ pub mod IDirectDraw7 {
 }
 
 pub mod IDirectDrawSurface7 {
+    use std::rc::Rc;
+
     use super::*;
 
     pub const VTABLE_ENTRIES: [&str; 49] = [
@@ -549,11 +551,11 @@ pub mod IDirectDrawSurface7 {
         let dc = gdi32::state()
             .dcs
             .borrow_mut()
-            .add(gdi32::new_memory_dc(DIB {
-                width: surface.width,
-                height: surface.height,
+            .add(gdi32::new_memory_dc(Rc::new(gdi32::Bitmap::new_simple(
+                surface.width,
+                surface.height,
                 pixels,
-            }));
+            ))));
         ctx.memory.write(lphDC, dc.to_raw());
         stub!(DD::OK)
     }

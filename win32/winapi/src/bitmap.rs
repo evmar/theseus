@@ -80,40 +80,59 @@ impl BITMAPINFOHEADER {
     }
 }
 
-/// Device dependent bitmap: the result of parsing a bitmap header.
-pub struct DDB {
+pub struct Bitmap {
     pub width: u32,
     pub height: u32,
-    pub stride: usize,
     pub is_bottom_up: bool,
     pub bit_count: u8,
-    pub compression: BI,
     pub palette: Box<[[u8; 4]]>,
-    pub pixels: Box<[u8]>,
+    pub pixels: u32,
 }
 
-impl std::fmt::Debug for DDB {
+impl std::fmt::Debug for Bitmap {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(
             f,
-            "BitmapInfo {{ {w}x{h} stride:{stride} {bpp}bpp bottom_up:{is_bottom_up} compression:{compression:?} palette:{entries} }}",
+            "Bitmap {{ {w}x{h} {bpp}bpp bottom_up:{is_bottom_up} palette:{entries} }}",
             w = self.width,
             h = self.height,
-            stride = self.stride,
             bpp = self.bit_count,
             is_bottom_up = self.is_bottom_up,
-            compression = self.compression,
             entries = self.palette.len(),
         )
     }
 }
 
-impl DDB {
+impl Bitmap {
+    /// A "simple" bitmap is BGRA top-down, like an SDL buffer.
+    pub fn new_simple(width: u32, height: u32, pixels: u32) -> Self {
+        Self {
+            width,
+            height,
+            is_bottom_up: false,
+            bit_count: 32,
+            palette: Box::new([]),
+            pixels,
+        }
+    }
+
+    pub fn stride(&self) -> usize {
+        // Bitmap row stride is padded out to 4 bytes per row.
+        (((self.width as usize * self.bit_count as usize) + 31) & !31) / 8
+    }
+
+    pub fn pixels_len(&self) -> usize {
+        self.height as usize * self.stride()
+    }
+
+    pub fn pixels_range(&self) -> std::ops::Range<usize> {
+        self.pixels as usize..self.pixels as usize + self.pixels_len()
+    }
+
     // TODO: when parsing a bitmap from memory it's unclear how much memory we'll need
     // to read until we've read the bitmap header.  This means the caller cannot know how
     // big of a slice to provide.
-
-    pub fn parse(buf: &[u8]) -> Self {
+    pub fn parse(buf: &[u8]) -> (Self, &[u8]) {
         use zerocopy::FromBytes;
         let (header_size, _) = <u32>::read_from_prefix(buf).unwrap();
         match header_size {
@@ -130,7 +149,7 @@ impl DDB {
     }
 
     /// buf is the bytes following the header.
-    fn parseBMPv2(header: &BITMAPCOREHEADER, buf: &[u8]) -> Self {
+    fn parseBMPv2<'a>(header: &BITMAPCOREHEADER, buf: &'a [u8]) -> (Self, &'a [u8]) {
         let palette_len = if header.bcBitCount <= 8 {
             2usize.pow(header.bcBitCount as u32)
         } else {
@@ -142,25 +161,20 @@ impl DDB {
             .map(|&[r, g, b]| [0xff, r, g, b]) // RGBQUAD
             .collect::<Vec<_>>()
             .into_boxed_slice();
-
-        let pixels = buf[..(header.bcHeight as usize * header.stride())]
-            .to_owned()
-            .into_boxed_slice();
-
-        DDB {
+        let pixels = &buf[..(header.bcHeight as usize * header.stride())];
+        let bitmap = Bitmap {
             width: header.bcWidth as u32,
             height: header.bcHeight as u32,
-            stride: header.stride(),
             is_bottom_up: true, // MSDN: "BITMAPCOREHEADER bitmaps cannot be top-down bitmaps"
             bit_count: header.bcBitCount as u8,
-            compression: BI::RGB,
             palette,
-            pixels,
-        }
+            pixels: 0,
+        };
+        (bitmap, pixels)
     }
 
     /// buf is the bytes following the header.
-    fn parseBMPv3(header: &BITMAPINFOHEADER, buf: &[u8]) -> Self {
+    fn parseBMPv3<'a>(header: &BITMAPINFOHEADER, buf: &'a [u8]) -> (Self, &'a [u8]) {
         if header.biCompression != BI::RGB as u32 {
             todo!("compression {:?}", header.biCompression);
         }
@@ -179,23 +193,19 @@ impl DDB {
             .collect::<Vec<_>>()
             .into_boxed_slice();
 
-        let pixels = buf[..(header.height() as usize * header.stride())]
-            .to_owned()
-            .into_boxed_slice();
-
-        DDB {
+        let pixels = &buf[..(header.height() as usize * header.stride())];
+        let bitmap = Bitmap {
             width: header.biWidth,
             height: header.height(),
-            stride: header.stride(),
             is_bottom_up: header.is_bottom_up(),
             bit_count: header.biBitCount as u8,
-            compression: BI::RGB,
             palette,
-            pixels,
-        }
+            pixels: 0,
+        };
+        (bitmap, pixels)
     }
 
-    pub fn read_pixels(&self, y: u32, x1: u32, x2: u32, dst: &mut [u8]) {
+    pub fn read_pixels(&self, pixels: &[u8], y: u32, x1: u32, x2: u32, dst: &mut [u8]) {
         let y = if self.is_bottom_up {
             self.height - y - 1
         } else {
@@ -203,7 +213,7 @@ impl DDB {
         };
         match self.bit_count {
             8 => {
-                let src = &self.pixels[(y * self.width + x1) as usize..][..(x2 - x1) as usize];
+                let src = &pixels[(y * self.width + x1) as usize..][..(x2 - x1) as usize];
                 for i in 0..(x2 - x1) as usize {
                     let [a, r, g, b] = self.palette[src[i] as usize];
                     dst[i * 4] = b;
