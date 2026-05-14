@@ -3,7 +3,7 @@
 #![allow(non_upper_case_globals)]
 
 pub mod advapi32;
-pub mod bitmap;
+pub mod bitmap_format;
 pub mod ddraw;
 mod dllexport;
 pub mod dsound;

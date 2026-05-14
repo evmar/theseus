@@ -5,12 +5,12 @@ use zerocopy::FromBytes;
 
 use crate::{
     HANDLE,
-    bitmap::BITMAPINFOHEADER,
+    bitmap_format::BITMAPINFOHEADER,
     gdi32::{self, HDC, State},
     kernel32,
 };
 
-pub use crate::bitmap::Bitmap;
+pub use crate::bitmap_format::Bitmap;
 
 #[win32_derive::dllexport]
 pub fn BitBlt(
