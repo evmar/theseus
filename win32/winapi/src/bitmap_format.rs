@@ -230,7 +230,7 @@ impl Bitmap {
                     dst[i * 4 + 3] = a;
                 }
             }
-            _ => todo!(),
+            _ => todo!("{}", self.bit_count),
         }
     }
 }
