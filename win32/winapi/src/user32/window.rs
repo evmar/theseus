@@ -1,19 +1,19 @@
 use std::{cell::RefCell, rc::Rc};
 
 use runtime::Context;
+use zerocopy::FromBytes;
 
 use crate::{
     FromABIParam,
     gdi32::{self, HDC},
     stub,
-    user32::{HINSTANCE, HMENU, HWND, State, state},
+    user32::{HCURSOR, HICON, HINSTANCE, HMENU, HWND, State, state},
 };
 
 pub struct Window {
     pub width: u32,
     pub height: u32,
     pub canvas: sdl3::render::WindowCanvas,
-    pub wndproc: Option<runtime::Cont>,
 }
 
 impl Window {
@@ -80,7 +80,6 @@ impl State {
                 .build()
                 .unwrap()
                 .into_canvas(),
-            wndproc: None,
         };
         window.canvas.clear();
         let hwnd = HWND::from_raw(1);
@@ -193,13 +192,45 @@ pub fn SetFocus(_ctx: &mut Context, _hWnd: HWND) -> HWND {
     stub!(HWND::null())
 }
 
+#[repr(C)]
+#[derive(Debug, zerocopy::FromBytes)]
+struct WNDCLASS {
+    style: u32,       /* WNDCLASS_STYLES */
+    lpfnWndProc: u32, /* WNDPROC */
+    cbClsExtra: i32,
+    cbWndExtra: i32,
+    hInstance: HINSTANCE,
+    hIcon: HICON,
+    hCursor: HCURSOR,
+    hbrBackground: u32,
+    lpszMenuName: u32,
+    lpszClassName: u32,
+}
+
+pub struct WndClass {
+    pub wndproc: runtime::Cont,
+}
+
+impl State {
+    pub fn register_class(&self, wnd_class: WndClass) -> u16 {
+        *self.wnd_class.borrow_mut() = Some(wnd_class);
+        0
+    }
+}
+
 #[win32_derive::dllexport]
 pub fn RegisterClassA(_ctx: &mut Context, _lpWndClass: u32) -> u16 {
     stub!(1)
 }
 
 #[win32_derive::dllexport]
-pub fn RegisterClassW(_ctx: &mut Context, _lpWndClass: u32 /* WNDCLASSW */) -> u16 {
+pub fn RegisterClassW(ctx: &mut Context, lpWndClass: u32 /* WNDCLASSW */) -> u16 {
+    let wndclass = <WNDCLASS>::read_from_prefix(&ctx.memory[lpWndClass..])
+        .unwrap()
+        .0;
+    state().register_class(WndClass {
+        wndproc: ctx.indirect(wndclass.lpfnWndProc),
+    });
     stub!(1)
 }
 
