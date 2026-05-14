@@ -1,7 +1,4 @@
-use std::{
-    cell::RefCell,
-    sync::{Arc, Mutex},
-};
+use std::sync::{Arc, Mutex};
 
 use crate::{HANDLE, handle::Handles, locked_state::LockedState};
 
@@ -19,8 +16,8 @@ pub type COLORREF = u32;
 
 #[derive(Default)]
 pub struct State {
-    pub dcs: RefCell<Handles<DC>>,
-    pub objects: RefCell<Handles<Arc<Bitmap>>>,
+    pub dcs: Handles<DC>,
+    pub objects: Handles<Arc<Bitmap>>,
 }
 
 static STATE: Mutex<Option<State>> = Mutex::new(None);

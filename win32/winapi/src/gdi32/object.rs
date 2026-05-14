@@ -19,7 +19,8 @@ struct BITMAP {
 
 #[win32_derive::dllexport]
 pub fn GetObjectA(ctx: &mut Context, handle: HGDIOBJ, size: u32, lpOut: u32) -> u32 {
-    let bitmap = gdi32::lock().objects.borrow().get(handle).unwrap().clone();
+    let state = gdi32::lock();
+    let bitmap = state.objects.get(handle).unwrap();
     assert!(size == std::mem::size_of::<BITMAP>() as u32);
     let fields = BITMAP {
         bmType: 0,
@@ -41,10 +42,9 @@ pub fn GetStockObject(_ctx: &mut Context, _i: u32 /* GET_STOCK_OBJECT_FLAGS */) 
 
 #[win32_derive::dllexport]
 pub fn SelectObject(_ctx: &mut Context, hdc: HDC, h: HGDIOBJ) -> HGDIOBJ {
-    let state = gdi32::lock();
-    let object = state.objects.borrow().get(h).unwrap().clone();
-    let mut dcs = state.dcs.borrow_mut();
-    let dc = dcs.get_mut(hdc).unwrap();
+    let mut state = gdi32::lock();
+    let object = state.objects.get(h).unwrap().clone();
+    let dc = state.dcs.get_mut(hdc).unwrap();
     // let prev = dc.bitmap;
     dc.bitmap = object;
     stub!(HGDIOBJ::null())

@@ -11,8 +11,8 @@ use crate::{
 pub type HDC = HANDLE;
 
 impl State {
-    pub fn release_dc(&self, hdc: HDC) {
-        self.dcs.borrow_mut().remove(hdc);
+    pub fn release_dc(&mut self, hdc: HDC) {
+        self.dcs.remove(hdc);
     }
 }
 
@@ -38,10 +38,10 @@ pub fn CreateCompatibleDC(_ctx: &mut Context, hdc: HDC) -> HDC {
     let dc = new_memory_dc(Arc::new(bitmap));
     if hdc.is_null() {
         // memory DC compatible with screen
-        gdi32::lock().dcs.borrow_mut().add(dc)
+        gdi32::lock().dcs.add(dc)
     } else {
         // memory DC compatible with hdc
-        gdi32::lock().dcs.borrow_mut().add(dc)
+        gdi32::lock().dcs.add(dc)
     }
 }
 

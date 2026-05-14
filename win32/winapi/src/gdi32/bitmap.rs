@@ -30,11 +30,10 @@ pub fn StretchBlt(
     assert_eq!(rop, 0xcc0020);
 
     let state = gdi32::lock();
-    let dcs = state.dcs.borrow();
-    let dc_src = dcs.get(hdcSrc).unwrap();
+    let dc_src = state.dcs.get(hdcSrc).unwrap();
     let bmp_src = &dc_src.bitmap;
 
-    let dc_dst = dcs.get(hdcDest).unwrap();
+    let dc_dst = state.dcs.get(hdcDest).unwrap();
     let bmp_dst = &dc_dst.bitmap;
 
     let [pixels_src, pixels_dst] = ctx
@@ -62,10 +61,9 @@ pub fn StretchBlt(
 }
 
 impl State {
-    pub fn new_hbitmap(&self, bitmap: Arc<Bitmap>) -> HBITMAP {
-        let mut objects = self.objects.borrow_mut();
-        let handle = objects.reserve();
-        objects.set(handle, bitmap);
+    pub fn new_hbitmap(&mut self, bitmap: Arc<Bitmap>) -> HBITMAP {
+        let handle = self.objects.reserve();
+        self.objects.set(handle, bitmap);
         handle
     }
 }

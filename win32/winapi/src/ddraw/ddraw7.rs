@@ -549,7 +549,6 @@ pub mod IDirectDrawSurface7 {
         let pixels = surface.lock(&mut ctx.memory);
         let dc = gdi32::lock()
             .dcs
-            .borrow_mut()
             .add(gdi32::new_memory_dc(Arc::new(gdi32::Bitmap::new_simple(
                 surface.width,
                 surface.height,

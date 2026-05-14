@@ -279,7 +279,6 @@ pub fn GetDC(ctx: &mut Context, hWnd: HWND) -> HDC {
     let bitmap = gdi32::Bitmap::new_simple(window.width, window.height, pixels);
     gdi32::lock()
         .dcs
-        .borrow_mut()
         .add(gdi32::new_memory_dc(Arc::new(bitmap)))
 }
 
