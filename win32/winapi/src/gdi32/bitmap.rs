@@ -13,6 +13,22 @@ use crate::{
 pub use crate::bitmap::Bitmap;
 
 #[win32_derive::dllexport]
+pub fn BitBlt(
+    _ctx: &mut Context,
+    _hdc: HDC,
+    _x: i32,
+    _y: i32,
+    _cx: i32,
+    _cy: i32,
+    _hdcSrc: HDC,
+    _x1: i32,
+    _y1: i32,
+    _rop: u32, /* ROP_CODE */
+) -> bool {
+    todo!()
+}
+
+#[win32_derive::dllexport]
 pub fn StretchBlt(
     ctx: &mut Context,
     hdcDest: HDC,
