@@ -72,7 +72,6 @@ impl Window {
         texture.update(None, pixels, stride as usize).unwrap();
         self.canvas.copy(texture, None, None).unwrap();
         self.canvas.present();
-        log::info!("flush");
     }
 }
 

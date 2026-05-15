@@ -215,24 +215,33 @@ impl Bitmap {
     }
 
     pub fn read_pixels(&self, pixels: &[u8], y: u32, x1: u32, x2: u32, dst: &mut [u8]) {
-        let y = if self.is_bottom_up {
-            self.height - y - 1
-        } else {
-            y
-        };
         match self.bit_count {
             32 => {
                 let len = ((x2 - x1) * 4) as usize;
                 dst[..len].copy_from_slice(&pixels[(y * self.stride() + x1 * 4) as usize..][..len]);
             }
             8 => {
-                let src = &pixels[(y * self.width + x1) as usize..][..(x2 - x1) as usize];
-                for i in 0..(x2 - x1) as usize {
-                    let [a, r, g, b] = self.palette[src[i] as usize];
-                    dst[i * 4] = b;
-                    dst[i * 4 + 1] = g;
-                    dst[i * 4 + 2] = r;
-                    dst[i * 4 + 3] = a;
+                let src = &pixels[(y * self.stride()) as usize..];
+                for (srci, dsti) in (x1..x2).zip((0..).step_by(4)) {
+                    let [a, r, g, b] = self.palette[src[srci as usize] as usize];
+                    dst[dsti] = b;
+                    dst[dsti + 1] = g;
+                    dst[dsti + 2] = r;
+                    dst[dsti + 3] = a;
+                }
+            }
+            4 => {
+                let src = &pixels[(y * self.stride()) as usize..];
+                for (srci, dsti) in (x1..x2).zip((0..).step_by(4)) {
+                    let [a, r, g, b] = self.palette[if srci % 2 == 0 {
+                        src[(srci / 2) as usize] >> 4
+                    } else {
+                        src[(srci / 2) as usize] & 0xf
+                    } as usize];
+                    dst[dsti] = b;
+                    dst[dsti + 1] = g;
+                    dst[dsti + 2] = r;
+                    dst[dsti + 3] = a;
                 }
             }
             _ => todo!("{}", self.bit_count),

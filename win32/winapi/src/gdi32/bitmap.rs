@@ -1,11 +1,9 @@
 use std::sync::Arc;
 
 use runtime::Context;
-use zerocopy::FromBytes;
 
 use crate::{
     HANDLE,
-    bitmap_format::BITMAPINFOHEADER,
     gdi32::{self, HDC, Object, State},
     kernel32,
 };
@@ -102,29 +100,58 @@ pub fn CreateCompatibleBitmap(ctx: &mut Context, _hdc: HDC, cx: i32, cy: i32) ->
 #[win32_derive::dllexport]
 pub fn SetDIBitsToDevice(
     ctx: &mut Context,
-    _hdc: HDC,
-    _xDest: i32,
-    _yDest: i32,
-    _w: u32,
-    _h: u32,
-    _xSrc: i32,
-    _ySrc: i32,
+    hdc: HDC,
+    xDest: u32,
+    yDest: u32,
+    w: u32,
+    h: u32,
+    xSrc: u32,
+    ySrc: u32,
     StartScan: u32,
     cLines: u32,
     lpvBits: u32,
     lpbmi: u32,    /* BITMAPINFO */
     ColorUse: u32, /* DIB_USAGE */
 ) -> u32 {
-    let (header, rest) = <BITMAPINFOHEADER>::read_from_prefix(&ctx.memory[lpbmi..]).unwrap();
-    assert_eq!(header.biCompression, 0); // BI_RGB
-    assert_eq!(ColorUse, 0); // DIB_RGB_COLORS
-
-    assert_eq!(header.biClrUsed, 0);
-    let palette_size = 2usize.pow(header.biBitCount as u32);
-    let _palette = &rest[..palette_size];
-    let _pixels = &ctx.memory[lpvBits..];
+    let (bmp_src, _) = Bitmap::parse(&ctx.memory[lpbmi..]);
 
     assert_eq!(StartScan, 0);
+    assert_eq!(ColorUse, 0); // DIB_RGB_COLORS
+    assert_eq!(cLines, h); // why would these ever be different?
+
+    let state = gdi32::lock();
+    let dc_dst = state.dcs.get(hdc).unwrap();
+    let bmp_dst = &dc_dst.bitmap.1;
+    assert!(bmp_dst.is_simple());
+
+    let [pixels_src, pixels_dst] = ctx
+        .memory
+        .bytes
+        .get_disjoint_mut([
+            lpvBits as usize..(lpvBits + (h * bmp_src.stride())) as usize,
+            bmp_dst.pixels_range(),
+        ])
+        .unwrap();
+
+    // for i in (0..pixels_src.len()).step_by(bmp_src.stride() as usize) {
+    //     log::info!("{:x?}", &pixels_src[i..][..bmp_src.stride() as usize]);
+    // }
+
+    for y in 0..h {
+        let dst = &mut pixels_dst[((yDest + y) * bmp_dst.stride() + xDest * 4) as usize..];
+        let y_src = ySrc + y;
+        bmp_src.read_pixels(
+            pixels_src,
+            if bmp_src.is_bottom_up {
+                h - y_src - 1
+            } else {
+                y_src
+            },
+            xSrc,
+            xSrc + w,
+            dst,
+        );
+    }
 
     cLines
 }
