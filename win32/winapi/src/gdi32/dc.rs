@@ -5,7 +5,7 @@ use zerocopy::IntoBytes;
 
 use crate::{
     HANDLE, POINT,
-    gdi32::{self, Bitmap, COLORREF, HBITMAP, Object, State},
+    gdi32::{self, Bitmap, COLORREF, HBITMAP, HPEN, Object, Pen, State},
     stub,
 };
 
@@ -17,6 +17,8 @@ impl State {
         let hbitmap = self.objects.add(Object::Bitmap(bitmap.clone()));
         let dc = DC {
             bitmap: (hbitmap, bitmap),
+            pen: (HPEN::null(), Pen(COLORREF::default())),
+            rop2: R2::COPYPEN,
             pos: POINT::default(),
         };
         self.dcs.add(dc)
@@ -30,6 +32,8 @@ impl State {
 pub struct DC {
     /// Store the HBITMAP as well as the Bitmap itself so that when it is switched via SelectObject we can return it.
     pub bitmap: (HBITMAP, Arc<Bitmap>),
+    pub pen: (HPEN, Pen),
+    rop2: R2,
     pos: POINT,
 }
 
@@ -70,9 +74,31 @@ pub fn GetLayout(_ctx: &mut Context, _hdc: HDC) -> u32 {
     0 // LTR
 }
 
+#[derive(Debug, win32_derive::ABIEnum)]
+pub enum R2 {
+    BLACK = 1,
+    NOTMERGEPEN = 2,
+    MASKNOTPEN = 3,
+    NOTCOPYPEN = 4,
+    MASKPENNOT = 5,
+    NOT = 6,
+    XORPEN = 7,
+    NOTMASKPEN = 8,
+    MASKPEN = 9,
+    NOTXORPEN = 10,
+    NOP = 11,
+    MERGENOTPEN = 12,
+    COPYPEN = 13,
+    MERGEPENNOT = 14,
+    MERGEPEN = 15,
+    WHITE = 16,
+}
+
 #[win32_derive::dllexport]
-pub fn SetROP2(_ctx: &mut Context, _hdc: HDC, _rop2: u32 /* R2_MODE */) -> i32 {
-    stub!(0)
+pub fn SetROP2(_ctx: &mut Context, hdc: HDC, rop2: R2) -> i32 {
+    let mut state = gdi32::lock();
+    let dc = state.dcs.get_mut(hdc).unwrap();
+    std::mem::replace(&mut dc.rop2, rop2) as i32
 }
 
 fn ascending(a: i32, b: i32) -> std::ops::RangeInclusive<i32> {
@@ -86,22 +112,22 @@ pub fn LineTo(ctx: &mut Context, hdc: HDC, x: i32, y: i32) -> bool {
     let bitmap = dc.bitmap();
     assert!(bitmap.is_simple());
 
+    let color = match dc.rop2 {
+        R2::COPYPEN => dc.pen.1.0,
+        R2::WHITE => COLORREF::from_rgb(0xff, 0xff, 0xff),
+        _ => todo!("{:?}", dc.rop2),
+    };
+
     let pixels = bitmap.pixels_mut(&mut ctx.memory);
     if x == dc.pos.x {
         for y in ascending(dc.pos.y, y) {
             let i = ((y as u32 * bitmap.stride()) + (x as u32 * 4)) as usize;
-            pixels[i] = 0;
-            pixels[i + 1] = 0;
-            pixels[i + 2] = 0;
-            pixels[i + 3] = 0;
+            pixels[i..][..4].copy_from_slice(&color.as_mem());
         }
     } else if y == dc.pos.y {
         for x in ascending(dc.pos.x, x) {
             let i = ((y as u32 * bitmap.stride()) + (x as u32 * 4)) as usize;
-            pixels[i] = 0;
-            pixels[i + 1] = 0;
-            pixels[i + 2] = 0;
-            pixels[i + 3] = 0;
+            pixels[i..][..4].copy_from_slice(&color.as_mem());
         }
     } else {
         todo!(); // only axis-aligned supported for now

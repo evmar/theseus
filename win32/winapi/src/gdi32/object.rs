@@ -2,14 +2,31 @@ use std::sync::Arc;
 
 use runtime::Context;
 
-use crate::gdi32::{self, Bitmap, COLORREF, HDC, HGDIOBJ};
+use crate::gdi32::{self, Bitmap, COLORREF, HDC, HGDIOBJ, HPEN};
 
 #[derive(Debug, Clone)]
 pub struct Brush(pub COLORREF);
 
+#[derive(Debug, Clone)]
+pub struct Pen(pub COLORREF);
+
+#[win32_derive::dllexport]
+pub fn CreatePen(
+    _ctx: &mut Context,
+    iStyle: u32, /* PEN_STYLE */
+    cWidth: i32,
+    color: COLORREF,
+) -> HPEN {
+    assert_eq!(iStyle, 0); // PS_SOLID
+    assert_eq!(cWidth, 1);
+    let pen = Pen(color);
+    gdi32::lock().objects.add(Object::Pen(pen))
+}
+
 pub enum Object {
     Bitmap(Arc<Bitmap>),
     Brush(Brush),
+    Pen(Pen),
 }
 
 impl Object {
@@ -93,12 +110,19 @@ pub fn SelectObject(_ctx: &mut Context, hdc: HDC, h: HGDIOBJ) -> HGDIOBJ {
         return HGDIOBJ::null();
     }
     let state = &mut *gdi32::lock();
-    let object = state.objects.get(h).unwrap();
-    let Object::Bitmap(bitmap) = object else {
-        panic!();
-    };
     let dc = state.dcs.get_mut(hdc).unwrap();
-    let prev = dc.bitmap.0;
-    dc.bitmap = (h, bitmap.clone());
-    prev
+    let object = state.objects.get(h).unwrap();
+    match object {
+        Object::Bitmap(bitmap) => {
+            let prev = dc.bitmap.0;
+            dc.bitmap = (h, bitmap.clone());
+            prev
+        }
+        Object::Pen(pen) => {
+            let prev = dc.pen.0;
+            dc.pen = (h, pen.clone());
+            prev
+        }
+        _ => todo!(),
+    }
 }

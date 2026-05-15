@@ -1,22 +1,8 @@
 use runtime::Context;
 
-use crate::{
-    gdi32::{COLORREF, HDC},
-    stub,
-};
+use crate::{gdi32::HDC, stub};
 
 pub type HGDIOBJ = u32;
-pub type HPEN = u32;
-
-#[win32_derive::dllexport]
-pub fn CreatePen(
-    _ctx: &mut Context,
-    _iStyle: u32, /* PEN_STYLE */
-    _cWidth: i32,
-    _color: COLORREF,
-) -> HPEN {
-    stub!(0)
-}
 
 #[win32_derive::dllexport]
 pub fn DeleteObject(_ctx: &mut Context, _ho: HGDIOBJ) -> bool {

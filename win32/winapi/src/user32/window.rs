@@ -318,7 +318,7 @@ pub fn BeginPaint(ctx: &mut Context, hWnd: HWND, lpPaint: u32 /* PAINTSTRUCT */)
             pixel_count,
         )
         .unwrap();
-        pixels.fill(background.0.as_argb8888());
+        pixels.fill(background.0.as_mem_u32());
     };
     let rcPaint = window.rect();
     drop(window);

@@ -13,6 +13,7 @@ pub use object::*;
 
 pub type HGDIOBJ = HANDLE;
 pub type HBRUSH = HGDIOBJ;
+pub type HPEN = HGDIOBJ;
 
 #[derive(Default)]
 pub struct State {
@@ -27,7 +28,7 @@ pub fn lock() -> Lock {
     LockedState::from_or_init(&STATE, Default::default)
 }
 
-#[derive(Debug, Copy, Clone)]
+#[derive(Debug, Copy, Clone, Default)]
 pub struct COLORREF(u32);
 
 impl FromABIParam for COLORREF {
@@ -43,12 +44,21 @@ impl Into<ABIReturn> for COLORREF {
 }
 
 impl COLORREF {
-    pub fn as_argb8888(&self) -> u32 {
-        let [r, g, b, _] = self.0.to_le_bytes();
-        u32::from_le_bytes([b, g, r, 0xff])
+    pub fn as_mem(&self) -> [u8; 4] {
+        let [r, g, b] = self.to_rgb();
+        [b, g, r, 0xff]
+    }
+
+    pub fn as_mem_u32(&self) -> u32 {
+        u32::from_le_bytes(self.as_mem())
     }
 
     pub fn from_rgb(r: u8, g: u8, b: u8) -> Self {
         Self(u32::from_le_bytes([r, g, b, 0]))
+    }
+
+    pub fn to_rgb(&self) -> [u8; 3] {
+        let [r, g, b, _] = self.0.to_le_bytes();
+        [r, g, b]
     }
 }
