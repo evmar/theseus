@@ -75,24 +75,48 @@ pub fn SetROP2(_ctx: &mut Context, _hdc: HDC, _rop2: u32 /* R2_MODE */) -> i32 {
     stub!(0)
 }
 
+fn ascending(a: i32, b: i32) -> std::ops::RangeInclusive<i32> {
+    if a < b { a..=b } else { b..=a }
+}
+
 #[win32_derive::dllexport]
-pub fn LineTo(ctx: &mut Context, hdc: HDC, _x: i32, _y: i32) -> bool {
+pub fn LineTo(ctx: &mut Context, hdc: HDC, x: i32, y: i32) -> bool {
     let mut state = gdi32::lock();
     let dc = state.dcs.get_mut(hdc).unwrap();
     let bitmap = dc.bitmap();
     assert!(bitmap.is_simple());
 
-    let _pixels = bitmap.pixels_mut(&mut ctx.memory);
+    let pixels = bitmap.pixels_mut(&mut ctx.memory);
+    if x == dc.pos.x {
+        for y in ascending(dc.pos.y, y) {
+            let i = ((y as u32 * bitmap.stride()) + (x as u32 * 4)) as usize;
+            pixels[i] = 0;
+            pixels[i + 1] = 0;
+            pixels[i + 2] = 0;
+            pixels[i + 3] = 0;
+        }
+    } else if y == dc.pos.y {
+        for x in ascending(dc.pos.x, x) {
+            let i = ((y as u32 * bitmap.stride()) + (x as u32 * 4)) as usize;
+            pixels[i] = 0;
+            pixels[i + 1] = 0;
+            pixels[i + 2] = 0;
+            pixels[i + 3] = 0;
+        }
+    } else {
+        todo!(); // only axis-aligned supported for now
+    }
 
-    stub!(true)
+    dc.pos = POINT { x, y };
+
+    true
 }
 
 #[win32_derive::dllexport]
 pub fn MoveToEx(ctx: &mut Context, hdc: HDC, x: i32, y: i32, lppt: u32 /* POINT */) -> bool {
     let mut state = gdi32::lock();
     let dc = state.dcs.get_mut(hdc).unwrap();
-    dc.pos.x = x;
-    dc.pos.y = y;
+    dc.pos = POINT { x, y };
     if lppt != 0 {
         dc.pos.write_to_prefix(&mut ctx.memory[lppt..]).unwrap();
     }
