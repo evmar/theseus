@@ -46,7 +46,6 @@ pub fn StretchBlt(
     let state = gdi32::lock();
     let dc_src = state.dcs.get(hdcSrc).unwrap();
     let bmp_src = &dc_src.bitmap.1;
-    assert!(bmp_src.is_simple());
 
     let dc_dst = state.dcs.get(hdcDest).unwrap();
     let bmp_dst = &dc_dst.bitmap.1;
@@ -58,6 +57,7 @@ pub fn StretchBlt(
         .get_disjoint_mut([bmp_src.pixels_range(), bmp_dst.pixels_range()])
         .unwrap();
 
+    // stretching not implemented yet
     assert_eq!(wDest, wSrc);
     assert_eq!(hDest, hSrc);
 
@@ -66,11 +66,23 @@ pub fn StretchBlt(
     let xDst = xDest as u32;
     let yDst = yDest as u32;
     let wSrc = wSrc as u32;
+    let hSrc = hSrc as u32;
     let wDst = wDest as u32;
     for y in 0..hDest as u32 {
         let dst = &mut pixels_dst[(((yDst + y) * bmp_dst.stride()) + (xDst * 4)) as usize..]
             [..wDst as usize * 4];
-        bmp_src.read_pixels(&pixels_src, ySrc + y, xSrc, xSrc + wSrc, dst);
+        let y_src = ySrc + y;
+        bmp_src.read_pixels(
+            &pixels_src,
+            if bmp_src.is_bottom_up {
+                hSrc - y_src - 1
+            } else {
+                y_src
+            },
+            xSrc,
+            xSrc + wSrc,
+            dst,
+        );
     }
 
     true

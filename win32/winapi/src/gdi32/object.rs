@@ -80,6 +80,7 @@ pub fn GetStockObject(_ctx: &mut Context, i: GetStockObjectArg) -> HGDIOBJ {
     use GetStockObjectArg::*;
     let object = match i {
         LTGRAY_BRUSH => Object::Brush(Brush(COLORREF::from_rgb(0xc0, 0xc0, 0xc0))),
+        BLACK_BRUSH => Object::Brush(Brush(COLORREF::from_rgb(0x00, 0x00, 0x00))),
         _ => todo!("{:?}", i),
     };
     gdi32::lock().objects.add(object)
