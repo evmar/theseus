@@ -234,6 +234,17 @@ pub fn DefWindowProcA(
 }
 
 #[win32_derive::dllexport]
+pub fn DefWindowProcW(
+    _ctx: &mut Context,
+    _hWnd: HWND,
+    _Msg: u32,
+    _wParam: u32,
+    _lParam: u32,
+) -> u32 {
+    0
+}
+
+#[win32_derive::dllexport]
 pub fn SetFocus(_ctx: &mut Context, _hWnd: HWND) -> HWND {
     stub!(HWND::null())
 }

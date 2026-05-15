@@ -4,7 +4,9 @@ use zerocopy::{FromBytes, IntoBytes};
 use runtime::Context;
 
 use crate::{
-    POINT, stub,
+    POINT,
+    dllexport::win32flags,
+    stub,
     user32::{HACCEL, HWND, state},
 };
 
@@ -26,6 +28,34 @@ struct MSG {
 pub struct MessageQueue {
     pub hwnd: HWND,
     messages: VecDeque<MSG>,
+}
+
+win32flags! {
+    pub struct MK {
+        const LBUTTON = 0x0001;
+        const RBUTTON = 0x0002;
+        const SHIFT   = 0x0004;
+        const CONTROL = 0x0008;
+        const MBUTTON = 0x0010;
+    }
+}
+
+fn mouse_msg(hwnd: HWND, message: u32, mouse_btn: sdl3::mouse::MouseButton, x: f32, y: f32) -> MSG {
+    let wParam = match mouse_btn {
+        sdl3::mouse::MouseButton::Left => MK::LBUTTON,
+        sdl3::mouse::MouseButton::Right => MK::RBUTTON,
+        sdl3::mouse::MouseButton::Middle => MK::MBUTTON,
+        _ => MK::empty(),
+    }
+    .bits();
+    MSG {
+        hwnd,
+        message,
+        wParam,
+        lParam: (y as u16 as u32) << 16 | x as u16 as u32,
+        time: 0, // todo
+        pt: POINT::default(),
+    }
 }
 
 impl MessageQueue {
@@ -88,6 +118,22 @@ impl MessageQueue {
             }
             Event::MouseMotion { .. } => {
                 return None;
+            }
+            Event::MouseButtonDown {
+                mouse_btn, x, y, ..
+            } => {
+                return Some(mouse_msg(
+                    self.hwnd, 0x201, /* WM_LBUTTONDOWN */
+                    mouse_btn, x, y,
+                ));
+            }
+            Event::MouseButtonUp {
+                mouse_btn, x, y, ..
+            } => {
+                return Some(mouse_msg(
+                    self.hwnd, 0x202, /* WM_LBUTTONUP */
+                    mouse_btn, x, y,
+                ));
             }
             Event::AudioDeviceAdded { .. }
             | Event::ClipboardUpdate { .. }

@@ -106,17 +106,6 @@ pub fn CheckMenuItem(_ctx: &mut Context, _hMenu: HMENU, _uIDCheckItem: u32, _uCh
 pub type LRESULT = i32;
 
 #[win32_derive::dllexport]
-pub fn DefWindowProcW(
-    _ctx: &mut Context,
-    _hWnd: HWND,
-    _Msg: u32,
-    _wParam: WPARAM,
-    _lParam: LPARAM,
-) -> LRESULT {
-    todo!()
-}
-
-#[win32_derive::dllexport]
 pub fn DialogBoxParamW(
     _ctx: &mut Context,
     _hInstance: HINSTANCE,
