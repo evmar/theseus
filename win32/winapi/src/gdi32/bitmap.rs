@@ -10,6 +10,14 @@ use crate::{
 
 pub use crate::bitmap_format::Bitmap;
 
+impl State {
+    pub fn new_bitmap_handle(&mut self, bitmap: Bitmap) -> (HBITMAP, Arc<Bitmap>) {
+        let bitmap = Arc::new(bitmap);
+        let hbitmap = self.objects.add(Object::Bitmap(bitmap.clone()));
+        (hbitmap, bitmap)
+    }
+}
+
 #[win32_derive::dllexport]
 pub fn BitBlt(
     ctx: &mut Context,
@@ -88,14 +96,6 @@ pub fn StretchBlt(
     true
 }
 
-impl State {
-    pub fn new_hbitmap(&mut self, bitmap: Arc<Bitmap>) -> HBITMAP {
-        let handle = self.objects.reserve();
-        self.objects.set(handle, Object::Bitmap(bitmap));
-        handle
-    }
-}
-
 pub type HBITMAP = HANDLE;
 
 #[win32_derive::dllexport]
@@ -106,7 +106,7 @@ pub fn CreateCompatibleBitmap(ctx: &mut Context, _hdc: HDC, cx: i32, cy: i32) ->
         .process_heap
         .alloc(&mut ctx.memory, w * h * 4);
     let bitmap = Bitmap::new_simple(w, h, pixels);
-    gdi32::lock().new_hbitmap(Arc::new(bitmap))
+    gdi32::lock().new_bitmap_handle(bitmap).0
 }
 
 #[win32_derive::dllexport]

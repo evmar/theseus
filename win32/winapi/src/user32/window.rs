@@ -5,9 +5,9 @@ use zerocopy::{FromBytes, IntoBytes};
 
 use crate::{
     FromABIParam, RECT,
-    gdi32::{self, HBRUSH, HDC},
+    gdi32::{self, DC, HBRUSH, HDC},
     kernel32, stub,
-    user32::{HCURSOR, HICON, HINSTANCE, HMENU, HWND, State, state},
+    user32::{self, HCURSOR, HICON, HINSTANCE, HMENU, HWND, State, state},
 };
 
 pub struct Window {
@@ -56,6 +56,9 @@ impl Window {
     }
 
     pub fn flush(&mut self, ctx: &mut Context) {
+        if self.width == 0 || self.height == 0 {
+            return;
+        }
         let stride = self.width * 4;
         let pixels = self.pixels.unwrap();
         let pixels = &mut ctx.memory[pixels..][..(self.height * stride) as usize];
@@ -376,11 +379,21 @@ pub fn GetDC(ctx: &mut Context, hWnd: HWND) -> HDC {
 
     let pixels = window.ensure_pixels(ctx);
     let bitmap = gdi32::Bitmap::new_simple(window.width, window.height, pixels);
-    gdi32::lock().new_memory_dc(bitmap)
+
+    let mut lock = gdi32::lock();
+    let (hbitmap, bitmap) = lock.new_bitmap_handle(bitmap);
+    let dc = DC::new(hbitmap, bitmap);
+    // dc.hwnd = Some(hWnd);
+    lock.dcs.add(dc)
 }
 
 #[win32_derive::dllexport]
-pub fn ReleaseDC(_ctx: &mut Context, _hWnd: HWND, hDC: HDC) -> i32 {
+pub fn ReleaseDC(ctx: &mut Context, hWnd: HWND, hDC: HDC) -> i32 {
+    if !hWnd.is_null() {
+        let window = user32::state().window.borrow();
+        let mut window = window.as_ref().unwrap().borrow_mut();
+        window.flush(ctx);
+    }
     gdi32::lock().release_dc(hDC);
     1 // success
 }

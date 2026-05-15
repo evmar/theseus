@@ -1,5 +1,3 @@
-use std::sync::Arc;
-
 use runtime::*;
 use zerocopy::FromBytes;
 
@@ -70,7 +68,7 @@ pub fn LoadImageA(
     let pixels = unsafe { pixels.as_ptr().offset_from_unsigned(ctx.memory.as_ptr()) };
     bitmap.pixels = pixels as u32;
 
-    gdi32::lock().new_hbitmap(Arc::new(bitmap))
+    gdi32::lock().new_bitmap_handle(bitmap).0
 }
 
 pub type HCURSOR = u32;

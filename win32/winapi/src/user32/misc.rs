@@ -1,8 +1,8 @@
 use runtime::Context;
 
 use super::*;
-use crate::{RECT, stub};
-use zerocopy::IntoBytes;
+use crate::{POINT, RECT, stub};
+use zerocopy::{FromBytes, IntoBytes};
 
 #[win32_derive::dllexport]
 pub fn GetSystemMetrics(_ctx: &mut Context, nIndex: u32 /* SYSTEM_METRICS_INDEX */) -> i32 {
@@ -53,8 +53,10 @@ pub fn MapWindowPoints(
 }
 
 #[win32_derive::dllexport]
-pub fn PtInRect(_ctx: &mut Context, _lprc: u32 /* RECT */, _pt: u32 /* POINT */) -> bool {
-    todo!()
+pub fn PtInRect(ctx: &mut Context, lprc: u32 /* RECT */, x: i32, y: i32) -> bool {
+    let rect = RECT::read_from_prefix(&ctx.memory[lprc..]).unwrap().0;
+    let point = POINT { x, y };
+    rect.contains(point)
 }
 
 #[win32_derive::dllexport]
@@ -79,12 +81,12 @@ pub fn SetRect(
 
 #[win32_derive::dllexport]
 pub fn ReleaseCapture(_ctx: &mut Context) -> bool {
-    todo!()
+    stub!(true)
 }
 
 #[win32_derive::dllexport]
 pub fn SetCapture(_ctx: &mut Context, _hWnd: HWND) -> HWND {
-    todo!()
+    stub!(HWND::null())
 }
 
 #[win32_derive::dllexport]
@@ -173,7 +175,7 @@ pub fn MessageBoxW(
     _lpCaption: u32, /* WSTR */
     _uType: u32,     /* MESSAGEBOX_STYLE */
 ) -> u32 /* MESSAGEBOX_RESULT */ {
-    todo!()
+    stub!(0)
 }
 
 #[win32_derive::dllexport]
@@ -244,7 +246,7 @@ pub fn SetTimer(
     _uElapse: u32,
     _lpTimerFunc: u32, /* TIMERPROC */
 ) -> u32 {
-    todo!()
+    stub!(0) // fail
 }
 
 // XXX: cdecl
