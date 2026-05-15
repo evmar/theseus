@@ -29,6 +29,10 @@ struct Args {
     #[argh(option, from_str_fn(hex))]
     entry_point: Vec<u32>,
 
+    /// additional addresses containing pointers to code
+    #[argh(option, from_str_fn(hex_range))]
+    jump_table: Vec<std::ops::Range<u32>>,
+
     /// additional address ranges to scan for code
     #[argh(option, from_str_fn(hex_range))]
     entry_points: Vec<std::ops::Range<u32>>,
@@ -66,21 +70,26 @@ fn run() -> anyhow::Result<()> {
 
     state.init_imports();
 
+    let mut entry_points = vec![];
+    for addr in args.entry_point {
+        entry_points.push(tc::EntryPoint::Single(addr));
+    }
+    for range in args.jump_table {
+        for addr in range.step_by(4) {
+            let code = state.mem.read::<u32>(addr);
+            log::info!("{addr:x} -> {code:x}");
+            entry_points.push(tc::EntryPoint::Single(code));
+        }
+    }
+    for range in args.entry_points {
+        entry_points.push(tc::EntryPoint::Range(range));
+    }
+
     state.gather(tc::Gather {
         scan_immediates: args.scan_immediates,
         scan_memory: args.scan_memory,
         externs: args.externs,
-        entry_points: [
-            args.entry_point
-                .into_iter()
-                .map(tc::EntryPoint::Single)
-                .collect::<Vec<_>>(),
-            args.entry_points
-                .into_iter()
-                .map(tc::EntryPoint::Range)
-                .collect(),
-        ]
-        .concat(),
+        entry_points,
         ..Default::default() // todo: entry_points, jump_tables?
     });
 

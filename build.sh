@@ -40,8 +40,10 @@ elif [[ $1 == "thread" ]]; then
     cargo run -p thread-exe
 elif [[ $1 == "mine" ]]; then
     wndproc=0x100180a
+    wndproc_jmptable=0x1001e0a..0x1001e2e
     cargo run -p tc -- --exe ~/win/rs/deploy/archive/win2k/winmine.exe --out exe/mine \
-        --entry-point $wndproc
+        --entry-point $wndproc \
+        --jump-table $wndproc_jmptable
 else
     cargo run -p tc -- --scan-memory --exe ~/win/rs/deploy/archive/BasicDD.exe --out exe/basicdd --entry-point 0x4012d0
     echo cargo run -p basicdd-exe
