@@ -171,7 +171,8 @@ pub fn waveOutOpen(
         .unwrap()
         .0;
 
-    let audio = user32::state().sdl.audio().unwrap();
+    todo!();
+    let audio: sdl3::AudioSubsystem = todo!(); //user32::state().sdl.audio().unwrap();
     let stream = audio
         .default_playback_device()
         .open_device_stream(Some(&sdl3::audio::AudioSpec {

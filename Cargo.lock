@@ -271,7 +271,6 @@ version = "0.1.0"
 dependencies = [
  "bitflags",
  "log",
- "logger",
  "num-traits",
  "wee_alloc",
  "widestring",
@@ -478,6 +477,7 @@ dependencies = [
  "bitflags",
  "bitflags-derive",
  "log",
+ "logger",
  "pe",
  "runtime",
  "sdl3",

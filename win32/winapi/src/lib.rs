@@ -10,6 +10,7 @@ pub mod dsound;
 pub mod gdi32;
 mod handle;
 mod heap;
+pub mod host;
 pub mod kernel32;
 mod locked_state;
 pub mod msvcrt;
@@ -31,7 +32,7 @@ macro_rules! stub {
         $arg
     }};
 }
-use runtime::{CPU, Context, Host, Memory};
+use runtime::{CPU, Context, Memory};
 pub(crate) use stub;
 
 pub struct EXEData {
@@ -43,7 +44,8 @@ pub struct EXEData {
 }
 
 pub fn load(exe: &EXEData) -> Context {
-    let host = Box::new(runtime::NativeHost {});
+    use runtime::host::Host;
+    let host = Box::new(host::SDLHost::new());
     host.init();
 
     crate::trace::init(&std::env::var("THESEUS_TRACE").unwrap_or_default());

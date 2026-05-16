@@ -120,13 +120,14 @@ impl State {
         let mut window = Window {
             width,
             height,
-            canvas: state()
-                .video
-                .window(&args.name, width, height)
-                .high_pixel_density()
-                .build()
-                .unwrap()
-                .into_canvas(),
+            canvas: todo!(),
+            /*state()
+            .video
+            .window(&args.name, width, height)
+            .high_pixel_density()
+            .build()
+            .unwrap()
+            .into_canvas(),*/
             pixels: None,
             texture: None,
         };

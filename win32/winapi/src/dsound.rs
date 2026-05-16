@@ -134,7 +134,8 @@ fn init() {
     if state.is_none() {
         *state = Some(State {
             buffers: HashMap::default(),
-            audio: SDLHack(user32::state().sdl.audio().unwrap()),
+            // audio: SDLHack(user32::state().sdl.audio().unwrap()),
+            audio: SDLHack(todo!()),
         });
     }
 }

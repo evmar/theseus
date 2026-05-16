@@ -1,4 +1,4 @@
-use crate::{Cont, ContFn, Flags, Host, Memory, Regs, fpu::FPU, mmx::MMX};
+use crate::{Cont, ContFn, Flags, Memory, Regs, fpu::FPU, host::Host, mmx::MMX};
 
 #[derive(Default)]
 pub struct CPU {

@@ -3,27 +3,18 @@ mod wasm;
 
 mod flags;
 mod fpu;
+pub mod host;
 mod machine;
 mod memory;
 mod mmx;
-mod native;
 mod ops;
 mod registers;
 
 pub use flags::Flags;
 pub use machine::{CPU, Context};
 pub use memory::Memory;
-pub use native::NativeHost;
 pub use ops::*;
 pub use registers::Regs;
-
-pub trait Host: Send {
-    /// Used to send between threads.
-    fn clone(&self) -> Box<dyn Host>;
-
-    fn init(&self);
-    fn print(&self, text: &[u8]);
-}
 
 pub type ContFn = fn(&mut Context) -> Cont;
 

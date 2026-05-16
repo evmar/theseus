@@ -1,7 +1,7 @@
 use std::collections::VecDeque;
 use zerocopy::{FromBytes, IntoBytes};
 
-use runtime::Context;
+use runtime::{Context, host};
 
 use crate::{
     POINT,
@@ -40,19 +40,19 @@ win32flags! {
     }
 }
 
-fn mouse_msg(hwnd: HWND, message: u32, mouse_btn: sdl3::mouse::MouseButton, x: f32, y: f32) -> MSG {
-    let wParam = match mouse_btn {
-        sdl3::mouse::MouseButton::Left => MK::LBUTTON,
-        sdl3::mouse::MouseButton::Right => MK::RBUTTON,
-        sdl3::mouse::MouseButton::Middle => MK::MBUTTON,
+fn mouse_msg(hwnd: HWND, wm: u32, message: host::MouseMessage) -> MSG {
+    let wParam = match message.button {
+        1 => MK::LBUTTON,
+        2 => MK::RBUTTON,
+        3 => MK::MBUTTON,
         _ => MK::empty(),
     }
     .bits();
     MSG {
         hwnd,
-        message,
+        message: wm,
         wParam,
-        lParam: (y as u16 as u32) << 16 | x as u16 as u32,
+        lParam: (message.y as u16 as u32) << 16 | message.x as u16 as u32,
         time: 0, // todo
         pt: POINT::default(),
     }
@@ -63,88 +63,45 @@ impl MessageQueue {
         self.messages.pop_front()
     }
 
-    fn get(&mut self) -> MSG {
+    fn read(&mut self, ctx: &mut Context) -> MSG {
         loop {
             if let Some(msg) = self.messages.pop_front() {
                 return msg;
             }
-            self.wait();
+            self.wait(ctx);
         }
     }
 
-    fn poll(&mut self) {
-        let Some(event) = state().event_pump.borrow_mut().poll_event() else {
+    fn poll(&mut self, ctx: &mut Context) {
+        let Some(message) = ctx.host.poll() else {
             return;
         };
-        let Some(msg) = self.msg_from_event(event) else {
-            return;
-        };
+        let msg = self.msg_from_message(message);
         self.messages.push_back(msg);
     }
 
-    fn wait(&mut self) {
-        let event = state().event_pump.borrow_mut().wait_event();
-        let Some(msg) = self.msg_from_event(event) else {
-            return;
-        };
+    fn wait(&mut self, ctx: &mut Context) {
+        let message = ctx.host.wait();
+        let msg = self.msg_from_message(message);
         self.messages.push_back(msg);
     }
 
-    fn msg_from_event(&self, event: sdl3::event::Event) -> Option<MSG> {
-        use sdl3::event::Event;
-        match event {
-            Event::Window { win_event, .. } => {
-                use sdl3::event::WindowEvent;
-                match win_event {
-                    WindowEvent::Shown => return None,
-                    WindowEvent::Resized(_, _) => return None,
-                    WindowEvent::FocusGained => return None,
-                    WindowEvent::FocusLost => return None,
-                    WindowEvent::Exposed => {
-                        return Some(MSG {
-                            hwnd: self.hwnd,
-                            message: 0xf, // WM_PAINT,
-                            wParam: 0,    // todo
-                            lParam: 0,    // todo
-                            time: 0,      // todo
-                            pt: POINT::default(),
-                        });
-                    }
-                    WindowEvent::MouseEnter => return None,
-                    WindowEvent::MouseLeave => return None,
-                    WindowEvent::PixelSizeChanged(_, _) => return None,
-                    _ => {}
+    fn msg_from_message(&self, message: host::Message) -> MSG {
+        use host::Message::*;
+        match message {
+            Paint => {
+                MSG {
+                    hwnd: self.hwnd,
+                    message: 0xf, // WM_PAINT,
+                    wParam: 0,    // todo
+                    lParam: 0,    // todo
+                    time: 0,      // todo
+                    pt: POINT::default(),
                 }
             }
-            Event::MouseMotion { .. } => {
-                return None;
-            }
-            Event::MouseButtonDown {
-                mouse_btn, x, y, ..
-            } => {
-                return Some(mouse_msg(
-                    self.hwnd, 0x201, /* WM_LBUTTONDOWN */
-                    mouse_btn, x, y,
-                ));
-            }
-            Event::MouseButtonUp {
-                mouse_btn, x, y, ..
-            } => {
-                return Some(mouse_msg(
-                    self.hwnd, 0x202, /* WM_LBUTTONUP */
-                    mouse_btn, x, y,
-                ));
-            }
-            Event::AudioDeviceAdded { .. }
-            | Event::ClipboardUpdate { .. }
-            | Event::Unknown { .. } => {
-                // ignore
-                return None;
-            }
-            _ => {}
+            MouseDown(mouse) => mouse_msg(self.hwnd, 0x201 /* WM_LBUTTONDOWN */, mouse),
+            MouseUp(mouse) => mouse_msg(self.hwnd, 0x202 /* WM_LBUTTONUP */, mouse),
         }
-        log::warn!("todo: handle sdl event: {:?}", event);
-        None
     }
 }
 
@@ -180,7 +137,7 @@ pub fn PeekMessageA(
     _wRemoveMsg: u32, /* PEEK_MESSAGE_REMOVE_TYPE */
 ) -> bool {
     let mut queue = state().message_queue.borrow_mut();
-    queue.poll();
+    queue.poll(ctx);
     if let Some(msg) = queue.pop() {
         if hWnd.is_null() {
             msg.write_to_prefix(&mut ctx.memory[lpMsg..]).unwrap();
@@ -216,7 +173,7 @@ pub fn GetMessageW(
     _wMsgFilterMin: u32,
     _wMsgFilterMax: u32,
 ) -> i32 {
-    let msg = state().message_queue.borrow_mut().get();
+    let msg = state().message_queue.borrow_mut().read(ctx);
 
     if hWnd.is_null() {
         msg.write_to_prefix(&mut ctx.memory[lpMsg..]).unwrap();
