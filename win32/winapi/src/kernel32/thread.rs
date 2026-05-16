@@ -68,6 +68,7 @@ impl kernel32::State {
     ) {
         let handle = self.objects.add(Object::Thread);
         let mut new_ctx = Context {
+            host: ctx.host.clone(),
             cpu: runtime::CPU::default(),
             thread_handle: handle.to_raw(),
             thread_id: self.next_thread_id,

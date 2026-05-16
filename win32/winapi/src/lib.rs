@@ -31,7 +31,7 @@ macro_rules! stub {
         $arg
     }};
 }
-use runtime::{CPU, Context, Memory};
+use runtime::{CPU, Context, Host, Memory};
 pub(crate) use stub;
 
 pub struct EXEData {
@@ -43,8 +43,8 @@ pub struct EXEData {
 }
 
 pub fn load(exe: &EXEData) -> Context {
-    use runtime::Host;
-    runtime::HOST.init();
+    let host = Box::new(runtime::NativeHost {});
+    host.init();
 
     crate::trace::init(&std::env::var("THESEUS_TRACE").unwrap_or_default());
 
@@ -58,6 +58,7 @@ pub fn load(exe: &EXEData) -> Context {
     let mut lock = kernel32::lock();
 
     let mut ctx = Context {
+        host,
         cpu: CPU::default(),
         thread_handle: lock.objects.add(kernel32::Object::Thread).to_raw(),
         thread_id: 1,

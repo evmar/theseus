@@ -1,4 +1,4 @@
-use runtime::{Context, HOST, Host};
+use runtime::Context;
 
 pub type HANDLE = u32;
 
@@ -31,7 +31,7 @@ pub fn WriteFile(
     assert_eq!(lpOverlapped, 0);
     if hFile == 0xf11e_0002 || hFile == 0xf11e_0003 {
         let buf = &ctx.memory[lpBuffer..][..nNumberOfBytesToWrite as usize];
-        HOST.print(buf);
+        ctx.host.print(buf);
         if lpNumberOfBytesWritten != 0 {
             ctx.memory
                 .write(lpNumberOfBytesWritten, nNumberOfBytesToWrite);
