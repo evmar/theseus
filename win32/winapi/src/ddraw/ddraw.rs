@@ -94,13 +94,10 @@ impl DirectDraw {
         let target = if params.is_primary {
             Target::Window(window.clone())
         } else {
-            let texture_creator = window.borrow().canvas.texture_creator();
-            let mut texture = texture_creator
-                .create_texture_target(None, params.width, params.height)
-                .unwrap();
-            texture.set_scale_mode(sdl3::render::ScaleMode::Nearest);
-            // FML, this means BGRA in memory order
-            assert_eq!(texture.format(), sdl3::pixels::PixelFormat::ARGB8888);
+            let texture = window
+                .borrow_mut()
+                .host
+                .create_surface(params.width, params.height);
             Target::Texture(texture)
         };
 
@@ -123,7 +120,7 @@ impl DirectDraw {
 
 pub enum Target {
     Window(Rc<RefCell<user32::Window>>),
-    Texture(sdl3::render::Texture),
+    Texture(Box<dyn host::Surface>),
 }
 
 pub struct Surface {
@@ -197,9 +194,7 @@ impl Surface {
         match &mut self.target {
             Target::Window(_) => unreachable!(),
             Target::Texture(texture) => {
-                texture
-                    .update(None, pixels32, self.width as usize * 4)
-                    .unwrap();
+                texture.set_pixels(pixels32, self.width * 4);
             }
         }
     }
@@ -218,15 +213,8 @@ impl Surface {
             unreachable!()
         };
 
-        // Ignore any alpha in the input when doing the final render copy.
-        texture.set_blend_mode(sdl3::render::BlendMode::None);
-
-        let mut canvas = RefMut::map(window.borrow_mut(), |w| &mut w.canvas);
-        // For debugging, can verify that the flip covers the entire canvas by starting with red:
-        // canvas.set_draw_color(sdl3::pixels::Color::RED);
-        // canvas.clear();
-        canvas.copy(texture, None, None).unwrap();
-        canvas.present();
+        let mut window = window.borrow_mut();
+        window.host.render(&mut **texture);
     }
 }
 

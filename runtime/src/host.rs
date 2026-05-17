@@ -18,7 +18,21 @@ pub trait MessageLoop {
     fn wait(&mut self) -> Message;
 }
 
-pub trait Host: Send + MessageLoop {
+pub trait Surface {
+    fn set_pixels(&mut self, pixels: &[u8], stride: u32);
+}
+
+pub trait Window {
+    fn create_surface(&mut self, width: u32, height: u32) -> Box<dyn Surface>;
+    fn resize(&mut self, width: u32, height: u32);
+    fn render(&mut self, surface: &mut dyn Surface);
+}
+
+pub trait Windowing {
+    fn create_window(&mut self, title: &str, width: u32, height: u32) -> Box<dyn Window>;
+}
+
+pub trait Host: Send + MessageLoop + Windowing {
     /// Used to send between threads.
     fn clone(&self) -> Box<dyn Host>;
 

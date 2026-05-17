@@ -13,27 +13,20 @@ use crate::{
 pub struct Window {
     pub width: u32,
     pub height: u32,
-    pub canvas: sdl3::render::WindowCanvas,
     pub pixels: Option<u32>,
-    pub texture: Option<sdl3::render::Texture>,
+    pub host: Box<dyn runtime::host::Window>,
+    pub surface: Option<Box<dyn runtime::host::Surface>>,
 }
 
 impl Window {
     pub fn resize(&mut self, ctx: &mut Context, width: u32, height: u32) {
         self.width = width;
         self.height = height;
-        let window = self.canvas.window_mut();
-        let scale = window.display_scale();
-        window
-            .set_size(
-                (width as f32 * scale) as u32,
-                (height as f32 * scale) as u32,
-            )
-            .unwrap();
+        self.host.resize(width, height);
         if let Some(pixels) = self.pixels {
             kernel32::lock().process_heap.free(&mut ctx.memory, pixels);
             self.pixels = None;
-            self.texture = None;
+            self.surface = None;
         }
     }
 
@@ -62,19 +55,11 @@ impl Window {
         let stride = self.width * 4;
         let pixels = self.pixels.unwrap();
         let pixels = &mut ctx.memory[pixels..][..(self.height * stride) as usize];
-        let texture = self.texture.get_or_insert_with(|| {
-            let texture_creator = self.canvas.texture_creator();
-            let mut texture = texture_creator
-                .create_texture_target(None, self.width, self.height)
-                .unwrap();
-            texture.set_scale_mode(sdl3::render::ScaleMode::Nearest);
-            // FML, this means BGRA in memory order
-            assert_eq!(texture.format(), sdl3::pixels::PixelFormat::ARGB8888);
-            texture
-        });
-        texture.update(None, pixels, stride as usize).unwrap();
-        self.canvas.copy(texture, None, None).unwrap();
-        self.canvas.present();
+        let surface = self
+            .surface
+            .get_or_insert_with(|| self.host.create_surface(self.width, self.height));
+        surface.set_pixels(pixels, stride);
+        self.host.render(&mut **surface);
     }
 }
 
@@ -113,25 +98,17 @@ impl std::fmt::Debug for CW {
 }
 
 impl State {
-    fn create_window(&self, args: CreateWindowArgs) -> HWND {
+    fn create_window(&self, ctx: &mut Context, args: CreateWindowArgs) -> HWND {
         let width = args.width.unwrap_or(640);
         let height = args.height.unwrap_or(480);
 
-        let mut window = Window {
+        let window = Window {
             width,
             height,
-            canvas: todo!(),
-            /*state()
-            .video
-            .window(&args.name, width, height)
-            .high_pixel_density()
-            .build()
-            .unwrap()
-            .into_canvas(),*/
+            host: ctx.host.create_window(&args.name, width, height),
             pixels: None,
-            texture: None,
+            surface: None,
         };
-        window.canvas.clear();
         let hwnd = HWND::from_raw(1);
         *self.window.borrow_mut() = Some(Rc::new(RefCell::new(window)));
         self.message_queue.borrow_mut().hwnd = hwnd;
@@ -156,11 +133,14 @@ pub fn CreateWindowExA(
     _lpParam: u32,
 ) -> HWND {
     let name = ctx.memory.read_str(lpWindowName);
-    state().create_window(CreateWindowArgs {
-        name: name.into(),
-        width: nWidth.value(),
-        height: nHeight.value(),
-    })
+    state().create_window(
+        ctx,
+        CreateWindowArgs {
+            name: name.into(),
+            width: nWidth.value(),
+            height: nHeight.value(),
+        },
+    )
 }
 
 #[win32_derive::dllexport]
@@ -180,11 +160,14 @@ pub fn CreateWindowExW(
     _lpParam: u32,
 ) -> HWND {
     let name = ctx.memory.read_wstr(lpWindowName);
-    state().create_window(CreateWindowArgs {
-        name: name.to_string_lossy(),
-        width: nWidth.value(),
-        height: nHeight.value(),
-    })
+    state().create_window(
+        ctx,
+        CreateWindowArgs {
+            name: name.to_string_lossy(),
+            width: nWidth.value(),
+            height: nHeight.value(),
+        },
+    )
 }
 
 #[win32_derive::dllexport]

@@ -141,6 +141,74 @@ impl SDLState {
     }
 }
 
+struct SDLSurface {
+    pub texture: sdl3::render::Texture,
+}
+
+impl host::Surface for SDLSurface {
+    fn set_pixels(&mut self, pixels: &[u8], stride: u32) {
+        self.texture.update(None, pixels, stride as usize).unwrap();
+    }
+}
+
+struct SDLWindow {
+    pub canvas: sdl3::render::WindowCanvas,
+}
+
+impl host::Window for SDLWindow {
+    fn create_surface(&mut self, width: u32, height: u32) -> Box<dyn host::Surface> {
+        let texture_creator = self.canvas.texture_creator();
+        let mut texture = texture_creator
+            .create_texture_target(None, width, height)
+            .unwrap();
+        texture.set_scale_mode(sdl3::render::ScaleMode::Nearest);
+        // FML, this means BGRA in memory order
+        assert_eq!(texture.format(), sdl3::pixels::PixelFormat::ARGB8888);
+        Box::new(SDLSurface { texture })
+    }
+
+    fn resize(&mut self, width: u32, height: u32) {
+        let window = self.canvas.window_mut();
+        let scale = window.display_scale();
+        window
+            .set_size(
+                (width as f32 * scale) as u32,
+                (height as f32 * scale) as u32,
+            )
+            .unwrap();
+    }
+
+    fn render(&mut self, surface: &mut dyn host::Surface) {
+        let surface = unsafe { &mut *(surface as *mut _ as *mut SDLSurface) };
+
+        // For debugging, can verify that the flip covers the entire canvas by starting with red:
+        // canvas.set_draw_color(sdl3::pixels::Color::RED);
+        // canvas.clear();
+        // Ignore any alpha in the input when doing the final render copy.
+        surface
+            .texture
+            .set_blend_mode(sdl3::render::BlendMode::None);
+        self.canvas.copy(&surface.texture, None, None).unwrap();
+        self.canvas.present();
+    }
+}
+
+impl host::Windowing for SDLHost {
+    fn create_window(&mut self, title: &str, width: u32, height: u32) -> Box<dyn host::Window> {
+        let mut canvas = self
+            .sdl
+            .get()
+            .video
+            .window(title, width, height)
+            .high_pixel_density()
+            .build()
+            .unwrap()
+            .into_canvas();
+        canvas.clear();
+        Box::new(SDLWindow { canvas })
+    }
+}
+
 impl host::Host for SDLHost {
     fn clone(&self) -> Box<dyn host::Host> {
         Box::new(SDLHost {
