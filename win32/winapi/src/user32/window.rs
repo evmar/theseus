@@ -277,6 +277,11 @@ pub fn RegisterClassW(ctx: &mut Context, lpWndClass: u32 /* WNDCLASSW */) -> u16
         .0;
     let background = if wndclass.hbrBackground.is_null() {
         None
+    } else if wndclass.hbrBackground.to_raw() < 32 {
+        // COLOR_* enum
+        log::warn!("COLOR_* enum: {:?}", wndclass.hbrBackground.to_raw());
+        let brush: Option<gdi32::Brush> = None;
+        stub!(brush)
     } else {
         Some(
             gdi32::lock()
