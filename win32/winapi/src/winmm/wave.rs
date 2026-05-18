@@ -3,18 +3,13 @@ use std::collections::VecDeque;
 use runtime::Context;
 use zerocopy::FromBytes;
 
-use crate::{FromABIParam, dllexport::win32flags, kernel32, stub, user32, winmm::state};
+use crate::{FromABIParam, dllexport::win32flags, host, kernel32, stub, user32, winmm::state};
 
 const MMSYSERR_NOERROR: u32 = 0;
 
 pub struct State {
     sender: std::sync::mpsc::Sender<u32>,
 }
-
-// TODO: sdl has wacky safety requirements; the audio objects are Send
-// but the subsystem itself is not because it must be freed on main thread.
-struct StreamHack(sdl3::audio::AudioStreamOwner);
-unsafe impl Send for StreamHack {}
 
 #[win32_derive::dllexport]
 pub fn waveOutGetNumDevs(_ctx: &mut Context) -> u32 {
@@ -95,13 +90,11 @@ enum MM_WOM {
 /// and we pull it out here and pass it to SDL.
 fn thread_proc(
     ctx: &mut Context,
-    stream: StreamHack,
+    stream: host::AudioStream,
     receiver: std::sync::mpsc::Receiver<u32>,
     callback: u32,
     callback_data: u32,
 ) {
-    let stream = stream.0;
-
     // We need to notify when a queued block is done, but SDL doesn't make that easy.
     // We keep track of how much data we have passed to SDL, then compare it against
     // how much data SDL says is yet to be processed, and use the difference to decide
@@ -117,11 +110,11 @@ fn thread_proc(
 
     let f = ctx.indirect(callback);
     loop {
-        while stream.queued_bytes().unwrap() < 8 << 10 {
+        while stream.queued_bytes() < 8 << 10 {
             let addr = receiver.recv().unwrap();
             let header = <WAVEHDR>::ref_from_prefix(&ctx.memory[addr..]).unwrap().0;
             let buf = &ctx.memory[header.lpData..][..header.dwBufferLength as usize];
-            stream.put_data(buf).unwrap();
+            stream.put_data(buf);
             total_pending += header.dwBufferLength;
             queued_blocks.push_back(QueuedBlock {
                 addr,
@@ -130,7 +123,7 @@ fn thread_proc(
         }
 
         if let Some(block) = queued_blocks.front() {
-            let queued_bytes = stream.queued_bytes().unwrap() as u32;
+            let queued_bytes = stream.queued_bytes() as u32;
             let consumed = total_pending - queued_bytes;
             if consumed >= block.len {
                 let QueuedBlock { addr, len } = *block;
@@ -171,22 +164,11 @@ pub fn waveOutOpen(
         .unwrap()
         .0;
 
-    todo!();
-    let audio: sdl3::AudioSubsystem = todo!(); //user32::state().sdl.audio().unwrap();
-    let stream = audio
-        .default_playback_device()
-        .open_device_stream(Some(&sdl3::audio::AudioSpec {
-            freq: Some(fmt.nSamplesPerSec as i32),
-            channels: Some(fmt.nChannels as i32),
-            format: Some(if fmt.wBitsPerSample == 16 {
-                sdl3::audio::AudioFormat::S16LE
-            } else {
-                todo!()
-            }),
-        }))
-        .unwrap();
-    stream.resume().unwrap();
-    let stream_hack = StreamHack(stream);
+    assert_eq!(fmt.wBitsPerSample, 16);
+    let stream = host::host().create_audio_stream(host::AudioSpec {
+        channels: fmt.nChannels as u32,
+        sample_rate: fmt.nSamplesPerSec as u32,
+    });
 
     let (sender, receiver) = std::sync::mpsc::channel::<u32>();
     state().wave = Some(State { sender });
@@ -196,7 +178,7 @@ pub fn waveOutOpen(
         CALLBACK::NULL => {}
         CALLBACK::FUNCTION => {
             kernel32::lock().create_thread(ctx, format!("winmm thread"), move |ctx| {
-                thread_proc(ctx, stream_hack, receiver, dwCallback, dwInstance)
+                thread_proc(ctx, stream, receiver, dwCallback, dwInstance)
             });
         }
         _ => todo!("{callback:?}"),

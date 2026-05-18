@@ -7,30 +7,34 @@ use crate::{RECT, host};
 /// SDL data structures must all be accessed from the main thread, yikes.
 struct SingleThreader<T> {
     id: ThreadId,
-    data: RefCell<T>,
+    data: T,
 }
 /// Safety: accessors assert we're on the initial thread.
 unsafe impl<T> Sync for SingleThreader<T> {}
 unsafe impl<T> Send for SingleThreader<T> {}
 
 impl<T> SingleThreader<T> {
-    pub fn get(&self) -> &RefCell<T> {
+    pub fn new(data: T) -> Self {
+        Self {
+            id: std::thread::current().id(),
+            data,
+        }
+    }
+
+    pub fn get(&self) -> &T {
         assert_eq!(std::thread::current().id(), self.id);
         &self.data
     }
 }
 
 pub struct Host {
-    sdl: SingleThreader<SDLState>,
+    sdl: SingleThreader<RefCell<SDLState>>,
 }
 
 impl Host {
     pub fn new() -> Self {
         Self {
-            sdl: SingleThreader {
-                id: std::thread::current().id(),
-                data: RefCell::new(SDLState::new()),
-            },
+            sdl: SingleThreader::new(RefCell::new(SDLState::new())),
         }
     }
 }
@@ -116,7 +120,7 @@ impl Host {
 struct SDLState {
     _sdl: sdl3::Sdl,
     video: sdl3::VideoSubsystem,
-    _audio: sdl3::AudioSubsystem,
+    audio: sdl3::AudioSubsystem,
     event_pump: sdl3::EventPump,
 }
 
@@ -126,12 +130,12 @@ impl SDLState {
         assert!(sdl3::hint::set(sdl3::hint::names::RENDER_VSYNC, "1"));
         let _sdl = sdl3::init().unwrap();
         let video = _sdl.video().unwrap();
-        let _audio = _sdl.audio().unwrap();
+        let audio = _sdl.audio().unwrap();
         let event_pump = _sdl.event_pump().unwrap();
         Self {
             _sdl,
             video,
-            _audio,
+            audio,
             event_pump,
         }
     }
@@ -231,5 +235,41 @@ impl Host {
     pub fn print(&self, text: &[u8]) {
         use std::io::Write;
         std::io::stdout().write_all(text).unwrap();
+    }
+}
+
+pub struct AudioSpec {
+    pub sample_rate: u32,
+    pub channels: u32,
+}
+
+pub struct AudioStream(SingleThreader<sdl3::audio::AudioStreamOwner>);
+
+impl AudioStream {
+    pub fn queued_bytes(&self) -> usize {
+        self.0.get().queued_bytes().unwrap() as usize
+    }
+
+    pub fn put_data(&self, data: &[u8]) {
+        self.0.get().put_data(data).unwrap();
+    }
+}
+
+impl Host {
+    pub fn create_audio_stream(&self, spec: AudioSpec) -> AudioStream {
+        let stream = self
+            .sdl
+            .get()
+            .borrow()
+            .audio
+            .default_playback_device()
+            .open_device_stream(Some(&sdl3::audio::AudioSpec {
+                freq: Some(spec.sample_rate as i32),
+                channels: Some(spec.channels as i32),
+                format: Some(sdl3::audio::AudioFormat::S16LE),
+            }))
+            .unwrap();
+        stream.resume().unwrap();
+        AudioStream(SingleThreader::new(stream))
     }
 }
