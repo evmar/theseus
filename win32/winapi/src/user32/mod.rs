@@ -38,13 +38,9 @@ unsafe impl Sync for StaticState {}
 static STATE: StaticState = StaticState(OnceCell::new());
 
 pub fn state() -> &'static State {
-    STATE.0.get_or_init(|| {
-        assert!(sdl3::hint::set(sdl3::hint::names::NO_SIGNAL_HANDLERS, "1"));
-        assert!(sdl3::hint::set(sdl3::hint::names::RENDER_VSYNC, "1"));
-        State {
-            window: Default::default(),
-            wndclass: Default::default(),
-            message_queue: Default::default(),
-        }
+    STATE.0.get_or_init(|| State {
+        window: Default::default(),
+        wndclass: Default::default(),
+        message_queue: Default::default(),
     })
 }
