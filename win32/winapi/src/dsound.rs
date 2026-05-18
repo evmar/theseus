@@ -3,7 +3,7 @@ use std::{collections::HashMap, sync::Mutex};
 use runtime::Context;
 use zerocopy::FromBytes;
 
-use crate::{dllexport::win32flags, heap::Heap, kernel32, locked_state::LockedState, stub, user32};
+use crate::{dllexport::win32flags, heap::Heap, host, kernel32, locked_state::LockedState, stub};
 
 /// When true, write a debug `out.wav` containing the audio data.
 const WRITE_WAV: bool = false;
@@ -16,9 +16,6 @@ const fn make_dhsresult(code: u32) -> u32 {
 const DSERR_NODRIVER: u32 = make_dhsresult(120);
 
 const DS_OK: u32 = 0;
-
-struct AudioStream(sdl3::audio::AudioStreamOwner);
-unsafe impl Send for AudioStream {}
 
 struct WavWrite {
     f: std::fs::File,
@@ -106,22 +103,12 @@ struct Buffer {
     addr: u32,
     size: u32,
     total_written: u32,
-    stream: AudioStream,
+    stream: host::AudioStream,
     write: Option<WavWrite>,
 }
 
-// We need a sdl3::AudioSubsystem to make audio calls.
-// The underlying SDL3 audio APIs are thread-safe and don't depend on any audio system pointer.
-// But sdl3::AudioSubsystem is not send because it must be shut down on the main thread.
-// So we hackily init it on the main thread (currently in user32), then init it a second time here
-// (getting refcount=2) so this ref will never be shut down.
-// TODO: we should move all of this kind of management to a Host abstraction.
-struct SDLHack(sdl3::AudioSubsystem);
-unsafe impl Send for SDLHack {}
-
 struct State {
     buffers: HashMap<u32, Buffer>,
-    audio: SDLHack,
 }
 static STATE: Mutex<Option<State>> = Mutex::new(None);
 type Lock = LockedState<State>;
@@ -134,8 +121,6 @@ fn init() {
     if state.is_none() {
         *state = Some(State {
             buffers: HashMap::default(),
-            // audio: SDLHack(user32::state().sdl.audio().unwrap()),
-            audio: SDLHack(todo!()),
         });
     }
 }
@@ -159,6 +144,8 @@ pub fn ordinal1(ctx: &mut Context, lpGuid: u32, ppDS: u32, pUnkOuter: u32) -> u3
 }
 
 pub mod IDirectSound {
+    use crate::host;
+
     use super::*;
 
     pub const VTABLE_ENTRIES: [&'static str; 11] = [
@@ -215,20 +202,10 @@ pub mod IDirectSound {
             const WAVE_FORMAT_PCM: u16 = 1;
             assert_eq!(fmt.wFormatTag, WAVE_FORMAT_PCM);
 
-            let mut lock = lock();
-            let stream = lock
-                .audio
-                .0
-                .default_playback_device()
-                .open_device_stream(Some(&sdl3::audio::AudioSpec {
-                    freq: Some(fmt.nSamplesPerSec as i32),
-                    channels: Some(fmt.nChannels as i32),
-                    format: Some(match fmt.wBitsPerSample {
-                        16 => sdl3::audio::AudioFormat::S16LE,
-                        _ => todo!(),
-                    }),
-                }))
-                .unwrap();
+            let stream = host::host().create_audio_stream(host::AudioSpec {
+                sample_rate: fmt.nSamplesPerSec as u32,
+                channels: fmt.nChannels as u32,
+            });
 
             let write = if WRITE_WAV {
                 Some(WavWrite::new("out.wav"))
@@ -242,11 +219,11 @@ pub mod IDirectSound {
                     .alloc(&mut ctx.memory, desc.dwBufferBytes),
                 size: desc.dwBufferBytes,
                 total_written: 0,
-                stream: AudioStream(stream),
+                stream,
                 write,
             };
 
-            lock.buffers.insert(addr, buffer);
+            lock().buffers.insert(addr, buffer);
         }
 
         ctx.memory.write(lplpDirectSoundBuffer, addr);
@@ -354,7 +331,7 @@ pub mod IDirectSoundBuffer {
         let mut lock = lock();
         let buffer = lock.buffers.get_mut(&this).unwrap();
         if pdwCurrentPlayCursor != 0 {
-            let unplayed = buffer.stream.0.queued_bytes().unwrap() as u32;
+            let unplayed = buffer.stream.queued_bytes();
             let play_cursor = (buffer.total_written - unplayed) % buffer.size;
             ctx.memory.write(pdwCurrentPlayCursor, play_cursor);
         }
@@ -443,7 +420,7 @@ pub mod IDirectSoundBuffer {
     ) -> u32 {
         let mut lock = lock();
         let buffer = lock.buffers.get_mut(&this).unwrap();
-        buffer.stream.0.resume().unwrap();
+        buffer.stream.resume();
         DS_OK
     }
 
@@ -501,7 +478,7 @@ pub mod IDirectSoundBuffer {
         }
 
         let data = &ctx.memory[pvAudioPtr1..][..dwAudioBytes1 as usize];
-        buffer.stream.0.put_data(data).unwrap();
+        buffer.stream.put_data(data);
         buffer.write.as_mut().map(|w| w.write(data));
         buffer.total_written += data.len() as u32;
 

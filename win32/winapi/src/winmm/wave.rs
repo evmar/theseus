@@ -3,7 +3,7 @@ use std::collections::VecDeque;
 use runtime::Context;
 use zerocopy::FromBytes;
 
-use crate::{FromABIParam, dllexport::win32flags, host, kernel32, stub, user32, winmm::state};
+use crate::{FromABIParam, dllexport::win32flags, host, kernel32, stub, winmm::state};
 
 const MMSYSERR_NOERROR: u32 = 0;
 
@@ -169,6 +169,7 @@ pub fn waveOutOpen(
         channels: fmt.nChannels as u32,
         sample_rate: fmt.nSamplesPerSec as u32,
     });
+    stream.resume();
 
     let (sender, receiver) = std::sync::mpsc::channel::<u32>();
     state().wave = Some(State { sender });

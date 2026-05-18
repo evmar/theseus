@@ -246,12 +246,16 @@ pub struct AudioSpec {
 pub struct AudioStream(SingleThreader<sdl3::audio::AudioStreamOwner>);
 
 impl AudioStream {
-    pub fn queued_bytes(&self) -> usize {
-        self.0.get().queued_bytes().unwrap() as usize
+    pub fn queued_bytes(&self) -> u32 {
+        self.0.get().queued_bytes().unwrap() as u32
     }
 
     pub fn put_data(&self, data: &[u8]) {
         self.0.get().put_data(data).unwrap();
+    }
+
+    pub fn resume(&self) {
+        self.0.get().resume().unwrap();
     }
 }
 
@@ -269,7 +273,6 @@ impl Host {
                 format: Some(sdl3::audio::AudioFormat::S16LE),
             }))
             .unwrap();
-        stream.resume().unwrap();
         AudioStream(SingleThreader::new(stream))
     }
 }
