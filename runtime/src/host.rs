@@ -18,8 +18,17 @@ pub trait MessageLoop {
     fn wait(&mut self) -> Message;
 }
 
+pub struct Rect {
+    pub x: u32,
+    pub y: u32,
+    pub width: u32,
+    pub height: u32,
+}
+
 pub trait Surface {
     fn set_pixels(&mut self, pixels: &[u8], stride: u32);
+    // This takes a Window because SDL needs it as the graphics context.
+    fn copy(&mut self, window: &mut dyn Window, dst_rect: Rect, src: &dyn Surface, src_rect: Rect);
 }
 
 pub trait Window {

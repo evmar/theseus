@@ -145,9 +145,45 @@ struct SDLSurface {
     pub texture: sdl3::render::Texture,
 }
 
+fn host_rect_to_sdl(rect: host::Rect) -> sdl3::rect::Rect {
+    sdl3::rect::Rect::new(
+        rect.x as i32,
+        rect.y as i32,
+        rect.width as u32,
+        rect.height as u32,
+    )
+}
+
 impl host::Surface for SDLSurface {
     fn set_pixels(&mut self, pixels: &[u8], stride: u32) {
         self.texture.update(None, pixels, stride as usize).unwrap();
+    }
+
+    fn copy(
+        &mut self,
+        window: &mut dyn host::Window,
+        dst_rect: host::Rect,
+        src: &dyn host::Surface,
+        src_rect: host::Rect,
+    ) {
+        let window = unsafe { &mut *(window as *mut _ as *mut SDLWindow) };
+        let src = unsafe { &*(src as *const _ as *const SDLSurface) };
+
+        // To render to a texture, we need to start with a canvas, which we can only get from
+        // a window because (I guess?) something about having a GPU context.
+
+        window
+            .canvas
+            .with_texture_canvas(&mut self.texture, |canvas| {
+                canvas
+                    .copy(
+                        &src.texture,
+                        host_rect_to_sdl(src_rect),
+                        host_rect_to_sdl(dst_rect),
+                    )
+                    .unwrap();
+            })
+            .unwrap();
     }
 }
 

@@ -1,5 +1,3 @@
-use std::cell::RefMut;
-
 use runtime::*;
 use zerocopy::FromBytes;
 
@@ -421,43 +419,26 @@ pub mod IDirectDrawSurface7 {
             unreachable!()
         };
 
-        todo!();
-        // To render to a texture, we need to start with a canvas, which we can only get from
-        // a window or a surface for some reason.  Use the window in case it has some sort of
-        // GPU context attached.
-        // let ddraw = state().ddraw.borrow();
-        // let mut canvas = RefMut::map(
-        //     ddraw
-        //         .as_ref()
-        //         .unwrap()
-        //         .window
-        //         .as_ref()
-        //         .unwrap()
-        //         .borrow_mut(),
-        //     |w| &mut w.canvas,
-        // );
+        let ddraw = state().ddraw.borrow();
+        let mut window = ddraw
+            .as_ref()
+            .unwrap()
+            .window
+            .as_ref()
+            .unwrap()
+            .borrow_mut();
 
-        // canvas
-        //     .with_texture_canvas(dst_texture, |canvas| {
-        //         canvas
-        //             .copy(
-        //                 src_texture,
-        //                 sdl3::rect::Rect::new(
-        //                     src_rect.left as i32,
-        //                     src_rect.top as i32,
-        //                     (src_rect.right - src_rect.left) as u32,
-        //                     (src_rect.bottom - src_rect.top) as u32,
-        //                 ),
-        //                 sdl3::render::FRect::new(
-        //                     dwX as f32,
-        //                     dwY as f32,
-        //                     (src_rect.right - src_rect.left) as f32,
-        //                     (src_rect.bottom - src_rect.top) as f32,
-        //                 ),
-        //             )
-        //             .unwrap();
-        //     })
-        //     .unwrap();
+        dst_texture.copy(
+            &mut *window.host,
+            host::Rect {
+                x: dwX,
+                y: dwY,
+                width: (src_rect.right - src_rect.left) as u32,
+                height: (src_rect.bottom - src_rect.top) as u32,
+            },
+            &**src_texture,
+            src_rect.to_host(),
+        );
 
         stub!(DD::OK)
     }
