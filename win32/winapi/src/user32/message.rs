@@ -153,13 +153,13 @@ pub fn PeekMessageA(
 
 #[win32_derive::dllexport]
 pub fn GetMessageA(
-    _ctx: &mut Context,
-    _lpMsg: u32,
-    _hWnd: HWND,
-    _wMsgFilterMin: u32,
-    _wMsgFilterMax: u32,
+    ctx: &mut Context,
+    lpMsg: u32,
+    hWnd: HWND,
+    wMsgFilterMin: u32,
+    wMsgFilterMax: u32,
 ) -> i32 {
-    todo!()
+    GetMessageW(ctx, lpMsg, hWnd, wMsgFilterMin, wMsgFilterMax)
 }
 
 #[win32_derive::dllexport]

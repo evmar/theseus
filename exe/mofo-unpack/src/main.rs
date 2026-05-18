@@ -141,6 +141,7 @@ pub fn do_unpack(ctx: &mut runtime::Context) {
         //scan_immediates: true,
         entry_points: [
             vec![
+                tc::EntryPoint::Single(0x004068f0), // window proc
                 tc::EntryPoint::Single(0x0041ec70), // sound thread proc
                 tc::EntryPoint::Single(0x0041e8f0), // waveOutOpen callback
             ],

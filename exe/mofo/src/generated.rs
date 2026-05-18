@@ -16534,6 +16534,128 @@ pub fn x4068e9(ctx: &mut Context) -> Cont {
     ctx.ret(0)
 }
 
+pub fn x4068f0(ctx: &mut Context) -> Cont {
+    // 004068f0 mov eax,[esp+8]
+    ctx.cpu.regs.eax = ctx
+        .memory
+        .read::<u32>(ctx.cpu.regs.esp.wrapping_add(0x8u32));
+    // 004068f4 push esi
+    ctx.push(ctx.cpu.regs.esi);
+    // 004068f5 cmp eax,10h
+    sub(ctx.cpu.regs.eax, 0x10u32, &mut ctx.cpu.flags);
+    // 004068f8 mov esi,1
+    ctx.cpu.regs.esi = 0x1u32;
+    // 004068fd ja short 0040692Eh
+    ctx.ja(Cont(x4068ff), Cont(x40692e))
+}
+
+pub fn x4068ff(ctx: &mut Context) -> Cont {
+    // 004068ff je short 00406917h
+    ctx.je(Cont(x406901), Cont(x406917))
+}
+
+pub fn x406901(ctx: &mut Context) -> Cont {
+    // 00406901 mov ecx,eax
+    ctx.cpu.regs.ecx = ctx.cpu.regs.eax;
+    // 00406903 dec ecx
+    ctx.cpu.regs.ecx = dec(ctx.cpu.regs.ecx, &mut ctx.cpu.flags);
+    // 00406904 je short 00406928h
+    ctx.je(Cont(x406906), Cont(x406928))
+}
+
+pub fn x406906(ctx: &mut Context) -> Cont {
+    // 00406906 dec ecx
+    ctx.cpu.regs.ecx = dec(ctx.cpu.regs.ecx, &mut ctx.cpu.flags);
+    // 00406907 jne short 0040693Ah
+    ctx.jne(Cont(x406909), Cont(x40693a))
+}
+
+pub fn x406909(ctx: &mut Context) -> Cont {
+    // 00406909 push 0
+    ctx.push(0x0u32);
+    // 0040690b call dword ptr ds:[420064h]
+    ctx.call_builtin(user32::PostQuitMessage_stdcall);
+    // 00406911 mov eax,esi
+    ctx.cpu.regs.eax = ctx.cpu.regs.esi;
+    // 00406913 pop esi
+    let x = ctx.pop();
+    ctx.cpu.regs.esi = x;
+    // 00406914 ret 10h
+    ctx.ret(16)
+}
+
+pub fn x406917(ctx: &mut Context) -> Cont {
+    // 00406917 mov eax,[esp+8]
+    ctx.cpu.regs.eax = ctx
+        .memory
+        .read::<u32>(ctx.cpu.regs.esp.wrapping_add(0x8u32));
+    // 0040691b push eax
+    ctx.push(ctx.cpu.regs.eax);
+    // 0040691c call dword ptr ds:[420048h]
+    ctx.call_builtin(user32::DestroyWindow_stdcall);
+    Cont(x406922)
+}
+
+pub fn x406922(ctx: &mut Context) -> Cont {
+    // 00406922 mov ds:[421A64h],esi
+    ctx.memory.write::<u32>(0x421a64u32, ctx.cpu.regs.esi);
+    Cont(x406928)
+}
+
+pub fn x406928(ctx: &mut Context) -> Cont {
+    // 00406928 mov eax,esi
+    ctx.cpu.regs.eax = ctx.cpu.regs.esi;
+    // 0040692a pop esi
+    let x = ctx.pop();
+    ctx.cpu.regs.esi = x;
+    // 0040692b ret 10h
+    ctx.ret(16)
+}
+
+pub fn x40692e(ctx: &mut Context) -> Cont {
+    // 0040692e cmp eax,12h
+    sub(ctx.cpu.regs.eax, 0x12u32, &mut ctx.cpu.flags);
+    // 00406931 je short 00406928h
+    ctx.je(Cont(x406933), Cont(x406928))
+}
+
+pub fn x406933(ctx: &mut Context) -> Cont {
+    // 00406933 cmp eax,100h
+    sub(ctx.cpu.regs.eax, 0x100u32, &mut ctx.cpu.flags);
+    // 00406938 je short 00406922h
+    ctx.je(Cont(x40693a), Cont(x406922))
+}
+
+pub fn x40693a(ctx: &mut Context) -> Cont {
+    // 0040693a mov ecx,[esp+14h]
+    ctx.cpu.regs.ecx = ctx
+        .memory
+        .read::<u32>(ctx.cpu.regs.esp.wrapping_add(0x14u32));
+    // 0040693e mov edx,[esp+10h]
+    ctx.cpu.regs.edx = ctx
+        .memory
+        .read::<u32>(ctx.cpu.regs.esp.wrapping_add(0x10u32));
+    // 00406942 push ecx
+    ctx.push(ctx.cpu.regs.ecx);
+    // 00406943 push edx
+    ctx.push(ctx.cpu.regs.edx);
+    // 00406944 push eax
+    ctx.push(ctx.cpu.regs.eax);
+    // 00406945 mov eax,[esp+14h]
+    ctx.cpu.regs.eax = ctx
+        .memory
+        .read::<u32>(ctx.cpu.regs.esp.wrapping_add(0x14u32));
+    // 00406949 push eax
+    ctx.push(ctx.cpu.regs.eax);
+    // 0040694a call dword ptr ds:[42005Ch]
+    ctx.call_builtin(user32::DefWindowProcA_stdcall);
+    // 00406950 pop esi
+    let x = ctx.pop();
+    ctx.cpu.regs.esi = x;
+    // 00406951 ret 10h
+    ctx.ret(16)
+}
+
 pub fn x406960(ctx: &mut Context) -> Cont {
     // 00406960 sub esp,62Ch
     ctx.cpu.regs.esp = sub(ctx.cpu.regs.esp, 0x62cu32, &mut ctx.cpu.flags);
@@ -26007,7 +26129,7 @@ pub fn x41f11c(ctx: &mut Context) -> Cont {
     Cont(kernel32::ExitProcess_stdcall)
 }
 
-const BLOCKS: [(u32, ContFn); 1393] = [
+const BLOCKS: [(u32, ContFn); 1404] = [
     (0x401000, x401000),
     (0x40118e, x40118e),
     (0x401195, x401195),
@@ -26650,6 +26772,17 @@ const BLOCKS: [(u32, ContFn); 1393] = [
     (0x406859, x406859),
     (0x4068e7, x4068e7),
     (0x4068e9, x4068e9),
+    (0x4068f0, x4068f0),
+    (0x4068ff, x4068ff),
+    (0x406901, x406901),
+    (0x406906, x406906),
+    (0x406909, x406909),
+    (0x406917, x406917),
+    (0x406922, x406922),
+    (0x406928, x406928),
+    (0x40692e, x40692e),
+    (0x406933, x406933),
+    (0x40693a, x40693a),
     (0x406960, x406960),
     (0x4069f5, x4069f5),
     (0x406a10, x406a10),
