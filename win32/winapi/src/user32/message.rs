@@ -59,10 +59,14 @@ fn mouse_msg(hwnd: HWND, wm: u32, message: host::MouseMessage) -> MSG {
 }
 
 impl MessageQueue {
-    fn pop(&mut self) -> Option<MSG> {
-        self.messages.pop_front()
+    fn peek(&mut self) -> Option<&MSG> {
+        self.messages.front()
+    }
+    fn pop(&mut self) {
+        self.messages.pop_front();
     }
 
+    /// Pop one message, waiting for a new one if necessary.
     fn read(&mut self) -> MSG {
         loop {
             if let Some(msg) = self.messages.pop_front() {
@@ -72,6 +76,7 @@ impl MessageQueue {
         }
     }
 
+    /// Read one pending host message, if any available.
     fn poll(&mut self) {
         let Some(message) = host::host().main_thread.get().poll() else {
             return;
@@ -80,6 +85,7 @@ impl MessageQueue {
         self.messages.push_back(msg);
     }
 
+    /// Wait for a new message to arrive.
     fn wait(&mut self) {
         let message = host::host().main_thread.get().wait();
         let msg = self.msg_from_message(message);
@@ -134,24 +140,31 @@ pub fn PeekMessageA(
     hWnd: HWND,
     _wMsgFilterMin: u32,
     _wMsgFilterMax: u32,
-    _wRemoveMsg: u32, /* PEEK_MESSAGE_REMOVE_TYPE */
+    wRemoveMsg: u32, /* PEEK_MESSAGE_REMOVE_TYPE */
 ) -> bool {
+    let remove = match wRemoveMsg {
+        0 => false,   // PM_NOREMOVE
+        1 => true,    // PM_REMOVE
+        _ => todo!(), // e.g. PM_NOYIELD
+    };
     let mut queue = state().message_queue.borrow_mut();
     queue.poll();
-    if let Some(msg) = queue.pop() {
-        if hWnd.is_null() {
-            msg.write_to_prefix(&mut ctx.memory[lpMsg..]).unwrap();
-        } else if hWnd.is_invalid() {
-            // TODO: only null hwnd messages
-            assert!(msg.hwnd.is_null());
-        } else {
-            // TODO: only matching messages
-            assert_eq!(msg.hwnd, hWnd);
-        }
-        true
+    let Some(msg) = queue.peek() else {
+        return false;
+    };
+    if hWnd.is_null() {
+        msg.write_to_prefix(&mut ctx.memory[lpMsg..]).unwrap();
+    } else if hWnd.is_invalid() {
+        // TODO: only null hwnd messages
+        assert!(msg.hwnd.is_null());
     } else {
-        false
+        // TODO: only matching messages
+        assert_eq!(msg.hwnd, hWnd);
     }
+    if remove {
+        queue.pop();
+    }
+    true
 }
 
 #[win32_derive::dllexport]
