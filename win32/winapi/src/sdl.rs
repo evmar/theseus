@@ -1,14 +1,31 @@
 //! Implementation of host interfaces using SDL.
 
-use std::{cell::RefCell, thread::ThreadId};
+use std::{mem::MaybeUninit, thread::ThreadId};
+
+use sdl3_sys as sdl;
 
 use crate::{RECT, host};
 
-/// SDL data structures must all be accessed from the main thread, yikes.
-struct SingleThreader<T> {
+fn check(res: bool) {
+    if !res {
+        panic!();
+    }
+}
+
+fn check_ptr<T>(t: *mut T) -> *mut T {
+    if t.is_null() {
+        panic!();
+    }
+    t
+}
+
+/// SDL has many APIs that must be accessed from the main thread, yikes.
+/// SingleThreader stores the thread it's created on, then panics if you call .get() from a different thread.
+pub struct SingleThreader<T> {
     id: ThreadId,
     data: T,
 }
+
 /// Safety: accessors assert we're on the initial thread.
 unsafe impl<T> Sync for SingleThreader<T> {}
 unsafe impl<T> Send for SingleThreader<T> {}
@@ -27,207 +44,214 @@ impl<T> SingleThreader<T> {
     }
 }
 
+pub struct MainThread {}
+
 pub struct Host {
-    sdl: SingleThreader<RefCell<SDLState>>,
+    pub main_thread: SingleThreader<MainThread>,
 }
 
 impl Host {
     pub fn new() -> Self {
         Self {
-            sdl: SingleThreader::new(RefCell::new(SDLState::new())),
+            main_thread: SingleThreader::new(MainThread::new()),
         }
     }
 }
 
-fn mouse_msg(
-    down: bool,
-    mouse_btn: sdl3::mouse::MouseButton,
-    x: f32,
-    y: f32,
-) -> host::MouseMessage {
-    let button = match mouse_btn {
-        sdl3::mouse::MouseButton::Left => 1,
-        sdl3::mouse::MouseButton::Right => 2,
-        sdl3::mouse::MouseButton::Middle => 3,
-        _ => todo!(),
-    };
-    host::MouseMessage {
-        down,
-        x: x as u32,
-        y: y as u32,
-        button,
-    }
-}
-
-fn msg_from_event(event: sdl3::event::Event) -> Option<host::Message> {
-    use sdl3::event::Event;
-    match event {
-        Event::Window { win_event, .. } => {
-            use sdl3::event::WindowEvent;
-            match win_event {
-                WindowEvent::Shown => return None,
-                WindowEvent::Resized(_, _) => return None,
-                WindowEvent::FocusGained => return None,
-                WindowEvent::FocusLost => return None,
-                WindowEvent::Exposed => return Some(host::Message::Paint),
-                WindowEvent::MouseEnter => return None,
-                WindowEvent::MouseLeave => return None,
-                WindowEvent::PixelSizeChanged(_, _) => return None,
-                _ => {}
+fn msg_from_event(event: &sdl::events::SDL_Event) -> Option<host::Message> {
+    unsafe {
+        use sdl::events::SDL_EventType;
+        let typ: sdl::events::SDL_EventType = std::mem::transmute(event.r#type);
+        match typ {
+            SDL_EventType::WINDOW_EXPOSED => return Some(host::Message::Paint),
+            SDL_EventType::MOUSE_BUTTON_DOWN | SDL_EventType::MOUSE_BUTTON_UP => {
+                let event = &event.button;
+                let button = match event.button as _ {
+                    sdl::mouse::SDL_BUTTON_LEFT => 1,
+                    sdl::mouse::SDL_BUTTON_RIGHT => 3,
+                    sdl::mouse::SDL_BUTTON_MIDDLE => 2,
+                    _ => return None,
+                };
+                let message = host::MouseMessage {
+                    x: event.x as u32,
+                    y: event.y as u32,
+                    button: button as u32,
+                };
+                if typ == SDL_EventType::MOUSE_BUTTON_DOWN {
+                    return Some(host::Message::MouseDown(message));
+                } else {
+                    return Some(host::Message::MouseUp(message));
+                }
             }
+            _ => {}
         }
-        Event::MouseMotion { .. } => {
-            return None;
-        }
-        Event::MouseButtonDown {
-            mouse_btn, x, y, ..
-        } => {
-            return Some(host::Message::MouseDown(mouse_msg(true, mouse_btn, x, y)));
-        }
-        Event::MouseButtonUp {
-            mouse_btn, x, y, ..
-        } => {
-            return Some(host::Message::MouseUp(mouse_msg(true, mouse_btn, x, y)));
-        }
-        Event::AudioDeviceAdded { .. } | Event::ClipboardUpdate { .. } | Event::Unknown { .. } => {
-            // ignore
-            return None;
-        }
-        _ => {}
+        //log::warn!("todo: handle sdl event: {:#x?}", typ);
     }
-    log::warn!("todo: handle sdl event: {:?}", event);
     None
 }
 
-impl Host {
+impl MainThread {
+    fn new() -> Self {
+        unsafe {
+            sdl::hints::SDL_SetHint(sdl::hints::SDL_HINT_NO_SIGNAL_HANDLERS, c"1".as_ptr());
+            sdl::hints::SDL_SetHint(sdl::hints::SDL_HINT_RENDER_VSYNC, c"1".as_ptr());
+            sdl::init::SDL_Init(sdl::init::SDL_INIT_VIDEO | sdl::init::SDL_INIT_AUDIO);
+        }
+        Self {}
+    }
+
     pub fn poll(&self) -> Option<host::Message> {
-        let event = self.sdl.get().borrow_mut().event_pump.poll_event()?;
-        let msg = msg_from_event(event)?;
+        let event = unsafe {
+            let mut event = MaybeUninit::uninit();
+            if !sdl::events::SDL_PollEvent(event.as_mut_ptr()) {
+                return None;
+            };
+            event.assume_init()
+        };
+        let msg = msg_from_event(&event)?;
         Some(msg)
     }
 
     pub fn wait(&self) -> host::Message {
         loop {
-            let event = self.sdl.get().borrow_mut().event_pump.wait_event();
-            let Some(msg) = msg_from_event(event) else {
-                continue;
+            let event = unsafe {
+                let mut event = MaybeUninit::uninit();
+                if !sdl::events::SDL_WaitEvent(event.as_mut_ptr()) {
+                    panic!();
+                };
+                event.assume_init()
             };
-            return msg;
+            if let Some(msg) = msg_from_event(&event) {
+                return msg;
+            }
         }
     }
 }
 
-struct SDLState {
-    _sdl: sdl3::Sdl,
-    video: sdl3::VideoSubsystem,
-    audio: sdl3::AudioSubsystem,
-    event_pump: sdl3::EventPump,
-}
-
-impl SDLState {
-    pub fn new() -> Self {
-        assert!(sdl3::hint::set(sdl3::hint::names::NO_SIGNAL_HANDLERS, "1"));
-        assert!(sdl3::hint::set(sdl3::hint::names::RENDER_VSYNC, "1"));
-        let _sdl = sdl3::init().unwrap();
-        let video = _sdl.video().unwrap();
-        let audio = _sdl.audio().unwrap();
-        let event_pump = _sdl.event_pump().unwrap();
-        Self {
-            _sdl,
-            video,
-            audio,
-            event_pump,
-        }
+pub fn rect_to_sdl(rect: &RECT) -> sdl::rect::SDL_FRect {
+    sdl::rect::SDL_FRect {
+        x: rect.left as f32,
+        y: rect.top as f32,
+        w: (rect.right - rect.left) as f32,
+        h: (rect.bottom - rect.top) as f32,
     }
-}
-
-pub fn rect_to_sdl(rect: &RECT) -> sdl3::rect::Rect {
-    sdl3::rect::Rect::new(
-        rect.left,
-        rect.top,
-        (rect.right - rect.left) as u32,
-        (rect.bottom - rect.top) as u32,
-    )
 }
 
 pub struct Surface {
-    texture: sdl3::render::Texture,
+    texture: *mut sdl::render::SDL_Texture,
 }
 
 impl Surface {
     pub fn set_pixels(&mut self, pixels: &[u8], stride: u32) {
-        self.texture.update(None, pixels, stride as usize).unwrap();
+        unsafe {
+            check(sdl::render::SDL_UpdateTexture(
+                self.texture,
+                std::ptr::null(),
+                pixels.as_ptr() as *const _,
+                stride as i32,
+            ));
+        }
     }
 
     pub fn copy(&mut self, window: &mut Window, dst_rect: &RECT, src: &Surface, src_rect: &RECT) {
         // To render to a texture, we need to start with a canvas, which we can only get from
         // a window because (I guess?) something about having a GPU context.
 
-        window
-            .canvas
-            .with_texture_canvas(&mut self.texture, |canvas| {
-                canvas
-                    .copy(&src.texture, rect_to_sdl(src_rect), rect_to_sdl(dst_rect))
-                    .unwrap();
-            })
-            .unwrap();
+        unsafe {
+            check(sdl::render::SDL_SetRenderTarget(
+                window.renderer,
+                self.texture,
+            ));
+            check(sdl::render::SDL_RenderTexture(
+                window.renderer,
+                src.texture,
+                &rect_to_sdl(src_rect),
+                &rect_to_sdl(dst_rect),
+            ));
+            check(sdl::render::SDL_SetRenderTarget(
+                window.renderer,
+                std::ptr::null_mut(),
+            ));
+        }
     }
 }
 
 pub struct Window {
-    canvas: sdl3::render::WindowCanvas,
+    window: *mut sdl::video::SDL_Window,
+    renderer: *mut sdl::render::SDL_Renderer,
 }
 
 impl Window {
     pub fn create_surface(&mut self, width: u32, height: u32) -> Surface {
-        let texture_creator = self.canvas.texture_creator();
-        let mut texture = texture_creator
-            .create_texture_target(None, width, height)
-            .unwrap();
-        texture.set_scale_mode(sdl3::render::ScaleMode::Nearest);
-        // FML, this means BGRA in memory order
-        assert_eq!(texture.format(), sdl3::pixels::PixelFormat::ARGB8888);
-        Surface { texture }
+        unsafe {
+            let texture = check_ptr(sdl::render::SDL_CreateTexture(
+                self.renderer,
+                // FML, this means BGRA in memory order
+                sdl::pixels::SDL_PIXELFORMAT_ARGB8888,
+                sdl::render::SDL_TEXTUREACCESS_TARGET,
+                width as i32,
+                height as i32,
+            ));
+            Surface { texture }
+        }
     }
 
     pub fn resize(&mut self, width: u32, height: u32) {
-        let window = self.canvas.window_mut();
-        let scale = window.display_scale();
-        window
-            .set_size(
-                (width as f32 * scale) as u32,
-                (height as f32 * scale) as u32,
-            )
-            .unwrap();
+        let scale = unsafe { sdl::video::SDL_GetWindowDisplayScale(self.window) } as f32;
+        unsafe {
+            check(sdl::video::SDL_SetWindowSize(
+                self.window,
+                (width as f32 * scale) as i32,
+                (height as f32 * scale) as i32,
+            ));
+        }
     }
 
     pub fn render(&mut self, surface: &mut Surface) {
-        // For debugging, can verify that the flip covers the entire canvas by starting with red:
-        // canvas.set_draw_color(sdl3::pixels::Color::RED);
-        // canvas.clear();
-        // Ignore any alpha in the input when doing the final render copy.
-        surface
-            .texture
-            .set_blend_mode(sdl3::render::BlendMode::None);
-        self.canvas.copy(&surface.texture, None, None).unwrap();
-        self.canvas.present();
+        unsafe {
+            // For debugging, can verify that the flip covers the entire canvas by starting with red:
+            // check(sdl::render::SDL_SetRenderDrawColor(
+            //     self.renderer,
+            //     255,
+            //     0,
+            //     0,
+            //     255,
+            // ));
+            // check(sdl::render::SDL_RenderClear(self.renderer));
+
+            // Ignore any alpha in the input when doing the final render copy.
+            check(sdl::render::SDL_SetTextureBlendMode(
+                surface.texture,
+                sdl::blendmode::SDL_BlendMode::NONE,
+            ));
+            check(sdl::render::SDL_RenderTexture(
+                self.renderer,
+                surface.texture,
+                std::ptr::null(),
+                std::ptr::null(),
+            ));
+            check(sdl::render::SDL_RenderPresent(self.renderer));
+        }
     }
 }
 
-impl Host {
+impl MainThread {
     pub fn create_window(&self, title: &str, width: u32, height: u32) -> Window {
-        let mut canvas = self
-            .sdl
-            .get()
-            .borrow()
-            .video
-            .window(title, width, height)
-            .high_pixel_density()
-            .build()
-            .unwrap()
-            .into_canvas();
-        canvas.clear();
-        Window { canvas }
+        unsafe {
+            let window = sdl::video::SDL_CreateWindow(
+                title.as_ptr() as *const _,
+                width as i32,
+                height as i32,
+                sdl::video::SDL_WindowFlags::HIGH_PIXEL_DENSITY,
+            );
+            let renderer = sdl::render::SDL_CreateRenderer(window, std::ptr::null());
+            check(sdl::render::SDL_RenderClear(renderer));
+            check(sdl::render::SDL_SetDefaultTextureScaleMode(
+                renderer,
+                sdl::surface::SDL_ScaleMode::NEAREST,
+            ));
+            Window { window, renderer }
+        }
     }
 }
 
@@ -243,36 +267,46 @@ pub struct AudioSpec {
     pub channels: u32,
 }
 
-pub struct AudioStream(SingleThreader<sdl3::audio::AudioStreamOwner>);
+pub struct AudioStream(*mut sdl::audio::SDL_AudioStream);
+unsafe impl Send for AudioStream {}
 
 impl AudioStream {
     pub fn queued_bytes(&self) -> u32 {
-        self.0.get().queued_bytes().unwrap() as u32
+        unsafe { sdl::audio::SDL_GetAudioStreamQueued(self.0) as u32 }
     }
 
     pub fn put_data(&self, data: &[u8]) {
-        self.0.get().put_data(data).unwrap();
+        // self.0.get().put_data(data).unwrap();
+        unsafe {
+            check(sdl::audio::SDL_PutAudioStreamData(
+                self.0,
+                data.as_ptr() as *const _,
+                data.len() as i32,
+            ))
+        }
     }
 
     pub fn resume(&self) {
-        self.0.get().resume().unwrap();
+        unsafe {
+            check(sdl::audio::SDL_ResumeAudioStreamDevice(self.0));
+        }
     }
 }
 
 impl Host {
     pub fn create_audio_stream(&self, spec: AudioSpec) -> AudioStream {
-        let stream = self
-            .sdl
-            .get()
-            .borrow()
-            .audio
-            .default_playback_device()
-            .open_device_stream(Some(&sdl3::audio::AudioSpec {
-                freq: Some(spec.sample_rate as i32),
-                channels: Some(spec.channels as i32),
-                format: Some(sdl3::audio::AudioFormat::S16LE),
-            }))
-            .unwrap();
-        AudioStream(SingleThreader::new(stream))
+        unsafe {
+            let stream = sdl::audio::SDL_OpenAudioDeviceStream(
+                sdl::audio::SDL_AudioDeviceID::DEFAULT_PLAYBACK,
+                &sdl::audio::SDL_AudioSpec {
+                    freq: spec.sample_rate as i32,
+                    channels: spec.channels as i32,
+                    format: sdl::audio::SDL_AudioFormat::S16LE,
+                },
+                None,                 // no callback
+                std::ptr::null_mut(), // no userdata
+            );
+            AudioStream(stream)
+        }
     }
 }

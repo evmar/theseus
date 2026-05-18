@@ -73,7 +73,7 @@ impl MessageQueue {
     }
 
     fn poll(&mut self) {
-        let Some(message) = host::host().poll() else {
+        let Some(message) = host::host().main_thread.get().poll() else {
             return;
         };
         let msg = self.msg_from_message(message);
@@ -81,7 +81,7 @@ impl MessageQueue {
     }
 
     fn wait(&mut self) {
-        let message = host::host().wait();
+        let message = host::host().main_thread.get().wait();
         let msg = self.msg_from_message(message);
         self.messages.push_back(msg);
     }

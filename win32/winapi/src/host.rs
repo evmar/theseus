@@ -5,7 +5,6 @@ pub use crate::sdl::*;
 static HOST: LazyLock<Host> = LazyLock::new(Host::new);
 
 pub struct MouseMessage {
-    pub down: bool,
     pub x: u32,
     pub y: u32,
     pub button: u32,

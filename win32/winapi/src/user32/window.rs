@@ -105,7 +105,10 @@ impl State {
         let window = Window {
             width,
             height,
-            host: host::host().create_window(&args.name, width, height),
+            host: host::host()
+                .main_thread
+                .get()
+                .create_window(&args.name, width, height),
             pixels: None,
             surface: None,
         };
