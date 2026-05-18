@@ -10,6 +10,7 @@ pub mod dsound;
 pub mod gdi32;
 mod handle;
 mod heap;
+mod host;
 pub mod kernel32;
 mod locked_state;
 pub mod msvcrt;
@@ -44,9 +45,7 @@ pub struct EXEData {
 }
 
 pub fn load(exe: &EXEData) -> Context {
-    use runtime::host::Host;
-    let host = Box::new(sdl::SDLHost::new());
-    host.init();
+    host::init();
 
     crate::trace::init(&std::env::var("THESEUS_TRACE").unwrap_or_default());
 
@@ -60,7 +59,6 @@ pub fn load(exe: &EXEData) -> Context {
     let mut lock = kernel32::lock();
 
     let mut ctx = Context {
-        host,
         cpu: CPU::default(),
         thread_handle: lock.objects.add(kernel32::Object::Thread).to_raw(),
         thread_id: 1,

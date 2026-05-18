@@ -1,5 +1,3 @@
-use runtime::host;
-
 use crate::POINT;
 
 #[repr(C)]
@@ -56,15 +54,6 @@ impl RECT {
             top: self.top + delta.y,
             right: self.right + delta.x,
             bottom: self.bottom + delta.y,
-        }
-    }
-
-    pub fn to_host(&self) -> host::Rect {
-        host::Rect {
-            x: self.left as u32,
-            y: self.top as u32,
-            width: (self.right - self.left) as u32,
-            height: (self.bottom - self.top) as u32,
         }
     }
 }

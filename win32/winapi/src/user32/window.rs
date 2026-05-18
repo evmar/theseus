@@ -6,7 +6,7 @@ use zerocopy::{FromBytes, IntoBytes};
 use crate::{
     FromABIParam, RECT,
     gdi32::{self, DC, HBRUSH, HDC},
-    kernel32, stub,
+    host, kernel32, stub,
     user32::{self, HCURSOR, HICON, HINSTANCE, HMENU, HWND, State, state},
 };
 
@@ -14,8 +14,8 @@ pub struct Window {
     pub width: u32,
     pub height: u32,
     pub pixels: Option<u32>,
-    pub host: Box<dyn runtime::host::Window>,
-    pub surface: Option<Box<dyn runtime::host::Surface>>,
+    pub host: host::Window,
+    pub surface: Option<host::Surface>,
 }
 
 impl Window {
@@ -59,7 +59,7 @@ impl Window {
             .surface
             .get_or_insert_with(|| self.host.create_surface(self.width, self.height));
         surface.set_pixels(pixels, stride);
-        self.host.render(&mut **surface);
+        self.host.render(surface);
     }
 }
 
@@ -98,14 +98,14 @@ impl std::fmt::Debug for CW {
 }
 
 impl State {
-    fn create_window(&self, ctx: &mut Context, args: CreateWindowArgs) -> HWND {
+    fn create_window(&self, args: CreateWindowArgs) -> HWND {
         let width = args.width.unwrap_or(640);
         let height = args.height.unwrap_or(480);
 
         let window = Window {
             width,
             height,
-            host: ctx.host.create_window(&args.name, width, height),
+            host: host::host().create_window(&args.name, width, height),
             pixels: None,
             surface: None,
         };
@@ -133,14 +133,11 @@ pub fn CreateWindowExA(
     _lpParam: u32,
 ) -> HWND {
     let name = ctx.memory.read_str(lpWindowName);
-    state().create_window(
-        ctx,
-        CreateWindowArgs {
-            name: name.into(),
-            width: nWidth.value(),
-            height: nHeight.value(),
-        },
-    )
+    state().create_window(CreateWindowArgs {
+        name: name.into(),
+        width: nWidth.value(),
+        height: nHeight.value(),
+    })
 }
 
 #[win32_derive::dllexport]
@@ -160,14 +157,11 @@ pub fn CreateWindowExW(
     _lpParam: u32,
 ) -> HWND {
     let name = ctx.memory.read_wstr(lpWindowName);
-    state().create_window(
-        ctx,
-        CreateWindowArgs {
-            name: name.to_string_lossy(),
-            width: nWidth.value(),
-            height: nHeight.value(),
-        },
-    )
+    state().create_window(CreateWindowArgs {
+        name: name.to_string_lossy(),
+        width: nWidth.value(),
+        height: nHeight.value(),
+    })
 }
 
 #[win32_derive::dllexport]

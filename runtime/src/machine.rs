@@ -1,4 +1,4 @@
-use crate::{Cont, ContFn, Flags, Memory, Regs, fpu::FPU, host::Host, mmx::MMX};
+use crate::{Cont, ContFn, Flags, Memory, Regs, fpu::FPU, mmx::MMX};
 
 #[derive(Default)]
 pub struct CPU {
@@ -9,7 +9,6 @@ pub struct CPU {
 }
 
 pub struct Context {
-    pub host: Box<dyn Host>,
     pub cpu: CPU,
     pub thread_handle: u32,
     pub thread_id: u32,

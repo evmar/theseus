@@ -3,7 +3,6 @@ mod wasm;
 
 mod flags;
 mod fpu;
-pub mod host;
 mod machine;
 mod memory;
 mod mmx;

@@ -31,7 +31,9 @@ pub fn WriteFile(
     assert_eq!(lpOverlapped, 0);
     if hFile == 0xf11e_0002 || hFile == 0xf11e_0003 {
         let buf = &ctx.memory[lpBuffer..][..nNumberOfBytesToWrite as usize];
-        ctx.host.print(buf);
+        // TODO: host interface
+        use std::io::Write;
+        std::io::stdout().write_all(buf).unwrap();
         if lpNumberOfBytesWritten != 0 {
             ctx.memory
                 .write(lpNumberOfBytesWritten, nNumberOfBytesToWrite);

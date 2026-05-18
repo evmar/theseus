@@ -5,7 +5,7 @@ use runtime::*;
 use super::types::*;
 use crate::{
     ddraw::{GUID, ddraw1, ddraw7, state},
-    kernel32,
+    host, kernel32,
     user32::{self, HWND},
 };
 
@@ -117,7 +117,7 @@ impl DirectDraw {
 
 pub enum Target {
     Window(Rc<RefCell<user32::Window>>),
-    Texture(Box<dyn host::Surface>),
+    Texture(host::Surface),
 }
 
 pub struct Surface {
@@ -211,7 +211,7 @@ impl Surface {
         };
 
         let mut window = window.borrow_mut();
-        window.host.render(&mut **texture);
+        window.host.render(texture);
     }
 }
 

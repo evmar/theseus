@@ -1,39 +1,35 @@
-//! Implementation of runtime::host using SDL.
+//! Implementation of host interfaces using SDL.
 
-use std::thread::ThreadId;
+use std::{cell::RefCell, thread::ThreadId};
 
-use runtime::host;
+use crate::{RECT, host};
 
 /// SDL data structures must all be accessed from the main thread, yikes.
 struct SingleThreader<T> {
     id: ThreadId,
-    data: Option<T>,
+    data: RefCell<T>,
 }
+/// Safety: accessors assert we're on the initial thread.
+unsafe impl<T> Sync for SingleThreader<T> {}
 unsafe impl<T> Send for SingleThreader<T> {}
 
 impl<T> SingleThreader<T> {
-    pub fn clone(&self) -> Self {
-        Self {
-            id: self.id,
-            data: None,
-        }
-    }
-    pub fn get(&mut self) -> &mut T {
+    pub fn get(&self) -> &RefCell<T> {
         assert_eq!(std::thread::current().id(), self.id);
-        self.data.as_mut().unwrap()
+        &self.data
     }
 }
 
-pub struct SDLHost {
+pub struct Host {
     sdl: SingleThreader<SDLState>,
 }
 
-impl SDLHost {
+impl Host {
     pub fn new() -> Self {
         Self {
             sdl: SingleThreader {
                 id: std::thread::current().id(),
-                data: Some(SDLState::new()),
+                data: RefCell::new(SDLState::new()),
             },
         }
     }
@@ -99,16 +95,16 @@ fn msg_from_event(event: sdl3::event::Event) -> Option<host::Message> {
     None
 }
 
-impl host::MessageLoop for SDLHost {
-    fn poll(&mut self) -> Option<host::Message> {
-        let event = self.sdl.get().event_pump.poll_event()?;
+impl Host {
+    pub fn poll(&self) -> Option<host::Message> {
+        let event = self.sdl.get().borrow_mut().event_pump.poll_event()?;
         let msg = msg_from_event(event)?;
         Some(msg)
     }
 
-    fn wait(&mut self) -> host::Message {
+    pub fn wait(&self) -> host::Message {
         loop {
-            let event = self.sdl.get().event_pump.wait_event();
+            let event = self.sdl.get().borrow_mut().event_pump.wait_event();
             let Some(msg) = msg_from_event(event) else {
                 continue;
             };
@@ -118,9 +114,9 @@ impl host::MessageLoop for SDLHost {
 }
 
 struct SDLState {
-    sdl: sdl3::Sdl,
+    _sdl: sdl3::Sdl,
     video: sdl3::VideoSubsystem,
-    audio: sdl3::AudioSubsystem,
+    _audio: sdl3::AudioSubsystem,
     event_pump: sdl3::EventPump,
 }
 
@@ -128,47 +124,38 @@ impl SDLState {
     pub fn new() -> Self {
         assert!(sdl3::hint::set(sdl3::hint::names::NO_SIGNAL_HANDLERS, "1"));
         assert!(sdl3::hint::set(sdl3::hint::names::RENDER_VSYNC, "1"));
-        let sdl = sdl3::init().unwrap();
-        let video = sdl.video().unwrap();
-        let audio = sdl.audio().unwrap();
-        let event_pump = sdl.event_pump().unwrap();
+        let _sdl = sdl3::init().unwrap();
+        let video = _sdl.video().unwrap();
+        let _audio = _sdl.audio().unwrap();
+        let event_pump = _sdl.event_pump().unwrap();
         Self {
-            sdl,
+            _sdl,
             video,
-            audio,
+            _audio,
             event_pump,
         }
     }
 }
 
-struct SDLSurface {
-    pub texture: sdl3::render::Texture,
-}
-
-fn host_rect_to_sdl(rect: host::Rect) -> sdl3::rect::Rect {
+pub fn rect_to_sdl(rect: &RECT) -> sdl3::rect::Rect {
     sdl3::rect::Rect::new(
-        rect.x as i32,
-        rect.y as i32,
-        rect.width as u32,
-        rect.height as u32,
+        rect.left,
+        rect.top,
+        (rect.right - rect.left) as u32,
+        (rect.bottom - rect.top) as u32,
     )
 }
 
-impl host::Surface for SDLSurface {
-    fn set_pixels(&mut self, pixels: &[u8], stride: u32) {
+pub struct Surface {
+    texture: sdl3::render::Texture,
+}
+
+impl Surface {
+    pub fn set_pixels(&mut self, pixels: &[u8], stride: u32) {
         self.texture.update(None, pixels, stride as usize).unwrap();
     }
 
-    fn copy(
-        &mut self,
-        window: &mut dyn host::Window,
-        dst_rect: host::Rect,
-        src: &dyn host::Surface,
-        src_rect: host::Rect,
-    ) {
-        let window = unsafe { &mut *(window as *mut _ as *mut SDLWindow) };
-        let src = unsafe { &*(src as *const _ as *const SDLSurface) };
-
+    pub fn copy(&mut self, window: &mut Window, dst_rect: &RECT, src: &Surface, src_rect: &RECT) {
         // To render to a texture, we need to start with a canvas, which we can only get from
         // a window because (I guess?) something about having a GPU context.
 
@@ -176,23 +163,19 @@ impl host::Surface for SDLSurface {
             .canvas
             .with_texture_canvas(&mut self.texture, |canvas| {
                 canvas
-                    .copy(
-                        &src.texture,
-                        host_rect_to_sdl(src_rect),
-                        host_rect_to_sdl(dst_rect),
-                    )
+                    .copy(&src.texture, rect_to_sdl(src_rect), rect_to_sdl(dst_rect))
                     .unwrap();
             })
             .unwrap();
     }
 }
 
-struct SDLWindow {
-    pub canvas: sdl3::render::WindowCanvas,
+pub struct Window {
+    canvas: sdl3::render::WindowCanvas,
 }
 
-impl host::Window for SDLWindow {
-    fn create_surface(&mut self, width: u32, height: u32) -> Box<dyn host::Surface> {
+impl Window {
+    pub fn create_surface(&mut self, width: u32, height: u32) -> Surface {
         let texture_creator = self.canvas.texture_creator();
         let mut texture = texture_creator
             .create_texture_target(None, width, height)
@@ -200,10 +183,10 @@ impl host::Window for SDLWindow {
         texture.set_scale_mode(sdl3::render::ScaleMode::Nearest);
         // FML, this means BGRA in memory order
         assert_eq!(texture.format(), sdl3::pixels::PixelFormat::ARGB8888);
-        Box::new(SDLSurface { texture })
+        Surface { texture }
     }
 
-    fn resize(&mut self, width: u32, height: u32) {
+    pub fn resize(&mut self, width: u32, height: u32) {
         let window = self.canvas.window_mut();
         let scale = window.display_scale();
         window
@@ -214,9 +197,7 @@ impl host::Window for SDLWindow {
             .unwrap();
     }
 
-    fn render(&mut self, surface: &mut dyn host::Surface) {
-        let surface = unsafe { &mut *(surface as *mut _ as *mut SDLSurface) };
-
+    pub fn render(&mut self, surface: &mut Surface) {
         // For debugging, can verify that the flip covers the entire canvas by starting with red:
         // canvas.set_draw_color(sdl3::pixels::Color::RED);
         // canvas.clear();
@@ -229,11 +210,12 @@ impl host::Window for SDLWindow {
     }
 }
 
-impl host::Windowing for SDLHost {
-    fn create_window(&mut self, title: &str, width: u32, height: u32) -> Box<dyn host::Window> {
+impl Host {
+    pub fn create_window(&self, title: &str, width: u32, height: u32) -> Window {
         let mut canvas = self
             .sdl
             .get()
+            .borrow()
             .video
             .window(title, width, height)
             .high_pixel_density()
@@ -241,22 +223,12 @@ impl host::Windowing for SDLHost {
             .unwrap()
             .into_canvas();
         canvas.clear();
-        Box::new(SDLWindow { canvas })
+        Window { canvas }
     }
 }
 
-impl host::Host for SDLHost {
-    fn clone(&self) -> Box<dyn host::Host> {
-        Box::new(SDLHost {
-            sdl: self.sdl.clone(),
-        })
-    }
-
-    fn init(&self) {
-        logger::init();
-    }
-
-    fn print(&self, text: &[u8]) {
+impl Host {
+    pub fn print(&self, text: &[u8]) {
         use std::io::Write;
         std::io::stdout().write_all(text).unwrap();
     }

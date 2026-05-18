@@ -1,12 +1,12 @@
 use std::collections::VecDeque;
 use zerocopy::{FromBytes, IntoBytes};
 
-use runtime::{Context, host};
+use runtime::Context;
 
 use crate::{
     POINT,
     dllexport::win32flags,
-    stub,
+    host, stub,
     user32::{HACCEL, HWND, state},
 };
 
@@ -63,25 +63,25 @@ impl MessageQueue {
         self.messages.pop_front()
     }
 
-    fn read(&mut self, ctx: &mut Context) -> MSG {
+    fn read(&mut self) -> MSG {
         loop {
             if let Some(msg) = self.messages.pop_front() {
                 return msg;
             }
-            self.wait(ctx);
+            self.wait();
         }
     }
 
-    fn poll(&mut self, ctx: &mut Context) {
-        let Some(message) = ctx.host.poll() else {
+    fn poll(&mut self) {
+        let Some(message) = host::host().poll() else {
             return;
         };
         let msg = self.msg_from_message(message);
         self.messages.push_back(msg);
     }
 
-    fn wait(&mut self, ctx: &mut Context) {
-        let message = ctx.host.wait();
+    fn wait(&mut self) {
+        let message = host::host().wait();
         let msg = self.msg_from_message(message);
         self.messages.push_back(msg);
     }
@@ -137,7 +137,7 @@ pub fn PeekMessageA(
     _wRemoveMsg: u32, /* PEEK_MESSAGE_REMOVE_TYPE */
 ) -> bool {
     let mut queue = state().message_queue.borrow_mut();
-    queue.poll(ctx);
+    queue.poll();
     if let Some(msg) = queue.pop() {
         if hWnd.is_null() {
             msg.write_to_prefix(&mut ctx.memory[lpMsg..]).unwrap();
@@ -173,7 +173,7 @@ pub fn GetMessageW(
     _wMsgFilterMin: u32,
     _wMsgFilterMax: u32,
 ) -> i32 {
-    let msg = state().message_queue.borrow_mut().read(ctx);
+    let msg = state().message_queue.borrow_mut().read();
 
     if hWnd.is_null() {
         msg.write_to_prefix(&mut ctx.memory[lpMsg..]).unwrap();

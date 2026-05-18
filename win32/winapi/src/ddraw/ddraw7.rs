@@ -429,15 +429,15 @@ pub mod IDirectDrawSurface7 {
             .borrow_mut();
 
         dst_texture.copy(
-            &mut *window.host,
-            host::Rect {
-                x: dwX,
-                y: dwY,
-                width: (src_rect.right - src_rect.left) as u32,
-                height: (src_rect.bottom - src_rect.top) as u32,
+            &mut window.host,
+            &RECT {
+                left: dwX as i32,
+                top: dwY as i32,
+                right: dwX as i32 + (src_rect.right - src_rect.left),
+                bottom: dwY as i32 + (src_rect.bottom - src_rect.top),
             },
-            &**src_texture,
-            src_rect.to_host(),
+            src_texture,
+            src_rect,
         );
 
         stub!(DD::OK)
