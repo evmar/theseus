@@ -2,36 +2,50 @@
   {
     "label": "basicdd",
     "build": {
-      "command": "./build.sh"
+      "command": "./build.sh",
     },
     "program": "$ZED_WORKTREE_ROOT/target/debug/basicdd-exe",
     "sourceLanguages": ["rust"],
     "request": "launch",
-    "adapter": "CodeLLDB"
+    "adapter": "CodeLLDB",
   },
   {
     "label": "chillin-tc",
     "build": {
       "command": "./build.sh",
-      "args": ["chillin"]
+      "args": ["chillin"],
     },
     "program": "$ZED_WORKTREE_ROOT/target/fast/chillin",
     "sourceLanguages": ["rust"],
     "request": "launch",
-    "adapter": "CodeLLDB"
+    "adapter": "CodeLLDB",
   },
   {
     "label": "chillin",
     "build": {
       "command": "cargo",
-      "args": ["build", "-p", "chillin", "--profile", "fast"]
+      "args": ["build", "-p", "chillin", "--profile", "fast"],
     },
     "env": {
-      "THESEUS_TRACE": "dsound,kernel32/time"
+      "THESEUS_TRACE": "dsound,kernel32/time",
     },
     "program": "$ZED_WORKTREE_ROOT/target/fast/chillin",
     "sourceLanguages": ["rust"],
     "request": "launch",
-    "adapter": "CodeLLDB"
-  }
+    "adapter": "CodeLLDB",
+  },
+  {
+    "label": "mofo",
+    "build": {
+      "command": "cargo",
+      "args": ["build", "-p", "mofo", "--profile", "fast"],
+    },
+    "env": {
+      "THESEUS_TRACE": "+",
+    },
+    "program": "$ZED_WORKTREE_ROOT/target/fast/mofo",
+    "sourceLanguages": ["rust"],
+    "request": "launch",
+    "adapter": "CodeLLDB",
+  },
 ]
