@@ -29,6 +29,12 @@ elif [[ $1 == "chillin-unpack" ]]; then
         --out exe/chillin-unpack \
         --extern 0x004085dd
     cargo run -p chillin-unpack
+elif [[ $1 == "mofo-unpack" ]]; then
+    cargo run -p tc -- \
+        --exe ~/win/rs/deploy/archive/demo/psi_mofo.exe \
+        --out exe/mofo-unpack \
+        --extern 0x41f079
+    cargo run -p mofo-unpack
 elif [[ $1 == "thread" ]]; then
     cargo run -p tc -- --exe ~/win/rs/exe/cpp/thread.exe --out exe/thread --scan-immediates
     cargo run -p thread-exe
