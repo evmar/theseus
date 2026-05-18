@@ -15,7 +15,6 @@ pub type HGDIOBJ = HANDLE;
 pub type HBRUSH = HGDIOBJ;
 pub type HPEN = HGDIOBJ;
 
-#[derive(Default)]
 pub struct State {
     pub dcs: Handles<DC>,
     pub objects: Handles<Object>,
@@ -25,7 +24,11 @@ static STATE: Mutex<Option<State>> = Mutex::new(None);
 
 pub type Lock = LockedState<State>;
 pub fn lock() -> Lock {
-    LockedState::from_or_init(&STATE, Default::default)
+    LockedState::from_or_init(&STATE, || State {
+        // avoid low-numbered object handles to avoid conflicting with COLOR_* constants for HBRUSH
+        objects: Handles::new(0x1000),
+        dcs: Default::default(),
+    })
 }
 
 #[derive(Debug, Copy, Clone, Default)]
