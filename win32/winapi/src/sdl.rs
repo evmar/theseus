@@ -162,7 +162,7 @@ impl Surface {
     }
 
     pub fn copy(&mut self, window: &mut Window, dst_rect: &RECT, src: &Surface, src_rect: &RECT) {
-        // To render to a texture, we need to start with a canvas, which we can only get from
+        // To render to a texture, we need to start with a renderer, which we can only get from
         // a window because (I guess?) something about having a GPU context.
 
         unsafe {
