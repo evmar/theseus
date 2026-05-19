@@ -205,12 +205,11 @@ impl Window {
     }
 
     pub fn resize(&mut self, width: u32, height: u32) {
-        let scale = unsafe { sdl::video::SDL_GetWindowDisplayScale(self.window) } as f32;
         unsafe {
             check(sdl::video::SDL_SetWindowSize(
                 self.window,
-                (width as f32 * scale) as i32,
-                (height as f32 * scale) as i32,
+                width as i32,
+                height as i32,
             ));
         }
     }
