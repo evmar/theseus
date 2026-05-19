@@ -8,14 +8,16 @@ use crate::{RECT, host};
 
 fn check(res: bool) {
     if !res {
-        panic!();
+        let err = sdl::error::SDL_GetError();
+        panic!(
+            "SDL error: {}",
+            unsafe { std::ffi::CStr::from_ptr(err) }.to_string_lossy()
+        );
     }
 }
 
 fn check_ptr<T>(t: *mut T) -> *mut T {
-    if t.is_null() {
-        panic!();
-    }
+    check(!t.is_null());
     t
 }
 
@@ -93,8 +95,14 @@ fn msg_from_event(event: &sdl::events::SDL_Event) -> Option<host::Message> {
 impl MainThread {
     fn new() -> Self {
         unsafe {
-            sdl::hints::SDL_SetHint(sdl::hints::SDL_HINT_NO_SIGNAL_HANDLERS, c"1".as_ptr());
-            sdl::hints::SDL_SetHint(sdl::hints::SDL_HINT_RENDER_VSYNC, c"1".as_ptr());
+            check(sdl::hints::SDL_SetHint(
+                sdl::hints::SDL_HINT_NO_SIGNAL_HANDLERS,
+                c"1".as_ptr(),
+            ));
+            check(sdl::hints::SDL_SetHint(
+                sdl::hints::SDL_HINT_RENDER_VSYNC,
+                c"1".as_ptr(),
+            ));
             sdl::init::SDL_Init(sdl::init::SDL_INIT_VIDEO | sdl::init::SDL_INIT_AUDIO);
         }
         Self {}
