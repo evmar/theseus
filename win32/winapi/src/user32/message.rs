@@ -169,14 +169,14 @@ pub fn PeekMessageA(
 
 #[win32_derive::dllexport]
 pub fn PeekMessageW(
-    _ctx: &mut Context,
-    _lpMsg: u32, /*MSG*/
-    _hWnd: HWND,
-    _wMsgFilterMin: u32,
-    _wMsgFilterMax: u32,
-    _wRemoveMsg: u32, /* PEEK_MESSAGE_REMOVE_TYPE */
+    ctx: &mut Context,
+    lpMsg: u32, /*MSG*/
+    hWnd: HWND,
+    wMsgFilterMin: u32,
+    wMsgFilterMax: u32,
+    wRemoveMsg: u32, /* PEEK_MESSAGE_REMOVE_TYPE */
 ) -> bool {
-    todo!()
+    PeekMessageA(ctx, lpMsg, hWnd, wMsgFilterMin, wMsgFilterMax, wRemoveMsg)
 }
 
 #[win32_derive::dllexport]
