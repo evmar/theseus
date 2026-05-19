@@ -14,7 +14,7 @@ pub type WPARAM = u32;
 pub type LPARAM = u32;
 
 #[repr(C)]
-#[derive(zerocopy::FromBytes, zerocopy::IntoBytes, zerocopy::Immutable)]
+#[derive(Debug, zerocopy::FromBytes, zerocopy::IntoBytes, zerocopy::Immutable)]
 struct MSG {
     hwnd: HWND,
     message: u32,
@@ -153,7 +153,6 @@ pub fn PeekMessageA(
         return false;
     };
     if hWnd.is_null() {
-        msg.write_to_prefix(&mut ctx.memory[lpMsg..]).unwrap();
     } else if hWnd.is_invalid() {
         // TODO: only null hwnd messages
         assert!(msg.hwnd.is_null());
@@ -161,6 +160,7 @@ pub fn PeekMessageA(
         // TODO: only matching messages
         assert_eq!(msg.hwnd, hWnd);
     }
+    msg.write_to_prefix(&mut ctx.memory[lpMsg..]).unwrap();
     if remove {
         queue.pop();
     }
@@ -201,7 +201,6 @@ pub fn GetMessageW(
     let msg = state().message_queue.borrow_mut().read();
 
     if hWnd.is_null() {
-        msg.write_to_prefix(&mut ctx.memory[lpMsg..]).unwrap();
     } else if hWnd.is_invalid() {
         // TODO: only null hwnd messages
         assert!(msg.hwnd.is_null());
@@ -209,6 +208,7 @@ pub fn GetMessageW(
         // TODO: only matching messages
         assert_eq!(msg.hwnd, hWnd);
     }
+    msg.write_to_prefix(&mut ctx.memory[lpMsg..]).unwrap();
 
     1 // no error, no WM_QUIT
 }
