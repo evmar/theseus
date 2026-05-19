@@ -439,3 +439,8 @@ pub fn MapWindowPoints(
 ) -> i32 {
     todo!()
 }
+
+#[win32_derive::dllexport]
+pub fn ValidateRect(_ctx: &mut Context, _hWnd: HWND, _lpRect: u32) -> bool {
+    stub!(true)
+}

@@ -1,12 +1,7 @@
 use runtime::Context;
 use zerocopy::{FromBytes, IntoBytes};
 
-use crate::{POINT, RECT, user32::HWND};
-
-#[win32_derive::dllexport]
-pub fn ValidateRect(_ctx: &mut Context, _hWnd: HWND, _lpRect: u32) -> bool {
-    todo!()
-}
+use crate::{POINT, RECT};
 
 #[win32_derive::dllexport]
 pub fn PtInRect(ctx: &mut Context, lprc: u32 /* RECT */, x: i32, y: i32) -> bool {
