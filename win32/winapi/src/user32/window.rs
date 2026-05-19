@@ -4,13 +4,15 @@ use runtime::Context;
 use zerocopy::{FromBytes, IntoBytes};
 
 use crate::{
-    FromABIParam, RECT,
+    FromABIParam, POINT, RECT,
     gdi32::{self, Brush, COLORREF, DC, HBRUSH, HDC},
     host, kernel32, stub,
     user32::{self, HCURSOR, HICON, HINSTANCE, HMENU, HWND, State, state},
 };
 
 pub struct Window {
+    pub x: i32,
+    pub y: i32,
     pub width: u32,
     pub height: u32,
     pub pixels: Option<u32>,
@@ -66,6 +68,8 @@ impl Window {
 #[derive(Default)]
 struct CreateWindowArgs {
     name: String,
+    x: i32,
+    y: i32,
     width: Option<u32>,
     height: Option<u32>,
 }
@@ -103,6 +107,8 @@ impl State {
         let height = args.height.unwrap_or(480);
 
         let window = Window {
+            x: args.x,
+            y: args.y,
             width,
             height,
             host: host::host()
@@ -126,8 +132,8 @@ pub fn CreateWindowExA(
     _lpClassName: u32,
     lpWindowName: u32,
     _dwStyle: u32, /* WINDOW_STYLE */
-    _X: i32,
-    _Y: i32,
+    X: i32,
+    Y: i32,
     nWidth: CW,
     nHeight: CW,
     _hWndParent: HWND,
@@ -138,6 +144,8 @@ pub fn CreateWindowExA(
     let name = ctx.memory.read_str(lpWindowName);
     state().create_window(CreateWindowArgs {
         name: name.into(),
+        x: X,
+        y: Y,
         width: nWidth.value(),
         height: nHeight.value(),
     })
@@ -150,8 +158,8 @@ pub fn CreateWindowExW(
     _lpClassName: u32, /* WSTR */
     lpWindowName: u32, /* WSTR */
     _dwStyle: u32,     /* WINDOW_STYLE */
-    _X: i32,
-    _Y: i32,
+    X: i32,
+    Y: i32,
     nWidth: CW,
     nHeight: CW,
     _hWndParent: HWND,
@@ -162,6 +170,8 @@ pub fn CreateWindowExW(
     let name = ctx.memory.read_wstr(lpWindowName);
     state().create_window(CreateWindowArgs {
         name: name.to_string_lossy(),
+        x: X,
+        y: Y,
         width: nWidth.value(),
         height: nHeight.value(),
     })
@@ -185,8 +195,8 @@ pub fn ShowWindow(
 pub fn MoveWindow(
     ctx: &mut Context,
     _hWnd: HWND,
-    _X: i32,
-    _Y: i32,
+    X: i32,
+    Y: i32,
     nWidth: i32,
     nHeight: i32,
     bRepaint: bool,
@@ -194,6 +204,8 @@ pub fn MoveWindow(
     let state = state();
     let window = state.window.borrow();
     let mut window = window.as_ref().unwrap().borrow_mut();
+    window.x = X;
+    window.y = Y;
     window.resize(ctx, nWidth as u32, nHeight as u32);
     if bRepaint {
         // ...
@@ -431,13 +443,39 @@ pub fn GetDesktopWindow(_ctx: &mut Context) -> HWND {
 
 #[win32_derive::dllexport]
 pub fn MapWindowPoints(
-    _ctx: &mut Context,
-    _hWndFrom: HWND,
-    _hWndTo: HWND,
-    _lpPoints: u32, /* POINT */
-    _cPoints: u32,
+    ctx: &mut Context,
+    hWndFrom: HWND,
+    hWndTo: HWND,
+    lpPoints: u32, /* POINT */
+    cPoints: u32,
 ) -> i32 {
-    todo!()
+    let state = state();
+    let window = state.window.borrow();
+    let window_origin = |hwnd: HWND| -> POINT {
+        if hwnd.is_null() {
+            return POINT::default();
+        }
+
+        let window = window.as_ref().unwrap().borrow();
+        POINT {
+            x: window.x,
+            y: window.y,
+        }
+    };
+
+    let from = window_origin(hWndFrom);
+    let to = window_origin(hWndTo);
+    let delta = from.sub(to);
+
+    let point_size = std::mem::size_of::<POINT>() as u32;
+    for i in 0..cPoints {
+        let addr = lpPoints + i * point_size;
+        let mut point = POINT::read_from_prefix(&ctx.memory[addr..]).unwrap().0;
+        point = point.add(delta);
+        point.write_to_prefix(&mut ctx.memory[addr..]).unwrap();
+    }
+
+    ((delta.y as u16 as u32) << 16 | delta.x as u16 as u32) as i32
 }
 
 #[win32_derive::dllexport]
