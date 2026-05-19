@@ -1,8 +1,7 @@
 use runtime::Context;
 
 use super::*;
-use crate::{POINT, RECT, stub};
-use zerocopy::{FromBytes, IntoBytes};
+use crate::stub;
 
 #[win32_derive::dllexport]
 pub fn GetSystemMetrics(_ctx: &mut Context, nIndex: u32 /* SYSTEM_METRICS_INDEX */) -> i32 {
@@ -23,11 +22,6 @@ pub fn ShowCursor(_ctx: &mut Context, bShow: bool) -> i32 {
 }
 
 #[win32_derive::dllexport]
-pub fn ValidateRect(_ctx: &mut Context, _hWnd: HWND, _lpRect: u32) -> bool {
-    todo!()
-}
-
-#[win32_derive::dllexport]
 pub fn CreateCursor(
     _ctx: &mut Context,
     _hInst: HINSTANCE,
@@ -39,44 +33,6 @@ pub fn CreateCursor(
     _pvXORPlane: u32,
 ) -> HCURSOR {
     stub!(0)
-}
-
-#[win32_derive::dllexport]
-pub fn MapWindowPoints(
-    _ctx: &mut Context,
-    _hWndFrom: HWND,
-    _hWndTo: HWND,
-    _lpPoints: u32, /* POINT */
-    _cPoints: u32,
-) -> i32 {
-    todo!()
-}
-
-#[win32_derive::dllexport]
-pub fn PtInRect(ctx: &mut Context, lprc: u32 /* RECT */, x: i32, y: i32) -> bool {
-    let rect = RECT::read_from_prefix(&ctx.memory[lprc..]).unwrap().0;
-    let point = POINT { x, y };
-    rect.contains(point)
-}
-
-#[win32_derive::dllexport]
-pub fn SetRect(
-    ctx: &mut Context,
-    lprc: u32, /* RECT */
-    xLeft: i32,
-    yTop: i32,
-    xRight: i32,
-    yBottom: i32,
-) -> bool {
-    RECT {
-        left: xLeft,
-        top: yTop,
-        right: xRight,
-        bottom: yBottom,
-    }
-    .write_to_prefix(&mut ctx.memory[lprc..])
-    .unwrap();
-    true
 }
 
 #[win32_derive::dllexport]
@@ -108,50 +64,6 @@ pub fn CheckMenuItem(_ctx: &mut Context, _hMenu: HMENU, _uIDCheckItem: u32, _uCh
 pub type LRESULT = i32;
 
 #[win32_derive::dllexport]
-pub fn DialogBoxParamW(
-    _ctx: &mut Context,
-    _hInstance: HINSTANCE,
-    _lpTemplateName: u32, /* WSTR */
-    _hWndParent: HWND,
-    _lpDialogFunc: u32, /* DLGPROC */
-    _dwInitParam: LPARAM,
-) -> i32 {
-    todo!()
-}
-
-#[win32_derive::dllexport]
-pub fn GetDesktopWindow(_ctx: &mut Context) -> HWND {
-    stub!(HWND::null())
-}
-
-#[win32_derive::dllexport]
-pub fn GetDlgItem(_ctx: &mut Context, _hDlg: HWND, _nIDDlgItem: i32) -> HWND {
-    todo!()
-}
-
-#[win32_derive::dllexport]
-pub fn GetDlgItemInt(
-    _ctx: &mut Context,
-    _hDlg: HWND,
-    _nIDDlgItem: i32,
-    _lpTranslated: bool,
-    _bSigned: bool,
-) -> u32 {
-    todo!()
-}
-
-#[win32_derive::dllexport]
-pub fn GetDlgItemTextW(
-    _ctx: &mut Context,
-    _hDlg: HWND,
-    _nIDDlgItem: i32,
-    _lpString: u32, /* WSTR */
-    _cchMax: i32,
-) -> u32 {
-    todo!()
-}
-
-#[win32_derive::dllexport]
 pub fn GetMenuItemRect(
     _ctx: &mut Context,
     _hWnd: HWND,
@@ -176,61 +88,6 @@ pub fn MessageBoxW(
     _uType: u32,     /* MESSAGEBOX_STYLE */
 ) -> u32 /* MESSAGEBOX_RESULT */ {
     stub!(0)
-}
-
-#[win32_derive::dllexport]
-pub fn PeekMessageW(
-    _ctx: &mut Context,
-    _lpMsg: u32, /*MSG*/
-    _hWnd: HWND,
-    _wMsgFilterMin: u32,
-    _wMsgFilterMax: u32,
-    _wRemoveMsg: u32, /* PEEK_MESSAGE_REMOVE_TYPE */
-) -> bool {
-    todo!()
-}
-
-#[win32_derive::dllexport]
-pub fn PostMessageW(
-    _ctx: &mut Context,
-    _hWnd: HWND,
-    _Msg: u32,
-    _wParam: WPARAM,
-    _lParam: LPARAM,
-) -> bool {
-    todo!()
-}
-
-#[win32_derive::dllexport]
-pub fn SendMessageW(
-    _ctx: &mut Context,
-    _hWnd: HWND,
-    _Msg: u32,
-    _wParam: WPARAM,
-    _lParam: LPARAM,
-) -> LRESULT {
-    todo!()
-}
-
-#[win32_derive::dllexport]
-pub fn SetDlgItemInt(
-    _ctx: &mut Context,
-    _hDlg: HWND,
-    _nIDDlgItem: i32,
-    _uValue: u32,
-    _bSigned: bool,
-) -> bool {
-    todo!()
-}
-
-#[win32_derive::dllexport]
-pub fn SetDlgItemTextW(
-    _ctx: &mut Context,
-    _hDlg: HWND,
-    _nIDDlgItem: i32,
-    _lpString: u32, /* WSTR */
-) -> bool {
-    todo!()
 }
 
 #[win32_derive::dllexport]

@@ -168,6 +168,18 @@ pub fn PeekMessageA(
 }
 
 #[win32_derive::dllexport]
+pub fn PeekMessageW(
+    _ctx: &mut Context,
+    _lpMsg: u32, /*MSG*/
+    _hWnd: HWND,
+    _wMsgFilterMin: u32,
+    _wMsgFilterMax: u32,
+    _wRemoveMsg: u32, /* PEEK_MESSAGE_REMOVE_TYPE */
+) -> bool {
+    todo!()
+}
+
+#[win32_derive::dllexport]
 pub fn GetMessageA(
     ctx: &mut Context,
     lpMsg: u32,
@@ -213,5 +225,27 @@ pub fn TranslateAcceleratorW(
 
 #[win32_derive::dllexport]
 pub fn PostQuitMessage(_ctx: &mut Context, _nExitCode: i32) {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn PostMessageW(
+    _ctx: &mut Context,
+    _hWnd: HWND,
+    _Msg: u32,
+    _wParam: WPARAM,
+    _lParam: LPARAM,
+) -> bool {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn SendMessageW(
+    _ctx: &mut Context,
+    _hWnd: HWND,
+    _Msg: u32,
+    _wParam: WPARAM,
+    _lParam: LPARAM,
+) -> u32 {
     todo!()
 }

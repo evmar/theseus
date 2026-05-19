@@ -423,3 +423,19 @@ pub fn InvalidateRect(
 ) -> bool {
     stub!(true)
 }
+
+#[win32_derive::dllexport]
+pub fn GetDesktopWindow(_ctx: &mut Context) -> HWND {
+    stub!(HWND::null())
+}
+
+#[win32_derive::dllexport]
+pub fn MapWindowPoints(
+    _ctx: &mut Context,
+    _hWndFrom: HWND,
+    _hWndTo: HWND,
+    _lpPoints: u32, /* POINT */
+    _cPoints: u32,
+) -> i32 {
+    todo!()
+}

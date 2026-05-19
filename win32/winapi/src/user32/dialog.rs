@@ -29,6 +29,18 @@ pub fn DialogBoxParamA(
 }
 
 #[win32_derive::dllexport]
+pub fn DialogBoxParamW(
+    _ctx: &mut Context,
+    _hInstance: HINSTANCE,
+    _lpTemplateName: u32, /* WSTR */
+    _hWndParent: HWND,
+    _lpDialogFunc: u32, /* DLGPROC */
+    _dwInitParam: u32,
+) -> i32 {
+    todo!()
+}
+
+#[win32_derive::dllexport]
 pub fn CheckDlgButton(
     _ctx: &mut Context,
     _hDlg: HWND,
@@ -45,5 +57,53 @@ pub fn EndDialog(_ctx: &mut Context, _hDlg: HWND, _nResult: i32) -> bool {
 
 #[win32_derive::dllexport]
 pub fn IsDlgButtonChecked(_ctx: &mut Context, _hDlg: HWND, _nIDButton: i32) -> u32 {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn GetDlgItem(_ctx: &mut Context, _hDlg: HWND, _nIDDlgItem: i32) -> HWND {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn GetDlgItemInt(
+    _ctx: &mut Context,
+    _hDlg: HWND,
+    _nIDDlgItem: i32,
+    _lpTranslated: bool,
+    _bSigned: bool,
+) -> u32 {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn GetDlgItemTextW(
+    _ctx: &mut Context,
+    _hDlg: HWND,
+    _nIDDlgItem: i32,
+    _lpString: u32, /* WSTR */
+    _cchMax: i32,
+) -> u32 {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn SetDlgItemInt(
+    _ctx: &mut Context,
+    _hDlg: HWND,
+    _nIDDlgItem: i32,
+    _uValue: u32,
+    _bSigned: bool,
+) -> bool {
+    todo!()
+}
+
+#[win32_derive::dllexport]
+pub fn SetDlgItemTextW(
+    _ctx: &mut Context,
+    _hDlg: HWND,
+    _nIDDlgItem: i32,
+    _lpString: u32, /* WSTR */
+) -> bool {
     todo!()
 }

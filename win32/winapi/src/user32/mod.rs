@@ -1,6 +1,7 @@
 mod dialog;
 mod message;
 mod misc;
+mod rect;
 mod resource;
 mod window;
 
@@ -12,6 +13,7 @@ use std::{
 pub use dialog::*;
 pub use message::*;
 pub use misc::*;
+pub use rect::*;
 pub use resource::*;
 pub use window::*;
 
