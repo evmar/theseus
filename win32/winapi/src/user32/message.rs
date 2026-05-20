@@ -123,7 +123,7 @@ impl MessageQueue {
 
     /// Read one pending host message, if any available.
     fn poll_host(&mut self) {
-        let Some(message) = host::host().main_thread.get().poll() else {
+        let Some(message) = host::host().poll() else {
             return;
         };
         self.enqueue_message(message);
@@ -131,7 +131,7 @@ impl MessageQueue {
 
     /// Wait for a new message to arrive.
     fn wait_host(&mut self) {
-        let message = host::host().main_thread.get().wait();
+        let message = host::host().wait();
         self.enqueue_message(message);
     }
 

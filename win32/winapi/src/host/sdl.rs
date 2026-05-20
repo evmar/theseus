@@ -294,15 +294,11 @@ impl MainThread {
 }
 
 impl Host {
+    #[allow(unused)] // todo
     pub fn print(&self, text: &[u8]) {
         use std::io::Write;
         std::io::stdout().write_all(text).unwrap();
     }
-}
-
-pub struct AudioSpec {
-    pub sample_rate: u32,
-    pub channels: u32,
 }
 
 pub struct AudioStream(*mut sdl::audio::SDL_AudioStream);
@@ -332,7 +328,17 @@ impl AudioStream {
 }
 
 impl Host {
-    pub fn create_audio_stream(&self, spec: AudioSpec) -> AudioStream {
+    pub fn poll(&self) -> Option<host::Message> {
+        self.main_thread.get().poll()
+    }
+    pub fn wait(&self) -> host::Message {
+        self.main_thread.get().wait()
+    }
+    pub fn create_window(&self, title: &str, width: u32, height: u32) -> Window {
+        self.main_thread.get().create_window(title, width, height)
+    }
+
+    pub fn create_audio_stream(&self, spec: host::AudioSpec) -> AudioStream {
         unsafe {
             let stream = sdl::audio::SDL_OpenAudioDeviceStream(
                 sdl::audio::SDL_AudioDeviceID::DEFAULT_PLAYBACK,
