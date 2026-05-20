@@ -33,6 +33,12 @@ impl<T: zerocopy::FromBytes> Ptr<T> {
     }
 }
 
+impl<T: zerocopy::FromBytes + zerocopy::Immutable + zerocopy::KnownLayout> Ptr<T> {
+    pub fn aligned_ref<'a>(&self, memory: &'a Memory) -> &'a T {
+        <T>::ref_from_bytes(&memory[self.addr..][..std::mem::size_of::<T>()]).unwrap()
+    }
+}
+
 impl<T: zerocopy::IntoBytes + zerocopy::Immutable> Ptr<T> {
     pub fn write(&self, memory: &mut Memory, value: T) -> Option<()> {
         if self.addr < 0x1000 {
@@ -42,6 +48,14 @@ impl<T: zerocopy::IntoBytes + zerocopy::Immutable> Ptr<T> {
         let bytes = &mut memory[self.addr..][..std::mem::size_of::<T>()];
         value.write_to(bytes).unwrap();
         Some(())
+    }
+}
+
+impl<T: zerocopy::FromBytes + zerocopy::IntoBytes + zerocopy::Immutable + zerocopy::KnownLayout>
+    Ptr<T>
+{
+    pub fn aligned_mut<'a>(&self, memory: &'a mut Memory) -> &'a mut T {
+        <T>::mut_from_bytes(&mut memory[self.addr..][..std::mem::size_of::<T>()]).unwrap()
     }
 }
 

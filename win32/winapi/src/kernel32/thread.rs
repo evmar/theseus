@@ -1,5 +1,4 @@
 use runtime::Context;
-use zerocopy::FromBytes as _;
 
 use crate::{
     HANDLE, Ptr,
@@ -46,17 +45,14 @@ pub struct TEB {
 
 #[allow(unused)]
 pub fn teb<'a>(ctx: &'a mut Context) -> &'a TEB {
-    let teb_addr = ctx.cpu.regs.fs_base;
-    let teb = TEB::ref_from_bytes(&ctx.memory[teb_addr..][..std::mem::size_of::<TEB>()]).unwrap();
-    teb
+    let teb_ptr = Ptr::<TEB>::new(ctx.cpu.regs.fs_base);
+    teb_ptr.aligned_ref(&ctx.memory)
 }
 
 #[allow(unused)]
 pub fn teb_mut<'a>(ctx: &'a mut Context) -> &'a mut TEB {
-    let teb_addr = ctx.cpu.regs.fs_base;
-    let teb =
-        TEB::mut_from_bytes(&mut ctx.memory[teb_addr..][..std::mem::size_of::<TEB>()]).unwrap();
-    teb
+    let teb_ptr = Ptr::<TEB>::new(ctx.cpu.regs.fs_base);
+    teb_ptr.aligned_mut(&mut ctx.memory)
 }
 
 impl kernel32::State {
@@ -90,8 +86,7 @@ impl kernel32::State {
             format!("thread {} TEB", ctx.thread_id),
             std::mem::size_of::<TEB>() as u32,
         );
-        let buf = &mut ctx.memory[teb_addr..][..std::mem::size_of::<TEB>()];
-        let teb = TEB::mut_from_bytes(buf).unwrap();
+        let teb = Ptr::<TEB>::new(teb_addr).aligned_mut(&mut ctx.memory);
         teb.Peb = peb_addr;
         teb.Tib._Self = teb_addr;
         ctx.cpu.regs.fs_base = teb_addr;
