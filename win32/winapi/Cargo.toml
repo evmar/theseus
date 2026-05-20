@@ -16,4 +16,6 @@ zerocopy = { workspace = true }
 
 [target.'cfg(not(target_family = "wasm"))'.dependencies]
 sdl3-sys = { version = "0.6.5", features = ["debug-impls"] }
-wasm-bindgen = { workspace = true }
+
+[target.'cfg(target_family = "wasm")'.dependencies]
+console_error_panic_hook = "0.1.7"

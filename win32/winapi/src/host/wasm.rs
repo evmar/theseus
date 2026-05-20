@@ -44,7 +44,8 @@ pub struct Host {}
 
 impl Host {
     pub fn new() -> Self {
-        todo!()
+        std::panic::set_hook(Box::new(console_error_panic_hook::hook));
+        Host {}
     }
 
     pub fn poll(&self) -> Option<host::Message> {
