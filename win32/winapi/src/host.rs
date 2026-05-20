@@ -16,6 +16,7 @@ pub enum Message {
     MouseDown(MouseMessage),
     MouseUp(MouseMessage),
     MouseMove(MouseMessage),
+    Quit,
 }
 
 pub fn init() {

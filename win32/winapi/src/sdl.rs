@@ -113,6 +113,9 @@ fn msg_from_event(event: &sdl::events::SDL_Event) -> Option<host::Message> {
                     return Some(host::Message::MouseUp(message));
                 }
             }
+            SDL_EventType::QUIT => {
+                return Some(host::Message::Quit);
+            }
             _ => {}
         }
         //log::warn!("todo: handle sdl event: {:#x?}", typ);

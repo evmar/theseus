@@ -19,6 +19,7 @@ pub type LPARAM = u32;
 #[derive(win32_derive::ABIEnum)]
 pub enum WM {
     PAINT = 0xf,
+    QUIT = 0x12,
     MOUSEMOVE = 0x200,
     LBUTTONDOWN = 0x201,
     LBUTTONUP = 0x202,
@@ -43,6 +44,7 @@ pub struct MSG {
 pub struct MessageQueue {
     pub hwnd: HWND,
     messages: VecDeque<MSG>,
+    quit: Option<MSG>,
 }
 
 win32flags! {
@@ -95,42 +97,56 @@ fn mouse_msg(wm: WM, hwnd: HWND, message: &host::MouseMessage) -> MSG {
 
 impl MessageQueue {
     fn peek(&mut self) -> Option<&MSG> {
-        self.messages.front()
+        if let Some(msg) = self.messages.front() {
+            Some(msg)
+        } else {
+            self.quit.as_ref()
+        }
     }
-    fn pop(&mut self) {
-        self.messages.pop_front();
+    fn pop(&mut self) -> Option<MSG> {
+        if let Some(msg) = self.messages.pop_front() {
+            Some(msg)
+        } else {
+            self.quit.take()
+        }
     }
 
     /// Pop one message, waiting for a new one if necessary.
     fn read(&mut self) -> MSG {
         loop {
-            if let Some(msg) = self.messages.pop_front() {
+            if let Some(msg) = self.pop() {
                 return msg;
             }
-            self.wait();
+            self.wait_host();
         }
     }
 
     /// Read one pending host message, if any available.
-    fn poll(&mut self) {
+    fn poll_host(&mut self) {
         let Some(message) = host::host().main_thread.get().poll() else {
             return;
         };
-        let msg = self.msg_from_message(message);
-        if *LOG_MESSAGES {
-            log::info!("{:#x?}", msg);
-        }
-        self.messages.push_back(msg);
+        self.enqueue_message(message);
     }
 
     /// Wait for a new message to arrive.
-    fn wait(&mut self) {
+    fn wait_host(&mut self) {
         let message = host::host().main_thread.get().wait();
-        let msg = self.msg_from_message(message);
+        self.enqueue_message(message);
+    }
+
+    fn enqueue_message(&mut self, msg: host::Message) {
+        let msg = self.msg_from_message(msg);
         if *LOG_MESSAGES {
             log::info!("{:#x?}", msg);
         }
-        self.messages.push_back(msg);
+
+        // PAINT/TIMER/QUIT are in special queues.
+        if msg.message == WM::QUIT as u32 {
+            self.quit = Some(msg);
+        } else {
+            self.messages.push_back(msg);
+        }
     }
 
     fn msg_from_message(&self, message: host::Message) -> MSG {
@@ -149,6 +165,16 @@ impl MessageQueue {
             MouseDown(mouse) => mouse_msg(mouse_button_to_wm(true, &mouse), self.hwnd, &mouse),
             MouseUp(mouse) => mouse_msg(mouse_button_to_wm(false, &mouse), self.hwnd, &mouse),
             MouseMove(mouse) => mouse_msg(WM::MOUSEMOVE, self.hwnd, &mouse),
+            Quit => {
+                MSG {
+                    hwnd: self.hwnd,
+                    message: WM::QUIT as u32,
+                    wParam: 0, // todo
+                    lParam: 0, // todo
+                    time: 0,   // todo
+                    pt: POINT::default(),
+                }
+            }
         }
     }
 }
@@ -190,10 +216,11 @@ pub fn PeekMessageA(
         _ => todo!(), // e.g. PM_NOYIELD
     };
     let mut queue = state().message_queue.borrow_mut();
-    queue.poll();
+    queue.poll_host();
     let Some(msg) = queue.peek() else {
         return false;
     };
+
     if hWnd.is_null() {
     } else if hWnd.is_invalid() {
         // TODO: only null hwnd messages
@@ -241,6 +268,9 @@ pub fn GetMessageW(
     _wMsgFilterMax: u32,
 ) -> i32 {
     let msg = state().message_queue.borrow_mut().read();
+    if msg.message == WM::QUIT as u32 {
+        return 0;
+    }
 
     if hWnd.is_null() {
     } else if hWnd.is_invalid() {
