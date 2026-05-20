@@ -43,27 +43,34 @@ win32flags! {
     }
 }
 
-fn mouse_msg(is_down: bool, hwnd: HWND, message: host::MouseMessage) -> MSG {
-    let wParam = match message.button {
-        1 => MK::LBUTTON,
-        2 => MK::RBUTTON,
-        3 => MK::MBUTTON,
-        _ => MK::empty(),
-    }
-    .bits();
-    let wm = match (message.button, is_down) {
+fn mouse_button_to_wm(is_down: bool, message: &host::MouseMessage) -> u32 {
+    match (message.button, is_down) {
         (1, true) => 0x201,  // WM_LBUTTONDOWN
         (1, false) => 0x202, // WM_LBUTTONUP
         (2, true) => 0x204,  // WM_RBUTTONDOWN
         (2, false) => 0x205, // WM_RBUTTONUP
         (3, true) => 0x207,  // WM_MBUTTONDOWN
         (3, false) => 0x208, // WM_MBUTTONUP
-        _ => unreachable!("unsupported mouse button {}", message.button),
-    };
+        _ => todo!("mouse button {}", message.button),
+    }
+}
+
+fn mouse_msg(wm: u32, hwnd: HWND, message: &host::MouseMessage) -> MSG {
+    let mut wParam = MK::empty();
+    if message.buttons & 1 != 0 {
+        wParam |= MK::LBUTTON;
+    }
+    if message.buttons & (1 << 1) != 0 {
+        wParam |= MK::RBUTTON;
+    }
+    if message.buttons & (1 << 2) != 0 {
+        wParam |= MK::MBUTTON;
+    }
+
     MSG {
         hwnd,
         message: wm,
-        wParam,
+        wParam: wParam.bits(),
         lParam: (message.y as u16 as u32) << 16 | message.x as u16 as u32,
         time: 0, // todo
         // TODO: screen coordinates
@@ -127,8 +134,9 @@ impl MessageQueue {
                     pt: POINT::default(),
                 }
             }
-            MouseDown(mouse) => mouse_msg(true, self.hwnd, mouse),
-            MouseUp(mouse) => mouse_msg(false, self.hwnd, mouse),
+            MouseDown(mouse) => mouse_msg(mouse_button_to_wm(true, &mouse), self.hwnd, &mouse),
+            MouseUp(mouse) => mouse_msg(mouse_button_to_wm(false, &mouse), self.hwnd, &mouse),
+            MouseMove(mouse) => mouse_msg(0x200 /* WM_MOUSEMOVE */, self.hwnd, &mouse),
         }
     }
 }

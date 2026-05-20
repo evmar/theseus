@@ -60,12 +60,39 @@ impl Host {
     }
 }
 
+fn mouse_button_mask(button: u32) -> u32 {
+    1 << (button - 1)
+}
+
+fn mouse_buttons_from_sdl(state: sdl::mouse::SDL_MouseButtonFlags) -> u32 {
+    let mut buttons = 0;
+    if state.0 & sdl::mouse::SDL_BUTTON_LMASK.0 != 0 {
+        buttons |= mouse_button_mask(1);
+    }
+    if state.0 & sdl::mouse::SDL_BUTTON_RMASK.0 != 0 {
+        buttons |= mouse_button_mask(2);
+    }
+    if state.0 & sdl::mouse::SDL_BUTTON_MMASK.0 != 0 {
+        buttons |= mouse_button_mask(3);
+    }
+    buttons
+}
+
 fn msg_from_event(event: &sdl::events::SDL_Event) -> Option<host::Message> {
     unsafe {
         use sdl::events::SDL_EventType;
         let typ: sdl::events::SDL_EventType = std::mem::transmute(event.r#type);
         match typ {
             SDL_EventType::WINDOW_EXPOSED => return Some(host::Message::Paint),
+            SDL_EventType::MOUSE_MOTION => {
+                let event = &event.motion;
+                return Some(host::Message::MouseMove(host::MouseMessage {
+                    x: event.x as u32,
+                    y: event.y as u32,
+                    button: 0,
+                    buttons: mouse_buttons_from_sdl(event.state),
+                }));
+            }
             SDL_EventType::MOUSE_BUTTON_DOWN | SDL_EventType::MOUSE_BUTTON_UP => {
                 let event = &event.button;
                 let button = match event.button as _ {
@@ -78,6 +105,7 @@ fn msg_from_event(event: &sdl::events::SDL_Event) -> Option<host::Message> {
                     x: event.x as u32,
                     y: event.y as u32,
                     button: button as u32,
+                    buttons: mouse_button_mask(button as u32),
                 };
                 if typ == SDL_EventType::MOUSE_BUTTON_DOWN {
                     return Some(host::Message::MouseDown(message));

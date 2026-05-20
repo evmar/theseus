@@ -8,12 +8,14 @@ pub struct MouseMessage {
     pub x: u32,
     pub y: u32,
     pub button: u32,
+    pub buttons: u32,
 }
 
 pub enum Message {
     Paint,
     MouseDown(MouseMessage),
     MouseUp(MouseMessage),
+    MouseMove(MouseMessage),
 }
 
 pub fn init() {
