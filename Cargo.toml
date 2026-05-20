@@ -30,6 +30,7 @@ pe = { path = "win32/pe" }
 runtime = { path = "runtime" }
 tc = { path = "tc" }
 wasm-bindgen = "0.2.121"
+web-sys = "0.3.98"
 widestring = "1.2.1"
 winapi = { path = "win32/winapi" }
 zerocopy = { version = "0.8.40", features = ["derive"] }

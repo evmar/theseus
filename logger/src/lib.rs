@@ -4,6 +4,7 @@ impl log::Log for Logger {
         true
     }
 
+    #[cfg(not(target_family = "wasm"))]
     fn log(&self, record: &log::Record) {
         use colored::Colorize;
         use log::Level::*;
@@ -21,6 +22,22 @@ impl log::Log for Logger {
             record.line().unwrap_or(0),
             record.args()
         );
+    }
+
+    #[cfg(target_family = "wasm")]
+    fn log(&self, record: &log::Record) {
+        let s = format!(
+            "{}:{} {}",
+            record.file().unwrap_or("?"),
+            record.line().unwrap_or(0),
+            record.args()
+        );
+        match record.level() {
+            log::Level::Error => web_sys::console::error_1(&s.into()),
+            log::Level::Warn => web_sys::console::warn_1(&s.into()),
+            log::Level::Info => web_sys::console::log_1(&s.into()),
+            log::Level::Debug | log::Level::Trace => web_sys::console::debug_1(&s.into()),
+        }
     }
 
     fn flush(&self) {}
