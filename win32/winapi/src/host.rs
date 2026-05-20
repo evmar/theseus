@@ -1,5 +1,6 @@
 use std::sync::LazyLock;
 
+#[cfg(not(target_family = "wasm"))]
 pub use crate::sdl::*;
 
 static HOST: LazyLock<Host> = LazyLock::new(Host::new);

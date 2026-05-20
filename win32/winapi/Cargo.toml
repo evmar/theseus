@@ -10,7 +10,9 @@ log = { workspace = true }
 logger = { workspace = true }
 pe = { workspace = true }
 runtime = { workspace = true }
-sdl3-sys = { version = "0.6.5", features = ["debug-impls"] }
 widestring = { workspace = true }
 win32-derive = { path = "../derive" }
 zerocopy = { workspace = true }
+
+[target.'cfg(not(target_family = "wasm"))'.dependencies]
+sdl3-sys = { version = "0.6.5", features = ["debug-impls"] }

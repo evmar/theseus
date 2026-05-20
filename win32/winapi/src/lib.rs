@@ -17,6 +17,7 @@ pub mod msvcrt;
 mod point;
 mod ptr;
 mod rect;
+#[cfg(not(target_family = "wasm"))]
 pub mod sdl;
 pub mod shell32;
 pub mod trace;
