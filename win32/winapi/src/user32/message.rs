@@ -1,15 +1,17 @@
-use std::collections::VecDeque;
+use std::{collections::VecDeque, sync::LazyLock};
 
 use runtime::Context;
 
 use crate::{
     POINT, Ptr,
     dllexport::win32flags,
-    host, stub,
+    host, stub, trace,
     user32::{HACCEL, HWND, state},
 };
 
-const LOG_MESSAGES: bool = false;
+/// If THESEUS_TRACE includes "wm", log all Windows messages.
+static LOG_MESSAGES: LazyLock<bool> =
+    LazyLock::new(|| !matches!(trace::get_uncached("wm"), trace::Trace::None));
 
 pub type WPARAM = u32;
 pub type LPARAM = u32;
@@ -96,7 +98,7 @@ impl MessageQueue {
             return;
         };
         let msg = self.msg_from_message(message);
-        if LOG_MESSAGES {
+        if *LOG_MESSAGES {
             log::info!("{:#x?}", msg);
         }
         self.messages.push_back(msg);
@@ -106,7 +108,7 @@ impl MessageQueue {
     fn wait(&mut self) {
         let message = host::host().main_thread.get().wait();
         let msg = self.msg_from_message(message);
-        if LOG_MESSAGES {
+        if *LOG_MESSAGES {
             log::info!("{:#x?}", msg);
         }
         self.messages.push_back(msg);

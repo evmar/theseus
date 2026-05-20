@@ -59,7 +59,7 @@ pub fn dllexport(_attr: TokenStream, mut tokens: TokenStream) -> TokenStream {
     call_args.next(); // skip return_addr
 
     let out: TokenStream = quote! {
-        static mut #trace_cache: crate::trace::Trace = crate::trace::Trace::Unknown;
+        static mut #trace_cache: Option<crate::trace::Trace> = None;
         #[allow(static_mut_refs)]
         pub fn #wrapper_name(ctx: &mut crate::Context) -> runtime::Cont {
             use crate::{ABIReturn, FromABIParam};

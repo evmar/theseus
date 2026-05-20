@@ -6,7 +6,6 @@ use std::sync::OnceLock;
 
 #[derive(Clone, Copy)]
 pub enum Trace {
-    Unknown,
     None,
     Before,
 }
@@ -48,10 +47,7 @@ pub fn init(scheme: &str) {
     STATE.get_or_init(|| State::parse(scheme));
 }
 
-pub fn get(cache: &mut Trace, path: &str) -> Trace {
-    if !matches!(*cache, Trace::Unknown) {
-        return *cache;
-    }
+pub fn get_uncached(path: &str) -> Trace {
     let state = STATE.get().unwrap();
     let mut enabled = false;
     for rule in &state.rules {
@@ -60,7 +56,14 @@ pub fn get(cache: &mut Trace, path: &str) -> Trace {
             // Don't break, let last match win.
         }
     }
-    let trace = if enabled { Trace::Before } else { Trace::None };
-    *cache = trace;
+    if enabled { Trace::Before } else { Trace::None }
+}
+
+pub fn get(cache: &mut Option<Trace>, path: &str) -> Trace {
+    if let Some(trace) = *cache {
+        return trace;
+    }
+    let trace = get_uncached(path);
+    *cache = Some(trace);
     trace
 }
