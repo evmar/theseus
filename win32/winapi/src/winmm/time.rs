@@ -1,8 +1,7 @@
 use runtime::Context;
 
 use crate::{
-    kernel32::{self, get_tick_count},
-    stub,
+    host, kernel32, stub,
     winmm::{state, winmm_main},
 };
 
@@ -50,7 +49,7 @@ pub fn timeSetEvent(
     assert!(state.timer.is_none());
     state.timer = Some(Timer {
         period: uDelay,
-        next: get_tick_count() + uDelay,
+        next: host::host().time() + uDelay,
         callback: lpTimeProc,
         user_data: dwUser,
     });

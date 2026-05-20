@@ -3,7 +3,7 @@ use std::{cell::Cell, collections::HashMap, sync::Mutex};
 use crate::{
     Handles,
     heap::Heap,
-    kernel32::{self, CommandLine, Mappings, Object, UnsafeTickCount},
+    kernel32::{self, CommandLine, Mappings, Object},
     locked_state::LockedState,
 };
 
@@ -24,7 +24,6 @@ pub struct State {
 static STATE: Mutex<Option<State>> = Mutex::new(None);
 
 pub fn init_state(image_base: u32, resources: std::ops::Range<u32>) {
-    UnsafeTickCount::init();
     let mut state = STATE.lock().unwrap();
     *state = Some(State {
         image_base,

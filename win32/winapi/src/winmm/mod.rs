@@ -9,7 +9,7 @@ pub use wave::*;
 mod misc;
 pub use misc::*;
 
-use crate::kernel32::get_tick_count;
+use crate::host;
 
 #[derive(Default)]
 pub struct State {
@@ -33,7 +33,7 @@ fn winmm_main(ctx: &mut Context) {
             return;
         };
 
-        let now = get_tick_count();
+        let now = host::host().time();
         if now < timer.next {
             let delta = timer.next - now;
             std::thread::sleep(std::time::Duration::from_millis(delta as u64));

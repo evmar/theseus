@@ -63,4 +63,8 @@ impl Host {
     pub fn create_audio_stream(&self, spec: host::AudioSpec) -> AudioStream {
         todo!()
     }
+
+    pub fn time(&self) -> u32 {
+        todo!()
+    }
 }

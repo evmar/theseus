@@ -353,4 +353,8 @@ impl Host {
             AudioStream(stream)
         }
     }
+
+    pub fn time(&self) -> u32 {
+        unsafe { sdl::timer::SDL_GetTicks() as u32 }
+    }
 }
