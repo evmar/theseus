@@ -16,6 +16,18 @@ static LOG_MESSAGES: LazyLock<bool> =
 pub type WPARAM = u32;
 pub type LPARAM = u32;
 
+#[derive(win32_derive::ABIEnum)]
+pub enum WM {
+    PAINT = 0xf,
+    MOUSEMOVE = 0x200,
+    LBUTTONDOWN = 0x201,
+    LBUTTONUP = 0x202,
+    RBUTTONDOWN = 0x204,
+    RBUTTONUP = 0x205,
+    MBUTTONDOWN = 0x207,
+    MBUTTONUP = 0x208,
+}
+
 #[repr(C)]
 #[derive(Copy, Clone, Debug, zerocopy::FromBytes, zerocopy::IntoBytes, zerocopy::Immutable)]
 pub struct MSG {
@@ -43,19 +55,19 @@ win32flags! {
     }
 }
 
-fn mouse_button_to_wm(is_down: bool, message: &host::MouseMessage) -> u32 {
+fn mouse_button_to_wm(is_down: bool, message: &host::MouseMessage) -> WM {
     match (message.button, is_down) {
-        (1, true) => 0x201,  // WM_LBUTTONDOWN
-        (1, false) => 0x202, // WM_LBUTTONUP
-        (2, true) => 0x204,  // WM_RBUTTONDOWN
-        (2, false) => 0x205, // WM_RBUTTONUP
-        (3, true) => 0x207,  // WM_MBUTTONDOWN
-        (3, false) => 0x208, // WM_MBUTTONUP
+        (1, true) => WM::LBUTTONDOWN,
+        (1, false) => WM::LBUTTONUP,
+        (2, true) => WM::RBUTTONDOWN,
+        (2, false) => WM::RBUTTONUP,
+        (3, true) => WM::MBUTTONDOWN,
+        (3, false) => WM::MBUTTONUP,
         _ => todo!("mouse button {}", message.button),
     }
 }
 
-fn mouse_msg(wm: u32, hwnd: HWND, message: &host::MouseMessage) -> MSG {
+fn mouse_msg(wm: WM, hwnd: HWND, message: &host::MouseMessage) -> MSG {
     let mut wParam = MK::empty();
     if message.buttons & 1 != 0 {
         wParam |= MK::LBUTTON;
@@ -69,7 +81,7 @@ fn mouse_msg(wm: u32, hwnd: HWND, message: &host::MouseMessage) -> MSG {
 
     MSG {
         hwnd,
-        message: wm,
+        message: wm as u32,
         wParam: wParam.bits(),
         lParam: (message.y as u16 as u32) << 16 | message.x as u16 as u32,
         time: 0, // todo
@@ -127,16 +139,16 @@ impl MessageQueue {
             Paint => {
                 MSG {
                     hwnd: self.hwnd,
-                    message: 0xf, // WM_PAINT,
-                    wParam: 0,    // todo
-                    lParam: 0,    // todo
-                    time: 0,      // todo
+                    message: WM::PAINT as u32,
+                    wParam: 0, // todo
+                    lParam: 0, // todo
+                    time: 0,   // todo
                     pt: POINT::default(),
                 }
             }
             MouseDown(mouse) => mouse_msg(mouse_button_to_wm(true, &mouse), self.hwnd, &mouse),
             MouseUp(mouse) => mouse_msg(mouse_button_to_wm(false, &mouse), self.hwnd, &mouse),
-            MouseMove(mouse) => mouse_msg(0x200 /* WM_MOUSEMOVE */, self.hwnd, &mouse),
+            MouseMove(mouse) => mouse_msg(WM::MOUSEMOVE, self.hwnd, &mouse),
         }
     }
 }
