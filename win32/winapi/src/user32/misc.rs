@@ -1,7 +1,7 @@
 use runtime::Context;
 
 use super::*;
-use crate::stub;
+use crate::{Ptr, RECT, stub};
 
 #[win32_derive::dllexport]
 pub fn GetSystemMetrics(_ctx: &mut Context, nIndex: u32 /* SYSTEM_METRICS_INDEX */) -> i32 {
@@ -29,8 +29,8 @@ pub fn CreateCursor(
     _yHotSpot: i32,
     _nWidth: i32,
     _nHeight: i32,
-    _pvANDPlane: u32,
-    _pvXORPlane: u32,
+    _pvANDPlane: Ptr<u8>,
+    _pvXORPlane: Ptr<u8>,
 ) -> HCURSOR {
     stub!(0)
 }
@@ -49,7 +49,7 @@ pub fn SetCapture(_ctx: &mut Context, _hWnd: HWND) -> HWND {
 pub fn WinHelpW(
     _ctx: &mut Context,
     _hWndMain: HWND,
-    _lpszHelp: u32, /* WSTR */
+    _lpszHelp: Ptr<u16>, /* WSTR */
     _uCommand: u32,
     _dwData: u32,
 ) -> bool {
@@ -69,7 +69,7 @@ pub fn GetMenuItemRect(
     _hWnd: HWND,
     _hMenu: HMENU,
     _uItem: u32,
-    _lprcItem: u32, /* RECT */
+    _lprcItem: Ptr<RECT>,
 ) -> bool {
     todo!()
 }
@@ -83,9 +83,9 @@ pub fn KillTimer(_ctx: &mut Context, _hWnd: HWND, _uIDEvent: u32) -> bool {
 pub fn MessageBoxW(
     _ctx: &mut Context,
     _hWnd: HWND,
-    _lpText: u32,    /* WSTR */
-    _lpCaption: u32, /* WSTR */
-    _uType: u32,     /* MESSAGEBOX_STYLE */
+    _lpText: Ptr<u16>,    /* WSTR */
+    _lpCaption: Ptr<u16>, /* WSTR */
+    _uType: u32,          /* MESSAGEBOX_STYLE */
 ) -> u32 /* MESSAGEBOX_RESULT */ {
     stub!(0)
 }
@@ -101,7 +101,7 @@ pub fn SetTimer(
     _hWnd: HWND,
     _nIDEvent: u32,
     _uElapse: u32,
-    _lpTimerFunc: u32, /* TIMERPROC */
+    _lpTimerFunc: Ptr<()>, /* TIMERPROC */
 ) -> u32 {
     stub!(0) // fail
 }
@@ -110,8 +110,8 @@ pub fn SetTimer(
 #[win32_derive::dllexport]
 pub fn wsprintfW(
     _ctx: &mut Context,
-    _param0: u32, /* WSTR */
-    _param1: u32, /* WSTR */
+    _param0: Ptr<u16>, /* WSTR */
+    _param1: Ptr<u16>, /* WSTR */
 ) -> i32 {
     todo!()
 }

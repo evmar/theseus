@@ -1,16 +1,15 @@
 use runtime::*;
-use zerocopy::FromBytes;
 
 use super::*;
-use crate::{dllexport::win32flags, gdi32, handle::HANDLE, kernel32, stub};
+use crate::{Ptr, dllexport::win32flags, gdi32, handle::HANDLE, kernel32, stub};
 
 #[win32_derive::dllexport]
-pub fn LoadCursorA(_ctx: &mut Context, _hInstance: HINSTANCE, _lpCursorName: u32) -> HCURSOR {
+pub fn LoadCursorA(_ctx: &mut Context, _hInstance: HINSTANCE, _lpCursorName: Ptr<u8>) -> HCURSOR {
     stub!(0)
 }
 
 #[win32_derive::dllexport]
-pub fn LoadIconA(_ctx: &mut Context, _hInstance: HINSTANCE, _lpIconName: u32) -> HICON {
+pub fn LoadIconA(_ctx: &mut Context, _hInstance: HINSTANCE, _lpIconName: Ptr<u8>) -> HICON {
     stub!(0)
 }
 
@@ -35,7 +34,7 @@ fn is_intresource(x: u32) -> bool {
 pub fn LoadImageA(
     ctx: &mut Context,
     hInst: HINSTANCE,
-    name: u32,
+    name: Ptr<u8>,
     typ: IMAGE,
     cx: u32,
     cy: u32,
@@ -43,8 +42,8 @@ pub fn LoadImageA(
 ) -> HANDLE {
     assert!(hInst == 0);
 
-    assert!(is_intresource(name));
-    let name = pe::ResourceName::Id(name);
+    assert!(is_intresource(name.addr));
+    let name = pe::ResourceName::Id(name.addr);
 
     assert!(typ == IMAGE::BITMAP);
     let typ = pe::ResourceName::Id(match typ {
@@ -79,7 +78,7 @@ pub type HMENU = u32;
 pub fn LoadAcceleratorsW(
     _ctx: &mut Context,
     _hInstance: HINSTANCE,
-    _lpTableName: u32, /* WSTR */
+    _lpTableName: Ptr<u16>, /* WSTR */
 ) -> HACCEL {
     stub!(0)
 }
@@ -88,7 +87,7 @@ pub fn LoadAcceleratorsW(
 pub fn LoadCursorW(
     _ctx: &mut Context,
     _hInstance: HINSTANCE,
-    _lpCursorName: u32, /* WSTR */
+    _lpCursorName: Ptr<u16>, /* WSTR */
 ) -> HCURSOR {
     stub!(0)
 }
@@ -97,7 +96,7 @@ pub fn LoadCursorW(
 pub fn LoadIconW(
     _ctx: &mut Context,
     _hInstance: HINSTANCE,
-    _lpIconName: u32, /* WSTR */
+    _lpIconName: Ptr<u16>, /* WSTR */
 ) -> HICON {
     stub!(0)
 }
@@ -106,7 +105,7 @@ pub fn LoadIconW(
 pub fn LoadMenuW(
     _ctx: &mut Context,
     _hInstance: HINSTANCE,
-    _lpMenuName: u32, /* WSTR */
+    _lpMenuName: Ptr<u16>, /* WSTR */
 ) -> HMENU {
     stub!(0)
 }
@@ -121,14 +120,18 @@ fn find_string(ctx: &Context, uID: u32) -> Option<&[u8]> {
         pe::ResourceName::Id(resource_id),
     )?;
 
+    use zerocopy::FromBytes;
     // Each block is a sequence of two byte length-prefixed strings.
     // Iterate through them to find the requested index.
-    for _ in 0..index {
-        let len = <u16>::read_from_prefix(block).unwrap().0;
-        block = &block[(1 + len as usize) * 2..];
+    for i in 0.. {
+        let (len, rest) = <u16>::read_from_prefix(block).unwrap();
+        let (cur, next) = rest.split_at(len as usize * 2);
+        if i == index {
+            return Some(cur);
+        }
+        block = next;
     }
-    let (len, rest) = <u16>::read_from_prefix(block).unwrap();
-    Some(&rest[..len as usize * 2])
+    unreachable!()
 }
 
 #[win32_derive::dllexport]
@@ -136,7 +139,7 @@ pub fn LoadStringW(
     ctx: &mut Context,
     hInstance: HINSTANCE,
     uID: u32,
-    lpBuffer: u32, /* WSTR */
+    lpBuffer: Ptr<u16>, /* WSTR */
     cchBufferMax: i32,
 ) -> i32 {
     assert_eq!(hInstance, 0);
@@ -145,7 +148,7 @@ pub fn LoadStringW(
         panic!();
     };
     let buf = Vec::from(bytes);
-    let out = &mut ctx.memory[lpBuffer..][..cchBufferMax as usize * 2];
+    let out = &mut ctx.memory[lpBuffer.addr..][..cchBufferMax as usize * 2];
     // TODO: handle case where buf.len() > cchBufferMax
     out[..buf.len()].copy_from_slice(&buf);
     buf.len() as i32 / 2

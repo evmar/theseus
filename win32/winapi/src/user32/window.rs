@@ -128,8 +128,8 @@ impl State {
 pub fn CreateWindowExA(
     ctx: &mut Context,
     _dwExStyle: u32, /* WINDOW_EX_STYLE */
-    _lpClassName: u32,
-    lpWindowName: u32,
+    _lpClassName: Ptr<u8>,
+    lpWindowName: Ptr<u8>,
     _dwStyle: u32, /* WINDOW_STYLE */
     X: i32,
     Y: i32,
@@ -138,9 +138,9 @@ pub fn CreateWindowExA(
     _hWndParent: HWND,
     _hMenu: HMENU,
     _hInstance: HINSTANCE,
-    _lpParam: u32,
+    _lpParam: Ptr<()>,
 ) -> HWND {
-    let name = ctx.memory.read_str(lpWindowName);
+    let name = ctx.memory.read_str(lpWindowName.addr);
     state().create_window(CreateWindowArgs {
         name: name.into(),
         x: X,
@@ -153,10 +153,10 @@ pub fn CreateWindowExA(
 #[win32_derive::dllexport]
 pub fn CreateWindowExW(
     ctx: &mut Context,
-    _dwExStyle: u32,   /* WINDOW_EX_STYLE */
-    _lpClassName: u32, /* WSTR */
-    lpWindowName: u32, /* WSTR */
-    _dwStyle: u32,     /* WINDOW_STYLE */
+    _dwExStyle: u32,        /* WINDOW_EX_STYLE */
+    _lpClassName: Ptr<u16>, /* WSTR */
+    lpWindowName: Ptr<u16>, /* WSTR */
+    _dwStyle: u32,          /* WINDOW_STYLE */
     X: i32,
     Y: i32,
     nWidth: CW,
@@ -164,9 +164,9 @@ pub fn CreateWindowExW(
     _hWndParent: HWND,
     _hMenu: HMENU,
     _hInstance: HINSTANCE,
-    _lpParam: u32,
+    _lpParam: Ptr<()>,
 ) -> HWND {
-    let name = ctx.memory.read_wstr(lpWindowName);
+    let name = ctx.memory.read_wstr(lpWindowName.addr);
     state().create_window(CreateWindowArgs {
         name: name.to_string_lossy(),
         x: X,
@@ -426,12 +426,7 @@ pub fn ReleaseDC(ctx: &mut Context, hWnd: HWND, hDC: HDC) -> i32 {
 }
 
 #[win32_derive::dllexport]
-pub fn InvalidateRect(
-    _ctx: &mut Context,
-    _hWnd: HWND,
-    _lpRect: u32, /* RECT */
-    _bErase: bool,
-) -> bool {
+pub fn InvalidateRect(_ctx: &mut Context, _hWnd: HWND, _lpRect: Ptr<RECT>, _bErase: bool) -> bool {
     stub!(true)
 }
 
@@ -477,6 +472,6 @@ pub fn MapWindowPoints(
 }
 
 #[win32_derive::dllexport]
-pub fn ValidateRect(_ctx: &mut Context, _hWnd: HWND, _lpRect: u32) -> bool {
+pub fn ValidateRect(_ctx: &mut Context, _hWnd: HWND, _lpRect: Ptr<RECT>) -> bool {
     stub!(true)
 }

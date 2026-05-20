@@ -1,7 +1,7 @@
 use runtime::Context;
 
 use crate::{
-    stub,
+    Ptr, stub,
     user32::{HINSTANCE, HWND},
 };
 
@@ -9,8 +9,8 @@ use crate::{
 pub fn MessageBoxA(
     _ctx: &mut Context,
     _hWnd: HWND,
-    _lpText: u32,
-    _lpCaption: u32,
+    _lpText: Ptr<u8>,
+    _lpCaption: Ptr<u8>,
     _uType: u32, /* MESSAGEBOX_STYLE */
 ) -> u32 /* MESSAGEBOX_RESULT */ {
     todo!()
@@ -20,9 +20,9 @@ pub fn MessageBoxA(
 pub fn DialogBoxParamA(
     _ctx: &mut Context,
     _hInstance: HINSTANCE,
-    _lpTemplateName: u32,
+    _lpTemplateName: Ptr<u8>,
     _hWndParent: HWND,
-    _lpDialogFunc: u32, /* DLGPROC */
+    _lpDialogFunc: Ptr<()>, /* DLGPROC */
     _dwInitParam: u32,
 ) -> i32 {
     stub!(1) // return value from dialog proc
@@ -32,9 +32,9 @@ pub fn DialogBoxParamA(
 pub fn DialogBoxParamW(
     _ctx: &mut Context,
     _hInstance: HINSTANCE,
-    _lpTemplateName: u32, /* WSTR */
+    _lpTemplateName: Ptr<u16>, /* WSTR */
     _hWndParent: HWND,
-    _lpDialogFunc: u32, /* DLGPROC */
+    _lpDialogFunc: Ptr<()>, /* DLGPROC */
     _dwInitParam: u32,
 ) -> i32 {
     todo!()
@@ -70,7 +70,7 @@ pub fn GetDlgItemInt(
     _ctx: &mut Context,
     _hDlg: HWND,
     _nIDDlgItem: i32,
-    _lpTranslated: bool,
+    _lpTranslated: Ptr<u32>,
     _bSigned: bool,
 ) -> u32 {
     todo!()
@@ -81,7 +81,7 @@ pub fn GetDlgItemTextW(
     _ctx: &mut Context,
     _hDlg: HWND,
     _nIDDlgItem: i32,
-    _lpString: u32, /* WSTR */
+    _lpString: Ptr<u16>, /* WSTR */
     _cchMax: i32,
 ) -> u32 {
     todo!()
@@ -103,7 +103,7 @@ pub fn SetDlgItemTextW(
     _ctx: &mut Context,
     _hDlg: HWND,
     _nIDDlgItem: i32,
-    _lpString: u32, /* WSTR */
+    _lpString: Ptr<u16>, /* WSTR */
 ) -> bool {
     todo!()
 }

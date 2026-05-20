@@ -1,10 +1,9 @@
 use std::collections::VecDeque;
-use zerocopy::{FromBytes, IntoBytes};
 
 use runtime::Context;
 
 use crate::{
-    POINT,
+    POINT, Ptr,
     dllexport::win32flags,
     host, stub,
     user32::{HACCEL, HWND, state},
@@ -14,8 +13,8 @@ pub type WPARAM = u32;
 pub type LPARAM = u32;
 
 #[repr(C)]
-#[derive(Debug, zerocopy::FromBytes, zerocopy::IntoBytes, zerocopy::Immutable)]
-struct MSG {
+#[derive(Copy, Clone, Debug, zerocopy::FromBytes, zerocopy::IntoBytes, zerocopy::Immutable)]
+pub struct MSG {
     hwnd: HWND,
     message: u32,
     wParam: WPARAM,
@@ -112,14 +111,14 @@ impl MessageQueue {
 }
 
 #[win32_derive::dllexport]
-pub fn DispatchMessageA(ctx: &mut Context, lpMsg: u32) -> u32 {
+pub fn DispatchMessageA(ctx: &mut Context, lpMsg: Ptr<MSG>) -> u32 {
     DispatchMessageW(ctx, lpMsg)
 }
 
 #[win32_derive::dllexport]
-pub fn DispatchMessageW(ctx: &mut Context, lpMsg: u32 /* MSG */) -> u32 {
+pub fn DispatchMessageW(ctx: &mut Context, lpMsg: Ptr<MSG>) -> u32 {
     let wndproc = state().wndclass.borrow().as_ref().unwrap().wndproc.clone();
-    let msg = <MSG>::read_from_prefix(&ctx.memory[lpMsg..]).unwrap().0;
+    let msg = lpMsg.read(&ctx.memory).unwrap();
     // WNDPROC
     ctx.call_x86(
         wndproc,
@@ -129,14 +128,14 @@ pub fn DispatchMessageW(ctx: &mut Context, lpMsg: u32 /* MSG */) -> u32 {
 }
 
 #[win32_derive::dllexport]
-pub fn TranslateMessage(_ctx: &mut Context, _lpMsg: u32) -> bool {
+pub fn TranslateMessage(_ctx: &mut Context, _lpMsg: Ptr<MSG>) -> bool {
     false // no translation
 }
 
 #[win32_derive::dllexport]
 pub fn PeekMessageA(
     ctx: &mut Context,
-    lpMsg: u32, /* MSG */
+    lpMsg: Ptr<MSG>,
     hWnd: HWND,
     _wMsgFilterMin: u32,
     _wMsgFilterMax: u32,
@@ -160,7 +159,7 @@ pub fn PeekMessageA(
         // TODO: only matching messages
         assert_eq!(msg.hwnd, hWnd);
     }
-    msg.write_to_prefix(&mut ctx.memory[lpMsg..]).unwrap();
+    lpMsg.write(&mut ctx.memory, *msg).unwrap();
     if remove {
         queue.pop();
     }
@@ -170,7 +169,7 @@ pub fn PeekMessageA(
 #[win32_derive::dllexport]
 pub fn PeekMessageW(
     ctx: &mut Context,
-    lpMsg: u32, /*MSG*/
+    lpMsg: Ptr<MSG>,
     hWnd: HWND,
     wMsgFilterMin: u32,
     wMsgFilterMax: u32,
@@ -182,7 +181,7 @@ pub fn PeekMessageW(
 #[win32_derive::dllexport]
 pub fn GetMessageA(
     ctx: &mut Context,
-    lpMsg: u32,
+    lpMsg: Ptr<MSG>,
     hWnd: HWND,
     wMsgFilterMin: u32,
     wMsgFilterMax: u32,
@@ -193,7 +192,7 @@ pub fn GetMessageA(
 #[win32_derive::dllexport]
 pub fn GetMessageW(
     ctx: &mut Context,
-    lpMsg: u32, /* MSG */
+    lpMsg: Ptr<MSG>,
     hWnd: HWND,
     _wMsgFilterMin: u32,
     _wMsgFilterMax: u32,
@@ -208,7 +207,7 @@ pub fn GetMessageW(
         // TODO: only matching messages
         assert_eq!(msg.hwnd, hWnd);
     }
-    msg.write_to_prefix(&mut ctx.memory[lpMsg..]).unwrap();
+    lpMsg.write(&mut ctx.memory, msg).unwrap();
 
     1 // no error, no WM_QUIT
 }
@@ -218,7 +217,7 @@ pub fn TranslateAcceleratorW(
     _ctx: &mut Context,
     _hWnd: HWND,
     _hAccTable: HACCEL,
-    _lpMsg: u32, /* MSG */
+    _lpMsg: Ptr<MSG>,
 ) -> i32 {
     stub!(0) // no translation
 }
