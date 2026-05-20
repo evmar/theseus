@@ -41,7 +41,7 @@ win32flags! {
     }
 }
 
-fn mouse_msg(hwnd: HWND, wm: u32, message: host::MouseMessage) -> MSG {
+fn mouse_msg(is_down: bool, hwnd: HWND, message: host::MouseMessage) -> MSG {
     let wParam = match message.button {
         1 => MK::LBUTTON,
         2 => MK::RBUTTON,
@@ -49,6 +49,15 @@ fn mouse_msg(hwnd: HWND, wm: u32, message: host::MouseMessage) -> MSG {
         _ => MK::empty(),
     }
     .bits();
+    let wm = match (message.button, is_down) {
+        (1, true) => 0x201,  // WM_LBUTTONDOWN
+        (1, false) => 0x202, // WM_LBUTTONUP
+        (2, true) => 0x204,  // WM_RBUTTONDOWN
+        (2, false) => 0x205, // WM_RBUTTONUP
+        (3, true) => 0x207,  // WM_MBUTTONDOWN
+        (3, false) => 0x208, // WM_MBUTTONUP
+        _ => unreachable!("unsupported mouse button {}", message.button),
+    };
     MSG {
         hwnd,
         message: wm,
@@ -116,8 +125,8 @@ impl MessageQueue {
                     pt: POINT::default(),
                 }
             }
-            MouseDown(mouse) => mouse_msg(self.hwnd, 0x201 /* WM_LBUTTONDOWN */, mouse),
-            MouseUp(mouse) => mouse_msg(self.hwnd, 0x202 /* WM_LBUTTONUP */, mouse),
+            MouseDown(mouse) => mouse_msg(true, self.hwnd, mouse),
+            MouseUp(mouse) => mouse_msg(false, self.hwnd, mouse),
         }
     }
 }

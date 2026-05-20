@@ -70,8 +70,8 @@ fn msg_from_event(event: &sdl::events::SDL_Event) -> Option<host::Message> {
                 let event = &event.button;
                 let button = match event.button as _ {
                     sdl::mouse::SDL_BUTTON_LEFT => 1,
-                    sdl::mouse::SDL_BUTTON_RIGHT => 3,
-                    sdl::mouse::SDL_BUTTON_MIDDLE => 2,
+                    sdl::mouse::SDL_BUTTON_RIGHT => 2,
+                    sdl::mouse::SDL_BUTTON_MIDDLE => 3,
                     _ => return None,
                 };
                 let message = host::MouseMessage {
