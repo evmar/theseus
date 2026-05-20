@@ -1,6 +1,6 @@
 use runtime::Context;
 
-use crate::stub;
+use crate::{Ptr, stub};
 
 #[win32_derive::dllexport]
 pub fn GetACP(_ctx: &mut Context) -> u32 {
@@ -8,7 +8,7 @@ pub fn GetACP(_ctx: &mut Context) -> u32 {
 }
 
 #[win32_derive::dllexport]
-pub fn GetCPInfo(_ctx: &mut Context, _CodePage: u32, _lpCPInfo: u32) -> bool {
+pub fn GetCPInfo(_ctx: &mut Context, _CodePage: u32, _lpCPInfo: Ptr<()>) -> bool {
     stub!(false) // fail
 }
 
@@ -17,9 +17,9 @@ pub fn GetStringTypeA(
     _ctx: &mut Context,
     _Locale: u32,
     _dwInfoType: u32,
-    _lpSrcStr: u32,
+    _lpSrcStr: Ptr<u8>,
     _cchSrc: i32,
-    _lpCharType: u32,
+    _lpCharType: Ptr<u16>,
 ) -> bool {
     todo!();
 }
@@ -28,9 +28,9 @@ pub fn GetStringTypeA(
 pub fn GetStringTypeW(
     _ctx: &mut Context,
     _dwInfoType: u32,
-    _lpSrcStr: u32,
+    _lpSrcStr: Ptr<u16>,
     _cchSrc: i32,
-    _lpCharType: u32,
+    _lpCharType: Ptr<u16>,
 ) -> bool {
     todo!();
 }
@@ -40,9 +40,9 @@ pub fn LCMapStringA(
     _ctx: &mut Context,
     _Locale: u32,
     _dwMapFlags: u32,
-    _lpSrcStr: u32,
+    _lpSrcStr: Ptr<u8>,
     _cchSrc: i32,
-    _lpDestStr: u32,
+    _lpDestStr: Ptr<u8>,
     _cchDest: i32,
 ) -> i32 {
     todo!();
@@ -53,9 +53,9 @@ pub fn LCMapStringW(
     _ctx: &mut Context,
     _Locale: u32,
     _dwMapFlags: u32,
-    _lpSrcStr: u32,
+    _lpSrcStr: Ptr<u16>,
     _cchSrc: i32,
-    _lpDestStr: u32,
+    _lpDestStr: Ptr<u16>,
     _cchDest: i32,
 ) -> i32 {
     todo!();
@@ -66,9 +66,9 @@ pub fn MultiByteToWideChar(
     _ctx: &mut Context,
     _CodePage: u32,
     _dwFlags: u32, /* MULTI_BYTE_TO_WIDE_CHAR_FLAGS */
-    _lpMultiByteStr: u32,
+    _lpMultiByteStr: Ptr<u8>,
     _cbMultiByte: i32,
-    _lpWideCharStr: u32,
+    _lpWideCharStr: Ptr<u16>,
     _cchWideChar: i32,
 ) -> i32 {
     0
@@ -118,12 +118,12 @@ pub fn WideCharToMultiByte(
     _ctx: &mut Context,
     _CodePage: u32,
     _dwFlags: u32,
-    _lpWideCharStr: u32,
+    _lpWideCharStr: Ptr<u16>,
     _cchWideChar: i32,
-    _lpMultiByteStr: u32,
+    _lpMultiByteStr: Ptr<u8>,
     _cbMultiByte: i32,
-    _lpDefaultChar: u32,
-    _lpUsedDefaultChar: u32,
+    _lpDefaultChar: Ptr<u8>,
+    _lpUsedDefaultChar: Ptr<bool>,
 ) -> i32 {
     0
     /*

@@ -2,7 +2,7 @@ use runtime::Context;
 use zerocopy::FromBytes as _;
 
 use crate::{
-    HANDLE,
+    HANDLE, Ptr,
     kernel32::{self, Object},
     stub,
 };
@@ -109,19 +109,19 @@ impl kernel32::State {
 #[win32_derive::dllexport]
 pub fn CreateThread(
     ctx: &mut Context,
-    _lpThreadAttributes: u32,
+    _lpThreadAttributes: Ptr<()>,
     _dwStackSize: u32,
-    lpStartAddress: u32, /* LPTHREAD_START_ROUTINE */
-    lpParameter: u32,
+    lpStartAddress: Ptr<()>,
+    lpParameter: Ptr<()>,
     _dwCreationFlags: u32, /* THREAD_CREATION_FLAGS */
-    _lpThreadId: u32,
+    _lpThreadId: Ptr<u32>,
 ) -> HANDLE {
     let mut lock = kernel32::lock();
     let id = lock.next_thread_id;
-    let name = format!("thread {}@{:x}", id, lpStartAddress);
+    let name = format!("thread {}@{:x}", id, lpStartAddress.addr);
     lock.create_thread(ctx, name, move |ctx| {
-        let f = ctx.indirect(lpStartAddress);
-        ctx.call_x86(f, vec![lpParameter]);
+        let f = ctx.indirect(lpStartAddress.addr);
+        ctx.call_x86(f, vec![lpParameter.addr]);
     });
     HANDLE::from_raw(id)
 }

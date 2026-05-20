@@ -1,6 +1,9 @@
 use runtime::Context;
 
-use crate::kernel32::{self, HMODULE, State};
+use crate::{
+    Ptr,
+    kernel32::{self, HMODULE, State},
+};
 
 pub type HRSRC = u32;
 pub type HGLOBAL = u32;
@@ -27,18 +30,18 @@ impl State {
 pub fn FindResourceW(
     ctx: &mut Context,
     _hModule: HMODULE,
-    lpName: u32, /* WSTR */
-    lpType: u32, /* WSTR */
+    lpName: Ptr<u16>,
+    lpType: Ptr<u16>,
 ) -> HRSRC {
-    let name = if is_intresource(lpName) {
-        pe::ResourceName::Id(lpName)
+    let name = if is_intresource(lpName.addr) {
+        pe::ResourceName::Id(lpName.addr)
     } else {
-        pe::ResourceName::Name(&ctx.memory.read_wstr(lpName))
+        pe::ResourceName::Name(&ctx.memory.read_wstr(lpName.addr))
     };
-    let typ = if is_intresource(lpType) {
-        pe::ResourceName::Id(lpType)
+    let typ = if is_intresource(lpType.addr) {
+        pe::ResourceName::Id(lpType.addr)
     } else {
-        pe::ResourceName::Name(&ctx.memory.read_wstr(lpType))
+        pe::ResourceName::Name(&ctx.memory.read_wstr(lpType.addr))
     };
     let buf = kernel32::lock().find_resource(ctx, typ, name).unwrap();
     unsafe { buf.as_ptr().byte_offset_from(ctx.memory.as_ptr()) as u32 }

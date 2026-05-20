@@ -2,7 +2,7 @@ use std::sync::{Arc, Condvar, Mutex};
 
 use runtime::Context;
 
-use crate::{HANDLE, kernel32::lock};
+use crate::{HANDLE, Ptr, kernel32::lock};
 
 pub enum Object {
     Thread,
@@ -47,12 +47,12 @@ pub fn WaitForSingleObject(_ctx: &mut Context, hHandle: HANDLE, dwMilliseconds: 
 #[win32_derive::dllexport]
 pub fn CreateEventA(
     ctx: &mut Context,
-    _lpEventAttributes: u32,
+    _lpEventAttributes: Ptr<()>,
     bManualReset: bool,
     bInitialState: bool,
-    lpName: u32,
+    lpName: Ptr<u8>,
 ) -> HANDLE {
-    let name = ctx.memory.read_str(lpName);
+    let name = ctx.memory.read_str(lpName.addr);
     let event = Event {
         _name: name.to_string(),
         manual_reset: bManualReset,

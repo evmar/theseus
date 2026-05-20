@@ -1,5 +1,7 @@
 use runtime::Context;
 
+use crate::Ptr;
+
 pub type HANDLE = u32;
 
 const STDIN_HFILE: HANDLE = 0xF11E_0001;
@@ -23,20 +25,21 @@ pub fn GetStdHandle(_ctx: &mut Context, nStdHandle: u32) -> u32 {
 pub fn WriteFile(
     ctx: &mut Context,
     hFile: u32,
-    lpBuffer: u32,
+    lpBuffer: Ptr<u8>,
     nNumberOfBytesToWrite: u32,
-    lpNumberOfBytesWritten: u32,
-    lpOverlapped: u32,
+    lpNumberOfBytesWritten: Ptr<u32>,
+    lpOverlapped: Ptr<()>,
 ) -> u32 {
-    assert_eq!(lpOverlapped, 0);
+    assert_eq!(lpOverlapped.addr, 0);
     if hFile == 0xf11e_0002 || hFile == 0xf11e_0003 {
-        let buf = &ctx.memory[lpBuffer..][..nNumberOfBytesToWrite as usize];
+        let buf = &ctx.memory[lpBuffer.addr..][..nNumberOfBytesToWrite as usize];
         // TODO: host interface
         use std::io::Write;
         std::io::stdout().write_all(buf).unwrap();
-        if lpNumberOfBytesWritten != 0 {
-            ctx.memory
-                .write(lpNumberOfBytesWritten, nNumberOfBytesToWrite);
+        if lpNumberOfBytesWritten.addr != 0 {
+            lpNumberOfBytesWritten
+                .write(&mut ctx.memory, nNumberOfBytesToWrite)
+                .unwrap();
         }
     } else {
         todo!("WriteFile(hFile={hFile:x})");

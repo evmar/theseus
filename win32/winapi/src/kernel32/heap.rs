@@ -1,6 +1,7 @@
 use runtime::Context;
 
 use crate::{
+    Ptr,
     dllexport::win32flags,
     heap::Heap,
     kernel32::{self, HANDLE, lock},
@@ -56,14 +57,14 @@ pub fn HeapSize(
     ctx: &mut Context,
     hHeap: HANDLE,
     dwFlags: u32, /* HEAP_FLAGS */
-    lpMem: u32,
+    lpMem: Ptr<()>,
 ) -> u32 {
     if dwFlags != 0 {
         log::warn!("HeapFree flags {dwFlags:x}");
     }
     let state = kernel32::lock();
     let heap = state.heaps.get(&hHeap).unwrap();
-    heap.size(&mut ctx.memory, lpMem)
+    heap.size(&mut ctx.memory, lpMem.addr)
 }
 
 #[win32_derive::dllexport]
@@ -71,14 +72,14 @@ pub fn HeapFree(
     ctx: &mut Context,
     hHeap: HANDLE,
     dwFlags: u32, /* HEAP_FLAGS */
-    lpMem: u32,
+    lpMem: Ptr<()>,
 ) -> bool {
     if dwFlags != 0 {
         log::warn!("HeapFree flags {dwFlags:x}");
     }
     let state = kernel32::lock();
     let heap = state.heaps.get(&hHeap).unwrap();
-    heap.free(&mut ctx.memory, lpMem);
+    heap.free(&mut ctx.memory, lpMem.addr);
     true
 }
 
@@ -87,7 +88,7 @@ pub fn HeapReAlloc(
     _ctx: &mut Context,
     _hHeap: HANDLE,
     dwFlags: u32, /* HEAP_FLAGS */
-    _lpMem: u32,
+    _lpMem: Ptr<()>,
     _dwBytes: u32,
 ) -> u32 {
     if dwFlags != 0 {
@@ -141,7 +142,7 @@ pub fn GlobalAlloc(ctx: &mut Context, uFlags: GMEM, dwBytes: u32) -> u32 {
 }
 
 #[win32_derive::dllexport]
-pub fn GlobalFree(ctx: &mut Context, hMem: u32) -> u32 {
-    lock().process_heap.free(&mut ctx.memory, hMem);
+pub fn GlobalFree(ctx: &mut Context, hMem: Ptr<()>) -> u32 {
+    lock().process_heap.free(&mut ctx.memory, hMem.addr);
     0 // success
 }

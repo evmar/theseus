@@ -1,6 +1,6 @@
 use runtime::Context;
 
-use crate::{kernel32::lock, stub};
+use crate::{Ptr, kernel32::lock, stub};
 
 pub type HMODULE = u32;
 
@@ -27,7 +27,7 @@ impl DLLLoader for () {
 pub fn GetModuleFileNameA(
     _ctx: &mut Context,
     _hModule: HMODULE,
-    _lpFilename: u32,
+    _lpFilename: Ptr<u8>,
     _nSize: u32,
 ) -> u32 {
     /*
@@ -37,7 +37,7 @@ pub fn GetModuleFileNameA(
 }
 
 #[win32_derive::dllexport]
-pub fn GetModuleHandleA(_ctx: &mut Context, _lpModuleName: u32) -> HMODULE {
+pub fn GetModuleHandleA(_ctx: &mut Context, _lpModuleName: Ptr<u8>) -> HMODULE {
     stub!(0)
     /*
     let state = get_state(sys);
@@ -56,17 +56,17 @@ pub fn GetModuleHandleA(_ctx: &mut Context, _lpModuleName: u32) -> HMODULE {
 }
 
 #[win32_derive::dllexport]
-pub fn LoadLibraryA(ctx: &mut Context, lpLibFileName: u32) -> HMODULE {
-    let filename = ctx.memory.read_str(lpLibFileName);
+pub fn LoadLibraryA(ctx: &mut Context, lpLibFileName: Ptr<u8>) -> HMODULE {
+    let filename = ctx.memory.read_str(lpLibFileName.addr);
     lock().dll_loader.load_library(&filename)
 }
 
 #[win32_derive::dllexport]
-pub fn GetProcAddress(ctx: &mut Context, hModule: HMODULE, lpProcName: u32) -> u32 {
-    let name = if lpProcName < 0x1000 {
-        format!("ordinal{}", lpProcName)
+pub fn GetProcAddress(ctx: &mut Context, hModule: HMODULE, lpProcName: Ptr<u8>) -> u32 {
+    let name = if lpProcName.addr < 0x1000 {
+        format!("ordinal{}", lpProcName.addr)
     } else {
-        ctx.memory.read_str(lpProcName).to_owned()
+        ctx.memory.read_str(lpProcName.addr).to_owned()
     };
     lock().dll_loader.get_proc_address(hModule, &name)
 }

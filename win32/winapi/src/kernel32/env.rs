@@ -1,6 +1,6 @@
 use runtime::Context;
 
-use crate::{kernel32::lock, stub};
+use crate::{Ptr, kernel32::lock, stub};
 
 #[win32_derive::dllexport]
 pub fn GetEnvironmentStrings(_ctx: &mut Context) -> u32 {
@@ -33,21 +33,21 @@ pub fn GetEnvironmentStringsW(_ctx: &mut Context) -> u32 {
 #[win32_derive::dllexport]
 pub fn GetEnvironmentVariableA(
     _ctx: &mut Context,
-    _lpName: u32,
-    _lpBuffer: u32,
+    _lpName: Ptr<u8>,
+    _lpBuffer: Ptr<u8>,
     _nSize: u32,
 ) -> u32 {
     stub!(lock().environ.get())
 }
 
 #[win32_derive::dllexport]
-pub fn FreeEnvironmentStringsA(_ctx: &mut Context, _penv: u32) -> bool {
+pub fn FreeEnvironmentStringsA(_ctx: &mut Context, _penv: Ptr<u8>) -> bool {
     //sys.memory().process_heap.free(sys.mem(), penv);
     stub!(true) // success
 }
 
 #[win32_derive::dllexport]
-pub fn FreeEnvironmentStringsW(_ctx: &mut Context, _penv: u32) -> bool {
+pub fn FreeEnvironmentStringsW(_ctx: &mut Context, _penv: Ptr<u16>) -> bool {
     //sys.memory().process_heap.free(sys.mem(), penv);
     stub!(true) // success
 }

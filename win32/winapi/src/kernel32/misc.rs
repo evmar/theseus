@@ -1,6 +1,6 @@
 use runtime::Context;
 
-use crate::{kernel32::lock, stub};
+use crate::{Ptr, kernel32::lock, stub};
 
 const ERROR_FILE_NOT_FOUND: u32 = 2;
 
@@ -33,8 +33,8 @@ pub struct STARTUPINFOA {
 }
 
 #[win32_derive::dllexport]
-pub fn GetStartupInfoA(ctx: &mut Context, lpStartupInfo: u32) {
-    let size = ctx.memory.read::<u32>(lpStartupInfo);
+pub fn GetStartupInfoA(ctx: &mut Context, lpStartupInfo: Ptr<STARTUPINFOA>) {
+    let size = ctx.memory.read::<u32>(lpStartupInfo.addr);
     if size > 0 && size < std::mem::size_of::<STARTUPINFOA>() as u32 {
         log::error!("GetStartupInfoA: undersized buffer");
         return;
@@ -43,7 +43,7 @@ pub fn GetStartupInfoA(ctx: &mut Context, lpStartupInfo: u32) {
     let info = STARTUPINFOA {
         ..Default::default()
     };
-    ctx.memory.write(lpStartupInfo, info);
+    lpStartupInfo.write(&mut ctx.memory, info).unwrap();
 }
 
 #[win32_derive::dllexport]
@@ -64,8 +64,8 @@ pub struct OSVERSIONINFO {
 }
 
 #[win32_derive::dllexport]
-pub fn GetVersionExA(ctx: &mut Context, lpVersionInformation: u32) -> bool {
-    let size = ctx.memory.read::<u32>(lpVersionInformation);
+pub fn GetVersionExA(ctx: &mut Context, lpVersionInformation: Ptr<OSVERSIONINFO>) -> bool {
+    let size = ctx.memory.read::<u32>(lpVersionInformation.addr);
     if size < std::mem::size_of::<OSVERSIONINFO>() as u32 {
         log::error!("GetVersionExA undersized buffer");
         return false;
@@ -76,13 +76,13 @@ pub fn GetVersionExA(ctx: &mut Context, lpVersionInformation: u32) -> bool {
         dwPlatformId: 2,   /* VER_PLATFORM_WIN32_NT */
         ..Default::default()
     };
-    ctx.memory.write(lpVersionInformation, info);
+    lpVersionInformation.write(&mut ctx.memory, info).unwrap();
 
     true
 }
 
 #[win32_derive::dllexport]
-pub fn UnhandledExceptionFilter(_ctx: &mut Context, _ExceptionInfo: u32) -> i32 {
+pub fn UnhandledExceptionFilter(_ctx: &mut Context, _ExceptionInfo: Ptr<()>) -> i32 {
     // "The process is being debugged, so the exception should be passed (as second chance) to the application's debugger."
     0 // EXCEPTION_CONTINUE_SEARCH
 }
@@ -90,12 +90,12 @@ pub fn UnhandledExceptionFilter(_ctx: &mut Context, _ExceptionInfo: u32) -> i32 
 #[win32_derive::dllexport]
 pub fn VirtualAlloc(
     _ctx: &mut Context,
-    lpAddress: u32,
+    lpAddress: Ptr<()>,
     dwSize: u32,
     _flAllocationType: u32, /* VIRTUAL_ALLOCATION_TYPE */
     _flProtect: u32,        /* PAGE_PROTECTION_FLAGS */
 ) -> u32 {
-    assert_eq!(lpAddress, 0);
+    assert_eq!(lpAddress.addr, 0);
     lock().mappings.alloc("VirtualAlloc".into(), dwSize)
     /*
     let memory = sys.memory_mut();
@@ -129,7 +129,7 @@ pub fn VirtualAlloc(
 #[win32_derive::dllexport]
 pub fn VirtualFree(
     _ctx: &mut Context,
-    _lpAddress: u32,
+    _lpAddress: Ptr<()>,
     _dwSize: u32,
     _dwFreeType: u32, /* VIRTUAL_FREE_TYPE */
 ) -> bool {
@@ -137,50 +137,46 @@ pub fn VirtualFree(
 }
 
 #[win32_derive::dllexport]
-pub fn OutputDebugStringA(_ctx: &mut Context, _lpOutputString: u32) {
+pub fn OutputDebugStringA(_ctx: &mut Context, _lpOutputString: Ptr<u8>) {
     todo!()
 }
 
 #[win32_derive::dllexport]
 pub fn RtlUnwind(
     _ctx: &mut Context,
-    _TargetFrame: u32,
-    _TargetIp: u32,
-    _ExceptionRecord: u32,
-    _ReturnValue: u32,
+    _TargetFrame: Ptr<()>,
+    _TargetIp: Ptr<()>,
+    _ExceptionRecord: Ptr<()>,
+    _ReturnValue: Ptr<()>,
 ) {
     todo!()
 }
 
 #[win32_derive::dllexport]
-pub fn lstrcpyW(
-    ctx: &mut Context,
-    lpString1: u32, /* WSTR */
-    lpString2: u32, /* WSTR */
-) -> u32 /* WSTR */ {
-    let buf = &ctx.memory[lpString2..];
+pub fn lstrcpyW(ctx: &mut Context, lpString1: Ptr<u16>, lpString2: Ptr<u16>) -> u32 /* WSTR */ {
+    let buf = &ctx.memory[lpString2.addr..];
     let len = buf.chunks_exact(2).position(|c| c == &[0, 0]).unwrap();
-    let src = lpString2 as usize;
-    let dst = lpString1 as usize;
+    let src = lpString2.addr as usize;
+    let dst = lpString1.addr as usize;
     ctx.memory
         .bytes
         .copy_within(src..src + len + 2, dst as usize);
-    lpString1
+    lpString1.addr
 }
 
 #[win32_derive::dllexport]
-pub fn lstrlenW(ctx: &mut Context, lpString: u32 /* WSTR */) -> i32 {
-    let buf = &ctx.memory[lpString..];
+pub fn lstrlenW(ctx: &mut Context, lpString: Ptr<u16>) -> i32 {
+    let buf = &ctx.memory[lpString.addr..];
     buf.chunks_exact(2).position(|c| c == &[0, 0]).unwrap() as i32
 }
 
 #[win32_derive::dllexport]
 pub fn GetPrivateProfileIntW(
     _ctx: &mut Context,
-    _lpAppName: u32, /* WSTR */
-    _lpKeyName: u32, /* WSTR */
+    _lpAppName: Ptr<u16>,
+    _lpKeyName: Ptr<u16>,
     nDefault: i32,
-    _lpFileName: u32, /* WSTR */
+    _lpFileName: Ptr<u16>,
 ) -> i32 {
     stub!(nDefault)
 }
@@ -188,12 +184,12 @@ pub fn GetPrivateProfileIntW(
 #[win32_derive::dllexport]
 pub fn GetPrivateProfileStringW(
     _ctx: &mut Context,
-    _lpAppName: u32,        /* WSTR */
-    _lpKeyName: u32,        /* WSTR */
-    _lpDefault: u32,        /* WSTR */
-    _lpReturnedString: u32, /* WSTR */
+    _lpAppName: Ptr<u16>,
+    _lpKeyName: Ptr<u16>,
+    _lpDefault: Ptr<u16>,
+    _lpReturnedString: Ptr<u16>,
     _nSize: u32,
-    _lpFileName: u32, /* WSTR */
+    _lpFileName: Ptr<u16>,
 ) -> u32 {
     stub!(ERROR_FILE_NOT_FOUND)
 }
