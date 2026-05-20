@@ -2,7 +2,10 @@ use std::sync::Arc;
 
 use runtime::Context;
 
-use crate::gdi32::{self, Bitmap, COLORREF, HDC, HGDIOBJ, HPEN};
+use crate::{
+    Ptr,
+    gdi32::{self, Bitmap, COLORREF, HDC, HGDIOBJ, HPEN},
+};
 
 #[derive(Debug, Clone)]
 pub struct Brush(pub COLORREF);
@@ -38,7 +41,7 @@ impl Object {
 
 #[repr(C)]
 #[derive(zerocopy::Immutable, zerocopy::IntoBytes)]
-struct BITMAP {
+pub struct BITMAP {
     bmType: u32,
     bmWidth: u32,
     bmHeight: u32,
@@ -49,7 +52,7 @@ struct BITMAP {
 }
 
 #[win32_derive::dllexport]
-pub fn GetObjectA(ctx: &mut Context, handle: HGDIOBJ, size: u32, lpOut: u32) -> u32 {
+pub fn GetObjectA(ctx: &mut Context, handle: HGDIOBJ, size: u32, lpOut: Ptr<BITMAP>) -> u32 {
     let state = gdi32::lock();
     let object = state.objects.get(handle).unwrap();
     let Object::Bitmap(bitmap) = object else {
@@ -65,7 +68,7 @@ pub fn GetObjectA(ctx: &mut Context, handle: HGDIOBJ, size: u32, lpOut: u32) -> 
         bmBitsPixel: bitmap.bit_count as u16,
         bmBits: 0,
     };
-    ctx.memory.write(lpOut, fields);
+    lpOut.write(&mut ctx.memory, fields).unwrap();
     size
 }
 

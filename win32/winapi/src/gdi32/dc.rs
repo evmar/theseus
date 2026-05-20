@@ -1,10 +1,9 @@
 use std::sync::Arc;
 
 use runtime::Context;
-use zerocopy::IntoBytes;
 
 use crate::{
-    HANDLE, POINT,
+    HANDLE, POINT, Ptr,
     gdi32::{self, Bitmap, COLORREF, HBITMAP, HPEN, Pen, State},
     stub,
 };
@@ -142,12 +141,12 @@ pub fn LineTo(ctx: &mut Context, hdc: HDC, x: i32, y: i32) -> bool {
 }
 
 #[win32_derive::dllexport]
-pub fn MoveToEx(ctx: &mut Context, hdc: HDC, x: i32, y: i32, lppt: u32 /* POINT */) -> bool {
+pub fn MoveToEx(ctx: &mut Context, hdc: HDC, x: i32, y: i32, lppt: Ptr<POINT>) -> bool {
     let mut state = gdi32::lock();
     let dc = state.dcs.get_mut(hdc).unwrap();
     dc.pos = POINT { x, y };
-    if lppt != 0 {
-        dc.pos.write_to_prefix(&mut ctx.memory[lppt..]).unwrap();
+    if lppt.addr != 0 {
+        lppt.write(&mut ctx.memory, dc.pos).unwrap();
     }
     true
 }

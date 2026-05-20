@@ -3,7 +3,7 @@ use std::sync::Arc;
 use runtime::Context;
 
 use crate::{
-    HANDLE,
+    HANDLE, Ptr,
     gdi32::{self, HDC, Object, State},
     kernel32,
 };
@@ -121,11 +121,11 @@ pub fn SetDIBitsToDevice(
     ySrc: u32,
     StartScan: u32,
     cLines: u32,
-    lpvBits: u32,
-    lpbmi: u32,    /* BITMAPINFO */
-    ColorUse: u32, /* DIB_USAGE */
+    lpvBits: Ptr<u8>,
+    lpbmi: Ptr<u8>, /* BITMAPINFO */
+    ColorUse: u32,  /* DIB_USAGE */
 ) -> u32 {
-    let (bmp_src, _) = Bitmap::parse(&ctx.memory[lpbmi..]);
+    let (bmp_src, _) = Bitmap::parse(&ctx.memory[lpbmi.addr..]);
 
     assert_eq!(StartScan, 0);
     assert_eq!(ColorUse, 0); // DIB_RGB_COLORS
@@ -140,7 +140,7 @@ pub fn SetDIBitsToDevice(
         .memory
         .bytes
         .get_disjoint_mut([
-            lpvBits as usize..(lpvBits + (h * bmp_src.stride())) as usize,
+            lpvBits.addr as usize..(lpvBits.addr + (h * bmp_src.stride())) as usize,
             bmp_dst.pixels_range(),
         ])
         .unwrap();
