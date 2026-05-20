@@ -9,6 +9,8 @@ use crate::{
     user32::{HACCEL, HWND, state},
 };
 
+const LOG_MESSAGES: bool = false;
+
 pub type WPARAM = u32;
 pub type LPARAM = u32;
 
@@ -53,7 +55,11 @@ fn mouse_msg(hwnd: HWND, wm: u32, message: host::MouseMessage) -> MSG {
         wParam,
         lParam: (message.y as u16 as u32) << 16 | message.x as u16 as u32,
         time: 0, // todo
-        pt: POINT::default(),
+        // TODO: screen coordinates
+        pt: POINT {
+            x: message.x as i32,
+            y: message.y as i32,
+        },
     }
 }
 
@@ -81,6 +87,9 @@ impl MessageQueue {
             return;
         };
         let msg = self.msg_from_message(message);
+        if LOG_MESSAGES {
+            log::info!("{:#x?}", msg);
+        }
         self.messages.push_back(msg);
     }
 
@@ -88,6 +97,9 @@ impl MessageQueue {
     fn wait(&mut self) {
         let message = host::host().main_thread.get().wait();
         let msg = self.msg_from_message(message);
+        if LOG_MESSAGES {
+            log::info!("{:#x?}", msg);
+        }
         self.messages.push_back(msg);
     }
 

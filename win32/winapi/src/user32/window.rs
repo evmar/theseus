@@ -450,10 +450,13 @@ pub fn MapWindowPoints(
             return POINT::default();
         }
 
-        let window = window.as_ref().unwrap().borrow();
+        let _window = window.as_ref().unwrap().borrow();
         POINT {
-            x: window.x,
-            y: window.y,
+            x: 0,
+            y: 0,
+            // TODO: screen coordinates, need MSG.point to translate as well
+            // x: window.x,
+            // y: window.y,
         }
     };
 
