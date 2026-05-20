@@ -28,7 +28,7 @@ impl Memory {
     }
 
     #[inline(never)]
-    fn null_ptr(&self) {
+    pub fn null_ptr(&self) {
         log::error!("null page read/write");
     }
 

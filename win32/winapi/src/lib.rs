@@ -15,6 +15,7 @@ pub mod kernel32;
 mod locked_state;
 pub mod msvcrt;
 mod point;
+mod ptr;
 mod rect;
 pub mod sdl;
 pub mod shell32;
@@ -25,6 +26,7 @@ pub mod winmm;
 pub use dllexport::{ABIReturn, FromABIParam};
 pub use handle::{HANDLE, Handles};
 pub use point::POINT;
+pub use ptr::Ptr;
 pub use rect::RECT;
 
 macro_rules! stub {

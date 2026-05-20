@@ -1,10 +1,9 @@
 use std::{cell::RefCell, rc::Rc};
 
 use runtime::Context;
-use zerocopy::{FromBytes, IntoBytes};
 
 use crate::{
-    FromABIParam, POINT, RECT,
+    FromABIParam, POINT, Ptr, RECT,
     gdi32::{self, Brush, COLORREF, DC, HBRUSH, HDC},
     host, kernel32, stub,
     user32::{self, HCURSOR, HICON, HINSTANCE, HMENU, HWND, State, state},
@@ -247,7 +246,7 @@ pub fn SetFocus(_ctx: &mut Context, _hWnd: HWND) -> HWND {
 
 #[repr(C)]
 #[derive(Debug, zerocopy::FromBytes)]
-struct WNDCLASS {
+pub struct WNDCLASS {
     style: u32,       /* WNDCLASS_STYLES */
     lpfnWndProc: u32, /* WNDPROC */
     cbClsExtra: i32,
@@ -310,15 +309,13 @@ impl COLOR {
 }
 
 #[win32_derive::dllexport]
-pub fn RegisterClassA(ctx: &mut Context, lpWndClass: u32) -> u16 {
+pub fn RegisterClassA(ctx: &mut Context, lpWndClass: Ptr<WNDCLASS>) -> u16 {
     RegisterClassW(ctx, lpWndClass)
 }
 
 #[win32_derive::dllexport]
-pub fn RegisterClassW(ctx: &mut Context, lpWndClass: u32 /* WNDCLASSW */) -> u16 {
-    let wndclass = <WNDCLASS>::read_from_prefix(&ctx.memory[lpWndClass..])
-        .unwrap()
-        .0;
+pub fn RegisterClassW(ctx: &mut Context, lpWndClass: Ptr<WNDCLASS>) -> u16 {
+    let wndclass = lpWndClass.read(&ctx.memory).unwrap();
     let background = if wndclass.hbrBackground.is_null() {
         None
     } else if wndclass.hbrBackground.to_raw() < 32 {
@@ -342,7 +339,7 @@ pub fn RegisterClassW(ctx: &mut Context, lpWndClass: u32 /* WNDCLASSW */) -> u16
 
 #[repr(C)]
 #[derive(Debug, zerocopy::IntoBytes, zerocopy::Immutable, zerocopy::FromBytes)]
-struct PAINTSTRUCT {
+pub struct PAINTSTRUCT {
     hdc: HDC,
     fErase: u32,
     rcPaint: RECT,
@@ -350,7 +347,7 @@ struct PAINTSTRUCT {
 }
 
 #[win32_derive::dllexport]
-pub fn BeginPaint(ctx: &mut Context, hWnd: HWND, lpPaint: u32 /* PAINTSTRUCT */) -> HDC {
+pub fn BeginPaint(ctx: &mut Context, hWnd: HWND, lpPaint: Ptr<PAINTSTRUCT>) -> HDC {
     let window = state().window.borrow();
     let mut window = window.as_ref().unwrap().borrow_mut();
 
@@ -360,6 +357,7 @@ pub fn BeginPaint(ctx: &mut Context, hWnd: HWND, lpPaint: u32 /* PAINTSTRUCT */)
         // TODO: send WM_ERASEBKGND, let DefWindowProc handle it
         let pixels = window.ensure_pixels(ctx);
         let pixel_count = (window.width * (window.height)) as usize;
+        use zerocopy::FromBytes;
         let pixels = <[u32]>::mut_from_bytes_with_elems(
             &mut ctx.memory[pixels..][..pixel_count * 4],
             pixel_count,
@@ -371,24 +369,25 @@ pub fn BeginPaint(ctx: &mut Context, hWnd: HWND, lpPaint: u32 /* PAINTSTRUCT */)
     drop(window);
 
     let hdc = GetDC(ctx, hWnd);
-    PAINTSTRUCT {
-        hdc,
-        fErase: wndclass.background.is_none() as u32,
-        rcPaint,
-        reserved: [0; 10],
-    }
-    .write_to_prefix(&mut ctx.memory[lpPaint..])
-    .unwrap();
+    lpPaint
+        .write(
+            &mut ctx.memory,
+            PAINTSTRUCT {
+                hdc,
+                fErase: wndclass.background.is_none() as u32,
+                rcPaint,
+                reserved: [0; 10],
+            },
+        )
+        .unwrap();
     hdc
 }
 
 #[win32_derive::dllexport]
-pub fn EndPaint(ctx: &mut Context, _hWnd: HWND, lpPaint: u32 /* PAINTSTRUCT */) -> bool {
+pub fn EndPaint(ctx: &mut Context, _hWnd: HWND, lpPaint: Ptr<PAINTSTRUCT>) -> bool {
     let window = state().window.borrow();
     let mut window = window.as_ref().unwrap().borrow_mut();
-    let paint = <PAINTSTRUCT>::read_from_prefix(&ctx.memory[lpPaint..])
-        .unwrap()
-        .0;
+    let paint = lpPaint.read(&ctx.memory).unwrap();
     gdi32::lock().release_dc(paint.hdc);
     window.flush(ctx);
     true
@@ -446,7 +445,7 @@ pub fn MapWindowPoints(
     ctx: &mut Context,
     hWndFrom: HWND,
     hWndTo: HWND,
-    lpPoints: u32, /* POINT */
+    lpPoints: Ptr<POINT>,
     cPoints: u32,
 ) -> i32 {
     let state = state();
@@ -467,12 +466,11 @@ pub fn MapWindowPoints(
     let to = window_origin(hWndTo);
     let delta = from.sub(to);
 
-    let point_size = std::mem::size_of::<POINT>() as u32;
-    for i in 0..cPoints {
-        let addr = lpPoints + i * point_size;
-        let mut point = POINT::read_from_prefix(&ctx.memory[addr..]).unwrap().0;
-        point = point.add(delta);
-        point.write_to_prefix(&mut ctx.memory[addr..]).unwrap();
+    let mut points = lpPoints;
+    for _ in 0..cPoints {
+        let point = points.read(&ctx.memory).unwrap();
+        points.write(&mut ctx.memory, point.add(delta)).unwrap();
+        points.advance();
     }
 
     ((delta.y as u16 as u32) << 16 | delta.x as u16 as u32) as i32
