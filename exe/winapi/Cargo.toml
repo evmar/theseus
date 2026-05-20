@@ -3,6 +3,13 @@ name = "winapi-exe"
 version = "0.1.0"
 edition = "2024"
 
+[lib]
+name = "winapi_wasm"
+crate-type = ["cdylib"]
+
 [dependencies]
 runtime = { workspace = true }
 winapi = { workspace = true }
+
+[target.'cfg(target_family = "wasm")'.dependencies]
+wasm-bindgen = { workspace = true }

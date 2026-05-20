@@ -1,5 +1,5 @@
-use winapi_exe::entry_point;
+mod generated;
 
-fn main() {
-    entry_point();
+pub fn main() {
+    winapi::run(&generated::EXEDATA);
 }

@@ -1,5 +1,8 @@
+use wasm_bindgen::prelude::*;
+
 mod generated;
 
-pub fn entry_point() {
+#[wasm_bindgen]
+pub fn main() {
     winapi::run(&generated::EXEDATA);
 }

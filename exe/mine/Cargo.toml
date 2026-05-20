@@ -3,10 +3,13 @@ name = "mine"
 version = "0.1.0"
 edition = "2024"
 
+[lib]
+name = "mine_wasm"
+crate-type = ["cdylib"]
+
 [dependencies]
 runtime = { workspace = true }
 winapi = { workspace = true }
 
-[lib]
-name = "mine_wasm"
-crate-type = ["cdylib"]
+[target.'cfg(target_family = "wasm")'.dependencies]
+wasm-bindgen = { workspace = true }
