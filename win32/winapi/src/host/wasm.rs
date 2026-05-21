@@ -1,4 +1,7 @@
-use std::sync::Mutex;
+use std::{
+    arch::wasm32,
+    sync::{Mutex, atomic},
+};
 
 use web_sys::wasm_bindgen::prelude::*;
 
@@ -117,27 +120,15 @@ impl AudioStream {
 }
 
 pub struct Host {
-    console_text: Mutex<Vec<u8>>,
-    console: web_sys::HtmlElement,
+    chan: Mutex<WebHostSendChannel>,
 }
 
 impl Host {
     pub fn new() -> Self {
         std::panic::set_hook(Box::new(console_error_panic_hook::hook));
 
-        let document = web_sys::window().unwrap().document().unwrap();
-        let body = document.body().unwrap();
-        let console = document
-            .create_element("pre")
-            .unwrap()
-            .dyn_into::<web_sys::HtmlElement>()
-            .unwrap();
-        console.set_id("console");
-        body.append_child(&console).unwrap();
-
         Host {
-            console_text: Default::default(),
-            console,
+            chan: Mutex::new(WebHostSendChannel::new()),
         }
     }
 
@@ -162,9 +153,34 @@ impl Host {
     }
 
     pub fn console_write(&self, text: &[u8]) {
-        let mut console_text = self.console_text.lock().unwrap();
-        console_text.extend_from_slice(text);
-        let utf8 = String::from_utf8_lossy(&console_text);
-        self.console.set_inner_text(&utf8);
+        // let mut console_text = self.console_text.lock().unwrap();
+        // console_text.extend_from_slice(text);
+        // let utf8 = String::from_utf8_lossy(&console_text);
+        // self.console.set_inner_text(&utf8);
+        self.chan.lock().unwrap().console_write(text);
+    }
+}
+
+struct WebHostSendChannel {
+    done: atomic::AtomicI32,
+}
+
+impl WebHostSendChannel {
+    pub fn new() -> Self {
+        Self {
+            done: atomic::AtomicI32::new(0),
+        }
+    }
+
+    pub fn console_write(&mut self, text: &[u8]) {
+        web_sys::window()
+            .unwrap()
+            .post_message(&JsValue::from("wake"), "*")
+            .unwrap();
+        // Block until the UI has written the response
+        unsafe {
+            //wasm32::memory_atomic_wait32(self.done.as_ptr(), 0, -1);
+        }
+        self.done.store(0, atomic::Ordering::SeqCst);
     }
 }

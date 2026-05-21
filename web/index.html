@@ -6,10 +6,12 @@
     }
 </style>
 <script type="module">
-    import init, { main } from "./mine_wasm.js";
+    import * as mine from "./mine_wasm.js";
+    import * as host from "./web_host.js";
     async function run() {
-        await init();
-        main();
+        //await mine.init();
+        await host.default();
+        host.main();
     }
     run().catch((e) => console.error(e));
 </script>
