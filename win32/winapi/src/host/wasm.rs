@@ -86,7 +86,7 @@ impl Host {
     }
 
     pub fn time(&self) -> u32 {
-        todo!()
+        web_sys::window().unwrap().performance().unwrap().now() as u32
     }
 
     pub fn console_write(&self, text: &[u8]) {
