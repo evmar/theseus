@@ -357,4 +357,9 @@ impl Host {
     pub fn time(&self) -> u32 {
         unsafe { sdl::timer::SDL_GetTicks() as u32 }
     }
+
+    pub fn console_write(&self, text: &[u8]) {
+        use std::io::Write;
+        std::io::stdout().write_all(text).unwrap();
+    }
 }

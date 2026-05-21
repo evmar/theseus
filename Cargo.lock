@@ -609,6 +609,7 @@ dependencies = [
  "pe",
  "runtime",
  "sdl3-sys",
+ "web-sys",
  "widestring",
  "win32-derive",
  "zerocopy",

@@ -1,6 +1,6 @@
 use runtime::Context;
 
-use crate::Ptr;
+use crate::{Ptr, host};
 
 pub type HANDLE = u32;
 
@@ -33,9 +33,7 @@ pub fn WriteFile(
     assert_eq!(lpOverlapped.addr, 0);
     if hFile == 0xf11e_0002 || hFile == 0xf11e_0003 {
         let buf = &ctx.memory[lpBuffer.addr..][..nNumberOfBytesToWrite as usize];
-        // TODO: host interface
-        use std::io::Write;
-        std::io::stdout().write_all(buf).unwrap();
+        host::host().console_write(buf);
         if lpNumberOfBytesWritten.addr != 0 {
             lpNumberOfBytesWritten
                 .write(&mut ctx.memory, nNumberOfBytesToWrite)

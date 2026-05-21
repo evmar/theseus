@@ -19,3 +19,9 @@ sdl3-sys = { version = "0.6.5", features = ["debug-impls"] }
 
 [target.'cfg(target_family = "wasm")'.dependencies]
 console_error_panic_hook = "0.1.7"
+web-sys = { workspace = true, features = [
+    "Document",
+    "Element",
+    "HtmlElement",
+    "Window",
+] }

@@ -1,3 +1,7 @@
+use std::sync::Mutex;
+
+use web_sys::wasm_bindgen::prelude::*;
+
 use crate::{RECT, host};
 
 pub struct Surface {}
@@ -40,12 +44,29 @@ impl AudioStream {
     }
 }
 
-pub struct Host {}
+pub struct Host {
+    console_text: Mutex<Vec<u8>>,
+    console: web_sys::HtmlElement,
+}
 
 impl Host {
     pub fn new() -> Self {
         std::panic::set_hook(Box::new(console_error_panic_hook::hook));
-        Host {}
+
+        let document = web_sys::window().unwrap().document().unwrap();
+        let body = document.body().unwrap();
+        let console = document
+            .create_element("pre")
+            .unwrap()
+            .dyn_into::<web_sys::HtmlElement>()
+            .unwrap();
+        console.set_id("console");
+        body.append_child(&console).unwrap();
+
+        Host {
+            console_text: Default::default(),
+            console,
+        }
     }
 
     pub fn poll(&self) -> Option<host::Message> {
@@ -66,5 +87,12 @@ impl Host {
 
     pub fn time(&self) -> u32 {
         todo!()
+    }
+
+    pub fn console_write(&self, text: &[u8]) {
+        let mut console_text = self.console_text.lock().unwrap();
+        console_text.extend_from_slice(text);
+        let utf8 = String::from_utf8_lossy(&console_text);
+        self.console.set_inner_text(&utf8);
     }
 }
