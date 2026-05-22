@@ -173,14 +173,17 @@ impl WebHostSendChannel {
     }
 
     pub fn console_write(&mut self, text: &[u8]) {
-        web_sys::window()
-            .unwrap()
-            .post_message(&JsValue::from("wake"), "*")
-            .unwrap();
-        // Block until the UI has written the response
-        unsafe {
-            //wasm32::memory_atomic_wait32(self.done.as_ptr(), 0, -1);
-        }
+        let args = js_sys::Array::new();
+        args.push(&JsValue::from("wake"));
+        args.push(&JsValue::from(text.as_ptr()));
+        args.push(&JsValue::from(text.len()));
+        args.push(&JsValue::from(self.done.as_ptr()));
+        web_sys::window().unwrap().post_message(&args, "*").unwrap();
+
+        // todo: block until the UI has written the response
+        // unsafe {
+        // wasm32::memory_atomic_wait32(self.done.as_ptr(), 0, -1);
+        // }
         self.done.store(0, atomic::Ordering::SeqCst);
     }
 }

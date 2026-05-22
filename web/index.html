@@ -6,12 +6,23 @@
     }
 </style>
 <script type="module">
-    import * as mine from "./mine_wasm.js";
+    if (!window.SharedArrayBuffer) {
+        alert("SharedArrayBuffer is not supported");
+    }
+    import * as exe from "./winapi_wasm.js";
     import * as host from "./web_host.js";
     async function run() {
-        //await mine.init();
+        const memory = new WebAssembly.Memory({
+            initial: 32, // in units of 64KB pages, 2mb
+            maximum: 1024, // 64mb
+            shared: true,
+        });
+
         await host.default();
-        host.main();
+        host.main(memory);
+
+        await exe.default(/* module */ undefined, memory);
+        exe.main();
     }
     run().catch((e) => console.error(e));
 </script>
