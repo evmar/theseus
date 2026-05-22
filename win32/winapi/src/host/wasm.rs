@@ -165,6 +165,13 @@ struct WebHostSendChannel {
     done: atomic::AtomicI32,
 }
 
+#[wasm_bindgen(typescript_custom_section)]
+const MSG_TYPES: &'static str = r#"
+export type Addr = number;
+export type MsgConsoleWrite = ["console_write", Addr, number, Addr];
+export type Msg = MsgConsoleWrite;
+"#;
+
 impl WebHostSendChannel {
     pub fn new() -> Self {
         Self {
@@ -174,7 +181,7 @@ impl WebHostSendChannel {
 
     pub fn console_write(&mut self, text: &[u8]) {
         let args = js_sys::Array::new();
-        args.push(&JsValue::from("wake"));
+        args.push(&JsValue::from("console_write"));
         args.push(&JsValue::from(text.as_ptr()));
         args.push(&JsValue::from(text.len()));
         args.push(&JsValue::from(self.done.as_ptr()));

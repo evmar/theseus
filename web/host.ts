@@ -10,12 +10,12 @@ function init(memory: WebAssembly.Memory) {
   document.body.appendChild(consoleDom);
 
   const consoleOutput = new ArrayBuffer(0, { maxByteLength: 10 << 10 });
-  window.onmessage = (e) => {
+  window.onmessage = (e: MessageEvent<exe.Msg>) => {
     const buffer = memory.buffer;
-    const [msg] = e.data;
-    switch (msg) {
-      case "wake":
-        const [, ptr, len, done] = e.data;
+    const msg = e.data;
+    switch (msg[0]) {
+      case "console_write":
+        const [, ptr, len, done] = msg;
         const inBuf = new Uint8Array(buffer, ptr, len);
         const ofs = consoleOutput.byteLength;
         consoleOutput.resize(ofs + len);
@@ -23,6 +23,8 @@ function init(memory: WebAssembly.Memory) {
         outBuf.set(inBuf);
         consoleDom.innerText = new TextDecoder().decode(consoleOutput);
         break;
+      default:
+        throw new Error(`unknown message: ${msg[0]}`);
     }
     console.log(msg);
   };
