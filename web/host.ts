@@ -1,4 +1,4 @@
-import * as exe from "./winapi_wasm.js";
+import * as exe from "./mine_wasm.js";
 
 function init(memory: WebAssembly.Memory) {
   if (!window.SharedArrayBuffer) {
@@ -14,7 +14,7 @@ function init(memory: WebAssembly.Memory) {
     const buffer = memory.buffer;
     const msg = e.data;
     switch (msg[0]) {
-      case "console_write":
+      case "console_write": {
         const [, ptr, len, done] = msg;
         const inBuf = new Uint8Array(buffer, ptr, len);
         const ofs = consoleOutput.byteLength;
@@ -23,6 +23,20 @@ function init(memory: WebAssembly.Memory) {
         outBuf.set(inBuf);
         consoleDom.innerText = new TextDecoder().decode(consoleOutput);
         break;
+      }
+
+      case "create_surface": {
+        const [, width, height, done] = msg;
+        const surface = document.createElement("canvas");
+        surface.width = width;
+        surface.height = height;
+        document.body.appendChild(surface);
+        const ta = new Int32Array(buffer);
+        console.log("writing atomic");
+        Atomics.store(ta, done, 1);
+        break;
+      }
+
       default:
         throw new Error(`unknown message: ${msg[0]}`);
     }
