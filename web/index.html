@@ -5,24 +5,4 @@
         position: absolute;
     }
 </style>
-<script type="module">
-    if (!window.SharedArrayBuffer) {
-        alert("SharedArrayBuffer is not supported");
-    }
-    import * as exe from "./winapi_wasm.js";
-    import * as host from "./web_host.js";
-    async function run() {
-        const memory = new WebAssembly.Memory({
-            initial: 32, // in units of 64KB pages, 2mb
-            maximum: 1024, // 64mb
-            shared: true,
-        });
-
-        await host.default();
-        host.main(memory);
-
-        await exe.default(/* module */ undefined, memory);
-        exe.main();
-    }
-    run().catch((e) => console.error(e));
-</script>
+<script type="module" src="host.js"></script>

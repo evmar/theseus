@@ -553,19 +553,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "web-host"
-version = "0.1.0"
-dependencies = [
- "console_error_panic_hook",
- "js-sys",
- "log",
- "logger",
- "wasm-bindgen",
- "web-sys",
- "winapi 0.1.0",
-]
-
-[[package]]
 name = "web-sys"
 version = "0.3.98"
 source = "registry+https://github.com/rust-lang/crates.io-index"

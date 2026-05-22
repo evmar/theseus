@@ -14,7 +14,3 @@ wasm-bindgen --out-dir web --typescript --target web --reference-types \
 # cargo build --target wasm32-unknown-unknown -p mine
 # wasm-bindgen --out-dir web --typescript --target web --reference-types \
 #     target/wasm32-unknown-unknown/debug/mine_wasm.wasm
-
-cargo build --target wasm32-unknown-unknown -p web-host
-wasm-bindgen --out-dir web --typescript --target web --reference-types \
-    target/wasm32-unknown-unknown/debug/web_host.wasm

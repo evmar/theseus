@@ -13,7 +13,7 @@ members = [
   "explore",
   "logger",
   "runtime",
-  "tc", "web/host",
+  "tc",
   "win32/derive",
   "win32/extract",
   "win32/winapi",
