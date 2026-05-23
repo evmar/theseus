@@ -62,28 +62,17 @@ impl Surface {
 }
 
 pub struct Window {
-    dom: web_sys::HtmlCanvasElement,
-    context: web_sys::CanvasRenderingContext2d,
+    id: i32,
 }
 
 impl Window {
     pub fn new(title: &str, width: u32, height: u32) -> Self {
-        let document = web_sys::window().unwrap().document().unwrap();
-        let dom = document
-            .create_element("canvas")
+        let id = host::host()
+            .chan
+            .lock()
             .unwrap()
-            .dyn_into::<web_sys::HtmlCanvasElement>()
-            .unwrap();
-        let context = dom
-            .get_context("2d")
-            .unwrap()
-            .unwrap()
-            .dyn_into::<web_sys::CanvasRenderingContext2d>()
-            .unwrap();
-        dom.set_class_name("window");
-        let mut window = Self { dom, context };
-        window.resize(width, height);
-        window
+            .create_window(title, width, height);
+        Window { id }
     }
 
     pub fn create_surface(&mut self, width: u32, height: u32) -> Surface {
@@ -91,20 +80,11 @@ impl Window {
     }
 
     pub fn resize(&mut self, width: u32, height: u32) {
-        let style = self.dom.style();
-        style
-            .set_property("width", &format!("{}px", width))
-            .unwrap();
-        style
-            .set_property("height", &format!("{}px", height))
-            .unwrap();
-        self.context = self
-            .dom
-            .get_context("2d")
+        host::host()
+            .chan
+            .lock()
             .unwrap()
-            .unwrap()
-            .dyn_into::<web_sys::CanvasRenderingContext2d>()
-            .unwrap();
+            .resize_window(self.id, width, height);
     }
 
     pub fn render(&mut self, surface: &mut Surface) {
@@ -167,31 +147,25 @@ impl Host {
     }
 
     pub fn console_write(&self, text: &[u8]) {
-        // let mut console_text = self.console_text.lock().unwrap();
-        // console_text.extend_from_slice(text);
-        // let utf8 = String::from_utf8_lossy(&console_text);
-        // self.console.set_inner_text(&utf8);
         self.chan.lock().unwrap().console_write(text);
     }
 }
 
-struct WebHostSendChannel {
-    done: atomic::AtomicI32,
-}
+struct WebHostSendChannel {}
 
 #[wasm_bindgen(typescript_custom_section)]
 const MSG_TYPES: &'static str = r#"
 export type Addr = number;
 export type MsgConsoleWrite = ["console_write", Addr, number, Addr];
 export type MsgCreateSurface = ["create_surface", number, number, Addr];
-export type Msg = MsgConsoleWrite | MsgCreateSurface;
+export type MsgCreateWindow = ["create_window", string, number, number, Addr];
+export type MsgResizeWindow = ["resize_window", number, number, number];
+export type Msg = MsgConsoleWrite | MsgCreateSurface | MsgCreateWindow | MsgResizeWindow;
 "#;
 
 impl WebHostSendChannel {
     pub fn new() -> Self {
-        Self {
-            done: atomic::AtomicI32::new(0),
-        }
+        Self {}
     }
 
     pub fn console_write(&mut self, text: &[u8]) {
@@ -199,8 +173,8 @@ impl WebHostSendChannel {
         args.push(&JsValue::from("console_write"));
         args.push(&JsValue::from(text.as_ptr()));
         args.push(&JsValue::from(text.len()));
-        args.push(&JsValue::from(self.done.as_ptr()));
-        web_sys::window().unwrap().post_message(&args, "*").unwrap();
+        //args.push(&JsValue::from(self.done.as_ptr()));
+        self.send(&args);
 
         // todo: block until the UI has written the response
         // unsafe {
@@ -215,13 +189,47 @@ impl WebHostSendChannel {
         args.push(&JsValue::from("create_surface"));
         args.push(&JsValue::from(width));
         args.push(&JsValue::from(height));
-        args.push(&JsValue::from(self.done.as_ptr()));
-        web_sys::window().unwrap().post_message(&args, "*").unwrap();
+        args.push(&JsValue::from(&mut done as *mut _));
+        self.send(&args);
 
         unsafe {
             wasm32::memory_atomic_wait32(&mut done as *mut _, 0, -1);
         }
         log::info!("got done: {}", done);
         done
+    }
+
+    pub fn create_window(&mut self, title: &str, width: u32, height: u32) -> i32 {
+        let mut ret = 0i32;
+        let args = js_sys::Array::new();
+        args.push(&JsValue::from("create_window"));
+        args.push(&JsValue::from(title));
+        args.push(&JsValue::from(width));
+        args.push(&JsValue::from(height));
+        args.push(&JsValue::from(&mut ret as *mut _));
+        self.send(&args);
+
+        unsafe {
+            wasm32::memory_atomic_wait32(&mut ret as *mut _, 0, -1);
+        }
+        ret
+    }
+
+    pub fn resize_window(&mut self, id: i32, width: u32, height: u32) {
+        let args = js_sys::Array::new();
+        args.push(&JsValue::from("resize_window"));
+        args.push(&JsValue::from(id));
+        args.push(&JsValue::from(width));
+        args.push(&JsValue::from(height));
+        self.send(&args);
+    }
+
+    fn send(&mut self, msg: &JsValue) {
+        log::info!("sending: {:?}", msg);
+        js_sys::global()
+            .dyn_into::<web_sys::DedicatedWorkerGlobalScope>()
+            .unwrap()
+            .post_message(msg)
+            .unwrap();
     }
 }

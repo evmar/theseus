@@ -31,5 +31,6 @@ web-sys = { workspace = true, features = [
     "ImageData",
     "Performance",
     "Window",
+    "DedicatedWorkerGlobalScope",
     "WorkerGlobalScope",
 ] }

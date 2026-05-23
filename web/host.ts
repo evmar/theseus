@@ -1,6 +1,6 @@
 import * as exe from "./mine_wasm.js";
 
-function init(memory: WebAssembly.Memory) {
+function init(worker: Worker, memory: WebAssembly.Memory) {
   if (!window.SharedArrayBuffer) {
     alert("SharedArrayBuffer is not supported");
   }
@@ -9,10 +9,12 @@ function init(memory: WebAssembly.Memory) {
   consoleDom.id = "console";
   document.body.appendChild(consoleDom);
 
+  let window_: HTMLCanvasElement;
   const consoleOutput = new ArrayBuffer(0, { maxByteLength: 10 << 10 });
-  window.onmessage = (e: MessageEvent<exe.Msg>) => {
+  worker.onmessage = (e: MessageEvent<exe.Msg>) => {
     const buffer = memory.buffer;
     const msg = e.data;
+    console.log("msg", msg);
     switch (msg[0]) {
       case "console_write": {
         const [, ptr, len, done] = msg;
@@ -37,10 +39,32 @@ function init(memory: WebAssembly.Memory) {
         break;
       }
 
+      case "create_window": {
+        const [, title, width, height, done] = msg;
+        window_ = document.createElement("canvas");
+        window_.className = "window";
+        window_.width = width;
+        window_.height = height;
+        document.body.appendChild(window_);
+        console.log("done is at", done.toString(16));
+        const ta = new Int32Array(buffer, done, 1);
+        console.log("writing atomic, prev is", ta[0]);
+        ta[0] = 1;
+        Atomics.notify(ta, 0, 1);
+        console.log("notified atomic");
+        break;
+      }
+
+      case "resize_window": {
+        const [, id, width, height] = msg;
+        window_.width = width;
+        window_.height = height;
+        break;
+      }
+
       default:
         throw new Error(`unknown message: ${msg[0]}`);
     }
-    console.log(msg);
   };
 }
 
@@ -50,9 +74,9 @@ async function main() {
     maximum: 1024, // 64mb
     shared: true,
   });
-  init(memory);
 
   const worker = new Worker("./worker.js", { type: "module" });
+  init(worker, memory);
   worker.postMessage(memory);
 }
 main().catch((e) => console.error(e));
