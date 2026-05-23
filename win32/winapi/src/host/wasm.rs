@@ -155,13 +155,26 @@ struct WebHostSendChannel {}
 
 #[wasm_bindgen(typescript_custom_section)]
 const MSG_TYPES: &'static str = r#"
-export type Addr = number;
-export type MsgConsoleWrite = ["console_write", Addr, number, Addr];
-export type MsgCreateSurface = ["create_surface", number, number, Addr];
-export type MsgCreateWindow = ["create_window", string, number, number, Addr];
-export type MsgResizeWindow = ["resize_window", number, number, number];
-export type Msg = MsgConsoleWrite | MsgCreateSurface | MsgCreateWindow | MsgResizeWindow;
+export interface Msg {
+    func: string,
+    args: unknown[],
+    ret: number,
+}
+
+export interface WasmHost {
+    console_write(ptr: number, len: number): void;
+
+    create_surface(width: number, height: number): number;
+
+    create_window(title: string, width: number, height: number): number;
+    resize_window(id: number, width: number, height: number): void;
+}
 "#;
+
+#[wasm_bindgen]
+extern "C" {
+    fn send_to_host(msg: &str, args: js_sys::Array, ret: u32);
+}
 
 impl WebHostSendChannel {
     pub fn new() -> Self {
@@ -173,46 +186,24 @@ impl WebHostSendChannel {
         args.push(&JsValue::from("console_write"));
         args.push(&JsValue::from(text.as_ptr()));
         args.push(&JsValue::from(text.len()));
-        //args.push(&JsValue::from(self.done.as_ptr()));
-        self.send(&args);
-
-        // todo: block until the UI has written the response
-        // unsafe {
-        // wasm32::memory_atomic_wait32(self.done.as_ptr(), 0, -1);
-        // }
-        // self.done.store(0, atomic::Ordering::SeqCst);
+        self.send_async("console_write", args);
     }
 
     pub fn create_surface(&mut self, width: u32, height: u32) -> i32 {
-        let mut done = 0i32;
         let args = js_sys::Array::new();
         args.push(&JsValue::from("create_surface"));
         args.push(&JsValue::from(width));
         args.push(&JsValue::from(height));
-        args.push(&JsValue::from(&mut done as *mut _));
-        self.send(&args);
-
-        unsafe {
-            wasm32::memory_atomic_wait32(&mut done as *mut _, 0, -1);
-        }
-        log::info!("got done: {}", done);
-        done
+        self.send_sync("create_surface", args)
     }
 
     pub fn create_window(&mut self, title: &str, width: u32, height: u32) -> i32 {
-        let mut ret = 0i32;
         let args = js_sys::Array::new();
         args.push(&JsValue::from("create_window"));
         args.push(&JsValue::from(title));
         args.push(&JsValue::from(width));
         args.push(&JsValue::from(height));
-        args.push(&JsValue::from(&mut ret as *mut _));
-        self.send(&args);
-
-        unsafe {
-            wasm32::memory_atomic_wait32(&mut ret as *mut _, 0, -1);
-        }
-        ret
+        self.send_sync("create_window", args)
     }
 
     pub fn resize_window(&mut self, id: i32, width: u32, height: u32) {
@@ -221,15 +212,19 @@ impl WebHostSendChannel {
         args.push(&JsValue::from(id));
         args.push(&JsValue::from(width));
         args.push(&JsValue::from(height));
-        self.send(&args);
+        self.send_async("resize_window", args);
     }
 
-    fn send(&mut self, msg: &JsValue) {
-        log::info!("sending: {:?}", msg);
-        js_sys::global()
-            .dyn_into::<web_sys::DedicatedWorkerGlobalScope>()
-            .unwrap()
-            .post_message(msg)
-            .unwrap();
+    fn send_sync(&mut self, msg: &str, args: js_sys::Array) -> i32 {
+        let mut ret = 0i32;
+        send_to_host(msg, args, &mut ret as *mut _ as u32);
+        unsafe {
+            wasm32::memory_atomic_wait32(&mut ret as *mut _, 0, -1);
+        }
+        ret
+    }
+
+    fn send_async(&mut self, msg: &str, args: js_sys::Array) {
+        send_to_host(msg, args, 0);
     }
 }
