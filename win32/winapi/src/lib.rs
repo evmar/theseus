@@ -46,10 +46,20 @@ pub struct EXEData {
     pub entry_point: runtime::Cont,
 }
 
+#[cfg(target_family = "wasm")]
+fn thesesus_trace() -> String {
+    "+".into()
+}
+
+#[cfg(not(target_family = "wasm"))]
+fn thesesus_trace() -> String {
+    std::env::var("THESEUS_TRACE").unwrap_or_default()
+}
+
 pub fn load(exe: &EXEData) -> Context {
     host::init();
 
-    crate::trace::init(&std::env::var("THESEUS_TRACE").unwrap_or_default());
+    crate::trace::init(&thesesus_trace());
 
     let memory_size = 32 << 20;
     // safety: safe to assume_init on zeroed u8
