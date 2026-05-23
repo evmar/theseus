@@ -10,6 +10,9 @@ use crate::{
 };
 
 pub struct Window {
+    /// There is a single unique HWND for each window, it's not a refcounted handle.
+    pub hwnd: HWND,
+    pub dirty: bool, // triggers WM_PAINT
     pub x: i32,
     pub y: i32,
     pub width: u32,
@@ -105,7 +108,10 @@ impl State {
         let width = args.width.unwrap_or(640);
         let height = args.height.unwrap_or(480);
 
-        let window = Window {
+        let hwnd = HWND::from_raw(1);
+        let window = Rc::new(RefCell::new(Window {
+            hwnd,
+            dirty: true,
             x: args.x,
             y: args.y,
             width,
@@ -113,10 +119,9 @@ impl State {
             host: host::host().create_window(&args.name, width, height),
             pixels: None,
             surface: None,
-        };
-        let hwnd = HWND::from_raw(1);
-        *self.window.borrow_mut() = Some(Rc::new(RefCell::new(window)));
-        self.message_queue.borrow_mut().hwnd = hwnd;
+        }));
+        *self.window.borrow_mut() = Some(window.clone());
+        self.message_queue.borrow_mut().window = Some(window);
         stub!(hwnd)
     }
 }
@@ -386,6 +391,7 @@ pub fn EndPaint(ctx: &mut Context, _hWnd: HWND, lpPaint: Ptr<PAINTSTRUCT>) -> bo
     let mut window = window.as_ref().unwrap().borrow_mut();
     let paint = lpPaint.read(&ctx.memory).unwrap();
     gdi32::lock().release_dc(paint.hdc);
+    window.dirty = false;
     window.flush(ctx);
     true
 }
@@ -423,8 +429,12 @@ pub fn ReleaseDC(ctx: &mut Context, hWnd: HWND, hDC: HDC) -> i32 {
 }
 
 #[win32_derive::dllexport]
-pub fn InvalidateRect(_ctx: &mut Context, _hWnd: HWND, _lpRect: Ptr<RECT>, _bErase: bool) -> bool {
-    stub!(true)
+pub fn InvalidateRect(_ctx: &mut Context, hWnd: HWND, _lpRect: Ptr<RECT>, _bErase: bool) -> bool {
+    assert!(!hWnd.is_null()); // todo
+    let window = user32::state().window.borrow();
+    let mut window = window.as_ref().unwrap().borrow_mut();
+    window.dirty = true;
+    true
 }
 
 #[win32_derive::dllexport]

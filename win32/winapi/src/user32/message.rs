@@ -1,4 +1,4 @@
-use std::{collections::VecDeque, sync::LazyLock};
+use std::{cell::RefCell, collections::VecDeque, rc::Rc, sync::LazyLock};
 
 use runtime::Context;
 
@@ -6,7 +6,7 @@ use crate::{
     POINT, Ptr,
     dllexport::win32flags,
     host, stub, trace,
-    user32::{HACCEL, HWND, state},
+    user32::{HACCEL, HWND, Window, state},
 };
 
 /// If THESEUS_TRACE includes "wm", log all Windows messages.
@@ -42,7 +42,7 @@ pub struct MSG {
 
 #[derive(Default)]
 pub struct MessageQueue {
-    pub hwnd: HWND,
+    pub window: Option<Rc<RefCell<Window>>>,
     messages: VecDeque<MSG>,
     quit: Option<MSG>,
 }
@@ -151,10 +151,13 @@ impl MessageQueue {
 
     fn msg_from_message(&self, message: host::Message) -> MSG {
         use host::Message::*;
+        let hwnd = self.window.as_ref().unwrap().borrow().hwnd;
         match message {
             Paint => {
+                // TODO: this is not really a WM_PAINT, it's the host requesting a window update
+                // and maybe we ought to just draw whatever pixel data we already have.
                 MSG {
-                    hwnd: self.hwnd,
+                    hwnd,
                     message: WM::PAINT as u32,
                     wParam: 0, // todo
                     lParam: 0, // todo
@@ -162,12 +165,12 @@ impl MessageQueue {
                     pt: POINT::default(),
                 }
             }
-            MouseDown(mouse) => mouse_msg(mouse_button_to_wm(true, &mouse), self.hwnd, &mouse),
-            MouseUp(mouse) => mouse_msg(mouse_button_to_wm(false, &mouse), self.hwnd, &mouse),
-            MouseMove(mouse) => mouse_msg(WM::MOUSEMOVE, self.hwnd, &mouse),
+            MouseDown(mouse) => mouse_msg(mouse_button_to_wm(true, &mouse), hwnd, &mouse),
+            MouseUp(mouse) => mouse_msg(mouse_button_to_wm(false, &mouse), hwnd, &mouse),
+            MouseMove(mouse) => mouse_msg(WM::MOUSEMOVE, hwnd, &mouse),
             Quit => {
                 MSG {
-                    hwnd: self.hwnd,
+                    hwnd,
                     message: WM::QUIT as u32,
                     wParam: 0, // todo
                     lParam: 0, // todo
