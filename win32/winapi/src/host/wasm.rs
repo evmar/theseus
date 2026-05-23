@@ -1,43 +1,15 @@
-use std::{
-    arch::wasm32,
-    sync::{
-        Mutex,
-        atomic::{self},
-    },
-};
+use std::{arch::wasm32, sync::Mutex};
 
 use web_sys::wasm_bindgen::prelude::*;
 
 use crate::{RECT, host};
 
 pub struct Surface {
-    // canvas: web_sys::HtmlCanvasElement,
-    // width: u32,
-    // context: web_sys::CanvasRenderingContext2d,
     id: i32,
 }
 
 impl Surface {
     pub fn new(width: u32, height: u32) -> Self {
-        // let document = web_sys::window().unwrap().document().unwrap();
-        // let canvas = document
-        //     .create_element("canvas")
-        //     .unwrap()
-        //     .dyn_into::<web_sys::HtmlCanvasElement>()
-        //     .unwrap();
-        // canvas.set_width(width);
-        // canvas.set_height(height);
-        // let context = canvas
-        //     .get_context("2d")
-        //     .unwrap()
-        //     .unwrap()
-        //     .dyn_into::<web_sys::CanvasRenderingContext2d>()
-        //     .unwrap();
-        // Self {
-        //     canvas,
-        //     width,
-        //     context,
-        // }
         let id = host::host()
             .chan
             .lock()
@@ -46,17 +18,21 @@ impl Surface {
         Self { id }
     }
 
-    pub fn set_pixels(&mut self, pixels: &[u8], stride: u32) {
-        // let image_data = web_sys::ImageData::new_with_u8_clamped_array(
-        //     wasm_bindgen::Clamped(pixels),
-        //     self.width,
-        // )
-        // .unwrap();
-        // self.context.put_image_data(&image_data, 0.0, 0.0).unwrap();
-        todo!();
+    pub fn set_pixels(&mut self, pixels: &[u8], _stride: u32) {
+        host::host()
+            .chan
+            .lock()
+            .unwrap()
+            .set_pixels(self.id, pixels);
     }
 
-    pub fn copy(&mut self, window: &mut Window, dst_rect: &RECT, src: &Surface, src_rect: &RECT) {
+    pub fn copy(
+        &mut self,
+        _window: &mut Window,
+        _dst_rect: &RECT,
+        _src: &Surface,
+        _src_rect: &RECT,
+    ) {
         todo!()
     }
 }
@@ -88,10 +64,11 @@ impl Window {
     }
 
     pub fn render(&mut self, surface: &mut Surface) {
-        // self.context
-        //     .draw_image_with_html_canvas_element(&surface.canvas, 0.0, 0.0)
-        //     .unwrap();
-        todo!();
+        host::host()
+            .chan
+            .lock()
+            .unwrap()
+            .render(self.id, surface.id);
     }
 }
 
@@ -100,7 +77,7 @@ impl AudioStream {
     pub fn queued_bytes(&self) -> u32 {
         todo!()
     }
-    pub fn put_data(&self, data: &[u8]) {
+    pub fn put_data(&self, _data: &[u8]) {
         todo!()
     }
 
@@ -134,7 +111,7 @@ impl Host {
         Window::new(title, width, height)
     }
 
-    pub fn create_audio_stream(&self, spec: host::AudioSpec) -> AudioStream {
+    pub fn create_audio_stream(&self, _spec: host::AudioSpec) -> AudioStream {
         todo!()
     }
 
@@ -167,7 +144,10 @@ export interface WasmHost {
     create_surface(width: number, height: number): number;
 
     create_window(title: string, width: number, height: number): number;
-    resize_window(id: number, width: number, height: number): void;
+    resize_window(window_id: number, width: number, height: number): void;
+    render(window_id: number, surface_id: number): void;
+
+    set_pixels(surface_id: number, ptr: number, len: number): void;
 }
 "#;
 
@@ -183,7 +163,6 @@ impl WebHostSendChannel {
 
     pub fn console_write(&mut self, text: &[u8]) {
         let args = js_sys::Array::new();
-        args.push(&JsValue::from("console_write"));
         args.push(&JsValue::from(text.as_ptr()));
         args.push(&JsValue::from(text.len()));
         self.send_async("console_write", args);
@@ -191,7 +170,6 @@ impl WebHostSendChannel {
 
     pub fn create_surface(&mut self, width: u32, height: u32) -> i32 {
         let args = js_sys::Array::new();
-        args.push(&JsValue::from("create_surface"));
         args.push(&JsValue::from(width));
         args.push(&JsValue::from(height));
         self.send_sync("create_surface", args)
@@ -199,7 +177,6 @@ impl WebHostSendChannel {
 
     pub fn create_window(&mut self, title: &str, width: u32, height: u32) -> i32 {
         let args = js_sys::Array::new();
-        args.push(&JsValue::from("create_window"));
         args.push(&JsValue::from(title));
         args.push(&JsValue::from(width));
         args.push(&JsValue::from(height));
@@ -208,11 +185,25 @@ impl WebHostSendChannel {
 
     pub fn resize_window(&mut self, id: i32, width: u32, height: u32) {
         let args = js_sys::Array::new();
-        args.push(&JsValue::from("resize_window"));
         args.push(&JsValue::from(id));
         args.push(&JsValue::from(width));
         args.push(&JsValue::from(height));
         self.send_async("resize_window", args);
+    }
+
+    pub fn render(&mut self, window_id: i32, surface_id: i32) {
+        let args = js_sys::Array::new();
+        args.push(&JsValue::from(window_id));
+        args.push(&JsValue::from(surface_id));
+        self.send_async("render", args);
+    }
+
+    pub fn set_pixels(&mut self, id: i32, pixels: &[u8]) {
+        let args = js_sys::Array::new();
+        args.push(&JsValue::from(id));
+        args.push(&JsValue::from(pixels.as_ptr() as u32));
+        args.push(&JsValue::from(pixels.len()));
+        self.send_async("set_pixels", args);
     }
 
     fn send_sync(&mut self, msg: &str, args: js_sys::Array) -> i32 {

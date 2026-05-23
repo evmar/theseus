@@ -5,6 +5,8 @@ class Host implements exe.WasmHost {
   consoleOutput = new ArrayBuffer(0, { maxByteLength: 10 << 10 });
   window_: HTMLCanvasElement | undefined;
 
+  surfaces: Map<number, HTMLCanvasElement> = new Map();
+
   constructor(public wasmMemory: WebAssembly.Memory) {
     if (!window.SharedArrayBuffer) {
       alert("SharedArrayBuffer is not supported");
@@ -22,7 +24,6 @@ class Host implements exe.WasmHost {
       if (ret == 0) throw new Error();
       const ints = new Int32Array(this.wasmMemory.buffer, msg.ret, 1);
       ints[0] = ret;
-      console.log("notify");
       Atomics.notify(ints, 0, 1);
     }
   }
@@ -41,7 +42,10 @@ class Host implements exe.WasmHost {
     surface.width = width;
     surface.height = height;
     document.body.appendChild(surface);
-    return 1;
+
+    const id = 1;
+    this.surfaces.set(id, surface);
+    return id;
   }
 
   create_window(title: string, width: number, height: number): number {
@@ -56,6 +60,22 @@ class Host implements exe.WasmHost {
   resize_window(id: number, width: number, height: number): void {
     this.window_!.width = width;
     this.window_!.height = height;
+  }
+
+  render(window_id: number, surface_id: number) {
+    const surface = this.surfaces.get(surface_id)!;
+    this.window_!.getContext("2d")!.drawImage(surface, 0, 0);
+  }
+
+  set_pixels(id: number, ptr: number, len: number): void {
+    const copy = new Uint8ClampedArray(
+      this.wasmMemory.buffer,
+      ptr,
+      len,
+    ).slice();
+    const surface = this.surfaces.get(id)!;
+    const imageData = new ImageData(copy, surface.width);
+    surface.getContext("2d")!.putImageData(imageData, 0, 0);
   }
 }
 
