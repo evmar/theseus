@@ -159,7 +159,11 @@ impl Host {
     }
 
     pub fn time(&self) -> u32 {
-        web_sys::window().unwrap().performance().unwrap().now() as u32
+        js_sys::global()
+            .unchecked_into::<web_sys::WorkerGlobalScope>()
+            .performance()
+            .unwrap()
+            .now() as u32
     }
 
     pub fn console_write(&self, text: &[u8]) {

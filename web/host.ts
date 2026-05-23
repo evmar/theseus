@@ -51,7 +51,8 @@ async function main() {
     shared: true,
   });
   init(memory);
-  await exe.default(/* module */ undefined, memory);
-  exe.main();
+
+  const worker = new Worker("./worker.js", { type: "module" });
+  worker.postMessage(memory);
 }
 main().catch((e) => console.error(e));
