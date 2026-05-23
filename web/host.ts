@@ -1,11 +1,31 @@
 import * as exe from "./mine_wasm.js";
 
+class MessageQueue {
+  private messages: number[] = [];
+  private waiter: ((value: number) => void) | undefined;
+
+  poll(): number | undefined {
+    return this.messages.shift();
+  }
+
+  wait(): Promise<number> {
+    const msg = this.poll();
+    if (msg !== undefined) {
+      return Promise.resolve(msg);
+    }
+    const { promise, resolve } = Promise.withResolvers<number>();
+    this.waiter = resolve;
+    return promise;
+  }
+}
+
 class Host implements exe.WasmHost {
   consoleDom = document.createElement("pre");
   consoleOutput = new ArrayBuffer(0, { maxByteLength: 10 << 10 });
   window_: HTMLCanvasElement | undefined;
 
   surfaces: Map<number, HTMLCanvasElement> = new Map();
+  messageQueue = new MessageQueue();
 
   constructor(public wasmMemory: WebAssembly.Memory) {
     if (!window.SharedArrayBuffer) {
@@ -19,13 +39,22 @@ class Host implements exe.WasmHost {
   onMessage(e: MessageEvent<exe.Msg>) {
     const msg = e.data;
     console.log("msg", msg);
+
     const ret = (this as any)[msg.func](...msg.args);
     if (msg.ret) {
-      if (ret == 0) throw new Error();
-      const ints = new Int32Array(this.wasmMemory.buffer, msg.ret, 1);
-      ints[0] = ret;
-      Atomics.notify(ints, 0, 1);
+      if (ret instanceof Promise) {
+        ret.then((ret) => this.finishSync(msg.ret, ret));
+        return;
+      }
+      this.finishSync(msg.ret, ret);
     }
+  }
+
+  finishSync(retPtr: number, ret: number): void {
+    if (ret == 0) throw new Error();
+    const ints = new Int32Array(this.wasmMemory.buffer, retPtr, 1);
+    ints[0] = ret;
+    Atomics.notify(ints, 0, 1);
   }
 
   console_write(ptr: number, len: number): void {
@@ -76,6 +105,14 @@ class Host implements exe.WasmHost {
     const surface = this.surfaces.get(id)!;
     const imageData = new ImageData(copy, surface.width);
     surface.getContext("2d")!.putImageData(imageData, 0, 0);
+  }
+
+  poll_message(): number {
+    return this.messageQueue.poll() ?? -1;
+  }
+
+  wait_message(): Promise<number> {
+    return this.messageQueue.wait();
   }
 }
 

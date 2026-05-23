@@ -100,11 +100,11 @@ impl Host {
     }
 
     pub fn poll(&self) -> Option<host::Message> {
-        todo!()
+        self.chan.lock().unwrap().poll_message()
     }
 
     pub fn wait(&self) -> host::Message {
-        todo!()
+        self.chan.lock().unwrap().wait_message()
     }
 
     pub fn create_window(&self, title: &str, width: u32, height: u32) -> Window {
@@ -148,6 +148,9 @@ export interface WasmHost {
     render(window_id: number, surface_id: number): void;
 
     set_pixels(surface_id: number, ptr: number, len: number): void;
+
+    poll_message(): number;
+    wait_message(): Promise<number>;
 }
 "#;
 
@@ -204,6 +207,26 @@ impl WebHostSendChannel {
         args.push(&JsValue::from(pixels.as_ptr() as u32));
         args.push(&JsValue::from(pixels.len()));
         self.send_async("set_pixels", args);
+    }
+
+    fn parse_message(ret: i32) -> Option<host::Message> {
+        // TOOD: some sort of structured encoding
+        Some(match ret {
+            -1 => return None,
+            2 => host::Message::Paint,
+            3 => host::Message::Quit,
+            msg => todo!("host message {msg}"),
+        })
+    }
+
+    pub fn poll_message(&mut self) -> Option<host::Message> {
+        let ret = self.send_sync("poll_message", js_sys::Array::new());
+        Self::parse_message(ret)
+    }
+
+    pub fn wait_message(&mut self) -> host::Message {
+        let ret = self.send_sync("wait_message", js_sys::Array::new());
+        Self::parse_message(ret).unwrap()
     }
 
     fn send_sync(&mut self, msg: &str, args: js_sys::Array) -> i32 {
