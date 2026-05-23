@@ -3,10 +3,10 @@ use std::{cell::RefCell, collections::VecDeque, rc::Rc, sync::LazyLock};
 use runtime::Context;
 
 use crate::{
-    POINT, Ptr,
     dllexport::win32flags,
     host, stub, trace,
-    user32::{HACCEL, HWND, Window, state},
+    user32::{state, Window, HACCEL, HWND},
+    Ptr, POINT,
 };
 
 /// If THESEUS_TRACE includes "wm", log all Windows messages.
@@ -96,18 +96,39 @@ fn mouse_msg(wm: WM, hwnd: HWND, message: &host::MouseMessage) -> MSG {
 }
 
 impl MessageQueue {
-    fn peek(&mut self) -> Option<&MSG> {
+    fn paint_msg(&self) -> Option<MSG> {
+        let window = self.window.as_ref()?.borrow();
+        if !window.dirty {
+            return None;
+        }
+
+        Some(MSG {
+            hwnd: window.hwnd,
+            message: WM::PAINT as u32,
+            wParam: 0,
+            lParam: 0,
+            time: 0,
+            pt: POINT::default(),
+        })
+    }
+
+    fn peek(&mut self) -> Option<MSG> {
         if let Some(msg) = self.messages.front() {
-            Some(msg)
+            Some(*msg)
+        } else if self.quit.is_some() {
+            self.quit
         } else {
-            self.quit.as_ref()
+            self.paint_msg()
         }
     }
+
     fn pop(&mut self) -> Option<MSG> {
         if let Some(msg) = self.messages.pop_front() {
             Some(msg)
-        } else {
+        } else if self.quit.is_some() {
             self.quit.take()
+        } else {
+            self.paint_msg()
         }
     }
 
@@ -136,6 +157,13 @@ impl MessageQueue {
     }
 
     fn enqueue_message(&mut self, msg: host::Message) {
+        if matches!(msg, host::Message::Paint) {
+            if let Some(window) = &self.window {
+                window.borrow_mut().dirty = true;
+            }
+            return;
+        }
+
         let msg = self.msg_from_message(msg);
         if *LOG_MESSAGES {
             log::info!("{:#x?}", msg);
@@ -153,18 +181,7 @@ impl MessageQueue {
         use host::Message::*;
         let hwnd = self.window.as_ref().unwrap().borrow().hwnd;
         match message {
-            Paint => {
-                // TODO: this is not really a WM_PAINT, it's the host requesting a window update
-                // and maybe we ought to just draw whatever pixel data we already have.
-                MSG {
-                    hwnd,
-                    message: WM::PAINT as u32,
-                    wParam: 0, // todo
-                    lParam: 0, // todo
-                    time: 0,   // todo
-                    pt: POINT::default(),
-                }
-            }
+            Paint => unreachable!(),
             MouseDown(mouse) => mouse_msg(mouse_button_to_wm(true, &mouse), hwnd, &mouse),
             MouseUp(mouse) => mouse_msg(mouse_button_to_wm(false, &mouse), hwnd, &mouse),
             MouseMove(mouse) => mouse_msg(WM::MOUSEMOVE, hwnd, &mouse),
@@ -232,7 +249,7 @@ pub fn PeekMessageA(
         // TODO: only matching messages
         assert_eq!(msg.hwnd, hWnd);
     }
-    lpMsg.write(&mut ctx.memory, *msg).unwrap();
+    lpMsg.write(&mut ctx.memory, msg).unwrap();
     if remove {
         queue.pop();
     }
