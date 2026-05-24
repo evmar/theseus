@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2024"
 
 [lib]
-name = "winapi_wasm"
+name = "winapi"
 crate-type = ["cdylib"]
 
 [dependencies]

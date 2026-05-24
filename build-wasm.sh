@@ -33,8 +33,7 @@ for package in winapi-exe mine basicdd-exe; do
     if [[ "$desired" != "" && "$desired" != "$file" ]]; then
         continue
     fi
-    cargo +nightly build $build_mode -Z build-std=std,panic_abort --target wasm32-unknown-unknown -p $package
-
+    cargo +nightly build --lib $build_mode -Z build-std=std,panic_abort --target wasm32-unknown-unknown -p $package
     wasm-bindgen --out-dir web --typescript --target web --reference-types \
-        target/wasm32-unknown-unknown/$build_path/${file}_wasm.wasm
+        target/wasm32-unknown-unknown/$build_path/${file}.wasm
 done

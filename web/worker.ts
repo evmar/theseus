@@ -1,4 +1,4 @@
-import * as exe from "./mine_wasm.js";
+import * as exe from "./mine.js";
 
 (self as any).send_to_host = (func: string, args: any[], retAddr: number) => {
   const obj: exe.Msg = { func, args, retAddr };

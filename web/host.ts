@@ -1,4 +1,4 @@
-import * as exe from "./mine_wasm.js";
+import * as exe from "./mine.js";
 
 class MessageQueue {
   private messages: Event[] = [];
