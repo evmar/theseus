@@ -28,7 +28,7 @@ fi
 
 
 desired="$1"
-for package in winapi-exe mine basicdd-exe; do
+for package in winapi-exe mine basicdd; do
     file=$(sed -e 's/-exe//' <<< "$package")
     if [[ "$desired" != "" && "$desired" != "$file" ]]; then
         continue

@@ -1,5 +1,3 @@
-mod generated;
-
-fn main() {
-    winapi::run(&generated::EXEDATA);
+pub fn main() {
+    basicdd::main();
 }

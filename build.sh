@@ -46,5 +46,5 @@ elif [[ $1 == "mine" ]]; then
         --jump-table $wndproc_jmptable
 else
     cargo run -p tc -- --scan-memory --exe ~/win/rs/deploy/archive/BasicDD.exe --out exe/basicdd --entry-point 0x4012d0
-    echo cargo run -p basicdd-exe
+    echo cargo run -p basicdd
 fi

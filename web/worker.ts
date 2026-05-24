@@ -1,4 +1,4 @@
-import * as exe from "./mine.js";
+import * as exe from "./basicdd.js";
 
 (self as any).send_to_host = (func: string, args: any[], retAddr: number) => {
   const obj: exe.Msg = { func, args, retAddr };
