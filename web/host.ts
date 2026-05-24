@@ -51,10 +51,6 @@ class Host implements exe.WasmHost {
   messageQueue = new MessageQueue();
 
   constructor(public wasmMemory: WebAssembly.Memory) {
-    if (!window.SharedArrayBuffer) {
-      alert("SharedArrayBuffer is not supported");
-    }
-
     this.consoleDom.id = "console";
     document.body.appendChild(this.consoleDom);
   }
@@ -168,6 +164,12 @@ class Host implements exe.WasmHost {
 }
 
 async function main() {
+  if (!window.SharedArrayBuffer) {
+    document.body.innerText =
+      "SharedArrayBuffer is not supported; possibly try reloading";
+    return;
+  }
+
   const memory = new WebAssembly.Memory({
     initial: 32, // in units of 64KB pages, 2mb
     maximum: 1024, // 64mb
