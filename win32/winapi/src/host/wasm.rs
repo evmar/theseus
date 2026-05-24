@@ -206,7 +206,7 @@ impl WebHostSendChannel {
         args.push(&JsValue::from(id));
         args.push(&JsValue::from(pixels.as_ptr() as u32));
         args.push(&JsValue::from(pixels.len()));
-        self.send_async("set_pixels", args);
+        self.send_sync("set_pixels", args);
     }
 
     fn parse_message(buf: &[i32; 4]) -> Option<host::Message> {
