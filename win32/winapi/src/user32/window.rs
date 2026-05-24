@@ -220,24 +220,27 @@ pub fn UpdateWindow(_ctx: &mut Context, _hWnd: HWND) -> bool {
 }
 
 #[win32_derive::dllexport]
-pub fn DefWindowProcA(
-    _ctx: &mut Context,
-    _hWnd: HWND,
-    _Msg: u32,
-    _wParam: u32,
-    _lParam: u32,
-) -> u32 {
-    0
+pub fn DefWindowProcA(ctx: &mut Context, hWnd: HWND, Msg: u32, wParam: u32, lParam: u32) -> u32 {
+    DefWindowProcW(ctx, hWnd, Msg, wParam, lParam)
 }
 
 #[win32_derive::dllexport]
 pub fn DefWindowProcW(
     _ctx: &mut Context,
     _hWnd: HWND,
-    _Msg: u32,
+    Msg: u32,
     _wParam: u32,
     _lParam: u32,
 ) -> u32 {
+    let window = state().window.borrow();
+    let mut window = window.as_ref().unwrap().borrow_mut();
+    match Msg {
+        0xf => {
+            // WM_PAINT
+            window.dirty = false;
+        }
+        _ => {}
+    }
     0
 }
 
