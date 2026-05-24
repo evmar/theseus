@@ -156,6 +156,7 @@ impl MessageQueue {
     }
 
     fn enqueue_message(&mut self, msg: host::Message) {
+        #[cfg(not(target_family = "wasm"))]
         if matches!(msg, host::Message::Paint) {
             if let Some(window) = &self.window {
                 window.borrow_mut().dirty = true;
@@ -180,10 +181,10 @@ impl MessageQueue {
         use host::Message::*;
         let hwnd = self.window.as_ref().unwrap().borrow().hwnd;
         match message {
-            Paint => unreachable!(),
             MouseDown(mouse) => mouse_msg(mouse_button_to_wm(true, &mouse), hwnd, &mouse),
             MouseUp(mouse) => mouse_msg(mouse_button_to_wm(false, &mouse), hwnd, &mouse),
             MouseMove(mouse) => mouse_msg(WM::MOUSEMOVE, hwnd, &mouse),
+            #[cfg(not(target_family = "wasm"))]
             Quit => {
                 MSG {
                     hwnd,

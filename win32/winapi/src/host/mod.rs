@@ -38,7 +38,9 @@ pub struct MouseMessage {
 }
 
 pub enum Message {
+    #[cfg(not(target_family = "wasm"))] // no "quit" menu on web
     Quit,
+    #[cfg(not(target_family = "wasm"))] // no paint on web, browser does painting
     Paint,
     MouseDown(MouseMessage),
     MouseUp(MouseMessage),
