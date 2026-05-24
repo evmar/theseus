@@ -16,12 +16,21 @@ for arg in target-feature=+atomics $link_args; do
     RUSTFLAGS="$RUSTFLAGS -C$arg"
 done
 
-echo "RUSTFLAGS=$RUSTFLAGS"
 export RUSTFLAGS
-cargo +nightly build -Z build-std=std,panic_abort --target wasm32-unknown-unknown -p winapi-exe
-wasm-bindgen --out-dir web --typescript --target web --reference-types \
-    target/wasm32-unknown-unknown/debug/winapi_wasm.wasm
 
-cargo +nightly build -Z build-std=std,panic_abort --target wasm32-unknown-unknown -p mine
+build_mode=
+build_path=debug
+if [[ "$1" == "--release" ]]; then
+    build_mode="--release"
+    build_path=release
+fi
+
+cargo_args="+nightly build $build_mode -Z build-std=std,panic_abort --target wasm32-unknown-unknown"
+
+cargo $cargo_args -p winapi-exe
 wasm-bindgen --out-dir web --typescript --target web --reference-types \
-    target/wasm32-unknown-unknown/debug/mine_wasm.wasm
+    target/wasm32-unknown-unknown/$build_path/winapi_wasm.wasm
+
+cargo $cargo_args -p mine
+wasm-bindgen --out-dir web --typescript --target web --reference-types \
+    target/wasm32-unknown-unknown/$build_path/mine_wasm.wasm
