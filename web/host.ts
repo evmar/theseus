@@ -45,6 +45,7 @@ class Host implements exe.WasmHost {
   window_: HTMLCanvasElement | undefined;
 
   surfaces: Map<number, HTMLCanvasElement> = new Map();
+  nextSurface = 1;
   messageQueue = new MessageQueue();
 
   constructor(public wasmMemory: WebAssembly.Memory) {
@@ -91,7 +92,7 @@ class Host implements exe.WasmHost {
     surface.height = height;
     document.body.appendChild(surface);
 
-    const id = 1;
+    const id = this.nextSurface++;
     this.surfaces.set(id, surface);
     return id;
   }
