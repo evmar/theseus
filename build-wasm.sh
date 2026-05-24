@@ -20,17 +20,21 @@ export RUSTFLAGS
 
 build_mode=
 build_path=debug
-if [[ "$1" == "--release" ]]; then
+if [[ "$1" == "--release" ]]; then\
+    shift
     build_mode="--release"
     build_path=release
 fi
 
-cargo_args="+nightly build $build_mode -Z build-std=std,panic_abort --target wasm32-unknown-unknown"
 
-cargo $cargo_args -p winapi-exe
-wasm-bindgen --out-dir web --typescript --target web --reference-types \
-    target/wasm32-unknown-unknown/$build_path/winapi_wasm.wasm
+desired="$1"
+for package in winapi-exe mine basicdd-exe; do
+    file=$(sed -e 's/-exe//' <<< "$package")
+    if [[ "$desired" != "" && "$desired" != "$file" ]]; then
+        continue
+    fi
+    cargo +nightly build $build_mode -Z build-std=std,panic_abort --target wasm32-unknown-unknown -p $package
 
-cargo $cargo_args -p mine
-wasm-bindgen --out-dir web --typescript --target web --reference-types \
-    target/wasm32-unknown-unknown/$build_path/mine_wasm.wasm
+    wasm-bindgen --out-dir web --typescript --target web --reference-types \
+        target/wasm32-unknown-unknown/$build_path/${file}_wasm.wasm
+done
