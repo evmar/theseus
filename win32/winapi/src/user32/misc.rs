@@ -80,6 +80,17 @@ pub fn KillTimer(_ctx: &mut Context, _hWnd: HWND, _uIDEvent: u32) -> bool {
 }
 
 #[win32_derive::dllexport]
+pub fn MessageBoxA(
+    _ctx: &mut Context,
+    _hWnd: HWND,
+    _lpText: Ptr<u8>,
+    _lpCaption: Ptr<u8>,
+    _uType: u32, /* MESSAGEBOX_STYLE */
+) -> u32 /* MESSAGEBOX_RESULT */ {
+    stub!(0)
+}
+
+#[win32_derive::dllexport]
 pub fn MessageBoxW(
     _ctx: &mut Context,
     _hWnd: HWND,

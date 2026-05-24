@@ -6,17 +6,6 @@ use crate::{
 };
 
 #[win32_derive::dllexport]
-pub fn MessageBoxA(
-    _ctx: &mut Context,
-    _hWnd: HWND,
-    _lpText: Ptr<u8>,
-    _lpCaption: Ptr<u8>,
-    _uType: u32, /* MESSAGEBOX_STYLE */
-) -> u32 /* MESSAGEBOX_RESULT */ {
-    todo!()
-}
-
-#[win32_derive::dllexport]
 pub fn DialogBoxParamA(
     _ctx: &mut Context,
     _hInstance: HINSTANCE,
