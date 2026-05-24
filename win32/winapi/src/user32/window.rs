@@ -6,7 +6,7 @@ use crate::{
     FromABIParam, POINT, Ptr, RECT,
     gdi32::{self, Brush, COLORREF, DC, HBRUSH, HDC},
     host, kernel32, stub,
-    user32::{self, HCURSOR, HICON, HINSTANCE, HMENU, HWND, State, state},
+    user32::{self, HCURSOR, HICON, HINSTANCE, HMENU, HWND, State, WM, state},
 };
 
 pub struct Window {
@@ -220,7 +220,13 @@ pub fn UpdateWindow(_ctx: &mut Context, _hWnd: HWND) -> bool {
 }
 
 #[win32_derive::dllexport]
-pub fn DefWindowProcA(ctx: &mut Context, hWnd: HWND, Msg: u32, wParam: u32, lParam: u32) -> u32 {
+pub fn DefWindowProcA(
+    ctx: &mut Context,
+    hWnd: HWND,
+    Msg: Result<WM, u32>,
+    wParam: u32,
+    lParam: u32,
+) -> u32 {
     DefWindowProcW(ctx, hWnd, Msg, wParam, lParam)
 }
 
@@ -228,15 +234,14 @@ pub fn DefWindowProcA(ctx: &mut Context, hWnd: HWND, Msg: u32, wParam: u32, lPar
 pub fn DefWindowProcW(
     _ctx: &mut Context,
     _hWnd: HWND,
-    Msg: u32,
+    Msg: Result<WM, u32>,
     _wParam: u32,
     _lParam: u32,
 ) -> u32 {
     let window = state().window.borrow();
     let mut window = window.as_ref().unwrap().borrow_mut();
     match Msg {
-        0xf => {
-            // WM_PAINT
+        Ok(WM::PAINT) => {
             window.dirty = false;
         }
         _ => {}

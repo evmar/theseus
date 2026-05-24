@@ -64,6 +64,12 @@ impl FromABIParam for u16 {
     }
 }
 
+impl<T: TryFrom<u32>> FromABIParam for Result<T, u32> {
+    fn from_abi(val: u32) -> Self {
+        T::try_from(val).map_err(|_| val)
+    }
+}
+
 macro_rules! win32flags {
     (pub struct $name:ident $body:tt) => {
         #[derive(
@@ -88,6 +94,13 @@ macro_rules! win32flags {
         impl crate::FromABIParam for $name {
             fn from_abi(val: u32) -> Self {
                 $name::from_bits(val).unwrap()
+            }
+        }
+
+        impl TryFrom<u32> for $name {
+            type Error = u32;
+            fn try_from(val: u32) -> Result<Self, Self::Error> {
+                $name::from_bits(val).ok_or(val)
             }
         }
     };

@@ -114,14 +114,21 @@ pub fn abi_enum(item: proc_macro::TokenStream) -> proc_macro::TokenStream {
     };
 
     quote! {
+        impl TryFrom<u32> for #name {
+            type Error = u32;
+            fn try_from(value: u32) -> Result<Self, Self::Error> {
+                #get_value
+                Ok(match value {
+                    #(#matches)*
+                    _ => return Err(value),
+                })
+            }
+        }
+
         impl crate::FromABIParam for #name {
             #[allow(unused)]
             fn from_abi(value: u32) -> Self {
-                #get_value
-                match value {
-                    #(#matches)*
-                    _ => todo!()
-                }
+                #name::try_from(value).unwrap()
             }
         }
     }

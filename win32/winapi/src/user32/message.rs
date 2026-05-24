@@ -16,7 +16,7 @@ static LOG_MESSAGES: LazyLock<bool> =
 pub type WPARAM = u32;
 pub type LPARAM = u32;
 
-#[derive(win32_derive::ABIEnum)]
+#[derive(win32_derive::ABIEnum, Debug)]
 pub enum WM {
     PAINT = 0xf,
     QUIT = 0x12,
