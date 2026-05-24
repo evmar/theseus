@@ -4,7 +4,7 @@ use std::{mem::MaybeUninit, thread::ThreadId};
 
 use sdl3_sys as sdl;
 
-use crate::{RECT, host};
+use crate::host;
 
 fn check(res: bool) {
     if !res {
@@ -163,15 +163,6 @@ impl MainThread {
     }
 }
 
-pub fn rect_to_sdl(rect: &RECT) -> sdl::rect::SDL_FRect {
-    sdl::rect::SDL_FRect {
-        x: rect.left as f32,
-        y: rect.top as f32,
-        w: (rect.right - rect.left) as f32,
-        h: (rect.bottom - rect.top) as f32,
-    }
-}
-
 pub struct Surface {
     texture: *mut sdl::render::SDL_Texture,
 }
@@ -184,28 +175,6 @@ impl Surface {
                 std::ptr::null(),
                 pixels.as_ptr() as *const _,
                 stride as i32,
-            ));
-        }
-    }
-
-    pub fn copy(&mut self, window: &mut Window, dst_rect: &RECT, src: &Surface, src_rect: &RECT) {
-        // To render to a texture, we need to start with a renderer, which we can only get from
-        // a window because (I guess?) something about having a GPU context.
-
-        unsafe {
-            check(sdl::render::SDL_SetRenderTarget(
-                window.renderer,
-                self.texture,
-            ));
-            check(sdl::render::SDL_RenderTexture(
-                window.renderer,
-                src.texture,
-                &rect_to_sdl(src_rect),
-                &rect_to_sdl(dst_rect),
-            ));
-            check(sdl::render::SDL_SetRenderTarget(
-                window.renderer,
-                std::ptr::null_mut(),
             ));
         }
     }

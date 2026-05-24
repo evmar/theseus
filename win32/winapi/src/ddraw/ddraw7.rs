@@ -1,9 +1,10 @@
+use crate::Ptr;
 use runtime::*;
 use zerocopy::FromBytes;
 
 use crate::{
     RECT,
-    ddraw::{GUID, Target, state, types::*},
+    ddraw::{GUID, state, types::*},
     gdi32,
     gdi32::HDC,
     heap::Heap,
@@ -404,41 +405,43 @@ pub mod IDirectDrawSurface7 {
         dwX: u32,
         dwY: u32,
         lpDDSrcSurface: u32,
-        lpSrcRect: u32,
+        lpSrcRect: Ptr<RECT>,
         _dwTrans: u32,
     ) -> DD {
         let surfaces = state().surf.borrow_mut();
         let mut dst_surface = surfaces.get(&this).unwrap().borrow_mut();
-        let src_rect = <RECT>::ref_from_prefix(&ctx.memory[lpSrcRect..]).unwrap().0;
-        let src_surface = surfaces.get(&lpDDSrcSurface).unwrap().borrow();
+        let mut src_surface = surfaces.get(&lpDDSrcSurface).unwrap().borrow_mut();
 
-        let Target::Texture(dst_texture) = &mut dst_surface.target else {
-            unreachable!()
-        };
-        let Target::Texture(src_texture) = &src_surface.target else {
-            unreachable!()
-        };
+        assert_eq!(src_surface.bytes_per_pixel, 4);
+        assert_eq!(dst_surface.bytes_per_pixel, 4);
+        let bytes_per_pixel = src_surface.bytes_per_pixel;
+        let src_stride = src_surface.width * bytes_per_pixel;
+        let dst_stride = dst_surface.width * bytes_per_pixel;
 
-        let ddraw = state().ddraw.borrow();
-        let mut window = ddraw
-            .as_ref()
-            .unwrap()
-            .window
-            .as_ref()
-            .unwrap()
-            .borrow_mut();
+        let src_rect = lpSrcRect.read(&ctx.memory).unwrap();
+        let src_addr = src_surface.lock(&mut ctx.memory);
+        let dst_addr = dst_surface.lock(&mut ctx.memory);
 
-        dst_texture.copy(
-            &mut window.host,
-            &RECT {
-                left: dwX as i32,
-                top: dwY as i32,
-                right: dwX as i32 + (src_rect.right - src_rect.left),
-                bottom: dwY as i32 + (src_rect.bottom - src_rect.top),
-            },
-            src_texture,
-            src_rect,
-        );
+        let [src_pixels, dst_pixels] = ctx
+            .memory
+            .bytes
+            .get_disjoint_mut([
+                src_addr as usize..(src_addr + src_surface.height * src_stride) as usize,
+                dst_addr as usize..(dst_addr + dst_surface.height * dst_stride) as usize,
+            ])
+            .unwrap();
+
+        let width = ((src_rect.right - src_rect.left) as u32 * bytes_per_pixel) as usize;
+        for (sy, dy) in (src_rect.top as u32..src_rect.bottom as u32).zip(dwY..) {
+            let src_row = &src_pixels[(sy * src_stride) as usize..];
+            let dst_row = &mut dst_pixels[(dy * dst_stride) as usize..];
+            dst_row[(dwX * bytes_per_pixel) as usize..][..width].copy_from_slice(
+                &src_row[(src_rect.left as u32 * bytes_per_pixel) as usize..][..width],
+            );
+        }
+
+        src_surface.unlock(&mut ctx.memory);
+        dst_surface.unlock(&mut ctx.memory);
 
         stub!(DD::OK)
     }
