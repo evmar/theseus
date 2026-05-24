@@ -1,0 +1,92 @@
+<!doctype html>
+<script type="module" crossorigin src="../assets/sbtalker-DObYD41p.js"></script>
+<link rel="modulepreload" crossorigin href="../assets/modulepreload-polyfill-P2Xu9kJm.js">
+
+<title>SBTalker</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<style>
+body {
+    max-width: 50rem;
+    padding: 2rem;
+    margin: 0 auto;
+    font-family: tahoma, sans-serif;
+    line-height: 1.5;
+}
+h1, h2 { font-size: inherit; }
+textarea, button { font: inherit; }
+textarea {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #aab4c3;
+    border-radius: 0.4rem;
+    resize: vertical;
+}
+#output {
+    overflow-wrap: anywhere;
+}
+</style>
+
+
+<div>
+    <h1>Dr. Sbaitso</h1>
+
+    <p>
+        This demo uses <a href='https://github.com/evmar/theseus'>Theseus</a> (not AI!)
+        to convert the sound engine from <a href='https://en.wikipedia.org/wiki/Dr._Sbaitso'>Dr. Sbaitso</a>
+        into a WebAssembly library.  Enter text on the left, hit the Speak button to hear it.
+    </p>
+
+    <p>
+    <div style="display: flex; gap: 2rem">
+        <form id="speak" style="flex: 1">
+            <textarea id="text" name="text" rows="5">hello, i am dr. sbaitso.  i am here to help you.</textarea><br>
+            <button type="submit">Speak</button>
+        </form>
+        <div style="flex: 1">
+            <i>Phonological representation</i>
+            <div id="output"></div>
+        </div>
+    </div>
+    </p>
+
+    <br>
+
+    <h2>How it works</h2>
+    <p>
+        <a href='https://github.com/evmar/theseus'>Theseus</a> translates DOS/win32 programs to Rust,
+        which then can be compiled to target WebAssembly.  (A
+        <a href='https://neugierig.org/software/blog/2026/10/theseus-dos-ai.html'>recent blog post of mine</a>
+        goes into deeper detail on that.)
+    </p>
+
+    <p>
+        But running an old program is already well-covered by existing DOS emulators.  The angle Theseus
+        takes is about Frankensteining parts of those programs; because it translates into Rust, you can
+        replace and rewrite pieces in Rust yourself.  In Dr. Sbaitso's case, there are actually three
+        programs:
+        <ol>
+            <li>A frontend program that accepts text and calls a speech engine</li>
+            <li>The speech engine, a TSR that calls into a sound driver</li>
+            <li>A sound driver, that takes audio samples and pokes Sound Blaster hardware</li>
+        </ol>
+    </p>
+
+    <p>
+        In this demo I
+        <a href='https://github.com/evmar/theseus/blob/448ec399d9dc9536fff3d7126511d101ee7d5f4b/out/sbaitso/sbtalker/translate.sh#L19-L33'>substituted</a>
+        in <a href='https://github.com/evmar/theseus/blob/448ec399d9dc9536fff3d7126511d101ee7d5f4b/out/sbaitso/sbtalker/src/blaster.rs'>my own sound driver</a>
+        that just accumulates into a buffer.  Then I also replaced the frontend program with
+        <a href='https://github.com/evmar/theseus/blob/448ec399d9dc9536fff3d7126511d101ee7d5f4b/out/sbaitso/sbtalker/src/sbtalker.rs'>a library interface</a>
+        that is exposed to WebAssembly.
+    </p>
+
+    <h2>AI statement</h2>
+    <p>
+        I, a human, wrote all this code and text.  But to understand the driver interface and implementation I have built
+        a disassembler that uses AI to document how the program works.  It looks like this:
+        <figure style='overflow-x: scroll'>
+            <img src='../assets/disasm-CR1Wh4ga.png' width=542 height=221>
+        </figure>
+    </p>
+</main>
