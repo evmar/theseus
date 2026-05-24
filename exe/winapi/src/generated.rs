@@ -63,7 +63,7 @@ pub fn x401000(ctx: &mut Context) -> Cont {
     // 00401000 push 0FFFFFFF5h
     ctx.push(0xfffffff5u32);
     // 00401002 call dword ptr ds:[402058h]
-    ctx.call_builtin(kernel32::GetStdHandle_stdcall);
+    ctx.call_builtin(0x401008, kernel32::GetStdHandle_stdcall);
     // 00401008 xor ecx,ecx
     ctx.cpu.regs.ecx = xor(ctx.cpu.regs.ecx, ctx.cpu.regs.ecx, &mut ctx.cpu.flags);
     // 0040100a push ecx
@@ -77,7 +77,7 @@ pub fn x401000(ctx: &mut Context) -> Cont {
     // 00401013 push eax
     ctx.push(ctx.cpu.regs.eax);
     // 00401014 call dword ptr ds:[40205Ch]
-    ctx.call_builtin(kernel32::WriteFile_stdcall);
+    ctx.call_builtin(0x40101a, kernel32::WriteFile_stdcall);
     // 0040101a ret
     ctx.ret(0)
 }

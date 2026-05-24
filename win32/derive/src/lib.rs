@@ -49,7 +49,7 @@ pub fn dllexport(_attr: TokenStream, mut tokens: TokenStream) -> TokenStream {
                 .join(", ");
             format!("{{return_addr:08x}} {name}({named_args})")
         };
-        quote![log::info!(#fmt_string);]
+        quote![log::info!(#fmt_string, return_addr = if return_addr == RETURN_FROM_X86_ADDR { ctx.cpu.regs.eip_context } else { return_addr });]
     };
     let trace_cache = format_ident!("{}_trace", name);
 

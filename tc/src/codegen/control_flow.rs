@@ -44,7 +44,7 @@ impl<'a> CodeGen<'a> {
             Jmp => self.line(self.gen_jmp(instr).0),
             Call => {
                 if let Some(func) = &instr.hint {
-                    self.line(format!("ctx.call_builtin({func});"));
+                    self.line(format!("ctx.call_builtin({:#x}, {func});", instr.next_ip()));
                 } else {
                     let (dst, uses_ctx) = self.gen_jmp(instr);
                     if uses_ctx {

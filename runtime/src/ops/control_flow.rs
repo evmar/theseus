@@ -7,10 +7,12 @@ impl Context {
     }
 
     /// Call a ContFn (builtin implementation) synchronously, without returning a continuation.
-    pub fn call_builtin(&mut self, func: ContFn) {
+    pub fn call_builtin(&mut self, from: u32, func: ContFn) {
         // Because ContFn is stdcall it expects to pop a return address off the stack.
+        // Ensure it is valid, though we ignore it.
         self.push(RETURN_FROM_X86_ADDR);
-        func(self); // pops the above return address; ignore it
+        self.cpu.regs.eip_context = from;
+        func(self); // pops the above return address
     }
 
     pub fn je(&mut self, from: Cont, x: Cont) -> Cont {

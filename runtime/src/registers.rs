@@ -12,6 +12,8 @@ pub struct Regs {
     pub ebp: u32,
 
     pub fs_base: u32,
+    /// eip, only occasionally set by tracing
+    pub eip_context: u32,
 }
 
 impl Regs {
@@ -28,6 +30,7 @@ impl Regs {
             ebp: 0,
 
             fs_base: 0, // set when initializing process
+            eip_context: 0,
         }
     }
 
