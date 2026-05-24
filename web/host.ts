@@ -72,8 +72,12 @@ class Host implements exe.WasmHost {
   }
 
   finishSync(retAddr: number, ret: number | number[]): void {
-    if (ret == 0) throw new Error();
     const arr = Array.isArray(ret) ? ret : [ret];
+    if (!Number.isFinite(arr[0]) || arr[0] == 0) {
+      // For synchronization to work, we must put a non-zero value in the first slot.
+      // If this hits we messed up the sync/non-sync ness of some API.
+      throw new Error();
+    }
     const ints = new Int32Array(this.wasmMemory.buffer, retAddr, arr.length);
     ints.set(arr);
     Atomics.notify(ints, 0, 1);
@@ -119,7 +123,7 @@ class Host implements exe.WasmHost {
     this.window_!.getContext("2d")!.drawImage(surface, 0, 0);
   }
 
-  set_pixels(id: number, ptr: number, len: number): void {
+  set_pixels(id: number, ptr: number, len: number): number {
     const copy = new Uint8ClampedArray(
       this.wasmMemory.buffer,
       ptr,
@@ -128,6 +132,7 @@ class Host implements exe.WasmHost {
     const surface = this.surfaces.get(id)!;
     const imageData = new ImageData(copy, surface.width);
     surface.getContext("2d")!.putImageData(imageData, 0, 0);
+    return 1;
   }
 
   private serializeMessage(event: Event): number[] {
