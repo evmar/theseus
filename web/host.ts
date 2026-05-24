@@ -34,7 +34,7 @@ class MessageQueue {
   listen(dom: HTMLCanvasElement) {
     dom.onmousedown = this.enqueue;
     dom.onmouseup = this.enqueue;
-    //dom.onmousemove = handler;
+    dom.onmousemove = this.enqueue;
     dom.oncontextmenu = this.discard;
   }
 }
@@ -128,16 +128,20 @@ class Host implements exe.WasmHost {
   }
 
   private serializeMessage(event: Event): number[] {
+    // see wasm.rs:parse_message
+    const typeToCode: Record<string, number> = {
+      mousedown: 2,
+      mouseup: 3,
+      mousemove: 4,
+    };
+    const code = typeToCode[event.type];
+    if (code === undefined) throw new Error();
     switch (event.type) {
       case "mousedown":
-      case "mouseup": {
+      case "mouseup":
+      case "mousemove": {
         const e = event as MouseEvent;
-        return [
-          e.type === "mousedown" ? 2 : 3,
-          e.offsetX,
-          e.offsetY,
-          1 << e.button,
-        ];
+        return [typeToCode[e.type]!, e.offsetX, e.offsetY, 1 << e.button];
       }
       default:
         throw new Error();

@@ -213,7 +213,7 @@ impl WebHostSendChannel {
         // TOOD: some sort of structured encoding
         Some(match buf[0] {
             -1 => return None,
-            2 | 3 => {
+            2 | 3 | 4 => {
                 let buttons = host::MouseButton::from_abi(buf[3] as u32);
                 let mouse = host::MouseMessage {
                     x: buf[1] as u32,
@@ -221,10 +221,11 @@ impl WebHostSendChannel {
                     button: buttons,
                     buttons: buttons,
                 };
-                if buf[0] == 2 {
-                    host::Message::MouseDown(mouse)
-                } else {
-                    host::Message::MouseUp(mouse)
+                match buf[0] {
+                    2 => host::Message::MouseDown(mouse),
+                    3 => host::Message::MouseUp(mouse),
+                    4 => host::Message::MouseMove(mouse),
+                    _ => unreachable!(),
                 }
             }
             msg => todo!("host message {msg}"),
