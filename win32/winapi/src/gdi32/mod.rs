@@ -47,13 +47,13 @@ impl Into<ABIReturn> for COLORREF {
 }
 
 impl COLORREF {
-    pub fn as_mem(&self) -> [u8; 4] {
+    pub fn to_pixel(&self) -> [u8; 4] {
         let [r, g, b] = self.to_rgb();
-        [b, g, r, 0xff]
+        [r, g, b, 0xff]
     }
 
-    pub fn as_mem_u32(&self) -> u32 {
-        u32::from_le_bytes(self.as_mem())
+    pub fn as_win32(&self) -> u32 {
+        self.0
     }
 
     pub fn from_rgb(r: u8, g: u8, b: u8) -> Self {

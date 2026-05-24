@@ -363,12 +363,12 @@ pub fn BeginPaint(ctx: &mut Context, hWnd: HWND, lpPaint: Ptr<PAINTSTRUCT>) -> H
         let pixels = window.ensure_pixels(ctx);
         let pixel_count = (window.width * (window.height)) as usize;
         use zerocopy::FromBytes;
-        let pixels = <[u32]>::mut_from_bytes_with_elems(
+        let pixels = <[[u8; 4]]>::mut_from_bytes_with_elems(
             &mut ctx.memory[pixels..][..pixel_count * 4],
             pixel_count,
         )
         .unwrap();
-        pixels.fill(background.0.as_mem_u32());
+        pixels.fill(background.0.to_pixel());
     };
     let rcPaint = window.rect();
     drop(window);

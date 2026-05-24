@@ -53,7 +53,7 @@ pub fn CreateCompatibleDC(_ctx: &mut Context, hdc: HDC) -> HDC {
         height: 1,
         is_bottom_up: false,
         bit_count: 1,
-        palette: Box::new([[0; 4]]),
+        palette: Box::new([COLORREF::default()]),
         pixels: 0,
     };
     let new_hdc = gdi32::lock().new_memory_dc(bitmap);
@@ -124,12 +124,12 @@ pub fn LineTo(ctx: &mut Context, hdc: HDC, x: i32, y: i32) -> bool {
     if x == dc.pos.x {
         for y in ascending(dc.pos.y, y) {
             let i = ((y as u32 * bitmap.stride()) + (x as u32 * 4)) as usize;
-            pixels[i..][..4].copy_from_slice(&color.as_mem());
+            pixels[i..][..4].copy_from_slice(&color.to_pixel());
         }
     } else if y == dc.pos.y {
         for x in ascending(dc.pos.x, x) {
             let i = ((y as u32 * bitmap.stride()) + (x as u32 * 4)) as usize;
-            pixels[i..][..4].copy_from_slice(&color.as_mem());
+            pixels[i..][..4].copy_from_slice(&color.to_pixel());
         }
     } else {
         todo!(); // only axis-aligned supported for now

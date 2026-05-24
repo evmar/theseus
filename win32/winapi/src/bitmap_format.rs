@@ -2,7 +2,7 @@
 
 use zerocopy::FromBytes;
 
-use crate::FromABIParam;
+use crate::{FromABIParam, gdi32::COLORREF};
 
 #[derive(Debug, Eq, PartialEq, win32_derive::ABIEnum)]
 pub enum BI {
@@ -85,7 +85,7 @@ pub struct Bitmap {
     pub height: u32,
     pub is_bottom_up: bool,
     pub bit_count: u8,
-    pub palette: Box<[[u8; 4]]>,
+    pub palette: Box<[COLORREF]>,
     pub pixels: u32,
 }
 
@@ -105,7 +105,7 @@ impl std::fmt::Debug for Bitmap {
 }
 
 impl Bitmap {
-    /// A "simple" bitmap is BGRA top-down, like an SDL buffer.
+    /// A "simple" bitmap is RGBA top-down.
     pub fn new_simple(width: u32, height: u32, pixels: u32) -> Self {
         Self {
             width,
@@ -164,10 +164,10 @@ impl Bitmap {
         } else {
             todo!();
         };
-        let (palette, buf) = <[[u8; 3]]>::ref_from_prefix_with_elems(buf, palette_len).unwrap();
+        let (palette, buf) = <[[u8; 3]]>::ref_from_prefix_with_elems(buf, palette_len).unwrap(); // RGBTRIPLE
         let palette = palette
             .into_iter()
-            .map(|&[r, g, b]| [0xff, r, g, b]) // RGBQUAD
+            .map(|&[b, g, r]| COLORREF::from_rgb(r, g, b))
             .collect::<Vec<_>>()
             .into_boxed_slice();
         let pixels = &buf[..(header.bcHeight as usize * header.stride())];
@@ -195,10 +195,10 @@ impl Bitmap {
             todo!()
         };
 
-        let (palette, buf) = <[[u8; 4]]>::ref_from_prefix_with_elems(buf, palette_len).unwrap();
+        let (palette, buf) = <[[u8; 4]]>::ref_from_prefix_with_elems(buf, palette_len).unwrap(); // RGBQUAD
         let palette = palette
             .into_iter()
-            .map(|&[b, g, r, _]| [0xff, r, g, b]) // RGBQUAD
+            .map(|&[b, g, r, _]| COLORREF::from_rgb(r, g, b))
             .collect::<Vec<_>>()
             .into_boxed_slice();
 
@@ -223,25 +223,19 @@ impl Bitmap {
             8 => {
                 let src = &pixels[(y * self.stride()) as usize..];
                 for (srci, dsti) in (x1..x2).zip((0..).step_by(4)) {
-                    let [a, r, g, b] = self.palette[src[srci as usize] as usize];
-                    dst[dsti] = b;
-                    dst[dsti + 1] = g;
-                    dst[dsti + 2] = r;
-                    dst[dsti + 3] = a;
+                    let color = self.palette[src[srci as usize] as usize];
+                    dst[dsti..][..4].copy_from_slice(&color.to_pixel());
                 }
             }
             4 => {
                 let src = &pixels[(y * self.stride()) as usize..];
                 for (srci, dsti) in (x1..x2).zip((0..).step_by(4)) {
-                    let [a, r, g, b] = self.palette[if srci % 2 == 0 {
+                    let color = self.palette[if srci % 2 == 0 {
                         src[(srci / 2) as usize] >> 4
                     } else {
                         src[(srci / 2) as usize] & 0xf
                     } as usize];
-                    dst[dsti] = b;
-                    dst[dsti + 1] = g;
-                    dst[dsti + 2] = r;
-                    dst[dsti + 3] = a;
+                    dst[dsti..][..4].copy_from_slice(&color.to_pixel());
                 }
             }
             _ => todo!("{}", self.bit_count),

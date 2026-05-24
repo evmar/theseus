@@ -221,8 +221,8 @@ impl Window {
         unsafe {
             let texture = check_ptr(sdl::render::SDL_CreateTexture(
                 self.renderer,
-                // FML, this means BGRA in memory order
-                sdl::pixels::SDL_PIXELFORMAT_ARGB8888,
+                // this means RGBA in memory order
+                sdl::pixels::SDL_PIXELFORMAT_ABGR8888,
                 sdl::render::SDL_TEXTUREACCESS_TARGET,
                 width as i32,
                 height as i32,
