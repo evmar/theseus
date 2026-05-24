@@ -152,7 +152,7 @@ pub fn x401036(ctx: &mut Context) -> Cont {
     // 0040103b push ebx
     ctx.push(ctx.cpu.regs.ebx);
     // 0040103c call dword ptr cs:[40B124h]
-    ctx.call_builtin(user32::IsDlgButtonChecked_stdcall);
+    ctx.call_builtin(0x401043, user32::IsDlgButtonChecked_stdcall);
     // 00401043 test eax,eax
     and(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
     // 00401045 je short 00401051h
@@ -171,7 +171,7 @@ pub fn x401051(ctx: &mut Context) -> Cont {
     // 00401056 push ebx
     ctx.push(ctx.cpu.regs.ebx);
     // 00401057 call dword ptr cs:[40B124h]
-    ctx.call_builtin(user32::IsDlgButtonChecked_stdcall);
+    ctx.call_builtin(0x40105e, user32::IsDlgButtonChecked_stdcall);
     // 0040105e test eax,eax
     and(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
     // 00401060 je short 0040106Ch
@@ -190,7 +190,7 @@ pub fn x40106c(ctx: &mut Context) -> Cont {
     // 00401071 push ebx
     ctx.push(ctx.cpu.regs.ebx);
     // 00401072 call dword ptr cs:[40B124h]
-    ctx.call_builtin(user32::IsDlgButtonChecked_stdcall);
+    ctx.call_builtin(0x401079, user32::IsDlgButtonChecked_stdcall);
     // 00401079 test eax,eax
     and(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
     // 0040107b je short 00401087h
@@ -215,7 +215,7 @@ pub fn x401087(ctx: &mut Context) -> Cont {
     // 0040108c push ebx
     ctx.push(ctx.cpu.regs.ebx);
     // 0040108d call dword ptr cs:[40B124h]
-    ctx.call_builtin(user32::IsDlgButtonChecked_stdcall);
+    ctx.call_builtin(0x401094, user32::IsDlgButtonChecked_stdcall);
     // 00401094 test eax,eax
     and(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
     // 00401096 je short 004010A2h
@@ -234,7 +234,7 @@ pub fn x4010a2(ctx: &mut Context) -> Cont {
     // 004010a7 push ebx
     ctx.push(ctx.cpu.regs.ebx);
     // 004010a8 call dword ptr cs:[40B124h]
-    ctx.call_builtin(user32::IsDlgButtonChecked_stdcall);
+    ctx.call_builtin(0x4010af, user32::IsDlgButtonChecked_stdcall);
     // 004010af test eax,eax
     and(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
     // 004010b1 je short 004010BDh
@@ -253,7 +253,7 @@ pub fn x4010bd(ctx: &mut Context) -> Cont {
     // 004010c2 push ebx
     ctx.push(ctx.cpu.regs.ebx);
     // 004010c3 call dword ptr cs:[40B124h]
-    ctx.call_builtin(user32::IsDlgButtonChecked_stdcall);
+    ctx.call_builtin(0x4010ca, user32::IsDlgButtonChecked_stdcall);
     // 004010ca test eax,eax
     and(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
     // 004010cc je short 004010D8h
@@ -284,7 +284,7 @@ pub fn x4010e0(ctx: &mut Context) -> Cont {
     // 004010e2 push ebx
     ctx.push(ctx.cpu.regs.ebx);
     // 004010e3 call dword ptr cs:[40B11Ch]
-    ctx.call_builtin(user32::EndDialog_stdcall);
+    ctx.call_builtin(0x4010ea, user32::EndDialog_stdcall);
     // 004010ea jmp short 0040114Fh
     Cont(x40114f)
 }
@@ -297,7 +297,7 @@ pub fn x4010ec(ctx: &mut Context) -> Cont {
     // 004010f3 push ebx
     ctx.push(ctx.cpu.regs.ebx);
     // 004010f4 call dword ptr cs:[40B108h]
-    ctx.call_builtin(user32::CheckDlgButton_stdcall);
+    ctx.call_builtin(0x4010fb, user32::CheckDlgButton_stdcall);
     // 004010fb push 0
     ctx.push(0x0u32);
     // 004010fd push 0CAh
@@ -305,7 +305,7 @@ pub fn x4010ec(ctx: &mut Context) -> Cont {
     // 00401102 push ebx
     ctx.push(ctx.cpu.regs.ebx);
     // 00401103 call dword ptr cs:[40B108h]
-    ctx.call_builtin(user32::CheckDlgButton_stdcall);
+    ctx.call_builtin(0x40110a, user32::CheckDlgButton_stdcall);
     // 0040110a push 0
     ctx.push(0x0u32);
     // 0040110c push 0CBh
@@ -313,7 +313,7 @@ pub fn x4010ec(ctx: &mut Context) -> Cont {
     // 00401111 push ebx
     ctx.push(ctx.cpu.regs.ebx);
     // 00401112 call dword ptr cs:[40B108h]
-    ctx.call_builtin(user32::CheckDlgButton_stdcall);
+    ctx.call_builtin(0x401119, user32::CheckDlgButton_stdcall);
     // 00401119 push 0
     ctx.push(0x0u32);
     // 0040111b push 0CCh
@@ -321,7 +321,7 @@ pub fn x4010ec(ctx: &mut Context) -> Cont {
     // 00401120 push ebx
     ctx.push(ctx.cpu.regs.ebx);
     // 00401121 call dword ptr cs:[40B108h]
-    ctx.call_builtin(user32::CheckDlgButton_stdcall);
+    ctx.call_builtin(0x401128, user32::CheckDlgButton_stdcall);
     // 00401128 push 1
     ctx.push(0x1u32);
     // 0040112a push 12Dh
@@ -329,7 +329,7 @@ pub fn x4010ec(ctx: &mut Context) -> Cont {
     // 0040112f push ebx
     ctx.push(ctx.cpu.regs.ebx);
     // 00401130 call dword ptr cs:[40B108h]
-    ctx.call_builtin(user32::CheckDlgButton_stdcall);
+    ctx.call_builtin(0x401137, user32::CheckDlgButton_stdcall);
     // 00401137 push 0
     ctx.push(0x0u32);
     // 00401139 push 12Eh
@@ -337,7 +337,7 @@ pub fn x4010ec(ctx: &mut Context) -> Cont {
     // 0040113e push ebx
     ctx.push(ctx.cpu.regs.ebx);
     // 0040113f call dword ptr cs:[40B108h]
-    ctx.call_builtin(user32::CheckDlgButton_stdcall);
+    ctx.call_builtin(0x401146, user32::CheckDlgButton_stdcall);
     // 00401146 jmp short 0040114Fh
     Cont(x40114f)
 }
@@ -395,7 +395,7 @@ pub fn init_ddraw(ctx: &mut Context) -> Cont {
     // 0040117b mov ds:[433018h],edx
     ctx.memory.write::<u32>(0x433018u32, ctx.cpu.regs.edx);
     // 00401181 call dword ptr cs:[40B114h]
-    ctx.call_builtin(user32::DialogBoxParamA_stdcall);
+    ctx.call_builtin(0x401188, user32::DialogBoxParamA_stdcall);
     // 00401188 push 0
     ctx.push(0x0u32);
     // 0040118a push 433024h
@@ -609,7 +609,7 @@ pub fn x40125f(ctx: &mut Context) -> Cont {
     // 0040125f push 40C00Ah
     ctx.push(0x40c00au32);
     // 00401264 call dword ptr cs:[40B15Ch]
-    ctx.call_builtin(kernel32::OutputDebugStringA_stdcall);
+    ctx.call_builtin(0x40126b, kernel32::OutputDebugStringA_stdcall);
     // 0040126b cmp dword ptr ds:[43302Ch],0
     sub(
         ctx.memory.read::<u32>(0x43302cu32),
@@ -1463,7 +1463,7 @@ pub fn x4015f4(ctx: &mut Context) -> Cont {
     // 004015f4 push 40C016h
     ctx.push(0x40c016u32);
     // 004015f9 call dword ptr cs:[40B15Ch]
-    ctx.call_builtin(kernel32::OutputDebugStringA_stdcall);
+    ctx.call_builtin(0x401600, kernel32::OutputDebugStringA_stdcall);
     Cont(x401600)
 }
 
@@ -1494,7 +1494,7 @@ pub fn x401613(ctx: &mut Context) -> Cont {
     // 00401613 push 40C033h
     ctx.push(0x40c033u32);
     // 00401618 call dword ptr cs:[40B15Ch]
-    ctx.call_builtin(kernel32::OutputDebugStringA_stdcall);
+    ctx.call_builtin(0x40161f, kernel32::OutputDebugStringA_stdcall);
     Cont(x40161f)
 }
 
@@ -2838,7 +2838,7 @@ pub fn alloc(ctx: &mut Context) -> Cont {
     // 00401a6d push 0
     ctx.push(0x0u32);
     // 00401a6f call dword ptr cs:[40B168h]
-    ctx.call_builtin(kernel32::VirtualAlloc_stdcall);
+    ctx.call_builtin(0x401a76, kernel32::VirtualAlloc_stdcall);
     // 00401a76 pop ebp
     let x = ctx.pop();
     ctx.cpu.regs.ebp = x;
@@ -2861,7 +2861,7 @@ pub fn x401a78(ctx: &mut Context) -> Cont {
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0x8u32)),
     );
     // 00401a85 call dword ptr cs:[40B16Ch]
-    ctx.call_builtin(kernel32::VirtualFree_stdcall);
+    ctx.call_builtin(0x401a8c, kernel32::VirtualFree_stdcall);
     // 00401a8c pop ebp
     let x = ctx.pop();
     ctx.cpu.regs.ebp = x;
@@ -2970,7 +2970,7 @@ pub fn x401ad0(ctx: &mut Context) -> Cont {
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0xcu32)),
     );
     // 00401ad5 call dword ptr cs:[40B13Ch]
-    ctx.call_builtin(user32::ValidateRect_stdcall);
+    ctx.call_builtin(0x401adc, user32::ValidateRect_stdcall);
     Cont(x401adc)
 }
 
@@ -2993,7 +2993,7 @@ pub fn x401adc(ctx: &mut Context) -> Cont {
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0xcu32)),
     );
     // 00401ae6 call dword ptr cs:[40B110h]
-    ctx.call_builtin(user32::DefWindowProcA_stdcall);
+    ctx.call_builtin(0x401aed, user32::DefWindowProcA_stdcall);
     // 00401aed pop ebp
     let x = ctx.pop();
     ctx.cpu.regs.ebp = x;
@@ -3038,13 +3038,13 @@ pub fn create_window2(ctx: &mut Context) -> Cont {
     // 00401b19 mov ds:[433F88h],eax
     ctx.memory.write::<u32>(0x433f88u32, ctx.cpu.regs.eax);
     // 00401b1e call dword ptr cs:[40B10Ch]
-    ctx.call_builtin(user32::CreateWindowExA_stdcall);
+    ctx.call_builtin(0x401b25, user32::CreateWindowExA_stdcall);
     // 00401b25 push eax
     ctx.push(ctx.cpu.regs.eax);
     // 00401b26 mov ds:[40C73Bh],eax
     ctx.memory.write::<u32>(0x40c73bu32, ctx.cpu.regs.eax);
     // 00401b2b call dword ptr cs:[40B138h]
-    ctx.call_builtin(user32::UpdateWindow_stdcall);
+    ctx.call_builtin(0x401b32, user32::UpdateWindow_stdcall);
     // 00401b32 pop edx
     let x = ctx.pop();
     ctx.cpu.regs.edx = x;
@@ -3071,7 +3071,7 @@ pub fn create_window(ctx: &mut Context) -> Cont {
     // 00401b57 mov dword ptr ds:[433E0Ch],0
     ctx.memory.write::<u32>(0x433e0cu32, 0x0u32);
     // 00401b61 call dword ptr cs:[40B154h]
-    ctx.call_builtin(kernel32::GetModuleHandleA_stdcall);
+    ctx.call_builtin(0x401b68, kernel32::GetModuleHandleA_stdcall);
     // 00401b68 mov dword ptr ds:[433E14h],0
     ctx.memory.write::<u32>(0x433e14u32, 0x0u32);
     // 00401b72 mov dword ptr ds:[433E18h],0
@@ -3087,7 +3087,7 @@ pub fn create_window(ctx: &mut Context) -> Cont {
     // 00401b9f mov ds:[433E10h],eax
     ctx.memory.write::<u32>(0x433e10u32, ctx.cpu.regs.eax);
     // 00401ba4 call dword ptr cs:[40B12Ch]
-    ctx.call_builtin(user32::RegisterClassA_stdcall);
+    ctx.call_builtin(0x401bab, user32::RegisterClassA_stdcall);
     // 00401bab call 00401AF2h
     ctx.call(0x401bb0, Cont(create_window2))
 }
@@ -3123,7 +3123,7 @@ pub fn pump_messages(ctx: &mut Context) -> Cont {
     // 00401bc4 push eax
     ctx.push(ctx.cpu.regs.eax);
     // 00401bc5 call dword ptr cs:[40B128h]
-    ctx.call_builtin(user32::PeekMessageA_stdcall);
+    ctx.call_builtin(0x401bcc, user32::PeekMessageA_stdcall);
     // 00401bcc test eax,eax
     and(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
     // 00401bce je short 00401BFBh
@@ -3142,19 +3142,19 @@ pub fn x401bd0(ctx: &mut Context) -> Cont {
     // 00401bdd push eax
     ctx.push(ctx.cpu.regs.eax);
     // 00401bde call dword ptr cs:[40B120h]
-    ctx.call_builtin(user32::GetMessageA_stdcall);
+    ctx.call_builtin(0x401be5, user32::GetMessageA_stdcall);
     // 00401be5 lea eax,[ebp-1Ch]
     ctx.cpu.regs.eax = ctx.cpu.regs.ebp.wrapping_add(0xffffffe4u32);
     // 00401be8 push eax
     ctx.push(ctx.cpu.regs.eax);
     // 00401be9 call dword ptr cs:[40B134h]
-    ctx.call_builtin(user32::TranslateMessage_stdcall);
+    ctx.call_builtin(0x401bf0, user32::TranslateMessage_stdcall);
     // 00401bf0 lea eax,[ebp-1Ch]
     ctx.cpu.regs.eax = ctx.cpu.regs.ebp.wrapping_add(0xffffffe4u32);
     // 00401bf3 push eax
     ctx.push(ctx.cpu.regs.eax);
     // 00401bf4 call dword ptr cs:[40B118h]
-    ctx.call_builtin(user32::DispatchMessageA_stdcall);
+    ctx.call_builtin(0x401bfb, user32::DispatchMessageA_stdcall);
     Cont(x401bfb)
 }
 
@@ -3331,7 +3331,7 @@ pub fn init_timer(ctx: &mut Context) -> Cont {
     // 00401cce mov esi,edx
     ctx.cpu.regs.esi = ctx.cpu.regs.edx;
     // 00401cd0 call dword ptr cs:[40B158h]
-    ctx.call_builtin(kernel32::GetTickCount_stdcall);
+    ctx.call_builtin(0x401cd7, kernel32::GetTickCount_stdcall);
     // 00401cd7 mov ds:[433F7Ch],eax
     ctx.memory.write::<u32>(0x433f7cu32, ctx.cpu.regs.eax);
     // 00401cdc mov eax,ebx
@@ -3351,7 +3351,7 @@ pub fn init_timer(ctx: &mut Context) -> Cont {
     // 00401cec push ebx
     ctx.push(ctx.cpu.regs.ebx);
     // 00401ced call dword ptr cs:[40B100h]
-    ctx.call_builtin(winmm::timeSetEvent_stdcall);
+    ctx.call_builtin(0x401cf4, winmm::timeSetEvent_stdcall);
     // 00401cf4 mov ds:[433F80h],eax
     ctx.memory.write::<u32>(0x433f80u32, ctx.cpu.regs.eax);
     // 00401cf9 pop esi
@@ -3377,7 +3377,7 @@ pub fn state_from_timer(ctx: &mut Context) -> Cont {
     // 00401d12 push esi
     ctx.push(ctx.cpu.regs.esi);
     // 00401d13 call dword ptr cs:[40B158h]
-    ctx.call_builtin(kernel32::GetTickCount_stdcall);
+    ctx.call_builtin(0x401d1a, kernel32::GetTickCount_stdcall);
     // 00401d1a mov edx,ds:[433F7Ch]
     ctx.cpu.regs.edx = ctx.memory.read::<u32>(0x433f7cu32);
     // 00401d20 xor ebx,ebx
@@ -15537,7 +15537,7 @@ pub fn x404a00(ctx: &mut Context) -> Cont {
     // 00404a0e push eax
     ctx.push(ctx.cpu.regs.eax);
     // 00404a0f call dword ptr cs:[40B16Ch]
-    ctx.call_builtin(kernel32::VirtualFree_stdcall);
+    ctx.call_builtin(0x404a16, kernel32::VirtualFree_stdcall);
     // 00404a16 push 8000h
     ctx.push(0x8000u32);
     // 00404a1b push 0
@@ -15547,7 +15547,7 @@ pub fn x404a00(ctx: &mut Context) -> Cont {
     // 00404a22 push eax
     ctx.push(ctx.cpu.regs.eax);
     // 00404a23 call dword ptr cs:[40B16Ch]
-    ctx.call_builtin(kernel32::VirtualFree_stdcall);
+    ctx.call_builtin(0x404a2a, kernel32::VirtualFree_stdcall);
     // 00404a2a push 8000h
     ctx.push(0x8000u32);
     // 00404a2f push 0
@@ -15557,7 +15557,7 @@ pub fn x404a00(ctx: &mut Context) -> Cont {
     // 00404a36 push eax
     ctx.push(ctx.cpu.regs.eax);
     // 00404a37 call dword ptr cs:[40B16Ch]
-    ctx.call_builtin(kernel32::VirtualFree_stdcall);
+    ctx.call_builtin(0x404a3e, kernel32::VirtualFree_stdcall);
     // 00404a3e push 8000h
     ctx.push(0x8000u32);
     // 00404a43 push 0
@@ -15567,7 +15567,7 @@ pub fn x404a00(ctx: &mut Context) -> Cont {
     // 00404a4a push eax
     ctx.push(ctx.cpu.regs.eax);
     // 00404a4b call dword ptr cs:[40B16Ch]
-    ctx.call_builtin(kernel32::VirtualFree_stdcall);
+    ctx.call_builtin(0x404a52, kernel32::VirtualFree_stdcall);
     // 00404a52 push 8000h
     ctx.push(0x8000u32);
     // 00404a57 push 0
@@ -15577,7 +15577,7 @@ pub fn x404a00(ctx: &mut Context) -> Cont {
     // 00404a5e push eax
     ctx.push(ctx.cpu.regs.eax);
     // 00404a5f call dword ptr cs:[40B16Ch]
-    ctx.call_builtin(kernel32::VirtualFree_stdcall);
+    ctx.call_builtin(0x404a66, kernel32::VirtualFree_stdcall);
     // 00404a66 push 8000h
     ctx.push(0x8000u32);
     // 00404a6b push 0
@@ -15587,7 +15587,7 @@ pub fn x404a00(ctx: &mut Context) -> Cont {
     // 00404a72 push eax
     ctx.push(ctx.cpu.regs.eax);
     // 00404a73 call dword ptr cs:[40B16Ch]
-    ctx.call_builtin(kernel32::VirtualFree_stdcall);
+    ctx.call_builtin(0x404a7a, kernel32::VirtualFree_stdcall);
     // 00404a7a push 8000h
     ctx.push(0x8000u32);
     // 00404a7f push 0
@@ -15597,7 +15597,7 @@ pub fn x404a00(ctx: &mut Context) -> Cont {
     // 00404a86 push eax
     ctx.push(ctx.cpu.regs.eax);
     // 00404a87 call dword ptr cs:[40B16Ch]
-    ctx.call_builtin(kernel32::VirtualFree_stdcall);
+    ctx.call_builtin(0x404a8e, kernel32::VirtualFree_stdcall);
     // 00404a8e pop edx
     let x = ctx.pop();
     ctx.cpu.regs.edx = x;
@@ -20215,7 +20215,7 @@ pub fn x405808(ctx: &mut Context) -> Cont {
     // 00405816 push eax
     ctx.push(ctx.cpu.regs.eax);
     // 00405817 call dword ptr cs:[40B16Ch]
-    ctx.call_builtin(kernel32::VirtualFree_stdcall);
+    ctx.call_builtin(0x40581e, kernel32::VirtualFree_stdcall);
     // 0040581e push 8000h
     ctx.push(0x8000u32);
     // 00405823 push 0
@@ -20225,7 +20225,7 @@ pub fn x405808(ctx: &mut Context) -> Cont {
     // 0040582a push eax
     ctx.push(ctx.cpu.regs.eax);
     // 0040582b call dword ptr cs:[40B16Ch]
-    ctx.call_builtin(kernel32::VirtualFree_stdcall);
+    ctx.call_builtin(0x405832, kernel32::VirtualFree_stdcall);
     // 00405832 push 8000h
     ctx.push(0x8000u32);
     // 00405837 push 0
@@ -20235,7 +20235,7 @@ pub fn x405808(ctx: &mut Context) -> Cont {
     // 0040583e push eax
     ctx.push(ctx.cpu.regs.eax);
     // 0040583f call dword ptr cs:[40B16Ch]
-    ctx.call_builtin(kernel32::VirtualFree_stdcall);
+    ctx.call_builtin(0x405846, kernel32::VirtualFree_stdcall);
     // 00405846 push 8000h
     ctx.push(0x8000u32);
     // 0040584b push 0
@@ -20245,7 +20245,7 @@ pub fn x405808(ctx: &mut Context) -> Cont {
     // 00405852 push eax
     ctx.push(ctx.cpu.regs.eax);
     // 00405853 call dword ptr cs:[40B16Ch]
-    ctx.call_builtin(kernel32::VirtualFree_stdcall);
+    ctx.call_builtin(0x40585a, kernel32::VirtualFree_stdcall);
     // 0040585a push 8000h
     ctx.push(0x8000u32);
     // 0040585f push 0
@@ -20255,7 +20255,7 @@ pub fn x405808(ctx: &mut Context) -> Cont {
     // 00405866 push eax
     ctx.push(ctx.cpu.regs.eax);
     // 00405867 call dword ptr cs:[40B16Ch]
-    ctx.call_builtin(kernel32::VirtualFree_stdcall);
+    ctx.call_builtin(0x40586e, kernel32::VirtualFree_stdcall);
     // 0040586e pop edx
     let x = ctx.pop();
     ctx.cpu.regs.edx = x;
@@ -22919,7 +22919,7 @@ pub fn x406050(ctx: &mut Context) -> Cont {
     // 0040605f push eax
     ctx.push(ctx.cpu.regs.eax);
     // 00406060 call dword ptr cs:[40B16Ch]
-    ctx.call_builtin(kernel32::VirtualFree_stdcall);
+    ctx.call_builtin(0x406067, kernel32::VirtualFree_stdcall);
     // 00406067 push 8000h
     ctx.push(0x8000u32);
     // 0040606c push 0
@@ -22931,7 +22931,7 @@ pub fn x406050(ctx: &mut Context) -> Cont {
     // 00406071 push eax
     ctx.push(ctx.cpu.regs.eax);
     // 00406072 call dword ptr cs:[40B16Ch]
-    ctx.call_builtin(kernel32::VirtualFree_stdcall);
+    ctx.call_builtin(0x406079, kernel32::VirtualFree_stdcall);
     // 00406079 push 8000h
     ctx.push(0x8000u32);
     // 0040607e push 0
@@ -22943,7 +22943,7 @@ pub fn x406050(ctx: &mut Context) -> Cont {
     // 00406083 push eax
     ctx.push(ctx.cpu.regs.eax);
     // 00406084 call dword ptr cs:[40B16Ch]
-    ctx.call_builtin(kernel32::VirtualFree_stdcall);
+    ctx.call_builtin(0x40608b, kernel32::VirtualFree_stdcall);
     // 0040608b push 8000h
     ctx.push(0x8000u32);
     // 00406090 push 0
@@ -22955,7 +22955,7 @@ pub fn x406050(ctx: &mut Context) -> Cont {
     // 00406095 push eax
     ctx.push(ctx.cpu.regs.eax);
     // 00406096 call dword ptr cs:[40B16Ch]
-    ctx.call_builtin(kernel32::VirtualFree_stdcall);
+    ctx.call_builtin(0x40609d, kernel32::VirtualFree_stdcall);
     // 0040609d push 8000h
     ctx.push(0x8000u32);
     // 004060a2 push 0
@@ -22967,7 +22967,7 @@ pub fn x406050(ctx: &mut Context) -> Cont {
     // 004060a7 push eax
     ctx.push(ctx.cpu.regs.eax);
     // 004060a8 call dword ptr cs:[40B16Ch]
-    ctx.call_builtin(kernel32::VirtualFree_stdcall);
+    ctx.call_builtin(0x4060af, kernel32::VirtualFree_stdcall);
     // 004060af pop edx
     let x = ctx.pop();
     ctx.cpu.regs.edx = x;
@@ -25464,7 +25464,7 @@ pub fn x406c30(ctx: &mut Context) -> Cont {
     // 00406c3f inc ebx
     ctx.cpu.regs.ebx = inc(ctx.cpu.regs.ebx, &mut ctx.cpu.flags);
     // 00406c40 call dword ptr cs:[40B16Ch]
-    ctx.call_builtin(kernel32::VirtualFree_stdcall);
+    ctx.call_builtin(0x406c47, kernel32::VirtualFree_stdcall);
     // 00406c47 cmp ebx,0B4h
     sub(ctx.cpu.regs.ebx, 0xb4u32, &mut ctx.cpu.flags);
     // 00406c4d jl short 00406C30h
@@ -32209,7 +32209,7 @@ pub fn x4086bc(ctx: &mut Context) -> Cont {
     // 004086c8 push eax
     ctx.push(ctx.cpu.regs.eax);
     // 004086c9 call dword ptr cs:[40B16Ch]
-    ctx.call_builtin(kernel32::VirtualFree_stdcall);
+    ctx.call_builtin(0x4086d0, kernel32::VirtualFree_stdcall);
     // 004086d0 mov eax,433E54h
     ctx.cpu.regs.eax = 0x433e54u32;
     // 004086d5 call 00406050h
@@ -32236,7 +32236,7 @@ pub fn x4086e4(ctx: &mut Context) -> Cont {
     // 004086f0 push eax
     ctx.push(ctx.cpu.regs.eax);
     // 004086f1 call dword ptr cs:[40B16Ch]
-    ctx.call_builtin(kernel32::VirtualFree_stdcall);
+    ctx.call_builtin(0x4086f8, kernel32::VirtualFree_stdcall);
     // 004086f8 push 8000h
     ctx.push(0x8000u32);
     // 004086fd push 0
@@ -32248,7 +32248,7 @@ pub fn x4086e4(ctx: &mut Context) -> Cont {
     // 00408705 xor ebx,ebx
     ctx.cpu.regs.ebx = xor(ctx.cpu.regs.ebx, ctx.cpu.regs.ebx, &mut ctx.cpu.flags);
     // 00408707 call dword ptr cs:[40B16Ch]
-    ctx.call_builtin(kernel32::VirtualFree_stdcall);
+    ctx.call_builtin(0x40870e, kernel32::VirtualFree_stdcall);
     Cont(x40870e)
 }
 
@@ -32266,7 +32266,7 @@ pub fn x40870e(ctx: &mut Context) -> Cont {
     // 0040871d inc ebx
     ctx.cpu.regs.ebx = inc(ctx.cpu.regs.ebx, &mut ctx.cpu.flags);
     // 0040871e call dword ptr cs:[40B16Ch]
-    ctx.call_builtin(kernel32::VirtualFree_stdcall);
+    ctx.call_builtin(0x408725, kernel32::VirtualFree_stdcall);
     // 00408725 cmp ebx,0Ah
     sub(ctx.cpu.regs.ebx, 0xau32, &mut ctx.cpu.flags);
     // 00408728 jl short 0040870Eh
@@ -32293,7 +32293,7 @@ pub fn x40872c(ctx: &mut Context) -> Cont {
     // 0040873b inc ebx
     ctx.cpu.regs.ebx = inc(ctx.cpu.regs.ebx, &mut ctx.cpu.flags);
     // 0040873c call dword ptr cs:[40B16Ch]
-    ctx.call_builtin(kernel32::VirtualFree_stdcall);
+    ctx.call_builtin(0x408743, kernel32::VirtualFree_stdcall);
     // 00408743 cmp ebx,7
     sub(ctx.cpu.regs.ebx, 0x7u32, &mut ctx.cpu.flags);
     // 00408746 jl short 0040872Ch
@@ -32365,7 +32365,7 @@ pub fn x40878b(ctx: &mut Context) -> Cont {
     // 0040878b push eax
     ctx.push(ctx.cpu.regs.eax);
     // 0040878c call dword ptr cs:[40B130h]
-    ctx.call_builtin(user32::ShowCursor_stdcall);
+    ctx.call_builtin(0x408793, user32::ShowCursor_stdcall);
     // 00408793 call 004085E2h
     ctx.call(0x408798, Cont(allocs_computes))
 }
@@ -32458,7 +32458,7 @@ pub fn x4087f4(ctx: &mut Context) -> Cont {
     // 004087f4 push dword ptr ds:[433F80h]
     ctx.push(ctx.memory.read::<u32>(0x433f80u32));
     // 004087fa call dword ptr cs:[40B0FCh]
-    ctx.call_builtin(winmm::timeKillEvent_stdcall);
+    ctx.call_builtin(0x408801, winmm::timeKillEvent_stdcall);
     // 00408801 call 00409F49h
     ctx.call(0x408806, Cont(x409f49))
 }
@@ -32472,7 +32472,7 @@ pub fn x40880b(ctx: &mut Context) -> Cont {
     // 0040880b push 1
     ctx.push(0x1u32);
     // 0040880d call dword ptr cs:[40B130h]
-    ctx.call_builtin(user32::ShowCursor_stdcall);
+    ctx.call_builtin(0x408814, user32::ShowCursor_stdcall);
     Cont(x408814)
 }
 
@@ -32492,7 +32492,7 @@ pub fn x408823(ctx: &mut Context) -> Cont {
     // 00408823 push 0
     ctx.push(0x0u32);
     // 00408825 call dword ptr cs:[40B150h]
-    ctx.call_builtin(kernel32::ExitProcess_stdcall);
+    ctx.call_builtin(0x40882c, kernel32::ExitProcess_stdcall);
     // 0040882c xor eax,eax
     ctx.cpu.regs.eax = xor(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
     // 0040882e pop edx

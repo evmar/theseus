@@ -100,7 +100,7 @@ pub fn x401016(ctx: &mut Context) -> Cont {
 
 pub fn x401018(ctx: &mut Context) -> Cont {
     // 00401018 call dword ptr ds:[402188h]
-    ctx.call_builtin(kernel32::GetCurrentThreadId_stdcall);
+    ctx.call_builtin(0x40101e, kernel32::GetCurrentThreadId_stdcall);
     // 0040101e mov edi,eax
     ctx.cpu.regs.edi = ctx.cpu.regs.eax;
     // 00401020 mov ebp,esi
@@ -111,7 +111,7 @@ pub fn x401018(ctx: &mut Context) -> Cont {
             .read::<u32>(ctx.cpu.regs.esi.wrapping_add(0x8u32)),
     );
     // 00401025 call dword ptr ds:[402198h]
-    ctx.call_builtin(kernel32::TlsGetValue_stdcall);
+    ctx.call_builtin(0x40102b, kernel32::TlsGetValue_stdcall);
     // 0040102b mov [esp],eax
     ctx.memory.write::<u32>(ctx.cpu.regs.esp, ctx.cpu.regs.eax);
     // 0040102e mov dword ptr [esp+404h],0
@@ -392,7 +392,7 @@ pub fn x401121(ctx: &mut Context) -> Cont {
     // 0040113e push 0FFFFFFF5h
     ctx.push(0xfffffff5u32);
     // 00401140 call dword ptr ds:[40218Ch]
-    ctx.call_builtin(kernel32::GetStdHandle_stdcall);
+    ctx.call_builtin(0x401146, kernel32::GetStdHandle_stdcall);
     // 00401146 xor ecx,ecx
     ctx.cpu.regs.ecx = xor(ctx.cpu.regs.ecx, ctx.cpu.regs.ecx, &mut ctx.cpu.flags);
     // 00401148 push ecx
@@ -406,7 +406,7 @@ pub fn x401121(ctx: &mut Context) -> Cont {
     // 0040114c push eax
     ctx.push(ctx.cpu.regs.eax);
     // 0040114d call dword ptr ds:[4021A0h]
-    ctx.call_builtin(kernel32::WriteFile_stdcall);
+    ctx.call_builtin(0x401153, kernel32::WriteFile_stdcall);
     // 00401153 mov eax,3E8h
     ctx.cpu.regs.eax = 0x3e8u32;
     // 00401158 xor edx,edx
@@ -423,7 +423,7 @@ pub fn x401121(ctx: &mut Context) -> Cont {
     // 0040115f push eax
     ctx.push(ctx.cpu.regs.eax);
     // 00401160 call dword ptr ds:[402190h]
-    ctx.call_builtin(kernel32::Sleep_stdcall);
+    ctx.call_builtin(0x401166, kernel32::Sleep_stdcall);
     // 00401166 inc ebx
     ctx.cpu.regs.ebx = inc(ctx.cpu.regs.ebx, &mut ctx.cpu.flags);
     // 00401167 cmp ebx,[ebp+4]
@@ -439,7 +439,7 @@ pub fn x401121(ctx: &mut Context) -> Cont {
 
 pub fn x401170(ctx: &mut Context) -> Cont {
     // 00401170 call dword ptr ds:[402188h]
-    ctx.call_builtin(kernel32::GetCurrentThreadId_stdcall);
+    ctx.call_builtin(0x401176, kernel32::GetCurrentThreadId_stdcall);
     // 00401176 mov ebx,eax
     ctx.cpu.regs.ebx = ctx.cpu.regs.eax;
     // 00401178 push dword ptr [esi+8]
@@ -448,7 +448,7 @@ pub fn x401170(ctx: &mut Context) -> Cont {
             .read::<u32>(ctx.cpu.regs.esi.wrapping_add(0x8u32)),
     );
     // 0040117b call dword ptr ds:[402198h]
-    ctx.call_builtin(kernel32::TlsGetValue_stdcall);
+    ctx.call_builtin(0x401181, kernel32::TlsGetValue_stdcall);
     // 00401181 mov edi,eax
     ctx.cpu.regs.edi = ctx.cpu.regs.eax;
     // 00401183 mov dword ptr [esp+404h],0
@@ -728,7 +728,7 @@ pub fn x401267(ctx: &mut Context) -> Cont {
     // 00401284 push 0FFFFFFF5h
     ctx.push(0xfffffff5u32);
     // 00401286 call dword ptr ds:[40218Ch]
-    ctx.call_builtin(kernel32::GetStdHandle_stdcall);
+    ctx.call_builtin(0x40128c, kernel32::GetStdHandle_stdcall);
     // 0040128c xor ecx,ecx
     ctx.cpu.regs.ecx = xor(ctx.cpu.regs.ecx, ctx.cpu.regs.ecx, &mut ctx.cpu.flags);
     // 0040128e push ecx
@@ -742,7 +742,7 @@ pub fn x401267(ctx: &mut Context) -> Cont {
     // 00401292 push eax
     ctx.push(ctx.cpu.regs.eax);
     // 00401293 call dword ptr ds:[4021A0h]
-    ctx.call_builtin(kernel32::WriteFile_stdcall);
+    ctx.call_builtin(0x401299, kernel32::WriteFile_stdcall);
     // 00401299 add esp,408h
     ctx.cpu.regs.esp = add(ctx.cpu.regs.esp, 0x408u32, &mut ctx.cpu.flags);
     // 0040129f pop esi
@@ -947,7 +947,7 @@ pub fn x401325(ctx: &mut Context) -> Cont {
             .read::<u32>(ctx.cpu.regs.esi.wrapping_add(0x8u32)),
     );
     // 0040132f call dword ptr ds:[40219Ch]
-    ctx.call_builtin(kernel32::TlsSetValue_stdcall);
+    ctx.call_builtin(0x401335, kernel32::TlsSetValue_stdcall);
     // 00401335 mov ecx,esi
     ctx.cpu.regs.ecx = ctx.cpu.regs.esi;
     // 00401337 call 00401000h
@@ -972,7 +972,7 @@ pub fn x401342(ctx: &mut Context) -> Cont {
     // 00401344 sub esp,404h
     ctx.cpu.regs.esp = sub(ctx.cpu.regs.esp, 0x404u32, &mut ctx.cpu.flags);
     // 0040134a call dword ptr ds:[402188h]
-    ctx.call_builtin(kernel32::GetCurrentThreadId_stdcall);
+    ctx.call_builtin(0x401350, kernel32::GetCurrentThreadId_stdcall);
     // 00401350 mov dword ptr [esp+400h],0
     ctx.memory
         .write::<u32>(ctx.cpu.regs.esp.wrapping_add(0x400u32), 0x0u32);
@@ -1070,7 +1070,7 @@ pub fn x4013aa(ctx: &mut Context) -> Cont {
     // 004013c6 push 0FFFFFFF5h
     ctx.push(0xfffffff5u32);
     // 004013c8 call dword ptr ds:[40218Ch]
-    ctx.call_builtin(kernel32::GetStdHandle_stdcall);
+    ctx.call_builtin(0x4013ce, kernel32::GetStdHandle_stdcall);
     // 004013ce xor ecx,ecx
     ctx.cpu.regs.ecx = xor(ctx.cpu.regs.ecx, ctx.cpu.regs.ecx, &mut ctx.cpu.flags);
     // 004013d0 push ecx
@@ -1084,7 +1084,7 @@ pub fn x4013aa(ctx: &mut Context) -> Cont {
     // 004013d4 push eax
     ctx.push(ctx.cpu.regs.eax);
     // 004013d5 call dword ptr ds:[4021A0h]
-    ctx.call_builtin(kernel32::WriteFile_stdcall);
+    ctx.call_builtin(0x4013db, kernel32::WriteFile_stdcall);
     // 004013db xor eax,eax
     ctx.cpu.regs.eax = xor(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
     // 004013dd add esp,404h
@@ -1131,7 +1131,7 @@ pub fn x4013e8(ctx: &mut Context) -> Cont {
 
 pub fn x401406(ctx: &mut Context) -> Cont {
     // 00401406 call dword ptr ds:[402194h]
-    ctx.call_builtin(kernel32::TlsAlloc_stdcall);
+    ctx.call_builtin(0x40140c, kernel32::TlsAlloc_stdcall);
     // 0040140c mov esi,eax
     ctx.cpu.regs.esi = ctx.cpu.regs.eax;
     // 0040140e push 1
@@ -1139,7 +1139,7 @@ pub fn x401406(ctx: &mut Context) -> Cont {
     // 00401410 push eax
     ctx.push(ctx.cpu.regs.eax);
     // 00401411 call dword ptr ds:[40219Ch]
-    ctx.call_builtin(kernel32::TlsSetValue_stdcall);
+    ctx.call_builtin(0x401417, kernel32::TlsSetValue_stdcall);
     // 00401417 lea eax,[esp+0Ch]
     ctx.cpu.regs.eax = ctx.cpu.regs.esp.wrapping_add(0xcu32);
     // 0040141b mov dword ptr [eax],4020EBh
