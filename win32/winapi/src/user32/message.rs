@@ -3,10 +3,10 @@ use std::{cell::RefCell, collections::VecDeque, rc::Rc, sync::LazyLock};
 use runtime::Context;
 
 use crate::{
+    POINT, Ptr,
     dllexport::win32flags,
     host, stub, trace,
-    user32::{state, Window, HACCEL, HWND},
-    Ptr, POINT,
+    user32::{HACCEL, HWND, Window, state},
 };
 
 /// If THESEUS_TRACE includes "wm", log all Windows messages.
@@ -58,14 +58,13 @@ win32flags! {
 }
 
 fn mouse_button_to_wm(is_down: bool, message: &host::MouseMessage) -> WM {
-    match (message.button, is_down) {
-        (1, true) => WM::LBUTTONDOWN,
-        (1, false) => WM::LBUTTONUP,
-        (2, true) => WM::RBUTTONDOWN,
-        (2, false) => WM::RBUTTONUP,
-        (3, true) => WM::MBUTTONDOWN,
-        (3, false) => WM::MBUTTONUP,
-        _ => todo!("mouse button {}", message.button),
+    match (&message.button, is_down) {
+        (host::MouseButton::Left, true) => WM::LBUTTONDOWN,
+        (host::MouseButton::Left, false) => WM::LBUTTONUP,
+        (host::MouseButton::Right, true) => WM::RBUTTONDOWN,
+        (host::MouseButton::Right, false) => WM::RBUTTONUP,
+        (host::MouseButton::Middle, true) => WM::MBUTTONDOWN,
+        (host::MouseButton::Middle, false) => WM::MBUTTONUP,
     }
 }
 

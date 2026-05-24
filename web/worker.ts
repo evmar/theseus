@@ -1,7 +1,7 @@
 import * as exe from "./mine_wasm.js";
 
-(self as any).send_to_host = (func: string, args: any[], ret: number) => {
-  const obj: exe.Msg = { func, args, ret };
+(self as any).send_to_host = (func: string, args: any[], retAddr: number) => {
+  const obj: exe.Msg = { func, args, retAddr };
   self.postMessage(obj);
 };
 

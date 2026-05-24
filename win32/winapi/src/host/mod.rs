@@ -20,19 +20,29 @@ pub struct AudioSpec {
     pub channels: u32,
 }
 
+// This isn't really a win32 ABI enum, but we use ABIEnum derive to get the number=>value reverse mapping.
+#[derive(win32_derive::ABIEnum)]
+pub enum MouseButton {
+    Left = 1,
+    Middle = 2,
+    Right = 3,
+}
+
 pub struct MouseMessage {
     pub x: u32,
     pub y: u32,
-    pub button: u32,
+    /// In a click, which button triggered the click.
+    pub button: MouseButton,
+    /// Bitfield, which buttons are pressed.
     pub buttons: u32,
 }
 
 pub enum Message {
+    Quit,
     Paint,
     MouseDown(MouseMessage),
     MouseUp(MouseMessage),
     MouseMove(MouseMessage),
-    Quit,
 }
 
 pub fn init() {

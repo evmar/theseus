@@ -2,7 +2,7 @@ use std::{arch::wasm32, sync::Mutex};
 
 use web_sys::wasm_bindgen::prelude::*;
 
-use crate::{RECT, host};
+use crate::{FromABIParam, RECT, host};
 
 pub struct Surface {
     id: i32,
@@ -135,7 +135,7 @@ const MSG_TYPES: &'static str = r#"
 export interface Msg {
     func: string,
     args: unknown[],
-    ret: number,
+    retAddr: number,
 }
 
 export interface WasmHost {
@@ -149,8 +149,8 @@ export interface WasmHost {
 
     set_pixels(surface_id: number, ptr: number, len: number): void;
 
-    poll_message(): number;
-    wait_message(): Promise<number>;
+    poll_message(): number[];
+    wait_message(): Promise<number[]>;
 }
 "#;
 
@@ -209,33 +209,50 @@ impl WebHostSendChannel {
         self.send_async("set_pixels", args);
     }
 
-    fn parse_message(ret: i32) -> Option<host::Message> {
+    fn parse_message(buf: &[i32; 4]) -> Option<host::Message> {
         // TOOD: some sort of structured encoding
-        Some(match ret {
+        Some(match buf[0] {
             -1 => return None,
-            2 => host::Message::Paint,
-            3 => host::Message::Quit,
+            2 | 3 => {
+                let mouse = host::MouseMessage {
+                    x: buf[1] as u32,
+                    y: buf[2] as u32,
+                    button: host::MouseButton::from_abi(buf[3] as u32),
+                    buttons: 0,
+                };
+                if buf[0] == 2 {
+                    host::Message::MouseDown(mouse)
+                } else {
+                    host::Message::MouseUp(mouse)
+                }
+            }
             msg => todo!("host message {msg}"),
         })
     }
 
     pub fn poll_message(&mut self) -> Option<host::Message> {
-        let ret = self.send_sync("poll_message", js_sys::Array::new());
-        Self::parse_message(ret)
+        let mut buf = [0i32; 4];
+        self.send_sync_buf("poll_message", js_sys::Array::new(), &mut buf);
+        Self::parse_message(&buf)
     }
 
     pub fn wait_message(&mut self) -> host::Message {
-        let ret = self.send_sync("wait_message", js_sys::Array::new());
-        Self::parse_message(ret).unwrap()
+        let mut buf = [0i32; 4];
+        self.send_sync_buf("wait_message", js_sys::Array::new(), &mut buf);
+        Self::parse_message(&buf).unwrap()
     }
 
     fn send_sync(&mut self, msg: &str, args: js_sys::Array) -> i32 {
-        let mut ret = 0i32;
-        send_to_host(msg, args, &mut ret as *mut _ as u32);
+        let mut buf = [0i32];
+        self.send_sync_buf(msg, args, &mut buf);
+        buf[0]
+    }
+
+    fn send_sync_buf(&mut self, msg: &str, args: js_sys::Array, buf: &mut [i32]) {
+        send_to_host(msg, args, buf.as_ptr() as *mut i32 as u32);
         unsafe {
-            wasm32::memory_atomic_wait32(&mut ret as *mut _, 0, -1);
+            wasm32::memory_atomic_wait32(buf.as_ptr() as *mut _, 0, -1);
         }
-        ret
     }
 
     fn send_async(&mut self, msg: &str, args: js_sys::Array) {

@@ -1,21 +1,41 @@
 import * as exe from "./mine_wasm.js";
 
 class MessageQueue {
-  private messages: number[] = [];
-  private waiter: ((value: number) => void) | undefined;
+  private messages: Event[] = [];
+  private waiter: ((value: Event) => void) | undefined;
 
-  poll(): number | undefined {
+  poll(): Event | undefined {
     return this.messages.shift();
   }
 
-  wait(): Promise<number> {
+  wait(): Promise<Event> {
     const msg = this.poll();
     if (msg !== undefined) {
       return Promise.resolve(msg);
     }
-    const { promise, resolve } = Promise.withResolvers<number>();
+    const { promise, resolve } = Promise.withResolvers<Event>();
     this.waiter = resolve;
     return promise;
+  }
+
+  private enqueue = (e: Event) => {
+    e.preventDefault();
+    if (this.waiter) {
+      this.waiter(e);
+      this.waiter = undefined;
+    } else {
+      this.messages.push(e);
+    }
+  };
+  private discard = (e: Event) => {
+    e.preventDefault();
+  };
+
+  listen(dom: HTMLCanvasElement) {
+    dom.onmousedown = this.enqueue;
+    dom.onmouseup = this.enqueue;
+    //dom.onmousemove = handler;
+    dom.oncontextmenu = this.discard;
   }
 }
 
@@ -38,22 +58,21 @@ class Host implements exe.WasmHost {
 
   onMessage(e: MessageEvent<exe.Msg>) {
     const msg = e.data;
-    console.log("msg", msg);
-
     const ret = (this as any)[msg.func](...msg.args);
-    if (msg.ret) {
+    if (msg.retAddr) {
       if (ret instanceof Promise) {
-        ret.then((ret) => this.finishSync(msg.ret, ret));
+        ret.then((ret) => this.finishSync(msg.retAddr, ret));
         return;
       }
-      this.finishSync(msg.ret, ret);
+      this.finishSync(msg.retAddr, ret);
     }
   }
 
-  finishSync(retPtr: number, ret: number): void {
+  finishSync(retAddr: number, ret: number | number[]): void {
     if (ret == 0) throw new Error();
-    const ints = new Int32Array(this.wasmMemory.buffer, retPtr, 1);
-    ints[0] = ret;
+    const arr = Array.isArray(ret) ? ret : [ret];
+    const ints = new Int32Array(this.wasmMemory.buffer, retAddr, arr.length);
+    ints.set(arr);
     Atomics.notify(ints, 0, 1);
   }
 
@@ -83,6 +102,7 @@ class Host implements exe.WasmHost {
     this.window_.width = width;
     this.window_.height = height;
     document.body.appendChild(this.window_);
+    this.messageQueue.listen(this.window_);
     return 1;
   }
 
@@ -107,12 +127,32 @@ class Host implements exe.WasmHost {
     surface.getContext("2d")!.putImageData(imageData, 0, 0);
   }
 
-  poll_message(): number {
-    return this.messageQueue.poll() ?? -1;
+  private serializeMessage(event: Event): number[] {
+    switch (event.type) {
+      case "mousedown":
+      case "mouseup": {
+        const e = event as MouseEvent;
+        console.log(e);
+        return [
+          e.type === "mousedown" ? 2 : 3,
+          e.offsetX,
+          e.offsetY,
+          e.button + 1,
+        ];
+      }
+      default:
+        throw new Error();
+    }
   }
 
-  wait_message(): Promise<number> {
-    return this.messageQueue.wait();
+  poll_message(): number[] {
+    const event = this.messageQueue.poll();
+    return event ? this.serializeMessage(event) : [-1];
+  }
+
+  async wait_message(): Promise<number[]> {
+    const event = await this.messageQueue.wait();
+    return this.serializeMessage(event);
   }
 }
 
