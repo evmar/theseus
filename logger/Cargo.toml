@@ -8,4 +8,5 @@ colored = "3.1.1"
 log = { workspace = true }
 
 [target.'cfg(target_family = "wasm")'.dependencies]
+wasm-bindgen = { workspace = true }
 web-sys = { workspace = true, features = ["console"] }

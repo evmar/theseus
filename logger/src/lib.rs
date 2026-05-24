@@ -26,17 +26,18 @@ impl log::Log for Logger {
 
     #[cfg(target_family = "wasm")]
     fn log(&self, record: &log::Record) {
-        let s = format!(
+        let s: wasm_bindgen::JsValue = format!(
             "{}:{} {}",
             record.file().unwrap_or("?"),
             record.line().unwrap_or(0),
             record.args()
-        );
+        )
+        .into();
         match record.level() {
-            log::Level::Error => web_sys::console::error_1(&s.into()),
-            log::Level::Warn => web_sys::console::warn_1(&s.into()),
-            log::Level::Info => web_sys::console::log_1(&s.into()),
-            log::Level::Debug | log::Level::Trace => web_sys::console::debug_1(&s.into()),
+            log::Level::Error => web_sys::console::error_1(&s),
+            log::Level::Warn => web_sys::console::warn_1(&s),
+            log::Level::Info => web_sys::console::log_1(&s),
+            log::Level::Debug | log::Level::Trace => web_sys::console::debug_1(&s),
         }
     }
 
