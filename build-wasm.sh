@@ -34,6 +34,6 @@ for package in winapi-exe mine basicdd; do
         continue
     fi
     cargo +nightly build --lib $build_mode -Z build-std=std,panic_abort --target wasm32-unknown-unknown -p $package
-    wasm-bindgen --out-dir web --typescript --target web --reference-types \
+    wasm-bindgen --out-dir web/exe/${file} --typescript --target web --reference-types \
         target/wasm32-unknown-unknown/$build_path/${file}.wasm
 done

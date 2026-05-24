@@ -1,4 +1,6 @@
-import * as exe from "./mine.js";
+// Note that the specific exe here doesn't matter, we just need the same types found in all of them.
+import type * as exe from "./exe/basicdd/basicdd.js";
+import type * as worker from "./worker.js";
 
 class MessageQueue {
   private messages: Event[] = [];
@@ -170,6 +172,10 @@ async function main() {
   const host = new Host(memory);
   const worker = new Worker("./worker.js", { type: "module" });
   worker.onmessage = (e) => host.onMessage(e);
-  worker.postMessage(memory);
+  const message: worker.StartMessage = {
+    module: "./exe/mine/mine.js",
+    memory,
+  };
+  worker.postMessage(message);
 }
 main().catch((e) => console.error(e));
