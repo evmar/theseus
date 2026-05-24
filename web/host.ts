@@ -132,7 +132,6 @@ class Host implements exe.WasmHost {
       case "mousedown":
       case "mouseup": {
         const e = event as MouseEvent;
-        console.log(e);
         return [
           e.type === "mousedown" ? 2 : 3,
           e.offsetX,
