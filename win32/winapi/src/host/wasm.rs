@@ -214,11 +214,12 @@ impl WebHostSendChannel {
         Some(match buf[0] {
             -1 => return None,
             2 | 3 => {
+                let buttons = host::MouseButton::from_abi(buf[3] as u32);
                 let mouse = host::MouseMessage {
                     x: buf[1] as u32,
                     y: buf[2] as u32,
-                    button: host::MouseButton::from_abi(buf[3] as u32),
-                    buttons: 0,
+                    button: buttons,
+                    buttons: buttons,
                 };
                 if buf[0] == 2 {
                     host::Message::MouseDown(mouse)

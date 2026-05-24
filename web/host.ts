@@ -136,7 +136,7 @@ class Host implements exe.WasmHost {
           e.type === "mousedown" ? 2 : 3,
           e.offsetX,
           e.offsetY,
-          e.button + 1,
+          1 << e.button,
         ];
       }
       default:

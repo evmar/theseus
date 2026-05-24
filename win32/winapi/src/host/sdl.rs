@@ -60,20 +60,16 @@ impl Host {
     }
 }
 
-fn mouse_button_mask(button: u32) -> u32 {
-    1 << (button - 1)
-}
-
-fn mouse_buttons_from_sdl(state: sdl::mouse::SDL_MouseButtonFlags) -> u32 {
-    let mut buttons = 0;
+fn mouse_buttons_from_sdl(state: sdl::mouse::SDL_MouseButtonFlags) -> host::MouseButton {
+    let mut buttons = host::MouseButton::empty();
     if state.0 & sdl::mouse::SDL_BUTTON_LMASK.0 != 0 {
-        buttons |= mouse_button_mask(1);
-    }
-    if state.0 & sdl::mouse::SDL_BUTTON_RMASK.0 != 0 {
-        buttons |= mouse_button_mask(2);
+        buttons.insert(host::MouseButton::Left);
     }
     if state.0 & sdl::mouse::SDL_BUTTON_MMASK.0 != 0 {
-        buttons |= mouse_button_mask(3);
+        buttons.insert(host::MouseButton::Middle);
+    }
+    if state.0 & sdl::mouse::SDL_BUTTON_RMASK.0 != 0 {
+        buttons.insert(host::MouseButton::Right);
     }
     buttons
 }
@@ -89,23 +85,23 @@ fn msg_from_event(event: &sdl::events::SDL_Event) -> Option<host::Message> {
                 return Some(host::Message::MouseMove(host::MouseMessage {
                     x: event.x as u32,
                     y: event.y as u32,
-                    button: 0,
+                    button: host::MouseButton::empty(),
                     buttons: mouse_buttons_from_sdl(event.state),
                 }));
             }
             SDL_EventType::MOUSE_BUTTON_DOWN | SDL_EventType::MOUSE_BUTTON_UP => {
                 let event = &event.button;
                 let button = match event.button as _ {
-                    sdl::mouse::SDL_BUTTON_LEFT => 1,
-                    sdl::mouse::SDL_BUTTON_RIGHT => 2,
-                    sdl::mouse::SDL_BUTTON_MIDDLE => 3,
+                    sdl::mouse::SDL_BUTTON_LEFT => host::MouseButton::Left,
+                    sdl::mouse::SDL_BUTTON_MIDDLE => host::MouseButton::Middle,
+                    sdl::mouse::SDL_BUTTON_RIGHT => host::MouseButton::Right,
                     _ => return None,
                 };
                 let message = host::MouseMessage {
                     x: event.x as u32,
                     y: event.y as u32,
-                    button: button as u32,
-                    buttons: mouse_button_mask(button as u32),
+                    button: button,
+                    buttons: button,
                 };
                 if typ == SDL_EventType::MOUSE_BUTTON_DOWN {
                     return Some(host::Message::MouseDown(message));

@@ -58,26 +58,40 @@ win32flags! {
 }
 
 fn mouse_button_to_wm(is_down: bool, message: &host::MouseMessage) -> WM {
-    match (&message.button, is_down) {
-        (host::MouseButton::Left, true) => WM::LBUTTONDOWN,
-        (host::MouseButton::Left, false) => WM::LBUTTONUP,
-        (host::MouseButton::Right, true) => WM::RBUTTONDOWN,
-        (host::MouseButton::Right, false) => WM::RBUTTONUP,
-        (host::MouseButton::Middle, true) => WM::MBUTTONDOWN,
-        (host::MouseButton::Middle, false) => WM::MBUTTONUP,
+    // Can't use a match here because MouseButton is a bitfield, not an enum.
+    if message.button == host::MouseButton::Left {
+        if is_down {
+            return WM::LBUTTONDOWN;
+        } else {
+            return WM::LBUTTONUP;
+        }
+    } else if message.button == host::MouseButton::Right {
+        if is_down {
+            return WM::RBUTTONDOWN;
+        } else {
+            return WM::RBUTTONUP;
+        }
+    } else if message.button == host::MouseButton::Middle {
+        if is_down {
+            return WM::MBUTTONDOWN;
+        } else {
+            return WM::MBUTTONUP;
+        }
+    } else {
+        return WM::MOUSEMOVE;
     }
 }
 
 fn mouse_msg(wm: WM, hwnd: HWND, message: &host::MouseMessage) -> MSG {
     let mut wParam = MK::empty();
-    if message.buttons & 1 != 0 {
+    if message.buttons.contains(host::MouseButton::Left) {
         wParam |= MK::LBUTTON;
     }
-    if message.buttons & (1 << 1) != 0 {
-        wParam |= MK::RBUTTON;
-    }
-    if message.buttons & (1 << 2) != 0 {
+    if message.buttons.contains(host::MouseButton::Middle) {
         wParam |= MK::MBUTTON;
+    }
+    if message.buttons.contains(host::MouseButton::Right) {
+        wParam |= MK::RBUTTON;
     }
 
     MSG {
@@ -184,6 +198,8 @@ impl MessageQueue {
             MouseDown(mouse) => mouse_msg(mouse_button_to_wm(true, &mouse), hwnd, &mouse),
             MouseUp(mouse) => mouse_msg(mouse_button_to_wm(false, &mouse), hwnd, &mouse),
             MouseMove(mouse) => mouse_msg(WM::MOUSEMOVE, hwnd, &mouse),
+            #[cfg(not(target_family = "wasm"))]
+            Paint => unreachable!(),
             #[cfg(not(target_family = "wasm"))]
             Quit => {
                 MSG {

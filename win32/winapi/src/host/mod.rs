@@ -13,6 +13,8 @@ mod wasm;
 #[cfg(target_family = "wasm")]
 pub use wasm::*;
 
+use crate::dllexport::win32flags;
+
 static HOST: LazyLock<Host> = LazyLock::new(Host::new);
 
 pub struct AudioSpec {
@@ -20,12 +22,13 @@ pub struct AudioSpec {
     pub channels: u32,
 }
 
-// This isn't really a win32 ABI enum, but we use ABIEnum derive to get the number=>value reverse mapping.
-#[derive(win32_derive::ABIEnum)]
-pub enum MouseButton {
-    Left = 1,
-    Middle = 2,
-    Right = 3,
+// MouseButton isn't passed through a win32 API, but we reuse the derive so we get a bitfield and serialization from it.
+win32flags! {
+    pub struct MouseButton {
+        const Left = 1 << 0;
+        const Middle = 1 << 1;
+        const Right = 1 << 2;
+    }
 }
 
 pub struct MouseMessage {
@@ -34,7 +37,7 @@ pub struct MouseMessage {
     /// In a click, which button triggered the click.
     pub button: MouseButton,
     /// Bitfield, which buttons are pressed.
-    pub buttons: u32,
+    pub buttons: MouseButton,
 }
 
 pub enum Message {
