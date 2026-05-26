@@ -61,21 +61,21 @@ fn init_memory(ctx: &mut Context, mappings: &mut kernel32::Mappings) {
 
 pub fn x401000(ctx: &mut Context) -> Cont {
     // 00401000 push 0FFFFFFF5h
-    ctx.push(0xfffffff5u32);
+    ctx.push32(0xfffffff5u32);
     // 00401002 call dword ptr ds:[402058h]
     ctx.call_builtin(0x401008, kernel32::GetStdHandle_stdcall);
     // 00401008 xor ecx,ecx
     ctx.cpu.regs.ecx = xor(ctx.cpu.regs.ecx, ctx.cpu.regs.ecx, &mut ctx.cpu.flags);
     // 0040100a push ecx
-    ctx.push(ctx.cpu.regs.ecx);
+    ctx.push32(ctx.cpu.regs.ecx);
     // 0040100b push ecx
-    ctx.push(ctx.cpu.regs.ecx);
+    ctx.push32(ctx.cpu.regs.ecx);
     // 0040100c push 6
-    ctx.push(0x6u32);
+    ctx.push32(0x6u32);
     // 0040100e push 402000h
-    ctx.push(0x402000u32);
+    ctx.push32(0x402000u32);
     // 00401013 push eax
-    ctx.push(ctx.cpu.regs.eax);
+    ctx.push32(ctx.cpu.regs.eax);
     // 00401014 call dword ptr ds:[40205Ch]
     ctx.call_builtin(0x40101a, kernel32::WriteFile_stdcall);
     // 0040101a ret

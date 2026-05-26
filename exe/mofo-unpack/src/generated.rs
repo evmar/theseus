@@ -76,7 +76,7 @@ pub fn x44d840(ctx: &mut Context) -> Cont {
     // 0044d846 lea edi,[esi-3F000h]
     ctx.cpu.regs.edi = ctx.cpu.regs.esi.wrapping_add(0xfffc1000u32);
     // 0044d84c push edi
-    ctx.push(ctx.cpu.regs.edi);
+    ctx.push32(ctx.cpu.regs.edi);
     // 0044d84d or ebp,0FFFFFFFFh
     ctx.cpu.regs.ebp = or(ctx.cpu.regs.ebp, 0xffffffffu32, &mut ctx.cpu.flags);
     // 0044d850 jmp short 0044D862h
@@ -416,7 +416,7 @@ pub fn x44d90b(ctx: &mut Context) -> Cont {
 
 pub fn x44d912(ctx: &mut Context) -> Cont {
     // 0044d912 pop esi
-    let x = ctx.pop();
+    let x = ctx.pop32();
     ctx.cpu.regs.esi = x;
     // 0044d913 sub edi,[edi-4]
     ctx.cpu.regs.edi = sub(
@@ -426,7 +426,7 @@ pub fn x44d912(ctx: &mut Context) -> Cont {
         &mut ctx.cpu.flags,
     );
     // 0044d916 push edi
-    ctx.push(ctx.cpu.regs.edi);
+    ctx.push32(ctx.cpu.regs.edi);
     // 0044d917 mov edi,esi
     ctx.cpu.regs.edi = ctx.cpu.regs.esi;
     // 0044d919 mov ecx,1EDh
@@ -501,7 +501,7 @@ pub fn x44d92c(ctx: &mut Context) -> Cont {
 
 pub fn x44d94a(ctx: &mut Context) -> Cont {
     // 0044d94a pop edi
-    let x = ctx.pop();
+    let x = ctx.pop32();
     ctx.cpu.regs.edi = x;
     Cont(x44d94b)
 }
@@ -530,7 +530,7 @@ pub fn x44d951(ctx: &mut Context) -> Cont {
     // 0044d95b add ebx,esi
     ctx.cpu.regs.ebx = add(ctx.cpu.regs.ebx, ctx.cpu.regs.esi, &mut ctx.cpu.flags);
     // 0044d95d push eax
-    ctx.push(ctx.cpu.regs.eax);
+    ctx.push32(ctx.cpu.regs.eax);
     // 0044d95e add edi,8
     ctx.cpu.regs.edi = add(ctx.cpu.regs.edi, 0x8u32, &mut ctx.cpu.flags);
     // 0044d961 call dword ptr [esi+4E3F4h]
@@ -563,17 +563,17 @@ pub fn x44d968(ctx: &mut Context) -> Cont {
 
 pub fn x44d96f(ctx: &mut Context) -> Cont {
     // 0044d96f push edx
-    ctx.push(ctx.cpu.regs.edx);
+    ctx.push32(ctx.cpu.regs.edx);
     // 0044d970 mov ecx,edi
     ctx.cpu.regs.ecx = ctx.cpu.regs.edi;
     // 0044d972 push edi
-    ctx.push(ctx.cpu.regs.edi);
+    ctx.push32(ctx.cpu.regs.edi);
     // 0044d973 dec eax
     ctx.cpu.regs.eax = dec(ctx.cpu.regs.eax, &mut ctx.cpu.flags);
     // 0044d974 repne scasb
     ctx.rep(Rep::REPNE, Context::scasb);
     // 0044d976 push edx
-    ctx.push(ctx.cpu.regs.edx);
+    ctx.push32(ctx.cpu.regs.edx);
     // 0044d977 call dword ptr [esi+4E3F8h]
     let dst = ctx.indirect(ctx.memory.read(ctx.cpu.regs.esi.wrapping_add(0x4e3f8u32)));
     ctx.call(0x44d97d, dst)
@@ -581,7 +581,7 @@ pub fn x44d96f(ctx: &mut Context) -> Cont {
 
 pub fn x44d97d(ctx: &mut Context) -> Cont {
     // 0044d97d pop edx
-    let x = ctx.pop();
+    let x = ctx.pop32();
     ctx.cpu.regs.edx = x;
     // 0044d97e or eax,eax
     ctx.cpu.regs.eax = or(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);

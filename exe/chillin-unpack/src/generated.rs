@@ -78,7 +78,7 @@ pub fn x4cbca0(ctx: &mut Context) -> Cont {
     // 004cbca6 lea edi,[esi-0BB118h]
     ctx.cpu.regs.edi = ctx.cpu.regs.esi.wrapping_add(0xfff44ee8u32);
     // 004cbcac push edi
-    ctx.push(ctx.cpu.regs.edi);
+    ctx.push32(ctx.cpu.regs.edi);
     // 004cbcad or ebp,0FFFFFFFFh
     ctx.cpu.regs.ebp = or(ctx.cpu.regs.ebp, 0xffffffffu32, &mut ctx.cpu.flags);
     // 004cbcb0 jmp short 004CBCC2h
@@ -418,7 +418,7 @@ pub fn x4cbd6b(ctx: &mut Context) -> Cont {
 
 pub fn x4cbd72(ctx: &mut Context) -> Cont {
     // 004cbd72 pop esi
-    let x = ctx.pop();
+    let x = ctx.pop32();
     ctx.cpu.regs.esi = x;
     // 004cbd73 mov edi,esi
     ctx.cpu.regs.edi = ctx.cpu.regs.esi;
@@ -522,7 +522,7 @@ pub fn x4cbdb2(ctx: &mut Context) -> Cont {
     // 004cbdbc add ebx,esi
     ctx.cpu.regs.ebx = add(ctx.cpu.regs.ebx, ctx.cpu.regs.esi, &mut ctx.cpu.flags);
     // 004cbdbe push eax
-    ctx.push(ctx.cpu.regs.eax);
+    ctx.push32(ctx.cpu.regs.eax);
     // 004cbdbf add edi,8
     ctx.cpu.regs.edi = add(ctx.cpu.regs.edi, 0x8u32, &mut ctx.cpu.flags);
     // 004cbdc2 call dword ptr [esi+0CB0E4h]
@@ -566,13 +566,13 @@ pub fn x4cbdd4(ctx: &mut Context) -> Cont {
     // 004cbdd7 inc edi
     ctx.cpu.regs.edi = inc(ctx.cpu.regs.edi, &mut ctx.cpu.flags);
     // 004cbdd8 push eax
-    ctx.push(ctx.cpu.regs.eax);
+    ctx.push32(ctx.cpu.regs.eax);
     // 004cbdd9 inc edi
     ctx.cpu.regs.edi = inc(ctx.cpu.regs.edi, &mut ctx.cpu.flags);
     // 004cbdda mov ecx,0AEF24857h
     ctx.cpu.regs.ecx = 0xaef24857u32;
     // 004cbddf push ebp
-    ctx.push(ctx.cpu.regs.ebp);
+    ctx.push32(ctx.cpu.regs.ebp);
     // 004cbde0 call dword ptr [esi+0CB0E8h]
     let dst = ctx.indirect(ctx.memory.read(ctx.cpu.regs.esi.wrapping_add(0xcb0e8u32)));
     ctx.call(0x4cbde6, dst)
@@ -580,13 +580,13 @@ pub fn x4cbdd4(ctx: &mut Context) -> Cont {
 
 pub fn x4cbddb(ctx: &mut Context) -> Cont {
     // 004cbddb push edi
-    ctx.push(ctx.cpu.regs.edi);
+    ctx.push32(ctx.cpu.regs.edi);
     // 004cbddc dec eax
     ctx.cpu.regs.eax = dec(ctx.cpu.regs.eax, &mut ctx.cpu.flags);
     // 004cbddd repne scasb
     ctx.rep(Rep::REPNE, Context::scasb);
     // 004cbddf push ebp
-    ctx.push(ctx.cpu.regs.ebp);
+    ctx.push32(ctx.cpu.regs.ebp);
     // 004cbde0 call dword ptr [esi+0CB0E8h]
     let dst = ctx.indirect(ctx.memory.read(ctx.cpu.regs.esi.wrapping_add(0xcb0e8u32)));
     ctx.call(0x4cbde6, dst)

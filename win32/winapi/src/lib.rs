@@ -89,6 +89,7 @@ fn load16(exe: &EXEData) -> Context {
 
     let mut mappings = kernel32::Mappings::default();
     (exe.init_memory)(&mut ctx, &mut mappings);
+    ctx.cpu.regs.esp = 0xfffe;
     ctx
 }
 

@@ -30,12 +30,12 @@ impl Context {
     pub fn call_x86(&mut self, mut f: Cont, args: Vec<u32>) {
         let esp = self.cpu.regs.esp;
         for arg in args.into_iter().rev() {
-            self.push(arg);
+            self.push32(arg);
         }
         // Note that return_from_x86 is never called.  When the x86 code returns
         // to it, the stack will have been popped so that esp matches our initial
         // esp and we abort the loop before invoking the continuation.
-        self.push(RETURN_FROM_X86_ADDR);
+        self.push32(RETURN_FROM_X86_ADDR);
 
         let mut i = 0;
         while self.cpu.regs.esp != esp {

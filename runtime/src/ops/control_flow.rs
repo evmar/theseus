@@ -2,7 +2,7 @@ use crate::{Cont, ContFn, Context, Flags, RETURN_FROM_X86_ADDR};
 
 impl Context {
     pub fn call(&mut self, ret: u32, addr: Cont) -> Cont {
-        self.push(ret);
+        self.push32(ret);
         addr
     }
 
@@ -10,7 +10,7 @@ impl Context {
     pub fn call_builtin(&mut self, from: u32, func: ContFn) {
         // Because ContFn is stdcall it expects to pop a return address off the stack.
         // Ensure it is valid, though we ignore it.
-        self.push(RETURN_FROM_X86_ADDR);
+        self.push32(RETURN_FROM_X86_ADDR);
         self.cpu.regs.eip_context = from;
         func(self); // pops the above return address
     }
@@ -111,7 +111,7 @@ impl Context {
     }
 
     pub fn ret(&mut self, n: u16) -> Cont {
-        let ret = self.pop();
+        let ret = self.pop32();
         self.cpu.regs.esp += n as u32;
         self.indirect(ret)
     }
