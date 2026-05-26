@@ -39,6 +39,16 @@ impl Context {
         }
     }
 
+    pub fn lodsw(&mut self) {
+        let addr = self.cpu.regs.esi;
+        self.cpu.regs.set_ax(self.memory.read::<u16>(addr));
+        if self.cpu.flags.contains(Flags::DF) {
+            self.cpu.regs.esi = addr.wrapping_sub(2);
+        } else {
+            self.cpu.regs.esi = addr.wrapping_add(2);
+        }
+    }
+
     pub fn lodsd(&mut self) {
         let addr = self.cpu.regs.esi;
         self.cpu.regs.eax = self.memory.read::<u32>(addr);
