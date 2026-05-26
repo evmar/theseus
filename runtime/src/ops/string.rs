@@ -115,6 +115,18 @@ impl Context {
         }
     }
 
+    pub fn movsw(&mut self) {
+        let val = self.memory.read::<u16>(self.cpu.regs.esi);
+        self.memory.write::<u16>(self.cpu.regs.edi, val);
+        if self.cpu.flags.contains(Flags::DF) {
+            self.cpu.regs.esi = self.cpu.regs.esi.wrapping_sub(2);
+            self.cpu.regs.edi = self.cpu.regs.edi.wrapping_sub(2);
+        } else {
+            self.cpu.regs.esi = self.cpu.regs.esi.wrapping_add(2);
+            self.cpu.regs.edi = self.cpu.regs.edi.wrapping_add(2);
+        }
+    }
+
     pub fn movsb(&mut self) {
         let val = self.memory.read::<u8>(self.cpu.regs.esi);
         self.memory.write::<u8>(self.cpu.regs.edi, val);
