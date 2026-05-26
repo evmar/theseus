@@ -11,6 +11,10 @@ pub struct Regs {
     pub esp: u32,
     pub ebp: u32,
 
+    pub cs: u16,
+    pub ds: u16,
+    pub ss: u16,
+
     pub fs_base: u32,
     /// eip, only occasionally set by tracing
     pub eip_context: u32,
@@ -28,6 +32,10 @@ impl Regs {
             edi: 0,
             esp: 0,
             ebp: 0,
+
+            cs: 0,
+            ds: 0,
+            ss: 0,
 
             fs_base: 0, // set when initializing process
             eip_context: 0,
@@ -51,9 +59,6 @@ impl Regs {
     }
     pub fn get_di(&self) -> u16 {
         self.edi as u16
-    }
-    pub fn get_es(&self) -> u16 {
-        todo!()
     }
     pub fn get_sp(&self) -> u16 {
         todo!()
@@ -84,6 +89,25 @@ impl Regs {
         self.ebp = (self.ebp & 0xFFFF_0000) | (val as u32);
     }
 
+    pub fn get_cs(&mut self) -> u16 {
+        todo!();
+    }
+    pub fn get_ds(&mut self) -> u16 {
+        todo!();
+    }
+    pub fn get_es(&mut self) -> u16 {
+        todo!();
+    }
+    pub fn get_ss(&mut self) -> u16 {
+        todo!();
+    }
+
+    pub fn set_cs(&mut self, _val: u16) {
+        todo!();
+    }
+    pub fn set_ds(&mut self, _val: u16) {
+        todo!();
+    }
     pub fn set_es(&mut self, _val: u16) {
         todo!();
     }

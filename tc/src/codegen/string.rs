@@ -12,6 +12,7 @@ impl<'a> CodeGen<'a> {
                     self.line("ctx.movsb();");
                 }
             }
+            Movsw => self.todo(),
             Movsd => {
                 assert!(!instr.has_repne_prefix());
                 if instr.has_rep_prefix() {
@@ -29,6 +30,7 @@ impl<'a> CodeGen<'a> {
                     self.line("ctx.lodsb();");
                 };
             }
+            Lodsw => self.todo(),
             Lodsd => {
                 assert!(!instr.has_repne_prefix());
                 if instr.has_rep_prefix() {
@@ -58,6 +60,7 @@ impl<'a> CodeGen<'a> {
                     self.line("ctx.cmpsb();");
                 };
             }
+            Cmpsw | Cmpsd => self.todo(),
 
             // XXX: cmps/scas use repe, not rep
             Scasb => {
@@ -69,6 +72,7 @@ impl<'a> CodeGen<'a> {
                     self.line("ctx.scasb();");
                 };
             }
+            Scasw | Scasd => self.todo(),
 
             _ => return false,
         }

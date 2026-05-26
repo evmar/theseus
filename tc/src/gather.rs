@@ -161,9 +161,14 @@ impl<'a> Traverse<'a> {
         }
 
         let mut instrs = Vec::new();
-        let decoder =
-            iced_x86::Decoder::with_ip(32, data, ip as u64, iced_x86::DecoderOptions::NONE);
+        let decoder = iced_x86::Decoder::with_ip(
+            self.module.bitness,
+            data,
+            ip as u64,
+            iced_x86::DecoderOptions::NONE,
+        );
         for instr in decoder {
+            // log::info!("{ip:08x} {instr}", ip = instr.ip32());
             if self.blocks.contains_key(&instr.ip32()) {
                 // Hit a point covered by another block, e.g. a jump target
                 break;
@@ -198,6 +203,9 @@ impl<'a> Traverse<'a> {
                 Call | Jmp | Je | Jne | Jb | Js | Jns | Ja | Jae | Jl | Jge | Jecxz | Jg | Jle
                 | Jo | Jno | Jp | Jnp | Jbe | Loop | Loope | Loopne => {
                     match instr.op0_kind() {
+                        iced_x86::OpKind::NearBranch16 => {
+                            self.queue.push_back(instr.near_branch16() as u32)
+                        }
                         iced_x86::OpKind::NearBranch32 => {
                             self.queue.push_back(instr.near_branch32())
                         }

@@ -15,6 +15,10 @@ impl<'a> CodeGen<'a> {
     /// Returns (code, uses_ctx) where uses_ctx is true if code uses ctx.
     fn gen_jmp(&self, instr: &Instr) -> (String, bool) {
         match instr.iced.op_kind(0) {
+            iced_x86::OpKind::NearBranch16 => {
+                let addr = instr.iced.near_branch16() as u32;
+                (self.gen_abs_jmp(addr), false)
+            }
             iced_x86::OpKind::NearBranch32 => {
                 let addr = instr.iced.near_branch32();
                 (self.gen_abs_jmp(addr), false)

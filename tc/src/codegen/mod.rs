@@ -27,7 +27,9 @@ pub fn get_reg(r: iced_x86::Register) -> String {
         EAX | ECX | EDX | EBX | ESI | EDI | ESP | EBP => {
             format!("ctx.cpu.regs.{reg}", reg = reg_name(r))
         }
-        AL | AH | AX | CL | CH | CX | DL | DH | DX | BL | BH | BX | DI | SI | ES | SP | BP => {
+        AL | AH | AX | CL | CH | CX | DL | DH | DX | BL | BH | BX |
+        DI | SI | SP | BP | // comment to disable formatting
+        CS | DS | ES | SS => {
             format!("ctx.cpu.regs.get_{reg}()", reg = reg_name(r))
         }
         r => todo!("{r:?}"),
@@ -40,7 +42,9 @@ pub fn set_reg(r: iced_x86::Register, expr: String) -> String {
         EAX | ECX | EDX | EBX | ESI | EDI | ESP | EBP => {
             format!("ctx.cpu.regs.{reg} = {expr};", reg = reg_name(r))
         }
-        AL | AH | AX | CL | CH | CX | DL | DH | DX | BL | BH | BX | DI | SI | ES | SS | SP | BP => {
+        AL | AH | AX | CL | CH | CX | DL | DH | DX | BL | BH | BX |
+        DI | SI | SP | BP | // comment to disable formatting
+        CS | DS | ES | SS => {
             format!("ctx.cpu.regs.set_{reg}({expr});", reg = reg_name(r))
         }
         r => todo!("{r:?}"),
@@ -228,6 +232,7 @@ impl<'a> CodeGen<'a> {
     }
 
     fn gen_instr(&mut self, instr: &Instr) -> anyhow::Result<()> {
+        // log::info!("gen: {:08x} {}", instr.iced.ip32(), instr.iced);
         self.line(format!("// {:08x} {}", instr.iced.ip32(), instr.iced));
         if self.codegen_control_flow(instr) {
         } else if self.codegen_math(&instr.iced) {

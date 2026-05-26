@@ -59,16 +59,19 @@ fn run() -> anyhow::Result<()> {
     let args: Args = argh::from_env();
 
     let mut state = tc::State::default();
-    state.mem.mappings.alloc("null page".into(), 0x1000);
 
     if let Some(path) = &args.symbols_csv {
         state.load_symbols(std::fs::File::open(path)?)?;
     }
 
-    let buf = std::fs::read(args.exe).unwrap();
-    state.module = tc::load_pe(&mut state.mem, buf);
-
-    state.init_imports();
+    let buf = std::fs::read(&args.exe).unwrap();
+    if args.exe.to_ascii_lowercase().ends_with(".com") {
+        state.module = tc::com::load_com(&mut state.mem, buf);
+    } else {
+        state.mem.mappings.alloc("null page".into(), 0x1000);
+        state.module = tc::load_pe(&mut state.mem, buf);
+        state.init_imports();
+    }
 
     let mut entry_points = vec![];
     for addr in args.entry_point {

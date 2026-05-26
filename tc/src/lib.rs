@@ -5,6 +5,7 @@ use crate::memory::Memory;
 mod codegen;
 mod load;
 pub use load::load_pe;
+pub mod com;
 mod gather;
 mod memory;
 pub use gather::{EntryPoint, Gather};
@@ -23,6 +24,7 @@ pub struct Import {
 
 #[derive(Default)]
 pub struct Module {
+    pub bitness: u32,
     pub image_base: u32,
     pub entry_point: u32,
     pub code_memory: std::ops::Range<u32>,

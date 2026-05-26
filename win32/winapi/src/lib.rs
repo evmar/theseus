@@ -39,6 +39,7 @@ use runtime::{CPU, Context, Memory};
 pub(crate) use stub;
 
 pub struct EXEData {
+    pub bitness: u32,
     pub image_base: u32,
     pub resources: std::ops::Range<u32>,
     pub blocks: &'static [(u32, fn(&mut Context) -> runtime::Cont)],
@@ -56,16 +57,44 @@ fn thesesus_trace() -> String {
     std::env::var("THESEUS_TRACE").unwrap_or_default()
 }
 
+fn alloc_leak_memory(size: usize) -> Memory {
+    // safety: safe to assume_init on zeroed u8
+    let memory: Box<[u8]> = unsafe { Box::<[u8]>::new_zeroed_slice(size).assume_init() };
+    let static_memory: &'static mut [u8] = Box::leak(memory);
+    Memory::new(static_memory)
+}
+
 pub fn load(exe: &EXEData) -> Context {
     host::init();
-
     crate::trace::init(&thesesus_trace());
+    match exe.bitness {
+        16 => load16(exe),
+        32 => load32(exe),
+        _ => unreachable!(),
+    }
+}
 
+fn load16(exe: &EXEData) -> Context {
+    let memory_size = 64 << 10;
+    let memory = alloc_leak_memory(memory_size);
+
+    let mut ctx = Context {
+        cpu: CPU::default(),
+        thread_handle: 0,
+        thread_id: 1,
+        memory,
+        blocks: exe.blocks,
+        recent: [Context::return_from_x86; 4],
+    };
+
+    let mut mappings = kernel32::Mappings::default();
+    (exe.init_memory)(&mut ctx, &mut mappings);
+    ctx
+}
+
+fn load32(exe: &EXEData) -> Context {
     let memory_size = 32 << 20;
-    // safety: safe to assume_init on zeroed u8
-    let memory: Box<[u8]> = unsafe { Box::<[u8]>::new_zeroed_slice(memory_size).assume_init() };
-    let static_memory: &'static mut [u8] = Box::leak(memory);
-    let memory = Memory::new(static_memory);
+    let memory = alloc_leak_memory(memory_size);
 
     kernel32::init_state(exe.image_base, exe.resources.clone());
     let mut lock = kernel32::lock();

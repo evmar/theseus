@@ -43,6 +43,7 @@ pub fn load_pe(mem: &mut Memory, buf: Vec<u8>) -> Module {
     log::info!("imp {:#x?}", imports);
 
     Module {
+        bitness: 32,
         imports,
         image_base,
         entry_point: image_base + f.opt_header.AddressOfEntryPoint,
