@@ -1,12 +1,7 @@
 use super::int::Int;
 use crate::Flags;
 
-fn sbb_impl<I: Int + num_traits::ops::overflowing::OverflowingSub + num_traits::WrappingAdd>(
-    x: I,
-    y: I,
-    b: bool,
-    flags: &mut Flags,
-) -> I {
+fn sbb_impl<I: Int>(x: I, y: I, b: bool, flags: &mut Flags) -> I {
     let z = if b { y.wrapping_add(&I::one()) } else { y };
     let (result, borrow) = x.overflowing_sub(&z);
     flags.set(Flags::CF, borrow || (b && z == I::zero()));
@@ -22,32 +17,19 @@ fn sbb_impl<I: Int + num_traits::ops::overflowing::OverflowingSub + num_traits::
     result
 }
 
-pub fn sbb<I: Int + num_traits::ops::overflowing::OverflowingSub + num_traits::WrappingAdd>(
-    x: I,
-    y: I,
-    flags: &mut Flags,
-) -> I {
+pub fn sbb<I: Int>(x: I, y: I, flags: &mut Flags) -> I {
     sbb_impl(x, y, flags.contains(Flags::CF), flags)
 }
 
-pub fn sub<I: Int + num_traits::ops::overflowing::OverflowingSub + num_traits::WrappingAdd>(
-    x: I,
-    y: I,
-    flags: &mut Flags,
-) -> I {
+pub fn sub<I: Int>(x: I, y: I, flags: &mut Flags) -> I {
     sbb_impl(x, y, false, flags)
 }
 
-pub fn add<I: Int + num_traits::ops::wrapping::WrappingAdd>(x: I, y: I, flags: &mut Flags) -> I {
+pub fn add<I: Int>(x: I, y: I, flags: &mut Flags) -> I {
     addc(x, y, I::zero(), flags)
 }
 
-pub fn addc<I: Int + num_traits::ops::wrapping::WrappingAdd>(
-    x: I,
-    y: I,
-    z: I,
-    flags: &mut Flags,
-) -> I {
+pub fn addc<I: Int>(x: I, y: I, z: I, flags: &mut Flags) -> I {
     let result = x.wrapping_add(&y.wrapping_add(&z));
     flags.set(Flags::CF, result < x || (result == x && !z.is_zero()));
     flags.set(Flags::ZF, result.is_zero());
@@ -83,7 +65,7 @@ pub fn or<I: Int>(x: I, y: I, flags: &mut Flags) -> I {
 }
 
 /// neg: Two's Complement Negation
-pub fn neg<I: Int + num_traits::ops::overflowing::OverflowingSub>(x: I, flags: &mut Flags) -> I {
+pub fn neg<I: Int>(x: I, flags: &mut Flags) -> I {
     let (result, of) = I::zero().overflowing_sub(&x);
     flags.set(Flags::ZF, result.is_zero());
     flags.set(Flags::CF, !result.is_zero());
@@ -92,17 +74,14 @@ pub fn neg<I: Int + num_traits::ops::overflowing::OverflowingSub>(x: I, flags: &
     result
 }
 
-pub fn dec<I: Int + num_traits::ops::overflowing::OverflowingSub + num_traits::WrappingAdd>(
-    x: I,
-    flags: &mut Flags,
-) -> I {
+pub fn dec<I: Int>(x: I, flags: &mut Flags) -> I {
     let old_cf = flags.contains(Flags::CF);
     let result = sub(x, I::one(), flags);
     flags.set(Flags::CF, old_cf);
     result
 }
 
-pub fn inc<I: Int + num_traits::ops::wrapping::WrappingAdd>(x: I, flags: &mut Flags) -> I {
+pub fn inc<I: Int>(x: I, flags: &mut Flags) -> I {
     let old_cf = flags.contains(Flags::CF);
     let result = add(x, I::one(), flags);
     flags.set(Flags::CF, old_cf);

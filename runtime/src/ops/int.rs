@@ -1,4 +1,6 @@
-pub trait Int: num_traits::PrimInt {
+pub trait Int:
+    num_traits::PrimInt + num_traits::ops::overflowing::OverflowingSub + num_traits::WrappingAdd
+{
     fn bits() -> usize;
     fn low_byte(&self) -> u8;
 
