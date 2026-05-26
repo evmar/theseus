@@ -13,6 +13,7 @@ pub struct Regs {
 
     pub cs: u16,
     pub ds: u16,
+    pub es: u16,
     pub ss: u16,
 
     pub fs_base: u32,
@@ -35,6 +36,7 @@ impl Regs {
 
             cs: 0,
             ds: 0,
+            es: 0,
             ss: 0,
 
             fs_base: 0, // set when initializing process
@@ -90,29 +92,29 @@ impl Regs {
     }
 
     pub fn get_cs(&mut self) -> u16 {
-        todo!();
+        self.cs
     }
     pub fn get_ds(&mut self) -> u16 {
-        todo!();
+        self.ds
     }
     pub fn get_es(&mut self) -> u16 {
-        todo!();
+        self.es
     }
     pub fn get_ss(&mut self) -> u16 {
-        todo!();
+        self.ss
     }
 
-    pub fn set_cs(&mut self, _val: u16) {
-        todo!();
+    pub fn set_cs(&mut self, val: u16) {
+        self.cs = val;
     }
-    pub fn set_ds(&mut self, _val: u16) {
-        todo!();
+    pub fn set_ds(&mut self, val: u16) {
+        self.ds = val;
     }
-    pub fn set_es(&mut self, _val: u16) {
-        todo!();
+    pub fn set_es(&mut self, val: u16) {
+        self.es = val;
     }
-    pub fn set_ss(&mut self, _val: u16) {
-        todo!();
+    pub fn set_ss(&mut self, val: u16) {
+        self.ss = val;
     }
 
     pub fn get_al(&self) -> u8 {
