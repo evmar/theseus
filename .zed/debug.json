@@ -48,4 +48,19 @@
     "request": "launch",
     "adapter": "CodeLLDB",
   },
+  {
+    "label": "animate",
+    "build": {
+      "command": "cargo",
+      "args": ["build", "-p", "animate"],
+    },
+    "env": {
+      "RUST_BACKTRACE": "1",
+      "THESEUS_TRACE": "+",
+    },
+    "program": "$ZED_WORKTREE_ROOT/target/debug/animate",
+    "sourceLanguages": ["rust"],
+    "request": "launch",
+    "adapter": "CodeLLDB",
+  },
 ]
