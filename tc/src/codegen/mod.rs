@@ -275,7 +275,7 @@ impl<'a> CodeGen<'a> {
             if !zeroed {
                 self.line(format!(
                     "let bytes = include_bytes!(\"../data/{addr:08x}.raw\").as_slice();
-let out = &mut ctx.memory[{addr:#x}..][..bytes.len()];
+let out = &mut ctx.memory.bytes[{addr:#x}..][..bytes.len()];
 out.copy_from_slice(bytes);",
                 ));
             }
@@ -346,12 +346,14 @@ use winapi::*;
         let entry_point = self.blocks.get(&self.module.entry_point).unwrap();
         self.line(format!(
             "pub const EXEDATA: EXEData = EXEData {{
+            bitness: {bitness},
             image_base: {image_base:#x},
             resources: {res_start:#x}..{res_end:#x},
             blocks: &BLOCKS,
             init_memory,
             entry_point: Cont({entry_point}),
         }};\n\n",
+            bitness = self.module.bitness,
             image_base = self.module.image_base,
             res_start = resources.start,
             res_end = resources.end,
