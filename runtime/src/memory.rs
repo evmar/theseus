@@ -1,5 +1,4 @@
 use widestring::U16String;
-use zerocopy::{FromBytes, IntoBytes};
 
 /// Memory represents the inner machine's memory, as a flat byte array (no paging etc.).
 ///
@@ -13,6 +12,14 @@ use zerocopy::{FromBytes, IntoBytes};
 pub struct Memory {
     pub bytes: &'static mut [u8],
 }
+
+/// A trait for types that can be read from memory with .read().
+pub trait MemRead: zerocopy::FromBytes {}
+impl<T: zerocopy::FromBytes> MemRead for T {}
+
+/// A trait for types that can be written to memory with .write().
+pub trait MemWrite: zerocopy::IntoBytes + zerocopy::Immutable {}
+impl<T: zerocopy::IntoBytes + zerocopy::Immutable> MemWrite for T {}
 
 impl Memory {
     pub fn new(bytes: &'static mut [u8]) -> Self {
@@ -32,7 +39,7 @@ impl Memory {
         log::error!("null page read/write");
     }
 
-    pub fn read<T: FromBytes>(&self, addr: u32) -> T {
+    pub fn read<T: MemRead>(&self, addr: u32) -> T {
         if addr < 0x1000 {
             self.null_ptr();
         }
@@ -40,7 +47,7 @@ impl Memory {
         T::read_from_bytes(&self.bytes[addr..addr + std::mem::size_of::<T>()]).unwrap()
     }
 
-    pub fn write<T: IntoBytes + zerocopy::Immutable>(&mut self, addr: u32, val: T) {
+    pub fn write<T: MemWrite>(&mut self, addr: u32, val: T) {
         if addr < 0x1000 {
             self.null_ptr();
         }
