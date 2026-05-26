@@ -43,7 +43,15 @@ impl<'a> CodeGen<'a> {
                 ));
             }
 
-            Lea => self.line(set_op(instr, 0, gen_addr(instr))),
+            Lea => {
+                let addr = gen_addr(instr);
+                // addr is always computed as 32-bit, but for 16-bit lea we need to truncate.
+                if op_size(instr, 0) == 16 {
+                    self.line(set_op(instr, 0, format!("{} as u16", addr)));
+                } else {
+                    self.line(set_op(instr, 0, addr));
+                }
+            }
 
             Movzx => {
                 self.line(set_op(instr, 0, format!("{} as _", get_op(instr, 1))));

@@ -51,6 +51,9 @@ pub fn set_reg(r: iced_x86::Register, expr: String) -> String {
     }
 }
 
+/// Code generate a memory address reference.
+/// Even for 16-bit code we generate a 32-bit memory address, because the computed
+/// address can go beyond a 16-bit address range.
 pub fn gen_addr(instr: &iced_x86::Instruction) -> String {
     let mut expr = Vec::new();
     match instr.memory_segment() {
@@ -64,12 +67,7 @@ pub fn gen_addr(instr: &iced_x86::Instruction) -> String {
     }
     match instr.memory_base() {
         iced_x86::Register::None => {}
-        r => {
-            if reg_size(r) != 32 {
-                return format!("todo!()");
-            }
-            expr.push(get_reg(r))
-        }
+        r => expr.push(get_reg(r)),
     }
     if instr.memory_index() != iced_x86::Register::None {
         if instr.memory_index_scale() != 1 {
@@ -84,19 +82,42 @@ pub fn gen_addr(instr: &iced_x86::Instruction) -> String {
     }
     let offset = instr.memory_displacement32();
     if offset != 0 {
-        expr.push(format!("{offset:#x}u32"));
+        expr.push(format!("{offset:#x}"));
     }
-    expr.into_iter()
-        .enumerate()
-        .map(|(i, e)| {
-            if i == 0 {
-                e
-            } else {
-                format!(".wrapping_add({e})")
-            }
-        })
-        .collect::<Vec<_>>()
-        .join("")
+
+    let needs_cast = match instr.memory_size() {
+        iced_x86::MemorySize::Unknown => {
+            // e.g. lea
+            false
+        }
+        _ => mem_size(instr) == 16,
+    };
+
+    if needs_cast {
+        expr.into_iter()
+            .enumerate()
+            .map(|(i, e)| {
+                if i == 0 {
+                    format!("({e} as u32)")
+                } else {
+                    format!(".wrapping_add({e} as u32)")
+                }
+            })
+            .collect::<Vec<_>>()
+            .join("")
+    } else {
+        expr.into_iter()
+            .enumerate()
+            .map(|(i, e)| {
+                if i == 0 {
+                    format!("{e}")
+                } else {
+                    format!(".wrapping_add({e})")
+                }
+            })
+            .collect::<Vec<_>>()
+            .join("")
+    }
 }
 
 pub fn get_mem(typ: String, addr: String) -> String {
