@@ -112,6 +112,26 @@ pub fn rol<I: Int>(x: I, y: u8, flags: &mut Flags) -> I {
     result
 }
 
+pub fn rcl<I: Int>(x: I, y: u8, flags: &mut Flags) -> I {
+    assert!(I::bits() < 64);
+    let y = y % 32;
+    let count = y as usize % (I::bits() + 1);
+    if count == 0 {
+        return x;
+    }
+
+    let width = I::bits() + 1;
+    let mask = (1u64 << width) - 1;
+    let x = (x.to_u64().unwrap() << 1) | u64::from(flags.contains(Flags::CF));
+    let x = ((x << count) | (x >> (width - count))) & mask;
+    let result = I::from(x >> 1).unwrap();
+
+    flags.set(Flags::CF, (x & 1) != 0);
+    // Note: OF only defined for 1-bit rotates.
+    flags.set(Flags::OF, flags.contains(Flags::CF) ^ result.high_bit().is_one());
+    result
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -128,5 +148,27 @@ mod tests {
             0x8123_4567
         );
         assert_eq!("CF SF", flags.to_string());
+    }
+
+    #[test]
+    fn rcl() {
+        let mut flags = Flags::CF;
+        assert_eq!(super::rcl(0b1000_0000u8, 1, &mut flags), 0b0000_0001);
+        assert_eq!("CF OF", flags.to_string());
+
+        let mut flags = Flags::default();
+        assert_eq!(
+            super::rcl(0b1010_0000_0000_0001u16, 3, &mut flags),
+            0b0000_0000_0000_1010
+        );
+        assert_eq!("CF OF", flags.to_string());
+
+        let mut flags = Flags::CF | Flags::OF;
+        assert_eq!(super::rcl(0x1234_5678u32, 32, &mut flags), 0x1234_5678);
+        assert_eq!("CF OF", flags.to_string());
+
+        let mut flags = Flags::CF | Flags::OF;
+        assert_eq!(super::rcl(0x1234u16, 17, &mut flags), 0x1234);
+        assert_eq!("CF OF", flags.to_string());
     }
 }
