@@ -12,6 +12,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "animate-unpack"
+version = "0.1.0"
+dependencies = [
+ "runtime",
+ "wasm-bindgen",
+ "winapi 0.1.0",
+]
+
+[[package]]
 name = "anyhow"
 version = "1.0.102"
 source = "registry+https://github.com/rust-lang/crates.io-index"

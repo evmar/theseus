@@ -44,7 +44,15 @@ elif [[ $1 == "mine" ]]; then
     cargo run -p tc -- --exe ~/win/rs/deploy/archive/win2k/winmine.exe --out exe/mine \
         --entry-point $wndproc \
         --jump-table $wndproc_jmptable
-else
+elif [[ $1 == "animate" ]]; then
+    cargo run -p tc -- --exe animate.com --out exe/dos/animate
+elif [[ $1 == "animate-unpack" ]]; then
+    real_entry=0xff82
+    cargo run -p tc -- --exe dos/exe/schwartz_animate/ANIMATE.COM --out exe/dos/animate-unpack \
+        --extern $real_entry
+elif [[ $1 == "basicdd" ]]; then
     cargo run -p tc -- --scan-memory --exe ~/win/rs/deploy/archive/BasicDD.exe --out exe/basicdd --entry-point 0x4012d0
     echo cargo run -p basicdd
+else
+    echo "unknown target $1"
 fi
