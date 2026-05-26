@@ -86,6 +86,7 @@ fn load16(exe: &EXEData) -> Context {
         blocks: exe.blocks,
         recent: [Context::return_from_x86; 4],
     };
+    ctx.cpu.real_mode = true;
 
     let mut mappings = kernel32::Mappings::default();
     (exe.init_memory)(&mut ctx, &mut mappings);

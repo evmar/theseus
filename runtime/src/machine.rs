@@ -6,6 +6,7 @@ pub struct CPU {
     pub flags: Flags,
     pub fpu: FPU,
     pub mmx: MMX,
+    pub real_mode: bool,
 }
 
 pub struct Context {
