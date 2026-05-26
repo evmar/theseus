@@ -33,8 +33,11 @@ pub fn xff0a(ctx: &mut Context) -> Cont {
     ctx.cpu.regs.set_dx(ctx.cpu.regs.get_ax());
     ctx.cpu.regs.set_ax(t);
     // 0000ff0c rcr dx,1
-    // Rcr not implemented
-    todo!();
+    ctx.cpu
+        .regs
+        .set_dx(rcr(ctx.cpu.regs.get_dx(), 0x1u8, &mut ctx.cpu.flags));
+    // 0000ff0e jae short 0FF47h
+    ctx.jae(Cont(xff10), Cont(xff47))
 }
 
 pub fn xff10(ctx: &mut Context) -> Cont {
@@ -54,8 +57,11 @@ pub fn xff12(ctx: &mut Context) -> Cont {
     ctx.cpu.regs.set_dx(ctx.cpu.regs.get_ax());
     ctx.cpu.regs.set_ax(t);
     // 0000ff15 rcr dx,1
-    // Rcr not implemented
-    todo!();
+    ctx.cpu
+        .regs
+        .set_dx(rcr(ctx.cpu.regs.get_dx(), 0x1u8, &mut ctx.cpu.flags));
+    // 0000ff17 jb short 0FF30h
+    ctx.jb(Cont(xff19), Cont(xff30))
 }
 
 pub fn xff19(ctx: &mut Context) -> Cont {
@@ -278,8 +284,11 @@ pub fn xff7a(ctx: &mut Context) -> Cont {
     ctx.cpu.regs.set_dx(ctx.cpu.regs.get_ax());
     ctx.cpu.regs.set_ax(t);
     // 0000ff7c rcr dx,1
-    // Rcr not implemented
-    todo!();
+    ctx.cpu
+        .regs
+        .set_dx(rcr(ctx.cpu.regs.get_dx(), 0x1u8, &mut ctx.cpu.flags));
+    // 0000ff7e jb short 0FF40h
+    ctx.jb(Cont(xff80), Cont(xff40))
 }
 
 pub fn xff80(ctx: &mut Context) -> Cont {
