@@ -128,7 +128,35 @@ pub fn rcl<I: Int>(x: I, y: u8, flags: &mut Flags) -> I {
 
     flags.set(Flags::CF, (x & 1) != 0);
     // Note: OF only defined for 1-bit rotates.
-    flags.set(Flags::OF, flags.contains(Flags::CF) ^ result.high_bit().is_one());
+    flags.set(
+        Flags::OF,
+        flags.contains(Flags::CF) ^ result.high_bit().is_one(),
+    );
+    result
+}
+
+pub fn rcr<I: Int>(x: I, y: u8, flags: &mut Flags) -> I {
+    assert!(I::bits() < 64);
+    let y = y % 32;
+    let count = y as usize % (I::bits() + 1);
+    if count == 0 {
+        return x;
+    }
+
+    let bits = I::bits();
+    let width = bits + 1;
+    let mask = (1u64 << width) - 1;
+    let result_mask = (1u64 << bits) - 1;
+    let x = x.to_u64().unwrap() | (u64::from(flags.contains(Flags::CF)) << bits);
+    let x = ((x >> count) | (x << (width - count))) & mask;
+    let result = I::from(x & result_mask).unwrap();
+
+    flags.set(Flags::CF, ((x >> bits) & 1) != 0);
+    // Note: OF only defined for 1-bit rotates.
+    flags.set(
+        Flags::OF,
+        result.high_bit().is_one() ^ ((result >> (bits - 2)) & I::one()).is_one(),
+    );
     result
 }
 
@@ -157,10 +185,7 @@ mod tests {
         assert_eq!("CF OF", flags.to_string());
 
         let mut flags = Flags::default();
-        assert_eq!(
-            super::rcl(0b1010_0000_0000_0001u16, 3, &mut flags),
-            0b0000_0000_0000_1010
-        );
+        assert_eq!(super::rcl(0b1010_0001u8, 3, &mut flags), 0b0000_1010);
         assert_eq!("CF OF", flags.to_string());
 
         let mut flags = Flags::CF | Flags::OF;
@@ -169,6 +194,25 @@ mod tests {
 
         let mut flags = Flags::CF | Flags::OF;
         assert_eq!(super::rcl(0x1234u16, 17, &mut flags), 0x1234);
+        assert_eq!("CF OF", flags.to_string());
+    }
+
+    #[test]
+    fn rcr() {
+        let mut flags = Flags::CF;
+        assert_eq!(super::rcr(0b0000_0001u8, 1, &mut flags), 0b1000_0000);
+        assert_eq!("CF OF", flags.to_string());
+
+        let mut flags = Flags::default();
+        assert_eq!(super::rcr(0b1000_0101u8, 3, &mut flags), 0b0101_0000);
+        assert_eq!("CF OF", flags.to_string());
+
+        let mut flags = Flags::CF | Flags::OF;
+        assert_eq!(super::rcr(0x1234_5678u32, 32, &mut flags), 0x1234_5678);
+        assert_eq!("CF OF", flags.to_string());
+
+        let mut flags = Flags::CF | Flags::OF;
+        assert_eq!(super::rcr(0x1234u16, 17, &mut flags), 0x1234);
         assert_eq!("CF OF", flags.to_string());
     }
 }
