@@ -84,7 +84,7 @@ pub fn x106(ctx: &mut Context) -> Cont {
     let x = ctx.cpu.regs.get_di();
     ctx.push16(x);
     // 0000011f rep movsw
-    todo!();
+    ctx.rep(Rep::REP, Context::movsw);
     // 00000121 lea si,[di+2]
     ctx.cpu
         .regs

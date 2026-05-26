@@ -4,75 +4,30 @@ impl<'a> CodeGen<'a> {
     pub fn codegen_string(&mut self, instr: &iced_x86::Instruction) -> bool {
         use iced_x86::Mnemonic::*;
         match instr.mnemonic() {
-            Movsb => {
-                assert!(!instr.has_repne_prefix());
-                if instr.has_rep_prefix() {
-                    self.line("ctx.rep(Rep::REP, Context::movsb);");
-                } else {
-                    self.line("ctx.movsb();");
-                }
-            }
-            Movsw => self.todo(),
-            Movsd => {
-                assert!(!instr.has_repne_prefix());
-                if instr.has_rep_prefix() {
-                    self.line("ctx.rep(Rep::REP, Context::movsd);");
-                } else {
-                    self.line("ctx.movsd();");
-                }
-            }
-
-            Lodsb => {
-                assert!(!instr.has_repne_prefix());
-                if instr.has_rep_prefix() {
-                    self.line("ctx.rep(Rep::REP, Context::lodsb);");
-                } else {
-                    self.line("ctx.lodsb();");
-                };
-            }
-            Lodsw => self.todo(),
-            Lodsd => {
-                assert!(!instr.has_repne_prefix());
-                if instr.has_rep_prefix() {
-                    self.line("ctx.rep(Rep::REP, Context::lodsd);");
-                } else {
-                    self.line("ctx.lodsd();");
-                };
-            }
-
+            Movsb | Movsw | Movsd | // x
+            Lodsb | Lodsw | Lodsd | // x
             Stosb | Stosw | Stosd => {
-                let op = instr_name(instr);
                 assert!(!instr.has_repne_prefix());
+                let name = instr_name(instr);
                 if instr.has_rep_prefix() {
-                    self.line(format!("ctx.rep(Rep::REP, Context::{op});"));
+                    self.line(format!("ctx.rep(Rep::REP, Context::{name});"));
                 } else {
-                    self.line(format!("ctx.{op}();"));
-                };
+                    self.line(format!("ctx.{name}();"));
+                }
             }
 
-            // XXX: cmps/scas use repe, not rep
-            Cmpsb => {
+            // Careful: cmps/scas use repe, not rep
+            Cmpsb | Cmpsw | Cmpsd | //x
+            Scasb | Scasw | Scasd => {
+                let name = instr_name(instr);
                 if instr.has_repe_prefix() {
-                    self.line("ctx.rep(Rep::REPE, Context::cmpsb);");
+                    self.line(format!("ctx.rep(Rep::REPE, Context::{name});"));
                 } else if instr.has_repne_prefix() {
-                    self.line("ctx.rep(Rep::REPNE, Context::cmpsb);");
+                    self.line(format!("ctx.rep(Rep::REPNE, Context::{name});"));
                 } else {
-                    self.line("ctx.cmpsb();");
+                    self.line(format!("ctx.{name}();"));
                 };
             }
-            Cmpsw | Cmpsd => self.todo(),
-
-            // XXX: cmps/scas use repe, not rep
-            Scasb => {
-                if instr.has_repe_prefix() {
-                    self.line("ctx.rep(Rep::REPE, Context::scasb);");
-                } else if instr.has_repne_prefix() {
-                    self.line("ctx.rep(Rep::REPNE, Context::scasb);");
-                } else {
-                    self.line("ctx.scasb();");
-                };
-            }
-            Scasw | Scasd => self.todo(),
 
             _ => return false,
         }
