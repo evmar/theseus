@@ -229,6 +229,7 @@ impl<'a> CodeGen<'a> {
                     "pub fn {name}(ctx: &mut Context) -> Cont {{",
                     name = block.name()
                 ));
+                // self.line(format!("println!(\"{name}\");", name = block.name()));
                 for instr in instrs {
                     if let Err(e) = self.gen_instr(instr) {
                         self.line(format!("// {}", e));

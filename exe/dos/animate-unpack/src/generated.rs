@@ -26,7 +26,7 @@ pub fn x100(ctx: &mut Context) -> Cont {
     // 00000100 mov si,0F48h
     ctx.cpu.regs.set_si(0xf48u16);
     // 00000103 call 0106h
-    ctx.call(0x106, Cont(x106))
+    ctx.call32(0x106, Cont(x106))
 }
 
 pub fn x106(ctx: &mut Context) -> Cont {
@@ -98,7 +98,7 @@ pub fn x106(ctx: &mut Context) -> Cont {
     // 00000126 mov di,bp
     ctx.cpu.regs.set_di(ctx.cpu.regs.get_bp());
     // 00000128 ret
-    ctx.ret(0)
+    ctx.ret32(0)
 }
 
 const BLOCKS: [(u32, ContFn); 4] = [

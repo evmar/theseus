@@ -11,5 +11,5 @@ pub fn release(ctx: &mut Context) -> Cont {
     // where 403ab4 is in the middle of that?
     // maybe some unpacker failure?
     // It's in directsound shutdown anyway.
-    ctx.ret(0)
+    ctx.ret32(0)
 }

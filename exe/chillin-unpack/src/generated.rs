@@ -527,7 +527,7 @@ pub fn x4cbdb2(ctx: &mut Context) -> Cont {
     ctx.cpu.regs.edi = add(ctx.cpu.regs.edi, 0x8u32, &mut ctx.cpu.flags);
     // 004cbdc2 call dword ptr [esi+0CB0E4h]
     let dst = ctx.indirect(ctx.memory.read(ctx.cpu.regs.esi.wrapping_add(0xcb0e4u32)));
-    ctx.call(0x4cbdc8, dst)
+    ctx.call32(0x4cbdc8, dst)
 }
 
 pub fn x4cbdc8(ctx: &mut Context) -> Cont {
@@ -575,7 +575,7 @@ pub fn x4cbdd4(ctx: &mut Context) -> Cont {
     ctx.push32(ctx.cpu.regs.ebp);
     // 004cbde0 call dword ptr [esi+0CB0E8h]
     let dst = ctx.indirect(ctx.memory.read(ctx.cpu.regs.esi.wrapping_add(0xcb0e8u32)));
-    ctx.call(0x4cbde6, dst)
+    ctx.call32(0x4cbde6, dst)
 }
 
 pub fn x4cbddb(ctx: &mut Context) -> Cont {
@@ -589,7 +589,7 @@ pub fn x4cbddb(ctx: &mut Context) -> Cont {
     ctx.push32(ctx.cpu.regs.ebp);
     // 004cbde0 call dword ptr [esi+0CB0E8h]
     let dst = ctx.indirect(ctx.memory.read(ctx.cpu.regs.esi.wrapping_add(0xcb0e8u32)));
-    ctx.call(0x4cbde6, dst)
+    ctx.call32(0x4cbde6, dst)
 }
 
 pub fn x4cbde6(ctx: &mut Context) -> Cont {
@@ -612,7 +612,7 @@ pub fn x4cbdf1(ctx: &mut Context) -> Cont {
     // 004cbdf1 popa
     ctx.popad();
     // 004cbdf2 ret
-    ctx.ret(0)
+    ctx.ret32(0)
 }
 
 pub fn x4cbdf3(ctx: &mut Context) -> Cont {

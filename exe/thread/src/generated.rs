@@ -158,7 +158,7 @@ pub fn x40105c(ctx: &mut Context) -> Cont {
     // 00401060 mov edx,edi
     ctx.cpu.regs.edx = ctx.cpu.regs.edi;
     // 00401062 call 004012A4h
-    ctx.call(0x401067, Cont(x4012a4))
+    ctx.call32(0x401067, Cont(x4012a4))
 }
 
 pub fn x401067(ctx: &mut Context) -> Cont {
@@ -316,7 +316,7 @@ pub fn x4010e5(ctx: &mut Context) -> Cont {
     // 004010e9 mov edx,[esp]
     ctx.cpu.regs.edx = ctx.memory.read::<u32>(ctx.cpu.regs.esp);
     // 004010ec call 004012A4h
-    ctx.call(0x4010f1, Cont(x4012a4))
+    ctx.call32(0x4010f1, Cont(x4012a4))
 }
 
 pub fn x4010f1(ctx: &mut Context) -> Cont {
@@ -363,7 +363,7 @@ pub fn x401114(ctx: &mut Context) -> Cont {
     // 0040111a mov edx,ebx
     ctx.cpu.regs.edx = ctx.cpu.regs.ebx;
     // 0040111c call 004012A4h
-    ctx.call(0x401121, Cont(x4012a4))
+    ctx.call32(0x401121, Cont(x4012a4))
 }
 
 pub fn x401121(ctx: &mut Context) -> Cont {
@@ -495,7 +495,7 @@ pub fn x4011b1(ctx: &mut Context) -> Cont {
     // 004011b5 mov edx,ebx
     ctx.cpu.regs.edx = ctx.cpu.regs.ebx;
     // 004011b7 call 004012A4h
-    ctx.call(0x4011bc, Cont(x4012a4))
+    ctx.call32(0x4011bc, Cont(x4012a4))
 }
 
 pub fn x4011bc(ctx: &mut Context) -> Cont {
@@ -663,7 +663,7 @@ pub fn x401237(ctx: &mut Context) -> Cont {
     // 0040123d mov edx,edi
     ctx.cpu.regs.edx = ctx.cpu.regs.edi;
     // 0040123f call 004012A4h
-    ctx.call(0x401244, Cont(x4012a4))
+    ctx.call32(0x401244, Cont(x4012a4))
 }
 
 pub fn x401244(ctx: &mut Context) -> Cont {
@@ -758,7 +758,7 @@ pub fn x401267(ctx: &mut Context) -> Cont {
     let x = ctx.pop32();
     ctx.cpu.regs.ebp = x;
     // 004012a3 ret
-    ctx.ret(0)
+    ctx.ret32(0)
 }
 
 pub fn x4012a4(ctx: &mut Context) -> Cont {
@@ -929,7 +929,7 @@ pub fn x40131e(ctx: &mut Context) -> Cont {
     let x = ctx.pop32();
     ctx.cpu.regs.ebp = x;
     // 00401324 ret
-    ctx.ret(0)
+    ctx.ret32(0)
 }
 
 pub fn x401325(ctx: &mut Context) -> Cont {
@@ -951,7 +951,7 @@ pub fn x401325(ctx: &mut Context) -> Cont {
     // 00401335 mov ecx,esi
     ctx.cpu.regs.ecx = ctx.cpu.regs.esi;
     // 00401337 call 00401000h
-    ctx.call(0x40133c, Cont(x401000))
+    ctx.call32(0x40133c, Cont(x401000))
 }
 
 pub fn x40133c(ctx: &mut Context) -> Cont {
@@ -961,7 +961,7 @@ pub fn x40133c(ctx: &mut Context) -> Cont {
     let x = ctx.pop32();
     ctx.cpu.regs.esi = x;
     // 0040133f ret 4
-    ctx.ret(4)
+    ctx.ret32(4)
 }
 
 pub fn x401342(ctx: &mut Context) -> Cont {
@@ -1015,7 +1015,7 @@ pub fn x40137d(ctx: &mut Context) -> Cont {
     // 00401381 mov edx,eax
     ctx.cpu.regs.edx = ctx.cpu.regs.eax;
     // 00401383 call 004012A4h
-    ctx.call(0x401388, Cont(x4012a4))
+    ctx.call32(0x401388, Cont(x4012a4))
 }
 
 pub fn x401388(ctx: &mut Context) -> Cont {
@@ -1096,7 +1096,7 @@ pub fn x4013aa(ctx: &mut Context) -> Cont {
     let x = ctx.pop32();
     ctx.cpu.regs.edi = x;
     // 004013e5 ret 4
-    ctx.ret(4)
+    ctx.ret32(4)
 }
 
 pub fn x4013e8(ctx: &mut Context) -> Cont {
@@ -1126,7 +1126,7 @@ pub fn x4013e8(ctx: &mut Context) -> Cont {
     ctx.push32(ctx.cpu.regs.ebx);
     // 00401404 call edi
     let dst = ctx.indirect(ctx.cpu.regs.edi);
-    ctx.call(0x401406, dst)
+    ctx.call32(0x401406, dst)
 }
 
 pub fn x401406(ctx: &mut Context) -> Cont {
@@ -1164,7 +1164,7 @@ pub fn x401406(ctx: &mut Context) -> Cont {
     ctx.push32(ctx.cpu.regs.ebx);
     // 00401439 call edi
     let dst = ctx.indirect(ctx.cpu.regs.edi);
-    ctx.call(0x40143b, dst)
+    ctx.call32(0x40143b, dst)
 }
 
 pub fn x40143b(ctx: &mut Context) -> Cont {
@@ -1179,7 +1179,7 @@ pub fn x40143b(ctx: &mut Context) -> Cont {
     ctx.memory
         .write::<u32>(ctx.cpu.regs.ecx.wrapping_add(0x8u32), ctx.cpu.regs.esi);
     // 0040144d call 00401000h
-    ctx.call(0x401452, Cont(x401000))
+    ctx.call32(0x401452, Cont(x401000))
 }
 
 pub fn x401452(ctx: &mut Context) -> Cont {
@@ -1195,7 +1195,7 @@ pub fn x401452(ctx: &mut Context) -> Cont {
     let x = ctx.pop32();
     ctx.cpu.regs.ebx = x;
     // 00401458 ret
-    ctx.ret(0)
+    ctx.ret32(0)
 }
 
 const BLOCKS: [(u32, ContFn); 63] = [

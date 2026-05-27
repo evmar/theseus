@@ -76,7 +76,7 @@ pub fn x401000(ctx: &mut Context) -> Cont {
     ctx.cpu.regs.esp = sub(ctx.cpu.regs.esp, 0x10u32, &mut ctx.cpu.flags);
     // 00401009 call 00401015h
     let dst = Cont(x401015);
-    ctx.call(0x40100e, dst)
+    ctx.call32(0x40100e, dst)
 }
 
 pub fn x40100e(ctx: &mut Context) -> Cont {
@@ -84,7 +84,7 @@ pub fn x40100e(ctx: &mut Context) -> Cont {
     ctx.push32(0x0u32);
     // 00401010 call 00401077h
     let dst = Cont(x401077);
-    ctx.call(0x401015, dst)
+    ctx.call32(0x401015, dst)
 }
 
 pub fn x401015(ctx: &mut Context) -> Cont {
@@ -169,7 +169,7 @@ pub fn x401045(ctx: &mut Context) -> Cont {
     ctx.push32(ctx.cpu.regs.esi);
     // 00401055 call 00401083h
     let dst = Cont(x401083);
-    ctx.call(0x40105a, dst)
+    ctx.call32(0x40105a, dst)
 }
 
 pub fn x40105a(ctx: &mut Context) -> Cont {
@@ -193,7 +193,7 @@ pub fn x40105e(ctx: &mut Context) -> Cont {
 pub fn x401063(ctx: &mut Context) -> Cont {
     // 00401063 call 0040107Dh
     let dst = Cont(x40107d);
-    ctx.call(0x401068, dst)
+    ctx.call32(0x401068, dst)
 }
 
 pub fn x401068(ctx: &mut Context) -> Cont {
@@ -214,7 +214,7 @@ pub fn x401068(ctx: &mut Context) -> Cont {
     let x = ctx.pop32();
     ctx.cpu.regs.ebp = x;
     // 00401076 ret
-    ctx.ret(0)
+    ctx.ret32(0)
 }
 
 pub fn x401077(ctx: &mut Context) -> Cont {

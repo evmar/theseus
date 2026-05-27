@@ -1,8 +1,13 @@
 use crate::{Cont, ContFn, Context, Flags, RETURN_FROM_X86_ADDR};
 
 impl Context {
-    pub fn call(&mut self, ret: u32, addr: Cont) -> Cont {
+    pub fn call32(&mut self, ret: u32, addr: Cont) -> Cont {
         self.push32(ret);
+        addr
+    }
+
+    pub fn call16(&mut self, ret: u32, addr: Cont) -> Cont {
+        self.push16(ret as u16);
         addr
     }
 
@@ -110,8 +115,14 @@ impl Context {
         from
     }
 
-    pub fn ret(&mut self, n: u16) -> Cont {
+    pub fn ret32(&mut self, n: u16) -> Cont {
         let ret = self.pop32();
+        self.cpu.regs.esp += n as u32;
+        self.indirect(ret)
+    }
+
+    pub fn ret16(&mut self, n: u16) -> Cont {
+        let ret = self.pop16() as u32;
         self.cpu.regs.esp += n as u32;
         self.indirect(ret)
     }

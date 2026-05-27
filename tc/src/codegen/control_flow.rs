@@ -53,9 +53,17 @@ impl<'a> CodeGen<'a> {
                     let (dst, uses_ctx) = self.gen_jmp(instr);
                     if uses_ctx {
                         self.line(format!("let dst = {};", dst));
-                        self.line(format!("ctx.call({:#x}, dst)", instr.next_ip()));
+                        self.line(format!(
+                            "ctx.call{bitness}({ip:#x}, dst)",
+                            bitness = self.module.bitness,
+                            ip = instr.next_ip()
+                        ));
                     } else {
-                        self.line(format!("ctx.call({:#x}, {dst})", instr.next_ip()));
+                        self.line(format!(
+                            "ctx.call{bitness}({ip:#x}, {dst})",
+                            bitness = self.module.bitness,
+                            ip = instr.next_ip()
+                        ));
                     }
                 }
             }
@@ -68,7 +76,10 @@ impl<'a> CodeGen<'a> {
                     }
                     _ => todo!(),
                 };
-                self.line(format!("ctx.ret({n})"));
+                self.line(format!(
+                    "ctx.ret{bitness}({n})",
+                    bitness = self.module.bitness
+                ));
             }
             Je | Jne | Jb | Js | Jns | Ja | Jae | Jl | Jg | Jge | Jecxz | Jle | Jbe | Loop => {
                 let next = self.gen_abs_jmp(instr.next_ip());

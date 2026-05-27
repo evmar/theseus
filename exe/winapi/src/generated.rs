@@ -79,7 +79,7 @@ pub fn x401000(ctx: &mut Context) -> Cont {
     // 00401014 call dword ptr ds:[40205Ch]
     ctx.call_builtin(0x40101a, kernel32::WriteFile_stdcall);
     // 0040101a ret
-    ctx.ret(0)
+    ctx.ret32(0)
 }
 
 const BLOCKS: [(u32, ContFn); 4] = [

@@ -273,7 +273,7 @@ pub fn xff75(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_ax(x);
     // 0000ff79 ret
-    ctx.ret(0)
+    ctx.ret16(0)
 }
 
 pub fn xff7a(ctx: &mut Context) -> Cont {
