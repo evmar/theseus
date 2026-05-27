@@ -21,7 +21,17 @@ fn init_memory(ctx: &mut Context, mappings: &mut kernel32::Mappings) {
 }
 
 pub fn x100(ctx: &mut Context) -> Cont {
-    // 00000100 jmp near ptr 0FF82h
+    // 00000100 mov si,0F03Ch
+    ctx.cpu.regs.set_si(0xf03cu16);
+    // 00000103 mov di,100h
+    ctx.cpu.regs.set_di(0x100u16);
+    // 00000106 mov sp,0FFF0h
+    ctx.cpu.regs.set_sp(0xfff0u16);
+    // 00000109 mov bp,100h
+    ctx.cpu.regs.set_bp(0x100u16);
+    // 0000010c stc
+    stc(ctx);
+    // 0000010d jmp near ptr 0FF82h
     Cont(xff82)
 }
 

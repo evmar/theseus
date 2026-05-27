@@ -7,5 +7,5 @@ fn main() {
     ctx.cpu.regs.edi = 0x00000100;
     ctx.cpu.regs.esp = 0x0000fff0;
     ctx.cpu.regs.ebp = 0x00000100;
-    winapi::start(&mut ctx, exe);
+    winapi::start32(&mut ctx, exe);
 }

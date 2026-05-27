@@ -57,7 +57,7 @@ fn main() {
         let mut state = STATE.lock().unwrap();
         state.next_addr = 0xFAFB_FC00;
     }
-    winapi::start(&mut ctx, &generated::EXEDATA);
+    winapi::start32(&mut ctx, &generated::EXEDATA);
 }
 
 /// Fill in the .iat_addr on functions by searching the memory for their addresses.

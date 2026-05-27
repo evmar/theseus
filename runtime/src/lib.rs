@@ -27,7 +27,7 @@ pub const RETURN_FROM_X86_ADDR: u32 = 0xffff_fffe;
 
 impl Context {
     /// Call an x86 stdcall function, only returning once the function returns.
-    pub fn call_x86(&mut self, mut f: Cont, args: Vec<u32>) {
+    pub fn call32_x86(&mut self, mut f: Cont, args: Vec<u32>) {
         let esp = self.cpu.regs.esp;
         for arg in args.into_iter().rev() {
             self.push32(arg);
@@ -39,6 +39,15 @@ impl Context {
 
         let mut i = 0;
         while self.cpu.regs.esp != esp {
+            self.recent[i] = f.0;
+            i = (i + 1) % self.recent.len();
+            f = f.0(self);
+        }
+    }
+
+    pub fn cpu_loop(&mut self, mut f: Cont, target_esp: u32) {
+        let mut i = 0;
+        while self.cpu.regs.esp != target_esp {
             self.recent[i] = f.0;
             i = (i + 1) % self.recent.len();
             f = f.0(self);

@@ -115,12 +115,16 @@ fn load32(exe: &EXEData) -> Context {
     ctx
 }
 
-pub fn start(ctx: &mut Context, exe: &EXEData) {
-    ctx.call_x86(exe.entry_point, vec![]);
+pub fn start32(ctx: &mut Context, exe: &EXEData) {
+    ctx.call32_x86(exe.entry_point, vec![]);
     // TODO: per Windows, we need to join any spawned threads here.
 }
 
 pub fn run(exe: &EXEData) {
     let mut ctx = load(exe);
-    start(&mut ctx, exe);
+    if ctx.cpu.real_mode {
+        ctx.cpu_loop(exe.entry_point, 0xfffe);
+    } else {
+        start32(&mut ctx, exe);
+    }
 }

@@ -225,7 +225,7 @@ pub fn DispatchMessageW(ctx: &mut Context, lpMsg: Ptr<MSG>) -> u32 {
     let wndproc = state().wndclass.borrow().as_ref().unwrap().wndproc.clone();
     let msg = lpMsg.read(&ctx.memory).unwrap();
     // WNDPROC
-    ctx.call_x86(
+    ctx.call32_x86(
         wndproc,
         vec![msg.hwnd.to_raw(), msg.message, msg.wParam, msg.lParam],
     );
