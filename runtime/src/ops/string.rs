@@ -59,14 +59,23 @@ impl Context {
         }
     }
 
+    fn addr(&self, seg: u16, offset: u32) -> u32 {
+        if self.cpu.real_mode {
+            ((seg as u32) << 4).wrapping_add(offset)
+        } else {
+            offset
+        }
+    }
+
     fn lods<S: StringInt>(&mut self) {
-        let addr = self.cpu.regs.esi;
-        self.memory.read::<S>(addr).set_eax(&mut self.cpu.regs);
+        self.memory
+            .read::<S>(self.addr(self.cpu.regs.ds, self.cpu.regs.esi))
+            .set_eax(&mut self.cpu.regs);
         let step = std::mem::size_of::<S>() as u32;
         if self.cpu.flags.contains(Flags::DF) {
-            self.cpu.regs.esi = addr.wrapping_sub(step);
+            self.cpu.regs.esi = self.cpu.regs.esi.wrapping_sub(step);
         } else {
-            self.cpu.regs.esi = addr.wrapping_add(step);
+            self.cpu.regs.esi = self.cpu.regs.esi.wrapping_add(step);
         }
     }
 
@@ -81,13 +90,15 @@ impl Context {
     }
 
     fn stos<S: StringInt>(&mut self) {
-        let addr = self.cpu.regs.edi;
-        self.memory.write::<S>(addr, S::from_eax(self.cpu.regs.eax));
+        self.memory.write::<S>(
+            self.addr(self.cpu.regs.es, self.cpu.regs.edi),
+            S::from_eax(self.cpu.regs.eax),
+        );
         let step = std::mem::size_of::<S>() as u32;
         if self.cpu.flags.contains(Flags::DF) {
-            self.cpu.regs.edi = addr.wrapping_sub(step);
+            self.cpu.regs.edi = self.cpu.regs.edi.wrapping_sub(step);
         } else {
-            self.cpu.regs.edi = addr.wrapping_add(step);
+            self.cpu.regs.edi = self.cpu.regs.edi.wrapping_add(step);
         }
     }
 
@@ -102,14 +113,13 @@ impl Context {
     }
 
     fn scas<S: StringInt>(&mut self) {
-        let addr = self.cpu.regs.edi;
-        let mem = self.memory.read::<S>(addr);
+        let mem = self.memory.read::<S>(self.cpu.regs.edi);
         let _ = sub::<S>(S::from_eax(self.cpu.regs.eax), mem, &mut self.cpu.flags);
         let step = std::mem::size_of::<S>() as u32;
         if self.cpu.flags.contains(Flags::DF) {
-            self.cpu.regs.edi = addr.wrapping_sub(step);
+            self.cpu.regs.edi = self.cpu.regs.edi.wrapping_sub(step);
         } else {
-            self.cpu.regs.edi = addr.wrapping_add(step);
+            self.cpu.regs.edi = self.cpu.regs.edi.wrapping_add(step);
         }
     }
 
@@ -118,8 +128,12 @@ impl Context {
     }
 
     fn cmps<S: StringInt>(&mut self) {
-        let src = self.memory.read::<S>(self.cpu.regs.esi);
-        let dst = self.memory.read::<S>(self.cpu.regs.edi);
+        let src = self
+            .memory
+            .read::<S>(self.addr(self.cpu.regs.ds, self.cpu.regs.esi));
+        let dst = self
+            .memory
+            .read::<S>(self.addr(self.cpu.regs.es, self.cpu.regs.edi));
         let _ = sub::<S>(src, dst, &mut self.cpu.flags);
         let step = std::mem::size_of::<S>() as u32;
         if self.cpu.flags.contains(Flags::DF) {
