@@ -14,4 +14,5 @@ fn do_unpack(ctx: &mut Context) {
     data[1..=2].copy_from_slice(&rel_jmp.to_le_bytes());
 
     std::fs::write("animate.com", data).unwrap();
+    ctx.dump();
 }
