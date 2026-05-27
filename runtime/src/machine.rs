@@ -9,6 +9,18 @@ pub struct CPU {
     pub real_mode: bool,
 }
 
+impl CPU {
+    pub fn dump(&self) {
+        self.regs.dump();
+        if self.real_mode {
+            self.regs.dump_segments();
+        }
+        // self.flags.dump();
+        // self.fpu.dump();
+        // self.mmx.dump();
+    }
+}
+
 pub struct Context {
     pub cpu: CPU,
     pub thread_handle: u32,
@@ -44,6 +56,9 @@ fn dump_stack(memory: &Memory, esp: u32) {
     println!("stack:");
     for i in 0..8 {
         let addr = esp + i * 4;
+        if addr + 4 >= memory.bytes.len() as u32 {
+            break;
+        }
         println!("{addr:#08x} {:#08x}", memory.read::<u32>(addr));
     }
 }
@@ -54,7 +69,7 @@ impl Context {
     }
 
     pub fn dump(&self) {
-        self.cpu.regs.dump();
+        self.cpu.dump();
         self.dump_stack();
     }
 }

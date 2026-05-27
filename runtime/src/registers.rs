@@ -193,4 +193,8 @@ impl Regs {
             self.eax, self.ecx, self.edx, self.ebx, self.esi, self.edi, self.esp, self.ebp
         );
     }
+
+    pub fn dump_segments(&self) {
+        println!("ds={:04x} es={:04x} ss={:04x}", self.ds, self.es, self.ss);
+    }
 }
