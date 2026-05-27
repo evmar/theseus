@@ -34,6 +34,7 @@ impl Context {
     /// Given an address (jump target), look up the Cont registerd for it.
     pub fn indirect(&mut self, addr: u32) -> Cont {
         if addr == 0 {
+            self.dump();
             panic!("jmp to null ptr");
         }
         // TODO: this would be faster as a hash table, or even a perfect hash if we really cared.
