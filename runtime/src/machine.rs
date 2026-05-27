@@ -38,6 +38,7 @@ impl Context {
         }
         // TODO: this would be faster as a hash table, or even a perfect hash if we really cared.
         let Ok(index) = self.blocks.binary_search_by_key(&addr, |(addr, _)| *addr) else {
+            self.dump();
             panic!("jmp to unknown addr {addr:#08x}");
         };
         Cont(self.blocks[index].1)
