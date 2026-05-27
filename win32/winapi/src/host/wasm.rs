@@ -19,6 +19,8 @@ impl Surface {
     }
 
     pub fn set_pixels(&mut self, pixels: &[u8], _stride: u32) {
+        // TODO: investigate using OffscreenCanvas here instead,
+        // https://news.ycombinator.com/item?id=48297805
         host::host()
             .chan
             .lock()

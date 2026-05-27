@@ -120,6 +120,8 @@ class Host implements exe.WasmHost {
   }
 
   set_pixels(id: number, ptr: number, len: number): number {
+    // TODO: investigate using OffscreenCanvas here instead,
+    // https://news.ycombinator.com/item?id=48297805
     const copy = new Uint8ClampedArray(
       this.wasmMemory.buffer,
       ptr,
