@@ -15,6 +15,7 @@ dependencies = [
 name = "animate-unpack"
 version = "0.1.0"
 dependencies = [
+ "iced-x86",
  "runtime",
  "wasm-bindgen",
  "winapi 0.1.0",

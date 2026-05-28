@@ -90,6 +90,10 @@ fn load16(exe: &EXEData) -> Context {
 
     let mut mappings = kernel32::Mappings::default();
     (exe.init_memory)(&mut ctx, &mut mappings);
+
+    // initial cx: https://stackoverflow.com/questions/79440940/why-cx-register-already-has-a-non-zero-value-on-startup-of-a-dos-program-unlike
+    // this value copied from dosbox
+    ctx.cpu.regs.ecx = 0xff;
     ctx.cpu.regs.esp = 0xfffe;
     ctx
 }
@@ -123,7 +127,8 @@ pub fn start32(ctx: &mut Context, exe: &EXEData) {
 pub fn run(exe: &EXEData) {
     let mut ctx = load(exe);
     if ctx.cpu.real_mode {
-        ctx.cpu_loop(exe.entry_point, 0xfffe);
+        ctx.cpu_loop(exe.entry_point, 0);
+        panic!();
     } else {
         start32(&mut ctx, exe);
     }

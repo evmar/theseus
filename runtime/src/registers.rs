@@ -63,7 +63,7 @@ impl Regs {
         self.edi as u16
     }
     pub fn get_sp(&self) -> u16 {
-        todo!()
+        self.esp as u16
     }
     pub fn get_bp(&self) -> u16 {
         self.ebp as u16
