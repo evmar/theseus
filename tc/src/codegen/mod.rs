@@ -165,6 +165,7 @@ pub fn mem_size(instr: &iced_x86::Instruction) -> usize {
         Float64 => 64,
         Packed32_UInt8 => 32,
         Packed64_Int8 | Packed64_Int16 => 64,
+        DwordOffset => 32, // e.g. `call dword ptr [...]`
         s => todo!("{s:?}"),
     }
 }

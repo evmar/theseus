@@ -91,16 +91,16 @@ impl Regs {
         self.ebp = (self.ebp & 0xFFFF_0000) | (val as u32);
     }
 
-    pub fn get_cs(&mut self) -> u16 {
+    pub fn get_cs(&self) -> u16 {
         self.cs
     }
-    pub fn get_ds(&mut self) -> u16 {
+    pub fn get_ds(&self) -> u16 {
         self.ds
     }
-    pub fn get_es(&mut self) -> u16 {
+    pub fn get_es(&self) -> u16 {
         self.es
     }
-    pub fn get_ss(&mut self) -> u16 {
+    pub fn get_ss(&self) -> u16 {
         self.ss
     }
 

@@ -7,16 +7,15 @@ impl<'a> CodeGen<'a> {
             Push => {
                 let func = match op_size(instr, 0) {
                     16 => "push16",
-                    32 => "push",
+                    32 => "push32",
                     _ => return false,
                 };
-                self.line(format!("let x = {};", get_op(instr, 0)));
-                self.line(format!("ctx.{func}(x);",));
+                self.line(format!("ctx.{func}({});", get_op(instr, 0)));
             }
             Pop => {
                 let func = match op_size(instr, 0) {
                     16 => "pop16",
-                    32 => "pop",
+                    32 => "pop32",
                     _ => return false,
                 };
                 self.line(format!("let x = ctx.{func}();"));

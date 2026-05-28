@@ -38,29 +38,22 @@ pub fn x106(ctx: &mut Context) -> Cont {
         .regs
         .set_bp(add(ctx.cpu.regs.get_bp(), 0xfffau16, &mut ctx.cpu.flags));
     // 0000010a push bp
-    let x = ctx.cpu.regs.get_bp();
-    ctx.push16(x);
+    ctx.push16(ctx.cpu.regs.get_bp());
     // 0000010b push ax
-    let x = ctx.cpu.regs.get_ax();
-    ctx.push16(x);
+    ctx.push16(ctx.cpu.regs.get_ax());
     // 0000010c push bx
-    let x = ctx.cpu.regs.get_bx();
-    ctx.push16(x);
+    ctx.push16(ctx.cpu.regs.get_bx());
     // 0000010d push cx
-    let x = ctx.cpu.regs.get_cx();
-    ctx.push16(x);
+    ctx.push16(ctx.cpu.regs.get_cx());
     // 0000010e push dx
-    let x = ctx.cpu.regs.get_dx();
-    ctx.push16(x);
+    ctx.push16(ctx.cpu.regs.get_dx());
     // 0000010f push cs
-    let x = ctx.cpu.regs.get_cs();
-    ctx.push16(x);
+    ctx.push16(ctx.cpu.regs.get_cs());
     // 00000110 pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 00000111 push cs
-    let x = ctx.cpu.regs.get_cs();
-    ctx.push16(x);
+    ctx.push16(ctx.cpu.regs.get_cs());
     // 00000112 pop ds
     let x = ctx.pop16();
     ctx.cpu.regs.set_ds(x);
@@ -83,8 +76,7 @@ pub fn x106(ctx: &mut Context) -> Cont {
     // 0000011d std
     std(ctx);
     // 0000011e push di
-    let x = ctx.cpu.regs.get_di();
-    ctx.push16(x);
+    ctx.push16(ctx.cpu.regs.get_di());
     // 0000011f rep movsw
     ctx.rep(Rep::REP, Context::movsw);
     // 00000121 lea si,[di+2]
