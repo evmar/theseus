@@ -231,6 +231,7 @@ impl<'a> CodeGen<'a> {
                     name = block.name()
                 ));
                 // self.line(format!("println!(\"{name}\");", name = block.name()));
+                // self.line(format!("ctx.dump_dosbox(0{});", block.name()));
                 for instr in instrs {
                     if let Err(e) = self.gen_instr(instr) {
                         self.line(format!("// {}", e));

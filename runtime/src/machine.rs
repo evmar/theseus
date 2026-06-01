@@ -87,6 +87,26 @@ impl Context {
             self.dump_stack32();
         }
     }
+
+    pub fn dump_dosbox(&self, ip: u16) {
+        // 0813:0000FF30  xchg si,ax
+        // EAX:0000000C EBX:00000001 ECX:00000005 EDX:00000D0B
+        // ESI:0000F060 EDI:0000011F EBP:00000100 ESP:0000FFF4
+        // DS:0813 ES:0813 FS:0000 GS:0000 SS:0813 CF:1 ZF:0 SF:0 OF:0 IF:1
+        println!("{ip:08X}");
+        println!(
+            "EAX:{:08X} EBX:{:08X} ECX:{:08X} EDX:{:08X}",
+            self.cpu.regs.eax, self.cpu.regs.ebx, self.cpu.regs.ecx, self.cpu.regs.edx
+        );
+        println!(
+            "ESI:{:08X} EDI:{:08X} EBP:{:08X} ESP:{:08X}",
+            self.cpu.regs.esi, self.cpu.regs.edi, self.cpu.regs.ebp, self.cpu.regs.esp
+        );
+        // println!(
+        //     "DS:{:04x} ES:{:04x} FS:{:04x} GS:{:04x} SS:{:04x} CF:0 ZF:0 SF:0 OF:0 IF:0",
+        //     0x813, 0x813, 0, 0, 0x813
+        // );
+    }
 }
 
 #[unsafe(no_mangle)]
