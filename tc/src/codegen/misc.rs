@@ -100,6 +100,21 @@ impl<'a> CodeGen<'a> {
                 self.line(format!("{}(ctx);", instr_name(instr)));
             }
 
+            Cli => {
+                self.line(format!("ctx.{}();", instr_name(instr)));
+            }
+
+            Out => {
+                assert_eq!(instr.op_count(), 2);
+                let port = if instr.op0_kind() == iced_x86::OpKind::Immediate8 {
+                    // The Imm8 form can only reference the first 256 ports, but otherwise it's the same call.
+                    format!("{:#x}u16", instr.immediate8())
+                } else {
+                    self.get_op(instr, 0)
+                };
+                self.line(format!("ctx.out({port}, {});", self.get_op(instr, 1)));
+            }
+
             _ => return false,
         }
         true

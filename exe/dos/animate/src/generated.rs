@@ -5223,8 +5223,15 @@ pub fn xeca(ctx: &mut Context) -> Cont {
         &mut ctx.cpu.flags,
     ));
     // 00000ecf out dx,al
-    // Out not implemented
-    todo!();
+    ctx.out(ctx.cpu.regs.get_dx(), ctx.cpu.regs.get_al());
+    // 00000ed0 inc dx
+    ctx.cpu
+        .regs
+        .set_dx(inc(ctx.cpu.regs.get_dx(), &mut ctx.cpu.flags));
+    // 00000ed1 mov si,6F24h
+    ctx.cpu.regs.set_si(0x6f24u16);
+    // 00000ed4 mov cx,300h
+    ctx.cpu.regs.set_cx(0x300u16);
     Cont(xed7)
 }
 
@@ -5232,8 +5239,13 @@ pub fn xed7(ctx: &mut Context) -> Cont {
     // 00000ed7 lodsb
     ctx.lodsb();
     // 00000ed8 out dx,al
-    // Out not implemented
-    todo!();
+    ctx.out(ctx.cpu.regs.get_dx(), ctx.cpu.regs.get_al());
+    // 00000ed9 dec cx
+    ctx.cpu
+        .regs
+        .set_cx(dec(ctx.cpu.regs.get_cx(), &mut ctx.cpu.flags));
+    // 00000eda jne short 0ED7h
+    ctx.jne(Cont(xedc), Cont(xed7))
 }
 
 pub fn xedc(ctx: &mut Context) -> Cont {
@@ -6175,24 +6187,31 @@ pub fn x10d8(ctx: &mut Context) -> Cont {
 
 pub fn x10db(ctx: &mut Context) -> Cont {
     // 000010db cli
-    // Cli not implemented
-    todo!();
+    ctx.cli();
+    // 000010dc mov al,36h
+    ctx.cpu.regs.set_al(0x36u8);
+    // 000010de out 43h,al
+    ctx.out(0x43u16, ctx.cpu.regs.get_al());
+    // 000010e0 jmp short 10E2h
+    Cont(x10e2)
 }
 
 pub fn x10e2(ctx: &mut Context) -> Cont {
     // 000010e2 mov al,dl
     ctx.cpu.regs.set_al(ctx.cpu.regs.get_dl());
     // 000010e4 out 40h,al
-    // Out not implemented
-    todo!();
+    ctx.out(0x40u16, ctx.cpu.regs.get_al());
+    // 000010e6 jmp short 10E8h
+    Cont(x10e8)
 }
 
 pub fn x10e8(ctx: &mut Context) -> Cont {
     // 000010e8 mov al,dh
     ctx.cpu.regs.set_al(ctx.cpu.regs.get_dh());
     // 000010ea out 40h,al
-    // Out not implemented
-    todo!();
+    ctx.out(0x40u16, ctx.cpu.regs.get_al());
+    // 000010ec jmp short 10EEh
+    Cont(x10ee)
 }
 
 pub fn x10ee(ctx: &mut Context) -> Cont {

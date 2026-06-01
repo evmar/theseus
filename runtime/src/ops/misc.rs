@@ -69,4 +69,12 @@ impl Context {
     pub fn setne(self: &Context) -> u8 {
         !self.cpu.flags.contains(Flags::ZF) as u8
     }
+
+    pub fn cli(&mut self) {
+        // TODO: self.cpu.flags.remove(Flags::IF);
+    }
+
+    pub fn out(&mut self, port: u16, data: u8) {
+        log::warn!("TODO: out({:#x}, {:#x})", port, data);
+    }
 }

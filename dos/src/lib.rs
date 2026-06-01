@@ -38,9 +38,9 @@ pub fn run(exe: &EXEData) {
 }
 
 pub fn int10() {
-    log::warn!("TODO: int 10 (video)");
+    log::warn!("TODO: int 10h (video)");
 }
 
 pub fn int21() {
-    log::warn!("TODO: int 21 (dos)");
+    log::warn!("TODO: int 21h (dos)");
 }
