@@ -1,12 +1,12 @@
 #![allow(unused)]
 
-pub use winapi::kernel32::Mapping;
+pub use runtime::Mapping;
 
 #[derive(Default)]
 /// Memory represents the process memory after loading an executable.
 // TODO: this is maybe redundant with runtime's memory, should they be merged?
 pub struct Memory {
-    pub mappings: winapi::kernel32::Mappings,
+    pub mappings: runtime::Mappings,
     pub bytes: Vec<u8>,
 }
 

@@ -57,11 +57,11 @@ fn main() {
         let mut state = STATE.lock().unwrap();
         state.next_addr = 0xFAFB_FC00;
     }
-    winapi::start32(&mut ctx, &generated::EXEDATA);
+    winapi::start(&mut ctx, &generated::EXEDATA);
 }
 
 /// Fill in the .iat_addr on functions by searching the memory for their addresses.
-fn find_iat(functions: &mut [tc::Import], mappings: &[kernel32::Mapping], memory: &[u8]) {
+fn find_iat(functions: &mut [tc::Import], mappings: &[runtime::Mapping], memory: &[u8]) {
     for sym in functions.iter_mut() {
         let addr_bytes = sym.addr.to_le_bytes();
         let mut iat_addr = None;
@@ -98,7 +98,7 @@ pub fn do_unpack(ctx: &mut runtime::Context) {
 
     // Use the same mappings as the input file as sections of the output.
     // Filter to sections to avoid serializing out the process heap etc.
-    tc.mem.mappings = kernel32::Mappings::from(
+    tc.mem.mappings = runtime::Mappings::from(
         kernel32::lock()
             .mappings
             .vec()

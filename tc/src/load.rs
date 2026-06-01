@@ -11,7 +11,7 @@ pub fn load_pe(mem: &mut Memory, buf: Vec<u8>) -> Module {
     let mut code_range = None;
     for sec in &f.sections {
         let addr = image_base + sec.VirtualAddress;
-        let size = winapi::kernel32::round_to_page(sec.SizeOfRawData.max(sec.VirtualSize));
+        let size = runtime::round_to_page(sec.SizeOfRawData.max(sec.VirtualSize));
         mem.reserve(sec.name().unwrap().into(), addr, size);
 
         let flags = sec.characteristics().unwrap();

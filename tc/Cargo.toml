@@ -13,3 +13,4 @@ logger = { workspace = true }
 pe = { workspace = true }
 winapi = { workspace = true }
 zerocopy = { workspace = true }
+runtime = { workspace = true }

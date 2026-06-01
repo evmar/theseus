@@ -1,6 +1,5 @@
 mod generated;
 
 fn main() {
-    let exe = &generated::EXEDATA;
-    winapi::run(exe);
+    dos::run(&generated::EXEDATA);
 }

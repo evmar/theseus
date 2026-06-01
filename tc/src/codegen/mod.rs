@@ -279,7 +279,7 @@ impl<'a> CodeGen<'a> {
         // the location of such data at link time.  We could do it by postprocessing the wasm
         // file, maybe.
 
-        self.line("fn init_memory(ctx: &mut Context, mappings: &mut kernel32::Mappings) {");
+        self.line("fn init_memory(ctx: &mut Context, mappings: &mut runtime::Mappings) {");
 
         for map in self.mem.mappings.vec().iter() {
             let addr = map.addr;
@@ -287,7 +287,7 @@ impl<'a> CodeGen<'a> {
             let zeroed = buf.iter().all(|&b| b == 0);
 
             self.line(format!(
-                "mappings.reserve(winapi::kernel32::Mapping {{
+                "mappings.reserve(runtime::Mapping {{
                     desc: {desc:?}.to_string(),
                     addr: {addr:#x},
                     size: {size:#x},
@@ -349,9 +349,11 @@ out.copy_from_slice(bytes);",
 #![allow(non_snake_case)]
 
 use runtime::*;
-use winapi::*;
 ",
         );
+        if self.module.bitness == 32 {
+            self.line("use winapi::*;");
+        }
 
         if self
             .blocks

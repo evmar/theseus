@@ -26,6 +26,13 @@ impl Memory {
         Memory { bytes }
     }
 
+    pub fn leak_new(size: usize) -> Self {
+        // safety: safe to assume_init on zeroed u8
+        let memory: Box<[u8]> = unsafe { Box::<[u8]>::new_zeroed_slice(size).assume_init() };
+        let static_memory: &'static mut [u8] = Box::leak(memory);
+        Memory::new(static_memory)
+    }
+
     pub fn unsafe_clone(&mut self) -> Memory {
         Memory {
             bytes: unsafe {

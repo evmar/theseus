@@ -1,9 +1,11 @@
 use std::{cell::Cell, collections::HashMap, sync::Mutex};
 
+use runtime::Mappings;
+
 use crate::{
     Handles,
     heap::Heap,
-    kernel32::{self, CommandLine, Mappings, Object},
+    kernel32::{self, CommandLine, Object},
     locked_state::LockedState,
 };
 

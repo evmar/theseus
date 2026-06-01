@@ -1,8 +1,8 @@
 [package]
-name = "animate-unpack-2"
+name = "dos"
 version = "0.1.0"
 edition = "2024"
 
 [dependencies]
+logger = { workspace = true }
 runtime = { workspace = true }
-dos = { workspace = true }

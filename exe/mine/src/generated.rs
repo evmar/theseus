@@ -8,20 +8,20 @@
 use runtime::*;
 use winapi::*;
 
-fn init_memory(ctx: &mut Context, mappings: &mut kernel32::Mappings) {
-    mappings.reserve(winapi::kernel32::Mapping {
+fn init_memory(ctx: &mut Context, mappings: &mut runtime::Mappings) {
+    mappings.reserve(runtime::Mapping {
         desc: "null page".to_string(),
         addr: 0x0,
         size: 0x1000,
         section: false,
     });
-    mappings.reserve(winapi::kernel32::Mapping {
+    mappings.reserve(runtime::Mapping {
         desc: "vtables".to_string(),
         addr: 0x1000,
         size: 0x1000,
         section: false,
     });
-    mappings.reserve(winapi::kernel32::Mapping {
+    mappings.reserve(runtime::Mapping {
         desc: "exe header".to_string(),
         addr: 0x1000000,
         size: 0x1000,
@@ -30,7 +30,7 @@ fn init_memory(ctx: &mut Context, mappings: &mut kernel32::Mappings) {
     let bytes = include_bytes!("../data/01000000.raw").as_slice();
     let out = &mut ctx.memory[0x1000000..][..bytes.len()];
     out.copy_from_slice(bytes);
-    mappings.reserve(winapi::kernel32::Mapping {
+    mappings.reserve(runtime::Mapping {
         desc: ".text".to_string(),
         addr: 0x1001000,
         size: 0x4000,
@@ -39,7 +39,7 @@ fn init_memory(ctx: &mut Context, mappings: &mut kernel32::Mappings) {
     let bytes = include_bytes!("../data/01001000.raw").as_slice();
     let out = &mut ctx.memory[0x1001000..][..bytes.len()];
     out.copy_from_slice(bytes);
-    mappings.reserve(winapi::kernel32::Mapping {
+    mappings.reserve(runtime::Mapping {
         desc: ".data".to_string(),
         addr: 0x1005000,
         size: 0x1000,
@@ -48,7 +48,7 @@ fn init_memory(ctx: &mut Context, mappings: &mut kernel32::Mappings) {
     let bytes = include_bytes!("../data/01005000.raw").as_slice();
     let out = &mut ctx.memory[0x1005000..][..bytes.len()];
     out.copy_from_slice(bytes);
-    mappings.reserve(winapi::kernel32::Mapping {
+    mappings.reserve(runtime::Mapping {
         desc: ".rsrc".to_string(),
         addr: 0x1006000,
         size: 0x14000,

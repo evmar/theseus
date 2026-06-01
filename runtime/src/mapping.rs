@@ -31,11 +31,6 @@ pub struct Mappings {
     mappings: Vec<Mapping>,
 }
 
-pub enum MappingData<'a> {
-    Bytes(&'a [u8]),
-    U32s(&'a [(u32, u32)]),
-}
-
 pub fn round_to_page(size: u32) -> u32 {
     (size + 0x1000 - 1) & !(0x1000 - 1)
 }

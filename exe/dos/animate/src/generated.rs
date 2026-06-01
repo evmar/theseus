@@ -6,10 +6,9 @@
 #![allow(non_snake_case)]
 
 use runtime::*;
-use winapi::*;
 
-fn init_memory(ctx: &mut Context, mappings: &mut kernel32::Mappings) {
-    mappings.reserve(winapi::kernel32::Mapping {
+fn init_memory(ctx: &mut Context, mappings: &mut runtime::Mappings) {
+    mappings.reserve(runtime::Mapping {
         desc: "com".to_string(),
         addr: 0x100,
         size: 0xff00,

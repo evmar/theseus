@@ -1,16 +1,20 @@
 #[cfg(feature = "wasm")]
 mod wasm;
 
+mod exe;
 mod flags;
 mod fpu;
 mod machine;
+mod mapping;
 mod memory;
 mod mmx;
 mod ops;
 mod registers;
 
+pub use exe::EXEData;
 pub use flags::Flags;
 pub use machine::{CPU, Context};
+pub use mapping::{Mapping, Mappings, round_to_page};
 pub use memory::Memory;
 pub use ops::*;
 pub use registers::Regs;

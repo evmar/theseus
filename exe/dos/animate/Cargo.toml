@@ -8,7 +8,7 @@ edition = "2024"
 
 [dependencies]
 runtime = { workspace = true }
-winapi = { workspace = true }
+dos = { workspace = true }
 
 [target.'cfg(target_family = "wasm")'.dependencies]
 wasm-bindgen = { workspace = true }

@@ -19,7 +19,7 @@ members = [
   "tc",
   "win32/derive",
   "win32/extract",
-  "win32/winapi",
+  "win32/winapi", "dos",
 ]
 
 [workspace.dependencies]
@@ -31,6 +31,7 @@ log = "0.4.29"
 logger = { path = "logger" }
 pe = { path = "win32/pe" }
 runtime = { path = "runtime" }
+dos = { path = "dos" }
 tc = { path = "tc" }
 wasm-bindgen = "0.2.121"
 web-sys = "0.3.98"

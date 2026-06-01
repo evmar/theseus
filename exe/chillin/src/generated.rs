@@ -10,14 +10,14 @@ use winapi::*;
 
 use crate::externs::*;
 
-fn init_memory(ctx: &mut Context, mappings: &mut kernel32::Mappings) {
-    mappings.reserve(winapi::kernel32::Mapping {
+fn init_memory(ctx: &mut Context, mappings: &mut runtime::Mappings) {
+    mappings.reserve(runtime::Mapping {
         desc: "null page".to_string(),
         addr: 0x0,
         size: 0x1000,
         section: false,
     });
-    mappings.reserve(winapi::kernel32::Mapping {
+    mappings.reserve(runtime::Mapping {
         desc: "vtables".to_string(),
         addr: 0x1000,
         size: 0x1000,
@@ -26,7 +26,7 @@ fn init_memory(ctx: &mut Context, mappings: &mut kernel32::Mappings) {
     let bytes = include_bytes!("../data/00001000.raw").as_slice();
     let out = &mut ctx.memory[0x1000..][..bytes.len()];
     out.copy_from_slice(bytes);
-    mappings.reserve(winapi::kernel32::Mapping {
+    mappings.reserve(runtime::Mapping {
         desc: "exe header".to_string(),
         addr: 0x400000,
         size: 0x1000,
@@ -35,7 +35,7 @@ fn init_memory(ctx: &mut Context, mappings: &mut kernel32::Mappings) {
     let bytes = include_bytes!("../data/00400000.raw").as_slice();
     let out = &mut ctx.memory[0x400000..][..bytes.len()];
     out.copy_from_slice(bytes);
-    mappings.reserve(winapi::kernel32::Mapping {
+    mappings.reserve(runtime::Mapping {
         desc: "AUTO".to_string(),
         addr: 0x401000,
         size: 0xa000,
@@ -44,7 +44,7 @@ fn init_memory(ctx: &mut Context, mappings: &mut kernel32::Mappings) {
     let bytes = include_bytes!("../data/00401000.raw").as_slice();
     let out = &mut ctx.memory[0x401000..][..bytes.len()];
     out.copy_from_slice(bytes);
-    mappings.reserve(winapi::kernel32::Mapping {
+    mappings.reserve(runtime::Mapping {
         desc: ".idata".to_string(),
         addr: 0x40b000,
         size: 0x1000,
@@ -53,7 +53,7 @@ fn init_memory(ctx: &mut Context, mappings: &mut kernel32::Mappings) {
     let bytes = include_bytes!("../data/0040b000.raw").as_slice();
     let out = &mut ctx.memory[0x40b000..][..bytes.len()];
     out.copy_from_slice(bytes);
-    mappings.reserve(winapi::kernel32::Mapping {
+    mappings.reserve(runtime::Mapping {
         desc: "DGROUP".to_string(),
         addr: 0x40c000,
         size: 0x27000,
@@ -62,19 +62,19 @@ fn init_memory(ctx: &mut Context, mappings: &mut kernel32::Mappings) {
     let bytes = include_bytes!("../data/0040c000.raw").as_slice();
     let out = &mut ctx.memory[0x40c000..][..bytes.len()];
     out.copy_from_slice(bytes);
-    mappings.reserve(winapi::kernel32::Mapping {
+    mappings.reserve(runtime::Mapping {
         desc: ".bss".to_string(),
         addr: 0x433000,
         size: 0x95000,
         section: true,
     });
-    mappings.reserve(winapi::kernel32::Mapping {
+    mappings.reserve(runtime::Mapping {
         desc: ".reloc".to_string(),
         addr: 0x4c8000,
         size: 0x1000,
         section: true,
     });
-    mappings.reserve(winapi::kernel32::Mapping {
+    mappings.reserve(runtime::Mapping {
         desc: ".rsrc".to_string(),
         addr: 0x4c9000,
         size: 0x1000,
