@@ -54,25 +54,38 @@ impl Context {
     }
 }
 
-fn dump_stack(memory: &Memory, esp: u32) {
-    println!("stack:");
-    for i in 0..8 {
-        let addr = esp + i * 4;
-        if addr + 4 >= memory.bytes.len() as u32 {
-            break;
-        }
-        println!("{addr:#08x} {:#08x}", memory.read::<u32>(addr));
-    }
-}
-
 impl Context {
-    pub fn dump_stack(&self) {
-        dump_stack(&self.memory, self.cpu.regs.esp - 4);
+    pub fn dump_stack32(&self) {
+        let esp = self.cpu.regs.esp - 4;
+        println!("stack:");
+        for i in 0..8 {
+            let addr = esp + i * 4;
+            if addr + 4 > self.memory.bytes.len() as u32 {
+                break;
+            }
+            println!("{addr:08x} {:08x}", self.memory.read::<u32>(addr));
+        }
+    }
+
+    pub fn dump_stack16(&self) {
+        let esp = self.cpu.regs.esp - 2;
+        println!("stack:");
+        for i in 0..8 {
+            let addr = esp + i * 2;
+            if addr + 2 > self.memory.bytes.len() as u32 {
+                break;
+            }
+            println!("{addr:04x} {:04x}", self.memory.read::<u16>(addr));
+        }
     }
 
     pub fn dump(&self) {
         self.cpu.dump();
-        self.dump_stack();
+        if self.cpu.real_mode {
+            self.dump_stack16();
+        } else {
+            self.dump_stack32();
+        }
     }
 }
 
