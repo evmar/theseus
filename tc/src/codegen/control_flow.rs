@@ -51,20 +51,17 @@ impl<'a> CodeGen<'a> {
                     self.line(format!("ctx.call_builtin({:#x}, {func});", instr.next_ip()));
                 } else {
                     let (dst, uses_ctx) = self.gen_jmp(instr);
-                    if uses_ctx {
+                    let dst = if uses_ctx {
                         self.line(format!("let dst = {};", dst));
-                        self.line(format!(
-                            "ctx.call{bitness}({ip:#x}, dst)",
-                            bitness = self.module.bitness,
-                            ip = instr.next_ip()
-                        ));
+                        "dst".into()
                     } else {
-                        self.line(format!(
-                            "ctx.call{bitness}({ip:#x}, {dst})",
-                            bitness = self.module.bitness,
-                            ip = instr.next_ip()
-                        ));
-                    }
+                        dst
+                    };
+                    self.line(format!(
+                        "ctx.call{bitness}({ip:#x}, {dst})",
+                        bitness = self.module.bitness,
+                        ip = instr.next_ip()
+                    ));
                 }
             }
             Ret => {
