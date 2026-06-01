@@ -51,74 +51,68 @@ pub fn set_reg(r: iced_x86::Register, expr: String) -> String {
     }
 }
 
-/// Code generate a memory address reference.
-/// Even for 16-bit code we generate a 32-bit memory address, because the computed
-/// address can go beyond a 16-bit address range.
-pub fn gen_addr(instr: &iced_x86::Instruction) -> String {
-    let mut expr = Vec::new();
-    match instr.memory_segment() {
-        iced_x86::Register::CS
-        | iced_x86::Register::DS
-        | iced_x86::Register::SS
-        | iced_x86::Register::GS => {}
-        iced_x86::Register::ES => expr.push("todo!()".into()),
-        //iced_x86::Register::ES => expr.push(format!("ctx.cpu.regs.get_es() << 4")),
-        iced_x86::Register::FS => expr.push(format!("ctx.cpu.regs.fs_base")),
-        iced_x86::Register::None => {}
-        r => todo!("{r:?} in {instr}"),
-    }
-    match instr.memory_base() {
-        iced_x86::Register::None => {}
-        r => expr.push(get_reg(r)),
-    }
-    if instr.memory_index() != iced_x86::Register::None {
-        if instr.memory_index_scale() != 1 {
-            expr.push(format!(
-                "({}*{})",
-                get_reg(instr.memory_index()),
-                instr.memory_index_scale()
-            ));
+impl<'a> CodeGen<'a> {
+    /// Code generate a memory address reference.
+    /// Even for 16-bit code we generate a 32-bit memory address, because the computed
+    /// address can go beyond a 16-bit address range.
+    pub fn gen_addr(&self, instr: &iced_x86::Instruction) -> String {
+        let mut expr = Vec::new();
+        match instr.memory_segment() {
+            iced_x86::Register::CS
+            | iced_x86::Register::DS
+            | iced_x86::Register::SS
+            | iced_x86::Register::GS => {}
+            iced_x86::Register::ES => expr.push("todo!()".into()),
+            //iced_x86::Register::ES => expr.push(format!("ctx.cpu.regs.get_es() << 4")),
+            iced_x86::Register::FS => expr.push(format!("ctx.cpu.regs.fs_base")),
+            iced_x86::Register::None => {}
+            r => todo!("{r:?} in {instr}"),
+        }
+        match instr.memory_base() {
+            iced_x86::Register::None => {}
+            r => expr.push(get_reg(r)),
+        }
+        if instr.memory_index() != iced_x86::Register::None {
+            if instr.memory_index_scale() != 1 {
+                expr.push(format!(
+                    "({}*{})",
+                    get_reg(instr.memory_index()),
+                    instr.memory_index_scale()
+                ));
+            } else {
+                expr.push(format!("{}", get_reg(instr.memory_index()),));
+            }
+        }
+        let offset = instr.memory_displacement32();
+        if offset != 0 {
+            expr.push(format!("{offset:#x}"));
+        }
+
+        if self.module.bitness == 16 {
+            expr.into_iter()
+                .enumerate()
+                .map(|(i, e)| {
+                    if i == 0 {
+                        format!("({e} as u32)")
+                    } else {
+                        format!(".wrapping_add({e} as u32)")
+                    }
+                })
+                .collect::<Vec<_>>()
+                .join("")
         } else {
-            expr.push(format!("{}", get_reg(instr.memory_index()),));
+            expr.into_iter()
+                .enumerate()
+                .map(|(i, e)| {
+                    if i == 0 {
+                        format!("{e}")
+                    } else {
+                        format!(".wrapping_add({e})")
+                    }
+                })
+                .collect::<Vec<_>>()
+                .join("")
         }
-    }
-    let offset = instr.memory_displacement32();
-    if offset != 0 {
-        expr.push(format!("{offset:#x}"));
-    }
-
-    let needs_cast = match instr.memory_size() {
-        iced_x86::MemorySize::Unknown => {
-            // e.g. lea
-            false
-        }
-        _ => mem_size(instr) == 16,
-    };
-
-    if needs_cast {
-        expr.into_iter()
-            .enumerate()
-            .map(|(i, e)| {
-                if i == 0 {
-                    format!("({e} as u32)")
-                } else {
-                    format!(".wrapping_add({e} as u32)")
-                }
-            })
-            .collect::<Vec<_>>()
-            .join("")
-    } else {
-        expr.into_iter()
-            .enumerate()
-            .map(|(i, e)| {
-                if i == 0 {
-                    format!("{e}")
-                } else {
-                    format!(".wrapping_add({e})")
-                }
-            })
-            .collect::<Vec<_>>()
-            .join("")
     }
 }
 
@@ -130,17 +124,19 @@ pub fn set_mem(typ: String, addr: String, expr: String) -> String {
     format!("ctx.memory.write::<{typ}>({addr}, {expr});")
 }
 
-pub fn get_op(instr: &iced_x86::Instruction, n: u32) -> String {
-    use iced_x86::OpKind::*;
-    match instr.op_kind(n) {
-        Immediate8 => format!("{:#x}u8", instr.immediate8()),
-        Immediate16 => format!("{:#x}u16", instr.immediate16()),
-        Immediate8to16 => format!("{:#x}u16", instr.immediate8to16()),
-        Immediate8to32 => format!("{:#x}u32", instr.immediate8to32()),
-        Immediate32 => format!("{:#x}u32", instr.immediate32()),
-        Register => get_reg(instr.op_register(n)),
-        Memory => get_mem(format!("u{}", mem_size(instr)), gen_addr(instr)),
-        k => todo!("{:?}", k),
+impl<'a> CodeGen<'a> {
+    pub fn get_op(&self, instr: &iced_x86::Instruction, n: u32) -> String {
+        use iced_x86::OpKind::*;
+        match instr.op_kind(n) {
+            Immediate8 => format!("{:#x}u8", instr.immediate8()),
+            Immediate16 => format!("{:#x}u16", instr.immediate16()),
+            Immediate8to16 => format!("{:#x}u16", instr.immediate8to16()),
+            Immediate8to32 => format!("{:#x}u32", instr.immediate8to32()),
+            Immediate32 => format!("{:#x}u32", instr.immediate32()),
+            Register => get_reg(instr.op_register(n)),
+            Memory => get_mem(format!("u{}", mem_size(instr)), self.gen_addr(instr)),
+            k => todo!("{:?}", k),
+        }
     }
 }
 
@@ -185,16 +181,18 @@ pub fn op_size(instr: &iced_x86::Instruction, n: u32) -> usize {
     }
 }
 
-pub fn set_op(instr: &iced_x86::Instruction, n: u32, expr: String) -> String {
-    use iced_x86::OpKind::*;
-    match instr.op_kind(n) {
-        Register => set_reg(instr.op_register(n), expr),
-        Memory => {
-            let addr = gen_addr(instr);
-            let size = mem_size(instr);
-            set_mem(format!("u{size}"), addr, expr)
+impl<'a> CodeGen<'a> {
+    pub fn set_op(&self, instr: &iced_x86::Instruction, n: u32, expr: String) -> String {
+        use iced_x86::OpKind::*;
+        match instr.op_kind(n) {
+            Register => set_reg(instr.op_register(n), expr),
+            Memory => {
+                let addr = self.gen_addr(instr);
+                let size = mem_size(instr);
+                set_mem(format!("u{size}"), addr, expr)
+            }
+            k => todo!("{:?}", k),
         }
-        k => todo!("{:?}", k),
     }
 }
 

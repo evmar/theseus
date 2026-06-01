@@ -1,4 +1,4 @@
-use crate::codegen::{CodeGen, gen_addr, get_op, instr_name, op_size, set_op};
+use crate::codegen::{CodeGen, instr_name, op_size};
 
 impl<'a> CodeGen<'a> {
     pub fn codegen_misc(&mut self, instr: &iced_x86::Instruction) -> bool {
@@ -10,7 +10,7 @@ impl<'a> CodeGen<'a> {
                     32 => "push32",
                     _ => return false,
                 };
-                self.line(format!("ctx.{func}({});", get_op(instr, 0)));
+                self.line(format!("ctx.{func}({});", self.get_op(instr, 0)));
             }
             Pop => {
                 let func = match op_size(instr, 0) {
@@ -19,67 +19,67 @@ impl<'a> CodeGen<'a> {
                     _ => return false,
                 };
                 self.line(format!("let x = ctx.{func}();"));
-                self.line(set_op(instr, 0, "x".into()))
+                self.line(self.set_op(instr, 0, "x".into()))
             }
             Pushad => self.line("ctx.pushad();"),
             Popad => self.line("ctx.popad();"),
-            Mov => self.line(set_op(instr, 0, get_op(instr, 1))),
+            Mov => self.line(self.set_op(instr, 0, self.get_op(instr, 1))),
 
             Sete | Setg | Setge | Setne => {
-                self.line(set_op(instr, 0, format!("ctx.{}()", instr_name(instr))))
+                self.line(self.set_op(instr, 0, format!("ctx.{}()", instr_name(instr))))
             }
 
             Cmp => {
-                let op0 = get_op(instr, 0);
-                let op1 = get_op(instr, 1);
+                let op0 = self.get_op(instr, 0);
+                let op1 = self.get_op(instr, 1);
                 self.line(format!("sub({op0}, {op1}, &mut ctx.cpu.flags);"));
             }
             Test => {
                 self.line(format!(
                     "and({}, {}, &mut ctx.cpu.flags);",
-                    get_op(instr, 0),
-                    get_op(instr, 1)
+                    self.get_op(instr, 0),
+                    self.get_op(instr, 1)
                 ));
             }
 
             Lea => {
-                let addr = gen_addr(instr);
+                let addr = self.gen_addr(instr);
                 // addr is always computed as 32-bit, but for 16-bit lea we need to truncate.
                 if op_size(instr, 0) == 16 {
-                    self.line(set_op(instr, 0, format!("{} as u16", addr)));
+                    self.line(self.set_op(instr, 0, format!("{} as u16", addr)));
                 } else {
-                    self.line(set_op(instr, 0, addr));
+                    self.line(self.set_op(instr, 0, addr));
                 }
             }
 
             Movzx => {
-                self.line(set_op(instr, 0, format!("{} as _", get_op(instr, 1))));
+                self.line(self.set_op(instr, 0, format!("{} as _", self.get_op(instr, 1))));
             }
             Movsx => {
                 let read = format!(
                     "{read} as i{src} as i{dst} as u{dst}",
-                    read = get_op(instr, 1),
+                    read = self.get_op(instr, 1),
                     src = op_size(instr, 1),
                     dst = op_size(instr, 0)
                 );
-                self.line(set_op(instr, 0, read));
+                self.line(self.set_op(instr, 0, read));
             }
 
             Leave => self.line("ctx.leave();"),
             Enter => {
                 assert!(instr.op1_kind() == iced_x86::OpKind::Immediate8_2nd);
                 let op1 = instr.immediate8_2nd();
-                self.line(format!("ctx.enter({}, {:x});", get_op(instr, 0), op1));
+                self.line(format!("ctx.enter({}, {:x});", self.get_op(instr, 0), op1));
             }
 
             Xchg => {
-                self.line(format!("let t = {};", get_op(instr, 0)));
-                self.line(set_op(instr, 0, get_op(instr, 1)));
-                self.line(set_op(instr, 1, "t".into()));
+                self.line(format!("let t = {};", self.get_op(instr, 0)));
+                self.line(self.set_op(instr, 0, self.get_op(instr, 1)));
+                self.line(self.set_op(instr, 1, "t".into()));
             }
             Nop => {}
 
-            Not => self.line(set_op(instr, 0, format!("!{}", get_op(instr, 0)))),
+            Not => self.line(self.set_op(instr, 0, format!("!{}", self.get_op(instr, 0)))),
 
             Int => {
                 assert!(instr.op0_kind() == iced_x86::OpKind::Immediate8);

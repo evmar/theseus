@@ -2133,9 +2133,9 @@ pub fn x401969(ctx: &mut Context) -> Cont {
 
 pub fn x401972(ctx: &mut Context) -> Cont {
     // 00401972 movzx eax,word ptr [ebp-2Ch]
-    ctx.cpu.regs.eax =
-        ctx.memory
-            .read::<u16>((ctx.cpu.regs.ebp as u32).wrapping_add(0xffffffd4 as u32)) as _;
+    ctx.cpu.regs.eax = ctx
+        .memory
+        .read::<u16>(ctx.cpu.regs.ebp.wrapping_add(0xffffffd4)) as _;
     // 00401976 jmp short 0040197Bh
     Cont(x40197b)
 }
@@ -5755,7 +5755,7 @@ pub fn x40245b(ctx: &mut Context) -> Cont {
 pub fn x402465(ctx: &mut Context) -> Cont {
     // 00402465 cmp [esi],bx
     sub(
-        ctx.memory.read::<u16>((ctx.cpu.regs.esi as u32)),
+        ctx.memory.read::<u16>(ctx.cpu.regs.esi),
         ctx.cpu.regs.get_bx(),
         &mut ctx.cpu.flags,
     );
@@ -5772,7 +5772,7 @@ pub fn x40246c(ctx: &mut Context) -> Cont {
     ctx.cpu.regs.eax = inc(ctx.cpu.regs.eax, &mut ctx.cpu.flags);
     // 0040246e cmp [eax],bx
     sub(
-        ctx.memory.read::<u16>((ctx.cpu.regs.eax as u32)),
+        ctx.memory.read::<u16>(ctx.cpu.regs.eax),
         ctx.cpu.regs.get_bx(),
         &mut ctx.cpu.flags,
     );
@@ -5787,7 +5787,7 @@ pub fn x402473(ctx: &mut Context) -> Cont {
     ctx.cpu.regs.eax = inc(ctx.cpu.regs.eax, &mut ctx.cpu.flags);
     // 00402475 cmp [eax],bx
     sub(
-        ctx.memory.read::<u16>((ctx.cpu.regs.eax as u32)),
+        ctx.memory.read::<u16>(ctx.cpu.regs.eax),
         ctx.cpu.regs.get_bx(),
         &mut ctx.cpu.flags,
     );
@@ -6174,8 +6174,7 @@ pub fn x402584(ctx: &mut Context) -> Cont {
     ctx.call_builtin(0x40258f, kernel32::GetStartupInfoA_stdcall);
     // 0040258f cmp word ptr [esp+42h],0
     sub(
-        ctx.memory
-            .read::<u16>((ctx.cpu.regs.esp as u32).wrapping_add(0x42 as u32)),
+        ctx.memory.read::<u16>(ctx.cpu.regs.esp.wrapping_add(0x42)),
         0x0u16,
         &mut ctx.cpu.flags,
     );
@@ -6603,7 +6602,7 @@ pub fn x4026db(ctx: &mut Context) -> Cont {
     ctx.call_builtin(0x4026eb, kernel32::GetModuleHandleA_stdcall);
     // 004026eb cmp word ptr [eax],5A4Dh
     sub(
-        ctx.memory.read::<u16>((ctx.cpu.regs.eax as u32)),
+        ctx.memory.read::<u16>(ctx.cpu.regs.eax),
         0x5a4du16,
         &mut ctx.cpu.flags,
     );
@@ -14001,8 +14000,7 @@ pub fn x40419e(ctx: &mut Context) -> Cont {
     // 0040419e movzx eax,word ptr [eax*2+40933Ah]
     ctx.cpu.regs.eax = ctx
         .memory
-        .read::<u16>(((ctx.cpu.regs.eax * 2) as u32).wrapping_add(0x40933a as u32))
-        as _;
+        .read::<u16>((ctx.cpu.regs.eax * 2).wrapping_add(0x40933a)) as _;
     // 004041a6 and eax,[esp+8]
     ctx.cpu.regs.eax = and(
         ctx.cpu.regs.eax,
@@ -14923,7 +14921,7 @@ pub fn x4044ec(ctx: &mut Context) -> Cont {
     // 004044ec mov dx,[ecx]
     ctx.cpu
         .regs
-        .set_dx(ctx.memory.read::<u16>((ctx.cpu.regs.ecx as u32)));
+        .set_dx(ctx.memory.read::<u16>(ctx.cpu.regs.ecx));
     // 004044ef test dl,1
     and(ctx.cpu.regs.get_dl(), 0x1u8, &mut ctx.cpu.flags);
     // 004044f2 je short 0040450Ah
@@ -15435,7 +15433,7 @@ pub fn x40466a(ctx: &mut Context) -> Cont {
 pub fn x404672(ctx: &mut Context) -> Cont {
     // 00404672 mov [edi],dx
     ctx.memory
-        .write::<u16>((ctx.cpu.regs.edi as u32), ctx.cpu.regs.get_dx());
+        .write::<u16>(ctx.cpu.regs.edi, ctx.cpu.regs.get_dx());
     // 00404675 mov eax,[esp+8]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(ctx.cpu.regs.esp.wrapping_add(0x8));
     // 00404679 mov byte ptr [edi+2],0
@@ -15451,7 +15449,7 @@ pub fn x404672(ctx: &mut Context) -> Cont {
 pub fn x40467f(ctx: &mut Context) -> Cont {
     // 0040467f mov [edi],dx
     ctx.memory
-        .write::<u16>((ctx.cpu.regs.edi as u32), ctx.cpu.regs.get_dx());
+        .write::<u16>(ctx.cpu.regs.edi, ctx.cpu.regs.get_dx());
     // 00404682 mov eax,[esp+8]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(ctx.cpu.regs.esp.wrapping_add(0x8));
     // 00404686 pop edi
@@ -16017,7 +16015,7 @@ pub fn x40483a(ctx: &mut Context) -> Cont {
     // 0040483f mov ax,[eax+esi*2]
     ctx.cpu.regs.set_ax(
         ctx.memory
-            .read::<u16>((ctx.cpu.regs.eax as u32).wrapping_add((ctx.cpu.regs.esi * 2) as u32)),
+            .read::<u16>(ctx.cpu.regs.eax.wrapping_add((ctx.cpu.regs.esi * 2))),
     );
     // 00404843 and eax,edi
     ctx.cpu.regs.eax = and(ctx.cpu.regs.eax, ctx.cpu.regs.edi, &mut ctx.cpu.flags);
@@ -19260,10 +19258,9 @@ pub fn x40548e(ctx: &mut Context) -> Cont {
     // 0040548e mov ecx,ds:[409330h]
     ctx.cpu.regs.ecx = ctx.memory.read::<u32>(0x409330);
     // 00405494 movzx eax,word ptr [ecx+eax*2]
-    ctx.cpu.regs.eax = ctx
-        .memory
-        .read::<u16>((ctx.cpu.regs.ecx as u32).wrapping_add((ctx.cpu.regs.eax * 2) as u32))
-        as _;
+    ctx.cpu.regs.eax =
+        ctx.memory
+            .read::<u16>(ctx.cpu.regs.ecx.wrapping_add((ctx.cpu.regs.eax * 2))) as _;
     // 00405498 jmp short 004054ECh
     Cont(x4054ec)
 }
@@ -19390,9 +19387,7 @@ pub fn x4054e6(ctx: &mut Context) -> Cont {
 
 pub fn x4054e8(ctx: &mut Context) -> Cont {
     // 004054e8 movzx eax,word ptr [ebp+0Ah]
-    ctx.cpu.regs.eax =
-        ctx.memory
-            .read::<u16>((ctx.cpu.regs.ebp as u32).wrapping_add(0xa as u32)) as _;
+    ctx.cpu.regs.eax = ctx.memory.read::<u16>(ctx.cpu.regs.ebp.wrapping_add(0xa)) as _;
     Cont(x4054ec)
 }
 

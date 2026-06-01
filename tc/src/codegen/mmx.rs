@@ -20,88 +20,92 @@ fn mmx_reg(reg: iced_x86::Register) -> String {
     }
 }
 
-fn mmx_get(instr: &iced_x86::Instruction, n: u32) -> String {
-    use iced_x86::OpKind::*;
-    match instr.op_kind(n) {
-        Register => mmx_reg(instr.op_register(n)),
-        Memory => {
-            let addr = codegen::gen_addr(instr);
-            let size = codegen::mem_size(instr);
-            codegen::get_mem(format!("u{size}"), addr)
-        }
-        Immediate8 => format!("{:#x}u64", instr.immediate8()),
-        k => todo!("{k:?}"),
-    }
-}
-
-fn mmx_get_32(instr: &iced_x86::Instruction, n: u32) -> String {
-    use iced_x86::OpKind::*;
-    if matches!(instr.op_kind(n), Register) {
-        let reg = instr.op_register(n);
-        if is_mmx_reg(reg) {
-            return format!("{} as u32", mmx_reg(instr.op_register(n)));
-        }
-    }
-    codegen::get_op(instr, n)
-}
-
-fn mmx_set(instr: &iced_x86::Instruction, n: u32, expr: String) -> String {
-    use iced_x86::OpKind::*;
-    match instr.op_kind(n) {
-        Register => format!("{} = {};", mmx_reg(instr.op_register(n)), expr),
-        Memory => {
-            let addr = codegen::gen_addr(instr);
-            codegen::set_mem("u64".into(), addr, expr)
-        }
-        _ => unreachable!(),
-    }
-}
-
-fn mmx_set_32(instr: &iced_x86::Instruction, n: u32, expr: String) -> String {
-    use iced_x86::OpKind::*;
-    if matches!(instr.op_kind(n), Register) {
-        let reg = instr.op_register(n);
-        if is_mmx_reg(reg) {
-            return format!("{} = {} as u64;", mmx_reg(reg), expr);
-        }
-    }
-    codegen::set_op(instr, n, expr)
-}
-
 impl<'a> CodeGen<'a> {
+    fn mmx_get(&self, instr: &iced_x86::Instruction, n: u32) -> String {
+        use iced_x86::OpKind::*;
+        match instr.op_kind(n) {
+            Register => mmx_reg(instr.op_register(n)),
+            Memory => {
+                let addr = self.gen_addr(instr);
+                let size = codegen::mem_size(instr);
+                codegen::get_mem(format!("u{size}"), addr)
+            }
+            Immediate8 => format!("{:#x}u64", instr.immediate8()),
+            k => todo!("{k:?}"),
+        }
+    }
+
+    fn mmx_get_32(&self, instr: &iced_x86::Instruction, n: u32) -> String {
+        use iced_x86::OpKind::*;
+        if matches!(instr.op_kind(n), Register) {
+            let reg = instr.op_register(n);
+            if is_mmx_reg(reg) {
+                return format!("{} as u32", mmx_reg(instr.op_register(n)));
+            }
+        }
+        self.get_op(instr, n)
+    }
+
+    fn mmx_set(&self, instr: &iced_x86::Instruction, n: u32, expr: String) -> String {
+        use iced_x86::OpKind::*;
+        match instr.op_kind(n) {
+            Register => format!("{} = {};", mmx_reg(instr.op_register(n)), expr),
+            Memory => {
+                let addr = self.gen_addr(instr);
+                codegen::set_mem("u64".into(), addr, expr)
+            }
+            _ => unreachable!(),
+        }
+    }
+
+    fn mmx_set_32(&self, instr: &iced_x86::Instruction, n: u32, expr: String) -> String {
+        use iced_x86::OpKind::*;
+        if matches!(instr.op_kind(n), Register) {
+            let reg = instr.op_register(n);
+            if is_mmx_reg(reg) {
+                return format!("{} = {} as u64;", mmx_reg(reg), expr);
+            }
+        }
+        self.set_op(instr, n, expr)
+    }
+
     pub fn codegen_mmx(&mut self, instr: &iced_x86::Instruction) -> bool {
         use iced_x86::Mnemonic::*;
         match instr.mnemonic() {
-            Movd => self.line(mmx_set_32(instr, 0, mmx_get_32(instr, 1))),
-            Movq => self.line(mmx_set(instr, 0, mmx_get(instr, 1))),
+            Movd => self.line(self.mmx_set_32(instr, 0, self.mmx_get_32(instr, 1))),
+            Movq => self.line(self.mmx_set(instr, 0, self.mmx_get(instr, 1))),
 
             Pxor => {
-                self.line(mmx_set(
+                self.line(self.mmx_set(
                     instr,
                     0,
-                    format!("{} ^ {}", mmx_get(instr, 0), mmx_get(instr, 1)),
+                    format!("{} ^ {}", self.mmx_get(instr, 0), self.mmx_get(instr, 1)),
                 ));
             }
 
             // Binary operations, all implemented with same name as mnemonic.
             Paddsb | Paddsw | Paddusb | Pmullw | Psrlw | Packuswb | Psubusb | Psubw | Psraw => {
                 let func = instr_name(instr);
-                self.line(mmx_set(
+                self.line(self.mmx_set(
                     instr,
                     0,
-                    format!("{func}({}, {})", mmx_get(instr, 0), mmx_get(instr, 1)),
+                    format!(
+                        "{func}({}, {})",
+                        self.mmx_get(instr, 0),
+                        self.mmx_get(instr, 1)
+                    ),
                 ));
             }
 
             // Punpcklbw special because it only reads 4 bytes of memory.
             Punpcklbw => {
-                self.line(mmx_set(
+                self.line(self.mmx_set(
                     instr,
                     0,
                     format!(
                         "punpcklbw({}, {})",
-                        mmx_get_32(instr, 0),
-                        mmx_get_32(instr, 1)
+                        self.mmx_get_32(instr, 0),
+                        self.mmx_get_32(instr, 1)
                     ),
                 ));
             }

@@ -1,4 +1,4 @@
-use crate::codegen::{CodeGen, get_op, get_reg, instr_name, op_size, set_op};
+use crate::codegen::{CodeGen, get_reg, instr_name, op_size};
 
 impl<'a> CodeGen<'a> {
     pub fn codegen_math(&mut self, instr: &iced_x86::Instruction) -> bool {
@@ -8,9 +8,9 @@ impl<'a> CodeGen<'a> {
             And | Or | Add | Sub | Sbb | Xor | Shl | Shr | Sar | Rol | Rcl | Rcr => {
                 assert_eq!(instr.op_count(), 2);
                 let func = instr_name(instr);
-                let op0 = get_op(instr, 0);
-                let op1 = get_op(instr, 1);
-                self.line(set_op(
+                let op0 = self.get_op(instr, 0);
+                let op1 = self.get_op(instr, 1);
+                self.line(self.set_op(
                     instr,
                     0,
                     format!("{func}({op0}, {op1}, &mut ctx.cpu.flags)"),
@@ -19,10 +19,10 @@ impl<'a> CodeGen<'a> {
 
             Adc => {
                 assert_eq!(instr.op_count(), 2);
-                let op0 = get_op(instr, 0);
-                let op1 = get_op(instr, 1);
+                let op0 = self.get_op(instr, 0);
+                let op1 = self.get_op(instr, 1);
                 self.line("let carry = ctx.cpu.flags.contains(Flags::CF) as u32;");
-                self.line(set_op(
+                self.line(self.set_op(
                     instr,
                     0,
                     format!("addc({op0}, {op1}, carry as _, &mut ctx.cpu.flags)"),
@@ -31,10 +31,10 @@ impl<'a> CodeGen<'a> {
 
             Shld | Shrd => {
                 assert_eq!(instr.op_count(), 3);
-                let op0 = get_op(instr, 0);
-                let op1 = get_op(instr, 1);
-                let op2 = get_op(instr, 2);
-                self.line(set_op(
+                let op0 = self.get_op(instr, 0);
+                let op1 = self.get_op(instr, 1);
+                let op2 = self.get_op(instr, 2);
+                self.line(self.set_op(
                     instr,
                     0,
                     format!(
@@ -48,7 +48,7 @@ impl<'a> CodeGen<'a> {
                 assert_eq!(instr.op_count(), 1);
                 let size = op_size(instr, 0);
                 let size2 = size * 2;
-                self.line(format!("let res = mul(ctx.cpu.regs.eax as u{size} as u{size2}, {} as u{size2}, &mut ctx.cpu.flags);", get_op(instr, 0)));
+                self.line(format!("let res = mul(ctx.cpu.regs.eax as u{size} as u{size2}, {} as u{size2}, &mut ctx.cpu.flags);", self.get_op(instr, 0)));
                 match size {
                     8 => self.line(format!("ctx.cpu.regs.set_ax(res);")),
                     16 => self.line(format!("ctx.cpu.regs.set_dx_ax(res);")),
@@ -67,7 +67,7 @@ impl<'a> CodeGen<'a> {
                     32 => format!("ctx.cpu.regs.get_edx_eax()"),
                     _ => unreachable!(),
                 };
-                let y = format!("{} as u{size2}", get_op(instr, 0));
+                let y = format!("{} as u{size2}", self.get_op(instr, 0));
                 self.line(format!("let (quot, rem) = div({x}, {y});"));
                 match size {
                     8 => {
@@ -91,7 +91,7 @@ impl<'a> CodeGen<'a> {
                 if instr.op_count() == 1 {
                     // one-op imul has different in/out reg and overflow behavior from others
                     let x = format!("{} as u{size}", get_reg(iced_x86::Register::EAX));
-                    let y = get_op(instr, 0);
+                    let y = self.get_op(instr, 0);
                     let res = format!("imul1_{size}({x}, {y}, &mut ctx.cpu.flags)");
                     match size {
                         8 => self.line(format!("ctx.cpu.regs.set_ax({res});")),
@@ -103,16 +103,16 @@ impl<'a> CodeGen<'a> {
                     let (x, y) = match instr.op_count() {
                         2 => {
                             assert_eq!(op_size(instr, 0), op_size(instr, 1));
-                            (get_op(instr, 0), get_op(instr, 1))
+                            (self.get_op(instr, 0), self.get_op(instr, 1))
                         }
                         3 => {
                             assert_eq!(op_size(instr, 0), op_size(instr, 1));
                             assert_eq!(op_size(instr, 1), op_size(instr, 2));
-                            (get_op(instr, 1), get_op(instr, 2))
+                            (self.get_op(instr, 1), self.get_op(instr, 2))
                         }
                         _ => unreachable!(),
                     };
-                    self.line(set_op(
+                    self.line(self.set_op(
                         instr,
                         0,
                         format!("imul2_{size}({x}, {y}, &mut ctx.cpu.flags)"),
@@ -130,7 +130,7 @@ impl<'a> CodeGen<'a> {
                     32 => format!("ctx.cpu.regs.get_edx_eax() as i64"),
                     _ => unreachable!(),
                 };
-                let y = format!("{} as i{size} as i{size2}", get_op(instr, 0));
+                let y = format!("{} as i{size} as i{size2}", self.get_op(instr, 0));
                 self.line(format!("let x = {x};"));
                 self.line(format!("let y = {y};"));
                 let quot = format!("(x / y) as i{size} as u{size}");
@@ -152,21 +152,21 @@ impl<'a> CodeGen<'a> {
                 }
             }
 
-            Neg => self.line(set_op(
+            Neg => self.line(self.set_op(
                 instr,
                 0,
-                format!("neg({}, &mut ctx.cpu.flags)", get_op(instr, 0)),
+                format!("neg({}, &mut ctx.cpu.flags)", self.get_op(instr, 0)),
             )),
 
-            Dec => self.line(set_op(
+            Dec => self.line(self.set_op(
                 instr,
                 0,
-                format!("dec({}, &mut ctx.cpu.flags)", get_op(instr, 0)),
+                format!("dec({}, &mut ctx.cpu.flags)", self.get_op(instr, 0)),
             )),
-            Inc => self.line(set_op(
+            Inc => self.line(self.set_op(
                 instr,
                 0,
-                format!("inc({}, &mut ctx.cpu.flags)", get_op(instr, 0)),
+                format!("inc({}, &mut ctx.cpu.flags)", self.get_op(instr, 0)),
             )),
 
             _ => return false,

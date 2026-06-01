@@ -1,6 +1,6 @@
 use crate::{
     Instr,
-    codegen::{CodeGen, gen_addr, get_reg, instr_name},
+    codegen::{CodeGen, get_reg, instr_name},
 };
 
 impl<'a> CodeGen<'a> {
@@ -30,7 +30,10 @@ impl<'a> CodeGen<'a> {
                     return (format!("Cont({func})"), false);
                 }
                 (
-                    format!("ctx.indirect(ctx.memory.read({}))", gen_addr(&instr.iced)),
+                    format!(
+                        "ctx.indirect(ctx.memory.read({}))",
+                        self.gen_addr(&instr.iced)
+                    ),
                     true,
                 )
             }
