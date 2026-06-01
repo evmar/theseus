@@ -44,7 +44,7 @@ pub fn x100(ctx: &mut Context) -> Cont {
     // 00000110 mov ax,3508h
     ctx.cpu.regs.set_ax(0x3508u16);
     // 00000113 int 21h
-    todo!();
+    dos::int21();
     // 00000115 mov ds:[14D0h],es
     ctx.memory
         .write::<u16>((0x14d0 as u32), ctx.cpu.regs.get_es());
@@ -54,7 +54,7 @@ pub fn x100(ctx: &mut Context) -> Cont {
     // 0000011d mov ax,3509h
     ctx.cpu.regs.set_ax(0x3509u16);
     // 00000120 int 21h
-    todo!();
+    dos::int21();
     // 00000122 mov ds:[14D4h],es
     ctx.memory
         .write::<u16>((0x14d4 as u32), ctx.cpu.regs.get_es());
@@ -73,13 +73,13 @@ pub fn x100(ctx: &mut Context) -> Cont {
     // 00000130 mov ax,2509h
     ctx.cpu.regs.set_ax(0x2509u16);
     // 00000133 int 21h
-    todo!();
+    dos::int21();
     // 00000135 mov dx,1126h
     ctx.cpu.regs.set_dx(0x1126u16);
     // 00000138 mov ax,2508h
     ctx.cpu.regs.set_ax(0x2508u16);
     // 0000013b int 21h
-    todo!();
+    dos::int21();
     // 0000013d pop ds
     let x = ctx.pop16();
     ctx.cpu.regs.set_ds(x);
@@ -766,7 +766,7 @@ pub fn x30b(ctx: &mut Context) -> Cont {
     // 0000030b mov ax,13h
     ctx.cpu.regs.set_ax(0x13u16);
     // 0000030e int 10h
-    todo!();
+    dos::int10();
     // 00000310 mov di,7224h
     ctx.cpu.regs.set_di(0x7224u16);
     // 00000313 mov cx,300h
@@ -3869,13 +3869,13 @@ pub fn xba6(ctx: &mut Context) -> Cont {
     // 00000ba6 mov ax,3
     ctx.cpu.regs.set_ax(0x3u16);
     // 00000ba9 int 10h
-    todo!();
+    dos::int10();
     // 00000bab mov ah,9
     ctx.cpu.regs.set_ah(0x9u8);
     // 00000bad mov dx,14AAh
     ctx.cpu.regs.set_dx(0x14aau16);
     // 00000bb0 int 21h
-    todo!();
+    dos::int21();
     // 00000bb2 push ds
     ctx.push16(ctx.cpu.regs.get_ds());
     // 00000bb3 mov dx,ds:[14D6h]
@@ -3885,7 +3885,7 @@ pub fn xba6(ctx: &mut Context) -> Cont {
     // 00000bbb mov ax,2509h
     ctx.cpu.regs.set_ax(0x2509u16);
     // 00000bbe int 21h
-    todo!();
+    dos::int21();
     // 00000bc0 pop ds
     let x = ctx.pop16();
     ctx.cpu.regs.set_ds(x);
@@ -3909,14 +3909,15 @@ pub fn xbc6(ctx: &mut Context) -> Cont {
     // 00000bcf mov ax,2508h
     ctx.cpu.regs.set_ax(0x2508u16);
     // 00000bd2 int 21h
-    todo!();
+    dos::int21();
     // 00000bd4 pop ds
     let x = ctx.pop16();
     ctx.cpu.regs.set_ds(x);
     // 00000bd5 mov ax,4C00h
     ctx.cpu.regs.set_ax(0x4c00u16);
     // 00000bd8 int 21h
-    todo!();
+    dos::int21();
+    Cont(xbda)
 }
 
 pub fn xbda(ctx: &mut Context) -> Cont {

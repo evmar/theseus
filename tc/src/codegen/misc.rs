@@ -83,7 +83,8 @@ impl<'a> CodeGen<'a> {
 
             Int => {
                 assert!(instr.op0_kind() == iced_x86::OpKind::Immediate8);
-                self.todo();
+                assert_eq!(self.module.bitness, 16);
+                self.line(format!("dos::int{:x}();", instr.immediate8()));
             }
             Int3 | Cmpxchg | Pushfd | Cpuid | Xgetbv | Bt | Div => self.todo(),
 

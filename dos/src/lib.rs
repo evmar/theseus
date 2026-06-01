@@ -36,3 +36,11 @@ pub fn run(exe: &EXEData) {
     let mut ctx = load(exe);
     start(&mut ctx, exe);
 }
+
+pub fn int10() {
+    log::warn!("TODO: int 10 (video)");
+}
+
+pub fn int21() {
+    log::warn!("TODO: int 21 (dos)");
+}

@@ -186,6 +186,7 @@ dependencies = [
 name = "dos"
 version = "0.1.0"
 dependencies = [
+ "log",
  "logger",
  "runtime",
 ]
