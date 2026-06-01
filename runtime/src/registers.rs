@@ -14,6 +14,8 @@ pub struct Regs {
     pub cs: u16,
     pub ds: u16,
     pub es: u16,
+    pub fs: u16,
+    pub gs: u16,
     pub ss: u16,
 
     pub fs_base: u32,
@@ -37,6 +39,8 @@ impl Regs {
             cs: 0,
             ds: 0,
             es: 0,
+            fs: 0,
+            gs: 0,
             ss: 0,
 
             fs_base: 0, // set when initializing process
@@ -103,6 +107,12 @@ impl Regs {
     pub fn get_es(&self) -> u16 {
         self.es
     }
+    pub fn get_fs(&self) -> u16 {
+        self.fs
+    }
+    pub fn get_gs(&self) -> u16 {
+        self.gs
+    }
     pub fn get_ss(&self) -> u16 {
         self.ss
     }
@@ -115,6 +125,12 @@ impl Regs {
     }
     pub fn set_es(&mut self, val: u16) {
         self.es = val;
+    }
+    pub fn set_fs(&mut self, val: u16) {
+        self.fs = val;
+    }
+    pub fn set_gs(&mut self, val: u16) {
+        self.gs = val;
     }
     pub fn set_ss(&mut self, val: u16) {
         self.ss = val;
