@@ -44,12 +44,15 @@ elif [[ $1 == "mine" ]]; then
     cargo run -p tc -- --exe ~/win/rs/deploy/archive/win2k/winmine.exe --out exe/mine \
         --entry-point $wndproc \
         --jump-table $wndproc_jmptable
-elif [[ $1 == "animate" ]]; then
-    cargo run -p tc -- --exe animate.com --out exe/dos/animate
 elif [[ $1 == "animate-unpack" ]]; then
-    real_entry=0xff82
-    cargo run -p tc -- --exe dos/exe/schwartz_animate/ANIMATE.COM --out exe/dos/animate-unpack \
-        --extern $real_entry
+    cargo run -p tc -- --exe scratch/dos/schwartz_animate/ANIMATE.COM --out exe/dos/animate-unpack \
+        --extern 0xff82
+elif [[ $1 == "animate-unpack-2" ]]; then
+    cargo run -p tc -- --exe animate.com --out exe/dos/animate-unpack-2 \
+        --entry-point 0xff82 \
+        --extern 0x100
+elif [[ $1 == "animate" ]]; then
+    cargo run -p tc -- --exe animate2.com --out exe/dos/animate
 elif [[ $1 == "basicdd" ]]; then
     cargo run -p tc -- --scan-memory --exe ~/win/rs/deploy/archive/BasicDD.exe --out exe/basicdd --entry-point 0x4012d0
     echo cargo run -p basicdd

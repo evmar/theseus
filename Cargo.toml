@@ -5,6 +5,7 @@ members = [
   "exe/chillin",
   "exe/chillin-unpack",
   "exe/dos/animate-unpack",
+  "exe/dos/animate-unpack-2",
   "exe/dos/animate",
   "exe/mine",
   "exe/mofo",
