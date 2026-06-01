@@ -19,6 +19,7 @@ fn encode_state(ctx: &Context) -> Result<Vec<u8>, iced_x86::IcedError> {
 }
 
 fn do_unpack(ctx: &mut Context) {
+    println!("unpacking, final state:");
     ctx.dump();
 
     let init = encode_state(ctx).unwrap();
@@ -26,4 +27,5 @@ fn do_unpack(ctx: &mut Context) {
     data[0..init.len()].copy_from_slice(&init);
 
     std::fs::write("animate.com", data).unwrap();
+    println!("wrote animate.com");
 }
