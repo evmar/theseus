@@ -98,6 +98,11 @@ fn load16(exe: &EXEData) -> Context {
     ctx
 }
 
+pub fn start16(ctx: &mut Context, exe: &EXEData) {
+    ctx.cpu_loop(exe.entry_point, 0);
+    panic!();
+}
+
 fn load32(exe: &EXEData) -> Context {
     let memory_size = 32 << 20;
     let memory = alloc_leak_memory(memory_size);
@@ -127,8 +132,7 @@ pub fn start32(ctx: &mut Context, exe: &EXEData) {
 pub fn run(exe: &EXEData) {
     let mut ctx = load(exe);
     if ctx.cpu.real_mode {
-        ctx.cpu_loop(exe.entry_point, 0);
-        panic!();
+        start16(&mut ctx, exe);
     } else {
         start32(&mut ctx, exe);
     }
