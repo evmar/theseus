@@ -6216,8 +6216,9 @@ pub fn x10e8(ctx: &mut Context) -> Cont {
 
 pub fn x10ee(ctx: &mut Context) -> Cont {
     // 000010ee sti
-    // Sti not implemented
-    todo!();
+    ctx.sti();
+    // 000010ef ret
+    ctx.ret16(0)
 }
 
 pub fn x10f0(ctx: &mut Context) -> Cont {

@@ -100,7 +100,7 @@ impl<'a> CodeGen<'a> {
                 self.line(format!("{}(ctx);", instr_name(instr)));
             }
 
-            Cli => {
+            Cli | Sti => {
                 self.line(format!("ctx.{}();", instr_name(instr)));
             }
 

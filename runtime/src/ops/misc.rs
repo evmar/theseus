@@ -70,6 +70,10 @@ impl Context {
         !self.cpu.flags.contains(Flags::ZF) as u8
     }
 
+    pub fn sti(&mut self) {
+        // TODO: self.cpu.flags.insert(Flags::IF);
+    }
+
     pub fn cli(&mut self) {
         // TODO: self.cpu.flags.remove(Flags::IF);
     }
