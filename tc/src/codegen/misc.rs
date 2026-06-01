@@ -81,7 +81,11 @@ impl<'a> CodeGen<'a> {
 
             Not => self.line(set_op(instr, 0, format!("!{}", get_op(instr, 0)))),
 
-            Int | Int3 | Cmpxchg | Pushfd | Cpuid | Xgetbv | Bt | Div => self.todo(),
+            Int => {
+                assert!(instr.op0_kind() == iced_x86::OpKind::Immediate8);
+                self.todo();
+            }
+            Int3 | Cmpxchg | Pushfd | Cpuid | Xgetbv | Bt | Div => self.todo(),
 
             Cbw => self.line("ctx.cpu.regs.set_ax(ctx.cpu.regs.get_al() as i8 as i16 as u16);"),
             Cwde => self.line("ctx.cpu.regs.eax = ctx.cpu.regs.get_ax() as i16 as i32 as u32;"),

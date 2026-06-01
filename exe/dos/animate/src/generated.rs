@@ -46,10 +46,7229 @@ pub fn x100(ctx: &mut Context) -> Cont {
     ctx.cpu.regs.set_ax(0x3508u16);
     // 00000113 int 21h
     todo!();
+    // 00000115 mov ds:[14D0h],es
+    ctx.memory
+        .write::<u16>((0x14d0 as u32), ctx.cpu.regs.get_es());
+    // 00000119 mov ds:[14D2h],bx
+    ctx.memory
+        .write::<u16>((0x14d2 as u32), ctx.cpu.regs.get_bx());
+    // 0000011d mov ax,3509h
+    ctx.cpu.regs.set_ax(0x3509u16);
+    // 00000120 int 21h
+    todo!();
+    // 00000122 mov ds:[14D4h],es
+    ctx.memory
+        .write::<u16>((0x14d4 as u32), ctx.cpu.regs.get_es());
+    // 00000126 mov ds:[14D6h],bx
+    ctx.memory
+        .write::<u16>((0x14d6 as u32), ctx.cpu.regs.get_bx());
+    // 0000012a push ds
+    ctx.push16(ctx.cpu.regs.get_ds());
+    // 0000012b push cs
+    ctx.push16(ctx.cpu.regs.get_cs());
+    // 0000012c pop ds
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_ds(x);
+    // 0000012d mov dx,1165h
+    ctx.cpu.regs.set_dx(0x1165u16);
+    // 00000130 mov ax,2509h
+    ctx.cpu.regs.set_ax(0x2509u16);
+    // 00000133 int 21h
+    todo!();
+    // 00000135 mov dx,1126h
+    ctx.cpu.regs.set_dx(0x1126u16);
+    // 00000138 mov ax,2508h
+    ctx.cpu.regs.set_ax(0x2508u16);
+    // 0000013b int 21h
+    todo!();
+    // 0000013d pop ds
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_ds(x);
+    // 0000013e mov dx,1234h
+    ctx.cpu.regs.set_dx(0x1234u16);
+    // 00000141 call 10DBh
+    ctx.call16(0x144, Cont(x10db))
 }
 
-const BLOCKS: [(u32, ContFn); 2] = [
+pub fn x144(ctx: &mut Context) -> Cont {
+    // 00000144 mov ax,sp
+    ctx.cpu.regs.set_ax(ctx.cpu.regs.get_sp());
+    // 00000146 shr ax,4
+    ctx.cpu
+        .regs
+        .set_ax(shr(ctx.cpu.regs.get_ax(), 0x4u8, &mut ctx.cpu.flags));
+    // 00000149 inc ax
+    ctx.cpu
+        .regs
+        .set_ax(inc(ctx.cpu.regs.get_ax(), &mut ctx.cpu.flags));
+    // 0000014a mov bx,ss
+    ctx.cpu.regs.set_bx(ctx.cpu.regs.get_ss());
+    // 0000014c add ax,bx
+    ctx.cpu.regs.set_ax(add(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_bx(),
+        &mut ctx.cpu.flags,
+    ));
+    // 0000014e mov fs,ax
+    ctx.cpu.regs.set_fs(ctx.cpu.regs.get_ax());
+    // 00000150 add ax,1000h
+    ctx.cpu
+        .regs
+        .set_ax(add(ctx.cpu.regs.get_ax(), 0x1000u16, &mut ctx.cpu.flags));
+    // 00000153 mov gs,ax
+    ctx.cpu.regs.set_gs(ctx.cpu.regs.get_ax());
+    // 00000155 add ax,1000h
+    ctx.cpu
+        .regs
+        .set_ax(add(ctx.cpu.regs.get_ax(), 0x1000u16, &mut ctx.cpu.flags));
+    // 00000158 mov ds:[14B6h],ax
+    ctx.memory
+        .write::<u16>((0x14b6 as u32), ctx.cpu.regs.get_ax());
+    // 0000015b mov es,ax
+    ctx.cpu.regs.set_es(ctx.cpu.regs.get_ax());
+    // 0000015d sub di,di
+    ctx.cpu.regs.set_di(sub(
+        ctx.cpu.regs.get_di(),
+        ctx.cpu.regs.get_di(),
+        &mut ctx.cpu.flags,
+    ));
+    // 0000015f mov bp,100h
+    ctx.cpu.regs.set_bp(0x100u16);
+    Cont(x162)
+}
+
+pub fn x162(ctx: &mut Context) -> Cont {
+    // 00000162 mov cx,100h
+    ctx.cpu.regs.set_cx(0x100u16);
+    Cont(x165)
+}
+
+pub fn x165(ctx: &mut Context) -> Cont {
+    // 00000165 mov ax,bp
+    ctx.cpu.regs.set_ax(ctx.cpu.regs.get_bp());
+    // 00000167 dec ax
+    ctx.cpu
+        .regs
+        .set_ax(dec(ctx.cpu.regs.get_ax(), &mut ctx.cpu.flags));
+    // 00000168 and ax,3Fh
+    ctx.cpu
+        .regs
+        .set_ax(and(ctx.cpu.regs.get_ax(), 0x3fu16, &mut ctx.cpu.flags));
+    // 0000016b sub ax,20h
+    ctx.cpu
+        .regs
+        .set_ax(sub(ctx.cpu.regs.get_ax(), 0x20u16, &mut ctx.cpu.flags));
+    // 0000016e imul ax
+    ctx.cpu.regs.set_dx_ax(imul1_16(
+        ctx.cpu.regs.eax as u16,
+        ctx.cpu.regs.get_ax(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000170 mov bx,ax
+    ctx.cpu.regs.set_bx(ctx.cpu.regs.get_ax());
+    // 00000172 mov ax,cx
+    ctx.cpu.regs.set_ax(ctx.cpu.regs.get_cx());
+    // 00000174 dec ax
+    ctx.cpu
+        .regs
+        .set_ax(dec(ctx.cpu.regs.get_ax(), &mut ctx.cpu.flags));
+    // 00000175 and ax,3Fh
+    ctx.cpu
+        .regs
+        .set_ax(and(ctx.cpu.regs.get_ax(), 0x3fu16, &mut ctx.cpu.flags));
+    // 00000178 sub ax,20h
+    ctx.cpu
+        .regs
+        .set_ax(sub(ctx.cpu.regs.get_ax(), 0x20u16, &mut ctx.cpu.flags));
+    // 0000017b imul ax
+    ctx.cpu.regs.set_dx_ax(imul1_16(
+        ctx.cpu.regs.eax as u16,
+        ctx.cpu.regs.get_ax(),
+        &mut ctx.cpu.flags,
+    ));
+    // 0000017d add ax,bx
+    ctx.cpu.regs.set_ax(add(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_bx(),
+        &mut ctx.cpu.flags,
+    ));
+    // 0000017f shr ax,6
+    ctx.cpu
+        .regs
+        .set_ax(shr(ctx.cpu.regs.get_ax(), 0x6u8, &mut ctx.cpu.flags));
+    // 00000182 inc al
+    ctx.cpu
+        .regs
+        .set_al(inc(ctx.cpu.regs.get_al(), &mut ctx.cpu.flags));
+    // 00000184 cmp al,10h
+    sub(ctx.cpu.regs.get_al(), 0x10u8, &mut ctx.cpu.flags);
+    // 00000186 jbe short 018Ch
+    ctx.jbe(Cont(x188), Cont(x18c))
+}
+
+pub fn x188(ctx: &mut Context) -> Cont {
+    // 00000188 sub al,al
+    ctx.cpu.regs.set_al(sub(
+        ctx.cpu.regs.get_al(),
+        ctx.cpu.regs.get_al(),
+        &mut ctx.cpu.flags,
+    ));
+    // 0000018a jmp short 0194h
+    Cont(x194)
+}
+
+pub fn x18c(ctx: &mut Context) -> Cont {
+    // 0000018c add al,0Ch
+    ctx.cpu
+        .regs
+        .set_al(add(ctx.cpu.regs.get_al(), 0xcu8, &mut ctx.cpu.flags));
+    // 0000018e cmp al,1Ah
+    sub(ctx.cpu.regs.get_al(), 0x1au8, &mut ctx.cpu.flags);
+    // 00000190 jb short 0194h
+    ctx.jb(Cont(x192), Cont(x194))
+}
+
+pub fn x192(ctx: &mut Context) -> Cont {
+    // 00000192 mov al,1Ah
+    ctx.cpu.regs.set_al(0x1au8);
+    Cont(x194)
+}
+
+pub fn x194(ctx: &mut Context) -> Cont {
+    // 00000194 stosb
+    ctx.stosb();
+    // 00000195 loop 0165h
+    ctx.loop_(Cont(x197), Cont(x165))
+}
+
+pub fn x197(ctx: &mut Context) -> Cont {
+    // 00000197 dec bp
+    ctx.cpu
+        .regs
+        .set_bp(dec(ctx.cpu.regs.get_bp(), &mut ctx.cpu.flags));
+    // 00000198 jne short 0162h
+    ctx.jne(Cont(x19a), Cont(x162))
+}
+
+pub fn x19a(ctx: &mut Context) -> Cont {
+    // 0000019a mov di,8000h
+    ctx.cpu.regs.set_di(0x8000u16);
+    // 0000019d mov cx,1000h
+    ctx.cpu.regs.set_cx(0x1000u16);
+    // 000001a0 mov ax,0C08h
+    ctx.cpu.regs.set_ax(0xc08u16);
+    // 000001a3 rep stosw
+    ctx.rep(Rep::REP, Context::stosw);
+    // 000001a5 push fs
+    ctx.push16(ctx.cpu.regs.get_fs());
+    // 000001a7 pop es
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_es(x);
+    // 000001a8 mov di,6900h
+    ctx.cpu.regs.set_di(0x6900u16);
+    // 000001ab mov bp,0FFC0h
+    ctx.cpu.regs.set_bp(0xffc0u16);
+    Cont(x1ae)
+}
+
+pub fn x1ae(ctx: &mut Context) -> Cont {
+    // 000001ae mov cx,0FFC0h
+    ctx.cpu.regs.set_cx(0xffc0u16);
+    Cont(x1b1)
+}
+
+pub fn x1b1(ctx: &mut Context) -> Cont {
+    // 000001b1 test cx,cx
+    and(
+        ctx.cpu.regs.get_cx(),
+        ctx.cpu.regs.get_cx(),
+        &mut ctx.cpu.flags,
+    );
+    // 000001b3 je short 01BDh
+    ctx.je(Cont(x1b5), Cont(x1bd))
+}
+
+pub fn x1b5(ctx: &mut Context) -> Cont {
+    // 000001b5 mov ax,bp
+    ctx.cpu.regs.set_ax(ctx.cpu.regs.get_bp());
+    // 000001b7 shl ax,8
+    ctx.cpu
+        .regs
+        .set_ax(shl(ctx.cpu.regs.get_ax(), 0x8u8, &mut ctx.cpu.flags));
+    // 000001ba cwd
+    // Cwd not implemented
+    todo!();
+    Cont(x1bd)
+}
+
+pub fn x1bd(ctx: &mut Context) -> Cont {
+    // 000001bd stosw
+    ctx.stosw();
+    // 000001be inc cx
+    ctx.cpu
+        .regs
+        .set_cx(inc(ctx.cpu.regs.get_cx(), &mut ctx.cpu.flags));
+    // 000001bf cmp cx,40h
+    sub(ctx.cpu.regs.get_cx(), 0x40u16, &mut ctx.cpu.flags);
+    // 000001c2 jl short 01B1h
+    ctx.jl(Cont(x1c4), Cont(x1b1))
+}
+
+pub fn x1c4(ctx: &mut Context) -> Cont {
+    // 000001c4 inc bp
+    ctx.cpu
+        .regs
+        .set_bp(inc(ctx.cpu.regs.get_bp(), &mut ctx.cpu.flags));
+    // 000001c5 cmp bp,40h
+    sub(ctx.cpu.regs.get_bp(), 0x40u16, &mut ctx.cpu.flags);
+    // 000001c8 jl short 01AEh
+    ctx.jl(Cont(x1ca), Cont(x1ae))
+}
+
+pub fn x1ca(ctx: &mut Context) -> Cont {
+    // 000001ca push ds
+    ctx.push16(ctx.cpu.regs.get_ds());
+    // 000001cb pop es
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_es(x);
+    // 000001cc mov di,14DAh
+    ctx.cpu.regs.set_di(0x14dau16);
+    // 000001cf sub ebp,ebp
+    ctx.cpu.regs.ebp = sub(ctx.cpu.regs.ebp, ctx.cpu.regs.ebp, &mut ctx.cpu.flags);
+    // 000001d2 mov word ptr ds:[14B4h],200h
+    ctx.memory.write::<u16>((0x14b4 as u32), 0x200u16);
+    Cont(x1d8)
+}
+
+pub fn x1d8(ctx: &mut Context) -> Cont {
+    // 000001d8 add ebp,0C9h
+    ctx.cpu.regs.ebp = add(ctx.cpu.regs.ebp, 0xc9u32, &mut ctx.cpu.flags);
+    // 000001df mov ebx,ebp
+    ctx.cpu.regs.ebx = ctx.cpu.regs.ebp;
+    // 000001e2 mov si,134Ch
+    ctx.cpu.regs.set_si(0x134cu16);
+    // 000001e5 mov cx,5
+    ctx.cpu.regs.set_cx(0x5u16);
+    // 000001e8 mov eax,ebp
+    ctx.cpu.regs.eax = ctx.cpu.regs.ebp;
+    Cont(x1eb)
+}
+
+pub fn x1eb(ctx: &mut Context) -> Cont {
+    // 000001eb mul ebp
+    let res = mul(
+        ctx.cpu.regs.eax as u32 as u64,
+        ctx.cpu.regs.ebp as u64,
+        &mut ctx.cpu.flags,
+    );
+    ctx.cpu.regs.set_edx_eax(res);
+    // 000001ee shrd eax,edx,0Fh
+    ctx.cpu.regs.eax = shrd(
+        ctx.cpu.regs.eax,
+        ctx.cpu.regs.edx,
+        0xfu8,
+        &mut ctx.cpu.flags,
+    );
+    // 000001f3 shr edx,0Fh
+    ctx.cpu.regs.edx = shr(ctx.cpu.regs.edx, 0xfu8, &mut ctx.cpu.flags);
+    // 000001f7 mul ebp
+    let res = mul(
+        ctx.cpu.regs.eax as u32 as u64,
+        ctx.cpu.regs.ebp as u64,
+        &mut ctx.cpu.flags,
+    );
+    ctx.cpu.regs.set_edx_eax(res);
+    // 000001fa shrd eax,edx,0Fh
+    ctx.cpu.regs.eax = shrd(
+        ctx.cpu.regs.eax,
+        ctx.cpu.regs.edx,
+        0xfu8,
+        &mut ctx.cpu.flags,
+    );
+    // 000001ff shr edx,0Fh
+    ctx.cpu.regs.edx = shr(ctx.cpu.regs.edx, 0xfu8, &mut ctx.cpu.flags);
+    // 00000203 push eax
+    ctx.push32(ctx.cpu.regs.eax);
+    // 00000205 div dword ptr [si]
+    let (quot, rem) = div(
+        ctx.cpu.regs.get_edx_eax(),
+        ctx.memory.read::<u32>(ctx.cpu.regs.get_si()) as u64,
+    );
+    ctx.cpu.regs.eax = quot as u32;
+    ctx.cpu.regs.edx = rem as u32;
+    // 00000208 add si,4
+    ctx.cpu
+        .regs
+        .set_si(add(ctx.cpu.regs.get_si(), 0x4u16, &mut ctx.cpu.flags));
+    // 0000020b neg ebx
+    ctx.cpu.regs.ebx = neg(ctx.cpu.regs.ebx, &mut ctx.cpu.flags);
+    // 0000020e add ebx,eax
+    ctx.cpu.regs.ebx = add(ctx.cpu.regs.ebx, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
+    // 00000211 pop eax
+    let x = ctx.pop32();
+    ctx.cpu.regs.eax = x;
+    // 00000213 loop 01EBh
+    ctx.loop_(Cont(x215), Cont(x1eb))
+}
+
+pub fn x215(ctx: &mut Context) -> Cont {
+    // 00000215 mov eax,ebx
+    ctx.cpu.regs.eax = ctx.cpu.regs.ebx;
+    // 00000218 shr eax,0
+    ctx.cpu.regs.eax = shr(ctx.cpu.regs.eax, 0x0u8, &mut ctx.cpu.flags);
+    // 0000021c cmp ax,8000h
+    sub(ctx.cpu.regs.get_ax(), 0x8000u16, &mut ctx.cpu.flags);
+    // 0000021f jne short 0222h
+    ctx.jne(Cont(x221), Cont(x222))
+}
+
+pub fn x221(ctx: &mut Context) -> Cont {
+    // 00000221 inc ax
+    ctx.cpu
+        .regs
+        .set_ax(inc(ctx.cpu.regs.get_ax(), &mut ctx.cpu.flags));
+    Cont(x222)
+}
+
+pub fn x222(ctx: &mut Context) -> Cont {
+    // 00000222 stosw
+    ctx.stosw();
+    // 00000223 neg ax
+    ctx.cpu
+        .regs
+        .set_ax(neg(ctx.cpu.regs.get_ax(), &mut ctx.cpu.flags));
+    // 00000225 mov es:[di+3FEh],ax
+    ctx.memory.write::<u16>(
+        (todo!() as u32)
+            .wrapping_add(ctx.cpu.regs.get_di() as u32)
+            .wrapping_add(0x3fe as u32),
+        ctx.cpu.regs.get_ax(),
+    );
+    // 0000022a dec word ptr ds:[14B4h]
+    ctx.memory.write::<u16>(
+        (0x14b4 as u32),
+        dec(ctx.memory.read::<u16>((0x14b4 as u32)), &mut ctx.cpu.flags),
+    );
+    // 0000022e jne short 01D8h
+    ctx.jne(Cont(x230), Cont(x1d8))
+}
+
+pub fn x230(ctx: &mut Context) -> Cont {
+    // 00000230 mov di,1CDAh
+    ctx.cpu.regs.set_di(0x1cdau16);
+    // 00000233 mov si,14DAh
+    ctx.cpu.regs.set_si(0x14dau16);
+    // 00000236 mov cx,100h
+    ctx.cpu.regs.set_cx(0x100u16);
+    // 00000239 rep movsw
+    ctx.rep(Rep::REP, Context::movsw);
+    // 0000023b mov di,5523h
+    ctx.cpu.regs.set_di(0x5523u16);
+    // 0000023e mov bp,800h
+    ctx.cpu.regs.set_bp(0x800u16);
+    // 00000241 mov cx,489h
+    ctx.cpu.regs.set_cx(0x489u16);
+    Cont(x244)
+}
+
+pub fn x244(ctx: &mut Context) -> Cont {
+    // 00000244 mov bx,ds:[bp+14DAh]
+    ctx.cpu.regs.set_bx(
+        ctx.memory
+            .read::<u16>((ctx.cpu.regs.get_bp() as u32).wrapping_add(0x14da as u32)),
+    );
+    // 00000249 sar bx,8
+    ctx.cpu
+        .regs
+        .set_bx(sar(ctx.cpu.regs.get_bx(), 0x8u8, &mut ctx.cpu.flags));
+    // 0000024c add bx,bx
+    ctx.cpu.regs.set_bx(add(
+        ctx.cpu.regs.get_bx(),
+        ctx.cpu.regs.get_bx(),
+        &mut ctx.cpu.flags,
+    ));
+    // 0000024e mov ax,[bx+1676h]
+    ctx.cpu.regs.set_ax(
+        ctx.memory
+            .read::<u16>((ctx.cpu.regs.get_bx() as u32).wrapping_add(0x1676 as u32)),
+    );
+    // 00000252 cwd
+    // Cwd not implemented
+    todo!();
+}
+
+pub fn x263(ctx: &mut Context) -> Cont {
+    // 00000263 mov si,13E0h
+    ctx.cpu.regs.set_si(0x13e0u16);
+    // 00000266 mov di,3A20h
+    ctx.cpu.regs.set_di(0x3a20u16);
+    // 00000269 mov cx,24h
+    ctx.cpu.regs.set_cx(0x24u16);
+    Cont(x26c)
+}
+
+pub fn x26c(ctx: &mut Context) -> Cont {
+    // 0000026c push cx
+    ctx.push16(ctx.cpu.regs.get_cx());
+    // 0000026d mov dh,[si-2]
+    ctx.cpu.regs.set_dh(
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.get_si().wrapping_add(0xfffe)),
+    );
+    // 00000270 sub dh,[si]
+    ctx.cpu.regs.set_dh(sub(
+        ctx.cpu.regs.get_dh(),
+        ctx.memory.read::<u8>(ctx.cpu.regs.get_si()),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000272 mov al,[si+1]
+    ctx.cpu.regs.set_al(
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.get_si().wrapping_add(0x1)),
+    );
+    // 00000275 sub al,[si-1]
+    ctx.cpu.regs.set_al(sub(
+        ctx.cpu.regs.get_al(),
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.get_si().wrapping_add(0xffff)),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000278 mov dl,al
+    ctx.cpu.regs.set_dl(ctx.cpu.regs.get_al());
+    // 0000027a imul al
+    ctx.cpu.regs.set_ax(imul1_8(
+        ctx.cpu.regs.eax as u8,
+        ctx.cpu.regs.get_al(),
+        &mut ctx.cpu.flags,
+    ));
+    // 0000027c mov bx,ax
+    ctx.cpu.regs.set_bx(ctx.cpu.regs.get_ax());
+    // 0000027e mov al,dh
+    ctx.cpu.regs.set_al(ctx.cpu.regs.get_dh());
+    // 00000280 imul al
+    ctx.cpu.regs.set_ax(imul1_8(
+        ctx.cpu.regs.eax as u8,
+        ctx.cpu.regs.get_al(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000282 add ax,bx
+    ctx.cpu.regs.set_ax(add(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_bx(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000284 inc ax
+    ctx.cpu
+        .regs
+        .set_ax(inc(ctx.cpu.regs.get_ax(), &mut ctx.cpu.flags));
+    // 00000285 movzx eax,ax
+    ctx.cpu.regs.eax = ctx.cpu.regs.get_ax() as _;
+    // 00000289 push si
+    ctx.push16(ctx.cpu.regs.get_si());
+    // 0000028a call 10F0h
+    ctx.call16(0x28d, Cont(x10f0))
+}
+
+pub fn x28d(ctx: &mut Context) -> Cont {
+    // 0000028d pop si
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_si(x);
+    // 0000028e mov bp,dx
+    ctx.cpu.regs.set_bp(ctx.cpu.regs.get_dx());
+    // 00000290 mov cx,3Fh
+    ctx.cpu.regs.set_cx(0x3fu16);
+    // 00000293 movsx ax,dl
+    ctx.cpu
+        .regs
+        .set_ax(ctx.cpu.regs.get_dl() as i8 as i16 as u16);
+    // 00000296 imul cx
+    ctx.cpu.regs.set_dx_ax(imul1_16(
+        ctx.cpu.regs.eax as u16,
+        ctx.cpu.regs.get_cx(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000298 idiv bx
+    let x = ctx.cpu.regs.get_dx_ax() as i32;
+    let y = ctx.cpu.regs.get_bx() as i16 as i32;
+    ctx.cpu.regs.set_ax((x / y) as i16 as u16);
+    ctx.cpu.regs.set_dx((x % y) as i16 as u16);
+    // 0000029a stosb
+    ctx.stosb();
+    // 0000029b mov dx,bp
+    ctx.cpu.regs.set_dx(ctx.cpu.regs.get_bp());
+    // 0000029d movsx ax,dh
+    ctx.cpu
+        .regs
+        .set_ax(ctx.cpu.regs.get_dh() as i8 as i16 as u16);
+    // 000002a0 imul cx
+    ctx.cpu.regs.set_dx_ax(imul1_16(
+        ctx.cpu.regs.eax as u16,
+        ctx.cpu.regs.get_cx(),
+        &mut ctx.cpu.flags,
+    ));
+    // 000002a2 idiv bx
+    let x = ctx.cpu.regs.get_dx_ax() as i32;
+    let y = ctx.cpu.regs.get_bx() as i16 as i32;
+    ctx.cpu.regs.set_ax((x / y) as i16 as u16);
+    ctx.cpu.regs.set_dx((x % y) as i16 as u16);
+    // 000002a4 stosb
+    ctx.stosb();
+    // 000002a5 add si,2
+    ctx.cpu
+        .regs
+        .set_si(add(ctx.cpu.regs.get_si(), 0x2u16, &mut ctx.cpu.flags));
+    // 000002a8 pop cx
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_cx(x);
+    // 000002a9 loop 026Ch
+    ctx.loop_(Cont(x2ab), Cont(x26c))
+}
+
+pub fn x2ab(ctx: &mut Context) -> Cont {
+    // 000002ab mov si,3A20h
+    ctx.cpu.regs.set_si(0x3a20u16);
+    // 000002ae mov bp,13E2h
+    ctx.cpu.regs.set_bp(0x13e2u16);
+    // 000002b1 mov di,2CA0h
+    ctx.cpu.regs.set_di(0x2ca0u16);
+    // 000002b4 mov cx,23h
+    ctx.cpu.regs.set_cx(0x23u16);
+    Cont(x2b7)
+}
+
+pub fn x2b7(ctx: &mut Context) -> Cont {
+    // 000002b7 push cx
+    ctx.push16(ctx.cpu.regs.get_cx());
+    // 000002b8 mov dx,ds:[bp]
+    ctx.cpu
+        .regs
+        .set_dx(ctx.memory.read::<u16>((ctx.cpu.regs.get_bp() as u32)));
+    // 000002bc mov bx,780h
+    ctx.cpu.regs.set_bx(0x780u16);
+    Cont(x2bf)
+}
+
+pub fn x2bf(ctx: &mut Context) -> Cont {
+    // 000002bf mov al,dl
+    ctx.cpu.regs.set_al(ctx.cpu.regs.get_dl());
+    // 000002c1 imul byte ptr [bx+16DBh]
+    ctx.cpu.regs.set_ax(imul1_8(
+        ctx.cpu.regs.eax as u8,
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.get_bx().wrapping_add(0x16db)),
+        &mut ctx.cpu.flags,
+    ));
+    // 000002c5 sar ax,7
+    ctx.cpu
+        .regs
+        .set_ax(sar(ctx.cpu.regs.get_ax(), 0x7u8, &mut ctx.cpu.flags));
+    // 000002c8 stosb
+    ctx.stosb();
+    // 000002c9 mov al,dh
+    ctx.cpu.regs.set_al(ctx.cpu.regs.get_dh());
+    // 000002cb stosb
+    ctx.stosb();
+    // 000002cc mov al,dl
+    ctx.cpu.regs.set_al(ctx.cpu.regs.get_dl());
+    // 000002ce imul byte ptr [bx+14DBh]
+    ctx.cpu.regs.set_ax(imul1_8(
+        ctx.cpu.regs.eax as u8,
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.get_bx().wrapping_add(0x14db)),
+        &mut ctx.cpu.flags,
+    ));
+    // 000002d2 sar ax,7
+    ctx.cpu
+        .regs
+        .set_ax(sar(ctx.cpu.regs.get_ax(), 0x7u8, &mut ctx.cpu.flags));
+    // 000002d5 stosb
+    ctx.stosb();
+    // 000002d6 push dx
+    ctx.push16(ctx.cpu.regs.get_dx());
+    // 000002d7 mov al,[si+2]
+    ctx.cpu.regs.set_al(
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.get_si().wrapping_add(0x2)),
+    );
+    // 000002da mov cx,ax
+    ctx.cpu.regs.set_cx(ctx.cpu.regs.get_ax());
+    // 000002dc imul byte ptr [bx+16DBh]
+    ctx.cpu.regs.set_ax(imul1_8(
+        ctx.cpu.regs.eax as u8,
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.get_bx().wrapping_add(0x16db)),
+        &mut ctx.cpu.flags,
+    ));
+    // 000002e0 sar ax,7
+    ctx.cpu
+        .regs
+        .set_ax(sar(ctx.cpu.regs.get_ax(), 0x7u8, &mut ctx.cpu.flags));
+    // 000002e3 mov [di+6BDh],al
+    ctx.memory.write::<u8>(
+        ctx.cpu.regs.get_di().wrapping_add(0x6bd),
+        ctx.cpu.regs.get_al(),
+    );
+    // 000002e7 mov al,[si+3]
+    ctx.cpu.regs.set_al(
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.get_si().wrapping_add(0x3)),
+    );
+    // 000002ea mov [di+6BEh],al
+    ctx.memory.write::<u8>(
+        ctx.cpu.regs.get_di().wrapping_add(0x6be),
+        ctx.cpu.regs.get_al(),
+    );
+    // 000002ee mov ax,cx
+    ctx.cpu.regs.set_ax(ctx.cpu.regs.get_cx());
+    // 000002f0 imul byte ptr [bx+14DBh]
+    ctx.cpu.regs.set_ax(imul1_8(
+        ctx.cpu.regs.eax as u8,
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.get_bx().wrapping_add(0x14db)),
+        &mut ctx.cpu.flags,
+    ));
+    // 000002f4 sar ax,7
+    ctx.cpu
+        .regs
+        .set_ax(sar(ctx.cpu.regs.get_ax(), 0x7u8, &mut ctx.cpu.flags));
+    // 000002f7 mov [di+6BFh],al
+    ctx.memory.write::<u8>(
+        ctx.cpu.regs.get_di().wrapping_add(0x6bf),
+        ctx.cpu.regs.get_al(),
+    );
+    // 000002fb pop dx
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_dx(x);
+    // 000002fc sub bx,80h
+    ctx.cpu
+        .regs
+        .set_bx(sub(ctx.cpu.regs.get_bx(), 0x80u16, &mut ctx.cpu.flags));
+    // 00000300 jns short 02BFh
+    ctx.jns(Cont(x302), Cont(x2bf))
+}
+
+pub fn x302(ctx: &mut Context) -> Cont {
+    // 00000302 add si,2
+    ctx.cpu
+        .regs
+        .set_si(add(ctx.cpu.regs.get_si(), 0x2u16, &mut ctx.cpu.flags));
+    // 00000305 add bp,2
+    ctx.cpu
+        .regs
+        .set_bp(add(ctx.cpu.regs.get_bp(), 0x2u16, &mut ctx.cpu.flags));
+    // 00000308 pop cx
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_cx(x);
+    // 00000309 loop 02B7h
+    ctx.loop_(Cont(x30b), Cont(x2b7))
+}
+
+pub fn x30b(ctx: &mut Context) -> Cont {
+    // 0000030b mov ax,13h
+    ctx.cpu.regs.set_ax(0x13u16);
+    // 0000030e int 10h
+    todo!();
+    // 00000310 mov di,7224h
+    ctx.cpu.regs.set_di(0x7224u16);
+    // 00000313 mov cx,300h
+    ctx.cpu.regs.set_cx(0x300u16);
+    // 00000316 mov al,3Fh
+    ctx.cpu.regs.set_al(0x3fu8);
+    // 00000318 rep stosb
+    ctx.rep(Rep::REP, Context::stosb);
+    // 0000031a mov bp,40h
+    ctx.cpu.regs.set_bp(0x40u16);
+    Cont(x31d)
+}
+
+pub fn x31d(ctx: &mut Context) -> Cont {
+    // 0000031d call 0EA3h
+    ctx.call16(0x320, Cont(xea3))
+}
+
+pub fn x320(ctx: &mut Context) -> Cont {
+    // 00000320 dec bp
+    ctx.cpu
+        .regs
+        .set_bp(dec(ctx.cpu.regs.get_bp(), &mut ctx.cpu.flags));
+    // 00000321 jne short 031Dh
+    ctx.jne(Cont(x323), Cont(x31d))
+}
+
+pub fn x323(ctx: &mut Context) -> Cont {
+    // 00000323 call 0F47h
+    ctx.call16(0x326, Cont(xf47))
+}
+
+pub fn x326(ctx: &mut Context) -> Cont {
+    // 00000326 mov si,142Ah
+    ctx.cpu.regs.set_si(0x142au16);
+    // 00000329 mov di,7524h
+    ctx.cpu.regs.set_di(0x7524u16);
+    // 0000032c mov bp,40h
+    ctx.cpu.regs.set_bp(0x40u16);
+    Cont(x32f)
+}
+
+pub fn x32f(ctx: &mut Context) -> Cont {
+    // 0000032f lodsw
+    ctx.lodsw();
+    // 00000330 mov cx,10h
+    ctx.cpu.regs.set_cx(0x10u16);
+    Cont(x333)
+}
+
+pub fn x333(ctx: &mut Context) -> Cont {
+    // 00000333 shr ax,1
+    ctx.cpu
+        .regs
+        .set_ax(shr(ctx.cpu.regs.get_ax(), 0x1u8, &mut ctx.cpu.flags));
+    // 00000335 jae short 0348h
+    ctx.jae(Cont(x337), Cont(x348))
+}
+
+pub fn x337(ctx: &mut Context) -> Cont {
+    // 00000337 add byte ptr [di],1Fh
+    ctx.memory.write::<u8>(
+        ctx.cpu.regs.get_di(),
+        add(
+            ctx.memory.read::<u8>(ctx.cpu.regs.get_di()),
+            0x1fu8,
+            &mut ctx.cpu.flags,
+        ),
+    );
+    // 0000033a add byte ptr [di+40h],1Fh
+    ctx.memory.write::<u8>(
+        ctx.cpu.regs.get_di().wrapping_add(0x40),
+        add(
+            ctx.memory
+                .read::<u8>(ctx.cpu.regs.get_di().wrapping_add(0x40)),
+            0x1fu8,
+            &mut ctx.cpu.flags,
+        ),
+    );
+    // 0000033e add byte ptr [di+80h],1Fh
+    ctx.memory.write::<u8>(
+        ctx.cpu.regs.get_di().wrapping_add(0x80),
+        add(
+            ctx.memory
+                .read::<u8>(ctx.cpu.regs.get_di().wrapping_add(0x80)),
+            0x1fu8,
+            &mut ctx.cpu.flags,
+        ),
+    );
+    // 00000343 add byte ptr [di+0C0h],1Fh
+    ctx.memory.write::<u8>(
+        ctx.cpu.regs.get_di().wrapping_add(0xc0),
+        add(
+            ctx.memory
+                .read::<u8>(ctx.cpu.regs.get_di().wrapping_add(0xc0)),
+            0x1fu8,
+            &mut ctx.cpu.flags,
+        ),
+    );
+    Cont(x348)
+}
+
+pub fn x348(ctx: &mut Context) -> Cont {
+    // 00000348 add di,100h
+    ctx.cpu
+        .regs
+        .set_di(add(ctx.cpu.regs.get_di(), 0x100u16, &mut ctx.cpu.flags));
+    // 0000034c loop 0333h
+    ctx.loop_(Cont(x34e), Cont(x333))
+}
+
+pub fn x34e(ctx: &mut Context) -> Cont {
+    // 0000034e sub di,0FFFh
+    ctx.cpu
+        .regs
+        .set_di(sub(ctx.cpu.regs.get_di(), 0xfffu16, &mut ctx.cpu.flags));
+    // 00000352 dec bp
+    ctx.cpu
+        .regs
+        .set_bp(dec(ctx.cpu.regs.get_bp(), &mut ctx.cpu.flags));
+    // 00000353 jne short 032Fh
+    ctx.jne(Cont(x355), Cont(x32f))
+}
+
+pub fn x355(ctx: &mut Context) -> Cont {
+    // 00000355 mov ax,ds:[14B6h]
+    ctx.cpu.regs.set_ax(ctx.memory.read::<u16>((0x14b6 as u32)));
+    // 00000358 mov es,ax
+    ctx.cpu.regs.set_es(ctx.cpu.regs.get_ax());
+    // 0000035a sub di,di
+    ctx.cpu.regs.set_di(sub(
+        ctx.cpu.regs.get_di(),
+        ctx.cpu.regs.get_di(),
+        &mut ctx.cpu.flags,
+    ));
+    // 0000035c mov cx,8500h
+    ctx.cpu.regs.set_cx(0x8500u16);
+    Cont(x35f)
+}
+
+pub fn x35f(ctx: &mut Context) -> Cont {
+    // 0000035f xor al,ah
+    ctx.cpu.regs.set_al(xor(
+        ctx.cpu.regs.get_al(),
+        ctx.cpu.regs.get_ah(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000361 add dx,0A382h
+    ctx.cpu
+        .regs
+        .set_dx(add(ctx.cpu.regs.get_dx(), 0xa382u16, &mut ctx.cpu.flags));
+    // 00000365 add ax,dx
+    ctx.cpu.regs.set_ax(add(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_dx(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000367 and al,1Fh
+    ctx.cpu
+        .regs
+        .set_al(and(ctx.cpu.regs.get_al(), 0x1fu8, &mut ctx.cpu.flags));
+    // 00000369 mov bl,al
+    ctx.cpu.regs.set_bl(ctx.cpu.regs.get_al());
+    // 0000036b shr bl,2
+    ctx.cpu
+        .regs
+        .set_bl(shr(ctx.cpu.regs.get_bl(), 0x2u8, &mut ctx.cpu.flags));
+    // 0000036e sub al,bl
+    ctx.cpu.regs.set_al(sub(
+        ctx.cpu.regs.get_al(),
+        ctx.cpu.regs.get_bl(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000370 add al,20h
+    ctx.cpu
+        .regs
+        .set_al(add(ctx.cpu.regs.get_al(), 0x20u8, &mut ctx.cpu.flags));
+    // 00000372 stosb
+    ctx.stosb();
+    // 00000373 loop 035Fh
+    ctx.loop_(Cont(x375), Cont(x35f))
+}
+
+pub fn x375(ctx: &mut Context) -> Cont {
+    // 00000375 mov bx,5
+    ctx.cpu.regs.set_bx(0x5u16);
+    Cont(x378)
+}
+
+pub fn x378(ctx: &mut Context) -> Cont {
+    // 00000378 sub di,di
+    ctx.cpu.regs.set_di(sub(
+        ctx.cpu.regs.get_di(),
+        ctx.cpu.regs.get_di(),
+        &mut ctx.cpu.flags,
+    ));
+    // 0000037a mov cx,8500h
+    ctx.cpu.regs.set_cx(0x8500u16);
+    Cont(x37d)
+}
+
+pub fn x37d(ctx: &mut Context) -> Cont {
+    // 0000037d mov al,es:[di]
+    ctx.cpu.regs.set_al(
+        ctx.memory
+            .read::<u8>(todo!().wrapping_add(ctx.cpu.regs.get_di())),
+    );
+    // 00000380 add al,es:[di+1]
+    ctx.cpu.regs.set_al(add(
+        ctx.cpu.regs.get_al(),
+        ctx.memory.read::<u8>(
+            todo!()
+                .wrapping_add(ctx.cpu.regs.get_di())
+                .wrapping_add(0x1),
+        ),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000384 add al,es:[di+100h]
+    ctx.cpu.regs.set_al(add(
+        ctx.cpu.regs.get_al(),
+        ctx.memory.read::<u8>(
+            todo!()
+                .wrapping_add(ctx.cpu.regs.get_di())
+                .wrapping_add(0x100),
+        ),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000389 add al,es:[di+101h]
+    ctx.cpu.regs.set_al(add(
+        ctx.cpu.regs.get_al(),
+        ctx.memory.read::<u8>(
+            todo!()
+                .wrapping_add(ctx.cpu.regs.get_di())
+                .wrapping_add(0x101),
+        ),
+        &mut ctx.cpu.flags,
+    ));
+    // 0000038e add al,3
+    ctx.cpu
+        .regs
+        .set_al(add(ctx.cpu.regs.get_al(), 0x3u8, &mut ctx.cpu.flags));
+    // 00000390 shr al,2
+    ctx.cpu
+        .regs
+        .set_al(shr(ctx.cpu.regs.get_al(), 0x2u8, &mut ctx.cpu.flags));
+    // 00000393 stosb
+    ctx.stosb();
+    // 00000394 loop 037Dh
+    ctx.loop_(Cont(x396), Cont(x37d))
+}
+
+pub fn x396(ctx: &mut Context) -> Cont {
+    // 00000396 dec bx
+    ctx.cpu
+        .regs
+        .set_bx(dec(ctx.cpu.regs.get_bx(), &mut ctx.cpu.flags));
+    // 00000397 jne short 0378h
+    ctx.jne(Cont(x399), Cont(x378))
+}
+
+pub fn x399(ctx: &mut Context) -> Cont {
+    // 00000399 push ds
+    ctx.push16(ctx.cpu.regs.get_ds());
+    // 0000039a pop es
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_es(x);
+    // 0000039b mov di,1EDAh
+    ctx.cpu.regs.set_di(0x1edau16);
+    // 0000039e mov bp,81h
+    ctx.cpu.regs.set_bp(0x81u16);
+    Cont(x3a1)
+}
+
+pub fn x3a1(ctx: &mut Context) -> Cont {
+    // 000003a1 call 0BE8h
+    ctx.call16(0x3a4, Cont(xbe8))
+}
+
+pub fn x3a4(ctx: &mut Context) -> Cont {
+    // 000003a4 add ax,ax
+    ctx.cpu.regs.set_ax(add(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_ax(),
+        &mut ctx.cpu.flags,
+    ));
+    // 000003a6 sar ax,1
+    ctx.cpu
+        .regs
+        .set_ax(sar(ctx.cpu.regs.get_ax(), 0x1u8, &mut ctx.cpu.flags));
+    // 000003a8 stosw
+    ctx.stosw();
+    // 000003a9 dec bp
+    ctx.cpu
+        .regs
+        .set_bp(dec(ctx.cpu.regs.get_bp(), &mut ctx.cpu.flags));
+    // 000003aa jne short 03A1h
+    ctx.jne(Cont(x3ac), Cont(x3a1))
+}
+
+pub fn x3ac(ctx: &mut Context) -> Cont {
+    // 000003ac mov di,2B48h
+    ctx.cpu.regs.set_di(0x2b48u16);
+    // 000003af mov bp,2Bh
+    ctx.cpu.regs.set_bp(0x2bu16);
+    Cont(x3b2)
+}
+
+pub fn x3b2(ctx: &mut Context) -> Cont {
+    // 000003b2 call 0BE8h
+    ctx.call16(0x3b5, Cont(xbe8))
+}
+
+pub fn x3b5(ctx: &mut Context) -> Cont {
+    // 000003b5 mov [di+6],al
+    ctx.memory.write::<u8>(
+        ctx.cpu.regs.get_di().wrapping_add(0x6),
+        ctx.cpu.regs.get_al(),
+    );
+    // 000003b8 add di,8
+    ctx.cpu
+        .regs
+        .set_di(add(ctx.cpu.regs.get_di(), 0x8u16, &mut ctx.cpu.flags));
+    // 000003bb dec bp
+    ctx.cpu
+        .regs
+        .set_bp(dec(ctx.cpu.regs.get_bp(), &mut ctx.cpu.flags));
+    // 000003bc jne short 03B2h
+    ctx.jne(Cont(x3be), Cont(x3b2))
+}
+
+pub fn x3be(ctx: &mut Context) -> Cont {
+    // 000003be mov si,13BCh
+    ctx.cpu.regs.set_si(0x13bcu16);
+    // 000003c1 call 0F2Fh
+    ctx.call16(0x3c4, Cont(xf2f))
+}
+
+pub fn x3c4(ctx: &mut Context) -> Cont {
+    // 000003c4 mov byte ptr cs:[1164h],1
+    ctx.memory.write::<u8>(0x1164, 0x1u8);
+    // 000003ca mov word ptr cs:[115Ch],1900h
+    ctx.memory.write::<u16>((0x115c as u32), 0x1900u16);
+    Cont(x3d1)
+}
+
+pub fn x3d1(ctx: &mut Context) -> Cont {
+    // 000003d1 call 0EA3h
+    ctx.call16(0x3d4, Cont(xea3))
+}
+
+pub fn x3d4(ctx: &mut Context) -> Cont {
+    // 000003d4 call 108Bh
+    ctx.call16(0x3d7, Cont(x108b))
+}
+
+pub fn x3d7(ctx: &mut Context) -> Cont {
+    // 000003d7 sub ax,ax
+    ctx.cpu.regs.set_ax(sub(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_ax(),
+        &mut ctx.cpu.flags,
+    ));
+    // 000003d9 xchg al,cs:[1163h]
+    let t = ctx.memory.read::<u8>(0x1163);
+    ctx.memory.write::<u8>(0x1163, ctx.cpu.regs.get_al());
+    ctx.cpu.regs.set_al(t);
+    // 000003de mov ds:[5522h],al
+    ctx.memory.write::<u8>(0x5522, ctx.cpu.regs.get_al());
+    // 000003e1 movzx bx,al
+    ctx.cpu.regs.set_bx(ctx.cpu.regs.get_al() as _);
+    // 000003e4 mov ax,ds:[1360h]
+    ctx.cpu.regs.set_ax(ctx.memory.read::<u16>((0x1360 as u32)));
+    // 000003e7 shl bx,4
+    ctx.cpu
+        .regs
+        .set_bx(shl(ctx.cpu.regs.get_bx(), 0x4u8, &mut ctx.cpu.flags));
+    // 000003ea sub ax,bx
+    ctx.cpu.regs.set_ax(sub(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_bx(),
+        &mut ctx.cpu.flags,
+    ));
+    // 000003ec jb short 03FCh
+    ctx.jb(Cont(x3ee), Cont(x3fc))
+}
+
+pub fn x3ee(ctx: &mut Context) -> Cont {
+    // 000003ee mov ds:[1360h],ax
+    ctx.memory
+        .write::<u16>((0x1360 as u32), ctx.cpu.regs.get_ax());
+    // 000003f1 cmp ax,0A000h
+    sub(ctx.cpu.regs.get_ax(), 0xa000u16, &mut ctx.cpu.flags);
+    // 000003f4 jbe short 03F9h
+    ctx.jbe(Cont(x3f6), Cont(x3f9))
+}
+
+pub fn x3f6(ctx: &mut Context) -> Cont {
+    // 000003f6 mov ax,0A000h
+    ctx.cpu.regs.set_ax(0xa000u16);
+    Cont(x3f9)
+}
+
+pub fn x3f9(ctx: &mut Context) -> Cont {
+    // 000003f9 mov ds:[14B8h],ax
+    ctx.memory
+        .write::<u16>((0x14b8 as u32), ctx.cpu.regs.get_ax());
+    Cont(x3fc)
+}
+
+pub fn x3fc(ctx: &mut Context) -> Cont {
+    // 000003fc sub ax,ax
+    ctx.cpu.regs.set_ax(sub(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_ax(),
+        &mut ctx.cpu.flags,
+    ));
+    // 000003fe xchg ax,cs:[115Eh]
+    let t = ctx.memory.read::<u16>((0x115e as u32));
+    ctx.memory
+        .write::<u16>((0x115e as u32), ctx.cpu.regs.get_ax());
+    ctx.cpu.regs.set_ax(t);
+    // 00000403 add ds:[14C2h],ax
+    ctx.memory.write::<u16>(
+        (0x14c2 as u32),
+        add(
+            ctx.memory.read::<u16>((0x14c2 as u32)),
+            ctx.cpu.regs.get_ax(),
+            &mut ctx.cpu.flags,
+        ),
+    );
+    // 00000407 mov ax,ds:[14C2h]
+    ctx.cpu.regs.set_ax(ctx.memory.read::<u16>((0x14c2 as u32)));
+    // 0000040a mov bx,ax
+    ctx.cpu.regs.set_bx(ctx.cpu.regs.get_ax());
+    // 0000040c neg bx
+    ctx.cpu
+        .regs
+        .set_bx(neg(ctx.cpu.regs.get_bx(), &mut ctx.cpu.flags));
+    // 0000040e add bx,8000h
+    ctx.cpu
+        .regs
+        .set_bx(add(ctx.cpu.regs.get_bx(), 0x8000u16, &mut ctx.cpu.flags));
+    // 00000412 shr bx,6
+    ctx.cpu
+        .regs
+        .set_bx(shr(ctx.cpu.regs.get_bx(), 0x6u8, &mut ctx.cpu.flags));
+    // 00000415 add bx,bx
+    ctx.cpu.regs.set_bx(add(
+        ctx.cpu.regs.get_bx(),
+        ctx.cpu.regs.get_bx(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000417 mov cx,[bx+14DAh]
+    ctx.cpu.regs.set_cx(
+        ctx.memory
+            .read::<u16>((ctx.cpu.regs.get_bx() as u32).wrapping_add(0x14da as u32)),
+    );
+    // 0000041b sar cx,3
+    ctx.cpu
+        .regs
+        .set_cx(sar(ctx.cpu.regs.get_cx(), 0x3u8, &mut ctx.cpu.flags));
+    // 0000041e add cx,ax
+    ctx.cpu.regs.set_cx(add(
+        ctx.cpu.regs.get_cx(),
+        ctx.cpu.regs.get_ax(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000420 mov ds:[14BEh],cx
+    ctx.memory
+        .write::<u16>((0x14be as u32), ctx.cpu.regs.get_cx());
+    // 00000424 mov cx,[bx+16DAh]
+    ctx.cpu.regs.set_cx(
+        ctx.memory
+            .read::<u16>((ctx.cpu.regs.get_bx() as u32).wrapping_add(0x16da as u32)),
+    );
+    // 00000428 sar cx,3
+    ctx.cpu
+        .regs
+        .set_cx(sar(ctx.cpu.regs.get_cx(), 0x3u8, &mut ctx.cpu.flags));
+    // 0000042b mov ds:[14C0h],cx
+    ctx.memory
+        .write::<u16>((0x14c0 as u32), ctx.cpu.regs.get_cx());
+    // 0000042f mov bx,ds:[14C2h]
+    ctx.cpu.regs.set_bx(ctx.memory.read::<u16>((0x14c2 as u32)));
+    // 00000433 shr bx,6
+    ctx.cpu
+        .regs
+        .set_bx(shr(ctx.cpu.regs.get_bx(), 0x6u8, &mut ctx.cpu.flags));
+    // 00000436 add bx,bx
+    ctx.cpu.regs.set_bx(add(
+        ctx.cpu.regs.get_bx(),
+        ctx.cpu.regs.get_bx(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000438 mov al,[bx+14DBh]
+    ctx.cpu.regs.set_al(
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.get_bx().wrapping_add(0x14db)),
+    );
+    // 0000043c mov ah,[bx+16DBh]
+    ctx.cpu.regs.set_ah(
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.get_bx().wrapping_add(0x16db)),
+    );
+    // 00000440 mov ds:[5520h],al
+    ctx.memory.write::<u8>(0x5520, ctx.cpu.regs.get_al());
+    // 00000443 mov ds:[5521h],ah
+    ctx.memory.write::<u8>(0x5521, ctx.cpu.regs.get_ah());
+    // 00000447 push fs
+    ctx.push16(ctx.cpu.regs.get_fs());
+    // 00000449 push fs
+    ctx.push16(ctx.cpu.regs.get_fs());
+    // 0000044b pop es
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_es(x);
+    // 0000044c mov ax,ds:[14B6h]
+    ctx.cpu.regs.set_ax(ctx.memory.read::<u16>((0x14b6 as u32)));
+    // 0000044f mov fs,ax
+    ctx.cpu.regs.set_fs(ctx.cpu.regs.get_ax());
+    // 00000451 mov di,6430h
+    ctx.cpu.regs.set_di(0x6430u16);
+    // 00000454 mov bp,3Ch
+    ctx.cpu.regs.set_bp(0x3cu16);
+    Cont(x457)
+}
+
+pub fn x457(ctx: &mut Context) -> Cont {
+    // 00000457 mov ax,15Eh
+    ctx.cpu.regs.set_ax(0x15eu16);
+    // 0000045a mov bx,ds:[14B8h]
+    ctx.cpu.regs.set_bx(ctx.memory.read::<u16>((0x14b8 as u32)));
+    // 0000045e shr bx,3
+    ctx.cpu
+        .regs
+        .set_bx(shr(ctx.cpu.regs.get_bx(), 0x3u8, &mut ctx.cpu.flags));
+    // 00000461 add bx,1E4h
+    ctx.cpu
+        .regs
+        .set_bx(add(ctx.cpu.regs.get_bx(), 0x1e4u16, &mut ctx.cpu.flags));
+    // 00000465 mul bx
+    let res = mul(
+        ctx.cpu.regs.eax as u16 as u32,
+        ctx.cpu.regs.get_bx() as u32,
+        &mut ctx.cpu.flags,
+    );
+    ctx.cpu.regs.set_dx_ax(res);
+    // 00000467 div bp
+    let (quot, rem) = div(ctx.cpu.regs.get_dx_ax(), ctx.cpu.regs.get_bp() as u32);
+    ctx.cpu.regs.set_ax(quot as u16);
+    ctx.cpu.regs.set_dx(rem as u16);
+    // 00000469 cmp ah,3Fh
+    sub(ctx.cpu.regs.get_ah(), 0x3fu8, &mut ctx.cpu.flags);
+    // 0000046c ja near ptr 0503h
+    ctx.ja(Cont(x470), Cont(x503))
+}
+
+pub fn x470(ctx: &mut Context) -> Cont {
+    // 00000470 push bp
+    ctx.push16(ctx.cpu.regs.get_bp());
+    // 00000471 shr ax,7
+    ctx.cpu
+        .regs
+        .set_ax(shr(ctx.cpu.regs.get_ax(), 0x7u8, &mut ctx.cpu.flags));
+    // 00000474 mov cx,ax
+    ctx.cpu.regs.set_cx(ctx.cpu.regs.get_ax());
+    // 00000476 imul byte ptr ds:[5521h]
+    ctx.cpu.regs.set_ax(imul1_8(
+        ctx.cpu.regs.eax as u8,
+        ctx.memory.read::<u8>(0x5521),
+        &mut ctx.cpu.flags,
+    ));
+    // 0000047a sar ax,6
+    ctx.cpu
+        .regs
+        .set_ax(sar(ctx.cpu.regs.get_ax(), 0x6u8, &mut ctx.cpu.flags));
+    // 0000047d mov bp,ax
+    ctx.cpu.regs.set_bp(ctx.cpu.regs.get_ax());
+    // 0000047f shl ebp,10h
+    ctx.cpu.regs.ebp = shl(ctx.cpu.regs.ebp, 0x10u8, &mut ctx.cpu.flags);
+    // 00000483 imul dx,ax,0FFB0h
+    ctx.cpu.regs.set_dx(imul2_16(
+        ctx.cpu.regs.get_ax(),
+        0xffb0u16,
+        &mut ctx.cpu.flags,
+    ));
+    // 00000486 mov ax,cx
+    ctx.cpu.regs.set_ax(ctx.cpu.regs.get_cx());
+    // 00000488 imul byte ptr ds:[5520h]
+    ctx.cpu.regs.set_ax(imul1_8(
+        ctx.cpu.regs.eax as u8,
+        ctx.memory.read::<u8>(0x5520),
+        &mut ctx.cpu.flags,
+    ));
+    // 0000048c shl ax,1
+    ctx.cpu
+        .regs
+        .set_ax(shl(ctx.cpu.regs.get_ax(), 0x1u8, &mut ctx.cpu.flags));
+    // 0000048e sub dx,ax
+    ctx.cpu.regs.set_dx(sub(
+        ctx.cpu.regs.get_dx(),
+        ctx.cpu.regs.get_ax(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000490 shl edx,10h
+    ctx.cpu.regs.edx = shl(ctx.cpu.regs.edx, 0x10u8, &mut ctx.cpu.flags);
+    // 00000494 mov ax,cx
+    ctx.cpu.regs.set_ax(ctx.cpu.regs.get_cx());
+    // 00000496 imul byte ptr ds:[5520h]
+    ctx.cpu.regs.set_ax(imul1_8(
+        ctx.cpu.regs.eax as u8,
+        ctx.memory.read::<u8>(0x5520),
+        &mut ctx.cpu.flags,
+    ));
+    // 0000049a sar ax,6
+    ctx.cpu
+        .regs
+        .set_ax(sar(ctx.cpu.regs.get_ax(), 0x6u8, &mut ctx.cpu.flags));
+    // 0000049d mov bp,ax
+    ctx.cpu.regs.set_bp(ctx.cpu.regs.get_ax());
+    // 0000049f imul dx,ax,0FFB0h
+    ctx.cpu.regs.set_dx(imul2_16(
+        ctx.cpu.regs.get_ax(),
+        0xffb0u16,
+        &mut ctx.cpu.flags,
+    ));
+    // 000004a2 mov ax,cx
+    ctx.cpu.regs.set_ax(ctx.cpu.regs.get_cx());
+    // 000004a4 imul byte ptr ds:[5521h]
+    ctx.cpu.regs.set_ax(imul1_8(
+        ctx.cpu.regs.eax as u8,
+        ctx.memory.read::<u8>(0x5521),
+        &mut ctx.cpu.flags,
+    ));
+    // 000004a8 shl ax,1
+    ctx.cpu
+        .regs
+        .set_ax(shl(ctx.cpu.regs.get_ax(), 0x1u8, &mut ctx.cpu.flags));
+    // 000004aa add dx,ax
+    ctx.cpu.regs.set_dx(add(
+        ctx.cpu.regs.get_dx(),
+        ctx.cpu.regs.get_ax(),
+        &mut ctx.cpu.flags,
+    ));
+    // 000004ac mov ax,ds:[14BEh]
+    ctx.cpu.regs.set_ax(ctx.memory.read::<u16>((0x14be as u32)));
+    // 000004af shl eax,10h
+    ctx.cpu.regs.eax = shl(ctx.cpu.regs.eax, 0x10u8, &mut ctx.cpu.flags);
+    // 000004b3 mov ax,ds:[14C0h]
+    ctx.cpu.regs.set_ax(ctx.memory.read::<u16>((0x14c0 as u32)));
+    // 000004b6 add edx,eax
+    ctx.cpu.regs.edx = add(ctx.cpu.regs.edx, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
+    // 000004b9 shr cx,3
+    ctx.cpu
+        .regs
+        .set_cx(shr(ctx.cpu.regs.get_cx(), 0x3u8, &mut ctx.cpu.flags));
+    // 000004bc sub cx,9
+    ctx.cpu
+        .regs
+        .set_cx(sub(ctx.cpu.regs.get_cx(), 0x9u16, &mut ctx.cpu.flags));
+    // 000004bf mov si,51h
+    ctx.cpu.regs.set_si(0x51u16);
+    Cont(x4c2)
+}
+
+pub fn x4c2(ctx: &mut Context) -> Cont {
+    // 000004c2 mov bl,dh
+    ctx.cpu.regs.set_bl(ctx.cpu.regs.get_dh());
+    // 000004c4 rol edx,10h
+    ctx.cpu.regs.edx = rol(ctx.cpu.regs.edx, 0x10u8, &mut ctx.cpu.flags);
+    // 000004c8 mov bh,dh
+    ctx.cpu.regs.set_bh(ctx.cpu.regs.get_dh());
+    // 000004ca rol edx,10h
+    ctx.cpu.regs.edx = rol(ctx.cpu.regs.edx, 0x10u8, &mut ctx.cpu.flags);
+    // 000004ce and bh,7Fh
+    ctx.cpu
+        .regs
+        .set_bh(and(ctx.cpu.regs.get_bh(), 0x7fu8, &mut ctx.cpu.flags));
+    // 000004d1 mov al,fs:[bx]
+    ctx.cpu.regs.set_al(
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.fs_base.wrapping_add(ctx.cpu.regs.get_bx())),
+    );
+    // 000004d4 sub al,cl
+    ctx.cpu.regs.set_al(sub(
+        ctx.cpu.regs.get_al(),
+        ctx.cpu.regs.get_cl(),
+        &mut ctx.cpu.flags,
+    ));
+    // 000004d6 add edx,ebp
+    ctx.cpu.regs.edx = add(ctx.cpu.regs.edx, ctx.cpu.regs.ebp, &mut ctx.cpu.flags);
+    // 000004d9 mov bl,dh
+    ctx.cpu.regs.set_bl(ctx.cpu.regs.get_dh());
+    // 000004db rol edx,10h
+    ctx.cpu.regs.edx = rol(ctx.cpu.regs.edx, 0x10u8, &mut ctx.cpu.flags);
+    // 000004df mov bh,dh
+    ctx.cpu.regs.set_bh(ctx.cpu.regs.get_dh());
+    // 000004e1 rol edx,10h
+    ctx.cpu.regs.edx = rol(ctx.cpu.regs.edx, 0x10u8, &mut ctx.cpu.flags);
+    // 000004e5 and bh,7Fh
+    ctx.cpu
+        .regs
+        .set_bh(and(ctx.cpu.regs.get_bh(), 0x7fu8, &mut ctx.cpu.flags));
+    // 000004e8 mov ah,fs:[bx]
+    ctx.cpu.regs.set_ah(
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.fs_base.wrapping_add(ctx.cpu.regs.get_bx())),
+    );
+    // 000004eb sub ah,cl
+    ctx.cpu.regs.set_ah(sub(
+        ctx.cpu.regs.get_ah(),
+        ctx.cpu.regs.get_cl(),
+        &mut ctx.cpu.flags,
+    ));
+    // 000004ed mov es:[di],ax
+    ctx.memory.write::<u16>(
+        (todo!() as u32).wrapping_add(ctx.cpu.regs.get_di() as u32),
+        ctx.cpu.regs.get_ax(),
+    );
+    // 000004f0 add di,2
+    ctx.cpu
+        .regs
+        .set_di(add(ctx.cpu.regs.get_di(), 0x2u16, &mut ctx.cpu.flags));
+    // 000004f3 add edx,ebp
+    ctx.cpu.regs.edx = add(ctx.cpu.regs.edx, ctx.cpu.regs.ebp, &mut ctx.cpu.flags);
+    // 000004f6 dec si
+    ctx.cpu
+        .regs
+        .set_si(dec(ctx.cpu.regs.get_si(), &mut ctx.cpu.flags));
+    // 000004f7 jne short 04C2h
+    ctx.jne(Cont(x4f9), Cont(x4c2))
+}
+
+pub fn x4f9(ctx: &mut Context) -> Cont {
+    // 000004f9 pop bp
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_bp(x);
+    // 000004fa sub di,1A2h
+    ctx.cpu
+        .regs
+        .set_di(sub(ctx.cpu.regs.get_di(), 0x1a2u16, &mut ctx.cpu.flags));
+    // 000004fe dec bp
+    ctx.cpu
+        .regs
+        .set_bp(dec(ctx.cpu.regs.get_bp(), &mut ctx.cpu.flags));
+    // 000004ff jne near ptr 0457h
+    ctx.jne(Cont(x503), Cont(x457))
+}
+
+pub fn x503(ctx: &mut Context) -> Cont {
+    // 00000503 add bp,29h
+    ctx.cpu
+        .regs
+        .set_bp(add(ctx.cpu.regs.get_bp(), 0x29u16, &mut ctx.cpu.flags));
+    // 00000506 mov di,bp
+    ctx.cpu.regs.set_di(ctx.cpu.regs.get_bp());
+    // 00000508 shl di,8
+    ctx.cpu
+        .regs
+        .set_di(shl(ctx.cpu.regs.get_di(), 0x8u8, &mut ctx.cpu.flags));
+    // 0000050b add di,0FF30h
+    ctx.cpu
+        .regs
+        .set_di(add(ctx.cpu.regs.get_di(), 0xff30u16, &mut ctx.cpu.flags));
+    // 0000050f mov dx,0A00h
+    ctx.cpu.regs.set_dx(0xa00u16);
+    // 00000512 mov si,14Bh
+    ctx.cpu.regs.set_si(0x14bu16);
+    Cont(x515)
+}
+
+pub fn x515(ctx: &mut Context) -> Cont {
+    // 00000515 mov al,dh
+    ctx.cpu.regs.set_al(ctx.cpu.regs.get_dh());
+    // 00000517 mov ah,al
+    ctx.cpu.regs.set_ah(ctx.cpu.regs.get_al());
+    // 00000519 mov cx,ax
+    ctx.cpu.regs.set_cx(ctx.cpu.regs.get_ax());
+    // 0000051b shl eax,10h
+    ctx.cpu.regs.eax = shl(ctx.cpu.regs.eax, 0x10u8, &mut ctx.cpu.flags);
+    // 0000051f mov ax,cx
+    ctx.cpu.regs.set_ax(ctx.cpu.regs.get_cx());
+    // 00000521 mov cx,29h
+    ctx.cpu.regs.set_cx(0x29u16);
+    // 00000524 rep stosd
+    ctx.rep(Rep::REP, Context::stosd);
+    // 00000527 sub di,1A4h
+    ctx.cpu
+        .regs
+        .set_di(sub(ctx.cpu.regs.get_di(), 0x1a4u16, &mut ctx.cpu.flags));
+    // 0000052b cmp dh,1Fh
+    sub(ctx.cpu.regs.get_dh(), 0x1fu8, &mut ctx.cpu.flags);
+    // 0000052e jae short 0535h
+    ctx.jae(Cont(x530), Cont(x535))
+}
+
+pub fn x530(ctx: &mut Context) -> Cont {
+    // 00000530 add dx,si
+    ctx.cpu.regs.set_dx(add(
+        ctx.cpu.regs.get_dx(),
+        ctx.cpu.regs.get_si(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000532 sub si,0Ah
+    ctx.cpu
+        .regs
+        .set_si(sub(ctx.cpu.regs.get_si(), 0xau16, &mut ctx.cpu.flags));
+    Cont(x535)
+}
+
+pub fn x535(ctx: &mut Context) -> Cont {
+    // 00000535 dec bp
+    ctx.cpu
+        .regs
+        .set_bp(dec(ctx.cpu.regs.get_bp(), &mut ctx.cpu.flags));
+    // 00000536 jne short 0515h
+    ctx.jne(Cont(x538), Cont(x515))
+}
+
+pub fn x538(ctx: &mut Context) -> Cont {
+    // 00000538 pop fs
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_fs(x);
+    // 0000053a push ds
+    ctx.push16(ctx.cpu.regs.get_ds());
+    // 0000053b pop es
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_es(x);
+    // 0000053c mov di,2B48h
+    ctx.cpu.regs.set_di(0x2b48u16);
+    // 0000053f mov si,1EDAh
+    ctx.cpu.regs.set_si(0x1edau16);
+    // 00000542 mov byte ptr ds:[6F23h],2Ah
+    ctx.memory.write::<u8>(0x6f23, 0x2au8);
+    // 00000547 mov bx,ds:[14C2h]
+    ctx.cpu.regs.set_bx(ctx.memory.read::<u16>((0x14c2 as u32)));
+    // 0000054b shr bx,6
+    ctx.cpu
+        .regs
+        .set_bx(shr(ctx.cpu.regs.get_bx(), 0x6u8, &mut ctx.cpu.flags));
+    // 0000054e add bx,bx
+    ctx.cpu.regs.set_bx(add(
+        ctx.cpu.regs.get_bx(),
+        ctx.cpu.regs.get_bx(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000550 mov cx,[bx+14DAh]
+    ctx.cpu.regs.set_cx(
+        ctx.memory
+            .read::<u16>((ctx.cpu.regs.get_bx() as u32).wrapping_add(0x14da as u32)),
+    );
+    // 00000554 mov bp,[bx+16DAh]
+    ctx.cpu.regs.set_bp(
+        ctx.memory
+            .read::<u16>((ctx.cpu.regs.get_bx() as u32).wrapping_add(0x16da as u32)),
+    );
+    Cont(x558)
+}
+
+pub fn x558(ctx: &mut Context) -> Cont {
+    // 00000558 mov ax,[si]
+    ctx.cpu
+        .regs
+        .set_ax(ctx.memory.read::<u16>((ctx.cpu.regs.get_si() as u32)));
+    // 0000055a imul cx
+    ctx.cpu.regs.set_dx_ax(imul1_16(
+        ctx.cpu.regs.eax as u16,
+        ctx.cpu.regs.get_cx(),
+        &mut ctx.cpu.flags,
+    ));
+    // 0000055c mov bx,dx
+    ctx.cpu.regs.set_bx(ctx.cpu.regs.get_dx());
+    // 0000055e mov ax,[si+4]
+    ctx.cpu.regs.set_ax(
+        ctx.memory
+            .read::<u16>((ctx.cpu.regs.get_si() as u32).wrapping_add(0x4 as u32)),
+    );
+    // 00000561 imul bp
+    ctx.cpu.regs.set_dx_ax(imul1_16(
+        ctx.cpu.regs.eax as u16,
+        ctx.cpu.regs.get_bp(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000563 mov ax,dx
+    ctx.cpu.regs.set_ax(ctx.cpu.regs.get_dx());
+    // 00000565 add ax,bx
+    ctx.cpu.regs.set_ax(add(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_bx(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000567 add ax,ax
+    ctx.cpu.regs.set_ax(add(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_ax(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000569 stosw
+    ctx.stosw();
+    // 0000056a movzx bx,byte ptr [di+4]
+    ctx.cpu.regs.set_bx(
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.get_di().wrapping_add(0x4)) as _,
+    );
+    // 0000056e add bl,80h
+    ctx.cpu
+        .regs
+        .set_bl(add(ctx.cpu.regs.get_bl(), 0x80u8, &mut ctx.cpu.flags));
+    // 00000571 add bx,bx
+    ctx.cpu.regs.set_bx(add(
+        ctx.cpu.regs.get_bx(),
+        ctx.cpu.regs.get_bx(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000573 sub ax,ax
+    ctx.cpu.regs.set_ax(sub(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_ax(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000575 movsx ax,byte ptr [bx+5524h]
+    ctx.cpu.regs.set_ax(
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.get_bx().wrapping_add(0x5524)) as i8 as i16 as u16,
+    );
+    // 0000057a shl ax,5
+    ctx.cpu
+        .regs
+        .set_ax(shl(ctx.cpu.regs.get_ax(), 0x5u8, &mut ctx.cpu.flags));
+    // 0000057d add ax,[si+2]
+    ctx.cpu.regs.set_ax(add(
+        ctx.cpu.regs.get_ax(),
+        ctx.memory
+            .read::<u16>((ctx.cpu.regs.get_si() as u32).wrapping_add(0x2 as u32)),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000580 stosw
+    ctx.stosw();
+    // 00000581 mov ax,[si+4]
+    ctx.cpu.regs.set_ax(
+        ctx.memory
+            .read::<u16>((ctx.cpu.regs.get_si() as u32).wrapping_add(0x4 as u32)),
+    );
+    // 00000584 imul cx
+    ctx.cpu.regs.set_dx_ax(imul1_16(
+        ctx.cpu.regs.eax as u16,
+        ctx.cpu.regs.get_cx(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000586 mov bx,dx
+    ctx.cpu.regs.set_bx(ctx.cpu.regs.get_dx());
+    // 00000588 mov ax,[si]
+    ctx.cpu
+        .regs
+        .set_ax(ctx.memory.read::<u16>((ctx.cpu.regs.get_si() as u32)));
+    // 0000058a imul bp
+    ctx.cpu.regs.set_dx_ax(imul1_16(
+        ctx.cpu.regs.eax as u16,
+        ctx.cpu.regs.get_bp(),
+        &mut ctx.cpu.flags,
+    ));
+    // 0000058c mov ax,dx
+    ctx.cpu.regs.set_ax(ctx.cpu.regs.get_dx());
+    // 0000058e sub ax,bx
+    ctx.cpu.regs.set_ax(sub(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_bx(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000590 sar ax,6
+    ctx.cpu
+        .regs
+        .set_ax(sar(ctx.cpu.regs.get_ax(), 0x6u8, &mut ctx.cpu.flags));
+    // 00000593 add ax,140h
+    ctx.cpu
+        .regs
+        .set_ax(add(ctx.cpu.regs.get_ax(), 0x140u16, &mut ctx.cpu.flags));
+    // 00000596 stosw
+    ctx.stosw();
+    // 00000597 mov al,ds:[5522h]
+    ctx.cpu.regs.set_al(ctx.memory.read::<u8>(0x5522));
+    // 0000059a add [di],al
+    ctx.memory.write::<u8>(
+        ctx.cpu.regs.get_di(),
+        add(
+            ctx.memory.read::<u8>(ctx.cpu.regs.get_di()),
+            ctx.cpu.regs.get_al(),
+            &mut ctx.cpu.flags,
+        ),
+    );
+    // 0000059c mov ax,ds:[14C2h]
+    ctx.cpu.regs.set_ax(ctx.memory.read::<u16>((0x14c2 as u32)));
+    // 0000059f shr ax,8
+    ctx.cpu
+        .regs
+        .set_ax(shr(ctx.cpu.regs.get_ax(), 0x8u8, &mut ctx.cpu.flags));
+    // 000005a2 neg al
+    ctx.cpu
+        .regs
+        .set_al(neg(ctx.cpu.regs.get_al(), &mut ctx.cpu.flags));
+    // 000005a4 mov [di+1],al
+    ctx.memory.write::<u8>(
+        ctx.cpu.regs.get_di().wrapping_add(0x1),
+        ctx.cpu.regs.get_al(),
+    );
+    // 000005a7 add si,6
+    ctx.cpu
+        .regs
+        .set_si(add(ctx.cpu.regs.get_si(), 0x6u16, &mut ctx.cpu.flags));
+    // 000005aa add di,2
+    ctx.cpu
+        .regs
+        .set_di(add(ctx.cpu.regs.get_di(), 0x2u16, &mut ctx.cpu.flags));
+    // 000005ad dec byte ptr ds:[6F23h]
+    ctx.memory.write::<u8>(
+        0x6f23,
+        dec(ctx.memory.read::<u8>(0x6f23), &mut ctx.cpu.flags),
+    );
+    // 000005b1 jne short 0558h
+    ctx.jne(Cont(x5b3), Cont(x558))
+}
+
+pub fn x5b3(ctx: &mut Context) -> Cont {
+    // 000005b3 sub ax,ax
+    ctx.cpu.regs.set_ax(sub(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_ax(),
+        &mut ctx.cpu.flags,
+    ));
+    // 000005b5 stosw
+    ctx.stosw();
+    // 000005b6 movzx bx,byte ptr [di+4]
+    ctx.cpu.regs.set_bx(
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.get_di().wrapping_add(0x4)) as _,
+    );
+    // 000005ba add bl,80h
+    ctx.cpu
+        .regs
+        .set_bl(add(ctx.cpu.regs.get_bl(), 0x80u8, &mut ctx.cpu.flags));
+    // 000005bd add bx,bx
+    ctx.cpu.regs.set_bx(add(
+        ctx.cpu.regs.get_bx(),
+        ctx.cpu.regs.get_bx(),
+        &mut ctx.cpu.flags,
+    ));
+    // 000005bf sub ax,ax
+    ctx.cpu.regs.set_ax(sub(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_ax(),
+        &mut ctx.cpu.flags,
+    ));
+    // 000005c1 movsx ax,byte ptr [bx+5524h]
+    ctx.cpu.regs.set_ax(
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.get_bx().wrapping_add(0x5524)) as i8 as i16 as u16,
+    );
+    // 000005c6 shl ax,5
+    ctx.cpu
+        .regs
+        .set_ax(shl(ctx.cpu.regs.get_ax(), 0x5u8, &mut ctx.cpu.flags));
+    // 000005c9 mov cx,ds:[14B8h]
+    ctx.cpu.regs.set_cx(ctx.memory.read::<u16>((0x14b8 as u32)));
+    // 000005cd shr cx,1
+    ctx.cpu
+        .regs
+        .set_cx(shr(ctx.cpu.regs.get_cx(), 0x1u8, &mut ctx.cpu.flags));
+    // 000005cf add cx,1F40h
+    ctx.cpu
+        .regs
+        .set_cx(add(ctx.cpu.regs.get_cx(), 0x1f40u16, &mut ctx.cpu.flags));
+    // 000005d3 sub ax,cx
+    ctx.cpu.regs.set_ax(sub(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_cx(),
+        &mut ctx.cpu.flags,
+    ));
+    // 000005d5 stosw
+    ctx.stosw();
+    // 000005d6 mov ax,140h
+    ctx.cpu.regs.set_ax(0x140u16);
+    // 000005d9 stosw
+    ctx.stosw();
+    // 000005da mov al,ds:[5522h]
+    ctx.cpu.regs.set_al(ctx.memory.read::<u8>(0x5522));
+    // 000005dd add [di],al
+    ctx.memory.write::<u8>(
+        ctx.cpu.regs.get_di(),
+        add(
+            ctx.memory.read::<u8>(ctx.cpu.regs.get_di()),
+            ctx.cpu.regs.get_al(),
+            &mut ctx.cpu.flags,
+        ),
+    );
+    // 000005df mov ax,ds:[14C2h]
+    ctx.cpu.regs.set_ax(ctx.memory.read::<u16>((0x14c2 as u32)));
+    // 000005e2 shr ax,8
+    ctx.cpu
+        .regs
+        .set_ax(shr(ctx.cpu.regs.get_ax(), 0x8u8, &mut ctx.cpu.flags));
+    // 000005e5 neg al
+    ctx.cpu
+        .regs
+        .set_al(neg(ctx.cpu.regs.get_al(), &mut ctx.cpu.flags));
+    // 000005e7 mov [di+1],al
+    ctx.memory.write::<u8>(
+        ctx.cpu.regs.get_di().wrapping_add(0x1),
+        ctx.cpu.regs.get_al(),
+    );
+    // 000005ea mov bx,2B48h
+    ctx.cpu.regs.set_bx(0x2b48u16);
+    // 000005ed mov di,1FDCh
+    ctx.cpu.regs.set_di(0x1fdcu16);
+    // 000005f0 mov bp,2Bh
+    ctx.cpu.regs.set_bp(0x2bu16);
+    Cont(x5f3)
+}
+
+pub fn x5f3(ctx: &mut Context) -> Cont {
+    // 000005f3 push bx
+    ctx.push16(ctx.cpu.regs.get_bx());
+    // 000005f4 push bp
+    ctx.push16(ctx.cpu.regs.get_bp());
+    // 000005f5 mov si,13D4h
+    ctx.cpu.regs.set_si(0x13d4u16);
+    // 000005f8 mov cl,6
+    ctx.cpu.regs.set_cl(0x6u8);
+    // 000005fa movzx bp,byte ptr [bx+7]
+    ctx.cpu.regs.set_bp(
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.get_bx().wrapping_add(0x7)) as _,
+    );
+    // 000005fe shl bp,3
+    ctx.cpu
+        .regs
+        .set_bp(shl(ctx.cpu.regs.get_bp(), 0x3u8, &mut ctx.cpu.flags));
+    // 00000601 mov dl,ds:[bp+14DBh]
+    ctx.cpu.regs.set_dl(
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.get_bp().wrapping_add(0x14db)),
+    );
+    // 00000606 mov dh,ds:[bp+16DBh]
+    ctx.cpu.regs.set_dh(
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.get_bp().wrapping_add(0x16db)),
+    );
+    Cont(x60b)
+}
+
+pub fn x60b(ctx: &mut Context) -> Cont {
+    // 0000060b mov al,[si+1]
+    ctx.cpu.regs.set_al(
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.get_si().wrapping_add(0x1)),
+    );
+    // 0000060e imul dh
+    ctx.cpu.regs.set_ax(imul1_8(
+        ctx.cpu.regs.eax as u8,
+        ctx.cpu.regs.get_dh(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000610 add ax,[bx]
+    ctx.cpu.regs.set_ax(add(
+        ctx.cpu.regs.get_ax(),
+        ctx.memory.read::<u16>((ctx.cpu.regs.get_bx() as u32)),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000612 stosw
+    ctx.stosw();
+    // 00000613 movsx ax,byte ptr [si]
+    ctx.cpu
+        .regs
+        .set_ax(ctx.memory.read::<u8>(ctx.cpu.regs.get_si()) as i8 as i16 as u16);
+    // 00000616 shl ax,7
+    ctx.cpu
+        .regs
+        .set_ax(shl(ctx.cpu.regs.get_ax(), 0x7u8, &mut ctx.cpu.flags));
+    // 00000619 add ax,[bx+2]
+    ctx.cpu.regs.set_ax(add(
+        ctx.cpu.regs.get_ax(),
+        ctx.memory
+            .read::<u16>((ctx.cpu.regs.get_bx() as u32).wrapping_add(0x2 as u32)),
+        &mut ctx.cpu.flags,
+    ));
+    // 0000061c stosw
+    ctx.stosw();
+    // 0000061d mov al,[si+1]
+    ctx.cpu.regs.set_al(
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.get_si().wrapping_add(0x1)),
+    );
+    // 00000620 imul dl
+    ctx.cpu.regs.set_ax(imul1_8(
+        ctx.cpu.regs.eax as u8,
+        ctx.cpu.regs.get_dl(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000622 sar ax,7
+    ctx.cpu
+        .regs
+        .set_ax(sar(ctx.cpu.regs.get_ax(), 0x7u8, &mut ctx.cpu.flags));
+    // 00000625 add ax,[bx+4]
+    ctx.cpu.regs.set_ax(add(
+        ctx.cpu.regs.get_ax(),
+        ctx.memory
+            .read::<u16>((ctx.cpu.regs.get_bx() as u32).wrapping_add(0x4 as u32)),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000628 stosw
+    ctx.stosw();
+    // 00000629 add si,2
+    ctx.cpu
+        .regs
+        .set_si(add(ctx.cpu.regs.get_si(), 0x2u16, &mut ctx.cpu.flags));
+    // 0000062c dec cl
+    ctx.cpu
+        .regs
+        .set_cl(dec(ctx.cpu.regs.get_cl(), &mut ctx.cpu.flags));
+    // 0000062e jne short 060Bh
+    ctx.jne(Cont(x630), Cont(x60b))
+}
+
+pub fn x630(ctx: &mut Context) -> Cont {
+    // 00000630 movzx si,byte ptr [bx+6]
+    ctx.cpu.regs.set_si(
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.get_bx().wrapping_add(0x6)) as _,
+    );
+    // 00000634 add si,si
+    ctx.cpu.regs.set_si(add(
+        ctx.cpu.regs.get_si(),
+        ctx.cpu.regs.get_si(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000636 add si,5523h
+    ctx.cpu
+        .regs
+        .set_si(add(ctx.cpu.regs.get_si(), 0x5523u16, &mut ctx.cpu.flags));
+    // 0000063a mov al,0E2h
+    ctx.cpu.regs.set_al(0xe2u8);
+    // 0000063c imul dh
+    ctx.cpu.regs.set_ax(imul1_8(
+        ctx.cpu.regs.eax as u8,
+        ctx.cpu.regs.get_dh(),
+        &mut ctx.cpu.flags,
+    ));
+    // 0000063e mov bp,ax
+    ctx.cpu.regs.set_bp(ctx.cpu.regs.get_ax());
+    // 00000640 mov al,[si]
+    ctx.cpu
+        .regs
+        .set_al(ctx.memory.read::<u8>(ctx.cpu.regs.get_si()));
+    // 00000642 imul dl
+    ctx.cpu.regs.set_ax(imul1_8(
+        ctx.cpu.regs.eax as u8,
+        ctx.cpu.regs.get_dl(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000644 add ax,bp
+    ctx.cpu.regs.set_ax(add(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_bp(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000646 add ax,[bx]
+    ctx.cpu.regs.set_ax(add(
+        ctx.cpu.regs.get_ax(),
+        ctx.memory.read::<u16>((ctx.cpu.regs.get_bx() as u32)),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000648 stosw
+    ctx.stosw();
+    // 00000649 movsx ax,byte ptr [si+1]
+    ctx.cpu.regs.set_ax(
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.get_si().wrapping_add(0x1)) as i8 as i16 as u16,
+    );
+    // 0000064d shl ax,7
+    ctx.cpu
+        .regs
+        .set_ax(shl(ctx.cpu.regs.get_ax(), 0x7u8, &mut ctx.cpu.flags));
+    // 00000650 add ax,[bx+2]
+    ctx.cpu.regs.set_ax(add(
+        ctx.cpu.regs.get_ax(),
+        ctx.memory
+            .read::<u16>((ctx.cpu.regs.get_bx() as u32).wrapping_add(0x2 as u32)),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000653 stosw
+    ctx.stosw();
+    // 00000654 mov al,[si]
+    ctx.cpu
+        .regs
+        .set_al(ctx.memory.read::<u8>(ctx.cpu.regs.get_si()));
+    // 00000656 imul dh
+    ctx.cpu.regs.set_ax(imul1_8(
+        ctx.cpu.regs.eax as u8,
+        ctx.cpu.regs.get_dh(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000658 mov bp,ax
+    ctx.cpu.regs.set_bp(ctx.cpu.regs.get_ax());
+    // 0000065a mov al,0E2h
+    ctx.cpu.regs.set_al(0xe2u8);
+    // 0000065c imul dl
+    ctx.cpu.regs.set_ax(imul1_8(
+        ctx.cpu.regs.eax as u8,
+        ctx.cpu.regs.get_dl(),
+        &mut ctx.cpu.flags,
+    ));
+    // 0000065e sub ax,bp
+    ctx.cpu.regs.set_ax(sub(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_bp(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000660 sar ax,7
+    ctx.cpu
+        .regs
+        .set_ax(sar(ctx.cpu.regs.get_ax(), 0x7u8, &mut ctx.cpu.flags));
+    // 00000663 add ax,[bx+4]
+    ctx.cpu.regs.set_ax(add(
+        ctx.cpu.regs.get_ax(),
+        ctx.memory
+            .read::<u16>((ctx.cpu.regs.get_bx() as u32).wrapping_add(0x4 as u32)),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000666 stosw
+    ctx.stosw();
+    // 00000667 mov al,1Eh
+    ctx.cpu.regs.set_al(0x1eu8);
+    // 00000669 imul dh
+    ctx.cpu.regs.set_ax(imul1_8(
+        ctx.cpu.regs.eax as u8,
+        ctx.cpu.regs.get_dh(),
+        &mut ctx.cpu.flags,
+    ));
+    // 0000066b mov bp,ax
+    ctx.cpu.regs.set_bp(ctx.cpu.regs.get_ax());
+    // 0000066d mov al,[si]
+    ctx.cpu
+        .regs
+        .set_al(ctx.memory.read::<u8>(ctx.cpu.regs.get_si()));
+    // 0000066f imul dl
+    ctx.cpu.regs.set_ax(imul1_8(
+        ctx.cpu.regs.eax as u8,
+        ctx.cpu.regs.get_dl(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000671 add ax,bp
+    ctx.cpu.regs.set_ax(add(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_bp(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000673 add ax,[bx]
+    ctx.cpu.regs.set_ax(add(
+        ctx.cpu.regs.get_ax(),
+        ctx.memory.read::<u16>((ctx.cpu.regs.get_bx() as u32)),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000675 stosw
+    ctx.stosw();
+    // 00000676 movsx ax,byte ptr [si+1]
+    ctx.cpu.regs.set_ax(
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.get_si().wrapping_add(0x1)) as i8 as i16 as u16,
+    );
+    // 0000067a shl ax,7
+    ctx.cpu
+        .regs
+        .set_ax(shl(ctx.cpu.regs.get_ax(), 0x7u8, &mut ctx.cpu.flags));
+    // 0000067d add ax,[bx+2]
+    ctx.cpu.regs.set_ax(add(
+        ctx.cpu.regs.get_ax(),
+        ctx.memory
+            .read::<u16>((ctx.cpu.regs.get_bx() as u32).wrapping_add(0x2 as u32)),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000680 stosw
+    ctx.stosw();
+    // 00000681 mov al,[si]
+    ctx.cpu
+        .regs
+        .set_al(ctx.memory.read::<u8>(ctx.cpu.regs.get_si()));
+    // 00000683 imul dh
+    ctx.cpu.regs.set_ax(imul1_8(
+        ctx.cpu.regs.eax as u8,
+        ctx.cpu.regs.get_dh(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000685 mov bp,ax
+    ctx.cpu.regs.set_bp(ctx.cpu.regs.get_ax());
+    // 00000687 mov al,1Eh
+    ctx.cpu.regs.set_al(0x1eu8);
+    // 00000689 imul dl
+    ctx.cpu.regs.set_ax(imul1_8(
+        ctx.cpu.regs.eax as u8,
+        ctx.cpu.regs.get_dl(),
+        &mut ctx.cpu.flags,
+    ));
+    // 0000068b sub ax,bp
+    ctx.cpu.regs.set_ax(sub(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_bp(),
+        &mut ctx.cpu.flags,
+    ));
+    // 0000068d sar ax,7
+    ctx.cpu
+        .regs
+        .set_ax(sar(ctx.cpu.regs.get_ax(), 0x7u8, &mut ctx.cpu.flags));
+    // 00000690 add ax,[bx+4]
+    ctx.cpu.regs.set_ax(add(
+        ctx.cpu.regs.get_ax(),
+        ctx.memory
+            .read::<u16>((ctx.cpu.regs.get_bx() as u32).wrapping_add(0x4 as u32)),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000693 stosw
+    ctx.stosw();
+    // 00000694 neg dl
+    ctx.cpu
+        .regs
+        .set_dl(neg(ctx.cpu.regs.get_dl(), &mut ctx.cpu.flags));
+    // 00000696 neg dh
+    ctx.cpu
+        .regs
+        .set_dh(neg(ctx.cpu.regs.get_dh(), &mut ctx.cpu.flags));
+    // 00000698 dec dl
+    ctx.cpu
+        .regs
+        .set_dl(dec(ctx.cpu.regs.get_dl(), &mut ctx.cpu.flags));
+    // 0000069a dec dh
+    ctx.cpu
+        .regs
+        .set_dh(dec(ctx.cpu.regs.get_dh(), &mut ctx.cpu.flags));
+    // 0000069c mov al,1Eh
+    ctx.cpu.regs.set_al(0x1eu8);
+    // 0000069e imul dh
+    ctx.cpu.regs.set_ax(imul1_8(
+        ctx.cpu.regs.eax as u8,
+        ctx.cpu.regs.get_dh(),
+        &mut ctx.cpu.flags,
+    ));
+    // 000006a0 mov bp,ax
+    ctx.cpu.regs.set_bp(ctx.cpu.regs.get_ax());
+    // 000006a2 mov al,[si]
+    ctx.cpu
+        .regs
+        .set_al(ctx.memory.read::<u8>(ctx.cpu.regs.get_si()));
+    // 000006a4 imul dl
+    ctx.cpu.regs.set_ax(imul1_8(
+        ctx.cpu.regs.eax as u8,
+        ctx.cpu.regs.get_dl(),
+        &mut ctx.cpu.flags,
+    ));
+    // 000006a6 add ax,bp
+    ctx.cpu.regs.set_ax(add(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_bp(),
+        &mut ctx.cpu.flags,
+    ));
+    // 000006a8 add ax,[bx]
+    ctx.cpu.regs.set_ax(add(
+        ctx.cpu.regs.get_ax(),
+        ctx.memory.read::<u16>((ctx.cpu.regs.get_bx() as u32)),
+        &mut ctx.cpu.flags,
+    ));
+    // 000006aa stosw
+    ctx.stosw();
+    // 000006ab movsx ax,byte ptr [si+1]
+    ctx.cpu.regs.set_ax(
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.get_si().wrapping_add(0x1)) as i8 as i16 as u16,
+    );
+    // 000006af shl ax,7
+    ctx.cpu
+        .regs
+        .set_ax(shl(ctx.cpu.regs.get_ax(), 0x7u8, &mut ctx.cpu.flags));
+    // 000006b2 add ax,[bx+2]
+    ctx.cpu.regs.set_ax(add(
+        ctx.cpu.regs.get_ax(),
+        ctx.memory
+            .read::<u16>((ctx.cpu.regs.get_bx() as u32).wrapping_add(0x2 as u32)),
+        &mut ctx.cpu.flags,
+    ));
+    // 000006b5 stosw
+    ctx.stosw();
+    // 000006b6 mov al,[si]
+    ctx.cpu
+        .regs
+        .set_al(ctx.memory.read::<u8>(ctx.cpu.regs.get_si()));
+    // 000006b8 imul dh
+    ctx.cpu.regs.set_ax(imul1_8(
+        ctx.cpu.regs.eax as u8,
+        ctx.cpu.regs.get_dh(),
+        &mut ctx.cpu.flags,
+    ));
+    // 000006ba mov bp,ax
+    ctx.cpu.regs.set_bp(ctx.cpu.regs.get_ax());
+    // 000006bc mov al,1Eh
+    ctx.cpu.regs.set_al(0x1eu8);
+    // 000006be imul dl
+    ctx.cpu.regs.set_ax(imul1_8(
+        ctx.cpu.regs.eax as u8,
+        ctx.cpu.regs.get_dl(),
+        &mut ctx.cpu.flags,
+    ));
+    // 000006c0 sub ax,bp
+    ctx.cpu.regs.set_ax(sub(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_bp(),
+        &mut ctx.cpu.flags,
+    ));
+    // 000006c2 sar ax,7
+    ctx.cpu
+        .regs
+        .set_ax(sar(ctx.cpu.regs.get_ax(), 0x7u8, &mut ctx.cpu.flags));
+    // 000006c5 add ax,[bx+4]
+    ctx.cpu.regs.set_ax(add(
+        ctx.cpu.regs.get_ax(),
+        ctx.memory
+            .read::<u16>((ctx.cpu.regs.get_bx() as u32).wrapping_add(0x4 as u32)),
+        &mut ctx.cpu.flags,
+    ));
+    // 000006c8 stosw
+    ctx.stosw();
+    // 000006c9 mov al,0E2h
+    ctx.cpu.regs.set_al(0xe2u8);
+    // 000006cb imul dh
+    ctx.cpu.regs.set_ax(imul1_8(
+        ctx.cpu.regs.eax as u8,
+        ctx.cpu.regs.get_dh(),
+        &mut ctx.cpu.flags,
+    ));
+    // 000006cd mov bp,ax
+    ctx.cpu.regs.set_bp(ctx.cpu.regs.get_ax());
+    // 000006cf mov al,[si]
+    ctx.cpu
+        .regs
+        .set_al(ctx.memory.read::<u8>(ctx.cpu.regs.get_si()));
+    // 000006d1 imul dl
+    ctx.cpu.regs.set_ax(imul1_8(
+        ctx.cpu.regs.eax as u8,
+        ctx.cpu.regs.get_dl(),
+        &mut ctx.cpu.flags,
+    ));
+    // 000006d3 add ax,bp
+    ctx.cpu.regs.set_ax(add(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_bp(),
+        &mut ctx.cpu.flags,
+    ));
+    // 000006d5 add ax,[bx]
+    ctx.cpu.regs.set_ax(add(
+        ctx.cpu.regs.get_ax(),
+        ctx.memory.read::<u16>((ctx.cpu.regs.get_bx() as u32)),
+        &mut ctx.cpu.flags,
+    ));
+    // 000006d7 stosw
+    ctx.stosw();
+    // 000006d8 movsx ax,byte ptr [si+1]
+    ctx.cpu.regs.set_ax(
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.get_si().wrapping_add(0x1)) as i8 as i16 as u16,
+    );
+    // 000006dc shl ax,7
+    ctx.cpu
+        .regs
+        .set_ax(shl(ctx.cpu.regs.get_ax(), 0x7u8, &mut ctx.cpu.flags));
+    // 000006df add ax,[bx+2]
+    ctx.cpu.regs.set_ax(add(
+        ctx.cpu.regs.get_ax(),
+        ctx.memory
+            .read::<u16>((ctx.cpu.regs.get_bx() as u32).wrapping_add(0x2 as u32)),
+        &mut ctx.cpu.flags,
+    ));
+    // 000006e2 stosw
+    ctx.stosw();
+    // 000006e3 mov al,[si]
+    ctx.cpu
+        .regs
+        .set_al(ctx.memory.read::<u8>(ctx.cpu.regs.get_si()));
+    // 000006e5 imul dh
+    ctx.cpu.regs.set_ax(imul1_8(
+        ctx.cpu.regs.eax as u8,
+        ctx.cpu.regs.get_dh(),
+        &mut ctx.cpu.flags,
+    ));
+    // 000006e7 mov bp,ax
+    ctx.cpu.regs.set_bp(ctx.cpu.regs.get_ax());
+    // 000006e9 mov al,0E2h
+    ctx.cpu.regs.set_al(0xe2u8);
+    // 000006eb imul dl
+    ctx.cpu.regs.set_ax(imul1_8(
+        ctx.cpu.regs.eax as u8,
+        ctx.cpu.regs.get_dl(),
+        &mut ctx.cpu.flags,
+    ));
+    // 000006ed sub ax,bp
+    ctx.cpu.regs.set_ax(sub(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_bp(),
+        &mut ctx.cpu.flags,
+    ));
+    // 000006ef sar ax,7
+    ctx.cpu
+        .regs
+        .set_ax(sar(ctx.cpu.regs.get_ax(), 0x7u8, &mut ctx.cpu.flags));
+    // 000006f2 add ax,[bx+4]
+    ctx.cpu.regs.set_ax(add(
+        ctx.cpu.regs.get_ax(),
+        ctx.memory
+            .read::<u16>((ctx.cpu.regs.get_bx() as u32).wrapping_add(0x4 as u32)),
+        &mut ctx.cpu.flags,
+    ));
+    // 000006f5 stosw
+    ctx.stosw();
+    // 000006f6 pop bp
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_bp(x);
+    // 000006f7 pop bx
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_bx(x);
+    // 000006f8 add di,4
+    ctx.cpu
+        .regs
+        .set_di(add(ctx.cpu.regs.get_di(), 0x4u16, &mut ctx.cpu.flags));
+    // 000006fb add bx,8
+    ctx.cpu
+        .regs
+        .set_bx(add(ctx.cpu.regs.get_bx(), 0x8u16, &mut ctx.cpu.flags));
+    // 000006fe dec bp
+    ctx.cpu
+        .regs
+        .set_bp(dec(ctx.cpu.regs.get_bp(), &mut ctx.cpu.flags));
+    // 000006ff jne near ptr 05F3h
+    ctx.jne(Cont(x703), Cont(x5f3))
+}
+
+pub fn x703(ctx: &mut Context) -> Cont {
+    // 00000703 mov si,2B4Ch
+    ctx.cpu.regs.set_si(0x2b4cu16);
+    // 00000706 mov di,2A9Ch
+    ctx.cpu.regs.set_di(0x2a9cu16);
+    // 00000709 mov cx,2Bh
+    ctx.cpu.regs.set_cx(0x2bu16);
+    // 0000070c sub ax,ax
+    ctx.cpu.regs.set_ax(sub(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_ax(),
+        &mut ctx.cpu.flags,
+    ));
+    Cont(x70e)
+}
+
+pub fn x70e(ctx: &mut Context) -> Cont {
+    // 0000070e mov bx,[si]
+    ctx.cpu
+        .regs
+        .set_bx(ctx.memory.read::<u16>((ctx.cpu.regs.get_si() as u32)));
+    // 00000710 mov [di],bx
+    ctx.memory
+        .write::<u16>((ctx.cpu.regs.get_di() as u32), ctx.cpu.regs.get_bx());
+    // 00000712 mov [di+2],ax
+    ctx.memory.write::<u16>(
+        (ctx.cpu.regs.get_di() as u32).wrapping_add(0x2 as u32),
+        ctx.cpu.regs.get_ax(),
+    );
+    // 00000715 inc ax
+    ctx.cpu
+        .regs
+        .set_ax(inc(ctx.cpu.regs.get_ax(), &mut ctx.cpu.flags));
+    // 00000716 add si,8
+    ctx.cpu
+        .regs
+        .set_si(add(ctx.cpu.regs.get_si(), 0x8u16, &mut ctx.cpu.flags));
+    // 00000719 add di,4
+    ctx.cpu
+        .regs
+        .set_di(add(ctx.cpu.regs.get_di(), 0x4u16, &mut ctx.cpu.flags));
+    // 0000071c dec cx
+    ctx.cpu
+        .regs
+        .set_cx(dec(ctx.cpu.regs.get_cx(), &mut ctx.cpu.flags));
+    // 0000071d jne short 070Eh
+    ctx.jne(Cont(x71f), Cont(x70e))
+}
+
+pub fn x71f(ctx: &mut Context) -> Cont {
+    // 0000071f mov si,2A9Ch
+    ctx.cpu.regs.set_si(0x2a9cu16);
+    // 00000722 mov bp,2Ah
+    ctx.cpu.regs.set_bp(0x2au16);
+    Cont(x725)
+}
+
+pub fn x725(ctx: &mut Context) -> Cont {
+    // 00000725 mov di,si
+    ctx.cpu.regs.set_di(ctx.cpu.regs.get_si());
+    // 00000727 mov cx,bp
+    ctx.cpu.regs.set_cx(ctx.cpu.regs.get_bp());
+    Cont(x729)
+}
+
+pub fn x729(ctx: &mut Context) -> Cont {
+    // 00000729 mov ax,[di]
+    ctx.cpu
+        .regs
+        .set_ax(ctx.memory.read::<u16>((ctx.cpu.regs.get_di() as u32)));
+    // 0000072b cmp ax,[di+4]
+    sub(
+        ctx.cpu.regs.get_ax(),
+        ctx.memory
+            .read::<u16>((ctx.cpu.regs.get_di() as u32).wrapping_add(0x4 as u32)),
+        &mut ctx.cpu.flags,
+    );
+    // 0000072e jae short 0744h
+    ctx.jae(Cont(x730), Cont(x744))
+}
+
+pub fn x730(ctx: &mut Context) -> Cont {
+    // 00000730 mov bx,[di+4]
+    ctx.cpu.regs.set_bx(
+        ctx.memory
+            .read::<u16>((ctx.cpu.regs.get_di() as u32).wrapping_add(0x4 as u32)),
+    );
+    // 00000733 mov [di+4],ax
+    ctx.memory.write::<u16>(
+        (ctx.cpu.regs.get_di() as u32).wrapping_add(0x4 as u32),
+        ctx.cpu.regs.get_ax(),
+    );
+    // 00000736 mov [di],bx
+    ctx.memory
+        .write::<u16>((ctx.cpu.regs.get_di() as u32), ctx.cpu.regs.get_bx());
+    // 00000738 mov ax,[di+2]
+    ctx.cpu.regs.set_ax(
+        ctx.memory
+            .read::<u16>((ctx.cpu.regs.get_di() as u32).wrapping_add(0x2 as u32)),
+    );
+    // 0000073b mov bx,[di+6]
+    ctx.cpu.regs.set_bx(
+        ctx.memory
+            .read::<u16>((ctx.cpu.regs.get_di() as u32).wrapping_add(0x6 as u32)),
+    );
+    // 0000073e mov [di+6],ax
+    ctx.memory.write::<u16>(
+        (ctx.cpu.regs.get_di() as u32).wrapping_add(0x6 as u32),
+        ctx.cpu.regs.get_ax(),
+    );
+    // 00000741 mov [di+2],bx
+    ctx.memory.write::<u16>(
+        (ctx.cpu.regs.get_di() as u32).wrapping_add(0x2 as u32),
+        ctx.cpu.regs.get_bx(),
+    );
+    Cont(x744)
+}
+
+pub fn x744(ctx: &mut Context) -> Cont {
+    // 00000744 add di,4
+    ctx.cpu
+        .regs
+        .set_di(add(ctx.cpu.regs.get_di(), 0x4u16, &mut ctx.cpu.flags));
+    // 00000747 dec cx
+    ctx.cpu
+        .regs
+        .set_cx(dec(ctx.cpu.regs.get_cx(), &mut ctx.cpu.flags));
+    // 00000748 jne short 0729h
+    ctx.jne(Cont(x74a), Cont(x729))
+}
+
+pub fn x74a(ctx: &mut Context) -> Cont {
+    // 0000074a add si,4
+    ctx.cpu
+        .regs
+        .set_si(add(ctx.cpu.regs.get_si(), 0x4u16, &mut ctx.cpu.flags));
+    // 0000074d dec bp
+    ctx.cpu
+        .regs
+        .set_bp(dec(ctx.cpu.regs.get_bp(), &mut ctx.cpu.flags));
+    // 0000074e jne short 0725h
+    ctx.jne(Cont(x750), Cont(x725))
+}
+
+pub fn x750(ctx: &mut Context) -> Cont {
+    // 00000750 push gs
+    ctx.push16(ctx.cpu.regs.get_gs());
+    // 00000752 mov ax,ds:[14B6h]
+    ctx.cpu.regs.set_ax(ctx.memory.read::<u16>((0x14b6 as u32)));
+    // 00000755 mov gs,ax
+    ctx.cpu.regs.set_gs(ctx.cpu.regs.get_ax());
+    // 00000757 push fs
+    ctx.push16(ctx.cpu.regs.get_fs());
+    // 00000759 pop es
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_es(x);
+    // 0000075a mov si,2A9Eh
+    ctx.cpu.regs.set_si(0x2a9eu16);
+    // 0000075d mov bp,2Bh
+    ctx.cpu.regs.set_bp(0x2bu16);
+    Cont(x760)
+}
+
+pub fn x760(ctx: &mut Context) -> Cont {
+    // 00000760 push si
+    ctx.push16(ctx.cpu.regs.get_si());
+    // 00000761 mov si,[si]
+    ctx.cpu
+        .regs
+        .set_si(ctx.memory.read::<u16>((ctx.cpu.regs.get_si() as u32)));
+    // 00000763 shl si,6
+    ctx.cpu
+        .regs
+        .set_si(shl(ctx.cpu.regs.get_si(), 0x6u8, &mut ctx.cpu.flags));
+    // 00000766 add si,1FDCh
+    ctx.cpu
+        .regs
+        .set_si(add(ctx.cpu.regs.get_si(), 0x1fdcu16, &mut ctx.cpu.flags));
+    // 0000076a mov di,1362h
+    ctx.cpu.regs.set_di(0x1362u16);
+    // 0000076d mov bx,[si+4]
+    ctx.cpu.regs.set_bx(
+        ctx.memory
+            .read::<u16>((ctx.cpu.regs.get_si() as u32).wrapping_add(0x4 as u32)),
+    );
+    // 00000770 lodsw
+    ctx.lodsw();
+    // 00000771 cwd
+    // Cwd not implemented
+    todo!();
+}
+
+pub fn x78f(ctx: &mut Context) -> Cont {
+    // 0000078f mov [di+1],al
+    ctx.memory.write::<u8>(
+        ctx.cpu.regs.get_di().wrapping_add(0x1),
+        ctx.cpu.regs.get_al(),
+    );
+    // 00000792 mov [di+11h],al
+    ctx.memory.write::<u8>(
+        ctx.cpu.regs.get_di().wrapping_add(0x11),
+        ctx.cpu.regs.get_al(),
+    );
+    // 00000795 add si,2
+    ctx.cpu
+        .regs
+        .set_si(add(ctx.cpu.regs.get_si(), 0x2u16, &mut ctx.cpu.flags));
+    // 00000798 mov bx,[si+4]
+    ctx.cpu.regs.set_bx(
+        ctx.memory
+            .read::<u16>((ctx.cpu.regs.get_si() as u32).wrapping_add(0x4 as u32)),
+    );
+    // 0000079b lodsw
+    ctx.lodsw();
+    // 0000079c cwd
+    // Cwd not implemented
+    todo!();
+}
+
+pub fn x7b8(ctx: &mut Context) -> Cont {
+    // 000007b8 mov [di+5],al
+    ctx.memory.write::<u8>(
+        ctx.cpu.regs.get_di().wrapping_add(0x5),
+        ctx.cpu.regs.get_al(),
+    );
+    // 000007bb add si,2
+    ctx.cpu
+        .regs
+        .set_si(add(ctx.cpu.regs.get_si(), 0x2u16, &mut ctx.cpu.flags));
+    // 000007be mov bx,[si+4]
+    ctx.cpu.regs.set_bx(
+        ctx.memory
+            .read::<u16>((ctx.cpu.regs.get_si() as u32).wrapping_add(0x4 as u32)),
+    );
+    // 000007c1 lodsw
+    ctx.lodsw();
+    // 000007c2 cwd
+    // Cwd not implemented
+    todo!();
+}
+
+pub fn x7de(ctx: &mut Context) -> Cont {
+    // 000007de mov [di+9],al
+    ctx.memory.write::<u8>(
+        ctx.cpu.regs.get_di().wrapping_add(0x9),
+        ctx.cpu.regs.get_al(),
+    );
+    // 000007e1 add si,2
+    ctx.cpu
+        .regs
+        .set_si(add(ctx.cpu.regs.get_si(), 0x2u16, &mut ctx.cpu.flags));
+    // 000007e4 mov bx,[si+4]
+    ctx.cpu.regs.set_bx(
+        ctx.memory
+            .read::<u16>((ctx.cpu.regs.get_si() as u32).wrapping_add(0x4 as u32)),
+    );
+    // 000007e7 lodsw
+    ctx.lodsw();
+    // 000007e8 cwd
+    // Cwd not implemented
+    todo!();
+}
+
+pub fn x804(ctx: &mut Context) -> Cont {
+    // 00000804 mov [di+0Dh],al
+    ctx.memory.write::<u8>(
+        ctx.cpu.regs.get_di().wrapping_add(0xd),
+        ctx.cpu.regs.get_al(),
+    );
+    // 00000807 add si,2
+    ctx.cpu
+        .regs
+        .set_si(add(ctx.cpu.regs.get_si(), 0x2u16, &mut ctx.cpu.flags));
+    // 0000080a mov di,1376h
+    ctx.cpu.regs.set_di(0x1376u16);
+    // 0000080d mov bx,[si+4]
+    ctx.cpu.regs.set_bx(
+        ctx.memory
+            .read::<u16>((ctx.cpu.regs.get_si() as u32).wrapping_add(0x4 as u32)),
+    );
+    // 00000810 lodsw
+    ctx.lodsw();
+    // 00000811 cwd
+    // Cwd not implemented
+    todo!();
+}
+
+pub fn x835(ctx: &mut Context) -> Cont {
+    // 00000835 mov [di+1],al
+    ctx.memory.write::<u8>(
+        ctx.cpu.regs.get_di().wrapping_add(0x1),
+        ctx.cpu.regs.get_al(),
+    );
+    // 00000838 mov [di+11h],al
+    ctx.memory.write::<u8>(
+        ctx.cpu.regs.get_di().wrapping_add(0x11),
+        ctx.cpu.regs.get_al(),
+    );
+    // 0000083b mov [di+15h],al
+    ctx.memory.write::<u8>(
+        ctx.cpu.regs.get_di().wrapping_add(0x15),
+        ctx.cpu.regs.get_al(),
+    );
+    // 0000083e mov [di+25h],al
+    ctx.memory.write::<u8>(
+        ctx.cpu.regs.get_di().wrapping_add(0x25),
+        ctx.cpu.regs.get_al(),
+    );
+    // 00000841 add si,2
+    ctx.cpu
+        .regs
+        .set_si(add(ctx.cpu.regs.get_si(), 0x2u16, &mut ctx.cpu.flags));
+    // 00000844 mov bx,[si+4]
+    ctx.cpu.regs.set_bx(
+        ctx.memory
+            .read::<u16>((ctx.cpu.regs.get_si() as u32).wrapping_add(0x4 as u32)),
+    );
+    // 00000847 lodsw
+    ctx.lodsw();
+    // 00000848 cwd
+    // Cwd not implemented
+    todo!();
+}
+
+pub fn x867(ctx: &mut Context) -> Cont {
+    // 00000867 mov [di+5],al
+    ctx.memory.write::<u8>(
+        ctx.cpu.regs.get_di().wrapping_add(0x5),
+        ctx.cpu.regs.get_al(),
+    );
+    // 0000086a mov [di+19h],al
+    ctx.memory.write::<u8>(
+        ctx.cpu.regs.get_di().wrapping_add(0x19),
+        ctx.cpu.regs.get_al(),
+    );
+    // 0000086d add si,2
+    ctx.cpu
+        .regs
+        .set_si(add(ctx.cpu.regs.get_si(), 0x2u16, &mut ctx.cpu.flags));
+    // 00000870 mov bx,[si+4]
+    ctx.cpu.regs.set_bx(
+        ctx.memory
+            .read::<u16>((ctx.cpu.regs.get_si() as u32).wrapping_add(0x4 as u32)),
+    );
+    // 00000873 lodsw
+    ctx.lodsw();
+    // 00000874 cwd
+    // Cwd not implemented
+    todo!();
+}
+
+pub fn x890(ctx: &mut Context) -> Cont {
+    // 00000890 mov [di+9],al
+    ctx.memory.write::<u8>(
+        ctx.cpu.regs.get_di().wrapping_add(0x9),
+        ctx.cpu.regs.get_al(),
+    );
+    // 00000893 add si,2
+    ctx.cpu
+        .regs
+        .set_si(add(ctx.cpu.regs.get_si(), 0x2u16, &mut ctx.cpu.flags));
+    // 00000896 mov bx,[si+4]
+    ctx.cpu.regs.set_bx(
+        ctx.memory
+            .read::<u16>((ctx.cpu.regs.get_si() as u32).wrapping_add(0x4 as u32)),
+    );
+    // 00000899 lodsw
+    ctx.lodsw();
+    // 0000089a cwd
+    // Cwd not implemented
+    todo!();
+}
+
+pub fn x8b6(ctx: &mut Context) -> Cont {
+    // 000008b6 mov [di+0Dh],al
+    ctx.memory.write::<u8>(
+        ctx.cpu.regs.get_di().wrapping_add(0xd),
+        ctx.cpu.regs.get_al(),
+    );
+    // 000008b9 add si,2
+    ctx.cpu
+        .regs
+        .set_si(add(ctx.cpu.regs.get_si(), 0x2u16, &mut ctx.cpu.flags));
+    // 000008bc mov bx,[si+4]
+    ctx.cpu.regs.set_bx(
+        ctx.memory
+            .read::<u16>((ctx.cpu.regs.get_si() as u32).wrapping_add(0x4 as u32)),
+    );
+    // 000008bf lodsw
+    ctx.lodsw();
+    // 000008c0 cwd
+    // Cwd not implemented
+    todo!();
+}
+
+pub fn x8da(ctx: &mut Context) -> Cont {
+    // 000008da mov [di+1Dh],al
+    ctx.memory.write::<u8>(
+        ctx.cpu.regs.get_di().wrapping_add(0x1d),
+        ctx.cpu.regs.get_al(),
+    );
+    // 000008dd add si,2
+    ctx.cpu
+        .regs
+        .set_si(add(ctx.cpu.regs.get_si(), 0x2u16, &mut ctx.cpu.flags));
+    // 000008e0 mov bx,[si+4]
+    ctx.cpu.regs.set_bx(
+        ctx.memory
+            .read::<u16>((ctx.cpu.regs.get_si() as u32).wrapping_add(0x4 as u32)),
+    );
+    // 000008e3 lodsw
+    ctx.lodsw();
+    // 000008e4 cwd
+    // Cwd not implemented
+    todo!();
+}
+
+pub fn x8fe(ctx: &mut Context) -> Cont {
+    // 000008fe mov [di+21h],al
+    ctx.memory.write::<u8>(
+        ctx.cpu.regs.get_di().wrapping_add(0x21),
+        ctx.cpu.regs.get_al(),
+    );
+    // 00000901 push bp
+    ctx.push16(ctx.cpu.regs.get_bp());
+    // 00000902 mov si,1362h
+    ctx.cpu.regs.set_si(0x1362u16);
+    // 00000905 call 0C01h
+    ctx.call16(0x908, Cont(xc01))
+}
+
+pub fn x908(ctx: &mut Context) -> Cont {
+    // 00000908 push ax
+    ctx.push16(ctx.cpu.regs.get_ax());
+    // 00000909 cmp ax,0
+    sub(ctx.cpu.regs.get_ax(), 0x0u16, &mut ctx.cpu.flags);
+    // 0000090c jg short 092Ch
+    ctx.jg(Cont(x90e), Cont(x92c))
+}
+
+pub fn x90e(ctx: &mut Context) -> Cont {
+    // 0000090e mov si,138Ah
+    ctx.cpu.regs.set_si(0x138au16);
+    // 00000911 call 0C01h
+    ctx.call16(0x914, Cont(xc01))
+}
+
+pub fn x914(ctx: &mut Context) -> Cont {
+    // 00000914 call 0C25h
+    ctx.call16(0x917, Cont(xc25))
+}
+
+pub fn x917(ctx: &mut Context) -> Cont {
+    // 00000917 mov si,1362h
+    ctx.cpu.regs.set_si(0x1362u16);
+    // 0000091a pop word ptr ds:[14CAh]
+    let x = ctx.pop16();
+    ctx.memory.write::<u16>((0x14ca as u32), x);
+    // 0000091e call 0C25h
+    ctx.call16(0x921, Cont(xc25))
+}
+
+pub fn x921(ctx: &mut Context) -> Cont {
+    // 00000921 mov si,1376h
+    ctx.cpu.regs.set_si(0x1376u16);
+    // 00000924 call 0C01h
+    ctx.call16(0x927, Cont(xc01))
+}
+
+pub fn x927(ctx: &mut Context) -> Cont {
+    // 00000927 call 0C25h
+    ctx.call16(0x92a, Cont(xc25))
+}
+
+pub fn x92a(ctx: &mut Context) -> Cont {
+    // 0000092a jmp short 0948h
+    Cont(x948)
+}
+
+pub fn x92c(ctx: &mut Context) -> Cont {
+    // 0000092c mov si,1376h
+    ctx.cpu.regs.set_si(0x1376u16);
+    // 0000092f call 0C01h
+    ctx.call16(0x932, Cont(xc01))
+}
+
+pub fn x932(ctx: &mut Context) -> Cont {
+    // 00000932 call 0C25h
+    ctx.call16(0x935, Cont(xc25))
+}
+
+pub fn x935(ctx: &mut Context) -> Cont {
+    // 00000935 mov si,1362h
+    ctx.cpu.regs.set_si(0x1362u16);
+    // 00000938 pop word ptr ds:[14CAh]
+    let x = ctx.pop16();
+    ctx.memory.write::<u16>((0x14ca as u32), x);
+    // 0000093c call 0C25h
+    ctx.call16(0x93f, Cont(xc25))
+}
+
+pub fn x93f(ctx: &mut Context) -> Cont {
+    // 0000093f mov si,138Ah
+    ctx.cpu.regs.set_si(0x138au16);
+    // 00000942 call 0C01h
+    ctx.call16(0x945, Cont(xc01))
+}
+
+pub fn x945(ctx: &mut Context) -> Cont {
+    // 00000945 call 0C25h
+    ctx.call16(0x948, Cont(xc25))
+}
+
+pub fn x948(ctx: &mut Context) -> Cont {
+    // 00000948 pop bp
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_bp(x);
+    Cont(x949)
+}
+
+pub fn x949(ctx: &mut Context) -> Cont {
+    // 00000949 pop si
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_si(x);
+    // 0000094a add si,4
+    ctx.cpu
+        .regs
+        .set_si(add(ctx.cpu.regs.get_si(), 0x4u16, &mut ctx.cpu.flags));
+    // 0000094d dec bp
+    ctx.cpu
+        .regs
+        .set_bp(dec(ctx.cpu.regs.get_bp(), &mut ctx.cpu.flags));
+    // 0000094e jne near ptr 0760h
+    ctx.jne(Cont(x952), Cont(x760))
+}
+
+pub fn x952(ctx: &mut Context) -> Cont {
+    // 00000952 pop gs
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_gs(x);
+    // 00000954 cmp byte ptr cs:[1162h],0
+    sub(ctx.memory.read::<u8>(0x1162), 0x0u8, &mut ctx.cpu.flags);
+    // 0000095a jne near ptr 0BA6h
+    ctx.jne(Cont(x95e), Cont(xba6))
+}
+
+pub fn x95e(ctx: &mut Context) -> Cont {
+    // 0000095e cmp word ptr cs:[115Ch],100h
+    sub(
+        ctx.memory.read::<u16>((0x115c as u32)),
+        0x100u16,
+        &mut ctx.cpu.flags,
+    );
+    // 00000965 jb short 096Ah
+    ctx.jb(Cont(x967), Cont(x96a))
+}
+
+pub fn x967(ctx: &mut Context) -> Cont {
+    // 00000967 jmp near ptr 03D1h
+    Cont(x3d1)
+}
+
+pub fn x96a(ctx: &mut Context) -> Cont {
+    // 0000096a push fs
+    ctx.push16(ctx.cpu.regs.get_fs());
+    // 0000096c pop es
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_es(x);
+    // 0000096d mov di,30h
+    ctx.cpu.regs.set_di(0x30u16);
+    // 00000970 mov bp,64h
+    ctx.cpu.regs.set_bp(0x64u16);
+    // 00000973 sub ax,ax
+    ctx.cpu.regs.set_ax(sub(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_ax(),
+        &mut ctx.cpu.flags,
+    ));
+    Cont(x975)
+}
+
+pub fn x975(ctx: &mut Context) -> Cont {
+    // 00000975 add di,0A0h
+    ctx.cpu
+        .regs
+        .set_di(add(ctx.cpu.regs.get_di(), 0xa0u16, &mut ctx.cpu.flags));
+    // 00000979 mov cx,30h
+    ctx.cpu.regs.set_cx(0x30u16);
+    // 0000097c rep stosw
+    ctx.rep(Rep::REP, Context::stosw);
+    // 0000097e dec bp
+    ctx.cpu
+        .regs
+        .set_bp(dec(ctx.cpu.regs.get_bp(), &mut ctx.cpu.flags));
+    // 0000097f jne short 0975h
+    ctx.jne(Cont(x981), Cont(x975))
+}
+
+pub fn x981(ctx: &mut Context) -> Cont {
+    // 00000981 mov cx,280h
+    ctx.cpu.regs.set_cx(0x280u16);
+    // 00000984 rep stosw
+    ctx.rep(Rep::REP, Context::stosw);
+    // 00000986 mov bp,23h
+    ctx.cpu.regs.set_bp(0x23u16);
+    Cont(x989)
+}
+
+pub fn x989(ctx: &mut Context) -> Cont {
+    // 00000989 push bp
+    ctx.push16(ctx.cpu.regs.get_bp());
+    // 0000098a call 0EDDh
+    ctx.call16(0x98d, Cont(xedd))
+}
+
+pub fn x98d(ctx: &mut Context) -> Cont {
+    // 0000098d call 108Bh
+    ctx.call16(0x990, Cont(x108b))
+}
+
+pub fn x990(ctx: &mut Context) -> Cont {
+    // 00000990 pop bp
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_bp(x);
+    // 00000991 dec bp
+    ctx.cpu
+        .regs
+        .set_bp(dec(ctx.cpu.regs.get_bp(), &mut ctx.cpu.flags));
+    // 00000992 jne short 0989h
+    ctx.jne(Cont(x994), Cont(x989))
+}
+
+pub fn x994(ctx: &mut Context) -> Cont {
+    // 00000994 mov ax,ds:[14B6h]
+    ctx.cpu.regs.set_ax(ctx.memory.read::<u16>((0x14b6 as u32)));
+    // 00000997 mov es,ax
+    ctx.cpu.regs.set_es(ctx.cpu.regs.get_ax());
+    // 00000999 sub di,di
+    ctx.cpu.regs.set_di(sub(
+        ctx.cpu.regs.get_di(),
+        ctx.cpu.regs.get_di(),
+        &mut ctx.cpu.flags,
+    ));
+    // 0000099b mov bp,100h
+    ctx.cpu.regs.set_bp(0x100u16);
+    Cont(x99e)
+}
+
+pub fn x99e(ctx: &mut Context) -> Cont {
+    // 0000099e mov cx,100h
+    ctx.cpu.regs.set_cx(0x100u16);
+    Cont(x9a1)
+}
+
+pub fn x9a1(ctx: &mut Context) -> Cont {
+    // 000009a1 push bp
+    ctx.push16(ctx.cpu.regs.get_bp());
+    // 000009a2 push cx
+    ctx.push16(ctx.cpu.regs.get_cx());
+    // 000009a3 push di
+    ctx.push16(ctx.cpu.regs.get_di());
+    // 000009a4 sub bp,80h
+    ctx.cpu
+        .regs
+        .set_bp(sub(ctx.cpu.regs.get_bp(), 0x80u16, &mut ctx.cpu.flags));
+    // 000009a8 sub cx,80h
+    ctx.cpu
+        .regs
+        .set_cx(sub(ctx.cpu.regs.get_cx(), 0x80u16, &mut ctx.cpu.flags));
+    // 000009ac shl bp,1
+    ctx.cpu
+        .regs
+        .set_bp(shl(ctx.cpu.regs.get_bp(), 0x1u8, &mut ctx.cpu.flags));
+    // 000009ae shl cx,1
+    ctx.cpu
+        .regs
+        .set_cx(shl(ctx.cpu.regs.get_cx(), 0x1u8, &mut ctx.cpu.flags));
+    // 000009b0 mov ax,bp
+    ctx.cpu.regs.set_ax(ctx.cpu.regs.get_bp());
+    // 000009b2 imul ax
+    ctx.cpu.regs.set_dx_ax(imul1_16(
+        ctx.cpu.regs.eax as u16,
+        ctx.cpu.regs.get_ax(),
+        &mut ctx.cpu.flags,
+    ));
+    // 000009b4 mov bx,ax
+    ctx.cpu.regs.set_bx(ctx.cpu.regs.get_ax());
+    // 000009b6 mov ax,cx
+    ctx.cpu.regs.set_ax(ctx.cpu.regs.get_cx());
+    // 000009b8 imul ax
+    ctx.cpu.regs.set_dx_ax(imul1_16(
+        ctx.cpu.regs.eax as u16,
+        ctx.cpu.regs.get_ax(),
+        &mut ctx.cpu.flags,
+    ));
+    // 000009ba add ax,bx
+    ctx.cpu.regs.set_ax(add(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_bx(),
+        &mut ctx.cpu.flags,
+    ));
+    // 000009bc sub ax,4000h
+    ctx.cpu
+        .regs
+        .set_ax(sub(ctx.cpu.regs.get_ax(), 0x4000u16, &mut ctx.cpu.flags));
+    // 000009bf jae short 09F3h
+    ctx.jae(Cont(x9c1), Cont(x9f3))
+}
+
+pub fn x9c1(ctx: &mut Context) -> Cont {
+    // 000009c1 neg ax
+    ctx.cpu
+        .regs
+        .set_ax(neg(ctx.cpu.regs.get_ax(), &mut ctx.cpu.flags));
+    // 000009c3 movzx eax,ax
+    ctx.cpu.regs.eax = ctx.cpu.regs.get_ax() as _;
+    // 000009c7 push bp
+    ctx.push16(ctx.cpu.regs.get_bp());
+    // 000009c8 call 10F0h
+    ctx.call16(0x9cb, Cont(x10f0))
+}
+
+pub fn x9cb(ctx: &mut Context) -> Cont {
+    // 000009cb pop bp
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_bp(x);
+    // 000009cc mov ax,0FFD0h
+    ctx.cpu.regs.set_ax(0xffd0u16);
+    // 000009cf imul cx
+    ctx.cpu.regs.set_dx_ax(imul1_16(
+        ctx.cpu.regs.eax as u16,
+        ctx.cpu.regs.get_cx(),
+        &mut ctx.cpu.flags,
+    ));
+    // 000009d1 mov si,ax
+    ctx.cpu.regs.set_si(ctx.cpu.regs.get_ax());
+    // 000009d3 mov ax,76h
+    ctx.cpu.regs.set_ax(0x76u16);
+    // 000009d6 imul bx
+    ctx.cpu.regs.set_dx_ax(imul1_16(
+        ctx.cpu.regs.eax as u16,
+        ctx.cpu.regs.get_bx(),
+        &mut ctx.cpu.flags,
+    ));
+    // 000009d8 add ax,si
+    ctx.cpu.regs.set_ax(add(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_si(),
+        &mut ctx.cpu.flags,
+    ));
+    // 000009da sar ax,9
+    ctx.cpu
+        .regs
+        .set_ax(sar(ctx.cpu.regs.get_ax(), 0x9u8, &mut ctx.cpu.flags));
+    // 000009dd test ax,ax
+    and(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_ax(),
+        &mut ctx.cpu.flags,
+    );
+    // 000009df jns short 09E3h
+    ctx.jns(Cont(x9e1), Cont(x9e3))
+}
+
+pub fn x9e1(ctx: &mut Context) -> Cont {
+    // 000009e1 sub ax,ax
+    ctx.cpu.regs.set_ax(sub(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_ax(),
+        &mut ctx.cpu.flags,
+    ));
+    Cont(x9e3)
+}
+
+pub fn x9e3(ctx: &mut Context) -> Cont {
+    // 000009e3 mov ds:[6F23h],al
+    ctx.memory.write::<u8>(0x6f23, ctx.cpu.regs.get_al());
+    // 000009e6 cmp ax,1Fh
+    sub(ctx.cpu.regs.get_ax(), 0x1fu16, &mut ctx.cpu.flags);
+    // 000009e9 jle short 09EEh
+    ctx.jle(Cont(x9eb), Cont(x9ee))
+}
+
+pub fn x9eb(ctx: &mut Context) -> Cont {
+    // 000009eb mov ax,1Fh
+    ctx.cpu.regs.set_ax(0x1fu16);
+    Cont(x9ee)
+}
+
+pub fn x9ee(ctx: &mut Context) -> Cont {
+    // 000009ee cmp ax,0Ah
+    sub(ctx.cpu.regs.get_ax(), 0xau16, &mut ctx.cpu.flags);
+    // 000009f1 jge short 09F6h
+    ctx.jge(Cont(x9f3), Cont(x9f6))
+}
+
+pub fn x9f3(ctx: &mut Context) -> Cont {
+    // 000009f3 mov ax,0Ah
+    ctx.cpu.regs.set_ax(0xau16);
+    Cont(x9f6)
+}
+
+pub fn x9f6(ctx: &mut Context) -> Cont {
+    // 000009f6 pop di
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_di(x);
+    // 000009f7 pop cx
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_cx(x);
+    // 000009f8 pop bp
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_bp(x);
+    // 000009f9 add al,20h
+    ctx.cpu
+        .regs
+        .set_al(add(ctx.cpu.regs.get_al(), 0x20u8, &mut ctx.cpu.flags));
+    // 000009fb stosb
+    ctx.stosb();
+    // 000009fc dec cx
+    ctx.cpu
+        .regs
+        .set_cx(dec(ctx.cpu.regs.get_cx(), &mut ctx.cpu.flags));
+    // 000009fd jne short 09A1h
+    ctx.jne(Cont(x9ff), Cont(x9a1))
+}
+
+pub fn x9ff(ctx: &mut Context) -> Cont {
+    // 000009ff dec bp
+    ctx.cpu
+        .regs
+        .set_bp(dec(ctx.cpu.regs.get_bp(), &mut ctx.cpu.flags));
+    // 00000a00 jne short 099Eh
+    ctx.jne(Cont(xa02), Cont(x99e))
+}
+
+pub fn xa02(ctx: &mut Context) -> Cont {
+    // 00000a02 mov si,13B0h
+    ctx.cpu.regs.set_si(0x13b0u16);
+    // 00000a05 call 0F2Fh
+    ctx.call16(0xa08, Cont(xf2f))
+}
+
+pub fn xa08(ctx: &mut Context) -> Cont {
+    // 00000a08 mov word ptr cs:[115Ch],0F00h
+    ctx.memory.write::<u16>((0x115c as u32), 0xf00u16);
+    // 00000a0f mov byte ptr cs:[1164h],2
+    ctx.memory.write::<u8>(0x1164, 0x2u8);
+    Cont(xa15)
+}
+
+pub fn xa15(ctx: &mut Context) -> Cont {
+    // 00000a15 mov bx,cs:[1160h]
+    ctx.cpu.regs.set_bx(ctx.memory.read::<u16>((0x1160 as u32)));
+    // 00000a1a and bx,3FFh
+    ctx.cpu
+        .regs
+        .set_bx(and(ctx.cpu.regs.get_bx(), 0x3ffu16, &mut ctx.cpu.flags));
+    // 00000a1e add bx,bx
+    ctx.cpu.regs.set_bx(add(
+        ctx.cpu.regs.get_bx(),
+        ctx.cpu.regs.get_bx(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000a20 mov ax,[bx+14DAh]
+    ctx.cpu.regs.set_ax(
+        ctx.memory
+            .read::<u16>((ctx.cpu.regs.get_bx() as u32).wrapping_add(0x14da as u32)),
+    );
+    // 00000a24 mov cx,ax
+    ctx.cpu.regs.set_cx(ctx.cpu.regs.get_ax());
+    // 00000a26 sar ax,2
+    ctx.cpu
+        .regs
+        .set_ax(sar(ctx.cpu.regs.get_ax(), 0x2u8, &mut ctx.cpu.flags));
+    // 00000a29 sar cx,3
+    ctx.cpu
+        .regs
+        .set_cx(sar(ctx.cpu.regs.get_cx(), 0x3u8, &mut ctx.cpu.flags));
+    // 00000a2c add ax,cx
+    ctx.cpu.regs.set_ax(add(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_cx(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000a2e mov ds:[14C8h],ax
+    ctx.memory
+        .write::<u16>((0x14c8 as u32), ctx.cpu.regs.get_ax());
+    // 00000a31 mov ax,[bx+16DAh]
+    ctx.cpu.regs.set_ax(
+        ctx.memory
+            .read::<u16>((ctx.cpu.regs.get_bx() as u32).wrapping_add(0x16da as u32)),
+    );
+    // 00000a35 mov bx,ax
+    ctx.cpu.regs.set_bx(ctx.cpu.regs.get_ax());
+    // 00000a37 sar ax,2
+    ctx.cpu
+        .regs
+        .set_ax(sar(ctx.cpu.regs.get_ax(), 0x2u8, &mut ctx.cpu.flags));
+    // 00000a3a sar bx,4
+    ctx.cpu
+        .regs
+        .set_bx(sar(ctx.cpu.regs.get_bx(), 0x4u8, &mut ctx.cpu.flags));
+    // 00000a3d add ax,bx
+    ctx.cpu.regs.set_ax(add(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_bx(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000a3f mov ds:[14C6h],ax
+    ctx.memory
+        .write::<u16>((0x14c6 as u32), ctx.cpu.regs.get_ax());
+    // 00000a42 call 117Eh
+    ctx.call16(0xa45, Cont(x117e))
+}
+
+pub fn xa45(ctx: &mut Context) -> Cont {
+    // 00000a45 call 0EA3h
+    ctx.call16(0xa48, Cont(xea3))
+}
+
+pub fn xa48(ctx: &mut Context) -> Cont {
+    // 00000a48 call 108Bh
+    ctx.call16(0xa4b, Cont(x108b))
+}
+
+pub fn xa4b(ctx: &mut Context) -> Cont {
+    // 00000a4b cmp byte ptr cs:[1162h],0
+    sub(ctx.memory.read::<u8>(0x1162), 0x0u8, &mut ctx.cpu.flags);
+    // 00000a51 jne near ptr 0BA6h
+    ctx.jne(Cont(xa55), Cont(xba6))
+}
+
+pub fn xa55(ctx: &mut Context) -> Cont {
+    // 00000a55 cmp word ptr cs:[115Ch],100h
+    sub(
+        ctx.memory.read::<u16>((0x115c as u32)),
+        0x100u16,
+        &mut ctx.cpu.flags,
+    );
+    // 00000a5c ja short 0A15h
+    ctx.ja(Cont(xa5e), Cont(xa15))
+}
+
+pub fn xa5e(ctx: &mut Context) -> Cont {
+    // 00000a5e mov word ptr cs:[1160h],0
+    ctx.memory.write::<u16>((0x1160 as u32), 0x0u16);
+    // 00000a65 mov cx,200h
+    ctx.cpu.regs.set_cx(0x200u16);
+    Cont(xa68)
+}
+
+pub fn xa68(ctx: &mut Context) -> Cont {
+    // 00000a68 sub bx,bx
+    ctx.cpu.regs.set_bx(sub(
+        ctx.cpu.regs.get_bx(),
+        ctx.cpu.regs.get_bx(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000a6a xchg bx,cs:[1160h]
+    let t = ctx.memory.read::<u16>((0x1160 as u32));
+    ctx.memory
+        .write::<u16>((0x1160 as u32), ctx.cpu.regs.get_bx());
+    ctx.cpu.regs.set_bx(t);
+    // 00000a6f shl bx,6
+    ctx.cpu
+        .regs
+        .set_bx(shl(ctx.cpu.regs.get_bx(), 0x6u8, &mut ctx.cpu.flags));
+    // 00000a72 mov ax,ds:[14C6h]
+    ctx.cpu.regs.set_ax(ctx.memory.read::<u16>((0x14c6 as u32)));
+    // 00000a75 sub ax,4000h
+    ctx.cpu
+        .regs
+        .set_ax(sub(ctx.cpu.regs.get_ax(), 0x4000u16, &mut ctx.cpu.flags));
+    // 00000a78 add ax,bx
+    ctx.cpu.regs.set_ax(add(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_bx(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000a7a jb short 0A84h
+    ctx.jb(Cont(xa7c), Cont(xa84))
+}
+
+pub fn xa7c(ctx: &mut Context) -> Cont {
+    // 00000a7c add ax,4000h
+    ctx.cpu
+        .regs
+        .set_ax(add(ctx.cpu.regs.get_ax(), 0x4000u16, &mut ctx.cpu.flags));
+    // 00000a7f mov ds:[14C6h],ax
+    ctx.memory
+        .write::<u16>((0x14c6 as u32), ctx.cpu.regs.get_ax());
+    // 00000a82 jmp short 0A89h
+    Cont(xa89)
+}
+
+pub fn xa84(ctx: &mut Context) -> Cont {
+    // 00000a84 mov byte ptr ds:[6F23h],1
+    ctx.memory.write::<u8>(0x6f23, 0x1u8);
+    Cont(xa89)
+}
+
+pub fn xa89(ctx: &mut Context) -> Cont {
+    // 00000a89 mov ax,ds:[14C8h]
+    ctx.cpu.regs.set_ax(ctx.memory.read::<u16>((0x14c8 as u32)));
+    // 00000a8c sub ax,3CD8h
+    ctx.cpu
+        .regs
+        .set_ax(sub(ctx.cpu.regs.get_ax(), 0x3cd8u16, &mut ctx.cpu.flags));
+    // 00000a8f sub ax,bx
+    ctx.cpu.regs.set_ax(sub(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_bx(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000a91 jb short 0A9Bh
+    ctx.jb(Cont(xa93), Cont(xa9b))
+}
+
+pub fn xa93(ctx: &mut Context) -> Cont {
+    // 00000a93 add ax,3CD8h
+    ctx.cpu
+        .regs
+        .set_ax(add(ctx.cpu.regs.get_ax(), 0x3cd8u16, &mut ctx.cpu.flags));
+    // 00000a96 mov ds:[14C8h],ax
+    ctx.memory
+        .write::<u16>((0x14c8 as u32), ctx.cpu.regs.get_ax());
+    // 00000a99 jmp short 0A9Fh
+    Cont(xa9f)
+}
+
+pub fn xa9b(ctx: &mut Context) -> Cont {
+    // 00000a9b inc byte ptr ds:[6F23h]
+    ctx.memory.write::<u8>(
+        0x6f23,
+        inc(ctx.memory.read::<u8>(0x6f23), &mut ctx.cpu.flags),
+    );
+    Cont(xa9f)
+}
+
+pub fn xa9f(ctx: &mut Context) -> Cont {
+    // 00000a9f cmp byte ptr ds:[6F23h],2
+    sub(ctx.memory.read::<u8>(0x6f23), 0x2u8, &mut ctx.cpu.flags);
+    // 00000aa4 je short 0ABDh
+    ctx.je(Cont(xaa6), Cont(xabd))
+}
+
+pub fn xaa6(ctx: &mut Context) -> Cont {
+    // 00000aa6 push cx
+    ctx.push16(ctx.cpu.regs.get_cx());
+    // 00000aa7 call 117Eh
+    ctx.call16(0xaaa, Cont(x117e))
+}
+
+pub fn xaaa(ctx: &mut Context) -> Cont {
+    // 00000aaa call 0EA3h
+    ctx.call16(0xaad, Cont(xea3))
+}
+
+pub fn xaad(ctx: &mut Context) -> Cont {
+    // 00000aad call 108Bh
+    ctx.call16(0xab0, Cont(x108b))
+}
+
+pub fn xab0(ctx: &mut Context) -> Cont {
+    // 00000ab0 cmp byte ptr cs:[1162h],0
+    sub(ctx.memory.read::<u8>(0x1162), 0x0u8, &mut ctx.cpu.flags);
+    // 00000ab6 jne near ptr 0BA6h
+    ctx.jne(Cont(xaba), Cont(xba6))
+}
+
+pub fn xaba(ctx: &mut Context) -> Cont {
+    // 00000aba pop cx
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_cx(x);
+    // 00000abb loop 0A68h
+    ctx.loop_(Cont(xabd), Cont(xa68))
+}
+
+pub fn xabd(ctx: &mut Context) -> Cont {
+    // 00000abd push ds
+    ctx.push16(ctx.cpu.regs.get_ds());
+    // 00000abe pop es
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_es(x);
+    // 00000abf mov si,13C8h
+    ctx.cpu.regs.set_si(0x13c8u16);
+    // 00000ac2 mov di,139Eh
+    ctx.cpu.regs.set_di(0x139eu16);
+    // 00000ac5 mov cx,6
+    ctx.cpu.regs.set_cx(0x6u16);
+    // 00000ac8 rep movsw
+    ctx.rep(Rep::REP, Context::movsw);
+    // 00000aca call 0F47h
+    ctx.call16(0xacd, Cont(xf47))
+}
+
+pub fn xacd(ctx: &mut Context) -> Cont {
+    // 00000acd mov cx,63h
+    ctx.cpu.regs.set_cx(0x63u16);
+    Cont(xad0)
+}
+
+pub fn xad0(ctx: &mut Context) -> Cont {
+    // 00000ad0 push cx
+    ctx.push16(ctx.cpu.regs.get_cx());
+    // 00000ad1 call 0BDAh
+    ctx.call16(0xad4, Cont(xbda))
+}
+
+pub fn xad4(ctx: &mut Context) -> Cont {
+    // 00000ad4 call 0EA3h
+    ctx.call16(0xad7, Cont(xea3))
+}
+
+pub fn xad7(ctx: &mut Context) -> Cont {
+    // 00000ad7 cmp byte ptr cs:[1162h],0
+    sub(ctx.memory.read::<u8>(0x1162), 0x0u8, &mut ctx.cpu.flags);
+    // 00000add jne near ptr 0BA6h
+    ctx.jne(Cont(xae1), Cont(xba6))
+}
+
+pub fn xae1(ctx: &mut Context) -> Cont {
+    // 00000ae1 pop cx
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_cx(x);
+    // 00000ae2 loop 0AD0h
+    ctx.loop_(Cont(xae4), Cont(xad0))
+}
+
+pub fn xae4(ctx: &mut Context) -> Cont {
+    // 00000ae4 push ds
+    ctx.push16(ctx.cpu.regs.get_ds());
+    // 00000ae5 mov ax,0A000h
+    ctx.cpu.regs.set_ax(0xa000u16);
+    // 00000ae8 mov es,ax
+    ctx.cpu.regs.set_es(ctx.cpu.regs.get_ax());
+    // 00000aea mov ds,ax
+    ctx.cpu.regs.set_ds(ctx.cpu.regs.get_ax());
+    // 00000aec mov bp,50h
+    ctx.cpu.regs.set_bp(0x50u16);
+    Cont(xaef)
+}
+
+pub fn xaef(ctx: &mut Context) -> Cont {
+    // 00000aef call 0BDAh
+    ctx.call16(0xaf2, Cont(xbda))
+}
+
+pub fn xaf2(ctx: &mut Context) -> Cont {
+    // 00000af2 sub di,di
+    ctx.cpu.regs.set_di(sub(
+        ctx.cpu.regs.get_di(),
+        ctx.cpu.regs.get_di(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000af4 mov dx,0C8h
+    ctx.cpu.regs.set_dx(0xc8u16);
+    Cont(xaf7)
+}
+
+pub fn xaf7(ctx: &mut Context) -> Cont {
+    // 00000af7 mov si,di
+    ctx.cpu.regs.set_si(ctx.cpu.regs.get_di());
+    // 00000af9 add si,2
+    ctx.cpu
+        .regs
+        .set_si(add(ctx.cpu.regs.get_si(), 0x2u16, &mut ctx.cpu.flags));
+    // 00000afc mov cx,50h
+    ctx.cpu.regs.set_cx(0x50u16);
+    // 00000aff rep movsw
+    ctx.rep(Rep::REP, Context::movsw);
+    // 00000b01 std
+    std(ctx);
+    // 00000b02 add di,0A0h
+    ctx.cpu
+        .regs
+        .set_di(add(ctx.cpu.regs.get_di(), 0xa0u16, &mut ctx.cpu.flags));
+    // 00000b06 add si,9Ch
+    ctx.cpu
+        .regs
+        .set_si(add(ctx.cpu.regs.get_si(), 0x9cu16, &mut ctx.cpu.flags));
+    // 00000b0a mov cx,50h
+    ctx.cpu.regs.set_cx(0x50u16);
+    // 00000b0d rep movsw
+    ctx.rep(Rep::REP, Context::movsw);
+    // 00000b0f cld
+    cld(ctx);
+    // 00000b10 add di,0A0h
+    ctx.cpu
+        .regs
+        .set_di(add(ctx.cpu.regs.get_di(), 0xa0u16, &mut ctx.cpu.flags));
+    // 00000b14 dec dx
+    ctx.cpu
+        .regs
+        .set_dx(dec(ctx.cpu.regs.get_dx(), &mut ctx.cpu.flags));
+    // 00000b15 jne short 0AF7h
+    ctx.jne(Cont(xb17), Cont(xaf7))
+}
+
+pub fn xb17(ctx: &mut Context) -> Cont {
+    // 00000b17 cmp byte ptr cs:[1162h],0
+    sub(ctx.memory.read::<u8>(0x1162), 0x0u8, &mut ctx.cpu.flags);
+    // 00000b1d jne near ptr 0BA6h
+    ctx.jne(Cont(xb21), Cont(xba6))
+}
+
+pub fn xb21(ctx: &mut Context) -> Cont {
+    // 00000b21 dec bp
+    ctx.cpu
+        .regs
+        .set_bp(dec(ctx.cpu.regs.get_bp(), &mut ctx.cpu.flags));
+    // 00000b22 jne short 0AEFh
+    ctx.jne(Cont(xb24), Cont(xaef))
+}
+
+pub fn xb24(ctx: &mut Context) -> Cont {
+    // 00000b24 pop ds
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_ds(x);
+    // 00000b25 push ds
+    ctx.push16(ctx.cpu.regs.get_ds());
+    // 00000b26 pop es
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_es(x);
+    // 00000b27 mov si,8524h
+    ctx.cpu.regs.set_si(0x8524u16);
+    // 00000b2a mov di,139Eh
+    ctx.cpu.regs.set_di(0x139eu16);
+    // 00000b2d mov cx,6
+    ctx.cpu.regs.set_cx(0x6u16);
+    // 00000b30 rep movsw
+    ctx.rep(Rep::REP, Context::movsw);
+    // 00000b32 call 0F47h
+    ctx.call16(0xb35, Cont(xf47))
+}
+
+pub fn xb35(ctx: &mut Context) -> Cont {
+    // 00000b35 mov ax,0A000h
+    ctx.cpu.regs.set_ax(0xa000u16);
+    // 00000b38 mov es,ax
+    ctx.cpu.regs.set_es(ctx.cpu.regs.get_ax());
+    // 00000b3a mov cx,7530h
+    ctx.cpu.regs.set_cx(0x7530u16);
+    // 00000b3d sub bp,bp
+    ctx.cpu.regs.set_bp(sub(
+        ctx.cpu.regs.get_bp(),
+        ctx.cpu.regs.get_bp(),
+        &mut ctx.cpu.flags,
+    ));
+    Cont(xb3f)
+}
+
+pub fn xb3f(ctx: &mut Context) -> Cont {
+    // 00000b3f push cx
+    ctx.push16(ctx.cpu.regs.get_cx());
+    // 00000b40 push bp
+    ctx.push16(ctx.cpu.regs.get_bp());
+    // 00000b41 shr cx,3
+    ctx.cpu
+        .regs
+        .set_cx(shr(ctx.cpu.regs.get_cx(), 0x3u8, &mut ctx.cpu.flags));
+    // 00000b44 mov bp,0EA7h
+    ctx.cpu.regs.set_bp(0xea7u16);
+    // 00000b47 sub bp,cx
+    ctx.cpu.regs.set_bp(sub(
+        ctx.cpu.regs.get_bp(),
+        ctx.cpu.regs.get_cx(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000b49 sub di,di
+    ctx.cpu.regs.set_di(sub(
+        ctx.cpu.regs.get_di(),
+        ctx.cpu.regs.get_di(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000b4b mov byte ptr ds:[6F23h],0C8h
+    ctx.memory.write::<u8>(0x6f23, 0xc8u8);
+    // 00000b50 mov ax,0FF9Ch
+    ctx.cpu.regs.set_ax(0xff9cu16);
+    // 00000b53 imul bp
+    ctx.cpu.regs.set_dx_ax(imul1_16(
+        ctx.cpu.regs.eax as u16,
+        ctx.cpu.regs.get_bp(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000b55 mov dx,ax
+    ctx.cpu.regs.set_dx(ctx.cpu.regs.get_ax());
+    // 00000b57 add dx,8000h
+    ctx.cpu
+        .regs
+        .set_dx(add(ctx.cpu.regs.get_dx(), 0x8000u16, &mut ctx.cpu.flags));
+    Cont(xb5b)
+}
+
+pub fn xb5b(ctx: &mut Context) -> Cont {
+    // 00000b5b mov cx,140h
+    ctx.cpu.regs.set_cx(0x140u16);
+    // 00000b5e push dx
+    ctx.push16(ctx.cpu.regs.get_dx());
+    // 00000b5f mov ax,0FF61h
+    ctx.cpu.regs.set_ax(0xff61u16);
+    // 00000b62 imul bp
+    ctx.cpu.regs.set_dx_ax(imul1_16(
+        ctx.cpu.regs.eax as u16,
+        ctx.cpu.regs.get_bp(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000b64 add ax,8000h
+    ctx.cpu
+        .regs
+        .set_ax(add(ctx.cpu.regs.get_ax(), 0x8000u16, &mut ctx.cpu.flags));
+    // 00000b67 pop dx
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_dx(x);
+    // 00000b68 add dx,bp
+    ctx.cpu.regs.set_dx(add(
+        ctx.cpu.regs.get_dx(),
+        ctx.cpu.regs.get_bp(),
+        &mut ctx.cpu.flags,
+    ));
+    Cont(xb6a)
+}
+
+pub fn xb6a(ctx: &mut Context) -> Cont {
+    // 00000b6a mov bh,dh
+    ctx.cpu.regs.set_bh(ctx.cpu.regs.get_dh());
+    // 00000b6c mov bl,ah
+    ctx.cpu.regs.set_bl(ctx.cpu.regs.get_ah());
+    // 00000b6e add ax,bp
+    ctx.cpu.regs.set_ax(add(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_bp(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000b70 add bx,824h
+    ctx.cpu
+        .regs
+        .set_bx(add(ctx.cpu.regs.get_bx(), 0x824u16, &mut ctx.cpu.flags));
+    // 00000b74 and bh,0Fh
+    ctx.cpu
+        .regs
+        .set_bh(and(ctx.cpu.regs.get_bh(), 0xfu8, &mut ctx.cpu.flags));
+    // 00000b77 mov bl,[bx+7524h]
+    ctx.cpu.regs.set_bl(
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.get_bx().wrapping_add(0x7524)),
+    );
+    // 00000b7b inc bl
+    ctx.cpu
+        .regs
+        .set_bl(inc(ctx.cpu.regs.get_bl(), &mut ctx.cpu.flags));
+    // 00000b7d mov es:[di],bl
+    ctx.memory.write::<u8>(
+        todo!().wrapping_add(ctx.cpu.regs.get_di()),
+        ctx.cpu.regs.get_bl(),
+    );
+    // 00000b80 inc di
+    ctx.cpu
+        .regs
+        .set_di(inc(ctx.cpu.regs.get_di(), &mut ctx.cpu.flags));
+    // 00000b81 dec cx
+    ctx.cpu
+        .regs
+        .set_cx(dec(ctx.cpu.regs.get_cx(), &mut ctx.cpu.flags));
+    // 00000b82 jne short 0B6Ah
+    ctx.jne(Cont(xb84), Cont(xb6a))
+}
+
+pub fn xb84(ctx: &mut Context) -> Cont {
+    // 00000b84 dec byte ptr ds:[6F23h]
+    ctx.memory.write::<u8>(
+        0x6f23,
+        dec(ctx.memory.read::<u8>(0x6f23), &mut ctx.cpu.flags),
+    );
+    // 00000b88 jne short 0B5Bh
+    ctx.jne(Cont(xb8a), Cont(xb5b))
+}
+
+pub fn xb8a(ctx: &mut Context) -> Cont {
+    // 00000b8a pop bp
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_bp(x);
+    // 00000b8b test bp,1
+    and(ctx.cpu.regs.get_bp(), 0x1u16, &mut ctx.cpu.flags);
+    // 00000b8f je short 0B94h
+    ctx.je(Cont(xb91), Cont(xb94))
+}
+
+pub fn xb91(ctx: &mut Context) -> Cont {
+    // 00000b91 call 0EA3h
+    ctx.call16(0xb94, Cont(xea3))
+}
+
+pub fn xb94(ctx: &mut Context) -> Cont {
+    // 00000b94 pop cx
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_cx(x);
+    // 00000b95 cmp byte ptr cs:[1162h],0
+    sub(ctx.memory.read::<u8>(0x1162), 0x0u8, &mut ctx.cpu.flags);
+    // 00000b9b jne short 0BA6h
+    ctx.jne(Cont(xb9d), Cont(xba6))
+}
+
+pub fn xb9d(ctx: &mut Context) -> Cont {
+    // 00000b9d inc bp
+    ctx.cpu
+        .regs
+        .set_bp(inc(ctx.cpu.regs.get_bp(), &mut ctx.cpu.flags));
+    // 00000b9e sub cx,bp
+    ctx.cpu.regs.set_cx(sub(
+        ctx.cpu.regs.get_cx(),
+        ctx.cpu.regs.get_bp(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000ba0 cmp cx,4E20h
+    sub(ctx.cpu.regs.get_cx(), 0x4e20u16, &mut ctx.cpu.flags);
+    // 00000ba4 ja short 0B3Fh
+    ctx.ja(Cont(xba6), Cont(xb3f))
+}
+
+pub fn xba6(ctx: &mut Context) -> Cont {
+    // 00000ba6 mov ax,3
+    ctx.cpu.regs.set_ax(0x3u16);
+    // 00000ba9 int 10h
+    todo!();
+    // 00000bab mov ah,9
+    ctx.cpu.regs.set_ah(0x9u8);
+    // 00000bad mov dx,14AAh
+    ctx.cpu.regs.set_dx(0x14aau16);
+    // 00000bb0 int 21h
+    todo!();
+    // 00000bb2 push ds
+    ctx.push16(ctx.cpu.regs.get_ds());
+    // 00000bb3 mov dx,ds:[14D6h]
+    ctx.cpu.regs.set_dx(ctx.memory.read::<u16>((0x14d6 as u32)));
+    // 00000bb7 mov ds,ds:[14D4h]
+    ctx.cpu.regs.set_ds(ctx.memory.read::<u16>((0x14d4 as u32)));
+    // 00000bbb mov ax,2509h
+    ctx.cpu.regs.set_ax(0x2509u16);
+    // 00000bbe int 21h
+    todo!();
+    // 00000bc0 pop ds
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_ds(x);
+    // 00000bc1 sub dx,dx
+    ctx.cpu.regs.set_dx(sub(
+        ctx.cpu.regs.get_dx(),
+        ctx.cpu.regs.get_dx(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000bc3 call 10DBh
+    ctx.call16(0xbc6, Cont(x10db))
+}
+
+pub fn xbc6(ctx: &mut Context) -> Cont {
+    // 00000bc6 push ds
+    ctx.push16(ctx.cpu.regs.get_ds());
+    // 00000bc7 mov dx,ds:[14D2h]
+    ctx.cpu.regs.set_dx(ctx.memory.read::<u16>((0x14d2 as u32)));
+    // 00000bcb mov ds,ds:[14D0h]
+    ctx.cpu.regs.set_ds(ctx.memory.read::<u16>((0x14d0 as u32)));
+    // 00000bcf mov ax,2508h
+    ctx.cpu.regs.set_ax(0x2508u16);
+    // 00000bd2 int 21h
+    todo!();
+    // 00000bd4 pop ds
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_ds(x);
+    // 00000bd5 mov ax,4C00h
+    ctx.cpu.regs.set_ax(0x4c00u16);
+    // 00000bd8 int 21h
+    todo!();
+}
+
+pub fn xbda(ctx: &mut Context) -> Cont {
+    // 00000bda mov dx,3DAh
+    ctx.cpu.regs.set_dx(0x3dau16);
+    // 00000bdd in al,dx
+    // In not implemented
+    todo!();
+}
+
+pub fn xbe2(ctx: &mut Context) -> Cont {
+    // 00000be2 in al,dx
+    // In not implemented
+    todo!();
+}
+
+pub fn xbe7(ctx: &mut Context) -> Cont {
+    // 00000be7 ret
+    ctx.ret16(0)
+}
+
+pub fn xbe8(ctx: &mut Context) -> Cont {
+    // 00000be8 mov ax,ds:[14CCh]
+    ctx.cpu.regs.set_ax(ctx.memory.read::<u16>((0x14cc as u32)));
+    // 00000beb mov cx,ds:[14CEh]
+    ctx.cpu.regs.set_cx(ctx.memory.read::<u16>((0x14ce as u32)));
+    // 00000bef add ax,cx
+    ctx.cpu.regs.set_ax(add(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_cx(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000bf1 rol ax,cl
+    ctx.cpu.regs.set_ax(rol(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_cl(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000bf3 add cx,7155h
+    ctx.cpu
+        .regs
+        .set_cx(add(ctx.cpu.regs.get_cx(), 0x7155u16, &mut ctx.cpu.flags));
+    // 00000bf7 ror cx,1
+    // Ror not implemented
+    todo!();
+}
+
+pub fn xc01(ctx: &mut Context) -> Cont {
+    // 00000c01 mov al,[si+1]
+    ctx.cpu.regs.set_al(
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.get_si().wrapping_add(0x1)),
+    );
+    // 00000c04 sub al,[si+5]
+    ctx.cpu.regs.set_al(sub(
+        ctx.cpu.regs.get_al(),
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.get_si().wrapping_add(0x5)),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000c07 mov ah,[si+8]
+    ctx.cpu.regs.set_ah(
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.get_si().wrapping_add(0x8)),
+    );
+    // 00000c0a sub ah,[si+4]
+    ctx.cpu.regs.set_ah(sub(
+        ctx.cpu.regs.get_ah(),
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.get_si().wrapping_add(0x4)),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000c0d imul ah
+    ctx.cpu.regs.set_ax(imul1_8(
+        ctx.cpu.regs.eax as u8,
+        ctx.cpu.regs.get_ah(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000c0f mov bx,ax
+    ctx.cpu.regs.set_bx(ctx.cpu.regs.get_ax());
+    // 00000c11 mov al,[si]
+    ctx.cpu
+        .regs
+        .set_al(ctx.memory.read::<u8>(ctx.cpu.regs.get_si()));
+    // 00000c13 sub al,[si+4]
+    ctx.cpu.regs.set_al(sub(
+        ctx.cpu.regs.get_al(),
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.get_si().wrapping_add(0x4)),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000c16 mov ah,[si+9]
+    ctx.cpu.regs.set_ah(
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.get_si().wrapping_add(0x9)),
+    );
+    // 00000c19 sub ah,[si+5]
+    ctx.cpu.regs.set_ah(sub(
+        ctx.cpu.regs.get_ah(),
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.get_si().wrapping_add(0x5)),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000c1c imul ah
+    ctx.cpu.regs.set_ax(imul1_8(
+        ctx.cpu.regs.eax as u8,
+        ctx.cpu.regs.get_ah(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000c1e sub ax,bx
+    ctx.cpu.regs.set_ax(sub(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_bx(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000c20 mov ds:[14CAh],ax
+    ctx.memory
+        .write::<u16>((0x14ca as u32), ctx.cpu.regs.get_ax());
+    // 00000c23 ret
+    ctx.ret16(0)
+}
+
+pub fn xc24(ctx: &mut Context) -> Cont {
+    // 00000c24 ret
+    ctx.ret16(0)
+}
+
+pub fn xc25(ctx: &mut Context) -> Cont {
+    // 00000c25 mov al,[si+1]
+    ctx.cpu.regs.set_al(
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.get_si().wrapping_add(0x1)),
+    );
+    // 00000c28 mov ah,[si+5]
+    ctx.cpu.regs.set_ah(
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.get_si().wrapping_add(0x5)),
+    );
+    // 00000c2b mov bl,[si+9]
+    ctx.cpu.regs.set_bl(
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.get_si().wrapping_add(0x9)),
+    );
+    // 00000c2e mov bh,[si+0Dh]
+    ctx.cpu.regs.set_bh(
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.get_si().wrapping_add(0xd)),
+    );
+    // 00000c31 cmp al,ah
+    sub(
+        ctx.cpu.regs.get_al(),
+        ctx.cpu.regs.get_ah(),
+        &mut ctx.cpu.flags,
+    );
+    // 00000c33 jb short 0C37h
+    ctx.jb(Cont(xc35), Cont(xc37))
+}
+
+pub fn xc35(ctx: &mut Context) -> Cont {
+    // 00000c35 xchg al,ah
+    let t = ctx.cpu.regs.get_ah();
+    ctx.cpu.regs.set_ah(ctx.cpu.regs.get_al());
+    ctx.cpu.regs.set_al(t);
+    Cont(xc37)
+}
+
+pub fn xc37(ctx: &mut Context) -> Cont {
+    // 00000c37 cmp bl,bh
+    sub(
+        ctx.cpu.regs.get_bl(),
+        ctx.cpu.regs.get_bh(),
+        &mut ctx.cpu.flags,
+    );
+    // 00000c39 jb short 0C3Eh
+    ctx.jb(Cont(xc3b), Cont(xc3e))
+}
+
+pub fn xc3b(ctx: &mut Context) -> Cont {
+    // 00000c3b rol bx,8
+    ctx.cpu
+        .regs
+        .set_bx(rol(ctx.cpu.regs.get_bx(), 0x8u8, &mut ctx.cpu.flags));
+    Cont(xc3e)
+}
+
+pub fn xc3e(ctx: &mut Context) -> Cont {
+    // 00000c3e cmp ah,bl
+    sub(
+        ctx.cpu.regs.get_ah(),
+        ctx.cpu.regs.get_bl(),
+        &mut ctx.cpu.flags,
+    );
+    // 00000c40 jb short 0C51h
+    ctx.jb(Cont(xc42), Cont(xc51))
+}
+
+pub fn xc42(ctx: &mut Context) -> Cont {
+    // 00000c42 xchg ah,bl
+    let t = ctx.cpu.regs.get_bl();
+    ctx.cpu.regs.set_bl(ctx.cpu.regs.get_ah());
+    ctx.cpu.regs.set_ah(t);
+    // 00000c44 cmp al,ah
+    sub(
+        ctx.cpu.regs.get_al(),
+        ctx.cpu.regs.get_ah(),
+        &mut ctx.cpu.flags,
+    );
+    // 00000c46 jb short 0C4Ah
+    ctx.jb(Cont(xc48), Cont(xc4a))
+}
+
+pub fn xc48(ctx: &mut Context) -> Cont {
+    // 00000c48 xchg al,ah
+    let t = ctx.cpu.regs.get_ah();
+    ctx.cpu.regs.set_ah(ctx.cpu.regs.get_al());
+    ctx.cpu.regs.set_al(t);
+    Cont(xc4a)
+}
+
+pub fn xc4a(ctx: &mut Context) -> Cont {
+    // 00000c4a cmp bl,bh
+    sub(
+        ctx.cpu.regs.get_bl(),
+        ctx.cpu.regs.get_bh(),
+        &mut ctx.cpu.flags,
+    );
+    // 00000c4c jb short 0C51h
+    ctx.jb(Cont(xc4e), Cont(xc51))
+}
+
+pub fn xc4e(ctx: &mut Context) -> Cont {
+    // 00000c4e rol bx,8
+    ctx.cpu
+        .regs
+        .set_bx(rol(ctx.cpu.regs.get_bx(), 0x8u8, &mut ctx.cpu.flags));
+    Cont(xc51)
+}
+
+pub fn xc51(ctx: &mut Context) -> Cont {
+    // 00000c51 cmp al,0B2h
+    sub(ctx.cpu.regs.get_al(), 0xb2u8, &mut ctx.cpu.flags);
+    // 00000c53 jae short 0C24h
+    ctx.jae(Cont(xc55), Cont(xc24))
+}
+
+pub fn xc55(ctx: &mut Context) -> Cont {
+    // 00000c55 cmp bh,4Eh
+    sub(ctx.cpu.regs.get_bh(), 0x4eu8, &mut ctx.cpu.flags);
+    // 00000c58 jbe short 0C24h
+    ctx.jbe(Cont(xc5a), Cont(xc24))
+}
+
+pub fn xc5a(ctx: &mut Context) -> Cont {
+    // 00000c5a cmp al,4Eh
+    sub(ctx.cpu.regs.get_al(), 0x4eu8, &mut ctx.cpu.flags);
+    // 00000c5c jae short 0C60h
+    ctx.jae(Cont(xc5e), Cont(xc60))
+}
+
+pub fn xc5e(ctx: &mut Context) -> Cont {
+    // 00000c5e mov al,4Eh
+    ctx.cpu.regs.set_al(0x4eu8);
+    Cont(xc60)
+}
+
+pub fn xc60(ctx: &mut Context) -> Cont {
+    // 00000c60 cmp bh,0B2h
+    sub(ctx.cpu.regs.get_bh(), 0xb2u8, &mut ctx.cpu.flags);
+    // 00000c63 jb short 0C67h
+    ctx.jb(Cont(xc65), Cont(xc67))
+}
+
+pub fn xc65(ctx: &mut Context) -> Cont {
+    // 00000c65 mov bh,0B2h
+    ctx.cpu.regs.set_bh(0xb2u8);
+    Cont(xc67)
+}
+
+pub fn xc67(ctx: &mut Context) -> Cont {
+    // 00000c67 movzx bx,bh
+    ctx.cpu.regs.set_bx(ctx.cpu.regs.get_bh() as _);
+    // 00000c6a movzx bp,al
+    ctx.cpu.regs.set_bp(ctx.cpu.regs.get_al() as _);
+    // 00000c6d sub bx,bp
+    ctx.cpu.regs.set_bx(sub(
+        ctx.cpu.regs.get_bx(),
+        ctx.cpu.regs.get_bp(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000c6f inc bx
+    ctx.cpu
+        .regs
+        .set_bx(inc(ctx.cpu.regs.get_bx(), &mut ctx.cpu.flags));
+    // 00000c70 mov ds:[14BCh],bx
+    ctx.memory
+        .write::<u16>((0x14bc as u32), ctx.cpu.regs.get_bx());
+    // 00000c74 mov ds:[14BAh],bp
+    ctx.memory
+        .write::<u16>((0x14ba as u32), ctx.cpu.regs.get_bp());
+    // 00000c78 mov byte ptr ds:[6F23h],4
+    ctx.memory.write::<u8>(0x6f23, 0x4u8);
+    Cont(xc7d)
+}
+
+pub fn xc7d(ctx: &mut Context) -> Cont {
+    // 00000c7d sub ax,ax
+    ctx.cpu.regs.set_ax(sub(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_ax(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000c7f mov ah,[si+4]
+    ctx.cpu.regs.set_ah(
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.get_si().wrapping_add(0x4)),
+    );
+    // 00000c82 sub bx,bx
+    ctx.cpu.regs.set_bx(sub(
+        ctx.cpu.regs.get_bx(),
+        ctx.cpu.regs.get_bx(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000c84 mov bh,[si]
+    ctx.cpu
+        .regs
+        .set_bh(ctx.memory.read::<u8>(ctx.cpu.regs.get_si()));
+    // 00000c86 sub ax,bx
+    ctx.cpu.regs.set_ax(sub(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_bx(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000c88 movzx di,byte ptr [si+5]
+    ctx.cpu.regs.set_di(
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.get_si().wrapping_add(0x5)) as _,
+    );
+    // 00000c8c movzx cx,byte ptr [si+1]
+    ctx.cpu.regs.set_cx(
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.get_si().wrapping_add(0x1)) as _,
+    );
+    // 00000c90 sub di,cx
+    ctx.cpu.regs.set_di(sub(
+        ctx.cpu.regs.get_di(),
+        ctx.cpu.regs.get_cx(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000c92 jne short 0CE9h
+    ctx.jne(Cont(xc94), Cont(xce9))
+}
+
+pub fn xc94(ctx: &mut Context) -> Cont {
+    // 00000c94 mov al,bh
+    ctx.cpu.regs.set_al(ctx.cpu.regs.get_bh());
+    // 00000c96 add ah,al
+    ctx.cpu.regs.set_ah(add(
+        ctx.cpu.regs.get_ah(),
+        ctx.cpu.regs.get_al(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000c98 mov bx,cx
+    ctx.cpu.regs.set_bx(ctx.cpu.regs.get_cx());
+    // 00000c9a add bx,5771h
+    ctx.cpu
+        .regs
+        .set_bx(add(ctx.cpu.regs.get_bx(), 0x5771u16, &mut ctx.cpu.flags));
+    // 00000c9e mov cx,[si+2]
+    ctx.cpu.regs.set_cx(
+        ctx.memory
+            .read::<u16>((ctx.cpu.regs.get_si() as u32).wrapping_add(0x2 as u32)),
+    );
+    // 00000ca1 mov dx,[si+6]
+    ctx.cpu.regs.set_dx(
+        ctx.memory
+            .read::<u16>((ctx.cpu.regs.get_si() as u32).wrapping_add(0x6 as u32)),
+    );
+    // 00000ca4 cmp al,ah
+    sub(
+        ctx.cpu.regs.get_al(),
+        ctx.cpu.regs.get_ah(),
+        &mut ctx.cpu.flags,
+    );
+    // 00000ca6 je near ptr 0D7Bh
+    ctx.je(Cont(xcaa), Cont(xd7b))
+}
+
+pub fn xcaa(ctx: &mut Context) -> Cont {
+    // 00000caa jb short 0CB0h
+    ctx.jb(Cont(xcac), Cont(xcb0))
+}
+
+pub fn xcac(ctx: &mut Context) -> Cont {
+    // 00000cac xchg al,ah
+    let t = ctx.cpu.regs.get_ah();
+    ctx.cpu.regs.set_ah(ctx.cpu.regs.get_al());
+    ctx.cpu.regs.set_al(t);
+    // 00000cae xchg cx,dx
+    let t = ctx.cpu.regs.get_dx();
+    ctx.cpu.regs.set_dx(ctx.cpu.regs.get_cx());
+    ctx.cpu.regs.set_cx(t);
+    Cont(xcb0)
+}
+
+pub fn xcb0(ctx: &mut Context) -> Cont {
+    // 00000cb0 cmp word ptr ds:[14CAh],0
+    sub(
+        ctx.memory.read::<u16>((0x14ca as u32)),
+        0x0u16,
+        &mut ctx.cpu.flags,
+    );
+    // 00000cb5 jl short 0CD0h
+    ctx.jl(Cont(xcb7), Cont(xcd0))
+}
+
+pub fn xcb7(ctx: &mut Context) -> Cont {
+    // 00000cb7 mov [bx],ah
+    ctx.memory
+        .write::<u8>(ctx.cpu.regs.get_bx(), ctx.cpu.regs.get_ah());
+    // 00000cb9 mov [bx+400h],dl
+    ctx.memory.write::<u8>(
+        ctx.cpu.regs.get_bx().wrapping_add(0x400),
+        ctx.cpu.regs.get_dl(),
+    );
+    // 00000cbd mov [bx+800h],dh
+    ctx.memory.write::<u8>(
+        ctx.cpu.regs.get_bx().wrapping_add(0x800),
+        ctx.cpu.regs.get_dh(),
+    );
+    // 00000cc1 mov [bx+0C00h],al
+    ctx.memory.write::<u8>(
+        ctx.cpu.regs.get_bx().wrapping_add(0xc00),
+        ctx.cpu.regs.get_al(),
+    );
+    // 00000cc5 mov [bx+1000h],cl
+    ctx.memory.write::<u8>(
+        ctx.cpu.regs.get_bx().wrapping_add(0x1000),
+        ctx.cpu.regs.get_cl(),
+    );
+    // 00000cc9 mov [bx+1400h],ch
+    ctx.memory.write::<u8>(
+        ctx.cpu.regs.get_bx().wrapping_add(0x1400),
+        ctx.cpu.regs.get_ch(),
+    );
+    // 00000ccd jmp near ptr 0D7Bh
+    Cont(xd7b)
+}
+
+pub fn xcd0(ctx: &mut Context) -> Cont {
+    // 00000cd0 mov [bx],al
+    ctx.memory
+        .write::<u8>(ctx.cpu.regs.get_bx(), ctx.cpu.regs.get_al());
+    // 00000cd2 mov [bx+400h],cl
+    ctx.memory.write::<u8>(
+        ctx.cpu.regs.get_bx().wrapping_add(0x400),
+        ctx.cpu.regs.get_cl(),
+    );
+    // 00000cd6 mov [bx+800h],ch
+    ctx.memory.write::<u8>(
+        ctx.cpu.regs.get_bx().wrapping_add(0x800),
+        ctx.cpu.regs.get_ch(),
+    );
+    // 00000cda mov [bx+0C00h],ah
+    ctx.memory.write::<u8>(
+        ctx.cpu.regs.get_bx().wrapping_add(0xc00),
+        ctx.cpu.regs.get_ah(),
+    );
+    // 00000cde mov [bx+1000h],dl
+    ctx.memory.write::<u8>(
+        ctx.cpu.regs.get_bx().wrapping_add(0x1000),
+        ctx.cpu.regs.get_dl(),
+    );
+    // 00000ce2 mov [bx+1400h],dh
+    ctx.memory.write::<u8>(
+        ctx.cpu.regs.get_bx().wrapping_add(0x1400),
+        ctx.cpu.regs.get_dh(),
+    );
+    // 00000ce6 jmp near ptr 0D7Bh
+    Cont(xd7b)
+}
+
+pub fn xce9(ctx: &mut Context) -> Cont {
+    // 00000ce9 push si
+    ctx.push16(ctx.cpu.regs.get_si());
+    // 00000cea push cx
+    ctx.push16(ctx.cpu.regs.get_cx());
+    // 00000ceb mov cx,bx
+    ctx.cpu.regs.set_cx(ctx.cpu.regs.get_bx());
+    // 00000ced mov bx,di
+    ctx.cpu.regs.set_bx(ctx.cpu.regs.get_di());
+    // 00000cef mov bh,ah
+    ctx.cpu.regs.set_bh(ctx.cpu.regs.get_ah());
+    // 00000cf1 add bl,bl
+    ctx.cpu.regs.set_bl(add(
+        ctx.cpu.regs.get_bl(),
+        ctx.cpu.regs.get_bl(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000cf3 push word ptr fs:[bx-5680h]
+    ctx.push16(
+        ctx.memory.read::<u16>(
+            (ctx.cpu.regs.fs_base as u32)
+                .wrapping_add(ctx.cpu.regs.get_bx() as u32)
+                .wrapping_add(0xa980 as u32),
+        ),
+    );
+    // 00000cf8 sub ax,ax
+    ctx.cpu.regs.set_ax(sub(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_ax(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000cfa mov ah,[si+7]
+    ctx.cpu.regs.set_ah(
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.get_si().wrapping_add(0x7)),
+    );
+    // 00000cfd sub bx,bx
+    ctx.cpu.regs.set_bx(sub(
+        ctx.cpu.regs.get_bx(),
+        ctx.cpu.regs.get_bx(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000cff mov bh,[si+3]
+    ctx.cpu.regs.set_bh(
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.get_si().wrapping_add(0x3)),
+    );
+    // 00000d02 sub ax,bx
+    ctx.cpu.regs.set_ax(sub(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_bx(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000d04 push bx
+    ctx.push16(ctx.cpu.regs.get_bx());
+    // 00000d05 mov bx,di
+    ctx.cpu.regs.set_bx(ctx.cpu.regs.get_di());
+    // 00000d07 mov bh,ah
+    ctx.cpu.regs.set_bh(ctx.cpu.regs.get_ah());
+    // 00000d09 add bl,bl
+    ctx.cpu.regs.set_bl(add(
+        ctx.cpu.regs.get_bl(),
+        ctx.cpu.regs.get_bl(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000d0b mov bp,fs:[bx-5680h]
+    ctx.cpu.regs.set_bp(
+        ctx.memory.read::<u16>(
+            (ctx.cpu.regs.fs_base as u32)
+                .wrapping_add(ctx.cpu.regs.get_bx() as u32)
+                .wrapping_add(0xa980 as u32),
+        ),
+    );
+    // 00000d10 sub dx,dx
+    ctx.cpu.regs.set_dx(sub(
+        ctx.cpu.regs.get_dx(),
+        ctx.cpu.regs.get_dx(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000d12 mov dh,[si+6]
+    ctx.cpu.regs.set_dh(
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.get_si().wrapping_add(0x6)),
+    );
+    // 00000d15 sub ax,ax
+    ctx.cpu.regs.set_ax(sub(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_ax(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000d17 mov ah,[si+2]
+    ctx.cpu.regs.set_ah(
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.get_si().wrapping_add(0x2)),
+    );
+    // 00000d1a sub dx,ax
+    ctx.cpu.regs.set_dx(sub(
+        ctx.cpu.regs.get_dx(),
+        ctx.cpu.regs.get_ax(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000d1c mov bx,di
+    ctx.cpu.regs.set_bx(ctx.cpu.regs.get_di());
+    // 00000d1e mov bh,dh
+    ctx.cpu.regs.set_bh(ctx.cpu.regs.get_dh());
+    // 00000d20 add bl,bl
+    ctx.cpu.regs.set_bl(add(
+        ctx.cpu.regs.get_bl(),
+        ctx.cpu.regs.get_bl(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000d22 mov dx,fs:[bx-5680h]
+    ctx.cpu.regs.set_dx(
+        ctx.memory.read::<u16>(
+            (ctx.cpu.regs.fs_base as u32)
+                .wrapping_add(ctx.cpu.regs.get_bx() as u32)
+                .wrapping_add(0xa980 as u32),
+        ),
+    );
+    // 00000d27 shl edx,10h
+    ctx.cpu.regs.edx = shl(ctx.cpu.regs.edx, 0x10u8, &mut ctx.cpu.flags);
+    // 00000d2b mov dx,bp
+    ctx.cpu.regs.set_dx(ctx.cpu.regs.get_bp());
+    // 00000d2d shl eax,10h
+    ctx.cpu.regs.eax = shl(ctx.cpu.regs.eax, 0x10u8, &mut ctx.cpu.flags);
+    // 00000d31 pop ax
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_ax(x);
+    // 00000d32 pop si
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_si(x);
+    // 00000d33 pop bx
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_bx(x);
+    // 00000d34 add bx,5771h
+    ctx.cpu
+        .regs
+        .set_bx(add(ctx.cpu.regs.get_bx(), 0x5771u16, &mut ctx.cpu.flags));
+    // 00000d38 test di,di
+    and(
+        ctx.cpu.regs.get_di(),
+        ctx.cpu.regs.get_di(),
+        &mut ctx.cpu.flags,
+    );
+    // 00000d3a jns short 0D5Ah
+    ctx.jns(Cont(xd3c), Cont(xd5a))
+}
+
+pub fn xd3c(ctx: &mut Context) -> Cont {
+    // 00000d3c dec di
+    ctx.cpu
+        .regs
+        .set_di(dec(ctx.cpu.regs.get_di(), &mut ctx.cpu.flags));
+    Cont(xd3d)
+}
+
+pub fn xd3d(ctx: &mut Context) -> Cont {
+    // 00000d3d mov [bx],ch
+    ctx.memory
+        .write::<u8>(ctx.cpu.regs.get_bx(), ctx.cpu.regs.get_ch());
+    // 00000d3f mov [bx+800h],ah
+    ctx.memory.write::<u8>(
+        ctx.cpu.regs.get_bx().wrapping_add(0x800),
+        ctx.cpu.regs.get_ah(),
+    );
+    // 00000d43 rol eax,10h
+    ctx.cpu.regs.eax = rol(ctx.cpu.regs.eax, 0x10u8, &mut ctx.cpu.flags);
+    // 00000d47 mov [bx+400h],ah
+    ctx.memory.write::<u8>(
+        ctx.cpu.regs.get_bx().wrapping_add(0x400),
+        ctx.cpu.regs.get_ah(),
+    );
+    // 00000d4b rol eax,10h
+    ctx.cpu.regs.eax = rol(ctx.cpu.regs.eax, 0x10u8, &mut ctx.cpu.flags);
+    // 00000d4f sub cx,si
+    ctx.cpu.regs.set_cx(sub(
+        ctx.cpu.regs.get_cx(),
+        ctx.cpu.regs.get_si(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000d51 sub eax,edx
+    ctx.cpu.regs.eax = sub(ctx.cpu.regs.eax, ctx.cpu.regs.edx, &mut ctx.cpu.flags);
+    // 00000d54 dec bx
+    ctx.cpu
+        .regs
+        .set_bx(dec(ctx.cpu.regs.get_bx(), &mut ctx.cpu.flags));
+    // 00000d55 inc di
+    ctx.cpu
+        .regs
+        .set_di(inc(ctx.cpu.regs.get_di(), &mut ctx.cpu.flags));
+    // 00000d56 jne short 0D3Dh
+    ctx.jne(Cont(xd58), Cont(xd3d))
+}
+
+pub fn xd58(ctx: &mut Context) -> Cont {
+    // 00000d58 jmp short 0D7Ah
+    Cont(xd7a)
+}
+
+pub fn xd5a(ctx: &mut Context) -> Cont {
+    // 00000d5a inc di
+    ctx.cpu
+        .regs
+        .set_di(inc(ctx.cpu.regs.get_di(), &mut ctx.cpu.flags));
+    // 00000d5b add bx,0C00h
+    ctx.cpu
+        .regs
+        .set_bx(add(ctx.cpu.regs.get_bx(), 0xc00u16, &mut ctx.cpu.flags));
+    Cont(xd5f)
+}
+
+pub fn xd5f(ctx: &mut Context) -> Cont {
+    // 00000d5f mov [bx],ch
+    ctx.memory
+        .write::<u8>(ctx.cpu.regs.get_bx(), ctx.cpu.regs.get_ch());
+    // 00000d61 mov [bx+800h],ah
+    ctx.memory.write::<u8>(
+        ctx.cpu.regs.get_bx().wrapping_add(0x800),
+        ctx.cpu.regs.get_ah(),
+    );
+    // 00000d65 rol eax,10h
+    ctx.cpu.regs.eax = rol(ctx.cpu.regs.eax, 0x10u8, &mut ctx.cpu.flags);
+    // 00000d69 mov [bx+400h],ah
+    ctx.memory.write::<u8>(
+        ctx.cpu.regs.get_bx().wrapping_add(0x400),
+        ctx.cpu.regs.get_ah(),
+    );
+    // 00000d6d rol eax,10h
+    ctx.cpu.regs.eax = rol(ctx.cpu.regs.eax, 0x10u8, &mut ctx.cpu.flags);
+    // 00000d71 add cx,si
+    ctx.cpu.regs.set_cx(add(
+        ctx.cpu.regs.get_cx(),
+        ctx.cpu.regs.get_si(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000d73 add eax,edx
+    ctx.cpu.regs.eax = add(ctx.cpu.regs.eax, ctx.cpu.regs.edx, &mut ctx.cpu.flags);
+    // 00000d76 inc bx
+    ctx.cpu
+        .regs
+        .set_bx(inc(ctx.cpu.regs.get_bx(), &mut ctx.cpu.flags));
+    // 00000d77 dec di
+    ctx.cpu
+        .regs
+        .set_di(dec(ctx.cpu.regs.get_di(), &mut ctx.cpu.flags));
+    // 00000d78 jne short 0D5Fh
+    ctx.jne(Cont(xd7a), Cont(xd5f))
+}
+
+pub fn xd7a(ctx: &mut Context) -> Cont {
+    // 00000d7a pop si
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_si(x);
+    Cont(xd7b)
+}
+
+pub fn xd7b(ctx: &mut Context) -> Cont {
+    // 00000d7b add si,4
+    ctx.cpu
+        .regs
+        .set_si(add(ctx.cpu.regs.get_si(), 0x4u16, &mut ctx.cpu.flags));
+    // 00000d7e dec byte ptr ds:[6F23h]
+    ctx.memory.write::<u8>(
+        0x6f23,
+        dec(ctx.memory.read::<u8>(0x6f23), &mut ctx.cpu.flags),
+    );
+    // 00000d82 jne near ptr 0C7Dh
+    ctx.jne(Cont(xd86), Cont(xc7d))
+}
+
+pub fn xd86(ctx: &mut Context) -> Cont {
+    // 00000d86 cmp word ptr ds:[14CAh],0
+    sub(
+        ctx.memory.read::<u16>((0x14ca as u32)),
+        0x0u16,
+        &mut ctx.cpu.flags,
+    );
+    // 00000d8b jl near ptr 0E19h
+    ctx.jl(Cont(xd8f), Cont(xe19))
+}
+
+pub fn xd8f(ctx: &mut Context) -> Cont {
+    // 00000d8f push ds
+    ctx.push16(ctx.cpu.regs.get_ds());
+    // 00000d90 mov si,ds:[14BAh]
+    ctx.cpu.regs.set_si(ctx.memory.read::<u16>((0x14ba as u32)));
+    // 00000d94 shl esi,10h
+    ctx.cpu.regs.esi = shl(ctx.cpu.regs.esi, 0x10u8, &mut ctx.cpu.flags);
+    // 00000d98 mov si,ds:[14BCh]
+    ctx.cpu.regs.set_si(ctx.memory.read::<u16>((0x14bc as u32)));
+    // 00000d9c push ds
+    ctx.push16(ctx.cpu.regs.get_ds());
+    // 00000d9d pop es
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_es(x);
+    // 00000d9e push fs
+    ctx.push16(ctx.cpu.regs.get_fs());
+    // 00000da0 pop ds
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_ds(x);
+    Cont(xda1)
+}
+
+pub fn xda1(ctx: &mut Context) -> Cont {
+    // 00000da1 rol esi,10h
+    ctx.cpu.regs.esi = rol(ctx.cpu.regs.esi, 0x10u8, &mut ctx.cpu.flags);
+    // 00000da5 movzx di,byte ptr es:[si+6371h]
+    ctx.cpu.regs.set_di(
+        ctx.memory.read::<u8>(
+            todo!()
+                .wrapping_add(ctx.cpu.regs.get_si())
+                .wrapping_add(0x6371),
+        ) as _,
+    );
+    // 00000dab movzx dx,byte ptr es:[si+5771h]
+    ctx.cpu.regs.set_dx(
+        ctx.memory.read::<u8>(
+            todo!()
+                .wrapping_add(ctx.cpu.regs.get_si())
+                .wrapping_add(0x5771),
+        ) as _,
+    );
+    // 00000db1 sub dx,di
+    ctx.cpu.regs.set_dx(sub(
+        ctx.cpu.regs.get_dx(),
+        ctx.cpu.regs.get_di(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000db3 jb short 0E0Fh
+    ctx.jb(Cont(xdb5), Cont(xe0f))
+}
+
+pub fn xdb5(ctx: &mut Context) -> Cont {
+    // 00000db5 inc dx
+    ctx.cpu
+        .regs
+        .set_dx(inc(ctx.cpu.regs.get_dx(), &mut ctx.cpu.flags));
+    // 00000db6 mov ax,si
+    ctx.cpu.regs.set_ax(ctx.cpu.regs.get_si());
+    // 00000db8 shl ax,8
+    ctx.cpu
+        .regs
+        .set_ax(shl(ctx.cpu.regs.get_ax(), 0x8u8, &mut ctx.cpu.flags));
+    // 00000dbb add di,ax
+    ctx.cpu.regs.set_di(add(
+        ctx.cpu.regs.get_di(),
+        ctx.cpu.regs.get_ax(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000dbd sub di,4E00h
+    ctx.cpu
+        .regs
+        .set_di(sub(ctx.cpu.regs.get_di(), 0x4e00u16, &mut ctx.cpu.flags));
+    // 00000dc1 mov bh,es:[si+5F71h]
+    ctx.cpu.regs.set_bh(
+        ctx.memory.read::<u8>(
+            todo!()
+                .wrapping_add(ctx.cpu.regs.get_si())
+                .wrapping_add(0x5f71),
+        ),
+    );
+    // 00000dc6 sub cx,cx
+    ctx.cpu.regs.set_cx(sub(
+        ctx.cpu.regs.get_cx(),
+        ctx.cpu.regs.get_cx(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000dc8 mov ch,es:[si+6B71h]
+    ctx.cpu.regs.set_ch(
+        ctx.memory.read::<u8>(
+            todo!()
+                .wrapping_add(ctx.cpu.regs.get_si())
+                .wrapping_add(0x6b71),
+        ),
+    );
+    // 00000dcd sub bh,ch
+    ctx.cpu.regs.set_bh(sub(
+        ctx.cpu.regs.get_bh(),
+        ctx.cpu.regs.get_ch(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000dcf shl ecx,10h
+    ctx.cpu.regs.ecx = shl(ctx.cpu.regs.ecx, 0x10u8, &mut ctx.cpu.flags);
+    // 00000dd3 mov bl,dl
+    ctx.cpu.regs.set_bl(ctx.cpu.regs.get_dl());
+    // 00000dd5 add bl,bl
+    ctx.cpu.regs.set_bl(add(
+        ctx.cpu.regs.get_bl(),
+        ctx.cpu.regs.get_bl(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000dd7 mov bp,[bx-5680h]
+    ctx.cpu.regs.set_bp(
+        ctx.memory
+            .read::<u16>((ctx.cpu.regs.get_bx() as u32).wrapping_add(0xa980 as u32)),
+    );
+    // 00000ddb shl ebp,10h
+    ctx.cpu.regs.ebp = shl(ctx.cpu.regs.ebp, 0x10u8, &mut ctx.cpu.flags);
+    // 00000ddf mov bh,es:[si+5B71h]
+    ctx.cpu.regs.set_bh(
+        ctx.memory.read::<u8>(
+            todo!()
+                .wrapping_add(ctx.cpu.regs.get_si())
+                .wrapping_add(0x5b71),
+        ),
+    );
+    // 00000de4 mov ch,es:[si+6771h]
+    ctx.cpu.regs.set_ch(
+        ctx.memory.read::<u8>(
+            todo!()
+                .wrapping_add(ctx.cpu.regs.get_si())
+                .wrapping_add(0x6771),
+        ),
+    );
+    // 00000de9 sub bh,ch
+    ctx.cpu.regs.set_bh(sub(
+        ctx.cpu.regs.get_bh(),
+        ctx.cpu.regs.get_ch(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000deb mov bl,dl
+    ctx.cpu.regs.set_bl(ctx.cpu.regs.get_dl());
+    // 00000ded add bl,bl
+    ctx.cpu.regs.set_bl(add(
+        ctx.cpu.regs.get_bl(),
+        ctx.cpu.regs.get_bl(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000def mov bp,[bx-5680h]
+    ctx.cpu.regs.set_bp(
+        ctx.memory
+            .read::<u16>((ctx.cpu.regs.get_bx() as u32).wrapping_add(0xa980 as u32)),
+    );
+    Cont(xdf3)
+}
+
+pub fn xdf3(ctx: &mut Context) -> Cont {
+    // 00000df3 mov bl,ch
+    ctx.cpu.regs.set_bl(ctx.cpu.regs.get_ch());
+    // 00000df5 rol ecx,10h
+    ctx.cpu.regs.ecx = rol(ctx.cpu.regs.ecx, 0x10u8, &mut ctx.cpu.flags);
+    // 00000df9 mov bh,ch
+    ctx.cpu.regs.set_bh(ctx.cpu.regs.get_ch());
+    // 00000dfb rol ecx,10h
+    ctx.cpu.regs.ecx = rol(ctx.cpu.regs.ecx, 0x10u8, &mut ctx.cpu.flags);
+    // 00000dff mov al,gs:[bx]
+    ctx.cpu
+        .regs
+        .set_al(ctx.memory.read::<u8>(ctx.cpu.regs.get_bx()));
+    // 00000e02 add ecx,ebp
+    ctx.cpu.regs.ecx = add(ctx.cpu.regs.ecx, ctx.cpu.regs.ebp, &mut ctx.cpu.flags);
+    // 00000e05 test al,al
+    and(
+        ctx.cpu.regs.get_al(),
+        ctx.cpu.regs.get_al(),
+        &mut ctx.cpu.flags,
+    );
+    // 00000e07 je short 0E0Bh
+    ctx.je(Cont(xe09), Cont(xe0b))
+}
+
+pub fn xe09(ctx: &mut Context) -> Cont {
+    // 00000e09 mov [di],al
+    ctx.memory
+        .write::<u8>(ctx.cpu.regs.get_di(), ctx.cpu.regs.get_al());
+    Cont(xe0b)
+}
+
+pub fn xe0b(ctx: &mut Context) -> Cont {
+    // 00000e0b inc di
+    ctx.cpu
+        .regs
+        .set_di(inc(ctx.cpu.regs.get_di(), &mut ctx.cpu.flags));
+    // 00000e0c dec dx
+    ctx.cpu
+        .regs
+        .set_dx(dec(ctx.cpu.regs.get_dx(), &mut ctx.cpu.flags));
+    // 00000e0d jne short 0DF3h
+    ctx.jne(Cont(xe0f), Cont(xdf3))
+}
+
+pub fn xe0f(ctx: &mut Context) -> Cont {
+    // 00000e0f inc si
+    ctx.cpu
+        .regs
+        .set_si(inc(ctx.cpu.regs.get_si(), &mut ctx.cpu.flags));
+    // 00000e10 rol esi,10h
+    ctx.cpu.regs.esi = rol(ctx.cpu.regs.esi, 0x10u8, &mut ctx.cpu.flags);
+    // 00000e14 dec si
+    ctx.cpu
+        .regs
+        .set_si(dec(ctx.cpu.regs.get_si(), &mut ctx.cpu.flags));
+    // 00000e15 jne short 0DA1h
+    ctx.jne(Cont(xe17), Cont(xda1))
+}
+
+pub fn xe17(ctx: &mut Context) -> Cont {
+    // 00000e17 pop ds
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_ds(x);
+    // 00000e18 ret
+    ctx.ret16(0)
+}
+
+pub fn xe19(ctx: &mut Context) -> Cont {
+    // 00000e19 push ds
+    ctx.push16(ctx.cpu.regs.get_ds());
+    // 00000e1a mov si,ds:[14BAh]
+    ctx.cpu.regs.set_si(ctx.memory.read::<u16>((0x14ba as u32)));
+    // 00000e1e shl esi,10h
+    ctx.cpu.regs.esi = shl(ctx.cpu.regs.esi, 0x10u8, &mut ctx.cpu.flags);
+    // 00000e22 mov si,ds:[14BCh]
+    ctx.cpu.regs.set_si(ctx.memory.read::<u16>((0x14bc as u32)));
+    // 00000e26 push ds
+    ctx.push16(ctx.cpu.regs.get_ds());
+    // 00000e27 pop es
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_es(x);
+    // 00000e28 push fs
+    ctx.push16(ctx.cpu.regs.get_fs());
+    // 00000e2a pop ds
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_ds(x);
+    Cont(xe2b)
+}
+
+pub fn xe2b(ctx: &mut Context) -> Cont {
+    // 00000e2b rol esi,10h
+    ctx.cpu.regs.esi = rol(ctx.cpu.regs.esi, 0x10u8, &mut ctx.cpu.flags);
+    // 00000e2f movzx di,byte ptr es:[si+5771h]
+    ctx.cpu.regs.set_di(
+        ctx.memory.read::<u8>(
+            todo!()
+                .wrapping_add(ctx.cpu.regs.get_si())
+                .wrapping_add(0x5771),
+        ) as _,
+    );
+    // 00000e35 movzx dx,byte ptr es:[si+6371h]
+    ctx.cpu.regs.set_dx(
+        ctx.memory.read::<u8>(
+            todo!()
+                .wrapping_add(ctx.cpu.regs.get_si())
+                .wrapping_add(0x6371),
+        ) as _,
+    );
+    // 00000e3b sub dx,di
+    ctx.cpu.regs.set_dx(sub(
+        ctx.cpu.regs.get_dx(),
+        ctx.cpu.regs.get_di(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000e3d jb short 0E99h
+    ctx.jb(Cont(xe3f), Cont(xe99))
+}
+
+pub fn xe3f(ctx: &mut Context) -> Cont {
+    // 00000e3f inc dx
+    ctx.cpu
+        .regs
+        .set_dx(inc(ctx.cpu.regs.get_dx(), &mut ctx.cpu.flags));
+    // 00000e40 mov ax,si
+    ctx.cpu.regs.set_ax(ctx.cpu.regs.get_si());
+    // 00000e42 shl ax,8
+    ctx.cpu
+        .regs
+        .set_ax(shl(ctx.cpu.regs.get_ax(), 0x8u8, &mut ctx.cpu.flags));
+    // 00000e45 add di,ax
+    ctx.cpu.regs.set_di(add(
+        ctx.cpu.regs.get_di(),
+        ctx.cpu.regs.get_ax(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000e47 sub di,4E00h
+    ctx.cpu
+        .regs
+        .set_di(sub(ctx.cpu.regs.get_di(), 0x4e00u16, &mut ctx.cpu.flags));
+    // 00000e4b mov bh,es:[si+6B71h]
+    ctx.cpu.regs.set_bh(
+        ctx.memory.read::<u8>(
+            todo!()
+                .wrapping_add(ctx.cpu.regs.get_si())
+                .wrapping_add(0x6b71),
+        ),
+    );
+    // 00000e50 sub cx,cx
+    ctx.cpu.regs.set_cx(sub(
+        ctx.cpu.regs.get_cx(),
+        ctx.cpu.regs.get_cx(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000e52 mov ch,es:[si+5F71h]
+    ctx.cpu.regs.set_ch(
+        ctx.memory.read::<u8>(
+            todo!()
+                .wrapping_add(ctx.cpu.regs.get_si())
+                .wrapping_add(0x5f71),
+        ),
+    );
+    // 00000e57 sub bh,ch
+    ctx.cpu.regs.set_bh(sub(
+        ctx.cpu.regs.get_bh(),
+        ctx.cpu.regs.get_ch(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000e59 shl ecx,10h
+    ctx.cpu.regs.ecx = shl(ctx.cpu.regs.ecx, 0x10u8, &mut ctx.cpu.flags);
+    // 00000e5d mov bl,dl
+    ctx.cpu.regs.set_bl(ctx.cpu.regs.get_dl());
+    // 00000e5f add bl,bl
+    ctx.cpu.regs.set_bl(add(
+        ctx.cpu.regs.get_bl(),
+        ctx.cpu.regs.get_bl(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000e61 mov bp,[bx-5680h]
+    ctx.cpu.regs.set_bp(
+        ctx.memory
+            .read::<u16>((ctx.cpu.regs.get_bx() as u32).wrapping_add(0xa980 as u32)),
+    );
+    // 00000e65 shl ebp,10h
+    ctx.cpu.regs.ebp = shl(ctx.cpu.regs.ebp, 0x10u8, &mut ctx.cpu.flags);
+    // 00000e69 mov bh,es:[si+6771h]
+    ctx.cpu.regs.set_bh(
+        ctx.memory.read::<u8>(
+            todo!()
+                .wrapping_add(ctx.cpu.regs.get_si())
+                .wrapping_add(0x6771),
+        ),
+    );
+    // 00000e6e mov ch,es:[si+5B71h]
+    ctx.cpu.regs.set_ch(
+        ctx.memory.read::<u8>(
+            todo!()
+                .wrapping_add(ctx.cpu.regs.get_si())
+                .wrapping_add(0x5b71),
+        ),
+    );
+    // 00000e73 sub bh,ch
+    ctx.cpu.regs.set_bh(sub(
+        ctx.cpu.regs.get_bh(),
+        ctx.cpu.regs.get_ch(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000e75 mov bl,dl
+    ctx.cpu.regs.set_bl(ctx.cpu.regs.get_dl());
+    // 00000e77 add bl,bl
+    ctx.cpu.regs.set_bl(add(
+        ctx.cpu.regs.get_bl(),
+        ctx.cpu.regs.get_bl(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000e79 mov bp,[bx-5680h]
+    ctx.cpu.regs.set_bp(
+        ctx.memory
+            .read::<u16>((ctx.cpu.regs.get_bx() as u32).wrapping_add(0xa980 as u32)),
+    );
+    Cont(xe7d)
+}
+
+pub fn xe7d(ctx: &mut Context) -> Cont {
+    // 00000e7d mov bl,ch
+    ctx.cpu.regs.set_bl(ctx.cpu.regs.get_ch());
+    // 00000e7f rol ecx,10h
+    ctx.cpu.regs.ecx = rol(ctx.cpu.regs.ecx, 0x10u8, &mut ctx.cpu.flags);
+    // 00000e83 mov bh,ch
+    ctx.cpu.regs.set_bh(ctx.cpu.regs.get_ch());
+    // 00000e85 rol ecx,10h
+    ctx.cpu.regs.ecx = rol(ctx.cpu.regs.ecx, 0x10u8, &mut ctx.cpu.flags);
+    // 00000e89 mov al,gs:[bx]
+    ctx.cpu
+        .regs
+        .set_al(ctx.memory.read::<u8>(ctx.cpu.regs.get_bx()));
+    // 00000e8c add ecx,ebp
+    ctx.cpu.regs.ecx = add(ctx.cpu.regs.ecx, ctx.cpu.regs.ebp, &mut ctx.cpu.flags);
+    // 00000e8f test al,al
+    and(
+        ctx.cpu.regs.get_al(),
+        ctx.cpu.regs.get_al(),
+        &mut ctx.cpu.flags,
+    );
+    // 00000e91 je short 0E95h
+    ctx.je(Cont(xe93), Cont(xe95))
+}
+
+pub fn xe93(ctx: &mut Context) -> Cont {
+    // 00000e93 mov [di],al
+    ctx.memory
+        .write::<u8>(ctx.cpu.regs.get_di(), ctx.cpu.regs.get_al());
+    Cont(xe95)
+}
+
+pub fn xe95(ctx: &mut Context) -> Cont {
+    // 00000e95 inc di
+    ctx.cpu
+        .regs
+        .set_di(inc(ctx.cpu.regs.get_di(), &mut ctx.cpu.flags));
+    // 00000e96 dec dx
+    ctx.cpu
+        .regs
+        .set_dx(dec(ctx.cpu.regs.get_dx(), &mut ctx.cpu.flags));
+    // 00000e97 jne short 0E7Dh
+    ctx.jne(Cont(xe99), Cont(xe7d))
+}
+
+pub fn xe99(ctx: &mut Context) -> Cont {
+    // 00000e99 inc si
+    ctx.cpu
+        .regs
+        .set_si(inc(ctx.cpu.regs.get_si(), &mut ctx.cpu.flags));
+    // 00000e9a rol esi,10h
+    ctx.cpu.regs.esi = rol(ctx.cpu.regs.esi, 0x10u8, &mut ctx.cpu.flags);
+    // 00000e9e dec si
+    ctx.cpu
+        .regs
+        .set_si(dec(ctx.cpu.regs.get_si(), &mut ctx.cpu.flags));
+    // 00000e9f jne short 0E2Bh
+    ctx.jne(Cont(xea1), Cont(xe2b))
+}
+
+pub fn xea1(ctx: &mut Context) -> Cont {
+    // 00000ea1 pop ds
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_ds(x);
+    // 00000ea2 ret
+    ctx.ret16(0)
+}
+
+pub fn xea3(ctx: &mut Context) -> Cont {
+    // 00000ea3 mov di,6F24h
+    ctx.cpu.regs.set_di(0x6f24u16);
+    // 00000ea6 sub bx,bx
+    ctx.cpu.regs.set_bx(sub(
+        ctx.cpu.regs.get_bx(),
+        ctx.cpu.regs.get_bx(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000ea8 mov cx,300h
+    ctx.cpu.regs.set_cx(0x300u16);
+    Cont(xeab)
+}
+
+pub fn xeab(ctx: &mut Context) -> Cont {
+    // 00000eab mov al,[di]
+    ctx.cpu
+        .regs
+        .set_al(ctx.memory.read::<u8>(ctx.cpu.regs.get_di()));
+    // 00000ead mov ah,[di+300h]
+    ctx.cpu.regs.set_ah(
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.get_di().wrapping_add(0x300)),
+    );
+    // 00000eb1 cmp al,ah
+    sub(
+        ctx.cpu.regs.get_al(),
+        ctx.cpu.regs.get_ah(),
+        &mut ctx.cpu.flags,
+    );
+    // 00000eb3 jne short 0EB8h
+    ctx.jne(Cont(xeb5), Cont(xeb8))
+}
+
+pub fn xeb5(ctx: &mut Context) -> Cont {
+    // 00000eb5 inc bx
+    ctx.cpu
+        .regs
+        .set_bx(inc(ctx.cpu.regs.get_bx(), &mut ctx.cpu.flags));
+    // 00000eb6 jmp short 0EC0h
+    Cont(xec0)
+}
+
+pub fn xeb8(ctx: &mut Context) -> Cont {
+    // 00000eb8 jb short 0EBCh
+    ctx.jb(Cont(xeba), Cont(xebc))
+}
+
+pub fn xeba(ctx: &mut Context) -> Cont {
+    // 00000eba sub al,2
+    ctx.cpu
+        .regs
+        .set_al(sub(ctx.cpu.regs.get_al(), 0x2u8, &mut ctx.cpu.flags));
+    Cont(xebc)
+}
+
+pub fn xebc(ctx: &mut Context) -> Cont {
+    // 00000ebc inc al
+    ctx.cpu
+        .regs
+        .set_al(inc(ctx.cpu.regs.get_al(), &mut ctx.cpu.flags));
+    // 00000ebe mov [di],al
+    ctx.memory
+        .write::<u8>(ctx.cpu.regs.get_di(), ctx.cpu.regs.get_al());
+    Cont(xec0)
+}
+
+pub fn xec0(ctx: &mut Context) -> Cont {
+    // 00000ec0 inc di
+    ctx.cpu
+        .regs
+        .set_di(inc(ctx.cpu.regs.get_di(), &mut ctx.cpu.flags));
+    // 00000ec1 dec cx
+    ctx.cpu
+        .regs
+        .set_cx(dec(ctx.cpu.regs.get_cx(), &mut ctx.cpu.flags));
+    // 00000ec2 jne short 0EABh
+    ctx.jne(Cont(xec4), Cont(xeab))
+}
+
+pub fn xec4(ctx: &mut Context) -> Cont {
+    // 00000ec4 cmp bx,300h
+    sub(ctx.cpu.regs.get_bx(), 0x300u16, &mut ctx.cpu.flags);
+    // 00000ec8 jae short 0EDCh
+    ctx.jae(Cont(xeca), Cont(xedc))
+}
+
+pub fn xeca(ctx: &mut Context) -> Cont {
+    // 00000eca mov dx,3C8h
+    ctx.cpu.regs.set_dx(0x3c8u16);
+    // 00000ecd sub al,al
+    ctx.cpu.regs.set_al(sub(
+        ctx.cpu.regs.get_al(),
+        ctx.cpu.regs.get_al(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000ecf out dx,al
+    // Out not implemented
+    todo!();
+    Cont(xed7)
+}
+
+pub fn xed7(ctx: &mut Context) -> Cont {
+    // 00000ed7 lodsb
+    ctx.lodsb();
+    // 00000ed8 out dx,al
+    // Out not implemented
+    todo!();
+}
+
+pub fn xedc(ctx: &mut Context) -> Cont {
+    // 00000edc ret
+    ctx.ret16(0)
+}
+
+pub fn xedd(ctx: &mut Context) -> Cont {
+    // 00000edd mov di,30h
+    ctx.cpu.regs.set_di(0x30u16);
+    // 00000ee0 sub bp,bp
+    ctx.cpu.regs.set_bp(sub(
+        ctx.cpu.regs.get_bp(),
+        ctx.cpu.regs.get_bp(),
+        &mut ctx.cpu.flags,
+    ));
+    Cont(xee2)
+}
+
+pub fn xee2(ctx: &mut Context) -> Cont {
+    // 00000ee2 mov dx,30h
+    ctx.cpu.regs.set_dx(0x30u16);
+    Cont(xee5)
+}
+
+pub fn xee5(ctx: &mut Context) -> Cont {
+    // 00000ee5 mov ax,bp
+    ctx.cpu.regs.set_ax(ctx.cpu.regs.get_bp());
+    // 00000ee7 shl ax,5
+    ctx.cpu
+        .regs
+        .set_ax(shl(ctx.cpu.regs.get_ax(), 0x5u8, &mut ctx.cpu.flags));
+    // 00000eea add ax,bp
+    ctx.cpu.regs.set_ax(add(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_bp(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000eec add ax,dx
+    ctx.cpu.regs.set_ax(add(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_dx(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000eee shr ax,5
+    ctx.cpu
+        .regs
+        .set_ax(shr(ctx.cpu.regs.get_ax(), 0x5u8, &mut ctx.cpu.flags));
+    // 00000ef1 mov bh,al
+    ctx.cpu.regs.set_bh(ctx.cpu.regs.get_al());
+    // 00000ef3 mov ax,dx
+    ctx.cpu.regs.set_ax(ctx.cpu.regs.get_dx());
+    // 00000ef5 shl ax,5
+    ctx.cpu
+        .regs
+        .set_ax(shl(ctx.cpu.regs.get_ax(), 0x5u8, &mut ctx.cpu.flags));
+    // 00000ef8 add ax,dx
+    ctx.cpu.regs.set_ax(add(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_dx(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000efa sub ax,bp
+    ctx.cpu.regs.set_ax(sub(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_bp(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000efc shr ax,5
+    ctx.cpu
+        .regs
+        .set_ax(shr(ctx.cpu.regs.get_ax(), 0x5u8, &mut ctx.cpu.flags));
+    // 00000eff mov bl,al
+    ctx.cpu.regs.set_bl(ctx.cpu.regs.get_al());
+    // 00000f01 cmp bh,64h
+    sub(ctx.cpu.regs.get_bh(), 0x64u8, &mut ctx.cpu.flags);
+    // 00000f04 jbe short 0F08h
+    ctx.jbe(Cont(xf06), Cont(xf08))
+}
+
+pub fn xf06(ctx: &mut Context) -> Cont {
+    // 00000f06 mov bh,64h
+    ctx.cpu.regs.set_bh(0x64u8);
+    Cont(xf08)
+}
+
+pub fn xf08(ctx: &mut Context) -> Cont {
+    // 00000f08 mov si,bx
+    ctx.cpu.regs.set_si(ctx.cpu.regs.get_bx());
+    // 00000f0a mov bx,fs:[si]
+    ctx.cpu.regs.set_bx(
+        ctx.memory
+            .read::<u16>((ctx.cpu.regs.fs_base as u32).wrapping_add(ctx.cpu.regs.get_si() as u32)),
+    );
+    // 00000f0d mov al,gs:[bx]
+    ctx.cpu
+        .regs
+        .set_al(ctx.memory.read::<u8>(ctx.cpu.regs.get_bx()));
+    // 00000f10 mov bx,fs:[si+100h]
+    ctx.cpu.regs.set_bx(
+        ctx.memory.read::<u16>(
+            (ctx.cpu.regs.fs_base as u32)
+                .wrapping_add(ctx.cpu.regs.get_si() as u32)
+                .wrapping_add(0x100 as u32),
+        ),
+    );
+    // 00000f15 mov ah,gs:[bx]
+    ctx.cpu
+        .regs
+        .set_ah(ctx.memory.read::<u8>(ctx.cpu.regs.get_bx()));
+    // 00000f18 mov bx,ax
+    ctx.cpu.regs.set_bx(ctx.cpu.regs.get_ax());
+    // 00000f1a mov al,gs:[bx]
+    ctx.cpu
+        .regs
+        .set_al(ctx.memory.read::<u8>(ctx.cpu.regs.get_bx()));
+    // 00000f1d stosb
+    ctx.stosb();
+    // 00000f1e inc dx
+    ctx.cpu
+        .regs
+        .set_dx(inc(ctx.cpu.regs.get_dx(), &mut ctx.cpu.flags));
+    // 00000f1f cmp dx,0D0h
+    sub(ctx.cpu.regs.get_dx(), 0xd0u16, &mut ctx.cpu.flags);
+    // 00000f23 jb short 0EE5h
+    ctx.jb(Cont(xf25), Cont(xee5))
+}
+
+pub fn xf25(ctx: &mut Context) -> Cont {
+    // 00000f25 add di,60h
+    ctx.cpu
+        .regs
+        .set_di(add(ctx.cpu.regs.get_di(), 0x60u16, &mut ctx.cpu.flags));
+    // 00000f28 inc bp
+    ctx.cpu
+        .regs
+        .set_bp(inc(ctx.cpu.regs.get_bp(), &mut ctx.cpu.flags));
+    // 00000f29 cmp bp,64h
+    sub(ctx.cpu.regs.get_bp(), 0x64u16, &mut ctx.cpu.flags);
+    // 00000f2c jb short 0EE2h
+    ctx.jb(Cont(xf2e), Cont(xee2))
+}
+
+pub fn xf2e(ctx: &mut Context) -> Cont {
+    // 00000f2e ret
+    ctx.ret16(0)
+}
+
+pub fn xf2f(ctx: &mut Context) -> Cont {
+    // 00000f2f push ds
+    ctx.push16(ctx.cpu.regs.get_ds());
+    // 00000f30 pop es
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_es(x);
+    // 00000f31 mov di,139Eh
+    ctx.cpu.regs.set_di(0x139eu16);
+    // 00000f34 mov cx,6
+    ctx.cpu.regs.set_cx(0x6u16);
+    // 00000f37 rep movsw
+    ctx.rep(Rep::REP, Context::movsw);
+    // 00000f39 mov di,6F24h
+    ctx.cpu.regs.set_di(0x6f24u16);
+    // 00000f3c mov cx,300h
+    ctx.cpu.regs.set_cx(0x300u16);
+    // 00000f3f mov al,3Fh
+    ctx.cpu.regs.set_al(0x3fu8);
+    // 00000f41 rep stosb
+    ctx.rep(Rep::REP, Context::stosb);
+    // 00000f43 call 0F47h
+    ctx.call16(0xf46, Cont(xf47))
+}
+
+pub fn xf46(ctx: &mut Context) -> Cont {
+    // 00000f46 ret
+    ctx.ret16(0)
+}
+
+pub fn xf47(ctx: &mut Context) -> Cont {
+    // 00000f47 mov di,139Eh
+    ctx.cpu.regs.set_di(0x139eu16);
+    // 00000f4a call 105Eh
+    ctx.call16(0xf4d, Cont(x105e))
+}
+
+pub fn xf4d(ctx: &mut Context) -> Cont {
+    // 00000f4d mov di,7224h
+    ctx.cpu.regs.set_di(0x7224u16);
+    // 00000f50 call 1043h
+    ctx.call16(0xf53, Cont(x1043))
+}
+
+pub fn xf53(ctx: &mut Context) -> Cont {
+    // 00000f53 push di
+    ctx.push16(ctx.cpu.regs.get_di());
+    // 00000f54 call 1024h
+    ctx.call16(0xf57, Cont(x1024))
+}
+
+pub fn xf57(ctx: &mut Context) -> Cont {
+    // 00000f57 mov di,13A4h
+    ctx.cpu.regs.set_di(0x13a4u16);
+    // 00000f5a call 105Eh
+    ctx.call16(0xf5d, Cont(x105e))
+}
+
+pub fn xf5d(ctx: &mut Context) -> Cont {
+    // 00000f5d pop di
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_di(x);
+    // 00000f5e call 1043h
+    ctx.call16(0xf61, Cont(x1043))
+}
+
+pub fn xf61(ctx: &mut Context) -> Cont {
+    // 00000f61 call 1024h
+    ctx.call16(0xf64, Cont(x1024))
+}
+
+pub fn xf64(ctx: &mut Context) -> Cont {
+    // 00000f64 mov si,7227h
+    ctx.cpu.regs.set_si(0x7227u16);
+    // 00000f67 mov di,0C0h
+    ctx.cpu.regs.set_di(0xc0u16);
+    // 00000f6a mov bp,10h
+    ctx.cpu.regs.set_bp(0x10u16);
+    Cont(xf6d)
+}
+
+pub fn xf6d(ctx: &mut Context) -> Cont {
+    // 00000f6d mov ah,[si]
+    ctx.cpu
+        .regs
+        .set_ah(ctx.memory.read::<u8>(ctx.cpu.regs.get_si()));
+    // 00000f6f mov dl,[si+1]
+    ctx.cpu.regs.set_dl(
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.get_si().wrapping_add(0x1)),
+    );
+    // 00000f72 mov dh,[si+2]
+    ctx.cpu.regs.set_dh(
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.get_si().wrapping_add(0x2)),
+    );
+    // 00000f75 add si,6
+    ctx.cpu
+        .regs
+        .set_si(add(ctx.cpu.regs.get_si(), 0x6u16, &mut ctx.cpu.flags));
+    // 00000f78 push si
+    ctx.push16(ctx.cpu.regs.get_si());
+    // 00000f79 mov si,7287h
+    ctx.cpu.regs.set_si(0x7287u16);
+    // 00000f7c mov cx,0Ch
+    ctx.cpu.regs.set_cx(0xcu16);
+    Cont(xf7f)
+}
+
+pub fn xf7f(ctx: &mut Context) -> Cont {
+    // 00000f7f lodsb
+    ctx.lodsb();
+    // 00000f80 add al,ah
+    ctx.cpu.regs.set_al(add(
+        ctx.cpu.regs.get_al(),
+        ctx.cpu.regs.get_ah(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000f82 mov bl,al
+    ctx.cpu.regs.set_bl(ctx.cpu.regs.get_al());
+    // 00000f84 cmp bl,3Fh
+    sub(ctx.cpu.regs.get_bl(), 0x3fu8, &mut ctx.cpu.flags);
+    // 00000f87 jbe short 0F8Bh
+    ctx.jbe(Cont(xf89), Cont(xf8b))
+}
+
+pub fn xf89(ctx: &mut Context) -> Cont {
+    // 00000f89 mov bl,3Fh
+    ctx.cpu.regs.set_bl(0x3fu8);
+    Cont(xf8b)
+}
+
+pub fn xf8b(ctx: &mut Context) -> Cont {
+    // 00000f8b lodsb
+    ctx.lodsb();
+    // 00000f8c add al,dl
+    ctx.cpu.regs.set_al(add(
+        ctx.cpu.regs.get_al(),
+        ctx.cpu.regs.get_dl(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000f8e mov bh,al
+    ctx.cpu.regs.set_bh(ctx.cpu.regs.get_al());
+    // 00000f90 cmp bh,3Fh
+    sub(ctx.cpu.regs.get_bh(), 0x3fu8, &mut ctx.cpu.flags);
+    // 00000f93 jbe short 0F97h
+    ctx.jbe(Cont(xf95), Cont(xf97))
+}
+
+pub fn xf95(ctx: &mut Context) -> Cont {
+    // 00000f95 mov bh,3Fh
+    ctx.cpu.regs.set_bh(0x3fu8);
+    Cont(xf97)
+}
+
+pub fn xf97(ctx: &mut Context) -> Cont {
+    // 00000f97 lodsb
+    ctx.lodsb();
+    // 00000f98 add al,dh
+    ctx.cpu.regs.set_al(add(
+        ctx.cpu.regs.get_al(),
+        ctx.cpu.regs.get_dh(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000f9a cmp al,3Fh
+    sub(ctx.cpu.regs.get_al(), 0x3fu8, &mut ctx.cpu.flags);
+    // 00000f9c jbe short 0FA0h
+    ctx.jbe(Cont(xf9e), Cont(xfa0))
+}
+
+pub fn xf9e(ctx: &mut Context) -> Cont {
+    // 00000f9e mov al,3Fh
+    ctx.cpu.regs.set_al(0x3fu8);
+    Cont(xfa0)
+}
+
+pub fn xfa0(ctx: &mut Context) -> Cont {
+    // 00000fa0 mov [di+7224h],bl
+    ctx.memory.write::<u8>(
+        ctx.cpu.regs.get_di().wrapping_add(0x7224),
+        ctx.cpu.regs.get_bl(),
+    );
+    // 00000fa4 mov [di+7225h],bh
+    ctx.memory.write::<u8>(
+        ctx.cpu.regs.get_di().wrapping_add(0x7225),
+        ctx.cpu.regs.get_bh(),
+    );
+    // 00000fa8 mov [di+7226h],al
+    ctx.memory.write::<u8>(
+        ctx.cpu.regs.get_di().wrapping_add(0x7226),
+        ctx.cpu.regs.get_al(),
+    );
+    // 00000fac add di,3
+    ctx.cpu
+        .regs
+        .set_di(add(ctx.cpu.regs.get_di(), 0x3u16, &mut ctx.cpu.flags));
+    // 00000faf add si,6
+    ctx.cpu
+        .regs
+        .set_si(add(ctx.cpu.regs.get_si(), 0x6u16, &mut ctx.cpu.flags));
+    // 00000fb2 loop 0F7Fh
+    ctx.loop_(Cont(xfb4), Cont(xf7f))
+}
+
+pub fn xfb4(ctx: &mut Context) -> Cont {
+    // 00000fb4 pop si
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_si(x);
+    // 00000fb5 dec bp
+    ctx.cpu
+        .regs
+        .set_bp(dec(ctx.cpu.regs.get_bp(), &mut ctx.cpu.flags));
+    // 00000fb6 jne short 0F6Dh
+    ctx.jne(Cont(xfb8), Cont(xf6d))
+}
+
+pub fn xfb8(ctx: &mut Context) -> Cont {
+    // 00000fb8 push gs
+    ctx.push16(ctx.cpu.regs.get_gs());
+    // 00000fba pop es
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_es(x);
+    // 00000fbb sub di,di
+    ctx.cpu.regs.set_di(sub(
+        ctx.cpu.regs.get_di(),
+        ctx.cpu.regs.get_di(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000fbd mov bp,100h
+    ctx.cpu.regs.set_bp(0x100u16);
+    Cont(xfc0)
+}
+
+pub fn xfc0(ctx: &mut Context) -> Cont {
+    // 00000fc0 mov ax,bp
+    ctx.cpu.regs.set_ax(ctx.cpu.regs.get_bp());
+    // 00000fc2 call 0FFFh
+    ctx.call16(0xfc5, Cont(xfff))
+}
+
+pub fn xfc5(ctx: &mut Context) -> Cont {
+    // 00000fc5 mov bx,ax
+    ctx.cpu.regs.set_bx(ctx.cpu.regs.get_ax());
+    // 00000fc7 mov cx,100h
+    ctx.cpu.regs.set_cx(0x100u16);
+    Cont(xfca)
+}
+
+pub fn xfca(ctx: &mut Context) -> Cont {
+    // 00000fca mov ax,cx
+    ctx.cpu.regs.set_ax(ctx.cpu.regs.get_cx());
+    // 00000fcc call 0FFFh
+    ctx.call16(0xfcf, Cont(xfff))
+}
+
+pub fn xfcf(ctx: &mut Context) -> Cont {
+    // 00000fcf add ax,bx
+    ctx.cpu.regs.set_ax(add(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_bx(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000fd1 test ah,ah
+    and(
+        ctx.cpu.regs.get_ah(),
+        ctx.cpu.regs.get_ah(),
+        &mut ctx.cpu.flags,
+    );
+    // 00000fd3 jne short 0FD9h
+    ctx.jne(Cont(xfd5), Cont(xfd9))
+}
+
+pub fn xfd5(ctx: &mut Context) -> Cont {
+    // 00000fd5 shr al,1
+    ctx.cpu
+        .regs
+        .set_al(shr(ctx.cpu.regs.get_al(), 0x1u8, &mut ctx.cpu.flags));
+    // 00000fd7 jmp short 0FF8h
+    Cont(xff8)
+}
+
+pub fn xfd9(ctx: &mut Context) -> Cont {
+    // 00000fd9 test al,al
+    and(
+        ctx.cpu.regs.get_al(),
+        ctx.cpu.regs.get_al(),
+        &mut ctx.cpu.flags,
+    );
+    // 00000fdb jne short 0FE5h
+    ctx.jne(Cont(xfdd), Cont(xfe5))
+}
+
+pub fn xfdd(ctx: &mut Context) -> Cont {
+    // 00000fdd mov al,ah
+    ctx.cpu.regs.set_al(ctx.cpu.regs.get_ah());
+    // 00000fdf shr al,1
+    ctx.cpu
+        .regs
+        .set_al(shr(ctx.cpu.regs.get_al(), 0x1u8, &mut ctx.cpu.flags));
+    // 00000fe1 add al,20h
+    ctx.cpu
+        .regs
+        .set_al(add(ctx.cpu.regs.get_al(), 0x20u8, &mut ctx.cpu.flags));
+    // 00000fe3 jmp short 0FF8h
+    Cont(xff8)
+}
+
+pub fn xfe5(ctx: &mut Context) -> Cont {
+    // 00000fe5 mov dh,ah
+    ctx.cpu.regs.set_dh(ctx.cpu.regs.get_ah());
+    // 00000fe7 mov dl,0Ch
+    ctx.cpu.regs.set_dl(0xcu8);
+    // 00000fe9 shr al,2
+    ctx.cpu
+        .regs
+        .set_al(shr(ctx.cpu.regs.get_al(), 0x2u8, &mut ctx.cpu.flags));
+    // 00000fec mul dl
+    let res = mul(
+        ctx.cpu.regs.eax as u8 as u16,
+        ctx.cpu.regs.get_dl() as u16,
+        &mut ctx.cpu.flags,
+    );
+    ctx.cpu.regs.set_ax(res);
+    // 00000fee xchg al,dh
+    let t = ctx.cpu.regs.get_dh();
+    ctx.cpu.regs.set_dh(ctx.cpu.regs.get_al());
+    ctx.cpu.regs.set_al(t);
+    // 00000ff0 mov dl,6
+    ctx.cpu.regs.set_dl(0x6u8);
+    // 00000ff2 div dl
+    let (quot, rem) = div(ctx.cpu.regs.get_ax(), ctx.cpu.regs.get_dl() as u16);
+    ctx.cpu.regs.set_al(quot as u8);
+    ctx.cpu.regs.set_ah(rem as u8);
+    // 00000ff4 add al,dh
+    ctx.cpu.regs.set_al(add(
+        ctx.cpu.regs.get_al(),
+        ctx.cpu.regs.get_dh(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000ff6 add al,40h
+    ctx.cpu
+        .regs
+        .set_al(add(ctx.cpu.regs.get_al(), 0x40u8, &mut ctx.cpu.flags));
+    Cont(xff8)
+}
+
+pub fn xff8(ctx: &mut Context) -> Cont {
+    // 00000ff8 stosb
+    ctx.stosb();
+    // 00000ff9 loop 0FCAh
+    ctx.loop_(Cont(xffb), Cont(xfca))
+}
+
+pub fn xffb(ctx: &mut Context) -> Cont {
+    // 00000ffb dec bp
+    ctx.cpu
+        .regs
+        .set_bp(dec(ctx.cpu.regs.get_bp(), &mut ctx.cpu.flags));
+    // 00000ffc jne short 0FC0h
+    ctx.jne(Cont(xffe), Cont(xfc0))
+}
+
+pub fn xffe(ctx: &mut Context) -> Cont {
+    // 00000ffe ret
+    ctx.ret16(0)
+}
+
+pub fn xfff(ctx: &mut Context) -> Cont {
+    // 00000fff neg al
+    ctx.cpu
+        .regs
+        .set_al(neg(ctx.cpu.regs.get_al(), &mut ctx.cpu.flags));
+    // 00001001 sub ah,ah
+    ctx.cpu.regs.set_ah(sub(
+        ctx.cpu.regs.get_ah(),
+        ctx.cpu.regs.get_ah(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00001003 cmp ax,20h
+    sub(ctx.cpu.regs.get_ax(), 0x20u16, &mut ctx.cpu.flags);
+    // 00001006 jb short 1023h
+    ctx.jb(Cont(x1008), Cont(x1023))
+}
+
+pub fn x1008(ctx: &mut Context) -> Cont {
+    // 00001008 cmp ax,40h
+    sub(ctx.cpu.regs.get_ax(), 0x40u16, &mut ctx.cpu.flags);
+    // 0000100b jae short 1014h
+    ctx.jae(Cont(x100d), Cont(x1014))
+}
+
+pub fn x100d(ctx: &mut Context) -> Cont {
+    // 0000100d xchg al,ah
+    let t = ctx.cpu.regs.get_ah();
+    ctx.cpu.regs.set_ah(ctx.cpu.regs.get_al());
+    ctx.cpu.regs.set_al(t);
+    // 0000100f sub ah,20h
+    ctx.cpu
+        .regs
+        .set_ah(sub(ctx.cpu.regs.get_ah(), 0x20u8, &mut ctx.cpu.flags));
+    // 00001012 jmp short 1023h
+    Cont(x1023)
+}
+
+pub fn x1014(ctx: &mut Context) -> Cont {
+    // 00001014 sub ax,40h
+    ctx.cpu
+        .regs
+        .set_ax(sub(ctx.cpu.regs.get_ax(), 0x40u16, &mut ctx.cpu.flags));
+    // 00001017 mov dl,0Ch
+    ctx.cpu.regs.set_dl(0xcu8);
+    // 00001019 div dl
+    let (quot, rem) = div(ctx.cpu.regs.get_ax(), ctx.cpu.regs.get_dl() as u16);
+    ctx.cpu.regs.set_al(quot as u8);
+    ctx.cpu.regs.set_ah(rem as u8);
+    // 0000101b mov dl,ah
+    ctx.cpu.regs.set_dl(ctx.cpu.regs.get_ah());
+    // 0000101d add ah,ah
+    ctx.cpu.regs.set_ah(add(
+        ctx.cpu.regs.get_ah(),
+        ctx.cpu.regs.get_ah(),
+        &mut ctx.cpu.flags,
+    ));
+    // 0000101f add ah,dl
+    ctx.cpu.regs.set_ah(add(
+        ctx.cpu.regs.get_ah(),
+        ctx.cpu.regs.get_dl(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00001021 add al,al
+    ctx.cpu.regs.set_al(add(
+        ctx.cpu.regs.get_al(),
+        ctx.cpu.regs.get_al(),
+        &mut ctx.cpu.flags,
+    ));
+    Cont(x1023)
+}
+
+pub fn x1023(ctx: &mut Context) -> Cont {
+    // 00001023 ret
+    ctx.ret16(0)
+}
+
+pub fn x1024(ctx: &mut Context) -> Cont {
+    // 00001024 mov cx,6
+    ctx.cpu.regs.set_cx(0x6u16);
+    // 00001027 mov si,13B0h
+    ctx.cpu.regs.set_si(0x13b0u16);
+    Cont(x102a)
+}
+
+pub fn x102a(ctx: &mut Context) -> Cont {
+    // 0000102a dec si
+    ctx.cpu
+        .regs
+        .set_si(dec(ctx.cpu.regs.get_si(), &mut ctx.cpu.flags));
+    // 0000102b mov ah,[si]
+    ctx.cpu
+        .regs
+        .set_ah(ctx.memory.read::<u8>(ctx.cpu.regs.get_si()));
+    // 0000102d mov dx,3
+    ctx.cpu.regs.set_dx(0x3u16);
+    Cont(x1030)
+}
+
+pub fn x1030(ctx: &mut Context) -> Cont {
+    // 00001030 dec di
+    ctx.cpu
+        .regs
+        .set_di(dec(ctx.cpu.regs.get_di(), &mut ctx.cpu.flags));
+    // 00001031 mov al,[di]
+    ctx.cpu
+        .regs
+        .set_al(ctx.memory.read::<u8>(ctx.cpu.regs.get_di()));
+    // 00001033 add al,ah
+    ctx.cpu.regs.set_al(add(
+        ctx.cpu.regs.get_al(),
+        ctx.cpu.regs.get_ah(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00001035 cmp al,3Fh
+    sub(ctx.cpu.regs.get_al(), 0x3fu8, &mut ctx.cpu.flags);
+    // 00001037 jbe short 103Bh
+    ctx.jbe(Cont(x1039), Cont(x103b))
+}
+
+pub fn x1039(ctx: &mut Context) -> Cont {
+    // 00001039 mov al,3Fh
+    ctx.cpu.regs.set_al(0x3fu8);
+    Cont(x103b)
+}
+
+pub fn x103b(ctx: &mut Context) -> Cont {
+    // 0000103b mov [di],al
+    ctx.memory
+        .write::<u8>(ctx.cpu.regs.get_di(), ctx.cpu.regs.get_al());
+    // 0000103d dec dx
+    ctx.cpu
+        .regs
+        .set_dx(dec(ctx.cpu.regs.get_dx(), &mut ctx.cpu.flags));
+    // 0000103e jne short 1030h
+    ctx.jne(Cont(x1040), Cont(x1030))
+}
+
+pub fn x1040(ctx: &mut Context) -> Cont {
+    // 00001040 loop 102Ah
+    ctx.loop_(Cont(x1042), Cont(x102a))
+}
+
+pub fn x1042(ctx: &mut Context) -> Cont {
+    // 00001042 ret
+    ctx.ret16(0)
+}
+
+pub fn x1043(ctx: &mut Context) -> Cont {
+    // 00001043 mov byte ptr ds:[6F23h],20h
+    ctx.memory.write::<u8>(0x6f23, 0x20u8);
+    Cont(x1048)
+}
+
+pub fn x1048(ctx: &mut Context) -> Cont {
+    // 00001048 mov [di],bh
+    ctx.memory
+        .write::<u8>(ctx.cpu.regs.get_di(), ctx.cpu.regs.get_bh());
+    // 0000104a inc di
+    ctx.cpu
+        .regs
+        .set_di(inc(ctx.cpu.regs.get_di(), &mut ctx.cpu.flags));
+    // 0000104b mov [di],ch
+    ctx.memory
+        .write::<u8>(ctx.cpu.regs.get_di(), ctx.cpu.regs.get_ch());
+    // 0000104d inc di
+    ctx.cpu
+        .regs
+        .set_di(inc(ctx.cpu.regs.get_di(), &mut ctx.cpu.flags));
+    // 0000104e mov [di],ah
+    ctx.memory
+        .write::<u8>(ctx.cpu.regs.get_di(), ctx.cpu.regs.get_ah());
+    // 00001050 inc di
+    ctx.cpu
+        .regs
+        .set_di(inc(ctx.cpu.regs.get_di(), &mut ctx.cpu.flags));
+    // 00001051 add bx,bp
+    ctx.cpu.regs.set_bx(add(
+        ctx.cpu.regs.get_bx(),
+        ctx.cpu.regs.get_bp(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00001053 add cx,si
+    ctx.cpu.regs.set_cx(add(
+        ctx.cpu.regs.get_cx(),
+        ctx.cpu.regs.get_si(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00001055 add ax,dx
+    ctx.cpu.regs.set_ax(add(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_dx(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00001057 dec byte ptr ds:[6F23h]
+    ctx.memory.write::<u8>(
+        0x6f23,
+        dec(ctx.memory.read::<u8>(0x6f23), &mut ctx.cpu.flags),
+    );
+    // 0000105b jne short 1048h
+    ctx.jne(Cont(x105d), Cont(x1048))
+}
+
+pub fn x105d(ctx: &mut Context) -> Cont {
+    // 0000105d ret
+    ctx.ret16(0)
+}
+
+pub fn x105e(ctx: &mut Context) -> Cont {
+    // 0000105e sub ax,ax
+    ctx.cpu.regs.set_ax(sub(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_ax(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00001060 mov ah,[di+1]
+    ctx.cpu.regs.set_ah(
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.get_di().wrapping_add(0x1)),
+    );
+    // 00001063 mov bp,ax
+    ctx.cpu.regs.set_bp(ctx.cpu.regs.get_ax());
+    // 00001065 sub bx,bx
+    ctx.cpu.regs.set_bx(sub(
+        ctx.cpu.regs.get_bx(),
+        ctx.cpu.regs.get_bx(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00001067 mov bh,[di]
+    ctx.cpu
+        .regs
+        .set_bh(ctx.memory.read::<u8>(ctx.cpu.regs.get_di()));
+    // 00001069 sub bp,bx
+    ctx.cpu.regs.set_bp(sub(
+        ctx.cpu.regs.get_bp(),
+        ctx.cpu.regs.get_bx(),
+        &mut ctx.cpu.flags,
+    ));
+    // 0000106b sar bp,5
+    ctx.cpu
+        .regs
+        .set_bp(sar(ctx.cpu.regs.get_bp(), 0x5u8, &mut ctx.cpu.flags));
+    // 0000106e mov ah,[di+3]
+    ctx.cpu.regs.set_ah(
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.get_di().wrapping_add(0x3)),
+    );
+    // 00001071 mov si,ax
+    ctx.cpu.regs.set_si(ctx.cpu.regs.get_ax());
+    // 00001073 sub cx,cx
+    ctx.cpu.regs.set_cx(sub(
+        ctx.cpu.regs.get_cx(),
+        ctx.cpu.regs.get_cx(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00001075 mov ch,[di+2]
+    ctx.cpu.regs.set_ch(
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.get_di().wrapping_add(0x2)),
+    );
+    // 00001078 sub si,cx
+    ctx.cpu.regs.set_si(sub(
+        ctx.cpu.regs.get_si(),
+        ctx.cpu.regs.get_cx(),
+        &mut ctx.cpu.flags,
+    ));
+    // 0000107a sar si,5
+    ctx.cpu
+        .regs
+        .set_si(sar(ctx.cpu.regs.get_si(), 0x5u8, &mut ctx.cpu.flags));
+    // 0000107d mov ah,[di+5]
+    ctx.cpu.regs.set_ah(
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.get_di().wrapping_add(0x5)),
+    );
+    // 00001080 mov dx,ax
+    ctx.cpu.regs.set_dx(ctx.cpu.regs.get_ax());
+    // 00001082 mov ah,[di+4]
+    ctx.cpu.regs.set_ah(
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.get_di().wrapping_add(0x4)),
+    );
+    // 00001085 sub dx,ax
+    ctx.cpu.regs.set_dx(sub(
+        ctx.cpu.regs.get_dx(),
+        ctx.cpu.regs.get_ax(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00001087 sar dx,5
+    ctx.cpu
+        .regs
+        .set_dx(sar(ctx.cpu.regs.get_dx(), 0x5u8, &mut ctx.cpu.flags));
+    // 0000108a ret
+    ctx.ret16(0)
+}
+
+pub fn x108b(ctx: &mut Context) -> Cont {
+    // 0000108b push ds
+    ctx.push16(ctx.cpu.regs.get_ds());
+    // 0000108c push es
+    ctx.push16(ctx.cpu.regs.get_es());
+    // 0000108d mov ax,0A000h
+    ctx.cpu.regs.set_ax(0xa000u16);
+    // 00001090 mov es,ax
+    ctx.cpu.regs.set_es(ctx.cpu.regs.get_ax());
+    // 00001092 push fs
+    ctx.push16(ctx.cpu.regs.get_fs());
+    // 00001094 pop ds
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_ds(x);
+    // 00001095 mov si,30h
+    ctx.cpu.regs.set_si(0x30u16);
+    // 00001098 sub di,di
+    ctx.cpu.regs.set_di(sub(
+        ctx.cpu.regs.get_di(),
+        ctx.cpu.regs.get_di(),
+        &mut ctx.cpu.flags,
+    ));
+    // 0000109a mov bp,64h
+    ctx.cpu.regs.set_bp(0x64u16);
+    Cont(x109d)
+}
+
+pub fn x109d(ctx: &mut Context) -> Cont {
+    // 0000109d mov cx,0A0h
+    ctx.cpu.regs.set_cx(0xa0u16);
+    Cont(x10a0)
+}
+
+pub fn x10a0(ctx: &mut Context) -> Cont {
+    // 000010a0 mov bx,[si]
+    ctx.cpu
+        .regs
+        .set_bx(ctx.memory.read::<u16>((ctx.cpu.regs.get_si() as u32)));
+    // 000010a2 mov bh,gs:[bx]
+    ctx.cpu
+        .regs
+        .set_bh(ctx.memory.read::<u8>(ctx.cpu.regs.get_bx()));
+    // 000010a5 mov dl,bh
+    ctx.cpu.regs.set_dl(ctx.cpu.regs.get_bh());
+    // 000010a7 mov es:[di],bx
+    ctx.memory.write::<u16>(
+        (todo!() as u32).wrapping_add(ctx.cpu.regs.get_di() as u32),
+        ctx.cpu.regs.get_bx(),
+    );
+    // 000010aa mov ax,[si+100h]
+    ctx.cpu.regs.set_ax(
+        ctx.memory
+            .read::<u16>((ctx.cpu.regs.get_si() as u32).wrapping_add(0x100 as u32)),
+    );
+    // 000010ae mov bh,al
+    ctx.cpu.regs.set_bh(ctx.cpu.regs.get_al());
+    // 000010b0 mov bl,gs:[bx]
+    ctx.cpu
+        .regs
+        .set_bl(ctx.memory.read::<u8>(ctx.cpu.regs.get_bx()));
+    // 000010b3 mov es:[di+140h],bl
+    ctx.memory.write::<u8>(
+        todo!()
+            .wrapping_add(ctx.cpu.regs.get_di())
+            .wrapping_add(0x140),
+        ctx.cpu.regs.get_bl(),
+    );
+    // 000010b8 mov bl,ah
+    ctx.cpu.regs.set_bl(ctx.cpu.regs.get_ah());
+    // 000010ba mov bl,gs:[bx]
+    ctx.cpu
+        .regs
+        .set_bl(ctx.memory.read::<u8>(ctx.cpu.regs.get_bx()));
+    // 000010bd mov bh,dl
+    ctx.cpu.regs.set_bh(ctx.cpu.regs.get_dl());
+    // 000010bf mov al,gs:[bx]
+    ctx.cpu
+        .regs
+        .set_al(ctx.memory.read::<u8>(ctx.cpu.regs.get_bx()));
+    // 000010c2 mov es:[di+141h],al
+    ctx.memory.write::<u8>(
+        todo!()
+            .wrapping_add(ctx.cpu.regs.get_di())
+            .wrapping_add(0x141),
+        ctx.cpu.regs.get_al(),
+    );
+    // 000010c7 add di,2
+    ctx.cpu
+        .regs
+        .set_di(add(ctx.cpu.regs.get_di(), 0x2u16, &mut ctx.cpu.flags));
+    // 000010ca inc si
+    ctx.cpu
+        .regs
+        .set_si(inc(ctx.cpu.regs.get_si(), &mut ctx.cpu.flags));
+    // 000010cb dec cx
+    ctx.cpu
+        .regs
+        .set_cx(dec(ctx.cpu.regs.get_cx(), &mut ctx.cpu.flags));
+    // 000010cc jne short 10A0h
+    ctx.jne(Cont(x10ce), Cont(x10a0))
+}
+
+pub fn x10ce(ctx: &mut Context) -> Cont {
+    // 000010ce add di,140h
+    ctx.cpu
+        .regs
+        .set_di(add(ctx.cpu.regs.get_di(), 0x140u16, &mut ctx.cpu.flags));
+    // 000010d2 add si,60h
+    ctx.cpu
+        .regs
+        .set_si(add(ctx.cpu.regs.get_si(), 0x60u16, &mut ctx.cpu.flags));
+    // 000010d5 dec bp
+    ctx.cpu
+        .regs
+        .set_bp(dec(ctx.cpu.regs.get_bp(), &mut ctx.cpu.flags));
+    // 000010d6 jne short 109Dh
+    ctx.jne(Cont(x10d8), Cont(x109d))
+}
+
+pub fn x10d8(ctx: &mut Context) -> Cont {
+    // 000010d8 pop es
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_es(x);
+    // 000010d9 pop ds
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_ds(x);
+    // 000010da ret
+    ctx.ret16(0)
+}
+
+pub fn x10db(ctx: &mut Context) -> Cont {
+    // 000010db cli
+    // Cli not implemented
+    todo!();
+}
+
+pub fn x10e2(ctx: &mut Context) -> Cont {
+    // 000010e2 mov al,dl
+    ctx.cpu.regs.set_al(ctx.cpu.regs.get_dl());
+    // 000010e4 out 40h,al
+    // Out not implemented
+    todo!();
+}
+
+pub fn x10e8(ctx: &mut Context) -> Cont {
+    // 000010e8 mov al,dh
+    ctx.cpu.regs.set_al(ctx.cpu.regs.get_dh());
+    // 000010ea out 40h,al
+    // Out not implemented
+    todo!();
+}
+
+pub fn x10ee(ctx: &mut Context) -> Cont {
+    // 000010ee sti
+    // Sti not implemented
+    todo!();
+}
+
+pub fn x10f0(ctx: &mut Context) -> Cont {
+    // 000010f0 mov ebp,40000000h
+    ctx.cpu.regs.ebp = 0x40000000u32;
+    // 000010f6 sub esi,esi
+    ctx.cpu.regs.esi = sub(ctx.cpu.regs.esi, ctx.cpu.regs.esi, &mut ctx.cpu.flags);
+    Cont(x10f9)
+}
+
+pub fn x10f9(ctx: &mut Context) -> Cont {
+    // 000010f9 mov ebx,ebp
+    ctx.cpu.regs.ebx = ctx.cpu.regs.ebp;
+    // 000010fc add ebx,esi
+    ctx.cpu.regs.ebx = add(ctx.cpu.regs.ebx, ctx.cpu.regs.esi, &mut ctx.cpu.flags);
+    // 000010ff cmp ebx,eax
+    sub(ctx.cpu.regs.ebx, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
+    // 00001102 jbe short 1109h
+    ctx.jbe(Cont(x1104), Cont(x1109))
+}
+
+pub fn x1104(ctx: &mut Context) -> Cont {
+    // 00001104 shr esi,1
+    ctx.cpu.regs.esi = shr(ctx.cpu.regs.esi, 0x1u8, &mut ctx.cpu.flags);
+    // 00001107 jmp short 1115h
+    Cont(x1115)
+}
+
+pub fn x1109(ctx: &mut Context) -> Cont {
+    // 00001109 sub eax,esi
+    ctx.cpu.regs.eax = sub(ctx.cpu.regs.eax, ctx.cpu.regs.esi, &mut ctx.cpu.flags);
+    // 0000110c sub eax,ebp
+    ctx.cpu.regs.eax = sub(ctx.cpu.regs.eax, ctx.cpu.regs.ebp, &mut ctx.cpu.flags);
+    // 0000110f shr esi,1
+    ctx.cpu.regs.esi = shr(ctx.cpu.regs.esi, 0x1u8, &mut ctx.cpu.flags);
+    // 00001112 or esi,ebp
+    ctx.cpu.regs.esi = or(ctx.cpu.regs.esi, ctx.cpu.regs.ebp, &mut ctx.cpu.flags);
+    Cont(x1115)
+}
+
+pub fn x1115(ctx: &mut Context) -> Cont {
+    // 00001115 shr ebp,2
+    ctx.cpu.regs.ebp = shr(ctx.cpu.regs.ebp, 0x2u8, &mut ctx.cpu.flags);
+    // 00001119 jne short 10F9h
+    ctx.jne(Cont(x111b), Cont(x10f9))
+}
+
+pub fn x111b(ctx: &mut Context) -> Cont {
+    // 0000111b mov ebx,esi
+    ctx.cpu.regs.ebx = ctx.cpu.regs.esi;
+    // 0000111e cmp ebx,eax
+    sub(ctx.cpu.regs.ebx, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
+    // 00001121 jae short 1125h
+    ctx.jae(Cont(x1123), Cont(x1125))
+}
+
+pub fn x1123(ctx: &mut Context) -> Cont {
+    // 00001123 inc ebx
+    ctx.cpu.regs.ebx = inc(ctx.cpu.regs.ebx, &mut ctx.cpu.flags);
+    Cont(x1125)
+}
+
+pub fn x1125(ctx: &mut Context) -> Cont {
+    // 00001125 ret
+    ctx.ret16(0)
+}
+
+pub fn x117e(ctx: &mut Context) -> Cont {
+    // 0000117e push fs
+    ctx.push16(ctx.cpu.regs.get_fs());
+    // 00001180 pop es
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_es(x);
+    // 00001181 mov di,30h
+    ctx.cpu.regs.set_di(0x30u16);
+    // 00001184 mov bp,65h
+    ctx.cpu.regs.set_bp(0x65u16);
+    // 00001187 sub eax,eax
+    ctx.cpu.regs.eax = sub(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
+    Cont(x118a)
+}
+
+pub fn x118a(ctx: &mut Context) -> Cont {
+    // 0000118a mov cx,29h
+    ctx.cpu.regs.set_cx(0x29u16);
+    // 0000118d rep stosd
+    ctx.rep(Rep::REP, Context::stosd);
+    // 00001190 add di,5Ch
+    ctx.cpu
+        .regs
+        .set_di(add(ctx.cpu.regs.get_di(), 0x5cu16, &mut ctx.cpu.flags));
+    // 00001193 dec bp
+    ctx.cpu
+        .regs
+        .set_bp(dec(ctx.cpu.regs.get_bp(), &mut ctx.cpu.flags));
+    // 00001194 jne short 118Ah
+    ctx.jne(Cont(x1196), Cont(x118a))
+}
+
+pub fn x1196(ctx: &mut Context) -> Cont {
+    // 00001196 push ds
+    ctx.push16(ctx.cpu.regs.get_ds());
+    // 00001197 pop es
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_es(x);
+    // 00001198 mov bx,ds:[14C6h]
+    ctx.cpu.regs.set_bx(ctx.memory.read::<u16>((0x14c6 as u32)));
+    // 0000119c shr bx,6
+    ctx.cpu
+        .regs
+        .set_bx(shr(ctx.cpu.regs.get_bx(), 0x6u8, &mut ctx.cpu.flags));
+    // 0000119f add bx,bx
+    ctx.cpu.regs.set_bx(add(
+        ctx.cpu.regs.get_bx(),
+        ctx.cpu.regs.get_bx(),
+        &mut ctx.cpu.flags,
+    ));
+    // 000011a1 mov dh,[bx+14DBh]
+    ctx.cpu.regs.set_dh(
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.get_bx().wrapping_add(0x14db)),
+    );
+    // 000011a5 mov ch,[bx+16DBh]
+    ctx.cpu.regs.set_ch(
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.get_bx().wrapping_add(0x16db)),
+    );
+    // 000011a9 mov bx,ds:[14C8h]
+    ctx.cpu.regs.set_bx(ctx.memory.read::<u16>((0x14c8 as u32)));
+    // 000011ad shr bx,6
+    ctx.cpu
+        .regs
+        .set_bx(shr(ctx.cpu.regs.get_bx(), 0x6u8, &mut ctx.cpu.flags));
+    // 000011b0 add bx,bx
+    ctx.cpu.regs.set_bx(add(
+        ctx.cpu.regs.get_bx(),
+        ctx.cpu.regs.get_bx(),
+        &mut ctx.cpu.flags,
+    ));
+    // 000011b2 mov dl,[bx+14DBh]
+    ctx.cpu.regs.set_dl(
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.get_bx().wrapping_add(0x14db)),
+    );
+    // 000011b6 mov cl,[bx+16DBh]
+    ctx.cpu.regs.set_cl(
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.get_bx().wrapping_add(0x16db)),
+    );
+    // 000011ba mov si,2CA0h
+    ctx.cpu.regs.set_si(0x2ca0u16);
+    // 000011bd mov di,3A20h
+    ctx.cpu.regs.set_di(0x3a20u16);
+    // 000011c0 mov bp,480h
+    ctx.cpu.regs.set_bp(0x480u16);
+    Cont(x11c3)
+}
+
+pub fn x11c3(ctx: &mut Context) -> Cont {
+    // 000011c3 mov al,[si+2]
+    ctx.cpu.regs.set_al(
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.get_si().wrapping_add(0x2)),
+    );
+    // 000011c6 imul dh
+    ctx.cpu.regs.set_ax(imul1_8(
+        ctx.cpu.regs.eax as u8,
+        ctx.cpu.regs.get_dh(),
+        &mut ctx.cpu.flags,
+    ));
+    // 000011c8 mov bx,ax
+    ctx.cpu.regs.set_bx(ctx.cpu.regs.get_ax());
+    // 000011ca mov al,[si+1]
+    ctx.cpu.regs.set_al(
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.get_si().wrapping_add(0x1)),
+    );
+    // 000011cd imul ch
+    ctx.cpu.regs.set_ax(imul1_8(
+        ctx.cpu.regs.eax as u8,
+        ctx.cpu.regs.get_ch(),
+        &mut ctx.cpu.flags,
+    ));
+    // 000011cf add ax,bx
+    ctx.cpu.regs.set_ax(add(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_bx(),
+        &mut ctx.cpu.flags,
+    ));
+    // 000011d1 sar ax,7
+    ctx.cpu
+        .regs
+        .set_ax(sar(ctx.cpu.regs.get_ax(), 0x7u8, &mut ctx.cpu.flags));
+    // 000011d4 imul dl
+    ctx.cpu.regs.set_ax(imul1_8(
+        ctx.cpu.regs.eax as u8,
+        ctx.cpu.regs.get_dl(),
+        &mut ctx.cpu.flags,
+    ));
+    // 000011d6 mov bx,ax
+    ctx.cpu.regs.set_bx(ctx.cpu.regs.get_ax());
+    // 000011d8 mov al,[si]
+    ctx.cpu
+        .regs
+        .set_al(ctx.memory.read::<u8>(ctx.cpu.regs.get_si()));
+    // 000011da imul cl
+    ctx.cpu.regs.set_ax(imul1_8(
+        ctx.cpu.regs.eax as u8,
+        ctx.cpu.regs.get_cl(),
+        &mut ctx.cpu.flags,
+    ));
+    // 000011dc add ax,bx
+    ctx.cpu.regs.set_ax(add(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_bx(),
+        &mut ctx.cpu.flags,
+    ));
+    // 000011de mov [di],ax
+    ctx.memory
+        .write::<u16>((ctx.cpu.regs.get_di() as u32), ctx.cpu.regs.get_ax());
+    // 000011e0 mov al,[si+2]
+    ctx.cpu.regs.set_al(
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.get_si().wrapping_add(0x2)),
+    );
+    // 000011e3 imul ch
+    ctx.cpu.regs.set_ax(imul1_8(
+        ctx.cpu.regs.eax as u8,
+        ctx.cpu.regs.get_ch(),
+        &mut ctx.cpu.flags,
+    ));
+    // 000011e5 mov bx,ax
+    ctx.cpu.regs.set_bx(ctx.cpu.regs.get_ax());
+    // 000011e7 mov al,[si+1]
+    ctx.cpu.regs.set_al(
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.get_si().wrapping_add(0x1)),
+    );
+    // 000011ea imul dh
+    ctx.cpu.regs.set_ax(imul1_8(
+        ctx.cpu.regs.eax as u8,
+        ctx.cpu.regs.get_dh(),
+        &mut ctx.cpu.flags,
+    ));
+    // 000011ec sub ax,bx
+    ctx.cpu.regs.set_ax(sub(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_bx(),
+        &mut ctx.cpu.flags,
+    ));
+    // 000011ee mov [di+2],ax
+    ctx.memory.write::<u16>(
+        (ctx.cpu.regs.get_di() as u32).wrapping_add(0x2 as u32),
+        ctx.cpu.regs.get_ax(),
+    );
+    // 000011f1 add si,3
+    ctx.cpu
+        .regs
+        .set_si(add(ctx.cpu.regs.get_si(), 0x3u16, &mut ctx.cpu.flags));
+    // 000011f4 add di,6
+    ctx.cpu
+        .regs
+        .set_di(add(ctx.cpu.regs.get_di(), 0x6u16, &mut ctx.cpu.flags));
+    // 000011f7 dec bp
+    ctx.cpu
+        .regs
+        .set_bp(dec(ctx.cpu.regs.get_bp(), &mut ctx.cpu.flags));
+    // 000011f8 jne short 11C3h
+    ctx.jne(Cont(x11fa), Cont(x11c3))
+}
+
+pub fn x11fa(ctx: &mut Context) -> Cont {
+    // 000011fa push gs
+    ctx.push16(ctx.cpu.regs.get_gs());
+    // 000011fc mov ax,ds:[14B6h]
+    ctx.cpu.regs.set_ax(ctx.memory.read::<u16>((0x14b6 as u32)));
+    // 000011ff mov gs,ax
+    ctx.cpu.regs.set_gs(ctx.cpu.regs.get_ax());
+    // 00001201 mov si,3A20h
+    ctx.cpu.regs.set_si(0x3a20u16);
+    // 00001204 mov bp,22h
+    ctx.cpu.regs.set_bp(0x22u16);
+    Cont(x1207)
+}
+
+pub fn x1207(ctx: &mut Context) -> Cont {
+    // 00001207 push bp
+    ctx.push16(ctx.cpu.regs.get_bp());
+    // 00001208 mov ax,[si+5Ah]
+    ctx.cpu.regs.set_ax(
+        ctx.memory
+            .read::<u16>((ctx.cpu.regs.get_si() as u32).wrapping_add(0x5a as u32)),
+    );
+    // 0000120b sar ax,7
+    ctx.cpu
+        .regs
+        .set_ax(sar(ctx.cpu.regs.get_ax(), 0x7u8, &mut ctx.cpu.flags));
+    // 0000120e add al,80h
+    ctx.cpu
+        .regs
+        .set_al(add(ctx.cpu.regs.get_al(), 0x80u8, &mut ctx.cpu.flags));
+    // 00001210 mov ds:[1366h],al
+    ctx.memory.write::<u8>(0x1366, ctx.cpu.regs.get_al());
+    // 00001213 mov ax,[si+5Ch]
+    ctx.cpu.regs.set_ax(
+        ctx.memory
+            .read::<u16>((ctx.cpu.regs.get_si() as u32).wrapping_add(0x5c as u32)),
+    );
+    // 00001216 sar ax,7
+    ctx.cpu
+        .regs
+        .set_ax(sar(ctx.cpu.regs.get_ax(), 0x7u8, &mut ctx.cpu.flags));
+    // 00001219 add ax,7Dh
+    ctx.cpu
+        .regs
+        .set_ax(add(ctx.cpu.regs.get_ax(), 0x7du16, &mut ctx.cpu.flags));
+    // 0000121c test ah,ah
+    and(
+        ctx.cpu.regs.get_ah(),
+        ctx.cpu.regs.get_ah(),
+        &mut ctx.cpu.flags,
+    );
+    // 0000121e jne near ptr 130Dh
+    ctx.jne(Cont(x1222), Cont(x130d))
+}
+
+pub fn x1222(ctx: &mut Context) -> Cont {
+    // 00001222 mov ds:[1367h],al
+    ctx.memory.write::<u8>(0x1367, ctx.cpu.regs.get_al());
+    // 00001225 mov ax,[si+0DDAh]
+    ctx.cpu.regs.set_ax(
+        ctx.memory
+            .read::<u16>((ctx.cpu.regs.get_si() as u32).wrapping_add(0xdda as u32)),
+    );
+    // 00001229 sar ax,7
+    ctx.cpu
+        .regs
+        .set_ax(sar(ctx.cpu.regs.get_ax(), 0x7u8, &mut ctx.cpu.flags));
+    // 0000122c add al,80h
+    ctx.cpu
+        .regs
+        .set_al(add(ctx.cpu.regs.get_al(), 0x80u8, &mut ctx.cpu.flags));
+    // 0000122e mov ds:[1368h],al
+    ctx.memory.write::<u8>(0x1368, ctx.cpu.regs.get_al());
+    // 00001231 mov ax,[si+0DDCh]
+    ctx.cpu.regs.set_ax(
+        ctx.memory
+            .read::<u16>((ctx.cpu.regs.get_si() as u32).wrapping_add(0xddc as u32)),
+    );
+    // 00001235 sar ax,7
+    ctx.cpu
+        .regs
+        .set_ax(sar(ctx.cpu.regs.get_ax(), 0x7u8, &mut ctx.cpu.flags));
+    // 00001238 add al,80h
+    ctx.cpu
+        .regs
+        .set_al(add(ctx.cpu.regs.get_al(), 0x80u8, &mut ctx.cpu.flags));
+    // 0000123a mov ds:[1369h],al
+    ctx.memory.write::<u8>(0x1369, ctx.cpu.regs.get_al());
+    // 0000123d mov ax,[si+0BAh]
+    ctx.cpu.regs.set_ax(
+        ctx.memory
+            .read::<u16>((ctx.cpu.regs.get_si() as u32).wrapping_add(0xba as u32)),
+    );
+    // 00001241 sar ax,7
+    ctx.cpu
+        .regs
+        .set_ax(sar(ctx.cpu.regs.get_ax(), 0x7u8, &mut ctx.cpu.flags));
+    // 00001244 add al,80h
+    ctx.cpu
+        .regs
+        .set_al(add(ctx.cpu.regs.get_al(), 0x80u8, &mut ctx.cpu.flags));
+    // 00001246 mov ds:[136Ah],al
+    ctx.memory.write::<u8>(0x136a, ctx.cpu.regs.get_al());
+    // 00001249 mov ax,[si+0BCh]
+    ctx.cpu.regs.set_ax(
+        ctx.memory
+            .read::<u16>((ctx.cpu.regs.get_si() as u32).wrapping_add(0xbc as u32)),
+    );
+    // 0000124d sar ax,7
+    ctx.cpu
+        .regs
+        .set_ax(sar(ctx.cpu.regs.get_ax(), 0x7u8, &mut ctx.cpu.flags));
+    // 00001250 add ax,7Dh
+    ctx.cpu
+        .regs
+        .set_ax(add(ctx.cpu.regs.get_ax(), 0x7du16, &mut ctx.cpu.flags));
+    // 00001253 test ah,ah
+    and(
+        ctx.cpu.regs.get_ah(),
+        ctx.cpu.regs.get_ah(),
+        &mut ctx.cpu.flags,
+    );
+    // 00001255 jne near ptr 130Dh
+    ctx.jne(Cont(x1259), Cont(x130d))
+}
+
+pub fn x1259(ctx: &mut Context) -> Cont {
+    // 00001259 mov ds:[136Bh],al
+    ctx.memory.write::<u8>(0x136b, ctx.cpu.regs.get_al());
+    // 0000125c mov ax,[si+0E3Ah]
+    ctx.cpu.regs.set_ax(
+        ctx.memory
+            .read::<u16>((ctx.cpu.regs.get_si() as u32).wrapping_add(0xe3a as u32)),
+    );
+    // 00001260 sar ax,7
+    ctx.cpu
+        .regs
+        .set_ax(sar(ctx.cpu.regs.get_ax(), 0x7u8, &mut ctx.cpu.flags));
+    // 00001263 add al,80h
+    ctx.cpu
+        .regs
+        .set_al(add(ctx.cpu.regs.get_al(), 0x80u8, &mut ctx.cpu.flags));
+    // 00001265 mov ds:[136Ch],al
+    ctx.memory.write::<u8>(0x136c, ctx.cpu.regs.get_al());
+    // 00001268 mov ax,[si+0E3Ch]
+    ctx.cpu.regs.set_ax(
+        ctx.memory
+            .read::<u16>((ctx.cpu.regs.get_si() as u32).wrapping_add(0xe3c as u32)),
+    );
+    // 0000126c sar ax,7
+    ctx.cpu
+        .regs
+        .set_ax(sar(ctx.cpu.regs.get_ax(), 0x7u8, &mut ctx.cpu.flags));
+    // 0000126f add al,80h
+    ctx.cpu
+        .regs
+        .set_al(add(ctx.cpu.regs.get_al(), 0x80u8, &mut ctx.cpu.flags));
+    // 00001271 mov ds:[136Dh],al
+    ctx.memory.write::<u8>(0x136d, ctx.cpu.regs.get_al());
+    // 00001274 mov bp,10h
+    ctx.cpu.regs.set_bp(0x10u16);
+    Cont(x1277)
+}
+
+pub fn x1277(ctx: &mut Context) -> Cont {
+    // 00001277 push bp
+    ctx.push16(ctx.cpu.regs.get_bp());
+    // 00001278 mov ax,ds:[1366h]
+    ctx.cpu.regs.set_ax(ctx.memory.read::<u16>((0x1366 as u32)));
+    // 0000127b mov ds:[1362h],ax
+    ctx.memory
+        .write::<u16>((0x1362 as u32), ctx.cpu.regs.get_ax());
+    // 0000127e mov ds:[1372h],ax
+    ctx.memory
+        .write::<u16>((0x1372 as u32), ctx.cpu.regs.get_ax());
+    // 00001281 mov ax,ds:[1368h]
+    ctx.cpu.regs.set_ax(ctx.memory.read::<u16>((0x1368 as u32)));
+    // 00001284 mov ds:[1364h],ax
+    ctx.memory
+        .write::<u16>((0x1364 as u32), ctx.cpu.regs.get_ax());
+    // 00001287 mov ds:[1374h],ax
+    ctx.memory
+        .write::<u16>((0x1374 as u32), ctx.cpu.regs.get_ax());
+    // 0000128a mov ax,ds:[136Ah]
+    ctx.cpu.regs.set_ax(ctx.memory.read::<u16>((0x136a as u32)));
+    // 0000128d mov ds:[136Eh],ax
+    ctx.memory
+        .write::<u16>((0x136e as u32), ctx.cpu.regs.get_ax());
+    // 00001290 mov ax,ds:[136Ch]
+    ctx.cpu.regs.set_ax(ctx.memory.read::<u16>((0x136c as u32)));
+    // 00001293 mov ds:[1370h],ax
+    ctx.memory
+        .write::<u16>((0x1370 as u32), ctx.cpu.regs.get_ax());
+    // 00001296 mov ax,[si]
+    ctx.cpu
+        .regs
+        .set_ax(ctx.memory.read::<u16>((ctx.cpu.regs.get_si() as u32)));
+    // 00001298 sar ax,7
+    ctx.cpu
+        .regs
+        .set_ax(sar(ctx.cpu.regs.get_ax(), 0x7u8, &mut ctx.cpu.flags));
+    // 0000129b add al,80h
+    ctx.cpu
+        .regs
+        .set_al(add(ctx.cpu.regs.get_al(), 0x80u8, &mut ctx.cpu.flags));
+    // 0000129d mov ds:[1366h],al
+    ctx.memory.write::<u8>(0x1366, ctx.cpu.regs.get_al());
+    // 000012a0 mov ax,[si+2]
+    ctx.cpu.regs.set_ax(
+        ctx.memory
+            .read::<u16>((ctx.cpu.regs.get_si() as u32).wrapping_add(0x2 as u32)),
+    );
+    // 000012a3 sar ax,7
+    ctx.cpu
+        .regs
+        .set_ax(sar(ctx.cpu.regs.get_ax(), 0x7u8, &mut ctx.cpu.flags));
+    // 000012a6 add ax,7Dh
+    ctx.cpu
+        .regs
+        .set_ax(add(ctx.cpu.regs.get_ax(), 0x7du16, &mut ctx.cpu.flags));
+    // 000012a9 test ah,ah
+    and(
+        ctx.cpu.regs.get_ah(),
+        ctx.cpu.regs.get_ah(),
+        &mut ctx.cpu.flags,
+    );
+    // 000012ab jne short 130Dh
+    ctx.jne(Cont(x12ad), Cont(x130d))
+}
+
+pub fn x12ad(ctx: &mut Context) -> Cont {
+    // 000012ad mov ds:[1367h],al
+    ctx.memory.write::<u8>(0x1367, ctx.cpu.regs.get_al());
+    // 000012b0 mov ax,[si+0D80h]
+    ctx.cpu.regs.set_ax(
+        ctx.memory
+            .read::<u16>((ctx.cpu.regs.get_si() as u32).wrapping_add(0xd80 as u32)),
+    );
+    // 000012b4 sar ax,7
+    ctx.cpu
+        .regs
+        .set_ax(sar(ctx.cpu.regs.get_ax(), 0x7u8, &mut ctx.cpu.flags));
+    // 000012b7 add al,80h
+    ctx.cpu
+        .regs
+        .set_al(add(ctx.cpu.regs.get_al(), 0x80u8, &mut ctx.cpu.flags));
+    // 000012b9 mov ds:[1368h],al
+    ctx.memory.write::<u8>(0x1368, ctx.cpu.regs.get_al());
+    // 000012bc mov ax,[si+0D82h]
+    ctx.cpu.regs.set_ax(
+        ctx.memory
+            .read::<u16>((ctx.cpu.regs.get_si() as u32).wrapping_add(0xd82 as u32)),
+    );
+    // 000012c0 sar ax,7
+    ctx.cpu
+        .regs
+        .set_ax(sar(ctx.cpu.regs.get_ax(), 0x7u8, &mut ctx.cpu.flags));
+    // 000012c3 add al,80h
+    ctx.cpu
+        .regs
+        .set_al(add(ctx.cpu.regs.get_al(), 0x80u8, &mut ctx.cpu.flags));
+    // 000012c5 mov ds:[1369h],al
+    ctx.memory.write::<u8>(0x1369, ctx.cpu.regs.get_al());
+    // 000012c8 mov ax,[si+60h]
+    ctx.cpu.regs.set_ax(
+        ctx.memory
+            .read::<u16>((ctx.cpu.regs.get_si() as u32).wrapping_add(0x60 as u32)),
+    );
+    // 000012cb sar ax,7
+    ctx.cpu
+        .regs
+        .set_ax(sar(ctx.cpu.regs.get_ax(), 0x7u8, &mut ctx.cpu.flags));
+    // 000012ce add al,80h
+    ctx.cpu
+        .regs
+        .set_al(add(ctx.cpu.regs.get_al(), 0x80u8, &mut ctx.cpu.flags));
+    // 000012d0 mov ds:[136Ah],al
+    ctx.memory.write::<u8>(0x136a, ctx.cpu.regs.get_al());
+    // 000012d3 mov ax,[si+62h]
+    ctx.cpu.regs.set_ax(
+        ctx.memory
+            .read::<u16>((ctx.cpu.regs.get_si() as u32).wrapping_add(0x62 as u32)),
+    );
+    // 000012d6 sar ax,7
+    ctx.cpu
+        .regs
+        .set_ax(sar(ctx.cpu.regs.get_ax(), 0x7u8, &mut ctx.cpu.flags));
+    // 000012d9 add ax,7Dh
+    ctx.cpu
+        .regs
+        .set_ax(add(ctx.cpu.regs.get_ax(), 0x7du16, &mut ctx.cpu.flags));
+    // 000012dc test ah,ah
+    and(
+        ctx.cpu.regs.get_ah(),
+        ctx.cpu.regs.get_ah(),
+        &mut ctx.cpu.flags,
+    );
+    // 000012de jne short 130Dh
+    ctx.jne(Cont(x12e0), Cont(x130d))
+}
+
+pub fn x12e0(ctx: &mut Context) -> Cont {
+    // 000012e0 mov ds:[136Bh],al
+    ctx.memory.write::<u8>(0x136b, ctx.cpu.regs.get_al());
+    // 000012e3 mov ax,[si+0DE0h]
+    ctx.cpu.regs.set_ax(
+        ctx.memory
+            .read::<u16>((ctx.cpu.regs.get_si() as u32).wrapping_add(0xde0 as u32)),
+    );
+    // 000012e7 sar ax,7
+    ctx.cpu
+        .regs
+        .set_ax(sar(ctx.cpu.regs.get_ax(), 0x7u8, &mut ctx.cpu.flags));
+    // 000012ea add al,80h
+    ctx.cpu
+        .regs
+        .set_al(add(ctx.cpu.regs.get_al(), 0x80u8, &mut ctx.cpu.flags));
+    // 000012ec mov ds:[136Ch],al
+    ctx.memory.write::<u8>(0x136c, ctx.cpu.regs.get_al());
+    // 000012ef mov ax,[si+0DE2h]
+    ctx.cpu.regs.set_ax(
+        ctx.memory
+            .read::<u16>((ctx.cpu.regs.get_si() as u32).wrapping_add(0xde2 as u32)),
+    );
+    // 000012f3 sar ax,7
+    ctx.cpu
+        .regs
+        .set_ax(sar(ctx.cpu.regs.get_ax(), 0x7u8, &mut ctx.cpu.flags));
+    // 000012f6 add al,80h
+    ctx.cpu
+        .regs
+        .set_al(add(ctx.cpu.regs.get_al(), 0x80u8, &mut ctx.cpu.flags));
+    // 000012f8 mov ds:[136Dh],al
+    ctx.memory.write::<u8>(0x136d, ctx.cpu.regs.get_al());
+    // 000012fb push si
+    ctx.push16(ctx.cpu.regs.get_si());
+    // 000012fc mov si,1362h
+    ctx.cpu.regs.set_si(0x1362u16);
+    // 000012ff call 0C01h
+    ctx.call16(0x1302, Cont(xc01))
+}
+
+pub fn x1302(ctx: &mut Context) -> Cont {
+    // 00001302 test ax,ax
+    and(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_ax(),
+        &mut ctx.cpu.flags,
+    );
+    // 00001304 jns short 130Ch
+    ctx.jns(Cont(x1306), Cont(x130c))
+}
+
+pub fn x1306(ctx: &mut Context) -> Cont {
+    // 00001306 mov si,1362h
+    ctx.cpu.regs.set_si(0x1362u16);
+    // 00001309 call 0C25h
+    ctx.call16(0x130c, Cont(xc25))
+}
+
+pub fn x130c(ctx: &mut Context) -> Cont {
+    // 0000130c pop si
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_si(x);
+    Cont(x130d)
+}
+
+pub fn x130d(ctx: &mut Context) -> Cont {
+    // 0000130d add si,6
+    ctx.cpu
+        .regs
+        .set_si(add(ctx.cpu.regs.get_si(), 0x6u16, &mut ctx.cpu.flags));
+    // 00001310 pop bp
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_bp(x);
+    // 00001311 dec bp
+    ctx.cpu
+        .regs
+        .set_bp(dec(ctx.cpu.regs.get_bp(), &mut ctx.cpu.flags));
+    // 00001312 jne near ptr 1277h
+    ctx.jne(Cont(x1316), Cont(x1277))
+}
+
+pub fn x1316(ctx: &mut Context) -> Cont {
+    // 00001316 pop bp
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_bp(x);
+    // 00001317 dec bp
+    ctx.cpu
+        .regs
+        .set_bp(dec(ctx.cpu.regs.get_bp(), &mut ctx.cpu.flags));
+    // 00001318 jne near ptr 1207h
+    ctx.jne(Cont(x131c), Cont(x1207))
+}
+
+pub fn x131c(ctx: &mut Context) -> Cont {
+    // 0000131c pop gs
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_gs(x);
+    // 0000131e push ds
+    ctx.push16(ctx.cpu.regs.get_ds());
+    // 0000131f push fs
+    ctx.push16(ctx.cpu.regs.get_fs());
+    // 00001321 pop ds
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_ds(x);
+    // 00001322 mov di,30h
+    ctx.cpu.regs.set_di(0x30u16);
+    // 00001325 mov bp,65h
+    ctx.cpu.regs.set_bp(0x65u16);
+    Cont(x1328)
+}
+
+pub fn x1328(ctx: &mut Context) -> Cont {
+    // 00001328 mov cx,0A1h
+    ctx.cpu.regs.set_cx(0xa1u16);
+    Cont(x132b)
+}
+
+pub fn x132b(ctx: &mut Context) -> Cont {
+    // 0000132b cmp byte ptr [di],0
+    sub(
+        ctx.memory.read::<u8>(ctx.cpu.regs.get_di()),
+        0x0u8,
+        &mut ctx.cpu.flags,
+    );
+    // 0000132e jne short 1340h
+    ctx.jne(Cont(x1330), Cont(x1340))
+}
+
+pub fn x1330(ctx: &mut Context) -> Cont {
+    // 00001330 mov ax,cx
+    ctx.cpu.regs.set_ax(ctx.cpu.regs.get_cx());
+    // 00001332 xor ax,bp
+    ctx.cpu.regs.set_ax(xor(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_bp(),
+        &mut ctx.cpu.flags,
+    ));
+    // 00001334 and al,0Fh
+    ctx.cpu
+        .regs
+        .set_al(and(ctx.cpu.regs.get_al(), 0xfu8, &mut ctx.cpu.flags));
+    // 00001336 cmp byte ptr [di+30h],0
+    sub(
+        ctx.memory
+            .read::<u8>(ctx.cpu.regs.get_di().wrapping_add(0x30)),
+        0x0u8,
+        &mut ctx.cpu.flags,
+    );
+    // 0000133a jne short 133Eh
+    ctx.jne(Cont(x133c), Cont(x133e))
+}
+
+pub fn x133c(ctx: &mut Context) -> Cont {
+    // 0000133c add al,7
+    ctx.cpu
+        .regs
+        .set_al(add(ctx.cpu.regs.get_al(), 0x7u8, &mut ctx.cpu.flags));
+    Cont(x133e)
+}
+
+pub fn x133e(ctx: &mut Context) -> Cont {
+    // 0000133e mov [di],al
+    ctx.memory
+        .write::<u8>(ctx.cpu.regs.get_di(), ctx.cpu.regs.get_al());
+    Cont(x1340)
+}
+
+pub fn x1340(ctx: &mut Context) -> Cont {
+    // 00001340 inc di
+    ctx.cpu
+        .regs
+        .set_di(inc(ctx.cpu.regs.get_di(), &mut ctx.cpu.flags));
+    // 00001341 dec cx
+    ctx.cpu
+        .regs
+        .set_cx(dec(ctx.cpu.regs.get_cx(), &mut ctx.cpu.flags));
+    // 00001342 jne short 132Bh
+    ctx.jne(Cont(x1344), Cont(x132b))
+}
+
+pub fn x1344(ctx: &mut Context) -> Cont {
+    // 00001344 add di,5Fh
+    ctx.cpu
+        .regs
+        .set_di(add(ctx.cpu.regs.get_di(), 0x5fu16, &mut ctx.cpu.flags));
+    // 00001347 dec bp
+    ctx.cpu
+        .regs
+        .set_bp(dec(ctx.cpu.regs.get_bp(), &mut ctx.cpu.flags));
+    // 00001348 jne short 1328h
+    ctx.jne(Cont(x134a), Cont(x1328))
+}
+
+pub fn x134a(ctx: &mut Context) -> Cont {
+    // 0000134a pop ds
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_ds(x);
+    // 0000134b ret
+    ctx.ret16(0)
+}
+
+const BLOCKS: [(u32, ContFn); 335] = [
     (0x100, x100),
+    (0x144, x144),
+    (0x162, x162),
+    (0x165, x165),
+    (0x188, x188),
+    (0x18c, x18c),
+    (0x192, x192),
+    (0x194, x194),
+    (0x197, x197),
+    (0x19a, x19a),
+    (0x1ae, x1ae),
+    (0x1b1, x1b1),
+    (0x1b5, x1b5),
+    (0x1bd, x1bd),
+    (0x1c4, x1c4),
+    (0x1ca, x1ca),
+    (0x1d8, x1d8),
+    (0x1eb, x1eb),
+    (0x215, x215),
+    (0x221, x221),
+    (0x222, x222),
+    (0x230, x230),
+    (0x244, x244),
+    (0x263, x263),
+    (0x26c, x26c),
+    (0x28d, x28d),
+    (0x2ab, x2ab),
+    (0x2b7, x2b7),
+    (0x2bf, x2bf),
+    (0x302, x302),
+    (0x30b, x30b),
+    (0x31d, x31d),
+    (0x320, x320),
+    (0x323, x323),
+    (0x326, x326),
+    (0x32f, x32f),
+    (0x333, x333),
+    (0x337, x337),
+    (0x348, x348),
+    (0x34e, x34e),
+    (0x355, x355),
+    (0x35f, x35f),
+    (0x375, x375),
+    (0x378, x378),
+    (0x37d, x37d),
+    (0x396, x396),
+    (0x399, x399),
+    (0x3a1, x3a1),
+    (0x3a4, x3a4),
+    (0x3ac, x3ac),
+    (0x3b2, x3b2),
+    (0x3b5, x3b5),
+    (0x3be, x3be),
+    (0x3c4, x3c4),
+    (0x3d1, x3d1),
+    (0x3d4, x3d4),
+    (0x3d7, x3d7),
+    (0x3ee, x3ee),
+    (0x3f6, x3f6),
+    (0x3f9, x3f9),
+    (0x3fc, x3fc),
+    (0x457, x457),
+    (0x470, x470),
+    (0x4c2, x4c2),
+    (0x4f9, x4f9),
+    (0x503, x503),
+    (0x515, x515),
+    (0x530, x530),
+    (0x535, x535),
+    (0x538, x538),
+    (0x558, x558),
+    (0x5b3, x5b3),
+    (0x5f3, x5f3),
+    (0x60b, x60b),
+    (0x630, x630),
+    (0x703, x703),
+    (0x70e, x70e),
+    (0x71f, x71f),
+    (0x725, x725),
+    (0x729, x729),
+    (0x730, x730),
+    (0x744, x744),
+    (0x74a, x74a),
+    (0x750, x750),
+    (0x760, x760),
+    (0x78f, x78f),
+    (0x7b8, x7b8),
+    (0x7de, x7de),
+    (0x804, x804),
+    (0x835, x835),
+    (0x867, x867),
+    (0x890, x890),
+    (0x8b6, x8b6),
+    (0x8da, x8da),
+    (0x8fe, x8fe),
+    (0x908, x908),
+    (0x90e, x90e),
+    (0x914, x914),
+    (0x917, x917),
+    (0x921, x921),
+    (0x927, x927),
+    (0x92a, x92a),
+    (0x92c, x92c),
+    (0x932, x932),
+    (0x935, x935),
+    (0x93f, x93f),
+    (0x945, x945),
+    (0x948, x948),
+    (0x949, x949),
+    (0x952, x952),
+    (0x95e, x95e),
+    (0x967, x967),
+    (0x96a, x96a),
+    (0x975, x975),
+    (0x981, x981),
+    (0x989, x989),
+    (0x98d, x98d),
+    (0x990, x990),
+    (0x994, x994),
+    (0x99e, x99e),
+    (0x9a1, x9a1),
+    (0x9c1, x9c1),
+    (0x9cb, x9cb),
+    (0x9e1, x9e1),
+    (0x9e3, x9e3),
+    (0x9eb, x9eb),
+    (0x9ee, x9ee),
+    (0x9f3, x9f3),
+    (0x9f6, x9f6),
+    (0x9ff, x9ff),
+    (0xa02, xa02),
+    (0xa08, xa08),
+    (0xa15, xa15),
+    (0xa45, xa45),
+    (0xa48, xa48),
+    (0xa4b, xa4b),
+    (0xa55, xa55),
+    (0xa5e, xa5e),
+    (0xa68, xa68),
+    (0xa7c, xa7c),
+    (0xa84, xa84),
+    (0xa89, xa89),
+    (0xa93, xa93),
+    (0xa9b, xa9b),
+    (0xa9f, xa9f),
+    (0xaa6, xaa6),
+    (0xaaa, xaaa),
+    (0xaad, xaad),
+    (0xab0, xab0),
+    (0xaba, xaba),
+    (0xabd, xabd),
+    (0xacd, xacd),
+    (0xad0, xad0),
+    (0xad4, xad4),
+    (0xad7, xad7),
+    (0xae1, xae1),
+    (0xae4, xae4),
+    (0xaef, xaef),
+    (0xaf2, xaf2),
+    (0xaf7, xaf7),
+    (0xb17, xb17),
+    (0xb21, xb21),
+    (0xb24, xb24),
+    (0xb35, xb35),
+    (0xb3f, xb3f),
+    (0xb5b, xb5b),
+    (0xb6a, xb6a),
+    (0xb84, xb84),
+    (0xb8a, xb8a),
+    (0xb91, xb91),
+    (0xb94, xb94),
+    (0xb9d, xb9d),
+    (0xba6, xba6),
+    (0xbc6, xbc6),
+    (0xbda, xbda),
+    (0xbe2, xbe2),
+    (0xbe7, xbe7),
+    (0xbe8, xbe8),
+    (0xc01, xc01),
+    (0xc24, xc24),
+    (0xc25, xc25),
+    (0xc35, xc35),
+    (0xc37, xc37),
+    (0xc3b, xc3b),
+    (0xc3e, xc3e),
+    (0xc42, xc42),
+    (0xc48, xc48),
+    (0xc4a, xc4a),
+    (0xc4e, xc4e),
+    (0xc51, xc51),
+    (0xc55, xc55),
+    (0xc5a, xc5a),
+    (0xc5e, xc5e),
+    (0xc60, xc60),
+    (0xc65, xc65),
+    (0xc67, xc67),
+    (0xc7d, xc7d),
+    (0xc94, xc94),
+    (0xcaa, xcaa),
+    (0xcac, xcac),
+    (0xcb0, xcb0),
+    (0xcb7, xcb7),
+    (0xcd0, xcd0),
+    (0xce9, xce9),
+    (0xd3c, xd3c),
+    (0xd3d, xd3d),
+    (0xd58, xd58),
+    (0xd5a, xd5a),
+    (0xd5f, xd5f),
+    (0xd7a, xd7a),
+    (0xd7b, xd7b),
+    (0xd86, xd86),
+    (0xd8f, xd8f),
+    (0xda1, xda1),
+    (0xdb5, xdb5),
+    (0xdf3, xdf3),
+    (0xe09, xe09),
+    (0xe0b, xe0b),
+    (0xe0f, xe0f),
+    (0xe17, xe17),
+    (0xe19, xe19),
+    (0xe2b, xe2b),
+    (0xe3f, xe3f),
+    (0xe7d, xe7d),
+    (0xe93, xe93),
+    (0xe95, xe95),
+    (0xe99, xe99),
+    (0xea1, xea1),
+    (0xea3, xea3),
+    (0xeab, xeab),
+    (0xeb5, xeb5),
+    (0xeb8, xeb8),
+    (0xeba, xeba),
+    (0xebc, xebc),
+    (0xec0, xec0),
+    (0xec4, xec4),
+    (0xeca, xeca),
+    (0xed7, xed7),
+    (0xedc, xedc),
+    (0xedd, xedd),
+    (0xee2, xee2),
+    (0xee5, xee5),
+    (0xf06, xf06),
+    (0xf08, xf08),
+    (0xf25, xf25),
+    (0xf2e, xf2e),
+    (0xf2f, xf2f),
+    (0xf46, xf46),
+    (0xf47, xf47),
+    (0xf4d, xf4d),
+    (0xf53, xf53),
+    (0xf57, xf57),
+    (0xf5d, xf5d),
+    (0xf61, xf61),
+    (0xf64, xf64),
+    (0xf6d, xf6d),
+    (0xf7f, xf7f),
+    (0xf89, xf89),
+    (0xf8b, xf8b),
+    (0xf95, xf95),
+    (0xf97, xf97),
+    (0xf9e, xf9e),
+    (0xfa0, xfa0),
+    (0xfb4, xfb4),
+    (0xfb8, xfb8),
+    (0xfc0, xfc0),
+    (0xfc5, xfc5),
+    (0xfca, xfca),
+    (0xfcf, xfcf),
+    (0xfd5, xfd5),
+    (0xfd9, xfd9),
+    (0xfdd, xfdd),
+    (0xfe5, xfe5),
+    (0xff8, xff8),
+    (0xffb, xffb),
+    (0xffe, xffe),
+    (0xfff, xfff),
+    (0x1008, x1008),
+    (0x100d, x100d),
+    (0x1014, x1014),
+    (0x1023, x1023),
+    (0x1024, x1024),
+    (0x102a, x102a),
+    (0x1030, x1030),
+    (0x1039, x1039),
+    (0x103b, x103b),
+    (0x1040, x1040),
+    (0x1042, x1042),
+    (0x1043, x1043),
+    (0x1048, x1048),
+    (0x105d, x105d),
+    (0x105e, x105e),
+    (0x108b, x108b),
+    (0x109d, x109d),
+    (0x10a0, x10a0),
+    (0x10ce, x10ce),
+    (0x10d8, x10d8),
+    (0x10db, x10db),
+    (0x10e2, x10e2),
+    (0x10e8, x10e8),
+    (0x10ee, x10ee),
+    (0x10f0, x10f0),
+    (0x10f9, x10f9),
+    (0x1104, x1104),
+    (0x1109, x1109),
+    (0x1115, x1115),
+    (0x111b, x111b),
+    (0x1123, x1123),
+    (0x1125, x1125),
+    (0x117e, x117e),
+    (0x118a, x118a),
+    (0x1196, x1196),
+    (0x11c3, x11c3),
+    (0x11fa, x11fa),
+    (0x1207, x1207),
+    (0x1222, x1222),
+    (0x1259, x1259),
+    (0x1277, x1277),
+    (0x12ad, x12ad),
+    (0x12e0, x12e0),
+    (0x1302, x1302),
+    (0x1306, x1306),
+    (0x130c, x130c),
+    (0x130d, x130d),
+    (0x1316, x1316),
+    (0x131c, x131c),
+    (0x1328, x1328),
+    (0x132b, x132b),
+    (0x1330, x1330),
+    (0x133c, x133c),
+    (0x133e, x133e),
+    (0x1340, x1340),
+    (0x1344, x1344),
+    (0x134a, x134a),
     (runtime::RETURN_FROM_X86_ADDR, Context::return_from_x86),
 ];
 

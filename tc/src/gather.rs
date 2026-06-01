@@ -190,7 +190,9 @@ impl<'a> Traverse<'a> {
                 }
             }
 
-            if instr.flow_control() == iced_x86::FlowControl::Next {
+            if instr.flow_control() == iced_x86::FlowControl::Next
+                || instr.mnemonic() == iced_x86::Mnemonic::Int
+            {
                 let next_bytes = &data[(instr.next_ip32() - ip) as usize..][..0x10];
                 if next_bytes.iter().all(|&b| b == 0) {
                     anyhow::bail!("suspicious block of 0");
@@ -234,7 +236,7 @@ impl<'a> Traverse<'a> {
                     }
                 }
                 Ret | Retf => {}
-                Int | Into => {}  // terminates
+                Into => {}        // terminates
                 Int1 | Int3 => {} // breakpoint
                 INVALID => {
                     anyhow::bail!("invalid code found");

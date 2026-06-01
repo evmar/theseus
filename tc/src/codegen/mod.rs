@@ -29,7 +29,7 @@ pub fn get_reg(r: iced_x86::Register) -> String {
         }
         AL | AH | AX | CL | CH | CX | DL | DH | DX | BL | BH | BX |
         DI | SI | SP | BP | // comment to disable formatting
-        CS | DS | ES | SS => {
+        CS | DS | ES | FS | GS | SS => {
             format!("ctx.cpu.regs.get_{reg}()", reg = reg_name(r))
         }
         r => todo!("{r:?}"),
@@ -44,7 +44,7 @@ pub fn set_reg(r: iced_x86::Register, expr: String) -> String {
         }
         AL | AH | AX | CL | CH | CX | DL | DH | DX | BL | BH | BX |
         DI | SI | SP | BP | // comment to disable formatting
-        CS | DS | ES | SS => {
+        CS | DS | ES | FS | GS | SS => {
             format!("ctx.cpu.regs.set_{reg}({expr});", reg = reg_name(r))
         }
         r => todo!("{r:?}"),
@@ -61,9 +61,11 @@ pub fn gen_addr(instr: &iced_x86::Instruction) -> String {
         | iced_x86::Register::DS
         | iced_x86::Register::SS
         | iced_x86::Register::GS => {}
+        iced_x86::Register::ES => expr.push("todo!()".into()),
+        //iced_x86::Register::ES => expr.push(format!("ctx.cpu.regs.get_es() << 4")),
         iced_x86::Register::FS => expr.push(format!("ctx.cpu.regs.fs_base")),
         iced_x86::Register::None => {}
-        r => todo!("{r:?}"),
+        r => todo!("{r:?} in {instr}"),
     }
     match instr.memory_base() {
         iced_x86::Register::None => {}
@@ -176,6 +178,7 @@ pub fn op_size(instr: &iced_x86::Instruction, n: u32) -> usize {
         Register => reg_size(instr.op_register(n)),
         Memory => mem_size(instr),
         Immediate16 => 16,
+        Immediate8to16 => 16,
         Immediate8to32 => 32,
         Immediate32 => 32,
         k => todo!("{k:?}"),
