@@ -1,12 +1,13 @@
 [workspace]
 resolver = "2"
 members = [
+  "dos",
   "exe/basicdd",
   "exe/chillin",
   "exe/chillin-unpack",
+  "exe/dos/animate",
   "exe/dos/animate-unpack",
   "exe/dos/animate-unpack-2",
-  "exe/dos/animate",
   "exe/mine",
   "exe/mofo",
   "exe/mofo-unpack",
@@ -19,27 +20,27 @@ members = [
   "tc",
   "win32/derive",
   "win32/extract",
-  "win32/winapi", "dos",
+  "win32/winapi",
 ]
 
 [workspace.dependencies]
 argh = { version = "0.1.19", default-features = false, features = ["help"] }
 bitflags = "2.11.0"
 bitflags-derive = "0.0.4"
+console_error_panic_hook = "0.1.7"
+dos = { path = "dos" }
 iced-x86 = "1.21.0"
+js-sys = "0.3.98"
 log = "0.4.29"
 logger = { path = "logger" }
 pe = { path = "win32/pe" }
 runtime = { path = "runtime" }
-dos = { path = "dos" }
 tc = { path = "tc" }
 wasm-bindgen = "0.2.121"
 web-sys = "0.3.98"
-js-sys = "0.3.98"
 widestring = "1.2.1"
 winapi = { path = "win32/winapi" }
 zerocopy = { version = "0.8.40", features = ["derive"] }
-console_error_panic_hook = "0.1.7"
 
 [profile.fast]
 inherits = "dev"

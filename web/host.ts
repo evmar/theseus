@@ -167,8 +167,7 @@ class Host implements exe.WasmHost {
 
 async function main() {
   if (!window.SharedArrayBuffer) {
-    document.body.innerText =
-      "SharedArrayBuffer is not supported; possibly try reloading";
+    document.body.innerText = "SharedArrayBuffer is not supported; possibly try reloading";
     return;
   }
 

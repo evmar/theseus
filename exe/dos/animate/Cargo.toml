@@ -3,12 +3,12 @@ name = "animate"
 version = "0.1.0"
 edition = "2024"
 
-#[lib]
-#crate-type = ["lib", "cdylib"]
+# [lib]
+# crate-type = ["lib", "cdylib"]
 
 [dependencies]
-runtime = { workspace = true }
 dos = { workspace = true }
+runtime = { workspace = true }
 
 [target.'cfg(target_family = "wasm")'.dependencies]
 wasm-bindgen = { workspace = true }
