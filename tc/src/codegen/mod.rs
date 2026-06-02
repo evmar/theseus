@@ -56,23 +56,22 @@ impl<'a> CodeGen<'a> {
     /// Even for 16-bit code we generate a 32-bit memory address, because the computed
     /// address can go beyond a 16-bit address range.
     pub fn gen_addr(&self, instr: &iced_x86::Instruction) -> String {
+        use iced_x86::Register::*;
         let mut expr = Vec::new();
-        match instr.memory_segment() {
-            iced_x86::Register::CS
-            | iced_x86::Register::DS
-            | iced_x86::Register::SS
-            | iced_x86::Register::GS => {}
-            iced_x86::Register::ES => expr.push("todo!()".into()),
-            //iced_x86::Register::ES => expr.push(format!("ctx.cpu.regs.get_es() << 4")),
-            iced_x86::Register::FS => expr.push(format!("ctx.cpu.regs.fs_base")),
-            iced_x86::Register::None => {}
-            r => todo!("{r:?} in {instr}"),
+        if self.module.bitness == 32 {
+            // 16-bit segments handled later
+            match instr.memory_segment() {
+                CS | DS | ES | GS | SS => {}
+                FS => expr.push(format!("ctx.cpu.regs.fs_base")),
+                None => {}
+                r => todo!("{r:?} in {instr}"),
+            }
         }
         match instr.memory_base() {
-            iced_x86::Register::None => {}
+            None => {}
             r => expr.push(get_reg(r)),
         }
-        if instr.memory_index() != iced_x86::Register::None {
+        if instr.memory_index() != None {
             if instr.memory_index_scale() != 1 {
                 expr.push(format!(
                     "({}*{})",
@@ -85,33 +84,34 @@ impl<'a> CodeGen<'a> {
         }
         let offset = instr.memory_displacement32();
         if offset != 0 {
-            expr.push(format!("{offset:#x}"));
+            expr.push(format!("{offset:#x}u{}", self.module.bitness));
         }
 
+        let offset = expr
+            .into_iter()
+            .enumerate()
+            .map(|(i, e)| {
+                if i == 0 {
+                    format!("{e}")
+                } else {
+                    format!(".wrapping_add({e})")
+                }
+            })
+            .collect::<Vec<_>>()
+            .join("");
+
         if self.module.bitness == 16 {
-            expr.into_iter()
-                .enumerate()
-                .map(|(i, e)| {
-                    if i == 0 {
-                        format!("({e} as u32)")
-                    } else {
-                        format!(".wrapping_add({e} as u32)")
-                    }
-                })
-                .collect::<Vec<_>>()
-                .join("")
+            // The above offset expression will be a u16 in real mode.
+            // Convert to u32 as we add the segment.
+            match instr.memory_segment() {
+                None => format!("{offset} as u32"),
+                r => format!(
+                    "segofs(ctx.cpu.regs.get_{seg}(), {offset})",
+                    seg = reg_name(r)
+                ),
+            }
         } else {
-            expr.into_iter()
-                .enumerate()
-                .map(|(i, e)| {
-                    if i == 0 {
-                        format!("{e}")
-                    } else {
-                        format!(".wrapping_add({e})")
-                    }
-                })
-                .collect::<Vec<_>>()
-                .join("")
+            offset
         }
     }
 }

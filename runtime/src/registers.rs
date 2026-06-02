@@ -11,6 +11,7 @@ pub struct Regs {
     pub esp: u32,
     pub ebp: u32,
 
+    /// Segment registers, only used in 16-bit mode.
     pub cs: u16,
     pub ds: u16,
     pub es: u16,
@@ -18,6 +19,7 @@ pub struct Regs {
     pub gs: u16,
     pub ss: u16,
 
+    /// The flat address for fs-relative accesses, only used in 32-bit mode.
     pub fs_base: u32,
     /// eip, only occasionally set by tracing
     pub eip_context: u32,
