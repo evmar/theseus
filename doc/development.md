@@ -8,13 +8,14 @@
 - win32/pe/: PE (`.exe` format) parser
 - win32/winapi/: Windows API implementation (e.g. kernel32, user32)
 - win32/derive/: some Rust macros for winapi
+- dos/: (work in progress) DOS support
 
 The two halves of Theseus are:
 
 1. The `tc` compiler uses the PE loader to load a `.exe` file and generate
    source code under `exe/`.
 2. Building an exe relies on `runtime` for support for x86 operations and
-   `win32` for Windows API.
+   `win32` for Windows API or `dos` for DOS support.
 
 ## Profiling
 
