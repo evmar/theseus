@@ -1,6 +1,3 @@
-#[cfg(feature = "wasm")]
-mod wasm;
-
 mod exe;
 mod flags;
 mod fpu;

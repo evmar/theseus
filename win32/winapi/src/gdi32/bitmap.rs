@@ -2,13 +2,12 @@ use std::sync::Arc;
 
 use runtime::Context;
 
+pub use crate::bitmap_format::Bitmap;
 use crate::{
     HANDLE, Ptr,
     gdi32::{self, HDC, Object, State},
     kernel32,
 };
-
-pub use crate::bitmap_format::Bitmap;
 
 impl State {
     pub fn new_bitmap_handle(&mut self, bitmap: Bitmap) -> (HBITMAP, Arc<Bitmap>) {

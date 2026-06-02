@@ -1,5 +1,6 @@
-use crate::generated::xff82;
 use runtime::{Cont, Context};
+
+use crate::generated::xff82;
 
 static mut UNPACK: bool = false;
 

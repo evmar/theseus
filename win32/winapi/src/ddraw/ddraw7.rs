@@ -1,9 +1,8 @@
-use crate::Ptr;
 use runtime::*;
 use zerocopy::FromBytes;
 
 use crate::{
-    RECT,
+    Ptr, RECT,
     ddraw::{GUID, state, types::*},
     gdi32,
     gdi32::HDC,

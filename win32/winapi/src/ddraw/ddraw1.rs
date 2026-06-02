@@ -1,17 +1,16 @@
-use runtime::Context;
 use std::{cell::RefCell, rc::Rc};
+
+use runtime::Context;
 use zerocopy::{FromBytes, IntoBytes};
 
 use crate::{
-    ddraw::{DD, get_pixel_format, state, types::*},
+    ddraw::{DD, Palette, get_pixel_format, state, types::*},
     heap::Heap,
     kernel32, stub,
     user32::HWND,
 };
 
 pub mod IDirectDraw {
-    use crate::ddraw::Palette;
-
     use super::*;
 
     pub const VTABLE_ENTRIES: [&str; 23] = [

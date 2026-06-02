@@ -31,6 +31,7 @@ impl WavWrite {
 
     fn write_header(&mut self) -> std::io::Result<()> {
         use std::io::Write;
+
         use zerocopy::IntoBytes;
 
         #[repr(C)]
@@ -144,8 +145,6 @@ pub fn ordinal1(ctx: &mut Context, lpGuid: u32, ppDS: u32, pUnkOuter: u32) -> u3
 }
 
 pub mod IDirectSound {
-    use crate::host;
-
     use super::*;
 
     pub const VTABLE_ENTRIES: [&'static str; 11] = [
