@@ -5,6 +5,7 @@
 - tc/: "theseus compiler", exe to Rust generator
 - exe/: (mostly) generated exe code for a few test executables, the output of tc
 - runtime/: runtime x86 support for the generated programs
+- web/: web hosting implementation for running wasm output
 - win32/pe/: PE (`.exe` format) parser
 - win32/winapi/: Windows API implementation (e.g. kernel32, user32)
 - win32/derive/: some Rust macros for winapi
