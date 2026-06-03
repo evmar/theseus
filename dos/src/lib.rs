@@ -1,4 +1,4 @@
-use runtime::{CPU, Context, EXEData, Mappings, Memory, segofs};
+use runtime::{CPU, Context, EXEData, Mappings, Memory};
 
 /// DOSBox-X loads com files into this segment.
 pub const DOSBOX_SEG: u16 = 0x813;
@@ -6,7 +6,7 @@ pub const DOSBOX_SEG: u16 = 0x813;
 pub fn load(exe: &EXEData) -> Context {
     logger::init();
 
-    let memory_size = segofs(DOSBOX_SEG, 0) + (64 << 10);
+    let memory_size = 640 << 10;
     let memory = Memory::leak_new(memory_size as usize);
 
     let mut ctx = Context {
