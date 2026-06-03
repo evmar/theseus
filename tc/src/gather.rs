@@ -152,10 +152,11 @@ impl<'a> Traverse<'a> {
     }
 
     fn decode_one(&mut self, ip: u32) -> anyhow::Result<Block> {
-        if ip > self.mem.bytes.len() as u32 {
+        let addr = ((self.module.code_segment.unwrap_or(0) as u32) << 4).wrapping_add(ip);
+        if addr > self.mem.bytes.len() as u32 {
             anyhow::bail!("ip out of bounds");
         }
-        let data = self.mem.slice_all(ip);
+        let data = self.mem.slice_all(addr);
         if data[..0x10].iter().all(|&b| b == 0) {
             anyhow::bail!("block appears zero-filled");
         }
@@ -260,6 +261,9 @@ impl<'a> Traverse<'a> {
             }
             log::info!("scanning mapping {:?}", mapping);
             let mapping_addr = mapping.addr;
+            if self.module.code_segment.is_some() {
+                todo!();
+            }
             let data = self.mem.bytes[mapping.addr as usize..][..mapping.size as usize].to_vec();
             for ofs in 0..data.len() - 4 {
                 let value =

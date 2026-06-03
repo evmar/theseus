@@ -12,12 +12,12 @@ use crate::externs::*;
 fn init_memory(ctx: &mut Context, mappings: &mut runtime::Mappings) {
     mappings.reserve(runtime::Mapping {
         desc: "com".to_string(),
-        addr: 0x100,
+        addr: 0x8230,
         size: 0xff00,
         section: true,
     });
-    let bytes = include_bytes!("../data/00000100.raw").as_slice();
-    let out = &mut ctx.memory.bytes[0x100..][..bytes.len()];
+    let bytes = include_bytes!("../data/00008230.raw").as_slice();
+    let out = &mut ctx.memory.bytes[0x8230..][..bytes.len()];
     out.copy_from_slice(bytes);
 }
 
@@ -298,30 +298,30 @@ pub fn xff82(ctx: &mut Context) -> Cont {
 }
 
 const BLOCKS: [(u32, ContFn); 25] = [
-    (0x100, x100),
-    (0xff0a, xff0a),
-    (0xff10, xff10),
-    (0xff12, xff12),
-    (0xff19, xff19),
-    (0xff1b, xff1b),
-    (0xff1f, xff1f),
-    (0xff28, xff28),
-    (0xff2a, xff2a),
-    (0xff2e, xff2e),
-    (0xff30, xff30),
-    (0xff39, xff39),
-    (0xff3e, xff3e),
-    (0xff40, xff40),
-    (0xff44, xff44),
-    (0xff46, xff46),
-    (0xff47, xff47),
-    (0xff4c, xff4c),
-    (0xff5b, xff5b),
-    (0xff60, xff60),
-    (0xff75, xff75),
-    (0xff7a, xff7a),
-    (0xff80, xff80),
-    (0xff82, xff82),
+    (0x8230, x100),
+    (0x1803a, xff0a),
+    (0x18040, xff10),
+    (0x18042, xff12),
+    (0x18049, xff19),
+    (0x1804b, xff1b),
+    (0x1804f, xff1f),
+    (0x18058, xff28),
+    (0x1805a, xff2a),
+    (0x1805e, xff2e),
+    (0x18060, xff30),
+    (0x18069, xff39),
+    (0x1806e, xff3e),
+    (0x18070, xff40),
+    (0x18074, xff44),
+    (0x18076, xff46),
+    (0x18077, xff47),
+    (0x1807c, xff4c),
+    (0x1808b, xff5b),
+    (0x18090, xff60),
+    (0x180a5, xff75),
+    (0x180aa, xff7a),
+    (0x180b0, xff80),
+    (0x180b2, xff82),
     (runtime::RETURN_FROM_X86_ADDR, Context::return_from_x86),
 ];
 

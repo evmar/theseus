@@ -1,4 +1,4 @@
-use runtime::{Cont, Context};
+use runtime::{Cont, Context, segofs};
 
 use crate::generated::xff82;
 
@@ -31,7 +31,7 @@ pub fn x100(ctx: &mut Context) -> Cont {
 
 fn do_unpack(ctx: &mut Context) {
     ctx.dump();
-    let data = &ctx.memory.bytes[0x100..];
+    let data = &ctx.memory[segofs(dos::DOSBOX_SEG, 0x100)..];
     std::fs::write("animate2.com", data).unwrap();
     println!("wrote animate.com");
 }

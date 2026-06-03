@@ -44,6 +44,7 @@ pub fn load_pe(mem: &mut Memory, buf: Vec<u8>) -> Module {
 
     Module {
         bitness: 32,
+        code_segment: None,
         imports,
         image_base,
         entry_point: image_base + f.opt_header.AddressOfEntryPoint,

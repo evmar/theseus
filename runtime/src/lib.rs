@@ -57,5 +57,5 @@ impl Context {
 
 /// Combine a seg:ofs address into a single flat u32 address.
 pub fn segofs(seg: u16, off: u16) -> u32 {
-    ((seg as u32) << 4) | (off as u32)
+    ((seg as u32) << 4) + (off as u32)
 }

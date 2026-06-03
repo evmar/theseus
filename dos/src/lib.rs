@@ -1,10 +1,13 @@
-use runtime::{CPU, Context, EXEData, Mappings, Memory};
+use runtime::{CPU, Context, EXEData, Mappings, Memory, segofs};
+
+/// DOSBox-X loads com files into this segment.
+pub const DOSBOX_SEG: u16 = 0x813;
 
 pub fn load(exe: &EXEData) -> Context {
     logger::init();
 
-    let memory_size = 64 << 10;
-    let memory = Memory::leak_new(memory_size);
+    let memory_size = segofs(DOSBOX_SEG, 0) + (64 << 10);
+    let memory = Memory::leak_new(memory_size as usize);
 
     let mut ctx = Context {
         cpu: CPU::default(),
@@ -19,8 +22,14 @@ pub fn load(exe: &EXEData) -> Context {
     let mut mappings = Mappings::default();
     (exe.init_memory)(&mut ctx, &mut mappings);
 
+    // initial register values copied to match dosbox
+
+    ctx.cpu.regs.cs = DOSBOX_SEG;
+    ctx.cpu.regs.ds = DOSBOX_SEG;
+    ctx.cpu.regs.es = DOSBOX_SEG;
+    ctx.cpu.regs.ss = DOSBOX_SEG;
+
     // initial cx: https://stackoverflow.com/questions/79440940/why-cx-register-already-has-a-non-zero-value-on-startup-of-a-dos-program-unlike
-    // this value copied from dosbox
     ctx.cpu.regs.ecx = 0xff;
     ctx.cpu.regs.esp = 0xfffe;
     ctx

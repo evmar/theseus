@@ -3,6 +3,7 @@ use crate::{
     Context, Flags, Regs,
     memory::{MemRead, MemWrite},
     ops::int::Int,
+    segofs,
 };
 
 #[derive(Debug)]
@@ -59,9 +60,9 @@ impl Context {
         }
     }
 
-    fn addr(&self, seg: u16, offset: u32) -> u32 {
+    pub fn addr(&self, seg: u16, offset: u32) -> u32 {
         if self.cpu.real_mode {
-            ((seg as u32) << 4).wrapping_add(offset)
+            segofs(seg, offset as u16)
         } else {
             offset
         }
@@ -150,8 +151,10 @@ impl Context {
     }
 
     fn movs<S: StringInt>(&mut self) {
-        let val = self.memory.read::<S>(self.cpu.regs.esi);
-        self.memory.write::<S>(self.cpu.regs.edi, val);
+        let src_addr = self.addr(self.cpu.regs.ds, self.cpu.regs.esi);
+        let val = self.memory.read::<S>(src_addr);
+        let dst_addr = self.addr(self.cpu.regs.es, self.cpu.regs.edi);
+        self.memory.write::<S>(dst_addr, val);
         let step = std::mem::size_of::<S>() as u32;
         if self.cpu.flags.contains(Flags::DF) {
             self.cpu.regs.esi = self.cpu.regs.esi.wrapping_sub(step);

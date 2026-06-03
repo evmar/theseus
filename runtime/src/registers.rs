@@ -216,6 +216,9 @@ impl Regs {
     }
 
     pub fn dump_segments(&self) {
-        println!("ds={:04x} es={:04x} ss={:04x}", self.ds, self.es, self.ss);
+        println!(
+            "cs={:04x} ds={:04x} es={:04x} fs={:04x} gs={:04x} ss={:04x}",
+            self.cs, self.ds, self.es, self.fs, self.gs, self.ss
+        );
     }
 }

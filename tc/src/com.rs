@@ -1,10 +1,14 @@
+use runtime::segofs;
+
 use crate::{Module, memory::Memory};
 
 pub fn load_com(mem: &mut Memory, buf: Vec<u8>) -> Module {
-    mem.reserve("com".into(), 0x100, buf.len() as u32);
-    mem.bytes[0x100..].copy_from_slice(&buf);
+    let addr = segofs(dos::DOSBOX_SEG, 0x100);
+    mem.reserve("com".into(), addr, buf.len() as u32);
+    mem.bytes[addr as usize..].copy_from_slice(&buf);
     Module {
         bitness: 16,
+        code_segment: Some(dos::DOSBOX_SEG),
         image_base: 0x100,
         entry_point: 0x100,
         code_memory: 0..0,

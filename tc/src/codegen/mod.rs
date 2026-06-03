@@ -330,9 +330,11 @@ out.copy_from_slice(bytes);",
             "const BLOCKS: [(u32, ContFn); {}] = [\n",
             ips.len() + 1,
         ));
+        let code_segment = self.module.code_segment.unwrap_or(0);
         for &ip in &ips {
             let block = self.blocks.get(&ip).unwrap();
-            self.line(format!("({ip:#x}, {name}),", name = block.name()));
+            let addr = (code_segment << 4) as u32 + ip;
+            self.line(format!("({addr:#x}, {name}),", name = block.name()));
         }
         self.line("(runtime::RETURN_FROM_X86_ADDR, Context::return_from_x86),");
         self.line("];");

@@ -12,12 +12,12 @@ use crate::externs::*;
 fn init_memory(ctx: &mut Context, mappings: &mut runtime::Mappings) {
     mappings.reserve(runtime::Mapping {
         desc: "com".to_string(),
-        addr: 0x100,
+        addr: 0x8230,
         size: 0xfc2,
         section: true,
     });
-    let bytes = include_bytes!("../data/00000100.raw").as_slice();
-    let out = &mut ctx.memory.bytes[0x100..][..bytes.len()];
+    let bytes = include_bytes!("../data/00008230.raw").as_slice();
+    let out = &mut ctx.memory.bytes[0x8230..][..bytes.len()];
     out.copy_from_slice(bytes);
 }
 
@@ -93,9 +93,9 @@ pub fn x106(ctx: &mut Context) -> Cont {
 }
 
 const BLOCKS: [(u32, ContFn); 4] = [
-    (0x100, x100),
-    (0x106, x106),
-    (0xff82, xff82),
+    (0x8230, x100),
+    (0x8236, x106),
+    (0x180b2, xff82),
     (runtime::RETURN_FROM_X86_ADDR, Context::return_from_x86),
 ];
 

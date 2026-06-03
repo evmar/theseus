@@ -470,6 +470,7 @@ dependencies = [
  "anyhow",
  "argh",
  "csv",
+ "dos",
  "iced-x86",
  "log",
  "logger",

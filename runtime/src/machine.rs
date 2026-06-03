@@ -1,4 +1,4 @@
-use crate::{Cont, ContFn, Flags, Memory, Regs, fpu::FPU, mmx::MMX};
+use crate::{Cont, ContFn, Flags, Memory, Regs, fpu::FPU, mmx::MMX, segofs};
 
 #[derive(Default)]
 pub struct CPU {
@@ -31,7 +31,12 @@ pub struct Context {
 }
 
 impl Context {
-    /// Given an address (jump target), look up the Cont registerd for it.
+    /// Given an address (jump target), look up the Cont registered for it.
+    pub fn indirect16(&mut self, addr: u16) -> Cont {
+        self.indirect(segofs(self.cpu.regs.get_cs(), addr))
+    }
+
+    /// Given an address (jump target), look up the Cont registered for it.
     pub fn indirect(&mut self, addr: u32) -> Cont {
         if addr == 0 {
             self.dump();
@@ -67,16 +72,24 @@ impl Context {
         }
     }
 
-    pub fn dump_stack16(&self) {
-        let esp = self.cpu.regs.esp - 2;
-        println!("stack:");
-        for i in 0..8 {
-            let addr = esp + i * 2;
+    pub fn dump_memory16(&self, seg: u16, ofs: u16, count: u16) {
+        for i in 0..count {
+            let Some(ofs) = ofs.checked_add(i * 2) else {
+                break;
+            };
+            let addr = segofs(seg, ofs);
             if addr + 2 > self.memory.bytes.len() as u32 {
                 break;
             }
-            println!("{addr:04x} {:04x}", self.memory.read::<u16>(addr));
+            println!("{seg:04x}:{ofs:04x} {:04x}", self.memory.read::<u16>(addr));
         }
+    }
+
+    pub fn dump_stack16(&self) {
+        let seg = self.cpu.regs.get_ss();
+        let sp = self.cpu.regs.get_sp();
+        println!("stack:");
+        self.dump_memory16(seg, sp - 2, 8);
     }
 
     pub fn dump(&self) {

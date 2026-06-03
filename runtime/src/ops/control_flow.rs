@@ -6,8 +6,8 @@ impl Context {
         addr
     }
 
-    pub fn call16(&mut self, ret: u32, addr: Cont) -> Cont {
-        self.push16(ret as u16);
+    pub fn call16(&mut self, ret: u16, addr: Cont) -> Cont {
+        self.push16(ret);
         addr
     }
 
@@ -122,9 +122,9 @@ impl Context {
     }
 
     pub fn ret16(&mut self, n: u16) -> Cont {
-        let ret = self.pop16() as u32;
+        let ret = self.pop16();
         self.cpu.regs.esp += n as u32;
-        self.indirect(ret)
+        self.indirect16(ret)
     }
 
     pub fn loop_(&mut self, from: Cont, x: Cont) -> Cont {

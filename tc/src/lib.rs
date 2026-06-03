@@ -25,6 +25,7 @@ pub struct Import {
 #[derive(Default)]
 pub struct Module {
     pub bitness: u32,
+    pub code_segment: Option<u16>,
     pub image_base: u32,
     pub entry_point: u32,
     pub code_memory: std::ops::Range<u32>,

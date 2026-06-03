@@ -1,4 +1,4 @@
-use crate::{Context, Flags};
+use crate::{Context, Flags, segofs};
 
 impl Context {
     pub fn push32(&mut self, x: u32) {
@@ -8,7 +8,8 @@ impl Context {
 
     pub fn push16(&mut self, x: u16) {
         self.cpu.regs.esp -= 2;
-        self.memory.write::<u16>(self.cpu.regs.esp, x);
+        self.memory
+            .write::<u16>(segofs(self.cpu.regs.ss, self.cpu.regs.get_sp()), x);
     }
 
     pub fn pop32(&mut self) -> u32 {
@@ -18,7 +19,9 @@ impl Context {
     }
 
     pub fn pop16(&mut self) -> u16 {
-        let x = self.memory.read::<u16>(self.cpu.regs.esp);
+        let x = self
+            .memory
+            .read::<u16>(segofs(self.cpu.regs.ss, self.cpu.regs.get_sp()));
         self.cpu.regs.esp += 2;
         x
     }

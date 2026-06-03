@@ -129,6 +129,7 @@ pub fn do_unpack(ctx: &mut runtime::Context) {
 
     tc.module = tc::Module {
         bitness: 32,
+        code_segment: None,
         image_base,
         entry_point: 0x0041f079,
         code_memory: 0x40_0000..tc.mem.bytes.len() as u32,
