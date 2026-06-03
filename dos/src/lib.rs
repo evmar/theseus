@@ -6,7 +6,7 @@ pub const DOSBOX_SEG: u16 = 0x813;
 pub fn load(exe: &EXEData) -> Context {
     logger::init();
 
-    let memory_size = 640 << 10;
+    let memory_size = 1 << 20;
     let memory = Memory::leak_new(memory_size as usize);
 
     let mut ctx = Context {
