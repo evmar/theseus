@@ -305,8 +305,14 @@ pub fn x1b5(ctx: &mut Context) -> Cont {
         .regs
         .set_ax(shl(ctx.cpu.regs.get_ax(), 0x8u8, &mut ctx.cpu.flags));
     // 000001ba cwd
-    // Cwd not implemented
-    todo!();
+    ctx.cpu
+        .regs
+        .set_dx_ax(ctx.cpu.regs.get_ax() as i16 as i32 as u32);
+    // 000001bb idiv cx
+    let x = ctx.cpu.regs.get_dx_ax() as i32;
+    let y = ctx.cpu.regs.get_cx() as i16 as i32;
+    ctx.cpu.regs.set_ax((x / y) as i16 as u16);
+    ctx.cpu.regs.set_dx((x % y) as i16 as u16);
     Cont(x1bd)
 }
 
@@ -509,8 +515,38 @@ pub fn x244(ctx: &mut Context) -> Cont {
         ctx.cpu.regs.get_bx().wrapping_add(0x1676u16),
     )));
     // 00000252 cwd
-    // Cwd not implemented
-    todo!();
+    ctx.cpu
+        .regs
+        .set_dx_ax(ctx.cpu.regs.get_ax() as i16 as i32 as u32);
+    // 00000253 idiv cx
+    let x = ctx.cpu.regs.get_dx_ax() as i32;
+    let y = ctx.cpu.regs.get_cx() as i16 as i32;
+    ctx.cpu.regs.set_ax((x / y) as i16 as u16);
+    ctx.cpu.regs.set_dx((x % y) as i16 as u16);
+    // 00000255 stosb
+    ctx.stosb();
+    // 00000256 mov ax,[bx+1876h]
+    ctx.cpu.regs.set_ax(ctx.memory.read::<u16>(segofs(
+        ctx.cpu.regs.get_ds(),
+        ctx.cpu.regs.get_bx().wrapping_add(0x1876u16),
+    )));
+    // 0000025a cwd
+    ctx.cpu
+        .regs
+        .set_dx_ax(ctx.cpu.regs.get_ax() as i16 as i32 as u32);
+    // 0000025b idiv cx
+    let x = ctx.cpu.regs.get_dx_ax() as i32;
+    let y = ctx.cpu.regs.get_cx() as i16 as i32;
+    ctx.cpu.regs.set_ax((x / y) as i16 as u16);
+    ctx.cpu.regs.set_dx((x % y) as i16 as u16);
+    // 0000025d stosb
+    ctx.stosb();
+    // 0000025e sub bp,8
+    ctx.cpu
+        .regs
+        .set_bp(sub(ctx.cpu.regs.get_bp(), 0x8u16, &mut ctx.cpu.flags));
+    // 00000261 jne short 0244h
+    ctx.jne(Cont(x263), Cont(x244))
 }
 
 pub fn x263(ctx: &mut Context) -> Cont {
@@ -2799,8 +2835,69 @@ pub fn x760(ctx: &mut Context) -> Cont {
     // 00000770 lodsw
     ctx.lodsw();
     // 00000771 cwd
-    // Cwd not implemented
-    todo!();
+    ctx.cpu
+        .regs
+        .set_dx_ax(ctx.cpu.regs.get_ax() as i16 as i32 as u32);
+    // 00000772 idiv bx
+    let x = ctx.cpu.regs.get_dx_ax() as i32;
+    let y = ctx.cpu.regs.get_bx() as i16 as i32;
+    ctx.cpu.regs.set_ax((x / y) as i16 as u16);
+    ctx.cpu.regs.set_dx((x % y) as i16 as u16);
+    // 00000774 add al,80h
+    ctx.cpu
+        .regs
+        .set_al(add(ctx.cpu.regs.get_al(), 0x80u8, &mut ctx.cpu.flags));
+    // 00000776 mov [di],al
+    ctx.memory.write::<u8>(
+        segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_di()),
+        ctx.cpu.regs.get_al(),
+    );
+    // 00000778 mov [di+10h],al
+    ctx.memory.write::<u8>(
+        segofs(
+            ctx.cpu.regs.get_ds(),
+            ctx.cpu.regs.get_di().wrapping_add(0x10u16),
+        ),
+        ctx.cpu.regs.get_al(),
+    );
+    // 0000077b lodsw
+    ctx.lodsw();
+    // 0000077c cwd
+    ctx.cpu
+        .regs
+        .set_dx_ax(ctx.cpu.regs.get_ax() as i16 as i32 as u32);
+    // 0000077d add ax,ds:[14B8h]
+    ctx.cpu.regs.set_ax(add(
+        ctx.cpu.regs.get_ax(),
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x14b8u16)),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000781 adc dx,0
+    let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
+    ctx.cpu.regs.set_dx(addc(
+        ctx.cpu.regs.get_dx(),
+        0x0u16,
+        carry as _,
+        &mut ctx.cpu.flags,
+    ));
+    // 00000784 idiv bx
+    let x = ctx.cpu.regs.get_dx_ax() as i32;
+    let y = ctx.cpu.regs.get_bx() as i16 as i32;
+    ctx.cpu.regs.set_ax((x / y) as i16 as u16);
+    ctx.cpu.regs.set_dx((x % y) as i16 as u16);
+    // 00000786 add ax,80h
+    ctx.cpu
+        .regs
+        .set_ax(add(ctx.cpu.regs.get_ax(), 0x80u16, &mut ctx.cpu.flags));
+    // 00000789 test ah,ah
+    and(
+        ctx.cpu.regs.get_ah(),
+        ctx.cpu.regs.get_ah(),
+        &mut ctx.cpu.flags,
+    );
+    // 0000078b jne near ptr 0949h
+    ctx.jne(Cont(x78f), Cont(x949))
 }
 
 pub fn x78f(ctx: &mut Context) -> Cont {
@@ -2832,8 +2929,64 @@ pub fn x78f(ctx: &mut Context) -> Cont {
     // 0000079b lodsw
     ctx.lodsw();
     // 0000079c cwd
-    // Cwd not implemented
-    todo!();
+    ctx.cpu
+        .regs
+        .set_dx_ax(ctx.cpu.regs.get_ax() as i16 as i32 as u32);
+    // 0000079d idiv bx
+    let x = ctx.cpu.regs.get_dx_ax() as i32;
+    let y = ctx.cpu.regs.get_bx() as i16 as i32;
+    ctx.cpu.regs.set_ax((x / y) as i16 as u16);
+    ctx.cpu.regs.set_dx((x % y) as i16 as u16);
+    // 0000079f add al,80h
+    ctx.cpu
+        .regs
+        .set_al(add(ctx.cpu.regs.get_al(), 0x80u8, &mut ctx.cpu.flags));
+    // 000007a1 mov [di+4],al
+    ctx.memory.write::<u8>(
+        segofs(
+            ctx.cpu.regs.get_ds(),
+            ctx.cpu.regs.get_di().wrapping_add(0x4u16),
+        ),
+        ctx.cpu.regs.get_al(),
+    );
+    // 000007a4 lodsw
+    ctx.lodsw();
+    // 000007a5 cwd
+    ctx.cpu
+        .regs
+        .set_dx_ax(ctx.cpu.regs.get_ax() as i16 as i32 as u32);
+    // 000007a6 add ax,ds:[14B8h]
+    ctx.cpu.regs.set_ax(add(
+        ctx.cpu.regs.get_ax(),
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x14b8u16)),
+        &mut ctx.cpu.flags,
+    ));
+    // 000007aa adc dx,0
+    let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
+    ctx.cpu.regs.set_dx(addc(
+        ctx.cpu.regs.get_dx(),
+        0x0u16,
+        carry as _,
+        &mut ctx.cpu.flags,
+    ));
+    // 000007ad idiv bx
+    let x = ctx.cpu.regs.get_dx_ax() as i32;
+    let y = ctx.cpu.regs.get_bx() as i16 as i32;
+    ctx.cpu.regs.set_ax((x / y) as i16 as u16);
+    ctx.cpu.regs.set_dx((x % y) as i16 as u16);
+    // 000007af add ax,80h
+    ctx.cpu
+        .regs
+        .set_ax(add(ctx.cpu.regs.get_ax(), 0x80u16, &mut ctx.cpu.flags));
+    // 000007b2 test ah,ah
+    and(
+        ctx.cpu.regs.get_ah(),
+        ctx.cpu.regs.get_ah(),
+        &mut ctx.cpu.flags,
+    );
+    // 000007b4 jne near ptr 0949h
+    ctx.jne(Cont(x7b8), Cont(x949))
 }
 
 pub fn x7b8(ctx: &mut Context) -> Cont {
@@ -2857,8 +3010,64 @@ pub fn x7b8(ctx: &mut Context) -> Cont {
     // 000007c1 lodsw
     ctx.lodsw();
     // 000007c2 cwd
-    // Cwd not implemented
-    todo!();
+    ctx.cpu
+        .regs
+        .set_dx_ax(ctx.cpu.regs.get_ax() as i16 as i32 as u32);
+    // 000007c3 idiv bx
+    let x = ctx.cpu.regs.get_dx_ax() as i32;
+    let y = ctx.cpu.regs.get_bx() as i16 as i32;
+    ctx.cpu.regs.set_ax((x / y) as i16 as u16);
+    ctx.cpu.regs.set_dx((x % y) as i16 as u16);
+    // 000007c5 add al,80h
+    ctx.cpu
+        .regs
+        .set_al(add(ctx.cpu.regs.get_al(), 0x80u8, &mut ctx.cpu.flags));
+    // 000007c7 mov [di+8],al
+    ctx.memory.write::<u8>(
+        segofs(
+            ctx.cpu.regs.get_ds(),
+            ctx.cpu.regs.get_di().wrapping_add(0x8u16),
+        ),
+        ctx.cpu.regs.get_al(),
+    );
+    // 000007ca lodsw
+    ctx.lodsw();
+    // 000007cb cwd
+    ctx.cpu
+        .regs
+        .set_dx_ax(ctx.cpu.regs.get_ax() as i16 as i32 as u32);
+    // 000007cc add ax,ds:[14B8h]
+    ctx.cpu.regs.set_ax(add(
+        ctx.cpu.regs.get_ax(),
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x14b8u16)),
+        &mut ctx.cpu.flags,
+    ));
+    // 000007d0 adc dx,0
+    let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
+    ctx.cpu.regs.set_dx(addc(
+        ctx.cpu.regs.get_dx(),
+        0x0u16,
+        carry as _,
+        &mut ctx.cpu.flags,
+    ));
+    // 000007d3 idiv bx
+    let x = ctx.cpu.regs.get_dx_ax() as i32;
+    let y = ctx.cpu.regs.get_bx() as i16 as i32;
+    ctx.cpu.regs.set_ax((x / y) as i16 as u16);
+    ctx.cpu.regs.set_dx((x % y) as i16 as u16);
+    // 000007d5 add ax,80h
+    ctx.cpu
+        .regs
+        .set_ax(add(ctx.cpu.regs.get_ax(), 0x80u16, &mut ctx.cpu.flags));
+    // 000007d8 test ah,ah
+    and(
+        ctx.cpu.regs.get_ah(),
+        ctx.cpu.regs.get_ah(),
+        &mut ctx.cpu.flags,
+    );
+    // 000007da jne near ptr 0949h
+    ctx.jne(Cont(x7de), Cont(x949))
 }
 
 pub fn x7de(ctx: &mut Context) -> Cont {
@@ -2882,8 +3091,64 @@ pub fn x7de(ctx: &mut Context) -> Cont {
     // 000007e7 lodsw
     ctx.lodsw();
     // 000007e8 cwd
-    // Cwd not implemented
-    todo!();
+    ctx.cpu
+        .regs
+        .set_dx_ax(ctx.cpu.regs.get_ax() as i16 as i32 as u32);
+    // 000007e9 idiv bx
+    let x = ctx.cpu.regs.get_dx_ax() as i32;
+    let y = ctx.cpu.regs.get_bx() as i16 as i32;
+    ctx.cpu.regs.set_ax((x / y) as i16 as u16);
+    ctx.cpu.regs.set_dx((x % y) as i16 as u16);
+    // 000007eb add al,80h
+    ctx.cpu
+        .regs
+        .set_al(add(ctx.cpu.regs.get_al(), 0x80u8, &mut ctx.cpu.flags));
+    // 000007ed mov [di+0Ch],al
+    ctx.memory.write::<u8>(
+        segofs(
+            ctx.cpu.regs.get_ds(),
+            ctx.cpu.regs.get_di().wrapping_add(0xcu16),
+        ),
+        ctx.cpu.regs.get_al(),
+    );
+    // 000007f0 lodsw
+    ctx.lodsw();
+    // 000007f1 cwd
+    ctx.cpu
+        .regs
+        .set_dx_ax(ctx.cpu.regs.get_ax() as i16 as i32 as u32);
+    // 000007f2 add ax,ds:[14B8h]
+    ctx.cpu.regs.set_ax(add(
+        ctx.cpu.regs.get_ax(),
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x14b8u16)),
+        &mut ctx.cpu.flags,
+    ));
+    // 000007f6 adc dx,0
+    let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
+    ctx.cpu.regs.set_dx(addc(
+        ctx.cpu.regs.get_dx(),
+        0x0u16,
+        carry as _,
+        &mut ctx.cpu.flags,
+    ));
+    // 000007f9 idiv bx
+    let x = ctx.cpu.regs.get_dx_ax() as i32;
+    let y = ctx.cpu.regs.get_bx() as i16 as i32;
+    ctx.cpu.regs.set_ax((x / y) as i16 as u16);
+    ctx.cpu.regs.set_dx((x % y) as i16 as u16);
+    // 000007fb add ax,80h
+    ctx.cpu
+        .regs
+        .set_ax(add(ctx.cpu.regs.get_ax(), 0x80u16, &mut ctx.cpu.flags));
+    // 000007fe test ah,ah
+    and(
+        ctx.cpu.regs.get_ah(),
+        ctx.cpu.regs.get_ah(),
+        &mut ctx.cpu.flags,
+    );
+    // 00000800 jne near ptr 0949h
+    ctx.jne(Cont(x804), Cont(x949))
 }
 
 pub fn x804(ctx: &mut Context) -> Cont {
@@ -2909,8 +3174,85 @@ pub fn x804(ctx: &mut Context) -> Cont {
     // 00000810 lodsw
     ctx.lodsw();
     // 00000811 cwd
-    // Cwd not implemented
-    todo!();
+    ctx.cpu
+        .regs
+        .set_dx_ax(ctx.cpu.regs.get_ax() as i16 as i32 as u32);
+    // 00000812 idiv bx
+    let x = ctx.cpu.regs.get_dx_ax() as i32;
+    let y = ctx.cpu.regs.get_bx() as i16 as i32;
+    ctx.cpu.regs.set_ax((x / y) as i16 as u16);
+    ctx.cpu.regs.set_dx((x % y) as i16 as u16);
+    // 00000814 add al,80h
+    ctx.cpu
+        .regs
+        .set_al(add(ctx.cpu.regs.get_al(), 0x80u8, &mut ctx.cpu.flags));
+    // 00000816 mov [di],al
+    ctx.memory.write::<u8>(
+        segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_di()),
+        ctx.cpu.regs.get_al(),
+    );
+    // 00000818 mov [di+10h],al
+    ctx.memory.write::<u8>(
+        segofs(
+            ctx.cpu.regs.get_ds(),
+            ctx.cpu.regs.get_di().wrapping_add(0x10u16),
+        ),
+        ctx.cpu.regs.get_al(),
+    );
+    // 0000081b mov [di+14h],al
+    ctx.memory.write::<u8>(
+        segofs(
+            ctx.cpu.regs.get_ds(),
+            ctx.cpu.regs.get_di().wrapping_add(0x14u16),
+        ),
+        ctx.cpu.regs.get_al(),
+    );
+    // 0000081e mov [di+24h],al
+    ctx.memory.write::<u8>(
+        segofs(
+            ctx.cpu.regs.get_ds(),
+            ctx.cpu.regs.get_di().wrapping_add(0x24u16),
+        ),
+        ctx.cpu.regs.get_al(),
+    );
+    // 00000821 lodsw
+    ctx.lodsw();
+    // 00000822 cwd
+    ctx.cpu
+        .regs
+        .set_dx_ax(ctx.cpu.regs.get_ax() as i16 as i32 as u32);
+    // 00000823 add ax,ds:[14B8h]
+    ctx.cpu.regs.set_ax(add(
+        ctx.cpu.regs.get_ax(),
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x14b8u16)),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000827 adc dx,0
+    let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
+    ctx.cpu.regs.set_dx(addc(
+        ctx.cpu.regs.get_dx(),
+        0x0u16,
+        carry as _,
+        &mut ctx.cpu.flags,
+    ));
+    // 0000082a idiv bx
+    let x = ctx.cpu.regs.get_dx_ax() as i32;
+    let y = ctx.cpu.regs.get_bx() as i16 as i32;
+    ctx.cpu.regs.set_ax((x / y) as i16 as u16);
+    ctx.cpu.regs.set_dx((x % y) as i16 as u16);
+    // 0000082c add ax,80h
+    ctx.cpu
+        .regs
+        .set_ax(add(ctx.cpu.regs.get_ax(), 0x80u16, &mut ctx.cpu.flags));
+    // 0000082f test ah,ah
+    and(
+        ctx.cpu.regs.get_ah(),
+        ctx.cpu.regs.get_ah(),
+        &mut ctx.cpu.flags,
+    );
+    // 00000831 jne near ptr 0949h
+    ctx.jne(Cont(x835), Cont(x949))
 }
 
 pub fn x835(ctx: &mut Context) -> Cont {
@@ -2958,8 +3300,72 @@ pub fn x835(ctx: &mut Context) -> Cont {
     // 00000847 lodsw
     ctx.lodsw();
     // 00000848 cwd
-    // Cwd not implemented
-    todo!();
+    ctx.cpu
+        .regs
+        .set_dx_ax(ctx.cpu.regs.get_ax() as i16 as i32 as u32);
+    // 00000849 idiv bx
+    let x = ctx.cpu.regs.get_dx_ax() as i32;
+    let y = ctx.cpu.regs.get_bx() as i16 as i32;
+    ctx.cpu.regs.set_ax((x / y) as i16 as u16);
+    ctx.cpu.regs.set_dx((x % y) as i16 as u16);
+    // 0000084b add al,80h
+    ctx.cpu
+        .regs
+        .set_al(add(ctx.cpu.regs.get_al(), 0x80u8, &mut ctx.cpu.flags));
+    // 0000084d mov [di+4],al
+    ctx.memory.write::<u8>(
+        segofs(
+            ctx.cpu.regs.get_ds(),
+            ctx.cpu.regs.get_di().wrapping_add(0x4u16),
+        ),
+        ctx.cpu.regs.get_al(),
+    );
+    // 00000850 mov [di+18h],al
+    ctx.memory.write::<u8>(
+        segofs(
+            ctx.cpu.regs.get_ds(),
+            ctx.cpu.regs.get_di().wrapping_add(0x18u16),
+        ),
+        ctx.cpu.regs.get_al(),
+    );
+    // 00000853 lodsw
+    ctx.lodsw();
+    // 00000854 cwd
+    ctx.cpu
+        .regs
+        .set_dx_ax(ctx.cpu.regs.get_ax() as i16 as i32 as u32);
+    // 00000855 add ax,ds:[14B8h]
+    ctx.cpu.regs.set_ax(add(
+        ctx.cpu.regs.get_ax(),
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x14b8u16)),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000859 adc dx,0
+    let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
+    ctx.cpu.regs.set_dx(addc(
+        ctx.cpu.regs.get_dx(),
+        0x0u16,
+        carry as _,
+        &mut ctx.cpu.flags,
+    ));
+    // 0000085c idiv bx
+    let x = ctx.cpu.regs.get_dx_ax() as i32;
+    let y = ctx.cpu.regs.get_bx() as i16 as i32;
+    ctx.cpu.regs.set_ax((x / y) as i16 as u16);
+    ctx.cpu.regs.set_dx((x % y) as i16 as u16);
+    // 0000085e add ax,80h
+    ctx.cpu
+        .regs
+        .set_ax(add(ctx.cpu.regs.get_ax(), 0x80u16, &mut ctx.cpu.flags));
+    // 00000861 test ah,ah
+    and(
+        ctx.cpu.regs.get_ah(),
+        ctx.cpu.regs.get_ah(),
+        &mut ctx.cpu.flags,
+    );
+    // 00000863 jne near ptr 0949h
+    ctx.jne(Cont(x867), Cont(x949))
 }
 
 pub fn x867(ctx: &mut Context) -> Cont {
@@ -2991,8 +3397,64 @@ pub fn x867(ctx: &mut Context) -> Cont {
     // 00000873 lodsw
     ctx.lodsw();
     // 00000874 cwd
-    // Cwd not implemented
-    todo!();
+    ctx.cpu
+        .regs
+        .set_dx_ax(ctx.cpu.regs.get_ax() as i16 as i32 as u32);
+    // 00000875 idiv bx
+    let x = ctx.cpu.regs.get_dx_ax() as i32;
+    let y = ctx.cpu.regs.get_bx() as i16 as i32;
+    ctx.cpu.regs.set_ax((x / y) as i16 as u16);
+    ctx.cpu.regs.set_dx((x % y) as i16 as u16);
+    // 00000877 add al,80h
+    ctx.cpu
+        .regs
+        .set_al(add(ctx.cpu.regs.get_al(), 0x80u8, &mut ctx.cpu.flags));
+    // 00000879 mov [di+8],al
+    ctx.memory.write::<u8>(
+        segofs(
+            ctx.cpu.regs.get_ds(),
+            ctx.cpu.regs.get_di().wrapping_add(0x8u16),
+        ),
+        ctx.cpu.regs.get_al(),
+    );
+    // 0000087c lodsw
+    ctx.lodsw();
+    // 0000087d cwd
+    ctx.cpu
+        .regs
+        .set_dx_ax(ctx.cpu.regs.get_ax() as i16 as i32 as u32);
+    // 0000087e add ax,ds:[14B8h]
+    ctx.cpu.regs.set_ax(add(
+        ctx.cpu.regs.get_ax(),
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x14b8u16)),
+        &mut ctx.cpu.flags,
+    ));
+    // 00000882 adc dx,0
+    let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
+    ctx.cpu.regs.set_dx(addc(
+        ctx.cpu.regs.get_dx(),
+        0x0u16,
+        carry as _,
+        &mut ctx.cpu.flags,
+    ));
+    // 00000885 idiv bx
+    let x = ctx.cpu.regs.get_dx_ax() as i32;
+    let y = ctx.cpu.regs.get_bx() as i16 as i32;
+    ctx.cpu.regs.set_ax((x / y) as i16 as u16);
+    ctx.cpu.regs.set_dx((x % y) as i16 as u16);
+    // 00000887 add ax,80h
+    ctx.cpu
+        .regs
+        .set_ax(add(ctx.cpu.regs.get_ax(), 0x80u16, &mut ctx.cpu.flags));
+    // 0000088a test ah,ah
+    and(
+        ctx.cpu.regs.get_ah(),
+        ctx.cpu.regs.get_ah(),
+        &mut ctx.cpu.flags,
+    );
+    // 0000088c jne near ptr 0949h
+    ctx.jne(Cont(x890), Cont(x949))
 }
 
 pub fn x890(ctx: &mut Context) -> Cont {
@@ -3016,8 +3478,64 @@ pub fn x890(ctx: &mut Context) -> Cont {
     // 00000899 lodsw
     ctx.lodsw();
     // 0000089a cwd
-    // Cwd not implemented
-    todo!();
+    ctx.cpu
+        .regs
+        .set_dx_ax(ctx.cpu.regs.get_ax() as i16 as i32 as u32);
+    // 0000089b idiv bx
+    let x = ctx.cpu.regs.get_dx_ax() as i32;
+    let y = ctx.cpu.regs.get_bx() as i16 as i32;
+    ctx.cpu.regs.set_ax((x / y) as i16 as u16);
+    ctx.cpu.regs.set_dx((x % y) as i16 as u16);
+    // 0000089d add al,80h
+    ctx.cpu
+        .regs
+        .set_al(add(ctx.cpu.regs.get_al(), 0x80u8, &mut ctx.cpu.flags));
+    // 0000089f mov [di+0Ch],al
+    ctx.memory.write::<u8>(
+        segofs(
+            ctx.cpu.regs.get_ds(),
+            ctx.cpu.regs.get_di().wrapping_add(0xcu16),
+        ),
+        ctx.cpu.regs.get_al(),
+    );
+    // 000008a2 lodsw
+    ctx.lodsw();
+    // 000008a3 cwd
+    ctx.cpu
+        .regs
+        .set_dx_ax(ctx.cpu.regs.get_ax() as i16 as i32 as u32);
+    // 000008a4 add ax,ds:[14B8h]
+    ctx.cpu.regs.set_ax(add(
+        ctx.cpu.regs.get_ax(),
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x14b8u16)),
+        &mut ctx.cpu.flags,
+    ));
+    // 000008a8 adc dx,0
+    let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
+    ctx.cpu.regs.set_dx(addc(
+        ctx.cpu.regs.get_dx(),
+        0x0u16,
+        carry as _,
+        &mut ctx.cpu.flags,
+    ));
+    // 000008ab idiv bx
+    let x = ctx.cpu.regs.get_dx_ax() as i32;
+    let y = ctx.cpu.regs.get_bx() as i16 as i32;
+    ctx.cpu.regs.set_ax((x / y) as i16 as u16);
+    ctx.cpu.regs.set_dx((x % y) as i16 as u16);
+    // 000008ad add ax,80h
+    ctx.cpu
+        .regs
+        .set_ax(add(ctx.cpu.regs.get_ax(), 0x80u16, &mut ctx.cpu.flags));
+    // 000008b0 test ah,ah
+    and(
+        ctx.cpu.regs.get_ah(),
+        ctx.cpu.regs.get_ah(),
+        &mut ctx.cpu.flags,
+    );
+    // 000008b2 jne near ptr 0949h
+    ctx.jne(Cont(x8b6), Cont(x949))
 }
 
 pub fn x8b6(ctx: &mut Context) -> Cont {
@@ -3041,8 +3559,64 @@ pub fn x8b6(ctx: &mut Context) -> Cont {
     // 000008bf lodsw
     ctx.lodsw();
     // 000008c0 cwd
-    // Cwd not implemented
-    todo!();
+    ctx.cpu
+        .regs
+        .set_dx_ax(ctx.cpu.regs.get_ax() as i16 as i32 as u32);
+    // 000008c1 idiv bx
+    let x = ctx.cpu.regs.get_dx_ax() as i32;
+    let y = ctx.cpu.regs.get_bx() as i16 as i32;
+    ctx.cpu.regs.set_ax((x / y) as i16 as u16);
+    ctx.cpu.regs.set_dx((x % y) as i16 as u16);
+    // 000008c3 add al,80h
+    ctx.cpu
+        .regs
+        .set_al(add(ctx.cpu.regs.get_al(), 0x80u8, &mut ctx.cpu.flags));
+    // 000008c5 mov [di+1Ch],al
+    ctx.memory.write::<u8>(
+        segofs(
+            ctx.cpu.regs.get_ds(),
+            ctx.cpu.regs.get_di().wrapping_add(0x1cu16),
+        ),
+        ctx.cpu.regs.get_al(),
+    );
+    // 000008c8 lodsw
+    ctx.lodsw();
+    // 000008c9 cwd
+    ctx.cpu
+        .regs
+        .set_dx_ax(ctx.cpu.regs.get_ax() as i16 as i32 as u32);
+    // 000008ca add ax,ds:[14B8h]
+    ctx.cpu.regs.set_ax(add(
+        ctx.cpu.regs.get_ax(),
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x14b8u16)),
+        &mut ctx.cpu.flags,
+    ));
+    // 000008ce adc dx,0
+    let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
+    ctx.cpu.regs.set_dx(addc(
+        ctx.cpu.regs.get_dx(),
+        0x0u16,
+        carry as _,
+        &mut ctx.cpu.flags,
+    ));
+    // 000008d1 idiv bx
+    let x = ctx.cpu.regs.get_dx_ax() as i32;
+    let y = ctx.cpu.regs.get_bx() as i16 as i32;
+    ctx.cpu.regs.set_ax((x / y) as i16 as u16);
+    ctx.cpu.regs.set_dx((x % y) as i16 as u16);
+    // 000008d3 add ax,80h
+    ctx.cpu
+        .regs
+        .set_ax(add(ctx.cpu.regs.get_ax(), 0x80u16, &mut ctx.cpu.flags));
+    // 000008d6 test ah,ah
+    and(
+        ctx.cpu.regs.get_ah(),
+        ctx.cpu.regs.get_ah(),
+        &mut ctx.cpu.flags,
+    );
+    // 000008d8 jne short 0949h
+    ctx.jne(Cont(x8da), Cont(x949))
 }
 
 pub fn x8da(ctx: &mut Context) -> Cont {
@@ -3066,8 +3640,64 @@ pub fn x8da(ctx: &mut Context) -> Cont {
     // 000008e3 lodsw
     ctx.lodsw();
     // 000008e4 cwd
-    // Cwd not implemented
-    todo!();
+    ctx.cpu
+        .regs
+        .set_dx_ax(ctx.cpu.regs.get_ax() as i16 as i32 as u32);
+    // 000008e5 idiv bx
+    let x = ctx.cpu.regs.get_dx_ax() as i32;
+    let y = ctx.cpu.regs.get_bx() as i16 as i32;
+    ctx.cpu.regs.set_ax((x / y) as i16 as u16);
+    ctx.cpu.regs.set_dx((x % y) as i16 as u16);
+    // 000008e7 add al,80h
+    ctx.cpu
+        .regs
+        .set_al(add(ctx.cpu.regs.get_al(), 0x80u8, &mut ctx.cpu.flags));
+    // 000008e9 mov [di+20h],al
+    ctx.memory.write::<u8>(
+        segofs(
+            ctx.cpu.regs.get_ds(),
+            ctx.cpu.regs.get_di().wrapping_add(0x20u16),
+        ),
+        ctx.cpu.regs.get_al(),
+    );
+    // 000008ec lodsw
+    ctx.lodsw();
+    // 000008ed cwd
+    ctx.cpu
+        .regs
+        .set_dx_ax(ctx.cpu.regs.get_ax() as i16 as i32 as u32);
+    // 000008ee add ax,ds:[14B8h]
+    ctx.cpu.regs.set_ax(add(
+        ctx.cpu.regs.get_ax(),
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x14b8u16)),
+        &mut ctx.cpu.flags,
+    ));
+    // 000008f2 adc dx,0
+    let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
+    ctx.cpu.regs.set_dx(addc(
+        ctx.cpu.regs.get_dx(),
+        0x0u16,
+        carry as _,
+        &mut ctx.cpu.flags,
+    ));
+    // 000008f5 idiv bx
+    let x = ctx.cpu.regs.get_dx_ax() as i32;
+    let y = ctx.cpu.regs.get_bx() as i16 as i32;
+    ctx.cpu.regs.set_ax((x / y) as i16 as u16);
+    ctx.cpu.regs.set_dx((x % y) as i16 as u16);
+    // 000008f7 add ax,80h
+    ctx.cpu
+        .regs
+        .set_ax(add(ctx.cpu.regs.get_ax(), 0x80u16, &mut ctx.cpu.flags));
+    // 000008fa test ah,ah
+    and(
+        ctx.cpu.regs.get_ah(),
+        ctx.cpu.regs.get_ah(),
+        &mut ctx.cpu.flags,
+    );
+    // 000008fc jne short 0949h
+    ctx.jne(Cont(x8fe), Cont(x949))
 }
 
 pub fn x8fe(ctx: &mut Context) -> Cont {

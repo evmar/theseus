@@ -84,13 +84,13 @@ impl<'a> CodeGen<'a> {
             }
             Int3 | Cmpxchg | Pushfd | Cpuid | Xgetbv | Bt | Div => self.todo(),
 
+            // CBW/CWDE: sign extend to next larger ax
             Cbw => self.line("ctx.cpu.regs.set_ax(ctx.cpu.regs.get_al() as i8 as i16 as u16);"),
             Cwde => self.line("ctx.cpu.regs.eax = ctx.cpu.regs.get_ax() as i16 as i32 as u32;"),
-            Cdq => {
-                self.line("let t = ctx.cpu.regs.eax as i32 as i64 as u64;");
-                self.line("ctx.cpu.regs.edx = (t >> 32) as u32;");
-                self.line("ctx.cpu.regs.eax = t as u32;");
-            }
+
+            // CWD/CDQ: sign extend to dx:ax
+            Cwd => self.line("ctx.cpu.regs.set_dx_ax(ctx.cpu.regs.get_ax() as i16 as i32 as u32);"),
+            Cdq => self.line("ctx.cpu.regs.set_edx_eax(ctx.cpu.regs.eax as i32 as i64 as u64);"),
 
             Stc | Clc | Std | Cld | Sahf => {
                 self.line(format!("{}(ctx);", instr_name(instr)));
