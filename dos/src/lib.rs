@@ -46,8 +46,15 @@ pub fn run(exe: &EXEData) {
     start(&mut ctx, exe);
 }
 
-pub fn int10(_ctx: &mut Context) {
-    log::warn!("TODO: int 10h (video)");
+pub fn int10(ctx: &mut Context) {
+    let func = ctx.cpu.regs.get_ah();
+    match func {
+        0x0 => {
+            let mode = ctx.cpu.regs.get_al();
+            log::warn!("TODO: set video mode {mode:02x}");
+        }
+        _ => log::error!("TODO: int 10h (video) call {func:02x}"),
+    }
 }
 
 pub fn int21(ctx: &mut Context) {
@@ -56,11 +63,11 @@ pub fn int21(ctx: &mut Context) {
         0x25 => {
             let int = ctx.cpu.regs.get_al();
             let (seg, ofs) = (ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_dx());
-            log::warn!("TODO: dos set interrupt handler {int:02x} to {seg:04x}:{ofs:04x}");
+            log::warn!("TODO: set interrupt handler {int:02x} to {seg:04x}:{ofs:04x}");
         }
         0x35 => {
             let int = ctx.cpu.regs.get_al();
-            log::warn!("TODO: dos get interrupt handler {int:02x}, returning 0");
+            log::warn!("TODO: get interrupt handler {int:02x}, returning 0");
             let (seg, ofs) = (0, 0);
             ctx.cpu.regs.set_es(seg);
             ctx.cpu.regs.set_bx(ofs);
@@ -78,6 +85,15 @@ pub fn out(_ctx: &mut Context, port: u16, data: u8) {
         0x43 => {
             // https://wiki.osdev.org/Programmable_Interval_Timer
             log::warn!("TODO: out({:#x}, {:#x}): PIT control", port, data);
+        }
+
+        0x3C0..=0x3DF => {
+            // http://www.osdever.net/FreeVGA/vga/portidx.htm
+            match port {
+                0x3c8 => log::warn!("TODO: out({:#x}, {:#x}): DAC write address", port, data),
+                0x3c9 => log::warn!("TODO: out({:#x}, {:#x}): DAC write data", port, data),
+                _ => log::error!("TODO: out({:#x}, {:#x}): graphics control", port, data),
+            }
         }
         _ => {
             log::error!("TODO: out({:#x}, {:#x})", port, data);
