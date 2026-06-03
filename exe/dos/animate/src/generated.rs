@@ -44,7 +44,7 @@ pub fn x100(ctx: &mut Context) -> Cont {
     // 00000110 mov ax,3508h
     ctx.cpu.regs.set_ax(0x3508u16);
     // 00000113 int 21h
-    dos::int21();
+    dos::int21(ctx);
     // 00000115 mov ds:[14D0h],es
     ctx.memory.write::<u16>(
         segofs(ctx.cpu.regs.get_ds(), 0x14d0u16),
@@ -58,7 +58,7 @@ pub fn x100(ctx: &mut Context) -> Cont {
     // 0000011d mov ax,3509h
     ctx.cpu.regs.set_ax(0x3509u16);
     // 00000120 int 21h
-    dos::int21();
+    dos::int21(ctx);
     // 00000122 mov ds:[14D4h],es
     ctx.memory.write::<u16>(
         segofs(ctx.cpu.regs.get_ds(), 0x14d4u16),
@@ -81,13 +81,13 @@ pub fn x100(ctx: &mut Context) -> Cont {
     // 00000130 mov ax,2509h
     ctx.cpu.regs.set_ax(0x2509u16);
     // 00000133 int 21h
-    dos::int21();
+    dos::int21(ctx);
     // 00000135 mov dx,1126h
     ctx.cpu.regs.set_dx(0x1126u16);
     // 00000138 mov ax,2508h
     ctx.cpu.regs.set_ax(0x2508u16);
     // 0000013b int 21h
-    dos::int21();
+    dos::int21(ctx);
     // 0000013d pop ds
     let x = ctx.pop16();
     ctx.cpu.regs.set_ds(x);
@@ -804,7 +804,7 @@ pub fn x30b(ctx: &mut Context) -> Cont {
     // 0000030b mov ax,13h
     ctx.cpu.regs.set_ax(0x13u16);
     // 0000030e int 10h
-    dos::int10();
+    dos::int10(ctx);
     // 00000310 mov di,7224h
     ctx.cpu.regs.set_di(0x7224u16);
     // 00000313 mov cx,300h
@@ -4159,13 +4159,13 @@ pub fn xba6(ctx: &mut Context) -> Cont {
     // 00000ba6 mov ax,3
     ctx.cpu.regs.set_ax(0x3u16);
     // 00000ba9 int 10h
-    dos::int10();
+    dos::int10(ctx);
     // 00000bab mov ah,9
     ctx.cpu.regs.set_ah(0x9u8);
     // 00000bad mov dx,14AAh
     ctx.cpu.regs.set_dx(0x14aau16);
     // 00000bb0 int 21h
-    dos::int21();
+    dos::int21(ctx);
     // 00000bb2 push ds
     ctx.push16(ctx.cpu.regs.get_ds());
     // 00000bb3 mov dx,ds:[14D6h]
@@ -4181,7 +4181,7 @@ pub fn xba6(ctx: &mut Context) -> Cont {
     // 00000bbb mov ax,2509h
     ctx.cpu.regs.set_ax(0x2509u16);
     // 00000bbe int 21h
-    dos::int21();
+    dos::int21(ctx);
     // 00000bc0 pop ds
     let x = ctx.pop16();
     ctx.cpu.regs.set_ds(x);
@@ -4211,14 +4211,14 @@ pub fn xbc6(ctx: &mut Context) -> Cont {
     // 00000bcf mov ax,2508h
     ctx.cpu.regs.set_ax(0x2508u16);
     // 00000bd2 int 21h
-    dos::int21();
+    dos::int21(ctx);
     // 00000bd4 pop ds
     let x = ctx.pop16();
     ctx.cpu.regs.set_ds(x);
     // 00000bd5 mov ax,4C00h
     ctx.cpu.regs.set_ax(0x4c00u16);
     // 00000bd8 int 21h
-    dos::int21();
+    dos::int21(ctx);
     Cont(xbda)
 }
 
@@ -5580,7 +5580,7 @@ pub fn xeca(ctx: &mut Context) -> Cont {
         &mut ctx.cpu.flags,
     ));
     // 00000ecf out dx,al
-    ctx.out(ctx.cpu.regs.get_dx(), ctx.cpu.regs.get_al());
+    dos::out(ctx, ctx.cpu.regs.get_dx(), ctx.cpu.regs.get_al());
     // 00000ed0 inc dx
     ctx.cpu
         .regs
@@ -5596,7 +5596,7 @@ pub fn xed7(ctx: &mut Context) -> Cont {
     // 00000ed7 lodsb
     ctx.lodsb();
     // 00000ed8 out dx,al
-    ctx.out(ctx.cpu.regs.get_dx(), ctx.cpu.regs.get_al());
+    dos::out(ctx, ctx.cpu.regs.get_dx(), ctx.cpu.regs.get_al());
     // 00000ed9 dec cx
     ctx.cpu
         .regs
@@ -6581,7 +6581,7 @@ pub fn x10db(ctx: &mut Context) -> Cont {
     // 000010dc mov al,36h
     ctx.cpu.regs.set_al(0x36u8);
     // 000010de out 43h,al
-    ctx.out(0x43u16, ctx.cpu.regs.get_al());
+    dos::out(ctx, 0x43u16, ctx.cpu.regs.get_al());
     // 000010e0 jmp short 10E2h
     Cont(x10e2)
 }
@@ -6590,7 +6590,7 @@ pub fn x10e2(ctx: &mut Context) -> Cont {
     // 000010e2 mov al,dl
     ctx.cpu.regs.set_al(ctx.cpu.regs.get_dl());
     // 000010e4 out 40h,al
-    ctx.out(0x40u16, ctx.cpu.regs.get_al());
+    dos::out(ctx, 0x40u16, ctx.cpu.regs.get_al());
     // 000010e6 jmp short 10E8h
     Cont(x10e8)
 }
@@ -6599,7 +6599,7 @@ pub fn x10e8(ctx: &mut Context) -> Cont {
     // 000010e8 mov al,dh
     ctx.cpu.regs.set_al(ctx.cpu.regs.get_dh());
     // 000010ea out 40h,al
-    ctx.out(0x40u16, ctx.cpu.regs.get_al());
+    dos::out(ctx, 0x40u16, ctx.cpu.regs.get_al());
     // 000010ec jmp short 10EEh
     Cont(x10ee)
 }
