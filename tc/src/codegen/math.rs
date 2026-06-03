@@ -5,7 +5,7 @@ impl<'a> CodeGen<'a> {
         use iced_x86::Mnemonic::*;
         match instr.mnemonic() {
             // Binary operations.
-            And | Or | Add | Sub | Sbb | Xor | Shl | Shr | Sar | Rol | Rcl | Rcr => {
+            And | Or | Add | Sub | Sbb | Xor | Shl | Shr | Sar | Rol | Ror | Rcl | Rcr => {
                 assert_eq!(instr.op_count(), 2);
                 let func = instr_name(instr);
                 let op0 = self.get_op(instr, 0);

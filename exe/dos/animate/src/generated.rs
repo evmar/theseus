@@ -4899,8 +4899,21 @@ pub fn xbe8(ctx: &mut Context) -> Cont {
         .regs
         .set_cx(add(ctx.cpu.regs.get_cx(), 0x7155u16, &mut ctx.cpu.flags));
     // 00000bf7 ror cx,1
-    // Ror not implemented
-    todo!();
+    ctx.cpu
+        .regs
+        .set_cx(ror(ctx.cpu.regs.get_cx(), 0x1u8, &mut ctx.cpu.flags));
+    // 00000bf9 mov ds:[14CCh],ax
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_ds(), 0x14ccu16),
+        ctx.cpu.regs.get_ax(),
+    );
+    // 00000bfc mov ds:[14CEh],cx
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_ds(), 0x14ceu16),
+        ctx.cpu.regs.get_cx(),
+    );
+    // 00000c00 ret
+    ctx.ret16(0)
 }
 
 pub fn xc01(ctx: &mut Context) -> Cont {
