@@ -43,13 +43,9 @@ impl<'a> CodeGen<'a> {
             }
 
             Lea => {
-                let addr = self.gen_addr(instr);
-                // addr is always computed as 32-bit, but for 16-bit lea we need to truncate.
-                if op_size(instr, 0) == 16 {
-                    self.line(self.set_op(instr, 0, format!("{} as u16", addr)));
-                } else {
-                    self.line(self.set_op(instr, 0, addr));
-                }
+                // Note: in 16-bit mode lea ignores segment registers.
+                let addr = self.gen_addr_offset(instr);
+                self.line(self.set_op(instr, 0, addr));
             }
 
             Movzx => {

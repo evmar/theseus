@@ -60,9 +60,11 @@ pub fn x106(ctx: &mut Context) -> Cont {
     ctx.cpu.regs.set_cx(ctx.cpu.regs.get_si());
     // 00000115 lea si,[bp+si+42h]
     ctx.cpu.regs.set_si(
-        (ctx.cpu.regs.get_bp() as u32)
-            .wrapping_add(ctx.cpu.regs.get_si() as u32)
-            .wrapping_add(0x42 as u32) as u16,
+        ctx.cpu
+            .regs
+            .get_bp()
+            .wrapping_add(ctx.cpu.regs.get_si())
+            .wrapping_add(0x42u16),
     );
     // 00000118 mov di,0FF82h
     ctx.cpu.regs.set_di(0xff82u16);
@@ -79,7 +81,7 @@ pub fn x106(ctx: &mut Context) -> Cont {
     // 00000121 lea si,[di+2]
     ctx.cpu
         .regs
-        .set_si((ctx.cpu.regs.get_di() as u32).wrapping_add(0x2 as u32) as u16);
+        .set_si(ctx.cpu.regs.get_di().wrapping_add(0x2u16));
     // 00000124 cld
     cld(ctx);
     // 00000125 stc

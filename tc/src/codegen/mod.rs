@@ -55,11 +55,11 @@ impl<'a> CodeGen<'a> {
     /// Code generate a memory address reference.
     /// Even for 16-bit code we generate a 32-bit memory address, because the computed
     /// address can go beyond a 16-bit address range.
-    pub fn gen_addr(&self, instr: &iced_x86::Instruction) -> String {
+    pub fn gen_addr_offset(&self, instr: &iced_x86::Instruction) -> String {
         use iced_x86::Register::*;
         let mut expr = Vec::new();
         if self.module.bitness == 32 {
-            // 16-bit segments handled later
+            // 16-bit segments handled in gen_addr(), not here
             match instr.memory_segment() {
                 CS | DS | ES | GS | SS => {}
                 FS => expr.push(format!("ctx.cpu.regs.fs_base")),
@@ -87,8 +87,7 @@ impl<'a> CodeGen<'a> {
             expr.push(format!("{offset:#x}u{}", self.module.bitness));
         }
 
-        let offset = expr
-            .into_iter()
+        expr.into_iter()
             .enumerate()
             .map(|(i, e)| {
                 if i == 0 {
@@ -98,20 +97,20 @@ impl<'a> CodeGen<'a> {
                 }
             })
             .collect::<Vec<_>>()
-            .join("");
+            .join("")
+    }
 
+    pub fn gen_addr(&self, instr: &iced_x86::Instruction) -> String {
+        let addr = self.gen_addr_offset(instr);
         if self.module.bitness == 16 {
             // The above offset expression will be a u16 in real mode.
             // Convert to u32 as we add the segment.
-            match instr.memory_segment() {
-                None => format!("{offset} as u32"),
-                r => format!(
-                    "segofs(ctx.cpu.regs.get_{seg}(), {offset})",
-                    seg = reg_name(r)
-                ),
-            }
+            format!(
+                "segofs(ctx.cpu.regs.get_{seg}(), {addr})",
+                seg = reg_name(instr.memory_segment())
+            )
         } else {
-            offset
+            addr
         }
     }
 }
