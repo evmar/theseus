@@ -1,4 +1,4 @@
-use runtime::{Cont, Context, segofs};
+use runtime::{Cont, Context};
 
 pub fn xff82(ctx: &mut Context) -> Cont {
     do_unpack(ctx);
@@ -8,7 +8,7 @@ pub fn xff82(ctx: &mut Context) -> Cont {
 fn do_unpack(ctx: &mut Context) {
     println!("unpacking at ip=0xff82, final state:");
     ctx.dump();
-    let data = &ctx.memory[segofs(dos::DOSBOX_SEG, 0x100)..];
+    let data = dos::dump_com(ctx);
     std::fs::write("animate.com", data).unwrap();
     println!("wrote animate.com");
 }

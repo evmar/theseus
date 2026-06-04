@@ -13,7 +13,7 @@ fn init_memory(ctx: &mut Context, mappings: &mut runtime::Mappings) {
     mappings.reserve(runtime::Mapping {
         desc: "com".to_string(),
         addr: 0x8230,
-        size: 0xff00,
+        size: 0xfefe,
         section: true,
     });
     let bytes = include_bytes!("../data/00008230.raw").as_slice();

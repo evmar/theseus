@@ -1,6 +1,6 @@
 use std::sync::Mutex;
 
-use runtime::{CPU, Context, EXEData, Mappings, Memory};
+use runtime::{CPU, Context, EXEData, Mappings, Memory, segofs};
 
 /// DOSBox-X loads com files into this segment.
 pub const DOSBOX_SEG: u16 = 0x813;
@@ -128,4 +128,11 @@ pub fn out(_ctx: &mut Context, port: u16, data: u8) {
             log::error!("TODO: out({:#x}, {:#x})", port, data);
         }
     }
+}
+
+pub fn dump_com(ctx: &mut Context) -> &[u8] {
+    let data = &ctx.memory[segofs(DOSBOX_SEG, 0x100)..];
+    let end = data.iter().rposition(|&x| x != 0);
+    let data = &data[..end.unwrap() + 1];
+    data
 }
