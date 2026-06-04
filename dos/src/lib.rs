@@ -49,13 +49,19 @@ pub fn run(exe: &EXEData) {
 }
 
 static STATE: Mutex<State> = Mutex::new(State::new());
+
 struct State {
+    pit_divisor: u16,
+    pit_lobyte: Option<u8>,
     palette: [[u8; 3]; 256],
     palette_index: (u8, u8),
 }
+
 impl State {
     const fn new() -> Self {
         State {
+            pit_divisor: 0,
+            pit_lobyte: None,
             palette: [[0; 3]; 256],
             palette_index: (0, 0),
         }
@@ -96,37 +102,61 @@ pub fn int21(ctx: &mut Context) {
     }
 }
 
-pub fn out(_ctx: &mut Context, port: u16, data: u8) {
+/// Handle an `out` instruction that writes to a Programmable Interval Timer (PIT) port.
+fn out_pit(_ctx: &mut Context, port: u16, data: u8) {
+    // https://wiki.osdev.org/Programmable_Interval_Timer
     match port {
-        // https://wiki.osdev.org/Programmable_Interval_Timer
         0x40..=0x42 => {
-            log::warn!("TODO: out({:#x}, {:#x}): PIT channel", port, data);
-        }
-        0x43 => {
-            log::warn!("TODO: out({:#x}, {:#x}): PIT control", port, data);
-        }
-
-        0x3C0..=0x3DF => {
-            // http://www.osdever.net/FreeVGA/vga/portidx.htm
-            match port {
-                0x3c8 => state().palette_index = (data, 0),
-                0x3c9 => {
-                    let mut state = state();
-                    let (mut index, mut color) = state.palette_index;
-                    state.palette[index as usize][color as usize] = data;
-                    color += 1;
-                    if color == 3 {
-                        color = 0;
-                        index = index.wrapping_add(1);
-                    }
-                    state.palette_index = (index, color);
+            assert_eq!(port, 0x40); // timer interrupt
+            let mut state = STATE.lock().unwrap();
+            match state.pit_lobyte {
+                Some(lo) => {
+                    state.pit_lobyte = None;
+                    state.pit_divisor = (data as u16) << 8 | (lo as u16);
+                    log::info!("PIT divisor set to {:#x}", state.pit_divisor);
                 }
-                _ => log::error!("TODO: out({:#x}, {:#x}): graphics control", port, data),
+                None => state.pit_lobyte = Some(data),
             }
         }
-        _ => {
-            log::error!("TODO: out({:#x}, {:#x})", port, data);
+        0x43 => {
+            let channel = data >> 6;
+            let access_mode = (data >> 4) & 0b11;
+            let operating_mode = (data >> 1) & 0b11;
+            let bcd_mode = data & 0b1;
+            assert_eq!(channel, 0); // timer interrupt
+            assert_eq!(access_mode, 0b11); // lo/hi byte
+            assert_eq!(operating_mode, 0b11); // square wave
+            assert_eq!(bcd_mode, 0); // binary mode
         }
+        _ => unreachable!(),
+    }
+}
+
+/// Handle an `out` instruction that writes to a VGA port.
+fn out_vga(_ctx: &mut Context, port: u16, data: u8) {
+    // http://www.osdever.net/FreeVGA/vga/portidx.htm
+    match port {
+        0x3c8 => state().palette_index = (data, 0),
+        0x3c9 => {
+            let mut state = state();
+            let (mut index, mut color) = state.palette_index;
+            state.palette[index as usize][color as usize] = data;
+            color += 1;
+            if color == 3 {
+                color = 0;
+                index = index.wrapping_add(1);
+            }
+            state.palette_index = (index, color);
+        }
+        _ => log::error!("TODO: out({:#x}, {:#x}): graphics control", port, data),
+    }
+}
+
+pub fn out(ctx: &mut Context, port: u16, data: u8) {
+    match port {
+        0x40..=0x43 => out_pit(ctx, port, data),
+        0x3C0..=0x3DF => out_vga(ctx, port, data),
+        _ => log::error!("TODO: out({:#x}, {:#x})", port, data),
     }
 }
 
