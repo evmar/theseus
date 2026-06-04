@@ -1,3 +1,5 @@
+use std::sync::Mutex;
+
 use runtime::{CPU, Context, EXEData, Mappings, Memory};
 
 /// DOSBox-X loads com files into this segment.
@@ -46,6 +48,24 @@ pub fn run(exe: &EXEData) {
     start(&mut ctx, exe);
 }
 
+static STATE: Mutex<State> = Mutex::new(State::new());
+struct State {
+    palette: [[u8; 3]; 256],
+    palette_index: (u8, u8),
+}
+impl State {
+    const fn new() -> Self {
+        State {
+            palette: [[0; 3]; 256],
+            palette_index: (0, 0),
+        }
+    }
+}
+
+fn state() -> std::sync::MutexGuard<'static, State> {
+    STATE.lock().unwrap()
+}
+
 pub fn int10(ctx: &mut Context) {
     let func = ctx.cpu.regs.get_ah();
     match func {
@@ -78,20 +98,29 @@ pub fn int21(ctx: &mut Context) {
 
 pub fn out(_ctx: &mut Context, port: u16, data: u8) {
     match port {
+        // https://wiki.osdev.org/Programmable_Interval_Timer
         0x40..=0x42 => {
-            // https://wiki.osdev.org/Programmable_Interval_Timer
             log::warn!("TODO: out({:#x}, {:#x}): PIT channel", port, data);
         }
         0x43 => {
-            // https://wiki.osdev.org/Programmable_Interval_Timer
             log::warn!("TODO: out({:#x}, {:#x}): PIT control", port, data);
         }
 
         0x3C0..=0x3DF => {
             // http://www.osdever.net/FreeVGA/vga/portidx.htm
             match port {
-                0x3c8 => log::warn!("TODO: out({:#x}, {:#x}): DAC write address", port, data),
-                0x3c9 => log::warn!("TODO: out({:#x}, {:#x}): DAC write data", port, data),
+                0x3c8 => state().palette_index = (data, 0),
+                0x3c9 => {
+                    let mut state = state();
+                    let (mut index, mut color) = state.palette_index;
+                    state.palette[index as usize][color as usize] = data;
+                    color += 1;
+                    if color == 3 {
+                        color = 0;
+                        index = index.wrapping_add(1);
+                    }
+                    state.palette_index = (index, color);
+                }
                 _ => log::error!("TODO: out({:#x}, {:#x}): graphics control", port, data),
             }
         }
