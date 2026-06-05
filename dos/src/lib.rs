@@ -1,6 +1,6 @@
 use std::sync::Mutex;
 
-use runtime::{CPU, Context, EXEData, Mappings, Memory, segofs};
+use runtime::{CPU, Cont, Context, EXEData, Mappings, Memory, segofs};
 
 /// DOSBox-X loads com files into this segment.
 pub const DOSBOX_SEG: u16 = 0x813;
@@ -39,8 +39,18 @@ pub fn load(exe: &EXEData) -> Context {
 
 pub fn start(ctx: &mut Context, exe: &EXEData) {
     assert!(ctx.cpu.real_mode);
-    ctx.cpu_loop(exe.entry_point, 0);
-    panic!();
+
+    let mut f = exe.entry_point;
+    let mut i = 0;
+    loop {
+        if i % 0x1000 == 0 {
+            if let Some(int) = check_interrupts(ctx) {
+                f = int;
+            }
+        }
+        f = f.0(ctx);
+        i += 1;
+    }
 }
 
 pub fn run(exe: &EXEData) {
@@ -55,7 +65,7 @@ struct State {
     pit_lobyte: Option<u8>,
     palette: [[u8; 3]; 256],
     palette_index: (u8, u8),
-    interrupts: [(u16, u16); 16],
+    interrupt_handlers: [(u16, u16); 16],
 }
 
 impl State {
@@ -65,7 +75,7 @@ impl State {
             pit_lobyte: None,
             palette: [[0; 3]; 256],
             palette_index: (0, 0),
-            interrupts: [(0, 0); 16],
+            interrupt_handlers: [(0, 0); 16],
         }
     }
 }
@@ -91,11 +101,11 @@ pub fn int21(ctx: &mut Context) {
         0x25 => {
             let int = ctx.cpu.regs.get_al();
             let (seg, ofs) = (ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_dx());
-            state().interrupts[int as usize] = (seg, ofs);
+            state().interrupt_handlers[int as usize] = (seg, ofs);
         }
         0x35 => {
             let int = ctx.cpu.regs.get_al();
-            let (seg, ofs) = state().interrupts[int as usize];
+            let (seg, ofs) = state().interrupt_handlers[int as usize];
             ctx.cpu.regs.set_es(seg);
             ctx.cpu.regs.set_bx(ofs);
         }
@@ -166,4 +176,13 @@ pub fn dump_com(ctx: &mut Context) -> &[u8] {
     let end = data.iter().rposition(|&x| x != 0);
     let data = &data[..end.unwrap() + 1];
     data
+}
+
+fn check_interrupts(_ctx: &mut Context) -> Option<Cont> {
+    let state = state();
+    let timer = state.interrupt_handlers[8];
+    if timer.0 != 0 {
+        // TODO: check time
+    }
+    None
 }
