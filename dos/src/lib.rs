@@ -55,6 +55,7 @@ struct State {
     pit_lobyte: Option<u8>,
     palette: [[u8; 3]; 256],
     palette_index: (u8, u8),
+    interrupts: [(u16, u16); 16],
 }
 
 impl State {
@@ -64,6 +65,7 @@ impl State {
             pit_lobyte: None,
             palette: [[0; 3]; 256],
             palette_index: (0, 0),
+            interrupts: [(0, 0); 16],
         }
     }
 }
@@ -89,12 +91,11 @@ pub fn int21(ctx: &mut Context) {
         0x25 => {
             let int = ctx.cpu.regs.get_al();
             let (seg, ofs) = (ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_dx());
-            log::warn!("TODO: set interrupt handler {int:02x} to {seg:04x}:{ofs:04x}");
+            state().interrupts[int as usize] = (seg, ofs);
         }
         0x35 => {
             let int = ctx.cpu.regs.get_al();
-            log::warn!("TODO: get interrupt handler {int:02x}, returning 0");
-            let (seg, ofs) = (0, 0);
+            let (seg, ofs) = state().interrupts[int as usize];
             ctx.cpu.regs.set_es(seg);
             ctx.cpu.regs.set_bx(ofs);
         }
