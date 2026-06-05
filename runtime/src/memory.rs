@@ -44,7 +44,6 @@ impl Memory {
     #[inline(never)]
     pub fn null_ptr(&self) {
         log::error!("null page read/write");
-        panic!();
     }
 
     pub fn read<T: MemRead>(&self, addr: u32) -> T {
