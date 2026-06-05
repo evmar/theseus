@@ -6,19 +6,10 @@ edition = "2024"
 [dependencies]
 bitflags = { workspace = true }
 bitflags-derive = { workspace = true }
+host = { workspace = true }
 log = { workspace = true }
-logger = { workspace = true }
 pe = { workspace = true }
 runtime = { workspace = true }
 widestring = { workspace = true }
 win32-derive = { path = "../derive" }
 zerocopy = { workspace = true }
-
-[target.'cfg(not(target_family = "wasm"))'.dependencies]
-sdl3-sys = { version = "0.6.5", features = ["debug-impls"] }
-
-[target.'cfg(target_family = "wasm")'.dependencies]
-console_error_panic_hook = { workspace = true }
-wasm-bindgen = { workspace = true }
-js-sys = { workspace = true }
-web-sys = { workspace = true, features = ["Performance", "WorkerGlobalScope"] }

@@ -9,8 +9,6 @@ pub use wave::*;
 mod misc;
 pub use misc::*;
 
-use crate::host;
-
 #[derive(Default)]
 pub struct State {
     timer: Option<Timer>,

@@ -5,7 +5,7 @@ use runtime::Context;
 use crate::{
     FromABIParam, POINT, Ptr, RECT,
     gdi32::{self, Brush, COLORREF, DC, HBRUSH, HDC},
-    host, kernel32, stub,
+    kernel32, stub,
     user32::{self, HCURSOR, HICON, HINSTANCE, HMENU, HWND, State, WM, state},
 };
 

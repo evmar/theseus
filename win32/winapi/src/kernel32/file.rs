@@ -1,6 +1,6 @@
 use runtime::Context;
 
-use crate::{Ptr, host};
+use crate::Ptr;
 
 pub type HANDLE = u32;
 

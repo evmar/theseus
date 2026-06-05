@@ -1,10 +1,9 @@
 //! Implementation of host interfaces using SDL.
 
+use crate as host;
 use std::{mem::MaybeUninit, thread::ThreadId};
 
 use sdl3_sys as sdl;
-
-use crate::host;
 
 fn check(res: bool) {
     if !res {

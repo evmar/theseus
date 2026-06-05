@@ -1,6 +1,8 @@
 //! Interface for the host environment, for APIs like "create window" or "play sound".
 //! Implemented using SDL or web technologies.
 
+#![cfg_attr(target_family = "wasm", feature(stdarch_wasm_atomic_wait))]
+
 use std::sync::LazyLock;
 
 #[cfg(not(target_family = "wasm"))]
@@ -13,8 +15,6 @@ mod wasm;
 #[cfg(target_family = "wasm")]
 pub use wasm::*;
 
-use crate::dllexport::win32flags;
-
 static HOST: LazyLock<Host> = LazyLock::new(Host::new);
 
 pub struct AudioSpec {
@@ -22,9 +22,9 @@ pub struct AudioSpec {
     pub channels: u32,
 }
 
-// MouseButton isn't passed through a win32 API, but we reuse the derive so we get a bitfield and serialization from it.
-win32flags! {
-    pub struct MouseButton {
+bitflags::bitflags! {
+    #[derive(Debug, Clone, Copy, Eq, PartialEq)]
+    pub struct MouseButton: u16 {
         const Left = 1 << 0;
         const Middle = 1 << 1;
         const Right = 1 << 2;

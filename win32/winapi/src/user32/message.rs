@@ -5,7 +5,7 @@ use runtime::Context;
 use crate::{
     POINT, Ptr,
     dllexport::win32flags,
-    host, stub, trace,
+    stub, trace,
     user32::{HACCEL, HWND, Window, state},
 };
 

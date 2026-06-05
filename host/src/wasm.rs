@@ -2,7 +2,7 @@ use std::{arch::wasm32, sync::Mutex};
 
 use web_sys::wasm_bindgen::prelude::*;
 
-use crate::{FromABIParam, RECT, host};
+use crate as host;
 
 pub struct Surface {
     id: i32,
@@ -26,16 +26,6 @@ impl Surface {
             .lock()
             .unwrap()
             .set_pixels(self.id, pixels);
-    }
-
-    pub fn copy(
-        &mut self,
-        _window: &mut Window,
-        _dst_rect: &RECT,
-        _src: &Surface,
-        _src_rect: &RECT,
-    ) {
-        todo!()
     }
 }
 
@@ -216,7 +206,7 @@ impl WebHostSendChannel {
         Some(match buf[0] {
             -1 => return None,
             2 | 3 | 4 => {
-                let buttons = host::MouseButton::from_abi(buf[3] as u32);
+                let buttons = host::MouseButton::from_bits(buf[3] as u16).unwrap();
                 let mouse = host::MouseMessage {
                     x: buf[1] as u32,
                     y: buf[2] as u32,

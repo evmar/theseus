@@ -3,7 +3,7 @@ use std::collections::VecDeque;
 use runtime::Context;
 use zerocopy::FromBytes;
 
-use crate::{FromABIParam, dllexport::win32flags, host, kernel32, stub, winmm::state};
+use crate::{FromABIParam, dllexport::win32flags, kernel32, stub, winmm::state};
 
 const MMSYSERR_NOERROR: u32 = 0;
 

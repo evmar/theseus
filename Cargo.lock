@@ -229,6 +229,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "host"
+version = "0.1.0"
+dependencies = [
+ "bitflags",
+ "console_error_panic_hook",
+ "js-sys",
+ "logger",
+ "sdl3-sys",
+ "wasm-bindgen",
+ "web-sys",
+]
+
+[[package]]
 name = "iced-x86"
 version = "1.21.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -641,15 +654,10 @@ version = "0.1.0"
 dependencies = [
  "bitflags",
  "bitflags-derive",
- "console_error_panic_hook",
- "js-sys",
+ "host",
  "log",
- "logger",
  "pe",
  "runtime",
- "sdl3-sys",
- "wasm-bindgen",
- "web-sys",
  "widestring",
  "win32-derive",
  "zerocopy",

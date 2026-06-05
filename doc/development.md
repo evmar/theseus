@@ -10,6 +10,7 @@
 - win32/winapi/: Windows API implementation (e.g. kernel32, user32)
 - win32/derive/: some Rust macros for winapi
 - dos/: (work in progress) DOS support
+- host/: the host environment (SDL or web), used by winapi and DOS
 
 The two halves of Theseus are:
 

@@ -1,7 +1,5 @@
 use runtime::Context;
 
-use crate::host;
-
 #[win32_derive::dllexport]
 pub fn GetTickCount(_ctx: &mut Context) -> u32 {
     host::host().time()

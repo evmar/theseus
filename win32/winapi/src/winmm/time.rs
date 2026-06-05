@@ -1,7 +1,7 @@
 use runtime::Context;
 
 use crate::{
-    host, kernel32, stub,
+    kernel32, stub,
     winmm::{state, winmm_main},
 };
 

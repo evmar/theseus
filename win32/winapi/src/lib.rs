@@ -1,4 +1,3 @@
-#![cfg_attr(target_family = "wasm", feature(stdarch_wasm_atomic_wait))]
 #![allow(non_snake_case)]
 #![allow(non_camel_case_types)]
 #![allow(non_upper_case_globals)]
@@ -11,7 +10,6 @@ pub mod dsound;
 pub mod gdi32;
 mod handle;
 mod heap;
-mod host;
 pub mod kernel32;
 mod locked_state;
 pub mod msvcrt;

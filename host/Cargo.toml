@@ -1,0 +1,17 @@
+[package]
+name = "host"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+bitflags = { workspace = true }
+logger = { workspace = true }
+
+[target.'cfg(not(target_family = "wasm"))'.dependencies]
+sdl3-sys = { version = "0.6.5", features = ["debug-impls"] }
+
+[target.'cfg(target_family = "wasm")'.dependencies]
+console_error_panic_hook = { workspace = true }
+wasm-bindgen = { workspace = true }
+js-sys = { workspace = true }
+web-sys = { workspace = true, features = ["Performance", "WorkerGlobalScope"] }

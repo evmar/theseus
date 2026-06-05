@@ -3,7 +3,7 @@ use std::{collections::HashMap, sync::Mutex};
 use runtime::Context;
 use zerocopy::FromBytes;
 
-use crate::{dllexport::win32flags, heap::Heap, host, kernel32, locked_state::LockedState, stub};
+use crate::{dllexport::win32flags, heap::Heap, kernel32, locked_state::LockedState, stub};
 
 /// When true, write a debug `out.wav` containing the audio data.
 const WRITE_WAV: bool = false;
