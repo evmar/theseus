@@ -81,6 +81,12 @@ impl<'a> CodeGen<'a> {
                     bitness = self.module.bitness
                 ));
             }
+            Iret => {
+                self.line(format!(
+                    "ctx.iret{bitness}()",
+                    bitness = self.module.bitness
+                ));
+            }
             Je | Jne | Jb | Js | Jns | Ja | Jae | Jl | Jg | Jge | Jecxz | Jle | Jbe | Loop => {
                 let next = self.gen_abs_jmp(instr.next_ip());
                 let dst = self.gen_jmp(instr).0;

@@ -11,7 +11,7 @@ fn init_memory(ctx: &mut Context, mappings: &mut runtime::Mappings) {
     mappings.reserve(runtime::Mapping {
         desc: "com".to_string(),
         addr: 0x8230,
-        size: 0xff00,
+        size: 0xfefe,
         section: true,
     });
     let bytes = include_bytes!("../data/00008230.raw").as_slice();
@@ -7319,6 +7319,129 @@ pub fn x1125(ctx: &mut Context) -> Cont {
     ctx.ret16(0)
 }
 
+pub fn x1126(ctx: &mut Context) -> Cont {
+    // 00001126 mov cs:[115Ah],ax
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_cs(), 0x115au16),
+        ctx.cpu.regs.get_ax(),
+    );
+    // 0000112a dec word ptr cs:[115Ch]
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_cs(), 0x115cu16),
+        dec(
+            ctx.memory
+                .read::<u16>(segofs(ctx.cpu.regs.get_cs(), 0x115cu16)),
+            &mut ctx.cpu.flags,
+        ),
+    );
+    // 0000112f test byte ptr cs:[1164h],1
+    and(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_cs(), 0x1164u16)),
+        0x1u8,
+        &mut ctx.cpu.flags,
+    );
+    // 00001135 je short 1143h
+    ctx.je(Cont(x1137), Cont(x1143))
+}
+
+pub fn x1137(ctx: &mut Context) -> Cont {
+    // 00001137 add byte ptr cs:[1163h],3
+    ctx.memory.write::<u8>(
+        segofs(ctx.cpu.regs.get_cs(), 0x1163u16),
+        add(
+            ctx.memory
+                .read::<u8>(segofs(ctx.cpu.regs.get_cs(), 0x1163u16)),
+            0x3u8,
+            &mut ctx.cpu.flags,
+        ),
+    );
+    // 0000113d add word ptr cs:[115Eh],1Fh
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_cs(), 0x115eu16),
+        add(
+            ctx.memory
+                .read::<u16>(segofs(ctx.cpu.regs.get_cs(), 0x115eu16)),
+            0x1fu16,
+            &mut ctx.cpu.flags,
+        ),
+    );
+    Cont(x1143)
+}
+
+pub fn x1143(ctx: &mut Context) -> Cont {
+    // 00001143 test byte ptr cs:[1164h],2
+    and(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_cs(), 0x1164u16)),
+        0x2u8,
+        &mut ctx.cpu.flags,
+    );
+    // 00001149 je short 1150h
+    ctx.je(Cont(x114b), Cont(x1150))
+}
+
+pub fn x114b(ctx: &mut Context) -> Cont {
+    // 0000114b inc word ptr cs:[1160h]
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_cs(), 0x1160u16),
+        inc(
+            ctx.memory
+                .read::<u16>(segofs(ctx.cpu.regs.get_cs(), 0x1160u16)),
+            &mut ctx.cpu.flags,
+        ),
+    );
+    Cont(x1150)
+}
+
+pub fn x1150(ctx: &mut Context) -> Cont {
+    // 00001150 mov al,20h
+    ctx.cpu.regs.set_al(0x20u8);
+    // 00001152 out 20h,al
+    dos::out(ctx, 0x20u16, ctx.cpu.regs.get_al());
+    // 00001154 mov ax,cs:[115Ah]
+    ctx.cpu.regs.set_ax(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_cs(), 0x115au16)),
+    );
+    // 00001158 sti
+    ctx.sti();
+    // 00001159 iret
+    ctx.iret16()
+}
+
+pub fn x1165(ctx: &mut Context) -> Cont {
+    // 00001165 mov cs:[115Ah],ax
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_cs(), 0x115au16),
+        ctx.cpu.regs.get_ax(),
+    );
+    // 00001169 in al,60h
+    // In not implemented
+    todo!();
+}
+
+pub fn x116f(ctx: &mut Context) -> Cont {
+    // 0000116f mov byte ptr cs:[1162h],1
+    ctx.memory
+        .write::<u8>(segofs(ctx.cpu.regs.get_cs(), 0x1162u16), 0x1u8);
+    Cont(x1175)
+}
+
+pub fn x1175(ctx: &mut Context) -> Cont {
+    // 00001175 mov al,20h
+    ctx.cpu.regs.set_al(0x20u8);
+    // 00001177 out 20h,al
+    dos::out(ctx, 0x20u16, ctx.cpu.regs.get_al());
+    // 00001179 mov ax,cs:[115Ah]
+    ctx.cpu.regs.set_ax(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_cs(), 0x115au16)),
+    );
+    // 0000117d iret
+    ctx.iret16()
+}
+
 pub fn x117e(ctx: &mut Context) -> Cont {
     // 0000117e push fs
     ctx.push16(ctx.cpu.regs.get_fs());
@@ -8119,7 +8242,7 @@ pub fn x134a(ctx: &mut Context) -> Cont {
     ctx.ret16(0)
 }
 
-const BLOCKS: [(u32, ContFn); 335] = [
+const BLOCKS: [(u32, ContFn); 343] = [
     (0x8230, x100),
     (0x8274, x144),
     (0x8292, x162),
@@ -8429,6 +8552,14 @@ const BLOCKS: [(u32, ContFn); 335] = [
     (0x924b, x111b),
     (0x9253, x1123),
     (0x9255, x1125),
+    (0x9256, x1126),
+    (0x9267, x1137),
+    (0x9273, x1143),
+    (0x927b, x114b),
+    (0x9280, x1150),
+    (0x9295, x1165),
+    (0x929f, x116f),
+    (0x92a5, x1175),
     (0x92ae, x117e),
     (0x92ba, x118a),
     (0x92c6, x1196),

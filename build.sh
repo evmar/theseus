@@ -52,7 +52,9 @@ elif [[ $1 == "animate-unpack-2" ]]; then
         --entry-point 0xff82 \
         --extern 0x100
 elif [[ $1 == "animate" ]]; then
-    cargo run -p tc -- --exe animate2.com --out exe/dos/animate
+    cargo run -p tc -- --exe animate2.com --out exe/dos/animate \
+        --entry-point 0x1126 \
+        --entry-point 0x1165
 elif [[ $1 == "basicdd" ]]; then
     cargo run -p tc -- --scan-memory --exe ~/win/rs/deploy/archive/BasicDD.exe --out exe/basicdd --entry-point 0x4012d0
     echo cargo run -p basicdd

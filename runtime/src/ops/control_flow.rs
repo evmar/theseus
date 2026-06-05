@@ -1,4 +1,4 @@
-use crate::{Cont, ContFn, Context, Flags, RETURN_FROM_X86_ADDR};
+use crate::{Cont, ContFn, Context, Flags, RETURN_FROM_X86_ADDR, segofs};
 
 impl Context {
     pub fn call32(&mut self, ret: u32, addr: Cont) -> Cont {
@@ -125,6 +125,15 @@ impl Context {
         let ret = self.pop16();
         self.cpu.regs.esp += n as u32;
         self.indirect16(ret)
+    }
+
+    pub fn iret16(&mut self) -> Cont {
+        let ip = self.pop16();
+        let cs = self.pop16();
+        self.cpu.regs.set_cs(cs);
+        let flags = self.pop16();
+        self.cpu.flags = Flags::from_bits(flags as u32).unwrap();
+        self.indirect(segofs(cs, ip))
     }
 
     pub fn loop_(&mut self, from: Cont, x: Cont) -> Cont {

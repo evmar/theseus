@@ -236,7 +236,7 @@ impl<'a> Traverse<'a> {
                         self.queue.push_back(instr.next_ip32());
                     }
                 }
-                Ret | Retf => {}
+                Ret | Retf | Iret => {}
                 Into => {}        // terminates
                 Int1 | Int3 => {} // breakpoint
                 INVALID => {
