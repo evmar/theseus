@@ -8,6 +8,7 @@ members = [
   "exe/dos/animate",
   "exe/dos/animate-unpack",
   "exe/dos/animate-unpack-2",
+  "exe/dos/magixfly",
   "exe/mine",
   "exe/mofo",
   "exe/mofo-unpack",

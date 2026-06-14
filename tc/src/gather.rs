@@ -157,7 +157,7 @@ impl<'a> Traverse<'a> {
             anyhow::bail!("ip out of bounds");
         }
         let data = self.mem.slice_all(addr);
-        if data[..0x10].iter().all(|&b| b == 0) {
+        if data.len() > 0x10 && data.iter().all(|&b| b == 0) {
             anyhow::bail!("block appears zero-filled");
         }
 
@@ -194,8 +194,8 @@ impl<'a> Traverse<'a> {
             if instr.flow_control() == iced_x86::FlowControl::Next
                 || instr.mnemonic() == iced_x86::Mnemonic::Int
             {
-                let next_bytes = &data[(instr.next_ip32() - ip) as usize..][..0x10];
-                if next_bytes.iter().all(|&b| b == 0) {
+                let next_bytes = &data[(instr.next_ip32() - ip) as usize..];
+                if next_bytes.len() > 0x10 && next_bytes[..0x10].iter().all(|&b| b == 0) {
                     anyhow::bail!("suspicious block of 0");
                 }
                 continue;

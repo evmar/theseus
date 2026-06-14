@@ -58,6 +58,10 @@ elif [[ $1 == "animate" ]]; then
 elif [[ $1 == "basicdd" ]]; then
     cargo run -p tc -- --scan-memory --exe ~/win/rs/deploy/archive/BasicDD.exe --out exe/basicdd --entry-point 0x4012d0
     echo cargo run -p basicdd
+elif [[ $1 == "magixfly" ]]; then
+    cargo run -p tc -- \
+        --exe scratch/dos/magixfly/magixfly.com \
+        --out exe/dos/magixfly
 else
     echo "unknown target $1"
 fi
