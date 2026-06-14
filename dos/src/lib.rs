@@ -111,7 +111,7 @@ fn state() -> RefMut<'static, State> {
     STATE.get().borrow_mut()
 }
 
-pub fn int10(ctx: &mut Context) {
+fn int10(ctx: &mut Context) {
     let func = ctx.cpu.regs.get_ah();
     match func {
         0x0 => {
@@ -123,7 +123,7 @@ pub fn int10(ctx: &mut Context) {
     }
 }
 
-pub fn int21(ctx: &mut Context) {
+fn int21(ctx: &mut Context) {
     let func = ctx.cpu.regs.get_ah();
     match func {
         0x25 => {
@@ -138,6 +138,15 @@ pub fn int21(ctx: &mut Context) {
             ctx.cpu.regs.set_bx(ofs);
         }
         _ => log::error!("TODO: dos int 21h ({func:02x})"),
+    }
+}
+
+pub fn int(ctx: &mut Context, interrupt: u8) {
+    match interrupt {
+        0x10 => int10(ctx),
+        0x16 => log::warn!("TODO: dos int 0x16, keyboard?"),
+        0x21 => int21(ctx),
+        _ => log::error!("TODO: dos int {interrupt:x}h"),
     }
 }
 

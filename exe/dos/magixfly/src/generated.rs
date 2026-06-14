@@ -23,7 +23,7 @@ pub fn x100(ctx: &mut Context) -> Cont {
     // 00000100 mov al,13h
     ctx.cpu.regs.set_al(0x13u8);
     // 00000102 int 10h
-    dos::int10(ctx);
+    dos::int(ctx, 0x10);
     // 00000104 mov ax,0A000h
     ctx.cpu.regs.set_ax(0xa000u16);
     // 00000107 mov es,ax
@@ -127,7 +127,7 @@ pub fn x12e(ctx: &mut Context) -> Cont {
     // 0000012f mov ah,1
     ctx.cpu.regs.set_ah(0x1u8);
     // 00000131 int 16h
-    dos::int16(ctx);
+    dos::int(ctx, 0x16);
     // 00000133 je short 0109h
     ctx.je(Cont(x135), Cont(x109))
 }
