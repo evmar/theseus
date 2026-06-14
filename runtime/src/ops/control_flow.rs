@@ -138,6 +138,15 @@ impl Context {
 
     pub fn loop_(&mut self, from: Cont, x: Cont) -> Cont {
         self.cpu.regs.ecx = self.cpu.regs.ecx.wrapping_sub(1);
-        if self.cpu.regs.ecx == 0 { from } else { x }
+        if self.cpu.regs.ecx != 0 { x } else { from }
+    }
+
+    pub fn loopne(&mut self, from: Cont, x: Cont) -> Cont {
+        self.cpu.regs.ecx = self.cpu.regs.ecx.wrapping_sub(1);
+        if self.cpu.regs.ecx != 0 && !self.cpu.flags.contains(Flags::ZF) {
+            x
+        } else {
+            from
+        }
     }
 }

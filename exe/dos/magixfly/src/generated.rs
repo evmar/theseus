@@ -110,8 +110,7 @@ pub fn x119(ctx: &mut Context) -> Cont {
         &mut ctx.cpu.flags,
     );
     // 0000012a loopne 0119h
-    // Loopne not implemented
-    todo!();
+    ctx.loopne(Cont(x12c), Cont(x119))
 }
 
 pub fn x12c(ctx: &mut Context) -> Cont {
