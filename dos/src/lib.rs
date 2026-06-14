@@ -144,7 +144,10 @@ fn int21(ctx: &mut Context) {
 pub fn int(ctx: &mut Context, interrupt: u8) {
     match interrupt {
         0x10 => int10(ctx),
-        0x16 => log::warn!("TODO: dos int 0x16, keyboard?"),
+        0x16 => {
+            // TODO: dos int 0x16, keyboard?
+            ctx.cpu.flags.insert(runtime::Flags::ZF);
+        }
         0x21 => int21(ctx),
         _ => log::error!("TODO: dos int {interrupt:x}h"),
     }
