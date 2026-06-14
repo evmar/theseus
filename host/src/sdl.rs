@@ -1,7 +1,7 @@
 //! Implementation of host interfaces using SDL.
 
 use crate as host;
-use std::{mem::MaybeUninit, thread::ThreadId};
+use std::{ffi::CString, mem::MaybeUninit, thread::ThreadId};
 
 use sdl3_sys as sdl;
 
@@ -129,7 +129,9 @@ impl MainThread {
                 sdl::hints::SDL_HINT_RENDER_VSYNC,
                 c"1".as_ptr(),
             ));
-            sdl::init::SDL_Init(sdl::init::SDL_INIT_VIDEO | sdl::init::SDL_INIT_AUDIO);
+            check(sdl::init::SDL_Init(
+                sdl::init::SDL_INIT_VIDEO | sdl::init::SDL_INIT_AUDIO,
+            ));
         }
         Self {}
     }
@@ -241,7 +243,7 @@ impl MainThread {
     pub fn create_window(&self, title: &str, width: u32, height: u32) -> Window {
         unsafe {
             let window = sdl::video::SDL_CreateWindow(
-                title.as_ptr() as *const _,
+                CString::new(title).unwrap().as_ptr(),
                 width as i32,
                 height as i32,
                 sdl::video::SDL_WindowFlags::HIGH_PIXEL_DENSITY,

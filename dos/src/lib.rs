@@ -6,7 +6,7 @@ use runtime::{CPU, Cont, Context, EXEData, Mappings, Memory, segofs};
 pub const DOSBOX_SEG: u16 = 0x813;
 
 pub fn load(exe: &EXEData) -> Context {
-    logger::init();
+    host::init();
 
     let memory_size = 1 << 20;
     let memory = Memory::leak_new(memory_size as usize);
@@ -89,7 +89,8 @@ pub fn int10(ctx: &mut Context) {
     match func {
         0x0 => {
             let mode = ctx.cpu.regs.get_al();
-            log::warn!("TODO: set video mode {mode:02x}");
+            assert_eq!(mode, 0x13);
+            host::host().create_window("VGA", 320, 200);
         }
         _ => log::error!("TODO: int 10h (video) call {func:02x}"),
     }

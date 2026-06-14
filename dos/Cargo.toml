@@ -5,5 +5,5 @@ edition = "2024"
 
 [dependencies]
 log = { workspace = true }
-logger = { workspace = true }
 runtime = { workspace = true }
+host = { workspace = true }
