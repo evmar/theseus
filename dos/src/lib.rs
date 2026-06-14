@@ -1,5 +1,9 @@
-use std::sync::Mutex;
+use std::{
+    cell::{RefCell, RefMut},
+    sync::LazyLock,
+};
 
+use host::SingleThreader;
 use runtime::{CPU, Cont, Context, EXEData, Mappings, Memory, segofs};
 
 /// DOSBox-X loads com files into this segment.
@@ -58,14 +62,38 @@ pub fn run(exe: &EXEData) {
     start(&mut ctx, exe);
 }
 
-static STATE: Mutex<State> = Mutex::new(State::new());
+static STATE: LazyLock<SingleThreader<RefCell<State>>> =
+    LazyLock::new(|| SingleThreader::new(RefCell::new(State::new())));
+
+struct VGA {
+    window: host::Window,
+    surface: host::Surface,
+    pixels32: Vec<u8>,
+    palette: [[u8; 3]; 256],
+    palette_index: (u8, u8),
+}
+
+impl VGA {
+    fn new() -> Self {
+        let mut window = host::host().create_window("VGA", 320, 200);
+        let surface = window.create_surface(320, 200);
+        let mut pixels32 = vec![];
+        pixels32.resize(320 * 200 * 4, 0);
+        VGA {
+            window,
+            surface,
+            pixels32,
+            palette: [[0; 3]; 256],
+            palette_index: (0, 0),
+        }
+    }
+}
 
 struct State {
     pit_divisor: u16,
     pit_lobyte: Option<u8>,
-    palette: [[u8; 3]; 256],
-    palette_index: (u8, u8),
     interrupt_handlers: [(u16, u16); 16],
+    vga: Option<VGA>,
 }
 
 impl State {
@@ -73,15 +101,14 @@ impl State {
         State {
             pit_divisor: 0,
             pit_lobyte: None,
-            palette: [[0; 3]; 256],
-            palette_index: (0, 0),
             interrupt_handlers: [(0, 0); 16],
+            vga: None,
         }
     }
 }
 
-fn state() -> std::sync::MutexGuard<'static, State> {
-    STATE.lock().unwrap()
+fn state() -> RefMut<'static, State> {
+    STATE.get().borrow_mut()
 }
 
 pub fn int10(ctx: &mut Context) {
@@ -90,7 +117,7 @@ pub fn int10(ctx: &mut Context) {
         0x0 => {
             let mode = ctx.cpu.regs.get_al();
             assert_eq!(mode, 0x13);
-            host::host().create_window("VGA", 320, 200);
+            state().vga = Some(VGA::new());
         }
         _ => log::error!("TODO: int 10h (video) call {func:02x}"),
     }
@@ -120,7 +147,7 @@ fn out_pit(_ctx: &mut Context, port: u16, data: u8) {
     match port {
         0x40..=0x42 => {
             assert_eq!(port, 0x40); // timer interrupt
-            let mut state = STATE.lock().unwrap();
+            let mut state = state();
             match state.pit_lobyte {
                 Some(lo) => {
                     state.pit_lobyte = None;
@@ -146,19 +173,20 @@ fn out_pit(_ctx: &mut Context, port: u16, data: u8) {
 
 /// Handle an `out` instruction that writes to a VGA port.
 fn out_vga(_ctx: &mut Context, port: u16, data: u8) {
+    let mut state = state();
+    let vga = state.vga.as_mut().unwrap();
     // http://www.osdever.net/FreeVGA/vga/portidx.htm
     match port {
-        0x3c8 => state().palette_index = (data, 0),
+        0x3c8 => vga.palette_index = (data, 0),
         0x3c9 => {
-            let mut state = state();
-            let (mut index, mut color) = state.palette_index;
-            state.palette[index as usize][color as usize] = data;
+            let (mut index, mut color) = vga.palette_index;
+            vga.palette[index as usize][color as usize] = data;
             color += 1;
             if color == 3 {
                 color = 0;
                 index = index.wrapping_add(1);
             }
-            state.palette_index = (index, color);
+            vga.palette_index = (index, color);
         }
         _ => log::error!("TODO: out({:#x}, {:#x}): graphics control", port, data),
     }
@@ -180,7 +208,7 @@ pub fn dump_com(ctx: &mut Context) -> &[u8] {
 }
 
 fn check_interrupts(ctx: &mut Context) -> Option<Cont> {
-    let state = state();
+    let mut state = state();
     let timer = state.interrupt_handlers[8];
     if timer.0 != 0 {
         let now = host::host().time();
@@ -200,6 +228,30 @@ fn check_interrupts(ctx: &mut Context) -> Option<Cont> {
             // don't check interrupts while running interrupt handler
             f = f.0(ctx);
         }
+
+        state.update_graphics(ctx);
     }
     None
+}
+
+impl State {
+    fn update_graphics(&mut self, ctx: &mut Context) {
+        let Some(vga) = &mut self.vga else {
+            return;
+        };
+        host::host().poll();
+
+        let pixels_seg = 0xa000;
+        let pixels8 = &ctx.memory[segofs(pixels_seg, 0)..][..(320 * 200)];
+
+        for (p32, &p8) in vga.pixels32.chunks_exact_mut(4).zip(pixels8) {
+            p32[0] = p8;
+            p32[1] = p8;
+            p32[2] = p8;
+            p32[3] = 0xff;
+        }
+
+        vga.surface.set_pixels(&vga.pixels32, 320 * 4);
+        vga.window.render(&mut vga.surface);
+    }
 }
