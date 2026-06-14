@@ -221,12 +221,13 @@ pub fn dump_com(ctx: &mut Context) -> &[u8] {
 
 fn check_interrupts(ctx: &mut Context) -> Option<Cont> {
     let mut state = state();
+
+    let now = host::host().time();
+    // TODO: actually use time value to judge whether to invoke timer
+
     let timer = state.interrupt_handlers[8];
     if timer.0 != 0 {
-        let now = host::host().time();
-
         let (seg, ofs) = timer;
-        // TODO: actually use time value to judge whether to invoke timer
         log::info!("timer @{now} {seg:x}:{ofs:x}");
 
         assert_eq!(ctx.cpu.regs.cs, seg);
@@ -240,30 +241,30 @@ fn check_interrupts(ctx: &mut Context) -> Option<Cont> {
             // don't check interrupts while running interrupt handler
             f = f.0(ctx);
         }
-
-        state.update_graphics(ctx);
     }
+
+    if let Some(vga) = &mut state.vga {
+        vga.update_screen(ctx);
+    }
+
     None
 }
 
-impl State {
-    fn update_graphics(&mut self, ctx: &mut Context) {
-        let Some(vga) = &mut self.vga else {
-            return;
-        };
-        host::host().poll();
+impl VGA {
+    fn update_screen(&mut self, ctx: &mut Context) {
+        host::host().poll(); // pump msg loop
 
         let pixels_seg = 0xa000;
         let pixels8 = &ctx.memory[segofs(pixels_seg, 0)..][..(320 * 200)];
 
-        for (p32, &p8) in vga.pixels32.chunks_exact_mut(4).zip(pixels8) {
+        for (p32, &p8) in self.pixels32.chunks_exact_mut(4).zip(pixels8) {
             p32[0] = p8;
             p32[1] = p8;
             p32[2] = p8;
             p32[3] = 0xff;
         }
 
-        vga.surface.set_pixels(&vga.pixels32, 320 * 4);
-        vga.window.render(&mut vga.surface);
+        self.surface.set_pixels(&self.pixels32, 320 * 4);
+        self.window.render(&mut self.surface);
     }
 }
