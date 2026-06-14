@@ -61,7 +61,7 @@ impl Context {
 
 impl Context {
     pub fn dump_stack32(&self) {
-        let esp = self.cpu.regs.esp - 4;
+        let esp = self.cpu.regs.esp;
         println!("stack:");
         for i in 0..8 {
             let addr = esp + i * 4;
@@ -89,7 +89,7 @@ impl Context {
         let seg = self.cpu.regs.get_ss();
         let sp = self.cpu.regs.get_sp();
         println!("stack:");
-        self.dump_memory16(seg, sp - 2, 8);
+        self.dump_memory16(seg, sp, 8);
     }
 
     pub fn dump(&self) {
