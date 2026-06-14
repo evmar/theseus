@@ -43,7 +43,7 @@ pub fn start(ctx: &mut Context, exe: &EXEData) {
     let mut f = exe.entry_point;
     let mut i = 0;
     loop {
-        if i % 0x1000 == 0 {
+        if i % 0x2000 == 0 {
             if let Some(int) = check_interrupts(ctx) {
                 f = int;
             }
@@ -179,11 +179,27 @@ pub fn dump_com(ctx: &mut Context) -> &[u8] {
     data
 }
 
-fn check_interrupts(_ctx: &mut Context) -> Option<Cont> {
+fn check_interrupts(ctx: &mut Context) -> Option<Cont> {
     let state = state();
     let timer = state.interrupt_handlers[8];
     if timer.0 != 0 {
-        // TODO: check time
+        let now = host::host().time();
+
+        let (seg, ofs) = timer;
+        // TODO: actually use time value to judge whether to invoke timer
+        log::info!("timer @{now} {seg:x}:{ofs:x}");
+
+        assert_eq!(ctx.cpu.regs.cs, seg);
+        let esp = ctx.cpu.regs.esp;
+        ctx.push16(ctx.cpu.flags.bits() as u16);
+        ctx.push16(seg);
+        ctx.push16(ofs);
+
+        let mut f = ctx.indirect16(ofs);
+        while ctx.cpu.regs.esp != esp {
+            // don't check interrupts while running interrupt handler
+            f = f.0(ctx);
+        }
     }
     None
 }
