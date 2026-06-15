@@ -6,7 +6,7 @@ use std::{
 };
 
 use host::SingleThreader;
-use runtime::{CPU, Cont, Context, EXEData, Mappings, Memory, segofs};
+use runtime::{CPU, Context, EXEData, Mappings, Memory, segofs};
 
 use crate::vga::VGA;
 
@@ -52,9 +52,7 @@ pub fn start(ctx: &mut Context, exe: &EXEData) {
     let mut i = 0;
     loop {
         if i % 0x2000 == 0 {
-            if let Some(int) = check_interrupts(ctx) {
-                f = int;
-            }
+            state().check_interrupts(ctx);
         }
         f = f.0(ctx);
         i += 1;
@@ -72,6 +70,7 @@ static STATE: LazyLock<SingleThreader<RefCell<State>>> =
 struct State {
     pit_divisor: u16,
     pit_lobyte: Option<u8>,
+    pit_next_interrupt: Option<u64>,
     interrupt_handlers: [(u16, u16); 16],
     vga: Option<VGA>,
 }
@@ -81,9 +80,25 @@ impl State {
         State {
             pit_divisor: 0,
             pit_lobyte: None,
+            pit_next_interrupt: None,
             interrupt_handlers: [(0, 0); 16],
             vga: None,
         }
+    }
+}
+
+/// Convert a ms tick count into the number of times the PIT ticks in that interval.
+fn pit_ticks(time_ms: u32) -> u64 {
+    const PIT_HZ: u64 = 1_193_182;
+    time_ms as u64 * PIT_HZ / 1000
+}
+
+/// Convert a PIT divisor into the number of times the PIT ticks in that interval.
+fn pit_period_ticks(divisor: u16) -> u64 {
+    match divisor {
+        // The PIT treats a programmed divisor of 0 as 65536.
+        0 => 1 << 16,
+        divisor => divisor as u64,
     }
 }
 
@@ -144,6 +159,8 @@ fn out_pit(_ctx: &mut Context, port: u16, data: u8) {
                 Some(lo) => {
                     state.pit_lobyte = None;
                     state.pit_divisor = (data as u16) << 8 | (lo as u16);
+                    state.pit_next_interrupt =
+                        Some(pit_ticks(host::host().time()) + pit_period_ticks(state.pit_divisor));
                     log::info!("PIT divisor set to {:#x}", state.pit_divisor);
                 }
                 None => state.pit_lobyte = Some(data),
@@ -179,16 +196,33 @@ pub fn dump_com(ctx: &mut Context) -> &[u8] {
     data
 }
 
-fn check_interrupts(ctx: &mut Context) -> Option<Cont> {
-    let mut state = state();
+impl State {
+    fn check_interrupts(&mut self, ctx: &mut Context) {
+        self.check_timer(ctx);
+        if let Some(vga) = &mut self.vga {
+            vga.update_screen(ctx);
+        }
+    }
 
-    let now = host::host().time();
-    // TODO: actually use time value to judge whether to invoke timer
+    fn check_timer(&mut self, ctx: &mut Context) {
+        let Some(mut next) = self.pit_next_interrupt else {
+            return;
+        };
 
-    let timer = state.interrupt_handlers[8];
-    if timer.0 != 0 {
-        let (seg, ofs) = timer;
-        log::info!("timer @{now} {seg:x}:{ofs:x}");
+        let now = host::host().time();
+        let now_ticks = pit_ticks(now);
+        while next <= now_ticks {
+            self.call_timer(ctx);
+            next += pit_period_ticks(self.pit_divisor);
+        }
+        assert!(next > now_ticks);
+        self.pit_next_interrupt = Some(next);
+    }
+
+    fn call_timer(&mut self, ctx: &mut Context) {
+        let (seg, ofs) = self.interrupt_handlers[8];
+        assert!(seg != 0);
+        log::info!("timer {seg:x}:{ofs:x}");
 
         assert_eq!(ctx.cpu.regs.cs, seg);
         let esp = ctx.cpu.regs.esp;
@@ -202,10 +236,4 @@ fn check_interrupts(ctx: &mut Context) -> Option<Cont> {
             f = f.0(ctx);
         }
     }
-
-    if let Some(vga) = &mut state.vga {
-        vga.update_screen(ctx);
-    }
-
-    None
 }
