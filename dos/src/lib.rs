@@ -206,6 +206,7 @@ fn out_vga(_ctx: &mut Context, port: u16, data: u8) {
 
 pub fn out(ctx: &mut Context, port: u16, data: u8) {
     match port {
+        0x20 => { /* end of interrupt, ignore */ }
         0x40..=0x43 => out_pit(ctx, port, data),
         0x3C0..=0x3DF => out_vga(ctx, port, data),
         _ => log::error!("TODO: out({:#x}, {:#x})", port, data),
