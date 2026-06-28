@@ -119,6 +119,7 @@ fn int21(ctx: &mut Context) {
 }
 
 pub fn int(ctx: &mut Context, interrupt: u8) {
+    // https://en.wikibooks.org/wiki/First_steps_towards_system_programming_under_MS-DOS_7/Selected_interrupt_handlers
     match interrupt {
         0x10 => int10(ctx),
         0x16 => {
