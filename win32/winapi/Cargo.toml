@@ -6,9 +6,9 @@ edition = "2024"
 [dependencies]
 bitflags = { workspace = true }
 bitflags-derive = { workspace = true }
+exe = { workspace = true }
 host = { workspace = true }
 log = { workspace = true }
-pe = { workspace = true }
 runtime = { workspace = true }
 widestring = { workspace = true }
 win32-derive = { path = "../derive" }

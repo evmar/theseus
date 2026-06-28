@@ -1,4 +1,4 @@
-# PE parser
+# EXE parser
 
 This crate traverses Windows Portable Executable (PE) files, aka .exe and .dll.
 

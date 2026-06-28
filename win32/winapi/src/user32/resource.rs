@@ -43,13 +43,13 @@ pub fn LoadImageA(
     assert!(hInst == 0);
 
     assert!(is_intresource(name.addr));
-    let name = pe::ResourceName::Id(name.addr);
+    let name = exe::ResourceName::Id(name.addr);
 
     assert!(typ == IMAGE::BITMAP);
-    let typ = pe::ResourceName::Id(match typ {
-        IMAGE::CURSOR => pe::RT::CURSOR,
-        IMAGE::BITMAP => pe::RT::BITMAP,
-        IMAGE::ICON => pe::RT::ICON,
+    let typ = exe::ResourceName::Id(match typ {
+        IMAGE::CURSOR => exe::RT::CURSOR,
+        IMAGE::BITMAP => exe::RT::BITMAP,
+        IMAGE::ICON => exe::RT::ICON,
     } as u32);
 
     // assert!(cx == 0);
@@ -116,8 +116,8 @@ fn find_string(ctx: &Context, uID: u32) -> Option<&[u8]> {
 
     let mut block = kernel32::lock().find_resource(
         ctx,
-        pe::ResourceName::Id(pe::RT::STRING as u32),
-        pe::ResourceName::Id(resource_id),
+        exe::ResourceName::Id(exe::RT::STRING as u32),
+        exe::ResourceName::Id(resource_id),
     )?;
 
     use zerocopy::FromBytes;

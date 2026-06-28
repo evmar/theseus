@@ -6,9 +6,10 @@
 - out/: (mostly) generated exe code for a few test executables, the output of tc
 - runtime/: runtime x86 support for the generated programs
 - web/: web hosting implementation for running wasm output
-- win32/pe/: PE (`.exe` format) parser
+- exe/: `.exe` format parser
 - win32/winapi/: Windows API implementation (e.g. kernel32, user32)
 - win32/derive/: some Rust macros for winapi
+- win32/extract/: generate Rust prototypes from Windows API documentation
 - dos/: (work in progress) DOS support
 - host/: the host environment (SDL or web), used by winapi and DOS
 

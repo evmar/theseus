@@ -192,6 +192,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "exe"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "bitflags",
+ "log",
+ "serde",
+ "widestring",
+ "zerocopy",
+]
+
+[[package]]
 name = "explore"
 version = "0.1.0"
 dependencies = [
@@ -360,18 +372,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9f7c3e4beb33f85d45ae3e3a1792185706c8e16d043238c593331cc7cd313b50"
 
 [[package]]
-name = "pe"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "bitflags",
- "log",
- "serde",
- "widestring",
- "zerocopy",
-]
-
-[[package]]
 name = "pin-project-lite"
 version = "0.2.17"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -493,10 +493,10 @@ dependencies = [
  "argh",
  "csv",
  "dos",
+ "exe",
  "iced-x86",
  "log",
  "logger",
- "pe",
  "runtime",
  "winapi 0.1.0",
  "zerocopy",
@@ -663,9 +663,9 @@ version = "0.1.0"
 dependencies = [
  "bitflags",
  "bitflags-derive",
+ "exe",
  "host",
  "log",
- "pe",
  "runtime",
  "widestring",
  "win32-derive",

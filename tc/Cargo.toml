@@ -8,10 +8,10 @@ anyhow = "1.0.102"
 argh = { workspace = true }
 csv = "1.4.0"
 dos = { workspace = true }
+exe = { workspace = true }
 iced-x86 = { workspace = true }
 log = { workspace = true }
 logger = { workspace = true }
-pe = { workspace = true }
 runtime = { workspace = true }
 winapi = { workspace = true }
 zerocopy = { workspace = true }

@@ -3,7 +3,7 @@
 use crate::{Import, Module, memory::Memory};
 
 pub fn load_pe(mem: &mut Memory, buf: Vec<u8>) -> Module {
-    let f = pe::File::parse(&buf).unwrap();
+    let f = exe::File::parse(&buf).unwrap();
 
     let image_base = f.opt_header.ImageBase;
     mem.reserve("exe header".into(), image_base, 0x1000);
@@ -15,13 +15,13 @@ pub fn load_pe(mem: &mut Memory, buf: Vec<u8>) -> Module {
         mem.reserve(sec.name().unwrap().into(), addr, size);
 
         let flags = sec.characteristics().unwrap();
-        let load_data =
-            flags.contains(pe::IMAGE_SCN::CODE) || flags.contains(pe::IMAGE_SCN::INITIALIZED_DATA);
+        let load_data = flags.contains(exe::IMAGE_SCN::CODE)
+            || flags.contains(exe::IMAGE_SCN::INITIALIZED_DATA);
         if load_data {
             let data = &buf[sec.PointerToRawData as usize..][..sec.SizeOfRawData as usize];
             mem.put(addr, data);
         }
-        if flags.contains(pe::IMAGE_SCN::CODE) || flags.contains(pe::IMAGE_SCN::MEM_EXECUTE) {
+        if flags.contains(exe::IMAGE_SCN::CODE) || flags.contains(exe::IMAGE_SCN::MEM_EXECUTE) {
             match &mut code_range {
                 None => code_range = Some(addr..addr + sec.SizeOfRawData),
                 Some(range) => {
@@ -33,7 +33,7 @@ pub fn load_pe(mem: &mut Memory, buf: Vec<u8>) -> Module {
     }
 
     let resources = f
-        .get_data_directory(pe::IMAGE_DIRECTORY_ENTRY::RESOURCE)
+        .get_data_directory(exe::IMAGE_DIRECTORY_ENTRY::RESOURCE)
         .map(|dir| {
             let addr = image_base + dir.VirtualAddress;
             addr..(addr + dir.Size)
@@ -62,22 +62,22 @@ fn is_data(dll: &str, func: &str) -> bool {
 }
 
 /// Read the file's imported symbols.
-fn read_imports(pe_file: &pe::File, mem: &Memory) -> Vec<Import> {
+fn read_imports(pe_file: &exe::File, mem: &Memory) -> Vec<Import> {
     let mut imports = vec![];
-    let Some(dir) = pe_file.get_data_directory(pe::IMAGE_DIRECTORY_ENTRY::IMPORT) else {
+    let Some(dir) = pe_file.get_data_directory(exe::IMAGE_DIRECTORY_ENTRY::IMPORT) else {
         return imports;
     };
     let image_base = pe_file.opt_header.ImageBase;
     let image = mem.slice_all(image_base);
-    for imp in pe::read_imports(dir.as_slice(image).unwrap()) {
+    for imp in exe::read_imports(dir.as_slice(image).unwrap()) {
         let name = std::str::from_utf8(imp.image_name(image))
             .unwrap()
             .to_lowercase();
         let name = name.trim_end_matches(".dll");
         for (addr, entry) in imp.iat_iter(image) {
             let func = match entry.as_import_symbol(image) {
-                pe::ImportSymbol::Name(name) => std::str::from_utf8(name).unwrap().to_string(),
-                pe::ImportSymbol::Ordinal(n) => format!("ordinal{n}"),
+                exe::ImportSymbol::Name(name) => std::str::from_utf8(name).unwrap().to_string(),
+                exe::ImportSymbol::Ordinal(n) => format!("ordinal{n}"),
             };
             let data = is_data(name, &func);
             imports.push(Import {

@@ -2,6 +2,7 @@
 resolver = "2"
 members = [
   "dos",
+  "exe",
   "explore",
   "host",
   "logger",
@@ -31,12 +32,12 @@ bitflags = "2.11.0"
 bitflags-derive = "0.0.4"
 console_error_panic_hook = "0.1.7"
 dos = { path = "dos" }
+exe = { path = "exe" }
 host = { path = "host" }
 iced-x86 = "1.21.0"
 js-sys = "0.3.98"
 log = "0.4.29"
 logger = { path = "logger" }
-pe = { path = "win32/pe" }
 runtime = { path = "runtime" }
 tc = { path = "tc" }
 wasm-bindgen = "0.2.121"
