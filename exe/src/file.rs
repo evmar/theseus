@@ -245,11 +245,12 @@ impl File {
         use crate::parse;
         let dos_header =
             parse::dos_header(buf).map_err(|err| anyhow!("reading DOS header: {}", err))?;
-        let pe_offset = dos_header.e_lfanew;
-        if pe_offset > buf.len() as u32 {
+
+        let pe_offset = dos_header.e_lfanew as usize;
+        if pe_offset > buf.len() {
             anyhow::bail!("invalid PE offset in DOS header, might be a DOS executable?");
         }
-        let (header, buf) = parse::pe_header(buf, pe_offset)
+        let (header, buf) = parse::pe_header(&buf[pe_offset..])
             .map_err(|err| anyhow!("reading PE header: {}", err))?;
         let (data_directory, buf) = parse::data_directory(&header, buf)
             .map_err(|err| anyhow!("reading data directory: {}", err))?;

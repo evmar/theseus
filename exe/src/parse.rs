@@ -7,7 +7,8 @@ use anyhow::bail;
 use zerocopy::FromBytes;
 
 use crate::{
-    IMAGE_DATA_DIRECTORY, IMAGE_DOS_HEADER, IMAGE_NT_HEADERS32, IMAGE_SECTION_HEADER, iter_pod_n,
+    IMAGE_DATA_DIRECTORY, IMAGE_DOS_HEADER, IMAGE_NT_HEADERS32, IMAGE_SECTION_HEADER,
+    iter::iter_pod_n,
 };
 
 pub fn dos_header(buf: &[u8]) -> anyhow::Result<IMAGE_DOS_HEADER> {
@@ -21,8 +22,8 @@ pub fn dos_header(buf: &[u8]) -> anyhow::Result<IMAGE_DOS_HEADER> {
     Ok(header)
 }
 
-pub fn pe_header(buf: &[u8], ofs: u32) -> anyhow::Result<(IMAGE_NT_HEADERS32, &[u8])> {
-    let (header, buf) = <IMAGE_NT_HEADERS32>::read_from_prefix(&buf[ofs as usize..]).unwrap();
+pub fn pe_header(buf: &[u8]) -> anyhow::Result<(IMAGE_NT_HEADERS32, &[u8])> {
+    let (header, buf) = <IMAGE_NT_HEADERS32>::read_from_prefix(buf).unwrap();
     if header.Signature != *b"PE\0\0" {
         bail!(
             "invalid PE signature; wanted 'PE\\0\\0', got {:x?}",

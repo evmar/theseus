@@ -1,7 +1,7 @@
 #![allow(non_snake_case)]
 #![allow(non_camel_case_types)]
 
-use crate::{c_str, iter_pod};
+use crate::{c_str, iter::iter_pod};
 
 // http://sandsprite.com/CodeStuff/Understanding_imports.html
 //

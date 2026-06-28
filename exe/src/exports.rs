@@ -3,7 +3,7 @@
 
 use zerocopy::FromBytes;
 
-use crate::{c_str, iter_pod_n};
+use crate::{c_str, iter::iter_pod_n};
 
 #[derive(Debug, zerocopy::FromBytes)]
 #[repr(C)]

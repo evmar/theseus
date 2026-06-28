@@ -15,7 +15,7 @@ use std::ops::Range;
 use widestring::U16Str;
 use zerocopy::FromBytes;
 
-use crate::iter_pod_n;
+use crate::iter::iter_pod_n;
 
 #[repr(C)]
 #[derive(Debug, zerocopy::FromBytes)]
