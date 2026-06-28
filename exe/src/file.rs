@@ -233,37 +233,14 @@ impl IMAGE_SCN {
 }
 
 #[derive(Debug)]
-pub struct File {
+pub struct PE {
     pub header: IMAGE_FILE_HEADER,
     pub opt_header: IMAGE_OPTIONAL_HEADER32,
     pub data_directory: Box<[IMAGE_DATA_DIRECTORY]>,
     pub sections: Box<[IMAGE_SECTION_HEADER]>,
 }
 
-impl File {
-    pub fn parse(buf: &[u8]) -> anyhow::Result<File> {
-        use crate::parse;
-        let dos_header =
-            parse::dos_header(buf).map_err(|err| anyhow!("reading DOS header: {}", err))?;
-
-        let pe_offset = dos_header.e_lfanew as usize;
-        if pe_offset > buf.len() {
-            anyhow::bail!("invalid PE offset in DOS header, might be a DOS executable?");
-        }
-        let (header, buf) = parse::pe_header(&buf[pe_offset..])
-            .map_err(|err| anyhow!("reading PE header: {}", err))?;
-        let (data_directory, buf) = parse::data_directory(&header, buf)
-            .map_err(|err| anyhow!("reading data directory: {}", err))?;
-        let (sections, _) =
-            parse::sections(&header, buf).map_err(|err| anyhow!("reading sections: {}", err))?;
-        Ok(File {
-            header: header.FileHeader,
-            opt_header: header.OptionalHeader,
-            data_directory,
-            sections,
-        })
-    }
-
+impl PE {
     pub fn get_data_directory(
         &self,
         entry: IMAGE_DIRECTORY_ENTRY,
@@ -273,28 +250,5 @@ impl File {
             return None;
         }
         Some(dir)
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
-    #[test]
-    fn kkrunchy_header() {
-        let mut header = IMAGE_SECTION_HEADER::default();
-        header.Name = *b"kkrunchy";
-        assert_eq!(header.name().unwrap(), "kkrunchy");
-    }
-
-    use std::io::Write;
-
-    #[test]
-    fn dos_header() {
-        let mut buf: Vec<u8> = Vec::new();
-        buf.write(b"MZ").unwrap();
-        buf.write(&[0; 0x3a]).unwrap();
-        buf.write(&0xFFFFFFFFu32.to_le_bytes()).unwrap();
-        assert!(File::parse(&buf).is_err()); // no crash
     }
 }

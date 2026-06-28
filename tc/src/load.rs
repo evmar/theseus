@@ -2,8 +2,14 @@
 
 use crate::{Import, Module, memory::Memory};
 
-pub fn load_pe(mem: &mut Memory, buf: Vec<u8>) -> Module {
-    let f = exe::File::parse(&buf).unwrap();
+pub fn load_exe(mem: &mut Memory, buf: Vec<u8>) -> Module {
+    match exe::parse(&buf).unwrap() {
+        exe::Parse::PE(f) => load_pe(mem, f, &buf),
+    }
+}
+
+fn load_pe(mem: &mut Memory, f: exe::PE, buf: &[u8]) -> Module {
+    mem.mappings.alloc("null page".into(), 0x1000);
 
     let image_base = f.opt_header.ImageBase;
     mem.reserve("exe header".into(), image_base, 0x1000);
@@ -62,7 +68,7 @@ fn is_data(dll: &str, func: &str) -> bool {
 }
 
 /// Read the file's imported symbols.
-fn read_imports(pe_file: &exe::File, mem: &Memory) -> Vec<Import> {
+fn read_imports(pe_file: &exe::PE, mem: &Memory) -> Vec<Import> {
     let mut imports = vec![];
     let Some(dir) = pe_file.get_data_directory(exe::IMAGE_DIRECTORY_ENTRY::IMPORT) else {
         return imports;

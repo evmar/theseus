@@ -4,7 +4,7 @@ use crate::memory::Memory;
 
 mod codegen;
 mod load;
-pub use load::load_pe;
+pub use load::load_exe;
 pub mod com;
 mod gather;
 mod memory;
