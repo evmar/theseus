@@ -1,14 +1,19 @@
-//! PE loading.
+//! EXE loading.
 
 use crate::{Import, Module, memory::Memory};
 
 pub fn load_exe(mem: &mut Memory, buf: Vec<u8>) -> Module {
     match exe::parse(&buf).unwrap() {
-        exe::Parse::PE(f) => load_pe(mem, f, &buf),
+        exe::Parse::PE(pe) => load_pe(mem, &buf, pe),
+        exe::Parse::DOS(dos) => load_dos(mem, &buf, dos),
     }
 }
 
-fn load_pe(mem: &mut Memory, f: exe::PE, buf: &[u8]) -> Module {
+fn load_dos(_mem: &mut Memory, _buf: &[u8], dos: exe::DOS) -> Module {
+    todo!("DOS exe {:#x?}", dos.header)
+}
+
+fn load_pe(mem: &mut Memory, buf: &[u8], f: exe::PE) -> Module {
     mem.mappings.alloc("null page".into(), 0x1000);
 
     let image_base = f.opt_header.ImageBase;
@@ -46,7 +51,6 @@ fn load_pe(mem: &mut Memory, f: exe::PE, buf: &[u8]) -> Module {
         });
 
     let imports = read_imports(&f, mem);
-    log::info!("imp {:#x?}", imports);
 
     Module {
         bitness: 32,

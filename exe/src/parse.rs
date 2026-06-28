@@ -13,9 +13,9 @@ use crate::{
     iter::iter_pod_n,
 };
 
-pub fn dos_header(buf: &[u8]) -> anyhow::Result<IMAGE_DOS_HEADER> {
+fn dos_header(buf: &[u8]) -> anyhow::Result<IMAGE_DOS_HEADER> {
     let header = <IMAGE_DOS_HEADER>::read_from_prefix(buf).unwrap().0;
-    if header.e_magic.as_slice() != b"MZ" {
+    if header.e_magic != *b"MZ" {
         bail!(
             "invalid DOS signature; wanted 'MZ', got {:?}",
             header.e_magic
@@ -24,7 +24,11 @@ pub fn dos_header(buf: &[u8]) -> anyhow::Result<IMAGE_DOS_HEADER> {
     Ok(header)
 }
 
-pub fn pe_header(buf: &[u8]) -> anyhow::Result<(IMAGE_NT_HEADERS32, &[u8])> {
+fn has_pe_signature(buf: &[u8]) -> bool {
+    buf[..4] == *b"PE\0\0"
+}
+
+fn pe_header(buf: &[u8]) -> anyhow::Result<(IMAGE_NT_HEADERS32, &[u8])> {
     let (header, buf) = <IMAGE_NT_HEADERS32>::read_from_prefix(buf).unwrap();
     if header.Signature != *b"PE\0\0" {
         bail!(
@@ -42,7 +46,7 @@ pub fn pe_header(buf: &[u8]) -> anyhow::Result<(IMAGE_NT_HEADERS32, &[u8])> {
     Ok((header, buf))
 }
 
-pub fn data_directory<'a>(
+fn pe_data_directory<'a>(
     header: &IMAGE_NT_HEADERS32,
     buf: &'a [u8],
 ) -> anyhow::Result<(Box<[IMAGE_DATA_DIRECTORY]>, &'a [u8])> {
@@ -54,7 +58,7 @@ pub fn data_directory<'a>(
     Ok((data_directory, buf))
 }
 
-pub fn sections<'a>(
+fn pe_sections<'a>(
     header: &IMAGE_NT_HEADERS32,
     buf: &'a [u8],
 ) -> anyhow::Result<(Box<[IMAGE_SECTION_HEADER]>, &'a [u8])> {
@@ -66,25 +70,42 @@ pub fn sections<'a>(
     Ok((sections, buf))
 }
 
-pub fn parse(buf: &[u8]) -> anyhow::Result<PE> {
-    let dos_header = dos_header(buf).map_err(|err| anyhow!("reading DOS header: {}", err))?;
-
-    let pe_offset = dos_header.e_lfanew as usize;
-    if pe_offset > buf.len() {
-        anyhow::bail!("invalid PE offset in DOS header, might be a DOS executable?");
-    }
-    let (header, buf) =
-        pe_header(&buf[pe_offset..]).map_err(|err| anyhow!("reading PE header: {}", err))?;
-    let (data_directory, buf) =
-        data_directory(&header, buf).map_err(|err| anyhow!("reading data directory: {}", err))?;
+fn parse_pe(buf: &[u8]) -> anyhow::Result<PE> {
+    let (header, buf) = pe_header(buf).map_err(|err| anyhow!("reading PE header: {}", err))?;
+    let (data_directory, buf) = pe_data_directory(&header, buf)
+        .map_err(|err| anyhow!("reading data directory: {}", err))?;
     let (sections, _) =
-        sections(&header, buf).map_err(|err| anyhow!("reading sections: {}", err))?;
+        pe_sections(&header, buf).map_err(|err| anyhow!("reading sections: {}", err))?;
     Ok(PE {
         header: header.FileHeader,
         opt_header: header.OptionalHeader,
         data_directory,
         sections,
     })
+}
+
+pub struct DOS {
+    pub header: IMAGE_DOS_HEADER,
+    // TODO: relocations
+    // TODO: contents
+}
+
+pub enum Parse {
+    PE(PE),
+    DOS(DOS),
+}
+
+pub fn parse(buf: &[u8]) -> anyhow::Result<Parse> {
+    let dos_header = dos_header(buf).map_err(|err| anyhow!("reading DOS header: {}", err))?;
+
+    let pe_offset = dos_header.e_lfanew as usize;
+    if pe_offset < buf.len() && has_pe_signature(&buf[pe_offset..]) {
+        let pe = parse_pe(&buf[pe_offset..])?;
+        Ok(Parse::PE(pe))
+    } else {
+        let dos = DOS { header: dos_header };
+        Ok(Parse::DOS(dos))
+    }
 }
 
 #[cfg(test)]

@@ -9,6 +9,7 @@ mod resources;
 pub use exports::*;
 pub use file::{IMAGE_DIRECTORY_ENTRY, IMAGE_SCN, PE};
 pub use imports::*;
+pub use parse::{DOS, Parse, parse};
 pub use relocations::*;
 pub use resources::*;
 
@@ -17,12 +18,4 @@ pub use resources::*;
 pub(crate) fn c_str(buf: &[u8]) -> &[u8] {
     let len = buf.iter().position(|b| *b == 0).unwrap_or(buf.len());
     &buf[..len]
-}
-
-pub enum Parse {
-    PE(PE),
-}
-pub fn parse(buf: &[u8]) -> anyhow::Result<Parse> {
-    let pe = parse::parse(buf)?;
-    Ok(Parse::PE(pe))
 }
