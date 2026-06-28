@@ -6,7 +6,7 @@ use crate::{Ptr, RECT, stub};
 #[win32_derive::dllexport]
 pub fn GetSystemMetrics(_ctx: &mut Context, nIndex: u32 /* SYSTEM_METRICS_INDEX */) -> i32 {
     // These were dumped from a win2k VM running at 640x480.
-    // See exe/rust/bin/metrics.rs.
+    // See retrowin32's exe/cpp/metrics.cc.
     const METRICS: [i32; 100] = [
         640, 480, 16, 16, 19, 1, 1, 3, 3, 16, 16, 32, 32, 32, 32, 19, 640, 433, 0, 1, 16, 16, 0, 0,
         0, 0, 0, 0, 112, 27, 18, 18, 4, 4, 112, 27, 4, 4, 75, 75, 0, 0, 0, 5, 0, 2, 2, 160, 24, 16,

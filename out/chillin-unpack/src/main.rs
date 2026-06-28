@@ -127,5 +127,5 @@ pub fn do_unpack(ctx: &mut runtime::Context) {
         ..Default::default()
     });
 
-    tc.generate("exe/chillin").unwrap();
+    tc.generate("out/chillin").unwrap();
 }
