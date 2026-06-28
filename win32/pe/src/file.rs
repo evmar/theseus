@@ -9,6 +9,30 @@ use bitflags::bitflags;
 
 #[derive(Debug, zerocopy::FromBytes)]
 #[repr(C)]
+pub struct IMAGE_DOS_HEADER {
+    pub e_magic: [u8; 2],
+    pub e_cblp: u16,
+    pub e_cp: u16,
+    pub e_crlc: u16,
+    pub e_cparhdr: u16,
+    pub e_minalloc: u16,
+    pub e_maxalloc: u16,
+    pub e_ss: u16,
+    pub e_sp: u16,
+    pub e_csum: u16,
+    pub e_ip: u16,
+    pub e_cs: u16,
+    pub e_lfarlc: u16,
+    pub e_ovno: u16,
+    pub e_res: [u16; 4],
+    pub e_oemid: u16,
+    pub e_oeminfo: u16,
+    pub e_res2: [u16; 10],
+    pub e_lfanew: u32,
+}
+
+#[derive(Debug, zerocopy::FromBytes)]
+#[repr(C)]
 pub struct IMAGE_NT_HEADERS32 {
     pub Signature: [u8; 4],
     pub FileHeader: IMAGE_FILE_HEADER,
@@ -219,14 +243,18 @@ pub struct File {
 impl File {
     pub fn parse(buf: &[u8]) -> anyhow::Result<File> {
         use crate::parse;
-        let mut ofs =
+        let dos_header =
             parse::dos_header(buf).map_err(|err| anyhow!("reading DOS header: {}", err))?;
-        let header =
-            parse::pe_header(buf, &mut ofs).map_err(|err| anyhow!("reading PE header: {}", err))?;
-        let data_directory = parse::data_directory(&header, buf, &mut ofs)
+        let pe_offset = dos_header.e_lfanew;
+        if pe_offset > buf.len() as u32 {
+            anyhow::bail!("invalid PE offset in DOS header, might be a DOS executable?");
+        }
+        let (header, buf) = parse::pe_header(buf, pe_offset)
+            .map_err(|err| anyhow!("reading PE header: {}", err))?;
+        let (data_directory, buf) = parse::data_directory(&header, buf)
             .map_err(|err| anyhow!("reading data directory: {}", err))?;
-        let sections = parse::sections(&header, buf, &mut ofs)
-            .map_err(|err| anyhow!("reading sections: {}", err))?;
+        let (sections, _) =
+            parse::sections(&header, buf).map_err(|err| anyhow!("reading sections: {}", err))?;
         Ok(File {
             header: header.FileHeader,
             opt_header: header.OptionalHeader,

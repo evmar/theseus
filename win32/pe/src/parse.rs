@@ -6,24 +6,23 @@
 use anyhow::bail;
 use zerocopy::FromBytes;
 
-use crate::{IMAGE_DATA_DIRECTORY, IMAGE_NT_HEADERS32, IMAGE_SECTION_HEADER, iter_pod_n};
+use crate::{
+    IMAGE_DATA_DIRECTORY, IMAGE_DOS_HEADER, IMAGE_NT_HEADERS32, IMAGE_SECTION_HEADER, iter_pod_n,
+};
 
-pub fn dos_header(buf: &[u8]) -> anyhow::Result<u32> {
-    let sig = &buf[0..2];
-    if sig != b"MZ" {
-        bail!("invalid DOS signature; wanted 'MZ', got {:?}", sig);
+pub fn dos_header(buf: &[u8]) -> anyhow::Result<IMAGE_DOS_HEADER> {
+    let header = <IMAGE_DOS_HEADER>::read_from_prefix(buf).unwrap().0;
+    if header.e_magic.as_slice() != b"MZ" {
+        bail!(
+            "invalid DOS signature; wanted 'MZ', got {:?}",
+            header.e_magic
+        );
     }
-    let pe_offset = <u32>::read_from_bytes(&buf[0x3c..][..4]).unwrap();
-    if pe_offset > buf.len() as u32 {
-        bail!("invalid PE offset in DOS header, might be a DOS executable?");
-    }
-    Ok(pe_offset)
+    Ok(header)
 }
 
-pub fn pe_header(buf: &[u8], ofs: &mut u32) -> anyhow::Result<IMAGE_NT_HEADERS32> {
-    let header = <IMAGE_NT_HEADERS32>::read_from_prefix(&buf[*ofs as usize..])
-        .unwrap()
-        .0;
+pub fn pe_header(buf: &[u8], ofs: u32) -> anyhow::Result<(IMAGE_NT_HEADERS32, &[u8])> {
+    let (header, buf) = <IMAGE_NT_HEADERS32>::read_from_prefix(&buf[ofs as usize..]).unwrap();
     if header.Signature != *b"PE\0\0" {
         bail!(
             "invalid PE signature; wanted 'PE\\0\\0', got {:x?}",
@@ -37,33 +36,29 @@ pub fn pe_header(buf: &[u8], ofs: &mut u32) -> anyhow::Result<IMAGE_NT_HEADERS32
             header.FileHeader.Machine
         );
     }
-    *ofs += std::mem::size_of::<IMAGE_NT_HEADERS32>() as u32;
-
-    Ok(header)
+    Ok((header, buf))
 }
 
-pub fn data_directory(
+pub fn data_directory<'a>(
     header: &IMAGE_NT_HEADERS32,
-    buf: &[u8],
-    ofs: &mut u32,
-) -> anyhow::Result<Box<[IMAGE_DATA_DIRECTORY]>> {
+    buf: &'a [u8],
+) -> anyhow::Result<(Box<[IMAGE_DATA_DIRECTORY]>, &'a [u8])> {
     let data_directory =
-        iter_pod_n::<IMAGE_DATA_DIRECTORY>(buf, *ofs, header.OptionalHeader.NumberOfRvaAndSizes)
+        iter_pod_n::<IMAGE_DATA_DIRECTORY>(buf, 0, header.OptionalHeader.NumberOfRvaAndSizes)
             .collect();
-    *ofs += std::mem::size_of::<IMAGE_DATA_DIRECTORY>() as u32
-        * header.OptionalHeader.NumberOfRvaAndSizes;
-    Ok(data_directory)
+    let buf = &buf[(std::mem::size_of::<IMAGE_DATA_DIRECTORY>()
+        * header.OptionalHeader.NumberOfRvaAndSizes as usize)..];
+    Ok((data_directory, buf))
 }
 
-pub fn sections(
+pub fn sections<'a>(
     header: &IMAGE_NT_HEADERS32,
-    buf: &[u8],
-    ofs: &mut u32,
-) -> anyhow::Result<Box<[IMAGE_SECTION_HEADER]>> {
+    buf: &'a [u8],
+) -> anyhow::Result<(Box<[IMAGE_SECTION_HEADER]>, &'a [u8])> {
     let sections =
-        iter_pod_n::<IMAGE_SECTION_HEADER>(buf, *ofs, header.FileHeader.NumberOfSections as u32)
+        iter_pod_n::<IMAGE_SECTION_HEADER>(buf, 0, header.FileHeader.NumberOfSections as u32)
             .collect();
-    *ofs += std::mem::size_of::<IMAGE_SECTION_HEADER>() as u32
-        * header.FileHeader.NumberOfSections as u32;
-    Ok(sections)
+    let buf = &buf[(std::mem::size_of::<IMAGE_SECTION_HEADER>()
+        * header.FileHeader.NumberOfSections as usize)..];
+    Ok((sections, buf))
 }
