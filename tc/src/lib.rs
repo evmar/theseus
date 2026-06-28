@@ -107,15 +107,17 @@ impl State {
 
     /// For any dll used by the module, write its vtables to the executable memory.
     fn add_vtables(&mut self) -> u32 {
-        let vtables_addr = self.mem.mappings.alloc("vtables".into(), 0x1000);
-        let mut addr = vtables_addr;
-        assert!(addr != 0);
+        let mut addr = 0; // only set up if vtables are needd
         for (dll, vtables) in [
             ("ddraw", winapi::ddraw::VTABLES.as_slice()),
             ("dsound", winapi::dsound::VTABLES.as_slice()),
         ] {
             if !self.module.imports.iter().any(|imp| imp.dll == dll) {
                 continue;
+            }
+            if addr == 0 {
+                addr = self.mem.mappings.alloc("vtables".into(), 0x1000);
+                assert!(addr != 0);
             }
             for (interface, entries) in vtables {
                 self.module

@@ -86,8 +86,14 @@ fn parse_pe(buf: &[u8]) -> anyhow::Result<PE> {
 
 pub struct DOS {
     pub header: IMAGE_DOS_HEADER,
-    // TODO: relocations
-    // TODO: contents
+    // pub reloc: Box<[u8]>,
+}
+
+impl DOS {
+    pub fn header_size(&self) -> usize {
+        let paragraph = 16;
+        self.header.e_cparhdr as usize * paragraph
+    }
 }
 
 pub enum Parse {
@@ -103,6 +109,9 @@ pub fn parse(buf: &[u8]) -> anyhow::Result<Parse> {
         let pe = parse_pe(&buf[pe_offset..])?;
         Ok(Parse::PE(pe))
     } else {
+        if dos_header.e_crlc > 0 {
+            log::warn!("TODO: {} DOS relocs", dos_header.e_crlc);
+        }
         let dos = DOS { header: dos_header };
         Ok(Parse::DOS(dos))
     }

@@ -372,7 +372,12 @@ use runtime::*;
 
         let resources = self.module.resources.clone().unwrap_or(0..0);
 
-        let entry_point = self.blocks.get(&self.module.entry_point).unwrap();
+        let entry_point = self.blocks.get(&self.module.entry_point).ok_or_else(|| {
+            anyhow!(
+                "entry point {:x} not found in parsed blocks",
+                self.module.entry_point
+            )
+        })?;
         self.line(format!(
             "pub const EXEDATA: EXEData = EXEData {{
             bitness: {bitness},

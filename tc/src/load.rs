@@ -1,5 +1,7 @@
 //! EXE loading.
 
+use runtime::segofs;
+
 use crate::{Import, Module, memory::Memory};
 
 pub fn load_exe(mem: &mut Memory, buf: Vec<u8>) -> Module {
@@ -9,8 +11,25 @@ pub fn load_exe(mem: &mut Memory, buf: Vec<u8>) -> Module {
     }
 }
 
-fn load_dos(_mem: &mut Memory, _buf: &[u8], dos: exe::DOS) -> Module {
-    todo!("DOS exe {:#x?}", dos.header)
+fn load_dos(mem: &mut Memory, buf: &[u8], dos: exe::DOS) -> Module {
+    let cs = 0x1000; // matching ghidra
+    assert_eq!(dos.header.e_cs, 0); // not sure what this is for
+
+    let data = &buf[dos.header_size()..];
+    let addr = segofs(cs, 0);
+    mem.reserve("dos data".into(), addr, data.len() as u32);
+    mem.slice_mut(addr, data.len() as u32).copy_from_slice(data);
+
+    Module {
+        bitness: 16,
+        imports: Default::default(),
+        image_base: 0,
+        code_segment: Some(cs),
+        entry_point: dos.header.e_ip as u32,
+        code_memory: (0..0),
+        resources: None,
+        vtables: Default::default(),
+    }
 }
 
 fn load_pe(mem: &mut Memory, buf: &[u8], f: exe::PE) -> Module {
