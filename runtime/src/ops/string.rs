@@ -149,6 +149,9 @@ impl Context {
     pub fn cmpsb(&mut self) {
         self.cmps::<u8>()
     }
+    pub fn cmpsw(&mut self) {
+        self.cmps::<u16>()
+    }
 
     fn movs<S: StringInt>(&mut self) {
         let src_addr = self.addr(self.cpu.regs.ds, self.cpu.regs.esi);
