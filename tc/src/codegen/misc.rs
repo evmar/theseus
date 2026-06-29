@@ -82,7 +82,7 @@ impl<'a> CodeGen<'a> {
                 assert_eq!(self.module.bitness, 16);
                 self.line(format!("dos::int(ctx, {:#x});", instr.immediate8()));
             }
-            Int3 | Cmpxchg | Pushfd | Cpuid | Xgetbv | Bt | Div => self.todo(),
+            Int3 | Cmpxchg | Pushfd | Cpuid | Xgetbv | Bt | Div => self.todo(instr_name(instr)),
 
             // CBW/CWDE: sign extend to next larger ax
             Cbw => self.line("ctx.cpu.regs.set_ax(ctx.cpu.regs.get_al() as i8 as i16 as u16);"),

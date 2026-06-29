@@ -217,8 +217,8 @@ impl<'a> CodeGen<'a> {
         self.buf.push('\n');
     }
 
-    pub fn todo(&mut self) {
-        self.line("todo!();");
+    pub fn todo(&mut self, msg: String) {
+        self.line(format!("todo!({msg:?});"));
     }
 }
 
@@ -234,8 +234,7 @@ impl<'a> CodeGen<'a> {
                 // self.line(format!("ctx.dump_dosbox(0{});", block.name()));
                 for instr in instrs {
                     if let Err(e) = self.gen_instr(instr) {
-                        self.line(format!("// {}", e));
-                        self.todo();
+                        self.line(format!("panic!({:?});", e.to_string()));
                         break;
                     }
                 }
