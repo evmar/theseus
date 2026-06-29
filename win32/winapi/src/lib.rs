@@ -66,7 +66,7 @@ pub fn load(exe: &EXEData) -> Context {
         recent: [Context::return_from_x86; 4],
     };
 
-    (exe.init_memory)(&mut ctx, &mut lock.mappings);
+    (exe.init)(&mut ctx, &mut lock.mappings);
     lock.init_process(&mut ctx);
     ctx
 }

@@ -30,11 +30,7 @@ pub fn load(exe: &EXEData) -> Context {
     };
     ctx.cpu.real_mode = true;
 
-    let mut mappings = Mappings::default();
-    (exe.init_memory)(&mut ctx, &mut mappings);
-
     // initial register values copied to match dosbox
-
     ctx.cpu.regs.cs = DOSBOX_SEG;
     ctx.cpu.regs.ds = DOSBOX_SEG;
     ctx.cpu.regs.es = DOSBOX_SEG;
@@ -43,6 +39,10 @@ pub fn load(exe: &EXEData) -> Context {
     // initial cx: https://stackoverflow.com/questions/79440940/why-cx-register-already-has-a-non-zero-value-on-startup-of-a-dos-program-unlike
     ctx.cpu.regs.ecx = 0xff;
     ctx.cpu.regs.esp = 0xfffe;
+
+    let mut mappings = Mappings::default();
+    (exe.init)(&mut ctx, &mut mappings);
+
     ctx
 }
 

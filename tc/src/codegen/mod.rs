@@ -199,6 +199,7 @@ pub struct CodeGen<'a> {
     module: &'a Module,
     mem: &'a Memory,
     blocks: &'a HashMap<u32, Block>,
+    /// Output buffer.
     buf: String,
 }
 
@@ -212,17 +213,15 @@ impl<'a> CodeGen<'a> {
         }
     }
 
-    pub fn line(&mut self, s: impl AsRef<str>) {
+    fn line(&mut self, s: impl AsRef<str>) {
         self.buf.push_str(s.as_ref());
         self.buf.push('\n');
     }
 
-    pub fn todo(&mut self, msg: String) {
+    fn todo(&mut self, msg: String) {
         self.line(format!("todo!({msg:?});"));
     }
-}
 
-impl<'a> CodeGen<'a> {
     fn gen_block(&mut self, block: &Block) {
         match &block.ty {
             BlockType::Instrs(instrs) => {
@@ -270,7 +269,7 @@ impl<'a> CodeGen<'a> {
         Ok(())
     }
 
-    fn gen_init_memory(&mut self) {
+    fn gen_init(&mut self) {
         // It would be cool if we could just link a wasm object file that contains data sections
         // like
         //   (data (i32.const 0x400000) "....")
@@ -278,7 +277,7 @@ impl<'a> CodeGen<'a> {
         // the location of such data at link time.  We could do it by postprocessing the wasm
         // file, maybe.
 
-        self.line("fn init_memory(ctx: &mut Context, mappings: &mut runtime::Mappings) {");
+        self.line("fn init(ctx: &mut Context, mappings: &mut runtime::Mappings) {");
 
         for map in self.mem.mappings.vec().iter() {
             let addr = map.addr;
@@ -356,7 +355,7 @@ use runtime::*;
             self.line("use winapi::*;");
         }
 
-        self.gen_init_memory();
+        self.gen_init();
 
         self.gen_blocks();
 
@@ -374,7 +373,7 @@ use runtime::*;
             image_base: {image_base:#x},
             resources: {res_start:#x}..{res_end:#x},
             blocks: &BLOCKS,
-            init_memory,
+            init,
             entry_point: Cont({entry_point}),
         }};\n\n",
             bitness = self.module.bitness,

@@ -7,7 +7,7 @@
 
 use runtime::*;
 
-fn init_memory(ctx: &mut Context, mappings: &mut runtime::Mappings) {
+fn init(ctx: &mut Context, mappings: &mut runtime::Mappings) {
     mappings.reserve(runtime::Mapping {
         desc: "dos data".to_string(),
         addr: 0x8130,
@@ -9748,9 +9748,9 @@ const BLOCKS: [(u32, ContFn); 633] = [
 
 pub const EXEDATA: EXEData = EXEData {
     bitness: 16,
-    image_base: 0x0,
+    image_base: 0x8130,
     resources: 0x0..0x0,
     blocks: &BLOCKS,
-    init_memory,
+    init,
     entry_point: Cont(x68e),
 };

@@ -1071,6 +1071,6 @@ pub const EXEDATA: EXEData = EXEData {
     image_base: 0x400000,
     resources: 0x4cc000..0x4cc06c,
     blocks: &BLOCKS,
-    init_memory,
+    init: init_memory,
     entry_point: Cont(x4cbca0),
 };
