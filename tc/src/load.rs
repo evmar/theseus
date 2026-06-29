@@ -16,14 +16,15 @@ fn load_dos(mem: &mut Memory, buf: &[u8], dos: exe::DOS) -> Module {
     assert_eq!(dos.header.e_cs, 0); // not sure what this is for
 
     let data = &buf[dos.header_size()..];
-    let addr = segofs(cs, 0);
-    mem.reserve("dos data".into(), addr, data.len() as u32);
-    mem.slice_mut(addr, data.len() as u32).copy_from_slice(data);
+    let image_base = segofs(cs, 0);
+    mem.reserve("dos data".into(), image_base, data.len() as u32);
+    mem.slice_mut(image_base, data.len() as u32)
+        .copy_from_slice(data);
 
     Module {
         bitness: 16,
         imports: Default::default(),
-        image_base: 0,
+        image_base,
         code_segment: Some(cs),
         entry_point: dos.header.e_ip as u32,
         code_memory: (0..0),
