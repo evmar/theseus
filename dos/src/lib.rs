@@ -103,11 +103,17 @@ fn int10(ctx: &mut Context) {
 fn int21(ctx: &mut Context) {
     let func = ctx.cpu.regs.get_ah();
     match func {
+        // write to interrupt table
         0x25 => {
             let int = ctx.cpu.regs.get_al();
             let (seg, ofs) = (ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_dx());
             state().interrupt_handlers[int as usize] = (seg, ofs);
         }
+        // get DOS version
+        0x30 => {
+            ctx.cpu.regs.set_ax(6);
+        }
+        // read from interrupt table
         0x35 => {
             let int = ctx.cpu.regs.get_al();
             let (seg, ofs) = state().interrupt_handlers[int as usize];
