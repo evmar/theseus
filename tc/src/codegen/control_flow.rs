@@ -31,14 +31,19 @@ impl<'a> CodeGen<'a> {
                 }
                 (
                     format!(
-                        "ctx.indirect(ctx.memory.read({}))",
-                        self.gen_addr(&instr.iced)
+                        "ctx.indirect{bitness}(ctx.memory.read({addr}))",
+                        bitness = self.module.bitness,
+                        addr = self.gen_addr(&instr.iced)
                     ),
                     true,
                 )
             }
             iced_x86::OpKind::Register => (
-                format!("ctx.indirect({})", get_reg(instr.iced.op0_register())),
+                format!(
+                    "ctx.indirect{bitness}({reg})",
+                    bitness = self.module.bitness,
+                    reg = get_reg(instr.iced.op0_register())
+                ),
                 true,
             ),
             k => todo!("{:?}", k),

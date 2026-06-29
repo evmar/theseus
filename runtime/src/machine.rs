@@ -37,6 +37,11 @@ impl Context {
     }
 
     /// Given an address (jump target), look up the Cont registered for it.
+    pub fn indirect32(&mut self, addr: u32) -> Cont {
+        self.indirect(addr)
+    }
+
+    /// Given an address (jump target), look up the Cont registered for it.
     pub fn indirect(&mut self, addr: u32) -> Cont {
         if addr == 0 {
             self.dump();

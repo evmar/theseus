@@ -1022,7 +1022,7 @@ pub fn x6c7(ctx: &mut Context) -> Cont {
 
 pub fn x723(ctx: &mut Context) -> Cont {
     // 00000723 call cx
-    let dst = ctx.indirect(ctx.cpu.regs.get_cx());
+    let dst = ctx.indirect16(ctx.cpu.regs.get_cx());
     ctx.call16(0x725, dst)
 }
 
@@ -1115,7 +1115,7 @@ pub fn x766(ctx: &mut Context) -> Cont {
     // 00000767 push ax
     ctx.push16(ctx.cpu.regs.get_ax());
     // 00000768 call word ptr ss:[446h]
-    let dst = ctx.indirect(ctx.memory.read(segofs(ctx.cpu.regs.get_ss(), 0x446u16)));
+    let dst = ctx.indirect16(ctx.memory.read(segofs(ctx.cpu.regs.get_ss(), 0x446u16)));
     ctx.call16(0x76d, dst)
 }
 
@@ -1125,7 +1125,7 @@ pub fn x76d(ctx: &mut Context) -> Cont {
     // 00000770 push ax
     ctx.push16(ctx.cpu.regs.get_ax());
     // 00000771 call word ptr ds:[1F6h]
-    let dst = ctx.indirect(ctx.memory.read(segofs(ctx.cpu.regs.get_ds(), 0x1f6u16)));
+    let dst = ctx.indirect16(ctx.memory.read(segofs(ctx.cpu.regs.get_ds(), 0x1f6u16)));
     ctx.call16(0x775, dst)
 }
 
@@ -1578,7 +1578,7 @@ pub fn x87e(ctx: &mut Context) -> Cont {
 
 pub fn x886(ctx: &mut Context) -> Cont {
     // 00000886 call word ptr ds:[448h]
-    let dst = ctx.indirect(ctx.memory.read(segofs(ctx.cpu.regs.get_ds(), 0x448u16)));
+    let dst = ctx.indirect16(ctx.memory.read(segofs(ctx.cpu.regs.get_ds(), 0x448u16)));
     ctx.call16(0x88a, dst)
 }
 
@@ -1719,7 +1719,7 @@ pub fn x8cd(ctx: &mut Context) -> Cont {
     // 000008cd mov bx,2
     ctx.cpu.regs.set_bx(0x2u16);
     // 000008d0 call dword ptr ds:[452h]
-    let dst = ctx.indirect(ctx.memory.read(segofs(ctx.cpu.regs.get_ds(), 0x452u16)));
+    let dst = ctx.indirect16(ctx.memory.read(segofs(ctx.cpu.regs.get_ds(), 0x452u16)));
     ctx.call16(0x8d4, dst)
 }
 
@@ -1782,7 +1782,7 @@ pub fn x8f8(ctx: &mut Context) -> Cont {
 
 pub fn x8fe(ctx: &mut Context) -> Cont {
     // 000008fe call cx
-    let dst = ctx.indirect(ctx.cpu.regs.get_cx());
+    let dst = ctx.indirect16(ctx.cpu.regs.get_cx());
     ctx.call16(0x900, dst)
 }
 
@@ -1832,7 +1832,7 @@ pub fn x907(ctx: &mut Context) -> Cont {
 
 pub fn x911(ctx: &mut Context) -> Cont {
     // 00000911 call dword ptr [di]
-    let dst = ctx.indirect(
+    let dst = ctx.indirect16(
         ctx.memory
             .read(segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_di())),
     );
@@ -1876,7 +1876,7 @@ pub fn x920(ctx: &mut Context) -> Cont {
 
 pub fn x927(ctx: &mut Context) -> Cont {
     // 00000927 call word ptr ds:[264h]
-    let dst = ctx.indirect(ctx.memory.read(segofs(ctx.cpu.regs.get_ds(), 0x264u16)));
+    let dst = ctx.indirect16(ctx.memory.read(segofs(ctx.cpu.regs.get_ds(), 0x264u16)));
     ctx.call16(0x92b, dst)
 }
 
@@ -1938,7 +1938,7 @@ pub fn x949(ctx: &mut Context) -> Cont {
     // 00000949 mov sp,bx
     ctx.cpu.regs.set_sp(ctx.cpu.regs.get_bx());
     // 0000094b jmp cx
-    ctx.indirect(ctx.cpu.regs.get_cx())
+    ctx.indirect16(ctx.cpu.regs.get_cx())
 }
 
 pub fn x94d(ctx: &mut Context) -> Cont {
@@ -2854,7 +2854,7 @@ pub fn xafa(ctx: &mut Context) -> Cont {
     ctx.memory
         .write::<u16>(segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_bx()), 0x0u16);
     // 00000b00 jmp word ptr ds:[26Ah]
-    ctx.indirect(ctx.memory.read(segofs(ctx.cpu.regs.get_ds(), 0x26au16)))
+    ctx.indirect16(ctx.memory.read(segofs(ctx.cpu.regs.get_ds(), 0x26au16)))
 }
 
 pub fn xb04(ctx: &mut Context) -> Cont {
@@ -3256,7 +3256,7 @@ pub fn xbbb(ctx: &mut Context) -> Cont {
 
 pub fn xbd3(ctx: &mut Context) -> Cont {
     // 00000bd3 call word ptr ds:[444h]
-    let dst = ctx.indirect(ctx.memory.read(segofs(ctx.cpu.regs.get_ds(), 0x444u16)));
+    let dst = ctx.indirect16(ctx.memory.read(segofs(ctx.cpu.regs.get_ds(), 0x444u16)));
     ctx.call16(0xbd7, dst)
 }
 
@@ -6293,7 +6293,7 @@ pub fn x1647(ctx: &mut Context) -> Cont {
 
 pub fn x164f(ctx: &mut Context) -> Cont {
     // 0000164f call word ptr ds:[444h]
-    let dst = ctx.indirect(ctx.memory.read(segofs(ctx.cpu.regs.get_ds(), 0x444u16)));
+    let dst = ctx.indirect16(ctx.memory.read(segofs(ctx.cpu.regs.get_ds(), 0x444u16)));
     ctx.call16(0x1653, dst)
 }
 
@@ -6724,7 +6724,7 @@ pub fn x1724(ctx: &mut Context) -> Cont {
 
 pub fn x172c(ctx: &mut Context) -> Cont {
     // 0000172c call word ptr ds:[444h]
-    let dst = ctx.indirect(ctx.memory.read(segofs(ctx.cpu.regs.get_ds(), 0x444u16)));
+    let dst = ctx.indirect16(ctx.memory.read(segofs(ctx.cpu.regs.get_ds(), 0x444u16)));
     ctx.call16(0x1730, dst)
 }
 
@@ -7330,7 +7330,7 @@ pub fn x1854(ctx: &mut Context) -> Cont {
 
 pub fn x1858(ctx: &mut Context) -> Cont {
     // 00001858 jmp cx
-    ctx.indirect(ctx.cpu.regs.get_cx())
+    ctx.indirect16(ctx.cpu.regs.get_cx())
 }
 
 pub fn x185a(ctx: &mut Context) -> Cont {
