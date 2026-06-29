@@ -83,7 +83,7 @@ impl<'a> CodeGen<'a> {
             }
         }
         let offset = instr.memory_displacement32();
-        if offset != 0 {
+        if offset != 0 || expr.is_empty() {
             expr.push(format!("{offset:#x}u{}", self.module.bitness));
         }
 

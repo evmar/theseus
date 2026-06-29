@@ -2909,7 +2909,7 @@ pub fn xb04(ctx: &mut Context) -> Cont {
 pub fn xb20(ctx: &mut Context) -> Cont {
     // 00000b20 cmp byte ptr es:[0],0
     sub(
-        ctx.memory.read::<u8>(segofs(ctx.cpu.regs.get_es())),
+        ctx.memory.read::<u8>(segofs(ctx.cpu.regs.get_es(), 0x0u16)),
         0x0u8,
         &mut ctx.cpu.flags,
     );
