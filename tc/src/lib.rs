@@ -268,11 +268,11 @@ impl State {
         self.blocks = gather.run(self);
     }
 
-    pub fn generate(&mut self, outdir: &str) -> anyhow::Result<()> {
-        let mut codegen = codegen::CodeGen::new(self);
-        codegen.gen_file(outdir)?;
+    pub fn generate(&mut self, trace: bool, out_dir: &str) -> anyhow::Result<()> {
+        let mut codegen = codegen::CodeGen::new(self, trace);
+        codegen.gen_file(out_dir)?;
 
-        let data_dir = format!("{outdir}/data");
+        let data_dir = format!("{out_dir}/data");
         std::fs::create_dir_all(&data_dir)?;
         for map in self.mem.mappings.vec().iter() {
             let buf = self.mem.slice(map.addr, map.size);
@@ -285,7 +285,7 @@ impl State {
                 map.addr,
                 map.size
             );
-            write_if_changed(&format!("{outdir}/data/{:08x}.raw", map.addr), buf)?;
+            write_if_changed(&format!("{out_dir}/data/{:08x}.raw", map.addr), buf)?;
         }
         Ok(())
     }

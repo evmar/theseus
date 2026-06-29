@@ -62,6 +62,10 @@ struct Args {
     /// blocks written by hand
     #[argh(option, long = "extern", from_str_fn(parse_extern))]
     externs: Vec<(u32, Option<String>)>,
+
+    /// emit output that traces each basic block as it's executed
+    #[argh(switch)]
+    trace: bool,
 }
 
 fn run() -> anyhow::Result<()> {
@@ -117,7 +121,7 @@ fn run() -> anyhow::Result<()> {
         ..Default::default() // todo: entry_points, jump_tables?
     });
 
-    state.generate(&args.out)
+    state.generate(args.trace, &args.out)
 }
 
 fn main() {

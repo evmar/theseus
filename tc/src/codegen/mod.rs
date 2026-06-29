@@ -199,16 +199,18 @@ pub struct CodeGen<'a> {
     module: &'a Module,
     mem: &'a Memory,
     blocks: &'a HashMap<u32, Block>,
+    trace: bool,
     /// Output buffer.
     buf: String,
 }
 
 impl<'a> CodeGen<'a> {
-    pub fn new(state: &'a State) -> Self {
+    pub fn new(state: &'a State, trace: bool) -> Self {
         Self {
             module: &state.module,
             mem: &state.mem,
             blocks: &state.blocks,
+            trace,
             buf: Default::default(),
         }
     }
@@ -230,7 +232,12 @@ impl<'a> CodeGen<'a> {
                     name = block.name()
                 ));
                 // self.line(format!("println!(\"{name}\");", name = block.name()));
-                // self.line(format!("ctx.dump_dosbox(0{});", block.name()));
+                if self.trace {
+                    match self.module {
+                        Module::DOS(_) => self.line(format!("ctx.dump_dosbox(0{});", block.name())),
+                        Module::Windows(_) => todo!(),
+                    }
+                }
                 for instr in instrs {
                     if let Err(e) = self.gen_instr(instr) {
                         self.line(format!("panic!({:?});", e.to_string()));
