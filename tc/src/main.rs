@@ -1,3 +1,5 @@
+use tc::AddrInfo;
+
 fn hex(val: &str) -> Result<u32, String> {
     if !val.starts_with("0x") {
         return Err("hex value must start with 0x".into());
@@ -63,6 +65,15 @@ fn run() -> anyhow::Result<()> {
     if let Some(path) = &args.symbols_csv {
         state.load_symbols(std::fs::File::open(path)?)?;
     }
+    for &addr in &args.externs {
+        state.addr_info.insert(
+            addr,
+            AddrInfo {
+                name: format!("crate::externs::x{}", addr),
+                is_extern: true,
+            },
+        );
+    }
 
     let buf = std::fs::read(&args.exe).unwrap();
     if args.exe.to_ascii_lowercase().ends_with(".com") {
@@ -73,6 +84,7 @@ fn run() -> anyhow::Result<()> {
     } else {
         anyhow::bail!("unexpected file extension");
     }
+    state.init_system_hooks();
 
     let mut entry_points = vec![];
     for addr in args.entry_point {
@@ -92,7 +104,6 @@ fn run() -> anyhow::Result<()> {
     state.gather(tc::Gather {
         scan_immediates: args.scan_immediates,
         scan_memory: args.scan_memory,
-        externs: args.externs,
         entry_points,
         ..Default::default() // todo: entry_points, jump_tables?
     });

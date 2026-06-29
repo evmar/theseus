@@ -356,15 +356,6 @@ use runtime::*;
             self.line("use winapi::*;");
         }
 
-        if self
-            .blocks
-            .values()
-            .any(|b| matches!(b.ty, BlockType::Extern(_)))
-        {
-            self.line("use crate::externs::*;");
-        }
-        self.line("");
-
         self.gen_init_memory();
 
         self.gen_blocks();

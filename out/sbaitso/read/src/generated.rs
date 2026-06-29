@@ -9110,7 +9110,8 @@ pub fn x1c54(ctx: &mut Context) -> Cont {
     ctx.ret16(0)
 }
 
-const BLOCKS: [(u32, ContFn); 632] = [
+const BLOCKS: [(u32, ContFn); 633] = [
+    (0x8130, dos::exit),
     (0x8140, x10),
     (0x8149, x19),
     (0x8152, x22),

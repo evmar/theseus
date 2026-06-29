@@ -2,7 +2,7 @@
 
 use std::collections::{BTreeMap, HashMap, HashSet, VecDeque};
 
-use crate::{Block, BlockType, Import, Instr, Module, State, memory::Memory};
+use crate::{AddrInfo, Block, BlockType, Import, Instr, Module, State, memory::Memory};
 
 /// If the instruction looks like
 ///   foo [x]
@@ -28,7 +28,6 @@ pub enum EntryPoint {
 
 #[derive(Default)]
 pub struct Gather {
-    pub externs: Vec<u32>,
     pub scan_immediates: bool,
     pub scan_memory: bool,
 
@@ -47,7 +46,7 @@ struct Traverse<'a> {
     gather: &'a Gather,
     module: &'a Module,
     mem: &'a Memory,
-    symbol_names: &'a HashMap<u32, String>,
+    addr_info: &'a HashMap<u32, AddrInfo>,
 
     iat_refs: HashMap<u32, &'a Import>,
     queue: VecDeque<u32>,
@@ -61,7 +60,7 @@ impl<'a> Traverse<'a> {
             gather,
             module: &state.module,
             mem: &state.mem,
-            symbol_names: &state.symbol_names,
+            addr_info: &state.addr_info,
 
             iat_refs: Default::default(),
             queue: VecDeque::new(),
@@ -85,14 +84,16 @@ impl<'a> Traverse<'a> {
             self.iat_refs.insert(import.iat_addr, &import);
         }
 
-        for &addr in self.gather.externs.iter() {
-            self.blocks.insert(
-                addr,
-                Block {
-                    name: self.symbol_names.get(&addr).cloned(),
-                    ty: BlockType::Extern(addr),
-                },
-            );
+        for (&addr, info) in self.addr_info.iter() {
+            if info.is_extern {
+                self.blocks.insert(
+                    addr,
+                    Block {
+                        name: Some(info.name.clone()),
+                        ty: BlockType::Extern(addr),
+                    },
+                );
+            }
         }
 
         self.queue.push_back(self.module.entry_point);
@@ -247,8 +248,9 @@ impl<'a> Traverse<'a> {
             break;
         }
 
+        let info = self.addr_info.get(&instrs[0].iced.ip32());
         Ok(Block {
-            name: self.symbol_names.get(&instrs[0].iced.ip32()).cloned(),
+            name: info.map(|info| info.name.clone()),
             ty: BlockType::Instrs(instrs),
         })
     }

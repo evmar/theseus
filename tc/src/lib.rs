@@ -35,10 +35,16 @@ pub struct Module {
 }
 
 #[derive(Default)]
+pub struct AddrInfo {
+    pub name: String,
+    pub is_extern: bool,
+}
+
+#[derive(Default)]
 pub struct State {
     pub module: Module,
     pub mem: Memory,
-    symbol_names: HashMap<u32, String>,
+    pub addr_info: HashMap<u32, AddrInfo>,
     pub blocks: HashMap<u32, Block>,
 }
 
@@ -100,7 +106,13 @@ impl State {
             }
             let addr = u32::from_str_radix(&addr, 16)
                 .map_err(|err| anyhow::anyhow!(format!("{addr:?}: {err}")))?;
-            self.symbol_names.insert(addr, name.to_string());
+            self.addr_info.insert(
+                addr,
+                AddrInfo {
+                    name: name.to_string(),
+                    is_extern: false,
+                },
+            );
         }
         Ok(())
     }
@@ -159,6 +171,19 @@ impl State {
     pub fn init_imports(&mut self) {
         let data_addr = self.add_vtables();
         self.write_iat(data_addr);
+    }
+
+    /// Install externs for ambient addresses that make system calls.
+    pub fn init_system_hooks(&mut self) {
+        if self.module.bitness == 16 {
+            self.addr_info.insert(
+                0,
+                AddrInfo {
+                    name: "dos::exit".into(),
+                    is_extern: true,
+                },
+            );
+        }
     }
 
     pub fn gather(&mut self, gather: Gather) {
