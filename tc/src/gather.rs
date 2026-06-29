@@ -203,8 +203,8 @@ impl<'a> Traverse<'a> {
             let ip = instr.ip32();
             use iced_x86::Mnemonic::*;
             match instr.mnemonic() {
-                Call | Jmp | Je | Jne | Jb | Js | Jns | Ja | Jae | Jl | Jge | Jecxz | Jg | Jle
-                | Jo | Jno | Jp | Jnp | Jbe | Loop | Loope | Loopne => {
+                Call | Jmp | Jcxz | Je | Jne | Jb | Js | Jns | Ja | Jae | Jl | Jge | Jecxz | Jg
+                | Jle | Jo | Jno | Jp | Jnp | Jbe | Loop | Loope | Loopne => {
                     match instr.op0_kind() {
                         iced_x86::OpKind::NearBranch16 => {
                             self.queue.push_back(instr.near_branch16() as u32)

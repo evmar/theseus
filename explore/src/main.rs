@@ -211,8 +211,8 @@ fn decode(snippet: &Snippet) -> (Vec<Instr>, Vec<iced_x86::Instruction>) {
                 });
                 continue;
             }
-            Je | Jne | Jl | Jle | Jg | Jge | Jb | Jbe | Ja | Jae | Js | Jns | Jo | Jno | Jp
-            | Jnp => {
+            Jcxz | Je | Jne | Jl | Jle | Jg | Jge | Jb | Jbe | Ja | Jae | Js | Jns | Jo | Jno
+            | Jp | Jnp => {
                 let [x] = args.try_into().unwrap();
                 Effect::Jmp(Box::new(crate::Jmp::new(
                     op,
