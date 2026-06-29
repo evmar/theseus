@@ -12,7 +12,7 @@ pub fn load_exe(mem: &mut Memory, buf: Vec<u8>) -> Module {
 }
 
 fn load_dos(mem: &mut Memory, buf: &[u8], dos: exe::DOS) -> Module {
-    let cs = 0x1000; // matching ghidra
+    let cs = dos::DOSBOX_SEG;
     assert_eq!(dos.header.e_cs, 0); // not sure what this is for
 
     let data = &buf[dos.header_size()..];
