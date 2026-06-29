@@ -175,6 +175,11 @@ impl<'a> Traverse<'a> {
                 // Hit a point covered by another block, e.g. a jump target
                 break;
             }
+
+            if instr.mnemonic() == iced_x86::Mnemonic::Out && self.module.bitness != 16 {
+                anyhow::bail!("'out' instruction in non-DOS code");
+            }
+
             let new_instr = instrs.push_mut(Instr {
                 iced: instr,
                 hint: None,
