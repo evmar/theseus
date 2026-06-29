@@ -16,6 +16,14 @@ fn hex_range(val: &str) -> Result<std::ops::Range<u32>, String> {
     Ok(start..end)
 }
 
+fn parse_extern(val: &str) -> Result<(u32, Option<String>), String> {
+    let (val, name) = match val.split_once('=') {
+        None => (val, None),
+        Some((val, name)) => (val, Some(name.into())),
+    };
+    Ok((hex(val)?, name))
+}
+
 #[derive(argh::FromArgs)]
 /// theseus compiler
 struct Args {
@@ -52,8 +60,8 @@ struct Args {
     out: String,
 
     /// blocks written by hand
-    #[argh(option, long = "extern", from_str_fn(hex))]
-    externs: Vec<u32>,
+    #[argh(option, long = "extern", from_str_fn(parse_extern))]
+    externs: Vec<(u32, Option<String>)>,
 }
 
 fn run() -> anyhow::Result<()> {
@@ -65,11 +73,12 @@ fn run() -> anyhow::Result<()> {
     if let Some(path) = &args.symbols_csv {
         state.load_symbols(std::fs::File::open(path)?)?;
     }
-    for &addr in &args.externs {
+    for (addr, name) in args.externs {
+        let name = name.unwrap_or_else(|| format!("x{}", addr));
         state.addr_info.insert(
             addr,
             AddrInfo {
-                name: format!("crate::externs::x{}", addr),
+                name: format!("crate::externs::{}", name),
                 is_extern: true,
             },
         );
