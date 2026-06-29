@@ -72,7 +72,7 @@ impl<'a> CodeGen<'a> {
                     ));
                 }
             }
-            Ret => {
+            Ret | Retf => {
                 let n = match instr.iced.op_count() {
                     0 => 0,
                     1 => {
@@ -82,7 +82,8 @@ impl<'a> CodeGen<'a> {
                     _ => todo!(),
                 };
                 self.line(format!(
-                    "ctx.ret{bitness}({n})",
+                    "ctx.{name}{bitness}({n})",
+                    name = instr_name(&instr.iced),
                     bitness = self.module.bitness
                 ));
             }

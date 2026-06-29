@@ -136,6 +136,14 @@ impl Context {
         self.indirect(segofs(cs, ip))
     }
 
+    pub fn retf16(&mut self, n: u16) -> Cont {
+        let ip = self.pop16();
+        let cs = self.pop16();
+        self.cpu.regs.set_cs(cs);
+        self.cpu.regs.esp += n as u32;
+        self.indirect(segofs(cs, ip))
+    }
+
     pub fn loop_(&mut self, from: Cont, x: Cont) -> Cont {
         self.cpu.regs.ecx = self.cpu.regs.ecx.wrapping_sub(1);
         if self.cpu.regs.ecx != 0 { x } else { from }

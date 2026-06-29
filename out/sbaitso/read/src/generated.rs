@@ -798,7 +798,7 @@ pub fn x696(ctx: &mut Context) -> Cont {
     // 00000699 push ax
     ctx.push16(ctx.cpu.regs.get_ax());
     // 0000069a retf
-    panic!("Retf not implemented");
+    ctx.retf16(0)
 }
 
 pub fn x69b(ctx: &mut Context) -> Cont {
