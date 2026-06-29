@@ -114,7 +114,9 @@ impl Context {
     }
 
     fn scas<S: StringInt>(&mut self) {
-        let mem = self.memory.read::<S>(self.cpu.regs.edi);
+        let mem = self
+            .memory
+            .read::<S>(self.addr(self.cpu.regs.es, self.cpu.regs.edi));
         let _ = sub::<S>(S::from_eax(self.cpu.regs.eax), mem, &mut self.cpu.flags);
         let step = std::mem::size_of::<S>() as u32;
         if self.cpu.flags.contains(Flags::DF) {
