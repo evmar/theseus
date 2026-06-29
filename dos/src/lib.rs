@@ -120,6 +120,26 @@ fn int21(ctx: &mut Context) {
             ctx.cpu.regs.set_es(seg);
             ctx.cpu.regs.set_bx(ofs);
         }
+        // write to file
+        0x40 => {
+            use std::io::Write;
+            let handle = ctx.cpu.regs.get_bx();
+            let len = ctx.cpu.regs.get_cx();
+            let addr = segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_dx());
+            let buf = &ctx.memory[addr..][..len as usize];
+            match handle {
+                1 => std::io::stdout().lock().write_all(buf).unwrap(),
+                2 => std::io::stderr().lock().write_all(buf).unwrap(),
+                _ => log::error!("TODO: dos write to file {handle} {buf:?}"),
+            }
+            ctx.cpu.regs.set_ax(len); // bytes written
+            ctx.cpu.flags.remove(runtime::Flags::CF); // no error
+        }
+        // error exit
+        0x4c => {
+            let code = ctx.cpu.regs.get_al();
+            std::process::exit(code as i32);
+        }
         _ => log::error!("TODO: dos int 21h ({func:02x})"),
     }
 }
