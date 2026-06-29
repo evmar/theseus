@@ -32,7 +32,7 @@ impl<'a> CodeGen<'a> {
                 (
                     format!(
                         "ctx.indirect{bitness}(ctx.memory.read({addr}))",
-                        bitness = self.module.bitness,
+                        bitness = self.module.bitness(),
                         addr = self.gen_addr(&instr.iced)
                     ),
                     true,
@@ -41,7 +41,7 @@ impl<'a> CodeGen<'a> {
             iced_x86::OpKind::Register => (
                 format!(
                     "ctx.indirect{bitness}({reg})",
-                    bitness = self.module.bitness,
+                    bitness = self.module.bitness(),
                     reg = get_reg(instr.iced.op0_register())
                 ),
                 true,
@@ -67,7 +67,7 @@ impl<'a> CodeGen<'a> {
                     };
                     self.line(format!(
                         "ctx.call{bitness}({ip:#x}, {dst})",
-                        bitness = self.module.bitness,
+                        bitness = self.module.bitness(),
                         ip = instr.next_ip()
                     ));
                 }
@@ -84,13 +84,13 @@ impl<'a> CodeGen<'a> {
                 self.line(format!(
                     "ctx.{name}{bitness}({n})",
                     name = instr_name(&instr.iced),
-                    bitness = self.module.bitness
+                    bitness = self.module.bitness()
                 ));
             }
             Iret => {
                 self.line(format!(
                     "ctx.iret{bitness}()",
-                    bitness = self.module.bitness
+                    bitness = self.module.bitness()
                 ));
             }
             Je | Jne | Jb | Js | Jns | Ja | Jae | Jl | Jg | Jge | Jecxz | Jle | Jbe | Loop

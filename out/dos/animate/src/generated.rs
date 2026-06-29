@@ -7,7 +7,7 @@
 
 use runtime::*;
 
-fn init_memory(ctx: &mut Context, mappings: &mut runtime::Mappings) {
+fn init(ctx: &mut Context, mappings: &mut runtime::Mappings) {
     mappings.reserve(runtime::Mapping {
         desc: "com".to_string(),
         addr: 0x8230,
@@ -4856,14 +4856,12 @@ pub fn xbda(ctx: &mut Context) -> Cont {
     // 00000bda mov dx,3DAh
     ctx.cpu.regs.set_dx(0x3dau16);
     // 00000bdd in al,dx
-    // In not implemented
-    todo!();
+    panic!("In not implemented");
 }
 
 pub fn xbe2(ctx: &mut Context) -> Cont {
     // 00000be2 in al,dx
-    // In not implemented
-    todo!();
+    panic!("In not implemented");
 }
 
 pub fn xbe7(ctx: &mut Context) -> Cont {
@@ -7417,8 +7415,7 @@ pub fn x1165(ctx: &mut Context) -> Cont {
         ctx.cpu.regs.get_ax(),
     );
     // 00001169 in al,60h
-    // In not implemented
-    todo!();
+    panic!("In not implemented");
 }
 
 pub fn x116f(ctx: &mut Context) -> Cont {
@@ -8242,7 +8239,8 @@ pub fn x134a(ctx: &mut Context) -> Cont {
     ctx.ret16(0)
 }
 
-const BLOCKS: [(u32, ContFn); 343] = [
+const BLOCKS: [(u32, ContFn); 344] = [
+    (0x8130, dos::exit),
     (0x8230, x100),
     (0x8274, x144),
     (0x8292, x162),
@@ -8590,9 +8588,9 @@ const BLOCKS: [(u32, ContFn); 343] = [
 
 pub const EXEDATA: EXEData = EXEData {
     bitness: 16,
-    image_base: 0x100,
+    image_base: 0x8130,
     resources: 0x0..0x0,
     blocks: &BLOCKS,
-    init: init_memory,
+    init,
     entry_point: Cont(x100),
 };

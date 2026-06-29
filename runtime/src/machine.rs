@@ -120,10 +120,14 @@ impl Context {
             "ESI:{:08X} EDI:{:08X} EBP:{:08X} ESP:{:08X}",
             self.cpu.regs.esi, self.cpu.regs.edi, self.cpu.regs.ebp, self.cpu.regs.esp
         );
-        // println!(
-        //     "DS:{:04x} ES:{:04x} FS:{:04x} GS:{:04x} SS:{:04x} CF:0 ZF:0 SF:0 OF:0 IF:0",
-        //     0x813, 0x813, 0, 0, 0x813
-        // );
+        println!(
+            "DS:{:04x} ES:{:04x} FS:{:04x} GS:{:04x} SS:{:04x}",
+            self.cpu.regs.ds,
+            self.cpu.regs.es,
+            self.cpu.regs.fs,
+            self.cpu.regs.gs,
+            self.cpu.regs.ss
+        );
     }
 }
 

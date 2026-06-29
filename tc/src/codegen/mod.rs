@@ -58,7 +58,7 @@ impl<'a> CodeGen<'a> {
     pub fn gen_addr_offset(&self, instr: &iced_x86::Instruction) -> String {
         use iced_x86::Register::*;
         let mut expr = Vec::new();
-        if self.module.bitness == 32 {
+        if !self.module.segment_addressed() {
             // 16-bit segments handled in gen_addr(), not here
             match instr.memory_segment() {
                 CS | DS | ES | GS | SS => {}
@@ -84,7 +84,7 @@ impl<'a> CodeGen<'a> {
         }
         let offset = instr.memory_displacement32();
         if offset != 0 || expr.is_empty() {
-            expr.push(format!("{offset:#x}u{}", self.module.bitness));
+            expr.push(format!("{offset:#x}u{}", self.module.bitness()));
         }
 
         expr.into_iter()
@@ -102,7 +102,7 @@ impl<'a> CodeGen<'a> {
 
     pub fn gen_addr(&self, instr: &iced_x86::Instruction) -> String {
         let addr = self.gen_addr_offset(instr);
-        if self.module.bitness == 16 {
+        if self.module.segment_addressed() {
             // The above offset expression will be a u16 in real mode.
             // Convert to u32 as we add the segment.
             format!(
@@ -304,12 +304,17 @@ out.copy_from_slice(bytes);",
             }
         }
 
-        if !self.module.vtables.is_empty() {
-            self.line("unsafe {");
-            for (module, val) in &self.module.vtables {
-                self.line(format!("winapi::{module}::VTABLE = {val:#x};"));
+        match self.module {
+            Module::Windows(module) => {
+                if !module.vtables.is_empty() {
+                    self.line("unsafe {");
+                    for (module, val) in &module.vtables {
+                        self.line(format!("winapi::{module}::VTABLE = {val:#x};"));
+                    }
+                    self.line("}");
+                }
             }
-            self.line("}");
+            Module::DOS(_) => {}
         }
 
         self.line("}");
@@ -328,10 +333,10 @@ out.copy_from_slice(bytes);",
             "const BLOCKS: [(u32, ContFn); {}] = [\n",
             ips.len() + 1,
         ));
-        let code_segment = self.module.code_segment.unwrap_or(0);
+
         for &ip in &ips {
             let block = self.blocks.get(&ip).unwrap();
-            let addr = (code_segment << 4) as u32 + ip;
+            let addr = self.module.ip_to_addr(ip);
             self.line(format!("({addr:#x}, {name}),", name = block.name()));
         }
         self.line("(runtime::RETURN_FROM_X86_ADDR, Context::return_from_x86),");
@@ -351,7 +356,7 @@ out.copy_from_slice(bytes);",
 use runtime::*;
 ",
         );
-        if self.module.bitness == 32 {
+        if self.module.is_windows() {
             self.line("use winapi::*;");
         }
 
@@ -359,14 +364,17 @@ use runtime::*;
 
         self.gen_blocks();
 
-        let resources = self.module.resources.clone().unwrap_or(0..0);
+        // TODO: split EXEDATA into DOS/Windows.
+        let resources = match self.module {
+            Module::DOS(_) => 0..0,
+            Module::Windows(m) => m.resources.clone().unwrap_or(0..0),
+        };
 
-        let entry_point = self.blocks.get(&self.module.entry_point).ok_or_else(|| {
-            anyhow!(
-                "entry point {:x} not found in parsed blocks",
-                self.module.entry_point
-            )
-        })?;
+        let entry_point = self.module.entry_point_ip();
+        let entry_point = self
+            .blocks
+            .get(&entry_point)
+            .ok_or_else(|| anyhow!("entry point {entry_point:x} not found in parsed blocks"))?;
         self.line(format!(
             "pub const EXEDATA: EXEData = EXEData {{
             bitness: {bitness},
@@ -376,8 +384,8 @@ use runtime::*;
             init,
             entry_point: Cont({entry_point}),
         }};\n\n",
-            bitness = self.module.bitness,
-            image_base = self.module.image_base,
+            bitness = self.module.bitness(),
+            image_base = self.module.image_base(),
             res_start = resources.start,
             res_end = resources.end,
             entry_point = entry_point.name(),

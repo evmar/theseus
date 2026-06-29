@@ -9,6 +9,25 @@ pub mod com;
 mod gather;
 mod memory;
 pub use gather::{EntryPoint, Gather};
+use runtime::segofs;
+
+#[derive(Default)]
+pub struct DOSModule {
+    pub load_segment: u16,
+    pub code_segment: u16,
+    pub entry_point: u16,
+    pub code_memory: std::ops::Range<u32>,
+}
+
+#[derive(Default)]
+pub struct WindowsModule {
+    pub image_base: u32,
+    pub entry_point: u32,
+    pub code_memory: std::ops::Range<u32>,
+    pub resources: Option<std::ops::Range<u32>>,
+    pub imports: Vec<Import>,
+    pub vtables: Vec<(String, u32)>,
+}
 
 #[derive(Debug, Clone)]
 pub struct Import {
@@ -22,16 +41,54 @@ pub struct Import {
     pub data: bool,
 }
 
-#[derive(Default)]
-pub struct Module {
-    pub bitness: u32,
-    pub code_segment: Option<u16>,
-    pub image_base: u32,
-    pub entry_point: u32,
-    pub code_memory: std::ops::Range<u32>,
-    pub resources: Option<std::ops::Range<u32>>,
-    pub imports: Vec<Import>,
-    pub vtables: Vec<(String, u32)>,
+pub enum Module {
+    DOS(DOSModule),
+    Windows(WindowsModule),
+}
+
+impl Module {
+    // TODO: remove some of these methods as we untangle DOS vs Windows
+    fn bitness(&self) -> u32 {
+        match self {
+            Module::DOS(_) => 16,
+            Module::Windows(_) => 32,
+        }
+    }
+    fn is_dos(&self) -> bool {
+        matches!(self, Module::DOS(_))
+    }
+    fn is_windows(&self) -> bool {
+        matches!(self, Module::Windows(_))
+    }
+    fn segment_addressed(&self) -> bool {
+        self.is_dos()
+    }
+
+    fn entry_point_ip(&self) -> u32 {
+        match self {
+            Module::DOS(m) => m.entry_point as u32,
+            Module::Windows(m) => m.entry_point,
+        }
+    }
+
+    fn image_base(&self) -> u32 {
+        match self {
+            Module::DOS(m) => segofs(m.load_segment, 0),
+            Module::Windows(m) => m.image_base,
+        }
+    }
+    fn code_memory(&self) -> std::ops::Range<u32> {
+        match self {
+            Module::DOS(m) => m.code_memory.clone(),
+            Module::Windows(m) => m.code_memory.clone(),
+        }
+    }
+    fn ip_to_addr(&self, ip: u32) -> u32 {
+        match self {
+            Module::DOS(m) => segofs(m.code_segment, ip as u16),
+            Module::Windows(_) => ip,
+        }
+    }
 }
 
 #[derive(Default)]
@@ -40,12 +97,22 @@ pub struct AddrInfo {
     pub is_extern: bool,
 }
 
-#[derive(Default)]
 pub struct State {
     pub module: Module,
     pub mem: Memory,
     pub addr_info: HashMap<u32, AddrInfo>,
     pub blocks: HashMap<u32, Block>,
+}
+
+impl Default for State {
+    fn default() -> Self {
+        Self {
+            module: Module::DOS(DOSModule::default()),
+            mem: Default::default(),
+            addr_info: Default::default(),
+            blocks: Default::default(),
+        }
+    }
 }
 
 pub struct Instr {
@@ -119,12 +186,15 @@ impl State {
 
     /// For any dll used by the module, write its vtables to the executable memory.
     fn add_vtables(&mut self) -> u32 {
+        let Module::Windows(module) = &mut self.module else {
+            unreachable!()
+        };
         let mut addr = 0; // only set up if vtables are needd
         for (dll, vtables) in [
             ("ddraw", winapi::ddraw::VTABLES.as_slice()),
             ("dsound", winapi::dsound::VTABLES.as_slice()),
         ] {
-            if !self.module.imports.iter().any(|imp| imp.dll == dll) {
+            if !module.imports.iter().any(|imp| imp.dll == dll) {
                 continue;
             }
             if addr == 0 {
@@ -132,11 +202,9 @@ impl State {
                 assert!(addr != 0);
             }
             for (interface, entries) in vtables {
-                self.module
-                    .vtables
-                    .push((format!("{dll}::{interface}"), addr));
+                module.vtables.push((format!("{dll}::{interface}"), addr));
                 for func in entries.iter() {
-                    self.module.imports.push(Import {
+                    module.imports.push(Import {
                         dll: dll.to_string(),
                         func: format!("{interface}::{func}"),
                         iat_addr: addr,
@@ -151,9 +219,12 @@ impl State {
     }
 
     fn write_iat(&mut self, data_addr: u32) {
+        let Module::Windows(module) = &mut self.module else {
+            unreachable!()
+        };
         let mut data_addr = data_addr;
         let mut func_addr = 0xfafbfc00;
-        for import in self.module.imports.iter_mut() {
+        for import in module.imports.iter_mut() {
             if import.iat_addr == 0 {
                 panic!("{import:#x?}");
             }
@@ -169,20 +240,27 @@ impl State {
     }
 
     pub fn init_imports(&mut self) {
-        let data_addr = self.add_vtables();
-        self.write_iat(data_addr);
+        if matches!(self.module, Module::Windows(_)) {
+            let data_addr = self.add_vtables();
+            self.write_iat(data_addr);
+        }
     }
 
     /// Install externs for ambient addresses that make system calls.
     pub fn init_system_hooks(&mut self) {
-        if self.module.bitness == 16 {
-            self.addr_info.insert(
-                0,
-                AddrInfo {
-                    name: "dos::exit".into(),
-                    is_extern: true,
-                },
-            );
+        match &self.module {
+            Module::DOS(m) => {
+                if m.load_segment == m.code_segment {
+                    self.addr_info.insert(
+                        0,
+                        AddrInfo {
+                            name: "dos::exit".into(),
+                            is_extern: true,
+                        },
+                    );
+                }
+            }
+            Module::Windows(_) => {}
         }
     }
 

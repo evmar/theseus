@@ -2,38 +2,38 @@
 
 use runtime::segofs;
 
-use crate::{Import, Module, memory::Memory};
+use crate::{DOSModule, Import, Module, WindowsModule, memory::Memory};
 
 pub fn load_exe(mem: &mut Memory, buf: Vec<u8>) -> Module {
     match exe::parse(&buf).unwrap() {
-        exe::Parse::PE(pe) => load_pe(mem, &buf, pe),
-        exe::Parse::DOS(dos) => load_dos(mem, &buf, dos),
+        exe::Parse::PE(pe) => Module::Windows(load_pe(mem, &buf, pe)),
+        exe::Parse::DOS(dos) => Module::DOS(load_dos(mem, &buf, dos)),
     }
 }
 
-fn load_dos(mem: &mut Memory, buf: &[u8], dos: exe::DOS) -> Module {
-    let cs = dos::DOSBOX_SEG;
-    assert_eq!(dos.header.e_cs, 0); // not sure what this is for
+fn load_dos(mem: &mut Memory, buf: &[u8], dos: exe::DOS) -> DOSModule {
+    let load_segment = dos::DOSBOX_SEG;
+    assert_eq!(dos.header.e_cs, 0);
 
+    mem.reserve("psp".into(), segofs(load_segment, 0), 0x100);
+
+    let code_segment = load_segment + 0x10;
+    let code_addr = segofs(code_segment, 0);
     let data = &buf[dos.header_size()..];
-    let image_base = segofs(cs, 0);
-    mem.reserve("dos data".into(), image_base, data.len() as u32);
-    mem.slice_mut(image_base, data.len() as u32)
+    mem.reserve("dos data".into(), code_addr, data.len() as u32);
+    mem.slice_mut(code_addr, data.len() as u32)
         .copy_from_slice(data);
+    mem.mappings.dump();
 
-    Module {
-        bitness: 16,
-        imports: Default::default(),
-        image_base,
-        code_segment: Some(cs),
-        entry_point: dos.header.e_ip as u32,
-        code_memory: (0..0),
-        resources: None,
-        vtables: Default::default(),
+    DOSModule {
+        load_segment,
+        code_segment: load_segment + 0x10,
+        entry_point: dos.header.e_ip,
+        code_memory: (code_addr..data.len() as u32),
     }
 }
 
-fn load_pe(mem: &mut Memory, buf: &[u8], f: exe::PE) -> Module {
+fn load_pe(mem: &mut Memory, buf: &[u8], f: exe::PE) -> WindowsModule {
     mem.mappings.alloc("null page".into(), 0x1000);
 
     let image_base = f.opt_header.ImageBase;
@@ -72,9 +72,7 @@ fn load_pe(mem: &mut Memory, buf: &[u8], f: exe::PE) -> Module {
 
     let imports = read_imports(&f, mem);
 
-    Module {
-        bitness: 32,
-        code_segment: None,
+    WindowsModule {
         imports,
         image_base,
         entry_point: image_base + f.opt_header.AddressOfEntryPoint,

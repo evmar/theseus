@@ -1,4 +1,4 @@
-use tc::AddrInfo;
+use tc::{AddrInfo, Module};
 
 fn hex(val: &str) -> Result<u32, String> {
     if !val.starts_with("0x") {
@@ -86,7 +86,7 @@ fn run() -> anyhow::Result<()> {
 
     let buf = std::fs::read(&args.exe).unwrap();
     if args.exe.to_ascii_lowercase().ends_with(".com") {
-        state.module = tc::com::load_com(&mut state.mem, buf);
+        state.module = Module::DOS(tc::com::load_com(&mut state.mem, buf));
     } else if args.exe.to_ascii_lowercase().ends_with(".exe") {
         state.module = tc::load_exe(&mut state.mem, buf);
         state.init_imports();

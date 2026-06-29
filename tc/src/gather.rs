@@ -70,18 +70,20 @@ impl<'a> Traverse<'a> {
     }
 
     fn run(&mut self) {
-        for import in &self.module.imports {
-            if !import.data {
-                let func = format!("{}::{}", import.dll, import.func);
-                self.blocks.insert(
-                    import.addr,
-                    Block {
-                        name: None, // block.name() will use the stdcall name
-                        ty: BlockType::Stdcall(func),
-                    },
-                );
+        if let Module::Windows(module) = self.module {
+            for import in &module.imports {
+                if !import.data {
+                    let func = format!("{}::{}", import.dll, import.func);
+                    self.blocks.insert(
+                        import.addr,
+                        Block {
+                            name: None, // block.name() will use the stdcall name
+                            ty: BlockType::Stdcall(func),
+                        },
+                    );
+                }
+                self.iat_refs.insert(import.iat_addr, &import);
             }
-            self.iat_refs.insert(import.iat_addr, &import);
         }
 
         for (&addr, info) in self.addr_info.iter() {
@@ -96,7 +98,7 @@ impl<'a> Traverse<'a> {
             }
         }
 
-        self.queue.push_back(self.module.entry_point);
+        self.queue.push_back(self.module.entry_point_ip());
         for entry_point in self.gather.entry_points.iter() {
             match entry_point {
                 EntryPoint::Single(addr) => self.queue.push_back(*addr),
@@ -153,7 +155,7 @@ impl<'a> Traverse<'a> {
     }
 
     fn decode_one(&mut self, ip: u32) -> anyhow::Result<Block> {
-        let addr = ((self.module.code_segment.unwrap_or(0) as u32) << 4).wrapping_add(ip);
+        let addr = self.module.ip_to_addr(ip);
         if addr > self.mem.bytes.len() as u32 {
             anyhow::bail!("ip out of bounds");
         }
@@ -164,7 +166,7 @@ impl<'a> Traverse<'a> {
 
         let mut instrs = Vec::new();
         let decoder = iced_x86::Decoder::with_ip(
-            self.module.bitness,
+            self.module.bitness(),
             data,
             ip as u64,
             iced_x86::DecoderOptions::NONE,
@@ -176,7 +178,7 @@ impl<'a> Traverse<'a> {
                 break;
             }
 
-            if instr.mnemonic() == iced_x86::Mnemonic::Out && self.module.bitness != 16 {
+            if instr.mnemonic() == iced_x86::Mnemonic::Out && !self.module.is_dos() {
                 anyhow::bail!("'out' instruction in non-DOS code");
             }
 
@@ -189,7 +191,7 @@ impl<'a> Traverse<'a> {
                 for i in 0..instr.op_count() {
                     if instr.op_kind(i) == iced_x86::OpKind::Immediate32 {
                         let imm = instr.immediate32();
-                        if self.module.code_memory.contains(&imm) {
+                        if self.module.code_memory().contains(&imm) {
                             log::info!("{imm:x} looks like a code pointer");
                             self.queue.push_back(imm);
                         }
@@ -263,19 +265,19 @@ impl<'a> Traverse<'a> {
     fn scan_for_pointers(&mut self) {
         for i in 0..self.mem.mappings.vec().len() {
             let mapping = &self.mem.mappings.vec()[i];
-            if mapping.addr == 0 || mapping.addr == self.module.code_memory.start {
+            if mapping.addr == 0 || mapping.addr == self.module.code_memory().start {
                 continue;
             }
             log::info!("scanning mapping {:?}", mapping);
             let mapping_addr = mapping.addr;
-            if self.module.code_segment.is_some() {
+            if self.module.segment_addressed() {
                 todo!();
             }
             let data = self.mem.bytes[mapping.addr as usize..][..mapping.size as usize].to_vec();
             for ofs in 0..data.len() - 4 {
                 let value =
                     u32::from_le_bytes([data[ofs], data[ofs + 1], data[ofs + 2], data[ofs + 3]]);
-                if self.module.code_memory.contains(&value) {
+                if self.module.code_memory().contains(&value) {
                     log::info!(
                         "{addr:08x}: found possible code pointer {value:x}",
                         addr = mapping_addr + ofs as u32
