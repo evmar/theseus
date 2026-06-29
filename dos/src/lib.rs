@@ -155,3 +155,8 @@ impl State {
         }
     }
 }
+
+/// Handler for address 0; what happens if the entry point returns.
+pub fn exit(_ctx: &mut Context) -> runtime::Cont {
+    std::process::exit(0);
+}
