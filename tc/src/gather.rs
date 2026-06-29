@@ -7,7 +7,7 @@ use crate::{Block, BlockType, Import, Instr, Module, State, memory::Memory};
 /// If the instruction looks like
 ///   foo [x]
 /// where x is a constant, return the value of x.
-pub fn is_abs_memory_ref(instr: &iced_x86::Instruction) -> Option<u32> {
+fn is_abs_memory_ref(instr: &iced_x86::Instruction) -> Option<u32> {
     let iced_x86::OpKind::Memory = instr.op0_kind() else {
         return None;
     };
@@ -56,7 +56,7 @@ struct Traverse<'a> {
 }
 
 impl<'a> Traverse<'a> {
-    pub fn new(state: &'a mut State, gather: &'a Gather) -> Traverse<'a> {
+    fn new(state: &'a mut State, gather: &'a Gather) -> Traverse<'a> {
         Traverse {
             gather,
             module: &state.module,
@@ -70,7 +70,7 @@ impl<'a> Traverse<'a> {
         }
     }
 
-    pub fn run(&mut self) {
+    fn run(&mut self) {
         for import in &self.module.imports {
             if !import.data {
                 let func = format!("{}::{}", import.dll, import.func);
