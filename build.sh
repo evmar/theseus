@@ -62,6 +62,10 @@ elif [[ $1 == "magixfly" ]]; then
     cargo run -p tc -- \
         --exe scratch/dos/magixfly/magixfly.com \
         --out out/dos/magixfly
+elif [[ $1 == "sbaitso-read" ]]; then
+    cargo run -p tc -- \
+        --exe scratch/dos/sbaitso/READ.EXE \
+        --out out/sbaitso/read
 else
     echo "unknown target $1"
 fi
