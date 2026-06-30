@@ -83,6 +83,13 @@ impl Context {
         from
     }
 
+    pub fn jcxz(&mut self, from: Cont, x: Cont) -> Cont {
+        if self.cpu.regs.get_cx() == 0 {
+            return x;
+        }
+        from
+    }
+
     pub fn jecxz(&mut self, from: Cont, x: Cont) -> Cont {
         if self.cpu.regs.ecx == 0 {
             return x;

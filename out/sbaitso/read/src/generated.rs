@@ -1104,7 +1104,7 @@ pub fn x6c7(ctx: &mut Context) -> Cont {
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x440u16)),
     );
     // 00000721 jcxz 0725h
-    panic!("Jcxz not implemented");
+    ctx.jcxz(Cont(x723), Cont(x725))
 }
 
 pub fn x723(ctx: &mut Context) -> Cont {
@@ -1343,7 +1343,7 @@ pub fn x7ce(ctx: &mut Context) -> Cont {
             .read::<u16>(segofs(ctx.cpu.regs.get_es(), 0x2cu16)),
     );
     // 000007d7 jcxz 0817h
-    panic!("Jcxz not implemented");
+    ctx.jcxz(Cont(x7d9), Cont(x817))
 }
 
 pub fn x7d9(ctx: &mut Context) -> Cont {
@@ -1792,7 +1792,7 @@ pub fn x8c7(ctx: &mut Context) -> Cont {
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x454u16)),
     );
     // 000008cb jcxz 08D4h
-    panic!("Jcxz not implemented");
+    ctx.jcxz(Cont(x8cd), Cont(x8d4))
 }
 
 pub fn x8cd(ctx: &mut Context) -> Cont {
@@ -1860,7 +1860,7 @@ pub fn x8f8(ctx: &mut Context) -> Cont {
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_di())),
     );
     // 000008fc jcxz 08F4h
-    panic!("Jcxz not implemented");
+    ctx.jcxz(Cont(x8fe), Cont(x8f4))
 }
 
 pub fn x8fe(ctx: &mut Context) -> Cont {
@@ -3186,7 +3186,7 @@ pub fn xb44(ctx: &mut Context) -> Cont {
         .regs
         .set_cx(dec(ctx.cpu.regs.get_cx(), &mut ctx.cpu.flags));
     // 00000b53 jcxz 0B7Bh
-    panic!("Jcxz not implemented");
+    ctx.jcxz(Cont(xb55), Cont(xb7b))
 }
 
 pub fn xb55(ctx: &mut Context) -> Cont {
@@ -3721,7 +3721,7 @@ pub fn xc5c(ctx: &mut Context) -> Cont {
     // 00000c6a mov cx,ax
     ctx.cpu.regs.set_cx(ctx.cpu.regs.get_ax());
     // 00000c6c jcxz 0CCAh
-    panic!("Jcxz not implemented");
+    ctx.jcxz(Cont(xc6e), Cont(xcca))
 }
 
 pub fn xc6e(ctx: &mut Context) -> Cont {
@@ -4276,7 +4276,7 @@ pub fn xd42(ctx: &mut Context) -> Cont {
 pub fn xd46(ctx: &mut Context) -> Cont {
     ctx.dump_dosbox(0xd46);
     // 00000d46 jcxz 0D54h
-    panic!("Jcxz not implemented");
+    ctx.jcxz(Cont(xd48), Cont(xd54))
 }
 
 pub fn xd48(ctx: &mut Context) -> Cont {
@@ -5095,7 +5095,7 @@ pub fn xebb(ctx: &mut Context) -> Cont {
         ctx.cpu.regs.get_dx(),
     );
     // 00000ecc jcxz 0EEEh
-    panic!("Jcxz not implemented");
+    ctx.jcxz(Cont(xece), Cont(xeee))
 }
 
 pub fn xece(ctx: &mut Context) -> Cont {
@@ -6634,7 +6634,7 @@ pub fn x1639(ctx: &mut Context) -> Cont {
         ctx.cpu.regs.get_bp().wrapping_add(0x8u16),
     )));
     // 0000163e jcxz 16A1h
-    panic!("Jcxz not implemented");
+    ctx.jcxz(Cont(x1640), Cont(x16a1))
 }
 
 pub fn x1640(ctx: &mut Context) -> Cont {
@@ -6745,7 +6745,7 @@ pub fn x166a(ctx: &mut Context) -> Cont {
     // 00001676 mov cx,ax
     ctx.cpu.regs.set_cx(ctx.cpu.regs.get_ax());
     // 00001678 jcxz 169Fh
-    panic!("Jcxz not implemented");
+    ctx.jcxz(Cont(x167a), Cont(x169f))
 }
 
 pub fn x167a(ctx: &mut Context) -> Cont {
@@ -7243,7 +7243,7 @@ pub fn x1749(ctx: &mut Context) -> Cont {
         ctx.cpu.regs.get_bp().wrapping_add(0x8u16),
     )));
     // 00001763 jcxz 179Dh
-    panic!("Jcxz not implemented");
+    ctx.jcxz(Cont(x1765), Cont(x179d))
 }
 
 pub fn x1765(ctx: &mut Context) -> Cont {
@@ -7458,7 +7458,7 @@ pub fn x17bf(ctx: &mut Context) -> Cont {
         &mut ctx.cpu.flags,
     ));
     // 000017c6 jcxz 17DAh
-    panic!("Jcxz not implemented");
+    ctx.jcxz(Cont(x17c8), Cont(x17da))
 }
 
 pub fn x17c8(ctx: &mut Context) -> Cont {
@@ -8313,7 +8313,7 @@ pub fn x194b(ctx: &mut Context) -> Cont {
     // 0000194d mov dx,0FFF0h
     ctx.cpu.regs.set_dx(0xfff0u16);
     // 00001950 jcxz 1982h
-    panic!("Jcxz not implemented");
+    ctx.jcxz(Cont(x1952), Cont(x1982))
 }
 
 pub fn x1952(ctx: &mut Context) -> Cont {
@@ -9183,7 +9183,7 @@ pub fn x1b6b(ctx: &mut Context) -> Cont {
         ctx.cpu.regs.get_bx().wrapping_add(0x2u16),
     )));
     // 00001b6e jcxz 1B86h
-    panic!("Jcxz not implemented");
+    ctx.jcxz(Cont(x1b70), Cont(x1b86))
 }
 
 pub fn x1b70(ctx: &mut Context) -> Cont {
@@ -9647,7 +9647,7 @@ pub fn x1c2e(ctx: &mut Context) -> Cont {
         ctx.cpu.regs.get_bp().wrapping_add(0x8u16),
     )));
     // 00001c44 jcxz 1C54h
-    panic!("Jcxz not implemented");
+    ctx.jcxz(Cont(x1c46), Cont(x1c54))
 }
 
 pub fn x1c46(ctx: &mut Context) -> Cont {
