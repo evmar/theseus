@@ -1294,7 +1294,22 @@ pub fn x798(ctx: &mut Context) -> Cont {
             .read::<u16>(segofs(ctx.cpu.regs.get_es(), 0x2cu16)),
     );
     // 000007a9 lds ax,ds:[456h]
-    panic!("Lds not implemented");
+    let ptr = ctx
+        .memory
+        .read::<u32>(segofs(ctx.cpu.regs.get_ds(), 0x456u16));
+    ctx.cpu.regs.ds = (ptr >> 16) as u16;
+    ctx.cpu.regs.set_ax(ptr as u16);
+    // 000007ad mov dx,ds
+    ctx.cpu.regs.set_dx(ctx.cpu.regs.get_ds());
+    // 000007af xor bx,bx
+    ctx.cpu.regs.set_bx(xor(
+        ctx.cpu.regs.get_bx(),
+        ctx.cpu.regs.get_bx(),
+        &mut ctx.cpu.flags,
+    ));
+    // 000007b1 call dword ptr ss:[452h]
+    let dst = ctx.indirect16(ctx.memory.read(segofs(ctx.cpu.regs.get_ss(), 0x452u16)));
+    ctx.call16(0x7b6, dst)
 }
 
 pub fn x7b6(ctx: &mut Context) -> Cont {
@@ -1317,7 +1332,18 @@ pub fn x7b8(ctx: &mut Context) -> Cont {
 pub fn x7bd(ctx: &mut Context) -> Cont {
     ctx.dump_dosbox(0x7bd);
     // 000007bd lds ax,ss:[45Ah]
-    panic!("Lds not implemented");
+    let ptr = ctx
+        .memory
+        .read::<u32>(segofs(ctx.cpu.regs.get_ss(), 0x45au16));
+    ctx.cpu.regs.ds = (ptr >> 16) as u16;
+    ctx.cpu.regs.set_ax(ptr as u16);
+    // 000007c2 mov dx,ds
+    ctx.cpu.regs.set_dx(ctx.cpu.regs.get_ds());
+    // 000007c4 mov bx,3
+    ctx.cpu.regs.set_bx(0x3u16);
+    // 000007c7 call dword ptr ss:[452h]
+    let dst = ctx.indirect16(ctx.memory.read(segofs(ctx.cpu.regs.get_ss(), 0x452u16)));
+    ctx.call16(0x7cc, dst)
 }
 
 pub fn x7cc(ctx: &mut Context) -> Cont {
@@ -1809,7 +1835,27 @@ pub fn x8d4(ctx: &mut Context) -> Cont {
     // 000008d4 push ds
     ctx.push16(ctx.cpu.regs.get_ds());
     // 000008d5 lds dx,ds:[220h]
-    panic!("Lds not implemented");
+    let ptr = ctx
+        .memory
+        .read::<u32>(segofs(ctx.cpu.regs.get_ds(), 0x220u16));
+    ctx.cpu.regs.ds = (ptr >> 16) as u16;
+    ctx.cpu.regs.set_dx(ptr as u16);
+    // 000008d9 mov ax,2500h
+    ctx.cpu.regs.set_ax(0x2500u16);
+    // 000008dc int 21h
+    dos::int(ctx, 0x21);
+    // 000008de pop ds
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_ds(x);
+    // 000008df cmp byte ptr ds:[25Eh],0
+    sub(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x25eu16)),
+        0x0u8,
+        &mut ctx.cpu.flags,
+    );
+    // 000008e4 je short 08F3h
+    ctx.je(Cont(x8e6), Cont(x8f3))
 }
 
 pub fn x8e6(ctx: &mut Context) -> Cont {
@@ -1822,7 +1868,18 @@ pub fn x8e6(ctx: &mut Context) -> Cont {
             .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x25fu16)),
     );
     // 000008ea lds dx,ds:[260h]
-    panic!("Lds not implemented");
+    let ptr = ctx
+        .memory
+        .read::<u32>(segofs(ctx.cpu.regs.get_ds(), 0x260u16));
+    ctx.cpu.regs.ds = (ptr >> 16) as u16;
+    ctx.cpu.regs.set_dx(ptr as u16);
+    // 000008ee mov ah,25h
+    ctx.cpu.regs.set_ah(0x25u8);
+    // 000008f0 int 21h
+    dos::int(ctx, 0x21);
+    // 000008f2 pop ds
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_ds(x);
     Cont(x8f3)
 }
 
@@ -2648,7 +2705,11 @@ pub fn xa37(ctx: &mut Context) -> Cont {
         .regs
         .set_bx(inc(ctx.cpu.regs.get_bx(), &mut ctx.cpu.flags));
     // 00000a5a lds si,ds:[257h]
-    panic!("Lds not implemented");
+    let ptr = ctx
+        .memory
+        .read::<u32>(segofs(ctx.cpu.regs.get_ds(), 0x257u16));
+    ctx.cpu.regs.ds = (ptr >> 16) as u16;
+    ctx.cpu.regs.set_si(ptr as u16);
     Cont(xa5e)
 }
 

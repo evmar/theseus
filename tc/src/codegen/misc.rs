@@ -1,4 +1,4 @@
-use crate::codegen::{CodeGen, instr_name, op_size};
+use crate::codegen::{CodeGen, get_mem, instr_name, op_size};
 
 impl<'a> CodeGen<'a> {
     pub fn codegen_misc(&mut self, instr: &iced_x86::Instruction) -> bool {
@@ -109,6 +109,27 @@ impl<'a> CodeGen<'a> {
                     self.get_op(instr, 0)
                 };
                 self.line(format!("dos::out(ctx, {port}, {});", self.get_op(instr, 1)));
+            }
+
+            Lds | Les | Lfs | Lgs | Lss => {
+                assert_eq!(instr.op_count(), 2);
+                assert_eq!(self.module.bitness(), 16);
+                self.line(format!(
+                    "let ptr = {};",
+                    get_mem("u32".into(), self.gen_addr(instr)),
+                ));
+                self.line(format!(
+                    "ctx.cpu.regs.{} = (ptr >> 16) as u16;",
+                    match instr.mnemonic() {
+                        Lds => "ds",
+                        Les => "es",
+                        Lfs => "fs",
+                        Lgs => "gs",
+                        Lss => "ss",
+                        _ => unreachable!(),
+                    }
+                ));
+                self.line(self.set_op(instr, 0, "ptr as u16".into()));
             }
 
             _ => return false,
