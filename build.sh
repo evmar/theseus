@@ -63,7 +63,7 @@ elif [[ $1 == "magixfly" ]]; then
         --exe scratch/dos/magixfly/magixfly.com \
         --out out/dos/magixfly
 elif [[ $1 == "sbaitso-read" ]]; then
-    cargo run -p tc -- \
+    cargo run -p tc -- --trace \
         --exe scratch/dos/sbaitso/READ.EXE \
         --out out/sbaitso/read
 else
