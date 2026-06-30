@@ -46,14 +46,15 @@ fn load_pe(mem: &mut Memory, buf: &[u8], f: exe::PE) -> WindowsModule {
         let size = runtime::round_to_page(sec.SizeOfRawData.max(sec.VirtualSize));
         mem.reserve(sec.name().unwrap().into(), addr, size);
 
+        use exe::pe::IMAGE_SCN;
         let flags = sec.characteristics().unwrap();
-        let load_data = flags.contains(exe::IMAGE_SCN::CODE)
-            || flags.contains(exe::IMAGE_SCN::INITIALIZED_DATA);
+        let load_data =
+            flags.contains(IMAGE_SCN::CODE) || flags.contains(IMAGE_SCN::INITIALIZED_DATA);
         if load_data {
             let data = &buf[sec.PointerToRawData as usize..][..sec.SizeOfRawData as usize];
             mem.put(addr, data);
         }
-        if flags.contains(exe::IMAGE_SCN::CODE) || flags.contains(exe::IMAGE_SCN::MEM_EXECUTE) {
+        if flags.contains(IMAGE_SCN::CODE) || flags.contains(IMAGE_SCN::MEM_EXECUTE) {
             match &mut code_range {
                 None => code_range = Some(addr..addr + sec.SizeOfRawData),
                 Some(range) => {
@@ -65,7 +66,7 @@ fn load_pe(mem: &mut Memory, buf: &[u8], f: exe::PE) -> WindowsModule {
     }
 
     let resources = f
-        .get_data_directory(exe::IMAGE_DIRECTORY_ENTRY::RESOURCE)
+        .get_data_directory(exe::pe::IMAGE_DIRECTORY_ENTRY::RESOURCE)
         .map(|dir| {
             let addr = image_base + dir.VirtualAddress;
             addr..(addr + dir.Size)
@@ -93,7 +94,7 @@ fn is_data(dll: &str, func: &str) -> bool {
 /// Read the file's imported symbols.
 fn read_imports(pe_file: &exe::PE, mem: &Memory) -> Vec<Import> {
     let mut imports = vec![];
-    let Some(dir) = pe_file.get_data_directory(exe::IMAGE_DIRECTORY_ENTRY::IMPORT) else {
+    let Some(dir) = pe_file.get_data_directory(exe::pe::IMAGE_DIRECTORY_ENTRY::IMPORT) else {
         return imports;
     };
     let image_base = pe_file.opt_header.ImageBase;

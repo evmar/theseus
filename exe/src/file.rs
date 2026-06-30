@@ -231,24 +231,3 @@ impl IMAGE_SCN {
         1 << (value - 1)
     }
 }
-
-#[derive(Debug)]
-pub struct PE {
-    pub header: IMAGE_FILE_HEADER,
-    pub opt_header: IMAGE_OPTIONAL_HEADER32,
-    pub data_directory: Box<[IMAGE_DATA_DIRECTORY]>,
-    pub sections: Box<[IMAGE_SECTION_HEADER]>,
-}
-
-impl PE {
-    pub fn get_data_directory(
-        &self,
-        entry: IMAGE_DIRECTORY_ENTRY,
-    ) -> Option<&IMAGE_DATA_DIRECTORY> {
-        let dir = self.data_directory.get(entry as usize)?;
-        if dir.VirtualAddress == 0 {
-            return None;
-        }
-        Some(dir)
-    }
-}
