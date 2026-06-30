@@ -127,15 +127,14 @@ pub fn do_unpack(ctx: &mut runtime::Context) {
     tc.mem.bytes.resize(ctx.memory.bytes.len(), 0);
     tc.mem.bytes.copy_from_slice(ctx.memory.bytes);
 
-    tc.module = tc::Module {
-        code_segment: None,
+    tc.module = tc::Module::Windows(tc::WindowsModule {
         image_base,
         entry_point: 0x0041f079,
         code_memory: 0x40_0000..tc.mem.bytes.len() as u32,
         resources: None,
         imports: syms,
         vtables: vec![],
-    };
+    });
     tc.init_imports();
 
     tc.gather(tc::Gather {
@@ -157,5 +156,5 @@ pub fn do_unpack(ctx: &mut runtime::Context) {
         ..Default::default()
     });
 
-    tc.generate("out/mofo").unwrap();
+    tc.generate(false, "out/mofo").unwrap();
 }

@@ -113,13 +113,13 @@ pub fn do_unpack(ctx: &mut runtime::Context) {
     tc.mem.bytes.resize(ctx.memory.bytes.len(), 0);
     tc.mem.bytes.copy_from_slice(ctx.memory.bytes);
 
-    tc.module = tc::Module {
+    tc.module = tc::Module::Windows(tc::WindowsModule {
         image_base: 0x0040_0000,
         entry_point: 0x0040_85dd,
         code_memory: 0x40_0000..tc.mem.bytes.len() as u32,
         imports: syms,
         ..Default::default()
-    };
+    });
     tc.init_imports();
 
     tc.gather(tc::Gather {
@@ -127,5 +127,5 @@ pub fn do_unpack(ctx: &mut runtime::Context) {
         ..Default::default()
     });
 
-    tc.generate("out/chillin").unwrap();
+    tc.generate(false, "out/chillin").unwrap();
 }
