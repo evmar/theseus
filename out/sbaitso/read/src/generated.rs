@@ -23,6 +23,16 @@ fn init(ctx: &mut Context, mappings: &mut runtime::Mappings) {
     let bytes = include_bytes!("../data/00008230.raw").as_slice();
     let out = &mut ctx.memory.bytes[0x8230..][..bytes.len()];
     out.copy_from_slice(bytes);
+
+    ctx.cpu.regs.cs = 0x823;
+    ctx.cpu.regs.ds = 0x813; // PSP
+    ctx.cpu.regs.es = 0x813; // PSP
+    ctx.cpu.regs.ss = 0xa71;
+    // initial cx: https://stackoverflow.com/questions/79440940/why-cx-register-already-has-a-non-zero-value-on-startup-of-a-dos-program-unlike
+    ctx.cpu.regs.ecx = 0xff;
+    ctx.cpu.regs.esp = 0x800;
+
+    ctx.cpu.regs.edx = 0x813; // PSP segment
 }
 
 pub fn x10(ctx: &mut Context) -> Cont {

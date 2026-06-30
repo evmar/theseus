@@ -13,8 +13,11 @@ use runtime::segofs;
 #[derive(Default)]
 pub struct DOSModule {
     pub is_com: bool,
+    // initial register values
+    pub psp_segment: u16,
     pub load_segment: u16,
-    pub code_segment: u16,
+    pub stack_segment: u16,
+    pub stack_pointer: u16,
     pub entry_point: u16,
     pub code_memory: std::ops::Range<u32>,
 }
@@ -73,7 +76,7 @@ impl Module {
 
     fn image_base(&self) -> u32 {
         match self {
-            Module::DOS(m) => segofs(m.load_segment, 0),
+            Module::DOS(m) => segofs(m.psp_segment, 0),
             Module::Windows(m) => m.image_base,
         }
     }
@@ -85,7 +88,7 @@ impl Module {
     }
     fn ip_to_addr(&self, ip: u32) -> u32 {
         match self {
-            Module::DOS(m) => segofs(m.code_segment, ip as u16),
+            Module::DOS(m) => segofs(m.load_segment, ip as u16),
             Module::Windows(_) => ip,
         }
     }

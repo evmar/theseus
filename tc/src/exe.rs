@@ -12,25 +12,25 @@ pub fn load_exe(mem: &mut Memory, buf: Vec<u8>) -> Module {
 }
 
 fn load_dos(mem: &mut Memory, buf: &[u8], dos: exe::DOS) -> DOSModule {
-    let load_segment = dos::DOSBOX_SEG;
-    assert_eq!(dos.header.e_cs, 0);
+    let psp_segment = dos::DOSBOX_SEG;
 
-    mem.reserve("psp".into(), segofs(load_segment, 0), 0x100);
+    mem.reserve("psp".into(), segofs(psp_segment, 0), 0x100);
 
-    let code_segment = load_segment + 0x10;
-    let code_addr = segofs(code_segment, 0);
+    let load_segment = psp_segment + 0x10;
+    let load_addr = segofs(load_segment, 0);
     let data = &buf[dos.header_size()..];
-    mem.reserve("dos data".into(), code_addr, data.len() as u32);
-    mem.slice_mut(code_addr, data.len() as u32)
+    mem.reserve("dos data".into(), load_addr, data.len() as u32);
+    mem.slice_mut(load_addr, data.len() as u32)
         .copy_from_slice(data);
-    mem.mappings.dump();
 
     DOSModule {
         is_com: false,
-        load_segment,
-        code_segment: load_segment + 0x10,
+        psp_segment,
+        load_segment: psp_segment + 0x10 + dos.header.e_cs,
+        stack_segment: load_segment + dos.header.e_ss,
+        stack_pointer: dos.header.e_sp,
         entry_point: dos.header.e_ip,
-        code_memory: (code_addr..data.len() as u32),
+        code_memory: (load_addr..data.len() as u32),
     }
 }
 

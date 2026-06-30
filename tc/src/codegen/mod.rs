@@ -322,18 +322,27 @@ out.copy_from_slice(bytes);",
                 }
             }
             Module::DOS(module) => {
-                if module.is_com {
-                    self.line("
-// initial register values copied to match dosbox
-ctx.cpu.regs.cs = DOSBOX_SEG;
-ctx.cpu.regs.ds = DOSBOX_SEG;
-ctx.cpu.regs.es = DOSBOX_SEG;
-ctx.cpu.regs.ss = DOSBOX_SEG;
-
+                self.line(format!("
+ctx.cpu.regs.cs = {load_segment:#x};
+ctx.cpu.regs.ds = {psp_segment:#x}; // PSP
+ctx.cpu.regs.es = {psp_segment:#x}; // PSP
+ctx.cpu.regs.ss = {stack_segment:#x};
 // initial cx: https://stackoverflow.com/questions/79440940/why-cx-register-already-has-a-non-zero-value-on-startup-of-a-dos-program-unlike
 ctx.cpu.regs.ecx = 0xff;
-ctx.cpu.regs.esp = 0xfffe;
-                ");
+ctx.cpu.regs.esp = {stack_pointer:#x};
+",
+                    load_segment = module.load_segment,
+                    psp_segment = module.psp_segment,
+                    stack_segment = module.stack_segment,
+                    stack_pointer = module.stack_pointer,
+                ));
+                if module.is_com {
+                    self.line("ctx.cpu.regs.esp = 0xfffe;");
+                } else {
+                    self.line(format!(
+                        "ctx.cpu.regs.edx = {:#x}; // PSP segment",
+                        module.psp_segment
+                    ));
                 }
             }
         }
