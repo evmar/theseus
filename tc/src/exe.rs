@@ -23,6 +23,8 @@ fn load_dos(mem: &mut Memory, buf: &[u8], dos: exe::DOS) -> DOSModule {
     mem.slice_mut(load_addr, data.len() as u32)
         .copy_from_slice(data);
 
+    dos.apply_relocations(load_segment, &mut mem.bytes[load_addr as usize..]);
+
     DOSModule {
         is_com: false,
         psp_segment,

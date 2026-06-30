@@ -35,9 +35,6 @@ pub fn parse(buf: &[u8]) -> anyhow::Result<Parse> {
         let pe = PE::parse(&buf[pe_offset..])?;
         Ok(Parse::PE(pe))
     } else {
-        if dos.header.e_crlc > 0 {
-            log::warn!("TODO: {} DOS relocs", dos.header.e_crlc);
-        }
         Ok(Parse::DOS(dos))
     }
 }

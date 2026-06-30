@@ -885,8 +885,8 @@ pub fn x696(ctx: &mut Context) -> Cont {
 
 pub fn x69b(ctx: &mut Context) -> Cont {
     ctx.dump_dosbox(0x69b);
-    // 0000069b mov di,1C7h
-    ctx.cpu.regs.set_di(0x1c7u16);
+    // 0000069b mov di,9EAh
+    ctx.cpu.regs.set_di(0x9eau16);
     // 0000069e mov si,ds:[2]
     ctx.cpu.regs.set_si(
         ctx.memory
@@ -1226,65 +1226,6 @@ pub fn x76d(ctx: &mut Context) -> Cont {
     // 00000771 call word ptr ds:[1F6h]
     let dst = ctx.indirect16(ctx.memory.read(segofs(ctx.cpu.regs.get_ds(), 0x1f6u16)));
     ctx.call16(0x775, dst)
-}
-
-pub fn x775(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x775);
-    // 00000775 mov word ptr [bx+di],0B800h
-    ctx.memory.write::<u16>(
-        segofs(
-            ctx.cpu.regs.get_ds(),
-            ctx.cpu.regs.get_bx().wrapping_add(ctx.cpu.regs.get_di()),
-        ),
-        0xb800u16,
-    );
-    // 00000779 add [di],dh
-    ctx.memory.write::<u8>(
-        segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_di()),
-        add(
-            ctx.memory
-                .read::<u8>(segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_di())),
-            ctx.cpu.regs.get_dh(),
-            &mut ctx.cpu.flags,
-        ),
-    );
-    // 0000077b int 21h
-    dos::int(ctx, 0x21);
-    // 0000077d mov ds:[220h],bx
-    ctx.memory.write::<u16>(
-        segofs(ctx.cpu.regs.get_ds(), 0x220u16),
-        ctx.cpu.regs.get_bx(),
-    );
-    // 00000781 mov ds:[222h],es
-    ctx.memory.write::<u16>(
-        segofs(ctx.cpu.regs.get_ds(), 0x222u16),
-        ctx.cpu.regs.get_es(),
-    );
-    // 00000785 push cs
-    ctx.push16(ctx.cpu.regs.get_cs());
-    // 00000786 pop ds
-    let x = ctx.pop16();
-    ctx.cpu.regs.set_ds(x);
-    // 00000787 mov ax,2500h
-    ctx.cpu.regs.set_ax(0x2500u16);
-    // 0000078a mov dx,746h
-    ctx.cpu.regs.set_dx(0x746u16);
-    // 0000078d int 21h
-    dos::int(ctx, 0x21);
-    // 0000078f push ss
-    ctx.push16(ctx.cpu.regs.get_ss());
-    // 00000790 pop ds
-    let x = ctx.pop16();
-    ctx.cpu.regs.set_ds(x);
-    // 00000791 cmp word ptr ds:[452h],0
-    sub(
-        ctx.memory
-            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x452u16)),
-        0x0u16,
-        &mut ctx.cpu.flags,
-    );
-    // 00000796 je short 07CEh
-    ctx.je(Cont(x798), Cont(x7ce))
 }
 
 pub fn x778(ctx: &mut Context) -> Cont {
@@ -9762,7 +9703,7 @@ pub fn x1c54(ctx: &mut Context) -> Cont {
     ctx.ret16(0)
 }
 
-const BLOCKS: [(u32, ContFn); 632] = [
+const BLOCKS: [(u32, ContFn); 631] = [
     (0x8240, x10),
     (0x8249, x19),
     (0x8252, x22),
@@ -9843,7 +9784,6 @@ const BLOCKS: [(u32, ContFn); 632] = [
     (0x898d, x75d),
     (0x8996, x766),
     (0x899d, x76d),
-    (0x89a5, x775),
     (0x89a8, x778),
     (0x89c8, x798),
     (0x89e6, x7b6),
