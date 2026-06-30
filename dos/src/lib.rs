@@ -93,6 +93,7 @@ fn state() -> RefMut<'static, State> {
     STATE.get().borrow_mut()
 }
 
+/// int10 is graphics calls.
 fn int10(ctx: &mut Context) {
     let func = ctx.cpu.regs.get_ah();
     match func {
@@ -105,6 +106,7 @@ fn int10(ctx: &mut Context) {
     }
 }
 
+/// int21 is used for system calls, like file i/o and exiting.
 fn int21(ctx: &mut Context) {
     let func = ctx.cpu.regs.get_ah();
     match func {
@@ -142,6 +144,15 @@ fn int21(ctx: &mut Context) {
             }
             ctx.cpu.regs.set_ax(len); // bytes written
             ctx.cpu.flags.remove(runtime::Flags::CF); // no error
+        }
+        // resize memory block
+        0x4a => {
+            let size = ctx.cpu.regs.get_bx() << 4;
+            let seg = ctx.cpu.regs.es;
+            log::warn!("TODO: resize memory seg {seg:x} to {size:x}");
+            ctx.cpu.flags.remove(runtime::Flags::CF);
+            let avail = 0xffff;
+            ctx.cpu.regs.set_bx(avail);
         }
         // error exit
         0x4c => {
