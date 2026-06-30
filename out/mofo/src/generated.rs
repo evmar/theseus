@@ -27657,7 +27657,6 @@ const BLOCKS: [(u32, ContFn); 1404] = [
 ];
 
 pub const EXEDATA: EXEData = EXEData {
-    bitness: 32,
     image_base: 0x400000,
     resources: 0x0..0x0,
     blocks: &BLOCKS,

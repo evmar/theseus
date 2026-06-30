@@ -398,14 +398,12 @@ use runtime::*;
             .ok_or_else(|| anyhow!("entry point {entry_point:x} not found in parsed blocks"))?;
         self.line(format!(
             "pub const EXEDATA: EXEData = EXEData {{
-            bitness: {bitness},
             image_base: {image_base:#x},
             resources: {res_start:#x}..{res_end:#x},
             blocks: &BLOCKS,
             init,
             entry_point: Cont({entry_point}),
         }};\n\n",
-            bitness = self.module.bitness(),
             image_base = self.module.image_base(),
             res_start = resources.start,
             res_end = resources.end,

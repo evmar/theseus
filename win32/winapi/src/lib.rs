@@ -49,7 +49,6 @@ fn thesesus_trace() -> String {
 pub fn load(exe: &EXEData) -> Context {
     host::init();
     crate::trace::init(&thesesus_trace());
-    assert_eq!(exe.bitness, 32);
 
     let memory_size = 32 << 20;
     let memory = Memory::leak_new(memory_size);
