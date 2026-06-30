@@ -14,11 +14,26 @@ use crate::{timer::PIT, vga::VGA};
 /// DOSBox-X loads com files into this segment.
 pub const DOSBOX_SEG: u16 = 0x813;
 
+#[repr(C)]
+#[derive(zerocopy::IntoBytes, zerocopy::Immutable)]
+struct PSP {
+    int20: [u8; 2],
+    memory_top: u16,
+}
+
 pub fn load(exe: &EXEData) -> Context {
     host::init();
 
     let memory_size = 1 << 20;
-    let memory = Memory::leak_new(memory_size as usize);
+    let mut memory = Memory::leak_new(memory_size as usize);
+
+    memory.write(
+        exe.image_base,
+        PSP {
+            int20: [0xcd, 0x20],
+            memory_top: 0x9fff, // from dosbox
+        },
+    );
 
     let mut ctx = Context {
         cpu: CPU::default(),

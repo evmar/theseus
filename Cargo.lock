@@ -189,6 +189,7 @@ dependencies = [
  "host",
  "log",
  "runtime",
+ "zerocopy",
 ]
 
 [[package]]
