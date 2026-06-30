@@ -33,6 +33,11 @@ fn init(ctx: &mut Context, mappings: &mut runtime::Mappings) {
     ctx.cpu.regs.esp = 0x800;
 
     ctx.cpu.regs.edx = 0x813; // PSP segment
+
+    // arbitrary values, matching dosbox
+    ctx.cpu.regs.esi = 0x68e;
+    ctx.cpu.regs.edi = 0x800;
+    ctx.cpu.regs.ebp = 0x91c;
 }
 
 pub fn x10(ctx: &mut Context) -> Cont {

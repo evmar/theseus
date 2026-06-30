@@ -101,7 +101,10 @@ fn int21(ctx: &mut Context) {
         }
         // get DOS version
         0x30 => {
-            ctx.cpu.regs.set_ax(6);
+            // these values match dosbox
+            ctx.cpu.regs.set_ax(5);
+            ctx.cpu.regs.set_bx(0xff00);
+            ctx.cpu.regs.set_cx(0);
         }
         // read from interrupt table
         0x35 => {

@@ -121,7 +121,7 @@ impl Context {
             self.cpu.regs.esi, self.cpu.regs.edi, self.cpu.regs.ebp, self.cpu.regs.esp
         );
         println!(
-            "DS:{:04x} ES:{:04x} FS:{:04x} GS:{:04x} SS:{:04x}",
+            "DS:{:04X} ES:{:04X} FS:{:04X} GS:{:04X} SS:{:04X}",
             self.cpu.regs.ds,
             self.cpu.regs.es,
             self.cpu.regs.fs,

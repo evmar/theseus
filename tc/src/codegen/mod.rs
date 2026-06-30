@@ -343,6 +343,15 @@ ctx.cpu.regs.esp = {stack_pointer:#x};
                         "ctx.cpu.regs.edx = {:#x}; // PSP segment",
                         module.psp_segment
                     ));
+
+                    self.line(
+                        "
+                        // arbitrary values, matching dosbox
+                        ctx.cpu.regs.esi = 0x68e;
+                        ctx.cpu.regs.edi = 0x800;
+                        ctx.cpu.regs.ebp = 0x91c;
+                        ",
+                    );
                 }
             }
         }
