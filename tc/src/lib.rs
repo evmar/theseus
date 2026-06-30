@@ -3,9 +3,8 @@ use std::collections::HashMap;
 use crate::memory::Memory;
 
 mod codegen;
-mod load;
-pub use load::load_exe;
 pub mod com;
+pub mod exe;
 mod gather;
 mod memory;
 pub use gather::{EntryPoint, Gather};

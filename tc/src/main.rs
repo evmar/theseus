@@ -92,7 +92,7 @@ fn run() -> anyhow::Result<()> {
     if args.exe.to_ascii_lowercase().ends_with(".com") {
         state.module = Module::DOS(tc::com::load_com(&mut state.mem, buf));
     } else if args.exe.to_ascii_lowercase().ends_with(".exe") {
-        state.module = tc::load_exe(&mut state.mem, buf);
+        state.module = tc::exe::load_exe(&mut state.mem, buf);
         state.init_imports();
     } else {
         anyhow::bail!("unexpected file extension");
