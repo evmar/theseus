@@ -12,6 +12,7 @@ use runtime::segofs;
 
 #[derive(Default)]
 pub struct DOSModule {
+    pub is_com: bool,
     pub load_segment: u16,
     pub code_segment: u16,
     pub entry_point: u16,
@@ -249,7 +250,7 @@ impl State {
     pub fn init_system_hooks(&mut self) {
         match &self.module {
             Module::DOS(m) => {
-                if m.load_segment == m.code_segment {
+                if m.is_com {
                     self.addr_info.insert(
                         0,
                         AddrInfo {

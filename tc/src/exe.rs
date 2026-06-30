@@ -26,6 +26,7 @@ fn load_dos(mem: &mut Memory, buf: &[u8], dos: exe::DOS) -> DOSModule {
     mem.mappings.dump();
 
     DOSModule {
+        is_com: false,
         load_segment,
         code_segment: load_segment + 0x10,
         entry_point: dos.header.e_ip,

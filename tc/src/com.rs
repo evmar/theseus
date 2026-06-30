@@ -7,6 +7,7 @@ pub fn load_com(mem: &mut Memory, buf: Vec<u8>) -> DOSModule {
     mem.reserve("com".into(), addr, buf.len() as u32);
     mem.bytes[addr as usize..].copy_from_slice(&buf);
     DOSModule {
+        is_com: true,
         load_segment: dos::DOSBOX_SEG,
         code_segment: dos::DOSBOX_SEG,
         entry_point: 0x100,
