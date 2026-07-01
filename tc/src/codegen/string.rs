@@ -7,9 +7,9 @@ impl<'a> CodeGen<'a> {
             Movsb | Movsw | Movsd | // x
             Lodsb | Lodsw | Lodsd | // x
             Stosb | Stosw | Stosd => {
-                assert!(!instr.has_repne_prefix());
                 let name = instr_name(instr);
-                if instr.has_rep_prefix() {
+                // Note: repe/repne behaves the same as rep for these instructions,
+                if instr.has_rep_prefix() || instr.has_repne_prefix() {
                     self.line(format!("ctx.rep(Rep::REP, Context::{name});"));
                 } else {
                     self.line(format!("ctx.{name}();"));
