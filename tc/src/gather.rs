@@ -160,7 +160,7 @@ impl<'a> Traverse<'a> {
             anyhow::bail!("ip out of bounds");
         }
         let data = self.mem.slice_all(addr);
-        if data.len() > 0x10 && data.iter().all(|&b| b == 0) {
+        if data.len() > 0x10 && data[..0x10].iter().all(|&b| b == 0) {
             anyhow::bail!("block appears zero-filled");
         }
 
@@ -219,6 +219,15 @@ impl<'a> Traverse<'a> {
                         }
                         iced_x86::OpKind::NearBranch32 => {
                             self.queue.push_back(instr.near_branch32())
+                        }
+                        iced_x86::OpKind::FarBranch16 => {
+                            log::warn!(
+                                "{:x} {} {:x}:{:x}",
+                                instr.ip32(),
+                                instr,
+                                instr.far_branch16(),
+                                instr.far_branch_selector()
+                            )
                         }
                         iced_x86::OpKind::Memory => {
                             if let Some(addr) = is_abs_memory_ref(&instr) {
