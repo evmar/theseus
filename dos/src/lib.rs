@@ -75,7 +75,8 @@ static STATE: LazyLock<SingleThreader<RefCell<State>>> =
 
 struct State {
     pit: PIT,
-    interrupt_handlers: [(u16, u16); 16],
+    // IVT; TODO: this actually lives in in memory at 0000:0000, not sure if anything depends on that
+    interrupt_handlers: [(u16, u16); 0x30],
     vga: Option<VGA>,
 }
 
@@ -83,7 +84,7 @@ impl State {
     fn new() -> Self {
         State {
             pit: PIT::default(),
-            interrupt_handlers: [(0, 0); 16],
+            interrupt_handlers: [(0, 0); 0x30],
             vga: None,
         }
     }
