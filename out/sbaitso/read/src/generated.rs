@@ -567,7 +567,7 @@ pub fn x158(ctx: &mut Context) -> Cont {
     // 0000015e push ax
     ctx.push16(ctx.cpu.regs.get_ax());
     // 0000015f call far ptr 0823h:03ADh
-    ctx.call16(0x164, Cont(x3ad))
+    ctx.callf16(0x164, Cont(x3ad))
 }
 
 pub fn x164(ctx: &mut Context) -> Cont {
@@ -814,7 +814,7 @@ pub fn x1e6(ctx: &mut Context) -> Cont {
     // 000001f5 push ax
     ctx.push16(ctx.cpu.regs.get_ax());
     // 000001f6 call far ptr 0823h:03ADh
-    ctx.call16(0x1fb, Cont(x3ad))
+    ctx.callf16(0x1fb, Cont(x3ad))
 }
 
 pub fn x1fb(ctx: &mut Context) -> Cont {
@@ -901,7 +901,7 @@ pub fn x224(ctx: &mut Context) -> Cont {
 pub fn x227(ctx: &mut Context) -> Cont {
     ctx.dump_dosbox(0x227);
     // 00000227 call far ptr 0823h:063Bh
-    ctx.call16(0x22c, Cont(x63b))
+    ctx.callf16(0x22c, Cont(x63b))
 }
 
 pub fn x22c(ctx: &mut Context) -> Cont {
@@ -1611,7 +1611,7 @@ pub fn x76d(ctx: &mut Context) -> Cont {
 pub fn x775(ctx: &mut Context) -> Cont {
     ctx.dump_dosbox(0x775);
     // 00000775 jmp far ptr 00B8h:9
-    todo!("775 jmp far ptr 00B8h:9")
+    todo!("far jmp to alternative seg")
 }
 
 pub fn x778(ctx: &mut Context) -> Cont {

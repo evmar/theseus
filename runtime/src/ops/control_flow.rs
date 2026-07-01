@@ -11,6 +11,12 @@ impl Context {
         addr
     }
 
+    pub fn callf16(&mut self, ret: u16, addr: Cont) -> Cont {
+        self.push16(self.cpu.regs.cs);
+        self.push16(ret);
+        addr
+    }
+
     /// Call a ContFn (builtin implementation) synchronously, without returning a continuation.
     pub fn call_builtin(&mut self, from: u32, func: ContFn) {
         // Because ContFn is stdcall it expects to pop a return address off the stack.

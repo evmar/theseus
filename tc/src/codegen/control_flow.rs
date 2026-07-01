@@ -4,6 +4,8 @@ use crate::{
 };
 
 impl<'a> CodeGen<'a> {
+    /// Codegen the Cont for a jump to an absolute address.
+    /// This should always resolve to a real symbol at translation time.
     fn gen_abs_jmp(&self, addr: u32) -> String {
         if let Some(block) = self.blocks.get(&addr) {
             format!("Cont({})", block.name())
@@ -12,16 +14,23 @@ impl<'a> CodeGen<'a> {
         }
     }
 
-    /// Returns (code, uses_ctx) where uses_ctx is true if code uses ctx.
-    fn gen_jmp(&self, instr: &Instr) -> (String, bool) {
-        match instr.iced.op_kind(0) {
+    /// Codegen the Cont for a jump or call instruction.
+    /// Returns (code, uses_ctx, far) where
+    ///   uses_ctx is true if code uses ctx (needed for lifetime reasons)
+    ///   far is true for far jmps/calls
+    fn gen_jmp(&self, instr: &Instr) -> (String, bool, bool) {
+        assert_eq!(instr.iced.op_count(), 1);
+        let expr: String;
+        let mut uses_ctx = false;
+        let mut far = false;
+        match instr.iced.op0_kind() {
             iced_x86::OpKind::NearBranch16 => {
                 let addr = instr.iced.near_branch16() as u32;
-                (self.gen_abs_jmp(addr), false)
+                expr = self.gen_abs_jmp(addr);
             }
             iced_x86::OpKind::NearBranch32 => {
                 let addr = instr.iced.near_branch32();
-                (self.gen_abs_jmp(addr), false)
+                expr = self.gen_abs_jmp(addr);
             }
             iced_x86::OpKind::FarBranch16 => {
                 let Module::DOS(m) = self.module else {
@@ -30,39 +39,38 @@ impl<'a> CodeGen<'a> {
                 let seg = instr.iced.far_branch_selector();
                 let addr = instr.iced.far_branch16();
                 if seg == m.load_segment {
-                    (self.gen_abs_jmp(addr as u32), false)
+                    expr = self.gen_abs_jmp(addr as u32);
                 } else {
-                    (
-                        format!("todo!(\"{:x} {}\")", instr.iced.ip32(), instr.iced),
-                        false,
-                    )
+                    expr = format!("todo!(\"far jmp to alternative seg\")");
                 }
+                far = true;
             }
             iced_x86::OpKind::Memory => {
                 // If it's like `jmp [someaddr]` where someaddr is in the IAT, resolve it directly.
                 // (Note that `call [someaddr@IAT]` is generated as a direct function call.)
                 if let Some(func) = &instr.hint {
-                    return (format!("Cont({func})"), false);
+                    return (format!("Cont({func})"), false, false);
                 }
-                (
-                    format!(
-                        "ctx.indirect{bitness}(ctx.memory.read({addr}))",
-                        bitness = self.module.bitness(),
-                        addr = self.gen_addr(&instr.iced)
-                    ),
-                    true,
-                )
+
+                // TODO: what about far calls?
+                expr = format!(
+                    "ctx.indirect{bitness}(ctx.memory.read({addr}))",
+                    bitness = self.module.bitness(),
+                    addr = self.gen_addr(&instr.iced)
+                );
+                uses_ctx = true;
             }
-            iced_x86::OpKind::Register => (
-                format!(
+            iced_x86::OpKind::Register => {
+                expr = format!(
                     "ctx.indirect{bitness}({reg})",
                     bitness = self.module.bitness(),
                     reg = get_reg(instr.iced.op0_register())
-                ),
-                true,
-            ),
+                );
+                uses_ctx = true;
+            }
             k => todo!("{:?}", k),
         }
+        (expr, uses_ctx, far)
     }
 
     pub fn codegen_control_flow(&mut self, instr: &Instr) -> bool {
@@ -73,7 +81,7 @@ impl<'a> CodeGen<'a> {
                 if let Some(func) = &instr.hint {
                     self.line(format!("ctx.call_builtin({:#x}, {func});", instr.next_ip()));
                 } else {
-                    let (dst, uses_ctx) = self.gen_jmp(instr);
+                    let (dst, uses_ctx, far) = self.gen_jmp(instr);
                     let dst = if uses_ctx {
                         self.line(format!("let dst = {};", dst));
                         "dst".into()
@@ -81,7 +89,8 @@ impl<'a> CodeGen<'a> {
                         dst
                     };
                     self.line(format!(
-                        "ctx.call{bitness}({ip:#x}, {dst})",
+                        "ctx.call{far}{bitness}({ip:#x}, {dst})",
+                        far = if far { "f" } else { "" },
                         bitness = self.module.bitness(),
                         ip = instr.next_ip()
                     ));

@@ -53,8 +53,6 @@ pub fn set_reg(r: iced_x86::Register, expr: String) -> String {
 
 impl<'a> CodeGen<'a> {
     /// Code generate a memory address reference.
-    /// Even for 16-bit code we generate a 32-bit memory address, because the computed
-    /// address can go beyond a 16-bit address range.
     pub fn gen_addr_offset(&self, instr: &iced_x86::Instruction) -> String {
         use iced_x86::Register::*;
         let mut expr = Vec::new();
@@ -100,6 +98,9 @@ impl<'a> CodeGen<'a> {
             .join("")
     }
 
+    /// Codegen the absolute address found in an instruction that has a memory reference.
+    /// Even for 16-bit code we generate a 32-bit memory address, because the computed
+    /// address can go beyond a 16-bit address range.
     pub fn gen_addr(&self, instr: &iced_x86::Instruction) -> String {
         let addr = self.gen_addr_offset(instr);
         if self.module.segment_addressed() {
