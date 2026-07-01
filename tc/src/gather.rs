@@ -221,13 +221,14 @@ impl<'a> Traverse<'a> {
                             self.queue.push_back(instr.near_branch32())
                         }
                         iced_x86::OpKind::FarBranch16 => {
-                            log::warn!(
-                                "{:x} {} {:x}:{:x}",
-                                instr.ip32(),
-                                instr,
-                                instr.far_branch16(),
-                                instr.far_branch_selector()
-                            )
+                            let Module::DOS(m) = self.module else {
+                                unreachable!()
+                            };
+                            if instr.far_branch_selector() == m.load_segment {
+                                self.queue.push_back(instr.far_branch16() as u32)
+                            } else {
+                                log::warn!("{ip:08x} {instr}  ; far branch to alternative segment");
+                            }
                         }
                         iced_x86::OpKind::Memory => {
                             if let Some(addr) = is_abs_memory_ref(&instr) {

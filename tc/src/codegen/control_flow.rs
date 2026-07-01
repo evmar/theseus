@@ -1,5 +1,5 @@
 use crate::{
-    Instr,
+    Instr, Module,
     codegen::{CodeGen, get_reg, instr_name},
 };
 
@@ -8,7 +8,7 @@ impl<'a> CodeGen<'a> {
         if let Some(block) = self.blocks.get(&addr) {
             format!("Cont({})", block.name())
         } else {
-            format!("todo!(\"indirect jmp to {:#x}?\")", addr)
+            format!("todo!(\"indirect jmp to unknown block {:#x}?\")", addr)
         }
     }
 
@@ -22,6 +22,21 @@ impl<'a> CodeGen<'a> {
             iced_x86::OpKind::NearBranch32 => {
                 let addr = instr.iced.near_branch32();
                 (self.gen_abs_jmp(addr), false)
+            }
+            iced_x86::OpKind::FarBranch16 => {
+                let Module::DOS(m) = self.module else {
+                    unreachable!()
+                };
+                let seg = instr.iced.far_branch_selector();
+                let addr = instr.iced.far_branch16();
+                if seg == m.load_segment {
+                    (self.gen_abs_jmp(addr as u32), false)
+                } else {
+                    (
+                        format!("todo!(\"{:x} {}\")", instr.iced.ip32(), instr.iced),
+                        false,
+                    )
+                }
             }
             iced_x86::OpKind::Memory => {
                 // If it's like `jmp [someaddr]` where someaddr is in the IAT, resolve it directly.
