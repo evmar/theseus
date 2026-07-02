@@ -189,6 +189,28 @@ fn int21(ctx: &mut Context) {
             ctx.cpu.regs.set_ax(len); // bytes written
             ctx.cpu.flags.remove(runtime::Flags::CF); // no error
         }
+        // file i/o
+        0x44 => {
+            let cmd = ctx.cpu.regs.get_al();
+            match cmd {
+                // get handle info
+                0 => {
+                    let handle = ctx.cpu.regs.get_bx();
+                    log::warn!("TODO: dos file i/o get handle info handle={handle:x}");
+                    ctx.cpu.flags.remove(runtime::Flags::CF); // no error
+                    // dx: file attributes, see book for tables
+                    // TODO: for now we hardcode responses
+                    if handle == 4 {
+                        ctx.cpu.regs.set_ax(0x80e0); // from dosbox
+                        ctx.cpu.regs.set_dx(0x80e0); // from dosbox
+                    } else {
+                        ctx.cpu.regs.set_ax(0x80d3); // from dosbox
+                        ctx.cpu.regs.set_dx(0x80d3); // from dosbox
+                    }
+                }
+                _ => log::error!("TODO: dos file i/o cmd={cmd:x}"),
+            }
+        }
         // resize memory block
         0x4a => {
             let size = ctx.cpu.regs.get_bx() << 4;
