@@ -10,6 +10,8 @@ set -e
 replacements1=(
     # remove interrupts
     -e '/^F000:/d'
+    # remove ... other interrupts?
+    -e '/^C000:/d'
     # trim segments; 813 is default, 823 in exe
     -e 's/^08.3://'
     # wrap registers EAX, ESI, DS
