@@ -64,10 +64,12 @@ elif [[ $1 == "magixfly" ]]; then
         --out out/dos/magixfly
 elif [[ $1 == "sbaitso-read" ]]; then
     args=(
-        --trace
+        #--trace
         --exe scratch/dos/sbaitso/READ.EXE
         --out out/sbaitso/read
         --jump-table 0x10c4..0x10d2
+        # 8fe:  call cx
+        --entry-point 0x1072
     )
     cargo run -p tc -- "${args[@]}"
 else
