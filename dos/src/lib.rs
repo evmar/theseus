@@ -151,9 +151,12 @@ fn int21(ctx: &mut Context) {
             let size = ctx.cpu.regs.get_bx() << 4;
             let seg = ctx.cpu.regs.es;
             log::warn!("TODO: resize memory seg {seg:x} to {size:x}");
-            ctx.cpu.flags.remove(runtime::Flags::CF);
-            let avail = 0xffff;
-            ctx.cpu.regs.set_bx(avail);
+
+            ctx.cpu.flags.remove(runtime::Flags::CF); // no error
+            // leave bx alone, indicating the requested amount was allocated
+            // ctx.cpu.regs.set_bx(available);
+            // TODO: dosbox sets this, but it's not clear why -- docs say it should return a success code.
+            ctx.cpu.regs.set_ax(ctx.cpu.regs.es);
         }
         // error exit
         0x4c => {
