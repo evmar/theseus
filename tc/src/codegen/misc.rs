@@ -132,6 +132,8 @@ impl<'a> CodeGen<'a> {
                 self.line(self.set_op(instr, 0, "ptr as u16".into()));
             }
 
+            Xlatb => self.line("ctx.xlat();"),
+
             _ => return false,
         }
         true

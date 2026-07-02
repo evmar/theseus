@@ -80,4 +80,15 @@ impl Context {
     pub fn cli(&mut self) {
         // TODO: self.cpu.flags.remove(Flags::IF);
     }
+
+    pub fn xlat(&mut self) {
+        let offset = if self.cpu.real_mode {
+            self.cpu.regs.get_bx() as u32
+        } else {
+            self.cpu.regs.ebx
+        };
+        let offset = offset.wrapping_add(self.cpu.regs.get_al() as u32);
+        let value = self.memory.read::<u8>(self.addr(self.cpu.regs.ds, offset));
+        self.cpu.regs.set_al(value);
+    }
 }

@@ -4109,7 +4109,7 @@ pub fn xc4e(ctx: &mut Context) -> Cont {
     // 00000c4e mov bx,26Ch
     ctx.cpu.regs.set_bx(0x26cu16);
     // 00000c51 xlatb
-    panic!("Xlatb not implemented");
+    ctx.xlat();
     Cont(xc52)
 }
 
@@ -6724,7 +6724,13 @@ pub fn x1101(ctx: &mut Context) -> Cont {
 pub fn x110a(ctx: &mut Context) -> Cont {
     ctx.dump_dosbox(0x110a);
     // 0000110a xlatb
-    panic!("Xlatb not implemented");
+    ctx.xlat();
+    // 0000110b and al,0Fh
+    ctx.cpu
+        .regs
+        .set_al(and(ctx.cpu.regs.get_al(), 0xfu8, &mut ctx.cpu.flags));
+    // 0000110d jmp short 1111h
+    Cont(x1111)
 }
 
 pub fn x110f(ctx: &mut Context) -> Cont {
@@ -6754,7 +6760,40 @@ pub fn x1111(ctx: &mut Context) -> Cont {
         &mut ctx.cpu.flags,
     ));
     // 00001118 xlatb
-    panic!("Xlatb not implemented");
+    ctx.xlat();
+    // 00001119 inc cl
+    ctx.cpu
+        .regs
+        .set_cl(inc(ctx.cpu.regs.get_cl(), &mut ctx.cpu.flags));
+    // 0000111b shr al,cl
+    ctx.cpu.regs.set_al(shr(
+        ctx.cpu.regs.get_al(),
+        ctx.cpu.regs.get_cl(),
+        &mut ctx.cpu.flags,
+    ));
+    // 0000111d mov [bp-5],al
+    ctx.memory.write::<u8>(
+        segofs(
+            ctx.cpu.regs.get_ss(),
+            ctx.cpu.regs.get_bp().wrapping_add(0xfffbu16),
+        ),
+        ctx.cpu.regs.get_al(),
+    );
+    // 00001120 cbw
+    ctx.cpu
+        .regs
+        .set_ax(ctx.cpu.regs.get_al() as i8 as i16 as u16);
+    // 00001121 mov bx,ax
+    ctx.cpu.regs.set_bx(ctx.cpu.regs.get_ax());
+    // 00001123 shl bx,1
+    ctx.cpu
+        .regs
+        .set_bx(shl(ctx.cpu.regs.get_bx(), 0x1u8, &mut ctx.cpu.flags));
+    // 00001125 jmp word ptr cs:[bx+10C4h]
+    ctx.indirect16(ctx.memory.read(segofs(
+        ctx.cpu.regs.get_cs(),
+        ctx.cpu.regs.get_bx().wrapping_add(0x10c4u16),
+    )))
 }
 
 pub fn x15a3(ctx: &mut Context) -> Cont {
