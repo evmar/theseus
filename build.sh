@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 set -e
 
@@ -63,9 +63,13 @@ elif [[ $1 == "magixfly" ]]; then
         --exe scratch/dos/magixfly/magixfly.com \
         --out out/dos/magixfly
 elif [[ $1 == "sbaitso-read" ]]; then
-    cargo run -p tc -- --trace \
-        --exe scratch/dos/sbaitso/READ.EXE \
+    args=(
+        --trace
+        --exe scratch/dos/sbaitso/READ.EXE
         --out out/sbaitso/read
+        --jump-table 0x10c4..0x10d2
+    )
+    cargo run -p tc -- "${args[@]}"
 else
     echo "unknown target $1"
 fi

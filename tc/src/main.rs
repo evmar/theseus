@@ -104,9 +104,14 @@ fn run() -> anyhow::Result<()> {
         entry_points.push(tc::EntryPoint::Single(addr));
     }
     for range in args.jump_table {
-        for addr in range.step_by(4) {
-            let code = state.mem.read::<u32>(addr);
-            log::info!("{addr:x} -> {code:x}");
+        for ip in range.step_by(4) {
+            let addr = state.module.ip_to_addr(ip);
+            let code = if state.module.segment_addressed() {
+                state.mem.read::<u16>(addr) as u32
+            } else {
+                state.mem.read::<u32>(addr)
+            };
+            log::info!("jump table {ip:x} -> {code:x}");
             entry_points.push(tc::EntryPoint::Single(code));
         }
     }

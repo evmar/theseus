@@ -63,7 +63,7 @@ impl Module {
     fn is_windows(&self) -> bool {
         matches!(self, Module::Windows(_))
     }
-    fn segment_addressed(&self) -> bool {
+    pub fn segment_addressed(&self) -> bool {
         self.is_dos()
     }
 
@@ -86,7 +86,7 @@ impl Module {
             Module::Windows(m) => m.code_memory.clone(),
         }
     }
-    fn ip_to_addr(&self, ip: u32) -> u32 {
+    pub fn ip_to_addr(&self, ip: u32) -> u32 {
         match self {
             Module::DOS(m) => segofs(m.load_segment, ip as u16),
             Module::Windows(_) => ip,
