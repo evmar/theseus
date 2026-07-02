@@ -128,7 +128,10 @@ impl State {
             interrupt_handlers: [(0, 0); 0x30],
             vga: None,
         };
+        // cpu exception handler
         state.interrupt_handlers[0] = (0xf000, 0xca60); // from dosbox
+        // TSR handler
+        state.interrupt_handlers[0x2f] = (0xf000, 0xd220); // from dosbox
         state
     }
 }
