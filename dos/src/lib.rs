@@ -20,9 +20,33 @@ struct PSP {
     int20: [u8; 2],
     memory_top: u16,
     /// TODO: other fields, pad out for now
-    padding: [u8; 0x28],
+    padding1: [u8; 0x28],
     /// environment segment
     environment: u16,
+    padding2: [u8; 0x52],
+    args_len: u8,
+    args: [u8; 0x7f],
+}
+
+impl PSP {
+    fn new() -> Self {
+        PSP {
+            int20: [0xcd, 0x20],
+            memory_top: 0,
+            padding1: [0; 0x28],
+            environment: 0,
+            padding2: [0; 0x52],
+            args_len: 0,
+            args: [0; 0x7f],
+        }
+    }
+
+    fn set_args(&mut self, args: &str) {
+        assert!(args.len() <= 0x7e);
+        self.args_len = args.len() as u8;
+        self.args[..args.len()].copy_from_slice(args.as_bytes());
+        self.args[args.len()] = b'\r';
+    }
 }
 
 pub fn load(exe: &EXEData) -> Context {
@@ -46,15 +70,11 @@ pub fn load(exe: &EXEData) -> Context {
     let environment_segment = 0x7ca; // from dosbox
     memory[segofs(environment_segment, 0)..][..environment.len()].copy_from_slice(&environment);
 
-    memory.write(
-        exe.image_base,
-        PSP {
-            int20: [0xcd, 0x20],
-            memory_top: 0x9fff, // from dosbox
-            padding: [0; 0x28],
-            environment: environment_segment,
-        },
-    );
+    let mut psp = PSP::new();
+    psp.memory_top = 0x9fff; // from dosbox
+    psp.environment = environment_segment;
+    psp.set_args("");
+    memory.write(exe.image_base, psp);
 
     let mut ctx = Context {
         cpu: CPU::default(),
