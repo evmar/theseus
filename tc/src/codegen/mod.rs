@@ -233,13 +233,15 @@ impl<'a> CodeGen<'a> {
                     name = block.name()
                 ));
                 // self.line(format!("println!(\"{name}\");", name = block.name()));
-                if self.trace {
-                    match self.module {
-                        Module::DOS(_) => self.line(format!("ctx.dump_dosbox(0{});", block.name())),
-                        Module::Windows(_) => todo!(),
-                    }
-                }
                 for instr in instrs {
+                    if self.trace {
+                        match self.module {
+                            Module::DOS(_) => {
+                                self.line(format!("ctx.dump_dosbox({:#x});", instr.iced.ip32()));
+                            }
+                            Module::Windows(_) => todo!(),
+                        }
+                    }
                     if let Err(e) = self.gen_instr(instr) {
                         self.line(format!("panic!({:?});", e.to_string()));
                         break;
