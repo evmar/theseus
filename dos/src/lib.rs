@@ -19,6 +19,10 @@ pub const DOSBOX_SEG: u16 = 0x813;
 struct PSP {
     int20: [u8; 2],
     memory_top: u16,
+    /// TODO: other fields, pad out for now
+    padding: [u8; 0x28],
+    /// environment segment
+    environment: u16,
 }
 
 pub fn load(exe: &EXEData) -> Context {
@@ -27,11 +31,28 @@ pub fn load(exe: &EXEData) -> Context {
     let memory_size = 1 << 20;
     let mut memory = Memory::leak_new(memory_size as usize);
 
+    // from dosbox
+    let environment = [
+        b"COMSPEC=Z:\\COMMAND.COM".as_slice(),
+        b"PATH=Z:\\;Z:\\SYSTEM;Z:\\BIN;Z:\\DOS;Z:\\4DOS;Z:\\DEBUG;Z:\\TEXTUTIL",
+        b"PROMPT=$P$G",
+        b"BLASTER=A220 I7 D1 H5 P330 T6",
+        b"",     // list terminator
+        b"\x01", // count of following strings
+        b"S:\\READ.EXE",
+        //b"UNT.COM\0",  // saw this in dosbox memory, but I think isn't needed
+    ]
+    .join(b"\0".as_slice());
+    let environment_segment = 0x7ca; // from dosbox
+    memory[segofs(environment_segment, 0)..][..environment.len()].copy_from_slice(&environment);
+
     memory.write(
         exe.image_base,
         PSP {
             int20: [0xcd, 0x20],
             memory_top: 0x9fff, // from dosbox
+            padding: [0; 0x28],
+            environment: environment_segment,
         },
     );
 
