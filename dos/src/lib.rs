@@ -123,11 +123,13 @@ struct State {
 
 impl State {
     fn new() -> Self {
-        State {
+        let mut state = State {
             pit: PIT::default(),
             interrupt_handlers: [(0, 0); 0x30],
             vga: None,
-        }
+        };
+        state.interrupt_handlers[0] = (0xf000, 0xca60); // from dosbox
+        state
     }
 }
 
