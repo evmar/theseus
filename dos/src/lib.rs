@@ -235,6 +235,10 @@ fn int21(ctx: &mut Context) {
     }
 }
 
+fn int2f(ctx: &mut Context) {
+    log::error!("TODO: int2f ax={:x}", ctx.cpu.regs.get_ax());
+}
+
 pub fn int(ctx: &mut Context, interrupt: u8) {
     // https://en.wikibooks.org/wiki/First_steps_towards_system_programming_under_MS-DOS_7/Selected_interrupt_handlers
     match interrupt {
@@ -244,6 +248,7 @@ pub fn int(ctx: &mut Context, interrupt: u8) {
             ctx.cpu.flags.insert(runtime::Flags::ZF);
         }
         0x21 => int21(ctx),
+        0x2f => int2f(ctx),
         _ => log::error!("TODO: dos int {interrupt:x}h"),
     }
 }
