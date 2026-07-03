@@ -1,5 +1,6 @@
 mod generated;
 
 fn main() {
-    dos::run(&generated::EXEDATA);
+    let mut ctx = dos::load(&generated::EXEDATA, Some(" /dBLASTER"));
+    dos::start(&mut ctx, &generated::EXEDATA);
 }

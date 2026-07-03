@@ -66,7 +66,7 @@ struct MCB {
     owner_name: [u8; 8],
 }
 
-pub fn load(exe: &EXEData) -> Context {
+pub fn load(exe: &EXEData, command_line: Option<&str>) -> Context {
     host::init();
 
     let memory_size = 1 << 20;
@@ -103,7 +103,7 @@ pub fn load(exe: &EXEData) -> Context {
     let mut psp = PSP::new();
     psp.memory_top = 0x9fff; // from dosbox
     psp.environment = environment_segment;
-    psp.set_args("");
+    psp.set_args(command_line.unwrap_or(""));
     memory.write(exe.image_base, psp);
 
     state().psp_segment = (exe.image_base >> 4) as u16;
@@ -139,7 +139,7 @@ pub fn start(ctx: &mut Context, exe: &EXEData) {
 }
 
 pub fn run(exe: &EXEData) {
-    let mut ctx = load(exe);
+    let mut ctx = load(exe, None);
     start(&mut ctx, exe);
 }
 
