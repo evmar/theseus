@@ -71,6 +71,8 @@ pub fn load(exe: &EXEData) -> Context {
 
     let memory_size = 1 << 20;
     let mut memory = Memory::leak_new(memory_size as usize);
+    // programs can write to memory address zero to overwrite the IVT
+    memory.null_page = false;
 
     // MCB goes in the paragraph before the PSP.
     // TODO: values copied from dosbox

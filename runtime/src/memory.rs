@@ -11,6 +11,9 @@ use widestring::U16String;
 /// Maybe by sticking a std::thread::scope in some outer structure?
 pub struct Memory {
     pub bytes: &'static mut [u8],
+    /// When true, panic on access to low memory.
+    /// TODO: full memory mapping access controls etc.
+    pub null_page: bool,
 }
 
 /// A trait for types that can be read from memory with .read().
@@ -23,7 +26,10 @@ impl<T: zerocopy::IntoBytes + zerocopy::Immutable> MemWrite for T {}
 
 impl Memory {
     pub fn new(bytes: &'static mut [u8]) -> Self {
-        Memory { bytes }
+        Memory {
+            bytes,
+            null_page: true,
+        }
     }
 
     pub fn leak_new(size: usize) -> Self {
@@ -38,6 +44,7 @@ impl Memory {
             bytes: unsafe {
                 std::slice::from_raw_parts_mut(self.bytes.as_mut_ptr(), self.bytes.len())
             },
+            null_page: self.null_page,
         }
     }
 
@@ -46,27 +53,28 @@ impl Memory {
         log::error!("null page read/write");
     }
 
-    pub fn read<T: MemRead>(&self, addr: u32) -> T {
-        if addr < 0x1000 {
+    #[inline]
+    fn check_access(&self, addr: u32) {
+        if addr < 0x1000 && self.null_page {
             self.null_ptr();
         }
+    }
+
+    pub fn read<T: MemRead>(&self, addr: u32) -> T {
+        self.check_access(addr);
         let addr = addr as usize;
         T::read_from_bytes(&self.bytes[addr..addr + std::mem::size_of::<T>()]).unwrap()
     }
 
     pub fn write<T: MemWrite>(&mut self, addr: u32, val: T) {
-        if addr < 0x1000 {
-            self.null_ptr();
-        }
+        self.check_access(addr);
         let addr = addr as usize;
         val.write_to(&mut self.bytes[addr..addr + std::mem::size_of::<T>()])
             .unwrap();
     }
 
     pub fn read_str(&self, addr: u32) -> &str {
-        if addr < 0x1000 {
-            self.null_ptr();
-        }
+        self.check_access(addr);
         let buf = &self.bytes[addr as usize..];
         let nul = buf.iter().position(|&c| c == 0).unwrap();
         let buf = &buf[..nul];
@@ -75,9 +83,7 @@ impl Memory {
 
     /// This returns an allocated string rather than a reference due to alignment.
     pub fn read_wstr(&self, addr: u32) -> U16String {
-        if addr < 0x1000 {
-            self.null_ptr();
-        }
+        self.check_access(addr);
         let buf = &self.bytes[addr as usize..];
         let mut str: Vec<u16> = vec![];
         for chunk in buf.chunks_exact(2) {
@@ -97,20 +103,16 @@ impl Memory {
 impl std::ops::Index<u32> for Memory {
     type Output = u8;
 
-    fn index(&self, index: u32) -> &Self::Output {
-        if index < 0x1000 {
-            log::error!("null index");
-        }
-        &self.bytes[index as usize]
+    fn index(&self, addr: u32) -> &Self::Output {
+        self.check_access(addr);
+        &self.bytes[addr as usize]
     }
 }
 
 impl std::ops::IndexMut<u32> for Memory {
-    fn index_mut(&mut self, index: u32) -> &mut Self::Output {
-        if index < 0x1000 {
-            log::error!("null index");
-        }
-        &mut self.bytes[index as usize]
+    fn index_mut(&mut self, addr: u32) -> &mut Self::Output {
+        self.check_access(addr);
+        &mut self.bytes[addr as usize]
     }
 }
 
@@ -118,18 +120,14 @@ impl std::ops::Index<std::ops::RangeFrom<u32>> for Memory {
     type Output = [u8];
 
     fn index(&self, index: std::ops::RangeFrom<u32>) -> &Self::Output {
-        if index.start < 0x1000 {
-            log::error!("null index");
-        }
+        self.check_access(index.start);
         &self.bytes[index.start as usize..]
     }
 }
 
 impl std::ops::IndexMut<std::ops::RangeFrom<u32>> for Memory {
     fn index_mut(&mut self, index: std::ops::RangeFrom<u32>) -> &mut Self::Output {
-        if index.start < 0x1000 {
-            log::error!("null index");
-        }
+        self.check_access(index.start);
         &mut self.bytes[index.start as usize..]
     }
 }
@@ -138,18 +136,14 @@ impl std::ops::Index<std::ops::Range<u32>> for Memory {
     type Output = [u8];
 
     fn index(&self, index: std::ops::Range<u32>) -> &Self::Output {
-        if index.start < 0x1000 {
-            log::error!("null index");
-        }
+        self.check_access(index.start);
         &self.bytes[index.start as usize..index.end as usize]
     }
 }
 
 impl std::ops::IndexMut<std::ops::Range<u32>> for Memory {
     fn index_mut(&mut self, index: std::ops::Range<u32>) -> &mut Self::Output {
-        if index.start < 0x1000 {
-            log::error!("null index");
-        }
+        self.check_access(index.start);
         &mut self.bytes[index.start as usize..index.end as usize]
     }
 }
