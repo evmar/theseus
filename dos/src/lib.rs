@@ -265,6 +265,19 @@ fn int21(ctx: &mut Context) {
             ctx.cpu.regs.set_ax(len); // bytes written
             ctx.cpu.flags.remove(runtime::Flags::CF); // no error
         }
+        // set file's access point
+        0x42 => {
+            let origin = ctx.cpu.regs.get_al();
+            let handle = ctx.cpu.regs.get_bx();
+            let offset =
+                (((ctx.cpu.regs.get_cx() as u32) << 16) | (ctx.cpu.regs.get_dx() as u32)) as i32;
+            log::error!("TODO: seek file {handle} {origin} {offset}");
+
+            ctx.cpu.flags.remove(runtime::Flags::CF); // no error
+            let offset = 0x26a3u32;
+            ctx.cpu.regs.set_dx((offset >> 16) as u16);
+            ctx.cpu.regs.set_ax(offset as u16);
+        }
         // file i/o
         0x44 => {
             let cmd = ctx.cpu.regs.get_al();
