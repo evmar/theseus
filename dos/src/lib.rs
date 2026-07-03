@@ -143,28 +143,40 @@ pub fn run(exe: &EXEData) {
     start(&mut ctx, exe);
 }
 
+/// Open file.
+#[derive(Default)]
+struct File {
+    buf: Vec<u8>,
+    /// Current read/write offset.
+    ofs: u32,
+}
+
 static STATE: LazyLock<SingleThreader<RefCell<State>>> =
     LazyLock::new(|| SingleThreader::new(RefCell::new(State::new())));
 
-struct State {
+pub struct State {
     psp_segment: u16,
     pit: PIT,
     // IVT; TODO: this actually lives in in memory at 0000:0000, not sure if anything depends on that
     interrupt_handlers: [(u16, u16); 0x30],
     vga: Option<VGA>,
-    files: Vec<u8>,
+    pub read_file: Option<Box<dyn FnMut(&str) -> Option<Vec<u8>>>>,
+    files: Vec<File>,
 }
 
 impl State {
     fn new() -> Self {
+        let mut files: Vec<File> = vec![];
+        // Initial files: stdin, stdout, stderr, stdaux, stdprn; file handles are indexes into this vector
+        // TODO: the JFT belongs in the PSP I guess.
+        files.resize_with(5, Default::default);
         let mut state = State {
             psp_segment: 0,
             pit: PIT::default(),
             interrupt_handlers: [(0, 0); 0x30],
             vga: None,
-            // Initial files: stdin, stdout, stderr, stdaux, stdprn; file handles are indexes into this vector
-            // TODO: this is the JFT, belongs in the PSP I guess.
-            files: vec![0, 0, 0, 0, 0],
+            read_file: None,
+            files,
         };
         // cpu exception handler
         state.interrupt_handlers[0] = (0xf000, 0xca60); // from dosbox
@@ -172,9 +184,14 @@ impl State {
         state.interrupt_handlers[0x2f] = (0xf000, 0xd220); // from dosbox
         state
     }
+
+    fn read_file(&mut self, path: &str) -> Option<Vec<u8>> {
+        let read_file = self.read_file.as_mut()?;
+        read_file(path)
+    }
 }
 
-fn state() -> RefMut<'static, State> {
+pub fn state() -> RefMut<'static, State> {
     STATE.get().borrow_mut()
 }
 
@@ -230,25 +247,17 @@ fn int21(ctx: &mut Context) {
             let _access = ctx.cpu.regs.get_al();
             let addr = segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_dx());
             let name = ctx.memory.read_str(addr);
-            let handle = if name == "BLASTER.DRV" {
-                let mut state = state();
-                let handle = state.files.len() as u8;
-                let _ = state.files.push(0);
-                Some(handle)
-            } else {
-                None
+            let mut state = state();
+            let Some(buf) = state.read_file(name) else {
+                log::warn!("open {name:?}: not found");
+                ctx.cpu.regs.set_ax(/* file not found */ 2);
+                ctx.cpu.flags.insert(runtime::Flags::CF);
+                return;
             };
-
-            match handle {
-                Some(h) => {
-                    ctx.cpu.regs.set_ax(h as u16); // TODO: file handle
-                    ctx.cpu.flags.remove(runtime::Flags::CF);
-                }
-                None => {
-                    ctx.cpu.regs.set_ax(/* file not found */ 2);
-                    ctx.cpu.flags.insert(runtime::Flags::CF);
-                }
-            }
+            let handle = state.files.len() as u8;
+            let _ = state.files.push(File { buf, ofs: 0 });
+            ctx.cpu.regs.set_ax(handle as u16);
+            ctx.cpu.flags.remove(runtime::Flags::CF);
         }
         // write to file
         0x40 => {
@@ -271,10 +280,17 @@ fn int21(ctx: &mut Context) {
             let handle = ctx.cpu.regs.get_bx();
             let offset =
                 (((ctx.cpu.regs.get_cx() as u32) << 16) | (ctx.cpu.regs.get_dx() as u32)) as i32;
-            log::error!("TODO: seek file {handle} {origin} {offset}");
+
+            let mut state = state();
+            let file = &mut state.files[handle as usize];
+            let offset = match origin {
+                0 => offset,
+                1 => file.ofs as i32 + offset,
+                2 => file.buf.len() as i32 + offset,
+                _ => panic!(),
+            } as u32;
 
             ctx.cpu.flags.remove(runtime::Flags::CF); // no error
-            let offset = 0x26a3u32;
             ctx.cpu.regs.set_dx((offset >> 16) as u16);
             ctx.cpu.regs.set_ax(offset as u16);
         }
