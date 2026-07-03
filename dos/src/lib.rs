@@ -244,7 +244,8 @@ fn int21(ctx: &mut Context) {
         }
         // get an access handle
         0x3d => {
-            let _access = ctx.cpu.regs.get_al();
+            let access = ctx.cpu.regs.get_al();
+            assert_eq!(access, 0);
             let addr = segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_dx());
             let name = ctx.memory.read_str(addr);
             let mut state = state();
@@ -258,6 +259,14 @@ fn int21(ctx: &mut Context) {
             let _ = state.files.push(File { buf, ofs: 0 });
             ctx.cpu.regs.set_ax(handle as u16);
             ctx.cpu.flags.remove(runtime::Flags::CF);
+        }
+        // delete an access handle
+        0x3e => {
+            let handle = ctx.cpu.regs.get_bx();
+            let mut state = state();
+            let _ = &mut state.files[handle as usize];
+            log::warn!("TODO: close file");
+            ctx.cpu.flags.remove(runtime::Flags::CF); // no error
         }
         // write to file
         0x40 => {
