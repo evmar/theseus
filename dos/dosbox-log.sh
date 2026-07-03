@@ -25,6 +25,7 @@ replacements1=(
     #-e 's/AF:. //'
     # drop all repe, they get printed multiple times for loop
     -e '/repe/d'
+    -e '/repne/d'
 )
 
 replacements2=(
