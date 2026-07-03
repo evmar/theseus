@@ -8,6 +8,7 @@ use std::{
 
 use host::SingleThreader;
 use runtime::{CPU, Context, EXEData, Mappings, Memory, segofs};
+use zerocopy::FromBytes;
 
 use crate::{timer::PIT, vga::VGA};
 
@@ -54,7 +55,9 @@ use zerocopy::byteorder::little_endian::U16;
 /// Memory Control Block
 /// Note that owner/size are unaligned, so we use zerocopy's unaligned U16 not u16.
 #[repr(C)]
-#[derive(zerocopy::IntoBytes, zerocopy::Immutable)]
+#[derive(
+    Debug, zerocopy::FromBytes, zerocopy::KnownLayout, zerocopy::IntoBytes, zerocopy::Immutable,
+)]
 struct MCB {
     /// 'M': more in chain, 'Z': last MCB
     typ: u8,
@@ -74,16 +77,17 @@ pub fn load(exe: &EXEData, command_line: Option<&str>) -> Context {
     // programs can write to memory address zero to overwrite the IVT
     memory.null_page = false;
 
-    // MCB goes in the paragraph before the PSP.
+    let mut state = state();
+    state.psp_segment = (exe.image_base >> 4) as u16;
+
     // TODO: values copied from dosbox
-    let mcb = MCB {
+    *state.program_mcb(&mut memory) = MCB {
         typ: b'M',
         owner: U16::new(0x813),
         size: U16::new(0x2cb1),
         reserved: [0; 3],
         owner_name: [0; 8],
     };
-    memory.write(exe.image_base - 0x10, mcb);
 
     // from dosbox
     let environment = [
@@ -105,8 +109,6 @@ pub fn load(exe: &EXEData, command_line: Option<&str>) -> Context {
     psp.environment = environment_segment;
     psp.set_args(command_line.unwrap_or(""));
     memory.write(exe.image_base, psp);
-
-    state().psp_segment = (exe.image_base >> 4) as u16;
 
     let mut ctx = Context {
         cpu: CPU::default(),
@@ -188,6 +190,10 @@ impl State {
     fn read_file(&mut self, path: &str) -> Option<Vec<u8>> {
         let read_file = self.read_file.as_mut()?;
         read_file(path)
+    }
+
+    fn program_mcb<'a>(&self, mem: &'a mut Memory) -> &'a mut MCB {
+        MCB::mut_from_bytes(&mut mem[segofs(self.psp_segment - 1, 0)..][..0x10]).unwrap()
     }
 }
 
@@ -333,9 +339,13 @@ fn int21(ctx: &mut Context) {
         }
         // resize memory block
         0x4a => {
-            let size = ctx.cpu.regs.get_bx() << 4;
+            let size = ctx.cpu.regs.get_bx(); // in paragraphs
             let seg = ctx.cpu.regs.es;
-            log::warn!("TODO: resize memory seg {seg:x} to {size:x}");
+
+            let state = state();
+            assert_eq!(seg, state.psp_segment);
+            let mcb = state.program_mcb(&mut ctx.memory);
+            mcb.size.set(size);
 
             ctx.cpu.flags.remove(runtime::Flags::CF); // no error
             // leave bx alone, indicating the requested amount was allocated
