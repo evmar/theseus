@@ -72,6 +72,13 @@ elif [[ $1 == "sbaitso-read" ]]; then
         --entry-point 0x1072
     )
     cargo run -p tc -- "${args[@]}"
+elif [[ $1 == "sbaitso-sbtalker" ]]; then
+    args=(
+        --trace
+        --exe scratch/dos/sbaitso/SBTALKER.EXE
+        --out out/sbaitso/sbtalker
+    )
+    cargo run -p tc -- "${args[@]}"
 else
     echo "unknown target $1"
 fi
