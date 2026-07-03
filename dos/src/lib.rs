@@ -218,6 +218,12 @@ fn int21(ctx: &mut Context) {
                 _ => log::error!("TODO: dos file i/o cmd={cmd:x}"),
             }
         }
+        // release memory block
+        0x49 => {
+            let seg = ctx.cpu.regs.es;
+            log::warn!("TODO: release memory seg {seg:x}");
+            ctx.cpu.flags.remove(runtime::Flags::CF); // no error
+        }
         // resize memory block
         0x4a => {
             let size = ctx.cpu.regs.get_bx() << 4;
