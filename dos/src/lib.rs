@@ -152,6 +152,7 @@ struct State {
     // IVT; TODO: this actually lives in in memory at 0000:0000, not sure if anything depends on that
     interrupt_handlers: [(u16, u16); 0x30],
     vga: Option<VGA>,
+    files: Vec<u8>,
 }
 
 impl State {
@@ -161,6 +162,9 @@ impl State {
             pit: PIT::default(),
             interrupt_handlers: [(0, 0); 0x30],
             vga: None,
+            // Initial files: stdin, stdout, stderr, stdaux, stdprn; file handles are indexes into this vector
+            // TODO: this is the JFT, belongs in the PSP I guess.
+            files: vec![0, 0, 0, 0, 0],
         };
         // cpu exception handler
         state.interrupt_handlers[0] = (0xf000, 0xca60); // from dosbox
@@ -223,16 +227,27 @@ fn int21(ctx: &mut Context) {
         }
         // get an access handle
         0x3d => {
-            let access = ctx.cpu.regs.get_al();
+            let _access = ctx.cpu.regs.get_al();
             let addr = segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_dx());
             let name = ctx.memory.read_str(addr);
-            log::warn!("open {name} with access {access:x}");
-            let error = true;
-            ctx.cpu.flags.set(runtime::Flags::CF, error);
-            if error {
-                ctx.cpu.regs.set_ax(/* file not found */ 2);
+            let handle = if name == "BLASTER.DRV" {
+                let mut state = state();
+                let handle = state.files.len() as u8;
+                let _ = state.files.push(0);
+                Some(handle)
             } else {
-                ctx.cpu.regs.set_ax(0); // TODO: file handle
+                None
+            };
+
+            match handle {
+                Some(h) => {
+                    ctx.cpu.regs.set_ax(h as u16); // TODO: file handle
+                    ctx.cpu.flags.remove(runtime::Flags::CF);
+                }
+                None => {
+                    ctx.cpu.regs.set_ax(/* file not found */ 2);
+                    ctx.cpu.flags.insert(runtime::Flags::CF);
+                }
             }
         }
         // write to file
