@@ -49,11 +49,39 @@ impl PSP {
     }
 }
 
+use zerocopy::byteorder::little_endian::U16;
+
+/// Memory Control Block
+/// Note that owner/size are unaligned, so we use zerocopy's unaligned U16 not u16.
+#[repr(C)]
+#[derive(zerocopy::IntoBytes, zerocopy::Immutable)]
+struct MCB {
+    /// 'M': more in chain, 'Z': last MCB
+    typ: u8,
+    /// PSP segment of block owner
+    owner: U16,
+    /// Size of block in paragraphs
+    size: U16,
+    reserved: [u8; 3],
+    owner_name: [u8; 8],
+}
+
 pub fn load(exe: &EXEData) -> Context {
     host::init();
 
     let memory_size = 1 << 20;
     let mut memory = Memory::leak_new(memory_size as usize);
+
+    // MCB goes in the paragraph before the PSP.
+    // TODO: values copied from dosbox
+    let mcb = MCB {
+        typ: b'M',
+        owner: U16::new(0x813),
+        size: U16::new(0x2cb1),
+        reserved: [0; 3],
+        owner_name: [0; 8],
+    };
+    memory.write(exe.image_base - 0x10, mcb);
 
     // from dosbox
     let environment = [
