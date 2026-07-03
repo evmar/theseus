@@ -209,6 +209,20 @@ fn int21(ctx: &mut Context) {
             ctx.cpu.regs.set_es(seg);
             ctx.cpu.regs.set_bx(ofs);
         }
+        // get an access handle
+        0x3d => {
+            let access = ctx.cpu.regs.get_al();
+            let addr = segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_dx());
+            let name = ctx.memory.read_str(addr);
+            log::warn!("open {name} with access {access:x}");
+            let error = true;
+            ctx.cpu.flags.set(runtime::Flags::CF, error);
+            if error {
+                ctx.cpu.regs.set_ax(/* file not found */ 2);
+            } else {
+                ctx.cpu.regs.set_ax(0); // TODO: file handle
+            }
+        }
         // write to file
         0x40 => {
             use std::io::Write;
