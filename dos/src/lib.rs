@@ -76,6 +76,8 @@ pub fn load(exe: &EXEData) -> Context {
     psp.set_args("");
     memory.write(exe.image_base, psp);
 
+    state().psp_segment = (exe.image_base >> 4) as u16;
+
     let mut ctx = Context {
         cpu: CPU::default(),
         thread_handle: 0,
@@ -115,6 +117,7 @@ static STATE: LazyLock<SingleThreader<RefCell<State>>> =
     LazyLock::new(|| SingleThreader::new(RefCell::new(State::new())));
 
 struct State {
+    psp_segment: u16,
     pit: PIT,
     // IVT; TODO: this actually lives in in memory at 0000:0000, not sure if anything depends on that
     interrupt_handlers: [(u16, u16); 0x30],
@@ -124,6 +127,7 @@ struct State {
 impl State {
     fn new() -> Self {
         let mut state = State {
+            psp_segment: 0,
             pit: PIT::default(),
             interrupt_handlers: [(0, 0); 0x30],
             vga: None,
@@ -230,6 +234,10 @@ fn int21(ctx: &mut Context) {
         0x4c => {
             let code = ctx.cpu.regs.get_al();
             std::process::exit(code as i32);
+        }
+        // get psp segment
+        0x51 => {
+            ctx.cpu.regs.set_bx(state().psp_segment);
         }
         _ => log::error!("TODO: dos int 21h ({func:02x})"),
     }
