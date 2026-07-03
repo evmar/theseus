@@ -1,9 +1,10 @@
 //! Implementation of host interfaces using SDL.
 
-use crate::{self as host, SingleThreader};
 use std::{ffi::CString, mem::MaybeUninit};
 
 use sdl3_sys as sdl;
+
+use crate::{self as host, SingleThreader};
 
 fn check(res: bool) {
     if !res {

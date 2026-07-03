@@ -41,9 +41,8 @@ pub fn parse(buf: &[u8]) -> anyhow::Result<Parse> {
 
 #[cfg(test)]
 mod tests {
-    use crate::file::IMAGE_SECTION_HEADER;
-
     use super::*;
+    use crate::file::IMAGE_SECTION_HEADER;
 
     #[test]
     fn kkrunchy_header() {

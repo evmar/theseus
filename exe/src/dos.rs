@@ -1,6 +1,5 @@
 use anyhow::bail;
-use zerocopy::FromBytes;
-use zerocopy::IntoBytes;
+use zerocopy::{FromBytes, IntoBytes};
 
 use crate::{file::IMAGE_DOS_HEADER, iter::iter_pod_n};
 

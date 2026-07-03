@@ -1,7 +1,6 @@
 //! Parsing PE files.
 
-use anyhow::anyhow;
-use anyhow::bail;
+use anyhow::{anyhow, bail};
 use zerocopy::FromBytes;
 
 pub use crate::file::*;
