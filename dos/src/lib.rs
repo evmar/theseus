@@ -189,6 +189,16 @@ fn int10(ctx: &mut Context) {
 fn int21(ctx: &mut Context) {
     let func = ctx.cpu.regs.get_ah();
     match func {
+        // write to stdout
+        0x09 => {
+            let addr = segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_dx());
+            let buf = &ctx.memory.bytes[addr as usize..];
+            let end = buf.iter().position(|&c| c == b'$').unwrap();
+            let buf = &buf[..end];
+            use std::io::Write;
+            std::io::stdout().lock().write(buf).unwrap();
+            ctx.cpu.regs.set_al(b'$');
+        }
         // write to interrupt table
         0x25 => {
             let int = ctx.cpu.regs.get_al();
