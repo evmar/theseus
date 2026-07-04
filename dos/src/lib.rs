@@ -272,6 +272,7 @@ fn int21(ctx: &mut Context) {
             let mut state = state();
             let _ = &mut state.files[handle as usize];
             log::warn!("TODO: close file");
+            ctx.cpu.regs.set_al(1); // docs say AX is clobbered, match dosbox for now
             ctx.cpu.flags.remove(runtime::Flags::CF); // no error
         }
         // write to file
@@ -365,6 +366,7 @@ fn int21(ctx: &mut Context) {
                 0 => todo!("load+run exe {cmd}"),
                 1 => todo!("load exe {cmd}"),
                 3 => {
+                    // overlay load
                     let seg = ctx.memory.read::<u16>(params_addr);
                     let relo = ctx.memory.read::<u16>(params_addr + 2);
 
@@ -374,8 +376,14 @@ fn int21(ctx: &mut Context) {
                     let header = exe::DOS::parse(&buf).unwrap();
                     let load_addr = segofs(seg, 0);
                     let data = &buf[header.image_offset()..];
+                    log::info!("loading {cmd:?} at {seg:x}:0 size {:x}", buf.len());
                     ctx.memory[load_addr..][..data.len()].copy_from_slice(data);
-                    log::info!("TODO: load image relocations {relo:x}");
+                    log::info!("TODO: relocations {relo:x}");
+
+                    ctx.cpu.flags.remove(runtime::Flags::CF); // no error
+                    // on success, no register values are known; match dosbox here
+                    ctx.cpu.regs.set_ax(0);
+                    ctx.cpu.regs.set_dx(0);
                 }
                 _ => panic!("int21 4b invalid func"),
             }
