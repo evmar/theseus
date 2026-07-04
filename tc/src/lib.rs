@@ -51,7 +51,7 @@ pub enum Module {
 
 impl Module {
     // TODO: remove some of these methods as we untangle DOS vs Windows
-    fn bitness(&self) -> u32 {
+    pub fn bitness(&self) -> u32 {
         match self {
             Module::DOS(_) => 16,
             Module::Windows(_) => 32,

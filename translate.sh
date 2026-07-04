@@ -75,6 +75,7 @@ elif [[ $1 == "sbaitso-read" ]]; then
 elif [[ $1 == "sbaitso-sbtalker" ]]; then
     args=(
         --trace
+        --jump-table 0xd8e..0xda0
         --exe scratch/dos/sbaitso/SBTALKER.EXE
         --out out/sbaitso/sbtalker
     )

@@ -104,7 +104,7 @@ fn run() -> anyhow::Result<()> {
         entry_points.push(tc::EntryPoint::Single(addr));
     }
     for range in args.jump_table {
-        for ip in range.step_by(4) {
+        for ip in range.step_by((state.module.bitness() / 8) as usize) {
             let addr = state.module.ip_to_addr(ip);
             let code = if state.module.segment_addressed() {
                 state.mem.read::<u16>(addr) as u32
