@@ -37,7 +37,7 @@ impl DOS {
         Ok(DOS { header, relocs })
     }
 
-    pub fn header_size(&self) -> usize {
+    pub fn image_offset(&self) -> usize {
         let paragraph = 16;
         self.header.e_cparhdr as usize * paragraph
     }

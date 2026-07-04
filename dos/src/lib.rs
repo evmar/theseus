@@ -353,6 +353,33 @@ fn int21(ctx: &mut Context) {
             // TODO: dosbox sets this, but it's not clear why -- docs say it should return a success code.
             ctx.cpu.regs.set_ax(ctx.cpu.regs.es);
         }
+        // load a program for execution
+        0x4b => {
+            let func = ctx.cpu.regs.get_al();
+            let cmd = ctx
+                .memory
+                .read_str(segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_dx()));
+            let params_addr = segofs(ctx.cpu.regs.get_es(), ctx.cpu.regs.get_bx());
+
+            match func {
+                0 => todo!("load+run exe {cmd}"),
+                1 => todo!("load exe {cmd}"),
+                3 => {
+                    let seg = ctx.memory.read::<u16>(params_addr);
+                    let relo = ctx.memory.read::<u16>(params_addr + 2);
+
+                    let Some(buf) = state().read_file(cmd) else {
+                        panic!()
+                    };
+                    let header = exe::DOS::parse(&buf).unwrap();
+                    let load_addr = segofs(seg, 0);
+                    let data = &buf[header.image_offset()..];
+                    ctx.memory[load_addr..][..data.len()].copy_from_slice(data);
+                    log::info!("TODO: load image relocations {relo:x}");
+                }
+                _ => panic!("int21 4b invalid func"),
+            }
+        }
         // error exit
         0x4c => {
             let code = ctx.cpu.regs.get_al();

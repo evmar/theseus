@@ -18,7 +18,7 @@ fn load_dos(mem: &mut Memory, buf: &[u8], dos: exe::DOS) -> DOSModule {
 
     let load_segment = psp_segment + 0x10;
     let load_addr = segofs(load_segment, 0);
-    let data = &buf[dos.header_size()..];
+    let data = &buf[dos.image_offset()..];
     mem.reserve("dos data".into(), load_addr, data.len() as u32);
     mem.slice_mut(load_addr, data.len() as u32)
         .copy_from_slice(data);
