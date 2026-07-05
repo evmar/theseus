@@ -11,9 +11,10 @@ impl Context {
         addr
     }
 
-    pub fn callf16(&mut self, ret: u16, addr: Cont) -> Cont {
+    pub fn callf16(&mut self, ret: u16, seg: u16, addr: Cont) -> Cont {
         self.push16(self.cpu.regs.cs);
         self.push16(ret);
+        self.cpu.regs.cs = seg;
         addr
     }
 

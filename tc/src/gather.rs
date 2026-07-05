@@ -35,6 +35,13 @@ impl IP {
         //IP::Flat(addr)
     }
 
+    pub fn seg(&self) -> u16 {
+        match *self {
+            IP::Flat(_) => unreachable!(),
+            IP::Seg(seg, _) => seg,
+        }
+    }
+
     pub fn to_addr(&self) -> u32 {
         match *self {
             IP::Flat(ip) => ip,
@@ -277,15 +284,8 @@ impl<'a> Traverse<'a> {
                             .queue
                             .push_back(block_ip.with_local(instr.near_branch32())),
                         iced_x86::OpKind::FarBranch16 => {
-                            let Module::DOS(m) = self.module else {
-                                unreachable!()
-                            };
-                            if instr.far_branch_selector() == m.load_segment {
-                                todo!("{ip} {instr}  ; far branch to alternative segment");
-                                //self.queue.push_back(instr.far_branch16() as u32)
-                            } else {
-                                log::warn!("{ip} {instr}  ; far branch to alternative segment");
-                            }
+                            let ip = IP::Seg(instr.far_branch_selector(), instr.far_branch16());
+                            self.queue.push_back(ip);
                         }
                         iced_x86::OpKind::Memory => {
                             if let Some(addr) = is_abs_memory_ref(&instr) {
