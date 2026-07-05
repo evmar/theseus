@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use crate::memory::Memory;
+use crate::{gather::IP, memory::Memory};
 
 mod codegen;
 pub mod com;
@@ -67,11 +67,19 @@ impl Module {
         self.is_dos()
     }
 
-    fn entry_point_ip(&self) -> u32 {
+    pub fn local_addr(&self, addr: u32) -> IP {
         match self {
+            Module::DOS(m) => IP::Seg(m.load_segment, addr as u16),
+            Module::Windows(_) => IP::Flat(addr),
+        }
+    }
+
+    fn entry_point(&self) -> IP {
+        let local = match self {
             Module::DOS(m) => m.entry_point as u32,
             Module::Windows(m) => m.entry_point,
-        }
+        };
+        self.local_addr(local)
     }
 
     fn image_base(&self) -> u32 {
@@ -80,16 +88,11 @@ impl Module {
             Module::Windows(m) => m.image_base,
         }
     }
+
     fn code_memory(&self) -> std::ops::Range<u32> {
         match self {
             Module::DOS(m) => m.code_memory.clone(),
             Module::Windows(m) => m.code_memory.clone(),
-        }
-    }
-    pub fn ip_to_addr(&self, ip: u32) -> u32 {
-        match self {
-            Module::DOS(m) => segofs(m.load_segment, ip as u16),
-            Module::Windows(_) => ip,
         }
     }
 }
@@ -119,13 +122,14 @@ impl Default for State {
 }
 
 pub struct Instr {
+    pub ip: IP,
     pub iced: iced_x86::Instruction,
     pub hint: Option<String>,
 }
 
 impl Instr {
-    pub fn next_ip(&self) -> u32 {
-        self.iced.next_ip32()
+    pub fn next_ip(&self) -> IP {
+        self.ip.with_local(self.iced.next_ip32())
     }
 }
 
@@ -137,7 +141,7 @@ pub struct Block {
 pub enum BlockType {
     Instrs(Vec<Instr>),
     Stdcall(String),
-    Extern(u32),
+    Extern(u32), // TODO: use ip instead
 }
 
 impl Block {
@@ -146,7 +150,10 @@ impl Block {
             return name.clone();
         }
         match &self.ty {
-            BlockType::Instrs(instrs) => format!("x{:x}", instrs[0].iced.ip32()),
+            BlockType::Instrs(instrs) => match instrs[0].ip {
+                IP::Flat(addr) => format!("x{:x}", addr),
+                IP::Seg(seg, ofs) => format!("x{:04x}_{:04x}", seg, ofs),
+            },
             BlockType::Stdcall(func) => format!("{}_stdcall", func),
             BlockType::Extern(ip) => format!("x{:x}", ip),
         }

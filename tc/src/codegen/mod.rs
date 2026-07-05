@@ -253,7 +253,8 @@ impl<'a> CodeGen<'a> {
                     || (last.iced.mnemonic() == iced_x86::Mnemonic::Call && last.hint.is_some())
                     || (last.iced.mnemonic() == iced_x86::Mnemonic::Int)
                 {
-                    self.line(format!("Cont(x{:x})", last.next_ip()));
+                    let next_block = self.blocks.get(&last.next_ip().to_addr()).unwrap();
+                    self.line(format!("Cont({})", next_block.name()));
                 }
 
                 self.line("}\n");
@@ -266,7 +267,7 @@ impl<'a> CodeGen<'a> {
 
     fn gen_instr(&mut self, instr: &Instr) -> anyhow::Result<()> {
         // log::info!("gen: {:08x} {}", instr.iced.ip32(), instr.iced);
-        self.line(format!("// {:08x} {}", instr.iced.ip32(), instr.iced));
+        self.line(format!("// {} {}", instr.ip, instr.iced));
         if self.codegen_control_flow(instr) {
         } else if self.codegen_math(&instr.iced) {
         } else if self.codegen_string(&instr.iced) {
@@ -364,21 +365,20 @@ ctx.cpu.regs.esp = {stack_pointer:#x};
     }
 
     fn gen_blocks(&mut self) {
-        let mut ips = self.blocks.keys().copied().collect::<Vec<_>>();
-        ips.sort();
-        for &ip in &ips {
-            let block = self.blocks.get(&ip).unwrap();
+        let mut addrs = self.blocks.keys().copied().collect::<Vec<_>>();
+        addrs.sort();
+        for &addr in &addrs {
+            let block = self.blocks.get(&addr).unwrap();
             self.gen_block(&block);
         }
 
         self.line(format!(
             "const BLOCKS: [(u32, ContFn); {}] = [\n",
-            ips.len() + 1,
+            addrs.len() + 1,
         ));
 
-        for &ip in &ips {
-            let block = self.blocks.get(&ip).unwrap();
-            let addr = self.module.ip_to_addr(ip);
+        for &addr in &addrs {
+            let block = self.blocks.get(&addr).unwrap();
             self.line(format!("({addr:#x}, {name}),", name = block.name()));
         }
         self.line("(runtime::RETURN_FROM_X86_ADDR, Context::return_from_x86),");
@@ -412,7 +412,7 @@ use runtime::*;
             Module::Windows(m) => m.resources.clone().unwrap_or(0..0),
         };
 
-        let entry_point = self.module.entry_point_ip();
+        let entry_point = self.module.entry_point().to_addr();
         let entry_point = self
             .blocks
             .get(&entry_point)

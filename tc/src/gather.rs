@@ -2,6 +2,8 @@
 
 use std::collections::{BTreeMap, HashMap, HashSet, VecDeque};
 
+use runtime::segofs;
+
 use crate::{AddrInfo, Block, BlockType, Import, Instr, Module, State, memory::Memory};
 
 /// If the instruction looks like
@@ -18,6 +20,56 @@ fn is_abs_memory_ref(instr: &iced_x86::Instruction) -> Option<u32> {
         return None;
     };
     Some(instr.memory_displacement32())
+}
+
+#[derive(Clone, Copy)]
+pub enum IP {
+    Flat(u32),
+    Seg(u16, u16),
+}
+
+impl IP {
+    /// called by code that hasn't been updated to be segmentation-aware
+    pub fn todo_segmenting(_addr: u32) -> IP {
+        todo!();
+        //IP::Flat(addr)
+    }
+
+    pub fn to_addr(&self) -> u32 {
+        match *self {
+            IP::Flat(ip) => ip,
+            IP::Seg(seg, ofs) => segofs(seg, ofs),
+        }
+    }
+
+    pub fn local(&self) -> u32 {
+        match *self {
+            IP::Flat(ip) => ip,
+            IP::Seg(_, ofs) => ofs as u32,
+        }
+    }
+
+    pub fn with_local(&self, addr: u32) -> IP {
+        match *self {
+            IP::Flat(_) => IP::Flat(addr),
+            IP::Seg(seg, _) => IP::Seg(seg, addr as u16),
+        }
+    }
+}
+
+impl std::fmt::Display for IP {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match *self {
+            IP::Flat(ip) => write!(f, "{ip:08x}"),
+            IP::Seg(seg, ofs) => write!(f, "{seg:04x}:{ofs:04x}"),
+        }
+    }
+}
+
+impl std::fmt::Debug for IP {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self)
+    }
 }
 
 #[derive(Clone)]
@@ -49,7 +101,7 @@ struct Traverse<'a> {
     addr_info: &'a HashMap<u32, AddrInfo>,
 
     iat_refs: HashMap<u32, &'a Import>,
-    queue: VecDeque<u32>,
+    queue: VecDeque<IP>,
     invalid: HashSet<u32>,
     blocks: BTreeMap<u32, Block>,
 }
@@ -98,23 +150,23 @@ impl<'a> Traverse<'a> {
             }
         }
 
-        self.queue.push_back(self.module.entry_point_ip());
+        self.queue.push_back(self.module.entry_point());
         for entry_point in self.gather.entry_points.iter() {
             match entry_point {
-                EntryPoint::Single(addr) => self.queue.push_back(*addr),
+                EntryPoint::Single(addr) => self.queue.push_back(self.module.local_addr(*addr)),
                 EntryPoint::Range(r) => {
-                    let mut ip = r.start;
-                    while ip < r.end {
-                        let Ok(block) = self.decode_one(ip) else {
-                            log::warn!("failed to decode range {r:#x?} at {:#x}", ip);
+                    let mut addr = r.start;
+                    while addr < r.end {
+                        let Ok(block) = self.decode_one(IP::todo_segmenting(addr)) else {
+                            log::warn!("failed to decode range {r:#x?} at {:#x}", addr);
                             break;
                         };
                         let BlockType::Instrs(instrs) = &block.ty else {
                             unreachable!();
                         };
-                        let next = instrs.last().unwrap().next_ip();
-                        self.blocks.insert(ip, block);
-                        ip = next;
+                        let next = instrs.last().unwrap().next_ip().to_addr();
+                        self.blocks.insert(addr, block);
+                        addr = next;
                     }
                 }
             }
@@ -124,42 +176,43 @@ impl<'a> Traverse<'a> {
         }
 
         while let Some(ip) = self.queue.pop_front() {
-            if self.blocks.contains_key(&ip) || self.invalid.contains(&ip) {
+            let addr = ip.to_addr();
+            if self.blocks.contains_key(&addr) || self.invalid.contains(&addr) {
                 continue;
             }
 
             // If this ip is contained within an existing block, it means it is a
             // jmp within some other code.
             // Re-queue the other block for re-parsing after this one so that it can be split.
-            if let Some((&addr, block)) = self.blocks.range(0..ip).last() {
+            if let Some((&baddr, block)) = self.blocks.range(0..addr).last() {
                 if let BlockType::Instrs(instrs) = &block.ty {
-                    let range =
-                        instrs.first().unwrap().iced.ip32()..instrs.last().unwrap().next_ip();
-                    if range.contains(&ip) {
-                        self.blocks.remove(&addr);
-                        self.queue.push_back(addr);
+                    let range = instrs.first().unwrap().ip.to_addr()
+                        ..instrs.last().unwrap().next_ip().to_addr();
+                    if range.contains(&addr) {
+                        self.queue.push_back(instrs[0].ip);
+                        self.blocks.remove(&baddr);
                     }
                 }
             }
 
             match self.decode_one(ip) {
                 Ok(block) => {
-                    self.blocks.insert(ip, block);
+                    self.blocks.insert(addr, block);
                 }
                 Err(e) => {
-                    log::warn!("omitting {ip:08x}: {e}");
-                    self.invalid.insert(ip);
+                    log::warn!("omitting {ip}: {e}");
+                    self.invalid.insert(addr);
                 }
             }
         }
     }
 
-    fn decode_one(&mut self, ip: u32) -> anyhow::Result<Block> {
-        let addr = self.module.ip_to_addr(ip);
-        if addr > self.mem.bytes.len() as u32 {
+    fn decode_one(&mut self, block_ip: IP) -> anyhow::Result<Block> {
+        let block_addr = block_ip.to_addr();
+        if block_addr > self.mem.bytes.len() as u32 {
             anyhow::bail!("ip out of bounds");
         }
-        let data = self.mem.slice_all(addr);
+        let data = self.mem.slice_all(block_addr);
         if data.len() > 0x10 && data[..0x10].iter().all(|&b| b == 0) {
             anyhow::bail!("block appears zero-filled");
         }
@@ -168,12 +221,13 @@ impl<'a> Traverse<'a> {
         let decoder = iced_x86::Decoder::with_ip(
             self.module.bitness(),
             data,
-            ip as u64,
+            block_ip.local() as u64,
             iced_x86::DecoderOptions::NONE,
         );
         for instr in decoder {
+            let ip = block_ip.with_local(instr.ip32());
             // log::info!("{ip:08x} {instr}", ip = instr.ip32());
-            if self.blocks.contains_key(&instr.ip32()) {
+            if self.blocks.contains_key(&ip.to_addr()) {
                 // Hit a point covered by another block, e.g. a jump target
                 break;
             }
@@ -183,6 +237,7 @@ impl<'a> Traverse<'a> {
             }
 
             let new_instr = instrs.push_mut(Instr {
+                ip,
                 iced: instr,
                 hint: None,
             });
@@ -193,7 +248,7 @@ impl<'a> Traverse<'a> {
                         let imm = instr.immediate32();
                         if self.module.code_memory().contains(&imm) {
                             log::info!("{imm:x} looks like a code pointer");
-                            self.queue.push_back(imm);
+                            self.queue.push_back(IP::todo_segmenting(imm));
                         }
                     }
                 }
@@ -202,32 +257,34 @@ impl<'a> Traverse<'a> {
             if instr.flow_control() == iced_x86::FlowControl::Next
                 || instr.mnemonic() == iced_x86::Mnemonic::Int
             {
-                let next_bytes = &data[(instr.next_ip32() - ip) as usize..];
+                let next_ip = block_ip.with_local(instr.next_ip32());
+                let next_bytes = &data[(next_ip.to_addr() - block_addr) as usize..];
                 if next_bytes.len() > 0x10 && next_bytes[..0x10].iter().all(|&b| b == 0) {
                     anyhow::bail!("suspicious block of 0");
                 }
                 continue;
             }
-            let ip = instr.ip32();
+            let ip = block_ip.with_local(instr.ip32());
             use iced_x86::Mnemonic::*;
             match instr.mnemonic() {
                 Call | Jmp | Jcxz | Je | Jne | Jb | Js | Jns | Ja | Jae | Jl | Jge | Jecxz | Jg
                 | Jle | Jo | Jno | Jp | Jnp | Jbe | Loop | Loope | Loopne => {
                     match instr.op0_kind() {
-                        iced_x86::OpKind::NearBranch16 => {
-                            self.queue.push_back(instr.near_branch16() as u32)
-                        }
-                        iced_x86::OpKind::NearBranch32 => {
-                            self.queue.push_back(instr.near_branch32())
-                        }
+                        iced_x86::OpKind::NearBranch16 => self
+                            .queue
+                            .push_back(block_ip.with_local(instr.near_branch16() as u32)),
+                        iced_x86::OpKind::NearBranch32 => self
+                            .queue
+                            .push_back(block_ip.with_local(instr.near_branch32())),
                         iced_x86::OpKind::FarBranch16 => {
                             let Module::DOS(m) = self.module else {
                                 unreachable!()
                             };
                             if instr.far_branch_selector() == m.load_segment {
-                                self.queue.push_back(instr.far_branch16() as u32)
+                                todo!("{ip} {instr}  ; far branch to alternative segment");
+                                //self.queue.push_back(instr.far_branch16() as u32)
                             } else {
-                                log::warn!("{ip:08x} {instr}  ; far branch to alternative segment");
+                                log::warn!("{ip} {instr}  ; far branch to alternative segment");
                             }
                         }
                         iced_x86::OpKind::Memory => {
@@ -239,19 +296,19 @@ impl<'a> Traverse<'a> {
                                         continue; // don't end block here
                                     }
                                 } else {
-                                    log::warn!("{ip:08x} {instr}  ; indirect via memory");
+                                    log::warn!("{ip} {instr}  ; indirect via memory");
                                 }
                             } else {
-                                log::warn!("{ip:08x} {instr}  ; indirect via memory");
+                                log::warn!("{ip} {instr}  ; indirect via memory");
                             }
                         }
                         iced_x86::OpKind::Register => {
-                            log::warn!("{ip:08x} {instr}  ; indirect via register");
+                            log::warn!("{ip} {instr}  ; indirect via register");
                         }
                         d => anyhow::bail!("unhandled jmp {d:?}"),
                     }
                     if instr.mnemonic() != Jmp {
-                        self.queue.push_back(instr.next_ip32());
+                        self.queue.push_back(block_ip.with_local(instr.next_ip32()));
                     }
                 }
                 Ret | Retf | Iret => {}
@@ -260,12 +317,12 @@ impl<'a> Traverse<'a> {
                 INVALID => {
                     anyhow::bail!("invalid code found");
                 }
-                _ => todo!("{ip:08x} control flow {}", instr),
+                _ => todo!("{ip} control flow {}", instr),
             }
             break;
         }
 
-        let info = self.addr_info.get(&instrs[0].iced.ip32());
+        let info = self.addr_info.get(&block_ip.to_addr());
         Ok(Block {
             name: info.map(|info| info.name.clone()),
             ty: BlockType::Instrs(instrs),
@@ -292,7 +349,7 @@ impl<'a> Traverse<'a> {
                         "{addr:08x}: found possible code pointer {value:x}",
                         addr = mapping_addr + ofs as u32
                     );
-                    self.queue.push_back(value);
+                    self.queue.push_back(IP::todo_segmenting(value));
                 }
             }
         }
