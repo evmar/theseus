@@ -39,6 +39,18 @@ pub fn int21(ctx: &mut Context) {
             ctx.cpu.regs.set_bx(0xff00);
             ctx.cpu.regs.set_cx(0);
         }
+        // terminate and stay resident
+        0x31 => {
+            let exit_code = ctx.cpu.regs.get_al();
+            let size = ctx.cpu.regs.get_dx() as u32 * 0x10;
+            log::warn!("TODO: TSR exit={exit_code:x} size={size:x}");
+            ctx.cpu.dump();
+            let ret = ivt(&mut ctx.memory)[0x22];
+            if ret == IVTEntry(0, 0) {
+                std::process::exit(exit_code as i32);
+            }
+            todo!("return to {ret:x?}");
+        }
         // read from interrupt table
         0x35 => {
             let int = ctx.cpu.regs.get_al();

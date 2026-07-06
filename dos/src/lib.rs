@@ -17,7 +17,9 @@ use crate::{timer::PIT, vga::VGA};
 pub const DOSBOX_SEG: u16 = 0x813;
 
 #[repr(C)]
-#[derive(Clone, Copy, zerocopy::FromBytes, zerocopy::IntoBytes, zerocopy::Immutable)]
+#[derive(
+    Clone, Copy, Debug, PartialEq, Eq, zerocopy::FromBytes, zerocopy::IntoBytes, zerocopy::Immutable,
+)]
 struct IVTEntry(u16, u16);
 
 impl From<IVTEntry> for (u16, u16) {
