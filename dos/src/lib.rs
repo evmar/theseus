@@ -16,6 +16,22 @@ use crate::{timer::PIT, vga::VGA};
 pub const DOSBOX_SEG: u16 = 0x813;
 
 #[repr(C)]
+#[derive(Clone, Copy, zerocopy::FromBytes, zerocopy::IntoBytes, zerocopy::Immutable)]
+struct IVTEntry(u16, u16);
+
+impl From<IVTEntry> for (u16, u16) {
+    fn from(IVTEntry(seg, ofs): IVTEntry) -> Self {
+        (seg, ofs)
+    }
+}
+
+fn ivt(mem: &mut Memory) -> &mut [IVTEntry] {
+    <[IVTEntry]>::mut_from_prefix_with_elems(&mut mem.bytes, 0x400)
+        .unwrap()
+        .0
+}
+
+#[repr(C)]
 #[derive(zerocopy::IntoBytes, zerocopy::Immutable)]
 struct PSP {
     int20: [u8; 2],
@@ -76,6 +92,12 @@ pub fn load(exe: &EXEData, command_line: Option<&str>) -> Context {
     let mut memory = Memory::leak_new(memory_size as usize);
     // programs can write to memory address zero to overwrite the IVT
     memory.null_page = false;
+
+    let ivt = ivt(&mut memory);
+    // cpu exception handler
+    ivt[0] = IVTEntry(0xf000, 0xca60); // from dosbox
+    // TSR handler
+    ivt[0x2f] = IVTEntry(0xf000, 0xd220); // from dosbox
 
     let mut state = state();
     state.psp_segment = (exe.image_base >> 4) as u16;
@@ -159,8 +181,6 @@ static STATE: LazyLock<SingleThreader<RefCell<State>>> =
 pub struct State {
     psp_segment: u16,
     pit: PIT,
-    // IVT; TODO: this actually lives in in memory at 0000:0000, not sure if anything depends on that
-    interrupt_handlers: [(u16, u16); 0x30],
     vga: Option<VGA>,
     pub read_file: Option<Box<dyn FnMut(&str) -> Option<Vec<u8>>>>,
     files: Vec<File>,
@@ -172,19 +192,13 @@ impl State {
         // Initial files: stdin, stdout, stderr, stdaux, stdprn; file handles are indexes into this vector
         // TODO: the JFT belongs in the PSP I guess.
         files.resize_with(5, Default::default);
-        let mut state = State {
+        State {
             psp_segment: 0,
             pit: PIT::default(),
-            interrupt_handlers: [(0, 0); 0x30],
             vga: None,
             read_file: None,
             files,
-        };
-        // cpu exception handler
-        state.interrupt_handlers[0] = (0xf000, 0xca60); // from dosbox
-        // TSR handler
-        state.interrupt_handlers[0x2f] = (0xf000, 0xd220); // from dosbox
-        state
+        }
     }
 
     fn read_file(&mut self, path: &str) -> Option<Vec<u8>> {
@@ -232,7 +246,7 @@ fn int21(ctx: &mut Context) {
         0x25 => {
             let int = ctx.cpu.regs.get_al();
             let (seg, ofs) = (ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_dx());
-            state().interrupt_handlers[int as usize] = (seg, ofs);
+            ivt(&mut ctx.memory)[int as usize] = IVTEntry(seg, ofs);
         }
         // get DOS version
         0x30 => {
@@ -244,7 +258,7 @@ fn int21(ctx: &mut Context) {
         // read from interrupt table
         0x35 => {
             let int = ctx.cpu.regs.get_al();
-            let (seg, ofs) = state().interrupt_handlers[int as usize];
+            let IVTEntry(seg, ofs) = ivt(&mut ctx.memory)[int as usize];
             ctx.cpu.regs.set_es(seg);
             ctx.cpu.regs.set_bx(ofs);
         }
@@ -439,7 +453,8 @@ pub fn dump_com(ctx: &mut Context) -> &[u8] {
 
 impl State {
     fn check_interrupts(&mut self, ctx: &mut Context) {
-        self.pit.check_timer(ctx, self.interrupt_handlers[8]);
+        let handler = ivt(&mut ctx.memory)[8];
+        self.pit.check_timer(ctx, handler.into());
         if let Some(vga) = &mut self.vga {
             vga.update_screen(ctx);
         }
