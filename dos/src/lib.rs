@@ -251,7 +251,9 @@ fn int21(ctx: &mut Context) {
         // get an access handle
         0x3d => {
             let access = ctx.cpu.regs.get_al();
-            assert_eq!(access, 0);
+            if access != 0 {
+                log::warn!("TODO: file access {access:x}");
+            }
             let addr = segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_dx());
             let name = ctx.memory.read_str(addr);
             let mut state = state();
