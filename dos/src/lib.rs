@@ -99,6 +99,8 @@ pub fn load(exe: &EXEData, command_line: Option<&str>) -> Context {
     ivt[0] = IVTEntry(0xf000, 0xca60); // from dosbox
     // TSR handler
     ivt[0x2f] = IVTEntry(0xf000, 0xd220); // from dosbox
+    // expanded memory manager (?)
+    ivt[0x67] = IVTEntry(0xc401, 0x4); // from dosbox
 
     let mut state = state();
     state.psp_segment = (exe.image_base >> 4) as u16;
