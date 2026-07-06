@@ -1,3 +1,5 @@
+//! Programmable Interrupt Timer.
+
 use runtime::Context;
 
 #[derive(Default)]

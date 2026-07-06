@@ -1,3 +1,5 @@
+//! Graphics support.
+
 use runtime::{Context, segofs};
 
 pub struct VGA {
