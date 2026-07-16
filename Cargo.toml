@@ -3,7 +3,6 @@ resolver = "2"
 members = [
   "dos",
   "exe",
-  "explore",
   "host",
   "logger",
   "out/basicdd",
