@@ -5,6 +5,7 @@
 pub mod advapi32;
 pub mod bitmap_format;
 pub mod ddraw;
+pub mod dinput;
 mod dllexport;
 pub mod dsound;
 pub mod gdi32;

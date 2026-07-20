@@ -204,6 +204,7 @@ impl State {
         for (dll, vtables) in [
             ("ddraw", winapi::ddraw::VTABLES.as_slice()),
             ("dsound", winapi::dsound::VTABLES.as_slice()),
+            ("dinput", winapi::dinput::VTABLES.as_slice()),
         ] {
             if !module.imports.iter().any(|imp| imp.dll == dll) {
                 continue;
