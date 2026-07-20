@@ -18,8 +18,12 @@ pub type LPARAM = u32;
 
 #[derive(win32_derive::ABIEnum, Debug)]
 pub enum WM {
+    ACTIVATE = 0x6,
+    SETFOCUS = 0x7,
     PAINT = 0xf,
     QUIT = 0x12,
+    SHOWWINDOW = 0x18,
+    ACTIVATEAPP = 0x1c,
     MOUSEMOVE = 0x200,
     LBUTTONDOWN = 0x201,
     LBUTTONUP = 0x202,
@@ -106,6 +110,29 @@ fn mouse_msg(wm: WM, hwnd: HWND, message: &host::MouseMessage) -> MSG {
             y: message.y as i32,
         },
     }
+}
+
+/// Post a message to the application's queue (e.g. synthetic activation
+/// messages from ShowWindow).
+pub fn post_message(hwnd: HWND, message: u32, wParam: WPARAM, lParam: LPARAM) {
+    let mut queue = state().message_queue.borrow_mut();
+    queue.messages.push_back(MSG {
+        hwnd,
+        message,
+        wParam,
+        lParam,
+        time: 0,
+        pt: POINT::default(),
+    });
+}
+
+#[win32_derive::dllexport]
+pub fn WaitMessage(_ctx: &mut Context) -> bool {
+    let mut queue = state().message_queue.borrow_mut();
+    if queue.peek().is_none() {
+        queue.wait_host();
+    }
+    true
 }
 
 impl MessageQueue {
@@ -332,19 +359,40 @@ pub fn TranslateAcceleratorW(
 }
 
 #[win32_derive::dllexport]
-pub fn PostQuitMessage(_ctx: &mut Context, _nExitCode: i32) {
-    todo!()
+pub fn PostQuitMessage(_ctx: &mut Context, nExitCode: i32) {
+    let mut queue = state().message_queue.borrow_mut();
+    queue.quit = Some(MSG {
+        hwnd: HWND::null(),
+        message: WM::QUIT as u32,
+        wParam: nExitCode as u32,
+        lParam: 0,
+        time: 0,
+        pt: POINT::default(),
+    });
 }
 
 #[win32_derive::dllexport]
 pub fn PostMessageW(
     _ctx: &mut Context,
-    _hWnd: HWND,
-    _Msg: u32,
-    _wParam: WPARAM,
-    _lParam: LPARAM,
+    hWnd: HWND,
+    Msg: u32,
+    wParam: WPARAM,
+    lParam: LPARAM,
 ) -> bool {
-    todo!()
+    post_message(hWnd, Msg, wParam, lParam);
+    true
+}
+
+#[win32_derive::dllexport]
+pub fn PostMessageA(
+    _ctx: &mut Context,
+    hWnd: HWND,
+    Msg: u32,
+    wParam: WPARAM,
+    lParam: LPARAM,
+) -> bool {
+    post_message(hWnd, Msg, wParam, lParam);
+    true
 }
 
 #[win32_derive::dllexport]

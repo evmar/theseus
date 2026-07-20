@@ -180,16 +180,23 @@ pub fn CreateWindowExW(
 
 #[win32_derive::dllexport]
 pub fn DestroyWindow(_ctx: &mut Context, _hWnd: HWND) -> bool {
-    todo!()
+    stub!(true)
 }
 
 #[win32_derive::dllexport]
 pub fn ShowWindow(
     _ctx: &mut Context,
-    _hWnd: HWND,
+    hWnd: HWND,
     _nCmdShow: u32, /* SHOW_WINDOW_CMD */
 ) -> bool {
-    stub!(true)
+    // The window comes up focused; games often wait for activation before
+    // running their main loop.
+    use super::message::{WM, post_message};
+    post_message(hWnd, WM::SHOWWINDOW as u32, 1, 0);
+    post_message(hWnd, WM::ACTIVATEAPP as u32, 1, 0);
+    post_message(hWnd, WM::ACTIVATE as u32, 1, 0); // WA_ACTIVE
+    post_message(hWnd, WM::SETFOCUS as u32, 0, 0);
+    true
 }
 
 #[win32_derive::dllexport]
@@ -240,7 +247,10 @@ pub fn DefWindowProcW(
 ) -> u32 {
     let msg = match msg {
         Ok(msg) => msg,
-        Err(n) => todo!("message type {:x}", n),
+        Err(n) => {
+            log::warn!("DefWindowProc: unhandled message type {:x}", n);
+            return 0;
+        }
     };
 
     let window = state().window.borrow();
@@ -454,6 +464,50 @@ pub fn InvalidateRect(_ctx: &mut Context, hWnd: HWND, _lpRect: Ptr<RECT>, _bEras
 #[win32_derive::dllexport]
 pub fn GetDesktopWindow(_ctx: &mut Context) -> HWND {
     stub!(HWND::null())
+}
+
+#[win32_derive::dllexport]
+pub fn GetClientRect(ctx: &mut Context, _hWnd: HWND, lpRect: Ptr<RECT>) -> bool {
+    let rect = {
+        let window = state().window.borrow();
+        let window = window.as_ref().unwrap().borrow();
+        window.rect()
+    };
+    lpRect.write(&mut ctx.memory, rect).is_some()
+}
+
+#[win32_derive::dllexport]
+pub fn SetWindowPos(
+    _ctx: &mut Context,
+    _hWnd: HWND,
+    _hWndInsertAfter: u32,
+    _X: i32,
+    _Y: i32,
+    _cx: i32,
+    _cy: i32,
+    _uFlags: u32,
+) -> bool {
+    stub!(true)
+}
+
+#[win32_derive::dllexport]
+pub fn SetWindowTextA(_ctx: &mut Context, _hWnd: HWND, _lpString: Ptr<u8>) -> bool {
+    stub!(true)
+}
+
+#[win32_derive::dllexport]
+pub fn EnableWindow(_ctx: &mut Context, _hWnd: HWND, _bEnable: bool) -> bool {
+    stub!(false)
+}
+
+#[win32_derive::dllexport]
+pub fn SetCursor(_ctx: &mut Context, _hCursor: u32) -> u32 {
+    stub!(0)
+}
+
+#[win32_derive::dllexport]
+pub fn SetCursorPos(_ctx: &mut Context, _X: i32, _Y: i32) -> bool {
+    stub!(true)
 }
 
 #[win32_derive::dllexport]

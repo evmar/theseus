@@ -45,6 +45,18 @@ pub fn EndDialog(_ctx: &mut Context, _hDlg: HWND, _nResult: i32) -> bool {
 }
 
 #[win32_derive::dllexport]
+pub fn SendDlgItemMessageA(
+    _ctx: &mut Context,
+    _hDlg: HWND,
+    _nIDDlgItem: i32,
+    _Msg: u32,
+    _wParam: u32,
+    _lParam: u32,
+) -> u32 {
+    crate::stub!(0)
+}
+
+#[win32_derive::dllexport]
 pub fn IsDlgButtonChecked(_ctx: &mut Context, _hDlg: HWND, _nIDButton: i32) -> u32 {
     todo!()
 }
