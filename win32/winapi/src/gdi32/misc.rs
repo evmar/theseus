@@ -9,6 +9,26 @@ pub fn DeleteObject(_ctx: &mut Context, _ho: HGDIOBJ) -> bool {
     stub!(true)
 }
 
+#[win32_derive::dllexport]
+pub fn GetSystemPaletteEntries(
+    ctx: &mut Context,
+    _hdc: HDC,
+    iStart: u32,
+    cEntries: u32,
+    pPalEntries: crate::Ptr<u8>,
+) -> u32 {
+    // PALETTEENTRY { peRed, peGreen, peBlue, peFlags }: report a gray ramp.
+    let mut addr = pPalEntries.addr;
+    for i in iStart..iStart + cEntries {
+        let level = (i & 0xff) as u8;
+        for value in [level, level, level, 0] {
+            ctx.memory.write::<u8>(addr, value);
+            addr += 1;
+        }
+    }
+    cEntries
+}
+
 #[derive(Debug, win32_derive::ABIEnum)]
 pub enum GetDeviceCapsArg {
     DRIVERVERSION = 0,
