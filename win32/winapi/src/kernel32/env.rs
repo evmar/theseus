@@ -18,15 +18,17 @@ pub fn GetEnvironmentStrings(_ctx: &mut Context) -> u32 {
         encode_env(&mut encoder, &state.env);
         encoder.status().unwrap();
     */
-    // TODO: if available, this ends up hitting a jmp table when parsing
-    // stub!(state().environ.get())
-    stub!(0)
+    // An empty environment block: a list of nul-terminated strings,
+    // terminated by an extra nul.
+    let kernel32 = lock();
+    let addr = kernel32.process_heap.alloc(&mut _ctx.memory, 2);
+    _ctx.memory[addr..][..2].fill(0);
+    addr
 }
 
 #[win32_derive::dllexport]
 pub fn GetEnvironmentStringsW(_ctx: &mut Context) -> u32 {
-    // TODO: if available, this ends up getting parsed with unimplemented nls functions
-    // stub!(state().environ.get())
+    // Returning 0 pushes the CRT towards the ANSI fallback (GetEnvironmentStrings).
     stub!(0)
 }
 
