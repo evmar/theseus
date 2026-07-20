@@ -53,7 +53,7 @@ pub fn load(exe: &EXEData) -> Context {
     host::init();
     crate::trace::init(&thesesus_trace());
 
-    let memory_size = 32 << 20;
+    let memory_size = 64 << 20;
     let memory = Memory::leak_new(memory_size);
 
     kernel32::init_state(exe.image_base, exe.resources.clone());
