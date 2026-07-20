@@ -10,24 +10,22 @@ use crate::{
 
 win32flags! {
     pub struct HEAP_FLAGS {
+        const NO_SERIALIZE        = 0x01;
+        const GENERATE_EXCEPTIONS = 0x04;
+        const ZERO_MEMORY         = 0x08;
     }
 }
 
 #[win32_derive::dllexport]
 pub fn HeapAlloc(ctx: &mut Context, hHeap: HANDLE, dwFlags: HEAP_FLAGS, dwBytes: u32) -> u32 {
-    if !dwFlags.is_empty() {
-        todo!();
-    }
-
     let state = kernel32::lock();
     let heap = state.heaps.get(&hHeap).unwrap();
-    heap.alloc(&mut ctx.memory, dwBytes)
-    /*
-    if flags.contains(HeapAllocFlags::HEAP_ZERO_MEMORY) {
-        memory.mem().sub32_mut(addr, dwBytes).fill(0);
-        flags.remove(HeapAllocFlags::HEAP_ZERO_MEMORY);
+    let addr = heap.alloc(&mut ctx.memory, dwBytes);
+    drop(state);
+    if addr != 0 && dwFlags.contains(HEAP_FLAGS::ZERO_MEMORY) {
+        ctx.memory[addr..][..dwBytes as usize].fill(0);
     }
-    */
+    addr
 }
 
 #[win32_derive::dllexport]
@@ -145,4 +143,22 @@ pub fn GlobalAlloc(ctx: &mut Context, uFlags: GMEM, dwBytes: u32) -> u32 {
 pub fn GlobalFree(ctx: &mut Context, hMem: Ptr<()>) -> u32 {
     lock().process_heap.free(&mut ctx.memory, hMem.addr);
     0 // success
+}
+
+// GlobalAlloc only hands out fixed (non-moveable) memory, so handles and
+// pointers are the same value.
+
+#[win32_derive::dllexport]
+pub fn GlobalLock(_ctx: &mut Context, hMem: u32) -> u32 {
+    hMem
+}
+
+#[win32_derive::dllexport]
+pub fn GlobalUnlock(_ctx: &mut Context, _hMem: u32) -> bool {
+    true
+}
+
+#[win32_derive::dllexport]
+pub fn GlobalHandle(_ctx: &mut Context, pMem: u32) -> u32 {
+    pMem
 }
