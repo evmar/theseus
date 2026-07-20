@@ -8,6 +8,8 @@ mod wave;
 pub use wave::*;
 mod misc;
 pub use misc::*;
+mod mmio;
+pub use mmio::*;
 
 #[derive(Default)]
 pub struct State {

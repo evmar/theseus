@@ -12,6 +12,11 @@ pub struct Timer {
     pub user_data: u32,
 }
 
+#[win32_derive::dllexport]
+pub fn timeGetTime(_ctx: &mut Context) -> u32 {
+    host::host().time()
+}
+
 #[derive(Debug)]
 pub struct TIME {
     periodic: bool,
