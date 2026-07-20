@@ -65,12 +65,44 @@ impl Context {
         self.cpu.flags.contains(Flags::ZF) as u8
     }
 
-    pub fn setge(self: &Context) -> u8 {
-        (self.cpu.flags.contains(Flags::ZF) == self.cpu.flags.contains(Flags::OF)) as u8
-    }
-
     pub fn setne(self: &Context) -> u8 {
         !self.cpu.flags.contains(Flags::ZF) as u8
+    }
+
+    pub fn setg(self: &Context) -> u8 {
+        (!self.cpu.flags.contains(Flags::ZF)
+            && self.cpu.flags.contains(Flags::SF) == self.cpu.flags.contains(Flags::OF))
+            as u8
+    }
+
+    pub fn setge(self: &Context) -> u8 {
+        (self.cpu.flags.contains(Flags::SF) == self.cpu.flags.contains(Flags::OF)) as u8
+    }
+
+    pub fn setl(self: &Context) -> u8 {
+        (self.cpu.flags.contains(Flags::SF) != self.cpu.flags.contains(Flags::OF)) as u8
+    }
+
+    pub fn setle(self: &Context) -> u8 {
+        (self.cpu.flags.contains(Flags::ZF)
+            || self.cpu.flags.contains(Flags::SF) != self.cpu.flags.contains(Flags::OF))
+            as u8
+    }
+
+    pub fn seta(self: &Context) -> u8 {
+        (!self.cpu.flags.contains(Flags::CF) && !self.cpu.flags.contains(Flags::ZF)) as u8
+    }
+
+    pub fn setae(self: &Context) -> u8 {
+        !self.cpu.flags.contains(Flags::CF) as u8
+    }
+
+    pub fn setb(self: &Context) -> u8 {
+        self.cpu.flags.contains(Flags::CF) as u8
+    }
+
+    pub fn setbe(self: &Context) -> u8 {
+        (self.cpu.flags.contains(Flags::CF) || self.cpu.flags.contains(Flags::ZF)) as u8
     }
 
     pub fn sti(&mut self) {

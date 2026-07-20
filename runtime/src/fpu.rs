@@ -18,6 +18,9 @@ pub struct FPU {
     pub st_top: usize,
     /// The result of the last fcmp, used to generate status word.
     pub cmp: std::cmp::Ordering,
+    /// Control word, as managed by fldcw/fnstcw. We only round-trip the value;
+    /// precision/rounding control bits are not honored.
+    pub control: u16,
 }
 
 impl Default for FPU {
@@ -26,6 +29,7 @@ impl Default for FPU {
             st: [0.; 8],
             st_top: 8,
             cmp: std::cmp::Ordering::Equal,
+            control: 0x037f,
         }
     }
 }

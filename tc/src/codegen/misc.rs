@@ -25,7 +25,7 @@ impl<'a> CodeGen<'a> {
             Popad => self.line("ctx.popad();"),
             Mov => self.line(self.set_op(instr, 0, self.get_op(instr, 1))),
 
-            Sete | Setg | Setge | Setne => {
+            Sete | Setne | Setg | Setge | Setl | Setle | Seta | Setae | Setb | Setbe => {
                 self.line(self.set_op(instr, 0, format!("ctx.{}()", instr_name(instr))))
             }
 
@@ -74,17 +74,24 @@ impl<'a> CodeGen<'a> {
                 self.line(self.set_op(instr, 1, "t".into()));
             }
             Nop => {}
+            // x87 exception sync; our FPU never raises.
+            Wait => {}
 
             Not => self.line(self.set_op(instr, 0, format!("!{}", self.get_op(instr, 0)))),
 
             Int => {
                 assert!(instr.op0_kind() == iced_x86::OpKind::Immediate8);
-                assert!(self.module.is_dos());
-                self.line(format!(
-                    "dos::int(ctx, {:#x}, {:#x})",
-                    instr.next_ip32(),
-                    instr.immediate8()
-                ));
+                // A misidentified code pointer can land us on an `int` in
+                // non-DOS code, where there's nothing to call.
+                if self.module.is_dos() {
+                    self.line(format!(
+                        "dos::int(ctx, {:#x}, {:#x})",
+                        instr.next_ip32(),
+                        instr.immediate8()
+                    ));
+                } else {
+                    self.todo(format!("int {:#x}", instr.immediate8()));
+                }
             }
             Int3 | Cmpxchg | Pushfd | Cpuid | Xgetbv | Bt | Div => self.todo(instr_name(instr)),
 
@@ -117,7 +124,11 @@ impl<'a> CodeGen<'a> {
 
             Lds | Les | Lfs | Lgs | Lss => {
                 assert_eq!(instr.op_count(), 2);
-                assert_eq!(self.module.bitness(), 16);
+                if self.module.bitness() != 16 {
+                    // Usually a junk block from a misidentified code pointer.
+                    self.todo(instr_name(instr));
+                    return true;
+                }
                 self.line(format!(
                     "let ptr = {};",
                     get_mem("u32".into(), self.gen_addr(instr)),

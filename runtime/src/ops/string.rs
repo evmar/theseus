@@ -129,6 +129,12 @@ impl Context {
     pub fn scasb(&mut self) {
         self.scas::<u8>()
     }
+    pub fn scasw(&mut self) {
+        self.scas::<u16>()
+    }
+    pub fn scasd(&mut self) {
+        self.scas::<u32>()
+    }
 
     fn cmps<S: StringInt>(&mut self) {
         let src = self
@@ -153,6 +159,9 @@ impl Context {
     }
     pub fn cmpsw(&mut self) {
         self.cmps::<u16>()
+    }
+    pub fn cmpsd(&mut self) {
+        self.cmps::<u32>()
     }
 
     fn movs<S: StringInt>(&mut self) {
