@@ -7,6 +7,7 @@ use crate::{HANDLE, Ptr, kernel32::lock};
 pub enum Object {
     Thread,
     Event(Arc<Event>),
+    Mutex,
 }
 
 pub struct Event {
@@ -61,6 +62,33 @@ pub fn CreateEventA(
     };
     let mut kernel32 = lock();
     kernel32.objects.add(Object::Event(Arc::new(event)))
+}
+
+#[win32_derive::dllexport]
+pub fn CreateMutexA(
+    _ctx: &mut Context,
+    _lpMutexAttributes: Ptr<()>,
+    _bInitialOwner: bool,
+    _lpName: Ptr<u8>,
+) -> HANDLE {
+    // Single x86 thread; no contention possible.
+    lock().objects.add(Object::Mutex)
+}
+
+#[win32_derive::dllexport]
+pub fn ReleaseMutex(_ctx: &mut Context, _hMutex: HANDLE) -> bool {
+    true
+}
+
+#[win32_derive::dllexport]
+pub fn WaitForMultipleObjects(
+    _ctx: &mut Context,
+    _nCount: u32,
+    _lpHandles: Ptr<u32>,
+    _bWaitAll: bool,
+    _dwMilliseconds: u32,
+) -> u32 /* WAIT_EVENT */ {
+    crate::stub!(0) // WAIT_OBJECT_0
 }
 
 #[win32_derive::dllexport]
