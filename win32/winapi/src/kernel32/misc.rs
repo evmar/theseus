@@ -9,6 +9,31 @@ pub fn GetLastError(_ctx: &mut Context) -> u32 {
     0
 }
 
+#[win32_derive::dllexport]
+pub fn GetComputerNameA(ctx: &mut Context, lpBuffer: Ptr<u8>, nSize: Ptr<u32>) -> bool {
+    let name = b"THESEUS";
+    let size = nSize.read(&ctx.memory).unwrap_or(0);
+    if (size as usize) < name.len() + 1 {
+        return false;
+    }
+    ctx.memory[lpBuffer.addr..][..name.len()].copy_from_slice(name);
+    ctx.memory.write::<u8>(lpBuffer.addr + name.len() as u32, 0);
+    nSize.write(&mut ctx.memory, name.len() as u32);
+    true
+}
+
+#[win32_derive::dllexport]
+pub fn SetEnvironmentVariableA(_ctx: &mut Context, _lpName: Ptr<u8>, _lpValue: Ptr<u8>) -> bool {
+    stub!(true)
+}
+
+#[win32_derive::dllexport]
+pub fn ExitThread(_ctx: &mut Context, dwExitCode: u32) {
+    // The only x86 thread is the main one.
+    log::warn!("ExitThread({dwExitCode})");
+    std::process::exit(dwExitCode as i32);
+}
+
 #[repr(C)]
 #[derive(Debug, Default, zerocopy::IntoBytes, zerocopy::Immutable)]
 pub struct STARTUPINFOA {
@@ -95,7 +120,11 @@ pub fn VirtualAlloc(
     _flAllocationType: u32, /* VIRTUAL_ALLOCATION_TYPE */
     _flProtect: u32,        /* PAGE_PROTECTION_FLAGS */
 ) -> u32 {
-    assert_eq!(lpAddress.addr, 0);
+    if lpAddress.addr != 0 {
+        // Committing (or re-protecting) part of an earlier reservation; all our
+        // memory is always committed, so just say yes.
+        return lpAddress.addr;
+    }
     lock().mappings.alloc("VirtualAlloc".into(), dwSize)
     /*
     let memory = sys.memory_mut();
