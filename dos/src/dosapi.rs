@@ -211,7 +211,7 @@ pub fn int21(ctx: &mut Context) {
                     let header = exe::DOS::parse(&buf).unwrap();
                     let load_addr = segofs(seg, 0);
                     let data = &buf[header.image_offset()..];
-                    log::info!("loading {cmd:?} at {seg:x}:0 size {:x}", buf.len());
+                    log::info!("load {cmd:?} load_addr={seg:x}:0 size={:x}", buf.len());
                     ctx.memory[load_addr..][..data.len()].copy_from_slice(data);
                     log::info!("TODO: relocations {relo:x}");
 
