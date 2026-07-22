@@ -12,6 +12,16 @@ pub struct File {
     ofs: u32,
 }
 
+macro_rules! trace {
+    ($func:expr, $($arg:expr),*) => {
+        {
+            let args: &[String] = &[$(format!("{}={:x?}", std::stringify!($arg), $arg)),*];
+            log::info!("dos: {}({})", $func, args.join(" "));
+        }
+    };
+    ($func:expr) => { trace!($func,) }
+}
+
 /// int21 is used for system calls, like file i/o and exiting.
 pub fn int21(ctx: &mut Context) {
     let func = ctx.cpu.regs.get_ah();
@@ -22,6 +32,7 @@ pub fn int21(ctx: &mut Context) {
             let buf = &ctx.memory.bytes[addr as usize..];
             let end = buf.iter().position(|&c| c == b'$').unwrap();
             let buf = &buf[..end];
+            //trace!("write_stdout", buf);
             use std::io::Write;
             std::io::stdout().lock().write(buf).unwrap();
             ctx.cpu.regs.set_al(b'$');
@@ -30,10 +41,12 @@ pub fn int21(ctx: &mut Context) {
         0x25 => {
             let int = ctx.cpu.regs.get_al();
             let (seg, ofs) = (ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_dx());
+            trace!("write_ivt", int, seg, ofs);
             ivt(&mut ctx.memory)[int as usize] = IVTEntry(seg, ofs);
         }
         // get DOS version
         0x30 => {
+            trace!("get_dos_version");
             // these values match dosbox
             ctx.cpu.regs.set_ax(5);
             ctx.cpu.regs.set_bx(0xff00);
@@ -43,7 +56,8 @@ pub fn int21(ctx: &mut Context) {
         0x31 => {
             let exit_code = ctx.cpu.regs.get_al();
             let size = ctx.cpu.regs.get_dx() as u32 * 0x10;
-            log::warn!("TODO: TSR exit={exit_code:x} size={size:x}");
+            trace!("TSR", exit_code, size);
+            log::warn!("TODO: TSR");
             ctx.cpu.dump();
             let ret = ivt(&mut ctx.memory)[0x22];
             if ret == IVTEntry(0, 0) {
@@ -54,6 +68,7 @@ pub fn int21(ctx: &mut Context) {
         // read from interrupt table
         0x35 => {
             let int = ctx.cpu.regs.get_al();
+            trace!("read_ivt", int);
             let IVTEntry(seg, ofs) = ivt(&mut ctx.memory)[int as usize];
             ctx.cpu.regs.set_es(seg);
             ctx.cpu.regs.set_bx(ofs);
@@ -61,11 +76,12 @@ pub fn int21(ctx: &mut Context) {
         // get an access handle
         0x3d => {
             let access = ctx.cpu.regs.get_al();
+            let addr = segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_dx());
+            let name = ctx.memory.read_str(addr);
+            trace!("handle_get", access, name);
             if access != 0 {
                 log::warn!("TODO: file access {access:x}");
             }
-            let addr = segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_dx());
-            let name = ctx.memory.read_str(addr);
             let mut state = state();
             let Some(buf) = state.read_file(name) else {
                 log::warn!("open {name:?}: not found");
@@ -81,6 +97,7 @@ pub fn int21(ctx: &mut Context) {
         // delete an access handle
         0x3e => {
             let handle = ctx.cpu.regs.get_bx();
+            trace!("handle_delete", handle);
             let mut state = state();
             let _ = &mut state.files[handle as usize];
             log::warn!("TODO: close file");
@@ -94,6 +111,7 @@ pub fn int21(ctx: &mut Context) {
             let len = ctx.cpu.regs.get_cx();
             let addr = segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_dx());
             let buf = &ctx.memory[addr..][..len as usize];
+            trace!("handle_write", handle, len, addr);
             match handle {
                 1 => std::io::stdout().lock().write_all(buf).unwrap(),
                 2 => std::io::stderr().lock().write_all(buf).unwrap(),
@@ -108,6 +126,7 @@ pub fn int21(ctx: &mut Context) {
             let handle = ctx.cpu.regs.get_bx();
             let offset =
                 (((ctx.cpu.regs.get_cx() as u32) << 16) | (ctx.cpu.regs.get_dx() as u32)) as i32;
+            trace!("handle_seek", handle, origin, offset);
 
             let mut state = state();
             let file = &mut state.files[handle as usize];
@@ -129,6 +148,7 @@ pub fn int21(ctx: &mut Context) {
                 // get handle info
                 0 => {
                     let handle = ctx.cpu.regs.get_bx();
+                    trace!("handle_info", handle);
                     log::warn!("TODO: dos file i/o get handle info handle={handle:x}");
                     ctx.cpu.flags.remove(runtime::Flags::CF); // no error
                     // dx: file attributes, see book for tables
@@ -147,6 +167,7 @@ pub fn int21(ctx: &mut Context) {
         // release memory block
         0x49 => {
             let seg = ctx.cpu.regs.es;
+            trace!("memory_release", seg);
             log::warn!("TODO: release memory seg {seg:x}");
             ctx.cpu.flags.remove(runtime::Flags::CF); // no error
         }
@@ -154,6 +175,7 @@ pub fn int21(ctx: &mut Context) {
         0x4a => {
             let size = ctx.cpu.regs.get_bx(); // in paragraphs
             let seg = ctx.cpu.regs.es;
+            trace!("memory_resize", seg, size);
 
             let state = state();
             assert_eq!(seg, state.psp_segment);
@@ -173,6 +195,7 @@ pub fn int21(ctx: &mut Context) {
                 .memory
                 .read_str(segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_dx()));
             let params_addr = segofs(ctx.cpu.regs.get_es(), ctx.cpu.regs.get_bx());
+            trace!("load_program", func, cmd, params_addr);
 
             match func {
                 0 => todo!("load+run exe {cmd}"),
@@ -203,10 +226,12 @@ pub fn int21(ctx: &mut Context) {
         // error exit
         0x4c => {
             let code = ctx.cpu.regs.get_al();
+            trace!("exit", code);
             std::process::exit(code as i32);
         }
         // get psp segment
         0x51 => {
+            trace!("get_psp");
             ctx.cpu.regs.set_bx(state().psp_segment);
         }
         _ => log::error!("TODO: dos int 21h ({func:02x})"),
