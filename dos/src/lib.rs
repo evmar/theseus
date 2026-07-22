@@ -226,8 +226,10 @@ fn int10(ctx: &mut Context) {
     }
 }
 
+/// int 2f: multiplex interrupt for calling into TSR.
+/// https://en.wikibooks.org/wiki/First_steps_towards_system_programming_under_MS-DOS_7/Selected_interrupt_handlers#8.03_Interrupt_handlers,_loaded_by_drivers_and_TSR_programs
 fn int2f(ctx: &mut Context) {
-    log::error!("TODO: int2f ax={:x}", ctx.cpu.regs.get_ax());
+    log::error!("TODO: int2f TSR query, ax={:x}", ctx.cpu.regs.get_ax());
 }
 
 pub fn int(ctx: &mut Context, interrupt: u8) {
