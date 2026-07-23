@@ -12097,7 +12097,7 @@ const BLOCKS: [(u32, ContFn); 918] = [
     (0xfafbfc5e, user32::TranslateMessage_stdcall),
     (0xfafbfc5f, shell32::ShellAboutW_stdcall),
     (0xfafbfc60, winmm::PlaySoundW_stdcall),
-    (runtime::RETURN_FROM_X86_ADDR, Context::return_from_x86),
+    (runtime::RETURN_FROM_X86_ADDR32, Context::return_from_x86),
 ];
 
 pub const EXEDATA: EXEData = EXEData {

@@ -22330,7 +22330,7 @@ const BLOCKS: [(u32, ContFn); 1712] = [
     (0xfafbfccd, ddraw::IDirectDrawPalette::GetEntries_stdcall),
     (0xfafbfcce, ddraw::IDirectDrawPalette::Initialize_stdcall),
     (0xfafbfccf, ddraw::IDirectDrawPalette::SetEntries_stdcall),
-    (runtime::RETURN_FROM_X86_ADDR, Context::return_from_x86),
+    (runtime::RETURN_FROM_X86_ADDR32, Context::return_from_x86),
 ];
 
 pub const EXEDATA: EXEData = EXEData {

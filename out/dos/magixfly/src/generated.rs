@@ -163,7 +163,7 @@ const BLOCKS: [(u32, ContFn); 11] = [
     (0x825e, x0813_012e),
     (0x8263, x0813_0133),
     (0x8265, x0813_0135),
-    (runtime::RETURN_FROM_X86_ADDR, Context::return_from_x86),
+    (runtime::RETURN_FROM_X86_ADDR32, Context::return_from_x86),
 ];
 
 pub const EXEDATA: EXEData = EXEData {

@@ -246,15 +246,17 @@ fn int10(ctx: &mut Context) {
 fn int2f(ctx: &mut Context) {
     let entry = ivt(&mut ctx.memory)[0x2f];
     if !entry.is_null() {
+        log::info!("calling tsr {:x?}, esp={:x}", entry, ctx.cpu.regs.get_sp());
         // TODO: centralize calling into x86 like in runtime::call32_x86.
         // but interrupt calls are different because they also push/pop flags, hmm.
+        let orig_sp = ctx.cpu.regs.get_sp();
         ctx.push16(0); // flags
         ctx.push16(0xffff); // cs
         ctx.push16(0xfffe); // ip
-        log::info!("calling tsr {:x?}", entry);
-        let mut f = ctx.indirect(segofs(entry.seg, entry.ofs));
+
+        let mut f = ctx.jmpf16(entry.seg, entry.ofs);
         // TODO: loop until return address is popped, like runtime::cpu_loop.
-        loop {
+        while ctx.cpu.regs.get_sp() != orig_sp {
             log::info!("loop esp={:x}", ctx.cpu.regs.get_sp());
             // TODO: interrupts are disabled when calling interrupts, but also it appears
             // the dosbox interrupt handlers immediately reenable interrupts when they are invoked.

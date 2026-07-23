@@ -380,7 +380,14 @@ ctx.cpu.regs.esp = {stack_pointer:#x};
             let block = self.blocks.get(&addr).unwrap();
             self.line(format!("({addr:#x}, {name}),", name = block.name()));
         }
-        self.line("(runtime::RETURN_FROM_X86_ADDR, Context::return_from_x86),");
+        match self.module {
+            Module::Windows(_) => {
+                self.line("(runtime::RETURN_FROM_X86_ADDR32, Context::return_from_x86),");
+            }
+            Module::DOS(_) => {
+                self.line("(runtime::RETURN_FROM_X86_ADDR16, Context::return_from_x86),");
+            }
+        }
         self.line("];");
         self.line("");
     }

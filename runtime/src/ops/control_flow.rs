@@ -1,4 +1,4 @@
-use crate::{Cont, ContFn, Context, Flags, RETURN_FROM_X86_ADDR, segofs};
+use crate::{Cont, ContFn, Context, Flags, RETURN_FROM_X86_ADDR32, segofs};
 
 impl Context {
     pub fn call32(&mut self, ret: u32, addr: Cont) -> Cont {
@@ -22,7 +22,7 @@ impl Context {
     pub fn call_builtin(&mut self, from: u32, func: ContFn) {
         // Because ContFn is stdcall it expects to pop a return address off the stack.
         // Ensure it is valid, though we ignore it.
-        self.push32(RETURN_FROM_X86_ADDR);
+        self.push32(RETURN_FROM_X86_ADDR32);
         self.cpu.regs.eip_context = from;
         func(self); // pops the above return address
     }
@@ -144,6 +144,7 @@ impl Context {
     pub fn iret16(&mut self) -> Cont {
         let ip = self.pop16();
         let cs = self.pop16();
+        log::info!("iret16 {cs:x} {ip:x}");
         self.cpu.regs.set_cs(cs);
         let flags = self.pop16();
         self.cpu.flags = Flags::from_bits(flags as u32).unwrap();

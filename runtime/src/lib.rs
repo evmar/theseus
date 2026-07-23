@@ -24,7 +24,8 @@ pub struct Cont(pub ContFn);
 /// When making a call from host to to x86 code, we need a valid return address
 /// that is associated with a real function so that the final 'ret' from the
 /// called function succeeds, but we never invoke it.
-pub const RETURN_FROM_X86_ADDR: u32 = 0xffff_fffe;
+pub const RETURN_FROM_X86_ADDR32: u32 = 0xffff_fffe;
+pub const RETURN_FROM_X86_ADDR16: u32 = segofs(0xffff, 0xfffe);
 
 impl Context {
     /// Call an x86 stdcall function, only returning once the function returns.
@@ -36,7 +37,7 @@ impl Context {
         // Note that return_from_x86 is never called.  When the x86 code returns
         // to it, the stack will have been popped so that esp matches our initial
         // esp and we abort the loop before invoking the continuation.
-        self.push32(RETURN_FROM_X86_ADDR);
+        self.push32(RETURN_FROM_X86_ADDR32);
 
         self.cpu_loop(f, esp);
     }
@@ -56,6 +57,6 @@ impl Context {
 }
 
 /// Combine a seg:ofs address into a single flat u32 address.
-pub fn segofs(seg: u16, off: u16) -> u32 {
+pub const fn segofs(seg: u16, off: u16) -> u32 {
     ((seg as u32) << 4) + (off as u32)
 }
