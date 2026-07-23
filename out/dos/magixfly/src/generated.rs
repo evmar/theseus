@@ -7,7 +7,7 @@
 
 use runtime::*;
 
-fn init_memory(ctx: &mut Context, mappings: &mut runtime::Mappings) {
+fn init(ctx: &mut Context, mappings: &mut runtime::Mappings) {
     mappings.reserve(runtime::Mapping {
         desc: "com".to_string(),
         addr: 0x8230,
@@ -17,140 +17,159 @@ fn init_memory(ctx: &mut Context, mappings: &mut runtime::Mappings) {
     let bytes = include_bytes!("../data/00008230.raw").as_slice();
     let out = &mut ctx.memory.bytes[0x8230..][..bytes.len()];
     out.copy_from_slice(bytes);
+
+    ctx.cpu.regs.cs = 0x813;
+    ctx.cpu.regs.ds = 0x813; // PSP
+    ctx.cpu.regs.es = 0x813; // PSP
+    ctx.cpu.regs.ss = 0x813;
+    // initial cx: https://stackoverflow.com/questions/79440940/why-cx-register-already-has-a-non-zero-value-on-startup-of-a-dos-program-unlike
+    ctx.cpu.regs.ecx = 0xff;
+    ctx.cpu.regs.esp = 0xfffe;
+
+    ctx.cpu.regs.esp = 0xfffe;
 }
 
-pub fn x100(ctx: &mut Context) -> Cont {
-    // 00000100 mov al,13h
+pub fn x0813_0100(ctx: &mut Context) -> Cont {
+    // 0813:0100 mov al,13h
     ctx.cpu.regs.set_al(0x13u8);
-    // 00000102 int 10h
-    dos::int(ctx, 0x10);
-    // 00000104 mov ax,0A000h
+    // 0813:0102 int 10h
+    dos::int(ctx, 0x104, 0x10)
+}
+
+pub fn x0813_0104(ctx: &mut Context) -> Cont {
+    // 0813:0104 mov ax,0A000h
     ctx.cpu.regs.set_ax(0xa000u16);
-    // 00000107 mov es,ax
+    // 0813:0107 mov es,ax
     ctx.cpu.regs.set_es(ctx.cpu.regs.get_ax());
-    Cont(x109)
+    Cont(x0813_0109)
 }
 
-pub fn x109(ctx: &mut Context) -> Cont {
-    // 00000109 mov bp,0Ch
+pub fn x0813_0109(ctx: &mut Context) -> Cont {
+    // 0813:0109 mov bp,0Ch
     ctx.cpu.regs.set_bp(0xcu16);
-    Cont(x10c)
+    Cont(x0813_010c)
 }
 
-pub fn x10c(ctx: &mut Context) -> Cont {
-    // 0000010c inc bp
+pub fn x0813_010c(ctx: &mut Context) -> Cont {
+    // 0813:010c inc bp
     ctx.cpu
         .regs
         .set_bp(inc(ctx.cpu.regs.get_bp(), &mut ctx.cpu.flags));
-    // 0000010d mov ax,0A00h
+    // 0813:010d mov ax,0A00h
     ctx.cpu.regs.set_ax(0xa00u16);
-    // 00000110 cwd
+    // 0813:0110 cwd
     ctx.cpu
         .regs
         .set_dx_ax(ctx.cpu.regs.get_ax() as i16 as i32 as u32);
-    // 00000111 div bp
+    // 0813:0111 div bp
     let (quot, rem) = div(ctx.cpu.regs.get_dx_ax(), ctx.cpu.regs.get_bp() as u32);
     ctx.cpu.regs.set_ax(quot as u16);
     ctx.cpu.regs.set_dx(rem as u16);
-    // 00000113 add ax,bx
+    // 0813:0113 add ax,bx
     ctx.cpu.regs.set_ax(add(
         ctx.cpu.regs.get_ax(),
         ctx.cpu.regs.get_bx(),
         &mut ctx.cpu.flags,
     ));
-    // 00000115 xchg si,ax
+    // 0813:0115 xchg si,ax
     let t = ctx.cpu.regs.get_si();
     ctx.cpu.regs.set_si(ctx.cpu.regs.get_ax());
     ctx.cpu.regs.set_ax(t);
-    // 00000116 mov cx,140h
+    // 0813:0116 mov cx,140h
     ctx.cpu.regs.set_cx(0x140u16);
-    Cont(x119)
+    Cont(x0813_0119)
 }
 
-pub fn x119(ctx: &mut Context) -> Cont {
-    // 00000119 mov ax,10h
+pub fn x0813_0119(ctx: &mut Context) -> Cont {
+    // 0813:0119 mov ax,10h
     ctx.cpu.regs.set_ax(0x10u16);
-    // 0000011c mul cx
+    // 0813:011c mul cx
     let res = mul(
         ctx.cpu.regs.eax as u16 as u32,
         ctx.cpu.regs.get_cx() as u32,
         &mut ctx.cpu.flags,
     );
     ctx.cpu.regs.set_dx_ax(res);
-    // 0000011e cwd
+    // 0813:011e cwd
     ctx.cpu
         .regs
         .set_dx_ax(ctx.cpu.regs.get_ax() as i16 as i32 as u32);
-    // 0000011f div bp
+    // 0813:011f div bp
     let (quot, rem) = div(ctx.cpu.regs.get_dx_ax(), ctx.cpu.regs.get_bp() as u32);
     ctx.cpu.regs.set_ax(quot as u16);
     ctx.cpu.regs.set_dx(rem as u16);
-    // 00000121 xor ax,si
+    // 0813:0121 xor ax,si
     ctx.cpu.regs.set_ax(xor(
         ctx.cpu.regs.get_ax(),
         ctx.cpu.regs.get_si(),
         &mut ctx.cpu.flags,
     ));
-    // 00000123 add al,bh
+    // 0813:0123 add al,bh
     ctx.cpu.regs.set_al(add(
         ctx.cpu.regs.get_al(),
         ctx.cpu.regs.get_bh(),
         &mut ctx.cpu.flags,
     ));
-    // 00000125 and al,1Fh
+    // 0813:0125 and al,1Fh
     ctx.cpu
         .regs
         .set_al(and(ctx.cpu.regs.get_al(), 0x1fu8, &mut ctx.cpu.flags));
-    // 00000127 stosb
+    // 0813:0127 stosb
     ctx.stosb();
-    // 00000128 test di,di
+    // 0813:0128 test di,di
     and(
         ctx.cpu.regs.get_di(),
         ctx.cpu.regs.get_di(),
         &mut ctx.cpu.flags,
     );
-    // 0000012a loopne 0119h
-    ctx.loopne(Cont(x12c), Cont(x119))
+    // 0813:012a loopne 0119h
+    ctx.loopne(Cont(x0813_012c), Cont(x0813_0119))
 }
 
-pub fn x12c(ctx: &mut Context) -> Cont {
-    // 0000012c jne short 010Ch
-    ctx.jne(Cont(x12e), Cont(x10c))
+pub fn x0813_012c(ctx: &mut Context) -> Cont {
+    // 0813:012c jne short 010Ch
+    ctx.jne(Cont(x0813_012e), Cont(x0813_010c))
 }
 
-pub fn x12e(ctx: &mut Context) -> Cont {
-    // 0000012e inc bx
+pub fn x0813_012e(ctx: &mut Context) -> Cont {
+    // 0813:012e inc bx
     ctx.cpu
         .regs
         .set_bx(inc(ctx.cpu.regs.get_bx(), &mut ctx.cpu.flags));
-    // 0000012f mov ah,1
+    // 0813:012f mov ah,1
     ctx.cpu.regs.set_ah(0x1u8);
-    // 00000131 int 16h
-    dos::int(ctx, 0x16);
-    // 00000133 je short 0109h
-    ctx.je(Cont(x135), Cont(x109))
+    // 0813:0131 int 16h
+    dos::int(ctx, 0x133, 0x16)
 }
 
-pub fn x135(ctx: &mut Context) -> Cont {
-    // 00000135 ret
+pub fn x0813_0133(ctx: &mut Context) -> Cont {
+    // 0813:0133 je short 0109h
+    ctx.je(Cont(x0813_0135), Cont(x0813_0109))
+}
+
+pub fn x0813_0135(ctx: &mut Context) -> Cont {
+    // 0813:0135 ret
     ctx.ret16(0)
 }
 
-const BLOCKS: [(u32, ContFn); 8] = [
-    (0x8230, x100),
-    (0x8239, x109),
-    (0x823c, x10c),
-    (0x8249, x119),
-    (0x825c, x12c),
-    (0x825e, x12e),
-    (0x8265, x135),
+const BLOCKS: [(u32, ContFn); 11] = [
+    (0x0, dos::exit),
+    (0x8230, x0813_0100),
+    (0x8234, x0813_0104),
+    (0x8239, x0813_0109),
+    (0x823c, x0813_010c),
+    (0x8249, x0813_0119),
+    (0x825c, x0813_012c),
+    (0x825e, x0813_012e),
+    (0x8263, x0813_0133),
+    (0x8265, x0813_0135),
     (runtime::RETURN_FROM_X86_ADDR, Context::return_from_x86),
 ];
 
 pub const EXEDATA: EXEData = EXEData {
-    image_base: 0x100,
+    image_base: 0x8130,
     resources: 0x0..0x0,
     blocks: &BLOCKS,
-    init: init_memory,
-    entry_point: Cont(x100),
+    init,
+    entry_point: Cont(x0813_0100),
 };

@@ -78,7 +78,7 @@ fn run() -> anyhow::Result<()> {
         state.load_symbols(std::fs::File::open(path)?)?;
     }
     for (addr, name) in args.externs {
-        let name = name.unwrap_or_else(|| format!("x{}", addr));
+        let name = name.unwrap_or_else(|| format!("x{:x}", addr));
         state.addr_info.insert(
             addr,
             AddrInfo {

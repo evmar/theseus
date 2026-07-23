@@ -1,3 +1,4 @@
+mod externs;
 mod generated;
 
 fn main() {
@@ -10,5 +11,9 @@ fn main() {
             None
         }
     }));
+
+    // set return address for once TSR is loaded
+    dos::ivt(&mut ctx.memory)[0x22] = dos::IVTEntry::from((1, 1));
+
     dos::start(&mut ctx, &generated::EXEDATA);
 }

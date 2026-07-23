@@ -20,15 +20,24 @@ pub const DOSBOX_SEG: u16 = 0x813;
 #[derive(
     Clone, Copy, Debug, PartialEq, Eq, zerocopy::FromBytes, zerocopy::IntoBytes, zerocopy::Immutable,
 )]
-struct IVTEntry(u16, u16);
+pub struct IVTEntry {
+    seg: u16,
+    ofs: u16,
+}
+
+impl From<(u16, u16)> for IVTEntry {
+    fn from((seg, ofs): (u16, u16)) -> Self {
+        IVTEntry { seg, ofs }
+    }
+}
 
 impl From<IVTEntry> for (u16, u16) {
-    fn from(IVTEntry(seg, ofs): IVTEntry) -> Self {
+    fn from(IVTEntry { seg, ofs }: IVTEntry) -> Self {
         (seg, ofs)
     }
 }
 
-fn ivt(mem: &mut Memory) -> &mut [IVTEntry] {
+pub fn ivt(mem: &mut Memory) -> &mut [IVTEntry] {
     <[IVTEntry]>::mut_from_prefix_with_elems(&mut mem.bytes, 0x400)
         .unwrap()
         .0
@@ -98,9 +107,9 @@ pub fn load(exe: &EXEData, command_line: Option<&str>) -> Context {
 
     let ivt = ivt(&mut memory);
     // cpu exception handler
-    ivt[0] = IVTEntry(0xf000, 0xca60); // from dosbox
+    ivt[0] = IVTEntry::from((0xf000, 0xca60)); // from dosbox
     // TSR handler
-    ivt[0x2f] = IVTEntry(0xf000, 0xd220); // from dosbox
+    ivt[0x2f] = IVTEntry::from((0xf000, 0xd220)); // from dosbox
     // expanded memory manager
     // This is present if dosbox configured with ems=true, but leave out for now.
     // ivt[0x67] = IVTEntry(0xc401, 0x4); // from dosbox
@@ -232,7 +241,8 @@ fn int2f(ctx: &mut Context) {
     log::error!("TODO: int2f TSR query, ax={:x}", ctx.cpu.regs.get_ax());
 }
 
-pub fn int(ctx: &mut Context, interrupt: u8) {
+// TODO: should this take a Cont for next instead?
+pub fn int(ctx: &mut Context, next: u16, interrupt: u8) -> runtime::Cont {
     // https://en.wikibooks.org/wiki/First_steps_towards_system_programming_under_MS-DOS_7/Selected_interrupt_handlers
     match interrupt {
         0x10 => int10(ctx),
@@ -240,10 +250,15 @@ pub fn int(ctx: &mut Context, interrupt: u8) {
             // TODO: dos int 0x16, keyboard?
             ctx.cpu.flags.insert(runtime::Flags::ZF);
         }
-        0x21 => dosapi::int21(ctx),
+        0x21 => {
+            if let Some(next) = dosapi::int21(ctx) {
+                return next;
+            }
+        }
         0x2f => int2f(ctx),
         _ => log::error!("TODO: dos int {interrupt:x}h"),
     }
+    ctx.indirect16(next)
 }
 
 pub fn out(ctx: &mut Context, port: u16, data: u8) {

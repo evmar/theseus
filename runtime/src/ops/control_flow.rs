@@ -153,9 +153,13 @@ impl Context {
     pub fn retf16(&mut self, n: u16) -> Cont {
         let ip = self.pop16();
         let cs = self.pop16();
-        self.cpu.regs.set_cs(cs);
         self.cpu.regs.esp += n as u32;
-        self.indirect(segofs(cs, ip))
+        self.jmpf16(cs, ip)
+    }
+
+    pub fn jmpf16(&mut self, seg: u16, ofs: u16) -> Cont {
+        self.cpu.regs.set_cs(seg);
+        self.indirect(segofs(seg, ofs))
     }
 
     pub fn loop_(&mut self, from: Cont, x: Cont) -> Cont {

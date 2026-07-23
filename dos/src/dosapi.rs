@@ -23,7 +23,7 @@ macro_rules! trace {
 }
 
 /// int21 is used for system calls, like file i/o and exiting.
-pub fn int21(ctx: &mut Context) {
+pub fn int21(ctx: &mut Context) -> Option<runtime::Cont> {
     let func = ctx.cpu.regs.get_ah();
     match func {
         // write to stdout
@@ -42,7 +42,7 @@ pub fn int21(ctx: &mut Context) {
             let int = ctx.cpu.regs.get_al();
             let (seg, ofs) = (ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_dx());
             trace!("write_ivt", int, seg, ofs);
-            ivt(&mut ctx.memory)[int as usize] = IVTEntry(seg, ofs);
+            ivt(&mut ctx.memory)[int as usize] = IVTEntry::from((seg, ofs));
         }
         // get DOS version
         0x30 => {
@@ -57,19 +57,19 @@ pub fn int21(ctx: &mut Context) {
             let exit_code = ctx.cpu.regs.get_al();
             let size = ctx.cpu.regs.get_dx() as u32 * 0x10;
             trace!("TSR", exit_code, size);
-            log::warn!("TODO: TSR");
             ctx.cpu.dump();
             let ret = ivt(&mut ctx.memory)[0x22];
-            if ret == IVTEntry(0, 0) {
+            if ret == IVTEntry::from((0, 0)) {
+                log::error!("TSR exiting with no next step");
                 std::process::exit(exit_code as i32);
             }
-            todo!("return to {ret:x?}");
+            return Some(ctx.jmpf16(ret.seg, ret.ofs));
         }
         // read from interrupt table
         0x35 => {
             let int = ctx.cpu.regs.get_al();
             trace!("read_ivt", int);
-            let IVTEntry(seg, ofs) = ivt(&mut ctx.memory)[int as usize];
+            let IVTEntry { seg, ofs } = ivt(&mut ctx.memory)[int as usize];
             ctx.cpu.regs.set_es(seg);
             ctx.cpu.regs.set_bx(ofs);
         }
@@ -87,7 +87,7 @@ pub fn int21(ctx: &mut Context) {
                 log::warn!("open {name:?}: not found");
                 ctx.cpu.regs.set_ax(/* file not found */ 2);
                 ctx.cpu.flags.insert(runtime::Flags::CF);
-                return;
+                return None;
             };
             let handle = state.files.len() as u8;
             let _ = state.files.push(File { buf, ofs: 0 });
@@ -236,4 +236,5 @@ pub fn int21(ctx: &mut Context) {
         }
         _ => log::error!("TODO: dos int 21h ({func:02x})"),
     }
+    None
 }

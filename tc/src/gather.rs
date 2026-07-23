@@ -261,9 +261,7 @@ impl<'a> Traverse<'a> {
                 }
             }
 
-            if instr.flow_control() == iced_x86::FlowControl::Next
-                || instr.mnemonic() == iced_x86::Mnemonic::Int
-            {
+            if instr.flow_control() == iced_x86::FlowControl::Next {
                 let next_ip = block_ip.with_local(instr.next_ip32());
                 let next_bytes = &data[(next_ip.to_addr() - block_addr) as usize..];
                 if next_bytes.len() > 0x10 && next_bytes[..0x10].iter().all(|&b| b == 0) {
@@ -314,6 +312,9 @@ impl<'a> Traverse<'a> {
                 Ret | Retf | Iret => {}
                 Into => {}        // terminates
                 Int1 | Int3 => {} // breakpoint
+                Int => {
+                    self.queue.push_back(block_ip.with_local(instr.next_ip32()));
+                }
                 INVALID => {
                     anyhow::bail!("invalid code found");
                 }

@@ -251,7 +251,6 @@ impl<'a> CodeGen<'a> {
                 let last = instrs.last().unwrap();
                 if last.iced.flow_control() == iced_x86::FlowControl::Next
                     || (last.iced.mnemonic() == iced_x86::Mnemonic::Call && last.hint.is_some())
-                    || (last.iced.mnemonic() == iced_x86::Mnemonic::Int)
                 {
                     let next_block = self.blocks.get(&last.next_ip().to_addr()).unwrap();
                     self.line(format!("Cont({})", next_block.name()));

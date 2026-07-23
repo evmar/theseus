@@ -78,6 +78,7 @@ elif [[ $1 == "sbaitso-sbtalker" ]]; then
         --jump-table 0xd8e..0xda0
         --exe scratch/dos/sbaitso/SBTALKER.EXE
         --out out/sbaitso/sbtalker
+        --extern 0x11
     )
     cargo run -p tc -- "${args[@]}"
 else
