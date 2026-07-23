@@ -59,7 +59,7 @@ pub fn int21(ctx: &mut Context) -> Option<runtime::Cont> {
             trace!("TSR", exit_code, size);
             ctx.cpu.dump();
             let ret = ivt(&mut ctx.memory)[0x22];
-            if ret == IVTEntry::from((0, 0)) {
+            if ret.is_null() {
                 log::error!("TSR exiting with no next step");
                 std::process::exit(exit_code as i32);
             }

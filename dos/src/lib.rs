@@ -25,6 +25,12 @@ pub struct IVTEntry {
     ofs: u16,
 }
 
+impl IVTEntry {
+    fn is_null(&self) -> bool {
+        *self == IVTEntry::from((0, 0))
+    }
+}
+
 impl From<(u16, u16)> for IVTEntry {
     fn from((seg, ofs): (u16, u16)) -> Self {
         IVTEntry { seg, ofs }
@@ -109,7 +115,7 @@ pub fn load(exe: &EXEData, command_line: Option<&str>) -> Context {
     // cpu exception handler
     ivt[0] = IVTEntry::from((0xf000, 0xca60)); // from dosbox
     // TSR handler
-    ivt[0x2f] = IVTEntry::from((0xf000, 0xd220)); // from dosbox
+    // ivt[0x2f] = IVTEntry::from((0xf000, 0xd220)); // from dosbox
     // expanded memory manager
     // This is present if dosbox configured with ems=true, but leave out for now.
     // ivt[0x67] = IVTEntry(0xc401, 0x4); // from dosbox
@@ -238,7 +244,28 @@ fn int10(ctx: &mut Context) {
 /// int 2f: multiplex interrupt for calling into TSR.
 /// https://en.wikibooks.org/wiki/First_steps_towards_system_programming_under_MS-DOS_7/Selected_interrupt_handlers#8.03_Interrupt_handlers,_loaded_by_drivers_and_TSR_programs
 fn int2f(ctx: &mut Context) {
-    log::error!("TODO: int2f TSR query, ax={:x}", ctx.cpu.regs.get_ax());
+    let entry = ivt(&mut ctx.memory)[0x2f];
+    if !entry.is_null() {
+        // TODO: centralize calling into x86 like in runtime::call32_x86.
+        // but interrupt calls are different because they also push/pop flags, hmm.
+        ctx.push16(0); // flags
+        ctx.push16(0xffff); // cs
+        ctx.push16(0xfffe); // ip
+        log::info!("calling tsr {:x?}", entry);
+        let mut f = ctx.indirect(segofs(entry.seg, entry.ofs));
+        // TODO: loop until return address is popped, like runtime::cpu_loop.
+        loop {
+            log::info!("loop esp={:x}", ctx.cpu.regs.get_sp());
+            // TODO: interrupts are disabled when calling interrupts, but also it appears
+            // the dosbox interrupt handlers immediately reenable interrupts when they are invoked.
+            // if i % 0x2000 == 0 {
+            //     state().check_interrupts(ctx);
+            // }
+            f = f.0(ctx);
+        }
+    } else {
+        log::error!("TODO: int2f TSR query, ax={:x}", ctx.cpu.regs.get_ax());
+    }
 }
 
 // TODO: should this take a Cont for next instead?
