@@ -40,6 +40,311 @@ fn init(ctx: &mut Context, mappings: &mut runtime::Mappings) {
     ctx.cpu.regs.ebp = 0x91c;
 }
 
+pub fn x0823_0898(ctx: &mut Context) -> Cont {
+    ctx.dump_dosbox(0x898);
+    // 0823:0898 cmp ax,0FBFBh
+    sub(ctx.cpu.regs.get_ax(), 0xfbfbu16, &mut ctx.cpu.flags);
+    ctx.dump_dosbox(0x89b);
+    // 0823:089b je short 08A9h
+    ctx.je(Cont(x0823_089d), Cont(x0823_08a9))
+}
+
+pub fn x0823_089d(ctx: &mut Context) -> Cont {
+    ctx.dump_dosbox(0x89d);
+    // 0823:089d cmp ax,0FBFFh
+    sub(ctx.cpu.regs.get_ax(), 0xfbffu16, &mut ctx.cpu.flags);
+    ctx.dump_dosbox(0x8a0);
+    // 0823:08a0 je short 08C6h
+    ctx.je(Cont(x0823_08a2), Cont(x0823_08c6))
+}
+
+pub fn x0823_08a2(ctx: &mut Context) -> Cont {
+    ctx.dump_dosbox(0x8a2);
+    // 0823:08a2 cmp ax,0FB00h
+    sub(ctx.cpu.regs.get_ax(), 0xfb00u16, &mut ctx.cpu.flags);
+    ctx.dump_dosbox(0x8a5);
+    // 0823:08a5 je short 08B1h
+    ctx.je(Cont(x0823_08a7), Cont(x0823_08b1))
+}
+
+pub fn x0823_08a7(ctx: &mut Context) -> Cont {
+    ctx.dump_dosbox(0x8a7);
+    // 0823:08a7 jmp short 0918h
+    Cont(x0823_0918)
+}
+
+pub fn x0823_08a9(ctx: &mut Context) -> Cont {
+    ctx.dump_dosbox(0x8a9);
+    // 0823:08a9 push cs
+    ctx.push16(ctx.cpu.regs.get_cs());
+    ctx.dump_dosbox(0x8aa);
+    // 0823:08aa pop es
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_es(x);
+    ctx.dump_dosbox(0x8ab);
+    // 0823:08ab mov bx,1CEh
+    ctx.cpu.regs.set_bx(0x1ceu16);
+    ctx.dump_dosbox(0x8ae);
+    // 0823:08ae sub ax,ax
+    ctx.cpu.regs.set_ax(sub(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_ax(),
+        &mut ctx.cpu.flags,
+    ));
+    ctx.dump_dosbox(0x8b0);
+    // 0823:08b0 iret
+    ctx.iret16()
+}
+
+pub fn x0823_08b1(ctx: &mut Context) -> Cont {
+    ctx.dump_dosbox(0x8b1);
+    // 0823:08b1 push es
+    ctx.push16(ctx.cpu.regs.get_es());
+    ctx.dump_dosbox(0x8b2);
+    // 0823:08b2 push ax
+    ctx.push16(ctx.cpu.regs.get_ax());
+    ctx.dump_dosbox(0x8b3);
+    // 0823:08b3 push cx
+    ctx.push16(ctx.cpu.regs.get_cx());
+    ctx.dump_dosbox(0x8b4);
+    // 0823:08b4 push di
+    ctx.push16(ctx.cpu.regs.get_di());
+    ctx.dump_dosbox(0x8b5);
+    // 0823:08b5 push cs
+    ctx.push16(ctx.cpu.regs.get_cs());
+    ctx.dump_dosbox(0x8b6);
+    // 0823:08b6 pop es
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_es(x);
+    ctx.dump_dosbox(0x8b7);
+    // 0823:08b7 sub ax,ax
+    ctx.cpu.regs.set_ax(sub(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_ax(),
+        &mut ctx.cpu.flags,
+    ));
+    ctx.dump_dosbox(0x8b9);
+    // 0823:08b9 mov di,1D8h
+    ctx.cpu.regs.set_di(0x1d8u16);
+    ctx.dump_dosbox(0x8bc);
+    // 0823:08bc mov cx,0Bh
+    ctx.cpu.regs.set_cx(0xbu16);
+    ctx.dump_dosbox(0x8bf);
+    // 0823:08bf rep stosw
+    ctx.rep(Rep::REP, Context::stosw);
+    ctx.dump_dosbox(0x8c1);
+    // 0823:08c1 pop di
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_di(x);
+    ctx.dump_dosbox(0x8c2);
+    // 0823:08c2 pop cx
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_cx(x);
+    ctx.dump_dosbox(0x8c3);
+    // 0823:08c3 pop ax
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_ax(x);
+    ctx.dump_dosbox(0x8c4);
+    // 0823:08c4 pop es
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_es(x);
+    ctx.dump_dosbox(0x8c5);
+    // 0823:08c5 iret
+    ctx.iret16()
+}
+
+pub fn x0823_08c6(ctx: &mut Context) -> Cont {
+    ctx.dump_dosbox(0x8c6);
+    // 0823:08c6 push cs
+    ctx.push16(ctx.cpu.regs.get_cs());
+    ctx.dump_dosbox(0x8c7);
+    // 0823:08c7 pop dx
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_dx(x);
+    ctx.dump_dosbox(0x8c8);
+    // 0823:08c8 mov ax,352Fh
+    ctx.cpu.regs.set_ax(0x352fu16);
+    ctx.dump_dosbox(0x8cb);
+    // 0823:08cb int 21h
+    dos::int(ctx, 0x8cd, 0x21)
+}
+
+pub fn x0823_08cd(ctx: &mut Context) -> Cont {
+    ctx.dump_dosbox(0x8cd);
+    // 0823:08cd push es
+    ctx.push16(ctx.cpu.regs.get_es());
+    ctx.dump_dosbox(0x8ce);
+    // 0823:08ce pop ax
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_ax(x);
+    ctx.dump_dosbox(0x8cf);
+    // 0823:08cf cmp ax,dx
+    sub(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_dx(),
+        &mut ctx.cpu.flags,
+    );
+    ctx.dump_dosbox(0x8d1);
+    // 0823:08d1 jne short 0914h
+    ctx.jne(Cont(x0823_08d3), Cont(x0823_0914))
+}
+
+pub fn x0823_08d3(ctx: &mut Context) -> Cont {
+    ctx.dump_dosbox(0x8d3);
+    // 0823:08d3 mov dx,cs:[7Eh]
+    ctx.cpu.regs.set_dx(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_cs(), 0x7eu16)),
+    );
+    ctx.dump_dosbox(0x8d8);
+    // 0823:08d8 push ds
+    ctx.push16(ctx.cpu.regs.get_ds());
+    ctx.dump_dosbox(0x8d9);
+    // 0823:08d9 mov ds,dx
+    ctx.cpu.regs.set_ds(ctx.cpu.regs.get_dx());
+    ctx.dump_dosbox(0x8db);
+    // 0823:08db mov dx,cs:[80h]
+    ctx.cpu.regs.set_dx(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_cs(), 0x80u16)),
+    );
+    ctx.dump_dosbox(0x8e0);
+    // 0823:08e0 mov ax,252Fh
+    ctx.cpu.regs.set_ax(0x252fu16);
+    ctx.dump_dosbox(0x8e3);
+    // 0823:08e3 int 21h
+    dos::int(ctx, 0x8e5, 0x21)
+}
+
+pub fn x0823_08e5(ctx: &mut Context) -> Cont {
+    ctx.dump_dosbox(0x8e5);
+    // 0823:08e5 mov ah,51h
+    ctx.cpu.regs.set_ah(0x51u8);
+    ctx.dump_dosbox(0x8e7);
+    // 0823:08e7 int 21h
+    dos::int(ctx, 0x8e9, 0x21)
+}
+
+pub fn x0823_08e9(ctx: &mut Context) -> Cont {
+    ctx.dump_dosbox(0x8e9);
+    // 0823:08e9 push bx
+    ctx.push16(ctx.cpu.regs.get_bx());
+    ctx.dump_dosbox(0x8ea);
+    // 0823:08ea mov bx,cs:[8Eh]
+    ctx.cpu.regs.set_bx(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_cs(), 0x8eu16)),
+    );
+    ctx.dump_dosbox(0x8ef);
+    // 0823:08ef mov ah,50h
+    ctx.cpu.regs.set_ah(0x50u8);
+    ctx.dump_dosbox(0x8f1);
+    // 0823:08f1 int 21h
+    dos::int(ctx, 0x8f3, 0x21)
+}
+
+pub fn x0823_08f3(ctx: &mut Context) -> Cont {
+    ctx.dump_dosbox(0x8f3);
+    // 0823:08f3 mov es,bx
+    ctx.cpu.regs.set_es(ctx.cpu.regs.get_bx());
+    ctx.dump_dosbox(0x8f5);
+    // 0823:08f5 mov ah,49h
+    ctx.cpu.regs.set_ah(0x49u8);
+    ctx.dump_dosbox(0x8f7);
+    // 0823:08f7 int 21h
+    dos::int(ctx, 0x8f9, 0x21)
+}
+
+pub fn x0823_08f9(ctx: &mut Context) -> Cont {
+    ctx.dump_dosbox(0x8f9);
+    // 0823:08f9 cmp byte ptr cs:[1CBh],0
+    sub(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_cs(), 0x1cbu16)),
+        0x0u8,
+        &mut ctx.cpu.flags,
+    );
+    ctx.dump_dosbox(0x8ff);
+    // 0823:08ff je short 090Ah
+    ctx.je(Cont(x0823_0901), Cont(x0823_090a))
+}
+
+pub fn x0823_0901(ctx: &mut Context) -> Cont {
+    ctx.dump_dosbox(0x901);
+    // 0823:0901 mov dx,cs:[9Eh]
+    ctx.cpu.regs.set_dx(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_cs(), 0x9eu16)),
+    );
+    ctx.dump_dosbox(0x906);
+    // 0823:0906 mov ah,45h
+    ctx.cpu.regs.set_ah(0x45u8);
+    ctx.dump_dosbox(0x908);
+    // 0823:0908 int 67h
+    dos::int(ctx, 0x90a, 0x67)
+}
+
+pub fn x0823_090a(ctx: &mut Context) -> Cont {
+    ctx.dump_dosbox(0x90a);
+    // 0823:090a pop bx
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_bx(x);
+    ctx.dump_dosbox(0x90b);
+    // 0823:090b mov ah,50h
+    ctx.cpu.regs.set_ah(0x50u8);
+    ctx.dump_dosbox(0x90d);
+    // 0823:090d int 21h
+    dos::int(ctx, 0x90f, 0x21)
+}
+
+pub fn x0823_090f(ctx: &mut Context) -> Cont {
+    ctx.dump_dosbox(0x90f);
+    // 0823:090f sub ax,ax
+    ctx.cpu.regs.set_ax(sub(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_ax(),
+        &mut ctx.cpu.flags,
+    ));
+    ctx.dump_dosbox(0x911);
+    // 0823:0911 pop ds
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_ds(x);
+    ctx.dump_dosbox(0x912);
+    // 0823:0912 jmp short 0917h
+    Cont(x0823_0917)
+}
+
+pub fn x0823_0914(ctx: &mut Context) -> Cont {
+    ctx.dump_dosbox(0x914);
+    // 0823:0914 mov ax,0FFFBh
+    ctx.cpu.regs.set_ax(0xfffbu16);
+    Cont(x0823_0917)
+}
+
+pub fn x0823_0917(ctx: &mut Context) -> Cont {
+    ctx.dump_dosbox(0x917);
+    // 0823:0917 iret
+    ctx.iret16()
+}
+
+pub fn x0823_0918(ctx: &mut Context) -> Cont {
+    ctx.dump_dosbox(0x918);
+    // 0823:0918 push word ptr cs:[7Eh]
+    ctx.push16(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_cs(), 0x7eu16)),
+    );
+    ctx.dump_dosbox(0x91d);
+    // 0823:091d push word ptr cs:[80h]
+    ctx.push16(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_cs(), 0x80u16)),
+    );
+    ctx.dump_dosbox(0x922);
+    // 0823:0922 retf
+    ctx.retf16(0)
+}
+
 pub fn x0823_0943(ctx: &mut Context) -> Cont {
     ctx.dump_dosbox(0x943);
     // 0823:0943 push ds
@@ -39109,8 +39414,27 @@ pub fn x1483_0940(ctx: &mut Context) -> Cont {
     ctx.ret16(0)
 }
 
-const BLOCKS: [(u32, ContFn); 1498] = [
+const BLOCKS: [(u32, ContFn); 1517] = [
     (0x11, crate::externs::x11),
+    (0x8ac8, x0823_0898),
+    (0x8acd, x0823_089d),
+    (0x8ad2, x0823_08a2),
+    (0x8ad7, x0823_08a7),
+    (0x8ad9, x0823_08a9),
+    (0x8ae1, x0823_08b1),
+    (0x8af6, x0823_08c6),
+    (0x8afd, x0823_08cd),
+    (0x8b03, x0823_08d3),
+    (0x8b15, x0823_08e5),
+    (0x8b19, x0823_08e9),
+    (0x8b23, x0823_08f3),
+    (0x8b29, x0823_08f9),
+    (0x8b31, x0823_0901),
+    (0x8b3a, x0823_090a),
+    (0x8b3f, x0823_090f),
+    (0x8b44, x0823_0914),
+    (0x8b47, x0823_0917),
+    (0x8b48, x0823_0918),
     (0x8b73, x0823_0943),
     (0x8bb3, x0823_0983),
     (0x8bc4, x0823_0994),

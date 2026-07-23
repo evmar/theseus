@@ -101,6 +101,23 @@ impl Gather {
     }
 }
 
+/// Wrap a VecDeque<IP> just so we add some logic every time it's called.
+#[derive(Default)]
+struct IPQueue(VecDeque<IP>);
+impl IPQueue {
+    pub fn enqueue(&mut self, ip: IP) {
+        // log::info!("enqueue {ip}");
+        // let IP::Seg(seg, ofs) = ip else { panic!() };
+        // if ofs > 0x8000 {
+        //     panic!();
+        // }
+        self.0.push_back(ip);
+    }
+    pub fn pop(&mut self) -> Option<IP> {
+        self.0.pop_front()
+    }
+}
+
 struct Traverse<'a> {
     gather: &'a Gather,
     module: &'a Module,
@@ -108,7 +125,7 @@ struct Traverse<'a> {
     addr_info: &'a HashMap<u32, AddrInfo>,
 
     iat_refs: HashMap<u32, &'a Import>,
-    queue: VecDeque<IP>,
+    queue: IPQueue,
     invalid: HashSet<u32>,
     blocks: BTreeMap<u32, Block>,
 }
@@ -122,7 +139,7 @@ impl<'a> Traverse<'a> {
             addr_info: &state.addr_info,
 
             iat_refs: Default::default(),
-            queue: VecDeque::new(),
+            queue: IPQueue::default(),
             invalid: HashSet::new(),
             blocks: Default::default(),
         }
@@ -157,10 +174,10 @@ impl<'a> Traverse<'a> {
             }
         }
 
-        self.queue.push_back(self.module.entry_point());
+        self.queue.enqueue(self.module.entry_point());
         for entry_point in self.gather.entry_points.iter() {
             match entry_point {
-                EntryPoint::Single(addr) => self.queue.push_back(self.module.local_addr(*addr)),
+                EntryPoint::Single(addr) => self.queue.enqueue(self.module.local_addr(*addr)),
                 EntryPoint::Range(r) => {
                     let mut addr = r.start;
                     while addr < r.end {
@@ -182,7 +199,7 @@ impl<'a> Traverse<'a> {
             self.scan_for_pointers();
         }
 
-        while let Some(ip) = self.queue.pop_front() {
+        while let Some(ip) = self.queue.pop() {
             let addr = ip.to_addr();
             if self.blocks.contains_key(&addr) || self.invalid.contains(&addr) {
                 continue;
@@ -196,7 +213,7 @@ impl<'a> Traverse<'a> {
                     let range = instrs.first().unwrap().ip.to_addr()
                         ..instrs.last().unwrap().next_ip().to_addr();
                     if range.contains(&addr) {
-                        self.queue.push_back(instrs[0].ip);
+                        self.queue.enqueue(instrs[0].ip);
                         self.blocks.remove(&baddr);
                     }
                 }
@@ -215,6 +232,7 @@ impl<'a> Traverse<'a> {
     }
 
     fn decode_one(&mut self, block_ip: IP) -> anyhow::Result<Block> {
+        // log::info!("decode block {block_ip}");
         let block_addr = block_ip.to_addr();
         if block_addr > self.mem.bytes.len() as u32 {
             anyhow::bail!("ip out of bounds");
@@ -255,7 +273,7 @@ impl<'a> Traverse<'a> {
                         let imm = instr.immediate32();
                         if self.module.code_memory().contains(&imm) {
                             log::info!("{imm:x} looks like a code pointer");
-                            self.queue.push_back(IP::todo_segmenting(imm));
+                            self.queue.enqueue(IP::todo_segmenting(imm));
                         }
                     }
                 }
@@ -277,13 +295,13 @@ impl<'a> Traverse<'a> {
                     match instr.op0_kind() {
                         iced_x86::OpKind::NearBranch16 => self
                             .queue
-                            .push_back(block_ip.with_local(instr.near_branch16() as u32)),
+                            .enqueue(block_ip.with_local(instr.near_branch16() as u32)),
                         iced_x86::OpKind::NearBranch32 => self
                             .queue
-                            .push_back(block_ip.with_local(instr.near_branch32())),
+                            .enqueue(block_ip.with_local(instr.near_branch32())),
                         iced_x86::OpKind::FarBranch16 => {
                             let ip = IP::Seg(instr.far_branch_selector(), instr.far_branch16());
-                            self.queue.push_back(ip);
+                            self.queue.enqueue(ip);
                         }
                         iced_x86::OpKind::Memory => {
                             if let Some(addr) = is_abs_memory_ref(&instr) {
@@ -306,14 +324,14 @@ impl<'a> Traverse<'a> {
                         d => anyhow::bail!("unhandled jmp {d:?}"),
                     }
                     if instr.mnemonic() != Jmp {
-                        self.queue.push_back(block_ip.with_local(instr.next_ip32()));
+                        self.queue.enqueue(block_ip.with_local(instr.next_ip32()));
                     }
                 }
                 Ret | Retf | Iret => {}
                 Into => {}        // terminates
                 Int1 | Int3 => {} // breakpoint
                 Int => {
-                    self.queue.push_back(block_ip.with_local(instr.next_ip32()));
+                    self.queue.enqueue(block_ip.with_local(instr.next_ip32()));
                 }
                 INVALID => {
                     anyhow::bail!("invalid code found");
@@ -350,7 +368,7 @@ impl<'a> Traverse<'a> {
                         "{addr:08x}: found possible code pointer {value:x}",
                         addr = mapping_addr + ofs as u32
                     );
-                    self.queue.push_back(IP::todo_segmenting(value));
+                    self.queue.enqueue(IP::todo_segmenting(value));
                 }
             }
         }

@@ -78,7 +78,10 @@ elif [[ $1 == "sbaitso-sbtalker" ]]; then
         --jump-table 0xd8e..0xda0
         --exe scratch/dos/sbaitso/SBTALKER.EXE
         --out out/sbaitso/sbtalker
+        # fake return address used after TSR loads
         --extern 0x11
+        # TSR entry point, called by users of TSR
+        --entry-point 0x898
     )
     cargo run -p tc -- "${args[@]}"
 else
