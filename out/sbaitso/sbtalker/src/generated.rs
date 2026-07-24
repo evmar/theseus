@@ -39414,8 +39414,9 @@ pub fn x1483_0940(ctx: &mut Context) -> Cont {
     ctx.ret16(0)
 }
 
-const BLOCKS: [(u32, ContFn); 1517] = [
+const BLOCKS: [(u32, ContFn); 1518] = [
     (0x11, crate::externs::x11),
+    (0x12, crate::externs::x12),
     (0x8ac8, x0823_0898),
     (0x8acd, x0823_089d),
     (0x8ad2, x0823_08a2),

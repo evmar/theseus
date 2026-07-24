@@ -243,7 +243,7 @@ fn int10(ctx: &mut Context) {
 
 /// int 2f: multiplex interrupt for calling into TSR.
 /// https://en.wikibooks.org/wiki/First_steps_towards_system_programming_under_MS-DOS_7/Selected_interrupt_handlers#8.03_Interrupt_handlers,_loaded_by_drivers_and_TSR_programs
-fn int2f(ctx: &mut Context) {
+fn int2f(ctx: &mut Context, next_ip: u16) {
     let entry = ivt(&mut ctx.memory)[0x2f];
     if !entry.is_null() {
         log::info!("calling tsr {:x?}, esp={:x}", entry, ctx.cpu.regs.get_sp());
@@ -251,8 +251,8 @@ fn int2f(ctx: &mut Context) {
         // but interrupt calls are different because they also push/pop flags, hmm.
         let orig_sp = ctx.cpu.regs.get_sp();
         ctx.push16(0); // flags
-        ctx.push16(0xffff); // cs
-        ctx.push16(0xfffe); // ip
+        ctx.push16(ctx.cpu.regs.get_cs()); // cs
+        ctx.push16(next_ip); // ip
 
         let mut f = ctx.jmpf16(entry.seg, entry.ofs);
         // TODO: loop until return address is popped, like runtime::cpu_loop.
@@ -271,7 +271,7 @@ fn int2f(ctx: &mut Context) {
 }
 
 // TODO: should this take a Cont for next instead?
-pub fn int(ctx: &mut Context, next: u16, interrupt: u8) -> runtime::Cont {
+pub fn int(ctx: &mut Context, next_ip: u16, interrupt: u8) -> runtime::Cont {
     // https://en.wikibooks.org/wiki/First_steps_towards_system_programming_under_MS-DOS_7/Selected_interrupt_handlers
     match interrupt {
         0x10 => int10(ctx),
@@ -284,10 +284,10 @@ pub fn int(ctx: &mut Context, next: u16, interrupt: u8) -> runtime::Cont {
                 return next;
             }
         }
-        0x2f => int2f(ctx),
+        0x2f => int2f(ctx, next_ip),
         _ => log::error!("TODO: dos int {interrupt:x}h"),
     }
-    ctx.indirect16(next)
+    ctx.indirect16(next_ip)
 }
 
 pub fn out(ctx: &mut Context, port: u16, data: u8) {
