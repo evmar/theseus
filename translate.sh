@@ -80,9 +80,10 @@ elif [[ $1 == "sbaitso-sbtalker" ]]; then
         --out out/sbaitso/sbtalker
         # fake return address used after TSR loads
         --extern 0x11
-        --extern 0x12
         # TSR entry point, called by users of TSR
         --entry-point 0x898
+        # driver entry point, returned by TSR
+        --entry-point 0xae2
     )
     cargo run -p tc -- "${args[@]}"
 else
