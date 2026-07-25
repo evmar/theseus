@@ -2,6 +2,7 @@ use super::int::Int;
 use crate::Flags;
 
 pub fn shl<I: Int + num_traits::WrappingShl>(x: I, y: u8, flags: &mut Flags) -> I {
+    let bits = I::bits() as u8;
     assert!(I::bits() < 64);
     let y = y % 32;
     if y == 0 {
@@ -9,8 +10,13 @@ pub fn shl<I: Int + num_traits::WrappingShl>(x: I, y: u8, flags: &mut Flags) -> 
     }
 
     // Carry is the highest bit that will be shifted out.
-    let cf = (x >> (I::bits() - y as usize) & I::one()).is_one();
-    let val = x << y as usize;
+    let cf = if y <= bits {
+        (x >> (bits - y) as usize & I::one()).is_one()
+    } else {
+        false
+    };
+    let val = if y < bits { x << y as usize } else { I::zero() };
+
     flags.set(Flags::CF, cf);
     let msb = val.high_bit().is_one();
     flags.set(Flags::SF, msb);
