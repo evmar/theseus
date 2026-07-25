@@ -76,13 +76,13 @@ impl PIT {
         assert!(seg != 0);
         log::info!("timer {seg:x}:{ofs:x}");
 
-        assert_eq!(ctx.cpu.regs.cs, seg);
+        assert_eq!(ctx.cpu.regs.cs, seg); // TODO: handle seg!=cs
         let esp = ctx.cpu.regs.esp;
         ctx.push16(ctx.cpu.flags.bits() as u16);
         ctx.push16(seg);
         ctx.push16(ofs);
 
-        let mut f = ctx.indirect_near(ofs); // TODO: handle seg!=cs
+        let mut f = ctx.indirect16((seg, ofs).into());
         while ctx.cpu.regs.esp != esp {
             // don't check interrupts while running interrupt handler
             f = f.0(ctx);

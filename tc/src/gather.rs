@@ -368,7 +368,7 @@ impl<'a> Traverse<'a> {
                         "{addr:08x}: found possible code pointer {value:x}",
                         addr = mapping_addr + ofs as u32
                     );
-                    self.queue.enqueue(IP::todo_segmenting(value));
+                    self.queue.enqueue(IP::Flat(value));
                 }
             }
         }

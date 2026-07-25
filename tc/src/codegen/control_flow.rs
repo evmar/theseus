@@ -15,72 +15,78 @@ impl<'a> CodeGen<'a> {
         }
     }
 
-    /// Codegen the Cont for a jump or call instruction.
-    /// Returns (code, uses_ctx, far) where
-    ///   uses_ctx is true if code uses ctx (needed for lifetime reasons)
-    ///   far is the target segment for far jmps/calls
-    fn gen_jmp(&self, instr: &Instr) -> (String, bool, Option<u16>) {
+    fn jmp_target(&self, instr: &Instr) -> (Option<String>, Option<String>, String) {
         assert_eq!(instr.iced.op_count(), 1);
-        let expr: String;
-        let mut uses_ctx = false;
-        let mut far = None;
+        let mut extra: Option<String> = None;
+        let mut seg: Option<String> = None;
+        let cont: String;
         match instr.iced.op0_kind() {
             iced_x86::OpKind::NearBranch16 => {
                 let ip = instr.ip.with_local(instr.iced.near_branch16() as u32);
-                expr = self.resolve_jmp(ip);
+                cont = self.resolve_jmp(ip);
             }
             iced_x86::OpKind::NearBranch32 => {
                 let ip = instr.ip.with_local(instr.iced.near_branch32());
-                expr = self.resolve_jmp(ip);
+                cont = self.resolve_jmp(ip);
             }
             iced_x86::OpKind::FarBranch16 => {
                 let ip = IP::Seg(instr.iced.far_branch_selector(), instr.iced.far_branch16());
-                expr = self.resolve_jmp(ip);
-                far = Some(instr.iced.far_branch_selector());
+                seg = Some(format!("{:#x}", instr.iced.far_branch_selector()));
+                cont = self.resolve_jmp(ip);
             }
             iced_x86::OpKind::Memory => {
                 // If it's like `jmp [someaddr]` where someaddr is in the IAT, resolve it directly.
                 // (Note that `call [someaddr@IAT]` is generated as a direct function call.)
                 if let Some(func) = &instr.hint {
-                    return (format!("Cont({func})"), false, None);
+                    return (None, None, format!("Cont({func})"));
                 }
 
-                // TODO: what about far calls?
-                let indirect = if self.module.bitness() == 16 {
-                    "indirect_near"
-                } else {
-                    "indirect32"
-                };
-                expr = format!(
-                    "ctx.{indirect}(ctx.memory.read({addr}))",
-                    addr = self.gen_addr(&instr.iced)
-                );
-                uses_ctx = true;
+                let addr = self.gen_addr(&instr.iced);
+                match instr.iced.memory_size() {
+                    iced_x86::MemorySize::SegPtr16 => {
+                        extra = Some(format!("let addr = ctx.memory.read::<SegOfs>({addr});"));
+                        seg = Some("addr.seg".into());
+                        cont = "ctx.indirect16(addr)".into();
+                    }
+                    iced_x86::MemorySize::WordOffset => {
+                        extra = Some(format!("let addr = ctx.memory.read::<u16>({addr});"));
+                        cont = "ctx.indirect16((ctx.cpu.regs.cs, addr).into())".into();
+                    }
+                    iced_x86::MemorySize::DwordOffset => {
+                        extra = Some(format!("let addr = ctx.memory.read::<u32>({addr});"));
+                        cont = "ctx.indirect32(addr)".into();
+                    }
+                    s => todo!("{s:?}"),
+                }
             }
             iced_x86::OpKind::Register => {
-                let indirect = if self.module.bitness() == 16 {
-                    "indirect_near"
+                if self.module.bitness() == 16 {
+                    cont = format!(
+                        "ctx.indirect16((ctx.cpu.regs.cs, {reg}).into())",
+                        reg = get_reg(instr.iced.op0_register())
+                    );
                 } else {
-                    "indirect32"
-                };
-                expr = format!(
-                    "ctx.{indirect}({reg})",
-                    reg = get_reg(instr.iced.op0_register())
-                );
-                uses_ctx = true;
+                    cont = format!(
+                        "ctx.indirect({reg})",
+                        reg = get_reg(instr.iced.op0_register())
+                    );
+                }
             }
             k => todo!("{:?}", k),
         }
-        (expr, uses_ctx, far)
+        (extra, seg, cont)
     }
 
     pub fn codegen_control_flow(&mut self, instr: &Instr) -> bool {
         use iced_x86::Mnemonic::*;
         match instr.iced.mnemonic() {
             Jmp => {
-                let (cont, _, far) = self.gen_jmp(instr);
-                if let Some(seg) = far {
-                    self.line(format!("ctx.cpu.regs.cs = {seg:#x};"));
+                let (extra, seg, cont) = self.jmp_target(instr);
+                if let Some(extra) = extra {
+                    self.line(extra);
+                }
+                if let Some(seg) = seg {
+                    self.line(format!("ctx.cpu.regs.cs = {seg};"));
                 }
                 self.line(cont);
             }
@@ -91,21 +97,18 @@ impl<'a> CodeGen<'a> {
                         instr.next_ip().local()
                     ));
                 } else {
-                    let (dst, uses_ctx, far) = self.gen_jmp(instr);
-                    let dst = if uses_ctx {
-                        self.line(format!("let dst = {};", dst));
-                        "dst".into()
-                    } else {
-                        dst
-                    };
-                    if let Some(seg) = far {
+                    let (extra, seg, cont) = self.jmp_target(instr);
+                    if let Some(extra) = extra {
+                        self.line(extra);
+                    }
+                    if let Some(seg) = seg {
                         self.line(format!(
-                            "ctx.callf16({ip:#x}, {seg:#x}, {dst})",
+                            "ctx.callf16({ip:#x}, {seg}, {cont})",
                             ip = instr.next_ip().local()
                         ));
                     } else {
                         self.line(format!(
-                            "ctx.call{bitness}({ip:#x}, {dst})",
+                            "ctx.call{bitness}({ip:#x}, {cont})",
                             bitness = self.module.bitness(),
                             ip = instr.next_ip().local()
                         ));
@@ -136,9 +139,11 @@ impl<'a> CodeGen<'a> {
             Je | Jne | Jb | Js | Jns | Ja | Jae | Jl | Jg | Jge | Jecxz | Jle | Jbe | Jcxz
             | Loop | Loopne => {
                 let next = self.resolve_jmp(instr.next_ip());
-                let dst = self.gen_jmp(instr).0;
+                let (None, None, cont) = self.jmp_target(instr) else {
+                    panic!()
+                };
                 let func = instr_name(&instr.iced);
-                self.line(format!("ctx.{func}({next}, {dst})"));
+                self.line(format!("ctx.{func}({next}, {cont})"));
             }
 
             _ => return false,

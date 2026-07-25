@@ -1,4 +1,4 @@
-use crate::{Cont, ContFn, Flags, Memory, Regs, fpu::FPU, mmx::MMX, segofs};
+use crate::{Cont, ContFn, Flags, Memory, Regs, SegOfs, fpu::FPU, mmx::MMX, segofs};
 
 #[derive(Default)]
 pub struct CPU {
@@ -32,17 +32,17 @@ pub struct Context {
 
 impl Context {
     /// Given an address (jump target), look up the Cont registered for it.
-    pub fn indirect_near(&mut self, addr: u16) -> Cont {
-        self.indirect(segofs(self.cpu.regs.get_cs(), addr))
+    pub fn indirect16(&self, addr: SegOfs) -> Cont {
+        self.indirect(addr.abs())
     }
 
     /// Given an address (jump target), look up the Cont registered for it.
-    pub fn indirect32(&mut self, addr: u32) -> Cont {
+    pub fn indirect32(&self, addr: u32) -> Cont {
         self.indirect(addr)
     }
 
     /// Given an address (jump target), look up the Cont registered for it.
-    pub fn indirect(&mut self, addr: u32) -> Cont {
+    pub fn indirect(&self, addr: u32) -> Cont {
         if addr == 0 {
             self.dump();
             panic!("jmp to null ptr");

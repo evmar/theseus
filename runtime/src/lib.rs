@@ -17,9 +17,10 @@ pub use ops::*;
 pub use registers::Regs;
 
 #[repr(C)]
+#[derive(zerocopy::FromBytes)]
 pub struct SegOfs {
-    ofs: u16,
-    seg: u16,
+    pub ofs: u16,
+    pub seg: u16,
 }
 
 impl SegOfs {
@@ -29,6 +30,12 @@ impl SegOfs {
 
     pub const fn abs(&self) -> u32 {
         segofs(self.seg, self.ofs)
+    }
+}
+
+impl From<(u16, u16)> for SegOfs {
+    fn from((seg, ofs): (u16, u16)) -> Self {
+        SegOfs::new(seg, ofs)
     }
 }
 

@@ -138,7 +138,7 @@ impl Context {
     pub fn ret16(&mut self, n: u16) -> Cont {
         let ret = self.pop16();
         self.cpu.regs.esp += n as u32;
-        self.indirect_near(ret)
+        self.indirect16((self.cpu.regs.cs, ret).into())
     }
 
     pub fn iret16(&mut self) -> Cont {

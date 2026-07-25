@@ -288,7 +288,7 @@ pub fn int(ctx: &mut Context, next_ip: u16, interrupt: u8) -> runtime::Cont {
         _ => log::error!("TODO: dos int {interrupt:x}h"),
     }
     // TODO: interrupts are fall calls with far returns
-    ctx.indirect_near(next_ip)
+    ctx.indirect16((ctx.cpu.regs.cs, next_ip).into())
 }
 
 pub fn out(ctx: &mut Context, port: u16, data: u8) {
