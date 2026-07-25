@@ -385,7 +385,7 @@ ctx.cpu.regs.esp = {stack_pointer:#x};
                 self.line("(runtime::RETURN_FROM_X86_ADDR32, Context::return_from_x86),");
             }
             Module::DOS(_) => {
-                self.line("(runtime::RETURN_FROM_X86_ADDR16, Context::return_from_x86),");
+                self.line("(runtime::RETURN_FROM_X86_ADDR16.abs(), Context::return_from_x86),");
             }
         }
         self.line("];");

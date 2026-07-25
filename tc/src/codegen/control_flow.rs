@@ -46,17 +46,25 @@ impl<'a> CodeGen<'a> {
                 }
 
                 // TODO: what about far calls?
+                let indirect = if self.module.bitness() == 16 {
+                    "indirect_near"
+                } else {
+                    "indirect32"
+                };
                 expr = format!(
-                    "ctx.indirect{bitness}(ctx.memory.read({addr}))",
-                    bitness = self.module.bitness(),
+                    "ctx.{indirect}(ctx.memory.read({addr}))",
                     addr = self.gen_addr(&instr.iced)
                 );
                 uses_ctx = true;
             }
             iced_x86::OpKind::Register => {
+                let indirect = if self.module.bitness() == 16 {
+                    "indirect_near"
+                } else {
+                    "indirect32"
+                };
                 expr = format!(
-                    "ctx.indirect{bitness}({reg})",
-                    bitness = self.module.bitness(),
+                    "ctx.{indirect}({reg})",
                     reg = get_reg(instr.iced.op0_register())
                 );
                 uses_ctx = true;

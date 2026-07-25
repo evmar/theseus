@@ -82,7 +82,7 @@ impl PIT {
         ctx.push16(seg);
         ctx.push16(ofs);
 
-        let mut f = ctx.indirect16(ofs);
+        let mut f = ctx.indirect_near(ofs); // TODO: handle seg!=cs
         while ctx.cpu.regs.esp != esp {
             // don't check interrupts while running interrupt handler
             f = f.0(ctx);

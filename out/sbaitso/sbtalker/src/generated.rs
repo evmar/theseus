@@ -1797,7 +1797,7 @@ pub fn x0823_0b2c(ctx: &mut Context) -> Cont {
     );
     ctx.dump_dosbox(0xb37);
     // 0823:0b37 jmp dword ptr cs:[7Ah]
-    ctx.indirect16(ctx.memory.read(segofs(ctx.cpu.regs.get_cs(), 0x7au16)))
+    ctx.indirect_near(ctx.memory.read(segofs(ctx.cpu.regs.get_cs(), 0x7au16)))
 }
 
 pub fn x0823_0b3c(ctx: &mut Context) -> Cont {
@@ -3398,7 +3398,7 @@ pub fn x0823_0e0a(ctx: &mut Context) -> Cont {
 pub fn x0823_0e0c(ctx: &mut Context) -> Cont {
     ctx.dump_dosbox(0xe0c);
     // 0823:0e0c call dword ptr cs:[0DBBh]
-    let dst = ctx.indirect16(ctx.memory.read(segofs(ctx.cpu.regs.get_cs(), 0xdbbu16)));
+    let dst = ctx.indirect_near(ctx.memory.read(segofs(ctx.cpu.regs.get_cs(), 0xdbbu16)));
     ctx.call16(0xe11, dst)
 }
 
@@ -3606,7 +3606,7 @@ pub fn x0823_0f73(ctx: &mut Context) -> Cont {
     ctx.cpu.regs.set_bx(ctx.cpu.regs.get_ax());
     ctx.dump_dosbox(0xf8d);
     // 0823:0f8d jmp word ptr cs:[bx+0D8Eh]
-    ctx.indirect16(ctx.memory.read(segofs(
+    ctx.indirect_near(ctx.memory.read(segofs(
         ctx.cpu.regs.get_cs(),
         ctx.cpu.regs.get_bx().wrapping_add(0xd8eu16),
     )))
@@ -22074,7 +22074,7 @@ pub fn x0935_21cc(ctx: &mut Context) -> Cont {
         .set_bx(shl(ctx.cpu.regs.get_bx(), 0x1u8, &mut ctx.cpu.flags));
     ctx.dump_dosbox(0x21ce);
     // 0935:21ce jmp word ptr cs:[bx+21D3h]
-    ctx.indirect16(ctx.memory.read(segofs(
+    ctx.indirect_near(ctx.memory.read(segofs(
         ctx.cpu.regs.get_cs(),
         ctx.cpu.regs.get_bx().wrapping_add(0x21d3u16),
     )))
@@ -27215,7 +27215,7 @@ pub fn x0935_3c39(ctx: &mut Context) -> Cont {
         .set_bx(shl(ctx.cpu.regs.get_bx(), 0x1u8, &mut ctx.cpu.flags));
     ctx.dump_dosbox(0x3c3b);
     // 0935:3c3b jmp word ptr cs:[bx+3C40h]
-    ctx.indirect16(ctx.memory.read(segofs(
+    ctx.indirect_near(ctx.memory.read(segofs(
         ctx.cpu.regs.get_cs(),
         ctx.cpu.regs.get_bx().wrapping_add(0x3c40u16),
     )))
@@ -30424,7 +30424,7 @@ pub fn x0d72_013c(ctx: &mut Context) -> Cont {
     ctx.cpu.regs.set_bl(ctx.cpu.regs.get_cl());
     ctx.dump_dosbox(0x157);
     // 0d72:0157 jmp ax
-    ctx.indirect16(ctx.cpu.regs.get_ax())
+    ctx.indirect_near(ctx.cpu.regs.get_ax())
 }
 
 pub fn x0d72_4b0c(ctx: &mut Context) -> Cont {
@@ -32104,7 +32104,7 @@ pub fn x0d72_53e8(ctx: &mut Context) -> Cont {
 pub fn x0d72_53f3(ctx: &mut Context) -> Cont {
     ctx.dump_dosbox(0x53f3);
     // 0d72:53f3 jmp dword ptr ds:[5F2h]
-    ctx.indirect16(ctx.memory.read(segofs(ctx.cpu.regs.get_ds(), 0x5f2u16)))
+    ctx.indirect_near(ctx.memory.read(segofs(ctx.cpu.regs.get_ds(), 0x5f2u16)))
 }
 
 pub fn x0d72_5452(ctx: &mut Context) -> Cont {
@@ -33954,7 +33954,7 @@ pub fn x0d72_5c3a(ctx: &mut Context) -> Cont {
     ctx.cpu.regs.set_sp(ctx.cpu.regs.get_bx());
     ctx.dump_dosbox(0x5c3c);
     // 0d72:5c3c jmp cx
-    ctx.indirect16(ctx.cpu.regs.get_cx())
+    ctx.indirect_near(ctx.cpu.regs.get_cx())
 }
 
 pub fn x0d72_5c3e(ctx: &mut Context) -> Cont {
@@ -34104,7 +34104,7 @@ pub fn x0d72_600d(ctx: &mut Context) -> Cont {
     ctx.cpu.regs.set_sp(ctx.cpu.regs.get_bx());
     ctx.dump_dosbox(0x600f);
     // 0d72:600f jmp cx
-    ctx.indirect16(ctx.cpu.regs.get_cx())
+    ctx.indirect_near(ctx.cpu.regs.get_cx())
 }
 
 pub fn x0d72_6011(ctx: &mut Context) -> Cont {
@@ -34520,7 +34520,7 @@ pub fn x0d72_64d8(ctx: &mut Context) -> Cont {
     ctx.cpu.regs.set_sp(ctx.cpu.regs.get_bx());
     ctx.dump_dosbox(0x64da);
     // 0d72:64da jmp cx
-    ctx.indirect16(ctx.cpu.regs.get_cx())
+    ctx.indirect_near(ctx.cpu.regs.get_cx())
 }
 
 pub fn x0d72_64dc(ctx: &mut Context) -> Cont {
@@ -34942,7 +34942,7 @@ pub fn x0d72_677b(ctx: &mut Context) -> Cont {
     ctx.cpu.regs.set_sp(ctx.cpu.regs.get_bx());
     ctx.dump_dosbox(0x677d);
     // 0d72:677d jmp cx
-    ctx.indirect16(ctx.cpu.regs.get_cx())
+    ctx.indirect_near(ctx.cpu.regs.get_cx())
 }
 
 pub fn x0d72_677f(ctx: &mut Context) -> Cont {
@@ -35149,7 +35149,7 @@ pub fn x0d72_6ba6(ctx: &mut Context) -> Cont {
     ctx.push16(ctx.cpu.regs.get_cx());
     ctx.dump_dosbox(0x6ba8);
     // 0d72:6ba8 jmp dword ptr ds:[78Eh]
-    ctx.indirect16(ctx.memory.read(segofs(ctx.cpu.regs.get_ds(), 0x78eu16)))
+    ctx.indirect_near(ctx.memory.read(segofs(ctx.cpu.regs.get_ds(), 0x78eu16)))
 }
 
 pub fn x0d72_6d29(ctx: &mut Context) -> Cont {
@@ -35179,7 +35179,7 @@ pub fn x0d72_6d34(ctx: &mut Context) -> Cont {
     ctx.push16(ctx.cpu.regs.get_cs());
     ctx.dump_dosbox(0x6d39);
     // 0d72:6d39 call word ptr ds:[798h]
-    let dst = ctx.indirect16(ctx.memory.read(segofs(ctx.cpu.regs.get_ds(), 0x798u16)));
+    let dst = ctx.indirect_near(ctx.memory.read(segofs(ctx.cpu.regs.get_ds(), 0x798u16)));
     ctx.call16(0x6d3d, dst)
 }
 
@@ -35508,7 +35508,7 @@ pub fn x0d72_6e8c(ctx: &mut Context) -> Cont {
     ctx.cpu.regs.set_bx(0x2u16);
     ctx.dump_dosbox(0x6e8f);
     // 0d72:6e8f call dword ptr ds:[1BB4h]
-    let dst = ctx.indirect16(ctx.memory.read(segofs(ctx.cpu.regs.get_ds(), 0x1bb4u16)));
+    let dst = ctx.indirect_near(ctx.memory.read(segofs(ctx.cpu.regs.get_ds(), 0x1bb4u16)));
     ctx.call16(0x6e93, dst)
 }
 
@@ -35631,7 +35631,7 @@ pub fn x0d72_6eb7(ctx: &mut Context) -> Cont {
 pub fn x0d72_6ec1(ctx: &mut Context) -> Cont {
     ctx.dump_dosbox(0x6ec1);
     // 0d72:6ec1 call dword ptr [di]
-    let dst = ctx.indirect16(
+    let dst = ctx.indirect_near(
         ctx.memory
             .read(segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_di())),
     );
@@ -35685,7 +35685,7 @@ pub fn x0d72_6ed8(ctx: &mut Context) -> Cont {
 pub fn x0d72_6edf(ctx: &mut Context) -> Cont {
     ctx.dump_dosbox(0x6edf);
     // 0d72:6edf call dword ptr ds:[840h]
-    let dst = ctx.indirect16(ctx.memory.read(segofs(ctx.cpu.regs.get_ds(), 0x840u16)));
+    let dst = ctx.indirect_near(ctx.memory.read(segofs(ctx.cpu.regs.get_ds(), 0x840u16)));
     ctx.call16(0x6ee3, dst)
 }
 
@@ -37136,7 +37136,7 @@ pub fn x1483_0381(ctx: &mut Context) -> Cont {
     ctx.cpu.regs.set_ds(x);
     ctx.dump_dosbox(0x39a);
     // 1483:039a call dword ptr cs:[0Ah]
-    let dst = ctx.indirect16(ctx.memory.read(segofs(ctx.cpu.regs.get_cs(), 0xau16)));
+    let dst = ctx.indirect_near(ctx.memory.read(segofs(ctx.cpu.regs.get_cs(), 0xau16)));
     ctx.call16(0x39f, dst)
 }
 
@@ -37158,7 +37158,7 @@ pub fn x1483_03a3(ctx: &mut Context) -> Cont {
 pub fn x1483_03a5(ctx: &mut Context) -> Cont {
     ctx.dump_dosbox(0x3a5);
     // 1483:03a5 call dword ptr cs:[0Eh]
-    let dst = ctx.indirect16(ctx.memory.read(segofs(ctx.cpu.regs.get_cs(), 0xeu16)));
+    let dst = ctx.indirect_near(ctx.memory.read(segofs(ctx.cpu.regs.get_cs(), 0xeu16)));
     ctx.call16(0x3aa, dst)
 }
 
@@ -37956,7 +37956,7 @@ pub fn x1483_0513(ctx: &mut Context) -> Cont {
 pub fn x1483_0516(ctx: &mut Context) -> Cont {
     ctx.dump_dosbox(0x516);
     // 1483:0516 call dword ptr cs:[0Eh]
-    let dst = ctx.indirect16(ctx.memory.read(segofs(ctx.cpu.regs.get_cs(), 0xeu16)));
+    let dst = ctx.indirect_near(ctx.memory.read(segofs(ctx.cpu.regs.get_cs(), 0xeu16)));
     ctx.call16(0x51b, dst)
 }
 
@@ -39353,7 +39353,7 @@ pub fn x1483_0789(ctx: &mut Context) -> Cont {
     );
     ctx.dump_dosbox(0x78c);
     // 1483:078c call dword ptr cs:[12h]
-    let dst = ctx.indirect16(ctx.memory.read(segofs(ctx.cpu.regs.get_cs(), 0x12u16)));
+    let dst = ctx.indirect_near(ctx.memory.read(segofs(ctx.cpu.regs.get_cs(), 0x12u16)));
     ctx.call16(0x791, dst)
 }
 
@@ -39399,7 +39399,7 @@ pub fn x1483_0791(ctx: &mut Context) -> Cont {
 pub fn x1483_07a4(ctx: &mut Context) -> Cont {
     ctx.dump_dosbox(0x7a4);
     // 1483:07a4 call dword ptr cs:[6]
-    let dst = ctx.indirect16(ctx.memory.read(segofs(ctx.cpu.regs.get_cs(), 0x6u16)));
+    let dst = ctx.indirect_near(ctx.memory.read(segofs(ctx.cpu.regs.get_cs(), 0x6u16)));
     ctx.call16(0x7a9, dst)
 }
 
@@ -39412,7 +39412,7 @@ pub fn x1483_07a9(ctx: &mut Context) -> Cont {
 pub fn x1483_07ab(ctx: &mut Context) -> Cont {
     ctx.dump_dosbox(0x7ab);
     // 1483:07ab call dword ptr cs:[16h]
-    let dst = ctx.indirect16(ctx.memory.read(segofs(ctx.cpu.regs.get_cs(), 0x16u16)));
+    let dst = ctx.indirect_near(ctx.memory.read(segofs(ctx.cpu.regs.get_cs(), 0x16u16)));
     ctx.call16(0x7b0, dst)
 }
 
@@ -40062,7 +40062,7 @@ pub fn x1483_08b3(ctx: &mut Context) -> Cont {
     );
     ctx.dump_dosbox(0x8b7);
     // 1483:08b7 call dword ptr cs:[12h]
-    let dst = ctx.indirect16(ctx.memory.read(segofs(ctx.cpu.regs.get_cs(), 0x12u16)));
+    let dst = ctx.indirect_near(ctx.memory.read(segofs(ctx.cpu.regs.get_cs(), 0x12u16)));
     ctx.call16(0x8bc, dst)
 }
 
@@ -40158,7 +40158,7 @@ pub fn x1483_08dc(ctx: &mut Context) -> Cont {
     ctx.xlat();
     ctx.dump_dosbox(0x8e9);
     // 1483:08e9 call dword ptr cs:[6]
-    let dst = ctx.indirect16(ctx.memory.read(segofs(ctx.cpu.regs.get_cs(), 0x6u16)));
+    let dst = ctx.indirect_near(ctx.memory.read(segofs(ctx.cpu.regs.get_cs(), 0x6u16)));
     ctx.call16(0x8ee, dst)
 }
 
@@ -40199,7 +40199,7 @@ pub fn x1483_08f6(ctx: &mut Context) -> Cont {
     ctx.xlat();
     ctx.dump_dosbox(0x8fd);
     // 1483:08fd call dword ptr cs:[6]
-    let dst = ctx.indirect16(ctx.memory.read(segofs(ctx.cpu.regs.get_cs(), 0x6u16)));
+    let dst = ctx.indirect_near(ctx.memory.read(segofs(ctx.cpu.regs.get_cs(), 0x6u16)));
     ctx.call16(0x902, dst)
 }
 
@@ -40240,7 +40240,7 @@ pub fn x1483_0904(ctx: &mut Context) -> Cont {
     );
     ctx.dump_dosbox(0x911);
     // 1483:0911 call dword ptr cs:[16h]
-    let dst = ctx.indirect16(ctx.memory.read(segofs(ctx.cpu.regs.get_cs(), 0x16u16)));
+    let dst = ctx.indirect_near(ctx.memory.read(segofs(ctx.cpu.regs.get_cs(), 0x16u16)));
     ctx.call16(0x916, dst)
 }
 
@@ -41898,7 +41898,10 @@ const BLOCKS: [(u32, ContFn); 1553] = [
     (0x15161, x1483_0931),
     (0x15167, x1483_0937),
     (0x15170, x1483_0940),
-    (runtime::RETURN_FROM_X86_ADDR16, Context::return_from_x86),
+    (
+        runtime::RETURN_FROM_X86_ADDR16.abs(),
+        Context::return_from_x86,
+    ),
 ];
 
 pub const EXEDATA: EXEData = EXEData {

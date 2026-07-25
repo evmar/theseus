@@ -32,7 +32,7 @@ pub struct Context {
 
 impl Context {
     /// Given an address (jump target), look up the Cont registered for it.
-    pub fn indirect16(&mut self, addr: u16) -> Cont {
+    pub fn indirect_near(&mut self, addr: u16) -> Cont {
         self.indirect(segofs(self.cpu.regs.get_cs(), addr))
     }
 

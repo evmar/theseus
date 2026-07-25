@@ -287,7 +287,8 @@ pub fn int(ctx: &mut Context, next_ip: u16, interrupt: u8) -> runtime::Cont {
         0x2f => int2f(ctx, next_ip),
         _ => log::error!("TODO: dos int {interrupt:x}h"),
     }
-    ctx.indirect16(next_ip)
+    // TODO: interrupts are fall calls with far returns
+    ctx.indirect_near(next_ip)
 }
 
 pub fn out(ctx: &mut Context, port: u16, data: u8) {

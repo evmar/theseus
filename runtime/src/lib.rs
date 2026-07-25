@@ -16,6 +16,28 @@ pub use memory::Memory;
 pub use ops::*;
 pub use registers::Regs;
 
+#[repr(C)]
+pub struct SegOfs {
+    ofs: u16,
+    seg: u16,
+}
+
+impl SegOfs {
+    pub const fn new(seg: u16, ofs: u16) -> SegOfs {
+        SegOfs { seg, ofs }
+    }
+
+    pub const fn abs(&self) -> u32 {
+        segofs(self.seg, self.ofs)
+    }
+}
+
+impl std::fmt::Display for SegOfs {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{seg:04x}:{ofs:04x}", seg = self.seg, ofs = self.ofs)
+    }
+}
+
 pub type ContFn = fn(&mut Context) -> Cont;
 
 #[derive(Clone, Copy)]
@@ -25,7 +47,7 @@ pub struct Cont(pub ContFn);
 /// that is associated with a real function so that the final 'ret' from the
 /// called function succeeds, but we never invoke it.
 pub const RETURN_FROM_X86_ADDR32: u32 = 0xffff_fffe;
-pub const RETURN_FROM_X86_ADDR16: u32 = segofs(0xffff, 0xfffe);
+pub const RETURN_FROM_X86_ADDR16: SegOfs = SegOfs::new(0xffff, 0xfffe);
 
 impl Context {
     /// Call an x86 stdcall function, only returning once the function returns.
