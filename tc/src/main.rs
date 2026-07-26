@@ -1,10 +1,7 @@
 use tc::{AddrInfo, Module};
 
 fn hex(val: &str) -> Result<u32, String> {
-    if !val.starts_with("0x") {
-        return Err("hex value must start with 0x".into());
-    }
-    u32::from_str_radix(&val[2..], 16).map_err(|err| err.to_string())
+    u32::from_str_radix(&val, 16).map_err(|err| err.to_string())
 }
 
 fn hex_range(val: &str) -> Result<std::ops::Range<u32>, String> {
