@@ -1,15 +1,26 @@
-use tc::{AddrInfo, Module};
+use tc::{AddrInfo, IP, Module};
 
-fn hex(val: &str) -> Result<u32, String> {
-    u32::from_str_radix(&val, 16).map_err(|err| err.to_string())
+fn parse_hex(val: &str) -> Result<u32, String> {
+    u32::from_str_radix(val, 16).map_err(|err| err.to_string())
 }
 
-fn hex_range(val: &str) -> Result<std::ops::Range<u32>, String> {
+fn parse_ip(val: &str) -> Result<IP, String> {
+    if let Some((seg, ofs)) = val.split_once(':') {
+        let seg = u16::from_str_radix(seg, 16).map_err(|err| err.to_string())?;
+        let ofs = u16::from_str_radix(ofs, 16).map_err(|err| err.to_string())?;
+        Ok(IP::Seg((seg, ofs).into()))
+    } else {
+        let addr = u32::from_str_radix(val, 16).map_err(|err| err.to_string())?;
+        Ok(IP::Flat(addr))
+    }
+}
+
+fn parse_ip_range(val: &str) -> Result<std::ops::Range<IP>, String> {
     let (start, end) = val
         .split_once("..")
         .ok_or_else(|| "range must include '..'".to_string())?;
-    let start = hex(start)?;
-    let end = hex(end)?;
+    let start = parse_ip(start)?;
+    let end = parse_ip(end)?;
     Ok(start..end)
 }
 
@@ -18,7 +29,7 @@ fn parse_extern(val: &str) -> Result<(u32, Option<String>), String> {
         None => (val, None),
         Some((val, name)) => (val, Some(name.into())),
     };
-    Ok((hex(val)?, name))
+    Ok((parse_hex(val)?, name))
 }
 
 #[derive(argh::FromArgs)]
@@ -33,16 +44,16 @@ struct Args {
     scan_immediates: bool,
 
     /// additional addresses to create a block
-    #[argh(option, from_str_fn(hex))]
-    entry_point: Vec<u32>,
+    #[argh(option, from_str_fn(parse_ip))]
+    entry_point: Vec<IP>,
 
     /// additional addresses containing pointers to code
-    #[argh(option, from_str_fn(hex_range))]
-    jump_table: Vec<std::ops::Range<u32>>,
+    #[argh(option, from_str_fn(parse_ip_range))]
+    jump_table: Vec<std::ops::Range<IP>>,
 
     /// additional address ranges to scan for code
-    #[argh(option, from_str_fn(hex_range))]
-    entry_points: Vec<std::ops::Range<u32>>,
+    #[argh(option, from_str_fn(parse_ip_range))]
+    entry_points: Vec<std::ops::Range<IP>>,
 
     /// ghidra symbols csv
     #[argh(option)]
@@ -97,22 +108,41 @@ fn run() -> anyhow::Result<()> {
     state.init_system_hooks();
 
     let mut entry_points = vec![];
-    for addr in args.entry_point {
-        entry_points.push(tc::EntryPoint::Single(addr));
+    for ip in args.entry_point {
+        if matches!(ip, IP::Seg(_)) != state.module.segment_addressed() {
+            anyhow::bail!("--entry-point {ip} must be ip");
+        }
+        entry_points.push(tc::EntryPoint::Single(ip));
     }
     for range in args.jump_table {
-        for local in range.step_by((state.module.bitness() / 8) as usize) {
-            let ip = state.module.local_addr(local);
-            let code = if state.module.segment_addressed() {
-                state.mem.read::<u16>(ip.to_addr()) as u32
+        let mut src = range.start; // TODO
+        while src <= range.end {
+            let next: IP;
+            let dst = if state.module.segment_addressed() {
+                let IP::Seg(addr) = src else {
+                    anyhow::bail!("--jump-table {src} must be seg:ofs");
+                };
+                next = IP::Seg((addr.seg, addr.ofs + 2).into());
+                IP::Seg((addr.seg, state.mem.read::<u16>(src.to_addr())).into())
             } else {
-                state.mem.read::<u32>(ip.to_addr())
+                let IP::Flat(addr) = src else {
+                    anyhow::bail!("--jump-table {src} must be flat address");
+                };
+                next = IP::Flat(addr + 4);
+                IP::Flat(state.mem.read::<u32>(src.to_addr()))
             };
-            log::info!("jump table {ip} -> {code:x}");
-            entry_points.push(tc::EntryPoint::Single(code));
+            log::info!("jump table {src} -> {dst}");
+            entry_points.push(tc::EntryPoint::Single(dst));
+            src = next;
         }
     }
     for range in args.entry_points {
+        if matches!(range.start, IP::Seg(_)) != state.module.segment_addressed() {
+            anyhow::bail!("--entry-points {ip} must be ip", ip = range.start);
+        }
+        if matches!(range.end, IP::Seg(_)) != state.module.segment_addressed() {
+            anyhow::bail!("--entry-points {ip} must be ip", ip = range.end);
+        }
         entry_points.push(tc::EntryPoint::Range(range));
     }
 

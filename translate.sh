@@ -75,15 +75,15 @@ elif [[ $1 == "sbaitso-read" ]]; then
 elif [[ $1 == "sbaitso-sbtalker" ]]; then
     args=(
         --trace
-        --jump-table d8e..da0
+        --jump-table 823:d8e..823:da0
         --exe scratch/dos/sbaitso/SBTALKER.EXE
         --out out/sbaitso/sbtalker
         # fake return address used after TSR loads
         --extern 11
         # TSR entry point, called by users of TSR
-        --entry-point 898
+        --entry-point 823:898
         # driver entry point, returned by TSR
-        --entry-point ae2
+        --entry-point 823:ae2
     )
     cargo run -p tc -- "${args[@]}"
 else

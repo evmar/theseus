@@ -3674,6 +3674,61 @@ pub fn x0823_0fb5(ctx: &mut Context) -> Cont {
     Cont(x0823_0ff6)
 }
 
+pub fn x0823_0fb7(ctx: &mut Context) -> Cont {
+    ctx.dump_dosbox(0xfb7);
+    // 0823:0fb7 call 0DA2h
+    ctx.call16(0xfba, Cont(x0823_0da2))
+}
+
+pub fn x0823_0fba(ctx: &mut Context) -> Cont {
+    ctx.dump_dosbox(0xfba);
+    // 0823:0fba les di,cs:[0DC3h]
+    let ptr = ctx
+        .memory
+        .read::<u32>(segofs(ctx.cpu.regs.get_cs(), 0xdc3u16));
+    ctx.cpu.regs.es = (ptr >> 16) as u16;
+    ctx.cpu.regs.set_di(ptr as u16);
+    ctx.dump_dosbox(0xfbf);
+    // 0823:0fbf push es
+    ctx.push16(ctx.cpu.regs.get_es());
+    ctx.dump_dosbox(0xfc0);
+    // 0823:0fc0 push di
+    ctx.push16(ctx.cpu.regs.get_di());
+    ctx.dump_dosbox(0xfc1);
+    // 0823:0fc1 push word ptr cs:[3F0h]
+    ctx.push16(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_cs(), 0x3f0u16)),
+    );
+    ctx.dump_dosbox(0xfc6);
+    // 0823:0fc6 push word ptr cs:[3F4h]
+    ctx.push16(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_cs(), 0x3f4u16)),
+    );
+    ctx.dump_dosbox(0xfcb);
+    // 0823:0fcb push word ptr cs:[3F6h]
+    ctx.push16(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_cs(), 0x3f6u16)),
+    );
+    ctx.dump_dosbox(0xfd0);
+    // 0823:0fd0 push word ptr cs:[3F2h]
+    ctx.push16(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_cs(), 0x3f2u16)),
+    );
+    ctx.dump_dosbox(0xfd5);
+    // 0823:0fd5 call far ptr 1483h:013Eh
+    ctx.callf16(0xfda, 0x1483, Cont(x1483_013e))
+}
+
+pub fn x0823_0fda(ctx: &mut Context) -> Cont {
+    ctx.dump_dosbox(0xfda);
+    // 0823:0fda jmp short 0FF6h
+    Cont(x0823_0ff6)
+}
+
 pub fn x0823_0fdc(ctx: &mut Context) -> Cont {
     ctx.dump_dosbox(0xfdc);
     // 0823:0fdc call 0DA2h
@@ -40387,7 +40442,7 @@ pub fn x1483_0940(ctx: &mut Context) -> Cont {
     ctx.ret16(0)
 }
 
-const BLOCKS: [(u32, ContFn); 1553] = [
+const BLOCKS: [(u32, ContFn); 1556] = [
     (0x11, crate::externs::x11),
     (0x8a34, x0823_0804),
     (0x8a5e, x0823_082e),
@@ -40563,6 +40618,9 @@ const BLOCKS: [(u32, ContFn); 1553] = [
     (0x91c2, x0823_0f92),
     (0x91c5, x0823_0f95),
     (0x91e5, x0823_0fb5),
+    (0x91e7, x0823_0fb7),
+    (0x91ea, x0823_0fba),
+    (0x920a, x0823_0fda),
     (0x920c, x0823_0fdc),
     (0x920f, x0823_0fdf),
     (0x9226, x0823_0ff6),

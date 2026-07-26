@@ -2,7 +2,7 @@
 
 use std::collections::{BTreeMap, HashMap, HashSet, VecDeque};
 
-use runtime::segofs;
+use runtime::SegOfs;
 
 use crate::{AddrInfo, Block, BlockType, Import, Instr, Module, State, memory::Memory};
 
@@ -22,10 +22,22 @@ fn is_abs_memory_ref(instr: &iced_x86::Instruction) -> Option<u32> {
     Some(instr.memory_displacement32())
 }
 
-#[derive(Clone, Copy)]
+#[derive(Clone, Copy, PartialEq, PartialOrd)]
 pub enum IP {
     Flat(u32),
-    Seg(u16, u16),
+    Seg(SegOfs),
+}
+
+impl From<u32> for IP {
+    fn from(addr: u32) -> Self {
+        IP::Flat(addr)
+    }
+}
+
+impl From<(u16, u16)> for IP {
+    fn from(tuple: (u16, u16)) -> Self {
+        IP::Seg(tuple.into())
+    }
 }
 
 impl IP {
@@ -38,28 +50,28 @@ impl IP {
     pub fn seg(&self) -> u16 {
         match *self {
             IP::Flat(_) => unreachable!(),
-            IP::Seg(seg, _) => seg,
+            IP::Seg(addr) => addr.seg,
         }
     }
 
     pub fn to_addr(&self) -> u32 {
         match *self {
-            IP::Flat(ip) => ip,
-            IP::Seg(seg, ofs) => segofs(seg, ofs),
+            IP::Flat(addr) => addr,
+            IP::Seg(addr) => addr.abs(),
         }
     }
 
     pub fn local(&self) -> u32 {
         match *self {
             IP::Flat(ip) => ip,
-            IP::Seg(_, ofs) => ofs as u32,
+            IP::Seg(addr) => addr.ofs as u32,
         }
     }
 
-    pub fn with_local(&self, addr: u32) -> IP {
+    pub fn with_local(&self, local: u32) -> IP {
         match *self {
-            IP::Flat(_) => IP::Flat(addr),
-            IP::Seg(seg, _) => IP::Seg(seg, addr as u16),
+            IP::Flat(_) => IP::Flat(local),
+            IP::Seg(addr) => IP::Seg((addr.seg, local as u16).into()),
         }
     }
 }
@@ -68,7 +80,7 @@ impl std::fmt::Display for IP {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match *self {
             IP::Flat(ip) => write!(f, "{ip:08x}"),
-            IP::Seg(seg, ofs) => write!(f, "{seg:04x}:{ofs:04x}"),
+            IP::Seg(addr) => write!(f, "{addr}"),
         }
     }
 }
@@ -81,8 +93,8 @@ impl std::fmt::Debug for IP {
 
 #[derive(Clone)]
 pub enum EntryPoint {
-    Single(u32),
-    Range(std::ops::Range<u32>),
+    Single(IP),
+    Range(std::ops::Range<IP>),
 }
 
 #[derive(Default)]
@@ -177,20 +189,20 @@ impl<'a> Traverse<'a> {
         self.queue.enqueue(self.module.entry_point());
         for entry_point in self.gather.entry_points.iter() {
             match entry_point {
-                EntryPoint::Single(addr) => self.queue.enqueue(self.module.local_addr(*addr)),
+                EntryPoint::Single(addr) => self.queue.enqueue(*addr),
                 EntryPoint::Range(r) => {
-                    let mut addr = r.start;
-                    while addr < r.end {
-                        let Ok(block) = self.decode_one(IP::todo_segmenting(addr)) else {
-                            log::warn!("failed to decode range {r:#x?} at {:#x}", addr);
+                    let mut ip = r.start;
+                    while ip < r.end {
+                        let Ok(block) = self.decode_one(ip) else {
+                            log::warn!("failed to decode range {r:#?} at {}", ip);
                             break;
                         };
                         let BlockType::Instrs(instrs) = &block.ty else {
                             unreachable!();
                         };
-                        let next = instrs.last().unwrap().next_ip().to_addr();
-                        self.blocks.insert(addr, block);
-                        addr = next;
+                        let next = instrs.last().unwrap().next_ip();
+                        self.blocks.insert(ip.to_addr(), block);
+                        ip = next;
                     }
                 }
             }
@@ -300,7 +312,8 @@ impl<'a> Traverse<'a> {
                             .queue
                             .enqueue(block_ip.with_local(instr.near_branch32())),
                         iced_x86::OpKind::FarBranch16 => {
-                            let ip = IP::Seg(instr.far_branch_selector(), instr.far_branch16());
+                            let ip =
+                                IP::Seg((instr.far_branch_selector(), instr.far_branch16()).into());
                             self.queue.enqueue(ip);
                         }
                         iced_x86::OpKind::Memory => {

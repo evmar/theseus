@@ -141,14 +141,14 @@ pub fn do_unpack(ctx: &mut runtime::Context) {
         //scan_immediates: true,
         entry_points: [
             vec![
-                tc::EntryPoint::Single(0x004068f0), // window proc
-                tc::EntryPoint::Single(0x0041ec70), // sound thread proc
-                tc::EntryPoint::Single(0x0041e8f0), // waveOutOpen callback
+                tc::EntryPoint::Single(0x004068f0.into()), // window proc
+                tc::EntryPoint::Single(0x0041ec70.into()), // sound thread proc
+                tc::EntryPoint::Single(0x0041e8f0.into()), // waveOutOpen callback
             ],
             // jump table
             (0x0041e8d4..=0x0041e8ec)
                 .step_by(4)
-                .map(|addr| tc::EntryPoint::Single(tc.mem.read::<u32>(addr)))
+                .map(|addr| tc::EntryPoint::Single(tc.mem.read::<u32>(addr).into()))
                 .collect(),
         ]
         .concat()

@@ -30,7 +30,8 @@ impl<'a> CodeGen<'a> {
                 cont = self.resolve_jmp(ip);
             }
             iced_x86::OpKind::FarBranch16 => {
-                let ip = IP::Seg(instr.iced.far_branch_selector(), instr.iced.far_branch16());
+                let ip =
+                    IP::Seg((instr.iced.far_branch_selector(), instr.iced.far_branch16()).into());
                 seg = Some(format!("{:#x}", instr.iced.far_branch_selector()));
                 cont = self.resolve_jmp(ip);
             }

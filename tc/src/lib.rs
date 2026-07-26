@@ -1,12 +1,13 @@
 use std::collections::HashMap;
 
-use crate::{gather::IP, memory::Memory};
+use crate::memory::Memory;
 
 mod codegen;
 pub mod com;
 pub mod exe;
 mod gather;
 mod memory;
+pub use gather::IP;
 pub use gather::{EntryPoint, Gather};
 use runtime::segofs;
 
@@ -69,7 +70,7 @@ impl Module {
 
     pub fn local_addr(&self, addr: u32) -> IP {
         match self {
-            Module::DOS(m) => IP::Seg(m.load_segment, addr as u16),
+            Module::DOS(m) => IP::Seg((m.load_segment, addr as u16).into()),
             Module::Windows(_) => IP::Flat(addr),
         }
     }
@@ -152,7 +153,7 @@ impl Block {
         match &self.ty {
             BlockType::Instrs(instrs) => match instrs[0].ip {
                 IP::Flat(addr) => format!("x{:x}", addr),
-                IP::Seg(seg, ofs) => format!("x{:04x}_{:04x}", seg, ofs),
+                IP::Seg(addr) => format!("x{:04x}_{:04x}", addr.seg, addr.ofs),
             },
             BlockType::Stdcall(func) => format!("{}_stdcall", func),
             BlockType::Extern(ip) => format!("x{:x}", ip),
