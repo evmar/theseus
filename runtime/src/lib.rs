@@ -17,7 +17,7 @@ pub use ops::*;
 pub use registers::Regs;
 
 #[repr(C)]
-#[derive(zerocopy::FromBytes)]
+#[derive(zerocopy::FromBytes, zerocopy::IntoBytes, Debug, Clone, Copy)]
 pub struct SegOfs {
     pub ofs: u16,
     pub seg: u16,
