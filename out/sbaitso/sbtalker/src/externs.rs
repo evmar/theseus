@@ -89,8 +89,8 @@ pub fn x11(ctx: &mut Context) -> Cont {
     println!("buf1: {:?}", driver.buf1.to_str());
     println!("buf2: {:?}", driver.buf2.to_str());
 
-    ctx.cpu.regs.set_al(/* say */ 7);
-    call(ctx, entry_point);
+    // ctx.cpu.regs.set_al(/* say */ 7);
+    // call(ctx, entry_point);
 
     todo!()
 }

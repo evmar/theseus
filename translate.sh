@@ -84,6 +84,8 @@ elif [[ $1 == "sbaitso-sbtalker" ]]; then
         --entry-point 823:898
         # driver entry point, returned by TSR
         --entry-point 823:ae2
+        # random jump table deep in sbtalker, uhoh
+        --jump-table d72:330..d72:336
     )
     cargo run -p tc -- "${args[@]}"
 else
