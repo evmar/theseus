@@ -123,13 +123,18 @@ fn run() -> anyhow::Result<()> {
                     anyhow::bail!("--jump-table {src} must be seg:ofs");
                 };
                 next = IP::Seg((addr.seg, addr.ofs + 2).into());
-                IP::Seg((addr.seg, state.mem.read::<u16>(src.to_addr())).into())
+                let val = state.mem.read::<u16>(src.to_addr());
+                IP::Seg((addr.seg, val).into())
             } else {
                 let IP::Flat(addr) = src else {
                     anyhow::bail!("--jump-table {src} must be flat address");
                 };
+                if addr == 0 {
+                    continue;
+                }
                 next = IP::Flat(addr + 4);
-                IP::Flat(state.mem.read::<u32>(src.to_addr()))
+                let val = state.mem.read::<u32>(src.to_addr());
+                IP::Flat(val)
             };
             log::info!("jump table {src} -> {dst}");
             entry_points.push(tc::EntryPoint::Single(dst));

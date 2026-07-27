@@ -346,9 +346,8 @@ impl<'a> Traverse<'a> {
                 Int => {
                     self.queue.enqueue(block_ip.with_local(instr.next_ip32()));
                 }
-                INVALID => {
-                    anyhow::bail!("invalid code found");
-                }
+                Syscall | Sysexit | Sysret => anyhow::bail!("syscall not implemented"),
+                INVALID => anyhow::bail!("invalid code found"),
                 _ => todo!("{ip} control flow {}", instr),
             }
             break;
