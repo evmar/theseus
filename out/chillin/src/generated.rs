@@ -6,8 +6,9 @@
 #![allow(non_snake_case)]
 
 use runtime::*;
+
 use winapi::*;
-fn init_memory(ctx: &mut Context, mappings: &mut runtime::Mappings) {
+fn init(ctx: &mut Context, mappings: &mut runtime::Mappings) {
     mappings.reserve(runtime::Mapping {
         desc: "null page".to_string(),
         addr: 0x0,
@@ -422,8 +423,10 @@ pub fn x40119e(ctx: &mut Context) -> Cont {
     // 004011a8 push eax
     ctx.push32(ctx.cpu.regs.eax);
     // 004011a9 call dword ptr [edx+50h]
-    let dst = ctx.indirect32(ctx.memory.read(ctx.cpu.regs.edx.wrapping_add(0x50u32)));
-    ctx.call32(0x4011ac, dst)
+    let addr = ctx
+        .memory
+        .read::<u32>(ctx.cpu.regs.edx.wrapping_add(0x50u32));
+    ctx.call32(0x4011ac, ctx.indirect32(addr))
 }
 
 pub fn x4011ac(ctx: &mut Context) -> Cont {
@@ -489,8 +492,10 @@ pub fn x4011d4(ctx: &mut Context) -> Cont {
 
 pub fn x4011e7(ctx: &mut Context) -> Cont {
     // 004011e7 call dword ptr [edx+54h]
-    let dst = ctx.indirect32(ctx.memory.read(ctx.cpu.regs.edx.wrapping_add(0x54u32)));
-    ctx.call32(0x4011ea, dst)
+    let addr = ctx
+        .memory
+        .read::<u32>(ctx.cpu.regs.edx.wrapping_add(0x54u32));
+    ctx.call32(0x4011ea, ctx.indirect32(addr))
 }
 
 pub fn x4011ea(ctx: &mut Context) -> Cont {
@@ -625,8 +630,10 @@ pub fn x401274(ctx: &mut Context) -> Cont {
     // 0040127a mov edx,[eax]
     ctx.cpu.regs.edx = ctx.memory.read::<u32>(ctx.cpu.regs.eax);
     // 0040127c call dword ptr [edx+8]
-    let dst = ctx.indirect32(ctx.memory.read(ctx.cpu.regs.edx.wrapping_add(0x8u32)));
-    ctx.call32(0x40127f, dst)
+    let addr = ctx
+        .memory
+        .read::<u32>(ctx.cpu.regs.edx.wrapping_add(0x8u32));
+    ctx.call32(0x40127f, ctx.indirect32(addr))
 }
 
 pub fn x40127f(ctx: &mut Context) -> Cont {
@@ -654,8 +661,10 @@ pub fn x401292(ctx: &mut Context) -> Cont {
     // 00401298 mov edx,[eax]
     ctx.cpu.regs.edx = ctx.memory.read::<u32>(ctx.cpu.regs.eax);
     // 0040129a call dword ptr [edx+8]
-    let dst = ctx.indirect32(ctx.memory.read(ctx.cpu.regs.edx.wrapping_add(0x8u32)));
-    ctx.call32(0x40129d, dst)
+    let addr = ctx
+        .memory
+        .read::<u32>(ctx.cpu.regs.edx.wrapping_add(0x8u32));
+    ctx.call32(0x40129d, ctx.indirect32(addr))
 }
 
 pub fn x40129d(ctx: &mut Context) -> Cont {
@@ -687,8 +696,10 @@ pub fn x4012b0(ctx: &mut Context) -> Cont {
     // 004012ba push eax
     ctx.push32(ctx.cpu.regs.eax);
     // 004012bb call dword ptr [edx+50h]
-    let dst = ctx.indirect32(ctx.memory.read(ctx.cpu.regs.edx.wrapping_add(0x50u32)));
-    ctx.call32(0x4012be, dst)
+    let addr = ctx
+        .memory
+        .read::<u32>(ctx.cpu.regs.edx.wrapping_add(0x50u32));
+    ctx.call32(0x4012be, ctx.indirect32(addr))
 }
 
 pub fn x4012be(ctx: &mut Context) -> Cont {
@@ -699,8 +710,10 @@ pub fn x4012be(ctx: &mut Context) -> Cont {
     // 004012c4 mov edx,[eax]
     ctx.cpu.regs.edx = ctx.memory.read::<u32>(ctx.cpu.regs.eax);
     // 004012c6 call dword ptr [edx+4Ch]
-    let dst = ctx.indirect32(ctx.memory.read(ctx.cpu.regs.edx.wrapping_add(0x4cu32)));
-    ctx.call32(0x4012c9, dst)
+    let addr = ctx
+        .memory
+        .read::<u32>(ctx.cpu.regs.edx.wrapping_add(0x4cu32));
+    ctx.call32(0x4012c9, ctx.indirect32(addr))
 }
 
 pub fn x4012c9(ctx: &mut Context) -> Cont {
@@ -711,8 +724,10 @@ pub fn x4012c9(ctx: &mut Context) -> Cont {
     // 004012cf mov edx,[eax]
     ctx.cpu.regs.edx = ctx.memory.read::<u32>(ctx.cpu.regs.eax);
     // 004012d1 call dword ptr [edx+8]
-    let dst = ctx.indirect32(ctx.memory.read(ctx.cpu.regs.edx.wrapping_add(0x8u32)));
-    ctx.call32(0x4012d4, dst)
+    let addr = ctx
+        .memory
+        .read::<u32>(ctx.cpu.regs.edx.wrapping_add(0x8u32));
+    ctx.call32(0x4012d4, ctx.indirect32(addr))
 }
 
 pub fn x4012d4(ctx: &mut Context) -> Cont {
@@ -793,8 +808,10 @@ pub fn x40130f(ctx: &mut Context) -> Cont {
 
 pub fn x40131e(ctx: &mut Context) -> Cont {
     // 0040131e call dword ptr [esi+54h]
-    let dst = ctx.indirect32(ctx.memory.read(ctx.cpu.regs.esi.wrapping_add(0x54u32)));
-    ctx.call32(0x401321, dst)
+    let addr = ctx
+        .memory
+        .read::<u32>(ctx.cpu.regs.esi.wrapping_add(0x54u32));
+    ctx.call32(0x401321, ctx.indirect32(addr))
 }
 
 pub fn x401321(ctx: &mut Context) -> Cont {
@@ -840,8 +857,10 @@ pub fn x401329(ctx: &mut Context) -> Cont {
     // 00401363 push eax
     ctx.push32(ctx.cpu.regs.eax);
     // 00401364 call dword ptr [edx+18h]
-    let dst = ctx.indirect32(ctx.memory.read(ctx.cpu.regs.edx.wrapping_add(0x18u32)));
-    ctx.call32(0x401367, dst)
+    let addr = ctx
+        .memory
+        .read::<u32>(ctx.cpu.regs.edx.wrapping_add(0x18u32));
+    ctx.call32(0x401367, ctx.indirect32(addr))
 }
 
 pub fn x401367(ctx: &mut Context) -> Cont {
@@ -876,8 +895,10 @@ pub fn x40136f(ctx: &mut Context) -> Cont {
     // 00401392 push eax
     ctx.push32(ctx.cpu.regs.eax);
     // 00401393 call dword ptr [edx+30h]
-    let dst = ctx.indirect32(ctx.memory.read(ctx.cpu.regs.edx.wrapping_add(0x30u32)));
-    ctx.call32(0x401396, dst)
+    let addr = ctx
+        .memory
+        .read::<u32>(ctx.cpu.regs.edx.wrapping_add(0x30u32));
+    ctx.call32(0x401396, ctx.indirect32(addr))
 }
 
 pub fn x401396(ctx: &mut Context) -> Cont {
@@ -910,8 +931,10 @@ pub fn x40139e(ctx: &mut Context) -> Cont {
     // 004013bc push eax
     ctx.push32(ctx.cpu.regs.eax);
     // 004013bd call dword ptr [edx+54h]
-    let dst = ctx.indirect32(ctx.memory.read(ctx.cpu.regs.edx.wrapping_add(0x54u32)));
-    ctx.call32(0x4013c0, dst)
+    let addr = ctx
+        .memory
+        .read::<u32>(ctx.cpu.regs.edx.wrapping_add(0x54u32));
+    ctx.call32(0x4013c0, ctx.indirect32(addr))
 }
 
 pub fn x4013c0(ctx: &mut Context) -> Cont {
@@ -1095,8 +1118,10 @@ pub fn x40149a(ctx: &mut Context) -> Cont {
     // 004014a0 mov edx,[eax]
     ctx.cpu.regs.edx = ctx.memory.read::<u32>(ctx.cpu.regs.eax);
     // 004014a2 call dword ptr [edx+8]
-    let dst = ctx.indirect32(ctx.memory.read(ctx.cpu.regs.edx.wrapping_add(0x8u32)));
-    ctx.call32(0x4014a5, dst)
+    let addr = ctx
+        .memory
+        .read::<u32>(ctx.cpu.regs.edx.wrapping_add(0x8u32));
+    ctx.call32(0x4014a5, ctx.indirect32(addr))
 }
 
 pub fn x4014a5(ctx: &mut Context) -> Cont {
@@ -1124,8 +1149,10 @@ pub fn x4014b8(ctx: &mut Context) -> Cont {
     // 004014be mov edx,[eax]
     ctx.cpu.regs.edx = ctx.memory.read::<u32>(ctx.cpu.regs.eax);
     // 004014c0 call dword ptr [edx+8]
-    let dst = ctx.indirect32(ctx.memory.read(ctx.cpu.regs.edx.wrapping_add(0x8u32)));
-    ctx.call32(0x4014c3, dst)
+    let addr = ctx
+        .memory
+        .read::<u32>(ctx.cpu.regs.edx.wrapping_add(0x8u32));
+    ctx.call32(0x4014c3, ctx.indirect32(addr))
 }
 
 pub fn x4014c3(ctx: &mut Context) -> Cont {
@@ -1157,8 +1184,10 @@ pub fn x4014d6(ctx: &mut Context) -> Cont {
     // 004014e0 push eax
     ctx.push32(ctx.cpu.regs.eax);
     // 004014e1 call dword ptr [edx+50h]
-    let dst = ctx.indirect32(ctx.memory.read(ctx.cpu.regs.edx.wrapping_add(0x50u32)));
-    ctx.call32(0x4014e4, dst)
+    let addr = ctx
+        .memory
+        .read::<u32>(ctx.cpu.regs.edx.wrapping_add(0x50u32));
+    ctx.call32(0x4014e4, ctx.indirect32(addr))
 }
 
 pub fn x4014e4(ctx: &mut Context) -> Cont {
@@ -1169,8 +1198,10 @@ pub fn x4014e4(ctx: &mut Context) -> Cont {
     // 004014ea mov edx,[eax]
     ctx.cpu.regs.edx = ctx.memory.read::<u32>(ctx.cpu.regs.eax);
     // 004014ec call dword ptr [edx+4Ch]
-    let dst = ctx.indirect32(ctx.memory.read(ctx.cpu.regs.edx.wrapping_add(0x4cu32)));
-    ctx.call32(0x4014ef, dst)
+    let addr = ctx
+        .memory
+        .read::<u32>(ctx.cpu.regs.edx.wrapping_add(0x4cu32));
+    ctx.call32(0x4014ef, ctx.indirect32(addr))
 }
 
 pub fn x4014ef(ctx: &mut Context) -> Cont {
@@ -1181,8 +1212,10 @@ pub fn x4014ef(ctx: &mut Context) -> Cont {
     // 004014f5 mov edx,[eax]
     ctx.cpu.regs.edx = ctx.memory.read::<u32>(ctx.cpu.regs.eax);
     // 004014f7 call dword ptr [edx+8]
-    let dst = ctx.indirect32(ctx.memory.read(ctx.cpu.regs.edx.wrapping_add(0x8u32)));
-    ctx.call32(0x4014fa, dst)
+    let addr = ctx
+        .memory
+        .read::<u32>(ctx.cpu.regs.edx.wrapping_add(0x8u32));
+    ctx.call32(0x4014fa, ctx.indirect32(addr))
 }
 
 pub fn x4014fa(ctx: &mut Context) -> Cont {
@@ -1266,8 +1299,10 @@ pub fn draw(ctx: &mut Context) -> Cont {
     // 00401550 push eax
     ctx.push32(ctx.cpu.regs.eax);
     // 00401551 call dword ptr [edx+64h]
-    let dst = ctx.indirect32(ctx.memory.read(ctx.cpu.regs.edx.wrapping_add(0x64u32)));
-    ctx.call32(0x401554, dst)
+    let addr = ctx
+        .memory
+        .read::<u32>(ctx.cpu.regs.edx.wrapping_add(0x64u32));
+    ctx.call32(0x401554, ctx.indirect32(addr))
 }
 
 pub fn x401554(ctx: &mut Context) -> Cont {
@@ -1445,8 +1480,10 @@ pub fn x4015e0(ctx: &mut Context) -> Cont {
     // 004015e8 mov edx,[eax]
     ctx.cpu.regs.edx = ctx.memory.read::<u32>(ctx.cpu.regs.eax);
     // 004015ea call dword ptr [edx+80h]
-    let dst = ctx.indirect32(ctx.memory.read(ctx.cpu.regs.edx.wrapping_add(0x80u32)));
-    ctx.call32(0x4015f0, dst)
+    let addr = ctx
+        .memory
+        .read::<u32>(ctx.cpu.regs.edx.wrapping_add(0x80u32));
+    ctx.call32(0x4015f0, ctx.indirect32(addr))
 }
 
 pub fn x4015f0(ctx: &mut Context) -> Cont {
@@ -1476,8 +1513,10 @@ pub fn x401600(ctx: &mut Context) -> Cont {
     // 0040160b push eax
     ctx.push32(ctx.cpu.regs.eax);
     // 0040160c call dword ptr [edx+2Ch]
-    let dst = ctx.indirect32(ctx.memory.read(ctx.cpu.regs.edx.wrapping_add(0x2cu32)));
-    ctx.call32(0x40160f, dst)
+    let addr = ctx
+        .memory
+        .read::<u32>(ctx.cpu.regs.edx.wrapping_add(0x2cu32));
+    ctx.call32(0x40160f, ctx.indirect32(addr))
 }
 
 pub fn x40160f(ctx: &mut Context) -> Cont {
@@ -12660,7 +12699,7 @@ pub fn x403efe(ctx: &mut Context) -> Cont {
 
 pub fn x404003(ctx: &mut Context) -> Cont {
     // 00404003 jmp fword ptr [ebx]
-    ctx.indirect32(ctx.memory.read(ctx.cpu.regs.ebx))
+    todo!("SegPtr32")
 }
 
 pub fn x404004(ctx: &mut Context) -> Cont {
@@ -39390,7 +39429,7 @@ pub fn x409b47(ctx: &mut Context) -> Cont {
         .wrapping_add(ctx.cpu.regs.ebx)
         .wrapping_add(0xfffff8eeu32);
     // 00409b56 jmp eax
-    ctx.indirect32(ctx.cpu.regs.eax)
+    ctx.indirect(ctx.cpu.regs.eax)
 }
 
 pub fn x409b58(ctx: &mut Context) -> Cont {
@@ -41025,8 +41064,10 @@ pub fn x40a2ad(ctx: &mut Context) -> Cont {
     // 0040a2b8 mov edi,[esi]
     ctx.cpu.regs.edi = ctx.memory.read::<u32>(ctx.cpu.regs.esi);
     // 0040a2ba call dword ptr [edi+18h]
-    let dst = ctx.indirect32(ctx.memory.read(ctx.cpu.regs.edi.wrapping_add(0x18u32)));
-    ctx.call32(0x40a2bd, dst)
+    let addr = ctx
+        .memory
+        .read::<u32>(ctx.cpu.regs.edi.wrapping_add(0x18u32));
+    ctx.call32(0x40a2bd, ctx.indirect32(addr))
 }
 
 pub fn x40a2bd(ctx: &mut Context) -> Cont {
@@ -41048,8 +41089,10 @@ pub fn x40a2c1(ctx: &mut Context) -> Cont {
     // 0040a2cb push esi
     ctx.push32(ctx.cpu.regs.esi);
     // 0040a2cc call dword ptr [edi+0Ch]
-    let dst = ctx.indirect32(ctx.memory.read(ctx.cpu.regs.edi.wrapping_add(0xcu32)));
-    ctx.call32(0x40a2cf, dst)
+    let addr = ctx
+        .memory
+        .read::<u32>(ctx.cpu.regs.edi.wrapping_add(0xcu32));
+    ctx.call32(0x40a2cf, ctx.indirect32(addr))
 }
 
 pub fn x40a2cf(ctx: &mut Context) -> Cont {
@@ -41075,8 +41118,10 @@ pub fn x40a2d3(ctx: &mut Context) -> Cont {
     // 0040a2dc push esi
     ctx.push32(ctx.cpu.regs.esi);
     // 0040a2dd call dword ptr [edi+0Ch]
-    let dst = ctx.indirect32(ctx.memory.read(ctx.cpu.regs.edi.wrapping_add(0xcu32)));
-    ctx.call32(0x40a2e0, dst)
+    let addr = ctx
+        .memory
+        .read::<u32>(ctx.cpu.regs.edi.wrapping_add(0xcu32));
+    ctx.call32(0x40a2e0, ctx.indirect32(addr))
 }
 
 pub fn x40a2e0(ctx: &mut Context) -> Cont {
@@ -41108,8 +41153,10 @@ pub fn x40a2e8(ctx: &mut Context) -> Cont {
     // 0040a2fb mov edi,[esi]
     ctx.cpu.regs.edi = ctx.memory.read::<u32>(ctx.cpu.regs.esi);
     // 0040a2fd call dword ptr [edi+38h]
-    let dst = ctx.indirect32(ctx.memory.read(ctx.cpu.regs.edi.wrapping_add(0x38u32)));
-    ctx.call32(0x40a300, dst)
+    let addr = ctx
+        .memory
+        .read::<u32>(ctx.cpu.regs.edi.wrapping_add(0x38u32));
+    ctx.call32(0x40a300, ctx.indirect32(addr))
 }
 
 pub fn x40a300(ctx: &mut Context) -> Cont {
@@ -41144,8 +41191,10 @@ pub fn x40a300(ctx: &mut Context) -> Cont {
     // 0040a31e push ebp
     ctx.push32(ctx.cpu.regs.ebp);
     // 0040a31f call dword ptr [esi+2Ch]
-    let dst = ctx.indirect32(ctx.memory.read(ctx.cpu.regs.esi.wrapping_add(0x2cu32)));
-    ctx.call32(0x40a322, dst)
+    let addr = ctx
+        .memory
+        .read::<u32>(ctx.cpu.regs.esi.wrapping_add(0x2cu32));
+    ctx.call32(0x40a322, ctx.indirect32(addr))
 }
 
 pub fn x40a322(ctx: &mut Context) -> Cont {
@@ -41199,8 +41248,10 @@ pub fn x40a326(ctx: &mut Context) -> Cont {
     // 0040a342 push ebp
     ctx.push32(ctx.cpu.regs.ebp);
     // 0040a343 call dword ptr [esi+4Ch]
-    let dst = ctx.indirect32(ctx.memory.read(ctx.cpu.regs.esi.wrapping_add(0x4cu32)));
-    ctx.call32(0x40a346, dst)
+    let addr = ctx
+        .memory
+        .read::<u32>(ctx.cpu.regs.esi.wrapping_add(0x4cu32));
+    ctx.call32(0x40a346, ctx.indirect32(addr))
 }
 
 pub fn x40a346(ctx: &mut Context) -> Cont {
@@ -41232,8 +41283,10 @@ pub fn x40a34a(ctx: &mut Context) -> Cont {
     // 0040a354 push ebp
     ctx.push32(ctx.cpu.regs.ebp);
     // 0040a355 call dword ptr [esi+30h]
-    let dst = ctx.indirect32(ctx.memory.read(ctx.cpu.regs.esi.wrapping_add(0x30u32)));
-    ctx.call32(0x40a358, dst)
+    let addr = ctx
+        .memory
+        .read::<u32>(ctx.cpu.regs.esi.wrapping_add(0x30u32));
+    ctx.call32(0x40a358, ctx.indirect32(addr))
 }
 
 pub fn x40a358(ctx: &mut Context) -> Cont {
@@ -41349,16 +41402,14 @@ pub fn x40a3a5(ctx: &mut Context) -> Cont {
     // 0040a3ac lodsd
     ctx.lodsd();
     // 0040a3ad call edi
-    let dst = ctx.indirect32(ctx.cpu.regs.edi);
-    ctx.call32(0x40a3af, dst)
+    ctx.call32(0x40a3af, ctx.indirect(ctx.cpu.regs.edi))
 }
 
 pub fn x40a3af(ctx: &mut Context) -> Cont {
     // 0040a3af lodsd
     ctx.lodsd();
     // 0040a3b0 call edi
-    let dst = ctx.indirect32(ctx.cpu.regs.edi);
-    ctx.call32(0x40a3b2, dst)
+    ctx.call32(0x40a3b2, ctx.indirect(ctx.cpu.regs.edi))
 }
 
 pub fn x40a3b2(ctx: &mut Context) -> Cont {
@@ -41378,8 +41429,10 @@ pub fn x40a3b9(ctx: &mut Context) -> Cont {
     // 0040a3bb push eax
     ctx.push32(ctx.cpu.regs.eax);
     // 0040a3bc call dword ptr [edx+8]
-    let dst = ctx.indirect32(ctx.memory.read(ctx.cpu.regs.edx.wrapping_add(0x8u32)));
-    ctx.call32(0x40a3bf, dst)
+    let addr = ctx
+        .memory
+        .read::<u32>(ctx.cpu.regs.edx.wrapping_add(0x8u32));
+    ctx.call32(0x40a3bf, ctx.indirect32(addr))
 }
 
 pub fn x40a3bf(ctx: &mut Context) -> Cont {
@@ -41454,8 +41507,10 @@ pub fn x40a3e4(ctx: &mut Context) -> Cont {
     // 0040a3ee mov edx,[ebp]
     ctx.cpu.regs.edx = ctx.memory.read::<u32>(ctx.cpu.regs.ebp);
     // 0040a3f1 call dword ptr [edx+10h]
-    let dst = ctx.indirect32(ctx.memory.read(ctx.cpu.regs.edx.wrapping_add(0x10u32)));
-    ctx.call32(0x40a3f4, dst)
+    let addr = ctx
+        .memory
+        .read::<u32>(ctx.cpu.regs.edx.wrapping_add(0x10u32));
+    ctx.call32(0x40a3f4, ctx.indirect32(addr))
 }
 
 pub fn x40a3f4(ctx: &mut Context) -> Cont {
@@ -41529,8 +41584,10 @@ pub fn x40a40f(ctx: &mut Context) -> Cont {
     // 0040a42e push ebp
     ctx.push32(ctx.cpu.regs.ebp);
     // 0040a42f call dword ptr [edx+2Ch]
-    let dst = ctx.indirect32(ctx.memory.read(ctx.cpu.regs.edx.wrapping_add(0x2cu32)));
-    ctx.call32(0x40a432, dst)
+    let addr = ctx
+        .memory
+        .read::<u32>(ctx.cpu.regs.edx.wrapping_add(0x2cu32));
+    ctx.call32(0x40a432, ctx.indirect32(addr))
 }
 
 pub fn x40a432(ctx: &mut Context) -> Cont {
@@ -41546,8 +41603,10 @@ pub fn x40a439(ctx: &mut Context) -> Cont {
     // 0040a43c push ebp
     ctx.push32(ctx.cpu.regs.ebp);
     // 0040a43d call dword ptr [edx+50h]
-    let dst = ctx.indirect32(ctx.memory.read(ctx.cpu.regs.edx.wrapping_add(0x50u32)));
-    ctx.call32(0x40a440, dst)
+    let addr = ctx
+        .memory
+        .read::<u32>(ctx.cpu.regs.edx.wrapping_add(0x50u32));
+    ctx.call32(0x40a440, ctx.indirect32(addr))
 }
 
 pub fn x40a440(ctx: &mut Context) -> Cont {
@@ -41589,8 +41648,7 @@ pub fn x40a461(ctx: &mut Context) -> Cont {
         .memory
         .read::<u32>(ctx.cpu.regs.ebx.wrapping_add(0x18u32));
     // 0040a464 call ebp
-    let dst = ctx.indirect32(ctx.cpu.regs.ebp);
-    ctx.call32(0x40a466, dst)
+    ctx.call32(0x40a466, ctx.indirect(ctx.cpu.regs.ebp))
 }
 
 pub fn x40a466(ctx: &mut Context) -> Cont {
@@ -41618,8 +41676,7 @@ pub fn x40a471(ctx: &mut Context) -> Cont {
         .memory
         .read::<u32>(ctx.cpu.regs.ebx.wrapping_add(0x20u32));
     // 0040a474 call ebp
-    let dst = ctx.indirect32(ctx.cpu.regs.ebp);
-    ctx.call32(0x40a476, dst)
+    ctx.call32(0x40a476, ctx.indirect(ctx.cpu.regs.ebp))
 }
 
 pub fn x40a476(ctx: &mut Context) -> Cont {
@@ -41651,8 +41708,10 @@ pub fn x40a476(ctx: &mut Context) -> Cont {
     // 0040a484 mov esi,[ebp]
     ctx.cpu.regs.esi = ctx.memory.read::<u32>(ctx.cpu.regs.ebp);
     // 0040a487 call dword ptr [esi+4Ch]
-    let dst = ctx.indirect32(ctx.memory.read(ctx.cpu.regs.esi.wrapping_add(0x4cu32)));
-    ctx.call32(0x40a48a, dst)
+    let addr = ctx
+        .memory
+        .read::<u32>(ctx.cpu.regs.esi.wrapping_add(0x4cu32));
+    ctx.call32(0x40a48a, ctx.indirect32(addr))
 }
 
 pub fn x40a48a(ctx: &mut Context) -> Cont {
@@ -43968,6 +44027,6 @@ pub const EXEDATA: EXEData = EXEData {
     image_base: 0x400000,
     resources: 0x4c9000..0x4c9400,
     blocks: &BLOCKS,
-    init: init_memory,
+    init,
     entry_point: Cont(entry),
 };

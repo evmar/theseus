@@ -57,7 +57,7 @@ impl<'a> CodeGen<'a> {
                         extra = Some(format!("let addr = ctx.memory.read::<u32>({addr});"));
                         cont = "ctx.indirect32(addr)".into();
                     }
-                    s => todo!("{s:?}"),
+                    s => cont = format!("todo!(\"{:?}\")", s),
                 }
             }
             iced_x86::OpKind::Register => {
