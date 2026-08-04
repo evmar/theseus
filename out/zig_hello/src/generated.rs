@@ -6,18 +6,12 @@
 #![allow(non_snake_case)]
 
 use runtime::*;
-use winapi::*;
 
-fn init_memory(ctx: &mut Context, mappings: &mut runtime::Mappings) {
+use winapi::*;
+fn init(ctx: &mut Context, mappings: &mut runtime::Mappings) {
     mappings.reserve(runtime::Mapping {
         desc: "null page".to_string(),
         addr: 0x0,
-        size: 0x1000,
-        section: false,
-    });
-    mappings.reserve(runtime::Mapping {
-        desc: "vtables".to_string(),
-        addr: 0x1000,
         size: 0x1000,
         section: false,
     });
@@ -28,7 +22,7 @@ fn init_memory(ctx: &mut Context, mappings: &mut runtime::Mappings) {
         section: true,
     });
     let bytes = include_bytes!("../data/00400000.raw").as_slice();
-    let out = &mut ctx.memory[0x400000..][..bytes.len()];
+    let out = &mut ctx.memory.bytes[0x400000..][..bytes.len()];
     out.copy_from_slice(bytes);
     mappings.reserve(runtime::Mapping {
         desc: ".text".to_string(),
@@ -37,7 +31,7 @@ fn init_memory(ctx: &mut Context, mappings: &mut runtime::Mappings) {
         section: true,
     });
     let bytes = include_bytes!("../data/00401000.raw").as_slice();
-    let out = &mut ctx.memory[0x401000..][..bytes.len()];
+    let out = &mut ctx.memory.bytes[0x401000..][..bytes.len()];
     out.copy_from_slice(bytes);
     mappings.reserve(runtime::Mapping {
         desc: ".rdata".to_string(),
@@ -46,7 +40,7 @@ fn init_memory(ctx: &mut Context, mappings: &mut runtime::Mappings) {
         section: true,
     });
     let bytes = include_bytes!("../data/00402000.raw").as_slice();
-    let out = &mut ctx.memory[0x402000..][..bytes.len()];
+    let out = &mut ctx.memory.bytes[0x402000..][..bytes.len()];
     out.copy_from_slice(bytes);
     mappings.reserve(runtime::Mapping {
         desc: ".data".to_string(),
@@ -61,7 +55,7 @@ fn init_memory(ctx: &mut Context, mappings: &mut runtime::Mappings) {
         section: true,
     });
     let bytes = include_bytes!("../data/00404000.raw").as_slice();
-    let out = &mut ctx.memory[0x404000..][..bytes.len()];
+    let out = &mut ctx.memory.bytes[0x404000..][..bytes.len()];
     out.copy_from_slice(bytes);
 }
 
@@ -75,16 +69,14 @@ pub fn x401000(ctx: &mut Context) -> Cont {
     // 00401006 sub esp,10h
     ctx.cpu.regs.esp = sub(ctx.cpu.regs.esp, 0x10u32, &mut ctx.cpu.flags);
     // 00401009 call 00401015h
-    let dst = Cont(x401015);
-    ctx.call32(0x40100e, dst)
+    ctx.call32(0x40100e, Cont(x401015))
 }
 
 pub fn x40100e(ctx: &mut Context) -> Cont {
     // 0040100e push 0
     ctx.push32(0x0u32);
     // 00401010 call 00401077h
-    let dst = Cont(x401077);
-    ctx.call32(0x401015, dst)
+    ctx.call32(0x401015, Cont(x401077))
 }
 
 pub fn x401015(ctx: &mut Context) -> Cont {
@@ -168,8 +160,7 @@ pub fn x401045(ctx: &mut Context) -> Cont {
     // 00401054 push esi
     ctx.push32(ctx.cpu.regs.esi);
     // 00401055 call 00401083h
-    let dst = Cont(x401083);
-    ctx.call32(0x40105a, dst)
+    ctx.call32(0x40105a, Cont(x401083))
 }
 
 pub fn x40105a(ctx: &mut Context) -> Cont {
@@ -192,8 +183,7 @@ pub fn x40105e(ctx: &mut Context) -> Cont {
 
 pub fn x401063(ctx: &mut Context) -> Cont {
     // 00401063 call 0040107Dh
-    let dst = Cont(x40107d);
-    ctx.call32(0x401068, dst)
+    ctx.call32(0x401068, Cont(x40107d))
 }
 
 pub fn x401068(ctx: &mut Context) -> Cont {
@@ -257,6 +247,6 @@ pub const EXEDATA: EXEData = EXEData {
     image_base: 0x400000,
     resources: 0x0..0x0,
     blocks: &BLOCKS,
-    init: init_memory,
+    init,
     entry_point: Cont(x401000),
 };

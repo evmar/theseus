@@ -285,7 +285,8 @@ impl<'a> Traverse<'a> {
                         let imm = instr.immediate32();
                         if self.module.code_memory().contains(&imm) {
                             log::info!("{imm:x} looks like a code pointer");
-                            self.queue.enqueue(IP::todo_segmenting(imm));
+                            assert!(!self.module.segment_addressed());
+                            self.queue.enqueue(IP::Flat(imm));
                         }
                     }
                 }

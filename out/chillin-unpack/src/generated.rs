@@ -6,11 +6,9 @@
 #![allow(non_snake_case)]
 
 use runtime::*;
+
 use winapi::*;
-
-use crate::externs::*;
-
-fn init_memory(ctx: &mut Context, mappings: &mut runtime::Mappings) {
+fn init(ctx: &mut Context, mappings: &mut runtime::Mappings) {
     mappings.reserve(runtime::Mapping {
         desc: "null page".to_string(),
         addr: 0x0,
@@ -24,7 +22,7 @@ fn init_memory(ctx: &mut Context, mappings: &mut runtime::Mappings) {
         section: false,
     });
     let bytes = include_bytes!("../data/00001000.raw").as_slice();
-    let out = &mut ctx.memory[0x1000..][..bytes.len()];
+    let out = &mut ctx.memory.bytes[0x1000..][..bytes.len()];
     out.copy_from_slice(bytes);
     mappings.reserve(runtime::Mapping {
         desc: "exe header".to_string(),
@@ -33,7 +31,7 @@ fn init_memory(ctx: &mut Context, mappings: &mut runtime::Mappings) {
         section: true,
     });
     let bytes = include_bytes!("../data/00400000.raw").as_slice();
-    let out = &mut ctx.memory[0x400000..][..bytes.len()];
+    let out = &mut ctx.memory.bytes[0x400000..][..bytes.len()];
     out.copy_from_slice(bytes);
     mappings.reserve(runtime::Mapping {
         desc: "UPX0".to_string(),
@@ -48,7 +46,7 @@ fn init_memory(ctx: &mut Context, mappings: &mut runtime::Mappings) {
         section: true,
     });
     let bytes = include_bytes!("../data/004bc000.raw").as_slice();
-    let out = &mut ctx.memory[0x4bc000..][..bytes.len()];
+    let out = &mut ctx.memory.bytes[0x4bc000..][..bytes.len()];
     out.copy_from_slice(bytes);
     mappings.reserve(runtime::Mapping {
         desc: ".rsrc".to_string(),
@@ -57,7 +55,7 @@ fn init_memory(ctx: &mut Context, mappings: &mut runtime::Mappings) {
         section: true,
     });
     let bytes = include_bytes!("../data/004cc000.raw").as_slice();
-    let out = &mut ctx.memory[0x4cc000..][..bytes.len()];
+    let out = &mut ctx.memory.bytes[0x4cc000..][..bytes.len()];
     out.copy_from_slice(bytes);
     unsafe {
         winapi::ddraw::IDirectDraw::VTABLE = 0x1000;
@@ -526,8 +524,10 @@ pub fn x4cbdb2(ctx: &mut Context) -> Cont {
     // 004cbdbf add edi,8
     ctx.cpu.regs.edi = add(ctx.cpu.regs.edi, 0x8u32, &mut ctx.cpu.flags);
     // 004cbdc2 call dword ptr [esi+0CB0E4h]
-    let dst = ctx.indirect(ctx.memory.read(ctx.cpu.regs.esi.wrapping_add(0xcb0e4u32)));
-    ctx.call32(0x4cbdc8, dst)
+    let addr = ctx
+        .memory
+        .read::<u32>(ctx.cpu.regs.esi.wrapping_add(0xcb0e4u32));
+    ctx.call32(0x4cbdc8, ctx.indirect32(addr))
 }
 
 pub fn x4cbdc8(ctx: &mut Context) -> Cont {
@@ -574,8 +574,10 @@ pub fn x4cbdd4(ctx: &mut Context) -> Cont {
     // 004cbddf push ebp
     ctx.push32(ctx.cpu.regs.ebp);
     // 004cbde0 call dword ptr [esi+0CB0E8h]
-    let dst = ctx.indirect(ctx.memory.read(ctx.cpu.regs.esi.wrapping_add(0xcb0e8u32)));
-    ctx.call32(0x4cbde6, dst)
+    let addr = ctx
+        .memory
+        .read::<u32>(ctx.cpu.regs.esi.wrapping_add(0xcb0e8u32));
+    ctx.call32(0x4cbde6, ctx.indirect32(addr))
 }
 
 pub fn x4cbddb(ctx: &mut Context) -> Cont {
@@ -588,8 +590,10 @@ pub fn x4cbddb(ctx: &mut Context) -> Cont {
     // 004cbddf push ebp
     ctx.push32(ctx.cpu.regs.ebp);
     // 004cbde0 call dword ptr [esi+0CB0E8h]
-    let dst = ctx.indirect(ctx.memory.read(ctx.cpu.regs.esi.wrapping_add(0xcb0e8u32)));
-    ctx.call32(0x4cbde6, dst)
+    let addr = ctx
+        .memory
+        .read::<u32>(ctx.cpu.regs.esi.wrapping_add(0xcb0e8u32));
+    ctx.call32(0x4cbde6, ctx.indirect32(addr))
 }
 
 pub fn x4cbde6(ctx: &mut Context) -> Cont {
@@ -687,11 +691,11 @@ pub fn x4cbe24(ctx: &mut Context) -> Cont {
     // 004cbe24 popa
     ctx.popad();
     // 004cbe25 jmp near ptr 004085DDh
-    Cont(x4085dd)
+    Cont(crate::externs::x4085dd)
 }
 
 const BLOCKS: [(u32, ContFn); 238] = [
-    (0x4085dd, x4085dd),
+    (0x4085dd, crate::externs::x4085dd),
     (0x4cbca0, x4cbca0),
     (0x4cbcb8, x4cbcb8),
     (0x4cbcbe, x4cbcbe),
@@ -1070,6 +1074,6 @@ pub const EXEDATA: EXEData = EXEData {
     image_base: 0x400000,
     resources: 0x4cc000..0x4cc06c,
     blocks: &BLOCKS,
-    init: init_memory,
+    init,
     entry_point: Cont(x4cbca0),
 };
