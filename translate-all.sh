@@ -17,10 +17,6 @@ projects=(
 
     mofo-unpack
 
-    dos/animate-unpack
-    dos/animate-unpack-2
-    dos/animate
-
     dos/magixfly
 
     sbaitso/read

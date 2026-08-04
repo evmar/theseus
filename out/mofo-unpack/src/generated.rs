@@ -6,11 +6,9 @@
 #![allow(non_snake_case)]
 
 use runtime::*;
+
 use winapi::*;
-
-use crate::externs::*;
-
-fn init_memory(ctx: &mut Context, mappings: &mut runtime::Mappings) {
+fn init(ctx: &mut Context, mappings: &mut runtime::Mappings) {
     mappings.reserve(runtime::Mapping {
         desc: "null page".to_string(),
         addr: 0x0,
@@ -24,7 +22,7 @@ fn init_memory(ctx: &mut Context, mappings: &mut runtime::Mappings) {
         section: false,
     });
     let bytes = include_bytes!("../data/00001000.raw").as_slice();
-    let out = &mut ctx.memory[0x1000..][..bytes.len()];
+    let out = &mut ctx.memory.bytes[0x1000..][..bytes.len()];
     out.copy_from_slice(bytes);
     mappings.reserve(runtime::Mapping {
         desc: "exe header".to_string(),
@@ -33,7 +31,7 @@ fn init_memory(ctx: &mut Context, mappings: &mut runtime::Mappings) {
         section: true,
     });
     let bytes = include_bytes!("../data/00400000.raw").as_slice();
-    let out = &mut ctx.memory[0x400000..][..bytes.len()];
+    let out = &mut ctx.memory.bytes[0x400000..][..bytes.len()];
     out.copy_from_slice(bytes);
     mappings.reserve(runtime::Mapping {
         desc: "UPX0".to_string(),
@@ -48,7 +46,7 @@ fn init_memory(ctx: &mut Context, mappings: &mut runtime::Mappings) {
         section: true,
     });
     let bytes = include_bytes!("../data/00440000.raw").as_slice();
-    let out = &mut ctx.memory[0x440000..][..bytes.len()];
+    let out = &mut ctx.memory.bytes[0x440000..][..bytes.len()];
     out.copy_from_slice(bytes);
     mappings.reserve(runtime::Mapping {
         desc: ".rsrc".to_string(),
@@ -57,7 +55,7 @@ fn init_memory(ctx: &mut Context, mappings: &mut runtime::Mappings) {
         section: true,
     });
     let bytes = include_bytes!("../data/0044e000.raw").as_slice();
-    let out = &mut ctx.memory[0x44e000..][..bytes.len()];
+    let out = &mut ctx.memory.bytes[0x44e000..][..bytes.len()];
     out.copy_from_slice(bytes);
     unsafe {
         winapi::ddraw::IDirectDraw::VTABLE = 0x1000;
@@ -534,8 +532,10 @@ pub fn x44d951(ctx: &mut Context) -> Cont {
     // 0044d95e add edi,8
     ctx.cpu.regs.edi = add(ctx.cpu.regs.edi, 0x8u32, &mut ctx.cpu.flags);
     // 0044d961 call dword ptr [esi+4E3F4h]
-    let dst = ctx.indirect(ctx.memory.read(ctx.cpu.regs.esi.wrapping_add(0x4e3f4u32)));
-    ctx.call32(0x44d967, dst)
+    let addr = ctx
+        .memory
+        .read::<u32>(ctx.cpu.regs.esi.wrapping_add(0x4e3f4u32));
+    ctx.call32(0x44d967, ctx.indirect32(addr))
 }
 
 pub fn x44d967(ctx: &mut Context) -> Cont {
@@ -575,8 +575,10 @@ pub fn x44d96f(ctx: &mut Context) -> Cont {
     // 0044d976 push edx
     ctx.push32(ctx.cpu.regs.edx);
     // 0044d977 call dword ptr [esi+4E3F8h]
-    let dst = ctx.indirect(ctx.memory.read(ctx.cpu.regs.esi.wrapping_add(0x4e3f8u32)));
-    ctx.call32(0x44d97d, dst)
+    let addr = ctx
+        .memory
+        .read::<u32>(ctx.cpu.regs.esi.wrapping_add(0x4e3f8u32));
+    ctx.call32(0x44d97d, ctx.indirect32(addr))
 }
 
 pub fn x44d97d(ctx: &mut Context) -> Cont {
@@ -609,11 +611,11 @@ pub fn x44d98b(ctx: &mut Context) -> Cont {
     // 0044d98b popa
     ctx.popad();
     // 0044d98c jmp near ptr 0041F079h
-    Cont(x41f079)
+    Cont(crate::externs::x41f079)
 }
 
 const BLOCKS: [(u32, ContFn); 198] = [
-    (0x41f079, x41f079),
+    (0x41f079, crate::externs::x41f079),
     (0x44d840, x44d840),
     (0x44d858, x44d858),
     (0x44d85e, x44d85e),
@@ -937,6 +939,6 @@ pub const EXEDATA: EXEData = EXEData {
     image_base: 0x400000,
     resources: 0x44e000..0x44f390,
     blocks: &BLOCKS,
-    init: init_memory,
+    init,
     entry_point: Cont(x44d840),
 };

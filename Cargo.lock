@@ -3,31 +3,6 @@
 version = 4
 
 [[package]]
-name = "animate"
-version = "0.1.0"
-dependencies = [
- "dos",
- "runtime",
- "wasm-bindgen",
-]
-
-[[package]]
-name = "animate-unpack"
-version = "0.1.0"
-dependencies = [
- "dos",
- "runtime",
-]
-
-[[package]]
-name = "animate-unpack-2"
-version = "0.1.0"
-dependencies = [
- "dos",
- "runtime",
-]
-
-[[package]]
 name = "anyhow"
 version = "1.0.102"
 source = "registry+https://github.com/rust-lang/crates.io-index"
