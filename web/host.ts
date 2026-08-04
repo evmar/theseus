@@ -171,9 +171,11 @@ async function main() {
     return;
   }
 
+  const wasmPageSize = 64 << 10;
   const memory = new WebAssembly.Memory({
-    initial: 32, // in units of 64KB pages, 2mb
-    maximum: 1024, // 64mb
+    // memory args are in units of wasm page size
+    initial: (2 << 20) / wasmPageSize,
+    maximum: (128 << 20) / wasmPageSize,
     shared: true,
   });
 
