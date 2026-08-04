@@ -165,6 +165,14 @@ class Host implements exe.WasmHost {
   }
 }
 
+/// Programs to run, chosen with `?exe=`.
+// TODO: we'll put program params in the values of this map.
+const PROGRAMS = new Map([
+  ["mine", {}],
+  ["basicdd", {}],
+  ["winapi", {}],
+]);
+
 async function main() {
   if (!window.SharedArrayBuffer) {
     document.body.innerText = "SharedArrayBuffer is not supported; possibly try reloading";
@@ -182,8 +190,18 @@ async function main() {
   const host = new Host(memory);
   const worker = new Worker(new URL("./worker.js", import.meta.url), { type: "module" });
   worker.onmessage = (e) => host.onMessage(e);
+
+  const params = new URLSearchParams(window.location.search);
+  const name = params.get("exe") ?? "mine";
+  const program = PROGRAMS.get(name);
+  if (!program) {
+    document.body.innerText = `no such program ${name}`;
+    return;
+  }
+
   const message: worker.StartMessage = {
-    module: "mine",
+    ...program,
+    name,
     memory,
   };
   worker.postMessage(message);
