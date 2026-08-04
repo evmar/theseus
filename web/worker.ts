@@ -7,7 +7,7 @@ import type * as exe from "./exe/basicdd/basicdd.js";
 };
 
 async function run(module: string, memory: WebAssembly.Memory) {
-  const exe = await import(module);
+  const exe = await import(`./exe/${module}/${module}.js`);
   await exe.default(/* module */ undefined, memory);
   exe.main();
 }

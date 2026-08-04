@@ -180,10 +180,10 @@ async function main() {
   });
 
   const host = new Host(memory);
-  const worker = new Worker("./worker.js", { type: "module" });
+  const worker = new Worker(new URL("./worker.js", import.meta.url), { type: "module" });
   worker.onmessage = (e) => host.onMessage(e);
   const message: worker.StartMessage = {
-    module: "./exe/mine/mine.js",
+    module: "mine",
     memory,
   };
   worker.postMessage(message);
