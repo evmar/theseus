@@ -27,3 +27,7 @@ $ cargo instruments -t time -p chillin --profile release --time-limit 10000
 ```
 
 Run `dsymutil target/release/chillin` to get source info in the profile output.
+
+## Web
+
+See web/README.md for more notes.
