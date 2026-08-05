@@ -273,11 +273,12 @@ impl<'a> Traverse<'a> {
                 anyhow::bail!("'out' instruction in non-DOS code");
             }
 
-            let new_instr = instrs.push_mut(Instr {
+            instrs.push(Instr {
                 ip,
                 iced: instr,
                 hint: None,
             });
+            let new_instr = instrs.last_mut().unwrap();
 
             if self.gather.scan_immediates {
                 for i in 0..instr.op_count() {
