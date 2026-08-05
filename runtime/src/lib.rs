@@ -10,7 +10,7 @@ mod registers;
 
 pub use exe::EXEData;
 pub use flags::Flags;
-pub use machine::{CPU, Context};
+pub use machine::{BlockCache, CPU, Context};
 pub use mapping::{Mapping, Mappings, round_to_page};
 pub use memory::Memory;
 pub use ops::*;
@@ -57,6 +57,32 @@ pub struct Cont(pub ContFn);
 /// called function succeeds, but we never invoke it.
 pub const RETURN_FROM_X86_ADDR32: u32 = 0xffff_fffe;
 pub const RETURN_FROM_X86_ADDR16: SegOfs = SegOfs::new(0xffff, 0xfffe);
+
+/// Record a code address the static analysis missed, so it can be fed back
+/// into tc via --entry-points-file. Set THESEUS_MISSING_ADDRS to a file path.
+pub fn log_missing_addr(addr: u32) {
+    #[cfg(not(target_family = "wasm"))]
+    if let Ok(path) = std::env::var("THESEUS_MISSING_ADDRS") {
+        use std::io::Write;
+        if let Ok(mut f) = std::fs::OpenOptions::new()
+            .create(true)
+            .append(true)
+            .open(&path)
+        {
+            let _ = writeln!(f, "{addr:x}");
+        }
+    }
+}
+
+/// Called by generated code for a statically-known jump target that the
+/// analysis didn't produce a block for.
+pub fn unknown_block(addr: u32) -> Cont {
+    log_missing_addr(addr);
+    panic!(
+        "jmp to unknown block {addr:#010x}; \
+         re-run tc with --entry-points-file (see THESEUS_MISSING_ADDRS)"
+    );
+}
 
 impl Context {
     /// Call an x86 stdcall function, only returning once the function returns.
