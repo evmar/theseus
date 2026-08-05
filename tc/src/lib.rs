@@ -31,6 +31,8 @@ pub struct WindowsModule {
     pub resources: Option<std::ops::Range<u32>>,
     pub imports: Vec<Import>,
     pub vtables: Vec<(String, u32)>,
+    /// (dll, function) pairs the program may resolve through GetProcAddress.
+    pub dynamic_exports: Vec<(String, String)>,
 }
 
 #[derive(Debug, Clone)]
@@ -195,7 +197,9 @@ impl State {
         Ok(())
     }
 
-    /// For any dll used by the module, write its vtables to the executable memory.
+    /// For any dll used by the module, reserve executable-memory addresses for
+    /// the things it can't import statically: COM vtable entries, and the
+    /// functions it may look up through GetProcAddress.
     fn add_vtables(&mut self) -> u32 {
         let Module::Windows(module) = &mut self.module else {
             unreachable!()
@@ -227,6 +231,39 @@ impl State {
                 }
             }
         }
+
+        for (dll, funcs) in winapi::DYNAMIC_EXPORTS {
+            if !module.imports.iter().any(|imp| imp.dll == *dll) {
+                continue;
+            }
+            for func in funcs.iter() {
+                module
+                    .dynamic_exports
+                    .push((dll.to_string(), func.to_string()));
+                // A function already imported statically has an address
+                // already; only the rest need one reserved.
+                if module
+                    .imports
+                    .iter()
+                    .any(|imp| imp.dll == *dll && imp.func == *func)
+                {
+                    continue;
+                }
+                if addr == 0 {
+                    addr = self.mem.mappings.alloc("vtables".into(), 0x1000);
+                    assert!(addr != 0);
+                }
+                module.imports.push(Import {
+                    dll: dll.to_string(),
+                    func: func.to_string(),
+                    iat_addr: addr,
+                    addr: 0,
+                    data: false,
+                });
+                addr += 4;
+            }
+        }
+
         addr
     }
 

@@ -83,6 +83,7 @@ fn load_pe(mem: &mut Memory, buf: &[u8], f: exe::PE) -> WindowsModule {
         code_memory: code_range.unwrap(),
         resources,
         vtables: Default::default(),
+        dynamic_exports: Default::default(),
     }
 }
 

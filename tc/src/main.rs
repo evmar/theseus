@@ -43,9 +43,17 @@ struct Args {
     #[argh(switch)]
     scan_immediates: bool,
 
+    /// scan unexplored code ranges for function prologues
+    #[argh(switch)]
+    scan_prologues: bool,
+
     /// additional addresses to create a block
     #[argh(option, from_str_fn(parse_ip))]
     entry_point: Vec<IP>,
+
+    /// file with additional entry point addresses, one hex address per line
+    #[argh(option)]
+    entry_points_file: Option<String>,
 
     /// additional addresses containing pointers to code
     #[argh(option, from_str_fn(parse_ip_range))]
@@ -114,6 +122,17 @@ fn run() -> anyhow::Result<()> {
         }
         entry_points.push(tc::EntryPoint::Single(ip));
     }
+    if let Some(path) = &args.entry_points_file {
+        for line in std::fs::read_to_string(path)?.lines() {
+            let line = line.trim();
+            if line.is_empty() || line.starts_with('#') {
+                continue;
+            }
+            let ip = parse_ip(line)
+                .map_err(|err| anyhow::anyhow!("{path}: bad address {line:?}: {err}"))?;
+            entry_points.push(tc::EntryPoint::Single(ip));
+        }
+    }
     for range in args.jump_table {
         let mut src = range.start; // TODO
         while src <= range.end {
@@ -154,8 +173,8 @@ fn run() -> anyhow::Result<()> {
     state.gather(tc::Gather {
         scan_immediates: args.scan_immediates,
         scan_memory: args.scan_memory,
+        scan_prologues: args.scan_prologues,
         entry_points,
-        ..Default::default() // todo: entry_points, jump_tables?
     });
 
     state.generate(args.trace, &args.out)
