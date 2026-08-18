@@ -65,6 +65,7 @@ pub fn load(exe: &EXEData) -> Context {
         thread_id: 1,
         memory,
         blocks: exe.blocks,
+        cache: Default::default(),
         recent: [Context::return_from_x86; 4],
     };
 
