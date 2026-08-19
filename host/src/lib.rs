@@ -5,6 +5,7 @@
 
 use std::sync::LazyLock;
 
+pub mod fs;
 #[cfg(not(target_family = "wasm"))]
 mod sdl;
 pub mod fs;
@@ -20,13 +21,14 @@ pub use wasm::*;
 
 static HOST: LazyLock<Host> = LazyLock::new(Host::new);
 
+#[derive(Clone, Copy)]
 pub struct AudioSpec {
     pub sample_rate: u32,
     pub channels: u32,
 }
 
 bitflags::bitflags! {
-    #[derive(Debug, Clone, Copy, Eq, PartialEq)]
+    #[derive(Debug, Default, Clone, Copy, Eq, PartialEq)]
     pub struct MouseButton: u16 {
         const Left = 1 << 0;
         const Middle = 1 << 1;
@@ -43,6 +45,22 @@ pub struct MouseMessage {
     pub buttons: MouseButton,
 }
 
+/// A key press/release, described the way DOS-era Windows apps expect: by
+/// PC/AT scan code (what DirectInput calls DIK_*) plus virtual key code.
+pub struct KeyMessage {
+    /// PC "set 1" scan code, without the 0xe0 prefix of extended keys.
+    pub scancode: u8,
+    /// Windows VK_* code. Uses the side-specific code (VK_RSHIFT, not VK_SHIFT)
+    /// where one exists; user32 widens it for window messages.
+    pub vkey: u8,
+    /// Key from the extended (0xe0-prefixed) part of the keyboard: arrows,
+    /// right ctrl/alt, keypad enter. Distinguishes e.g. arrow up from keypad 8,
+    /// which share scan code 0x48.
+    pub extended: bool,
+    /// Event produced by auto-repeat rather than a fresh press.
+    pub repeat: bool,
+}
+
 pub enum Message {
     #[cfg(not(target_family = "wasm"))] // no "quit" menu on web
     Quit,
@@ -51,6 +69,8 @@ pub enum Message {
     MouseDown(MouseMessage),
     MouseUp(MouseMessage),
     MouseMove(MouseMessage),
+    KeyDown(KeyMessage),
+    KeyUp(KeyMessage),
 }
 
 /// Which winapi calls to trace, in the syntax `trace::init` parses.

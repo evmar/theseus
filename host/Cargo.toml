@@ -5,6 +5,7 @@ edition = "2024"
 
 [dependencies]
 bitflags = { workspace = true }
+log = { workspace = true }
 logger = { workspace = true }
 
 [target.'cfg(not(target_family = "wasm"))'.dependencies]

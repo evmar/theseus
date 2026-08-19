@@ -1,4 +1,5 @@
 mod dialog;
+mod input;
 mod message;
 mod misc;
 mod rect;
@@ -11,6 +12,7 @@ use std::{
 };
 
 pub use dialog::*;
+pub use input::*;
 pub use message::*;
 pub use misc::*;
 pub use rect::*;
@@ -30,6 +32,7 @@ pub struct State {
     pub wndclass: RefCell<Option<WndClass>>,
     pub window: RefCell<Option<Rc<RefCell<Window>>>>,
     message_queue: RefCell<MessageQueue>,
+    pub input: RefCell<Input>,
 }
 
 // TODO: reuse locking pattern from kernel32
@@ -44,5 +47,6 @@ pub fn state() -> &'static State {
         window: Default::default(),
         wndclass: Default::default(),
         message_queue: Default::default(),
+        input: Default::default(),
     })
 }
