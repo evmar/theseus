@@ -6,7 +6,7 @@ use crate::{
     POINT, Ptr,
     dllexport::win32flags,
     stub, trace,
-    user32::{HACCEL, HWND, Window, state},
+    user32::{HACCEL, HWND, Window, char_for_key, message_vkey, state},
 };
 
 /// If THESEUS_TRACE includes "wm", log all Windows messages.
@@ -24,6 +24,11 @@ pub enum WM {
     QUIT = 0x12,
     SHOWWINDOW = 0x18,
     ACTIVATEAPP = 0x1c,
+    KEYDOWN = 0x100,
+    KEYUP = 0x101,
+    CHAR = 0x102,
+    SYSKEYDOWN = 0x104,
+    SYSKEYUP = 0x105,
     MOUSEMOVE = 0x200,
     LBUTTONDOWN = 0x201,
     LBUTTONUP = 0x202,
@@ -112,6 +117,45 @@ fn mouse_msg(wm: WM, hwnd: HWND, message: &host::MouseMessage) -> MSG {
     }
 }
 
+fn key_msg(hwnd: HWND, key: &host::KeyMessage, down: bool) -> MSG {
+    // lParam packs the key's physical details, as documented for WM_KEYDOWN.
+    let mut lParam = 1; // repeat count; the host reports repeats one at a time
+    lParam |= (key.scancode as u32) << 16;
+    if key.extended {
+        lParam |= 1 << 24;
+    }
+    // Bit 29 is set while alt is held, bit 30 holds the previous key state,
+    // bit 31 marks the release.
+    let alt = state().input.borrow().key_down(0x12); // VK_MENU
+    if alt {
+        lParam |= 1 << 29;
+    }
+    if key.repeat || !down {
+        lParam |= 1 << 30;
+    }
+    if !down {
+        lParam |= 1 << 31;
+    }
+
+    // Keys pressed with alt held are "system" keys, as is alt itself.
+    let system = alt || key.vkey == 0xa4 || key.vkey == 0xa5;
+    let message = match (down, system) {
+        (true, false) => WM::KEYDOWN,
+        (false, false) => WM::KEYUP,
+        (true, true) => WM::SYSKEYDOWN,
+        (false, true) => WM::SYSKEYUP,
+    };
+
+    MSG {
+        hwnd,
+        message: message as u32,
+        wParam: message_vkey(key.vkey) as u32,
+        lParam,
+        time: host::host().time(),
+        pt: POINT::default(),
+    }
+}
+
 /// Post a message to the application's queue (e.g. synthetic activation
 /// messages from ShowWindow).
 pub fn post_message(hwnd: HWND, message: u32, wParam: WPARAM, lParam: LPARAM) {
@@ -190,6 +234,14 @@ impl MessageQueue {
         self.enqueue_message(message);
     }
 
+    /// Read every pending host message. DirectInput calls this to refresh
+    /// input state without going through the window message queue.
+    pub fn poll_host_all(&mut self) {
+        while let Some(message) = host::host().poll() {
+            self.enqueue_message(message);
+        }
+    }
+
     /// Wait for a new message to arrive.
     fn wait_host(&mut self) {
         let message = host::host().wait();
@@ -203,6 +255,21 @@ impl MessageQueue {
                 window.borrow_mut().dirty = true;
             }
             return;
+        }
+
+        // Every host input event updates the shared input state, whether or not
+        // the app reads it through the message queue: DirectInput reads the
+        // same state, and this is the only place host events are consumed.
+        {
+            let mut input = state().input.borrow_mut();
+            match &msg {
+                host::Message::KeyDown(key) => input.on_key(key, true),
+                host::Message::KeyUp(key) => input.on_key(key, false),
+                host::Message::MouseDown(mouse)
+                | host::Message::MouseUp(mouse)
+                | host::Message::MouseMove(mouse) => input.on_mouse(mouse),
+                _ => {}
+            }
         }
 
         let msg = self.msg_from_message(msg);
@@ -225,6 +292,8 @@ impl MessageQueue {
             MouseDown(mouse) => mouse_msg(mouse_button_to_wm(true, &mouse), hwnd, &mouse),
             MouseUp(mouse) => mouse_msg(mouse_button_to_wm(false, &mouse), hwnd, &mouse),
             MouseMove(mouse) => mouse_msg(WM::MOUSEMOVE, hwnd, &mouse),
+            KeyDown(key) => key_msg(hwnd, &key, true),
+            KeyUp(key) => key_msg(hwnd, &key, false),
             #[cfg(not(target_family = "wasm"))]
             Paint => unreachable!(),
             #[cfg(not(target_family = "wasm"))]
@@ -260,8 +329,20 @@ pub fn DispatchMessageW(ctx: &mut Context, lpMsg: Ptr<MSG>) -> u32 {
 }
 
 #[win32_derive::dllexport]
-pub fn TranslateMessage(_ctx: &mut Context, _lpMsg: Ptr<MSG>) -> bool {
-    false // no translation
+pub fn TranslateMessage(ctx: &mut Context, lpMsg: Ptr<MSG>) -> bool {
+    let Some(msg) = lpMsg.read(&ctx.memory) else {
+        return false;
+    };
+    if msg.message != WM::KEYDOWN as u32 {
+        return false;
+    }
+    let Some(ch) = char_for_key(msg.wParam as u8) else {
+        return false;
+    };
+    // The character message follows the key message in the queue, so the app
+    // sees it on its next pump.
+    post_message(msg.hwnd, WM::CHAR as u32, ch as u32, msg.lParam);
+    true
 }
 
 #[win32_derive::dllexport]
@@ -278,6 +359,10 @@ pub fn PeekMessageA(
         1 => true,    // PM_REMOVE
         _ => todo!(), // e.g. PM_NOYIELD
     };
+    // Games poll for messages every frame; keep the audio mixer fed from here
+    // too, in case the app renders without flipping.
+    crate::dsound::pump(ctx);
+
     let mut queue = state().message_queue.borrow_mut();
     queue.poll_host();
     let Some(msg) = queue.peek() else {

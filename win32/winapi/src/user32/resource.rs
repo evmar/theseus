@@ -142,7 +142,9 @@ pub fn LoadStringW(
     lpBuffer: Ptr<u16>, /* WSTR */
     cchBufferMax: i32,
 ) -> i32 {
-    assert_eq!(hInstance, 0);
+    // GetModuleHandle(null) hands back the image base, so a program asking for
+    // its own resources passes either that or null.
+    assert!(hInstance == 0 || hInstance == kernel32::lock().image_base);
     assert!(cchBufferMax > 0);
     let Some(bytes) = find_string(ctx, uID) else {
         panic!();

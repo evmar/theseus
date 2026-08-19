@@ -506,8 +506,26 @@ pub fn SetCursor(_ctx: &mut Context, _hCursor: u32) -> u32 {
 }
 
 #[win32_derive::dllexport]
-pub fn SetCursorPos(_ctx: &mut Context, _X: i32, _Y: i32) -> bool {
-    stub!(true)
+pub fn SetCursorPos(_ctx: &mut Context, X: i32, Y: i32) -> bool {
+    // We can't warp the host's cursor, but tracking where the app put it keeps
+    // GetCursorPos and DirectInput's relative motion consistent with each other.
+    state().input.borrow_mut().mouse.warp(X, Y);
+    true
+}
+
+#[win32_derive::dllexport]
+pub fn GetCursorPos(ctx: &mut Context, lpPoint: Ptr<POINT>) -> bool {
+    crate::user32::pump_host_input();
+    let mouse = &state().input.borrow().mouse;
+    lpPoint
+        .write(
+            &mut ctx.memory,
+            POINT {
+                x: mouse.x,
+                y: mouse.y,
+            },
+        )
+        .is_some()
 }
 
 #[win32_derive::dllexport]
