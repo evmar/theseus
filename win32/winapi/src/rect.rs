@@ -21,6 +21,16 @@ pub struct RECT {
 }
 
 impl RECT {
+    /// The whole of something that size, starting at the origin.
+    pub fn from_size(width: u32, height: u32) -> RECT {
+        RECT {
+            left: 0,
+            top: 0,
+            right: width as i32,
+            bottom: height as i32,
+        }
+    }
+
     pub fn clip(&self, other: &RECT) -> RECT {
         RECT {
             left: self.left.max(other.left),
@@ -28,6 +38,11 @@ impl RECT {
             right: self.right.min(other.right),
             bottom: self.bottom.min(other.bottom),
         }
+    }
+
+    /// Clip to the bounds of something that size.
+    pub fn clip_to_size(&self, width: u32, height: u32) -> RECT {
+        self.clip(&RECT::from_size(width, height))
     }
 
     pub fn origin(&self) -> POINT {
