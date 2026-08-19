@@ -248,12 +248,25 @@ pub struct AudioStream(*mut sdl::audio::SDL_AudioStream);
 unsafe impl Send for AudioStream {}
 
 impl AudioStream {
+    /// False when the host has no audio device. Callers should skip producing
+    /// audio entirely rather than mixing into nothing.
+    pub fn is_open(&self) -> bool {
+        !self.0.is_null()
+    }
+
     pub fn queued_bytes(&self) -> u32 {
+        if self.0.is_null() {
+            // Nothing is queued, because writes are discarded. Saying anything
+            // else strands callers that wait for the queue to drain.
+            return 0;
+        }
         unsafe { sdl::audio::SDL_GetAudioStreamQueued(self.0) as u32 }
     }
 
     pub fn put_data(&self, data: &[u8]) {
-        // self.0.get().put_data(data).unwrap();
+        if self.0.is_null() {
+            return;
+        }
         unsafe {
             check(sdl::audio::SDL_PutAudioStreamData(
                 self.0,
@@ -264,6 +277,9 @@ impl AudioStream {
     }
 
     pub fn resume(&self) {
+        if self.0.is_null() {
+            return;
+        }
         unsafe {
             check(sdl::audio::SDL_ResumeAudioStreamDevice(self.0));
         }
