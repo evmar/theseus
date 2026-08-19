@@ -6,16 +6,11 @@ use crate::{
 
 impl<'a> CodeGen<'a> {
     /// Codegen the Cont for a jump to an statically known address.
-    /// This should always resolve to a real symbol at translation time.
-    fn resolve_jmp(&self, ip: IP) -> String {
-        if let Some(block) = self.blocks.get(&ip.to_addr()) {
-            format!("Cont({})", block.name())
-        } else {
-            format!("todo!(\"static jmp to unknown block {}\")", ip)
-        }
+    fn resolve_jmp(&mut self, ip: IP) -> String {
+        self.resolve_cont(ip.to_addr())
     }
 
-    fn jmp_target(&self, instr: &Instr) -> (Option<String>, Option<String>, String) {
+    fn jmp_target(&mut self, instr: &Instr) -> (Option<String>, Option<String>, String) {
         assert_eq!(instr.iced.op_count(), 1);
         let mut extra: Option<String> = None;
         let mut seg: Option<String> = None;
