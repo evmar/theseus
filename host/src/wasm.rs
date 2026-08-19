@@ -66,6 +66,11 @@ impl Window {
 
 pub struct AudioStream {}
 impl AudioStream {
+    /// No audio in the wasm host yet; see the web front end.
+    pub fn is_open(&self) -> bool {
+        false
+    }
+
     pub fn queued_bytes(&self) -> u32 {
         todo!()
     }
