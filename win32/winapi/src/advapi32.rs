@@ -12,7 +12,11 @@ pub fn RegCloseKey(_ctx: &mut Context, _hKey: HKEY) -> u32 /* WIN32_ERROR */ {
 }
 
 #[win32_derive::dllexport]
-pub fn GetUserNameA(ctx: &mut Context, lpBuffer: crate::Ptr<u8>, pcbBuffer: crate::Ptr<u32>) -> bool {
+pub fn GetUserNameA(
+    ctx: &mut Context,
+    lpBuffer: crate::Ptr<u8>,
+    pcbBuffer: crate::Ptr<u32>,
+) -> bool {
     let name = b"user";
     let size = pcbBuffer.read(&ctx.memory).unwrap_or(0);
     if (size as usize) < name.len() + 1 {
