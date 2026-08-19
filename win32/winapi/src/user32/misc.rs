@@ -129,6 +129,9 @@ pub fn wsprintfW(
 
 #[win32_derive::dllexport]
 pub fn wsprintfA(ctx: &mut Context) -> i32 {
+    /// Documented maximum output of wsprintf, including the nul.
+    const MAX_LEN: usize = 1024;
+
     // Cdecl varargs: declared with no args so the wrapper leaves the caller's
     // stack alone; read everything manually.
     // [esp] = return addr, [esp+4] = dst, [esp+8] = fmt, [esp+12...] = args.
@@ -169,7 +172,9 @@ pub fn wsprintfA(ctx: &mut Context) -> i32 {
             width = width * 10 + (d - b'0') as usize;
             i += 1;
             while let Some(&d @ b'0'..=b'9') = bytes.get(i) {
-                width = width * 10 + (d - b'0') as usize;
+                // Clamped because the width sizes an allocation here, and a
+                // format string can ask for gigabytes of padding.
+                width = (width * 10 + (d - b'0') as usize).min(MAX_LEN);
                 i += 1;
             }
         }
@@ -201,6 +206,9 @@ pub fn wsprintfA(ctx: &mut Context) -> i32 {
                 ctx.memory.read_str(addr).as_bytes().to_vec()
             }
             _ => {
+                // Consume the arg anyway: skipping it would shift every
+                // argument after this one.
+                next_arg();
                 log::warn!("wsprintfA: unhandled %{}", spec as char);
                 vec![b'%', spec]
             }
@@ -220,6 +228,9 @@ pub fn wsprintfA(ctx: &mut Context) -> i32 {
         }
     }
 
+    // The real wsprintfA writes at most 1024 characters including the nul, and
+    // callers size their buffers for that.
+    out.truncate(MAX_LEN - 1);
     ctx.memory[dst..][..out.len()].copy_from_slice(&out);
     ctx.memory.write::<u8>(dst + out.len() as u32, 0);
     out.len() as i32
