@@ -24,6 +24,13 @@ impl From<u16> for ABIReturn {
     }
 }
 
+impl From<i16> for ABIReturn {
+    fn from(value: i16) -> Self {
+        // Sign-extends, as a function returning SHORT does.
+        Self(value as i32 as u32)
+    }
+}
+
 impl From<bool> for ABIReturn {
     fn from(value: bool) -> Self {
         Self(if value { 1 } else { 0 })
