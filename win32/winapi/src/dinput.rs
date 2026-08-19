@@ -1,12 +1,13 @@
-//! DirectInput. Devices exist and can be acquired; GetDeviceState/GetDeviceData
-//! report no input until the host grows keyboard support (see the retrowin32
-//! fork's dinput for the full reference).
+//! DirectInput keyboard and mouse.
+//!
+//! Device state comes from the shared input state in user32, which the host
+//! message pump keeps up to date; see user32::input.
 
-use std::{cell::OnceCell, collections::HashMap, sync::Mutex};
+use std::{collections::HashMap, sync::Mutex};
 
 use runtime::Context;
 
-use crate::{ddraw::GUID, heap::Heap, kernel32};
+use crate::{ddraw::GUID, heap::Heap, kernel32, locked_state::LockedState, user32};
 
 const GUID_SysMouse: GUID = GUID((
     0x6F1D2B60,
@@ -23,7 +24,23 @@ const GUID_SysKeyboard: GUID = GUID((
 ));
 
 const DI_OK: u32 = 0;
+/// More events were buffered than the app's buffer could hold.
+const DI_BUFFEROVERFLOW: u32 = 1;
 const DIERR_DEVICENOTREG: u32 = 0x80040154;
+const DIERR_NOTACQUIRED: u32 = 0x8007000c;
+const DIERR_INVALIDPARAM: u32 = 0x80070057;
+
+/// sizeof(DIMOUSESTATE): three i32 axes then four button bytes.
+const DIMOUSESTATE_SIZE: usize = 16;
+
+/// DIGDD_PEEK: leave the returned events in the buffer.
+const DIGDD_PEEK: u32 = 0x00000001;
+
+/// DirectInput property GUIDs are really small integers cast to a GUID pointer
+/// (see MAKEDIPROP), so a property is identified by the pointer value itself.
+const DIPROP_BUFFERSIZE: u32 = 1;
+/// Offset of DIPROPDWORD::dwData, past the DIPROPHEADER.
+const DIPROPDWORD_DWDATA: u32 = 16;
 
 /// Which physical device a created IDirectInputDevice stands for.
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
@@ -32,18 +49,22 @@ pub enum DeviceKind {
     Mouse,
 }
 
+pub struct Device {
+    pub kind: DeviceKind,
+    pub acquired: bool,
+}
+
 #[derive(Default)]
 pub struct State {
     /// Maps an IDirectInputDevice interface pointer to the device it represents.
-    pub devices: Mutex<HashMap<u32, DeviceKind>>,
+    pub devices: HashMap<u32, Device>,
 }
 
-struct StaticState(OnceCell<State>);
-unsafe impl Sync for StaticState {}
-static STATE: StaticState = StaticState(OnceCell::new());
+static STATE: Mutex<Option<State>> = Mutex::new(None);
+type Lock = LockedState<State>;
 
-pub fn state() -> &'static State {
-    STATE.0.get_or_init(Default::default)
+fn lock() -> Lock {
+    LockedState::from_or_init(&STATE, Default::default)
 }
 
 pub const VTABLES: [(&'static str, &[&str]); 2] = [
@@ -126,7 +147,13 @@ pub mod IDirectInput {
         let mut kernel32 = kernel32::lock();
         let device = IDirectInputDevice::new(ctx, &mut kernel32.process_heap);
         drop(kernel32);
-        state().devices.lock().unwrap().insert(device, kind);
+        lock().devices.insert(
+            device,
+            Device {
+                kind,
+                acquired: false,
+            },
+        );
         ctx.memory.write::<u32>(lplpDirectInputDevice, device);
         DI_OK
     }
@@ -201,14 +228,20 @@ pub mod IDirectInputDevice {
         addr
     }
 
-    pub fn device_kind(this: u32) -> DeviceKind {
-        state()
+    /// The device behind an interface pointer, and whether it's acquired.
+    /// A device we never created reads as an unacquired keyboard.
+    pub fn device(this: u32) -> (DeviceKind, bool) {
+        lock()
             .devices
-            .lock()
-            .unwrap()
             .get(&this)
-            .copied()
-            .unwrap_or(DeviceKind::Keyboard)
+            .map(|device| (device.kind, device.acquired))
+            .unwrap_or((DeviceKind::Keyboard, false))
+    }
+
+    fn set_acquired(this: u32, acquired: bool) {
+        if let Some(device) = lock().devices.get_mut(&this) {
+            device.acquired = acquired;
+        }
     }
 
     #[win32_derive::dllexport]
@@ -222,8 +255,8 @@ pub mod IDirectInputDevice {
     }
 
     #[win32_derive::dllexport]
-    pub fn Release(_ctx: &mut Context, _this: u32) -> u32 {
-        state().devices.lock().unwrap().remove(&_this);
+    pub fn Release(_ctx: &mut Context, this: u32) -> u32 {
+        lock().devices.remove(&this);
         0
     }
 
@@ -244,47 +277,149 @@ pub mod IDirectInputDevice {
     }
 
     #[win32_derive::dllexport]
-    pub fn GetProperty(_ctx: &mut Context, _this: u32, _rguidProp: u32, _pdiph: u32) -> u32 {
-        todo!()
-    }
-
-    #[win32_derive::dllexport]
-    pub fn SetProperty(_ctx: &mut Context, _this: u32, _rguidProp: u32, _pdiph: u32) -> u32 {
+    pub fn GetProperty(ctx: &mut Context, this: u32, rguidProp: u32, pdiph: u32) -> u32 {
+        if rguidProp != DIPROP_BUFFERSIZE {
+            log::warn!("dinput GetProperty: unhandled property {rguidProp:#x}");
+            return DIERR_INVALIDPARAM;
+        }
+        let (kind, _) = device(this);
+        let size = user32::state()
+            .input
+            .borrow()
+            .buffer_size(kind == DeviceKind::Keyboard);
+        ctx.memory
+            .write::<u32>(pdiph + DIPROPDWORD_DWDATA, size as u32);
         DI_OK
     }
 
     #[win32_derive::dllexport]
-    pub fn Acquire(_ctx: &mut Context, _this: u32) -> u32 {
+    pub fn SetProperty(ctx: &mut Context, this: u32, rguidProp: u32, pdiph: u32) -> u32 {
+        if rguidProp != DIPROP_BUFFERSIZE {
+            // Axis mode, dead zone and the force feedback properties don't
+            // apply to the plain keyboard/mouse we emulate.
+            log::warn!("dinput SetProperty: ignoring property {rguidProp:#x}");
+            return DI_OK;
+        }
+        let (kind, _) = device(this);
+        let size = ctx.memory.read::<u32>(pdiph + DIPROPDWORD_DWDATA);
+        user32::state()
+            .input
+            .borrow_mut()
+            .set_buffer_size(kind == DeviceKind::Keyboard, size as usize);
         DI_OK
     }
 
     #[win32_derive::dllexport]
-    pub fn Unacquire(_ctx: &mut Context, _this: u32) -> u32 {
+    pub fn Acquire(_ctx: &mut Context, this: u32) -> u32 {
+        set_acquired(this, true);
         DI_OK
     }
 
-    /// Keyboard: a byte array indexed by DIK scancode (0x80 = pressed).
-    /// Mouse: DIMOUSESTATE (lX/lY/lZ relative, then button bytes).
-    /// No host input plumbing yet, so everything reads as idle.
     #[win32_derive::dllexport]
-    pub fn GetDeviceState(ctx: &mut Context, _this: u32, cbData: u32, lpvData: u32) -> u32 {
-        ctx.memory[lpvData..][..cbData as usize].fill(0);
+    pub fn Unacquire(_ctx: &mut Context, this: u32) -> u32 {
+        set_acquired(this, false);
         DI_OK
     }
 
+    /// Read immediate device state into the caller's buffer.
+    ///
+    /// Keyboard: a byte array indexed by DIK scan code (0x80 = pressed).
+    /// Mouse: a DIMOUSESTATE — lX/lY/lZ relative to the last read, then one
+    /// byte per button.
+    #[win32_derive::dllexport]
+    pub fn GetDeviceState(ctx: &mut Context, this: u32, cbData: u32, lpvData: u32) -> u32 {
+        let (kind, acquired) = device(this);
+        if !acquired {
+            return DIERR_NOTACQUIRED;
+        }
+        user32::pump_host_input();
+
+        // cbData comes straight from the app; a garbage value would otherwise
+        // ask for a multi-gigabyte allocation.
+        let len = match kind {
+            DeviceKind::Keyboard => 256,
+            // DIMOUSESTATE: lX, lY, lZ, then four buttons.
+            DeviceKind::Mouse => DIMOUSESTATE_SIZE,
+        };
+        if cbData as usize != len {
+            log::warn!("GetDeviceState: cbData {cbData} does not match {kind:?}");
+            return DIERR_INVALIDPARAM;
+        }
+        let mut buf = vec![0u8; len];
+        let mut input = user32::state().input.borrow_mut();
+        match kind {
+            DeviceKind::Keyboard => {
+                let keys = len.min(256);
+                buf[..keys].copy_from_slice(&input.dik_state()[..keys]);
+            }
+            DeviceKind::Mouse => {
+                let (dx, dy) = input.mouse.take_motion();
+                // DIMOUSESTATE: lX, lY, lZ, then rgbButtons.
+                for (ofs, value) in [(0, dx), (4, dy), (8, 0)] {
+                    if ofs + 4 <= len {
+                        buf[ofs..ofs + 4].copy_from_slice(&value.to_le_bytes());
+                    }
+                }
+                for (index, &button) in input.mouse.buttons.iter().enumerate() {
+                    if 12 + index < len {
+                        buf[12 + index] = button;
+                    }
+                }
+            }
+        }
+        drop(input);
+        ctx.memory[lpvData..][..len].copy_from_slice(&buf);
+        DI_OK
+    }
+
+    /// Read buffered events into the caller's DIDEVICEOBJECTDATA array.
     #[win32_derive::dllexport]
     pub fn GetDeviceData(
         ctx: &mut Context,
-        _this: u32,
-        _cbObjectData: u32,
-        _rgdod: u32,
+        this: u32,
+        cbObjectData: u32,
+        rgdod: u32,
         pdwInOut: u32,
-        _dwFlags: u32,
+        dwFlags: u32,
     ) -> u32 {
-        if pdwInOut != 0 {
-            ctx.memory.write::<u32>(pdwInOut, 0); // no buffered events
+        if pdwInOut == 0 {
+            return DIERR_INVALIDPARAM;
         }
-        DI_OK
+        let (kind, acquired) = device(this);
+        if !acquired {
+            return DIERR_NOTACQUIRED;
+        }
+        user32::pump_host_input();
+
+        // A null array means the caller wants the pending events discarded,
+        // or, with DIGDD_PEEK, just counted.
+        let capacity = if rgdod == 0 {
+            usize::MAX
+        } else {
+            ctx.memory.read::<u32>(pdwInOut) as usize
+        };
+        let peek = dwFlags & DIGDD_PEEK != 0;
+        let (events, overflowed) = user32::state().input.borrow_mut().take_events(
+            kind == DeviceKind::Keyboard,
+            capacity,
+            peek,
+        );
+
+        if rgdod != 0 {
+            for (i, event) in events.iter().enumerate() {
+                // DIDEVICEOBJECTDATA: dwOfs, dwData, dwTimeStamp, dwSequence.
+                // The stride comes from the caller in case it passes the
+                // larger DirectInput 8 struct.
+                let base = rgdod + i as u32 * cbObjectData;
+                ctx.memory.write::<u32>(base, event.ofs);
+                ctx.memory.write::<u32>(base + 4, event.data);
+                ctx.memory.write::<u32>(base + 8, event.time);
+                ctx.memory.write::<u32>(base + 12, event.sequence);
+            }
+        }
+        ctx.memory.write::<u32>(pdwInOut, events.len() as u32);
+
+        if overflowed { DI_BUFFEROVERFLOW } else { DI_OK }
     }
 
     #[win32_derive::dllexport]
