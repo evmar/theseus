@@ -1,64 +1,201 @@
 use runtime::Context;
 
-use crate::{Ptr, stub};
+use crate::{Ptr, dllexport::win32flags};
 
 #[win32_derive::dllexport]
 pub fn GetACP(_ctx: &mut Context) -> u32 {
     1252 // windows-1252
 }
 
+#[repr(C)]
+#[derive(Debug, Default, zerocopy::IntoBytes, zerocopy::Immutable)]
+pub struct CPINFO {
+    pub MaxCharSize: u32,
+    pub DefaultChar: [u8; 2],
+    pub LeadByte: [u8; 12],
+    /// Named so the struct has no implicit padding and can be written as bytes.
+    pub _pad: [u8; 2],
+}
+
 #[win32_derive::dllexport]
-pub fn GetCPInfo(_ctx: &mut Context, _CodePage: u32, _lpCPInfo: Ptr<()>) -> bool {
-    stub!(false) // fail
+pub fn GetCPInfo(ctx: &mut Context, _CodePage: u32, lpCPInfo: Ptr<CPINFO>) -> bool {
+    // A single-byte codepage, so no lead byte ranges.
+    let info = CPINFO {
+        MaxCharSize: 1,
+        DefaultChar: [b'?', 0],
+        LeadByte: [0; 12],
+        _pad: [0; 2],
+    };
+    ctx.memory.write(lpCPInfo.addr, info);
+    true
+}
+
+// CT_CTYPE1 character classification bits.
+win32flags! {
+    pub struct C1 {
+        const UPPER  = 0x001;
+        const LOWER  = 0x002;
+        const DIGIT  = 0x004;
+        const SPACE  = 0x008;
+        const PUNCT  = 0x010;
+        const CNTRL  = 0x020;
+        const BLANK  = 0x040;
+        const XDIGIT = 0x080;
+        const ALPHA  = 0x100;
+    }
+}
+
+/// CT_CTYPE1 character classification of an ASCII-ish character.
+fn ctype1(c: u32) -> C1 {
+    if c > 0xff {
+        return C1::ALPHA; // close enough
+    }
+    let c = c as u8;
+    let mut t = C1::empty();
+    t.set(C1::UPPER, c.is_ascii_uppercase());
+    t.set(C1::LOWER, c.is_ascii_lowercase());
+    t.set(C1::DIGIT, c.is_ascii_digit());
+    t.set(C1::SPACE, c == b' ' || (0x9..=0xd).contains(&c));
+    t.set(C1::PUNCT, c.is_ascii_punctuation());
+    t.set(C1::CNTRL, c < 0x20 || c == 0x7f);
+    t.set(C1::BLANK, c == b' ' || c == 0x9);
+    t.set(C1::XDIGIT, c.is_ascii_hexdigit());
+    t.set(C1::ALPHA, c.is_ascii_alphabetic() || c >= 0x80);
+    t
 }
 
 #[win32_derive::dllexport]
 pub fn GetStringTypeA(
-    _ctx: &mut Context,
+    ctx: &mut Context,
     _Locale: u32,
-    _dwInfoType: u32,
-    _lpSrcStr: Ptr<u8>,
-    _cchSrc: i32,
-    _lpCharType: Ptr<u16>,
+    dwInfoType: u32,
+    lpSrcStr: Ptr<u8>,
+    cchSrc: i32,
+    lpCharType: Ptr<u16>,
 ) -> bool {
-    todo!();
+    if dwInfoType != 1 {
+        log::warn!("GetStringTypeA: unimplemented type {dwInfoType}");
+        return false;
+    }
+    let len = if cchSrc < 0 {
+        ctx.memory.read_str(lpSrcStr.addr).len() + 1
+    } else {
+        cchSrc as usize
+    };
+    for i in 0..len as u32 {
+        let c = ctx.memory.read::<u8>(lpSrcStr.addr + i);
+        ctx.memory
+            .write::<u16>(lpCharType.addr + i * 2, ctype1(c as u32).bits() as u16);
+    }
+    true
 }
 
 #[win32_derive::dllexport]
 pub fn GetStringTypeW(
-    _ctx: &mut Context,
-    _dwInfoType: u32,
-    _lpSrcStr: Ptr<u16>,
-    _cchSrc: i32,
-    _lpCharType: Ptr<u16>,
+    ctx: &mut Context,
+    dwInfoType: u32,
+    lpSrcStr: Ptr<u16>,
+    cchSrc: i32,
+    lpCharType: Ptr<u16>,
 ) -> bool {
-    todo!();
+    if dwInfoType != 1 {
+        log::warn!("GetStringTypeW: unimplemented type {dwInfoType}");
+        return false;
+    }
+    let len = if cchSrc < 0 {
+        let mut n = 0;
+        while ctx.memory.read::<u16>(lpSrcStr.addr + n * 2) != 0 {
+            n += 1;
+        }
+        n + 1
+    } else {
+        cchSrc as u32
+    };
+    for i in 0..len {
+        let c = ctx.memory.read::<u16>(lpSrcStr.addr + i * 2);
+        ctx.memory
+            .write::<u16>(lpCharType.addr + i * 2, ctype1(c as u32).bits() as u16);
+    }
+    true
+}
+
+/// ASCII-only character mapping for LCMapString*.
+fn lcmap_char(c: u32, flags: u32) -> u32 {
+    const LCMAP_LOWERCASE: u32 = 0x100;
+    const LCMAP_UPPERCASE: u32 = 0x200;
+    if c < 0x80 {
+        if flags & LCMAP_LOWERCASE != 0 {
+            return (c as u8).to_ascii_lowercase() as u32;
+        }
+        if flags & LCMAP_UPPERCASE != 0 {
+            return (c as u8).to_ascii_uppercase() as u32;
+        }
+    }
+    c
 }
 
 #[win32_derive::dllexport]
 pub fn LCMapStringA(
-    _ctx: &mut Context,
+    ctx: &mut Context,
     _Locale: u32,
-    _dwMapFlags: u32,
-    _lpSrcStr: Ptr<u8>,
-    _cchSrc: i32,
-    _lpDestStr: Ptr<u8>,
-    _cchDest: i32,
+    dwMapFlags: u32,
+    lpSrcStr: Ptr<u8>,
+    cchSrc: i32,
+    lpDestStr: Ptr<u8>,
+    cchDest: i32,
 ) -> i32 {
-    todo!();
+    let len = if cchSrc < 0 {
+        ctx.memory.read_str(lpSrcStr.addr).len() as u32 + 1
+    } else {
+        cchSrc as u32
+    };
+    if cchDest == 0 {
+        return len as i32;
+    }
+    if (cchDest as u32) < len {
+        return 0;
+    }
+    for i in 0..len {
+        let c = ctx.memory.read::<u8>(lpSrcStr.addr + i);
+        ctx.memory
+            .write::<u8>(lpDestStr.addr + i, lcmap_char(c as u32, dwMapFlags) as u8);
+    }
+    len as i32
 }
 
 #[win32_derive::dllexport]
 pub fn LCMapStringW(
-    _ctx: &mut Context,
+    ctx: &mut Context,
     _Locale: u32,
-    _dwMapFlags: u32,
-    _lpSrcStr: Ptr<u16>,
-    _cchSrc: i32,
-    _lpDestStr: Ptr<u16>,
-    _cchDest: i32,
+    dwMapFlags: u32,
+    lpSrcStr: Ptr<u16>,
+    cchSrc: i32,
+    lpDestStr: Ptr<u16>,
+    cchDest: i32,
 ) -> i32 {
-    todo!();
+    let len = if cchSrc < 0 {
+        let mut n = 0;
+        while ctx.memory.read::<u16>(lpSrcStr.addr + n * 2) != 0 {
+            n += 1;
+        }
+        n + 1
+    } else {
+        cchSrc as u32
+    };
+    if cchDest == 0 {
+        return len as i32;
+    }
+    if (cchDest as u32) < len {
+        return 0;
+    }
+    for i in 0..len {
+        let c = ctx.memory.read::<u16>(lpSrcStr.addr + i * 2);
+        ctx.memory.write::<u16>(
+            lpDestStr.addr + i * 2,
+            lcmap_char(c as u32, dwMapFlags) as u16,
+        );
+    }
+    len as i32
 }
 
 #[win32_derive::dllexport]

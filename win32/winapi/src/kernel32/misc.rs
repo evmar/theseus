@@ -29,8 +29,9 @@ pub fn SetEnvironmentVariableA(_ctx: &mut Context, _lpName: Ptr<u8>, _lpValue: P
 
 #[win32_derive::dllexport]
 pub fn ExitThread(_ctx: &mut Context, dwExitCode: u32) {
-    // The only x86 thread is the main one.
-    log::warn!("ExitThread({dwExitCode})");
+    // Wrong for a thread from CreateThread, which should end just that thread.
+    // Loud because getting here from a worker kills the process.
+    log::warn!("ExitThread({dwExitCode}): exiting the whole process");
     std::process::exit(dwExitCode as i32);
 }
 
