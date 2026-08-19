@@ -375,15 +375,25 @@ pub mod IDirectDrawSurface7 {
 
     #[win32_derive::dllexport]
     pub fn Blt(
-        _ctx: &mut Context,
-        _this: u32,
-        _lpDestRect: u32,
-        _lpDDSrcSurface: u32,
-        _lpSrcRect: u32,
-        _dwFlags: u32,
-        _lpDDBltFx: u32,
+        ctx: &mut Context,
+        this: u32,
+        lpDestRect: u32,
+        lpDDSrcSurface: u32,
+        lpSrcRect: u32,
+        dwFlags: u32,
+        lpDDBltFx: u32,
     ) -> DD {
-        todo!()
+        // Surfaces are shared between interface versions, so the version 1
+        // implementation covers both.
+        crate::ddraw::ddraw1::IDirectDrawSurface::Blt(
+            ctx,
+            this,
+            lpDestRect,
+            lpDDSrcSurface,
+            lpSrcRect,
+            dwFlags,
+            lpDDBltFx,
+        )
     }
 
     #[win32_derive::dllexport]
@@ -405,44 +415,24 @@ pub mod IDirectDrawSurface7 {
         dwY: u32,
         lpDDSrcSurface: u32,
         lpSrcRect: Ptr<RECT>,
-        _dwTrans: u32,
+        dwTrans: u32,
     ) -> DD {
-        let surfaces = state().surf.borrow_mut();
-        let mut dst_surface = surfaces.get(&this).unwrap().borrow_mut();
-        let mut src_surface = surfaces.get(&lpDDSrcSurface).unwrap().borrow_mut();
-
-        assert_eq!(src_surface.bytes_per_pixel, 4);
-        assert_eq!(dst_surface.bytes_per_pixel, 4);
-        let bytes_per_pixel = src_surface.bytes_per_pixel;
-        let src_stride = src_surface.width * bytes_per_pixel;
-        let dst_stride = dst_surface.width * bytes_per_pixel;
-
-        let src_rect = lpSrcRect.read(&ctx.memory).unwrap();
-        let src_addr = src_surface.lock(&mut ctx.memory);
-        let dst_addr = dst_surface.lock(&mut ctx.memory);
-
-        let [src_pixels, dst_pixels] = ctx
-            .memory
-            .bytes
-            .get_disjoint_mut([
-                src_addr as usize..(src_addr + src_surface.height * src_stride) as usize,
-                dst_addr as usize..(dst_addr + dst_surface.height * dst_stride) as usize,
-            ])
-            .unwrap();
-
-        let width = ((src_rect.right - src_rect.left) as u32 * bytes_per_pixel) as usize;
-        for (sy, dy) in (src_rect.top as u32..src_rect.bottom as u32).zip(dwY..) {
-            let src_row = &src_pixels[(sy * src_stride) as usize..];
-            let dst_row = &mut dst_pixels[(dy * dst_stride) as usize..];
-            dst_row[(dwX * bytes_per_pixel) as usize..][..width].copy_from_slice(
-                &src_row[(src_rect.left as u32 * bytes_per_pixel) as usize..][..width],
-            );
+        let result = crate::ddraw::ddraw1::IDirectDrawSurface::BltFast(
+            ctx,
+            this,
+            dwX,
+            dwY,
+            lpDDSrcSurface,
+            lpSrcRect.addr,
+            dwTrans,
+        );
+        // Apps on this interface draw to an offscreen surface and expect to see
+        // the result without flipping, so refresh its texture here.
+        let surfaces = state().surf.borrow();
+        if let Some(surface) = surfaces.get(&this) {
+            surface.borrow_mut().unlock(&mut ctx.memory);
         }
-
-        src_surface.unlock(&mut ctx.memory);
-        dst_surface.unlock(&mut ctx.memory);
-
-        stub!(DD::OK)
+        result
     }
 
     #[win32_derive::dllexport]
@@ -483,9 +473,14 @@ pub mod IDirectDrawSurface7 {
         _lpDDSurfaceTargetOverride: u32,
         _dwFlags: u32,
     ) -> DD {
-        let surfaces = state().surf.borrow_mut();
-        let mut surface = surfaces.get(&this).unwrap().borrow_mut();
-        surface.flip(&mut ctx.memory);
+        {
+            let surfaces = state().surf.borrow_mut();
+            let mut surface = surfaces.get(&this).unwrap().borrow_mut();
+            surface.flip(&mut ctx.memory);
+        }
+        // A frame flip is the one thing a game does every frame no matter what
+        // it's doing, so it's where we keep the audio mixer fed.
+        crate::dsound::pump(ctx);
         DD::OK
     }
 
@@ -521,8 +516,8 @@ pub mod IDirectDrawSurface7 {
     }
 
     #[win32_derive::dllexport]
-    pub fn GetColorKey(_ctx: &mut Context, _this: u32, _dwFlags: u32, _lpDDColorKey: u32) -> DD {
-        todo!()
+    pub fn GetColorKey(ctx: &mut Context, this: u32, dwFlags: u32, lpDDColorKey: u32) -> DD {
+        crate::ddraw::ddraw1::IDirectDrawSurface::GetColorKey(ctx, this, dwFlags, lpDDColorKey)
     }
 
     #[win32_derive::dllexport]
@@ -621,8 +616,8 @@ pub mod IDirectDrawSurface7 {
     }
 
     #[win32_derive::dllexport]
-    pub fn SetColorKey(_ctx: &mut Context, _this: u32, _dwFlags: u32, _lpDDColorKey: u32) -> DD {
-        todo!()
+    pub fn SetColorKey(ctx: &mut Context, this: u32, dwFlags: u32, lpDDColorKey: u32) -> DD {
+        crate::ddraw::ddraw1::IDirectDrawSurface::SetColorKey(ctx, this, dwFlags, lpDDColorKey)
     }
 
     #[win32_derive::dllexport]
