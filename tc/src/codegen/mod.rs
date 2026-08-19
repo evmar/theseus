@@ -363,6 +363,17 @@ out.copy_from_slice(bytes);",
                     }
                     self.line("}");
                 }
+                for (dll, func) in &module.dynamic_exports {
+                    let addr = module
+                        .imports
+                        .iter()
+                        .find(|imp| imp.dll == *dll && imp.func == *func)
+                        .expect("dynamic export without a reserved address")
+                        .addr;
+                    self.line(format!(
+                        "winapi::kernel32::register_export({dll:?}, {func:?}, {addr:#x});"
+                    ));
+                }
             }
             Module::DOS(module) => {
                 self.line(format!("

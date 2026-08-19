@@ -24,6 +24,20 @@ pub mod trace;
 pub mod user32;
 pub mod winmm;
 
+/// Functions a program may resolve at runtime with LoadLibrary/GetProcAddress
+/// instead of importing statically. The translator reserves a callable address
+/// for each of these, so a call through the returned pointer lands somewhere.
+///
+/// Statically imported functions need no entry here; only add a name when a
+/// program is seen looking it up by hand.
+pub const DYNAMIC_EXPORTS: &[(&str, &[&str])] = &[
+    // The Microsoft C runtime loads user32 on demand to report fatal errors.
+    (
+        "user32",
+        &["MessageBoxA", "GetActiveWindow", "GetLastActivePopup"],
+    ),
+];
+
 pub use dllexport::{ABIReturn, FromABIParam};
 pub use handle::{HANDLE, Handles};
 pub use point::POINT;
