@@ -8,6 +8,7 @@ mod nls;
 mod process;
 mod resource;
 mod state;
+mod strings;
 mod thread;
 mod time;
 
@@ -21,5 +22,6 @@ pub use nls::*;
 pub use process::*;
 pub use resource::*;
 pub use state::{Lock, State, init_state, lock};
+pub use strings::*;
 pub use thread::*;
 pub use time::*;
