@@ -8,6 +8,8 @@ pub enum Object {
     Thread,
     Event(Arc<Event>),
     Mutex,
+    File(host::fs::File),
+    FindHandle(crate::kernel32::FindHandle),
 }
 
 pub struct Event {
