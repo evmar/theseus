@@ -10,7 +10,15 @@ pub enum DD {
     OK = 0,
     E_NOINTERFACE = 0x80004002,
     ERR_GENERIC = 0x80004005,
+    ERR_NOCOLORKEY = 0x887600d4,
 }
+
+/// DDCKEY_* flags, selecting which of a surface's color keys an operation
+/// refers to.
+pub const DDCKEY_DESTOVERLAY: u32 = 0x0001;
+pub const DDCKEY_DESTBLT: u32 = 0x0002;
+pub const DDCKEY_SRCOVERLAY: u32 = 0x0004;
+pub const DDCKEY_SRCBLT: u32 = 0x0008;
 
 impl Into<ABIReturn> for DD {
     fn into(self) -> ABIReturn {
@@ -135,8 +143,8 @@ win32flags! {
     zerocopy::IntoBytes,
 )]
 pub struct DDCOLORKEY {
-    dwColorSpaceLowValue: u32,
-    dwColorSpaceHighValue: u32,
+    pub dwColorSpaceLowValue: u32,
+    pub dwColorSpaceHighValue: u32,
 }
 
 #[repr(C)]
@@ -490,7 +498,14 @@ win32flags! {
 }
 
 #[repr(C)]
-#[derive(Debug, Clone, zerocopy::FromBytes, zerocopy::Immutable, zerocopy::KnownLayout)]
+#[derive(
+    Debug,
+    Clone,
+    zerocopy::FromBytes,
+    zerocopy::IntoBytes,
+    zerocopy::Immutable,
+    zerocopy::KnownLayout,
+)]
 pub struct PALETTEENTRY {
     pub peRed: u8,
     pub peGreen: u8,

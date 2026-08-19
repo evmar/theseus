@@ -51,11 +51,18 @@ impl DirectDraw {
         };
         drop(window);
 
-        let bytes_per_pixel = if is_primary {
-            self.bytes_per_pixel
+        // An offscreen surface takes the display mode's format unless the app
+        // asks for a specific one, which is what lets a palettized game blit
+        // between its buffers without conversion.
+        let bytes_per_pixel = if desc.dwFlags.contains(DDSD::PIXELFORMAT) {
+            let bits = desc.ddpfPixelFormat.dwRGBBitCount;
+            if bits == 0 {
+                self.bytes_per_pixel
+            } else {
+                bits.div_ceil(8)
+            }
         } else {
-            log::warn!("creating surface assuming 32bpp");
-            4
+            self.bytes_per_pixel
         };
 
         let surface = self.create_one_surface(
@@ -67,6 +74,19 @@ impl DirectDraw {
                 bytes_per_pixel,
             },
         );
+
+        if desc.dwFlags.contains(DDSD::CKSRCBLT) {
+            surface.borrow_mut().src_color_key = Some(ColorKey {
+                low: desc.ddckCKSrcBlt.dwColorSpaceLowValue,
+                high: desc.ddckCKSrcBlt.dwColorSpaceHighValue,
+            });
+        }
+        if desc.dwFlags.contains(DDSD::CKDESTBLT) {
+            surface.borrow_mut().dst_color_key = Some(ColorKey {
+                low: desc.ddckCKDestBlt.dwColorSpaceLowValue,
+                high: desc.ddckCKDestBlt.dwColorSpaceHighValue,
+            });
+        }
 
         if let Some(count) = desc.back_buffer_count() {
             assert_eq!(count, 1);
@@ -100,6 +120,7 @@ impl DirectDraw {
 
         let surf = Rc::new(RefCell::new(Surface {
             addr,
+            refs: 1,
             width: params.width,
             height: params.height,
             bytes_per_pixel: params.bytes_per_pixel,
@@ -108,6 +129,8 @@ impl DirectDraw {
             attached: Default::default(),
             pixels: None,
             palette: None,
+            src_color_key: None,
+            dst_color_key: None,
         }));
         // TODO: move surf to ddraw
         state().surf.borrow_mut().insert(addr, surf.clone());
@@ -120,8 +143,25 @@ pub enum Target {
     Texture(host::Surface),
 }
 
+/// A DDCOLORKEY: the inclusive range of pixel values a blit treats as
+/// transparent.
+#[derive(Copy, Clone, Debug)]
+pub struct ColorKey {
+    pub low: u32,
+    pub high: u32,
+}
+
+impl ColorKey {
+    pub fn matches(&self, pixel: u32) -> bool {
+        (self.low..=self.high).contains(&pixel)
+    }
+}
+
 pub struct Surface {
     pub addr: u32,
+    /// COM reference count. An app that balances AddRef/Release expects the
+    /// surface to outlive the matching Release, so this has to be real.
+    pub refs: u32,
     pub width: u32,
     pub height: u32,
     pub bytes_per_pixel: u32,
@@ -138,6 +178,13 @@ pub struct Surface {
     pub pixels: Option<u32>,
 
     pub palette: Option<Rc<RefCell<Palette>>>,
+
+    /// Pixel values that read as transparent when this surface is the source
+    /// of a blit — how sprites get their transparent background.
+    pub src_color_key: Option<ColorKey>,
+    /// Pixel values that may be overwritten when this surface is the
+    /// destination of a blit.
+    pub dst_color_key: Option<ColorKey>,
 }
 
 impl Surface {
@@ -156,44 +203,98 @@ impl Surface {
     }
 
     pub fn unlock(&mut self, mem: &mut Memory) {
-        self.update_texture(mem, &None);
+        match self.target {
+            // Writes to the primary surface go straight to the screen.
+            Target::Window(_) => self.present(mem),
+            Target::Texture(_) => self.update_texture(mem, &None),
+        }
+    }
+
+    /// Convert this surface's pixels to the RGBA the host wants, using
+    /// `palette` for palettized formats. Borrows the pixels directly when they
+    /// are already RGBA. Returns None when there is nothing to show, e.g. an
+    /// 8-bit surface with no palette attached yet.
+    fn to_rgba<'a>(
+        &self,
+        mem: &'a Memory,
+        palette: &Option<Rc<RefCell<Palette>>>,
+    ) -> Option<std::borrow::Cow<'a, [u8]>> {
+        let addr = self.pixels?;
+        let size = self.width * self.height * self.bytes_per_pixel;
+        let pixels = &mem[addr..][..size as usize];
+        Some(match self.bytes_per_pixel {
+            1 => {
+                let palette = palette.as_ref()?;
+                let entries = &palette.borrow().entries;
+                let mut buf = Vec::with_capacity(pixels.len() * 4);
+                for &p in pixels {
+                    let entry = &entries[p as usize];
+                    // ABGR8888 layout: R,G,B,A in byte order.
+                    buf.push(entry.peRed);
+                    buf.push(entry.peGreen);
+                    buf.push(entry.peBlue);
+                    buf.push(0);
+                }
+                buf.into()
+            }
+            2 => {
+                // RGB565, the standard 16-bit display format.
+                let mut buf = Vec::with_capacity(pixels.len() * 2);
+                for pixel in pixels.chunks_exact(2) {
+                    let pixel = u16::from_le_bytes([pixel[0], pixel[1]]);
+                    let (r, g, b) = (pixel >> 11, (pixel >> 5) & 0x3f, pixel & 0x1f);
+                    // Replicate the high bits into the low ones so full-scale
+                    // values stay full-scale.
+                    buf.push((r << 3 | r >> 2) as u8);
+                    buf.push((g << 2 | g >> 4) as u8);
+                    buf.push((b << 3 | b >> 2) as u8);
+                    buf.push(0);
+                }
+                buf.into()
+            }
+            4 => pixels.into(),
+            bpp => {
+                log::warn!("unsupported surface format: {bpp} bytes per pixel");
+                return None;
+            }
+        })
     }
 
     // App can write pixels to back buffer but attach palette to front buffer,
     // so take palette as an argument.
     fn update_texture(&mut self, mem: &mut Memory, palette: &Option<Rc<RefCell<Palette>>>) {
-        let Some(addr) = self.pixels else {
+        let Some(pixels) = self.to_rgba(mem, palette) else {
             return;
         };
-        let size = self.width * self.height * self.bytes_per_pixel;
-        let pixels = &mem[addr..][..size as usize];
-        let mut buf = vec![];
-        let pixels32 = match self.bytes_per_pixel {
-            1 => {
-                let Some(palette) = palette.as_ref() else {
-                    // e.g. unlock on a back buffer with no palette attached
-                    return;
-                };
-                let palette = palette.borrow();
-                let entries = &palette.entries;
-                for &p in pixels {
-                    let entry = &entries[p as usize];
-                    buf.push(entry.peBlue);
-                    buf.push(entry.peGreen);
-                    buf.push(entry.peRed);
-                    buf.push(0);
-                }
-                buf.as_slice()
-            }
-            4 => pixels,
-            _ => todo!(),
-        };
+        let width = self.width;
         match &mut self.target {
             Target::Window(_) => unreachable!(),
             Target::Texture(texture) => {
-                texture.set_pixels(pixels32, self.width * 4);
+                texture.set_pixels(&pixels, width * 4);
             }
         }
+    }
+
+    /// Present this surface's own pixel buffer to the window it targets, used
+    /// when an app draws directly to the primary surface (via Lock or Blt)
+    /// instead of flipping. No-op for non-primary surfaces.
+    pub fn present(&mut self, mem: &mut Memory) {
+        let Target::Window(window) = &self.target else {
+            return;
+        };
+        // We have no texture of our own; borrow the back buffer's.
+        let Some(back) = self.attached.clone() else {
+            return;
+        };
+        let Some(pixels) = self.to_rgba(mem, &self.palette) else {
+            return;
+        };
+        let mut back = back.borrow_mut();
+        let Target::Texture(texture) = &mut back.target else {
+            return;
+        };
+        texture.set_pixels(&pixels, self.width * 4);
+        window.borrow_mut().host.render(texture);
     }
 
     pub fn flip(&mut self, mem: &mut Memory) {
