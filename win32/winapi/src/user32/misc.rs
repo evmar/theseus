@@ -81,13 +81,39 @@ pub fn KillTimer(_ctx: &mut Context, _hWnd: HWND, _uIDEvent: u32) -> bool {
 
 #[win32_derive::dllexport]
 pub fn MessageBoxA(
-    _ctx: &mut Context,
+    ctx: &mut Context,
     _hWnd: HWND,
-    _lpText: Ptr<u8>,
-    _lpCaption: Ptr<u8>,
+    lpText: Ptr<u8>,
+    lpCaption: Ptr<u8>,
     _uType: u32, /* MESSAGEBOX_STYLE */
 ) -> u32 /* MESSAGEBOX_RESULT */ {
-    stub!(0)
+    // We have no dialogs, but the C runtime reports fatal errors this way, so
+    // the text is worth surfacing.
+    let read = |ptr: Ptr<u8>| {
+        if ptr.addr == 0 {
+            String::new()
+        } else {
+            ctx.memory.read_str(ptr.addr).to_owned()
+        }
+    };
+    log::warn!("MessageBox: {} / {}", read(lpCaption), read(lpText));
+    const IDOK: u32 = 1;
+    IDOK
+}
+
+#[win32_derive::dllexport]
+pub fn GetActiveWindow(_ctx: &mut Context) -> HWND {
+    // Only ever one window, and it's always the active one.
+    match state().window.borrow().as_ref() {
+        Some(window) => window.borrow().hwnd,
+        None => HWND::null(),
+    }
+}
+
+#[win32_derive::dllexport]
+pub fn GetLastActivePopup(_ctx: &mut Context, hWnd: HWND) -> HWND {
+    // No popups, so a window is its own last active popup.
+    hWnd
 }
 
 #[win32_derive::dllexport]
