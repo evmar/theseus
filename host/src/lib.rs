@@ -7,6 +7,7 @@ use std::sync::LazyLock;
 
 #[cfg(not(target_family = "wasm"))]
 mod sdl;
+pub mod fs;
 mod single_thread;
 #[cfg(not(target_family = "wasm"))]
 pub use sdl::*;
@@ -50,6 +51,29 @@ pub enum Message {
     MouseDown(MouseMessage),
     MouseUp(MouseMessage),
     MouseMove(MouseMessage),
+}
+
+/// Which winapi calls to trace, in the syntax `trace::init` parses.
+#[cfg(not(target_family = "wasm"))]
+pub fn trace_spec() -> String {
+    std::env::var("THESEUS_TRACE").unwrap_or_default()
+}
+
+/// The web build has no environment to read a spec from, so the page sets one
+/// with `set_trace` before starting the program. Tracing every call is slow
+/// enough to change how a program behaves, so it is off unless asked for.
+#[cfg(target_family = "wasm")]
+static TRACE_SPEC: std::sync::Mutex<String> = std::sync::Mutex::new(String::new());
+
+#[cfg(target_family = "wasm")]
+pub fn trace_spec() -> String {
+    TRACE_SPEC.lock().unwrap().clone()
+}
+
+#[cfg(target_family = "wasm")]
+#[wasm_bindgen::prelude::wasm_bindgen]
+pub fn set_trace(spec: &str) {
+    *TRACE_SPEC.lock().unwrap() = spec.to_string();
 }
 
 pub fn init() {
