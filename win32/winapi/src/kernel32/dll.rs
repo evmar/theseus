@@ -1,8 +1,10 @@
-use std::sync::Mutex;
-
 use runtime::Context;
 
-use crate::{Ptr, kernel32::lock, stub};
+use crate::{
+    Ptr,
+    kernel32::{State, lock},
+    stub,
+};
 
 pub type HMODULE = u32;
 
@@ -33,14 +35,12 @@ impl DLLLoader for () {
 /// uses for imports, so they resolve through the block table) and registers it
 /// here from the generated init code.
 #[derive(Default)]
-struct Exports {
+pub struct Exports {
     /// (dll, function) -> address, with dll lowercased and without ".dll".
     functions: Vec<(String, String, u32)>,
     /// Module handles handed out by LoadLibrary, in registration order.
     modules: Vec<String>,
 }
-
-static EXPORTS: Mutex<Option<Exports>> = Mutex::new(None);
 
 /// Module handles are synthetic; the value only has to be non-null and
 /// distinguishable.
@@ -53,40 +53,45 @@ fn normalize_module_name(name: &str) -> String {
     name.strip_suffix(".dll").unwrap_or(&name).to_string()
 }
 
-/// Register a function as available through GetProcAddress. Called from
-/// generated init code, once per function the translator reserved an address
-/// for.
-pub fn register_export(dll: &str, func: &str, addr: u32) {
-    let mut exports = EXPORTS.lock().unwrap();
-    let exports = exports.get_or_insert_with(Default::default);
-    let dll = normalize_module_name(dll);
-    if !exports.modules.contains(&dll) {
-        exports.modules.push(dll.clone());
+impl State {
+    /// Register a function as available through GetProcAddress. Called from
+    /// generated init code, once per function the translator reserved an
+    /// address for.
+    pub fn register_export(&mut self, dll: &str, func: &str, addr: u32) {
+        let dll = normalize_module_name(dll);
+        if !self.exports.modules.contains(&dll) {
+            self.exports.modules.push(dll.clone());
+        }
+        self.exports.functions.push((dll, func.to_string(), addr));
     }
-    exports.functions.push((dll, func.to_string(), addr));
+
+    fn module_handle(&self, name: &str) -> Option<HMODULE> {
+        let name = normalize_module_name(name);
+        let index = self
+            .exports
+            .modules
+            .iter()
+            .position(|module| *module == name)?;
+        Some(MODULE_HANDLE_BASE + index as u32)
+    }
+
+    fn module_name(&self, handle: HMODULE) -> Option<&str> {
+        let index = handle.checked_sub(MODULE_HANDLE_BASE)? as usize;
+        self.exports.modules.get(index).map(String::as_str)
+    }
+
+    fn proc_address(&self, module: &str, func: &str) -> Option<u32> {
+        self.exports
+            .functions
+            .iter()
+            .find_map(|(dll, name, addr)| (dll == module && name == func).then_some(*addr))
+    }
 }
 
-fn module_handle(name: &str) -> Option<HMODULE> {
-    let exports = EXPORTS.lock().unwrap();
-    let exports = exports.as_ref()?;
-    let name = normalize_module_name(name);
-    let index = exports.modules.iter().position(|module| *module == name)?;
-    Some(MODULE_HANDLE_BASE + index as u32)
-}
-
-fn module_name(handle: HMODULE) -> Option<String> {
-    let index = handle.checked_sub(MODULE_HANDLE_BASE)? as usize;
-    let exports = EXPORTS.lock().unwrap();
-    exports.as_ref()?.modules.get(index).cloned()
-}
-
-fn proc_address(module: &str, func: &str) -> Option<u32> {
-    let exports = EXPORTS.lock().unwrap();
-    exports
-        .as_ref()?
-        .functions
-        .iter()
-        .find_map(|(dll, name, addr)| (dll == module && name == func).then_some(*addr))
+/// Register a function as available through GetProcAddress; the entry point
+/// the generated init code calls.
+pub fn register_export(dll: &str, func: &str, addr: u32) {
+    lock().register_export(dll, func, addr);
 }
 
 #[win32_derive::dllexport]
@@ -110,7 +115,8 @@ pub fn GetModuleHandleA(ctx: &mut Context, lpModuleName: Ptr<u8>) -> HMODULE {
         // A null name asks for the running executable itself.
         return lock().image_base;
     };
-    match module_handle(&name) {
+    let kernel32 = lock();
+    match kernel32.module_handle(&name) {
         Some(handle) => handle,
         None => {
             log::warn!("GetModuleHandleA({name}): not loaded");
@@ -124,10 +130,11 @@ pub fn LoadLibraryA(ctx: &mut Context, lpLibFileName: Ptr<u8>) -> HMODULE {
     let filename = ctx.memory.read_str(lpLibFileName.addr).to_owned();
     // A DLL we implement is already "loaded"; anything else falls through to
     // whatever loader the host installed.
-    if let Some(handle) = module_handle(&filename) {
+    let mut kernel32 = lock();
+    if let Some(handle) = kernel32.module_handle(&filename) {
         return handle;
     }
-    lock().dll_loader.load_library(&filename)
+    kernel32.dll_loader.load_library(&filename)
 }
 
 #[win32_derive::dllexport]
@@ -144,12 +151,14 @@ pub fn GetProcAddress(ctx: &mut Context, hModule: HMODULE, lpProcName: Ptr<u8>) 
     } else {
         ctx.memory.read_str(lpProcName.addr).to_owned()
     };
-    if let Some(module) = module_name(hModule) {
-        if let Some(addr) = proc_address(&module, &name) {
+    let mut kernel32 = lock();
+    if let Some(module) = kernel32.module_name(hModule) {
+        let module = module.to_string();
+        if let Some(addr) = kernel32.proc_address(&module, &name) {
             return addr;
         }
         log::warn!("GetProcAddress({module}, {name}): not implemented, returning null");
         return 0;
     }
-    lock().dll_loader.get_proc_address(hModule, &name)
+    kernel32.dll_loader.get_proc_address(hModule, &name)
 }
