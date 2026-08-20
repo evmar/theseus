@@ -32,7 +32,7 @@ fn load_dos(mem: &mut Memory, buf: &[u8], dos: exe::DOS) -> DOSModule {
         stack_segment: load_segment + dos.header.e_ss,
         stack_pointer: dos.header.e_sp,
         entry_point: dos.header.e_ip,
-        code_memory: (load_addr..data.len() as u32),
+        code_memory: (load_addr..load_addr + data.len() as u32),
     }
 }
 
