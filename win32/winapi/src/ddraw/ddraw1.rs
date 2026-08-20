@@ -4,13 +4,7 @@ use runtime::Context;
 use zerocopy::{FromBytes, IntoBytes};
 
 use crate::{
-    RECT,
-    ddraw::{
-        ColorKey, DD, GUID, Palette,
-        ddraw::{blit_copy, read_rect, surface_src_color_key},
-        get_pixel_format, state,
-        types::*,
-    },
+    ddraw::{DD, GUID, Palette, get_pixel_format, state, types::*},
     heap::Heap,
     kernel32, stub,
     user32::HWND,
