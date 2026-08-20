@@ -76,6 +76,9 @@ fn init(ctx: &mut Context, mappings: &mut runtime::Mappings) {
         winapi::ddraw::IDirectDrawSurface7::VTABLE = 0x1164;
         winapi::ddraw::IDirectDrawPalette::VTABLE = 0x1228;
     }
+    winapi::kernel32::register_export("user32", "MessageBoxA", 0xfafbfc2c);
+    winapi::kernel32::register_export("user32", "GetActiveWindow", 0xfafbfcd0);
+    winapi::kernel32::register_export("user32", "GetLastActivePopup", 0xfafbfcd1);
 }
 
 pub fn x401000(ctx: &mut Context) -> Cont {
@@ -22063,7 +22066,7 @@ pub fn x4054ec(ctx: &mut Context) -> Cont {
     ctx.ret32(0)
 }
 
-const BLOCKS: [(u32, ContFn); 1784] = [
+const BLOCKS: [(u32, ContFn); 1786] = [
     (0x401000, x401000),
     (0x401005, x401005),
     (0x401010, x401010),
@@ -23967,6 +23970,8 @@ const BLOCKS: [(u32, ContFn); 1784] = [
     (0xfafbfccd, ddraw::IDirectDrawPalette::GetEntries_stdcall),
     (0xfafbfcce, ddraw::IDirectDrawPalette::Initialize_stdcall),
     (0xfafbfccf, ddraw::IDirectDrawPalette::SetEntries_stdcall),
+    (0xfafbfcd0, user32::GetActiveWindow_stdcall),
+    (0xfafbfcd1, user32::GetLastActivePopup_stdcall),
     (runtime::RETURN_FROM_X86_ADDR32, Context::return_from_x86),
 ];
 
