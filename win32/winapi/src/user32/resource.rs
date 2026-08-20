@@ -40,7 +40,7 @@ pub fn LoadImageA(
     cy: u32,
     fuLoad: LR,
 ) -> HANDLE {
-    assert!(hInst == 0);
+    assert!(hInst == 0 || hInst == kernel32::lock().image_base);
 
     assert!(is_intresource(name.addr));
     let name = exe::ResourceName::Id(name.addr);
