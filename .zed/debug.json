@@ -2,9 +2,9 @@
   {
     "label": "basicdd",
     "build": {
-      "command": "./build.sh"
+      "command": "cargo build -p basicdd"
     },
-    "program": "$ZED_WORKTREE_ROOT/target/debug/basicdd-exe",
+    "program": "$ZED_WORKTREE_ROOT/target/debug/basicdd",
     "sourceLanguages": ["rust"],
     "request": "launch",
     "adapter": "CodeLLDB"
