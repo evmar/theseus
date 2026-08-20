@@ -22,6 +22,7 @@ fn check_ptr<T>(t: *mut T) -> *mut T {
 }
 
 pub struct MainThread {
+    headless: bool,
     /// Mouse buttons currently held. Button events carry no mask of their own,
     /// so it is tracked as they arrive.
     buttons: std::cell::Cell<host::MouseButton>,
@@ -33,8 +34,9 @@ pub struct Host {
 
 impl Host {
     pub fn new() -> Self {
+        let headless = std::env::var("THESEUS_HEADLESS").unwrap_or_default() != "";
         Self {
-            main_thread: SingleThreader::new(MainThread::new()),
+            main_thread: SingleThreader::new(MainThread::new(headless)),
         }
     }
 }
@@ -249,7 +251,7 @@ impl MainThread {
 }
 
 impl MainThread {
-    fn new() -> Self {
+    fn new(headless: bool) -> Self {
         unsafe {
             check(sdl::hints::SDL_SetHint(
                 sdl::hints::SDL_HINT_NO_SIGNAL_HANDLERS,
@@ -259,11 +261,14 @@ impl MainThread {
                 sdl::hints::SDL_HINT_RENDER_VSYNC,
                 c"1".as_ptr(),
             ));
-            check(sdl::init::SDL_Init(
-                sdl::init::SDL_INIT_VIDEO | sdl::init::SDL_INIT_AUDIO,
-            ));
+            check(sdl::init::SDL_Init(if headless {
+                sdl::init::SDL_INIT_EVENTS
+            } else {
+                sdl::init::SDL_INIT_VIDEO | sdl::init::SDL_INIT_AUDIO
+            }));
         }
         Self {
+            headless,
             buttons: Default::default(),
         }
     }
@@ -297,12 +302,16 @@ impl MainThread {
 }
 
 pub struct Surface {
+    /// null when running in headless mode
     texture: *mut sdl::render::SDL_Texture,
 }
 
 impl Surface {
     /// pixels are RGBA in memory
     pub fn set_pixels(&mut self, pixels: &[u8], stride: u32) {
+        if self.texture.is_null() {
+            return;
+        }
         unsafe {
             check(sdl::render::SDL_UpdateTexture(
                 self.texture,
@@ -315,12 +324,19 @@ impl Surface {
 }
 
 pub struct Window {
+    /// null when running in headless mode
     window: *mut sdl::video::SDL_Window,
+    /// null when running in headless mode
     renderer: *mut sdl::render::SDL_Renderer,
 }
 
 impl Window {
     pub fn create_surface(&mut self, width: u32, height: u32) -> Surface {
+        if self.window.is_null() {
+            return Surface {
+                texture: std::ptr::null_mut(),
+            };
+        }
         unsafe {
             let texture = check_ptr(sdl::render::SDL_CreateTexture(
                 self.renderer,
@@ -335,6 +351,9 @@ impl Window {
     }
 
     pub fn resize(&mut self, width: u32, height: u32) {
+        if self.window.is_null() {
+            return;
+        }
         unsafe {
             check(sdl::video::SDL_SetWindowSize(
                 self.window,
@@ -345,6 +364,9 @@ impl Window {
     }
 
     pub fn render(&mut self, surface: &mut Surface) {
+        if self.window.is_null() {
+            return;
+        }
         unsafe {
             // For debugging, can verify that the flip covers the entire canvas by starting with red:
             // check(sdl::render::SDL_SetRenderDrawColor(
@@ -374,6 +396,12 @@ impl Window {
 
 impl MainThread {
     pub fn create_window(&self, title: &str, width: u32, height: u32) -> Window {
+        if self.headless {
+            return Window {
+                window: std::ptr::null_mut(),
+                renderer: std::ptr::null_mut(),
+            };
+        }
         unsafe {
             let window = sdl::video::SDL_CreateWindow(
                 CString::new(title).unwrap().as_ptr(),
