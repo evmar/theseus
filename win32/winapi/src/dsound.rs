@@ -43,6 +43,8 @@ const fn make_dserror(code: u32) -> u32 {
 }
 
 const DS_OK: u32 = 0;
+
+const WAVE_FORMAT_PCM: u16 = 1;
 #[allow(dead_code)]
 const DSERR_NODRIVER: u32 = make_dserror(120);
 const DSERR_INVALIDPARAM: u32 = 0x80070057;
@@ -104,7 +106,7 @@ struct Buffer {
     size: u32,
     format: WaveFormat,
     primary: bool,
-    caps_flags: DSBCAPS,
+    caps_flags: DSBCAPS_FLAGS,
     playing: bool,
     looping: bool,
     /// Playback position in source frames; fractional so resampling works.
@@ -376,14 +378,14 @@ pub mod IDirectSound {
         let addr = IDirectSoundBuffer::new(ctx, &mut kernel32.process_heap);
         drop(kernel32);
 
-        let primary = desc.dwFlags.contains(DSBCAPS::PRIMARYBUFFER);
+        let primary = desc.dwFlags.contains(DSBCAPS_FLAGS::PRIMARYBUFFER);
         let format = if desc.lpwfxFormat != 0 {
             let fmt = <WAVEFORMATEX>::read_from_prefix(&ctx.memory[desc.lpwfxFormat..])
                 .unwrap()
                 .0;
-            const WAVE_FORMAT_PCM: u16 = 1;
             if fmt.wFormatTag != WAVE_FORMAT_PCM {
-                log::warn!("dsound: non-PCM format {}", fmt.wFormatTag);
+                let tag = fmt.wFormatTag; // packed: copy before formatting
+                log::warn!("dsound: non-PCM format {tag}");
             }
             WaveFormat::from_wave(&fmt)
         } else {
@@ -590,14 +592,23 @@ pub mod IDirectSoundBuffer {
         let Some(buffer) = state.buffers.get(&this) else {
             return DSERR_INVALIDPARAM;
         };
-        // DSBCAPS: dwSize, dwFlags, dwBufferBytes, dwUnlockTransferRate,
-        // dwPlayCpuOverhead.
-        let (flags, size) = (buffer.caps_flags.bits(), buffer.size);
+        let (flags, size) = (buffer.caps_flags, buffer.size);
         drop(state);
-        ctx.memory.write::<u32>(lpDSBufferCaps + 4, flags);
-        ctx.memory.write::<u32>(lpDSBufferCaps + 8, size);
-        ctx.memory.write::<u32>(lpDSBufferCaps + 12, 0);
-        ctx.memory.write::<u32>(lpDSBufferCaps + 16, 0);
+        // dwSize is the caller's, and it tells us how much it expects back.
+        let dwSize = ctx.memory.read::<u32>(lpDSBufferCaps);
+        if (dwSize as usize) < std::mem::size_of::<DSBCAPS>() {
+            return DSERR_INVALIDPARAM;
+        }
+        ctx.memory.write(
+            lpDSBufferCaps,
+            DSBCAPS {
+                dwSize,
+                dwFlags: flags,
+                dwBufferBytes: size,
+                dwUnlockTransferRate: 0,
+                dwPlayCpuOverhead: 0,
+            },
+        );
         DS_OK
     }
 
@@ -657,16 +668,18 @@ pub mod IDirectSoundBuffer {
                 return DSERR_INVALIDPARAM;
             }
             let block_align = format.frame_bytes() as u16;
-            ctx.memory.write::<u16>(lpwfxFormat, 1); // WAVE_FORMAT_PCM
-            ctx.memory
-                .write::<u16>(lpwfxFormat + 2, format.channels as u16);
-            ctx.memory.write::<u32>(lpwfxFormat + 4, format.rate);
-            ctx.memory
-                .write::<u32>(lpwfxFormat + 8, format.rate * block_align as u32);
-            ctx.memory.write::<u16>(lpwfxFormat + 12, block_align);
-            ctx.memory
-                .write::<u16>(lpwfxFormat + 14, format.bits as u16);
-            ctx.memory.write::<u16>(lpwfxFormat + 16, 0); // cbSize
+            ctx.memory.write(
+                lpwfxFormat,
+                WAVEFORMATEX {
+                    wFormatTag: WAVE_FORMAT_PCM,
+                    nChannels: format.channels as u16,
+                    nSamplesPerSec: format.rate,
+                    nAvgBytesPerSec: format.rate * block_align as u32,
+                    nBlockAlign: block_align,
+                    wBitsPerSample: format.bits as u16,
+                    cbSize: 0,
+                },
+            );
         }
         if lpdwSizeWritten != 0 {
             ctx.memory.write::<u32>(lpdwSizeWritten, size);
@@ -914,7 +927,7 @@ pub mod IDirectSoundBuffer {
 }
 
 win32flags! {
-    pub struct DSBCAPS {
+    pub struct DSBCAPS_FLAGS {
         const PRIMARYBUFFER       = 0x00000001;
         const STATIC              = 0x00000002;
         const LOCHARDWARE         = 0x00000004;
@@ -946,15 +959,30 @@ win32flags! {
 #[repr(C)]
 pub struct DSBUFFERDESC {
     pub dwSize: u32,
-    pub dwFlags: DSBCAPS,
+    pub dwFlags: DSBCAPS_FLAGS,
     pub dwBufferBytes: u32,
     pub dwReserved: u32,
     pub lpwfxFormat: u32,
     // pub guid3DAlgorithm: GUID,
 }
 
+/// What IDirectSoundBuffer::GetCaps reports.
 #[repr(C)]
-#[derive(Debug, zerocopy::FromBytes, zerocopy::Immutable, zerocopy::KnownLayout)]
+#[derive(Debug, zerocopy::IntoBytes, zerocopy::Immutable)]
+pub struct DSBCAPS {
+    pub dwSize: u32,
+    pub dwFlags: DSBCAPS_FLAGS,
+    pub dwBufferBytes: u32,
+    pub dwUnlockTransferRate: u32,
+    pub dwPlayCpuOverhead: u32,
+}
+
+/// Packed because Windows' WAVEFORMATEX is 18 bytes: cbSize sits at offset 16
+/// with nothing after it, and callers size their buffers by that.
+#[repr(C, packed)]
+#[derive(
+    Debug, zerocopy::FromBytes, zerocopy::IntoBytes, zerocopy::Immutable, zerocopy::KnownLayout,
+)]
 pub struct WAVEFORMATEX {
     pub wFormatTag: u16,
     pub nChannels: u16,
