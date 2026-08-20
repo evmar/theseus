@@ -4,9 +4,13 @@ use runtime::Context;
 
 use crate::Ptr;
 
-const CSTR_LESS_THAN: i32 = 1;
-const CSTR_EQUAL: i32 = 2;
-const CSTR_GREATER_THAN: i32 = 3;
+/// The result of CompareString*.
+#[derive(Debug, PartialEq, Eq, win32_derive::ABIEnum)]
+pub enum CSTR {
+    LESS_THAN = 1,
+    EQUAL = 2,
+    GREATER_THAN = 3,
+}
 
 const NORM_IGNORECASE: u32 = 1;
 
@@ -68,11 +72,12 @@ fn read_counted_w(ctx: &Context, addr: u32, count: i32) -> Vec<u16> {
 }
 
 fn compare_ordering(ord: std::cmp::Ordering) -> i32 {
-    match ord {
-        std::cmp::Ordering::Less => CSTR_LESS_THAN,
-        std::cmp::Ordering::Equal => CSTR_EQUAL,
-        std::cmp::Ordering::Greater => CSTR_GREATER_THAN,
-    }
+    let result = match ord {
+        std::cmp::Ordering::Less => CSTR::LESS_THAN,
+        std::cmp::Ordering::Equal => CSTR::EQUAL,
+        std::cmp::Ordering::Greater => CSTR::GREATER_THAN,
+    };
+    result as i32
 }
 
 #[win32_derive::dllexport]
