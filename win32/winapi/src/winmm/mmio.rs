@@ -16,12 +16,7 @@ pub fn mciSendCommandA(
 }
 
 #[win32_derive::dllexport]
-pub fn mmioOpenA(
-    _ctx: &mut Context,
-    _szFilename: u32,
-    _lpmmioinfo: u32,
-    _dwOpenFlags: u32,
-) -> u32 {
+pub fn mmioOpenA(_ctx: &mut Context, _szFilename: u32, _lpmmioinfo: u32, _dwOpenFlags: u32) -> u32 {
     todo!("mmioOpenA")
 }
 

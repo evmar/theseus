@@ -303,7 +303,13 @@ pub mod IDirectInputDevice {
     }
 
     #[win32_derive::dllexport]
-    pub fn GetObjectInfo(_ctx: &mut Context, _this: u32, _pdidoi: u32, _dwObj: u32, _dwHow: u32) -> u32 {
+    pub fn GetObjectInfo(
+        _ctx: &mut Context,
+        _this: u32,
+        _pdidoi: u32,
+        _dwObj: u32,
+        _dwHow: u32,
+    ) -> u32 {
         todo!()
     }
 
@@ -318,7 +324,13 @@ pub mod IDirectInputDevice {
     }
 
     #[win32_derive::dllexport]
-    pub fn Initialize(_ctx: &mut Context, _this: u32, _hinst: u32, _dwVersion: u32, _rguid: u32) -> u32 {
+    pub fn Initialize(
+        _ctx: &mut Context,
+        _this: u32,
+        _hinst: u32,
+        _dwVersion: u32,
+        _rguid: u32,
+    ) -> u32 {
         DI_OK
     }
 
