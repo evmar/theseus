@@ -8,7 +8,7 @@
 use runtime::*;
 
 use winapi::*;
-fn init(ctx: &mut Context, mappings: &mut runtime::Mappings) {
+fn init(memory: &mut runtime::Memory, mappings: &mut runtime::Mappings) {
     mappings.reserve(runtime::Mapping {
         desc: "null page".to_string(),
         addr: 0x0,
@@ -22,7 +22,7 @@ fn init(ctx: &mut Context, mappings: &mut runtime::Mappings) {
         section: false,
     });
     let bytes = include_bytes!("../data/00001000.raw").as_slice();
-    let out = &mut ctx.memory.bytes[0x1000..][..bytes.len()];
+    let out = &mut memory.bytes[0x1000..][..bytes.len()];
     out.copy_from_slice(bytes);
     mappings.reserve(runtime::Mapping {
         desc: "exe header".to_string(),
@@ -31,7 +31,7 @@ fn init(ctx: &mut Context, mappings: &mut runtime::Mappings) {
         section: true,
     });
     let bytes = include_bytes!("../data/00400000.raw").as_slice();
-    let out = &mut ctx.memory.bytes[0x400000..][..bytes.len()];
+    let out = &mut memory.bytes[0x400000..][..bytes.len()];
     out.copy_from_slice(bytes);
     mappings.reserve(runtime::Mapping {
         desc: "UPX0".to_string(),
@@ -46,7 +46,7 @@ fn init(ctx: &mut Context, mappings: &mut runtime::Mappings) {
         section: true,
     });
     let bytes = include_bytes!("../data/00440000.raw").as_slice();
-    let out = &mut ctx.memory.bytes[0x440000..][..bytes.len()];
+    let out = &mut memory.bytes[0x440000..][..bytes.len()];
     out.copy_from_slice(bytes);
     mappings.reserve(runtime::Mapping {
         desc: ".rsrc".to_string(),
@@ -55,7 +55,7 @@ fn init(ctx: &mut Context, mappings: &mut runtime::Mappings) {
         section: true,
     });
     let bytes = include_bytes!("../data/0044e000.raw").as_slice();
-    let out = &mut ctx.memory.bytes[0x44e000..][..bytes.len()];
+    let out = &mut memory.bytes[0x44e000..][..bytes.len()];
     out.copy_from_slice(bytes);
     unsafe {
         winapi::ddraw::IDirectDraw::VTABLE = 0x1000;
@@ -64,6 +64,9 @@ fn init(ctx: &mut Context, mappings: &mut runtime::Mappings) {
         winapi::ddraw::IDirectDrawSurface7::VTABLE = 0x1164;
         winapi::ddraw::IDirectDrawPalette::VTABLE = 0x1228;
     }
+    winapi::kernel32::register_export("user32", "MessageBoxA", 0xfafbfc96);
+    winapi::kernel32::register_export("user32", "GetActiveWindow", 0xfafbfc97);
+    winapi::kernel32::register_export("user32", "GetLastActivePopup", 0xfafbfc98);
 }
 
 pub fn x44d840(ctx: &mut Context) -> Cont {
@@ -614,7 +617,7 @@ pub fn x44d98b(ctx: &mut Context) -> Cont {
     Cont(crate::externs::x41f079)
 }
 
-const BLOCKS: [(u32, ContFn); 198] = [
+const BLOCKS: [(u32, ContFn); 201] = [
     (0x41f079, crate::externs::x41f079),
     (0x44d840, x44d840),
     (0x44d858, x44d858),
@@ -932,6 +935,9 @@ const BLOCKS: [(u32, ContFn); 198] = [
     (0xfafbfc93, ddraw::IDirectDrawPalette::GetEntries_stdcall),
     (0xfafbfc94, ddraw::IDirectDrawPalette::Initialize_stdcall),
     (0xfafbfc95, ddraw::IDirectDrawPalette::SetEntries_stdcall),
+    (0xfafbfc96, user32::MessageBoxA_stdcall),
+    (0xfafbfc97, user32::GetActiveWindow_stdcall),
+    (0xfafbfc98, user32::GetLastActivePopup_stdcall),
     (runtime::RETURN_FROM_X86_ADDR32, Context::return_from_x86),
 ];
 

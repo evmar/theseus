@@ -7,7 +7,7 @@
 
 use runtime::*;
 
-fn init(ctx: &mut Context, mappings: &mut runtime::Mappings) {
+fn init(memory: &mut runtime::Memory, mappings: &mut runtime::Mappings) {
     mappings.reserve(runtime::Mapping {
         desc: "com".to_string(),
         addr: 0x8230,
@@ -15,7 +15,7 @@ fn init(ctx: &mut Context, mappings: &mut runtime::Mappings) {
         section: true,
     });
     let bytes = include_bytes!("../data/00008230.raw").as_slice();
-    let out = &mut ctx.memory.bytes[0x8230..][..bytes.len()];
+    let out = &mut memory.bytes[0x8230..][..bytes.len()];
     out.copy_from_slice(bytes);
 
     ctx.cpu.regs.cs = 0x813;

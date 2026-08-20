@@ -7,7 +7,7 @@
 
 use runtime::*;
 
-fn init(ctx: &mut Context, mappings: &mut runtime::Mappings) {
+fn init(memory: &mut runtime::Memory, mappings: &mut runtime::Mappings) {
     mappings.reserve(runtime::Mapping {
         desc: "psp".to_string(),
         addr: 0x8130,
@@ -21,7 +21,7 @@ fn init(ctx: &mut Context, mappings: &mut runtime::Mappings) {
         section: true,
     });
     let bytes = include_bytes!("../data/00008230.raw").as_slice();
-    let out = &mut ctx.memory.bytes[0x8230..][..bytes.len()];
+    let out = &mut memory.bytes[0x8230..][..bytes.len()];
     out.copy_from_slice(bytes);
 
     ctx.cpu.regs.cs = 0x823;
@@ -1527,7 +1527,7 @@ pub fn x0823_076d(ctx: &mut Context) -> Cont {
 pub fn x0823_0775(ctx: &mut Context) -> Cont {
     // 0823:0775 jmp far ptr 00B8h:9
     ctx.cpu.regs.cs = 0xb8;
-    todo!("static jmp to unknown block 00b8:0009")
+    Cont(unk_b89)
 }
 
 pub fn x0823_0778(ctx: &mut Context) -> Cont {
@@ -12245,6 +12245,10 @@ pub fn x0823_1c54(ctx: &mut Context) -> Cont {
     ctx.cpu.regs.set_bp(x);
     // 0823:1c59 ret
     ctx.ret16(0)
+}
+
+pub fn unk_b89(_ctx: &mut Context) -> Cont {
+    runtime::unknown_block(0xb89)
 }
 
 const BLOCKS: [(u32, ContFn); 872] = [

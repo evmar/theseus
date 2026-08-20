@@ -8,7 +8,7 @@
 use runtime::*;
 
 use winapi::*;
-fn init(ctx: &mut Context, mappings: &mut runtime::Mappings) {
+fn init(memory: &mut runtime::Memory, mappings: &mut runtime::Mappings) {
     mappings.reserve(runtime::Mapping {
         desc: "null page".to_string(),
         addr: 0x0,
@@ -16,13 +16,22 @@ fn init(ctx: &mut Context, mappings: &mut runtime::Mappings) {
         section: false,
     });
     mappings.reserve(runtime::Mapping {
+        desc: "vtables".to_string(),
+        addr: 0x1000,
+        size: 0x1000,
+        section: false,
+    });
+    let bytes = include_bytes!("../data/00001000.raw").as_slice();
+    let out = &mut memory.bytes[0x1000..][..bytes.len()];
+    out.copy_from_slice(bytes);
+    mappings.reserve(runtime::Mapping {
         desc: "exe header".to_string(),
         addr: 0x1000000,
         size: 0x1000,
         section: true,
     });
     let bytes = include_bytes!("../data/01000000.raw").as_slice();
-    let out = &mut ctx.memory.bytes[0x1000000..][..bytes.len()];
+    let out = &mut memory.bytes[0x1000000..][..bytes.len()];
     out.copy_from_slice(bytes);
     mappings.reserve(runtime::Mapping {
         desc: ".text".to_string(),
@@ -31,7 +40,7 @@ fn init(ctx: &mut Context, mappings: &mut runtime::Mappings) {
         section: true,
     });
     let bytes = include_bytes!("../data/01001000.raw").as_slice();
-    let out = &mut ctx.memory.bytes[0x1001000..][..bytes.len()];
+    let out = &mut memory.bytes[0x1001000..][..bytes.len()];
     out.copy_from_slice(bytes);
     mappings.reserve(runtime::Mapping {
         desc: ".data".to_string(),
@@ -40,7 +49,7 @@ fn init(ctx: &mut Context, mappings: &mut runtime::Mappings) {
         section: true,
     });
     let bytes = include_bytes!("../data/01005000.raw").as_slice();
-    let out = &mut ctx.memory.bytes[0x1005000..][..bytes.len()];
+    let out = &mut memory.bytes[0x1005000..][..bytes.len()];
     out.copy_from_slice(bytes);
     mappings.reserve(runtime::Mapping {
         desc: ".rsrc".to_string(),
@@ -49,8 +58,11 @@ fn init(ctx: &mut Context, mappings: &mut runtime::Mappings) {
         section: true,
     });
     let bytes = include_bytes!("../data/01006000.raw").as_slice();
-    let out = &mut ctx.memory.bytes[0x1006000..][..bytes.len()];
+    let out = &mut memory.bytes[0x1006000..][..bytes.len()];
     out.copy_from_slice(bytes);
+    winapi::kernel32::register_export("user32", "MessageBoxA", 0xfafbfc61);
+    winapi::kernel32::register_export("user32", "GetActiveWindow", 0xfafbfc62);
+    winapi::kernel32::register_export("user32", "GetLastActivePopup", 0xfafbfc63);
 }
 
 pub fn x1001420(ctx: &mut Context) -> Cont {
@@ -11134,7 +11146,7 @@ pub fn x10040cf(ctx: &mut Context) -> Cont {
     ctx.ret32(4)
 }
 
-const BLOCKS: [(u32, ContFn); 918] = [
+const BLOCKS: [(u32, ContFn); 921] = [
     (0x1001420, x1001420),
     (0x1001436, x1001436),
     (0x1001441, x1001441),
@@ -12052,6 +12064,9 @@ const BLOCKS: [(u32, ContFn); 918] = [
     (0xfafbfc5e, user32::TranslateMessage_stdcall),
     (0xfafbfc5f, shell32::ShellAboutW_stdcall),
     (0xfafbfc60, winmm::PlaySoundW_stdcall),
+    (0xfafbfc61, user32::MessageBoxA_stdcall),
+    (0xfafbfc62, user32::GetActiveWindow_stdcall),
+    (0xfafbfc63, user32::GetLastActivePopup_stdcall),
     (runtime::RETURN_FROM_X86_ADDR32, Context::return_from_x86),
 ];
 
