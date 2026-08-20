@@ -8,8 +8,9 @@
 use std::collections::HashMap;
 
 use runtime::Context;
+use zerocopy::FromBytes;
 
-use crate::{heap::Heap, kernel32};
+use crate::{dllexport::win32flags, heap::Heap, kernel32};
 
 const MMSYSERR_NOERROR: u32 = 0;
 const MMIOERR_CANNOTOPEN: u32 = 258;
@@ -18,9 +19,13 @@ const MMIOERR_CHUNKNOTFOUND: u32 = 261;
 /// mmioRead/mmioSeek report failure as -1.
 const MMIO_FAILURE: i32 = -1;
 
-const MMIO_FINDCHUNK: u32 = 0x0010;
-const MMIO_FINDRIFF: u32 = 0x0020;
-const MMIO_FINDLIST: u32 = 0x0040;
+win32flags! {
+    pub struct MMIO {
+        const FINDCHUNK = 0x0010;
+        const FINDRIFF  = 0x0020;
+        const FINDLIST  = 0x0040;
+    }
+}
 
 const FOURCC_RIFF: u32 = u32::from_le_bytes(*b"RIFF");
 const FOURCC_LIST: u32 = u32::from_le_bytes(*b"LIST");
@@ -45,19 +50,37 @@ struct MMCKINFO {
     dwFlags: u32,
 }
 
-/// Field offsets within MMIOINFO. Only the buffer-related fields matter to us,
-/// so rather than model the whole 0x48-byte struct we poke the fields we own
-/// and leave the rest of the caller's memory untouched.
-mod mmioinfo {
-    pub const DWFLAGS: u32 = 0x00;
-    pub const CCHBUFFER: u32 = 0x14;
-    pub const PCHBUFFER: u32 = 0x18;
-    pub const PCHNEXT: u32 = 0x1c;
-    pub const PCHENDREAD: u32 = 0x20;
-    pub const PCHENDWRITE: u32 = 0x24;
-    pub const LBUFOFFSET: u32 = 0x28;
-    pub const LDISKOFFSET: u32 = 0x2c;
-    pub const HMMIO: u32 = 0x44;
+/// MMIOINFO, the buffer descriptor mmioGetInfo fills in. Only the buffer
+/// fields matter to us; the rest are here so the layout is right, and are left
+/// as the caller had them.
+#[repr(C)]
+#[derive(
+    Clone,
+    Copy,
+    Debug,
+    Default,
+    zerocopy::FromBytes,
+    zerocopy::IntoBytes,
+    zerocopy::Immutable,
+    zerocopy::KnownLayout,
+)]
+struct MMIOINFO {
+    dwFlags: u32,
+    fccIOProc: u32,
+    pIOProc: u32,
+    wErrorRet: u32,
+    htask: u32,
+    cchBuffer: u32,
+    pchBuffer: u32,
+    pchNext: u32,
+    pchEndRead: u32,
+    pchEndWrite: u32,
+    lBufOffset: u32,
+    lDiskOffset: u32,
+    adwInfo: [u32; 3],
+    dwReserved1: u32,
+    dwReserved2: u32,
+    hmmio: u32,
 }
 
 struct File {
@@ -204,7 +227,7 @@ pub fn mmioSeek(_ctx: &mut Context, hmmio: u32, lOffset: i32, iOrigin: i32) -> i
 }
 
 #[win32_derive::dllexport]
-pub fn mmioDescend(ctx: &mut Context, hmmio: u32, lpck: u32, lpckParent: u32, wFlags: u32) -> u32 {
+pub fn mmioDescend(ctx: &mut Context, hmmio: u32, lpck: u32, lpckParent: u32, wFlags: MMIO) -> u32 {
     let mut want = ctx.memory.read::<MMCKINFO>(lpck);
     // A parent chunk bounds the search to its contents.
     let parent_end = if lpckParent != 0 {
@@ -236,11 +259,11 @@ pub fn mmioDescend(ctx: &mut Context, hmmio: u32, lpck: u32, lpckParent: u32, wF
             0
         };
 
-        let matched = if wFlags & MMIO_FINDRIFF != 0 {
+        let matched = if wFlags.contains(MMIO::FINDRIFF) {
             ckid == FOURCC_RIFF && fcc_type == want.fccType
-        } else if wFlags & MMIO_FINDLIST != 0 {
+        } else if wFlags.contains(MMIO::FINDLIST) {
             ckid == FOURCC_LIST && fcc_type == want.fccType
-        } else if wFlags & MMIO_FINDCHUNK != 0 {
+        } else if wFlags.contains(MMIO::FINDCHUNK) {
             ckid == want.ckid
         } else {
             true // just describe whatever chunk is here
@@ -287,34 +310,33 @@ pub fn mmioGetInfo(ctx: &mut Context, hmmio: u32, lpmmioinfo: u32, _wFlags: u32)
     let Some((buffer, pos, len)) = ensure_buffer(ctx, hmmio) else {
         return MMIOERR_CANNOTOPEN;
     };
+    let Ok(info) = <MMIOINFO>::mut_from_prefix(&mut ctx.memory[lpmmioinfo..]) else {
+        return MMIOERR_CANNOTOPEN;
+    };
+    let info = info.0;
     // MMIO_DIRTY is for writing, which we don't support; report a plain
     // readable buffer covering the whole file.
-    ctx.memory.write::<u32>(lpmmioinfo + mmioinfo::DWFLAGS, 0);
-    ctx.memory
-        .write::<u32>(lpmmioinfo + mmioinfo::CCHBUFFER, len);
-    ctx.memory
-        .write::<u32>(lpmmioinfo + mmioinfo::PCHBUFFER, buffer);
-    ctx.memory
-        .write::<u32>(lpmmioinfo + mmioinfo::PCHNEXT, buffer + pos);
-    ctx.memory
-        .write::<u32>(lpmmioinfo + mmioinfo::PCHENDREAD, buffer + len);
-    ctx.memory
-        .write::<u32>(lpmmioinfo + mmioinfo::PCHENDWRITE, buffer + len);
+    info.dwFlags = 0;
+    info.cchBuffer = len;
+    info.pchBuffer = buffer;
+    info.pchNext = buffer + pos;
+    info.pchEndRead = buffer + len;
+    info.pchEndWrite = buffer + len;
     // The buffer covers the file from its start, so buffer offsets and file
     // offsets coincide.
-    ctx.memory
-        .write::<u32>(lpmmioinfo + mmioinfo::LBUFOFFSET, 0);
-    ctx.memory
-        .write::<u32>(lpmmioinfo + mmioinfo::LDISKOFFSET, len);
-    ctx.memory.write::<u32>(lpmmioinfo + mmioinfo::HMMIO, hmmio);
+    info.lBufOffset = 0;
+    info.lDiskOffset = len;
+    info.hmmio = hmmio;
     MMSYSERR_NOERROR
 }
 
 /// Take back the file position the caller advanced through pchNext.
 #[win32_derive::dllexport]
 pub fn mmioSetInfo(ctx: &mut Context, hmmio: u32, lpmmioinfo: u32, _wFlags: u32) -> u32 {
-    let next = ctx.memory.read::<u32>(lpmmioinfo + mmioinfo::PCHNEXT);
-    let buffer = ctx.memory.read::<u32>(lpmmioinfo + mmioinfo::PCHBUFFER);
+    let Ok((info, _)) = <MMIOINFO>::ref_from_prefix(&ctx.memory[lpmmioinfo..]) else {
+        return MMIOERR_CANNOTOPEN;
+    };
+    let (next, buffer) = (info.pchNext, info.pchBuffer);
     let mut winmm = super::state();
     let Some(file) = winmm.mmio().files.get_mut(&hmmio) else {
         return MMIOERR_CANNOTOPEN;
@@ -330,8 +352,10 @@ pub fn mmioAdvance(ctx: &mut Context, hmmio: u32, lpmmioinfo: u32, _wFlags: u32)
     let Some((buffer, _, len)) = ensure_buffer(ctx, hmmio) else {
         return MMIOERR_CANNOTOPEN;
     };
-    let next = ctx.memory.read::<u32>(lpmmioinfo + mmioinfo::PCHNEXT);
-    let pos = next.saturating_sub(buffer).min(len);
+    let Ok((info, _)) = <MMIOINFO>::ref_from_prefix(&ctx.memory[lpmmioinfo..]) else {
+        return MMIOERR_CANNOTOPEN;
+    };
+    let pos = info.pchNext.saturating_sub(buffer).min(len);
     {
         let mut winmm = super::state();
         let Some(file) = winmm.mmio().files.get_mut(&hmmio) else {
@@ -340,9 +364,11 @@ pub fn mmioAdvance(ctx: &mut Context, hmmio: u32, lpmmioinfo: u32, _wFlags: u32)
         file.pos = pos as usize;
     }
 
-    ctx.memory
-        .write::<u32>(lpmmioinfo + mmioinfo::PCHNEXT, buffer + pos);
-    ctx.memory
-        .write::<u32>(lpmmioinfo + mmioinfo::PCHENDREAD, buffer + len);
+    let Ok(info) = <MMIOINFO>::mut_from_prefix(&mut ctx.memory[lpmmioinfo..]) else {
+        return MMIOERR_CANNOTOPEN;
+    };
+    let info = info.0;
+    info.pchNext = buffer + pos;
+    info.pchEndRead = buffer + len;
     MMSYSERR_NOERROR
 }
