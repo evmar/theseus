@@ -37,6 +37,16 @@ const DIERR_DEVICENOTREG: u32 = 0x80040154;
 const DIERR_NOTACQUIRED: u32 = make_dierror(0x0c); // ERROR_INVALID_ACCESS
 const DIERR_INVALIDPARAM: u32 = make_dierror(0x57); // ERROR_INVALID_PARAMETER
 
+/// One buffered event, as GetDeviceData reports it.
+#[repr(C)]
+#[derive(Debug, zerocopy::IntoBytes, zerocopy::Immutable)]
+pub struct DIDEVICEOBJECTDATA {
+    pub dwOfs: u32,
+    pub dwData: u32,
+    pub dwTimeStamp: u32,
+    pub dwSequence: u32,
+}
+
 /// sizeof(DIMOUSESTATE): three i32 axes then four button bytes.
 const DIMOUSESTATE_SIZE: usize = 16;
 
@@ -414,14 +424,18 @@ pub mod IDirectInputDevice {
 
         if rgdod != 0 {
             for (i, event) in events.iter().enumerate() {
-                // DIDEVICEOBJECTDATA: dwOfs, dwData, dwTimeStamp, dwSequence.
-                // The stride comes from the caller in case it passes the
-                // larger DirectInput 8 struct.
-                let base = rgdod + i as u32 * cbObjectData;
-                ctx.memory.write::<u32>(base, event.ofs);
-                ctx.memory.write::<u32>(base + 4, event.data);
-                ctx.memory.write::<u32>(base + 8, event.time);
-                ctx.memory.write::<u32>(base + 12, event.sequence);
+                // The stride comes from the caller rather than from the struct,
+                // in case it passes the larger DirectInput 8 version.
+                let addr = rgdod + i as u32 * cbObjectData;
+                ctx.memory.write(
+                    addr,
+                    DIDEVICEOBJECTDATA {
+                        dwOfs: event.ofs,
+                        dwData: event.data,
+                        dwTimeStamp: event.time,
+                        dwSequence: event.sequence,
+                    },
+                );
             }
         }
         ctx.memory.write::<u32>(pdwInOut, events.len() as u32);
