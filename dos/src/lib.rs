@@ -153,6 +153,9 @@ pub fn load(exe: &EXEData, command_line: Option<&str>) -> Context {
     psp.set_args(command_line.unwrap_or(""));
     memory.write(exe.image_base, psp);
 
+    let mut mappings = Mappings::default();
+    (exe.init)(&mut memory, &mut mappings);
+
     let mut ctx = Context {
         cpu: CPU::default(),
         thread_handle: 0,
@@ -163,10 +166,6 @@ pub fn load(exe: &EXEData, command_line: Option<&str>) -> Context {
         recent: [Context::return_from_x86; 4],
     };
     ctx.cpu.real_mode = true;
-
-    let mut mappings = Mappings::default();
-    (exe.init)(&mut ctx, &mut mappings);
-
     ctx
 }
 

@@ -8,7 +8,7 @@
 use runtime::*;
 
 use winapi::*;
-fn init(ctx: &mut Context, mappings: &mut runtime::Mappings) {
+fn init(memory: &mut runtime::Memory, mappings: &mut runtime::Mappings) {
     mappings.reserve(runtime::Mapping {
         desc: "null page".to_string(),
         addr: 0x0,
@@ -22,7 +22,7 @@ fn init(ctx: &mut Context, mappings: &mut runtime::Mappings) {
         section: false,
     });
     let bytes = include_bytes!("../data/00001000.raw").as_slice();
-    let out = &mut ctx.memory.bytes[0x1000..][..bytes.len()];
+    let out = &mut memory.bytes[0x1000..][..bytes.len()];
     out.copy_from_slice(bytes);
     mappings.reserve(runtime::Mapping {
         desc: "exe header".to_string(),
@@ -31,7 +31,7 @@ fn init(ctx: &mut Context, mappings: &mut runtime::Mappings) {
         section: true,
     });
     let bytes = include_bytes!("../data/00400000.raw").as_slice();
-    let out = &mut ctx.memory.bytes[0x400000..][..bytes.len()];
+    let out = &mut memory.bytes[0x400000..][..bytes.len()];
     out.copy_from_slice(bytes);
     mappings.reserve(runtime::Mapping {
         desc: ".text".to_string(),
@@ -40,7 +40,7 @@ fn init(ctx: &mut Context, mappings: &mut runtime::Mappings) {
         section: true,
     });
     let bytes = include_bytes!("../data/00401000.raw").as_slice();
-    let out = &mut ctx.memory.bytes[0x401000..][..bytes.len()];
+    let out = &mut memory.bytes[0x401000..][..bytes.len()];
     out.copy_from_slice(bytes);
     mappings.reserve(runtime::Mapping {
         desc: ".rdata".to_string(),
@@ -49,7 +49,7 @@ fn init(ctx: &mut Context, mappings: &mut runtime::Mappings) {
         section: true,
     });
     let bytes = include_bytes!("../data/00406000.raw").as_slice();
-    let out = &mut ctx.memory.bytes[0x406000..][..bytes.len()];
+    let out = &mut memory.bytes[0x406000..][..bytes.len()];
     out.copy_from_slice(bytes);
     mappings.reserve(runtime::Mapping {
         desc: ".data".to_string(),
@@ -58,7 +58,7 @@ fn init(ctx: &mut Context, mappings: &mut runtime::Mappings) {
         section: true,
     });
     let bytes = include_bytes!("../data/00407000.raw").as_slice();
-    let out = &mut ctx.memory.bytes[0x407000..][..bytes.len()];
+    let out = &mut memory.bytes[0x407000..][..bytes.len()];
     out.copy_from_slice(bytes);
     mappings.reserve(runtime::Mapping {
         desc: ".rsrc".to_string(),
@@ -67,7 +67,7 @@ fn init(ctx: &mut Context, mappings: &mut runtime::Mappings) {
         section: true,
     });
     let bytes = include_bytes!("../data/0040a000.raw").as_slice();
-    let out = &mut ctx.memory.bytes[0x40a000..][..bytes.len()];
+    let out = &mut memory.bytes[0x40a000..][..bytes.len()];
     out.copy_from_slice(bytes);
     unsafe {
         winapi::ddraw::IDirectDraw::VTABLE = 0x1000;

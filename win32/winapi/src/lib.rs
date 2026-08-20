@@ -50,7 +50,7 @@ macro_rules! stub {
         $arg
     }};
 }
-use runtime::{CPU, Context, EXEData, Memory};
+use runtime::{CPU, Context, EXEData, Mappings, Memory};
 pub(crate) use stub;
 
 pub fn load(exe: &EXEData) -> Context {
@@ -60,11 +60,14 @@ pub fn load(exe: &EXEData) -> Context {
     // Room for the program's image, its heaps and the flat pool games of this
     // era carve out for themselves.
     let memory_size = 256 << 20;
-    let memory = Memory::leak_new(memory_size);
+    let mut memory = Memory::leak_new(memory_size);
 
     kernel32::init_state(exe.image_base, exe.resources.clone());
-    let mut lock = kernel32::lock();
 
+    let mut mappings = Mappings::default();
+    (exe.init)(&mut memory, &mut mappings);
+
+    let mut lock = kernel32::lock();
     let mut ctx = Context {
         cpu: CPU::default(),
         thread_handle: lock.objects.add(kernel32::Object::Thread).to_raw(),
@@ -74,8 +77,6 @@ pub fn load(exe: &EXEData) -> Context {
         cache: Default::default(),
         recent: [Context::return_from_x86; 4],
     };
-
-    (exe.init)(&mut ctx, &mut lock.mappings);
     lock.init_process(&mut ctx);
     ctx
 }

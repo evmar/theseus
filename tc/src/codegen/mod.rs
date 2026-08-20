@@ -327,7 +327,7 @@ impl<'a> CodeGen<'a> {
         // the location of such data at link time.  We could do it by postprocessing the wasm
         // file, maybe.
 
-        self.line("fn init(ctx: &mut Context, mappings: &mut runtime::Mappings) {");
+        self.line("fn init(memory: &mut runtime::Memory, mappings: &mut runtime::Mappings) {");
 
         for map in self.mem.mappings.vec().iter() {
             let addr = map.addr;
@@ -348,7 +348,7 @@ impl<'a> CodeGen<'a> {
             if !zeroed {
                 self.line(format!(
                     "let bytes = include_bytes!(\"../data/{addr:08x}.raw\").as_slice();
-let out = &mut ctx.memory.bytes[{addr:#x}..][..bytes.len()];
+let out = &mut memory.bytes[{addr:#x}..][..bytes.len()];
 out.copy_from_slice(bytes);",
                 ));
             }
