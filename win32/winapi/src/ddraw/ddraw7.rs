@@ -383,9 +383,7 @@ pub mod IDirectDrawSurface7 {
         dwFlags: u32,
         lpDDBltFx: u32,
     ) -> DD {
-        // Surfaces are shared between interface versions, so the version 1
-        // implementation covers both.
-        crate::ddraw::ddraw1::IDirectDrawSurface::Blt(
+        crate::ddraw::ddraw::blt(
             ctx,
             this,
             lpDestRect,
@@ -417,7 +415,7 @@ pub mod IDirectDrawSurface7 {
         lpSrcRect: Ptr<RECT>,
         dwTrans: u32,
     ) -> DD {
-        let result = crate::ddraw::ddraw1::IDirectDrawSurface::BltFast(
+        let result = crate::ddraw::ddraw::blt_fast(
             ctx,
             this,
             dwX,
@@ -517,7 +515,7 @@ pub mod IDirectDrawSurface7 {
 
     #[win32_derive::dllexport]
     pub fn GetColorKey(ctx: &mut Context, this: u32, dwFlags: u32, lpDDColorKey: u32) -> DD {
-        crate::ddraw::ddraw1::IDirectDrawSurface::GetColorKey(ctx, this, dwFlags, lpDDColorKey)
+        crate::ddraw::ddraw::get_color_key(ctx, this, dwFlags, lpDDColorKey)
     }
 
     #[win32_derive::dllexport]
@@ -617,7 +615,7 @@ pub mod IDirectDrawSurface7 {
 
     #[win32_derive::dllexport]
     pub fn SetColorKey(ctx: &mut Context, this: u32, dwFlags: u32, lpDDColorKey: u32) -> DD {
-        crate::ddraw::ddraw1::IDirectDrawSurface::SetColorKey(ctx, this, dwFlags, lpDDColorKey)
+        crate::ddraw::ddraw::set_color_key(ctx, this, dwFlags, lpDDColorKey)
     }
 
     #[win32_derive::dllexport]
