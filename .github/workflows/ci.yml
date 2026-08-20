@@ -1,0 +1,55 @@
+name: CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  fmt:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Cache dprint
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.dprint
+            ~/.cache/dprint
+          key: dprint
+
+      - name: Install dprint
+        run: |
+          if [ ! -f $HOME/.dprint/bin/dprint ]; then
+            curl -fsSL https://dprint.dev/install.sh | sh
+          fi
+          echo $HOME/.dprint/bin >> $GITHUB_PATH
+
+      - run: dprint fmt
+
+  # build and run a simple program, to smoke test the runtime bits
+  run:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - uses: Swatinem/rust-cache@v2
+    - uses: libsdl-org/setup-sdl@main
+      id: sdl
+      with:
+        install-linux-dependencies: true
+        version: 3.4.12
+    - name: Build
+      env:
+        LIBRARY_PATH: ${{ env.SDL3_ROOT }}/lib
+      run: cargo build -p winapi-exe
+    - name: Run
+      env:
+        LD_LIBRARY_PATH: ${{ env.SDL3_ROOT }}/lib
+        RUST_BACKTRACE: 1
+        THESEUS_HEADLESS: 1
+      run: ./target/debug/winapi-exe
