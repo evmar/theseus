@@ -424,7 +424,8 @@ ctx.cpu.regs.esp = {stack_pointer:#x};
     fn gen_blocks(&mut self, outdir: &str) -> Result<Vec<String>> {
         /// Split once a part reaches roughly this size. Small programs stay in
         /// a single file, which keeps their generated output easy to read.
-        const MAX_PART_BYTES: usize = 1 << 20;
+        /// Stay under 1mb because that is the largest size Jujutsu wants to track.
+        const MAX_PART_BYTES: usize = 512 << 10;
 
         let mut addrs = self.blocks.keys().copied().collect::<Vec<_>>();
         addrs.sort();
