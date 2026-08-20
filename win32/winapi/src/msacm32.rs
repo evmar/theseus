@@ -7,30 +7,37 @@ use runtime::Context;
 const MMSYSERR_NOERROR: u32 = 0;
 const MMSYSERR_NOTSUPPORTED: u32 = 8;
 
-const ACM_METRIC_COUNT_DRIVERS: u32 = 1;
-const ACM_METRIC_COUNT_CODECS: u32 = 2;
-const ACM_METRIC_COUNT_CONVERTERS: u32 = 3;
-const ACM_METRIC_COUNT_FILTERS: u32 = 4;
-const ACM_METRIC_COUNT_DISABLED: u32 = 5;
-const ACM_METRIC_MAX_SIZE_FORMAT: u32 = 50;
-const ACM_METRIC_MAX_SIZE_FILTER: u32 = 51;
+#[derive(Debug, PartialEq, Eq, win32_derive::ABIEnum)]
+pub enum ACM_METRIC {
+    COUNT_DRIVERS = 1,
+    COUNT_CODECS = 2,
+    COUNT_CONVERTERS = 3,
+    COUNT_FILTERS = 4,
+    COUNT_DISABLED = 5,
+    MAX_SIZE_FORMAT = 50,
+    MAX_SIZE_FILTER = 51,
+}
 
 #[win32_derive::dllexport]
-pub fn acmMetrics(ctx: &mut Context, _hao: u32, uMetric: u32, pMetric: u32) -> u32 {
+pub fn acmMetrics(
+    ctx: &mut Context,
+    _hao: u32,
+    uMetric: Result<ACM_METRIC, u32>,
+    pMetric: u32,
+) -> u32 {
     let value = match uMetric {
         // The largest WAVEFORMATEX any driver might describe. Callers size a
         // format buffer with this, so it has to cover WAVEFORMATEX plus the
         // extra bytes a compressed format would carry.
-        ACM_METRIC_MAX_SIZE_FORMAT => 64,
-        ACM_METRIC_MAX_SIZE_FILTER => 64,
+        Ok(ACM_METRIC::MAX_SIZE_FORMAT) | Ok(ACM_METRIC::MAX_SIZE_FILTER) => 64,
         // No codecs: PCM needs no conversion.
-        ACM_METRIC_COUNT_DRIVERS
-        | ACM_METRIC_COUNT_CODECS
-        | ACM_METRIC_COUNT_CONVERTERS
-        | ACM_METRIC_COUNT_FILTERS
-        | ACM_METRIC_COUNT_DISABLED => 0,
-        _ => {
-            log::warn!("acmMetrics: unhandled metric {uMetric}");
+        Ok(ACM_METRIC::COUNT_DRIVERS)
+        | Ok(ACM_METRIC::COUNT_CODECS)
+        | Ok(ACM_METRIC::COUNT_CONVERTERS)
+        | Ok(ACM_METRIC::COUNT_FILTERS)
+        | Ok(ACM_METRIC::COUNT_DISABLED) => 0,
+        Err(metric) => {
+            log::warn!("acmMetrics: unhandled metric {metric}");
             return MMSYSERR_NOTSUPPORTED;
         }
     };

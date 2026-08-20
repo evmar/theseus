@@ -11,10 +11,8 @@ pub fn Sleep(_ctx: &mut Context, dwMilliseconds: u32) {
 }
 
 #[win32_derive::dllexport]
-pub fn GetTimeZoneInformation(
-    ctx: &mut Context,
-    lpTimeZoneInformation: crate::Ptr<u8>,
-) -> u32 /* TIME_ZONE_ID */ {
+pub fn GetTimeZoneInformation(ctx: &mut Context, lpTimeZoneInformation: crate::Ptr<u8>) -> u32 /* TIME_ZONE_ID */
+{
     // TIME_ZONE_INFORMATION is 172 bytes; report UTC by zeroing it.
     ctx.memory[lpTimeZoneInformation.addr..][..172].fill(0);
     0 // TIME_ZONE_ID_UNKNOWN
