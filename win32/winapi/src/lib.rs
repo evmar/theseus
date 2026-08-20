@@ -68,6 +68,9 @@ pub fn load(exe: &EXEData) -> Context {
     (exe.init)(&mut memory, &mut mappings);
 
     let mut lock = kernel32::lock();
+    // The mappings the program declared have to reach the state, or every
+    // later allocation hands out addresses the program is already using.
+    lock.mappings = mappings;
     let mut ctx = Context {
         cpu: CPU::default(),
         thread_handle: lock.objects.add(kernel32::Object::Thread).to_raw(),
