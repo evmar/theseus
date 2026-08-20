@@ -13,7 +13,9 @@ pub struct CPINFO {
     pub MaxCharSize: u32,
     pub DefaultChar: [u8; 2],
     pub LeadByte: [u8; 12],
-    /// Named so the struct has no implicit padding and can be written as bytes.
+    /// Windows' CPINFO is 20 bytes: the three fields above come to 18, and the
+    /// u32 alignment rounds it up. Spelled out because zerocopy won't derive
+    /// IntoBytes for a struct that has padding it cannot see.
     pub _pad: [u8; 2],
 }
 
