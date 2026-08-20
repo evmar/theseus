@@ -8,7 +8,6 @@ use std::sync::LazyLock;
 pub mod fs;
 #[cfg(not(target_family = "wasm"))]
 mod sdl;
-pub mod fs;
 mod single_thread;
 #[cfg(not(target_family = "wasm"))]
 pub use sdl::*;

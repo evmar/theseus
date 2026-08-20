@@ -37,12 +37,21 @@ pub struct DeviceEvent {
     pub sequence: u32,
 }
 
-/// Byte offset of a mouse object within the standard c_dfDIMouse data format:
-/// lX@0, lY@4, lZ@8, then one byte per button from 12.
-const MOUSE_AXIS_X: u32 = 0;
-const MOUSE_AXIS_Y: u32 = 4;
-const MOUSE_BUTTON_0: u32 = 12;
 pub const MOUSE_BUTTONS: usize = 4;
+
+/// The standard c_dfDIMouse data format. DirectInput identifies an object by
+/// its byte offset within this, which is what buffered events carry.
+#[repr(C)]
+pub struct DIMOUSESTATE {
+    pub lX: i32,
+    pub lY: i32,
+    pub lZ: i32,
+    pub rgbButtons: [u8; MOUSE_BUTTONS],
+}
+
+const MOUSE_AXIS_X: u32 = std::mem::offset_of!(DIMOUSESTATE, lX) as u32;
+const MOUSE_AXIS_Y: u32 = std::mem::offset_of!(DIMOUSESTATE, lY) as u32;
+const MOUSE_BUTTON_0: u32 = std::mem::offset_of!(DIMOUSESTATE, rgbButtons) as u32;
 
 pub struct Mouse {
     /// Cursor position in client coordinates.
