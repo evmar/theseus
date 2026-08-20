@@ -328,12 +328,6 @@ impl State {
             if buf.iter().all(|&b| b == 0) {
                 continue;
             }
-            log::info!(
-                "section {:?} @{:x} ({:x} bytes)",
-                map.desc,
-                map.addr,
-                map.size
-            );
             write_if_changed(&format!("{out_dir}/data/{:08x}.raw", map.addr), buf)?;
         }
         Ok(())
