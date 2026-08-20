@@ -26,9 +26,16 @@ const GUID_SysKeyboard: GUID = GUID((
 const DI_OK: u32 = 0;
 /// More events were buffered than the app's buffer could hold.
 const DI_BUFFEROVERFLOW: u32 = 1;
+/// DirectInput reports plain win32 error codes as HRESULTs, which is what
+/// MAKE_HRESULT with FACILITY_WIN32 comes out as.
+const fn make_dierror(win32_code: u32) -> u32 {
+    (1 << 31) | (7 << 16) | win32_code
+}
+
+/// REGDB_E_CLASSNOTREG, which is in a different facility to the rest.
 const DIERR_DEVICENOTREG: u32 = 0x80040154;
-const DIERR_NOTACQUIRED: u32 = 0x8007000c;
-const DIERR_INVALIDPARAM: u32 = 0x80070057;
+const DIERR_NOTACQUIRED: u32 = make_dierror(0x0c); // ERROR_INVALID_ACCESS
+const DIERR_INVALIDPARAM: u32 = make_dierror(0x57); // ERROR_INVALID_PARAMETER
 
 /// sizeof(DIMOUSESTATE): three i32 axes then four button bytes.
 const DIMOUSESTATE_SIZE: usize = 16;
