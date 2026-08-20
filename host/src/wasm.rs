@@ -118,6 +118,27 @@ impl Host {
     pub fn console_write(&self, text: &[u8]) {
         self.chan.lock().unwrap().console_write(text);
     }
+
+    /// Hand a written file to the page, which keeps it across reloads.
+    pub fn persist_file(&self, path: &str, data: &[u8]) {
+        self.chan.lock().unwrap().write_file(path, data);
+    }
+}
+
+/// Add a file to the program's filesystem. The page calls this for each file
+/// of the program's data before starting it.
+#[wasm_bindgen]
+pub fn mount_file(path: &str, data: &[u8]) {
+    crate::fs::mount(path, data.to_vec());
+}
+
+/// Set the directory the program starts in, the equivalent of launching it
+/// from that directory natively.
+#[wasm_bindgen]
+pub fn set_current_dir(path: &str) {
+    if let Err(err) = crate::fs::set_current_dir(std::path::Path::new(path)) {
+        log::warn!("set_current_dir({path}): {err}");
+    }
 }
 
 struct WebHostSendChannel {}
@@ -140,6 +161,8 @@ export interface WasmHost {
     render(window_id: number, surface_id: number): void;
 
     set_pixels(surface_id: number, ptr: number, len: number): void;
+
+    write_file(path: string, ptr: number, len: number): number;
 
     poll_message(): number[];
     wait_message(): Promise<number[]>;
@@ -191,6 +214,14 @@ impl WebHostSendChannel {
         args.push(&JsValue::from(window_id));
         args.push(&JsValue::from(surface_id));
         self.send_async("render", args);
+    }
+
+    pub fn write_file(&mut self, path: &str, data: &[u8]) {
+        let args = js_sys::Array::new();
+        args.push(&JsValue::from(path));
+        args.push(&JsValue::from(data.as_ptr() as u32));
+        args.push(&JsValue::from(data.len()));
+        self.send_sync("write_file", args);
     }
 
     pub fn set_pixels(&mut self, id: i32, pixels: &[u8]) {

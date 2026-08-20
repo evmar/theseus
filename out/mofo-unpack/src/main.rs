@@ -133,7 +133,7 @@ pub fn do_unpack(ctx: &mut runtime::Context) {
         code_memory: 0x40_0000..tc.mem.bytes.len() as u32,
         resources: None,
         imports: syms,
-        vtables: vec![],
+        ..Default::default()
     });
     tc.init_imports();
 

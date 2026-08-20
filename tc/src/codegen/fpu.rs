@@ -211,7 +211,10 @@ impl<'a> CodeGen<'a> {
             Fnclex => {}
 
             Fninit => {
+                // Also empties the stack, which is how a program recovers from
+                // leaving values on it.
                 self.line("ctx.cpu.fpu.control = 0x037f;");
+                self.line("ctx.cpu.fpu.st_top = 8;");
             }
 
             Fnstcw => {
@@ -221,10 +224,7 @@ impl<'a> CodeGen<'a> {
 
             Fldcw => {
                 assert_eq!(instr.op_count(), 1);
-                self.line(format!(
-                    "ctx.cpu.fpu.control = {};",
-                    self.get_op(instr, 0)
-                ));
+                self.line(format!("ctx.cpu.fpu.control = {};", self.get_op(instr, 0)));
             }
 
             Fpatan => {

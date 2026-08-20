@@ -15,11 +15,21 @@ pub use mmio::*;
 pub struct State {
     timer: Option<Timer>,
     wave: Option<wave::State>,
+    mmio: Option<mmio::State>,
+}
+
+impl State {
+    /// The mmio file table, created on first use (a `static` can't build the
+    /// map up front).
+    pub fn mmio(&mut self) -> &mut mmio::State {
+        self.mmio.get_or_insert_with(Default::default)
+    }
 }
 
 static STATE: Mutex<State> = Mutex::new(State {
     timer: None,
     wave: None,
+    mmio: None,
 });
 
 pub fn state() -> MutexGuard<'static, State> {
