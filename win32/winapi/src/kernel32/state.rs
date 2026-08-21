@@ -19,8 +19,7 @@ pub struct State {
     pub environ: Cell<u32>,
     pub next_thread_id: u32,
     pub next_tls_index: u32,
-    pub dll_loader: Box<dyn kernel32::DLLLoader>,
-    pub exports: kernel32::Exports,
+    pub dlls: Box<dyn kernel32::DLLs>,
     pub objects: Handles<Object>,
 }
 
@@ -38,8 +37,7 @@ pub fn init_state(image_base: u32, resources: std::ops::Range<u32>) {
         environ: Default::default(),
         next_thread_id: 2,
         next_tls_index: 0,
-        dll_loader: Box::new(()),
-        exports: Default::default(),
+        dlls: Box::new(kernel32::Exports::default()),
         objects: Handles::new(0x1000),
     });
 }

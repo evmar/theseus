@@ -22,13 +22,21 @@ static STATE: LazyLock<Mutex<State>> = LazyLock::new(|| Mutex::new(State::defaul
 /// Implementation of kernel32::DLLLoader (hooking LoadLibrary/GetProcAddress) that
 /// succeeds and records the imports in the global STATE.
 struct Loader;
-impl kernel32::DLLLoader for Loader {
+impl kernel32::DLLs for Loader {
+    fn register_export(&mut self, _dll: &str, _func: &str, _addr: u32) {
+        // ignore
+    }
+
     fn load_library(&mut self, filename: &str) -> kernel32::HMODULE {
         let name = filename.to_lowercase();
         let name = name.trim_end_matches(".dll");
         let mut state = STATE.lock().unwrap();
         state.modules.push(name.to_owned());
         state.modules.len() as u32
+    }
+
+    fn module_handle(&self, _dll: &str) -> Option<kernel32::HMODULE> {
+        unimplemented!()
     }
 
     fn get_proc_address(&mut self, hmodule: kernel32::HMODULE, proc_name: &str) -> u32 {
@@ -51,7 +59,7 @@ impl kernel32::DLLLoader for Loader {
 fn main() {
     let mut ctx = winapi::load(&generated::EXEDATA);
 
-    kernel32::lock().dll_loader = Box::new(Loader);
+    kernel32::lock().dlls = Box::new(Loader);
     {
         // Give the imports an arbitrary strange address so they are easier to find in memory.
         let mut state = STATE.lock().unwrap();
