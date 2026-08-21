@@ -85,7 +85,9 @@ class Host implements exe.WasmHost {
     this.consoleOutput.resize(ofs + len);
     const outBuf = new Uint8Array(this.consoleOutput, ofs, len);
     outBuf.set(inBuf);
-    this.consoleDom.innerText = new TextDecoder().decode(this.consoleOutput);
+    // Confusing: you cannot decode from a growable ArrayBuffer, even though there
+    // is no shared memory involved at all.
+    this.consoleDom.innerText = new TextDecoder().decode(this.consoleOutput.slice());
   }
 
   create_surface(width: number, height: number): number {
