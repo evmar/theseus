@@ -5,6 +5,7 @@ pub struct IATEntry {
 
 #[derive(Default)]
 pub struct Report {
+    pub name: String,
     pub iat: Vec<IATEntry>,
 }
 
@@ -27,11 +28,12 @@ impl Report {
         self.iat.sort_by_key(|e| e.addr);
 
         let style = [
-            "body { font-family: system-ui, sans-serif; font-size: 14px; }",
+            "body { font-family: system-ui, sans-serif; font-size: 14px; font-variant-numeric: tabular-nums;",
+            " margin: 3em 4em; }",
             "h1, h2 { font-weight: normal; }",
         ]
         .join("\n");
-        let title = format!("<h1>Theseus report for TODO</h1>");
+        let title = format!("<h1>Theseus analysis of {name}</h1>", name = self.name);
         let html_iat = table(
             self.iat
                 .into_iter()

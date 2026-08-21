@@ -111,7 +111,7 @@ pub struct State {
     pub mem: Memory,
     pub addr_info: HashMap<u32, AddrInfo>,
     pub blocks: HashMap<u32, Block>,
-    pub report: String,
+    pub report: gather::Report,
 }
 
 impl Default for State {
@@ -321,8 +321,8 @@ impl State {
         self.report = report;
     }
 
-    pub fn generate(&mut self, trace: bool, out_dir: &str) -> anyhow::Result<()> {
-        let mut codegen = codegen::CodeGen::new(self, trace);
+    pub fn generate(mut self, trace: bool, out_dir: &str) -> anyhow::Result<()> {
+        let mut codegen = codegen::CodeGen::new(&mut self, trace);
         codegen.gen_file(out_dir)?;
 
         let data_dir = format!("{out_dir}/data");
@@ -335,8 +335,10 @@ impl State {
             write_if_changed(&format!("{out_dir}/data/{:08x}.raw", map.addr), buf)?;
         }
 
+        let mut report = self.report;
+        report.name = out_dir.to_string();
         let report_path = format!("{out_dir}/report.html");
-        write_if_changed(&report_path, self.report.as_bytes())?;
+        write_if_changed(&report_path, report.to_html().as_bytes())?;
 
         fn link_path(path: &str) -> String {
             let abs_path = std::env::current_dir()

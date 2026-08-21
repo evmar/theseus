@@ -9,6 +9,7 @@ use std::collections::{BTreeMap, HashMap, HashSet, VecDeque};
 
 use crate::{AddrInfo, Block, BlockType, Import, Instr, Module, State, memory::Memory};
 pub use ip::IP;
+pub use report::Report;
 
 /// If the instruction looks like
 ///   foo [x]
@@ -104,7 +105,7 @@ pub struct Gather {
 }
 
 impl Gather {
-    pub fn run(self, state: &mut State) -> (HashMap<u32, Block>, String) {
+    pub fn run(self, state: &mut State) -> (HashMap<u32, Block>, Report) {
         let mut traverse = Traverse::new(state, &self);
         traverse.run();
         let report = traverse.generate_report();
@@ -571,7 +572,7 @@ impl<'a> Traverse<'a> {
         added
     }
 
-    pub fn generate_report(&self) -> String {
+    pub fn generate_report(&self) -> Report {
         use report::*;
         let mut report = Report::default();
         for (&addr, imp) in self.iat_refs.iter() {
@@ -580,6 +581,6 @@ impl<'a> Traverse<'a> {
                 func: format!("{dll}!{func}", dll = imp.dll, func = imp.func),
             });
         }
-        report.to_html()
+        report
     }
 }
