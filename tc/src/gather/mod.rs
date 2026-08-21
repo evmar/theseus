@@ -3,6 +3,7 @@
 mod coverage;
 mod ip;
 mod jump_table;
+mod report;
 
 use std::collections::{BTreeMap, HashMap, HashSet, VecDeque};
 
@@ -103,10 +104,12 @@ pub struct Gather {
 }
 
 impl Gather {
-    pub fn run(self, state: &mut State) -> HashMap<u32, Block> {
+    pub fn run(self, state: &mut State) -> (HashMap<u32, Block>, String) {
         let mut traverse = Traverse::new(state, &self);
         traverse.run();
-        traverse.blocks.into_iter().collect()
+        let report = traverse.generate_report();
+        let blocks = traverse.blocks.into_iter().collect();
+        (blocks, report)
     }
 }
 
@@ -133,6 +136,7 @@ struct Traverse<'a> {
     mem: &'a Memory,
     addr_info: &'a HashMap<u32, AddrInfo>,
 
+    /// Address of IAT entry => function it refers to.
     iat_refs: HashMap<u32, &'a Import>,
     queue: IPQueue,
     /// Lower-confidence code addresses (from scans); validated before decoding.
@@ -238,6 +242,8 @@ impl<'a> Traverse<'a> {
         }
 
         self.report_coverage();
+
+        self.generate_report();
     }
 
     /// Process the high-confidence queue to exhaustion, interleaved with promoting
@@ -563,5 +569,17 @@ impl<'a> Traverse<'a> {
             }
         }
         added
+    }
+
+    pub fn generate_report(&self) -> String {
+        use report::*;
+        let mut report = Report::default();
+        for (&addr, imp) in self.iat_refs.iter() {
+            report.iat.push(IATEntry {
+                addr,
+                func: format!("{dll}!{func}", dll = imp.dll, func = imp.func),
+            });
+        }
+        report.to_html()
     }
 }

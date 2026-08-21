@@ -111,6 +111,7 @@ pub struct State {
     pub mem: Memory,
     pub addr_info: HashMap<u32, AddrInfo>,
     pub blocks: HashMap<u32, Block>,
+    pub report: String,
 }
 
 impl Default for State {
@@ -120,6 +121,7 @@ impl Default for State {
             mem: Default::default(),
             addr_info: Default::default(),
             blocks: Default::default(),
+            report: Default::default(),
         }
     }
 }
@@ -314,7 +316,9 @@ impl State {
     }
 
     pub fn gather(&mut self, gather: Gather) {
-        self.blocks = gather.run(self);
+        let (blocks, report) = gather.run(self);
+        self.blocks = blocks;
+        self.report = report;
     }
 
     pub fn generate(&mut self, trace: bool, out_dir: &str) -> anyhow::Result<()> {
@@ -330,6 +334,24 @@ impl State {
             }
             write_if_changed(&format!("{out_dir}/data/{:08x}.raw", map.addr), buf)?;
         }
+
+        let report_path = format!("{out_dir}/report.html");
+        write_if_changed(&report_path, self.report.as_bytes())?;
+
+        fn link_path(path: &str) -> String {
+            let abs_path = std::env::current_dir()
+                .unwrap()
+                .join(path)
+                .to_string_lossy()
+                .to_string();
+            format!("\x1b]8;;file://{abs_path}\x1b\\{path}\x1b]8;;\x1b\\")
+        }
+
+        println!(
+            "generated in {out_dir}; report in {link}",
+            link = link_path(&report_path),
+        );
+
         Ok(())
     }
 }
