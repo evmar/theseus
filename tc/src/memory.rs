@@ -24,11 +24,6 @@ impl Memory {
         }
     }
 
-    pub fn put(&mut self, addr: u32, data: &[u8]) {
-        self.slice_mut(addr, data.len() as u32)
-            .copy_from_slice(data);
-    }
-
     pub fn read<T: zerocopy::FromBytes>(&self, addr: u32) -> T {
         <T>::read_from_prefix(&self.bytes[addr as usize..])
             .unwrap()
@@ -38,6 +33,11 @@ impl Memory {
     pub fn write<T: zerocopy::IntoBytes + zerocopy::Immutable>(&mut self, addr: u32, val: T) {
         val.write_to_prefix(&mut self.bytes[addr as usize..])
             .unwrap();
+    }
+
+    pub fn write_bytes(&mut self, addr: u32, data: &[u8]) {
+        self.slice_mut(addr, data.len() as u32)
+            .copy_from_slice(data);
     }
 
     pub fn slice(&self, addr: u32, len: u32) -> &[u8] {
@@ -50,12 +50,5 @@ impl Memory {
 
     pub fn slice_mut(&mut self, addr: u32, len: u32) -> &mut [u8] {
         &mut self.bytes[addr as usize..][..len as usize]
-    }
-}
-
-impl std::fmt::Debug for Memory {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "{:?}", self.mappings);
-        Ok(())
     }
 }

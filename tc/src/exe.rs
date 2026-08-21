@@ -41,7 +41,7 @@ fn load_pe(mem: &mut Memory, buf: &[u8], f: exe::PE) -> WindowsModule {
 
     let image_base = f.opt_header.ImageBase;
     mem.reserve("exe header".into(), image_base, 0x1000);
-    mem.put(image_base, &buf[..0x1000.min(buf.len())]);
+    mem.write_bytes(image_base, &buf[..0x1000.min(buf.len())]);
     let mut code_range = None;
     for sec in &f.sections {
         let addr = image_base + sec.VirtualAddress;
@@ -54,7 +54,7 @@ fn load_pe(mem: &mut Memory, buf: &[u8], f: exe::PE) -> WindowsModule {
             flags.contains(IMAGE_SCN::CODE) || flags.contains(IMAGE_SCN::INITIALIZED_DATA);
         if load_data {
             let data = &buf[sec.PointerToRawData as usize..][..sec.SizeOfRawData as usize];
-            mem.put(addr, data);
+            mem.write_bytes(addr, data);
         }
         if flags.contains(IMAGE_SCN::CODE) || flags.contains(IMAGE_SCN::MEM_EXECUTE) {
             match &mut code_range {
