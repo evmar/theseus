@@ -7,8 +7,7 @@ pub mod com;
 pub mod exe;
 mod gather;
 mod memory;
-pub use gather::IP;
-pub use gather::{EntryPoint, Gather};
+pub use gather::{EntryPoint, Gather, IP};
 use runtime::segofs;
 
 #[derive(Default)]

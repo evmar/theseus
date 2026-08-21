@@ -7,9 +7,10 @@ mod report;
 
 use std::collections::{BTreeMap, HashMap, HashSet, VecDeque};
 
-use crate::{AddrInfo, Block, BlockType, Import, Instr, Module, State, memory::Memory};
 pub use ip::IP;
 pub use report::Report;
+
+use crate::{AddrInfo, Block, BlockType, Import, Instr, Module, State, memory::Memory};
 
 /// If the instruction looks like
 ///   foo [x]

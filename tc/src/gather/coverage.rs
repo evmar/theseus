@@ -1,9 +1,8 @@
 //! Coverage statistics of the gathered blocks relative to the parts of memory that
 //! we think contain executable code (or jump table data).
 
-use crate::BlockType;
-
 use super::Traverse;
+use crate::BlockType;
 
 impl<'a> Traverse<'a> {
     /// Merged, sorted spans of all discovered blocks plus known data ranges.
