@@ -327,7 +327,7 @@ impl<'a> CodeGen<'a> {
         // the location of such data at link time.  We could do it by postprocessing the wasm
         // file, maybe.
 
-        self.line("fn init(memory: &mut runtime::Memory, mappings: &mut runtime::Mappings) {");
+        self.line("fn init(regs: &mut runtime::Regs, memory: &mut runtime::Memory, mappings: &mut runtime::Mappings) {");
 
         for map in self.mem.mappings.vec().iter() {
             let addr = map.addr;
@@ -377,13 +377,13 @@ out.copy_from_slice(bytes);",
             }
             Module::DOS(module) => {
                 self.line(format!("
-ctx.cpu.regs.cs = {load_segment:#x};
-ctx.cpu.regs.ds = {psp_segment:#x}; // PSP
-ctx.cpu.regs.es = {psp_segment:#x}; // PSP
-ctx.cpu.regs.ss = {stack_segment:#x};
+regs.cs = {load_segment:#x};
+regs.ds = {psp_segment:#x}; // PSP
+regs.es = {psp_segment:#x}; // PSP
+regs.ss = {stack_segment:#x};
 // initial cx: https://stackoverflow.com/questions/79440940/why-cx-register-already-has-a-non-zero-value-on-startup-of-a-dos-program-unlike
-ctx.cpu.regs.ecx = 0xff;
-ctx.cpu.regs.esp = {stack_pointer:#x};
+regs.ecx = 0xff;
+regs.esp = {stack_pointer:#x};
 ",
                     load_segment = module.load_segment,
                     psp_segment = module.psp_segment,
@@ -391,19 +391,19 @@ ctx.cpu.regs.esp = {stack_pointer:#x};
                     stack_pointer = module.stack_pointer,
                 ));
                 if module.is_com {
-                    self.line("ctx.cpu.regs.esp = 0xfffe;");
+                    self.line("regs.esp = 0xfffe;");
                 } else {
                     self.line(format!(
-                        "ctx.cpu.regs.edx = {:#x}; // PSP segment",
+                        "regs.edx = {:#x}; // PSP segment",
                         module.psp_segment
                     ));
 
                     self.line(
                         "
                         // arbitrary values, matching dosbox
-                        ctx.cpu.regs.esi = 0x68e;
-                        ctx.cpu.regs.edi = 0x800;
-                        ctx.cpu.regs.ebp = 0x91c;
+                        regs.esi = 0x68e;
+                        regs.edi = 0x800;
+                        regs.ebp = 0x91c;
                         ",
                     );
                 }

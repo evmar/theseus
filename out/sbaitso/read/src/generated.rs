@@ -7,7 +7,7 @@
 
 use runtime::*;
 
-fn init(memory: &mut runtime::Memory, mappings: &mut runtime::Mappings) {
+fn init(regs: &mut runtime::Regs, memory: &mut runtime::Memory, mappings: &mut runtime::Mappings) {
     mappings.reserve(runtime::Mapping {
         desc: "psp".to_string(),
         addr: 0x8130,
@@ -24,20 +24,20 @@ fn init(memory: &mut runtime::Memory, mappings: &mut runtime::Mappings) {
     let out = &mut memory.bytes[0x8230..][..bytes.len()];
     out.copy_from_slice(bytes);
 
-    ctx.cpu.regs.cs = 0x823;
-    ctx.cpu.regs.ds = 0x813; // PSP
-    ctx.cpu.regs.es = 0x813; // PSP
-    ctx.cpu.regs.ss = 0xa71;
+    regs.cs = 0x823;
+    regs.ds = 0x813; // PSP
+    regs.es = 0x813; // PSP
+    regs.ss = 0xa71;
     // initial cx: https://stackoverflow.com/questions/79440940/why-cx-register-already-has-a-non-zero-value-on-startup-of-a-dos-program-unlike
-    ctx.cpu.regs.ecx = 0xff;
-    ctx.cpu.regs.esp = 0x800;
+    regs.ecx = 0xff;
+    regs.esp = 0x800;
 
-    ctx.cpu.regs.edx = 0x813; // PSP segment
+    regs.edx = 0x813; // PSP segment
 
     // arbitrary values, matching dosbox
-    ctx.cpu.regs.esi = 0x68e;
-    ctx.cpu.regs.edi = 0x800;
-    ctx.cpu.regs.ebp = 0x91c;
+    regs.esi = 0x68e;
+    regs.edi = 0x800;
+    regs.ebp = 0x91c;
 }
 
 pub fn x0823_0010(ctx: &mut Context) -> Cont {

@@ -8,7 +8,7 @@
 use runtime::*;
 
 use winapi::*;
-fn init(memory: &mut runtime::Memory, mappings: &mut runtime::Mappings) {
+fn init(regs: &mut runtime::Regs, memory: &mut runtime::Memory, mappings: &mut runtime::Mappings) {
     mappings.reserve(runtime::Mapping {
         desc: "null page".to_string(),
         addr: 0x0,

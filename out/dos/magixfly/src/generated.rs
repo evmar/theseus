@@ -7,7 +7,7 @@
 
 use runtime::*;
 
-fn init(memory: &mut runtime::Memory, mappings: &mut runtime::Mappings) {
+fn init(regs: &mut runtime::Regs, memory: &mut runtime::Memory, mappings: &mut runtime::Mappings) {
     mappings.reserve(runtime::Mapping {
         desc: "com".to_string(),
         addr: 0x8230,
@@ -18,15 +18,15 @@ fn init(memory: &mut runtime::Memory, mappings: &mut runtime::Mappings) {
     let out = &mut memory.bytes[0x8230..][..bytes.len()];
     out.copy_from_slice(bytes);
 
-    ctx.cpu.regs.cs = 0x813;
-    ctx.cpu.regs.ds = 0x813; // PSP
-    ctx.cpu.regs.es = 0x813; // PSP
-    ctx.cpu.regs.ss = 0x813;
+    regs.cs = 0x813;
+    regs.ds = 0x813; // PSP
+    regs.es = 0x813; // PSP
+    regs.ss = 0x813;
     // initial cx: https://stackoverflow.com/questions/79440940/why-cx-register-already-has-a-non-zero-value-on-startup-of-a-dos-program-unlike
-    ctx.cpu.regs.ecx = 0xff;
-    ctx.cpu.regs.esp = 0xfffe;
+    regs.ecx = 0xff;
+    regs.esp = 0xfffe;
 
-    ctx.cpu.regs.esp = 0xfffe;
+    regs.esp = 0xfffe;
 }
 
 pub fn x0813_0100(ctx: &mut Context) -> Cont {

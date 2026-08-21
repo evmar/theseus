@@ -8,7 +8,7 @@ use std::{
 };
 
 use host::SingleThreader;
-use runtime::{CPU, Context, EXEData, Mappings, Memory, segofs};
+use runtime::{CPU, Context, EXEData, Mappings, Memory, Regs, segofs};
 use zerocopy::FromBytes;
 
 use crate::{timer::PIT, vga::VGA};
@@ -153,8 +153,9 @@ pub fn load(exe: &EXEData, command_line: Option<&str>) -> Context {
     psp.set_args(command_line.unwrap_or(""));
     memory.write(exe.image_base, psp);
 
+    let mut regs = Regs::default();
     let mut mappings = Mappings::default();
-    (exe.init)(&mut memory, &mut mappings);
+    (exe.init)(&mut regs, &mut memory, &mut mappings);
 
     let mut ctx = Context {
         cpu: CPU::default(),
@@ -165,6 +166,7 @@ pub fn load(exe: &EXEData, command_line: Option<&str>) -> Context {
         cache: Default::default(),
         recent: [Context::return_from_x86; 4],
     };
+    ctx.cpu.regs = regs;
     ctx.cpu.real_mode = true;
     ctx
 }

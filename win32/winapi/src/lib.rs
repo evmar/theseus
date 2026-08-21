@@ -50,7 +50,7 @@ macro_rules! stub {
         $arg
     }};
 }
-use runtime::{CPU, Context, EXEData, Mappings, Memory};
+use runtime::{CPU, Context, EXEData, Mappings, Memory, Regs};
 pub(crate) use stub;
 
 pub fn load(exe: &EXEData) -> Context {
@@ -64,8 +64,9 @@ pub fn load(exe: &EXEData) -> Context {
 
     kernel32::init_state(exe.image_base, exe.resources.clone());
 
+    let mut regs = Regs::default();
     let mut mappings = Mappings::default();
-    (exe.init)(&mut memory, &mut mappings);
+    (exe.init)(&mut regs, &mut memory, &mut mappings);
 
     let mut lock = kernel32::lock();
     // The mappings the program declared have to reach the state, or every
@@ -80,6 +81,7 @@ pub fn load(exe: &EXEData) -> Context {
         cache: Default::default(),
         recent: [Context::return_from_x86; 4],
     };
+    ctx.cpu.regs = regs;
     lock.init_process(&mut ctx);
     ctx
 }
