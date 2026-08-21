@@ -43,7 +43,7 @@ impl From<IVTEntry> for (u16, u16) {
     }
 }
 
-pub fn ivt(mem: &mut Memory) -> &mut [IVTEntry] {
+pub fn ivt<'a>(mem: &'a mut Memory) -> &'a mut [IVTEntry] {
     <[IVTEntry]>::mut_from_prefix_with_elems(&mut mem.bytes, 0x400)
         .unwrap()
         .0

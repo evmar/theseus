@@ -5,12 +5,8 @@ use widestring::U16String;
 /// It is unsafely mutably shared across multiple threads.  In principle any mangling
 /// that multi-threaded access can do could just as well be done by single-threaded code,
 /// since it is fully under the control of the target executable.
-///
-/// TODO: to support this unsafe sharing we also use a static lifetime, because otherwise
-/// we need to figure out how to guarantee the memory outlives the threads.
-/// Maybe by sticking a std::thread::scope in some outer structure?
-pub struct Memory {
-    pub bytes: &'static mut [u8],
+pub struct Memory<'a> {
+    pub bytes: &'a mut [u8],
     /// When true, panic on access to low memory.
     /// TODO: full memory mapping access controls etc.
     pub null_page: bool,
@@ -24,7 +20,7 @@ impl<T: zerocopy::FromBytes> MemRead for T {}
 pub trait MemWrite: zerocopy::IntoBytes + zerocopy::Immutable {}
 impl<T: zerocopy::IntoBytes + zerocopy::Immutable> MemWrite for T {}
 
-impl Memory {
+impl<'a> Memory<'a> {
     pub fn new(bytes: &'static mut [u8]) -> Self {
         Memory {
             bytes,
@@ -32,14 +28,7 @@ impl Memory {
         }
     }
 
-    pub fn leak_new(size: usize) -> Self {
-        // safety: safe to assume_init on zeroed u8
-        let memory: Box<[u8]> = unsafe { Box::<[u8]>::new_zeroed_slice(size).assume_init() };
-        let static_memory: &'static mut [u8] = Box::leak(memory);
-        Memory::new(static_memory)
-    }
-
-    pub fn unsafe_clone(&mut self) -> Memory {
+    pub fn unsafe_clone(&mut self) -> Memory<'a> {
         Memory {
             bytes: unsafe {
                 std::slice::from_raw_parts_mut(self.bytes.as_mut_ptr(), self.bytes.len())
@@ -100,7 +89,16 @@ impl Memory {
     }
 }
 
-impl std::ops::Index<u32> for Memory {
+impl Memory<'static> {
+    pub fn leak_new(size: usize) -> Self {
+        // safety: safe to assume_init on zeroed u8
+        let memory: Box<[u8]> = unsafe { Box::<[u8]>::new_zeroed_slice(size).assume_init() };
+        let static_memory: &'static mut [u8] = Box::leak(memory);
+        Memory::new(static_memory)
+    }
+}
+
+impl<'a> std::ops::Index<u32> for Memory<'a> {
     type Output = u8;
 
     fn index(&self, addr: u32) -> &Self::Output {
@@ -109,14 +107,14 @@ impl std::ops::Index<u32> for Memory {
     }
 }
 
-impl std::ops::IndexMut<u32> for Memory {
+impl<'a> std::ops::IndexMut<u32> for Memory<'a> {
     fn index_mut(&mut self, addr: u32) -> &mut Self::Output {
         self.check_access(addr);
         &mut self.bytes[addr as usize]
     }
 }
 
-impl std::ops::Index<std::ops::RangeFrom<u32>> for Memory {
+impl<'a> std::ops::Index<std::ops::RangeFrom<u32>> for Memory<'a> {
     type Output = [u8];
 
     fn index(&self, index: std::ops::RangeFrom<u32>) -> &Self::Output {
@@ -125,14 +123,14 @@ impl std::ops::Index<std::ops::RangeFrom<u32>> for Memory {
     }
 }
 
-impl std::ops::IndexMut<std::ops::RangeFrom<u32>> for Memory {
+impl<'a> std::ops::IndexMut<std::ops::RangeFrom<u32>> for Memory<'a> {
     fn index_mut(&mut self, index: std::ops::RangeFrom<u32>) -> &mut Self::Output {
         self.check_access(index.start);
         &mut self.bytes[index.start as usize..]
     }
 }
 
-impl std::ops::Index<std::ops::Range<u32>> for Memory {
+impl<'a> std::ops::Index<std::ops::Range<u32>> for Memory<'a> {
     type Output = [u8];
 
     fn index(&self, index: std::ops::Range<u32>) -> &Self::Output {
@@ -141,7 +139,7 @@ impl std::ops::Index<std::ops::Range<u32>> for Memory {
     }
 }
 
-impl std::ops::IndexMut<std::ops::Range<u32>> for Memory {
+impl<'a> std::ops::IndexMut<std::ops::Range<u32>> for Memory<'a> {
     fn index_mut(&mut self, index: std::ops::Range<u32>) -> &mut Self::Output {
         self.check_access(index.start);
         &mut self.bytes[index.start as usize..index.end as usize]

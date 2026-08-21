@@ -65,7 +65,8 @@ pub struct Context {
     pub cpu: CPU,
     pub thread_handle: u32,
     pub thread_id: u32,
-    pub memory: Memory,
+    // TODO: we currently use a single leaked static memory to allow it to be shared between threads.
+    pub memory: Memory<'static>,
     pub blocks: &'static [(u32, ContFn)],
     pub cache: BlockCache,
     pub recent: [ContFn; 4],
