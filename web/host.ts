@@ -43,7 +43,8 @@ class MessageQueue {
 
 class Host implements exe.WasmHost {
   consoleDom = document.createElement("pre");
-  consoleOutput = new ArrayBuffer(0, { maxByteLength: 10 << 10 });
+  consoleOutputDecoder = new TextDecoder();
+  consoleOutput = '';
   window_: HTMLCanvasElement | undefined;
 
   surfaces: Map<number, HTMLCanvasElement> = new Map();
@@ -80,14 +81,10 @@ class Host implements exe.WasmHost {
   }
 
   console_write(ptr: number, len: number): void {
-    const inBuf = new Uint8Array(this.wasmMemory.buffer, ptr, len);
-    const ofs = this.consoleOutput.byteLength;
-    this.consoleOutput.resize(ofs + len);
-    const outBuf = new Uint8Array(this.consoleOutput, ofs, len);
-    outBuf.set(inBuf);
-    // Confusing: you cannot decode from a growable ArrayBuffer, even though there
-    // is no shared memory involved at all.
-    this.consoleDom.innerText = new TextDecoder().decode(this.consoleOutput.slice());
+    // We must copy from wasm memory to decode.
+    const inBuf = new Uint8Array(this.wasmMemory.buffer, ptr, len).slice();
+    this.consoleOutput += this.consoleOutputDecoder.decode(inBuf, { stream: true });
+    this.consoleDom.innerText = this.consoleOutput;
   }
 
   create_surface(width: number, height: number): number {
