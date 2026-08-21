@@ -99,7 +99,7 @@ class Host implements exe.WasmHost {
     return id;
   }
 
-  create_window(title: string, width: number, height: number): number {
+  create_window(_title: string, width: number, height: number): number {
     this.window_ = document.createElement("canvas");
     this.window_.className = "window";
     this.window_.width = width;
@@ -109,12 +109,12 @@ class Host implements exe.WasmHost {
     return 1;
   }
 
-  resize_window(id: number, width: number, height: number): void {
+  resize_window(_id: number, width: number, height: number): void {
     this.window_!.width = width;
     this.window_!.height = height;
   }
 
-  render(window_id: number, surface_id: number) {
+  render(_window_id: number, surface_id: number) {
     const surface = this.surfaces.get(surface_id)!;
     this.window_!.getContext("2d")!.drawImage(surface, 0, 0);
   }
@@ -162,6 +162,10 @@ class Host implements exe.WasmHost {
   async wait_message(): Promise<number[]> {
     const event = await this.messageQueue.wait();
     return this.serializeMessage(event);
+  }
+
+  write_file(_path: string, _ptr: number, _len: number): number {
+    throw new Error('unimplemented');
   }
 }
 
