@@ -132,7 +132,8 @@ impl<'a> CodeGen<'a> {
                     bitness = self.module.bitness()
                 ));
             }
-            Je | Jne | Jb | Js | Jns | Ja | Jae | Jl | Jg | Jge | Jecxz | Jle | Jbe | Jcxz
+            Je | Jne | Jb | Js | Jns | Ja | Jae | Jl | Jg | Jge | Jecxz | Jle | Jbe | Jcxz | Jp
+            | Jnp | Jo | Jno
             | Loop | Loopne => {
                 let next = self.resolve_jmp(instr.next_ip());
                 let (None, None, cont) = self.jmp_target(instr) else {

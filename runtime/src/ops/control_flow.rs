@@ -48,6 +48,34 @@ impl Context {
         from
     }
 
+    pub fn jp(&mut self, from: Cont, x: Cont) -> Cont {
+        if self.cpu.flags.contains(Flags::PF) {
+            return x;
+        }
+        from
+    }
+
+    pub fn jnp(&mut self, from: Cont, x: Cont) -> Cont {
+        if !self.cpu.flags.contains(Flags::PF) {
+            return x;
+        }
+        from
+    }
+
+    pub fn jo(&mut self, from: Cont, x: Cont) -> Cont {
+        if self.cpu.flags.contains(Flags::OF) {
+            return x;
+        }
+        from
+    }
+
+    pub fn jno(&mut self, from: Cont, x: Cont) -> Cont {
+        if !self.cpu.flags.contains(Flags::OF) {
+            return x;
+        }
+        from
+    }
+
     pub fn js(&mut self, from: Cont, x: Cont) -> Cont {
         if self.cpu.flags.contains(Flags::SF) {
             return x;
