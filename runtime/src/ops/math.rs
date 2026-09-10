@@ -66,9 +66,12 @@ pub fn or<I: Int>(x: I, y: I, flags: &mut Flags) -> I {
 
 /// neg: Two's Complement Negation
 pub fn neg<I: Int>(x: I, flags: &mut Flags) -> I {
-    let (result, of) = I::zero().overflowing_sub(&x);
+    let (result, _) = I::zero().overflowing_sub(&x);
     flags.set(Flags::ZF, result.is_zero());
     flags.set(Flags::CF, !result.is_zero());
+    // Only the most negative value overflows: it is the one input whose
+    // negation is still negative.
+    let of = x.high_bit().is_one() && result.high_bit().is_one();
     flags.set(Flags::OF, of);
     flags.set(Flags::PF, result.low_byte().count_ones() % 2 == 0);
     result
