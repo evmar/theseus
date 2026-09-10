@@ -68,6 +68,7 @@ pub fn or<I: Int>(x: I, y: I, flags: &mut Flags) -> I {
 pub fn neg<I: Int>(x: I, flags: &mut Flags) -> I {
     let (result, _) = I::zero().overflowing_sub(&x);
     flags.set(Flags::ZF, result.is_zero());
+    flags.set(Flags::SF, result.high_bit().is_one());
     flags.set(Flags::CF, !result.is_zero());
     // Only the most negative value overflows: it is the one input whose
     // negation is still negative.
@@ -181,6 +182,31 @@ mod tests {
         flags.set(Flags::CF, carry);
         let result = sbb(x, y, &mut flags);
         (result, flags)
+    }
+
+    fn neg8(x: u8) -> (u8, Flags) {
+        let mut flags = Flags::default();
+        let result = neg(x, &mut flags);
+        (result, flags)
+    }
+
+    #[test]
+    fn neg_flags() {
+        let (result, flags) = neg8(0x00);
+        assert_eq!(result, 0x00);
+        assert_eq!(flags.to_string(), "PF ZF");
+
+        let (result, flags) = neg8(0x01);
+        assert_eq!(result, 0xff);
+        assert_eq!(flags.to_string(), "CF PF SF");
+
+        let (result, flags) = neg8(0xff);
+        assert_eq!(result, 0x01);
+        assert_eq!(flags.to_string(), "CF");
+
+        let (result, flags) = neg8(0x80);
+        assert_eq!(result, 0x80);
+        assert_eq!(flags.to_string(), "CF SF OF");
     }
 
     #[test]
