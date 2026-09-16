@@ -12,6 +12,8 @@
     Default,
     Hash,
 )]
+#[cfg_attr(feature = "serde", derive(ts_rs::TS))]
+#[cfg_attr(feature = "serde", ts(as = "String"))]
 pub struct SegOfs {
     pub seg: u16,
     pub ofs: u16,
