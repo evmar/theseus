@@ -1,22 +1,13 @@
 #[repr(C)]
 #[derive(
-    zerocopy::FromBytes,
-    zerocopy::IntoBytes,
-    Debug,
-    Clone,
-    Copy,
-    PartialEq,
-    PartialOrd,
-    Eq,
-    Ord,
-    Default,
-    Hash,
+    zerocopy::FromBytes, zerocopy::IntoBytes, Debug, Clone, Copy, PartialEq, Eq, Default, Hash,
 )]
 #[cfg_attr(feature = "serde", derive(ts_rs::TS))]
 #[cfg_attr(feature = "serde", ts(as = "String"))]
 pub struct SegOfs {
-    pub seg: u16,
+    // note: field order matters; we use repr(C) and want little-endian
     pub ofs: u16,
+    pub seg: u16,
 }
 
 impl SegOfs {
@@ -55,6 +46,22 @@ impl From<(u16, u16)> for SegOfs {
 impl std::fmt::Display for SegOfs {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(f, "{seg:04x}:{ofs:04x}", seg = self.seg, ofs = self.ofs)
+    }
+}
+
+impl PartialOrd for SegOfs {
+    fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+        Some(self.cmp(other))
+    }
+}
+impl Ord for SegOfs {
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+        // TODO: should this just compare .abs()?
+        // Do we want segofs with different segs to be possibly equal?
+        match self.seg.cmp(&other.seg) {
+            core::cmp::Ordering::Equal => self.ofs.cmp(&other.ofs),
+            ord => ord,
+        }
     }
 }
 
