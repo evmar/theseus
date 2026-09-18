@@ -180,9 +180,38 @@ impl Context {
             self.cpu.regs.ss
         );
     }
+
+    pub fn dump_memory(&self, addr: u32) {
+        let len = 256;
+        let stride = 16u32;
+        let mut addr = addr;
+        for _ in 0..(len / stride) {
+            let mem = &self.memory.bytes[addr as usize..];
+            let mem = &mem[..(stride as usize).min(mem.len())];
+            print!("{addr:x}");
+            for (i, b) in mem.iter().enumerate() {
+                print!(" {b:02x}");
+                if i == 8 {
+                    print!(" ");
+                }
+            }
+            println!();
+            addr += stride;
+        }
+    }
 }
 
 #[unsafe(no_mangle)]
 pub extern "C" fn dump_ctx(ctx: &Context) {
     ctx.dump();
+}
+
+#[unsafe(no_mangle)]
+pub extern "C" fn dump_mem32(ctx: &Context, ofs: u32) {
+    ctx.dump_memory(ofs);
+}
+
+#[unsafe(no_mangle)]
+pub extern "C" fn dump_mem16(ctx: &Context, seg: u16, ofs: u16) {
+    ctx.dump_memory(SegOfs::new(seg, ofs).abs());
 }
