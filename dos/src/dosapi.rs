@@ -1,8 +1,8 @@
 //! The system API exposed by DOS, e.g. opening files.
 
-use runtime::{Context, segofs};
+use runtime::{Context, SegOfs};
 
-use crate::{IVTEntry, ivt, state};
+use crate::{ivt, state};
 
 /// Open file.
 #[derive(Default)]
@@ -28,8 +28,8 @@ pub fn int21(ctx: &mut Context) -> Option<runtime::Cont> {
     match func {
         // write to stdout
         0x09 => {
-            let addr = segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_dx());
-            let buf = &ctx.memory.bytes[addr as usize..];
+            let addr = SegOfs::new(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_dx());
+            let buf = &ctx.memory[addr.abs()..];
             let end = buf.iter().position(|&c| c == b'$').unwrap();
             let buf = &buf[..end];
             //trace!("write_stdout", buf);
@@ -40,9 +40,9 @@ pub fn int21(ctx: &mut Context) -> Option<runtime::Cont> {
         // write to interrupt table
         0x25 => {
             let int = ctx.cpu.regs.get_al();
-            let (seg, ofs) = (ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_dx());
-            trace!("write_ivt", int, seg, ofs);
-            ivt(&mut ctx.memory)[int as usize] = IVTEntry::from((seg, ofs));
+            let segofs = SegOfs::new(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_dx());
+            trace!("write_ivt", int, segofs);
+            ivt(&mut ctx.memory)[int as usize] = segofs;
         }
         // get DOS version
         0x30 => {
@@ -69,15 +69,15 @@ pub fn int21(ctx: &mut Context) -> Option<runtime::Cont> {
         0x35 => {
             let int = ctx.cpu.regs.get_al();
             trace!("read_ivt", int);
-            let IVTEntry { seg, ofs } = ivt(&mut ctx.memory)[int as usize];
-            ctx.cpu.regs.set_es(seg);
-            ctx.cpu.regs.set_bx(ofs);
+            let segofs = ivt(&mut ctx.memory)[int as usize];
+            ctx.cpu.regs.set_es(segofs.seg);
+            ctx.cpu.regs.set_bx(segofs.ofs);
         }
         // get an access handle
         0x3d => {
             let access = ctx.cpu.regs.get_al();
-            let addr = segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_dx());
-            let name = ctx.memory.read_str(addr);
+            let addr = SegOfs::new(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_dx());
+            let name = ctx.memory.read_str(addr.abs());
             trace!("handle_get", access, name);
             if access != 0 {
                 log::warn!("TODO: file access {access:x}");
@@ -109,8 +109,8 @@ pub fn int21(ctx: &mut Context) -> Option<runtime::Cont> {
             use std::io::Write;
             let handle = ctx.cpu.regs.get_bx();
             let len = ctx.cpu.regs.get_cx();
-            let addr = segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_dx());
-            let buf = &ctx.memory[addr..][..len as usize];
+            let addr = SegOfs::new(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_dx());
+            let buf = &ctx.memory[addr.abs()..][..len as usize];
             trace!("handle_write", handle, len, addr);
             match handle {
                 1 => std::io::stdout().lock().write_all(buf).unwrap(),
@@ -191,10 +191,10 @@ pub fn int21(ctx: &mut Context) -> Option<runtime::Cont> {
         // load a program for execution
         0x4b => {
             let func = ctx.cpu.regs.get_al();
-            let cmd = ctx
-                .memory
-                .read_str(segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_dx()));
-            let params_addr = segofs(ctx.cpu.regs.get_es(), ctx.cpu.regs.get_bx());
+            let cmd_addr = SegOfs::new(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_dx());
+            let params_addr = SegOfs::new(ctx.cpu.regs.get_es(), ctx.cpu.regs.get_bx());
+
+            let cmd = ctx.memory.read_str(cmd_addr.abs());
             trace!("load_program", func, cmd, params_addr);
 
             match func {
@@ -202,18 +202,25 @@ pub fn int21(ctx: &mut Context) -> Option<runtime::Cont> {
                 1 => todo!("load exe {cmd}"),
                 3 => {
                     // overlay load
-                    let seg = ctx.memory.read::<u16>(params_addr);
-                    let relo = ctx.memory.read::<u16>(params_addr + 2);
+                    #[repr(C)]
+                    #[derive(zerocopy::FromBytes)]
+                    struct Params {
+                        /// segment at which to load overlay
+                        seg: u16,
+                        /// relocation factor to apply to overlay if in .EXE format
+                        relo: u16,
+                    }
+                    let params = ctx.memory.read::<Params>(params_addr.abs());
+                    let load_addr = SegOfs::new(params.seg, 0);
 
                     let Some(buf) = state().read_file(&cmd) else {
                         panic!()
                     };
                     let header = exe::DOS::parse(&buf).unwrap();
-                    let load_addr = segofs(seg, 0);
                     let data = &buf[header.image_offset()..];
-                    log::info!("load {cmd:?} load_addr={seg:x}:0 size={:x}", buf.len());
-                    ctx.memory[load_addr..][..data.len()].copy_from_slice(data);
-                    log::info!("TODO: relocations {relo:x}");
+                    log::info!("load {cmd:?} load_addr={load_addr} size={:x}", data.len());
+                    ctx.memory[load_addr.abs()..][..data.len()].copy_from_slice(data);
+                    log::info!("TODO: relocations {:x}", params.relo);
 
                     ctx.cpu.flags.remove(runtime::Flags::CF); // no error
                     // on success, no register values are known; match dosbox here

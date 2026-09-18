@@ -1,6 +1,6 @@
 //! Programmable Interrupt Timer.
 
-use runtime::Context;
+use runtime::{Context, SegOfs};
 
 #[derive(Default)]
 pub struct PIT {
@@ -56,7 +56,7 @@ impl PIT {
         }
     }
 
-    pub fn check_timer(&mut self, ctx: &mut Context, handler: (u16, u16)) {
+    pub fn check_timer(&mut self, ctx: &mut Context, handler: SegOfs) {
         let Some(mut next) = self.next_interrupt else {
             return;
         };
@@ -71,18 +71,17 @@ impl PIT {
         self.next_interrupt = Some(next);
     }
 
-    fn call_timer(&mut self, ctx: &mut Context, handler: (u16, u16)) {
-        let (seg, ofs) = handler;
-        assert!(seg != 0);
-        log::info!("timer {seg:x}:{ofs:x}");
+    fn call_timer(&mut self, ctx: &mut Context, handler: SegOfs) {
+        assert!(handler.seg != 0);
+        log::info!("timer {handler}");
 
-        assert_eq!(ctx.cpu.regs.cs, seg); // TODO: handle seg!=cs
+        assert_eq!(ctx.cpu.regs.cs, handler.seg); // TODO: handle seg!=cs
         let esp = ctx.cpu.regs.esp;
         ctx.push16(ctx.cpu.flags.bits() as u16);
-        ctx.push16(seg);
-        ctx.push16(ofs);
+        ctx.push16(handler.seg);
+        ctx.push16(handler.ofs);
 
-        let mut f = ctx.indirect16((seg, ofs).into());
+        let mut f = ctx.indirect16(handler);
         while ctx.cpu.regs.esp != esp {
             // don't check interrupts while running interrupt handler
             f = f.0(ctx);

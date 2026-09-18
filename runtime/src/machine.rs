@@ -186,7 +186,7 @@ impl Context {
         let stride = 16u32;
         let mut addr = addr;
         for _ in 0..(len / stride) {
-            let mem = &self.memory.bytes[addr as usize..];
+            let mem = &self.memory[addr..];
             let mem = &mem[..(stride as usize).min(mem.len())];
             print!("{addr:x}");
             for (i, b) in mem.iter().enumerate() {

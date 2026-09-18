@@ -13,7 +13,7 @@ fn main() {
     }));
 
     // set return address for once TSR is loaded
-    dos::ivt(&mut ctx.memory)[0x22] = dos::IVTEntry::from((1, 1));
+    dos::ivt(&mut ctx.memory)[0x22] = (1, 1).into();
 
     dos::start(&mut ctx, &generated::EXEDATA);
 }

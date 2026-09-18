@@ -8,7 +8,7 @@ use std::{
 };
 
 use host::SingleThreader;
-use runtime::{CPU, Context, EXEData, Mappings, Memory, Regs, segofs};
+use runtime::{CPU, Context, EXEData, Mappings, Memory, Regs, SegOfs, segofs};
 use zerocopy::FromBytes;
 
 use crate::{timer::PIT, vga::VGA};
@@ -16,35 +16,8 @@ use crate::{timer::PIT, vga::VGA};
 /// DOSBox-X loads com files into this segment.
 pub const DOSBOX_SEG: u16 = 0x813;
 
-#[repr(C)]
-#[derive(
-    Clone, Copy, Debug, PartialEq, Eq, zerocopy::FromBytes, zerocopy::IntoBytes, zerocopy::Immutable,
-)]
-pub struct IVTEntry {
-    seg: u16,
-    ofs: u16,
-}
-
-impl IVTEntry {
-    fn is_null(&self) -> bool {
-        *self == IVTEntry::from((0, 0))
-    }
-}
-
-impl From<(u16, u16)> for IVTEntry {
-    fn from((seg, ofs): (u16, u16)) -> Self {
-        IVTEntry { seg, ofs }
-    }
-}
-
-impl From<IVTEntry> for (u16, u16) {
-    fn from(IVTEntry { seg, ofs }: IVTEntry) -> Self {
-        (seg, ofs)
-    }
-}
-
-pub fn ivt<'a>(mem: &'a mut Memory) -> &'a mut [IVTEntry] {
-    <[IVTEntry]>::mut_from_prefix_with_elems(&mut mem.bytes, 0x400)
+pub fn ivt<'a>(mem: &'a mut Memory) -> &'a mut [SegOfs] {
+    <[SegOfs]>::mut_from_prefix_with_elems(&mut mem.bytes, 0x400)
         .unwrap()
         .0
 }
@@ -113,7 +86,7 @@ pub fn load(exe: &EXEData, command_line: Option<&str>) -> Context {
 
     let ivt = ivt(&mut memory);
     // cpu exception handler
-    ivt[0] = IVTEntry::from((0xf000, 0xca60)); // from dosbox
+    ivt[0] = (0xf000, 0xca60).into(); // from dosbox
     // TSR handler
     // ivt[0x2f] = IVTEntry::from((0xf000, 0xd220)); // from dosbox
     // expanded memory manager
