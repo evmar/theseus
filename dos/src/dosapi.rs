@@ -217,10 +217,12 @@ pub fn int21(ctx: &mut Context) -> Option<runtime::Cont> {
                         panic!()
                     };
                     let header = exe::DOS::parse(&buf).unwrap();
-                    let data = &buf[header.image_offset()..];
+                    let data = header.image(&buf);
                     log::info!("load {cmd:?} load_addr={load_addr} size={:x}", data.len());
-                    ctx.memory[load_addr.abs()..][..data.len()].copy_from_slice(data);
-                    log::info!("TODO: relocations {:x}", params.relo);
+                    let image = &mut ctx.memory[load_addr.abs()..][..data.len()];
+                    image.copy_from_slice(data);
+                    log::info!("relocating to {:x}", params.relo);
+                    header.apply_relocations(params.relo, image);
 
                     ctx.cpu.flags.remove(runtime::Flags::CF); // no error
                     // on success, no register values are known; match dosbox here

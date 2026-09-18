@@ -1,3 +1,4 @@
+use anyhow::anyhow;
 use tc::{AddrInfo, IP, Module};
 
 fn parse_hex(val: &str) -> Result<u32, String> {
@@ -71,6 +72,10 @@ struct Args {
     #[argh(option)]
     exe: String,
 
+    /// path to runtime-loaded DOS executable
+    #[argh(option)]
+    load: Option<String>,
+
     /// path to output directory
     #[argh(option)]
     out: String,
@@ -108,11 +113,20 @@ fn run() -> anyhow::Result<()> {
     if args.exe.to_ascii_lowercase().ends_with(".com") {
         state.module = Module::DOS(tc::com::load_com(&mut state.mem, buf));
     } else if args.exe.to_ascii_lowercase().ends_with(".exe") {
-        state.module = tc::exe::load_exe(&mut state.mem, buf);
+        state.module = tc::exe::load_exe(&mut state.mem, buf, None);
         state.init_imports();
     } else {
         anyhow::bail!("unexpected file extension");
     }
+    if let Some(load) = &args.load {
+        let Some((seg, path)) = load.split_once(':') else {
+            anyhow::bail!("--load: should be of the form 'seg:path'");
+        };
+        let seg = parse_hex(seg).map_err(|_| anyhow!("--load: bad segment"))? as u16;
+        let buf = std::fs::read(path)?;
+        tc::exe::load_exe(&mut state.mem, buf, Some(seg));
+    }
+
     state.init_system_hooks();
 
     let mut entry_points = vec![];

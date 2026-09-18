@@ -1,38 +1,52 @@
 //! EXE loading.
 
-use runtime::segofs;
+use runtime::{SegOfs, segofs};
 
 use crate::{DOSModule, Import, Module, WindowsModule, memory::Memory};
 
-pub fn load_exe(mem: &mut Memory, buf: Vec<u8>) -> Module {
+// TODO: change load api to first load a dos exe then a windows one
+// so we don't have this weird load param
+pub fn load_exe(mem: &mut Memory, buf: Vec<u8>, load_segment: Option<u16>) -> Module {
     match exe::parse(&buf).unwrap() {
         exe::Parse::PE(pe) => Module::Windows(load_pe(mem, &buf, pe)),
-        exe::Parse::DOS(dos) => Module::DOS(load_dos(mem, &buf, dos)),
+        exe::Parse::DOS(dos) => Module::DOS(load_dos(mem, &buf, dos, load_segment)),
     }
 }
 
-fn load_dos(mem: &mut Memory, buf: &[u8], dos: exe::DOS) -> DOSModule {
-    let psp_segment = dos::DOSBOX_SEG;
+fn load_dos(
+    mem: &mut Memory,
+    buf: &[u8],
+    dos_header: exe::DOS,
+    load_segment: Option<u16>,
+) -> DOSModule {
+    let (psp_segment, image_segment) = match load_segment {
+        Some(seg) => (0, seg),
+        None => {
+            let psp_segment = dos::DOSBOX_SEG;
+            mem.reserve("psp".into(), segofs(psp_segment, 0), 0x100);
+            (psp_segment, psp_segment + 0x10)
+        }
+    };
 
-    mem.reserve("psp".into(), segofs(psp_segment, 0), 0x100);
+    let dos_header: &exe::DOS = &dos_header;
+    let load_addr = SegOfs::new(image_segment, 0).abs();
+    let data = dos_header.image(buf);
 
-    let load_segment = psp_segment + 0x10;
-    let load_addr = segofs(load_segment, 0);
-    let data = &buf[dos.image_offset()..];
-    mem.reserve("dos data".into(), load_addr, data.len() as u32);
+    mem.reserve("dos image".into(), load_addr, data.len() as u32);
+
     mem.slice_mut(load_addr, data.len() as u32)
         .copy_from_slice(data);
-
-    dos.apply_relocations(load_segment, &mut mem.bytes[load_addr as usize..]);
+    dos_header.apply_relocations(image_segment, &mut mem.bytes[load_addr as usize..]);
+    let code_memory = load_addr..load_addr + data.len() as u32;
 
     DOSModule {
         is_com: false,
         psp_segment,
-        load_segment: psp_segment + 0x10 + dos.header.initial_cs,
-        stack_segment: load_segment + dos.header.initial_ss,
-        stack_pointer: dos.header.initial_sp,
-        entry_point: dos.header.entry_point,
-        code_memory: (load_addr..load_addr + data.len() as u32),
+        load_segment: psp_segment + 0x10 + dos_header.header.initial_cs,
+        stack_segment: image_segment + dos_header.header.initial_ss,
+        stack_pointer: dos_header.header.initial_sp,
+        entry_point: dos_header.header.entry_point,
+        code_memory,
     }
 }
 

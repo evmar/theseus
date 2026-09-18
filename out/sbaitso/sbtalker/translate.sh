@@ -5,6 +5,7 @@ cd "$(git rev-parse --show-toplevel)"
 args=(
     --trace
     --exe scratch/dos/sbaitso/SBTALKER.EXE
+    --load 34c4:scratch/dos/sbaitso/BLASTER.DRV
     --out out/sbaitso/sbtalker
     # Fake return address used after TSR loads.
     --extern 11

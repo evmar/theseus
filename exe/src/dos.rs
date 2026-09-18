@@ -35,9 +35,10 @@ impl DOS {
         Ok(DOS { header, relocs })
     }
 
-    pub fn image_offset(&self) -> usize {
+    pub fn image<'a>(&self, buf: &'a [u8]) -> &'a [u8] {
         let paragraph = 16;
-        self.header.header_size_paras as usize * paragraph
+        let image_offset = self.header.header_size_paras as usize * paragraph;
+        &buf[image_offset..]
     }
 
     pub fn apply_relocations(&self, seg: u16, mem: &mut [u8]) {

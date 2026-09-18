@@ -15,13 +15,22 @@ fn init(regs: &mut runtime::Regs, memory: &mut runtime::Memory, mappings: &mut r
         section: true,
     });
     mappings.reserve(runtime::Mapping {
-        desc: "dos data".to_string(),
+        desc: "dos image".to_string(),
         addr: 0x8230,
         size: 0x2b0d7,
         section: true,
     });
     let bytes = include_bytes!("../data/00008230.raw").as_slice();
     let out = &mut memory.bytes[0x8230..][..bytes.len()];
+    out.copy_from_slice(bytes);
+    mappings.reserve(runtime::Mapping {
+        desc: "dos image".to_string(),
+        addr: 0x34c40,
+        size: 0x24a3,
+        section: true,
+    });
+    let bytes = include_bytes!("../data/00034c40.raw").as_slice();
+    let out = &mut memory.bytes[0x34c40..][..bytes.len()];
     out.copy_from_slice(bytes);
 
     regs.cs = 0x823;
