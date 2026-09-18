@@ -1,3 +1,5 @@
+use std::cell::RefCell;
+
 use crate::{Cont, ContFn, Flags, Memory, Regs, SegOfs, fpu::FPU, mmx::MMX, segofs};
 
 #[derive(Default)]
@@ -22,16 +24,12 @@ impl CPU {
 }
 
 /// Cache of recently taken indirect jumps.
-///
-/// A program calls through function pointers and COM vtables constantly, but
-/// lands on few distinct targets: one game measured 935 of them across 24k
-/// blocks, where these 64 entries answered 99.7% of lookups. That leaves the
-/// search below cold enough that its cost stops mattering.
+/// Often when these are hot it's because they're in some sort of loop, so
+/// even a simple cache is effective.  One program I tested in retrowin32
+/// had cache hits on 99.7% of lookups.
 pub struct BlockCache {
-    /// Direct-mapped on the low bits of the address. A slot stores the address
-    /// it holds so a collision is caught on lookup. Per-slot cells because
-    /// `indirect` only has `&self`.
-    slots: [std::cell::Cell<Option<(u32, ContFn)>>; BlockCache::SIZE],
+    /// Simple hash table based on low bits of address.
+    slots: [Option<(u32, ContFn)>; BlockCache::SIZE],
 }
 
 impl BlockCache {
@@ -42,14 +40,14 @@ impl BlockCache {
     }
 
     fn get(&self, addr: u32) -> Option<ContFn> {
-        match self.slots[Self::slot(addr)].get() {
+        match self.slots[Self::slot(addr)] {
             Some((cached, func)) if cached == addr => Some(func),
             _ => None,
         }
     }
 
-    fn insert(&self, addr: u32, func: ContFn) {
-        self.slots[Self::slot(addr)].set(Some((addr, func)));
+    fn insert(&mut self, addr: u32, func: ContFn) {
+        self.slots[Self::slot(addr)] = Some((addr, func));
     }
 }
 
@@ -68,7 +66,7 @@ pub struct Context {
     // TODO: we currently use a single leaked static memory to allow it to be shared between threads.
     pub memory: Memory<'static>,
     pub blocks: &'static [(u32, ContFn)],
-    pub cache: BlockCache,
+    pub cache: RefCell<BlockCache>,
     pub recent: [ContFn; 4],
 }
 
@@ -89,7 +87,8 @@ impl Context {
             self.dump();
             panic!("jmp to null ptr");
         }
-        if let Some(func) = self.cache.get(addr) {
+        let mut cache = self.cache.borrow_mut();
+        if let Some(func) = cache.get(addr) {
             return Cont(func);
         }
         // TODO: this would be faster as a perfect hash if we really cared.
@@ -102,7 +101,7 @@ impl Context {
             );
         };
         let func = self.blocks[index].1;
-        self.cache.insert(addr, func);
+        cache.insert(addr, func);
         Cont(func)
     }
 
