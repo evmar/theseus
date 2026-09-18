@@ -77,5 +77,20 @@
     "sourceLanguages": ["rust"],
     "request": "launch",
     "adapter": "CodeLLDB"
+  },
+  {
+    "label": "sbtalker",
+    "build": {
+      "command": "cargo",
+      "args": ["build", "-p", "sbaitso-sbtalker"]
+    },
+    "env": {
+      "RUST_BACKTRACE": "1",
+      "THESEUS_TRACE": "+"
+    },
+    "program": "$ZED_WORKTREE_ROOT/target/debug/sbaitso-sbtalker",
+    "sourceLanguages": ["rust"],
+    "request": "launch",
+    "adapter": "CodeLLDB"
   }
 ]
