@@ -73,16 +73,16 @@ pub struct Context {
 impl Context {
     /// Given an address (jump target), look up the Cont registered for it.
     pub fn indirect16(&self, addr: SegOfs) -> Cont {
-        self.indirect(addr.abs())
+        self.indirect(addr.abs(), || format!("{addr}"))
     }
 
     /// Given an address (jump target), look up the Cont registered for it.
     pub fn indirect32(&self, addr: u32) -> Cont {
-        self.indirect(addr)
+        self.indirect(addr, || format!("{addr:x}"))
     }
 
     /// Given an address (jump target), look up the Cont registered for it.
-    fn indirect(&self, addr: u32) -> Cont {
+    fn indirect(&self, addr: u32, addr_str: impl FnOnce() -> String) -> Cont {
         if addr == 0 {
             self.dump();
             panic!("jmp to null ptr");
@@ -96,8 +96,9 @@ impl Context {
             self.dump();
             crate::log_missing_addr(addr);
             panic!(
-                "jmp to unknown addr {addr:#010x}; \
-                 re-run tc with --entry-points-file (see THESEUS_MISSING_ADDRS)"
+                "jmp to unknown addr {}; \
+                re-run tc with --entry-points-file (see THESEUS_MISSING_ADDRS)",
+                addr_str()
             );
         };
         let func = self.blocks[index].1;
