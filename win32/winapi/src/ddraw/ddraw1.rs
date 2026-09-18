@@ -173,7 +173,7 @@ pub mod IDirectDraw {
                     .process_heap
                     .alloc(&mut ctx.memory, desc.dwSize);
                 ctx.memory.write(desc_addr, desc);
-                let callback = ctx.indirect(lpEnumCallback);
+                let callback = ctx.indirect32(lpEnumCallback);
                 ctx.call32_x86(callback, vec![desc_addr, lpContext]);
                 let ret = ctx.cpu.regs.eax;
                 kernel32::lock()

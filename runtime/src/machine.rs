@@ -84,7 +84,7 @@ impl Context {
     }
 
     /// Given an address (jump target), look up the Cont registered for it.
-    pub fn indirect(&self, addr: u32) -> Cont {
+    fn indirect(&self, addr: u32) -> Cont {
         if addr == 0 {
             self.dump();
             panic!("jmp to null ptr");

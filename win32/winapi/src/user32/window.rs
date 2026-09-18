@@ -357,7 +357,7 @@ pub fn RegisterClassW(ctx: &mut Context, lpWndClass: Ptr<WNDCLASS>) -> u16 {
         )
     };
     state().register_class(WndClass {
-        wndproc: ctx.indirect(wndclass.lpfnWndProc),
+        wndproc: ctx.indirect32(wndclass.lpfnWndProc),
         background,
     });
     stub!(1)

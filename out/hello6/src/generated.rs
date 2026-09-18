@@ -1796,7 +1796,7 @@ pub fn x4015c4(ctx: &mut Context) -> Cont {
 
 pub fn x4015cd(ctx: &mut Context) -> Cont {
     // 004015cd call eax
-    ctx.call32(0x4015cf, ctx.indirect(ctx.cpu.regs.eax))
+    ctx.call32(0x4015cf, ctx.indirect32(ctx.cpu.regs.eax))
 }
 
 pub fn x4015cf(ctx: &mut Context) -> Cont {
@@ -1954,7 +1954,7 @@ pub fn x40165f(ctx: &mut Context) -> Cont {
 
 pub fn x401665(ctx: &mut Context) -> Cont {
     // 00401665 call eax
-    ctx.call32(0x401667, ctx.indirect(ctx.cpu.regs.eax))
+    ctx.call32(0x401667, ctx.indirect32(ctx.cpu.regs.eax))
 }
 
 pub fn x401667(ctx: &mut Context) -> Cont {
@@ -2075,7 +2075,7 @@ pub fn x4016b7(ctx: &mut Context) -> Cont {
 
 pub fn x4016bd(ctx: &mut Context) -> Cont {
     // 004016bd call eax
-    ctx.call32(0x4016bf, ctx.indirect(ctx.cpu.regs.eax))
+    ctx.call32(0x4016bf, ctx.indirect32(ctx.cpu.regs.eax))
 }
 
 pub fn x4016bf(ctx: &mut Context) -> Cont {
@@ -2336,7 +2336,7 @@ pub fn x4017d1(ctx: &mut Context) -> Cont {
     // 004017d7 push 8
     ctx.push32(0x8u32);
     // 004017d9 call ebx
-    ctx.call32(0x4017db, ctx.indirect(ctx.cpu.regs.ebx))
+    ctx.call32(0x4017db, ctx.indirect32(ctx.cpu.regs.ebx))
 }
 
 pub fn x4017db(ctx: &mut Context) -> Cont {
@@ -2369,7 +2369,7 @@ pub fn x4017e6(ctx: &mut Context) -> Cont {
     // 004017ea push ecx
     ctx.push32(ctx.cpu.regs.ecx);
     // 004017eb call ebx
-    ctx.call32(0x4017ed, ctx.indirect(ctx.cpu.regs.ebx))
+    ctx.call32(0x4017ed, ctx.indirect32(ctx.cpu.regs.ebx))
 }
 
 pub fn x4017ed(ctx: &mut Context) -> Cont {
@@ -3783,7 +3783,7 @@ pub fn x401b50(ctx: &mut Context) -> Cont {
 
 pub fn x401b6b(ctx: &mut Context) -> Cont {
     // 00401b6b call ebp
-    ctx.call32(0x401b6d, ctx.indirect(ctx.cpu.regs.ebp))
+    ctx.call32(0x401b6d, ctx.indirect32(ctx.cpu.regs.ebp))
 }
 
 pub fn x401b6d(ctx: &mut Context) -> Cont {
@@ -3836,7 +3836,7 @@ pub fn x401ba7(ctx: &mut Context) -> Cont {
 
 pub fn x401bab(ctx: &mut Context) -> Cont {
     // 00401bab call ebp
-    ctx.call32(0x401bad, ctx.indirect(ctx.cpu.regs.ebp))
+    ctx.call32(0x401bad, ctx.indirect32(ctx.cpu.regs.ebp))
 }
 
 pub fn x401bad(ctx: &mut Context) -> Cont {
@@ -3920,7 +3920,7 @@ pub fn x401bcc(ctx: &mut Context) -> Cont {
     ctx.memory
         .write::<u32>(ctx.cpu.regs.esp.wrapping_add(0x34u32), ctx.cpu.regs.eax);
     // 00401be3 call edi
-    ctx.call32(0x401be5, ctx.indirect(ctx.cpu.regs.edi))
+    ctx.call32(0x401be5, ctx.indirect32(ctx.cpu.regs.edi))
 }
 
 pub fn x401be5(ctx: &mut Context) -> Cont {
@@ -3973,7 +3973,7 @@ pub fn x401bfa(ctx: &mut Context) -> Cont {
     // 00401c04 push ebx
     ctx.push32(ctx.cpu.regs.ebx);
     // 00401c05 call edi
-    ctx.call32(0x401c07, ctx.indirect(ctx.cpu.regs.edi))
+    ctx.call32(0x401c07, ctx.indirect32(ctx.cpu.regs.edi))
 }
 
 pub fn x401c07(ctx: &mut Context) -> Cont {
@@ -4800,7 +4800,7 @@ pub fn x40205d(ctx: &mut Context) -> Cont {
 
 pub fn x402067(ctx: &mut Context) -> Cont {
     // 00402067 call eax
-    ctx.call32(0x402069, ctx.indirect(ctx.cpu.regs.eax))
+    ctx.call32(0x402069, ctx.indirect32(ctx.cpu.regs.eax))
 }
 
 pub fn x402069(ctx: &mut Context) -> Cont {
@@ -9888,7 +9888,7 @@ pub fn x4031b2(ctx: &mut Context) -> Cont {
     // 004031cf push ecx
     ctx.push32(ctx.cpu.regs.ecx);
     // 004031d0 call edi
-    ctx.call32(0x4031d2, ctx.indirect(ctx.cpu.regs.edi))
+    ctx.call32(0x4031d2, ctx.indirect32(ctx.cpu.regs.edi))
 }
 
 pub fn x4031d2(ctx: &mut Context) -> Cont {
@@ -10008,7 +10008,7 @@ pub fn x403225(ctx: &mut Context) -> Cont {
             .read::<u32>(ctx.cpu.regs.eax.wrapping_add(0xcu32)),
     );
     // 0040322b call edi
-    ctx.call32(0x40322d, ctx.indirect(ctx.cpu.regs.edi))
+    ctx.call32(0x40322d, ctx.indirect32(ctx.cpu.regs.edi))
 }
 
 pub fn x40322d(ctx: &mut Context) -> Cont {
@@ -11876,7 +11876,7 @@ pub fn x403777(ctx: &mut Context) -> Cont {
     // 00403782 push edi
     ctx.push32(ctx.cpu.regs.edi);
     // 00403783 call esi
-    ctx.call32(0x403785, ctx.indirect(ctx.cpu.regs.esi))
+    ctx.call32(0x403785, ctx.indirect32(ctx.cpu.regs.esi))
 }
 
 pub fn x403785(ctx: &mut Context) -> Cont {
@@ -11894,7 +11894,7 @@ pub fn x40378e(ctx: &mut Context) -> Cont {
     // 00403793 push edi
     ctx.push32(ctx.cpu.regs.edi);
     // 00403794 call esi
-    ctx.call32(0x403796, ctx.indirect(ctx.cpu.regs.esi))
+    ctx.call32(0x403796, ctx.indirect32(ctx.cpu.regs.esi))
 }
 
 pub fn x403796(ctx: &mut Context) -> Cont {
@@ -11905,7 +11905,7 @@ pub fn x403796(ctx: &mut Context) -> Cont {
     // 0040379c mov ds:[4067ECh],eax
     ctx.memory.write::<u32>(0x4067ecu32, ctx.cpu.regs.eax);
     // 004037a1 call esi
-    ctx.call32(0x4037a3, ctx.indirect(ctx.cpu.regs.esi))
+    ctx.call32(0x4037a3, ctx.indirect32(ctx.cpu.regs.esi))
 }
 
 pub fn x4037a3(ctx: &mut Context) -> Cont {
@@ -11925,7 +11925,7 @@ pub fn x4037a8(ctx: &mut Context) -> Cont {
 
 pub fn x4037b1(ctx: &mut Context) -> Cont {
     // 004037b1 call eax
-    ctx.call32(0x4037b3, ctx.indirect(ctx.cpu.regs.eax))
+    ctx.call32(0x4037b3, ctx.indirect32(ctx.cpu.regs.eax))
 }
 
 pub fn x4037b3(ctx: &mut Context) -> Cont {
@@ -11950,7 +11950,7 @@ pub fn x4037c2(ctx: &mut Context) -> Cont {
     // 004037c2 push ebx
     ctx.push32(ctx.cpu.regs.ebx);
     // 004037c3 call eax
-    ctx.call32(0x4037c5, ctx.indirect(ctx.cpu.regs.eax))
+    ctx.call32(0x4037c5, ctx.indirect32(ctx.cpu.regs.eax))
 }
 
 pub fn x4037c5(ctx: &mut Context) -> Cont {
@@ -12387,7 +12387,7 @@ pub fn x4038f7(ctx: &mut Context) -> Cont {
             .read::<u32>(ctx.cpu.regs.esp.wrapping_add(0x4u32)),
     );
     // 004038fb call eax
-    ctx.call32(0x4038fd, ctx.indirect(ctx.cpu.regs.eax))
+    ctx.call32(0x4038fd, ctx.indirect32(ctx.cpu.regs.eax))
 }
 
 pub fn x4038fd(ctx: &mut Context) -> Cont {

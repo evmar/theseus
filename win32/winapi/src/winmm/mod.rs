@@ -49,7 +49,7 @@ fn winmm_main(ctx: &mut Context) {
             std::thread::sleep(std::time::Duration::from_millis(delta as u64));
         }
 
-        let func = ctx.indirect(timer.callback);
+        let func = ctx.indirect32(timer.callback);
         let timer_id = 1;
         let user_data = timer.user_data;
         let next = now + timer.period;

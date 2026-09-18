@@ -1,4 +1,4 @@
-use crate::{Cont, ContFn, Context, Flags, RETURN_FROM_X86_ADDR32, segofs};
+use crate::{Cont, ContFn, Context, Flags, RETURN_FROM_X86_ADDR32};
 
 impl Context {
     pub fn call32(&mut self, ret: u32, addr: Cont) -> Cont {
@@ -160,7 +160,7 @@ impl Context {
     pub fn ret32(&mut self, n: u16) -> Cont {
         let ret = self.pop32();
         self.cpu.regs.esp += n as u32;
-        self.indirect(ret)
+        self.indirect32(ret)
     }
 
     pub fn ret16(&mut self, n: u16) -> Cont {
@@ -176,7 +176,7 @@ impl Context {
         self.cpu.regs.set_cs(cs);
         let flags = self.pop16();
         self.cpu.flags = Flags::from_bits(flags as u32).unwrap();
-        self.indirect(segofs(cs, ip))
+        self.indirect16((cs, ip).into())
     }
 
     pub fn retf16(&mut self, n: u16) -> Cont {
@@ -188,7 +188,7 @@ impl Context {
 
     pub fn jmpf16(&mut self, seg: u16, ofs: u16) -> Cont {
         self.cpu.regs.set_cs(seg);
-        self.indirect(segofs(seg, ofs))
+        self.indirect16((seg, ofs).into())
     }
 
     pub fn loop_(&mut self, from: Cont, x: Cont) -> Cont {

@@ -116,7 +116,7 @@ pub fn CreateThread(
     let id = lock.next_thread_id;
     let name = format!("thread {}@{:x}", id, lpStartAddress.addr);
     lock.create_thread(ctx, name, move |ctx| {
-        let f = ctx.indirect(lpStartAddress.addr);
+        let f = ctx.indirect32(lpStartAddress.addr);
         ctx.call32_x86(f, vec![lpParameter.addr]);
     });
     HANDLE::from_raw(id)

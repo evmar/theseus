@@ -63,7 +63,7 @@ impl<'a> CodeGen<'a> {
                     );
                 } else {
                     cont = format!(
-                        "ctx.indirect({reg})",
+                        "ctx.indirect32({reg})",
                         reg = get_reg(instr.iced.op0_register())
                     );
                 }

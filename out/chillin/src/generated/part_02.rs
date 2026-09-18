@@ -700,7 +700,7 @@ pub fn x409b47(ctx: &mut Context) -> Cont {
         .wrapping_add(ctx.cpu.regs.ebx)
         .wrapping_add(0xfffff8eeu32);
     // 00409b56 jmp eax
-    ctx.indirect(ctx.cpu.regs.eax)
+    ctx.indirect32(ctx.cpu.regs.eax)
 }
 
 pub fn x409b58(ctx: &mut Context) -> Cont {
@@ -2673,14 +2673,14 @@ pub fn x40a3a5(ctx: &mut Context) -> Cont {
     // 0040a3ac lodsd
     ctx.lodsd();
     // 0040a3ad call edi
-    ctx.call32(0x40a3af, ctx.indirect(ctx.cpu.regs.edi))
+    ctx.call32(0x40a3af, ctx.indirect32(ctx.cpu.regs.edi))
 }
 
 pub fn x40a3af(ctx: &mut Context) -> Cont {
     // 0040a3af lodsd
     ctx.lodsd();
     // 0040a3b0 call edi
-    ctx.call32(0x40a3b2, ctx.indirect(ctx.cpu.regs.edi))
+    ctx.call32(0x40a3b2, ctx.indirect32(ctx.cpu.regs.edi))
 }
 
 pub fn x40a3b2(ctx: &mut Context) -> Cont {
@@ -2919,7 +2919,7 @@ pub fn x40a461(ctx: &mut Context) -> Cont {
         .memory
         .read::<u32>(ctx.cpu.regs.ebx.wrapping_add(0x18u32));
     // 0040a464 call ebp
-    ctx.call32(0x40a466, ctx.indirect(ctx.cpu.regs.ebp))
+    ctx.call32(0x40a466, ctx.indirect32(ctx.cpu.regs.ebp))
 }
 
 pub fn x40a466(ctx: &mut Context) -> Cont {
@@ -2947,7 +2947,7 @@ pub fn x40a471(ctx: &mut Context) -> Cont {
         .memory
         .read::<u32>(ctx.cpu.regs.ebx.wrapping_add(0x20u32));
     // 0040a474 call ebp
-    ctx.call32(0x40a476, ctx.indirect(ctx.cpu.regs.ebp))
+    ctx.call32(0x40a476, ctx.indirect32(ctx.cpu.regs.ebp))
 }
 
 pub fn x40a476(ctx: &mut Context) -> Cont {

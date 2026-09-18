@@ -108,7 +108,7 @@ fn thread_proc(
     }
     let mut queued_blocks: VecDeque<QueuedBlock> = VecDeque::new();
 
-    let f = ctx.indirect(callback);
+    let f = ctx.indirect32(callback);
     loop {
         while stream.queued_bytes() < 8 << 10 {
             let addr = receiver.recv().unwrap();

@@ -11958,7 +11958,7 @@ pub fn x41e9f5(ctx: &mut Context) -> Cont {
     // 0041e9fc push esi
     ctx.push32(ctx.cpu.regs.esi);
     // 0041e9fd call ebp
-    ctx.call32(0x41e9ff, ctx.indirect(ctx.cpu.regs.ebp))
+    ctx.call32(0x41e9ff, ctx.indirect32(ctx.cpu.regs.ebp))
 }
 
 pub fn x41e9ff(ctx: &mut Context) -> Cont {
@@ -12840,7 +12840,7 @@ pub fn x41ee37(ctx: &mut Context) -> Cont {
     // 0041ee43 push edx
     ctx.push32(ctx.cpu.regs.edx);
     // 0041ee44 call ebx
-    ctx.call32(0x41ee46, ctx.indirect(ctx.cpu.regs.ebx))
+    ctx.call32(0x41ee46, ctx.indirect32(ctx.cpu.regs.ebx))
 }
 
 pub fn x41ee46(ctx: &mut Context) -> Cont {
@@ -12876,7 +12876,7 @@ pub fn x41ee64(ctx: &mut Context) -> Cont {
     // 0041ee6a push ecx
     ctx.push32(ctx.cpu.regs.ecx);
     // 0041ee6b call ebx
-    ctx.call32(0x41ee6d, ctx.indirect(ctx.cpu.regs.ebx))
+    ctx.call32(0x41ee6d, ctx.indirect32(ctx.cpu.regs.ebx))
 }
 
 pub fn x41ee6d(ctx: &mut Context) -> Cont {
