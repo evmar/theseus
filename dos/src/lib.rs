@@ -1,3 +1,4 @@
+mod dma;
 mod dosapi;
 mod sound_blaster;
 mod timer;
@@ -12,7 +13,7 @@ use host::SingleThreader;
 use runtime::{CPU, Context, EXEData, Mappings, Memory, Regs, SegOfs, segofs};
 use zerocopy::FromBytes;
 
-use crate::{sound_blaster::SoundBlaster, timer::PIT, vga::VGA};
+use crate::{dma::DMA, sound_blaster::SoundBlaster, timer::PIT, vga::VGA};
 
 /// DOSBox-X loads com files into this segment.
 pub const DOSBOX_SEG: u16 = 0x813;
@@ -174,6 +175,7 @@ pub struct State {
     sound_blaster: SoundBlaster,
     pub read_file: Option<Box<dyn FnMut(&str) -> Option<Vec<u8>>>>,
     files: Vec<dosapi::File>,
+    dma: DMA,
 }
 
 impl State {
@@ -189,6 +191,7 @@ impl State {
             sound_blaster: SoundBlaster::default(),
             read_file: None,
             files,
+            dma: Default::default(),
         }
     }
 
@@ -302,6 +305,7 @@ pub fn in_(ctx: &mut Context, port: u16) -> u8 {
 pub fn out(ctx: &mut Context, port: u16, data: u8) {
     log::info!("out({port:x}, {data:x})");
     match port {
+        0x0..=0x0f | 0x80..0x8f => state().dma.out(ctx, port, data),
         0x20 => { /* end of interrupt, ignore */ }
         0x40..=0x43 => state().pit.out(ctx, port, data),
         0x220..=0x22f => state().sound_blaster.out(ctx, port, data),
