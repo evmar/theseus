@@ -148,23 +148,49 @@ pub fn load(exe: &EXEData, command_line: Option<&str>) -> Context {
 
 pub fn start(ctx: &mut Context, exe: &EXEData) {
     assert!(ctx.cpu.real_mode);
-    run_loop(ctx, exe.entry_point, |_ctx| true);
+    run_loop(ctx, exe.entry_point, true, |_ctx| true);
 }
 
 pub fn run_loop(
     ctx: &mut Context,
     start: runtime::Cont,
+    allow_interrupts: bool,
     mut cond: impl FnMut(&mut Context) -> bool,
 ) {
     let mut f = start;
     let mut i = 0;
     while cond(ctx) {
-        if i % 0x2000 == 0 {
-            state().check_interrupts(ctx);
+        if allow_interrupts && i % 0x2000 == 0 {
+            // Note that we must release the state() lock to call the interrupt handler,
+            // and weirdly `while let Some(hanlder) = state().check` doesn't release it
+            // in its body?
+            loop {
+                let Some(handler) = state().check_interrupts(ctx) else {
+                    break;
+                };
+                state();
+                call_interrupt(ctx, handler);
+            }
         }
         f = f.0(ctx);
         i += 1;
     }
+}
+
+/// Call a seg:ofs as an interrupt handler,
+/// which means putting 3 things on the stack so it can iret.
+fn call_interrupt(ctx: &mut Context, handler: SegOfs) {
+    assert!(handler.seg != 0);
+    assert_eq!(ctx.cpu.regs.cs, handler.seg); // TODO: handle seg!=cs
+    let esp = ctx.cpu.regs.esp;
+    ctx.push16(ctx.cpu.flags.bits() as u16);
+    // We need to push a return address here, but we don't have one and it's never used
+    // anyway, so must push the handler address as it's a known valid one.
+    ctx.push16(handler.seg);
+    ctx.push16(handler.ofs);
+
+    let f = ctx.indirect16(handler);
+    run_loop(ctx, f, false, |ctx| ctx.cpu.regs.esp != esp);
 }
 
 pub fn run(exe: &EXEData) {
@@ -333,8 +359,11 @@ pub fn dump_com(ctx: &mut Context) -> &[u8] {
 }
 
 impl State {
-    fn check_interrupts(&mut self, ctx: &mut Context) {
-        let handler = ivt(&mut ctx.memory)[8];
+    fn check_interrupts(&mut self, ctx: &mut Context) -> Option<SegOfs> {
+        if self.pit.check_timer() {
+            return Some(ivt(&mut ctx.memory)[8]);
+        }
+
         if self.sound_blaster.drq && !self.dma.channel.masked {
             log::info!("drq + dma ready");
             log::info!(
@@ -347,11 +376,17 @@ impl State {
             let buf = &ctx.memory[self.dma.channel.addr()..][..len];
             std::fs::write("sb.raw", buf).unwrap();
             self.sound_blaster.drq = false;
+
+            let vector_offset = 0x8; // 8259 offsets interrupts by this for IVT
+            let irq = 7; // from BLASTER
+            let handler = ivt(&mut ctx.memory)[vector_offset + irq];
+            log::info!("irq 7 handler {handler}");
+            return Some(handler);
         }
-        self.pit.check_timer(ctx, handler.into());
         if let Some(vga) = &mut self.vga {
             vga.update_screen(ctx);
         }
+        None
     }
 }
 

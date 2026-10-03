@@ -1,6 +1,6 @@
 //! Programmable Interrupt Timer.
 
-use runtime::{Context, SegOfs};
+use runtime::Context;
 
 #[derive(Default)]
 pub struct PIT {
@@ -56,35 +56,17 @@ impl PIT {
         }
     }
 
-    pub fn check_timer(&mut self, ctx: &mut Context, handler: SegOfs) {
-        let Some(mut next) = self.next_interrupt else {
-            return;
+    /// Consume one pending tick before its handler runs, so the handler can
+    /// safely reprogram the PIT.
+    pub fn check_timer(&mut self) -> bool {
+        let Some(next) = self.next_interrupt else {
+            return false;
         };
 
-        let now = host::host().time();
-        let now_ticks = pit_ticks(now);
-        while next <= now_ticks {
-            self.call_timer(ctx, handler);
-            next += pit_period_ticks(self.divisor);
+        if next > pit_ticks(host::host().time()) {
+            return false;
         }
-        assert!(next > now_ticks);
-        self.next_interrupt = Some(next);
-    }
-
-    fn call_timer(&mut self, ctx: &mut Context, handler: SegOfs) {
-        assert!(handler.seg != 0);
-        log::info!("timer {handler}");
-
-        assert_eq!(ctx.cpu.regs.cs, handler.seg); // TODO: handle seg!=cs
-        let esp = ctx.cpu.regs.esp;
-        ctx.push16(ctx.cpu.flags.bits() as u16);
-        ctx.push16(handler.seg);
-        ctx.push16(handler.ofs);
-
-        let mut f = ctx.indirect16(handler);
-        while ctx.cpu.regs.esp != esp {
-            // don't check interrupts while running interrupt handler
-            f = f.0(ctx);
-        }
+        self.next_interrupt = Some(next + pit_period_ticks(self.divisor));
+        true
     }
 }

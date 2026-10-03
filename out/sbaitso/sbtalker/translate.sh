@@ -20,11 +20,14 @@ args=(
     --jump-table 935:3c40..935:3c58
 
     # BLASTER.DRV
+    # API entry points
     --entry-point 34c4:0000
     --entry-point 34c4:0005
     --entry-point 34c4:000a
     --entry-point 34c4:000f
     --entry-point 34c4:0014
+    # IRQ handler
+    --entry-point 34c4:0e2c
 
 )
 cargo run -p tc -- "${args[@]}"

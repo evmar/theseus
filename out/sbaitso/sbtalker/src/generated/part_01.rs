@@ -19849,6 +19849,247 @@ pub fn x34c4_0d86(ctx: &mut Context) -> Cont {
     ctx.ret16(0)
 }
 
+pub fn x34c4_0db4(ctx: &mut Context) -> Cont {
+    // 34c4:0db4 pushf
+    ctx.push16(ctx.cpu.flags.bits() as u16);
+    // 34c4:0db5 cli
+    ctx.cli();
+    // 34c4:0db6 mov cl,al
+    ctx.cpu.regs.set_cl(ctx.cpu.regs.get_al());
+    // 34c4:0db8 add al,8
+    ctx.cpu
+        .regs
+        .set_al(add(ctx.cpu.regs.get_al(), 0x8u8, &mut ctx.cpu.flags));
+    // 34c4:0dba cbw
+    ctx.cpu
+        .regs
+        .set_ax(ctx.cpu.regs.get_al() as i8 as i16 as u16);
+    // 34c4:0dbb shl ax,1
+    ctx.cpu
+        .regs
+        .set_ax(shl(ctx.cpu.regs.get_ax(), 0x1u8, &mut ctx.cpu.flags));
+    // 34c4:0dbd shl ax,1
+    ctx.cpu
+        .regs
+        .set_ax(shl(ctx.cpu.regs.get_ax(), 0x1u8, &mut ctx.cpu.flags));
+    // 34c4:0dbf mov di,ax
+    ctx.cpu.regs.set_di(ctx.cpu.regs.get_ax());
+    // 34c4:0dc1 push es
+    ctx.push16(ctx.cpu.regs.get_es());
+    // 34c4:0dc2 sub ax,ax
+    ctx.cpu.regs.set_ax(sub(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_ax(),
+        &mut ctx.cpu.flags,
+    ));
+    // 34c4:0dc4 mov es,ax
+    ctx.cpu.regs.set_es(ctx.cpu.regs.get_ax());
+    // 34c4:0dc6 mov ax,[bx]
+    ctx.cpu.regs.set_ax(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_bx())),
+    );
+    // 34c4:0dc8 mov es:[di],ax
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_es(), ctx.cpu.regs.get_di()),
+        ctx.cpu.regs.get_ax(),
+    );
+    // 34c4:0dcb mov ax,[bx+2]
+    ctx.cpu.regs.set_ax(ctx.memory.read::<u16>(segofs(
+        ctx.cpu.regs.get_ds(),
+        ctx.cpu.regs.get_bx().wrapping_add(0x2u16),
+    )));
+    // 34c4:0dce mov es:[di+2],ax
+    ctx.memory.write::<u16>(
+        segofs(
+            ctx.cpu.regs.get_es(),
+            ctx.cpu.regs.get_di().wrapping_add(0x2u16),
+        ),
+        ctx.cpu.regs.get_ax(),
+    );
+    // 34c4:0dd2 pop es
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_es(x);
+    // 34c4:0dd3 cmp cl,6Ah
+    sub(ctx.cpu.regs.get_cl(), 0x6au8, &mut ctx.cpu.flags);
+    // 34c4:0dd6 jne short 0DE3h
+    ctx.jne(Cont(x34c4_0dd8), Cont(x34c4_0de3))
+}
+
+pub fn x34c4_0dd8(ctx: &mut Context) -> Cont {
+    // 34c4:0dd8 mov ah,4
+    ctx.cpu.regs.set_ah(0x4u8);
+    // 34c4:0dda in al,0A1h
+    let input = dos::in_(ctx, 0xa1u8 as u16);
+    ctx.cpu.regs.set_al(input);
+    // 34c4:0ddc or al,ah
+    ctx.cpu.regs.set_al(or(
+        ctx.cpu.regs.get_al(),
+        ctx.cpu.regs.get_ah(),
+        &mut ctx.cpu.flags,
+    ));
+    // 34c4:0dde out 0A1h,al
+    dos::out(ctx, 0xa1u16, ctx.cpu.regs.get_al());
+    // 34c4:0de0 jmp short 0DEDh
+    Cont(x34c4_0ded)
+}
+
+pub fn x34c4_0de3(ctx: &mut Context) -> Cont {
+    // 34c4:0de3 mov ah,1
+    ctx.cpu.regs.set_ah(0x1u8);
+    // 34c4:0de5 shl ah,cl
+    ctx.cpu.regs.set_ah(shl(
+        ctx.cpu.regs.get_ah(),
+        ctx.cpu.regs.get_cl(),
+        &mut ctx.cpu.flags,
+    ));
+    // 34c4:0de7 in al,21h
+    let input = dos::in_(ctx, 0x21u8 as u16);
+    ctx.cpu.regs.set_al(input);
+    // 34c4:0de9 or al,ah
+    ctx.cpu.regs.set_al(or(
+        ctx.cpu.regs.get_al(),
+        ctx.cpu.regs.get_ah(),
+        &mut ctx.cpu.flags,
+    ));
+    // 34c4:0deb out 21h,al
+    dos::out(ctx, 0x21u16, ctx.cpu.regs.get_al());
+    Cont(x34c4_0ded)
+}
+
+pub fn x34c4_0ded(ctx: &mut Context) -> Cont {
+    // 34c4:0ded popf
+    let flags = ctx.pop16();
+    ctx.cpu.flags = Flags::from_bits_retain((ctx.cpu.flags.bits() & 0xFFFF_0000) | flags as u32);
+    // 34c4:0dee ret
+    ctx.ret16(0)
+}
+
+pub fn x34c4_0e2c(ctx: &mut Context) -> Cont {
+    // 34c4:0e2c push ds
+    ctx.push16(ctx.cpu.regs.get_ds());
+    // 34c4:0e2d push es
+    ctx.push16(ctx.cpu.regs.get_es());
+    // 34c4:0e2e push ax
+    ctx.push16(ctx.cpu.regs.get_ax());
+    // 34c4:0e2f push bx
+    ctx.push16(ctx.cpu.regs.get_bx());
+    // 34c4:0e30 push cx
+    ctx.push16(ctx.cpu.regs.get_cx());
+    // 34c4:0e31 push dx
+    ctx.push16(ctx.cpu.regs.get_dx());
+    // 34c4:0e32 push di
+    ctx.push16(ctx.cpu.regs.get_di());
+    // 34c4:0e33 push si
+    ctx.push16(ctx.cpu.regs.get_si());
+    // 34c4:0e34 push bp
+    ctx.push16(ctx.cpu.regs.get_bp());
+    // 34c4:0e35 cld
+    cld(ctx);
+    // 34c4:0e36 mov ax,34C4h
+    ctx.cpu.regs.set_ax(0x34c4u16);
+    // 34c4:0e39 mov ds,ax
+    ctx.cpu.regs.set_ds(ctx.cpu.regs.get_ax());
+    // 34c4:0e3b mov es,ax
+    ctx.cpu.regs.set_es(ctx.cpu.regs.get_ax());
+    // 34c4:0e3d mov dx,ds:[0C3Bh]
+    ctx.cpu.regs.set_dx(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xc3bu16)),
+    );
+    // 34c4:0e41 add dl,0Eh
+    ctx.cpu
+        .regs
+        .set_dl(add(ctx.cpu.regs.get_dl(), 0xeu8, &mut ctx.cpu.flags));
+    // 34c4:0e44 in al,dx
+    let input = dos::in_(ctx, ctx.cpu.regs.get_dx() as u16);
+    ctx.cpu.regs.set_al(input);
+    // 34c4:0e45 mov ax,ds:[0C35h]
+    ctx.cpu.regs.set_ax(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xc35u16)),
+    );
+    // 34c4:0e48 or ax,ax
+    ctx.cpu.regs.set_ax(or(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_ax(),
+        &mut ctx.cpu.flags,
+    ));
+    // 34c4:0e4a jne short 0E51h
+    ctx.jne(Cont(x34c4_0e4c), Cont(x34c4_0e51))
+}
+
+pub fn x34c4_0e4c(ctx: &mut Context) -> Cont {
+    // 34c4:0e4c call 0ED5h
+    ctx.call16(0xe4f, Cont(x34c4_0ed5))
+}
+
+pub fn x34c4_0e4f(ctx: &mut Context) -> Cont {
+    // 34c4:0e4f jmp short 0E54h
+    Cont(x34c4_0e54)
+}
+
+pub fn x34c4_0e51(ctx: &mut Context) -> Cont {
+    // 34c4:0e51 call 0E6Dh
+    ctx.call16(0xe54, Cont(x34c4_0e6d))
+}
+
+pub fn x34c4_0e54(ctx: &mut Context) -> Cont {
+    // 34c4:0e54 cmp byte ptr ds:[0C3Dh],6Ah
+    sub(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xc3du16)),
+        0x6au8,
+        &mut ctx.cpu.flags,
+    );
+    // 34c4:0e59 jne short 0E5Fh
+    ctx.jne(Cont(x34c4_0e5b), Cont(x34c4_0e5f))
+}
+
+pub fn x34c4_0e5b(ctx: &mut Context) -> Cont {
+    // 34c4:0e5b mov al,20h
+    ctx.cpu.regs.set_al(0x20u8);
+    // 34c4:0e5d out 0A0h,al
+    dos::out(ctx, 0xa0u16, ctx.cpu.regs.get_al());
+    Cont(x34c4_0e5f)
+}
+
+pub fn x34c4_0e5f(ctx: &mut Context) -> Cont {
+    // 34c4:0e5f mov al,20h
+    ctx.cpu.regs.set_al(0x20u8);
+    // 34c4:0e61 out 20h,al
+    dos::out(ctx, 0x20u16, ctx.cpu.regs.get_al());
+    // 34c4:0e63 pop bp
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_bp(x);
+    // 34c4:0e64 pop si
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_si(x);
+    // 34c4:0e65 pop di
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_di(x);
+    // 34c4:0e66 pop dx
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_dx(x);
+    // 34c4:0e67 pop cx
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_cx(x);
+    // 34c4:0e68 pop bx
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_bx(x);
+    // 34c4:0e69 pop ax
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_ax(x);
+    // 34c4:0e6a pop es
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_es(x);
+    // 34c4:0e6b pop ds
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_ds(x);
+    // 34c4:0e6c iret
+    ctx.iret16()
+}
+
 pub fn x34c4_0e6d(ctx: &mut Context) -> Cont {
     // 34c4:0e6d mov cx,0FFFFh
     ctx.cpu.regs.set_cx(0xffffu16);
@@ -20023,6 +20264,113 @@ pub fn x34c4_0ecf(ctx: &mut Context) -> Cont {
 
 pub fn x34c4_0ed4(ctx: &mut Context) -> Cont {
     // 34c4:0ed4 ret
+    ctx.ret16(0)
+}
+
+pub fn x34c4_0ed5(ctx: &mut Context) -> Cont {
+    // 34c4:0ed5 mov cs:[239Eh],dx
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_cs(), 0x239eu16),
+        ctx.cpu.regs.get_dx(),
+    );
+    // 34c4:0eda mov al,cs:[2388h]
+    ctx.cpu.regs.set_al(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_cs(), 0x2388u16)),
+    );
+    // 34c4:0ede mov dx,cs:[238Ah]
+    ctx.cpu.regs.set_dx(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_cs(), 0x238au16)),
+    );
+    // 34c4:0ee3 out dx,al
+    dos::out(ctx, ctx.cpu.regs.get_dx(), ctx.cpu.regs.get_al());
+    // 34c4:0ee4 mov dx,cs:[239Eh]
+    ctx.cpu.regs.set_dx(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_cs(), 0x239eu16)),
+    );
+    // 34c4:0ee9 mov cl,ds:[0C3Dh]
+    ctx.cpu.regs.set_cl(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xc3du16)),
+    );
+    // 34c4:0eed cmp cl,6Ah
+    sub(ctx.cpu.regs.get_cl(), 0x6au8, &mut ctx.cpu.flags);
+    // 34c4:0ef0 jne short 0EFDh
+    ctx.jne(Cont(x34c4_0ef2), Cont(x34c4_0efd))
+}
+
+pub fn x34c4_0ef2(ctx: &mut Context) -> Cont {
+    // 34c4:0ef2 in al,0A1h
+    let input = dos::in_(ctx, 0xa1u8 as u16);
+    ctx.cpu.regs.set_al(input);
+    // 34c4:0ef4 mov ah,4
+    ctx.cpu.regs.set_ah(0x4u8);
+    // 34c4:0ef6 or al,ah
+    ctx.cpu.regs.set_al(or(
+        ctx.cpu.regs.get_al(),
+        ctx.cpu.regs.get_ah(),
+        &mut ctx.cpu.flags,
+    ));
+    // 34c4:0ef8 out 0A1h,al
+    dos::out(ctx, 0xa1u16, ctx.cpu.regs.get_al());
+    // 34c4:0efa jmp short 0F07h
+    Cont(x34c4_0f07)
+}
+
+pub fn x34c4_0efd(ctx: &mut Context) -> Cont {
+    // 34c4:0efd mov ah,1
+    ctx.cpu.regs.set_ah(0x1u8);
+    // 34c4:0eff shl ah,cl
+    ctx.cpu.regs.set_ah(shl(
+        ctx.cpu.regs.get_ah(),
+        ctx.cpu.regs.get_cl(),
+        &mut ctx.cpu.flags,
+    ));
+    // 34c4:0f01 in al,21h
+    let input = dos::in_(ctx, 0x21u8 as u16);
+    ctx.cpu.regs.set_al(input);
+    // 34c4:0f03 or al,ah
+    ctx.cpu.regs.set_al(or(
+        ctx.cpu.regs.get_al(),
+        ctx.cpu.regs.get_ah(),
+        &mut ctx.cpu.flags,
+    ));
+    // 34c4:0f05 out 21h,al
+    dos::out(ctx, 0x21u16, ctx.cpu.regs.get_al());
+    Cont(x34c4_0f07)
+}
+
+pub fn x34c4_0f07(ctx: &mut Context) -> Cont {
+    // 34c4:0f07 mov al,ds:[0C3Dh]
+    ctx.cpu.regs.set_al(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xc3du16)),
+    );
+    // 34c4:0f0a mov bx,0C1Fh
+    ctx.cpu.regs.set_bx(0xc1fu16);
+    // 34c4:0f0d call 0DB4h
+    ctx.call16(0xf10, Cont(x34c4_0db4))
+}
+
+pub fn x34c4_0f10(ctx: &mut Context) -> Cont {
+    // 34c4:0f10 mov word ptr cs:[19h],0
+    ctx.memory
+        .write::<u16>(segofs(ctx.cpu.regs.get_cs(), 0x19u16), 0x0u16);
+    // 34c4:0f17 mov dx,ds:[0C3Bh]
+    ctx.cpu.regs.set_dx(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xc3bu16)),
+    );
+    // 34c4:0f1b add dl,0Eh
+    ctx.cpu
+        .regs
+        .set_dl(add(ctx.cpu.regs.get_dl(), 0xeu8, &mut ctx.cpu.flags));
+    // 34c4:0f1e in al,dx
+    let input = dos::in_(ctx, ctx.cpu.regs.get_dx() as u16);
+    ctx.cpu.regs.set_al(input);
+    // 34c4:0f1f ret
     ctx.ret16(0)
 }
 

@@ -54,7 +54,7 @@ pub use part_00::*;
 mod part_01;
 pub use part_01::*;
 
-const BLOCKS: [(u32, ContFn); 1998] = [
+const BLOCKS: [(u32, ContFn); 2014] = [
     (0x11, crate::externs::x11),
     (0x8a34, x0823_0804),
     (0x8a5e, x0823_082e),
@@ -1931,6 +1931,17 @@ const BLOCKS: [(u32, ContFn); 1998] = [
     (0x3594e, x34c4_0d0e),
     (0x359b2, x34c4_0d72),
     (0x359c6, x34c4_0d86),
+    (0x359f4, x34c4_0db4),
+    (0x35a18, x34c4_0dd8),
+    (0x35a23, x34c4_0de3),
+    (0x35a2d, x34c4_0ded),
+    (0x35a6c, x34c4_0e2c),
+    (0x35a8c, x34c4_0e4c),
+    (0x35a8f, x34c4_0e4f),
+    (0x35a91, x34c4_0e51),
+    (0x35a94, x34c4_0e54),
+    (0x35a9b, x34c4_0e5b),
+    (0x35a9f, x34c4_0e5f),
     (0x35aad, x34c4_0e6d),
     (0x35ab7, x34c4_0e77),
     (0x35abf, x34c4_0e7f),
@@ -1941,6 +1952,11 @@ const BLOCKS: [(u32, ContFn); 1998] = [
     (0x35b0a, x34c4_0eca),
     (0x35b0f, x34c4_0ecf),
     (0x35b14, x34c4_0ed4),
+    (0x35b15, x34c4_0ed5),
+    (0x35b32, x34c4_0ef2),
+    (0x35b3d, x34c4_0efd),
+    (0x35b47, x34c4_0f07),
+    (0x35b50, x34c4_0f10),
     (0x35b89, x34c4_0f49),
     (0x35baa, x34c4_0f6a),
     (0x35bb0, x34c4_0f70),
