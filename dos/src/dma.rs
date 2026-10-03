@@ -3,16 +3,22 @@ use runtime::Context;
 #[derive(Default)]
 pub struct DMA {
     // TODO: there's more than 1 channel
-    channel: Channel,
+    pub channel: Channel,
     flip_flop: FlipFlop,
 }
 
 #[derive(Default, Debug)]
-struct Channel {
-    address: u16,
-    count: u16,
+pub struct Channel {
     page: u8,
-    masked: bool,
+    address: u16,
+    pub count: u16,
+    pub masked: bool,
+}
+
+impl Channel {
+    pub fn addr(&self) -> u32 {
+        (self.page as u32) << 16 | self.address as u32
+    }
 }
 
 #[derive(Default)]
@@ -35,13 +41,13 @@ impl FlipFlop {
 // https://wiki.osdev.org/ISA_DMA
 
 impl DMA {
-    pub fn in_(&mut self, _ctx: &mut Context, port: u16) -> u8 {
-        match port {
-            _ => {
-                todo!("in port {port:x}")
-            }
-        }
-    }
+    // pub fn in_(&mut self, _ctx: &mut Context, port: u16) -> u8 {
+    //     match port {
+    //         _ => {
+    //             todo!("in port {port:x}")
+    //         }
+    //     }
+    // }
 
     pub fn out(&mut self, _ctx: &mut Context, port: u16, data: u8) {
         match port {
@@ -51,7 +57,7 @@ impl DMA {
                 log::warn!("dma: channel 1 start address {:x}", self.channel.address);
             }
             0x3 => {
-                log::warn!("dma: channel 1 count {data:x}");
+                log::warn!("dma: channel 1 count data={data:x}");
                 self.flip_flop.update(&mut self.channel.count, data);
                 log::warn!("dma: channel 1 count {:x}", self.channel.count);
             }

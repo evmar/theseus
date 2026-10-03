@@ -70,10 +70,8 @@ fn call(ctx: &mut Context, addr: SegOfs) {
     ctx.push16(0x11); // ip
 
     println!("call driver {addr}");
-    let mut f = ctx.jmpf16(addr.seg, addr.ofs);
-    while ctx.cpu.regs.get_sp() != orig_sp {
-        f = f.0(ctx);
-    }
+    let f = ctx.jmpf16(addr.seg, addr.ofs);
+    dos::run_loop(ctx, f, |ctx| ctx.cpu.regs.get_sp() != orig_sp);
 }
 
 pub fn x11(ctx: &mut Context) -> Cont {

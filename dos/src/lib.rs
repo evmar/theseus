@@ -148,10 +148,17 @@ pub fn load(exe: &EXEData, command_line: Option<&str>) -> Context {
 
 pub fn start(ctx: &mut Context, exe: &EXEData) {
     assert!(ctx.cpu.real_mode);
+    run_loop(ctx, exe.entry_point, |_ctx| true);
+}
 
-    let mut f = exe.entry_point;
+pub fn run_loop(
+    ctx: &mut Context,
+    start: runtime::Cont,
+    mut cond: impl FnMut(&mut Context) -> bool,
+) {
+    let mut f = start;
     let mut i = 0;
-    loop {
+    while cond(ctx) {
         if i % 0x2000 == 0 {
             state().check_interrupts(ctx);
         }
@@ -289,10 +296,10 @@ bitflags::bitflags! {
 /// IN — Input From Port
 pub fn in_(ctx: &mut Context, port: u16) -> u8 {
     // BLASTER=A220 means sound ports are 226, 22a, 22c, and 22e
-    log::info!("in({port:x})");
     match port {
         0x21 => {
             // pic data
+            log::info!("in({port:x}), read pic data");
             0b1011_1100
         }
         0x220..=0x22f => state().sound_blaster.in_(ctx, port),
@@ -303,13 +310,17 @@ pub fn in_(ctx: &mut Context, port: u16) -> u8 {
 }
 
 pub fn out(ctx: &mut Context, port: u16, data: u8) {
-    log::info!("out({port:x}, {data:x})");
+    // log::info!("out({port:x}, {data:x})");
+    let mut state = state();
     match port {
-        0x0..=0x0f | 0x80..0x8f => state().dma.out(ctx, port, data),
+        0x0..=0x0f | 0x80..0x8f => state.dma.out(ctx, port, data),
+        0x21 => {
+            log::info!("out({port:x}, {data:x}), write pic data");
+        }
         0x20 => { /* end of interrupt, ignore */ }
-        0x40..=0x43 => state().pit.out(ctx, port, data),
-        0x220..=0x22f => state().sound_blaster.out(ctx, port, data),
-        0x3C0..=0x3DF => state().vga.as_mut().unwrap().io_out(port, data),
+        0x40..=0x43 => state.pit.out(ctx, port, data),
+        0x220..=0x22f => state.sound_blaster.out(ctx, port, data),
+        0x3C0..=0x3DF => state.vga.as_mut().unwrap().io_out(port, data),
         _ => log::error!("TODO: out({:#x}, {:#x})", port, data),
     }
 }
@@ -324,6 +335,19 @@ pub fn dump_com(ctx: &mut Context) -> &[u8] {
 impl State {
     fn check_interrupts(&mut self, ctx: &mut Context) {
         let handler = ivt(&mut ctx.memory)[8];
+        if self.sound_blaster.drq && !self.dma.channel.masked {
+            log::info!("drq + dma ready");
+            log::info!(
+                "sb {:x} dma {:x}",
+                self.sound_blaster.len,
+                self.dma.channel.count
+            );
+            log::info!("sound addr {:x}", self.dma.channel.addr());
+            let len = self.sound_blaster.len.min(self.dma.channel.count) as usize + 1;
+            let buf = &ctx.memory[self.dma.channel.addr()..][..len];
+            std::fs::write("sb.raw", buf).unwrap();
+            self.sound_blaster.drq = false;
+        }
         self.pit.check_timer(ctx, handler.into());
         if let Some(vga) = &mut self.vga {
             vga.update_screen(ctx);

@@ -13,6 +13,8 @@ enum DSP {
 
 #[derive(Default)]
 pub struct SoundBlaster {
+    pub drq: bool,
+    pub len: u16,
     dsp: DSP,
 }
 
@@ -20,13 +22,19 @@ impl SoundBlaster {
     fn turn_on_speaker(&mut self, args: Vec<u8>) {
         log::info!("dsp: turn on speaker {args:x?}");
     }
+
     fn set_sampling_rate(&mut self, args: Vec<u8>) {
-        log::info!("dsp: set_sampling_rate {args:x?}");
+        let [time_constant] = args.try_into().unwrap();
+        let rate = 1_000_000 / (256 - time_constant as u32);
+        log::info!("dsp: set_sampling_rate {time_constant} {rate}hz");
     }
+
     fn pcm_output(&mut self, args: Vec<u8>) {
         let [lo, hi] = args.try_into().unwrap();
         let len = <u16>::from_le_bytes([lo, hi]);
         log::info!("dsp: pcm_output({len:x})");
+        self.len = len;
+        self.drq = true;
     }
 
     pub fn in_(&mut self, _ctx: &mut Context, port: u16) -> u8 {
