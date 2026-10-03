@@ -6220,7 +6220,18 @@ pub fn x34c4_0c7a(ctx: &mut Context) -> Cont {
 pub fn x34c4_0c7e(ctx: &mut Context) -> Cont {
     ctx.dump_dosbox(0xc7e);
     // 34c4:0c7e in al,dx
-    panic!("In not implemented");
+    let input = dos::in_(ctx, ctx.cpu.regs.get_dx() as u16);
+    ctx.cpu.regs.set_al(input as _);
+    ctx.dump_dosbox(0xc7f);
+    // 34c4:0c7f or al,al
+    ctx.cpu.regs.set_al(or(
+        ctx.cpu.regs.get_al(),
+        ctx.cpu.regs.get_al(),
+        &mut ctx.cpu.flags,
+    ));
+    ctx.dump_dosbox(0xc81);
+    // 34c4:0c81 js short 0C7Eh
+    ctx.js(Cont(x34c4_0c83), Cont(x34c4_0c7e))
 }
 
 pub fn x34c4_0c83(ctx: &mut Context) -> Cont {
@@ -6838,7 +6849,18 @@ pub fn x34c4_0fb4(ctx: &mut Context) -> Cont {
     ctx.cpu.regs.set_ah(0xf9u8);
     ctx.dump_dosbox(0xfb6);
     // 34c4:0fb6 in al,0A1h
-    panic!("In not implemented");
+    let input = dos::in_(ctx, 0xa1u8 as u16);
+    ctx.cpu.regs.set_al(input as _);
+    ctx.dump_dosbox(0xfb8);
+    // 34c4:0fb8 and al,ah
+    ctx.cpu.regs.set_al(and(
+        ctx.cpu.regs.get_al(),
+        ctx.cpu.regs.get_ah(),
+        &mut ctx.cpu.flags,
+    ));
+    ctx.dump_dosbox(0xfba);
+    // 34c4:0fba out 0A1h,al
+    dos::out(ctx, 0xa1u16, ctx.cpu.regs.get_al());
     Cont(x34c4_0fbc)
 }
 
@@ -6858,7 +6880,33 @@ pub fn x34c4_0fbc(ctx: &mut Context) -> Cont {
     ctx.cpu.regs.set_ah(!ctx.cpu.regs.get_ah());
     ctx.dump_dosbox(0xfc2);
     // 34c4:0fc2 in al,21h
-    panic!("In not implemented");
+    let input = dos::in_(ctx, 0x21u8 as u16);
+    ctx.cpu.regs.set_al(input as _);
+    ctx.dump_dosbox(0xfc4);
+    // 34c4:0fc4 and al,ah
+    ctx.cpu.regs.set_al(and(
+        ctx.cpu.regs.get_al(),
+        ctx.cpu.regs.get_ah(),
+        &mut ctx.cpu.flags,
+    ));
+    ctx.dump_dosbox(0xfc6);
+    // 34c4:0fc6 out 21h,al
+    dos::out(ctx, 0x21u16, ctx.cpu.regs.get_al());
+    ctx.dump_dosbox(0xfc8);
+    // 34c4:0fc8 mov ax,cs
+    ctx.cpu.regs.set_ax(ctx.cpu.regs.get_cs());
+    ctx.dump_dosbox(0xfca);
+    // 34c4:0fca mov dx,ax
+    ctx.cpu.regs.set_dx(ctx.cpu.regs.get_ax());
+    ctx.dump_dosbox(0xfcc);
+    // 34c4:0fcc mov ax,ds:[0C42h]
+    ctx.cpu.regs.set_ax(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xc42u16)),
+    );
+    ctx.dump_dosbox(0xfcf);
+    // 34c4:0fcf call 0D72h
+    ctx.call16(0xfd2, Cont(x34c4_0d72))
 }
 
 pub fn x34c4_0fd2(ctx: &mut Context) -> Cont {

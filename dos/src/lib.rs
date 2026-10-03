@@ -266,6 +266,20 @@ pub fn int(ctx: &mut Context, next_ip: u16, interrupt: u8) -> runtime::Cont {
     ctx.indirect16((ctx.cpu.regs.cs, next_ip).into())
 }
 
+/// IN — Input From Port
+pub fn in_(_ctx: &mut Context, port: u16) -> u32 {
+    // BLASTER=A220 means sound ports are 226, 22a, 22c, and 22e
+    match port {
+        0x22c => {
+            // write-buiffer status
+            0 // ready for data
+        }
+        _ => {
+            todo!("in port {port:x}")
+        }
+    }
+}
+
 pub fn out(ctx: &mut Context, port: u16, data: u8) {
     match port {
         0x20 => { /* end of interrupt, ignore */ }
