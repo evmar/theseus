@@ -284,17 +284,15 @@ bitflags::bitflags! {
 }
 
 /// IN — Input From Port
-pub fn in_(_ctx: &mut Context, port: u16) -> u8 {
+pub fn in_(ctx: &mut Context, port: u16) -> u8 {
     // BLASTER=A220 means sound ports are 226, 22a, 22c, and 22e
+    log::info!("in({port:x})");
     match port {
         0x21 => {
             // pic data
             0b1011_1100
         }
-        0x22c => {
-            // write-buiffer status
-            0 // ready for data
-        }
+        0x220..=0x22f => state().sound_blaster.in_(ctx, port),
         _ => {
             todo!("in port {port:x}")
         }
@@ -302,7 +300,7 @@ pub fn in_(_ctx: &mut Context, port: u16) -> u8 {
 }
 
 pub fn out(ctx: &mut Context, port: u16, data: u8) {
-    //log::info!("out({port:x}, {data:x})");
+    log::info!("out({port:x}, {data:x})");
     match port {
         0x20 => { /* end of interrupt, ignore */ }
         0x40..=0x43 => state().pit.out(ctx, port, data),

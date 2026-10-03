@@ -53,8 +53,6 @@ mod part_00;
 pub use part_00::*;
 mod part_01;
 pub use part_01::*;
-mod part_02;
-pub use part_02::*;
 
 const BLOCKS: [(u32, ContFn); 1998] = [
     (0x11, crate::externs::x11),

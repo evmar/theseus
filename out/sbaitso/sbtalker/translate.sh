@@ -3,7 +3,7 @@ set -e
 
 cd "$(git rev-parse --show-toplevel)"
 args=(
-    --trace
+    #--trace
     --exe scratch/dos/sbaitso/SBTALKER.EXE
     --load 34c4:scratch/dos/sbaitso/BLASTER.DRV
     --out out/sbaitso/sbtalker

@@ -7,5605 +7,452 @@
 
 use super::*;
 
-pub fn x0935_1f55(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x1f55);
-    // 0935:1f55 mov word ptr [bp-2],0FFFFh
-    ctx.memory.write::<u16>(
-        segofs(
-            ctx.cpu.regs.get_ss(),
-            ctx.cpu.regs.get_bp().wrapping_add(0xfffeu16),
-        ),
-        0xffffu16,
-    );
-    Cont(x0935_1f5a)
-}
-
-pub fn x0935_1f5a(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x1f5a);
-    // 0935:1f5a mov ax,[bp-2]
-    ctx.cpu.regs.set_ax(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0xfffeu16),
-    )));
-    ctx.dump_dosbox(0x1f5d);
-    // 0935:1f5d mov sp,bp
-    ctx.cpu.regs.set_sp(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x1f5f);
-    // 0935:1f5f pop bp
-    let x = ctx.pop16();
-    ctx.cpu.regs.set_bp(x);
-    ctx.dump_dosbox(0x1f60);
-    // 0935:1f60 ret 2
-    ctx.ret16(2)
-}
-
-pub fn x0935_1f63(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x1f63);
-    // 0935:1f63 push bp
-    ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x1f64);
-    // 0935:1f64 mov bp,sp
-    ctx.cpu.regs.set_bp(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x1f66);
-    // 0935:1f66 sub sp,0
-    ctx.cpu
-        .regs
-        .set_sp(sub(ctx.cpu.regs.get_sp(), 0x0u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x1f6a);
-    // 0935:1f6a mov bx,[bp+6]
-    ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x6u16),
-    )));
-    ctx.dump_dosbox(0x1f6d);
-    // 0935:1f6d jmp near ptr 21C4h
-    Cont(x0935_21c4)
-}
-
-pub fn x0935_1f70(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x1f70);
-    // 0935:1f70 mov si,1BC2h
-    ctx.cpu.regs.set_si(0x1bc2u16);
-    ctx.dump_dosbox(0x1f73);
-    // 0935:1f73 mov cx,79h
-    ctx.cpu.regs.set_cx(0x79u16);
-    ctx.dump_dosbox(0x1f76);
-    // 0935:1f76 sub sp,0F2h
-    ctx.cpu
-        .regs
-        .set_sp(sub(ctx.cpu.regs.get_sp(), 0xf2u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x1f7a);
-    // 0935:1f7a mov di,sp
-    ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x1f7c);
-    // 0935:1f7c cld
-    cld(ctx);
-    ctx.dump_dosbox(0x1f7d);
-    // 0935:1f7d push ss
-    ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x1f7e);
-    // 0935:1f7e pop es
-    let x = ctx.pop16();
-    ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x1f7f);
-    // 0935:1f7f rep movsw
-    ctx.rep(Rep::REP, Context::movsw);
-    ctx.dump_dosbox(0x1f81);
-    // 0935:1f81 mov si,1DC2h
-    ctx.cpu.regs.set_si(0x1dc2u16);
-    ctx.dump_dosbox(0x1f84);
-    // 0935:1f84 mov cx,7
-    ctx.cpu.regs.set_cx(0x7u16);
-    ctx.dump_dosbox(0x1f87);
-    // 0935:1f87 sub sp,0Eh
-    ctx.cpu
-        .regs
-        .set_sp(sub(ctx.cpu.regs.get_sp(), 0xeu16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x1f8a);
-    // 0935:1f8a mov di,sp
-    ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x1f8c);
-    // 0935:1f8c cld
-    cld(ctx);
-    ctx.dump_dosbox(0x1f8d);
-    // 0935:1f8d push ss
-    ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x1f8e);
-    // 0935:1f8e pop es
-    let x = ctx.pop16();
-    ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x1f8f);
-    // 0935:1f8f rep movsw
-    ctx.rep(Rep::REP, Context::movsw);
-    ctx.dump_dosbox(0x1f91);
-    // 0935:1f91 mov bx,[bp+4]
-    ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x1f94);
-    // 0935:1f94 mov bx,[bx+4]
-    ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ds(),
-        ctx.cpu.regs.get_bx().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x1f97);
-    // 0935:1f97 mov bx,[bx+4]
-    ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ds(),
-        ctx.cpu.regs.get_bx().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x1f9a);
-    // 0935:1f9a push word ptr [bx+4]
-    ctx.push16(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ds(),
-        ctx.cpu.regs.get_bx().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x1f9d);
-    // 0935:1f9d call 109Fh
-    ctx.call16(0x1fa0, Cont(x0935_109f))
-}
-
-pub fn x0935_1fa0(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x1fa0);
-    // 0935:1fa0 jmp near ptr 21EBh
-    Cont(x0935_21eb)
-}
-
-pub fn x0935_21c4(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x21c4);
-    // 0935:21c4 sub bx,1
-    ctx.cpu
-        .regs
-        .set_bx(sub(ctx.cpu.regs.get_bx(), 0x1u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x21c7);
-    // 0935:21c7 jg short 21CCh
-    ctx.jg(Cont(x0935_21c9), Cont(x0935_21cc))
-}
-
-pub fn x0935_21c9(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x21c9);
-    // 0935:21c9 jmp near ptr 1F70h
-    Cont(x0935_1f70)
-}
-
-pub fn x0935_21cc(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x21cc);
-    // 0935:21cc shl bx,1
-    ctx.cpu
-        .regs
-        .set_bx(shl(ctx.cpu.regs.get_bx(), 0x1u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x21ce);
-    // 0935:21ce jmp word ptr cs:[bx+21D3h]
-    let addr = ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_cs(),
-        ctx.cpu.regs.get_bx().wrapping_add(0x21d3u16),
-    ));
-    ctx.indirect16((ctx.cpu.regs.cs, addr).into())
-}
-
-pub fn x0935_21eb(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x21eb);
-    // 0935:21eb mov sp,bp
-    ctx.cpu.regs.set_sp(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x21ed);
-    // 0935:21ed pop bp
-    let x = ctx.pop16();
-    ctx.cpu.regs.set_bp(x);
-    ctx.dump_dosbox(0x21ee);
-    // 0935:21ee ret 4
-    ctx.ret16(4)
-}
-
-pub fn x0935_21f1(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x21f1);
-    // 0935:21f1 push bp
-    ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x21f2);
-    // 0935:21f2 mov bp,sp
-    ctx.cpu.regs.set_bp(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x21f4);
-    // 0935:21f4 sub sp,10Eh
-    ctx.cpu
-        .regs
-        .set_sp(sub(ctx.cpu.regs.get_sp(), 0x10eu16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x21f8);
-    // 0935:21f8 mov byte ptr [bp-2],0
-    ctx.memory.write::<u8>(
-        segofs(
-            ctx.cpu.regs.get_ss(),
-            ctx.cpu.regs.get_bp().wrapping_add(0xfffeu16),
-        ),
-        0x0u8,
-    );
-    ctx.dump_dosbox(0x21fc);
-    // 0935:21fc mov byte ptr [bp-4],2Fh
-    ctx.memory.write::<u8>(
-        segofs(
-            ctx.cpu.regs.get_ss(),
-            ctx.cpu.regs.get_bp().wrapping_add(0xfffcu16),
-        ),
-        0x2fu8,
-    );
-    ctx.dump_dosbox(0x2200);
-    // 0935:2200 mov ax,ds:[160h]
-    ctx.cpu.regs.set_ax(
-        ctx.memory
-            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x160u16)),
-    );
-    ctx.dump_dosbox(0x2203);
-    // 0935:2203 mov [bp-108h],ax
-    ctx.memory.write::<u16>(
-        segofs(
-            ctx.cpu.regs.get_ss(),
-            ctx.cpu.regs.get_bp().wrapping_add(0xfef8u16),
-        ),
-        ctx.cpu.regs.get_ax(),
-    );
-    ctx.dump_dosbox(0x2207);
-    // 0935:2207 mov al,ds:[164h]
-    ctx.cpu.regs.set_al(
-        ctx.memory
-            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x164u16)),
-    );
-    ctx.dump_dosbox(0x220a);
-    // 0935:220a mov [bp-6],al
-    ctx.memory.write::<u8>(
-        segofs(
-            ctx.cpu.regs.get_ss(),
-            ctx.cpu.regs.get_bp().wrapping_add(0xfffau16),
-        ),
-        ctx.cpu.regs.get_al(),
-    );
-    ctx.dump_dosbox(0x220d);
-    // 0935:220d push bp
-    ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x220e);
-    // 0935:220e call 1EC7h
-    ctx.call16(0x2211, Cont(x0935_1ec7))
-}
-
-pub fn x0935_2211(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2211);
-    // 0935:2211 mov [bp-10Ah],ax
-    ctx.memory.write::<u16>(
-        segofs(
-            ctx.cpu.regs.get_ss(),
-            ctx.cpu.regs.get_bp().wrapping_add(0xfef6u16),
-        ),
-        ctx.cpu.regs.get_ax(),
-    );
-    ctx.dump_dosbox(0x2215);
-    // 0935:2215 cmp word ptr [bp-10Ah],0
-    sub(
-        ctx.memory.read::<u16>(segofs(
-            ctx.cpu.regs.get_ss(),
-            ctx.cpu.regs.get_bp().wrapping_add(0xfef6u16),
-        )),
-        0x0u16,
-        &mut ctx.cpu.flags,
-    );
-    ctx.dump_dosbox(0x221a);
-    // 0935:221a jge short 221Fh
-    ctx.jge(Cont(x0935_221c), Cont(x0935_221f))
-}
-
-pub fn x0935_221c(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x221c);
-    // 0935:221c jmp near ptr 23D7h
-    Cont(x0935_23d7)
-}
-
-pub fn x0935_221f(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x221f);
-    // 0935:221f mov al,ds:[164h]
-    ctx.cpu.regs.set_al(
-        ctx.memory
-            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x164u16)),
-    );
-    ctx.dump_dosbox(0x2222);
-    // 0935:2222 cmp al,[bp-4]
-    sub(
-        ctx.cpu.regs.get_al(),
-        ctx.memory.read::<u8>(segofs(
-            ctx.cpu.regs.get_ss(),
-            ctx.cpu.regs.get_bp().wrapping_add(0xfffcu16),
-        )),
-        &mut ctx.cpu.flags,
-    );
-    ctx.dump_dosbox(0x2225);
-    // 0935:2225 je short 222Ah
-    ctx.je(Cont(x0935_2227), Cont(x0935_222a))
-}
-
-pub fn x0935_2227(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2227);
-    // 0935:2227 jmp near ptr 22DEh
-    Cont(x0935_22de)
-}
-
-pub fn x0935_222a(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x222a);
-    // 0935:222a mov bx,[bp+4]
-    ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x222d);
-    // 0935:222d mov bx,[bx+4]
-    ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ds(),
-        ctx.cpu.regs.get_bx().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x2230);
-    // 0935:2230 push word ptr [bx+4]
-    ctx.push16(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ds(),
-        ctx.cpu.regs.get_bx().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x2233);
-    // 0935:2233 call 11A0h
-    ctx.call16(0x2236, Cont(x0935_11a0))
-}
-
-pub fn x0935_2236(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2236);
-    // 0935:2236 push bp
-    ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x2237);
-    // 0935:2237 call 1EC7h
-    ctx.call16(0x223a, Cont(x0935_1ec7))
-}
-
-pub fn x0935_223a(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x223a);
-    // 0935:223a mov [bp-10Ch],ax
-    ctx.memory.write::<u16>(
-        segofs(
-            ctx.cpu.regs.get_ss(),
-            ctx.cpu.regs.get_bp().wrapping_add(0xfef4u16),
-        ),
-        ctx.cpu.regs.get_ax(),
-    );
-    ctx.dump_dosbox(0x223e);
-    // 0935:223e cmp word ptr [bp-10Ch],0
-    sub(
-        ctx.memory.read::<u16>(segofs(
-            ctx.cpu.regs.get_ss(),
-            ctx.cpu.regs.get_bp().wrapping_add(0xfef4u16),
-        )),
-        0x0u16,
-        &mut ctx.cpu.flags,
-    );
-    ctx.dump_dosbox(0x2243);
-    // 0935:2243 jge short 2248h
-    ctx.jge(Cont(x0935_2245), Cont(x0935_2248))
-}
-
-pub fn x0935_2245(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2245);
-    // 0935:2245 jmp near ptr 23D7h
-    Cont(x0935_23d7)
-}
-
-pub fn x0935_2248(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2248);
-    // 0935:2248 mov al,ds:[164h]
-    ctx.cpu.regs.set_al(
-        ctx.memory
-            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x164u16)),
-    );
-    ctx.dump_dosbox(0x224b);
-    // 0935:224b cmp al,[bp-4]
-    sub(
-        ctx.cpu.regs.get_al(),
-        ctx.memory.read::<u8>(segofs(
-            ctx.cpu.regs.get_ss(),
-            ctx.cpu.regs.get_bp().wrapping_add(0xfffcu16),
-        )),
-        &mut ctx.cpu.flags,
-    );
-    ctx.dump_dosbox(0x224e);
-    // 0935:224e je short 2253h
-    ctx.je(Cont(x0935_2250), Cont(x0935_2253))
-}
-
-pub fn x0935_2250(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2250);
-    // 0935:2250 jmp near ptr 23D7h
-    Cont(x0935_23d7)
-}
-
-pub fn x0935_2253(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2253);
-    // 0935:2253 mov bx,[bp+4]
-    ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x2256);
-    // 0935:2256 mov bx,[bx+4]
-    ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ds(),
-        ctx.cpu.regs.get_bx().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x2259);
-    // 0935:2259 push word ptr [bx+4]
-    ctx.push16(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ds(),
-        ctx.cpu.regs.get_bx().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x225c);
-    // 0935:225c call 11A0h
-    ctx.call16(0x225f, Cont(x0935_11a0))
-}
-
-pub fn x0935_225f(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x225f);
-    // 0935:225f push bp
-    ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x2260);
-    // 0935:2260 call 1EC7h
-    ctx.call16(0x2263, Cont(x0935_1ec7))
-}
-
-pub fn x0935_2263(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2263);
-    // 0935:2263 mov [bp-10Eh],ax
-    ctx.memory.write::<u16>(
-        segofs(
-            ctx.cpu.regs.get_ss(),
-            ctx.cpu.regs.get_bp().wrapping_add(0xfef2u16),
-        ),
-        ctx.cpu.regs.get_ax(),
-    );
-    ctx.dump_dosbox(0x2267);
-    // 0935:2267 cmp word ptr [bp-10Eh],0
-    sub(
-        ctx.memory.read::<u16>(segofs(
-            ctx.cpu.regs.get_ss(),
-            ctx.cpu.regs.get_bp().wrapping_add(0xfef2u16),
-        )),
-        0x0u16,
-        &mut ctx.cpu.flags,
-    );
-    ctx.dump_dosbox(0x226c);
-    // 0935:226c jge short 2271h
-    ctx.jge(Cont(x0935_226e), Cont(x0935_2271))
-}
-
-pub fn x0935_226e(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x226e);
-    // 0935:226e jmp near ptr 23D7h
-    Cont(x0935_23d7)
-}
-
-pub fn x0935_2271(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2271);
-    // 0935:2271 cmp word ptr [bp-10Eh],76Ch
-    sub(
-        ctx.memory.read::<u16>(segofs(
-            ctx.cpu.regs.get_ss(),
-            ctx.cpu.regs.get_bp().wrapping_add(0xfef2u16),
-        )),
-        0x76cu16,
-        &mut ctx.cpu.flags,
-    );
-    ctx.dump_dosbox(0x2277);
-    // 0935:2277 jl short 227Fh
-    ctx.jl(Cont(x0935_2279), Cont(x0935_227f))
-}
-
-pub fn x0935_2279(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2279);
-    // 0935:2279 sub word ptr [bp-10Eh],76Ch
-    ctx.memory.write::<u16>(
-        segofs(
-            ctx.cpu.regs.get_ss(),
-            ctx.cpu.regs.get_bp().wrapping_add(0xfef2u16),
-        ),
-        sub(
-            ctx.memory.read::<u16>(segofs(
-                ctx.cpu.regs.get_ss(),
-                ctx.cpu.regs.get_bp().wrapping_add(0xfef2u16),
-            )),
-            0x76cu16,
-            &mut ctx.cpu.flags,
-        ),
-    );
-    Cont(x0935_227f)
-}
-
-pub fn x0935_227f(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x227f);
-    // 0935:227f cmp word ptr [bp-10Ah],0
-    sub(
-        ctx.memory.read::<u16>(segofs(
-            ctx.cpu.regs.get_ss(),
-            ctx.cpu.regs.get_bp().wrapping_add(0xfef6u16),
-        )),
-        0x0u16,
-        &mut ctx.cpu.flags,
-    );
-    ctx.dump_dosbox(0x2284);
-    // 0935:2284 je short 229Bh
-    ctx.je(Cont(x0935_2286), Cont(x0935_229b))
-}
-
-pub fn x0935_2286(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2286);
-    // 0935:2286 cmp word ptr [bp-10Ah],0Ch
-    sub(
-        ctx.memory.read::<u16>(segofs(
-            ctx.cpu.regs.get_ss(),
-            ctx.cpu.regs.get_bp().wrapping_add(0xfef6u16),
-        )),
-        0xcu16,
-        &mut ctx.cpu.flags,
-    );
-    ctx.dump_dosbox(0x228b);
-    // 0935:228b jg short 229Bh
-    ctx.jg(Cont(x0935_228d), Cont(x0935_229b))
-}
-
-pub fn x0935_228d(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x228d);
-    // 0935:228d cmp word ptr [bp-10Ch],1Fh
-    sub(
-        ctx.memory.read::<u16>(segofs(
-            ctx.cpu.regs.get_ss(),
-            ctx.cpu.regs.get_bp().wrapping_add(0xfef4u16),
-        )),
-        0x1fu16,
-        &mut ctx.cpu.flags,
-    );
-    ctx.dump_dosbox(0x2292);
-    // 0935:2292 jg short 229Bh
-    ctx.jg(Cont(x0935_2294), Cont(x0935_229b))
-}
-
-pub fn x0935_2294(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2294);
-    // 0935:2294 cmp word ptr [bp-10Eh],63h
-    sub(
-        ctx.memory.read::<u16>(segofs(
-            ctx.cpu.regs.get_ss(),
-            ctx.cpu.regs.get_bp().wrapping_add(0xfef2u16),
-        )),
-        0x63u16,
-        &mut ctx.cpu.flags,
-    );
-    ctx.dump_dosbox(0x2299);
-    // 0935:2299 jle short 229Eh
-    ctx.jle(Cont(x0935_229b), Cont(x0935_229e))
-}
-
-pub fn x0935_229b(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x229b);
-    // 0935:229b jmp near ptr 23D7h
-    Cont(x0935_23d7)
-}
-
-pub fn x0935_229e(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x229e);
-    // 0935:229e push word ptr [bp-10Ah]
-    ctx.push16(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0xfef6u16),
-    )));
-    ctx.dump_dosbox(0x22a2);
-    // 0935:22a2 push bp
-    ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x22a3);
-    // 0935:22a3 call 1F63h
-    ctx.call16(0x22a6, Cont(x0935_1f63))
-}
-
-pub fn x0935_22a6(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x22a6);
-    // 0935:22a6 push word ptr [bp-10Ch]
-    ctx.push16(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0xfef4u16),
-    )));
-    ctx.dump_dosbox(0x22aa);
-    // 0935:22aa push bp
-    ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x22ab);
-    // 0935:22ab call 1E4Eh
-    ctx.call16(0x22ae, Cont(x0935_1e4e))
-}
-
-pub fn x0935_22ae(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x22ae);
-    // 0935:22ae lea di,[bp-106h]
-    ctx.cpu
-        .regs
-        .set_di(ctx.cpu.regs.get_bp().wrapping_add(0xfefau16));
-    ctx.dump_dosbox(0x22b2);
-    // 0935:22b2 push ss
-    ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x22b3);
-    // 0935:22b3 pop es
-    let x = ctx.pop16();
-    ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x22b4);
-    // 0935:22b4 mov si,1E36h
-    ctx.cpu.regs.set_si(0x1e36u16);
-    ctx.dump_dosbox(0x22b7);
-    // 0935:22b7 mov cx,3
-    ctx.cpu.regs.set_cx(0x3u16);
-    ctx.dump_dosbox(0x22ba);
-    // 0935:22ba mov ax,ds
-    ctx.cpu.regs.set_ax(ctx.cpu.regs.get_ds());
-    ctx.dump_dosbox(0x22bc);
-    // 0935:22bc call far ptr 0D72h:538Ch
-    ctx.callf16(0x22c1, 0xd72, Cont(x0d72_538c))
-}
-
-pub fn x0935_22c1(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x22c1);
-    // 0935:22c1 mov ax,1
-    ctx.cpu.regs.set_ax(0x1u16);
-    ctx.dump_dosbox(0x22c4);
-    // 0935:22c4 push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x22c5);
-    // 0935:22c5 lea ax,[bp-106h]
-    ctx.cpu
-        .regs
-        .set_ax(ctx.cpu.regs.get_bp().wrapping_add(0xfefau16));
-    ctx.dump_dosbox(0x22c9);
-    // 0935:22c9 push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x22ca);
-    // 0935:22ca mov bx,[bp+4]
-    ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x22cd);
-    // 0935:22cd push word ptr [bx+4]
-    ctx.push16(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ds(),
-        ctx.cpu.regs.get_bx().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x22d0);
-    // 0935:22d0 call 1742h
-    ctx.call16(0x22d3, Cont(x0935_1742))
-}
-
-pub fn x0935_22d3(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x22d3);
-    // 0935:22d3 push word ptr [bp-10Eh]
-    ctx.push16(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0xfef2u16),
-    )));
-    ctx.dump_dosbox(0x22d7);
-    // 0935:22d7 push bp
-    ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x22d8);
-    // 0935:22d8 call 1E4Eh
-    ctx.call16(0x22db, Cont(x0935_1e4e))
-}
-
-pub fn x0935_22db(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x22db);
-    // 0935:22db jmp near ptr 23D1h
-    Cont(x0935_23d1)
-}
-
-pub fn x0935_22de(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x22de);
-    // 0935:22de cmp byte ptr ds:[164h],2Dh
-    sub(
-        ctx.memory
-            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x164u16)),
-        0x2du8,
-        &mut ctx.cpu.flags,
-    );
-    ctx.dump_dosbox(0x22e3);
-    // 0935:22e3 jne short 22F1h
-    ctx.jne(Cont(x0935_22e5), Cont(x0935_22f1))
-}
-
-pub fn x0935_22e5(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x22e5);
-    // 0935:22e5 mov al,ds:[164h]
-    ctx.cpu.regs.set_al(
-        ctx.memory
-            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x164u16)),
-    );
-    ctx.dump_dosbox(0x22e8);
-    // 0935:22e8 mov [bp-4],al
-    ctx.memory.write::<u8>(
-        segofs(
-            ctx.cpu.regs.get_ss(),
-            ctx.cpu.regs.get_bp().wrapping_add(0xfffcu16),
-        ),
-        ctx.cpu.regs.get_al(),
-    );
-    ctx.dump_dosbox(0x22eb);
-    // 0935:22eb jmp near ptr 222Ah
-    Cont(x0935_222a)
-}
-
-pub fn x0935_22f1(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x22f1);
-    // 0935:22f1 cmp byte ptr ds:[164h],3Ah
-    sub(
-        ctx.memory
-            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x164u16)),
-        0x3au8,
-        &mut ctx.cpu.flags,
-    );
-    ctx.dump_dosbox(0x22f6);
-    // 0935:22f6 je short 22FBh
-    ctx.je(Cont(x0935_22f8), Cont(x0935_22fb))
-}
-
-pub fn x0935_22f8(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x22f8);
-    // 0935:22f8 jmp near ptr 23CEh
-    Cont(x0935_23ce)
-}
-
-pub fn x0935_22fb(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x22fb);
-    // 0935:22fb mov bx,[bp+4]
-    ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x22fe);
-    // 0935:22fe mov bx,[bx+4]
-    ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ds(),
-        ctx.cpu.regs.get_bx().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x2301);
-    // 0935:2301 push word ptr [bx+4]
-    ctx.push16(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ds(),
-        ctx.cpu.regs.get_bx().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x2304);
-    // 0935:2304 call 11A0h
-    ctx.call16(0x2307, Cont(x0935_11a0))
-}
-
-pub fn x0935_2307(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2307);
-    // 0935:2307 push bp
-    ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x2308);
-    // 0935:2308 call 1EC7h
-    ctx.call16(0x230b, Cont(x0935_1ec7))
-}
-
-pub fn x0935_230b(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x230b);
-    // 0935:230b mov [bp-10Ch],ax
-    ctx.memory.write::<u16>(
-        segofs(
-            ctx.cpu.regs.get_ss(),
-            ctx.cpu.regs.get_bp().wrapping_add(0xfef4u16),
-        ),
-        ctx.cpu.regs.get_ax(),
-    );
-    ctx.dump_dosbox(0x230f);
-    // 0935:230f cmp word ptr [bp-10Ch],0
-    sub(
-        ctx.memory.read::<u16>(segofs(
-            ctx.cpu.regs.get_ss(),
-            ctx.cpu.regs.get_bp().wrapping_add(0xfef4u16),
-        )),
-        0x0u16,
-        &mut ctx.cpu.flags,
-    );
-    ctx.dump_dosbox(0x2314);
-    // 0935:2314 jge short 2319h
-    ctx.jge(Cont(x0935_2316), Cont(x0935_2319))
-}
-
-pub fn x0935_2316(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2316);
-    // 0935:2316 jmp near ptr 23D7h
-    Cont(x0935_23d7)
-}
-
-pub fn x0935_2319(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2319);
-    // 0935:2319 cmp word ptr [bp-10Ah],18h
-    sub(
-        ctx.memory.read::<u16>(segofs(
-            ctx.cpu.regs.get_ss(),
-            ctx.cpu.regs.get_bp().wrapping_add(0xfef6u16),
-        )),
-        0x18u16,
-        &mut ctx.cpu.flags,
-    );
-    ctx.dump_dosbox(0x231e);
-    // 0935:231e jg short 2327h
-    ctx.jg(Cont(x0935_2320), Cont(x0935_2327))
-}
-
-pub fn x0935_2320(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2320);
-    // 0935:2320 cmp word ptr [bp-10Ch],3Bh
-    sub(
-        ctx.memory.read::<u16>(segofs(
-            ctx.cpu.regs.get_ss(),
-            ctx.cpu.regs.get_bp().wrapping_add(0xfef4u16),
-        )),
-        0x3bu16,
-        &mut ctx.cpu.flags,
-    );
-    ctx.dump_dosbox(0x2325);
-    // 0935:2325 jle short 232Ah
-    ctx.jle(Cont(x0935_2327), Cont(x0935_232a))
-}
-
-pub fn x0935_2327(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2327);
-    // 0935:2327 jmp near ptr 23D7h
-    Cont(x0935_23d7)
-}
-
-pub fn x0935_232a(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x232a);
-    // 0935:232a mov word ptr [bp-10Eh],0
-    ctx.memory.write::<u16>(
-        segofs(
-            ctx.cpu.regs.get_ss(),
-            ctx.cpu.regs.get_bp().wrapping_add(0xfef2u16),
-        ),
-        0x0u16,
-    );
-    ctx.dump_dosbox(0x2330);
-    // 0935:2330 cmp byte ptr ds:[164h],3Ah
-    sub(
-        ctx.memory
-            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x164u16)),
-        0x3au8,
-        &mut ctx.cpu.flags,
-    );
-    ctx.dump_dosbox(0x2335);
-    // 0935:2335 jne short 2355h
-    ctx.jne(Cont(x0935_2337), Cont(x0935_2355))
-}
-
-pub fn x0935_2337(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2337);
-    // 0935:2337 mov bx,[bp+4]
-    ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x233a);
-    // 0935:233a mov bx,[bx+4]
-    ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ds(),
-        ctx.cpu.regs.get_bx().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x233d);
-    // 0935:233d push word ptr [bx+4]
-    ctx.push16(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ds(),
-        ctx.cpu.regs.get_bx().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x2340);
-    // 0935:2340 call 11A0h
-    ctx.call16(0x2343, Cont(x0935_11a0))
-}
-
-pub fn x0935_2343(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2343);
-    // 0935:2343 push bp
-    ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x2344);
-    // 0935:2344 call 1EC7h
-    ctx.call16(0x2347, Cont(x0935_1ec7))
-}
-
-pub fn x0935_2347(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2347);
-    // 0935:2347 mov [bp-10Eh],ax
-    ctx.memory.write::<u16>(
-        segofs(
-            ctx.cpu.regs.get_ss(),
-            ctx.cpu.regs.get_bp().wrapping_add(0xfef2u16),
-        ),
-        ctx.cpu.regs.get_ax(),
-    );
-    ctx.dump_dosbox(0x234b);
-    // 0935:234b cmp word ptr [bp-10Eh],0
-    sub(
-        ctx.memory.read::<u16>(segofs(
-            ctx.cpu.regs.get_ss(),
-            ctx.cpu.regs.get_bp().wrapping_add(0xfef2u16),
-        )),
-        0x0u16,
-        &mut ctx.cpu.flags,
-    );
-    ctx.dump_dosbox(0x2350);
-    // 0935:2350 jge short 2355h
-    ctx.jge(Cont(x0935_2352), Cont(x0935_2355))
-}
-
-pub fn x0935_2352(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2352);
-    // 0935:2352 jmp near ptr 23D7h
-    Cont(x0935_23d7)
-}
-
-pub fn x0935_2355(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2355);
-    // 0935:2355 push word ptr [bp-10Ah]
-    ctx.push16(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0xfef6u16),
-    )));
-    ctx.dump_dosbox(0x2359);
-    // 0935:2359 push bp
-    ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x235a);
-    // 0935:235a call 1E4Eh
-    ctx.call16(0x235d, Cont(x0935_1e4e))
-}
-
-pub fn x0935_235d(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x235d);
-    // 0935:235d push word ptr [bp-10Ch]
-    ctx.push16(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0xfef4u16),
-    )));
-    ctx.dump_dosbox(0x2361);
-    // 0935:2361 push bp
-    ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x2362);
-    // 0935:2362 call 1E4Eh
-    ctx.call16(0x2365, Cont(x0935_1e4e))
-}
-
-pub fn x0935_2365(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2365);
-    // 0935:2365 cmp word ptr [bp-10Eh],0
-    sub(
-        ctx.memory.read::<u16>(segofs(
-            ctx.cpu.regs.get_ss(),
-            ctx.cpu.regs.get_bp().wrapping_add(0xfef2u16),
-        )),
-        0x0u16,
-        &mut ctx.cpu.flags,
-    );
-    ctx.dump_dosbox(0x236a);
-    // 0935:236a je short 23CCh
-    ctx.je(Cont(x0935_236c), Cont(x0935_23cc))
-}
-
-pub fn x0935_236c(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x236c);
-    // 0935:236c mov si,1BC2h
-    ctx.cpu.regs.set_si(0x1bc2u16);
-    ctx.dump_dosbox(0x236f);
-    // 0935:236f mov cx,7Dh
-    ctx.cpu.regs.set_cx(0x7du16);
-    ctx.dump_dosbox(0x2372);
-    // 0935:2372 sub sp,0FAh
-    ctx.cpu
-        .regs
-        .set_sp(sub(ctx.cpu.regs.get_sp(), 0xfau16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x2376);
-    // 0935:2376 mov di,sp
-    ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x2378);
-    // 0935:2378 cld
-    cld(ctx);
-    ctx.dump_dosbox(0x2379);
-    // 0935:2379 push ss
-    ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x237a);
-    // 0935:237a pop es
-    let x = ctx.pop16();
-    ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x237b);
-    // 0935:237b rep movsw
-    ctx.rep(Rep::REP, Context::movsw);
-    ctx.dump_dosbox(0x237d);
-    // 0935:237d mov si,1E3Ah
-    ctx.cpu.regs.set_si(0x1e3au16);
-    ctx.dump_dosbox(0x2380);
-    // 0935:2380 sub sp,6
-    ctx.cpu
-        .regs
-        .set_sp(sub(ctx.cpu.regs.get_sp(), 0x6u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x2383);
-    // 0935:2383 mov di,sp
-    ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x2385);
-    // 0935:2385 cld
-    cld(ctx);
-    ctx.dump_dosbox(0x2386);
-    // 0935:2386 push ss
-    ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x2387);
-    // 0935:2387 pop es
-    let x = ctx.pop16();
-    ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x2388);
-    // 0935:2388 movsw
-    ctx.movsw();
-    ctx.dump_dosbox(0x2389);
-    // 0935:2389 movsw
-    ctx.movsw();
-    ctx.dump_dosbox(0x238a);
-    // 0935:238a movsw
-    ctx.movsw();
-    ctx.dump_dosbox(0x238b);
-    // 0935:238b mov bx,[bp+4]
-    ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x238e);
-    // 0935:238e mov bx,[bx+4]
-    ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ds(),
-        ctx.cpu.regs.get_bx().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x2391);
-    // 0935:2391 push word ptr [bx+4]
-    ctx.push16(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ds(),
-        ctx.cpu.regs.get_bx().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x2394);
-    // 0935:2394 call 109Fh
-    ctx.call16(0x2397, Cont(x0935_109f))
-}
-
-pub fn x0935_2397(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2397);
-    // 0935:2397 push word ptr [bp-10Eh]
-    ctx.push16(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0xfef2u16),
-    )));
-    ctx.dump_dosbox(0x239b);
-    // 0935:239b push bp
-    ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x239c);
-    // 0935:239c call 1E4Eh
-    ctx.call16(0x239f, Cont(x0935_1e4e))
-}
-
-pub fn x0935_239f(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x239f);
-    // 0935:239f mov si,1BC2h
-    ctx.cpu.regs.set_si(0x1bc2u16);
-    ctx.dump_dosbox(0x23a2);
-    // 0935:23a2 mov cx,7Bh
-    ctx.cpu.regs.set_cx(0x7bu16);
-    ctx.dump_dosbox(0x23a5);
-    // 0935:23a5 sub sp,0F6h
-    ctx.cpu
-        .regs
-        .set_sp(sub(ctx.cpu.regs.get_sp(), 0xf6u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x23a9);
-    // 0935:23a9 mov di,sp
-    ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x23ab);
-    // 0935:23ab cld
-    cld(ctx);
-    ctx.dump_dosbox(0x23ac);
-    // 0935:23ac push ss
-    ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x23ad);
-    // 0935:23ad pop es
-    let x = ctx.pop16();
-    ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x23ae);
-    // 0935:23ae rep movsw
-    ctx.rep(Rep::REP, Context::movsw);
-    ctx.dump_dosbox(0x23b0);
-    // 0935:23b0 mov si,1E40h
-    ctx.cpu.regs.set_si(0x1e40u16);
-    ctx.dump_dosbox(0x23b3);
-    // 0935:23b3 mov cx,5
-    ctx.cpu.regs.set_cx(0x5u16);
-    ctx.dump_dosbox(0x23b6);
-    // 0935:23b6 sub sp,0Ah
-    ctx.cpu
-        .regs
-        .set_sp(sub(ctx.cpu.regs.get_sp(), 0xau16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x23b9);
-    // 0935:23b9 mov di,sp
-    ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x23bb);
-    // 0935:23bb cld
-    cld(ctx);
-    ctx.dump_dosbox(0x23bc);
-    // 0935:23bc push ss
-    ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x23bd);
-    // 0935:23bd pop es
-    let x = ctx.pop16();
-    ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x23be);
-    // 0935:23be rep movsw
-    ctx.rep(Rep::REP, Context::movsw);
-    ctx.dump_dosbox(0x23c0);
-    // 0935:23c0 mov bx,[bp+4]
-    ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x23c3);
-    // 0935:23c3 mov bx,[bx+4]
-    ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ds(),
-        ctx.cpu.regs.get_bx().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x23c6);
-    // 0935:23c6 push word ptr [bx+4]
-    ctx.push16(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ds(),
-        ctx.cpu.regs.get_bx().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x23c9);
-    // 0935:23c9 call 109Fh
-    ctx.call16(0x23cc, Cont(x0935_109f))
-}
-
-pub fn x0935_23cc(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x23cc);
-    // 0935:23cc jmp short 23D1h
-    Cont(x0935_23d1)
-}
-
-pub fn x0935_23ce(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x23ce);
-    // 0935:23ce jmp near ptr 23D7h
-    Cont(x0935_23d7)
-}
-
-pub fn x0935_23d1(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x23d1);
-    // 0935:23d1 mov byte ptr [bp-2],1
-    ctx.memory.write::<u8>(
-        segofs(
-            ctx.cpu.regs.get_ss(),
-            ctx.cpu.regs.get_bp().wrapping_add(0xfffeu16),
-        ),
-        0x1u8,
-    );
-    ctx.dump_dosbox(0x23d5);
-    // 0935:23d5 jmp short 23E4h
-    Cont(x0935_23e4)
-}
-
-pub fn x0935_23d7(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x23d7);
-    // 0935:23d7 mov ax,[bp-108h]
-    ctx.cpu.regs.set_ax(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0xfef8u16),
-    )));
-    ctx.dump_dosbox(0x23db);
-    // 0935:23db mov ds:[160h],ax
-    ctx.memory.write::<u16>(
-        segofs(ctx.cpu.regs.get_ds(), 0x160u16),
-        ctx.cpu.regs.get_ax(),
-    );
-    ctx.dump_dosbox(0x23de);
-    // 0935:23de mov al,[bp-6]
-    ctx.cpu.regs.set_al(ctx.memory.read::<u8>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0xfffau16),
-    )));
-    ctx.dump_dosbox(0x23e1);
-    // 0935:23e1 mov ds:[164h],al
-    ctx.memory.write::<u8>(
-        segofs(ctx.cpu.regs.get_ds(), 0x164u16),
-        ctx.cpu.regs.get_al(),
-    );
-    Cont(x0935_23e4)
-}
-
-pub fn x0935_23e4(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x23e4);
-    // 0935:23e4 mov ax,[bp-2]
-    ctx.cpu.regs.set_ax(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0xfffeu16),
-    )));
-    ctx.dump_dosbox(0x23e7);
-    // 0935:23e7 mov sp,bp
-    ctx.cpu.regs.set_sp(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x23e9);
-    // 0935:23e9 pop bp
-    let x = ctx.pop16();
-    ctx.cpu.regs.set_bp(x);
-    ctx.dump_dosbox(0x23ea);
-    // 0935:23ea ret 2
-    ctx.ret16(2)
-}
-
-pub fn x0935_23ed(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x23ed);
-    // 0935:23ed push bp
-    ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x23ee);
-    // 0935:23ee mov bp,sp
-    ctx.cpu.regs.set_bp(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x23f0);
-    // 0935:23f0 sub sp,210h
-    ctx.cpu
-        .regs
-        .set_sp(sub(ctx.cpu.regs.get_sp(), 0x210u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x23f4);
-    // 0935:23f4 mov byte ptr ds:[50h],1
-    ctx.memory
-        .write::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x50u16), 0x1u8);
-    ctx.dump_dosbox(0x23f9);
-    // 0935:23f9 mov byte ptr ds:[4Ch],1
-    ctx.memory
-        .write::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x4cu16), 0x1u8);
-    ctx.dump_dosbox(0x23fe);
-    // 0935:23fe mov byte ptr ds:[4Eh],1
-    ctx.memory
-        .write::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x4eu16), 0x1u8);
-    ctx.dump_dosbox(0x2403);
-    // 0935:2403 push bp
-    ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x2404);
-    // 0935:2404 call 21F1h
-    ctx.call16(0x2407, Cont(x0935_21f1))
-}
-
-pub fn x0935_2407(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2407);
-    // 0935:2407 shr ax,1
-    ctx.cpu
-        .regs
-        .set_ax(shr(ctx.cpu.regs.get_ax(), 0x1u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x2409);
-    // 0935:2409 jae short 240Eh
-    ctx.jae(Cont(x0935_240b), Cont(x0935_240e))
-}
-
-pub fn x0935_240b(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x240b);
-    // 0935:240b jmp near ptr 2BE6h
-    Cont(x0935_2be6)
-}
-
-pub fn x0935_240e(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x240e);
-    // 0935:240e mov di,[bp+4]
-    ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x2411);
-    // 0935:2411 lea ax,[di-200h]
-    ctx.cpu
-        .regs
-        .set_ax(ctx.cpu.regs.get_di().wrapping_add(0xfe00u16));
-    ctx.dump_dosbox(0x2415);
-    // 0935:2415 push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x2416);
-    // 0935:2416 mov si,170h
-    ctx.cpu.regs.set_si(0x170u16);
-    ctx.dump_dosbox(0x2419);
-    // 0935:2419 mov cx,10h
-    ctx.cpu.regs.set_cx(0x10u16);
-    ctx.dump_dosbox(0x241c);
-    // 0935:241c mov dx,di
-    ctx.cpu.regs.set_dx(ctx.cpu.regs.get_di());
-    ctx.dump_dosbox(0x241e);
-    // 0935:241e sub sp,20h
-    ctx.cpu
-        .regs
-        .set_sp(sub(ctx.cpu.regs.get_sp(), 0x20u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x2421);
-    // 0935:2421 mov di,sp
-    ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x2423);
-    // 0935:2423 cld
-    cld(ctx);
-    ctx.dump_dosbox(0x2424);
-    // 0935:2424 push ss
-    ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x2425);
-    // 0935:2425 pop es
-    let x = ctx.pop16();
-    ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x2426);
-    // 0935:2426 rep movsw
-    ctx.rep(Rep::REP, Context::movsw);
-    ctx.dump_dosbox(0x2428);
-    // 0935:2428 mov [bp-204h],dx
-    ctx.memory.write::<u16>(
-        segofs(
-            ctx.cpu.regs.get_ss(),
-            ctx.cpu.regs.get_bp().wrapping_add(0xfdfcu16),
-        ),
-        ctx.cpu.regs.get_dx(),
-    );
-    ctx.dump_dosbox(0x242c);
-    // 0935:242c push word ptr [bp+4]
-    ctx.push16(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x242f);
-    // 0935:242f call 1261h
-    ctx.call16(0x2432, Cont(x0935_1261))
-}
-
-pub fn x0935_2432(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2432);
-    // 0935:2432 mov byte ptr ds:[58h],0
-    ctx.memory
-        .write::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x58u16), 0x0u8);
-    Cont(x0935_2437)
-}
-
-pub fn x0935_2437(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2437);
-    // 0935:2437 cmp byte ptr ds:[164h],2Ch
-    sub(
-        ctx.memory
-            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x164u16)),
-        0x2cu8,
-        &mut ctx.cpu.flags,
-    );
-    ctx.dump_dosbox(0x243c);
-    // 0935:243c je short 2441h
-    ctx.je(Cont(x0935_243e), Cont(x0935_2441))
-}
-
-pub fn x0935_243e(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x243e);
-    // 0935:243e jmp near ptr 24CBh
-    Cont(x0935_24cb)
-}
-
-pub fn x0935_2441(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2441);
-    // 0935:2441 mov di,[bp+4]
-    ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x2444);
-    // 0935:2444 mov di,[di+4]
-    ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ds(),
-        ctx.cpu.regs.get_di().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x2447);
-    // 0935:2447 mov dx,di
-    ctx.cpu.regs.set_dx(ctx.cpu.regs.get_di());
-    ctx.dump_dosbox(0x2449);
-    // 0935:2449 les di,[di+0Ch]
-    let ptr = ctx.memory.read::<u32>(segofs(
-        ctx.cpu.regs.get_ds(),
-        ctx.cpu.regs.get_di().wrapping_add(0xcu16),
-    ));
-    ctx.cpu.regs.es = (ptr >> 16) as u16;
-    ctx.cpu.regs.set_di(ptr as u16);
-    ctx.dump_dosbox(0x244c);
-    // 0935:244c mov al,es:[di]
-    ctx.cpu.regs.set_al(
-        ctx.memory
-            .read::<u8>(segofs(ctx.cpu.regs.get_es(), ctx.cpu.regs.get_di())),
-    );
-    ctx.dump_dosbox(0x244f);
-    // 0935:244f xor ah,ah
-    ctx.cpu.regs.set_ah(xor(
-        ctx.cpu.regs.get_ah(),
-        ctx.cpu.regs.get_ah(),
-        &mut ctx.cpu.flags,
-    ));
-    ctx.dump_dosbox(0x2451);
-    // 0935:2451 cmp ax,ds:[160h]
-    sub(
-        ctx.cpu.regs.get_ax(),
-        ctx.memory
-            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x160u16)),
-        &mut ctx.cpu.flags,
-    );
-    ctx.dump_dosbox(0x2455);
-    // 0935:2455 jl short 24CBh
-    ctx.jl(Cont(x0935_2457), Cont(x0935_24cb))
-}
-
-pub fn x0935_2457(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2457);
-    // 0935:2457 mov bx,ds:[160h]
-    ctx.cpu.regs.set_bx(
-        ctx.memory
-            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x160u16)),
-    );
-    ctx.dump_dosbox(0x245b);
-    // 0935:245b mov al,es:[bx+di]
-    ctx.cpu.regs.set_al(ctx.memory.read::<u8>(segofs(
-        ctx.cpu.regs.get_es(),
-        ctx.cpu.regs.get_bx().wrapping_add(ctx.cpu.regs.get_di()),
-    )));
-    ctx.dump_dosbox(0x245e);
-    // 0935:245e xor ah,ah
-    ctx.cpu.regs.set_ah(xor(
-        ctx.cpu.regs.get_ah(),
-        ctx.cpu.regs.get_ah(),
-        &mut ctx.cpu.flags,
-    ));
-    ctx.dump_dosbox(0x2460);
-    // 0935:2460 push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x2461);
-    // 0935:2461 mov ax,1Fh
-    ctx.cpu.regs.set_ax(0x1fu16);
-    ctx.dump_dosbox(0x2464);
-    // 0935:2464 push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x2465);
-    // 0935:2465 mov ax,170h
-    ctx.cpu.regs.set_ax(0x170u16);
-    ctx.dump_dosbox(0x2468);
-    // 0935:2468 push ds
-    ctx.push16(ctx.cpu.regs.get_ds());
-    ctx.dump_dosbox(0x2469);
-    // 0935:2469 push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x246a);
-    // 0935:246a mov [bp-204h],dx
-    ctx.memory.write::<u16>(
-        segofs(
-            ctx.cpu.regs.get_ss(),
-            ctx.cpu.regs.get_bp().wrapping_add(0xfdfcu16),
-        ),
-        ctx.cpu.regs.get_dx(),
-    );
-    ctx.dump_dosbox(0x246e);
-    // 0935:246e call far ptr 0D72h:5452h
-    ctx.callf16(0x2473, 0xd72, Cont(x0d72_5452))
-}
-
-pub fn x0935_2473(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2473);
-    // 0935:2473 shr ax,1
-    ctx.cpu
-        .regs
-        .set_ax(shr(ctx.cpu.regs.get_ax(), 0x1u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x2475);
-    // 0935:2475 jae short 24C5h
-    ctx.jae(Cont(x0935_2477), Cont(x0935_24c5))
-}
-
-pub fn x0935_2477(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2477);
-    // 0935:2477 mov byte ptr ds:[58h],1
-    ctx.memory
-        .write::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x58u16), 0x1u8);
-    ctx.dump_dosbox(0x247c);
-    // 0935:247c mov bx,[bp+4]
-    ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x247f);
-    // 0935:247f push word ptr [bx+4]
-    ctx.push16(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ds(),
-        ctx.cpu.regs.get_bx().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x2482);
-    // 0935:2482 call 11A0h
-    ctx.call16(0x2485, Cont(x0935_11a0))
-}
-
-pub fn x0935_2485(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2485);
-    // 0935:2485 lea ax,[bp-202h]
-    ctx.cpu
-        .regs
-        .set_ax(ctx.cpu.regs.get_bp().wrapping_add(0xfdfeu16));
-    ctx.dump_dosbox(0x2489);
-    // 0935:2489 push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x248a);
-    // 0935:248a mov si,170h
-    ctx.cpu.regs.set_si(0x170u16);
-    ctx.dump_dosbox(0x248d);
-    // 0935:248d mov cx,10h
-    ctx.cpu.regs.set_cx(0x10u16);
-    ctx.dump_dosbox(0x2490);
-    // 0935:2490 sub sp,20h
-    ctx.cpu
-        .regs
-        .set_sp(sub(ctx.cpu.regs.get_sp(), 0x20u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x2493);
-    // 0935:2493 mov di,sp
-    ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x2495);
-    // 0935:2495 cld
-    cld(ctx);
-    ctx.dump_dosbox(0x2496);
-    // 0935:2496 push ss
-    ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x2497);
-    // 0935:2497 pop es
-    let x = ctx.pop16();
-    ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x2498);
-    // 0935:2498 rep movsw
-    ctx.rep(Rep::REP, Context::movsw);
-    ctx.dump_dosbox(0x249a);
-    // 0935:249a push word ptr [bp+4]
-    ctx.push16(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x249d);
-    // 0935:249d call 1261h
-    ctx.call16(0x24a0, Cont(x0935_1261))
-}
-
-pub fn x0935_24a0(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x24a0);
-    // 0935:24a0 mov ax,0FFh
-    ctx.cpu.regs.set_ax(0xffu16);
-    ctx.dump_dosbox(0x24a3);
-    // 0935:24a3 push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x24a4);
-    // 0935:24a4 mov di,[bp+4]
-    ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x24a7);
-    // 0935:24a7 lea ax,[di-200h]
-    ctx.cpu
-        .regs
-        .set_ax(ctx.cpu.regs.get_di().wrapping_add(0xfe00u16));
-    ctx.dump_dosbox(0x24ab);
-    // 0935:24ab push ds
-    ctx.push16(ctx.cpu.regs.get_ds());
-    ctx.dump_dosbox(0x24ac);
-    // 0935:24ac push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x24ad);
-    // 0935:24ad mov al,[bp-202h]
-    ctx.cpu.regs.set_al(ctx.memory.read::<u8>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0xfdfeu16),
-    )));
-    ctx.dump_dosbox(0x24b1);
-    // 0935:24b1 xor ah,ah
-    ctx.cpu.regs.set_ah(xor(
-        ctx.cpu.regs.get_ah(),
-        ctx.cpu.regs.get_ah(),
-        &mut ctx.cpu.flags,
-    ));
-    ctx.dump_dosbox(0x24b3);
-    // 0935:24b3 push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x24b4);
-    // 0935:24b4 lea ax,[bp-201h]
-    ctx.cpu
-        .regs
-        .set_ax(ctx.cpu.regs.get_bp().wrapping_add(0xfdffu16));
-    ctx.dump_dosbox(0x24b8);
-    // 0935:24b8 push ds
-    ctx.push16(ctx.cpu.regs.get_ds());
-    ctx.dump_dosbox(0x24b9);
-    // 0935:24b9 push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x24ba);
-    // 0935:24ba mov [bp-206h],di
-    ctx.memory.write::<u16>(
-        segofs(
-            ctx.cpu.regs.get_ss(),
-            ctx.cpu.regs.get_bp().wrapping_add(0xfdfau16),
-        ),
-        ctx.cpu.regs.get_di(),
-    );
-    ctx.dump_dosbox(0x24be);
-    // 0935:24be call far ptr 0D72h:582Ah
-    ctx.callf16(0x24c3, 0xd72, Cont(x0d72_582a))
-}
-
-pub fn x0935_24c3(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x24c3);
-    // 0935:24c3 jmp short 24C8h
-    Cont(x0935_24c8)
-}
-
-pub fn x0935_24c5(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x24c5);
-    // 0935:24c5 jmp near ptr 24CBh
-    Cont(x0935_24cb)
-}
-
-pub fn x0935_24c8(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x24c8);
-    // 0935:24c8 jmp near ptr 2437h
-    Cont(x0935_2437)
-}
-
-pub fn x0935_24cb(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x24cb);
-    // 0935:24cb mov al,ds:[164h]
-    ctx.cpu.regs.set_al(
-        ctx.memory
-            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x164u16)),
-    );
-    ctx.dump_dosbox(0x24ce);
-    // 0935:24ce xor ah,ah
-    ctx.cpu.regs.set_ah(xor(
-        ctx.cpu.regs.get_ah(),
-        ctx.cpu.regs.get_ah(),
-        &mut ctx.cpu.flags,
-    ));
-    ctx.dump_dosbox(0x24d0);
-    // 0935:24d0 push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x24d1);
-    // 0935:24d1 mov ax,0Bh
-    ctx.cpu.regs.set_ax(0xbu16);
-    ctx.dump_dosbox(0x24d4);
-    // 0935:24d4 push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x24d5);
-    // 0935:24d5 mov ax,1E4Ah
-    ctx.cpu.regs.set_ax(0x1e4au16);
-    ctx.dump_dosbox(0x24d8);
-    // 0935:24d8 push ds
-    ctx.push16(ctx.cpu.regs.get_ds());
-    ctx.dump_dosbox(0x24d9);
-    // 0935:24d9 push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x24da);
-    // 0935:24da call far ptr 0D72h:5452h
-    ctx.callf16(0x24df, 0xd72, Cont(x0d72_5452))
-}
-
-pub fn x0935_24df(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x24df);
-    // 0935:24df shr ax,1
-    ctx.cpu
-        .regs
-        .set_ax(shr(ctx.cpu.regs.get_ax(), 0x1u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x24e1);
-    // 0935:24e1 jb short 24E6h
-    ctx.jb(Cont(x0935_24e3), Cont(x0935_24e6))
-}
-
-pub fn x0935_24e3(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x24e3);
-    // 0935:24e3 jmp near ptr 2632h
-    Cont(x0935_2632)
-}
-
-pub fn x0935_24e6(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x24e6);
-    // 0935:24e6 mov di,[bp+4]
-    ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x24e9);
-    // 0935:24e9 lea ax,[di-100h]
-    ctx.cpu
-        .regs
-        .set_ax(ctx.cpu.regs.get_di().wrapping_add(0xff00u16));
-    ctx.dump_dosbox(0x24ed);
-    // 0935:24ed push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x24ee);
-    // 0935:24ee xor ax,ax
-    ctx.cpu.regs.set_ax(xor(
-        ctx.cpu.regs.get_ax(),
-        ctx.cpu.regs.get_ax(),
-        &mut ctx.cpu.flags,
-    ));
-    ctx.dump_dosbox(0x24f0);
-    // 0935:24f0 push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x24f1);
-    // 0935:24f1 push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x24f2);
-    // 0935:24f2 push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x24f3);
-    // 0935:24f3 push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x24f4);
-    // 0935:24f4 push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x24f5);
-    // 0935:24f5 push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x24f6);
-    // 0935:24f6 push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x24f7);
-    // 0935:24f7 push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x24f8);
-    // 0935:24f8 push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x24f9);
-    // 0935:24f9 push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x24fa);
-    // 0935:24fa mov si,1E56h
-    ctx.cpu.regs.set_si(0x1e56u16);
-    ctx.dump_dosbox(0x24fd);
-    // 0935:24fd mov cx,6
-    ctx.cpu.regs.set_cx(0x6u16);
-    ctx.dump_dosbox(0x2500);
-    // 0935:2500 mov dx,di
-    ctx.cpu.regs.set_dx(ctx.cpu.regs.get_di());
-    ctx.dump_dosbox(0x2502);
-    // 0935:2502 sub sp,0Ch
-    ctx.cpu
-        .regs
-        .set_sp(sub(ctx.cpu.regs.get_sp(), 0xcu16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x2505);
-    // 0935:2505 mov di,sp
-    ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x2507);
-    // 0935:2507 cld
-    cld(ctx);
-    ctx.dump_dosbox(0x2508);
-    // 0935:2508 push ss
-    ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x2509);
-    // 0935:2509 pop es
-    let x = ctx.pop16();
-    ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x250a);
-    // 0935:250a rep movsw
-    ctx.rep(Rep::REP, Context::movsw);
-    ctx.dump_dosbox(0x250c);
-    // 0935:250c mov [bp-204h],dx
-    ctx.memory.write::<u16>(
-        segofs(
-            ctx.cpu.regs.get_ss(),
-            ctx.cpu.regs.get_bp().wrapping_add(0xfdfcu16),
-        ),
-        ctx.cpu.regs.get_dx(),
-    );
-    ctx.dump_dosbox(0x2510);
-    // 0935:2510 push word ptr [bp+4]
-    ctx.push16(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x2513);
-    // 0935:2513 call 1261h
-    ctx.call16(0x2516, Cont(x0935_1261))
-}
-
-pub fn x0935_2516(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2516);
-    // 0935:2516 mov di,[bp+4]
-    ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x2519);
-    // 0935:2519 mov si,[bp+4]
-    ctx.cpu.regs.set_si(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x251c);
-    // 0935:251c mov al,[si-200h]
-    ctx.cpu.regs.set_al(ctx.memory.read::<u8>(segofs(
-        ctx.cpu.regs.get_ds(),
-        ctx.cpu.regs.get_si().wrapping_add(0xfe00u16),
-    )));
-    ctx.dump_dosbox(0x2520);
-    // 0935:2520 xor ah,ah
-    ctx.cpu.regs.set_ah(xor(
-        ctx.cpu.regs.get_ah(),
-        ctx.cpu.regs.get_ah(),
-        &mut ctx.cpu.flags,
-    ));
-    ctx.dump_dosbox(0x2522);
-    // 0935:2522 xchg si,ax
-    let t = ctx.cpu.regs.get_si();
-    ctx.cpu.regs.set_si(ctx.cpu.regs.get_ax());
-    ctx.cpu.regs.set_ax(t);
-    ctx.dump_dosbox(0x2523);
-    // 0935:2523 lea ax,[di-200h]
-    ctx.cpu
-        .regs
-        .set_ax(ctx.cpu.regs.get_di().wrapping_add(0xfe00u16));
-    ctx.dump_dosbox(0x2527);
-    // 0935:2527 add si,ax
-    ctx.cpu.regs.set_si(add(
-        ctx.cpu.regs.get_si(),
-        ctx.cpu.regs.get_ax(),
-        &mut ctx.cpu.flags,
-    ));
-    ctx.dump_dosbox(0x2529);
-    // 0935:2529 mov al,[si]
-    ctx.cpu.regs.set_al(
-        ctx.memory
-            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_si())),
-    );
-    ctx.dump_dosbox(0x252b);
-    // 0935:252b mov ds:[162h],al
-    ctx.memory.write::<u8>(
-        segofs(ctx.cpu.regs.get_ds(), 0x162u16),
-        ctx.cpu.regs.get_al(),
-    );
-    ctx.dump_dosbox(0x252e);
-    // 0935:252e cmp byte ptr ds:[162h],31h
-    sub(
-        ctx.memory
-            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x162u16)),
-        0x31u8,
-        &mut ctx.cpu.flags,
-    );
-    ctx.dump_dosbox(0x2533);
-    // 0935:2533 jne short 2553h
-    ctx.jne(Cont(x0935_2535), Cont(x0935_2553))
-}
-
-pub fn x0935_2535(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2535);
-    // 0935:2535 mov di,[bp+4]
-    ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x2538);
-    // 0935:2538 lea ax,[di-100h]
-    ctx.cpu
-        .regs
-        .set_ax(ctx.cpu.regs.get_di().wrapping_add(0xff00u16));
-    ctx.dump_dosbox(0x253c);
-    // 0935:253c push ds
-    ctx.push16(ctx.cpu.regs.get_ds());
-    ctx.dump_dosbox(0x253d);
-    // 0935:253d push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x253e);
-    // 0935:253e mov ax,1E62h
-    ctx.cpu.regs.set_ax(0x1e62u16);
-    ctx.dump_dosbox(0x2541);
-    // 0935:2541 push ds
-    ctx.push16(ctx.cpu.regs.get_ds());
-    ctx.dump_dosbox(0x2542);
-    // 0935:2542 push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x2543);
-    // 0935:2543 mov [bp-206h],di
-    ctx.memory.write::<u16>(
-        segofs(
-            ctx.cpu.regs.get_ss(),
-            ctx.cpu.regs.get_bp().wrapping_add(0xfdfau16),
-        ),
-        ctx.cpu.regs.get_di(),
-    );
-    ctx.dump_dosbox(0x2547);
-    // 0935:2547 call far ptr 0D72h:5570h
-    ctx.callf16(0x254c, 0xd72, Cont(x0d72_5570))
-}
-
-pub fn x0935_254c(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x254c);
-    // 0935:254c shr ax,1
-    ctx.cpu
-        .regs
-        .set_ax(shr(ctx.cpu.regs.get_ax(), 0x1u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x254e);
-    // 0935:254e jae short 2553h
-    ctx.jae(Cont(x0935_2550), Cont(x0935_2553))
-}
-
-pub fn x0935_2550(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2550);
-    // 0935:2550 jmp near ptr 25FBh
-    Cont(x0935_25fb)
-}
-
-pub fn x0935_2553(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2553);
-    // 0935:2553 cmp byte ptr ds:[162h],32h
-    sub(
-        ctx.memory
-            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x162u16)),
-        0x32u8,
-        &mut ctx.cpu.flags,
-    );
-    ctx.dump_dosbox(0x2558);
-    // 0935:2558 jne short 258Fh
-    ctx.jne(Cont(x0935_255a), Cont(x0935_258f))
-}
-
-pub fn x0935_255a(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x255a);
-    // 0935:255a mov di,[bp+4]
-    ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x255d);
-    // 0935:255d lea ax,[di-100h]
-    ctx.cpu
-        .regs
-        .set_ax(ctx.cpu.regs.get_di().wrapping_add(0xff00u16));
-    ctx.dump_dosbox(0x2561);
-    // 0935:2561 push ds
-    ctx.push16(ctx.cpu.regs.get_ds());
-    ctx.dump_dosbox(0x2562);
-    // 0935:2562 push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x2563);
-    // 0935:2563 mov cx,1E66h
-    ctx.cpu.regs.set_cx(0x1e66u16);
-    ctx.dump_dosbox(0x2566);
-    // 0935:2566 push ds
-    ctx.push16(ctx.cpu.regs.get_ds());
-    ctx.dump_dosbox(0x2567);
-    // 0935:2567 push cx
-    ctx.push16(ctx.cpu.regs.get_cx());
-    ctx.dump_dosbox(0x2568);
-    // 0935:2568 mov [bp-208h],di
-    ctx.memory.write::<u16>(
-        segofs(
-            ctx.cpu.regs.get_ss(),
-            ctx.cpu.regs.get_bp().wrapping_add(0xfdf8u16),
-        ),
-        ctx.cpu.regs.get_di(),
-    );
-    ctx.dump_dosbox(0x256c);
-    // 0935:256c mov [bp-20Ah],ax
-    ctx.memory.write::<u16>(
-        segofs(
-            ctx.cpu.regs.get_ss(),
-            ctx.cpu.regs.get_bp().wrapping_add(0xfdf6u16),
-        ),
-        ctx.cpu.regs.get_ax(),
-    );
-    ctx.dump_dosbox(0x2570);
-    // 0935:2570 call far ptr 0D72h:5570h
-    ctx.callf16(0x2575, 0xd72, Cont(x0d72_5570))
-}
-
-pub fn x0935_2575(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2575);
-    // 0935:2575 shr ax,1
-    ctx.cpu
-        .regs
-        .set_ax(shr(ctx.cpu.regs.get_ax(), 0x1u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x2577);
-    // 0935:2577 jae short 257Ch
-    ctx.jae(Cont(x0935_2579), Cont(x0935_257c))
-}
-
-pub fn x0935_2579(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2579);
-    // 0935:2579 jmp near ptr 25FBh
-    Cont(x0935_25fb)
-}
-
-pub fn x0935_257c(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x257c);
-    // 0935:257c push ds
-    ctx.push16(ctx.cpu.regs.get_ds());
-    ctx.dump_dosbox(0x257d);
-    // 0935:257d push word ptr [bp-20Ah]
-    ctx.push16(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0xfdf6u16),
-    )));
-    ctx.dump_dosbox(0x2581);
-    // 0935:2581 mov ax,1E68h
-    ctx.cpu.regs.set_ax(0x1e68u16);
-    ctx.dump_dosbox(0x2584);
-    // 0935:2584 push ds
-    ctx.push16(ctx.cpu.regs.get_ds());
-    ctx.dump_dosbox(0x2585);
-    // 0935:2585 push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x2586);
-    // 0935:2586 call far ptr 0D72h:5570h
-    ctx.callf16(0x258b, 0xd72, Cont(x0d72_5570))
-}
-
-pub fn x0935_258b(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x258b);
-    // 0935:258b shr ax,1
-    ctx.cpu
-        .regs
-        .set_ax(shr(ctx.cpu.regs.get_ax(), 0x1u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x258d);
-    // 0935:258d jb short 25FBh
-    ctx.jb(Cont(x0935_258f), Cont(x0935_25fb))
-}
-
-pub fn x0935_258f(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x258f);
-    // 0935:258f cmp byte ptr ds:[162h],33h
-    sub(
-        ctx.memory
-            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x162u16)),
-        0x33u8,
-        &mut ctx.cpu.flags,
-    );
-    ctx.dump_dosbox(0x2594);
-    // 0935:2594 jne short 25C8h
-    ctx.jne(Cont(x0935_2596), Cont(x0935_25c8))
-}
-
-pub fn x0935_2596(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2596);
-    // 0935:2596 mov di,[bp+4]
-    ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x2599);
-    // 0935:2599 lea ax,[di-100h]
-    ctx.cpu
-        .regs
-        .set_ax(ctx.cpu.regs.get_di().wrapping_add(0xff00u16));
-    ctx.dump_dosbox(0x259d);
-    // 0935:259d push ds
-    ctx.push16(ctx.cpu.regs.get_ds());
-    ctx.dump_dosbox(0x259e);
-    // 0935:259e push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x259f);
-    // 0935:259f mov cx,1E6Ch
-    ctx.cpu.regs.set_cx(0x1e6cu16);
-    ctx.dump_dosbox(0x25a2);
-    // 0935:25a2 push ds
-    ctx.push16(ctx.cpu.regs.get_ds());
-    ctx.dump_dosbox(0x25a3);
-    // 0935:25a3 push cx
-    ctx.push16(ctx.cpu.regs.get_cx());
-    ctx.dump_dosbox(0x25a4);
-    // 0935:25a4 mov [bp-20Ch],di
-    ctx.memory.write::<u16>(
-        segofs(
-            ctx.cpu.regs.get_ss(),
-            ctx.cpu.regs.get_bp().wrapping_add(0xfdf4u16),
-        ),
-        ctx.cpu.regs.get_di(),
-    );
-    ctx.dump_dosbox(0x25a8);
-    // 0935:25a8 mov [bp-20Eh],ax
-    ctx.memory.write::<u16>(
-        segofs(
-            ctx.cpu.regs.get_ss(),
-            ctx.cpu.regs.get_bp().wrapping_add(0xfdf2u16),
-        ),
-        ctx.cpu.regs.get_ax(),
-    );
-    ctx.dump_dosbox(0x25ac);
-    // 0935:25ac call far ptr 0D72h:5570h
-    ctx.callf16(0x25b1, 0xd72, Cont(x0d72_5570))
-}
-
-pub fn x0935_25b1(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x25b1);
-    // 0935:25b1 shr ax,1
-    ctx.cpu
-        .regs
-        .set_ax(shr(ctx.cpu.regs.get_ax(), 0x1u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x25b3);
-    // 0935:25b3 jb short 25FBh
-    ctx.jb(Cont(x0935_25b5), Cont(x0935_25fb))
-}
-
-pub fn x0935_25b5(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x25b5);
-    // 0935:25b5 push ds
-    ctx.push16(ctx.cpu.regs.get_ds());
-    ctx.dump_dosbox(0x25b6);
-    // 0935:25b6 push word ptr [bp-20Eh]
-    ctx.push16(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0xfdf2u16),
-    )));
-    ctx.dump_dosbox(0x25ba);
-    // 0935:25ba mov ax,1E6Eh
-    ctx.cpu.regs.set_ax(0x1e6eu16);
-    ctx.dump_dosbox(0x25bd);
-    // 0935:25bd push ds
-    ctx.push16(ctx.cpu.regs.get_ds());
-    ctx.dump_dosbox(0x25be);
-    // 0935:25be push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x25bf);
-    // 0935:25bf call far ptr 0D72h:5570h
-    ctx.callf16(0x25c4, 0xd72, Cont(x0d72_5570))
-}
-
-pub fn x0935_25c4(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x25c4);
-    // 0935:25c4 shr ax,1
-    ctx.cpu
-        .regs
-        .set_ax(shr(ctx.cpu.regs.get_ax(), 0x1u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x25c6);
-    // 0935:25c6 jb short 25FBh
-    ctx.jb(Cont(x0935_25c8), Cont(x0935_25fb))
-}
-
-pub fn x0935_25c8(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x25c8);
-    // 0935:25c8 mov al,ds:[162h]
-    ctx.cpu.regs.set_al(
-        ctx.memory
-            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x162u16)),
-    );
-    ctx.dump_dosbox(0x25cb);
-    // 0935:25cb xor ah,ah
-    ctx.cpu.regs.set_ah(xor(
-        ctx.cpu.regs.get_ah(),
-        ctx.cpu.regs.get_ah(),
-        &mut ctx.cpu.flags,
-    ));
-    ctx.dump_dosbox(0x25cd);
-    // 0935:25cd push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x25ce);
-    // 0935:25ce mov ax,7
-    ctx.cpu.regs.set_ax(0x7u16);
-    ctx.dump_dosbox(0x25d1);
-    // 0935:25d1 push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x25d2);
-    // 0935:25d2 mov ax,1E72h
-    ctx.cpu.regs.set_ax(0x1e72u16);
-    ctx.dump_dosbox(0x25d5);
-    // 0935:25d5 push ds
-    ctx.push16(ctx.cpu.regs.get_ds());
-    ctx.dump_dosbox(0x25d6);
-    // 0935:25d6 push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x25d7);
-    // 0935:25d7 call far ptr 0D72h:5452h
-    ctx.callf16(0x25dc, 0xd72, Cont(x0d72_5452))
-}
-
-pub fn x0935_25dc(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x25dc);
-    // 0935:25dc shr ax,1
-    ctx.cpu
-        .regs
-        .set_ax(shr(ctx.cpu.regs.get_ax(), 0x1u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x25de);
-    // 0935:25de jae short 2602h
-    ctx.jae(Cont(x0935_25e0), Cont(x0935_2602))
-}
-
-pub fn x0935_25e0(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x25e0);
-    // 0935:25e0 mov di,[bp+4]
-    ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x25e3);
-    // 0935:25e3 lea ax,[di-100h]
-    ctx.cpu
-        .regs
-        .set_ax(ctx.cpu.regs.get_di().wrapping_add(0xff00u16));
-    ctx.dump_dosbox(0x25e7);
-    // 0935:25e7 push ds
-    ctx.push16(ctx.cpu.regs.get_ds());
-    ctx.dump_dosbox(0x25e8);
-    // 0935:25e8 push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x25e9);
-    // 0935:25e9 mov ax,1E7Ah
-    ctx.cpu.regs.set_ax(0x1e7au16);
-    ctx.dump_dosbox(0x25ec);
-    // 0935:25ec push ds
-    ctx.push16(ctx.cpu.regs.get_ds());
-    ctx.dump_dosbox(0x25ed);
-    // 0935:25ed push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x25ee);
-    // 0935:25ee mov [bp-210h],di
-    ctx.memory.write::<u16>(
-        segofs(
-            ctx.cpu.regs.get_ss(),
-            ctx.cpu.regs.get_bp().wrapping_add(0xfdf0u16),
-        ),
-        ctx.cpu.regs.get_di(),
-    );
-    ctx.dump_dosbox(0x25f2);
-    // 0935:25f2 call far ptr 0D72h:5570h
-    ctx.callf16(0x25f7, 0xd72, Cont(x0d72_5570))
-}
-
-pub fn x0935_25f7(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x25f7);
-    // 0935:25f7 shr ax,1
-    ctx.cpu
-        .regs
-        .set_ax(shr(ctx.cpu.regs.get_ax(), 0x1u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x25f9);
-    // 0935:25f9 jae short 2602h
-    ctx.jae(Cont(x0935_25fb), Cont(x0935_2602))
-}
-
-pub fn x0935_25fb(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x25fb);
-    // 0935:25fb mov byte ptr ds:[4Eh],2
-    ctx.memory
-        .write::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x4eu16), 0x2u8);
-    ctx.dump_dosbox(0x2600);
-    // 0935:2600 jmp short 2619h
-    Cont(x0935_2619)
-}
-
-pub fn x0935_2602(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2602);
-    // 0935:2602 mov di,[bp+4]
-    ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x2605);
-    // 0935:2605 mov al,[di-100h]
-    ctx.cpu.regs.set_al(ctx.memory.read::<u8>(segofs(
-        ctx.cpu.regs.get_ds(),
-        ctx.cpu.regs.get_di().wrapping_add(0xff00u16),
-    )));
-    ctx.dump_dosbox(0x2609);
-    // 0935:2609 xor ah,ah
-    ctx.cpu.regs.set_ah(xor(
-        ctx.cpu.regs.get_ah(),
-        ctx.cpu.regs.get_ah(),
-        &mut ctx.cpu.flags,
-    ));
-    ctx.dump_dosbox(0x260b);
-    // 0935:260b sub ds:[160h],ax
-    ctx.memory.write::<u16>(
-        segofs(ctx.cpu.regs.get_ds(), 0x160u16),
-        sub(
-            ctx.memory
-                .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x160u16)),
-            ctx.cpu.regs.get_ax(),
-            &mut ctx.cpu.flags,
-        ),
-    );
-    ctx.dump_dosbox(0x260f);
-    // 0935:260f mov di,[bp+4]
-    ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x2612);
-    // 0935:2612 mov al,[di-0FFh]
-    ctx.cpu.regs.set_al(ctx.memory.read::<u8>(segofs(
-        ctx.cpu.regs.get_ds(),
-        ctx.cpu.regs.get_di().wrapping_add(0xff01u16),
-    )));
-    ctx.dump_dosbox(0x2616);
-    // 0935:2616 mov ds:[164h],al
-    ctx.memory.write::<u8>(
-        segofs(ctx.cpu.regs.get_ds(), 0x164u16),
-        ctx.cpu.regs.get_al(),
-    );
-    Cont(x0935_2619)
-}
-
-pub fn x0935_2619(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2619);
-    // 0935:2619 push word ptr ds:[4Eh]
-    ctx.push16(
-        ctx.memory
-            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x4eu16)),
-    );
-    ctx.dump_dosbox(0x261d);
-    // 0935:261d mov di,[bp+4]
-    ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x2620);
-    // 0935:2620 lea ax,[di-200h]
-    ctx.cpu
-        .regs
-        .set_ax(ctx.cpu.regs.get_di().wrapping_add(0xfe00u16));
-    ctx.dump_dosbox(0x2624);
-    // 0935:2624 push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x2625);
-    // 0935:2625 mov [bp-204h],di
-    ctx.memory.write::<u16>(
-        segofs(
-            ctx.cpu.regs.get_ss(),
-            ctx.cpu.regs.get_bp().wrapping_add(0xfdfcu16),
-        ),
-        ctx.cpu.regs.get_di(),
-    );
-    ctx.dump_dosbox(0x2629);
-    // 0935:2629 push word ptr [bp+4]
-    ctx.push16(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x262c);
-    // 0935:262c call 1742h
-    ctx.call16(0x262f, Cont(x0935_1742))
-}
-
-pub fn x0935_262f(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x262f);
-    // 0935:262f jmp near ptr 2B1Ah
-    Cont(x0935_2b1a)
-}
-
-pub fn x0935_2632(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2632);
-    // 0935:2632 cmp byte ptr ds:[164h],2Dh
-    sub(
-        ctx.memory
-            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x164u16)),
-        0x2du8,
-        &mut ctx.cpu.flags,
-    );
-    ctx.dump_dosbox(0x2637);
-    // 0935:2637 jne short 2682h
-    ctx.jne(Cont(x0935_2639), Cont(x0935_2682))
-}
-
-pub fn x0935_2639(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2639);
-    // 0935:2639 mov di,[bp+4]
-    ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x263c);
-    // 0935:263c mov al,[di-200h]
-    ctx.cpu.regs.set_al(ctx.memory.read::<u8>(segofs(
-        ctx.cpu.regs.get_ds(),
-        ctx.cpu.regs.get_di().wrapping_add(0xfe00u16),
-    )));
-    ctx.dump_dosbox(0x2640);
-    // 0935:2640 xor ah,ah
-    ctx.cpu.regs.set_ah(xor(
-        ctx.cpu.regs.get_ah(),
-        ctx.cpu.regs.get_ah(),
-        &mut ctx.cpu.flags,
-    ));
-    ctx.dump_dosbox(0x2642);
-    // 0935:2642 cmp ax,2
-    sub(ctx.cpu.regs.get_ax(), 0x2u16, &mut ctx.cpu.flags);
-    ctx.dump_dosbox(0x2645);
-    // 0935:2645 jle short 2682h
-    ctx.jle(Cont(x0935_2647), Cont(x0935_2682))
-}
-
-pub fn x0935_2647(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2647);
-    // 0935:2647 mov di,[bp+4]
-    ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x264a);
-    // 0935:264a mov di,[di+4]
-    ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ds(),
-        ctx.cpu.regs.get_di().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x264d);
-    // 0935:264d mov dx,di
-    ctx.cpu.regs.set_dx(ctx.cpu.regs.get_di());
-    ctx.dump_dosbox(0x264f);
-    // 0935:264f les di,[di+0Ch]
-    let ptr = ctx.memory.read::<u32>(segofs(
-        ctx.cpu.regs.get_ds(),
-        ctx.cpu.regs.get_di().wrapping_add(0xcu16),
-    ));
-    ctx.cpu.regs.es = (ptr >> 16) as u16;
-    ctx.cpu.regs.set_di(ptr as u16);
-    ctx.dump_dosbox(0x2652);
-    // 0935:2652 mov al,es:[di]
-    ctx.cpu.regs.set_al(
-        ctx.memory
-            .read::<u8>(segofs(ctx.cpu.regs.get_es(), ctx.cpu.regs.get_di())),
-    );
-    ctx.dump_dosbox(0x2655);
-    // 0935:2655 xor ah,ah
-    ctx.cpu.regs.set_ah(xor(
-        ctx.cpu.regs.get_ah(),
-        ctx.cpu.regs.get_ah(),
-        &mut ctx.cpu.flags,
-    ));
-    ctx.dump_dosbox(0x2657);
-    // 0935:2657 cmp ax,ds:[160h]
-    sub(
-        ctx.cpu.regs.get_ax(),
-        ctx.memory
-            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x160u16)),
-        &mut ctx.cpu.flags,
-    );
-    ctx.dump_dosbox(0x265b);
-    // 0935:265b jl short 2682h
-    ctx.jl(Cont(x0935_265d), Cont(x0935_2682))
-}
-
-pub fn x0935_265d(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x265d);
-    // 0935:265d mov bx,ds:[160h]
-    ctx.cpu.regs.set_bx(
-        ctx.memory
-            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x160u16)),
-    );
-    ctx.dump_dosbox(0x2661);
-    // 0935:2661 mov al,es:[bx+di]
-    ctx.cpu.regs.set_al(ctx.memory.read::<u8>(segofs(
-        ctx.cpu.regs.get_es(),
-        ctx.cpu.regs.get_bx().wrapping_add(ctx.cpu.regs.get_di()),
-    )));
-    ctx.dump_dosbox(0x2664);
-    // 0935:2664 xor ah,ah
-    ctx.cpu.regs.set_ah(xor(
-        ctx.cpu.regs.get_ah(),
-        ctx.cpu.regs.get_ah(),
-        &mut ctx.cpu.flags,
-    ));
-    ctx.dump_dosbox(0x2666);
-    // 0935:2666 push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x2667);
-    // 0935:2667 mov ax,1Fh
-    ctx.cpu.regs.set_ax(0x1fu16);
-    ctx.dump_dosbox(0x266a);
-    // 0935:266a push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x266b);
-    // 0935:266b mov ax,170h
-    ctx.cpu.regs.set_ax(0x170u16);
-    ctx.dump_dosbox(0x266e);
-    // 0935:266e push ds
-    ctx.push16(ctx.cpu.regs.get_ds());
-    ctx.dump_dosbox(0x266f);
-    // 0935:266f push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x2670);
-    // 0935:2670 mov [bp-204h],dx
-    ctx.memory.write::<u16>(
-        segofs(
-            ctx.cpu.regs.get_ss(),
-            ctx.cpu.regs.get_bp().wrapping_add(0xfdfcu16),
-        ),
-        ctx.cpu.regs.get_dx(),
-    );
-    ctx.dump_dosbox(0x2674);
-    // 0935:2674 call far ptr 0D72h:5452h
-    ctx.callf16(0x2679, 0xd72, Cont(x0d72_5452))
-}
-
-pub fn x0935_2679(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2679);
-    // 0935:2679 shr ax,1
-    ctx.cpu
-        .regs
-        .set_ax(shr(ctx.cpu.regs.get_ax(), 0x1u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x267b);
-    // 0935:267b jae short 2682h
-    ctx.jae(Cont(x0935_267d), Cont(x0935_2682))
-}
-
-pub fn x0935_267d(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x267d);
-    // 0935:267d mov byte ptr ds:[4Eh],3
-    ctx.memory
-        .write::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x4eu16), 0x3u8);
-    Cont(x0935_2682)
-}
-
-pub fn x0935_2682(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2682);
-    // 0935:2682 cmp byte ptr ds:[4Ah],1
-    sub(
-        ctx.memory
-            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x4au16)),
-        0x1u8,
-        &mut ctx.cpu.flags,
-    );
-    ctx.dump_dosbox(0x2687);
-    // 0935:2687 jne short 26B8h
-    ctx.jne(Cont(x0935_2689), Cont(x0935_26b8))
-}
-
-pub fn x0935_2689(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2689);
-    // 0935:2689 cmp byte ptr ds:[164h],2Fh
-    sub(
-        ctx.memory
-            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x164u16)),
-        0x2fu8,
-        &mut ctx.cpu.flags,
-    );
-    ctx.dump_dosbox(0x268e);
-    // 0935:268e jne short 26B8h
-    ctx.jne(Cont(x0935_2690), Cont(x0935_26b8))
-}
-
-pub fn x0935_2690(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2690);
-    // 0935:2690 mov si,1BC2h
-    ctx.cpu.regs.set_si(0x1bc2u16);
-    ctx.dump_dosbox(0x2693);
-    // 0935:2693 mov cx,7Dh
-    ctx.cpu.regs.set_cx(0x7du16);
-    ctx.dump_dosbox(0x2696);
-    // 0935:2696 sub sp,0FAh
-    ctx.cpu
-        .regs
-        .set_sp(sub(ctx.cpu.regs.get_sp(), 0xfau16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x269a);
-    // 0935:269a mov di,sp
-    ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x269c);
-    // 0935:269c cld
-    cld(ctx);
-    ctx.dump_dosbox(0x269d);
-    // 0935:269d push ss
-    ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x269e);
-    // 0935:269e pop es
-    let x = ctx.pop16();
-    ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x269f);
-    // 0935:269f rep movsw
-    ctx.rep(Rep::REP, Context::movsw);
-    ctx.dump_dosbox(0x26a1);
-    // 0935:26a1 mov si,1E7Eh
-    ctx.cpu.regs.set_si(0x1e7eu16);
-    ctx.dump_dosbox(0x26a4);
-    // 0935:26a4 sub sp,6
-    ctx.cpu
-        .regs
-        .set_sp(sub(ctx.cpu.regs.get_sp(), 0x6u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x26a7);
-    // 0935:26a7 mov di,sp
-    ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x26a9);
-    // 0935:26a9 cld
-    cld(ctx);
-    ctx.dump_dosbox(0x26aa);
-    // 0935:26aa push ss
-    ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x26ab);
-    // 0935:26ab pop es
-    let x = ctx.pop16();
-    ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x26ac);
-    // 0935:26ac movsw
-    ctx.movsw();
-    ctx.dump_dosbox(0x26ad);
-    // 0935:26ad movsw
-    ctx.movsw();
-    ctx.dump_dosbox(0x26ae);
-    // 0935:26ae movsw
-    ctx.movsw();
-    ctx.dump_dosbox(0x26af);
-    // 0935:26af mov bx,[bp+4]
-    ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x26b2);
-    // 0935:26b2 push word ptr [bx+4]
-    ctx.push16(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ds(),
-        ctx.cpu.regs.get_bx().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x26b5);
-    // 0935:26b5 call 109Fh
-    ctx.call16(0x26b8, Cont(x0935_109f))
-}
-
-pub fn x0935_26b8(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x26b8);
-    // 0935:26b8 push word ptr ds:[4Eh]
-    ctx.push16(
-        ctx.memory
-            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x4eu16)),
-    );
-    ctx.dump_dosbox(0x26bc);
-    // 0935:26bc mov di,[bp+4]
-    ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x26bf);
-    // 0935:26bf lea ax,[di-200h]
-    ctx.cpu
-        .regs
-        .set_ax(ctx.cpu.regs.get_di().wrapping_add(0xfe00u16));
-    ctx.dump_dosbox(0x26c3);
-    // 0935:26c3 push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x26c4);
-    // 0935:26c4 mov [bp-204h],di
-    ctx.memory.write::<u16>(
-        segofs(
-            ctx.cpu.regs.get_ss(),
-            ctx.cpu.regs.get_bp().wrapping_add(0xfdfcu16),
-        ),
-        ctx.cpu.regs.get_di(),
-    );
-    ctx.dump_dosbox(0x26c8);
-    // 0935:26c8 push word ptr [bp+4]
-    ctx.push16(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x26cb);
-    // 0935:26cb call 1742h
-    ctx.call16(0x26ce, Cont(x0935_1742))
-}
-
-pub fn x0935_26ce(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x26ce);
-    // 0935:26ce cmp byte ptr ds:[164h],2Dh
-    sub(
-        ctx.memory
-            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x164u16)),
-        0x2du8,
-        &mut ctx.cpu.flags,
-    );
-    ctx.dump_dosbox(0x26d3);
-    // 0935:26d3 je short 26D8h
-    ctx.je(Cont(x0935_26d5), Cont(x0935_26d8))
-}
-
-pub fn x0935_26d5(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x26d5);
-    // 0935:26d5 jmp near ptr 2799h
-    Cont(x0935_2799)
-}
-
-pub fn x0935_26d8(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x26d8);
-    // 0935:26d8 mov di,[bp+4]
-    ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x26db);
-    // 0935:26db mov di,[di+4]
-    ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ds(),
-        ctx.cpu.regs.get_di().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x26de);
-    // 0935:26de mov dx,di
-    ctx.cpu.regs.set_dx(ctx.cpu.regs.get_di());
-    ctx.dump_dosbox(0x26e0);
-    // 0935:26e0 les di,[di+0Ch]
-    let ptr = ctx.memory.read::<u32>(segofs(
-        ctx.cpu.regs.get_ds(),
-        ctx.cpu.regs.get_di().wrapping_add(0xcu16),
-    ));
-    ctx.cpu.regs.es = (ptr >> 16) as u16;
-    ctx.cpu.regs.set_di(ptr as u16);
-    ctx.dump_dosbox(0x26e3);
-    // 0935:26e3 mov al,es:[di]
-    ctx.cpu.regs.set_al(
-        ctx.memory
-            .read::<u8>(segofs(ctx.cpu.regs.get_es(), ctx.cpu.regs.get_di())),
-    );
-    ctx.dump_dosbox(0x26e6);
-    // 0935:26e6 xor ah,ah
-    ctx.cpu.regs.set_ah(xor(
-        ctx.cpu.regs.get_ah(),
-        ctx.cpu.regs.get_ah(),
-        &mut ctx.cpu.flags,
-    ));
-    ctx.dump_dosbox(0x26e8);
-    // 0935:26e8 cmp ax,ds:[160h]
-    sub(
-        ctx.cpu.regs.get_ax(),
-        ctx.memory
-            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x160u16)),
-        &mut ctx.cpu.flags,
-    );
-    ctx.dump_dosbox(0x26ec);
-    // 0935:26ec jge short 26F1h
-    ctx.jge(Cont(x0935_26ee), Cont(x0935_26f1))
-}
-
-pub fn x0935_26ee(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x26ee);
-    // 0935:26ee jmp near ptr 2799h
-    Cont(x0935_2799)
-}
-
-pub fn x0935_26f1(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x26f1);
-    // 0935:26f1 mov bx,ds:[160h]
-    ctx.cpu.regs.set_bx(
-        ctx.memory
-            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x160u16)),
-    );
-    ctx.dump_dosbox(0x26f5);
-    // 0935:26f5 mov al,es:[bx+di]
-    ctx.cpu.regs.set_al(ctx.memory.read::<u8>(segofs(
-        ctx.cpu.regs.get_es(),
-        ctx.cpu.regs.get_bx().wrapping_add(ctx.cpu.regs.get_di()),
-    )));
-    ctx.dump_dosbox(0x26f8);
-    // 0935:26f8 xor ah,ah
-    ctx.cpu.regs.set_ah(xor(
-        ctx.cpu.regs.get_ah(),
-        ctx.cpu.regs.get_ah(),
-        &mut ctx.cpu.flags,
-    ));
-    ctx.dump_dosbox(0x26fa);
-    // 0935:26fa push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x26fb);
-    // 0935:26fb mov ax,1Fh
-    ctx.cpu.regs.set_ax(0x1fu16);
-    ctx.dump_dosbox(0x26fe);
-    // 0935:26fe push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x26ff);
-    // 0935:26ff mov ax,170h
-    ctx.cpu.regs.set_ax(0x170u16);
-    ctx.dump_dosbox(0x2702);
-    // 0935:2702 push ds
-    ctx.push16(ctx.cpu.regs.get_ds());
-    ctx.dump_dosbox(0x2703);
-    // 0935:2703 push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x2704);
-    // 0935:2704 mov [bp-204h],dx
-    ctx.memory.write::<u16>(
-        segofs(
-            ctx.cpu.regs.get_ss(),
-            ctx.cpu.regs.get_bp().wrapping_add(0xfdfcu16),
-        ),
-        ctx.cpu.regs.get_dx(),
-    );
-    ctx.dump_dosbox(0x2708);
-    // 0935:2708 call far ptr 0D72h:5452h
-    ctx.callf16(0x270d, 0xd72, Cont(x0d72_5452))
-}
-
-pub fn x0935_270d(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x270d);
-    // 0935:270d shr ax,1
-    ctx.cpu
-        .regs
-        .set_ax(shr(ctx.cpu.regs.get_ax(), 0x1u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x270f);
-    // 0935:270f jb short 2714h
-    ctx.jb(Cont(x0935_2711), Cont(x0935_2714))
-}
-
-pub fn x0935_2711(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2711);
-    // 0935:2711 jmp near ptr 2799h
-    Cont(x0935_2799)
-}
-
-pub fn x0935_2714(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2714);
-    // 0935:2714 mov bx,[bp+4]
-    ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x2717);
-    // 0935:2717 push word ptr [bx+4]
-    ctx.push16(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ds(),
-        ctx.cpu.regs.get_bx().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x271a);
-    // 0935:271a call 11A0h
-    ctx.call16(0x271d, Cont(x0935_11a0))
-}
-
-pub fn x0935_271d(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x271d);
-    // 0935:271d mov si,1BC2h
-    ctx.cpu.regs.set_si(0x1bc2u16);
-    ctx.dump_dosbox(0x2720);
-    // 0935:2720 mov cx,7Fh
-    ctx.cpu.regs.set_cx(0x7fu16);
-    ctx.dump_dosbox(0x2723);
-    // 0935:2723 sub sp,0FEh
-    ctx.cpu
-        .regs
-        .set_sp(sub(ctx.cpu.regs.get_sp(), 0xfeu16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x2727);
-    // 0935:2727 mov di,sp
-    ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x2729);
-    // 0935:2729 cld
-    cld(ctx);
-    ctx.dump_dosbox(0x272a);
-    // 0935:272a push ss
-    ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x272b);
-    // 0935:272b pop es
-    let x = ctx.pop16();
-    ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x272c);
-    // 0935:272c rep movsw
-    ctx.rep(Rep::REP, Context::movsw);
-    ctx.dump_dosbox(0x272e);
-    // 0935:272e push word ptr ds:[1E84h]
-    ctx.push16(
-        ctx.memory
-            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x1e84u16)),
-    );
-    ctx.dump_dosbox(0x2732);
-    // 0935:2732 mov bx,[bp+4]
-    ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x2735);
-    // 0935:2735 push word ptr [bx+4]
-    ctx.push16(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ds(),
-        ctx.cpu.regs.get_bx().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x2738);
-    // 0935:2738 call 109Fh
-    ctx.call16(0x273b, Cont(x0935_109f))
-}
-
-pub fn x0935_273b(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x273b);
-    // 0935:273b mov di,[bp+4]
-    ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x273e);
-    // 0935:273e lea ax,[di-200h]
-    ctx.cpu
-        .regs
-        .set_ax(ctx.cpu.regs.get_di().wrapping_add(0xfe00u16));
-    ctx.dump_dosbox(0x2742);
-    // 0935:2742 push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x2743);
-    // 0935:2743 mov si,170h
-    ctx.cpu.regs.set_si(0x170u16);
-    ctx.dump_dosbox(0x2746);
-    // 0935:2746 mov cx,10h
-    ctx.cpu.regs.set_cx(0x10u16);
-    ctx.dump_dosbox(0x2749);
-    // 0935:2749 mov dx,di
-    ctx.cpu.regs.set_dx(ctx.cpu.regs.get_di());
-    ctx.dump_dosbox(0x274b);
-    // 0935:274b sub sp,20h
-    ctx.cpu
-        .regs
-        .set_sp(sub(ctx.cpu.regs.get_sp(), 0x20u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x274e);
-    // 0935:274e mov di,sp
-    ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x2750);
-    // 0935:2750 cld
-    cld(ctx);
-    ctx.dump_dosbox(0x2751);
-    // 0935:2751 push ss
-    ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x2752);
-    // 0935:2752 pop es
-    let x = ctx.pop16();
-    ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x2753);
-    // 0935:2753 rep movsw
-    ctx.rep(Rep::REP, Context::movsw);
-    ctx.dump_dosbox(0x2755);
-    // 0935:2755 mov [bp-206h],dx
-    ctx.memory.write::<u16>(
-        segofs(
-            ctx.cpu.regs.get_ss(),
-            ctx.cpu.regs.get_bp().wrapping_add(0xfdfau16),
-        ),
-        ctx.cpu.regs.get_dx(),
-    );
-    ctx.dump_dosbox(0x2759);
-    // 0935:2759 push word ptr [bp+4]
-    ctx.push16(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x275c);
-    // 0935:275c call 1261h
-    ctx.call16(0x275f, Cont(x0935_1261))
-}
-
-pub fn x0935_275f(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x275f);
-    // 0935:275f mov di,[bp+4]
-    ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x2762);
-    // 0935:2762 mov al,[di-200h]
-    ctx.cpu.regs.set_al(ctx.memory.read::<u8>(segofs(
-        ctx.cpu.regs.get_ds(),
-        ctx.cpu.regs.get_di().wrapping_add(0xfe00u16),
-    )));
-    ctx.dump_dosbox(0x2766);
-    // 0935:2766 xor ah,ah
-    ctx.cpu.regs.set_ah(xor(
-        ctx.cpu.regs.get_ah(),
-        ctx.cpu.regs.get_ah(),
-        &mut ctx.cpu.flags,
-    ));
-    ctx.dump_dosbox(0x2768);
-    // 0935:2768 cmp ax,2
-    sub(ctx.cpu.regs.get_ax(), 0x2u16, &mut ctx.cpu.flags);
-    ctx.dump_dosbox(0x276b);
-    // 0935:276b jle short 2774h
-    ctx.jle(Cont(x0935_276d), Cont(x0935_2774))
-}
-
-pub fn x0935_276d(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x276d);
-    // 0935:276d mov byte ptr ds:[4Eh],3
-    ctx.memory
-        .write::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x4eu16), 0x3u8);
-    ctx.dump_dosbox(0x2772);
-    // 0935:2772 jmp short 2780h
-    Cont(x0935_2780)
-}
-
-pub fn x0935_2774(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2774);
-    // 0935:2774 cmp byte ptr ds:[4Eh],3
-    sub(
-        ctx.memory
-            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x4eu16)),
-        0x3u8,
-        &mut ctx.cpu.flags,
-    );
-    ctx.dump_dosbox(0x2779);
-    // 0935:2779 je short 2780h
-    ctx.je(Cont(x0935_277b), Cont(x0935_2780))
-}
-
-pub fn x0935_277b(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x277b);
-    // 0935:277b mov byte ptr ds:[4Eh],1
-    ctx.memory
-        .write::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x4eu16), 0x1u8);
-    Cont(x0935_2780)
-}
-
-pub fn x0935_2780(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2780);
-    // 0935:2780 push word ptr ds:[4Eh]
-    ctx.push16(
-        ctx.memory
-            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x4eu16)),
-    );
-    ctx.dump_dosbox(0x2784);
-    // 0935:2784 mov di,[bp+4]
-    ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x2787);
-    // 0935:2787 lea ax,[di-200h]
-    ctx.cpu
-        .regs
-        .set_ax(ctx.cpu.regs.get_di().wrapping_add(0xfe00u16));
-    ctx.dump_dosbox(0x278b);
-    // 0935:278b push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x278c);
-    // 0935:278c mov [bp-204h],di
-    ctx.memory.write::<u16>(
-        segofs(
-            ctx.cpu.regs.get_ss(),
-            ctx.cpu.regs.get_bp().wrapping_add(0xfdfcu16),
-        ),
-        ctx.cpu.regs.get_di(),
-    );
-    ctx.dump_dosbox(0x2790);
-    // 0935:2790 push word ptr [bp+4]
-    ctx.push16(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x2793);
-    // 0935:2793 call 1742h
-    ctx.call16(0x2796, Cont(x0935_1742))
-}
-
-pub fn x0935_2796(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2796);
-    // 0935:2796 jmp near ptr 26CEh
-    Cont(x0935_26ce)
-}
-
-pub fn x0935_2799(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2799);
-    // 0935:2799 cmp byte ptr ds:[164h],2Fh
-    sub(
-        ctx.memory
-            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x164u16)),
-        0x2fu8,
-        &mut ctx.cpu.flags,
-    );
-    ctx.dump_dosbox(0x279e);
-    // 0935:279e je short 27A3h
-    ctx.je(Cont(x0935_27a0), Cont(x0935_27a3))
-}
-
-pub fn x0935_27a0(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x27a0);
-    // 0935:27a0 jmp near ptr 295Fh
-    Cont(x0935_295f)
-}
-
-pub fn x0935_27a3(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x27a3);
-    // 0935:27a3 mov di,[bp+4]
-    ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x27a6);
-    // 0935:27a6 mov di,[di+4]
-    ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ds(),
-        ctx.cpu.regs.get_di().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x27a9);
-    // 0935:27a9 mov dx,di
-    ctx.cpu.regs.set_dx(ctx.cpu.regs.get_di());
-    ctx.dump_dosbox(0x27ab);
-    // 0935:27ab les di,[di+0Ch]
-    let ptr = ctx.memory.read::<u32>(segofs(
-        ctx.cpu.regs.get_ds(),
-        ctx.cpu.regs.get_di().wrapping_add(0xcu16),
-    ));
-    ctx.cpu.regs.es = (ptr >> 16) as u16;
-    ctx.cpu.regs.set_di(ptr as u16);
-    ctx.dump_dosbox(0x27ae);
-    // 0935:27ae mov al,es:[di]
-    ctx.cpu.regs.set_al(
-        ctx.memory
-            .read::<u8>(segofs(ctx.cpu.regs.get_es(), ctx.cpu.regs.get_di())),
-    );
-    ctx.dump_dosbox(0x27b1);
-    // 0935:27b1 xor ah,ah
-    ctx.cpu.regs.set_ah(xor(
-        ctx.cpu.regs.get_ah(),
-        ctx.cpu.regs.get_ah(),
-        &mut ctx.cpu.flags,
-    ));
-    ctx.dump_dosbox(0x27b3);
-    // 0935:27b3 cmp ax,ds:[160h]
-    sub(
-        ctx.cpu.regs.get_ax(),
-        ctx.memory
-            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x160u16)),
-        &mut ctx.cpu.flags,
-    );
-    ctx.dump_dosbox(0x27b7);
-    // 0935:27b7 jge short 27BCh
-    ctx.jge(Cont(x0935_27b9), Cont(x0935_27bc))
-}
-
-pub fn x0935_27b9(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x27b9);
-    // 0935:27b9 jmp near ptr 295Fh
-    Cont(x0935_295f)
-}
-
-pub fn x0935_27bc(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x27bc);
-    // 0935:27bc mov bx,ds:[160h]
-    ctx.cpu.regs.set_bx(
-        ctx.memory
-            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x160u16)),
-    );
-    ctx.dump_dosbox(0x27c0);
-    // 0935:27c0 mov al,es:[bx+di]
-    ctx.cpu.regs.set_al(ctx.memory.read::<u8>(segofs(
-        ctx.cpu.regs.get_es(),
-        ctx.cpu.regs.get_bx().wrapping_add(ctx.cpu.regs.get_di()),
-    )));
-    ctx.dump_dosbox(0x27c3);
-    // 0935:27c3 xor ah,ah
-    ctx.cpu.regs.set_ah(xor(
-        ctx.cpu.regs.get_ah(),
-        ctx.cpu.regs.get_ah(),
-        &mut ctx.cpu.flags,
-    ));
-    ctx.dump_dosbox(0x27c5);
-    // 0935:27c5 push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x27c6);
-    // 0935:27c6 mov ax,1Fh
-    ctx.cpu.regs.set_ax(0x1fu16);
-    ctx.dump_dosbox(0x27c9);
-    // 0935:27c9 push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x27ca);
-    // 0935:27ca mov ax,170h
-    ctx.cpu.regs.set_ax(0x170u16);
-    ctx.dump_dosbox(0x27cd);
-    // 0935:27cd push ds
-    ctx.push16(ctx.cpu.regs.get_ds());
-    ctx.dump_dosbox(0x27ce);
-    // 0935:27ce push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x27cf);
-    // 0935:27cf mov [bp-204h],dx
-    ctx.memory.write::<u16>(
-        segofs(
-            ctx.cpu.regs.get_ss(),
-            ctx.cpu.regs.get_bp().wrapping_add(0xfdfcu16),
-        ),
-        ctx.cpu.regs.get_dx(),
-    );
-    ctx.dump_dosbox(0x27d3);
-    // 0935:27d3 call far ptr 0D72h:5452h
-    ctx.callf16(0x27d8, 0xd72, Cont(x0d72_5452))
-}
-
-pub fn x0935_27d8(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x27d8);
-    // 0935:27d8 shr ax,1
-    ctx.cpu
-        .regs
-        .set_ax(shr(ctx.cpu.regs.get_ax(), 0x1u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x27da);
-    // 0935:27da jb short 27DFh
-    ctx.jb(Cont(x0935_27dc), Cont(x0935_27df))
-}
-
-pub fn x0935_27dc(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x27dc);
-    // 0935:27dc jmp near ptr 295Fh
-    Cont(x0935_295f)
-}
-
-pub fn x0935_27df(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x27df);
-    // 0935:27df mov bx,[bp+4]
-    ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x27e2);
-    // 0935:27e2 push word ptr [bx+4]
-    ctx.push16(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ds(),
-        ctx.cpu.regs.get_bx().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x27e5);
-    // 0935:27e5 call 11A0h
-    ctx.call16(0x27e8, Cont(x0935_11a0))
-}
-
-pub fn x0935_27e8(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x27e8);
-    // 0935:27e8 lea ax,[bp-102h]
-    ctx.cpu
-        .regs
-        .set_ax(ctx.cpu.regs.get_bp().wrapping_add(0xfefeu16));
-    ctx.dump_dosbox(0x27ec);
-    // 0935:27ec push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x27ed);
-    // 0935:27ed mov si,170h
-    ctx.cpu.regs.set_si(0x170u16);
-    ctx.dump_dosbox(0x27f0);
-    // 0935:27f0 mov cx,10h
-    ctx.cpu.regs.set_cx(0x10u16);
-    ctx.dump_dosbox(0x27f3);
-    // 0935:27f3 sub sp,20h
-    ctx.cpu
-        .regs
-        .set_sp(sub(ctx.cpu.regs.get_sp(), 0x20u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x27f6);
-    // 0935:27f6 mov di,sp
-    ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x27f8);
-    // 0935:27f8 cld
-    cld(ctx);
-    ctx.dump_dosbox(0x27f9);
-    // 0935:27f9 push ss
-    ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x27fa);
-    // 0935:27fa pop es
-    let x = ctx.pop16();
-    ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x27fb);
-    // 0935:27fb rep movsw
-    ctx.rep(Rep::REP, Context::movsw);
-    ctx.dump_dosbox(0x27fd);
-    // 0935:27fd push word ptr [bp+4]
-    ctx.push16(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x2800);
-    // 0935:2800 call 1261h
-    ctx.call16(0x2803, Cont(x0935_1261))
-}
-
-pub fn x0935_2803(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2803);
-    // 0935:2803 cmp byte ptr ds:[164h],2Fh
-    sub(
-        ctx.memory
-            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x164u16)),
-        0x2fu8,
-        &mut ctx.cpu.flags,
-    );
-    ctx.dump_dosbox(0x2808);
-    // 0935:2808 jne short 283Ah
-    ctx.jne(Cont(x0935_280a), Cont(x0935_283a))
-}
-
-pub fn x0935_280a(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x280a);
-    // 0935:280a mov si,1BC2h
-    ctx.cpu.regs.set_si(0x1bc2u16);
-    ctx.dump_dosbox(0x280d);
-    // 0935:280d mov cx,7Fh
-    ctx.cpu.regs.set_cx(0x7fu16);
-    ctx.dump_dosbox(0x2810);
-    // 0935:2810 sub sp,0FEh
-    ctx.cpu
-        .regs
-        .set_sp(sub(ctx.cpu.regs.get_sp(), 0xfeu16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x2814);
-    // 0935:2814 mov di,sp
-    ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x2816);
-    // 0935:2816 cld
-    cld(ctx);
-    ctx.dump_dosbox(0x2817);
-    // 0935:2817 push ss
-    ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x2818);
-    // 0935:2818 pop es
-    let x = ctx.pop16();
-    ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x2819);
-    // 0935:2819 rep movsw
-    ctx.rep(Rep::REP, Context::movsw);
-    ctx.dump_dosbox(0x281b);
-    // 0935:281b push word ptr ds:[1E86h]
-    ctx.push16(
-        ctx.memory
-            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x1e86u16)),
-    );
-    ctx.dump_dosbox(0x281f);
-    // 0935:281f mov bx,[bp+4]
-    ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x2822);
-    // 0935:2822 push word ptr [bx+4]
-    ctx.push16(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ds(),
-        ctx.cpu.regs.get_bx().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x2825);
-    // 0935:2825 call 109Fh
-    ctx.call16(0x2828, Cont(x0935_109f))
-}
-
-pub fn x0935_2828(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2828);
-    // 0935:2828 push word ptr ds:[4Eh]
-    ctx.push16(
-        ctx.memory
-            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x4eu16)),
-    );
-    ctx.dump_dosbox(0x282c);
-    // 0935:282c lea ax,[bp-102h]
-    ctx.cpu
-        .regs
-        .set_ax(ctx.cpu.regs.get_bp().wrapping_add(0xfefeu16));
-    ctx.dump_dosbox(0x2830);
-    // 0935:2830 push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x2831);
-    // 0935:2831 push word ptr [bp+4]
-    ctx.push16(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x2834);
-    // 0935:2834 call 1742h
-    ctx.call16(0x2837, Cont(x0935_1742))
-}
-
-pub fn x0935_2837(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2837);
-    // 0935:2837 jmp near ptr 295Fh
-    Cont(x0935_295f)
-}
-
-pub fn x0935_283a(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x283a);
-    // 0935:283a lea ax,[bp-102h]
-    ctx.cpu
-        .regs
-        .set_ax(ctx.cpu.regs.get_bp().wrapping_add(0xfefeu16));
-    ctx.dump_dosbox(0x283e);
-    // 0935:283e push ds
-    ctx.push16(ctx.cpu.regs.get_ds());
-    ctx.dump_dosbox(0x283f);
-    // 0935:283f push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x2840);
-    // 0935:2840 mov ax,1E88h
-    ctx.cpu.regs.set_ax(0x1e88u16);
-    ctx.dump_dosbox(0x2843);
-    // 0935:2843 push ds
-    ctx.push16(ctx.cpu.regs.get_ds());
-    ctx.dump_dosbox(0x2844);
-    // 0935:2844 push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x2845);
-    // 0935:2845 call far ptr 0D72h:5570h
-    ctx.callf16(0x284a, 0xd72, Cont(x0d72_5570))
-}
-
-pub fn x0935_284a(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x284a);
-    // 0935:284a shr ax,1
-    ctx.cpu
-        .regs
-        .set_ax(shr(ctx.cpu.regs.get_ax(), 0x1u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x284c);
-    // 0935:284c jb short 2851h
-    ctx.jb(Cont(x0935_284e), Cont(x0935_2851))
-}
-
-pub fn x0935_284e(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x284e);
-    // 0935:284e jmp near ptr 28D3h
-    Cont(x0935_28d3)
-}
-
-pub fn x0935_2851(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2851);
-    // 0935:2851 mov si,1BC2h
-    ctx.cpu.regs.set_si(0x1bc2u16);
-    ctx.dump_dosbox(0x2854);
-    // 0935:2854 mov cx,7Eh
-    ctx.cpu.regs.set_cx(0x7eu16);
-    ctx.dump_dosbox(0x2857);
-    // 0935:2857 sub sp,0FCh
-    ctx.cpu
-        .regs
-        .set_sp(sub(ctx.cpu.regs.get_sp(), 0xfcu16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x285b);
-    // 0935:285b mov di,sp
-    ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x285d);
-    // 0935:285d cld
-    cld(ctx);
-    ctx.dump_dosbox(0x285e);
-    // 0935:285e push ss
-    ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x285f);
-    // 0935:285f pop es
-    let x = ctx.pop16();
-    ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x2860);
-    // 0935:2860 rep movsw
-    ctx.rep(Rep::REP, Context::movsw);
-    ctx.dump_dosbox(0x2862);
-    // 0935:2862 push word ptr ds:[1E8Ch]
-    ctx.push16(
-        ctx.memory
-            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x1e8cu16)),
-    );
-    ctx.dump_dosbox(0x2866);
-    // 0935:2866 push word ptr ds:[1E8Ah]
-    ctx.push16(
-        ctx.memory
-            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x1e8au16)),
-    );
-    ctx.dump_dosbox(0x286a);
-    // 0935:286a mov bx,[bp+4]
-    ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x286d);
-    // 0935:286d push word ptr [bx+4]
-    ctx.push16(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ds(),
-        ctx.cpu.regs.get_bx().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x2870);
-    // 0935:2870 call 109Fh
-    ctx.call16(0x2873, Cont(x0935_109f))
-}
-
-pub fn x0935_2873(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2873);
-    // 0935:2873 mov di,[bp+4]
-    ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x2876);
-    // 0935:2876 lea ax,[di-200h]
-    ctx.cpu
-        .regs
-        .set_ax(ctx.cpu.regs.get_di().wrapping_add(0xfe00u16));
-    ctx.dump_dosbox(0x287a);
-    // 0935:287a push ds
-    ctx.push16(ctx.cpu.regs.get_ds());
-    ctx.dump_dosbox(0x287b);
-    // 0935:287b push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x287c);
-    // 0935:287c mov ax,1E8Eh
-    ctx.cpu.regs.set_ax(0x1e8eu16);
-    ctx.dump_dosbox(0x287f);
-    // 0935:287f push ds
-    ctx.push16(ctx.cpu.regs.get_ds());
-    ctx.dump_dosbox(0x2880);
-    // 0935:2880 push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x2881);
-    // 0935:2881 mov [bp-204h],di
-    ctx.memory.write::<u16>(
-        segofs(
-            ctx.cpu.regs.get_ss(),
-            ctx.cpu.regs.get_bp().wrapping_add(0xfdfcu16),
-        ),
-        ctx.cpu.regs.get_di(),
-    );
-    ctx.dump_dosbox(0x2885);
-    // 0935:2885 call far ptr 0D72h:5570h
-    ctx.callf16(0x288a, 0xd72, Cont(x0d72_5570))
-}
-
-pub fn x0935_288a(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x288a);
-    // 0935:288a shr ax,1
-    ctx.cpu
-        .regs
-        .set_ax(shr(ctx.cpu.regs.get_ax(), 0x1u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x288c);
-    // 0935:288c jae short 28AEh
-    ctx.jae(Cont(x0935_288e), Cont(x0935_28ae))
-}
-
-pub fn x0935_288e(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x288e);
-    // 0935:288e mov si,1BC2h
-    ctx.cpu.regs.set_si(0x1bc2u16);
-    ctx.dump_dosbox(0x2891);
-    // 0935:2891 mov cx,7Fh
-    ctx.cpu.regs.set_cx(0x7fu16);
-    ctx.dump_dosbox(0x2894);
-    // 0935:2894 sub sp,0FEh
-    ctx.cpu
-        .regs
-        .set_sp(sub(ctx.cpu.regs.get_sp(), 0xfeu16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x2898);
-    // 0935:2898 mov di,sp
-    ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x289a);
-    // 0935:289a cld
-    cld(ctx);
-    ctx.dump_dosbox(0x289b);
-    // 0935:289b push ss
-    ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x289c);
-    // 0935:289c pop es
-    let x = ctx.pop16();
-    ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x289d);
-    // 0935:289d rep movsw
-    ctx.rep(Rep::REP, Context::movsw);
-    ctx.dump_dosbox(0x289f);
-    // 0935:289f push word ptr ds:[1E90h]
-    ctx.push16(
-        ctx.memory
-            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x1e90u16)),
-    );
-    ctx.dump_dosbox(0x28a3);
-    // 0935:28a3 mov bx,[bp+4]
-    ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x28a6);
-    // 0935:28a6 push word ptr [bx+4]
-    ctx.push16(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ds(),
-        ctx.cpu.regs.get_bx().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x28a9);
-    // 0935:28a9 call 109Fh
-    ctx.call16(0x28ac, Cont(x0935_109f))
-}
-
-pub fn x0935_28ac(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x28ac);
-    // 0935:28ac jmp short 28D0h
-    Cont(x0935_28d0)
-}
-
-pub fn x0935_28ae(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x28ae);
-    // 0935:28ae mov si,1BC2h
-    ctx.cpu.regs.set_si(0x1bc2u16);
-    ctx.dump_dosbox(0x28b1);
-    // 0935:28b1 mov cx,7Eh
-    ctx.cpu.regs.set_cx(0x7eu16);
-    ctx.dump_dosbox(0x28b4);
-    // 0935:28b4 sub sp,0FCh
-    ctx.cpu
-        .regs
-        .set_sp(sub(ctx.cpu.regs.get_sp(), 0xfcu16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x28b8);
-    // 0935:28b8 mov di,sp
-    ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x28ba);
-    // 0935:28ba cld
-    cld(ctx);
-    ctx.dump_dosbox(0x28bb);
-    // 0935:28bb push ss
-    ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x28bc);
-    // 0935:28bc pop es
-    let x = ctx.pop16();
-    ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x28bd);
-    // 0935:28bd rep movsw
-    ctx.rep(Rep::REP, Context::movsw);
-    ctx.dump_dosbox(0x28bf);
-    // 0935:28bf push word ptr ds:[1E94h]
-    ctx.push16(
-        ctx.memory
-            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x1e94u16)),
-    );
-    ctx.dump_dosbox(0x28c3);
-    // 0935:28c3 push word ptr ds:[1E92h]
-    ctx.push16(
-        ctx.memory
-            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x1e92u16)),
-    );
-    ctx.dump_dosbox(0x28c7);
-    // 0935:28c7 mov bx,[bp+4]
-    ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x28ca);
-    // 0935:28ca push word ptr [bx+4]
-    ctx.push16(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ds(),
-        ctx.cpu.regs.get_bx().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x28cd);
-    // 0935:28cd call 109Fh
-    ctx.call16(0x28d0, Cont(x0935_109f))
-}
-
-pub fn x0935_28d0(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x28d0);
-    // 0935:28d0 jmp near ptr 295Fh
-    Cont(x0935_295f)
-}
-
-pub fn x0935_28d3(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x28d3);
-    // 0935:28d3 mov ax,2
-    ctx.cpu.regs.set_ax(0x2u16);
-    ctx.dump_dosbox(0x28d6);
-    // 0935:28d6 push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x28d7);
-    // 0935:28d7 lea ax,[bp-102h]
-    ctx.cpu
-        .regs
-        .set_ax(ctx.cpu.regs.get_bp().wrapping_add(0xfefeu16));
-    ctx.dump_dosbox(0x28db);
-    // 0935:28db push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x28dc);
-    // 0935:28dc push word ptr [bp+4]
-    ctx.push16(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x28df);
-    // 0935:28df call 1742h
-    ctx.call16(0x28e2, Cont(x0935_1742))
-}
-
-pub fn x0935_28e2(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x28e2);
-    // 0935:28e2 mov di,[bp+4]
-    ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x28e5);
-    // 0935:28e5 lea ax,[di-200h]
-    ctx.cpu
-        .regs
-        .set_ax(ctx.cpu.regs.get_di().wrapping_add(0xfe00u16));
-    ctx.dump_dosbox(0x28e9);
-    // 0935:28e9 push ds
-    ctx.push16(ctx.cpu.regs.get_ds());
-    ctx.dump_dosbox(0x28ea);
-    // 0935:28ea push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x28eb);
-    // 0935:28eb mov ax,1E96h
-    ctx.cpu.regs.set_ax(0x1e96u16);
-    ctx.dump_dosbox(0x28ee);
-    // 0935:28ee push ds
-    ctx.push16(ctx.cpu.regs.get_ds());
-    ctx.dump_dosbox(0x28ef);
-    // 0935:28ef push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x28f0);
-    // 0935:28f0 mov [bp-204h],di
-    ctx.memory.write::<u16>(
-        segofs(
-            ctx.cpu.regs.get_ss(),
-            ctx.cpu.regs.get_bp().wrapping_add(0xfdfcu16),
-        ),
-        ctx.cpu.regs.get_di(),
-    );
-    ctx.dump_dosbox(0x28f4);
-    // 0935:28f4 call far ptr 0D72h:55E0h
-    ctx.callf16(0x28f9, 0xd72, Cont(x0d72_55e0))
-}
-
-pub fn x0935_28f9(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x28f9);
-    // 0935:28f9 shr ax,1
-    ctx.cpu
-        .regs
-        .set_ax(shr(ctx.cpu.regs.get_ax(), 0x1u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x28fb);
-    // 0935:28fb jae short 295Fh
-    ctx.jae(Cont(x0935_28fd), Cont(x0935_295f))
-}
-
-pub fn x0935_28fd(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x28fd);
-    // 0935:28fd mov di,[bp+4]
-    ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x2900);
-    // 0935:2900 mov di,[di+4]
-    ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ds(),
-        ctx.cpu.regs.get_di().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x2903);
-    // 0935:2903 mov dx,di
-    ctx.cpu.regs.set_dx(ctx.cpu.regs.get_di());
-    ctx.dump_dosbox(0x2905);
-    // 0935:2905 les di,[di+8]
-    let ptr = ctx.memory.read::<u32>(segofs(
-        ctx.cpu.regs.get_ds(),
-        ctx.cpu.regs.get_di().wrapping_add(0x8u16),
-    ));
-    ctx.cpu.regs.es = (ptr >> 16) as u16;
-    ctx.cpu.regs.set_di(ptr as u16);
-    ctx.dump_dosbox(0x2908);
-    // 0935:2908 mov al,es:[di]
-    ctx.cpu.regs.set_al(
-        ctx.memory
-            .read::<u8>(segofs(ctx.cpu.regs.get_es(), ctx.cpu.regs.get_di())),
-    );
-    ctx.dump_dosbox(0x290b);
-    // 0935:290b xor ah,ah
-    ctx.cpu.regs.set_ah(xor(
-        ctx.cpu.regs.get_ah(),
-        ctx.cpu.regs.get_ah(),
-        &mut ctx.cpu.flags,
-    ));
-    ctx.dump_dosbox(0x290d);
-    // 0935:290d xchg si,ax
-    let t = ctx.cpu.regs.get_si();
-    ctx.cpu.regs.set_si(ctx.cpu.regs.get_ax());
-    ctx.cpu.regs.set_ax(t);
-    ctx.dump_dosbox(0x290e);
-    // 0935:290e mov bx,si
-    ctx.cpu.regs.set_bx(ctx.cpu.regs.get_si());
-    ctx.dump_dosbox(0x2910);
-    // 0935:2910 mov al,es:[bx+di]
-    ctx.cpu.regs.set_al(ctx.memory.read::<u8>(segofs(
-        ctx.cpu.regs.get_es(),
-        ctx.cpu.regs.get_bx().wrapping_add(ctx.cpu.regs.get_di()),
-    )));
-    ctx.dump_dosbox(0x2913);
-    // 0935:2913 mov ds:[162h],al
-    ctx.memory.write::<u8>(
-        segofs(ctx.cpu.regs.get_ds(), 0x162u16),
-        ctx.cpu.regs.get_al(),
-    );
-    ctx.dump_dosbox(0x2916);
-    // 0935:2916 cmp byte ptr ds:[162h],64h
-    sub(
-        ctx.memory
-            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x162u16)),
-        0x64u8,
-        &mut ctx.cpu.flags,
-    );
-    ctx.dump_dosbox(0x291b);
-    // 0935:291b jne short 2941h
-    ctx.jne(Cont(x0935_291d), Cont(x0935_2941))
-}
-
-pub fn x0935_291d(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x291d);
-    // 0935:291d mov si,1BC2h
-    ctx.cpu.regs.set_si(0x1bc2u16);
-    ctx.dump_dosbox(0x2920);
-    // 0935:2920 mov cx,7Fh
-    ctx.cpu.regs.set_cx(0x7fu16);
-    ctx.dump_dosbox(0x2923);
-    // 0935:2923 sub sp,0FEh
-    ctx.cpu
-        .regs
-        .set_sp(sub(ctx.cpu.regs.get_sp(), 0xfeu16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x2927);
-    // 0935:2927 mov di,sp
-    ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x2929);
-    // 0935:2929 cld
-    cld(ctx);
-    ctx.dump_dosbox(0x292a);
-    // 0935:292a push ss
-    ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x292b);
-    // 0935:292b pop es
-    let x = ctx.pop16();
-    ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x292c);
-    // 0935:292c rep movsw
-    ctx.rep(Rep::REP, Context::movsw);
-    ctx.dump_dosbox(0x292e);
-    // 0935:292e push word ptr ds:[1E98h]
-    ctx.push16(
-        ctx.memory
-            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x1e98u16)),
-    );
-    ctx.dump_dosbox(0x2932);
-    // 0935:2932 mov [bp-206h],dx
-    ctx.memory.write::<u16>(
-        segofs(
-            ctx.cpu.regs.get_ss(),
-            ctx.cpu.regs.get_bp().wrapping_add(0xfdfau16),
-        ),
-        ctx.cpu.regs.get_dx(),
-    );
-    ctx.dump_dosbox(0x2936);
-    // 0935:2936 mov bx,[bp+4]
-    ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x2939);
-    // 0935:2939 push word ptr [bx+4]
-    ctx.push16(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ds(),
-        ctx.cpu.regs.get_bx().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x293c);
-    // 0935:293c call 109Fh
-    ctx.call16(0x293f, Cont(x0935_109f))
-}
-
-pub fn x0935_293f(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x293f);
-    // 0935:293f jmp short 295Fh
-    Cont(x0935_295f)
-}
-
-pub fn x0935_2941(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2941);
-    // 0935:2941 mov si,1BC2h
-    ctx.cpu.regs.set_si(0x1bc2u16);
-    ctx.dump_dosbox(0x2944);
-    // 0935:2944 mov cx,7Fh
-    ctx.cpu.regs.set_cx(0x7fu16);
-    ctx.dump_dosbox(0x2947);
-    // 0935:2947 sub sp,0FEh
-    ctx.cpu
-        .regs
-        .set_sp(sub(ctx.cpu.regs.get_sp(), 0xfeu16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x294b);
-    // 0935:294b mov di,sp
-    ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x294d);
-    // 0935:294d cld
-    cld(ctx);
-    ctx.dump_dosbox(0x294e);
-    // 0935:294e push ss
-    ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x294f);
-    // 0935:294f pop es
-    let x = ctx.pop16();
-    ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x2950);
-    // 0935:2950 rep movsw
-    ctx.rep(Rep::REP, Context::movsw);
-    ctx.dump_dosbox(0x2952);
-    // 0935:2952 push word ptr ds:[1E9Ah]
-    ctx.push16(
-        ctx.memory
-            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x1e9au16)),
-    );
-    ctx.dump_dosbox(0x2956);
-    // 0935:2956 mov bx,[bp+4]
-    ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x2959);
-    // 0935:2959 push word ptr [bx+4]
-    ctx.push16(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ds(),
-        ctx.cpu.regs.get_bx().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x295c);
-    // 0935:295c call 109Fh
-    ctx.call16(0x295f, Cont(x0935_109f))
-}
-
-pub fn x0935_295f(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x295f);
-    // 0935:295f test byte ptr ds:[56h],1
-    and(
-        ctx.memory
-            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x56u16)),
-        0x1u8,
-        &mut ctx.cpu.flags,
-    );
-    ctx.dump_dosbox(0x2964);
-    // 0935:2964 je short 29C8h
-    ctx.je(Cont(x0935_2966), Cont(x0935_29c8))
-}
-
-pub fn x0935_2966(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2966);
-    // 0935:2966 mov si,1BC2h
-    ctx.cpu.regs.set_si(0x1bc2u16);
-    ctx.dump_dosbox(0x2969);
-    // 0935:2969 mov cx,7Ch
-    ctx.cpu.regs.set_cx(0x7cu16);
-    ctx.dump_dosbox(0x296c);
-    // 0935:296c sub sp,0F8h
-    ctx.cpu
-        .regs
-        .set_sp(sub(ctx.cpu.regs.get_sp(), 0xf8u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x2970);
-    // 0935:2970 mov di,sp
-    ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x2972);
-    // 0935:2972 cld
-    cld(ctx);
-    ctx.dump_dosbox(0x2973);
-    // 0935:2973 push ss
-    ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x2974);
-    // 0935:2974 pop es
-    let x = ctx.pop16();
-    ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x2975);
-    // 0935:2975 rep movsw
-    ctx.rep(Rep::REP, Context::movsw);
-    ctx.dump_dosbox(0x2977);
-    // 0935:2977 mov si,1E9Ch
-    ctx.cpu.regs.set_si(0x1e9cu16);
-    ctx.dump_dosbox(0x297a);
-    // 0935:297a sub sp,8
-    ctx.cpu
-        .regs
-        .set_sp(sub(ctx.cpu.regs.get_sp(), 0x8u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x297d);
-    // 0935:297d mov di,sp
-    ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x297f);
-    // 0935:297f cld
-    cld(ctx);
-    ctx.dump_dosbox(0x2980);
-    // 0935:2980 push ss
-    ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x2981);
-    // 0935:2981 pop es
-    let x = ctx.pop16();
-    ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x2982);
-    // 0935:2982 movsw
-    ctx.movsw();
-    ctx.dump_dosbox(0x2983);
-    // 0935:2983 movsw
-    ctx.movsw();
-    ctx.dump_dosbox(0x2984);
-    // 0935:2984 movsw
-    ctx.movsw();
-    ctx.dump_dosbox(0x2985);
-    // 0935:2985 movsw
-    ctx.movsw();
-    ctx.dump_dosbox(0x2986);
-    // 0935:2986 mov bx,[bp+4]
-    ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x2989);
-    // 0935:2989 push word ptr [bx+4]
-    ctx.push16(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ds(),
-        ctx.cpu.regs.get_bx().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x298c);
-    // 0935:298c call 109Fh
-    ctx.call16(0x298f, Cont(x0935_109f))
-}
-
-pub fn x0935_298f(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x298f);
-    // 0935:298f mov di,[bp+4]
-    ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x2992);
-    // 0935:2992 lea ax,[di-200h]
-    ctx.cpu
-        .regs
-        .set_ax(ctx.cpu.regs.get_di().wrapping_add(0xfe00u16));
-    ctx.dump_dosbox(0x2996);
-    // 0935:2996 push ds
-    ctx.push16(ctx.cpu.regs.get_ds());
-    ctx.dump_dosbox(0x2997);
-    // 0935:2997 push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x2998);
-    // 0935:2998 mov ax,1EA4h
-    ctx.cpu.regs.set_ax(0x1ea4u16);
-    ctx.dump_dosbox(0x299b);
-    // 0935:299b push ds
-    ctx.push16(ctx.cpu.regs.get_ds());
-    ctx.dump_dosbox(0x299c);
-    // 0935:299c push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x299d);
-    // 0935:299d mov [bp-204h],di
-    ctx.memory.write::<u16>(
-        segofs(
-            ctx.cpu.regs.get_ss(),
-            ctx.cpu.regs.get_bp().wrapping_add(0xfdfcu16),
-        ),
-        ctx.cpu.regs.get_di(),
-    );
-    ctx.dump_dosbox(0x29a1);
-    // 0935:29a1 call far ptr 0D72h:55E0h
-    ctx.callf16(0x29a6, 0xd72, Cont(x0d72_55e0))
-}
-
-pub fn x0935_29a6(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x29a6);
-    // 0935:29a6 shr ax,1
-    ctx.cpu
-        .regs
-        .set_ax(shr(ctx.cpu.regs.get_ax(), 0x1u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x29a8);
-    // 0935:29a8 jae short 29C8h
-    ctx.jae(Cont(x0935_29aa), Cont(x0935_29c8))
-}
-
-pub fn x0935_29aa(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x29aa);
-    // 0935:29aa mov si,1BC2h
-    ctx.cpu.regs.set_si(0x1bc2u16);
-    ctx.dump_dosbox(0x29ad);
-    // 0935:29ad mov cx,7Fh
-    ctx.cpu.regs.set_cx(0x7fu16);
-    ctx.dump_dosbox(0x29b0);
-    // 0935:29b0 sub sp,0FEh
-    ctx.cpu
-        .regs
-        .set_sp(sub(ctx.cpu.regs.get_sp(), 0xfeu16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x29b4);
-    // 0935:29b4 mov di,sp
-    ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x29b6);
-    // 0935:29b6 cld
-    cld(ctx);
-    ctx.dump_dosbox(0x29b7);
-    // 0935:29b7 push ss
-    ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x29b8);
-    // 0935:29b8 pop es
-    let x = ctx.pop16();
-    ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x29b9);
-    // 0935:29b9 rep movsw
-    ctx.rep(Rep::REP, Context::movsw);
-    ctx.dump_dosbox(0x29bb);
-    // 0935:29bb push word ptr ds:[1EA6h]
-    ctx.push16(
-        ctx.memory
-            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x1ea6u16)),
-    );
-    ctx.dump_dosbox(0x29bf);
-    // 0935:29bf mov bx,[bp+4]
-    ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x29c2);
-    // 0935:29c2 push word ptr [bx+4]
-    ctx.push16(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ds(),
-        ctx.cpu.regs.get_bx().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x29c5);
-    // 0935:29c5 call 109Fh
-    ctx.call16(0x29c8, Cont(x0935_109f))
-}
-
-pub fn x0935_29c8(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x29c8);
-    // 0935:29c8 cmp byte ptr ds:[164h],2Eh
-    sub(
-        ctx.memory
-            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x164u16)),
-        0x2eu8,
-        &mut ctx.cpu.flags,
-    );
-    ctx.dump_dosbox(0x29cd);
-    // 0935:29cd je short 29D2h
-    ctx.je(Cont(x0935_29cf), Cont(x0935_29d2))
-}
-
-pub fn x0935_29cf(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x29cf);
-    // 0935:29cf jmp near ptr 2B1Ah
-    Cont(x0935_2b1a)
-}
-
-pub fn x0935_29d2(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x29d2);
-    // 0935:29d2 mov di,[bp+4]
-    ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x29d5);
-    // 0935:29d5 mov di,[di+4]
-    ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ds(),
-        ctx.cpu.regs.get_di().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x29d8);
-    // 0935:29d8 mov dx,di
-    ctx.cpu.regs.set_dx(ctx.cpu.regs.get_di());
-    ctx.dump_dosbox(0x29da);
-    // 0935:29da les di,[di+0Ch]
-    let ptr = ctx.memory.read::<u32>(segofs(
-        ctx.cpu.regs.get_ds(),
-        ctx.cpu.regs.get_di().wrapping_add(0xcu16),
-    ));
-    ctx.cpu.regs.es = (ptr >> 16) as u16;
-    ctx.cpu.regs.set_di(ptr as u16);
-    ctx.dump_dosbox(0x29dd);
-    // 0935:29dd mov al,es:[di]
-    ctx.cpu.regs.set_al(
-        ctx.memory
-            .read::<u8>(segofs(ctx.cpu.regs.get_es(), ctx.cpu.regs.get_di())),
-    );
-    ctx.dump_dosbox(0x29e0);
-    // 0935:29e0 xor ah,ah
-    ctx.cpu.regs.set_ah(xor(
-        ctx.cpu.regs.get_ah(),
-        ctx.cpu.regs.get_ah(),
-        &mut ctx.cpu.flags,
-    ));
-    ctx.dump_dosbox(0x29e2);
-    // 0935:29e2 cmp ax,ds:[160h]
-    sub(
-        ctx.cpu.regs.get_ax(),
-        ctx.memory
-            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x160u16)),
-        &mut ctx.cpu.flags,
-    );
-    ctx.dump_dosbox(0x29e6);
-    // 0935:29e6 jge short 29EBh
-    ctx.jge(Cont(x0935_29e8), Cont(x0935_29eb))
-}
-
-pub fn x0935_29e8(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x29e8);
-    // 0935:29e8 jmp near ptr 2B1Ah
-    Cont(x0935_2b1a)
-}
-
-pub fn x0935_29eb(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x29eb);
-    // 0935:29eb mov bx,ds:[160h]
-    ctx.cpu.regs.set_bx(
-        ctx.memory
-            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x160u16)),
-    );
-    ctx.dump_dosbox(0x29ef);
-    // 0935:29ef mov al,es:[bx+di]
-    ctx.cpu.regs.set_al(ctx.memory.read::<u8>(segofs(
-        ctx.cpu.regs.get_es(),
-        ctx.cpu.regs.get_bx().wrapping_add(ctx.cpu.regs.get_di()),
-    )));
-    ctx.dump_dosbox(0x29f2);
-    // 0935:29f2 xor ah,ah
-    ctx.cpu.regs.set_ah(xor(
-        ctx.cpu.regs.get_ah(),
-        ctx.cpu.regs.get_ah(),
-        &mut ctx.cpu.flags,
-    ));
-    ctx.dump_dosbox(0x29f4);
-    // 0935:29f4 push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x29f5);
-    // 0935:29f5 mov ax,1Fh
-    ctx.cpu.regs.set_ax(0x1fu16);
-    ctx.dump_dosbox(0x29f8);
-    // 0935:29f8 push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x29f9);
-    // 0935:29f9 mov ax,170h
-    ctx.cpu.regs.set_ax(0x170u16);
-    ctx.dump_dosbox(0x29fc);
-    // 0935:29fc push ds
-    ctx.push16(ctx.cpu.regs.get_ds());
-    ctx.dump_dosbox(0x29fd);
-    // 0935:29fd push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x29fe);
-    // 0935:29fe mov [bp-204h],dx
-    ctx.memory.write::<u16>(
-        segofs(
-            ctx.cpu.regs.get_ss(),
-            ctx.cpu.regs.get_bp().wrapping_add(0xfdfcu16),
-        ),
-        ctx.cpu.regs.get_dx(),
-    );
-    ctx.dump_dosbox(0x2a02);
-    // 0935:2a02 call far ptr 0D72h:5452h
-    ctx.callf16(0x2a07, 0xd72, Cont(x0d72_5452))
-}
-
-pub fn x0935_2a07(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2a07);
-    // 0935:2a07 shr ax,1
-    ctx.cpu
-        .regs
-        .set_ax(shr(ctx.cpu.regs.get_ax(), 0x1u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x2a09);
-    // 0935:2a09 jb short 2A0Eh
-    ctx.jb(Cont(x0935_2a0b), Cont(x0935_2a0e))
-}
-
-pub fn x0935_2a0b(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2a0b);
-    // 0935:2a0b jmp near ptr 2B1Ah
-    Cont(x0935_2b1a)
-}
-
-pub fn x0935_2a0e(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2a0e);
-    // 0935:2a0e mov bx,[bp+4]
-    ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x2a11);
-    // 0935:2a11 push word ptr [bx+4]
-    ctx.push16(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ds(),
-        ctx.cpu.regs.get_bx().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x2a14);
-    // 0935:2a14 call 11A0h
-    ctx.call16(0x2a17, Cont(x0935_11a0))
-}
-
-pub fn x0935_2a17(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2a17);
-    // 0935:2a17 lea ax,[bp-102h]
-    ctx.cpu
-        .regs
-        .set_ax(ctx.cpu.regs.get_bp().wrapping_add(0xfefeu16));
-    ctx.dump_dosbox(0x2a1b);
-    // 0935:2a1b push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x2a1c);
-    // 0935:2a1c mov si,170h
-    ctx.cpu.regs.set_si(0x170u16);
-    ctx.dump_dosbox(0x2a1f);
-    // 0935:2a1f mov cx,10h
-    ctx.cpu.regs.set_cx(0x10u16);
-    ctx.dump_dosbox(0x2a22);
-    // 0935:2a22 sub sp,20h
-    ctx.cpu
-        .regs
-        .set_sp(sub(ctx.cpu.regs.get_sp(), 0x20u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x2a25);
-    // 0935:2a25 mov di,sp
-    ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x2a27);
-    // 0935:2a27 cld
-    cld(ctx);
-    ctx.dump_dosbox(0x2a28);
-    // 0935:2a28 push ss
-    ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x2a29);
-    // 0935:2a29 pop es
-    let x = ctx.pop16();
-    ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x2a2a);
-    // 0935:2a2a rep movsw
-    ctx.rep(Rep::REP, Context::movsw);
-    ctx.dump_dosbox(0x2a2c);
-    // 0935:2a2c push word ptr [bp+4]
-    ctx.push16(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x2a2f);
-    // 0935:2a2f call 1261h
-    ctx.call16(0x2a32, Cont(x0935_1261))
-}
-
-pub fn x0935_2a32(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2a32);
-    // 0935:2a32 test byte ptr ds:[56h],1
-    and(
-        ctx.memory
-            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x56u16)),
-        0x1u8,
-        &mut ctx.cpu.flags,
-    );
-    ctx.dump_dosbox(0x2a37);
-    // 0935:2a37 jne short 2A3Ch
-    ctx.jne(Cont(x0935_2a39), Cont(x0935_2a3c))
-}
-
-pub fn x0935_2a39(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2a39);
-    // 0935:2a39 jmp near ptr 2AE4h
-    Cont(x0935_2ae4)
-}
-
-pub fn x0935_2a3c(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2a3c);
-    // 0935:2a3c lea si,[bp-102h]
-    ctx.cpu
-        .regs
-        .set_si(ctx.cpu.regs.get_bp().wrapping_add(0xfefeu16));
-    ctx.dump_dosbox(0x2a40);
-    // 0935:2a40 mov cx,80h
-    ctx.cpu.regs.set_cx(0x80u16);
-    ctx.dump_dosbox(0x2a43);
-    // 0935:2a43 sub sp,100h
-    ctx.cpu
-        .regs
-        .set_sp(sub(ctx.cpu.regs.get_sp(), 0x100u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x2a47);
-    // 0935:2a47 mov di,sp
-    ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x2a49);
-    // 0935:2a49 cld
-    cld(ctx);
-    ctx.dump_dosbox(0x2a4a);
-    // 0935:2a4a push ss
-    ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x2a4b);
-    // 0935:2a4b pop es
-    let x = ctx.pop16();
-    ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x2a4c);
-    // 0935:2a4c rep movsw
-    ctx.rep(Rep::REP, Context::movsw);
-    ctx.dump_dosbox(0x2a4e);
-    // 0935:2a4e lea ax,[bp-2]
-    ctx.cpu
-        .regs
-        .set_ax(ctx.cpu.regs.get_bp().wrapping_add(0xfffeu16));
-    ctx.dump_dosbox(0x2a51);
-    // 0935:2a51 push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x2a52);
-    // 0935:2a52 push bp
-    ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x2a53);
-    // 0935:2a53 call 1DB1h
-    ctx.call16(0x2a56, Cont(x0935_1db1))
-}
-
-pub fn x0935_2a56(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2a56);
-    // 0935:2a56 cmp word ptr [bp-2],0
-    sub(
-        ctx.memory.read::<u16>(segofs(
-            ctx.cpu.regs.get_ss(),
-            ctx.cpu.regs.get_bp().wrapping_add(0xfffeu16),
-        )),
-        0x0u16,
-        &mut ctx.cpu.flags,
-    );
-    ctx.dump_dosbox(0x2a5a);
-    // 0935:2a5a jne short 2A5Fh
-    ctx.jne(Cont(x0935_2a5c), Cont(x0935_2a5f))
-}
-
-pub fn x0935_2a5c(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2a5c);
-    // 0935:2a5c jmp near ptr 2AE2h
-    Cont(x0935_2ae2)
-}
-
-pub fn x0935_2a5f(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2a5f);
-    // 0935:2a5f mov si,1BC2h
-    ctx.cpu.regs.set_si(0x1bc2u16);
-    ctx.dump_dosbox(0x2a62);
-    // 0935:2a62 mov cx,7Dh
-    ctx.cpu.regs.set_cx(0x7du16);
-    ctx.dump_dosbox(0x2a65);
-    // 0935:2a65 sub sp,0FAh
-    ctx.cpu
-        .regs
-        .set_sp(sub(ctx.cpu.regs.get_sp(), 0xfau16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x2a69);
-    // 0935:2a69 mov di,sp
-    ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x2a6b);
-    // 0935:2a6b cld
-    cld(ctx);
-    ctx.dump_dosbox(0x2a6c);
-    // 0935:2a6c push ss
-    ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x2a6d);
-    // 0935:2a6d pop es
-    let x = ctx.pop16();
-    ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x2a6e);
-    // 0935:2a6e rep movsw
-    ctx.rep(Rep::REP, Context::movsw);
-    ctx.dump_dosbox(0x2a70);
-    // 0935:2a70 mov si,1EA8h
-    ctx.cpu.regs.set_si(0x1ea8u16);
-    ctx.dump_dosbox(0x2a73);
-    // 0935:2a73 sub sp,6
-    ctx.cpu
-        .regs
-        .set_sp(sub(ctx.cpu.regs.get_sp(), 0x6u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x2a76);
-    // 0935:2a76 mov di,sp
-    ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x2a78);
-    // 0935:2a78 cld
-    cld(ctx);
-    ctx.dump_dosbox(0x2a79);
-    // 0935:2a79 push ss
-    ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x2a7a);
-    // 0935:2a7a pop es
-    let x = ctx.pop16();
-    ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x2a7b);
-    // 0935:2a7b movsw
-    ctx.movsw();
-    ctx.dump_dosbox(0x2a7c);
-    // 0935:2a7c movsw
-    ctx.movsw();
-    ctx.dump_dosbox(0x2a7d);
-    // 0935:2a7d movsw
-    ctx.movsw();
-    ctx.dump_dosbox(0x2a7e);
-    // 0935:2a7e mov bx,[bp+4]
-    ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x2a81);
-    // 0935:2a81 push word ptr [bx+4]
-    ctx.push16(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ds(),
-        ctx.cpu.regs.get_bx().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x2a84);
-    // 0935:2a84 call 109Fh
-    ctx.call16(0x2a87, Cont(x0935_109f))
-}
-
-pub fn x0935_2a87(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2a87);
-    // 0935:2a87 mov ax,1
-    ctx.cpu.regs.set_ax(0x1u16);
-    ctx.dump_dosbox(0x2a8a);
-    // 0935:2a8a push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x2a8b);
-    // 0935:2a8b lea ax,[bp-102h]
-    ctx.cpu
-        .regs
-        .set_ax(ctx.cpu.regs.get_bp().wrapping_add(0xfefeu16));
-    ctx.dump_dosbox(0x2a8f);
-    // 0935:2a8f push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x2a90);
-    // 0935:2a90 push word ptr [bp+4]
-    ctx.push16(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x2a93);
-    // 0935:2a93 call 1742h
-    ctx.call16(0x2a96, Cont(x0935_1742))
-}
-
-pub fn x0935_2a96(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2a96);
-    // 0935:2a96 mov si,1BC2h
-    ctx.cpu.regs.set_si(0x1bc2u16);
-    ctx.dump_dosbox(0x2a99);
-    // 0935:2a99 mov cx,7Dh
-    ctx.cpu.regs.set_cx(0x7du16);
-    ctx.dump_dosbox(0x2a9c);
-    // 0935:2a9c sub sp,0FAh
-    ctx.cpu
-        .regs
-        .set_sp(sub(ctx.cpu.regs.get_sp(), 0xfau16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x2aa0);
-    // 0935:2aa0 mov di,sp
-    ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x2aa2);
-    // 0935:2aa2 cld
-    cld(ctx);
-    ctx.dump_dosbox(0x2aa3);
-    // 0935:2aa3 push ss
-    ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x2aa4);
-    // 0935:2aa4 pop es
-    let x = ctx.pop16();
-    ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x2aa5);
-    // 0935:2aa5 rep movsw
-    ctx.rep(Rep::REP, Context::movsw);
-    ctx.dump_dosbox(0x2aa7);
-    // 0935:2aa7 mov si,1EAEh
-    ctx.cpu.regs.set_si(0x1eaeu16);
-    ctx.dump_dosbox(0x2aaa);
-    // 0935:2aaa sub sp,6
-    ctx.cpu
-        .regs
-        .set_sp(sub(ctx.cpu.regs.get_sp(), 0x6u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x2aad);
-    // 0935:2aad mov di,sp
-    ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x2aaf);
-    // 0935:2aaf cld
-    cld(ctx);
-    ctx.dump_dosbox(0x2ab0);
-    // 0935:2ab0 push ss
-    ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x2ab1);
-    // 0935:2ab1 pop es
-    let x = ctx.pop16();
-    ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x2ab2);
-    // 0935:2ab2 movsw
-    ctx.movsw();
-    ctx.dump_dosbox(0x2ab3);
-    // 0935:2ab3 movsw
-    ctx.movsw();
-    ctx.dump_dosbox(0x2ab4);
-    // 0935:2ab4 movsw
-    ctx.movsw();
-    ctx.dump_dosbox(0x2ab5);
-    // 0935:2ab5 mov bx,[bp+4]
-    ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x2ab8);
-    // 0935:2ab8 push word ptr [bx+4]
-    ctx.push16(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ds(),
-        ctx.cpu.regs.get_bx().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x2abb);
-    // 0935:2abb call 109Fh
-    ctx.call16(0x2abe, Cont(x0935_109f))
-}
-
-pub fn x0935_2abe(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2abe);
-    // 0935:2abe cmp word ptr [bp-2],1
-    sub(
-        ctx.memory.read::<u16>(segofs(
-            ctx.cpu.regs.get_ss(),
-            ctx.cpu.regs.get_bp().wrapping_add(0xfffeu16),
-        )),
-        0x1u16,
-        &mut ctx.cpu.flags,
-    );
-    ctx.dump_dosbox(0x2ac2);
-    // 0935:2ac2 je short 2AE2h
-    ctx.je(Cont(x0935_2ac4), Cont(x0935_2ae2))
-}
-
-pub fn x0935_2ac4(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2ac4);
-    // 0935:2ac4 mov si,1BC2h
-    ctx.cpu.regs.set_si(0x1bc2u16);
-    ctx.dump_dosbox(0x2ac7);
-    // 0935:2ac7 mov cx,7Fh
-    ctx.cpu.regs.set_cx(0x7fu16);
-    ctx.dump_dosbox(0x2aca);
-    // 0935:2aca sub sp,0FEh
-    ctx.cpu
-        .regs
-        .set_sp(sub(ctx.cpu.regs.get_sp(), 0xfeu16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x2ace);
-    // 0935:2ace mov di,sp
-    ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x2ad0);
-    // 0935:2ad0 cld
-    cld(ctx);
-    ctx.dump_dosbox(0x2ad1);
-    // 0935:2ad1 push ss
-    ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x2ad2);
-    // 0935:2ad2 pop es
-    let x = ctx.pop16();
-    ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x2ad3);
-    // 0935:2ad3 rep movsw
-    ctx.rep(Rep::REP, Context::movsw);
-    ctx.dump_dosbox(0x2ad5);
-    // 0935:2ad5 push word ptr ds:[1EB4h]
-    ctx.push16(
-        ctx.memory
-            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x1eb4u16)),
-    );
-    ctx.dump_dosbox(0x2ad9);
-    // 0935:2ad9 mov bx,[bp+4]
-    ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x2adc);
-    // 0935:2adc push word ptr [bx+4]
-    ctx.push16(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ds(),
-        ctx.cpu.regs.get_bx().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x2adf);
-    // 0935:2adf call 109Fh
-    ctx.call16(0x2ae2, Cont(x0935_109f))
-}
-
-pub fn x0935_2ae2(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2ae2);
-    // 0935:2ae2 jmp short 2B1Ah
-    Cont(x0935_2b1a)
-}
-
-pub fn x0935_2ae4(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2ae4);
-    // 0935:2ae4 mov si,1BC2h
-    ctx.cpu.regs.set_si(0x1bc2u16);
-    ctx.dump_dosbox(0x2ae7);
-    // 0935:2ae7 mov cx,7Dh
-    ctx.cpu.regs.set_cx(0x7du16);
-    ctx.dump_dosbox(0x2aea);
-    // 0935:2aea sub sp,0FAh
-    ctx.cpu
-        .regs
-        .set_sp(sub(ctx.cpu.regs.get_sp(), 0xfau16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x2aee);
-    // 0935:2aee mov di,sp
-    ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x2af0);
-    // 0935:2af0 cld
-    cld(ctx);
-    ctx.dump_dosbox(0x2af1);
-    // 0935:2af1 push ss
-    ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x2af2);
-    // 0935:2af2 pop es
-    let x = ctx.pop16();
-    ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x2af3);
-    // 0935:2af3 rep movsw
-    ctx.rep(Rep::REP, Context::movsw);
-    ctx.dump_dosbox(0x2af5);
-    // 0935:2af5 mov si,1EB6h
-    ctx.cpu.regs.set_si(0x1eb6u16);
-    ctx.dump_dosbox(0x2af8);
-    // 0935:2af8 sub sp,6
-    ctx.cpu
-        .regs
-        .set_sp(sub(ctx.cpu.regs.get_sp(), 0x6u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x2afb);
-    // 0935:2afb mov di,sp
-    ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x2afd);
-    // 0935:2afd cld
-    cld(ctx);
-    ctx.dump_dosbox(0x2afe);
-    // 0935:2afe push ss
-    ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x2aff);
-    // 0935:2aff pop es
-    let x = ctx.pop16();
-    ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x2b00);
-    // 0935:2b00 movsw
-    ctx.movsw();
-    ctx.dump_dosbox(0x2b01);
-    // 0935:2b01 movsw
-    ctx.movsw();
-    ctx.dump_dosbox(0x2b02);
-    // 0935:2b02 movsw
-    ctx.movsw();
-    ctx.dump_dosbox(0x2b03);
-    // 0935:2b03 mov bx,[bp+4]
-    ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x2b06);
-    // 0935:2b06 push word ptr [bx+4]
-    ctx.push16(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ds(),
-        ctx.cpu.regs.get_bx().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x2b09);
-    // 0935:2b09 call 109Fh
-    ctx.call16(0x2b0c, Cont(x0935_109f))
-}
-
-pub fn x0935_2b0c(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2b0c);
-    // 0935:2b0c xor ax,ax
-    ctx.cpu.regs.set_ax(xor(
-        ctx.cpu.regs.get_ax(),
-        ctx.cpu.regs.get_ax(),
-        &mut ctx.cpu.flags,
-    ));
-    ctx.dump_dosbox(0x2b0e);
-    // 0935:2b0e push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x2b0f);
-    // 0935:2b0f lea ax,[bp-102h]
-    ctx.cpu
-        .regs
-        .set_ax(ctx.cpu.regs.get_bp().wrapping_add(0xfefeu16));
-    ctx.dump_dosbox(0x2b13);
-    // 0935:2b13 push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x2b14);
-    // 0935:2b14 push word ptr [bp+4]
-    ctx.push16(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x2b17);
-    // 0935:2b17 call 1742h
-    ctx.call16(0x2b1a, Cont(x0935_1742))
-}
-
-pub fn x0935_2b1a(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2b1a);
-    // 0935:2b1a mov byte ptr ds:[56h],0
-    ctx.memory
-        .write::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x56u16), 0x0u8);
-    ctx.dump_dosbox(0x2b1f);
-    // 0935:2b1f cmp byte ptr ds:[164h],27h
-    sub(
-        ctx.memory
-            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x164u16)),
-        0x27u8,
-        &mut ctx.cpu.flags,
-    );
-    ctx.dump_dosbox(0x2b24);
-    // 0935:2b24 je short 2B29h
-    ctx.je(Cont(x0935_2b26), Cont(x0935_2b29))
-}
-
-pub fn x0935_2b26(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2b26);
-    // 0935:2b26 jmp near ptr 2BE6h
-    Cont(x0935_2be6)
-}
-
-pub fn x0935_2b29(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2b29);
-    // 0935:2b29 mov di,[bp+4]
-    ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x2b2c);
-    // 0935:2b2c mov di,[di+4]
-    ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ds(),
-        ctx.cpu.regs.get_di().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x2b2f);
-    // 0935:2b2f mov dx,di
-    ctx.cpu.regs.set_dx(ctx.cpu.regs.get_di());
-    ctx.dump_dosbox(0x2b31);
-    // 0935:2b31 les di,[di+0Ch]
-    let ptr = ctx.memory.read::<u32>(segofs(
-        ctx.cpu.regs.get_ds(),
-        ctx.cpu.regs.get_di().wrapping_add(0xcu16),
-    ));
-    ctx.cpu.regs.es = (ptr >> 16) as u16;
-    ctx.cpu.regs.set_di(ptr as u16);
-    ctx.dump_dosbox(0x2b34);
-    // 0935:2b34 mov al,es:[di]
-    ctx.cpu.regs.set_al(
-        ctx.memory
-            .read::<u8>(segofs(ctx.cpu.regs.get_es(), ctx.cpu.regs.get_di())),
-    );
-    ctx.dump_dosbox(0x2b37);
-    // 0935:2b37 xor ah,ah
-    ctx.cpu.regs.set_ah(xor(
-        ctx.cpu.regs.get_ah(),
-        ctx.cpu.regs.get_ah(),
-        &mut ctx.cpu.flags,
-    ));
-    ctx.dump_dosbox(0x2b39);
-    // 0935:2b39 cmp ax,ds:[160h]
-    sub(
-        ctx.cpu.regs.get_ax(),
-        ctx.memory
-            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x160u16)),
-        &mut ctx.cpu.flags,
-    );
-    ctx.dump_dosbox(0x2b3d);
-    // 0935:2b3d jge short 2B42h
-    ctx.jge(Cont(x0935_2b3f), Cont(x0935_2b42))
-}
-
-pub fn x0935_2b3f(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2b3f);
-    // 0935:2b3f jmp near ptr 2BE6h
-    Cont(x0935_2be6)
-}
-
-pub fn x0935_2b42(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2b42);
-    // 0935:2b42 mov bx,ds:[160h]
-    ctx.cpu.regs.set_bx(
-        ctx.memory
-            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x160u16)),
-    );
-    ctx.dump_dosbox(0x2b46);
-    // 0935:2b46 mov al,es:[bx+di]
-    ctx.cpu.regs.set_al(ctx.memory.read::<u8>(segofs(
-        ctx.cpu.regs.get_es(),
-        ctx.cpu.regs.get_bx().wrapping_add(ctx.cpu.regs.get_di()),
-    )));
-    ctx.dump_dosbox(0x2b49);
-    // 0935:2b49 xor ah,ah
-    ctx.cpu.regs.set_ah(xor(
-        ctx.cpu.regs.get_ah(),
-        ctx.cpu.regs.get_ah(),
-        &mut ctx.cpu.flags,
-    ));
-    ctx.dump_dosbox(0x2b4b);
-    // 0935:2b4b push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x2b4c);
-    // 0935:2b4c mov ax,0Fh
-    ctx.cpu.regs.set_ax(0xfu16);
-    ctx.dump_dosbox(0x2b4f);
-    // 0935:2b4f push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x2b50);
-    // 0935:2b50 mov ax,1EBCh
-    ctx.cpu.regs.set_ax(0x1ebcu16);
-    ctx.dump_dosbox(0x2b53);
-    // 0935:2b53 push ds
-    ctx.push16(ctx.cpu.regs.get_ds());
-    ctx.dump_dosbox(0x2b54);
-    // 0935:2b54 push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x2b55);
-    // 0935:2b55 mov [bp-204h],dx
-    ctx.memory.write::<u16>(
-        segofs(
-            ctx.cpu.regs.get_ss(),
-            ctx.cpu.regs.get_bp().wrapping_add(0xfdfcu16),
-        ),
-        ctx.cpu.regs.get_dx(),
-    );
-    ctx.dump_dosbox(0x2b59);
-    // 0935:2b59 call far ptr 0D72h:5452h
-    ctx.callf16(0x2b5e, 0xd72, Cont(x0d72_5452))
-}
-
-pub fn x0935_2b5e(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2b5e);
-    // 0935:2b5e shr ax,1
-    ctx.cpu
-        .regs
-        .set_ax(shr(ctx.cpu.regs.get_ax(), 0x1u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x2b60);
-    // 0935:2b60 jb short 2B65h
-    ctx.jb(Cont(x0935_2b62), Cont(x0935_2b65))
-}
-
-pub fn x0935_2b62(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2b62);
-    // 0935:2b62 jmp near ptr 2BE6h
-    Cont(x0935_2be6)
-}
-
-pub fn x0935_2b65(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2b65);
-    // 0935:2b65 mov bx,[bp+4]
-    ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x2b68);
-    // 0935:2b68 push word ptr [bx+4]
-    ctx.push16(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ds(),
-        ctx.cpu.regs.get_bx().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x2b6b);
-    // 0935:2b6b call 11A0h
-    ctx.call16(0x2b6e, Cont(x0935_11a0))
-}
-
-pub fn x0935_2b6e(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2b6e);
-    // 0935:2b6e mov bx,[bp+4]
-    ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x2b71);
-    // 0935:2b71 push word ptr [bx+4]
-    ctx.push16(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ds(),
-        ctx.cpu.regs.get_bx().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x2b74);
-    // 0935:2b74 call 11A0h
-    ctx.call16(0x2b77, Cont(x0935_11a0))
-}
-
-pub fn x0935_2b77(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2b77);
-    // 0935:2b77 mov di,[bp+4]
-    ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x2b7a);
-    // 0935:2b7a mov di,[di+4]
-    ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ds(),
-        ctx.cpu.regs.get_di().wrapping_add(0x4u16),
-    )));
-    ctx.dump_dosbox(0x2b7d);
-    // 0935:2b7d mov dx,di
-    ctx.cpu.regs.set_dx(ctx.cpu.regs.get_di());
-    ctx.dump_dosbox(0x2b7f);
-    // 0935:2b7f les di,[di+8]
-    let ptr = ctx.memory.read::<u32>(segofs(
-        ctx.cpu.regs.get_ds(),
-        ctx.cpu.regs.get_di().wrapping_add(0x8u16),
-    ));
-    ctx.cpu.regs.es = (ptr >> 16) as u16;
-    ctx.cpu.regs.set_di(ptr as u16);
-    ctx.dump_dosbox(0x2b82);
-    // 0935:2b82 mov al,es:[di]
-    ctx.cpu.regs.set_al(
-        ctx.memory
-            .read::<u8>(segofs(ctx.cpu.regs.get_es(), ctx.cpu.regs.get_di())),
-    );
-    ctx.dump_dosbox(0x2b85);
-    // 0935:2b85 xor ah,ah
-    ctx.cpu.regs.set_ah(xor(
-        ctx.cpu.regs.get_ah(),
-        ctx.cpu.regs.get_ah(),
-        &mut ctx.cpu.flags,
-    ));
-    ctx.dump_dosbox(0x2b87);
-    // 0935:2b87 xchg si,ax
-    let t = ctx.cpu.regs.get_si();
-    ctx.cpu.regs.set_si(ctx.cpu.regs.get_ax());
-    ctx.cpu.regs.set_ax(t);
-    ctx.dump_dosbox(0x2b88);
-    // 0935:2b88 mov bx,si
-    ctx.cpu.regs.set_bx(ctx.cpu.regs.get_si());
-    ctx.dump_dosbox(0x2b8a);
-    // 0935:2b8a mov al,es:[bx+di]
-    ctx.cpu.regs.set_al(ctx.memory.read::<u8>(segofs(
-        ctx.cpu.regs.get_es(),
-        ctx.cpu.regs.get_bx().wrapping_add(ctx.cpu.regs.get_di()),
-    )));
-    ctx.dump_dosbox(0x2b8d);
-    // 0935:2b8d xor ah,ah
-    ctx.cpu.regs.set_ah(xor(
-        ctx.cpu.regs.get_ah(),
-        ctx.cpu.regs.get_ah(),
-        &mut ctx.cpu.flags,
-    ));
-    ctx.dump_dosbox(0x2b8f);
-    // 0935:2b8f push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x2b90);
-    // 0935:2b90 mov ax,0Fh
-    ctx.cpu.regs.set_ax(0xfu16);
-    ctx.dump_dosbox(0x2b93);
-    // 0935:2b93 push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x2b94);
-    // 0935:2b94 mov ax,1ECCh
-    ctx.cpu.regs.set_ax(0x1eccu16);
-    ctx.dump_dosbox(0x2b97);
-    // 0935:2b97 push ds
-    ctx.push16(ctx.cpu.regs.get_ds());
-    ctx.dump_dosbox(0x2b98);
-    // 0935:2b98 push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x2b99);
-    // 0935:2b99 mov [bp-206h],dx
-    ctx.memory.write::<u16>(
-        segofs(
-            ctx.cpu.regs.get_ss(),
-            ctx.cpu.regs.get_bp().wrapping_add(0xfdfau16),
-        ),
-        ctx.cpu.regs.get_dx(),
-    );
-    ctx.dump_dosbox(0x2b9d);
-    // 0935:2b9d call far ptr 0D72h:5452h
-    ctx.callf16(0x2ba2, 0xd72, Cont(x0d72_5452))
-}
-
 pub fn x0935_2ba2(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2ba2);
     // 0935:2ba2 shr ax,1
     ctx.cpu
         .regs
         .set_ax(shr(ctx.cpu.regs.get_ax(), 0x1u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x2ba4);
     // 0935:2ba4 jae short 2BC8h
     ctx.jae(Cont(x0935_2ba6), Cont(x0935_2bc8))
 }
 
 pub fn x0935_2ba6(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2ba6);
     // 0935:2ba6 mov si,1BC2h
     ctx.cpu.regs.set_si(0x1bc2u16);
-    ctx.dump_dosbox(0x2ba9);
     // 0935:2ba9 mov cx,7Eh
     ctx.cpu.regs.set_cx(0x7eu16);
-    ctx.dump_dosbox(0x2bac);
     // 0935:2bac sub sp,0FCh
     ctx.cpu
         .regs
         .set_sp(sub(ctx.cpu.regs.get_sp(), 0xfcu16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x2bb0);
     // 0935:2bb0 mov di,sp
     ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x2bb2);
     // 0935:2bb2 cld
     cld(ctx);
-    ctx.dump_dosbox(0x2bb3);
     // 0935:2bb3 push ss
     ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x2bb4);
     // 0935:2bb4 pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x2bb5);
     // 0935:2bb5 rep movsw
     ctx.rep(Rep::REP, Context::movsw);
-    ctx.dump_dosbox(0x2bb7);
     // 0935:2bb7 push word ptr ds:[1EDEh]
     ctx.push16(
         ctx.memory
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x1edeu16)),
     );
-    ctx.dump_dosbox(0x2bbb);
     // 0935:2bbb push word ptr ds:[1EDCh]
     ctx.push16(
         ctx.memory
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x1edcu16)),
     );
-    ctx.dump_dosbox(0x2bbf);
     // 0935:2bbf mov bx,[bp+4]
     ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x2bc2);
     // 0935:2bc2 push word ptr [bx+4]
     ctx.push16(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ds(),
         ctx.cpu.regs.get_bx().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x2bc5);
     // 0935:2bc5 call 109Fh
     ctx.call16(0x2bc8, Cont(x0935_109f))
 }
 
 pub fn x0935_2bc8(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2bc8);
     // 0935:2bc8 mov si,1BC2h
     ctx.cpu.regs.set_si(0x1bc2u16);
-    ctx.dump_dosbox(0x2bcb);
     // 0935:2bcb mov cx,7Fh
     ctx.cpu.regs.set_cx(0x7fu16);
-    ctx.dump_dosbox(0x2bce);
     // 0935:2bce sub sp,0FEh
     ctx.cpu
         .regs
         .set_sp(sub(ctx.cpu.regs.get_sp(), 0xfeu16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x2bd2);
     // 0935:2bd2 mov di,sp
     ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x2bd4);
     // 0935:2bd4 cld
     cld(ctx);
-    ctx.dump_dosbox(0x2bd5);
     // 0935:2bd5 push ss
     ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x2bd6);
     // 0935:2bd6 pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x2bd7);
     // 0935:2bd7 rep movsw
     ctx.rep(Rep::REP, Context::movsw);
-    ctx.dump_dosbox(0x2bd9);
     // 0935:2bd9 push word ptr ds:[1EE0h]
     ctx.push16(
         ctx.memory
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x1ee0u16)),
     );
-    ctx.dump_dosbox(0x2bdd);
     // 0935:2bdd mov bx,[bp+4]
     ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x2be0);
     // 0935:2be0 push word ptr [bx+4]
     ctx.push16(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ds(),
         ctx.cpu.regs.get_bx().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x2be3);
     // 0935:2be3 call 109Fh
     ctx.call16(0x2be6, Cont(x0935_109f))
 }
 
 pub fn x0935_2be6(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2be6);
     // 0935:2be6 mov sp,bp
     ctx.cpu.regs.set_sp(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x2be8);
     // 0935:2be8 pop bp
     let x = ctx.pop16();
     ctx.cpu.regs.set_bp(x);
-    ctx.dump_dosbox(0x2be9);
     // 0935:2be9 ret 2
     ctx.ret16(2)
 }
 
 pub fn x0935_30a1(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x30a1);
     // 0935:30a1 push bp
     ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x30a2);
     // 0935:30a2 mov bp,sp
     ctx.cpu.regs.set_bp(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x30a4);
     // 0935:30a4 sub sp,2Ch
     ctx.cpu
         .regs
         .set_sp(sub(ctx.cpu.regs.get_sp(), 0x2cu16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x30a8);
     // 0935:30a8 mov byte ptr ds:[50h],1
     ctx.memory
         .write::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x50u16), 0x1u8);
-    ctx.dump_dosbox(0x30ad);
     // 0935:30ad mov byte ptr ds:[4Ch],2
     ctx.memory
         .write::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x4cu16), 0x2u8);
-    ctx.dump_dosbox(0x30b2);
     // 0935:30b2 mov al,ds:[164h]
     ctx.cpu.regs.set_al(
         ctx.memory
             .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x164u16)),
     );
-    ctx.dump_dosbox(0x30b5);
     // 0935:30b5 xor ah,ah
     ctx.cpu.regs.set_ah(xor(
         ctx.cpu.regs.get_ah(),
         ctx.cpu.regs.get_ah(),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x30b7);
     // 0935:30b7 xchg bx,ax
     let t = ctx.cpu.regs.get_bx();
     ctx.cpu.regs.set_bx(ctx.cpu.regs.get_ax());
     ctx.cpu.regs.set_ax(t);
-    ctx.dump_dosbox(0x30b8);
     // 0935:30b8 jmp near ptr 3C2Fh
     Cont(x0935_3c2f)
 }
 
 pub fn x0935_3304(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3304);
     // 0935:3304 mov si,1BC2h
     ctx.cpu.regs.set_si(0x1bc2u16);
-    ctx.dump_dosbox(0x3307);
     // 0935:3307 mov cx,7Ch
     ctx.cpu.regs.set_cx(0x7cu16);
-    ctx.dump_dosbox(0x330a);
     // 0935:330a sub sp,0F8h
     ctx.cpu
         .regs
         .set_sp(sub(ctx.cpu.regs.get_sp(), 0xf8u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x330e);
     // 0935:330e mov di,sp
     ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x3310);
     // 0935:3310 cld
     cld(ctx);
-    ctx.dump_dosbox(0x3311);
     // 0935:3311 push ss
     ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x3312);
     // 0935:3312 pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x3313);
     // 0935:3313 rep movsw
     ctx.rep(Rep::REP, Context::movsw);
-    ctx.dump_dosbox(0x3315);
     // 0935:3315 mov si,1F8Ah
     ctx.cpu.regs.set_si(0x1f8au16);
-    ctx.dump_dosbox(0x3318);
     // 0935:3318 sub sp,8
     ctx.cpu
         .regs
         .set_sp(sub(ctx.cpu.regs.get_sp(), 0x8u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x331b);
     // 0935:331b mov di,sp
     ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x331d);
     // 0935:331d cld
     cld(ctx);
-    ctx.dump_dosbox(0x331e);
     // 0935:331e push ss
     ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x331f);
     // 0935:331f pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x3320);
     // 0935:3320 movsw
     ctx.movsw();
-    ctx.dump_dosbox(0x3321);
     // 0935:3321 movsw
     ctx.movsw();
-    ctx.dump_dosbox(0x3322);
     // 0935:3322 movsw
     ctx.movsw();
-    ctx.dump_dosbox(0x3323);
     // 0935:3323 movsw
     ctx.movsw();
-    ctx.dump_dosbox(0x3324);
     // 0935:3324 mov bx,[bp+4]
     ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x3327);
     // 0935:3327 push word ptr [bx+4]
     ctx.push16(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ds(),
         ctx.cpu.regs.get_bx().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x332a);
     // 0935:332a call 109Fh
     ctx.call16(0x332d, Cont(x0935_109f))
 }
 
 pub fn x0935_332d(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x332d);
     // 0935:332d jmp near ptr 3CBAh
     Cont(x0935_3cba)
 }
 
 pub fn x0935_360e(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x360e);
     // 0935:360e mov si,1BC2h
     ctx.cpu.regs.set_si(0x1bc2u16);
-    ctx.dump_dosbox(0x3611);
     // 0935:3611 mov cx,7Ch
     ctx.cpu.regs.set_cx(0x7cu16);
-    ctx.dump_dosbox(0x3614);
     // 0935:3614 sub sp,0F8h
     ctx.cpu
         .regs
         .set_sp(sub(ctx.cpu.regs.get_sp(), 0xf8u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x3618);
     // 0935:3618 mov di,sp
     ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x361a);
     // 0935:361a cld
     cld(ctx);
-    ctx.dump_dosbox(0x361b);
     // 0935:361b push ss
     ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x361c);
     // 0935:361c pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x361d);
     // 0935:361d rep movsw
     ctx.rep(Rep::REP, Context::movsw);
-    ctx.dump_dosbox(0x361f);
     // 0935:361f mov si,1FD8h
     ctx.cpu.regs.set_si(0x1fd8u16);
-    ctx.dump_dosbox(0x3622);
     // 0935:3622 sub sp,8
     ctx.cpu
         .regs
         .set_sp(sub(ctx.cpu.regs.get_sp(), 0x8u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x3625);
     // 0935:3625 mov di,sp
     ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x3627);
     // 0935:3627 cld
     cld(ctx);
-    ctx.dump_dosbox(0x3628);
     // 0935:3628 push ss
     ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x3629);
     // 0935:3629 pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x362a);
     // 0935:362a movsw
     ctx.movsw();
-    ctx.dump_dosbox(0x362b);
     // 0935:362b movsw
     ctx.movsw();
-    ctx.dump_dosbox(0x362c);
     // 0935:362c movsw
     ctx.movsw();
-    ctx.dump_dosbox(0x362d);
     // 0935:362d movsw
     ctx.movsw();
-    ctx.dump_dosbox(0x362e);
     // 0935:362e mov bx,[bp+4]
     ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x3631);
     // 0935:3631 push word ptr [bx+4]
     ctx.push16(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ds(),
         ctx.cpu.regs.get_bx().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x3634);
     // 0935:3634 call 109Fh
     ctx.call16(0x3637, Cont(x0935_109f))
 }
 
 pub fn x0935_3637(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3637);
     // 0935:3637 jmp near ptr 3CBAh
     Cont(x0935_3cba)
 }
 
 pub fn x0935_363a(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x363a);
     // 0935:363a mov byte ptr ds:[56h],1
     ctx.memory
         .write::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x56u16), 0x1u8);
-    ctx.dump_dosbox(0x363f);
     // 0935:363f jmp near ptr 3CBAh
     Cont(x0935_3cba)
 }
 
 pub fn x0935_3642(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3642);
     // 0935:3642 mov si,1BC2h
     ctx.cpu.regs.set_si(0x1bc2u16);
-    ctx.dump_dosbox(0x3645);
     // 0935:3645 mov cx,7Bh
     ctx.cpu.regs.set_cx(0x7bu16);
-    ctx.dump_dosbox(0x3648);
     // 0935:3648 sub sp,0F6h
     ctx.cpu
         .regs
         .set_sp(sub(ctx.cpu.regs.get_sp(), 0xf6u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x364c);
     // 0935:364c mov di,sp
     ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x364e);
     // 0935:364e cld
     cld(ctx);
-    ctx.dump_dosbox(0x364f);
     // 0935:364f push ss
     ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x3650);
     // 0935:3650 pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x3651);
     // 0935:3651 rep movsw
     ctx.rep(Rep::REP, Context::movsw);
-    ctx.dump_dosbox(0x3653);
     // 0935:3653 mov si,1FE0h
     ctx.cpu.regs.set_si(0x1fe0u16);
-    ctx.dump_dosbox(0x3656);
     // 0935:3656 mov cx,5
     ctx.cpu.regs.set_cx(0x5u16);
-    ctx.dump_dosbox(0x3659);
     // 0935:3659 sub sp,0Ah
     ctx.cpu
         .regs
         .set_sp(sub(ctx.cpu.regs.get_sp(), 0xau16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x365c);
     // 0935:365c mov di,sp
     ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x365e);
     // 0935:365e cld
     cld(ctx);
-    ctx.dump_dosbox(0x365f);
     // 0935:365f push ss
     ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x3660);
     // 0935:3660 pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x3661);
     // 0935:3661 rep movsw
     ctx.rep(Rep::REP, Context::movsw);
-    ctx.dump_dosbox(0x3663);
     // 0935:3663 mov bx,[bp+4]
     ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x3666);
     // 0935:3666 push word ptr [bx+4]
     ctx.push16(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ds(),
         ctx.cpu.regs.get_bx().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x3669);
     // 0935:3669 call 109Fh
     ctx.call16(0x366c, Cont(x0935_109f))
 }
 
 pub fn x0935_366c(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x366c);
     // 0935:366c jmp near ptr 3CBAh
     Cont(x0935_3cba)
 }
 
 pub fn x0935_366f(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x366f);
     // 0935:366f mov si,1BC2h
     ctx.cpu.regs.set_si(0x1bc2u16);
-    ctx.dump_dosbox(0x3672);
     // 0935:3672 mov cx,7Eh
     ctx.cpu.regs.set_cx(0x7eu16);
-    ctx.dump_dosbox(0x3675);
     // 0935:3675 sub sp,0FCh
     ctx.cpu
         .regs
         .set_sp(sub(ctx.cpu.regs.get_sp(), 0xfcu16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x3679);
     // 0935:3679 mov di,sp
     ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x367b);
     // 0935:367b cld
     cld(ctx);
-    ctx.dump_dosbox(0x367c);
     // 0935:367c push ss
     ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x367d);
     // 0935:367d pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x367e);
     // 0935:367e rep movsw
     ctx.rep(Rep::REP, Context::movsw);
-    ctx.dump_dosbox(0x3680);
     // 0935:3680 push word ptr ds:[1FECh]
     ctx.push16(
         ctx.memory
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x1fecu16)),
     );
-    ctx.dump_dosbox(0x3684);
     // 0935:3684 push word ptr ds:[1FEAh]
     ctx.push16(
         ctx.memory
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x1feau16)),
     );
-    ctx.dump_dosbox(0x3688);
     // 0935:3688 mov bx,[bp+4]
     ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x368b);
     // 0935:368b push word ptr [bx+4]
     ctx.push16(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ds(),
         ctx.cpu.regs.get_bx().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x368e);
     // 0935:368e call 109Fh
     ctx.call16(0x3691, Cont(x0935_109f))
 }
 
 pub fn x0935_3691(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3691);
     // 0935:3691 jmp near ptr 3CBAh
     Cont(x0935_3cba)
 }
 
 pub fn x0935_3694(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3694);
     // 0935:3694 mov si,1BC2h
     ctx.cpu.regs.set_si(0x1bc2u16);
-    ctx.dump_dosbox(0x3697);
     // 0935:3697 mov cx,78h
     ctx.cpu.regs.set_cx(0x78u16);
-    ctx.dump_dosbox(0x369a);
     // 0935:369a sub sp,0F0h
     ctx.cpu
         .regs
         .set_sp(sub(ctx.cpu.regs.get_sp(), 0xf0u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x369e);
     // 0935:369e mov di,sp
     ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x36a0);
     // 0935:36a0 cld
     cld(ctx);
-    ctx.dump_dosbox(0x36a1);
     // 0935:36a1 push ss
     ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x36a2);
     // 0935:36a2 pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x36a3);
     // 0935:36a3 rep movsw
     ctx.rep(Rep::REP, Context::movsw);
-    ctx.dump_dosbox(0x36a5);
     // 0935:36a5 mov si,1FEEh
     ctx.cpu.regs.set_si(0x1feeu16);
-    ctx.dump_dosbox(0x36a8);
     // 0935:36a8 mov cx,8
     ctx.cpu.regs.set_cx(0x8u16);
-    ctx.dump_dosbox(0x36ab);
     // 0935:36ab sub sp,10h
     ctx.cpu
         .regs
         .set_sp(sub(ctx.cpu.regs.get_sp(), 0x10u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x36ae);
     // 0935:36ae mov di,sp
     ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x36b0);
     // 0935:36b0 cld
     cld(ctx);
-    ctx.dump_dosbox(0x36b1);
     // 0935:36b1 push ss
     ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x36b2);
     // 0935:36b2 pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x36b3);
     // 0935:36b3 rep movsw
     ctx.rep(Rep::REP, Context::movsw);
-    ctx.dump_dosbox(0x36b5);
     // 0935:36b5 mov bx,[bp+4]
     ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x36b8);
     // 0935:36b8 push word ptr [bx+4]
     ctx.push16(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ds(),
         ctx.cpu.regs.get_bx().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x36bb);
     // 0935:36bb call 109Fh
     ctx.call16(0x36be, Cont(x0935_109f))
 }
 
 pub fn x0935_36be(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x36be);
     // 0935:36be jmp near ptr 3CBAh
     Cont(x0935_3cba)
 }
 
 pub fn x0935_371a(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x371a);
     // 0935:371a mov di,[bp+4]
     ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x371d);
     // 0935:371d mov di,[di+4]
     ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ds(),
         ctx.cpu.regs.get_di().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x3720);
     // 0935:3720 mov dx,di
     ctx.cpu.regs.set_dx(ctx.cpu.regs.get_di());
-    ctx.dump_dosbox(0x3722);
     // 0935:3722 les di,[di+0Ch]
     let ptr = ctx.memory.read::<u32>(segofs(
         ctx.cpu.regs.get_ds(),
@@ -5613,20 +460,17 @@ pub fn x0935_371a(ctx: &mut Context) -> Cont {
     ));
     ctx.cpu.regs.es = (ptr >> 16) as u16;
     ctx.cpu.regs.set_di(ptr as u16);
-    ctx.dump_dosbox(0x3725);
     // 0935:3725 mov al,es:[di]
     ctx.cpu.regs.set_al(
         ctx.memory
             .read::<u8>(segofs(ctx.cpu.regs.get_es(), ctx.cpu.regs.get_di())),
     );
-    ctx.dump_dosbox(0x3728);
     // 0935:3728 xor ah,ah
     ctx.cpu.regs.set_ah(xor(
         ctx.cpu.regs.get_ah(),
         ctx.cpu.regs.get_ah(),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x372a);
     // 0935:372a cmp ax,ds:[160h]
     sub(
         ctx.cpu.regs.get_ax(),
@@ -5634,56 +478,44 @@ pub fn x0935_371a(ctx: &mut Context) -> Cont {
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x160u16)),
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x372e);
     // 0935:372e jge short 3733h
     ctx.jge(Cont(x0935_3730), Cont(x0935_3733))
 }
 
 pub fn x0935_3730(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3730);
     // 0935:3730 jmp near ptr 381Eh
     Cont(x0935_381e)
 }
 
 pub fn x0935_3733(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3733);
     // 0935:3733 mov bx,ds:[160h]
     ctx.cpu.regs.set_bx(
         ctx.memory
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x160u16)),
     );
-    ctx.dump_dosbox(0x3737);
     // 0935:3737 mov al,es:[bx+di]
     ctx.cpu.regs.set_al(ctx.memory.read::<u8>(segofs(
         ctx.cpu.regs.get_es(),
         ctx.cpu.regs.get_bx().wrapping_add(ctx.cpu.regs.get_di()),
     )));
-    ctx.dump_dosbox(0x373a);
     // 0935:373a xor ah,ah
     ctx.cpu.regs.set_ah(xor(
         ctx.cpu.regs.get_ah(),
         ctx.cpu.regs.get_ah(),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x373c);
     // 0935:373c push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x373d);
     // 0935:373d mov ax,1Fh
     ctx.cpu.regs.set_ax(0x1fu16);
-    ctx.dump_dosbox(0x3740);
     // 0935:3740 push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x3741);
     // 0935:3741 mov ax,170h
     ctx.cpu.regs.set_ax(0x170u16);
-    ctx.dump_dosbox(0x3744);
     // 0935:3744 push ds
     ctx.push16(ctx.cpu.regs.get_ds());
-    ctx.dump_dosbox(0x3745);
     // 0935:3745 push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x3746);
     // 0935:3746 mov [bp-26h],dx
     ctx.memory.write::<u16>(
         segofs(
@@ -5692,92 +524,72 @@ pub fn x0935_3733(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_dx(),
     );
-    ctx.dump_dosbox(0x3749);
     // 0935:3749 call far ptr 0D72h:5452h
     ctx.callf16(0x374e, 0xd72, Cont(x0d72_5452))
 }
 
 pub fn x0935_374e(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x374e);
     // 0935:374e shr ax,1
     ctx.cpu
         .regs
         .set_ax(shr(ctx.cpu.regs.get_ax(), 0x1u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x3750);
     // 0935:3750 jb short 3755h
     ctx.jb(Cont(x0935_3752), Cont(x0935_3755))
 }
 
 pub fn x0935_3752(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3752);
     // 0935:3752 jmp near ptr 37F2h
     Cont(x0935_37f2)
 }
 
 pub fn x0935_3755(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3755);
     // 0935:3755 mov bx,[bp+4]
     ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x3758);
     // 0935:3758 push word ptr [bx+4]
     ctx.push16(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ds(),
         ctx.cpu.regs.get_bx().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x375b);
     // 0935:375b call 11A0h
     ctx.call16(0x375e, Cont(x0935_11a0))
 }
 
 pub fn x0935_375e(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x375e);
     // 0935:375e mov di,[bp+4]
     ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x3761);
     // 0935:3761 lea ax,[di-200h]
     ctx.cpu
         .regs
         .set_ax(ctx.cpu.regs.get_di().wrapping_add(0xfe00u16));
-    ctx.dump_dosbox(0x3765);
     // 0935:3765 push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x3766);
     // 0935:3766 mov si,170h
     ctx.cpu.regs.set_si(0x170u16);
-    ctx.dump_dosbox(0x3769);
     // 0935:3769 mov cx,10h
     ctx.cpu.regs.set_cx(0x10u16);
-    ctx.dump_dosbox(0x376c);
     // 0935:376c mov dx,di
     ctx.cpu.regs.set_dx(ctx.cpu.regs.get_di());
-    ctx.dump_dosbox(0x376e);
     // 0935:376e sub sp,20h
     ctx.cpu
         .regs
         .set_sp(sub(ctx.cpu.regs.get_sp(), 0x20u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x3771);
     // 0935:3771 mov di,sp
     ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x3773);
     // 0935:3773 cld
     cld(ctx);
-    ctx.dump_dosbox(0x3774);
     // 0935:3774 push ss
     ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x3775);
     // 0935:3775 pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x3776);
     // 0935:3776 rep movsw
     ctx.rep(Rep::REP, Context::movsw);
-    ctx.dump_dosbox(0x3778);
     // 0935:3778 mov [bp-28h],dx
     ctx.memory.write::<u16>(
         segofs(
@@ -5786,19 +598,16 @@ pub fn x0935_375e(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_dx(),
     );
-    ctx.dump_dosbox(0x377b);
     // 0935:377b push word ptr [bp+4]
     ctx.push16(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x377e);
     // 0935:377e call 1261h
     ctx.call16(0x3781, Cont(x0935_1261))
 }
 
 pub fn x0935_3781(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3781);
     // 0935:3781 cmp byte ptr ds:[164h],29h
     sub(
         ctx.memory
@@ -5806,61 +615,49 @@ pub fn x0935_3781(ctx: &mut Context) -> Cont {
         0x29u8,
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x3786);
     // 0935:3786 jne short 37ADh
     ctx.jne(Cont(x0935_3788), Cont(x0935_37ad))
 }
 
 pub fn x0935_3788(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3788);
     // 0935:3788 mov di,[bp+4]
     ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x378b);
     // 0935:378b mov al,[di-200h]
     ctx.cpu.regs.set_al(ctx.memory.read::<u8>(segofs(
         ctx.cpu.regs.get_ds(),
         ctx.cpu.regs.get_di().wrapping_add(0xfe00u16),
     )));
-    ctx.dump_dosbox(0x378f);
     // 0935:378f xor ah,ah
     ctx.cpu.regs.set_ah(xor(
         ctx.cpu.regs.get_ah(),
         ctx.cpu.regs.get_ah(),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x3791);
     // 0935:3791 cmp ax,3
     sub(ctx.cpu.regs.get_ax(), 0x3u16, &mut ctx.cpu.flags);
-    ctx.dump_dosbox(0x3794);
     // 0935:3794 jne short 37ADh
     ctx.jne(Cont(x0935_3796), Cont(x0935_37ad))
 }
 
 pub fn x0935_3796(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3796);
     // 0935:3796 mov ax,3
     ctx.cpu.regs.set_ax(0x3u16);
-    ctx.dump_dosbox(0x3799);
     // 0935:3799 push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x379a);
     // 0935:379a mov di,[bp+4]
     ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x379d);
     // 0935:379d lea ax,[di-200h]
     ctx.cpu
         .regs
         .set_ax(ctx.cpu.regs.get_di().wrapping_add(0xfe00u16));
-    ctx.dump_dosbox(0x37a1);
     // 0935:37a1 push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x37a2);
     // 0935:37a2 mov [bp-2Ah],di
     ctx.memory.write::<u16>(
         segofs(
@@ -5869,117 +666,89 @@ pub fn x0935_3796(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_di(),
     );
-    ctx.dump_dosbox(0x37a5);
     // 0935:37a5 push word ptr [bp+4]
     ctx.push16(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x37a8);
     // 0935:37a8 call 1742h
     ctx.call16(0x37ab, Cont(x0935_1742))
 }
 
 pub fn x0935_37ab(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x37ab);
     // 0935:37ab jmp short 37F0h
     Cont(x0935_37f0)
 }
 
 pub fn x0935_37ad(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x37ad);
     // 0935:37ad mov si,1BC2h
     ctx.cpu.regs.set_si(0x1bc2u16);
-    ctx.dump_dosbox(0x37b0);
     // 0935:37b0 mov cx,78h
     ctx.cpu.regs.set_cx(0x78u16);
-    ctx.dump_dosbox(0x37b3);
     // 0935:37b3 sub sp,0F0h
     ctx.cpu
         .regs
         .set_sp(sub(ctx.cpu.regs.get_sp(), 0xf0u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x37b7);
     // 0935:37b7 mov di,sp
     ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x37b9);
     // 0935:37b9 cld
     cld(ctx);
-    ctx.dump_dosbox(0x37ba);
     // 0935:37ba push ss
     ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x37bb);
     // 0935:37bb pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x37bc);
     // 0935:37bc rep movsw
     ctx.rep(Rep::REP, Context::movsw);
-    ctx.dump_dosbox(0x37be);
     // 0935:37be mov si,200Ah
     ctx.cpu.regs.set_si(0x200au16);
-    ctx.dump_dosbox(0x37c1);
     // 0935:37c1 mov cx,8
     ctx.cpu.regs.set_cx(0x8u16);
-    ctx.dump_dosbox(0x37c4);
     // 0935:37c4 sub sp,10h
     ctx.cpu
         .regs
         .set_sp(sub(ctx.cpu.regs.get_sp(), 0x10u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x37c7);
     // 0935:37c7 mov di,sp
     ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x37c9);
     // 0935:37c9 cld
     cld(ctx);
-    ctx.dump_dosbox(0x37ca);
     // 0935:37ca push ss
     ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x37cb);
     // 0935:37cb pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x37cc);
     // 0935:37cc rep movsw
     ctx.rep(Rep::REP, Context::movsw);
-    ctx.dump_dosbox(0x37ce);
     // 0935:37ce mov bx,[bp+4]
     ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x37d1);
     // 0935:37d1 push word ptr [bx+4]
     ctx.push16(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ds(),
         ctx.cpu.regs.get_bx().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x37d4);
     // 0935:37d4 call 109Fh
     ctx.call16(0x37d7, Cont(x0935_109f))
 }
 
 pub fn x0935_37d7(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x37d7);
     // 0935:37d7 mov ax,1
     ctx.cpu.regs.set_ax(0x1u16);
-    ctx.dump_dosbox(0x37da);
     // 0935:37da push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x37db);
     // 0935:37db mov di,[bp+4]
     ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x37de);
     // 0935:37de lea ax,[di-200h]
     ctx.cpu
         .regs
         .set_ax(ctx.cpu.regs.get_di().wrapping_add(0xfe00u16));
-    ctx.dump_dosbox(0x37e2);
     // 0935:37e2 push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x37e3);
     // 0935:37e3 mov [bp-26h],di
     ctx.memory.write::<u16>(
         segofs(
@@ -5988,19 +757,16 @@ pub fn x0935_37d7(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_di(),
     );
-    ctx.dump_dosbox(0x37e6);
     // 0935:37e6 push word ptr [bp+4]
     ctx.push16(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x37e9);
     // 0935:37e9 call 1742h
     ctx.call16(0x37ec, Cont(x0935_1742))
 }
 
 pub fn x0935_37ec(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x37ec);
     // 0935:37ec dec word ptr ds:[160h]
     ctx.memory.write::<u16>(
         segofs(ctx.cpu.regs.get_ds(), 0x160u16),
@@ -6014,169 +780,127 @@ pub fn x0935_37ec(ctx: &mut Context) -> Cont {
 }
 
 pub fn x0935_37f0(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x37f0);
     // 0935:37f0 jmp short 381Ch
     Cont(x0935_381c)
 }
 
 pub fn x0935_37f2(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x37f2);
     // 0935:37f2 mov si,1BC2h
     ctx.cpu.regs.set_si(0x1bc2u16);
-    ctx.dump_dosbox(0x37f5);
     // 0935:37f5 mov cx,77h
     ctx.cpu.regs.set_cx(0x77u16);
-    ctx.dump_dosbox(0x37f8);
     // 0935:37f8 sub sp,0EEh
     ctx.cpu
         .regs
         .set_sp(sub(ctx.cpu.regs.get_sp(), 0xeeu16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x37fc);
     // 0935:37fc mov di,sp
     ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x37fe);
     // 0935:37fe cld
     cld(ctx);
-    ctx.dump_dosbox(0x37ff);
     // 0935:37ff push ss
     ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x3800);
     // 0935:3800 pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x3801);
     // 0935:3801 rep movsw
     ctx.rep(Rep::REP, Context::movsw);
-    ctx.dump_dosbox(0x3803);
     // 0935:3803 mov si,201Ah
     ctx.cpu.regs.set_si(0x201au16);
-    ctx.dump_dosbox(0x3806);
     // 0935:3806 mov cx,9
     ctx.cpu.regs.set_cx(0x9u16);
-    ctx.dump_dosbox(0x3809);
     // 0935:3809 sub sp,12h
     ctx.cpu
         .regs
         .set_sp(sub(ctx.cpu.regs.get_sp(), 0x12u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x380c);
     // 0935:380c mov di,sp
     ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x380e);
     // 0935:380e cld
     cld(ctx);
-    ctx.dump_dosbox(0x380f);
     // 0935:380f push ss
     ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x3810);
     // 0935:3810 pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x3811);
     // 0935:3811 rep movsw
     ctx.rep(Rep::REP, Context::movsw);
-    ctx.dump_dosbox(0x3813);
     // 0935:3813 mov bx,[bp+4]
     ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x3816);
     // 0935:3816 push word ptr [bx+4]
     ctx.push16(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ds(),
         ctx.cpu.regs.get_bx().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x3819);
     // 0935:3819 call 109Fh
     ctx.call16(0x381c, Cont(x0935_109f))
 }
 
 pub fn x0935_381c(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x381c);
     // 0935:381c jmp short 3848h
     Cont(x0935_3848)
 }
 
 pub fn x0935_381e(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x381e);
     // 0935:381e mov si,1BC2h
     ctx.cpu.regs.set_si(0x1bc2u16);
-    ctx.dump_dosbox(0x3821);
     // 0935:3821 mov cx,77h
     ctx.cpu.regs.set_cx(0x77u16);
-    ctx.dump_dosbox(0x3824);
     // 0935:3824 sub sp,0EEh
     ctx.cpu
         .regs
         .set_sp(sub(ctx.cpu.regs.get_sp(), 0xeeu16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x3828);
     // 0935:3828 mov di,sp
     ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x382a);
     // 0935:382a cld
     cld(ctx);
-    ctx.dump_dosbox(0x382b);
     // 0935:382b push ss
     ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x382c);
     // 0935:382c pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x382d);
     // 0935:382d rep movsw
     ctx.rep(Rep::REP, Context::movsw);
-    ctx.dump_dosbox(0x382f);
     // 0935:382f mov si,202Ch
     ctx.cpu.regs.set_si(0x202cu16);
-    ctx.dump_dosbox(0x3832);
     // 0935:3832 mov cx,9
     ctx.cpu.regs.set_cx(0x9u16);
-    ctx.dump_dosbox(0x3835);
     // 0935:3835 sub sp,12h
     ctx.cpu
         .regs
         .set_sp(sub(ctx.cpu.regs.get_sp(), 0x12u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x3838);
     // 0935:3838 mov di,sp
     ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x383a);
     // 0935:383a cld
     cld(ctx);
-    ctx.dump_dosbox(0x383b);
     // 0935:383b push ss
     ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x383c);
     // 0935:383c pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x383d);
     // 0935:383d rep movsw
     ctx.rep(Rep::REP, Context::movsw);
-    ctx.dump_dosbox(0x383f);
     // 0935:383f mov bx,[bp+4]
     ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x3842);
     // 0935:3842 push word ptr [bx+4]
     ctx.push16(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ds(),
         ctx.cpu.regs.get_bx().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x3845);
     // 0935:3845 call 109Fh
     ctx.call16(0x3848, Cont(x0935_109f))
 }
 
 pub fn x0935_3848(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3848);
     // 0935:3848 jmp near ptr 3CBAh
     Cont(x0935_3cba)
 }
 
 pub fn x0935_384b(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x384b);
     // 0935:384b cmp byte ptr ds:[4Ah],1
     sub(
         ctx.memory
@@ -6184,13 +908,11 @@ pub fn x0935_384b(ctx: &mut Context) -> Cont {
         0x1u8,
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x3850);
     // 0935:3850 jne short 38AFh
     ctx.jne(Cont(x0935_3852), Cont(x0935_38af))
 }
 
 pub fn x0935_3852(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3852);
     // 0935:3852 cmp byte ptr ds:[4Eh],2
     sub(
         ctx.memory
@@ -6198,193 +920,145 @@ pub fn x0935_3852(ctx: &mut Context) -> Cont {
         0x2u8,
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x3857);
     // 0935:3857 jne short 3883h
     ctx.jne(Cont(x0935_3859), Cont(x0935_3883))
 }
 
 pub fn x0935_3859(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3859);
     // 0935:3859 mov si,1BC2h
     ctx.cpu.regs.set_si(0x1bc2u16);
-    ctx.dump_dosbox(0x385c);
     // 0935:385c mov cx,7Dh
     ctx.cpu.regs.set_cx(0x7du16);
-    ctx.dump_dosbox(0x385f);
     // 0935:385f sub sp,0FAh
     ctx.cpu
         .regs
         .set_sp(sub(ctx.cpu.regs.get_sp(), 0xfau16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x3863);
     // 0935:3863 mov di,sp
     ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x3865);
     // 0935:3865 cld
     cld(ctx);
-    ctx.dump_dosbox(0x3866);
     // 0935:3866 push ss
     ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x3867);
     // 0935:3867 pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x3868);
     // 0935:3868 rep movsw
     ctx.rep(Rep::REP, Context::movsw);
-    ctx.dump_dosbox(0x386a);
     // 0935:386a mov si,203Eh
     ctx.cpu.regs.set_si(0x203eu16);
-    ctx.dump_dosbox(0x386d);
     // 0935:386d sub sp,6
     ctx.cpu
         .regs
         .set_sp(sub(ctx.cpu.regs.get_sp(), 0x6u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x3870);
     // 0935:3870 mov di,sp
     ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x3872);
     // 0935:3872 cld
     cld(ctx);
-    ctx.dump_dosbox(0x3873);
     // 0935:3873 push ss
     ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x3874);
     // 0935:3874 pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x3875);
     // 0935:3875 movsw
     ctx.movsw();
-    ctx.dump_dosbox(0x3876);
     // 0935:3876 movsw
     ctx.movsw();
-    ctx.dump_dosbox(0x3877);
     // 0935:3877 movsw
     ctx.movsw();
-    ctx.dump_dosbox(0x3878);
     // 0935:3878 mov bx,[bp+4]
     ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x387b);
     // 0935:387b push word ptr [bx+4]
     ctx.push16(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ds(),
         ctx.cpu.regs.get_bx().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x387e);
     // 0935:387e call 109Fh
     ctx.call16(0x3881, Cont(x0935_109f))
 }
 
 pub fn x0935_3881(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3881);
     // 0935:3881 jmp short 38ACh
     Cont(x0935_38ac)
 }
 
 pub fn x0935_3883(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3883);
     // 0935:3883 mov si,1BC2h
     ctx.cpu.regs.set_si(0x1bc2u16);
-    ctx.dump_dosbox(0x3886);
     // 0935:3886 mov cx,7Ch
     ctx.cpu.regs.set_cx(0x7cu16);
-    ctx.dump_dosbox(0x3889);
     // 0935:3889 sub sp,0F8h
     ctx.cpu
         .regs
         .set_sp(sub(ctx.cpu.regs.get_sp(), 0xf8u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x388d);
     // 0935:388d mov di,sp
     ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x388f);
     // 0935:388f cld
     cld(ctx);
-    ctx.dump_dosbox(0x3890);
     // 0935:3890 push ss
     ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x3891);
     // 0935:3891 pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x3892);
     // 0935:3892 rep movsw
     ctx.rep(Rep::REP, Context::movsw);
-    ctx.dump_dosbox(0x3894);
     // 0935:3894 mov si,2044h
     ctx.cpu.regs.set_si(0x2044u16);
-    ctx.dump_dosbox(0x3897);
     // 0935:3897 sub sp,8
     ctx.cpu
         .regs
         .set_sp(sub(ctx.cpu.regs.get_sp(), 0x8u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x389a);
     // 0935:389a mov di,sp
     ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x389c);
     // 0935:389c cld
     cld(ctx);
-    ctx.dump_dosbox(0x389d);
     // 0935:389d push ss
     ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x389e);
     // 0935:389e pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x389f);
     // 0935:389f movsw
     ctx.movsw();
-    ctx.dump_dosbox(0x38a0);
     // 0935:38a0 movsw
     ctx.movsw();
-    ctx.dump_dosbox(0x38a1);
     // 0935:38a1 movsw
     ctx.movsw();
-    ctx.dump_dosbox(0x38a2);
     // 0935:38a2 movsw
     ctx.movsw();
-    ctx.dump_dosbox(0x38a3);
     // 0935:38a3 mov bx,[bp+4]
     ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x38a6);
     // 0935:38a6 push word ptr [bx+4]
     ctx.push16(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ds(),
         ctx.cpu.regs.get_bx().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x38a9);
     // 0935:38a9 call 109Fh
     ctx.call16(0x38ac, Cont(x0935_109f))
 }
 
 pub fn x0935_38ac(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x38ac);
     // 0935:38ac jmp near ptr 395Eh
     Cont(x0935_395e)
 }
 
 pub fn x0935_38af(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x38af);
     // 0935:38af mov di,[bp+4]
     ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x38b2);
     // 0935:38b2 mov di,[di+4]
     ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ds(),
         ctx.cpu.regs.get_di().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x38b5);
     // 0935:38b5 mov dx,di
     ctx.cpu.regs.set_dx(ctx.cpu.regs.get_di());
-    ctx.dump_dosbox(0x38b7);
     // 0935:38b7 les di,[di+0Ch]
     let ptr = ctx.memory.read::<u32>(segofs(
         ctx.cpu.regs.get_ds(),
@@ -6392,20 +1066,17 @@ pub fn x0935_38af(ctx: &mut Context) -> Cont {
     ));
     ctx.cpu.regs.es = (ptr >> 16) as u16;
     ctx.cpu.regs.set_di(ptr as u16);
-    ctx.dump_dosbox(0x38ba);
     // 0935:38ba mov al,es:[di]
     ctx.cpu.regs.set_al(
         ctx.memory
             .read::<u8>(segofs(ctx.cpu.regs.get_es(), ctx.cpu.regs.get_di())),
     );
-    ctx.dump_dosbox(0x38bd);
     // 0935:38bd xor ah,ah
     ctx.cpu.regs.set_ah(xor(
         ctx.cpu.regs.get_ah(),
         ctx.cpu.regs.get_ah(),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x38bf);
     // 0935:38bf cmp ax,ds:[160h]
     sub(
         ctx.cpu.regs.get_ax(),
@@ -6413,82 +1084,62 @@ pub fn x0935_38af(ctx: &mut Context) -> Cont {
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x160u16)),
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x38c3);
     // 0935:38c3 jge short 38C8h
     ctx.jge(Cont(x0935_38c5), Cont(x0935_38c8))
 }
 
 pub fn x0935_38c5(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x38c5);
     // 0935:38c5 jmp near ptr 395Eh
     Cont(x0935_395e)
 }
 
 pub fn x0935_38c8(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x38c8);
     // 0935:38c8 mov bx,ds:[160h]
     ctx.cpu.regs.set_bx(
         ctx.memory
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x160u16)),
     );
-    ctx.dump_dosbox(0x38cc);
     // 0935:38cc mov al,es:[bx+di]
     ctx.cpu.regs.set_al(ctx.memory.read::<u8>(segofs(
         ctx.cpu.regs.get_es(),
         ctx.cpu.regs.get_bx().wrapping_add(ctx.cpu.regs.get_di()),
     )));
-    ctx.dump_dosbox(0x38cf);
     // 0935:38cf xor ah,ah
     ctx.cpu.regs.set_ah(xor(
         ctx.cpu.regs.get_ah(),
         ctx.cpu.regs.get_ah(),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x38d1);
     // 0935:38d1 push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x38d2);
     // 0935:38d2 mov ax,1Fh
     ctx.cpu.regs.set_ax(0x1fu16);
-    ctx.dump_dosbox(0x38d5);
     // 0935:38d5 push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x38d6);
     // 0935:38d6 push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x38d7);
     // 0935:38d7 mov ax,170h
     ctx.cpu.regs.set_ax(0x170u16);
-    ctx.dump_dosbox(0x38da);
     // 0935:38da push ds
     ctx.push16(ctx.cpu.regs.get_ds());
-    ctx.dump_dosbox(0x38db);
     // 0935:38db push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x38dc);
     // 0935:38dc mov ax,5
     ctx.cpu.regs.set_ax(0x5u16);
-    ctx.dump_dosbox(0x38df);
     // 0935:38df push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x38e0);
     // 0935:38e0 mov ax,204Ch
     ctx.cpu.regs.set_ax(0x204cu16);
-    ctx.dump_dosbox(0x38e3);
     // 0935:38e3 push ds
     ctx.push16(ctx.cpu.regs.get_ds());
-    ctx.dump_dosbox(0x38e4);
     // 0935:38e4 push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x38e5);
     // 0935:38e5 lea ax,[bp-24h]
     ctx.cpu
         .regs
         .set_ax(ctx.cpu.regs.get_bp().wrapping_add(0xffdcu16));
-    ctx.dump_dosbox(0x38e8);
     // 0935:38e8 push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x38e9);
     // 0935:38e9 mov [bp-28h],di
     ctx.memory.write::<u16>(
         segofs(
@@ -6497,7 +1148,6 @@ pub fn x0935_38c8(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_di(),
     );
-    ctx.dump_dosbox(0x38ec);
     // 0935:38ec mov [bp-26h],es
     ctx.memory.write::<u16>(
         segofs(
@@ -6506,7 +1156,6 @@ pub fn x0935_38c8(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_es(),
     );
-    ctx.dump_dosbox(0x38ef);
     // 0935:38ef mov [bp-2Ah],dx
     ctx.memory.write::<u16>(
         segofs(
@@ -6515,36 +1164,29 @@ pub fn x0935_38c8(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_dx(),
     );
-    ctx.dump_dosbox(0x38f2);
     // 0935:38f2 call far ptr 0D72h:604Fh
     ctx.callf16(0x38f7, 0xd72, Cont(x0d72_604f))
 }
 
 pub fn x0935_38f7(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x38f7);
     // 0935:38f7 push ds
     ctx.push16(ctx.cpu.regs.get_ds());
-    ctx.dump_dosbox(0x38f8);
     // 0935:38f8 push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x38f9);
     // 0935:38f9 call far ptr 0D72h:5452h
     ctx.callf16(0x38fe, 0xd72, Cont(x0d72_5452))
 }
 
 pub fn x0935_38fe(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x38fe);
     // 0935:38fe shr ax,1
     ctx.cpu
         .regs
         .set_ax(shr(ctx.cpu.regs.get_ax(), 0x1u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x3900);
     // 0935:3900 jae short 395Eh
     ctx.jae(Cont(x0935_3902), Cont(x0935_395e))
 }
 
 pub fn x0935_3902(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3902);
     // 0935:3902 mov byte ptr [bp-4],1
     ctx.memory.write::<u8>(
         segofs(
@@ -6553,7 +1195,6 @@ pub fn x0935_3902(ctx: &mut Context) -> Cont {
         ),
         0x1u8,
     );
-    ctx.dump_dosbox(0x3906);
     // 0935:3906 cmp word ptr ds:[160h],2
     sub(
         ctx.memory
@@ -6561,29 +1202,24 @@ pub fn x0935_3902(ctx: &mut Context) -> Cont {
         0x2u16,
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x390b);
     // 0935:390b jle short 392Fh
     ctx.jle(Cont(x0935_390d), Cont(x0935_392f))
 }
 
 pub fn x0935_390d(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x390d);
     // 0935:390d mov di,ds:[160h]
     ctx.cpu.regs.set_di(
         ctx.memory
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x160u16)),
     );
-    ctx.dump_dosbox(0x3911);
     // 0935:3911 dec di
     ctx.cpu
         .regs
         .set_di(dec(ctx.cpu.regs.get_di(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x3912);
     // 0935:3912 dec di
     ctx.cpu
         .regs
         .set_di(dec(ctx.cpu.regs.get_di(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x3913);
     // 0935:3913 les bx,[bp-28h]
     let ptr = ctx.memory.read::<u32>(segofs(
         ctx.cpu.regs.get_ss(),
@@ -6591,49 +1227,38 @@ pub fn x0935_390d(ctx: &mut Context) -> Cont {
     ));
     ctx.cpu.regs.es = (ptr >> 16) as u16;
     ctx.cpu.regs.set_bx(ptr as u16);
-    ctx.dump_dosbox(0x3916);
     // 0935:3916 mov al,es:[bx+di]
     ctx.cpu.regs.set_al(ctx.memory.read::<u8>(segofs(
         ctx.cpu.regs.get_es(),
         ctx.cpu.regs.get_bx().wrapping_add(ctx.cpu.regs.get_di()),
     )));
-    ctx.dump_dosbox(0x3919);
     // 0935:3919 xor ah,ah
     ctx.cpu.regs.set_ah(xor(
         ctx.cpu.regs.get_ah(),
         ctx.cpu.regs.get_ah(),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x391b);
     // 0935:391b push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x391c);
     // 0935:391c mov ax,0Fh
     ctx.cpu.regs.set_ax(0xfu16);
-    ctx.dump_dosbox(0x391f);
     // 0935:391f push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x3920);
     // 0935:3920 mov ax,2052h
     ctx.cpu.regs.set_ax(0x2052u16);
-    ctx.dump_dosbox(0x3923);
     // 0935:3923 push ds
     ctx.push16(ctx.cpu.regs.get_ds());
-    ctx.dump_dosbox(0x3924);
     // 0935:3924 push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x3925);
     // 0935:3925 call far ptr 0D72h:5452h
     ctx.callf16(0x392a, 0xd72, Cont(x0d72_5452))
 }
 
 pub fn x0935_392a(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x392a);
     // 0935:392a xor al,1
     ctx.cpu
         .regs
         .set_al(xor(ctx.cpu.regs.get_al(), 0x1u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x392c);
     // 0935:392c mov [bp-4],al
     ctx.memory.write::<u8>(
         segofs(
@@ -6646,7 +1271,6 @@ pub fn x0935_392a(ctx: &mut Context) -> Cont {
 }
 
 pub fn x0935_392f(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x392f);
     // 0935:392f test byte ptr [bp-4],1
     and(
         ctx.memory.read::<u8>(segofs(
@@ -6656,241 +1280,182 @@ pub fn x0935_392f(ctx: &mut Context) -> Cont {
         0x1u8,
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x3933);
     // 0935:3933 je short 395Eh
     ctx.je(Cont(x0935_3935), Cont(x0935_395e))
 }
 
 pub fn x0935_3935(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3935);
     // 0935:3935 mov si,1BC2h
     ctx.cpu.regs.set_si(0x1bc2u16);
-    ctx.dump_dosbox(0x3938);
     // 0935:3938 mov cx,7Ch
     ctx.cpu.regs.set_cx(0x7cu16);
-    ctx.dump_dosbox(0x393b);
     // 0935:393b sub sp,0F8h
     ctx.cpu
         .regs
         .set_sp(sub(ctx.cpu.regs.get_sp(), 0xf8u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x393f);
     // 0935:393f mov di,sp
     ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x3941);
     // 0935:3941 cld
     cld(ctx);
-    ctx.dump_dosbox(0x3942);
     // 0935:3942 push ss
     ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x3943);
     // 0935:3943 pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x3944);
     // 0935:3944 rep movsw
     ctx.rep(Rep::REP, Context::movsw);
-    ctx.dump_dosbox(0x3946);
     // 0935:3946 mov si,2062h
     ctx.cpu.regs.set_si(0x2062u16);
-    ctx.dump_dosbox(0x3949);
     // 0935:3949 sub sp,8
     ctx.cpu
         .regs
         .set_sp(sub(ctx.cpu.regs.get_sp(), 0x8u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x394c);
     // 0935:394c mov di,sp
     ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x394e);
     // 0935:394e cld
     cld(ctx);
-    ctx.dump_dosbox(0x394f);
     // 0935:394f push ss
     ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x3950);
     // 0935:3950 pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x3951);
     // 0935:3951 movsw
     ctx.movsw();
-    ctx.dump_dosbox(0x3952);
     // 0935:3952 movsw
     ctx.movsw();
-    ctx.dump_dosbox(0x3953);
     // 0935:3953 movsw
     ctx.movsw();
-    ctx.dump_dosbox(0x3954);
     // 0935:3954 movsw
     ctx.movsw();
-    ctx.dump_dosbox(0x3955);
     // 0935:3955 mov bx,[bp+4]
     ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x3958);
     // 0935:3958 push word ptr [bx+4]
     ctx.push16(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ds(),
         ctx.cpu.regs.get_bx().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x395b);
     // 0935:395b call 109Fh
     ctx.call16(0x395e, Cont(x0935_109f))
 }
 
 pub fn x0935_395e(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x395e);
     // 0935:395e jmp near ptr 3CBAh
     Cont(x0935_3cba)
 }
 
 pub fn x0935_3961(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3961);
     // 0935:3961 mov si,1BC2h
     ctx.cpu.regs.set_si(0x1bc2u16);
-    ctx.dump_dosbox(0x3964);
     // 0935:3964 mov cx,7Dh
     ctx.cpu.regs.set_cx(0x7du16);
-    ctx.dump_dosbox(0x3967);
     // 0935:3967 sub sp,0FAh
     ctx.cpu
         .regs
         .set_sp(sub(ctx.cpu.regs.get_sp(), 0xfau16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x396b);
     // 0935:396b mov di,sp
     ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x396d);
     // 0935:396d cld
     cld(ctx);
-    ctx.dump_dosbox(0x396e);
     // 0935:396e push ss
     ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x396f);
     // 0935:396f pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x3970);
     // 0935:3970 rep movsw
     ctx.rep(Rep::REP, Context::movsw);
-    ctx.dump_dosbox(0x3972);
     // 0935:3972 mov si,206Ah
     ctx.cpu.regs.set_si(0x206au16);
-    ctx.dump_dosbox(0x3975);
     // 0935:3975 sub sp,6
     ctx.cpu
         .regs
         .set_sp(sub(ctx.cpu.regs.get_sp(), 0x6u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x3978);
     // 0935:3978 mov di,sp
     ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x397a);
     // 0935:397a cld
     cld(ctx);
-    ctx.dump_dosbox(0x397b);
     // 0935:397b push ss
     ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x397c);
     // 0935:397c pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x397d);
     // 0935:397d movsw
     ctx.movsw();
-    ctx.dump_dosbox(0x397e);
     // 0935:397e movsw
     ctx.movsw();
-    ctx.dump_dosbox(0x397f);
     // 0935:397f movsw
     ctx.movsw();
-    ctx.dump_dosbox(0x3980);
     // 0935:3980 mov bx,[bp+4]
     ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x3983);
     // 0935:3983 push word ptr [bx+4]
     ctx.push16(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ds(),
         ctx.cpu.regs.get_bx().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x3986);
     // 0935:3986 call 109Fh
     ctx.call16(0x3989, Cont(x0935_109f))
 }
 
 pub fn x0935_3989(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3989);
     // 0935:3989 jmp near ptr 3CBAh
     Cont(x0935_3cba)
 }
 
 pub fn x0935_39b9(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x39b9);
     // 0935:39b9 mov si,1BC2h
     ctx.cpu.regs.set_si(0x1bc2u16);
-    ctx.dump_dosbox(0x39bc);
     // 0935:39bc mov cx,7Eh
     ctx.cpu.regs.set_cx(0x7eu16);
-    ctx.dump_dosbox(0x39bf);
     // 0935:39bf sub sp,0FCh
     ctx.cpu
         .regs
         .set_sp(sub(ctx.cpu.regs.get_sp(), 0xfcu16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x39c3);
     // 0935:39c3 mov di,sp
     ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x39c5);
     // 0935:39c5 cld
     cld(ctx);
-    ctx.dump_dosbox(0x39c6);
     // 0935:39c6 push ss
     ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x39c7);
     // 0935:39c7 pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x39c8);
     // 0935:39c8 rep movsw
     ctx.rep(Rep::REP, Context::movsw);
-    ctx.dump_dosbox(0x39ca);
     // 0935:39ca push word ptr ds:[207Ch]
     ctx.push16(
         ctx.memory
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x207cu16)),
     );
-    ctx.dump_dosbox(0x39ce);
     // 0935:39ce push word ptr ds:[207Ah]
     ctx.push16(
         ctx.memory
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x207au16)),
     );
-    ctx.dump_dosbox(0x39d2);
     // 0935:39d2 mov bx,[bp+4]
     ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x39d5);
     // 0935:39d5 push word ptr [bx+4]
     ctx.push16(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ds(),
         ctx.cpu.regs.get_bx().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x39d8);
     // 0935:39d8 call 109Fh
     ctx.call16(0x39db, Cont(x0935_109f))
 }
 
 pub fn x0935_39db(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x39db);
     // 0935:39db jmp near ptr 3CBAh
     Cont(x0935_3cba)
 }
 
 pub fn x0935_39de(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x39de);
     // 0935:39de test byte ptr ds:[5Ah],1
     and(
         ctx.memory
@@ -6898,321 +1463,245 @@ pub fn x0935_39de(ctx: &mut Context) -> Cont {
         0x1u8,
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x39e3);
     // 0935:39e3 je short 3A33h
     ctx.je(Cont(x0935_39e5), Cont(x0935_3a33))
 }
 
 pub fn x0935_39e5(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x39e5);
     // 0935:39e5 mov si,1BC2h
     ctx.cpu.regs.set_si(0x1bc2u16);
-    ctx.dump_dosbox(0x39e8);
     // 0935:39e8 mov cx,7Eh
     ctx.cpu.regs.set_cx(0x7eu16);
-    ctx.dump_dosbox(0x39eb);
     // 0935:39eb sub sp,0FCh
     ctx.cpu
         .regs
         .set_sp(sub(ctx.cpu.regs.get_sp(), 0xfcu16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x39ef);
     // 0935:39ef mov di,sp
     ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x39f1);
     // 0935:39f1 cld
     cld(ctx);
-    ctx.dump_dosbox(0x39f2);
     // 0935:39f2 push ss
     ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x39f3);
     // 0935:39f3 pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x39f4);
     // 0935:39f4 rep movsw
     ctx.rep(Rep::REP, Context::movsw);
-    ctx.dump_dosbox(0x39f6);
     // 0935:39f6 push word ptr ds:[2080h]
     ctx.push16(
         ctx.memory
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x2080u16)),
     );
-    ctx.dump_dosbox(0x39fa);
     // 0935:39fa push word ptr ds:[207Eh]
     ctx.push16(
         ctx.memory
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x207eu16)),
     );
-    ctx.dump_dosbox(0x39fe);
     // 0935:39fe mov bx,[bp+4]
     ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x3a01);
     // 0935:3a01 push word ptr [bx+4]
     ctx.push16(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ds(),
         ctx.cpu.regs.get_bx().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x3a04);
     // 0935:3a04 call 109Fh
     ctx.call16(0x3a07, Cont(x0935_109f))
 }
 
 pub fn x0935_3a07(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3a07);
     // 0935:3a07 mov si,1BC2h
     ctx.cpu.regs.set_si(0x1bc2u16);
-    ctx.dump_dosbox(0x3a0a);
     // 0935:3a0a mov cx,7Bh
     ctx.cpu.regs.set_cx(0x7bu16);
-    ctx.dump_dosbox(0x3a0d);
     // 0935:3a0d sub sp,0F6h
     ctx.cpu
         .regs
         .set_sp(sub(ctx.cpu.regs.get_sp(), 0xf6u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x3a11);
     // 0935:3a11 mov di,sp
     ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x3a13);
     // 0935:3a13 cld
     cld(ctx);
-    ctx.dump_dosbox(0x3a14);
     // 0935:3a14 push ss
     ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x3a15);
     // 0935:3a15 pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x3a16);
     // 0935:3a16 rep movsw
     ctx.rep(Rep::REP, Context::movsw);
-    ctx.dump_dosbox(0x3a18);
     // 0935:3a18 mov si,2082h
     ctx.cpu.regs.set_si(0x2082u16);
-    ctx.dump_dosbox(0x3a1b);
     // 0935:3a1b mov cx,5
     ctx.cpu.regs.set_cx(0x5u16);
-    ctx.dump_dosbox(0x3a1e);
     // 0935:3a1e sub sp,0Ah
     ctx.cpu
         .regs
         .set_sp(sub(ctx.cpu.regs.get_sp(), 0xau16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x3a21);
     // 0935:3a21 mov di,sp
     ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x3a23);
     // 0935:3a23 cld
     cld(ctx);
-    ctx.dump_dosbox(0x3a24);
     // 0935:3a24 push ss
     ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x3a25);
     // 0935:3a25 pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x3a26);
     // 0935:3a26 rep movsw
     ctx.rep(Rep::REP, Context::movsw);
-    ctx.dump_dosbox(0x3a28);
     // 0935:3a28 mov bx,[bp+4]
     ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x3a2b);
     // 0935:3a2b push word ptr [bx+4]
     ctx.push16(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ds(),
         ctx.cpu.regs.get_bx().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x3a2e);
     // 0935:3a2e call 109Fh
     ctx.call16(0x3a31, Cont(x0935_109f))
 }
 
 pub fn x0935_3a31(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3a31);
     // 0935:3a31 jmp short 3A7Eh
     Cont(x0935_3a7e)
 }
 
 pub fn x0935_3a33(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3a33);
     // 0935:3a33 mov si,1BC2h
     ctx.cpu.regs.set_si(0x1bc2u16);
-    ctx.dump_dosbox(0x3a36);
     // 0935:3a36 mov cx,7Ch
     ctx.cpu.regs.set_cx(0x7cu16);
-    ctx.dump_dosbox(0x3a39);
     // 0935:3a39 sub sp,0F8h
     ctx.cpu
         .regs
         .set_sp(sub(ctx.cpu.regs.get_sp(), 0xf8u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x3a3d);
     // 0935:3a3d mov di,sp
     ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x3a3f);
     // 0935:3a3f cld
     cld(ctx);
-    ctx.dump_dosbox(0x3a40);
     // 0935:3a40 push ss
     ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x3a41);
     // 0935:3a41 pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x3a42);
     // 0935:3a42 rep movsw
     ctx.rep(Rep::REP, Context::movsw);
-    ctx.dump_dosbox(0x3a44);
     // 0935:3a44 mov si,208Ch
     ctx.cpu.regs.set_si(0x208cu16);
-    ctx.dump_dosbox(0x3a47);
     // 0935:3a47 sub sp,8
     ctx.cpu
         .regs
         .set_sp(sub(ctx.cpu.regs.get_sp(), 0x8u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x3a4a);
     // 0935:3a4a mov di,sp
     ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x3a4c);
     // 0935:3a4c cld
     cld(ctx);
-    ctx.dump_dosbox(0x3a4d);
     // 0935:3a4d push ss
     ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x3a4e);
     // 0935:3a4e pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x3a4f);
     // 0935:3a4f movsw
     ctx.movsw();
-    ctx.dump_dosbox(0x3a50);
     // 0935:3a50 movsw
     ctx.movsw();
-    ctx.dump_dosbox(0x3a51);
     // 0935:3a51 movsw
     ctx.movsw();
-    ctx.dump_dosbox(0x3a52);
     // 0935:3a52 movsw
     ctx.movsw();
-    ctx.dump_dosbox(0x3a53);
     // 0935:3a53 mov bx,[bp+4]
     ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x3a56);
     // 0935:3a56 push word ptr [bx+4]
     ctx.push16(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ds(),
         ctx.cpu.regs.get_bx().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x3a59);
     // 0935:3a59 call 109Fh
     ctx.call16(0x3a5c, Cont(x0935_109f))
 }
 
 pub fn x0935_3a5c(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3a5c);
     // 0935:3a5c mov si,1BC2h
     ctx.cpu.regs.set_si(0x1bc2u16);
-    ctx.dump_dosbox(0x3a5f);
     // 0935:3a5f mov cx,7Eh
     ctx.cpu.regs.set_cx(0x7eu16);
-    ctx.dump_dosbox(0x3a62);
     // 0935:3a62 sub sp,0FCh
     ctx.cpu
         .regs
         .set_sp(sub(ctx.cpu.regs.get_sp(), 0xfcu16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x3a66);
     // 0935:3a66 mov di,sp
     ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x3a68);
     // 0935:3a68 cld
     cld(ctx);
-    ctx.dump_dosbox(0x3a69);
     // 0935:3a69 push ss
     ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x3a6a);
     // 0935:3a6a pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x3a6b);
     // 0935:3a6b rep movsw
     ctx.rep(Rep::REP, Context::movsw);
-    ctx.dump_dosbox(0x3a6d);
     // 0935:3a6d push word ptr ds:[2096h]
     ctx.push16(
         ctx.memory
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x2096u16)),
     );
-    ctx.dump_dosbox(0x3a71);
     // 0935:3a71 push word ptr ds:[2094h]
     ctx.push16(
         ctx.memory
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x2094u16)),
     );
-    ctx.dump_dosbox(0x3a75);
     // 0935:3a75 mov bx,[bp+4]
     ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x3a78);
     // 0935:3a78 push word ptr [bx+4]
     ctx.push16(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ds(),
         ctx.cpu.regs.get_bx().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x3a7b);
     // 0935:3a7b call 109Fh
     ctx.call16(0x3a7e, Cont(x0935_109f))
 }
 
 pub fn x0935_3a7e(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3a7e);
     // 0935:3a7e mov al,ds:[5Ah]
     ctx.cpu.regs.set_al(
         ctx.memory
             .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x5au16)),
     );
-    ctx.dump_dosbox(0x3a81);
     // 0935:3a81 xor al,1
     ctx.cpu
         .regs
         .set_al(xor(ctx.cpu.regs.get_al(), 0x1u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x3a83);
     // 0935:3a83 mov ds:[5Ah],al
     ctx.memory.write::<u8>(
         segofs(ctx.cpu.regs.get_ds(), 0x5au16),
         ctx.cpu.regs.get_al(),
     );
-    ctx.dump_dosbox(0x3a86);
     // 0935:3a86 jmp near ptr 3CBAh
     Cont(x0935_3cba)
 }
 
 pub fn x0935_3a89(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3a89);
     // 0935:3a89 mov di,[bp+4]
     ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x3a8c);
     // 0935:3a8c mov di,[di+4]
     ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ds(),
         ctx.cpu.regs.get_di().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x3a8f);
     // 0935:3a8f mov dx,di
     ctx.cpu.regs.set_dx(ctx.cpu.regs.get_di());
-    ctx.dump_dosbox(0x3a91);
     // 0935:3a91 les di,[di+0Ch]
     let ptr = ctx.memory.read::<u32>(segofs(
         ctx.cpu.regs.get_ds(),
@@ -7220,122 +1709,96 @@ pub fn x0935_3a89(ctx: &mut Context) -> Cont {
     ));
     ctx.cpu.regs.es = (ptr >> 16) as u16;
     ctx.cpu.regs.set_di(ptr as u16);
-    ctx.dump_dosbox(0x3a94);
     // 0935:3a94 push es
     ctx.push16(ctx.cpu.regs.get_es());
-    ctx.dump_dosbox(0x3a95);
     // 0935:3a95 push di
     ctx.push16(ctx.cpu.regs.get_di());
-    ctx.dump_dosbox(0x3a96);
     // 0935:3a96 mov ax,ds:[160h]
     ctx.cpu.regs.set_ax(
         ctx.memory
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x160u16)),
     );
-    ctx.dump_dosbox(0x3a99);
     // 0935:3a99 dec ax
     ctx.cpu
         .regs
         .set_ax(dec(ctx.cpu.regs.get_ax(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x3a9a);
     // 0935:3a9a push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x3a9b);
     // 0935:3a9b call 0B91h
     ctx.call16(0x3a9e, Cont(x0935_0b91))
 }
 
 pub fn x0935_3a9e(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3a9e);
     // 0935:3a9e shr ax,1
     ctx.cpu
         .regs
         .set_ax(shr(ctx.cpu.regs.get_ax(), 0x1u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x3aa0);
     // 0935:3aa0 jae short 3AC7h
     ctx.jae(Cont(x0935_3aa2), Cont(x0935_3ac7))
 }
 
 pub fn x0935_3aa2(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3aa2);
     // 0935:3aa2 mov si,1BC2h
     ctx.cpu.regs.set_si(0x1bc2u16);
-    ctx.dump_dosbox(0x3aa5);
     // 0935:3aa5 mov cx,7Eh
     ctx.cpu.regs.set_cx(0x7eu16);
-    ctx.dump_dosbox(0x3aa8);
     // 0935:3aa8 sub sp,0FCh
     ctx.cpu
         .regs
         .set_sp(sub(ctx.cpu.regs.get_sp(), 0xfcu16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x3aac);
     // 0935:3aac mov di,sp
     ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x3aae);
     // 0935:3aae cld
     cld(ctx);
-    ctx.dump_dosbox(0x3aaf);
     // 0935:3aaf push ss
     ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x3ab0);
     // 0935:3ab0 pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x3ab1);
     // 0935:3ab1 rep movsw
     ctx.rep(Rep::REP, Context::movsw);
-    ctx.dump_dosbox(0x3ab3);
     // 0935:3ab3 push word ptr ds:[209Ah]
     ctx.push16(
         ctx.memory
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x209au16)),
     );
-    ctx.dump_dosbox(0x3ab7);
     // 0935:3ab7 push word ptr ds:[2098h]
     ctx.push16(
         ctx.memory
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x2098u16)),
     );
-    ctx.dump_dosbox(0x3abb);
     // 0935:3abb mov bx,[bp+4]
     ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x3abe);
     // 0935:3abe push word ptr [bx+4]
     ctx.push16(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ds(),
         ctx.cpu.regs.get_bx().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x3ac1);
     // 0935:3ac1 call 109Fh
     ctx.call16(0x3ac4, Cont(x0935_109f))
 }
 
 pub fn x0935_3ac4(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3ac4);
     // 0935:3ac4 jmp near ptr 3BF4h
     Cont(x0935_3bf4)
 }
 
 pub fn x0935_3ac7(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3ac7);
     // 0935:3ac7 mov di,[bp+4]
     ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x3aca);
     // 0935:3aca mov di,[di+4]
     ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ds(),
         ctx.cpu.regs.get_di().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x3acd);
     // 0935:3acd mov dx,di
     ctx.cpu.regs.set_dx(ctx.cpu.regs.get_di());
-    ctx.dump_dosbox(0x3acf);
     // 0935:3acf les di,[di+0Ch]
     let ptr = ctx.memory.read::<u32>(segofs(
         ctx.cpu.regs.get_ds(),
@@ -7343,20 +1806,17 @@ pub fn x0935_3ac7(ctx: &mut Context) -> Cont {
     ));
     ctx.cpu.regs.es = (ptr >> 16) as u16;
     ctx.cpu.regs.set_di(ptr as u16);
-    ctx.dump_dosbox(0x3ad2);
     // 0935:3ad2 mov al,es:[di]
     ctx.cpu.regs.set_al(
         ctx.memory
             .read::<u8>(segofs(ctx.cpu.regs.get_es(), ctx.cpu.regs.get_di())),
     );
-    ctx.dump_dosbox(0x3ad5);
     // 0935:3ad5 xor ah,ah
     ctx.cpu.regs.set_ah(xor(
         ctx.cpu.regs.get_ah(),
         ctx.cpu.regs.get_ah(),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x3ad7);
     // 0935:3ad7 cmp ax,ds:[160h]
     sub(
         ctx.cpu.regs.get_ax(),
@@ -7364,56 +1824,44 @@ pub fn x0935_3ac7(ctx: &mut Context) -> Cont {
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x160u16)),
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x3adb);
     // 0935:3adb jge short 3AE0h
     ctx.jge(Cont(x0935_3add), Cont(x0935_3ae0))
 }
 
 pub fn x0935_3add(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3add);
     // 0935:3add jmp near ptr 3BF4h
     Cont(x0935_3bf4)
 }
 
 pub fn x0935_3ae0(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3ae0);
     // 0935:3ae0 mov bx,ds:[160h]
     ctx.cpu.regs.set_bx(
         ctx.memory
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x160u16)),
     );
-    ctx.dump_dosbox(0x3ae4);
     // 0935:3ae4 mov al,es:[bx+di]
     ctx.cpu.regs.set_al(ctx.memory.read::<u8>(segofs(
         ctx.cpu.regs.get_es(),
         ctx.cpu.regs.get_bx().wrapping_add(ctx.cpu.regs.get_di()),
     )));
-    ctx.dump_dosbox(0x3ae7);
     // 0935:3ae7 xor ah,ah
     ctx.cpu.regs.set_ah(xor(
         ctx.cpu.regs.get_ah(),
         ctx.cpu.regs.get_ah(),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x3ae9);
     // 0935:3ae9 push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x3aea);
     // 0935:3aea mov ax,1Fh
     ctx.cpu.regs.set_ax(0x1fu16);
-    ctx.dump_dosbox(0x3aed);
     // 0935:3aed push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x3aee);
     // 0935:3aee mov ax,170h
     ctx.cpu.regs.set_ax(0x170u16);
-    ctx.dump_dosbox(0x3af1);
     // 0935:3af1 push ds
     ctx.push16(ctx.cpu.regs.get_ds());
-    ctx.dump_dosbox(0x3af2);
     // 0935:3af2 push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x3af3);
     // 0935:3af3 mov [bp-26h],dx
     ctx.memory.write::<u16>(
         segofs(
@@ -7422,92 +1870,72 @@ pub fn x0935_3ae0(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_dx(),
     );
-    ctx.dump_dosbox(0x3af6);
     // 0935:3af6 call far ptr 0D72h:5452h
     ctx.callf16(0x3afb, 0xd72, Cont(x0d72_5452))
 }
 
 pub fn x0935_3afb(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3afb);
     // 0935:3afb shr ax,1
     ctx.cpu
         .regs
         .set_ax(shr(ctx.cpu.regs.get_ax(), 0x1u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x3afd);
     // 0935:3afd jb short 3B02h
     ctx.jb(Cont(x0935_3aff), Cont(x0935_3b02))
 }
 
 pub fn x0935_3aff(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3aff);
     // 0935:3aff jmp near ptr 3BF4h
     Cont(x0935_3bf4)
 }
 
 pub fn x0935_3b02(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3b02);
     // 0935:3b02 mov bx,[bp+4]
     ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x3b05);
     // 0935:3b05 push word ptr [bx+4]
     ctx.push16(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ds(),
         ctx.cpu.regs.get_bx().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x3b08);
     // 0935:3b08 call 11A0h
     ctx.call16(0x3b0b, Cont(x0935_11a0))
 }
 
 pub fn x0935_3b0b(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3b0b);
     // 0935:3b0b mov di,[bp+4]
     ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x3b0e);
     // 0935:3b0e lea ax,[di-200h]
     ctx.cpu
         .regs
         .set_ax(ctx.cpu.regs.get_di().wrapping_add(0xfe00u16));
-    ctx.dump_dosbox(0x3b12);
     // 0935:3b12 push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x3b13);
     // 0935:3b13 mov si,170h
     ctx.cpu.regs.set_si(0x170u16);
-    ctx.dump_dosbox(0x3b16);
     // 0935:3b16 mov cx,10h
     ctx.cpu.regs.set_cx(0x10u16);
-    ctx.dump_dosbox(0x3b19);
     // 0935:3b19 mov dx,di
     ctx.cpu.regs.set_dx(ctx.cpu.regs.get_di());
-    ctx.dump_dosbox(0x3b1b);
     // 0935:3b1b sub sp,20h
     ctx.cpu
         .regs
         .set_sp(sub(ctx.cpu.regs.get_sp(), 0x20u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x3b1e);
     // 0935:3b1e mov di,sp
     ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x3b20);
     // 0935:3b20 cld
     cld(ctx);
-    ctx.dump_dosbox(0x3b21);
     // 0935:3b21 push ss
     ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x3b22);
     // 0935:3b22 pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x3b23);
     // 0935:3b23 rep movsw
     ctx.rep(Rep::REP, Context::movsw);
-    ctx.dump_dosbox(0x3b25);
     // 0935:3b25 mov [bp-28h],dx
     ctx.memory.write::<u16>(
         segofs(
@@ -7516,19 +1944,16 @@ pub fn x0935_3b0b(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_dx(),
     );
-    ctx.dump_dosbox(0x3b28);
     // 0935:3b28 push word ptr [bp+4]
     ctx.push16(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x3b2b);
     // 0935:3b2b call 1261h
     ctx.call16(0x3b2e, Cont(x0935_1261))
 }
 
 pub fn x0935_3b2e(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3b2e);
     // 0935:3b2e dec word ptr ds:[160h]
     ctx.memory.write::<u16>(
         segofs(ctx.cpu.regs.get_ds(), 0x160u16),
@@ -7538,7 +1963,6 @@ pub fn x0935_3b2e(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0x3b32);
     // 0935:3b32 test byte ptr ds:[56h],1
     and(
         ctx.memory
@@ -7546,39 +1970,31 @@ pub fn x0935_3b2e(ctx: &mut Context) -> Cont {
         0x1u8,
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x3b37);
     // 0935:3b37 jne short 3B3Ch
     ctx.jne(Cont(x0935_3b39), Cont(x0935_3b3c))
 }
 
 pub fn x0935_3b39(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3b39);
     // 0935:3b39 jmp near ptr 3BB8h
     Cont(x0935_3bb8)
 }
 
 pub fn x0935_3b3c(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3b3c);
     // 0935:3b3c mov ax,1
     ctx.cpu.regs.set_ax(0x1u16);
-    ctx.dump_dosbox(0x3b3f);
     // 0935:3b3f push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x3b40);
     // 0935:3b40 mov di,[bp+4]
     ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x3b43);
     // 0935:3b43 lea ax,[di-200h]
     ctx.cpu
         .regs
         .set_ax(ctx.cpu.regs.get_di().wrapping_add(0xfe00u16));
-    ctx.dump_dosbox(0x3b47);
     // 0935:3b47 push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x3b48);
     // 0935:3b48 mov [bp-2Ah],di
     ctx.memory.write::<u16>(
         segofs(
@@ -7587,120 +2003,90 @@ pub fn x0935_3b3c(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_di(),
     );
-    ctx.dump_dosbox(0x3b4b);
     // 0935:3b4b push word ptr [bp+4]
     ctx.push16(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x3b4e);
     // 0935:3b4e call 1742h
     ctx.call16(0x3b51, Cont(x0935_1742))
 }
 
 pub fn x0935_3b51(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3b51);
     // 0935:3b51 mov si,1BC2h
     ctx.cpu.regs.set_si(0x1bc2u16);
-    ctx.dump_dosbox(0x3b54);
     // 0935:3b54 mov cx,7Dh
     ctx.cpu.regs.set_cx(0x7du16);
-    ctx.dump_dosbox(0x3b57);
     // 0935:3b57 sub sp,0FAh
     ctx.cpu
         .regs
         .set_sp(sub(ctx.cpu.regs.get_sp(), 0xfau16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x3b5b);
     // 0935:3b5b mov di,sp
     ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x3b5d);
     // 0935:3b5d cld
     cld(ctx);
-    ctx.dump_dosbox(0x3b5e);
     // 0935:3b5e push ss
     ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x3b5f);
     // 0935:3b5f pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x3b60);
     // 0935:3b60 rep movsw
     ctx.rep(Rep::REP, Context::movsw);
-    ctx.dump_dosbox(0x3b62);
     // 0935:3b62 mov si,209Ch
     ctx.cpu.regs.set_si(0x209cu16);
-    ctx.dump_dosbox(0x3b65);
     // 0935:3b65 sub sp,6
     ctx.cpu
         .regs
         .set_sp(sub(ctx.cpu.regs.get_sp(), 0x6u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x3b68);
     // 0935:3b68 mov di,sp
     ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x3b6a);
     // 0935:3b6a cld
     cld(ctx);
-    ctx.dump_dosbox(0x3b6b);
     // 0935:3b6b push ss
     ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x3b6c);
     // 0935:3b6c pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x3b6d);
     // 0935:3b6d movsw
     ctx.movsw();
-    ctx.dump_dosbox(0x3b6e);
     // 0935:3b6e movsw
     ctx.movsw();
-    ctx.dump_dosbox(0x3b6f);
     // 0935:3b6f movsw
     ctx.movsw();
-    ctx.dump_dosbox(0x3b70);
     // 0935:3b70 mov bx,[bp+4]
     ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x3b73);
     // 0935:3b73 push word ptr [bx+4]
     ctx.push16(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ds(),
         ctx.cpu.regs.get_bx().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x3b76);
     // 0935:3b76 call 109Fh
     ctx.call16(0x3b79, Cont(x0935_109f))
 }
 
 pub fn x0935_3b79(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3b79);
     // 0935:3b79 mov di,[bp+4]
     ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x3b7c);
     // 0935:3b7c lea ax,[di-200h]
     ctx.cpu
         .regs
         .set_ax(ctx.cpu.regs.get_di().wrapping_add(0xfe00u16));
-    ctx.dump_dosbox(0x3b80);
     // 0935:3b80 push ds
     ctx.push16(ctx.cpu.regs.get_ds());
-    ctx.dump_dosbox(0x3b81);
     // 0935:3b81 push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x3b82);
     // 0935:3b82 mov ax,20A2h
     ctx.cpu.regs.set_ax(0x20a2u16);
-    ctx.dump_dosbox(0x3b85);
     // 0935:3b85 push ds
     ctx.push16(ctx.cpu.regs.get_ds());
-    ctx.dump_dosbox(0x3b86);
     // 0935:3b86 push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x3b87);
     // 0935:3b87 mov [bp-2Ch],di
     ctx.memory.write::<u16>(
         segofs(
@@ -7709,184 +2095,141 @@ pub fn x0935_3b79(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_di(),
     );
-    ctx.dump_dosbox(0x3b8a);
     // 0935:3b8a call far ptr 0D72h:55E0h
     ctx.callf16(0x3b8f, 0xd72, Cont(x0d72_55e0))
 }
 
 pub fn x0935_3b8f(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3b8f);
     // 0935:3b8f shr ax,1
     ctx.cpu
         .regs
         .set_ax(shr(ctx.cpu.regs.get_ax(), 0x1u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x3b91);
     // 0935:3b91 jae short 3BB1h
     ctx.jae(Cont(x0935_3b93), Cont(x0935_3bb1))
 }
 
 pub fn x0935_3b93(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3b93);
     // 0935:3b93 mov si,1BC2h
     ctx.cpu.regs.set_si(0x1bc2u16);
-    ctx.dump_dosbox(0x3b96);
     // 0935:3b96 mov cx,7Fh
     ctx.cpu.regs.set_cx(0x7fu16);
-    ctx.dump_dosbox(0x3b99);
     // 0935:3b99 sub sp,0FEh
     ctx.cpu
         .regs
         .set_sp(sub(ctx.cpu.regs.get_sp(), 0xfeu16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x3b9d);
     // 0935:3b9d mov di,sp
     ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x3b9f);
     // 0935:3b9f cld
     cld(ctx);
-    ctx.dump_dosbox(0x3ba0);
     // 0935:3ba0 push ss
     ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x3ba1);
     // 0935:3ba1 pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x3ba2);
     // 0935:3ba2 rep movsw
     ctx.rep(Rep::REP, Context::movsw);
-    ctx.dump_dosbox(0x3ba4);
     // 0935:3ba4 push word ptr ds:[20A6h]
     ctx.push16(
         ctx.memory
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x20a6u16)),
     );
-    ctx.dump_dosbox(0x3ba8);
     // 0935:3ba8 mov bx,[bp+4]
     ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x3bab);
     // 0935:3bab push word ptr [bx+4]
     ctx.push16(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ds(),
         ctx.cpu.regs.get_bx().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x3bae);
     // 0935:3bae call 109Fh
     ctx.call16(0x3bb1, Cont(x0935_109f))
 }
 
 pub fn x0935_3bb1(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3bb1);
     // 0935:3bb1 mov byte ptr ds:[56h],0
     ctx.memory
         .write::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x56u16), 0x0u8);
-    ctx.dump_dosbox(0x3bb6);
     // 0935:3bb6 jmp short 3BF4h
     Cont(x0935_3bf4)
 }
 
 pub fn x0935_3bb8(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3bb8);
     // 0935:3bb8 mov si,1BC2h
     ctx.cpu.regs.set_si(0x1bc2u16);
-    ctx.dump_dosbox(0x3bbb);
     // 0935:3bbb mov cx,7Dh
     ctx.cpu.regs.set_cx(0x7du16);
-    ctx.dump_dosbox(0x3bbe);
     // 0935:3bbe sub sp,0FAh
     ctx.cpu
         .regs
         .set_sp(sub(ctx.cpu.regs.get_sp(), 0xfau16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x3bc2);
     // 0935:3bc2 mov di,sp
     ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x3bc4);
     // 0935:3bc4 cld
     cld(ctx);
-    ctx.dump_dosbox(0x3bc5);
     // 0935:3bc5 push ss
     ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x3bc6);
     // 0935:3bc6 pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x3bc7);
     // 0935:3bc7 rep movsw
     ctx.rep(Rep::REP, Context::movsw);
-    ctx.dump_dosbox(0x3bc9);
     // 0935:3bc9 mov si,20A8h
     ctx.cpu.regs.set_si(0x20a8u16);
-    ctx.dump_dosbox(0x3bcc);
     // 0935:3bcc sub sp,6
     ctx.cpu
         .regs
         .set_sp(sub(ctx.cpu.regs.get_sp(), 0x6u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x3bcf);
     // 0935:3bcf mov di,sp
     ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x3bd1);
     // 0935:3bd1 cld
     cld(ctx);
-    ctx.dump_dosbox(0x3bd2);
     // 0935:3bd2 push ss
     ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x3bd3);
     // 0935:3bd3 pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x3bd4);
     // 0935:3bd4 movsw
     ctx.movsw();
-    ctx.dump_dosbox(0x3bd5);
     // 0935:3bd5 movsw
     ctx.movsw();
-    ctx.dump_dosbox(0x3bd6);
     // 0935:3bd6 movsw
     ctx.movsw();
-    ctx.dump_dosbox(0x3bd7);
     // 0935:3bd7 mov bx,[bp+4]
     ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x3bda);
     // 0935:3bda push word ptr [bx+4]
     ctx.push16(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ds(),
         ctx.cpu.regs.get_bx().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x3bdd);
     // 0935:3bdd call 109Fh
     ctx.call16(0x3be0, Cont(x0935_109f))
 }
 
 pub fn x0935_3be0(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3be0);
     // 0935:3be0 xor ax,ax
     ctx.cpu.regs.set_ax(xor(
         ctx.cpu.regs.get_ax(),
         ctx.cpu.regs.get_ax(),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x3be2);
     // 0935:3be2 push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x3be3);
     // 0935:3be3 mov di,[bp+4]
     ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x3be6);
     // 0935:3be6 lea ax,[di-200h]
     ctx.cpu
         .regs
         .set_ax(ctx.cpu.regs.get_di().wrapping_add(0xfe00u16));
-    ctx.dump_dosbox(0x3bea);
     // 0935:3bea push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x3beb);
     // 0935:3beb mov [bp-26h],di
     ctx.memory.write::<u16>(
         segofs(
@@ -7895,58 +2238,46 @@ pub fn x0935_3be0(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_di(),
     );
-    ctx.dump_dosbox(0x3bee);
     // 0935:3bee push word ptr [bp+4]
     ctx.push16(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x3bf1);
     // 0935:3bf1 call 1742h
     ctx.call16(0x3bf4, Cont(x0935_1742))
 }
 
 pub fn x0935_3bf4(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3bf4);
     // 0935:3bf4 jmp near ptr 3CBAh
     Cont(x0935_3cba)
 }
 
 pub fn x0935_3bf7(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3bf7);
     // 0935:3bf7 lea di,[bp-2]
     ctx.cpu
         .regs
         .set_di(ctx.cpu.regs.get_bp().wrapping_add(0xfffeu16));
-    ctx.dump_dosbox(0x3bfa);
     // 0935:3bfa push ss
     ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x3bfb);
     // 0935:3bfb pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x3bfc);
     // 0935:3bfc mov si,20AEh
     ctx.cpu.regs.set_si(0x20aeu16);
-    ctx.dump_dosbox(0x3bff);
     // 0935:3bff mov cx,2
     ctx.cpu.regs.set_cx(0x2u16);
-    ctx.dump_dosbox(0x3c02);
     // 0935:3c02 mov ax,ds
     ctx.cpu.regs.set_ax(ctx.cpu.regs.get_ds());
-    ctx.dump_dosbox(0x3c04);
     // 0935:3c04 call far ptr 0D72h:538Ch
     ctx.callf16(0x3c09, 0xd72, Cont(x0d72_538c))
 }
 
 pub fn x0935_3c09(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3c09);
     // 0935:3c09 mov al,ds:[164h]
     ctx.cpu.regs.set_al(
         ctx.memory
             .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x164u16)),
     );
-    ctx.dump_dosbox(0x3c0c);
     // 0935:3c0c mov [bp-1],al
     ctx.memory.write::<u8>(
         segofs(
@@ -7955,89 +2286,70 @@ pub fn x0935_3c09(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_al(),
     );
-    ctx.dump_dosbox(0x3c0f);
     // 0935:3c0f mov si,1BC2h
     ctx.cpu.regs.set_si(0x1bc2u16);
-    ctx.dump_dosbox(0x3c12);
     // 0935:3c12 mov cx,7Fh
     ctx.cpu.regs.set_cx(0x7fu16);
-    ctx.dump_dosbox(0x3c15);
     // 0935:3c15 sub sp,0FEh
     ctx.cpu
         .regs
         .set_sp(sub(ctx.cpu.regs.get_sp(), 0xfeu16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x3c19);
     // 0935:3c19 mov di,sp
     ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x3c1b);
     // 0935:3c1b cld
     cld(ctx);
-    ctx.dump_dosbox(0x3c1c);
     // 0935:3c1c push ss
     ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x3c1d);
     // 0935:3c1d pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x3c1e);
     // 0935:3c1e rep movsw
     ctx.rep(Rep::REP, Context::movsw);
-    ctx.dump_dosbox(0x3c20);
     // 0935:3c20 push word ptr [bp-2]
     ctx.push16(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0xfffeu16),
     )));
-    ctx.dump_dosbox(0x3c23);
     // 0935:3c23 mov bx,[bp+4]
     ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x3c26);
     // 0935:3c26 push word ptr [bx+4]
     ctx.push16(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ds(),
         ctx.cpu.regs.get_bx().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x3c29);
     // 0935:3c29 call 109Fh
     ctx.call16(0x3c2c, Cont(x0935_109f))
 }
 
 pub fn x0935_3c2c(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3c2c);
     // 0935:3c2c jmp near ptr 3CBAh
     Cont(x0935_3cba)
 }
 
 pub fn x0935_3c2f(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3c2f);
     // 0935:3c2f cmp bx,5Eh
     sub(ctx.cpu.regs.get_bx(), 0x5eu16, &mut ctx.cpu.flags);
-    ctx.dump_dosbox(0x3c32);
     // 0935:3c32 ja short 3BF7h
     ctx.ja(Cont(x0935_3c34), Cont(x0935_3bf7))
 }
 
 pub fn x0935_3c34(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3c34);
     // 0935:3c34 sub bx,22h
     ctx.cpu
         .regs
         .set_bx(sub(ctx.cpu.regs.get_bx(), 0x22u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x3c37);
     // 0935:3c37 jb short 3BF7h
     ctx.jb(Cont(x0935_3c39), Cont(x0935_3bf7))
 }
 
 pub fn x0935_3c39(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3c39);
     // 0935:3c39 shl bx,1
     ctx.cpu
         .regs
         .set_bx(shl(ctx.cpu.regs.get_bx(), 0x1u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x3c3b);
     // 0935:3c3b jmp word ptr cs:[bx+3C40h]
     let addr = ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_cs(),
@@ -8047,61 +2359,49 @@ pub fn x0935_3c39(ctx: &mut Context) -> Cont {
 }
 
 pub fn x0935_3cba(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3cba);
     // 0935:3cba mov bx,[bp+4]
     ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x3cbd);
     // 0935:3cbd push word ptr [bx+4]
     ctx.push16(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ds(),
         ctx.cpu.regs.get_bx().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x3cc0);
     // 0935:3cc0 call 11A0h
     ctx.call16(0x3cc3, Cont(x0935_11a0))
 }
 
 pub fn x0935_3cc3(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3cc3);
     // 0935:3cc3 mov sp,bp
     ctx.cpu.regs.set_sp(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x3cc5);
     // 0935:3cc5 pop bp
     let x = ctx.pop16();
     ctx.cpu.regs.set_bp(x);
-    ctx.dump_dosbox(0x3cc6);
     // 0935:3cc6 ret 2
     ctx.ret16(2)
 }
 
 pub fn x0935_3cc9(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3cc9);
     // 0935:3cc9 push bp
     ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x3cca);
     // 0935:3cca mov bp,sp
     ctx.cpu.regs.set_bp(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x3ccc);
     // 0935:3ccc sub sp,200h
     ctx.cpu
         .regs
         .set_sp(sub(ctx.cpu.regs.get_sp(), 0x200u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x3cd0);
     // 0935:3cd0 mov al,ds:[4Ch]
     ctx.cpu.regs.set_al(
         ctx.memory
             .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x4cu16)),
     );
-    ctx.dump_dosbox(0x3cd3);
     // 0935:3cd3 mov ds:[4Ah],al
     ctx.memory.write::<u8>(
         segofs(ctx.cpu.regs.get_ds(), 0x4au16),
         ctx.cpu.regs.get_al(),
     );
-    ctx.dump_dosbox(0x3cd6);
     // 0935:3cd6 cmp byte ptr ds:[164h],20h
     sub(
         ctx.memory
@@ -8109,29 +2409,24 @@ pub fn x0935_3cc9(ctx: &mut Context) -> Cont {
         0x20u8,
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x3cdb);
     // 0935:3cdb jne short 3CE8h
     ctx.jne(Cont(x0935_3cdd), Cont(x0935_3ce8))
 }
 
 pub fn x0935_3cdd(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3cdd);
     // 0935:3cdd mov byte ptr ds:[50h],1
     ctx.memory
         .write::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x50u16), 0x1u8);
-    ctx.dump_dosbox(0x3ce2);
     // 0935:3ce2 push word ptr [bp+4]
     ctx.push16(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x3ce5);
     // 0935:3ce5 call 11A0h
     ctx.call16(0x3ce8, Cont(x0935_11a0))
 }
 
 pub fn x0935_3ce8(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3ce8);
     // 0935:3ce8 cmp byte ptr ds:[164h],20h
     sub(
         ctx.memory
@@ -8139,202 +2434,158 @@ pub fn x0935_3ce8(ctx: &mut Context) -> Cont {
         0x20u8,
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x3ced);
     // 0935:3ced jne short 3D12h
     ctx.jne(Cont(x0935_3cef), Cont(x0935_3d12))
 }
 
 pub fn x0935_3cef(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3cef);
     // 0935:3cef mov si,1BC2h
     ctx.cpu.regs.set_si(0x1bc2u16);
-    ctx.dump_dosbox(0x3cf2);
     // 0935:3cf2 mov cx,7Fh
     ctx.cpu.regs.set_cx(0x7fu16);
-    ctx.dump_dosbox(0x3cf5);
     // 0935:3cf5 sub sp,0FEh
     ctx.cpu
         .regs
         .set_sp(sub(ctx.cpu.regs.get_sp(), 0xfeu16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x3cf9);
     // 0935:3cf9 mov di,sp
     ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x3cfb);
     // 0935:3cfb cld
     cld(ctx);
-    ctx.dump_dosbox(0x3cfc);
     // 0935:3cfc push ss
     ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x3cfd);
     // 0935:3cfd pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x3cfe);
     // 0935:3cfe rep movsw
     ctx.rep(Rep::REP, Context::movsw);
-    ctx.dump_dosbox(0x3d00);
     // 0935:3d00 push word ptr ds:[20B0h]
     ctx.push16(
         ctx.memory
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x20b0u16)),
     );
-    ctx.dump_dosbox(0x3d04);
     // 0935:3d04 push word ptr [bp+4]
     ctx.push16(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x3d07);
     // 0935:3d07 call 109Fh
     ctx.call16(0x3d0a, Cont(x0935_109f))
 }
 
 pub fn x0935_3d0a(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3d0a);
     // 0935:3d0a push word ptr [bp+4]
     ctx.push16(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x3d0d);
     // 0935:3d0d call 11A0h
     ctx.call16(0x3d10, Cont(x0935_11a0))
 }
 
 pub fn x0935_3d10(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3d10);
     // 0935:3d10 jmp short 3CE8h
     Cont(x0935_3ce8)
 }
 
 pub fn x0935_3d12(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3d12);
     // 0935:3d12 mov al,ds:[164h]
     ctx.cpu.regs.set_al(
         ctx.memory
             .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x164u16)),
     );
-    ctx.dump_dosbox(0x3d15);
     // 0935:3d15 xor ah,ah
     ctx.cpu.regs.set_ah(xor(
         ctx.cpu.regs.get_ah(),
         ctx.cpu.regs.get_ah(),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x3d17);
     // 0935:3d17 push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x3d18);
     // 0935:3d18 mov ax,0Bh
     ctx.cpu.regs.set_ax(0xbu16);
-    ctx.dump_dosbox(0x3d1b);
     // 0935:3d1b push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x3d1c);
     // 0935:3d1c mov ax,20B2h
     ctx.cpu.regs.set_ax(0x20b2u16);
-    ctx.dump_dosbox(0x3d1f);
     // 0935:3d1f push ds
     ctx.push16(ctx.cpu.regs.get_ds());
-    ctx.dump_dosbox(0x3d20);
     // 0935:3d20 push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x3d21);
     // 0935:3d21 call far ptr 0D72h:5452h
     ctx.callf16(0x3d26, 0xd72, Cont(x0d72_5452))
 }
 
 pub fn x0935_3d26(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3d26);
     // 0935:3d26 shr ax,1
     ctx.cpu
         .regs
         .set_ax(shr(ctx.cpu.regs.get_ax(), 0x1u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x3d28);
     // 0935:3d28 jae short 3D30h
     ctx.jae(Cont(x0935_3d2a), Cont(x0935_3d30))
 }
 
 pub fn x0935_3d2a(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3d2a);
     // 0935:3d2a push bp
     ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x3d2b);
     // 0935:3d2b call 12FCh
     ctx.call16(0x3d2e, Cont(x0935_12fc))
 }
 
 pub fn x0935_3d2e(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3d2e);
     // 0935:3d2e jmp short 3D60h
     Cont(x0935_3d60)
 }
 
 pub fn x0935_3d30(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3d30);
     // 0935:3d30 mov al,ds:[164h]
     ctx.cpu.regs.set_al(
         ctx.memory
             .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x164u16)),
     );
-    ctx.dump_dosbox(0x3d33);
     // 0935:3d33 xor ah,ah
     ctx.cpu.regs.set_ah(xor(
         ctx.cpu.regs.get_ah(),
         ctx.cpu.regs.get_ah(),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x3d35);
     // 0935:3d35 push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x3d36);
     // 0935:3d36 mov ax,1Fh
     ctx.cpu.regs.set_ax(0x1fu16);
-    ctx.dump_dosbox(0x3d39);
     // 0935:3d39 push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x3d3a);
     // 0935:3d3a mov ax,170h
     ctx.cpu.regs.set_ax(0x170u16);
-    ctx.dump_dosbox(0x3d3d);
     // 0935:3d3d push ds
     ctx.push16(ctx.cpu.regs.get_ds());
-    ctx.dump_dosbox(0x3d3e);
     // 0935:3d3e push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x3d3f);
     // 0935:3d3f call far ptr 0D72h:5452h
     ctx.callf16(0x3d44, 0xd72, Cont(x0d72_5452))
 }
 
 pub fn x0935_3d44(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3d44);
     // 0935:3d44 shr ax,1
     ctx.cpu
         .regs
         .set_ax(shr(ctx.cpu.regs.get_ax(), 0x1u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x3d46);
     // 0935:3d46 jae short 3D4Eh
     ctx.jae(Cont(x0935_3d48), Cont(x0935_3d4e))
 }
 
 pub fn x0935_3d48(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3d48);
     // 0935:3d48 push bp
     ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x3d49);
     // 0935:3d49 call 23EDh
     ctx.call16(0x3d4c, Cont(x0935_23ed))
 }
 
 pub fn x0935_3d4c(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3d4c);
     // 0935:3d4c jmp short 3D60h
     Cont(x0935_3d60)
 }
 
 pub fn x0935_3d4e(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3d4e);
     // 0935:3d4e cmp byte ptr ds:[164h],0
     sub(
         ctx.memory
@@ -8342,100 +2593,79 @@ pub fn x0935_3d4e(ctx: &mut Context) -> Cont {
         0x0u8,
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x3d53);
     // 0935:3d53 jne short 3D5Ch
     ctx.jne(Cont(x0935_3d55), Cont(x0935_3d5c))
 }
 
 pub fn x0935_3d55(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3d55);
     // 0935:3d55 mov byte ptr ds:[4Ch],3
     ctx.memory
         .write::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x4cu16), 0x3u8);
-    ctx.dump_dosbox(0x3d5a);
     // 0935:3d5a jmp short 3D60h
     Cont(x0935_3d60)
 }
 
 pub fn x0935_3d5c(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3d5c);
     // 0935:3d5c push bp
     ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x3d5d);
     // 0935:3d5d call 30A1h
     ctx.call16(0x3d60, Cont(x0935_30a1))
 }
 
 pub fn x0935_3d60(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3d60);
     // 0935:3d60 mov sp,bp
     ctx.cpu.regs.set_sp(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x3d62);
     // 0935:3d62 pop bp
     let x = ctx.pop16();
     ctx.cpu.regs.set_bp(x);
-    ctx.dump_dosbox(0x3d63);
     // 0935:3d63 ret 2
     ctx.ret16(2)
 }
 
 pub fn x0935_3d66(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3d66);
     // 0935:3d66 push bp
     ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x3d67);
     // 0935:3d67 mov bp,sp
     ctx.cpu.regs.set_bp(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x3d69);
     // 0935:3d69 sub sp,0Ah
     ctx.cpu
         .regs
         .set_sp(sub(ctx.cpu.regs.get_sp(), 0xau16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x3d6d);
     // 0935:3d6d push di
     ctx.push16(ctx.cpu.regs.get_di());
-    ctx.dump_dosbox(0x3d6e);
     // 0935:3d6e push si
     ctx.push16(ctx.cpu.regs.get_si());
-    ctx.dump_dosbox(0x3d6f);
     // 0935:3d6f mov ax,[bp+6]
     ctx.cpu.regs.set_ax(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x6u16),
     )));
-    ctx.dump_dosbox(0x3d72);
     // 0935:3d72 mov ds:[160h],ax
     ctx.memory.write::<u16>(
         segofs(ctx.cpu.regs.get_ds(), 0x160u16),
         ctx.cpu.regs.get_ax(),
     );
-    ctx.dump_dosbox(0x3d75);
     // 0935:3d75 mov ax,ds:[166h]
     ctx.cpu.regs.set_ax(
         ctx.memory
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x166u16)),
     );
-    ctx.dump_dosbox(0x3d78);
     // 0935:3d78 shl ax,1
     ctx.cpu
         .regs
         .set_ax(shl(ctx.cpu.regs.get_ax(), 0x1u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x3d7a);
     // 0935:3d7a shl ax,1
     ctx.cpu
         .regs
         .set_ax(shl(ctx.cpu.regs.get_ax(), 0x1u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x3d7c);
     // 0935:3d7c shl ax,1
     ctx.cpu
         .regs
         .set_ax(shl(ctx.cpu.regs.get_ax(), 0x1u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x3d7e);
     // 0935:3d7e add ax,48Ch
     ctx.cpu
         .regs
         .set_ax(add(ctx.cpu.regs.get_ax(), 0x48cu16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x3d81);
     // 0935:3d81 mov [bp-0Ah],ax
     ctx.memory.write::<u16>(
         segofs(
@@ -8444,19 +2674,16 @@ pub fn x0935_3d66(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_ax(),
     );
-    ctx.dump_dosbox(0x3d84);
     // 0935:3d84 mov di,[bp-0Ah]
     ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0xfff6u16),
     )));
-    ctx.dump_dosbox(0x3d87);
     // 0935:3d87 mov ax,[di+4]
     ctx.cpu.regs.set_ax(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ds(),
         ctx.cpu.regs.get_di().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x3d8a);
     // 0935:3d8a mov [bp-8],ax
     ctx.memory.write::<u16>(
         segofs(
@@ -8465,13 +2692,11 @@ pub fn x0935_3d66(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_ax(),
     );
-    ctx.dump_dosbox(0x3d8d);
     // 0935:3d8d mov ax,[di]
     ctx.cpu.regs.set_ax(
         ctx.memory
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_di())),
     );
-    ctx.dump_dosbox(0x3d8f);
     // 0935:3d8f mov [bp-4],ax
     ctx.memory.write::<u16>(
         segofs(
@@ -8480,13 +2705,11 @@ pub fn x0935_3d66(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_ax(),
     );
-    ctx.dump_dosbox(0x3d92);
     // 0935:3d92 mov ax,[di+2]
     ctx.cpu.regs.set_ax(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ds(),
         ctx.cpu.regs.get_di().wrapping_add(0x2u16),
     )));
-    ctx.dump_dosbox(0x3d95);
     // 0935:3d95 mov [bp-6],ax
     ctx.memory.write::<u16>(
         segofs(
@@ -8495,13 +2718,11 @@ pub fn x0935_3d66(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_ax(),
     );
-    ctx.dump_dosbox(0x3d98);
     // 0935:3d98 mov al,ds:[168h]
     ctx.cpu.regs.set_al(
         ctx.memory
             .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x168u16)),
     );
-    ctx.dump_dosbox(0x3d9b);
     // 0935:3d9b mov [di+6],al
     ctx.memory.write::<u8>(
         segofs(
@@ -8510,19 +2731,16 @@ pub fn x0935_3d66(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_al(),
     );
-    ctx.dump_dosbox(0x3d9e);
     // 0935:3d9e mov di,[bp-0Ah]
     ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0xfff6u16),
     )));
-    ctx.dump_dosbox(0x3da1);
     // 0935:3da1 mov al,ds:[16Ch]
     ctx.cpu.regs.set_al(
         ctx.memory
             .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x16cu16)),
     );
-    ctx.dump_dosbox(0x3da4);
     // 0935:3da4 mov [di+7],al
     ctx.memory.write::<u8>(
         segofs(
@@ -8531,19 +2749,16 @@ pub fn x0935_3d66(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_al(),
     );
-    ctx.dump_dosbox(0x3da7);
     // 0935:3da7 mov al,ds:[168h]
     ctx.cpu.regs.set_al(
         ctx.memory
             .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x168u16)),
     );
-    ctx.dump_dosbox(0x3daa);
     // 0935:3daa mov ds:[16Ah],al
     ctx.memory.write::<u8>(
         segofs(ctx.cpu.regs.get_ds(), 0x16au16),
         ctx.cpu.regs.get_al(),
     );
-    ctx.dump_dosbox(0x3dad);
     // 0935:3dad les di,[bp+8]
     let ptr = ctx.memory.read::<u32>(segofs(
         ctx.cpu.regs.get_ss(),
@@ -8551,81 +2766,63 @@ pub fn x0935_3d66(ctx: &mut Context) -> Cont {
     ));
     ctx.cpu.regs.es = (ptr >> 16) as u16;
     ctx.cpu.regs.set_di(ptr as u16);
-    ctx.dump_dosbox(0x3db0);
     // 0935:3db0 mov si,60h
     ctx.cpu.regs.set_si(0x60u16);
-    ctx.dump_dosbox(0x3db3);
     // 0935:3db3 mov cx,100h
     ctx.cpu.regs.set_cx(0x100u16);
-    ctx.dump_dosbox(0x3db6);
     // 0935:3db6 mov ax,ds
     ctx.cpu.regs.set_ax(ctx.cpu.regs.get_ds());
-    ctx.dump_dosbox(0x3db8);
     // 0935:3db8 call far ptr 0D72h:538Ch
     ctx.callf16(0x3dbd, 0xd72, Cont(x0d72_538c))
 }
 
 pub fn x0935_3dbd(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3dbd);
     // 0935:3dbd mov byte ptr ds:[60h],0
     ctx.memory
         .write::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x60u16), 0x0u8);
-    ctx.dump_dosbox(0x3dc2);
     // 0935:3dc2 mov byte ptr ds:[52h],0
     ctx.memory
         .write::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x52u16), 0x0u8);
-    ctx.dump_dosbox(0x3dc7);
     // 0935:3dc7 mov byte ptr ds:[50h],1
     ctx.memory
         .write::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x50u16), 0x1u8);
-    ctx.dump_dosbox(0x3dcc);
     // 0935:3dcc push bp
     ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x3dcd);
     // 0935:3dcd call 1210h
     ctx.call16(0x3dd0, Cont(x0935_1210))
 }
 
 pub fn x0935_3dd0(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3dd0);
     // 0935:3dd0 mov byte ptr ds:[56h],0
     ctx.memory
         .write::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x56u16), 0x0u8);
-    ctx.dump_dosbox(0x3dd5);
     // 0935:3dd5 mov byte ptr ds:[4Ch],3
     ctx.memory
         .write::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x4cu16), 0x3u8);
-    ctx.dump_dosbox(0x3dda);
     // 0935:3dda mov al,ds:[16Ch]
     ctx.cpu.regs.set_al(
         ctx.memory
             .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x16cu16)),
     );
-    ctx.dump_dosbox(0x3ddd);
     // 0935:3ddd mov ds:[16Eh],al
     ctx.memory.write::<u8>(
         segofs(ctx.cpu.regs.get_ds(), 0x16eu16),
         ctx.cpu.regs.get_al(),
     );
-    ctx.dump_dosbox(0x3de0);
     // 0935:3de0 push bp
     ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x3de1);
     // 0935:3de1 call 11A0h
     ctx.call16(0x3de4, Cont(x0935_11a0))
 }
 
 pub fn x0935_3de4(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3de4);
     // 0935:3de4 push bp
     ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x3de5);
     // 0935:3de5 call 3CC9h
     ctx.call16(0x3de8, Cont(x0935_3cc9))
 }
 
 pub fn x0935_3de8(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3de8);
     // 0935:3de8 cmp byte ptr ds:[4Ch],3
     sub(
         ctx.memory
@@ -8633,39 +2830,33 @@ pub fn x0935_3de8(ctx: &mut Context) -> Cont {
         0x3u8,
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x3ded);
     // 0935:3ded je short 3DF8h
     ctx.je(Cont(x0935_3def), Cont(x0935_3df8))
 }
 
 pub fn x0935_3def(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3def);
     // 0935:3def mov al,ds:[60h]
     ctx.cpu.regs.set_al(
         ctx.memory
             .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x60u16)),
     );
-    ctx.dump_dosbox(0x3df2);
     // 0935:3df2 xor ah,ah
     ctx.cpu.regs.set_ah(xor(
         ctx.cpu.regs.get_ah(),
         ctx.cpu.regs.get_ah(),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x3df4);
     // 0935:3df4 and ax,ax
     ctx.cpu.regs.set_ax(and(
         ctx.cpu.regs.get_ax(),
         ctx.cpu.regs.get_ax(),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x3df6);
     // 0935:3df6 je short 3DE4h
     ctx.je(Cont(x0935_3df8), Cont(x0935_3de4))
 }
 
 pub fn x0935_3df8(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3df8);
     // 0935:3df8 les di,[bp+8]
     let ptr = ctx.memory.read::<u32>(segofs(
         ctx.cpu.regs.get_ss(),
@@ -8673,38 +2864,30 @@ pub fn x0935_3df8(ctx: &mut Context) -> Cont {
     ));
     ctx.cpu.regs.es = (ptr >> 16) as u16;
     ctx.cpu.regs.set_di(ptr as u16);
-    ctx.dump_dosbox(0x3dfb);
     // 0935:3dfb push es
     ctx.push16(ctx.cpu.regs.get_es());
-    ctx.dump_dosbox(0x3dfc);
     // 0935:3dfc push di
     ctx.push16(ctx.cpu.regs.get_di());
-    ctx.dump_dosbox(0x3dfd);
     // 0935:3dfd push bp
     ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x3dfe);
     // 0935:3dfe call 0D7Fh
     ctx.call16(0x3e01, Cont(x0935_0d7f))
 }
 
 pub fn x0935_3e01(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3e01);
     // 0935:3e01 mov ax,ds:[160h]
     ctx.cpu.regs.set_ax(
         ctx.memory
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x160u16)),
     );
-    ctx.dump_dosbox(0x3e04);
     // 0935:3e04 dec ax
     ctx.cpu
         .regs
         .set_ax(dec(ctx.cpu.regs.get_ax(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x3e05);
     // 0935:3e05 dec ax
     ctx.cpu
         .regs
         .set_ax(dec(ctx.cpu.regs.get_ax(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x3e06);
     // 0935:3e06 mov [bp-2],ax
     ctx.memory.write::<u16>(
         segofs(
@@ -8713,51 +2896,40 @@ pub fn x0935_3e01(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_ax(),
     );
-    ctx.dump_dosbox(0x3e09);
     // 0935:3e09 mov ax,[bp-2]
     ctx.cpu.regs.set_ax(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0xfffeu16),
     )));
-    ctx.dump_dosbox(0x3e0c);
     // 0935:3e0c pop si
     let x = ctx.pop16();
     ctx.cpu.regs.set_si(x);
-    ctx.dump_dosbox(0x3e0d);
     // 0935:3e0d pop di
     let x = ctx.pop16();
     ctx.cpu.regs.set_di(x);
-    ctx.dump_dosbox(0x3e0e);
     // 0935:3e0e mov sp,bp
     ctx.cpu.regs.set_sp(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x3e10);
     // 0935:3e10 pop bp
     let x = ctx.pop16();
     ctx.cpu.regs.set_bp(x);
-    ctx.dump_dosbox(0x3e11);
     // 0935:3e11 retf 0Ah
     ctx.retf16(10)
 }
 
 pub fn x0935_3e14(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3e14);
     // 0935:3e14 push bp
     ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x3e15);
     // 0935:3e15 mov bp,sp
     ctx.cpu.regs.set_bp(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x3e17);
     // 0935:3e17 sub sp,6
     ctx.cpu
         .regs
         .set_sp(sub(ctx.cpu.regs.get_sp(), 0x6u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x3e1b);
     // 0935:3e1b mov di,[bp+4]
     ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x3e1e);
     // 0935:3e1e cmp word ptr [di-0Ah],1
     sub(
         ctx.memory.read::<u16>(segofs(
@@ -8767,39 +2939,32 @@ pub fn x0935_3e14(ctx: &mut Context) -> Cont {
         0x1u16,
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x3e22);
     // 0935:3e22 je short 3E97h
     ctx.je(Cont(x0935_3e24), Cont(x0935_3e97))
 }
 
 pub fn x0935_3e24(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3e24);
     // 0935:3e24 mov ax,ds:[166h]
     ctx.cpu.regs.set_ax(
         ctx.memory
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x166u16)),
     );
-    ctx.dump_dosbox(0x3e27);
     // 0935:3e27 shl ax,1
     ctx.cpu
         .regs
         .set_ax(shl(ctx.cpu.regs.get_ax(), 0x1u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x3e29);
     // 0935:3e29 shl ax,1
     ctx.cpu
         .regs
         .set_ax(shl(ctx.cpu.regs.get_ax(), 0x1u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x3e2b);
     // 0935:3e2b shl ax,1
     ctx.cpu
         .regs
         .set_ax(shl(ctx.cpu.regs.get_ax(), 0x1u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x3e2d);
     // 0935:3e2d add ax,48Ch
     ctx.cpu
         .regs
         .set_ax(add(ctx.cpu.regs.get_ax(), 0x48cu16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x3e30);
     // 0935:3e30 mov [bp-2],ax
     ctx.memory.write::<u16>(
         segofs(
@@ -8808,13 +2973,11 @@ pub fn x0935_3e24(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_ax(),
     );
-    ctx.dump_dosbox(0x3e33);
     // 0935:3e33 mov di,[bp+4]
     ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x3e36);
     // 0935:3e36 cmp byte ptr [di-20Ch],0
     sub(
         ctx.memory.read::<u8>(segofs(
@@ -8824,66 +2987,54 @@ pub fn x0935_3e24(ctx: &mut Context) -> Cont {
         0x0u8,
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x3e3b);
     // 0935:3e3b jne short 3E6Bh
     ctx.jne(Cont(x0935_3e3d), Cont(x0935_3e6b))
 }
 
 pub fn x0935_3e3d(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3e3d);
     // 0935:3e3d mov di,[bp+4]
     ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x3e40);
     // 0935:3e40 mov si,[bp+4]
     ctx.cpu.regs.set_si(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x3e43);
     // 0935:3e43 lea ax,[si-20Ah]
     ctx.cpu
         .regs
         .set_ax(ctx.cpu.regs.get_si().wrapping_add(0xfdf6u16));
-    ctx.dump_dosbox(0x3e47);
     // 0935:3e47 push ds
     ctx.push16(ctx.cpu.regs.get_ds());
-    ctx.dump_dosbox(0x3e48);
     // 0935:3e48 push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x3e49);
     // 0935:3e49 push word ptr ds:[168h]
     ctx.push16(
         ctx.memory
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x168u16)),
     );
-    ctx.dump_dosbox(0x3e4d);
     // 0935:3e4d mov bx,[bp-2]
     ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0xfffeu16),
     )));
-    ctx.dump_dosbox(0x3e50);
     // 0935:3e50 push word ptr [bx]
     ctx.push16(
         ctx.memory
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_bx())),
     );
-    ctx.dump_dosbox(0x3e52);
     // 0935:3e52 push word ptr [bx+2]
     ctx.push16(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ds(),
         ctx.cpu.regs.get_bx().wrapping_add(0x2u16),
     )));
-    ctx.dump_dosbox(0x3e55);
     // 0935:3e55 push word ptr [bx+4]
     ctx.push16(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ds(),
         ctx.cpu.regs.get_bx().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x3e58);
     // 0935:3e58 mov [bp-4],di
     ctx.memory.write::<u16>(
         segofs(
@@ -8892,7 +3043,6 @@ pub fn x0935_3e3d(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_di(),
     );
-    ctx.dump_dosbox(0x3e5b);
     // 0935:3e5b mov [bp-6],si
     ctx.memory.write::<u16>(
         segofs(
@@ -8901,19 +3051,16 @@ pub fn x0935_3e3d(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_si(),
     );
-    ctx.dump_dosbox(0x3e5e);
     // 0935:3e5e call far ptr 1483h:013Eh
     ctx.callf16(0x3e63, 0x1483, Cont(x1483_013e))
 }
 
 pub fn x0935_3e63(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3e63);
     // 0935:3e63 mov di,[bp-4]
     ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0xfffcu16),
     )));
-    ctx.dump_dosbox(0x3e66);
     // 0935:3e66 mov [di-4],ax
     ctx.memory.write::<u16>(
         segofs(
@@ -8922,66 +3069,54 @@ pub fn x0935_3e63(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_ax(),
     );
-    ctx.dump_dosbox(0x3e69);
     // 0935:3e69 jmp short 3E97h
     Cont(x0935_3e97)
 }
 
 pub fn x0935_3e6b(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3e6b);
     // 0935:3e6b mov di,[bp+4]
     ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x3e6e);
     // 0935:3e6e mov si,[bp+4]
     ctx.cpu.regs.set_si(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x3e71);
     // 0935:3e71 lea ax,[si-20Ah]
     ctx.cpu
         .regs
         .set_ax(ctx.cpu.regs.get_si().wrapping_add(0xfdf6u16));
-    ctx.dump_dosbox(0x3e75);
     // 0935:3e75 push ds
     ctx.push16(ctx.cpu.regs.get_ds());
-    ctx.dump_dosbox(0x3e76);
     // 0935:3e76 push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x3e77);
     // 0935:3e77 push word ptr ds:[168h]
     ctx.push16(
         ctx.memory
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x168u16)),
     );
-    ctx.dump_dosbox(0x3e7b);
     // 0935:3e7b mov bx,[bp-2]
     ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0xfffeu16),
     )));
-    ctx.dump_dosbox(0x3e7e);
     // 0935:3e7e push word ptr [bx]
     ctx.push16(
         ctx.memory
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_bx())),
     );
-    ctx.dump_dosbox(0x3e80);
     // 0935:3e80 push word ptr [bx+2]
     ctx.push16(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ds(),
         ctx.cpu.regs.get_bx().wrapping_add(0x2u16),
     )));
-    ctx.dump_dosbox(0x3e83);
     // 0935:3e83 push word ptr [bx+4]
     ctx.push16(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ds(),
         ctx.cpu.regs.get_bx().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x3e86);
     // 0935:3e86 mov [bp-4],di
     ctx.memory.write::<u16>(
         segofs(
@@ -8990,7 +3125,6 @@ pub fn x0935_3e6b(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_di(),
     );
-    ctx.dump_dosbox(0x3e89);
     // 0935:3e89 mov [bp-6],si
     ctx.memory.write::<u16>(
         segofs(
@@ -8999,19 +3133,16 @@ pub fn x0935_3e6b(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_si(),
     );
-    ctx.dump_dosbox(0x3e8c);
     // 0935:3e8c call far ptr 1483h:013Eh
     ctx.callf16(0x3e91, 0x1483, Cont(x1483_013e))
 }
 
 pub fn x0935_3e91(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3e91);
     // 0935:3e91 mov di,[bp-4]
     ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0xfffcu16),
     )));
-    ctx.dump_dosbox(0x3e94);
     // 0935:3e94 mov [di-4],ax
     ctx.memory.write::<u16>(
         segofs(
@@ -9024,37 +3155,28 @@ pub fn x0935_3e91(ctx: &mut Context) -> Cont {
 }
 
 pub fn x0935_3e97(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3e97);
     // 0935:3e97 mov sp,bp
     ctx.cpu.regs.set_sp(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x3e99);
     // 0935:3e99 pop bp
     let x = ctx.pop16();
     ctx.cpu.regs.set_bp(x);
-    ctx.dump_dosbox(0x3e9a);
     // 0935:3e9a ret 2
     ctx.ret16(2)
 }
 
 pub fn x0935_3e9d(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3e9d);
     // 0935:3e9d push bp
     ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x3e9e);
     // 0935:3e9e mov bp,sp
     ctx.cpu.regs.set_bp(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x3ea0);
     // 0935:3ea0 sub sp,20Ch
     ctx.cpu
         .regs
         .set_sp(sub(ctx.cpu.regs.get_sp(), 0x20cu16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x3ea4);
     // 0935:3ea4 push di
     ctx.push16(ctx.cpu.regs.get_di());
-    ctx.dump_dosbox(0x3ea5);
     // 0935:3ea5 push si
     ctx.push16(ctx.cpu.regs.get_si());
-    ctx.dump_dosbox(0x3ea6);
     // 0935:3ea6 mov word ptr [bp-2],0
     ctx.memory.write::<u16>(
         segofs(
@@ -9067,7 +3189,6 @@ pub fn x0935_3e9d(ctx: &mut Context) -> Cont {
 }
 
 pub fn x0935_3eab(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3eab);
     // 0935:3eab les di,[bp+6]
     let ptr = ctx.memory.read::<u32>(segofs(
         ctx.cpu.regs.get_ss(),
@@ -9075,44 +3196,34 @@ pub fn x0935_3eab(ctx: &mut Context) -> Cont {
     ));
     ctx.cpu.regs.es = (ptr >> 16) as u16;
     ctx.cpu.regs.set_di(ptr as u16);
-    ctx.dump_dosbox(0x3eae);
     // 0935:3eae push es
     ctx.push16(ctx.cpu.regs.get_es());
-    ctx.dump_dosbox(0x3eaf);
     // 0935:3eaf push di
     ctx.push16(ctx.cpu.regs.get_di());
-    ctx.dump_dosbox(0x3eb0);
     // 0935:3eb0 lea ax,[bp-10Ah]
     ctx.cpu
         .regs
         .set_ax(ctx.cpu.regs.get_bp().wrapping_add(0xfef6u16));
-    ctx.dump_dosbox(0x3eb4);
     // 0935:3eb4 push ds
     ctx.push16(ctx.cpu.regs.get_ds());
-    ctx.dump_dosbox(0x3eb5);
     // 0935:3eb5 push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x3eb6);
     // 0935:3eb6 mov ax,[bp-2]
     ctx.cpu.regs.set_ax(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0xfffeu16),
     )));
-    ctx.dump_dosbox(0x3eb9);
     // 0935:3eb9 inc ax
     ctx.cpu
         .regs
         .set_ax(inc(ctx.cpu.regs.get_ax(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x3eba);
     // 0935:3eba push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x3ebb);
     // 0935:3ebb call far ptr 0935h:3D66h
     ctx.callf16(0x3ec0, 0x935, Cont(x0935_3d66))
 }
 
 pub fn x0935_3ec0(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3ec0);
     // 0935:3ec0 mov [bp-2],ax
     ctx.memory.write::<u16>(
         segofs(
@@ -9121,20 +3232,17 @@ pub fn x0935_3ec0(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_ax(),
     );
-    ctx.dump_dosbox(0x3ec3);
     // 0935:3ec3 mov al,[bp-10Ah]
     ctx.cpu.regs.set_al(ctx.memory.read::<u8>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0xfef6u16),
     )));
-    ctx.dump_dosbox(0x3ec7);
     // 0935:3ec7 xor ah,ah
     ctx.cpu.regs.set_ah(xor(
         ctx.cpu.regs.get_ah(),
         ctx.cpu.regs.get_ah(),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x3ec9);
     // 0935:3ec9 mov [bp-6],ax
     ctx.memory.write::<u16>(
         segofs(
@@ -9143,7 +3251,6 @@ pub fn x0935_3ec0(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_ax(),
     );
-    ctx.dump_dosbox(0x3ecc);
     // 0935:3ecc cmp word ptr [bp-6],0
     sub(
         ctx.memory.read::<u16>(segofs(
@@ -9153,46 +3260,38 @@ pub fn x0935_3ec0(ctx: &mut Context) -> Cont {
         0x0u16,
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x3ed0);
     // 0935:3ed0 jne short 3ED5h
     ctx.jne(Cont(x0935_3ed2), Cont(x0935_3ed5))
 }
 
 pub fn x0935_3ed2(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3ed2);
     // 0935:3ed2 jmp near ptr 3F84h
     Cont(x0935_3f84)
 }
 
 pub fn x0935_3ed5(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3ed5);
     // 0935:3ed5 mov di,ds:[166h]
     ctx.cpu.regs.set_di(
         ctx.memory
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x166u16)),
     );
-    ctx.dump_dosbox(0x3ed9);
     // 0935:3ed9 shl di,1
     ctx.cpu
         .regs
         .set_di(shl(ctx.cpu.regs.get_di(), 0x1u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x3edb);
     // 0935:3edb shl di,1
     ctx.cpu
         .regs
         .set_di(shl(ctx.cpu.regs.get_di(), 0x1u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x3edd);
     // 0935:3edd shl di,1
     ctx.cpu
         .regs
         .set_di(shl(ctx.cpu.regs.get_di(), 0x1u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x3edf);
     // 0935:3edf mov al,[di+493h]
     ctx.cpu.regs.set_al(ctx.memory.read::<u8>(segofs(
         ctx.cpu.regs.get_ds(),
         ctx.cpu.regs.get_di().wrapping_add(0x493u16),
     )));
-    ctx.dump_dosbox(0x3ee3);
     // 0935:3ee3 mov [bp-20Ch],al
     ctx.memory.write::<u8>(
         segofs(
@@ -9201,7 +3300,6 @@ pub fn x0935_3ed5(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_al(),
     );
-    ctx.dump_dosbox(0x3ee7);
     // 0935:3ee7 mov word ptr [bp-8],0
     ctx.memory.write::<u16>(
         segofs(
@@ -9210,7 +3308,6 @@ pub fn x0935_3ed5(ctx: &mut Context) -> Cont {
         ),
         0x0u16,
     );
-    ctx.dump_dosbox(0x3eec);
     // 0935:3eec mov word ptr [bp-0Ah],1
     ctx.memory.write::<u16>(
         segofs(
@@ -9219,34 +3316,26 @@ pub fn x0935_3ed5(ctx: &mut Context) -> Cont {
         ),
         0x1u16,
     );
-    ctx.dump_dosbox(0x3ef1);
     // 0935:3ef1 lea di,[bp-20Ah]
     ctx.cpu
         .regs
         .set_di(ctx.cpu.regs.get_bp().wrapping_add(0xfdf6u16));
-    ctx.dump_dosbox(0x3ef5);
     // 0935:3ef5 push ss
     ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x3ef6);
     // 0935:3ef6 pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x3ef7);
     // 0935:3ef7 mov si,20BEh
     ctx.cpu.regs.set_si(0x20beu16);
-    ctx.dump_dosbox(0x3efa);
     // 0935:3efa mov cx,1
     ctx.cpu.regs.set_cx(0x1u16);
-    ctx.dump_dosbox(0x3efd);
     // 0935:3efd mov ax,ds
     ctx.cpu.regs.set_ax(ctx.cpu.regs.get_ds());
-    ctx.dump_dosbox(0x3eff);
     // 0935:3eff call far ptr 0D72h:538Ch
     ctx.callf16(0x3f04, 0xd72, Cont(x0d72_538c))
 }
 
 pub fn x0935_3f04(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3f04);
     // 0935:3f04 inc word ptr [bp-8]
     ctx.memory.write::<u16>(
         segofs(
@@ -9261,13 +3350,11 @@ pub fn x0935_3f04(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0x3f07);
     // 0935:3f07 mov di,[bp-8]
     ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0xfff8u16),
     )));
-    ctx.dump_dosbox(0x3f0a);
     // 0935:3f0a cmp byte ptr [bp+di-10Ah],4Dh
     sub(
         ctx.memory.read::<u8>(segofs(
@@ -9281,13 +3368,11 @@ pub fn x0935_3f04(ctx: &mut Context) -> Cont {
         0x4du8,
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x3f0f);
     // 0935:3f0f je short 3F18h
     ctx.je(Cont(x0935_3f11), Cont(x0935_3f18))
 }
 
 pub fn x0935_3f11(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3f11);
     // 0935:3f11 cmp byte ptr [bp+di-10Ah],46h
     sub(
         ctx.memory.read::<u8>(segofs(
@@ -9301,28 +3386,23 @@ pub fn x0935_3f11(ctx: &mut Context) -> Cont {
         0x46u8,
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x3f16);
     // 0935:3f16 jne short 3F4Ch
     ctx.jne(Cont(x0935_3f18), Cont(x0935_3f4c))
 }
 
 pub fn x0935_3f18(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3f18);
     // 0935:3f18 push bp
     ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x3f19);
     // 0935:3f19 call 3E14h
     ctx.call16(0x3f1c, Cont(x0935_3e14))
 }
 
 pub fn x0935_3f1c(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3f1c);
     // 0935:3f1c mov di,[bp-8]
     ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0xfff8u16),
     )));
-    ctx.dump_dosbox(0x3f1f);
     // 0935:3f1f cmp byte ptr [bp+di-10Ah],4Dh
     sub(
         ctx.memory.read::<u8>(segofs(
@@ -9336,13 +3416,11 @@ pub fn x0935_3f1c(ctx: &mut Context) -> Cont {
         0x4du8,
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x3f24);
     // 0935:3f24 jne short 3F2Dh
     ctx.jne(Cont(x0935_3f26), Cont(x0935_3f2d))
 }
 
 pub fn x0935_3f26(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3f26);
     // 0935:3f26 mov byte ptr [bp-20Ch],0
     ctx.memory.write::<u8>(
         segofs(
@@ -9351,13 +3429,11 @@ pub fn x0935_3f26(ctx: &mut Context) -> Cont {
         ),
         0x0u8,
     );
-    ctx.dump_dosbox(0x3f2b);
     // 0935:3f2b jmp short 3F32h
     Cont(x0935_3f32)
 }
 
 pub fn x0935_3f2d(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3f2d);
     // 0935:3f2d mov byte ptr [bp-20Ch],1
     ctx.memory.write::<u8>(
         segofs(
@@ -9370,7 +3446,6 @@ pub fn x0935_3f2d(ctx: &mut Context) -> Cont {
 }
 
 pub fn x0935_3f32(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3f32);
     // 0935:3f32 mov word ptr [bp-0Ah],1
     ctx.memory.write::<u16>(
         segofs(
@@ -9379,96 +3454,73 @@ pub fn x0935_3f32(ctx: &mut Context) -> Cont {
         ),
         0x1u16,
     );
-    ctx.dump_dosbox(0x3f37);
     // 0935:3f37 lea di,[bp-20Ah]
     ctx.cpu
         .regs
         .set_di(ctx.cpu.regs.get_bp().wrapping_add(0xfdf6u16));
-    ctx.dump_dosbox(0x3f3b);
     // 0935:3f3b push ss
     ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0x3f3c);
     // 0935:3f3c pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x3f3d);
     // 0935:3f3d mov si,20BEh
     ctx.cpu.regs.set_si(0x20beu16);
-    ctx.dump_dosbox(0x3f40);
     // 0935:3f40 mov cx,1
     ctx.cpu.regs.set_cx(0x1u16);
-    ctx.dump_dosbox(0x3f43);
     // 0935:3f43 mov ax,ds
     ctx.cpu.regs.set_ax(ctx.cpu.regs.get_ds());
-    ctx.dump_dosbox(0x3f45);
     // 0935:3f45 call far ptr 0D72h:538Ch
     ctx.callf16(0x3f4a, 0xd72, Cont(x0d72_538c))
 }
 
 pub fn x0935_3f4a(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3f4a);
     // 0935:3f4a jmp short 3F78h
     Cont(x0935_3f78)
 }
 
 pub fn x0935_3f4c(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3f4c);
     // 0935:3f4c mov ax,1
     ctx.cpu.regs.set_ax(0x1u16);
-    ctx.dump_dosbox(0x3f4f);
     // 0935:3f4f push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x3f50);
     // 0935:3f50 mov ax,20C1h
     ctx.cpu.regs.set_ax(0x20c1u16);
-    ctx.dump_dosbox(0x3f53);
     // 0935:3f53 push ds
     ctx.push16(ctx.cpu.regs.get_ds());
-    ctx.dump_dosbox(0x3f54);
     // 0935:3f54 push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x3f55);
     // 0935:3f55 mov ax,0FFh
     ctx.cpu.regs.set_ax(0xffu16);
-    ctx.dump_dosbox(0x3f58);
     // 0935:3f58 push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x3f59);
     // 0935:3f59 lea ax,[bp-20Ah]
     ctx.cpu
         .regs
         .set_ax(ctx.cpu.regs.get_bp().wrapping_add(0xfdf6u16));
-    ctx.dump_dosbox(0x3f5d);
     // 0935:3f5d push ds
     ctx.push16(ctx.cpu.regs.get_ds());
-    ctx.dump_dosbox(0x3f5e);
     // 0935:3f5e push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x3f5f);
     // 0935:3f5f push word ptr [bp-0Ah]
     ctx.push16(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0xfff6u16),
     )));
-    ctx.dump_dosbox(0x3f62);
     // 0935:3f62 call far ptr 0D72h:5909h
     ctx.callf16(0x3f67, 0xd72, Cont(x0d72_5909))
 }
 
 pub fn x0935_3f67(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3f67);
     // 0935:3f67 mov di,[bp-0Ah]
     ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0xfff6u16),
     )));
-    ctx.dump_dosbox(0x3f6a);
     // 0935:3f6a mov si,[bp-8]
     ctx.cpu.regs.set_si(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0xfff8u16),
     )));
-    ctx.dump_dosbox(0x3f6d);
     // 0935:3f6d mov al,[bp+si-10Ah]
     ctx.cpu.regs.set_al(
         ctx.memory.read::<u8>(segofs(
@@ -9480,7 +3532,6 @@ pub fn x0935_3f67(ctx: &mut Context) -> Cont {
                 .wrapping_add(0xfef6u16),
         )),
     );
-    ctx.dump_dosbox(0x3f71);
     // 0935:3f71 mov [bp+di-20Ah],al
     ctx.memory.write::<u8>(
         segofs(
@@ -9493,7 +3544,6 @@ pub fn x0935_3f67(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_al(),
     );
-    ctx.dump_dosbox(0x3f75);
     // 0935:3f75 inc word ptr [bp-0Ah]
     ctx.memory.write::<u16>(
         segofs(
@@ -9512,13 +3562,11 @@ pub fn x0935_3f67(ctx: &mut Context) -> Cont {
 }
 
 pub fn x0935_3f78(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3f78);
     // 0935:3f78 mov ax,[bp-8]
     ctx.cpu.regs.set_ax(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0xfff8u16),
     )));
-    ctx.dump_dosbox(0x3f7b);
     // 0935:3f7b cmp ax,[bp-6]
     sub(
         ctx.cpu.regs.get_ax(),
@@ -9528,22 +3576,18 @@ pub fn x0935_3f78(ctx: &mut Context) -> Cont {
         )),
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x3f7e);
     // 0935:3f7e jne short 3F04h
     ctx.jne(Cont(x0935_3f80), Cont(x0935_3f04))
 }
 
 pub fn x0935_3f80(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3f80);
     // 0935:3f80 push bp
     ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x3f81);
     // 0935:3f81 call 3E14h
     ctx.call16(0x3f84, Cont(x0935_3e14))
 }
 
 pub fn x0935_3f84(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3f84);
     // 0935:3f84 cmp word ptr [bp-6],0
     sub(
         ctx.memory.read::<u16>(segofs(
@@ -9553,82 +3597,66 @@ pub fn x0935_3f84(ctx: &mut Context) -> Cont {
         0x0u16,
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x3f88);
     // 0935:3f88 je short 3F8Dh
     ctx.je(Cont(x0935_3f8a), Cont(x0935_3f8d))
 }
 
 pub fn x0935_3f8a(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3f8a);
     // 0935:3f8a jmp near ptr 3EABh
     Cont(x0935_3eab)
 }
 
 pub fn x0935_3f8d(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3f8d);
     // 0935:3f8d pop si
     let x = ctx.pop16();
     ctx.cpu.regs.set_si(x);
-    ctx.dump_dosbox(0x3f8e);
     // 0935:3f8e pop di
     let x = ctx.pop16();
     ctx.cpu.regs.set_di(x);
-    ctx.dump_dosbox(0x3f8f);
     // 0935:3f8f mov sp,bp
     ctx.cpu.regs.set_sp(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x3f91);
     // 0935:3f91 pop bp
     let x = ctx.pop16();
     ctx.cpu.regs.set_bp(x);
-    ctx.dump_dosbox(0x3f92);
     // 0935:3f92 retf 4
     ctx.retf16(4)
 }
 
 pub fn x0d2f_0008(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x8);
     // 0d2f:0008 push bp
     ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x9);
     // 0d2f:0009 mov bp,sp
     ctx.cpu.regs.set_bp(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0xb);
     // 0d2f:000b sub sp,8
     ctx.cpu
         .regs
         .set_sp(sub(ctx.cpu.regs.get_sp(), 0x8u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xf);
     // 0d2f:000f mov di,[bp+4]
     ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x12);
     // 0d2f:0012 mov al,[di]
     ctx.cpu.regs.set_al(
         ctx.memory
             .read::<u8>(segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_di())),
     );
-    ctx.dump_dosbox(0x14);
     // 0d2f:0014 xor ah,ah
     ctx.cpu.regs.set_ah(xor(
         ctx.cpu.regs.get_ah(),
         ctx.cpu.regs.get_ah(),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x16);
     // 0d2f:0016 xchg si,ax
     let t = ctx.cpu.regs.get_si();
     ctx.cpu.regs.set_si(ctx.cpu.regs.get_ax());
     ctx.cpu.regs.set_ax(t);
-    ctx.dump_dosbox(0x17);
     // 0d2f:0017 add di,si
     ctx.cpu.regs.set_di(add(
         ctx.cpu.regs.get_di(),
         ctx.cpu.regs.get_si(),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x19);
     // 0d2f:0019 mov byte ptr [di+1],0
     ctx.memory.write::<u8>(
         segofs(
@@ -9637,20 +3665,16 @@ pub fn x0d2f_0008(ctx: &mut Context) -> Cont {
         ),
         0x0u8,
     );
-    ctx.dump_dosbox(0x1d);
     // 0d2f:001d mov bx,[bp+4]
     ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x20);
     // 0d2f:0020 push ds
     ctx.push16(ctx.cpu.regs.get_ds());
-    ctx.dump_dosbox(0x21);
     // 0d2f:0021 pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x22);
     // 0d2f:0022 mov [bp-4],bx
     ctx.memory.write::<u16>(
         segofs(
@@ -9659,7 +3683,6 @@ pub fn x0d2f_0008(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_bx(),
     );
-    ctx.dump_dosbox(0x25);
     // 0d2f:0025 mov [bp-2],es
     ctx.memory.write::<u16>(
         segofs(
@@ -9668,34 +3691,27 @@ pub fn x0d2f_0008(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_es(),
     );
-    ctx.dump_dosbox(0x28);
     // 0d2f:0028 mov bx,es
     ctx.cpu.regs.set_bx(ctx.cpu.regs.get_es());
-    ctx.dump_dosbox(0x2a);
     // 0d2f:002a xchg bx,ax
     let t = ctx.cpu.regs.get_bx();
     ctx.cpu.regs.set_bx(ctx.cpu.regs.get_ax());
     ctx.cpu.regs.set_ax(t);
-    ctx.dump_dosbox(0x2b);
     // 0d2f:002b mov ds:[4E2h],ax
     ctx.memory.write::<u16>(
         segofs(ctx.cpu.regs.get_ds(), 0x4e2u16),
         ctx.cpu.regs.get_ax(),
     );
-    ctx.dump_dosbox(0x2e);
     // 0d2f:002e mov di,[bp+4]
     ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x31);
     // 0d2f:0031 push ds
     ctx.push16(ctx.cpu.regs.get_ds());
-    ctx.dump_dosbox(0x32);
     // 0d2f:0032 pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x33);
     // 0d2f:0033 mov [bp-8],di
     ctx.memory.write::<u16>(
         segofs(
@@ -9704,7 +3720,6 @@ pub fn x0d2f_0008(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_di(),
     );
-    ctx.dump_dosbox(0x36);
     // 0d2f:0036 mov [bp-6],es
     ctx.memory.write::<u16>(
         segofs(
@@ -9713,53 +3728,41 @@ pub fn x0d2f_0008(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_es(),
     );
-    ctx.dump_dosbox(0x39);
     // 0d2f:0039 xchg di,ax
     let t = ctx.cpu.regs.get_di();
     ctx.cpu.regs.set_di(ctx.cpu.regs.get_ax());
     ctx.cpu.regs.set_ax(t);
-    ctx.dump_dosbox(0x3a);
     // 0d2f:003a inc ax
     ctx.cpu
         .regs
         .set_ax(inc(ctx.cpu.regs.get_ax(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x3b);
     // 0d2f:003b mov ds:[4E0h],ax
     ctx.memory.write::<u16>(
         segofs(ctx.cpu.regs.get_ds(), 0x4e0u16),
         ctx.cpu.regs.get_ax(),
     );
-    ctx.dump_dosbox(0x3e);
     // 0d2f:003e mov sp,bp
     ctx.cpu.regs.set_sp(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x40);
     // 0d2f:0040 pop bp
     let x = ctx.pop16();
     ctx.cpu.regs.set_bp(x);
-    ctx.dump_dosbox(0x41);
     // 0d2f:0041 ret 2
     ctx.ret16(2)
 }
 
 pub fn x0d2f_0044(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x44);
     // 0d2f:0044 push bp
     ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x45);
     // 0d2f:0045 mov bp,sp
     ctx.cpu.regs.set_bp(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x47);
     // 0d2f:0047 sub sp,4
     ctx.cpu
         .regs
         .set_sp(sub(ctx.cpu.regs.get_sp(), 0x4u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x4b);
     // 0d2f:004b push di
     ctx.push16(ctx.cpu.regs.get_di());
-    ctx.dump_dosbox(0x4c);
     // 0d2f:004c push si
     ctx.push16(ctx.cpu.regs.get_si());
-    ctx.dump_dosbox(0x4d);
     // 0d2f:004d mov word ptr [bp-4],4DCh
     ctx.memory.write::<u16>(
         segofs(
@@ -9768,27 +3771,22 @@ pub fn x0d2f_0044(ctx: &mut Context) -> Cont {
         ),
         0x4dcu16,
     );
-    ctx.dump_dosbox(0x52);
     // 0d2f:0052 lea ax,[bp+0Ah]
     ctx.cpu
         .regs
         .set_ax(ctx.cpu.regs.get_bp().wrapping_add(0xau16));
-    ctx.dump_dosbox(0x55);
     // 0d2f:0055 push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x56);
     // 0d2f:0056 call 8
     ctx.call16(0x59, Cont(x0d2f_0008))
 }
 
 pub fn x0d2f_0059(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x59);
     // 0d2f:0059 mov di,[bp-4]
     ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0xfffcu16),
     )));
-    ctx.dump_dosbox(0x5c);
     // 0d2f:005c mov byte ptr [di+0Ch],2
     ctx.memory.write::<u8>(
         segofs(
@@ -9797,13 +3795,11 @@ pub fn x0d2f_0059(ctx: &mut Context) -> Cont {
         ),
         0x2u8,
     );
-    ctx.dump_dosbox(0x60);
     // 0d2f:0060 mov di,[bp-4]
     ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0xfffcu16),
     )));
-    ctx.dump_dosbox(0x63);
     // 0d2f:0063 mov byte ptr [di+0Dh],3Dh
     ctx.memory.write::<u8>(
         segofs(
@@ -9812,55 +3808,45 @@ pub fn x0d2f_0059(ctx: &mut Context) -> Cont {
         ),
         0x3du8,
     );
-    ctx.dump_dosbox(0x67);
     // 0d2f:0067 mov ax,4DCh
     ctx.cpu.regs.set_ax(0x4dcu16);
-    ctx.dump_dosbox(0x6a);
     // 0d2f:006a push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x6b);
     // 0d2f:006b call far ptr 0D68h:0034h
     ctx.callf16(0x70, 0xd68, Cont(x0d68_0034))
 }
 
 pub fn x0d2f_0070(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x70);
     // 0d2f:0070 mov di,[bp+6]
     ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x6u16),
     )));
-    ctx.dump_dosbox(0x73);
     // 0d2f:0073 mov si,[bp-4]
     ctx.cpu.regs.set_si(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0xfffcu16),
     )));
-    ctx.dump_dosbox(0x76);
     // 0d2f:0076 mov ax,[si+0Ch]
     ctx.cpu.regs.set_ax(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ds(),
         ctx.cpu.regs.get_si().wrapping_add(0xcu16),
     )));
-    ctx.dump_dosbox(0x79);
     // 0d2f:0079 mov [di],ax
     ctx.memory.write::<u16>(
         segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_di()),
         ctx.cpu.regs.get_ax(),
     );
-    ctx.dump_dosbox(0x7b);
     // 0d2f:007b mov di,[bp-4]
     ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0xfffcu16),
     )));
-    ctx.dump_dosbox(0x7e);
     // 0d2f:007e mov ax,[di+8]
     ctx.cpu.regs.set_ax(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ds(),
         ctx.cpu.regs.get_di().wrapping_add(0x8u16),
     )));
-    ctx.dump_dosbox(0x81);
     // 0d2f:0081 mov [bp-2],ax
     ctx.memory.write::<u16>(
         segofs(
@@ -9869,51 +3855,39 @@ pub fn x0d2f_0070(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_ax(),
     );
-    ctx.dump_dosbox(0x84);
     // 0d2f:0084 mov ax,[bp-2]
     ctx.cpu.regs.set_ax(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0xfffeu16),
     )));
-    ctx.dump_dosbox(0x87);
     // 0d2f:0087 pop si
     let x = ctx.pop16();
     ctx.cpu.regs.set_si(x);
-    ctx.dump_dosbox(0x88);
     // 0d2f:0088 pop di
     let x = ctx.pop16();
     ctx.cpu.regs.set_di(x);
-    ctx.dump_dosbox(0x89);
     // 0d2f:0089 mov sp,bp
     ctx.cpu.regs.set_sp(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x8b);
     // 0d2f:008b pop bp
     let x = ctx.pop16();
     ctx.cpu.regs.set_bp(x);
-    ctx.dump_dosbox(0x8c);
     // 0d2f:008c retf 104h
     ctx.retf16(260)
 }
 
 pub fn x0d2f_008f(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x8f);
     // 0d2f:008f push bp
     ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x90);
     // 0d2f:0090 mov bp,sp
     ctx.cpu.regs.set_bp(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x92);
     // 0d2f:0092 sub sp,4
     ctx.cpu
         .regs
         .set_sp(sub(ctx.cpu.regs.get_sp(), 0x4u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x96);
     // 0d2f:0096 push di
     ctx.push16(ctx.cpu.regs.get_di());
-    ctx.dump_dosbox(0x97);
     // 0d2f:0097 push si
     ctx.push16(ctx.cpu.regs.get_si());
-    ctx.dump_dosbox(0x98);
     // 0d2f:0098 mov word ptr [bp-4],4DCh
     ctx.memory.write::<u16>(
         segofs(
@@ -9922,43 +3896,36 @@ pub fn x0d2f_008f(ctx: &mut Context) -> Cont {
         ),
         0x4dcu16,
     );
-    ctx.dump_dosbox(0x9d);
     // 0d2f:009d mov di,[bp-4]
     ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0xfffcu16),
     )));
-    ctx.dump_dosbox(0xa0);
     // 0d2f:00a0 mov ax,[bp+0Ch]
     ctx.cpu.regs.set_ax(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0xcu16),
     )));
-    ctx.dump_dosbox(0xa3);
     // 0d2f:00a3 mov [di],ax
     ctx.memory.write::<u16>(
         segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_di()),
         ctx.cpu.regs.get_ax(),
     );
-    ctx.dump_dosbox(0xa5);
     // 0d2f:00a5 mov di,[bp-4]
     ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0xfffcu16),
     )));
-    ctx.dump_dosbox(0xa8);
     // 0d2f:00a8 mov si,[bp+0Ah]
     ctx.cpu.regs.set_si(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0xau16),
     )));
-    ctx.dump_dosbox(0xab);
     // 0d2f:00ab mov ax,[si]
     ctx.cpu.regs.set_ax(
         ctx.memory
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_si())),
     );
-    ctx.dump_dosbox(0xad);
     // 0d2f:00ad mov [di+2],ax
     ctx.memory.write::<u16>(
         segofs(
@@ -9967,19 +3934,16 @@ pub fn x0d2f_008f(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_ax(),
     );
-    ctx.dump_dosbox(0xb0);
     // 0d2f:00b0 mov di,[bp-4]
     ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0xfffcu16),
     )));
-    ctx.dump_dosbox(0xb3);
     // 0d2f:00b3 mov ax,[bp+8]
     ctx.cpu.regs.set_ax(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x8u16),
     )));
-    ctx.dump_dosbox(0xb6);
     // 0d2f:00b6 mov [di+6],ax
     ctx.memory.write::<u16>(
         segofs(
@@ -9988,19 +3952,16 @@ pub fn x0d2f_008f(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_ax(),
     );
-    ctx.dump_dosbox(0xb9);
     // 0d2f:00b9 mov di,[bp-4]
     ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0xfffcu16),
     )));
-    ctx.dump_dosbox(0xbc);
     // 0d2f:00bc mov ax,[bp+6]
     ctx.cpu.regs.set_ax(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x6u16),
     )));
-    ctx.dump_dosbox(0xbf);
     // 0d2f:00bf mov [di+4],ax
     ctx.memory.write::<u16>(
         segofs(
@@ -10009,13 +3970,11 @@ pub fn x0d2f_008f(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_ax(),
     );
-    ctx.dump_dosbox(0xc2);
     // 0d2f:00c2 mov di,[bp-4]
     ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0xfffcu16),
     )));
-    ctx.dump_dosbox(0xc5);
     // 0d2f:00c5 mov byte ptr [di+0Dh],3Fh
     ctx.memory.write::<u8>(
         segofs(
@@ -10024,48 +3983,39 @@ pub fn x0d2f_008f(ctx: &mut Context) -> Cont {
         ),
         0x3fu8,
     );
-    ctx.dump_dosbox(0xc9);
     // 0d2f:00c9 mov ax,4DCh
     ctx.cpu.regs.set_ax(0x4dcu16);
-    ctx.dump_dosbox(0xcc);
     // 0d2f:00cc push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0xcd);
     // 0d2f:00cd call far ptr 0D68h:0034h
     ctx.callf16(0xd2, 0xd68, Cont(x0d68_0034))
 }
 
 pub fn x0d2f_00d2(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xd2);
     // 0d2f:00d2 mov di,[bp+0Ah]
     ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0xau16),
     )));
-    ctx.dump_dosbox(0xd5);
     // 0d2f:00d5 mov si,[bp-4]
     ctx.cpu.regs.set_si(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0xfffcu16),
     )));
-    ctx.dump_dosbox(0xd8);
     // 0d2f:00d8 mov ax,[si+0Ch]
     ctx.cpu.regs.set_ax(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ds(),
         ctx.cpu.regs.get_si().wrapping_add(0xcu16),
     )));
-    ctx.dump_dosbox(0xdb);
     // 0d2f:00db cwd
     ctx.cpu
         .regs
         .set_dx_ax(ctx.cpu.regs.get_ax() as i16 as i32 as u32);
-    ctx.dump_dosbox(0xdc);
     // 0d2f:00dc mov [di],ax
     ctx.memory.write::<u16>(
         segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_di()),
         ctx.cpu.regs.get_ax(),
     );
-    ctx.dump_dosbox(0xde);
     // 0d2f:00de mov [di+2],dx
     ctx.memory.write::<u16>(
         segofs(
@@ -10074,19 +4024,16 @@ pub fn x0d2f_00d2(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_dx(),
     );
-    ctx.dump_dosbox(0xe1);
     // 0d2f:00e1 mov di,[bp-4]
     ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0xfffcu16),
     )));
-    ctx.dump_dosbox(0xe4);
     // 0d2f:00e4 mov ax,[di+8]
     ctx.cpu.regs.set_ax(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ds(),
         ctx.cpu.regs.get_di().wrapping_add(0x8u16),
     )));
-    ctx.dump_dosbox(0xe7);
     // 0d2f:00e7 mov [bp-2],ax
     ctx.memory.write::<u16>(
         segofs(
@@ -10095,91 +4042,71 @@ pub fn x0d2f_00d2(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_ax(),
     );
-    ctx.dump_dosbox(0xea);
     // 0d2f:00ea mov ax,[bp-2]
     ctx.cpu.regs.set_ax(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0xfffeu16),
     )));
-    ctx.dump_dosbox(0xed);
     // 0d2f:00ed pop si
     let x = ctx.pop16();
     ctx.cpu.regs.set_si(x);
-    ctx.dump_dosbox(0xee);
     // 0d2f:00ee pop di
     let x = ctx.pop16();
     ctx.cpu.regs.set_di(x);
-    ctx.dump_dosbox(0xef);
     // 0d2f:00ef mov sp,bp
     ctx.cpu.regs.set_sp(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0xf1);
     // 0d2f:00f1 pop bp
     let x = ctx.pop16();
     ctx.cpu.regs.set_bp(x);
-    ctx.dump_dosbox(0xf2);
     // 0d2f:00f2 retf 8
     ctx.retf16(8)
 }
 
 pub fn x0d2f_01cb(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x1cb);
     // 0d2f:01cb push bp
     ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x1cc);
     // 0d2f:01cc mov bp,sp
     ctx.cpu.regs.set_bp(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x1ce);
     // 0d2f:01ce sub sp,0Ch
     ctx.cpu
         .regs
         .set_sp(sub(ctx.cpu.regs.get_sp(), 0xcu16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x1d2);
     // 0d2f:01d2 push di
     ctx.push16(ctx.cpu.regs.get_di());
-    ctx.dump_dosbox(0x1d3);
     // 0d2f:01d3 push si
     ctx.push16(ctx.cpu.regs.get_si());
-    ctx.dump_dosbox(0x1d4);
     // 0d2f:01d4 mov di,[bp+6]
     ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x6u16),
     )));
-    ctx.dump_dosbox(0x1d7);
     // 0d2f:01d7 mov ax,[di]
     ctx.cpu.regs.set_ax(
         ctx.memory
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_di())),
     );
-    ctx.dump_dosbox(0x1d9);
     // 0d2f:01d9 mov ds:[4DCh],ax
     ctx.memory.write::<u16>(
         segofs(ctx.cpu.regs.get_ds(), 0x4dcu16),
         ctx.cpu.regs.get_ax(),
     );
-    ctx.dump_dosbox(0x1dc);
     // 0d2f:01dc mov byte ptr ds:[4E9h],3Eh
     ctx.memory
         .write::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x4e9u16), 0x3eu8);
-    ctx.dump_dosbox(0x1e1);
     // 0d2f:01e1 mov ax,4DCh
     ctx.cpu.regs.set_ax(0x4dcu16);
-    ctx.dump_dosbox(0x1e4);
     // 0d2f:01e4 push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x1e5);
     // 0d2f:01e5 call far ptr 0D68h:0034h
     ctx.callf16(0x1ea, 0xd68, Cont(x0d68_0034))
 }
 
 pub fn x0d2f_01ea(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x1ea);
     // 0d2f:01ea mov ax,ds:[4E4h]
     ctx.cpu.regs.set_ax(
         ctx.memory
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x4e4u16)),
     );
-    ctx.dump_dosbox(0x1ed);
     // 0d2f:01ed mov [bp-2],ax
     ctx.memory.write::<u16>(
         segofs(
@@ -10188,170 +4115,133 @@ pub fn x0d2f_01ea(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_ax(),
     );
-    ctx.dump_dosbox(0x1f0);
     // 0d2f:01f0 mov ax,[bp-2]
     ctx.cpu.regs.set_ax(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0xfffeu16),
     )));
-    ctx.dump_dosbox(0x1f3);
     // 0d2f:01f3 pop si
     let x = ctx.pop16();
     ctx.cpu.regs.set_si(x);
-    ctx.dump_dosbox(0x1f4);
     // 0d2f:01f4 pop di
     let x = ctx.pop16();
     ctx.cpu.regs.set_di(x);
-    ctx.dump_dosbox(0x1f5);
     // 0d2f:01f5 mov sp,bp
     ctx.cpu.regs.set_sp(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x1f7);
     // 0d2f:01f7 pop bp
     let x = ctx.pop16();
     ctx.cpu.regs.set_bp(x);
-    ctx.dump_dosbox(0x1f8);
     // 0d2f:01f8 retf 2
     ctx.retf16(2)
 }
 
 pub fn x0d68_0034(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x34);
     // 0d68:0034 push bp
     ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x35);
     // 0d68:0035 mov bp,sp
     ctx.cpu.regs.set_bp(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x37);
     // 0d68:0037 mov si,[bp+6]
     ctx.cpu.regs.set_si(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x6u16),
     )));
-    ctx.dump_dosbox(0x3a);
     // 0d68:003a push ds
     ctx.push16(ctx.cpu.regs.get_ds());
-    ctx.dump_dosbox(0x3b);
     // 0d68:003b mov ax,[si+8]
     ctx.cpu.regs.set_ax(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ds(),
         ctx.cpu.regs.get_si().wrapping_add(0x8u16),
     )));
-    ctx.dump_dosbox(0x3e);
     // 0d68:003e push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x3f);
     // 0d68:003f mov ah,[si+0Dh]
     ctx.cpu.regs.set_ah(ctx.memory.read::<u8>(segofs(
         ctx.cpu.regs.get_ds(),
         ctx.cpu.regs.get_si().wrapping_add(0xdu16),
     )));
-    ctx.dump_dosbox(0x42);
     // 0d68:0042 mov al,[si+0Ch]
     ctx.cpu.regs.set_al(ctx.memory.read::<u8>(segofs(
         ctx.cpu.regs.get_ds(),
         ctx.cpu.regs.get_si().wrapping_add(0xcu16),
     )));
-    ctx.dump_dosbox(0x45);
     // 0d68:0045 mov bx,[si]
     ctx.cpu.regs.set_bx(
         ctx.memory
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_si())),
     );
-    ctx.dump_dosbox(0x47);
     // 0d68:0047 mov cx,[si+2]
     ctx.cpu.regs.set_cx(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ds(),
         ctx.cpu.regs.get_si().wrapping_add(0x2u16),
     )));
-    ctx.dump_dosbox(0x4a);
     // 0d68:004a mov dx,[si+4]
     ctx.cpu.regs.set_dx(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ds(),
         ctx.cpu.regs.get_si().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x4d);
     // 0d68:004d mov es,[si+0Ah]
     ctx.cpu.regs.set_es(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ds(),
         ctx.cpu.regs.get_si().wrapping_add(0xau16),
     )));
-    ctx.dump_dosbox(0x50);
     // 0d68:0050 mov ds,[si+6]
     ctx.cpu.regs.set_ds(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ds(),
         ctx.cpu.regs.get_si().wrapping_add(0x6u16),
     )));
-    ctx.dump_dosbox(0x53);
     // 0d68:0053 pop si
     let x = ctx.pop16();
     ctx.cpu.regs.set_si(x);
-    ctx.dump_dosbox(0x54);
     // 0d68:0054 cmp ah,2Fh
     sub(ctx.cpu.regs.get_ah(), 0x2fu8, &mut ctx.cpu.flags);
-    ctx.dump_dosbox(0x57);
     // 0d68:0057 jne short 006Fh
     ctx.jne(Cont(x0d68_0059), Cont(x0d68_006f))
 }
 
 pub fn x0d68_0059(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x59);
     // 0d68:0059 mov ax,0D68h
     ctx.cpu.regs.set_ax(0xd68u16);
-    ctx.dump_dosbox(0x5c);
     // 0d68:005c sub ax,10h
     ctx.cpu
         .regs
         .set_ax(sub(ctx.cpu.regs.get_ax(), 0x10u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x5f);
     // 0d68:005f mov es,ax
     ctx.cpu.regs.set_es(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x61);
     // 0d68:0061 mov bx,80h
     ctx.cpu.regs.set_bx(0x80u16);
-    ctx.dump_dosbox(0x64);
     // 0d68:0064 mov ds,ax
     ctx.cpu.regs.set_ds(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x66);
     // 0d68:0066 mov dx,bx
     ctx.cpu.regs.set_dx(ctx.cpu.regs.get_bx());
-    ctx.dump_dosbox(0x68);
     // 0d68:0068 mov ah,1Ah
     ctx.cpu.regs.set_ah(0x1au8);
-    ctx.dump_dosbox(0x6a);
     // 0d68:006a int 21h
     dos::int(ctx, 0x6c, 0x21)
 }
 
 pub fn x0d68_006c(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x6c);
     // 0d68:006c clc
     clc(ctx);
-    ctx.dump_dosbox(0x6d);
     // 0d68:006d jmp short 0072h
     Cont(x0d68_0072)
 }
 
 pub fn x0d68_006f(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x6f);
     // 0d68:006f clc
     clc(ctx);
-    ctx.dump_dosbox(0x70);
     // 0d68:0070 int 21h
     dos::int(ctx, 0x72, 0x21)
 }
 
 pub fn x0d68_0072(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x72);
     // 0d68:0072 mov si,[bp+6]
     ctx.cpu.regs.set_si(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x6u16),
     )));
-    ctx.dump_dosbox(0x75);
     // 0d68:0075 pop ds
     let x = ctx.pop16();
     ctx.cpu.regs.set_ds(x);
-    ctx.dump_dosbox(0x76);
     // 0d68:0076 mov [si+0Ch],ax
     ctx.memory.write::<u16>(
         segofs(
@@ -10360,13 +4250,11 @@ pub fn x0d68_0072(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_ax(),
     );
-    ctx.dump_dosbox(0x79);
     // 0d68:0079 jb short 007Dh
     ctx.jb(Cont(x0d68_007b), Cont(x0d68_007d))
 }
 
 pub fn x0d68_007b(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x7b);
     // 0d68:007b sub ax,ax
     ctx.cpu.regs.set_ax(sub(
         ctx.cpu.regs.get_ax(),
@@ -10377,7 +4265,6 @@ pub fn x0d68_007b(ctx: &mut Context) -> Cont {
 }
 
 pub fn x0d68_007d(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x7d);
     // 0d68:007d mov [si+0Ah],es
     ctx.memory.write::<u16>(
         segofs(
@@ -10386,7 +4273,6 @@ pub fn x0d68_007d(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_es(),
     );
-    ctx.dump_dosbox(0x80);
     // 0d68:0080 mov [si+8],ax
     ctx.memory.write::<u16>(
         segofs(
@@ -10395,13 +4281,11 @@ pub fn x0d68_007d(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_ax(),
     );
-    ctx.dump_dosbox(0x83);
     // 0d68:0083 mov [si],bx
     ctx.memory.write::<u16>(
         segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_si()),
         ctx.cpu.regs.get_bx(),
     );
-    ctx.dump_dosbox(0x85);
     // 0d68:0085 mov [si+2],cx
     ctx.memory.write::<u16>(
         segofs(
@@ -10410,7 +4294,6 @@ pub fn x0d68_007d(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_cx(),
     );
-    ctx.dump_dosbox(0x88);
     // 0d68:0088 mov [si+4],dx
     ctx.memory.write::<u16>(
         segofs(
@@ -10419,43 +4302,33 @@ pub fn x0d68_007d(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_dx(),
     );
-    ctx.dump_dosbox(0x8b);
     // 0d68:008b mov sp,bp
     ctx.cpu.regs.set_sp(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x8d);
     // 0d68:008d pop bp
     let x = ctx.pop16();
     ctx.cpu.regs.set_bp(x);
-    ctx.dump_dosbox(0x8e);
     // 0d68:008e retf 2
     ctx.retf16(2)
 }
 
 pub fn x0d72_0010(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x10);
     // 0d72:0010 push bp
     ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x11);
     // 0d72:0011 push ds
     ctx.push16(ctx.cpu.regs.get_ds());
-    ctx.dump_dosbox(0x12);
     // 0d72:0012 push es
     ctx.push16(ctx.cpu.regs.get_es());
-    ctx.dump_dosbox(0x13);
     // 0d72:0013 sub sp,10h
     ctx.cpu
         .regs
         .set_sp(sub(ctx.cpu.regs.get_sp(), 0x10u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x16);
     // 0d72:0016 mov bp,sp
     ctx.cpu.regs.set_bp(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x18);
     // 0d72:0018 mov es,[bp+1Ch]
     ctx.cpu.regs.set_es(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x1cu16),
     )));
-    ctx.dump_dosbox(0x1b);
     // 0d72:001b lds si,[bp+1Eh]
     let ptr = ctx.memory.read::<u32>(segofs(
         ctx.cpu.regs.get_ss(),
@@ -10463,38 +4336,31 @@ pub fn x0d72_0010(ctx: &mut Context) -> Cont {
     ));
     ctx.cpu.regs.ds = (ptr >> 16) as u16;
     ctx.cpu.regs.set_si(ptr as u16);
-    ctx.dump_dosbox(0x1e);
     // 0d72:001e mov al,[si]
     ctx.cpu.regs.set_al(
         ctx.memory
             .read::<u8>(segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_si())),
     );
-    ctx.dump_dosbox(0x20);
     // 0d72:0020 mov [bp],al
     ctx.memory.write::<u8>(
         segofs(ctx.cpu.regs.get_ss(), ctx.cpu.regs.get_bp()),
         ctx.cpu.regs.get_al(),
     );
-    ctx.dump_dosbox(0x23);
     // 0d72:0023 mov byte ptr [si],20h
     ctx.memory
         .write::<u8>(segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_si()), 0x20u8);
-    ctx.dump_dosbox(0x26);
     // 0d72:0026 inc si
     ctx.cpu
         .regs
         .set_si(inc(ctx.cpu.regs.get_si(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x27);
     // 0d72:0027 mov bl,al
     ctx.cpu.regs.set_bl(ctx.cpu.regs.get_al());
-    ctx.dump_dosbox(0x29);
     // 0d72:0029 xor bh,bh
     ctx.cpu.regs.set_bh(xor(
         ctx.cpu.regs.get_bh(),
         ctx.cpu.regs.get_bh(),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x2b);
     // 0d72:002b mov byte ptr [bx+si],20h
     ctx.memory.write::<u8>(
         segofs(
@@ -10503,7 +4369,6 @@ pub fn x0d72_0010(ctx: &mut Context) -> Cont {
         ),
         0x20u8,
     );
-    ctx.dump_dosbox(0x2e);
     // 0d72:002e mov word ptr [bp+6],0
     ctx.memory.write::<u16>(
         segofs(
@@ -10516,25 +4381,20 @@ pub fn x0d72_0010(ctx: &mut Context) -> Cont {
 }
 
 pub fn x0d72_0033(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x33);
     // 0d72:0033 lodsb
     ctx.lodsb();
-    ctx.dump_dosbox(0x34);
     // 0d72:0034 cmp al,20h
     sub(ctx.cpu.regs.get_al(), 0x20u8, &mut ctx.cpu.flags);
-    ctx.dump_dosbox(0x36);
     // 0d72:0036 jne short 003Bh
     ctx.jne(Cont(x0d72_0038), Cont(x0d72_003b))
 }
 
 pub fn x0d72_0038(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x38);
     // 0d72:0038 jmp near ptr 0122h
     Cont(x0d72_0122)
 }
 
 pub fn x0d72_003b(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3b);
     // 0d72:003b xor dx,dx
     ctx.cpu.regs.set_dx(xor(
         ctx.cpu.regs.get_dx(),
@@ -10545,69 +4405,55 @@ pub fn x0d72_003b(ctx: &mut Context) -> Cont {
 }
 
 pub fn x0d72_003d(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x3d);
     // 0d72:003d cmp al,27h
     sub(ctx.cpu.regs.get_al(), 0x27u8, &mut ctx.cpu.flags);
-    ctx.dump_dosbox(0x3f);
     // 0d72:003f je short 0045h
     ctx.je(Cont(x0d72_0041), Cont(x0d72_0045))
 }
 
 pub fn x0d72_0041(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x41);
     // 0d72:0041 cmp al,2Eh
     sub(ctx.cpu.regs.get_al(), 0x2eu8, &mut ctx.cpu.flags);
-    ctx.dump_dosbox(0x43);
     // 0d72:0043 jne short 004Dh
     ctx.jne(Cont(x0d72_0045), Cont(x0d72_004d))
 }
 
 pub fn x0d72_0045(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x45);
     // 0d72:0045 lodsb
     ctx.lodsb();
-    ctx.dump_dosbox(0x46);
     // 0d72:0046 cmp al,20h
     sub(ctx.cpu.regs.get_al(), 0x20u8, &mut ctx.cpu.flags);
-    ctx.dump_dosbox(0x48);
     // 0d72:0048 jne short 003Dh
     ctx.jne(Cont(x0d72_004a), Cont(x0d72_003d))
 }
 
 pub fn x0d72_004a(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x4a);
     // 0d72:004a jmp near ptr 0122h
     Cont(x0d72_0122)
 }
 
 pub fn x0d72_004d(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x4d);
     // 0d72:004d mov bl,al
     ctx.cpu.regs.set_bl(ctx.cpu.regs.get_al());
-    ctx.dump_dosbox(0x4f);
     // 0d72:004f xor bh,bh
     ctx.cpu.regs.set_bh(xor(
         ctx.cpu.regs.get_bh(),
         ctx.cpu.regs.get_bh(),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x51);
     // 0d72:0051 shl bx,1
     ctx.cpu
         .regs
         .set_bx(shl(ctx.cpu.regs.get_bx(), 0x1u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x53);
     // 0d72:0053 mov ax,cs:[bx+326h]
     ctx.cpu.regs.set_ax(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_cs(),
         ctx.cpu.regs.get_bx().wrapping_add(0x326u16),
     )));
-    ctx.dump_dosbox(0x58);
     // 0d72:0058 add ax,3FEh
     ctx.cpu
         .regs
         .set_ax(add(ctx.cpu.regs.get_ax(), 0x3feu16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x5b);
     // 0d72:005b mov [bp+4],ax
     ctx.memory.write::<u16>(
         segofs(
@@ -10616,7 +4462,6 @@ pub fn x0d72_004d(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_ax(),
     );
-    ctx.dump_dosbox(0x5e);
     // 0d72:005e mov [bp+8],si
     ctx.memory.write::<u16>(
         segofs(
@@ -10629,20 +4474,17 @@ pub fn x0d72_004d(ctx: &mut Context) -> Cont {
 }
 
 pub fn x0d72_0061(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x61);
     // 0d72:0061 mov di,[bp+4]
     ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x64);
     // 0d72:0064 add di,dx
     ctx.cpu.regs.set_di(add(
         ctx.cpu.regs.get_di(),
         ctx.cpu.regs.get_dx(),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x66);
     // 0d72:0066 mov [bp+4],di
     ctx.memory.write::<u16>(
         segofs(
@@ -10651,19 +4493,16 @@ pub fn x0d72_0061(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_di(),
     );
-    ctx.dump_dosbox(0x69);
     // 0d72:0069 mov dl,cs:[di]
     ctx.cpu.regs.set_dl(
         ctx.memory
             .read::<u8>(segofs(ctx.cpu.regs.get_cs(), ctx.cpu.regs.get_di())),
     );
-    ctx.dump_dosbox(0x6c);
     // 0d72:006c mov si,[bp+8]
     ctx.cpu.regs.set_si(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x8u16),
     )));
-    ctx.dump_dosbox(0x6f);
     // 0d72:006f xor bh,bh
     ctx.cpu.regs.set_bh(xor(
         ctx.cpu.regs.get_bh(),
@@ -10674,21 +4513,17 @@ pub fn x0d72_0061(ctx: &mut Context) -> Cont {
 }
 
 pub fn x0d72_0071(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x71);
     // 0d72:0071 inc di
     ctx.cpu
         .regs
         .set_di(inc(ctx.cpu.regs.get_di(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x72);
     // 0d72:0072 lodsb
     ctx.lodsb();
-    ctx.dump_dosbox(0x73);
     // 0d72:0073 mov bl,cs:[di]
     ctx.cpu.regs.set_bl(
         ctx.memory
             .read::<u8>(segofs(ctx.cpu.regs.get_cs(), ctx.cpu.regs.get_di())),
     );
-    ctx.dump_dosbox(0x76);
     // 0d72:0076 cmp al,cs:[bx+49FEh]
     sub(
         ctx.cpu.regs.get_al(),
@@ -10698,13 +4533,11 @@ pub fn x0d72_0071(ctx: &mut Context) -> Cont {
         )),
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x7b);
     // 0d72:007b je short 0071h
     ctx.je(Cont(x0d72_007d), Cont(x0d72_0071))
 }
 
 pub fn x0d72_007d(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x7d);
     // 0d72:007d cmp byte ptr cs:[di],3Eh
     sub(
         ctx.memory
@@ -10712,13 +4545,11 @@ pub fn x0d72_007d(ctx: &mut Context) -> Cont {
         0x3eu8,
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x81);
     // 0d72:0081 jb short 0061h
     ctx.jb(Cont(x0d72_0083), Cont(x0d72_0061))
 }
 
 pub fn x0d72_0083(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x83);
     // 0d72:0083 mov word ptr [bp+0Ch],0FFFFh
     ctx.memory.write::<u16>(
         segofs(
@@ -10727,12 +4558,10 @@ pub fn x0d72_0083(ctx: &mut Context) -> Cont {
         ),
         0xffffu16,
     );
-    ctx.dump_dosbox(0x88);
     // 0d72:0088 dec si
     ctx.cpu
         .regs
         .set_si(dec(ctx.cpu.regs.get_si(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x89);
     // 0d72:0089 mov [bp+0Ah],si
     ctx.memory.write::<u16>(
         segofs(
@@ -10741,13 +4570,11 @@ pub fn x0d72_0083(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_si(),
     );
-    ctx.dump_dosbox(0x8c);
     // 0d72:008c mov si,[bp+8]
     ctx.cpu.regs.set_si(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x8u16),
     )));
-    ctx.dump_dosbox(0x8f);
     // 0d72:008f sub si,2
     ctx.cpu
         .regs
@@ -10756,7 +4583,6 @@ pub fn x0d72_0083(ctx: &mut Context) -> Cont {
 }
 
 pub fn x0d72_0092(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x92);
     // 0d72:0092 mov word ptr [bp+0Eh],0FFFFh
     ctx.memory.write::<u16>(
         segofs(
@@ -10769,18 +4595,15 @@ pub fn x0d72_0092(ctx: &mut Context) -> Cont {
 }
 
 pub fn x0d72_0097(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x97);
     // 0d72:0097 inc di
     ctx.cpu
         .regs
         .set_di(inc(ctx.cpu.regs.get_di(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x98);
     // 0d72:0098 mov bl,cs:[di]
     ctx.cpu.regs.set_bl(
         ctx.memory
             .read::<u8>(segofs(ctx.cpu.regs.get_cs(), ctx.cpu.regs.get_di())),
     );
-    ctx.dump_dosbox(0x9b);
     // 0d72:009b mov [bp+2],bl
     ctx.memory.write::<u8>(
         segofs(
@@ -10789,29 +4612,24 @@ pub fn x0d72_0097(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_bl(),
     );
-    ctx.dump_dosbox(0x9e);
     // 0d72:009e cmp bl,3Eh
     sub(ctx.cpu.regs.get_bl(), 0x3eu8, &mut ctx.cpu.flags);
-    ctx.dump_dosbox(0xa1);
     // 0d72:00a1 jae short 00D6h
     ctx.jae(Cont(x0d72_00a3), Cont(x0d72_00d6))
 }
 
 pub fn x0d72_00a3(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xa3);
     // 0d72:00a3 xor bh,bh
     ctx.cpu.regs.set_bh(xor(
         ctx.cpu.regs.get_bh(),
         ctx.cpu.regs.get_bh(),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0xa5);
     // 0d72:00a5 mov al,cs:[bx+49FEh]
     ctx.cpu.regs.set_al(ctx.memory.read::<u8>(segofs(
         ctx.cpu.regs.get_cs(),
         ctx.cpu.regs.get_bx().wrapping_add(0x49feu16),
     )));
-    ctx.dump_dosbox(0xaa);
     // 0d72:00aa mov [bp+1],al
     ctx.memory.write::<u8>(
         segofs(
@@ -10820,61 +4638,51 @@ pub fn x0d72_00a3(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_al(),
     );
-    ctx.dump_dosbox(0xad);
     // 0d72:00ad xor bh,bh
     ctx.cpu.regs.set_bh(xor(
         ctx.cpu.regs.get_bh(),
         ctx.cpu.regs.get_bh(),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0xaf);
     // 0d72:00af mov bl,al
     ctx.cpu.regs.set_bl(ctx.cpu.regs.get_al());
-    ctx.dump_dosbox(0xb1);
     // 0d72:00b1 mov al,cs:[bx+4A9Ch]
     ctx.cpu.regs.set_al(ctx.memory.read::<u8>(segofs(
         ctx.cpu.regs.get_cs(),
         ctx.cpu.regs.get_bx().wrapping_add(0x4a9cu16),
     )));
-    ctx.dump_dosbox(0xb6);
     // 0d72:00b6 or al,al
     ctx.cpu.regs.set_al(or(
         ctx.cpu.regs.get_al(),
         ctx.cpu.regs.get_al(),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0xb8);
     // 0d72:00b8 jns short 00CCh
     ctx.jns(Cont(x0d72_00ba), Cont(x0d72_00cc))
 }
 
 pub fn x0d72_00ba(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xba);
     // 0d72:00ba call 013Ch
     ctx.call16(0xbd, Cont(x0d72_013c))
 }
 
 pub fn x0d72_00bd(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xbd);
     // 0d72:00bd mov al,[bp+3]
     ctx.cpu.regs.set_al(ctx.memory.read::<u8>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x3u16),
     )));
-    ctx.dump_dosbox(0xc0);
     // 0d72:00c0 or al,al
     ctx.cpu.regs.set_al(or(
         ctx.cpu.regs.get_al(),
         ctx.cpu.regs.get_al(),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0xc2);
     // 0d72:00c2 jne short 00D6h
     ctx.jne(Cont(x0d72_00c4), Cont(x0d72_00d6))
 }
 
 pub fn x0d72_00c4(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xc4);
     // 0d72:00c4 cmp word ptr [bp+0Eh],0FFFFh
     sub(
         ctx.memory.read::<u16>(segofs(
@@ -10884,25 +4692,21 @@ pub fn x0d72_00c4(ctx: &mut Context) -> Cont {
         0xffffu16,
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0xc8);
     // 0d72:00c8 jne short 00E2h
     ctx.jne(Cont(x0d72_00ca), Cont(x0d72_00e2))
 }
 
 pub fn x0d72_00ca(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xca);
     // 0d72:00ca jmp short 0061h
     Cont(x0d72_0061)
 }
 
 pub fn x0d72_00cc(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xcc);
     // 0d72:00cc mov al,[si]
     ctx.cpu.regs.set_al(
         ctx.memory
             .read::<u8>(segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_si())),
     );
-    ctx.dump_dosbox(0xce);
     // 0d72:00ce cmp al,[bp+1]
     sub(
         ctx.cpu.regs.get_al(),
@@ -10912,13 +4716,11 @@ pub fn x0d72_00cc(ctx: &mut Context) -> Cont {
         )),
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0xd1);
     // 0d72:00d1 jne short 00C4h
     ctx.jne(Cont(x0d72_00d3), Cont(x0d72_00c4))
 }
 
 pub fn x0d72_00d3(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xd3);
     // 0d72:00d3 add si,[bp+0Ch]
     ctx.cpu.regs.set_si(add(
         ctx.cpu.regs.get_si(),
@@ -10932,7 +4734,6 @@ pub fn x0d72_00d3(ctx: &mut Context) -> Cont {
 }
 
 pub fn x0d72_00d6(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xd6);
     // 0d72:00d6 cmp di,[bp+0Eh]
     sub(
         ctx.cpu.regs.get_di(),
@@ -10942,13 +4743,11 @@ pub fn x0d72_00d6(ctx: &mut Context) -> Cont {
         )),
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0xd9);
     // 0d72:00d9 je short 00EAh
     ctx.je(Cont(x0d72_00db), Cont(x0d72_00ea))
 }
 
 pub fn x0d72_00db(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xdb);
     // 0d72:00db mov word ptr [bp+0Eh],0FFFFh
     ctx.memory.write::<u16>(
         segofs(
@@ -10957,13 +4756,11 @@ pub fn x0d72_00db(ctx: &mut Context) -> Cont {
         ),
         0xffffu16,
     );
-    ctx.dump_dosbox(0xe0);
     // 0d72:00e0 jmp short 00EAh
     Cont(x0d72_00ea)
 }
 
 pub fn x0d72_00e2(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xe2);
     // 0d72:00e2 mov word ptr [bp+0Eh],0FFFFh
     ctx.memory.write::<u16>(
         segofs(
@@ -10972,7 +4769,6 @@ pub fn x0d72_00e2(ctx: &mut Context) -> Cont {
         ),
         0xffffu16,
     );
-    ctx.dump_dosbox(0xe7);
     // 0d72:00e7 sub di,2
     ctx.cpu
         .regs
@@ -10981,7 +4777,6 @@ pub fn x0d72_00e2(ctx: &mut Context) -> Cont {
 }
 
 pub fn x0d72_00ea(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xea);
     // 0d72:00ea cmp byte ptr [bp+2],3Eh
     sub(
         ctx.memory.read::<u8>(segofs(
@@ -10991,19 +4786,16 @@ pub fn x0d72_00ea(ctx: &mut Context) -> Cont {
         0x3eu8,
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0xee);
     // 0d72:00ee jb short 0097h
     ctx.jb(Cont(x0d72_00f0), Cont(x0d72_0097))
 }
 
 pub fn x0d72_00f0(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xf0);
     // 0d72:00f0 mov si,[bp+0Ah]
     ctx.cpu.regs.set_si(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0xau16),
     )));
-    ctx.dump_dosbox(0xf3);
     // 0d72:00f3 add word ptr [bp+0Ch],2
     ctx.memory.write::<u16>(
         segofs(
@@ -11019,28 +4811,23 @@ pub fn x0d72_00f0(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xf7);
     // 0d72:00f7 jae short 00FBh
     ctx.jae(Cont(x0d72_00f9), Cont(x0d72_00fb))
 }
 
 pub fn x0d72_00f9(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xf9);
     // 0d72:00f9 jmp short 0092h
     Cont(x0d72_0092)
 }
 
 pub fn x0d72_00fb(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xfb);
     // 0d72:00fb mov bx,di
     ctx.cpu.regs.set_bx(ctx.cpu.regs.get_di());
-    ctx.dump_dosbox(0xfd);
     // 0d72:00fd mov di,[bp+1Ah]
     ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x1au16),
     )));
-    ctx.dump_dosbox(0x100);
     // 0d72:0100 add di,[bp+6]
     ctx.cpu.regs.set_di(add(
         ctx.cpu.regs.get_di(),
@@ -11050,15 +4837,12 @@ pub fn x0d72_00fb(ctx: &mut Context) -> Cont {
         )),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x103);
     // 0d72:0103 inc di
     ctx.cpu
         .regs
         .set_di(inc(ctx.cpu.regs.get_di(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x104);
     // 0d72:0104 mov cx,si
     ctx.cpu.regs.set_cx(ctx.cpu.regs.get_si());
-    ctx.dump_dosbox(0x106);
     // 0d72:0106 xor ah,ah
     ctx.cpu.regs.set_ah(xor(
         ctx.cpu.regs.get_ah(),
@@ -11069,27 +4853,22 @@ pub fn x0d72_00fb(ctx: &mut Context) -> Cont {
 }
 
 pub fn x0d72_0108(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x108);
     // 0d72:0108 inc bx
     ctx.cpu
         .regs
         .set_bx(inc(ctx.cpu.regs.get_bx(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x109);
     // 0d72:0109 mov al,cs:[bx]
     ctx.cpu.regs.set_al(
         ctx.memory
             .read::<u8>(segofs(ctx.cpu.regs.get_cs(), ctx.cpu.regs.get_bx())),
     );
-    ctx.dump_dosbox(0x10c);
     // 0d72:010c cmp al,3Eh
     sub(ctx.cpu.regs.get_al(), 0x3eu8, &mut ctx.cpu.flags);
-    ctx.dump_dosbox(0x10e);
     // 0d72:010e jae short 011Dh
     ctx.jae(Cont(x0d72_0110), Cont(x0d72_011d))
 }
 
 pub fn x0d72_0110(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x110);
     // 0d72:0110 inc word ptr [bp+6]
     ctx.memory.write::<u16>(
         segofs(
@@ -11104,93 +4883,75 @@ pub fn x0d72_0110(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0x113);
     // 0d72:0113 mov si,ax
     ctx.cpu.regs.set_si(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x115);
     // 0d72:0115 mov al,cs:[si+49FEh]
     ctx.cpu.regs.set_al(ctx.memory.read::<u8>(segofs(
         ctx.cpu.regs.get_cs(),
         ctx.cpu.regs.get_si().wrapping_add(0x49feu16),
     )));
-    ctx.dump_dosbox(0x11a);
     // 0d72:011a stosb
     ctx.stosb();
-    ctx.dump_dosbox(0x11b);
     // 0d72:011b jmp short 0108h
     Cont(x0d72_0108)
 }
 
 pub fn x0d72_011d(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x11d);
     // 0d72:011d mov si,cx
     ctx.cpu.regs.set_si(ctx.cpu.regs.get_cx());
-    ctx.dump_dosbox(0x11f);
     // 0d72:011f jmp near ptr 0033h
     Cont(x0d72_0033)
 }
 
 pub fn x0d72_0122(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x122);
     // 0d72:0122 mov al,[bp]
     ctx.cpu.regs.set_al(
         ctx.memory
             .read::<u8>(segofs(ctx.cpu.regs.get_ss(), ctx.cpu.regs.get_bp())),
     );
-    ctx.dump_dosbox(0x125);
     // 0d72:0125 mov si,[bp+1Eh]
     ctx.cpu.regs.set_si(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x1eu16),
     )));
-    ctx.dump_dosbox(0x128);
     // 0d72:0128 mov [si],al
     ctx.memory.write::<u8>(
         segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_si()),
         ctx.cpu.regs.get_al(),
     );
-    ctx.dump_dosbox(0x12a);
     // 0d72:012a mov bx,[bp+1Ah]
     ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x1au16),
     )));
-    ctx.dump_dosbox(0x12d);
     // 0d72:012d mov ax,[bp+6]
     ctx.cpu.regs.set_ax(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x6u16),
     )));
-    ctx.dump_dosbox(0x130);
     // 0d72:0130 mov es:[bx],al
     ctx.memory.write::<u8>(
         segofs(ctx.cpu.regs.get_es(), ctx.cpu.regs.get_bx()),
         ctx.cpu.regs.get_al(),
     );
-    ctx.dump_dosbox(0x133);
     // 0d72:0133 add sp,10h
     ctx.cpu
         .regs
         .set_sp(add(ctx.cpu.regs.get_sp(), 0x10u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x136);
     // 0d72:0136 pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x137);
     // 0d72:0137 pop ds
     let x = ctx.pop16();
     ctx.cpu.regs.set_ds(x);
-    ctx.dump_dosbox(0x138);
     // 0d72:0138 pop bp
     let x = ctx.pop16();
     ctx.cpu.regs.set_bp(x);
-    ctx.dump_dosbox(0x139);
     // 0d72:0139 retf 8
     ctx.retf16(8)
 }
 
 pub fn x0d72_013c(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x13c);
     // 0d72:013c mov byte ptr [bp+3],0
     ctx.memory.write::<u8>(
         segofs(
@@ -11203,78 +4964,64 @@ pub fn x0d72_013c(ctx: &mut Context) -> Cont {
 }
 
 pub fn x0d72_0140(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x140);
     // 0d72:0140 mov cl,[si]
     ctx.cpu.regs.set_cl(
         ctx.memory
             .read::<u8>(segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_si())),
     );
-    ctx.dump_dosbox(0x142);
     // 0d72:0142 mov bx,[bp+0Ch]
     ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0xcu16),
     )));
-    ctx.dump_dosbox(0x145);
     // 0d72:0145 mov ch,[bx+si]
     ctx.cpu.regs.set_ch(ctx.memory.read::<u8>(segofs(
         ctx.cpu.regs.get_ds(),
         ctx.cpu.regs.get_bx().wrapping_add(ctx.cpu.regs.get_si()),
     )));
-    ctx.dump_dosbox(0x147);
     // 0d72:0147 mov al,[bp+1]
     ctx.cpu.regs.set_al(ctx.memory.read::<u8>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x1u16),
     )));
-    ctx.dump_dosbox(0x14a);
     // 0d72:014a shl al,1
     ctx.cpu
         .regs
         .set_al(shl(ctx.cpu.regs.get_al(), 0x1u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x14c);
     // 0d72:014c mov bl,al
     ctx.cpu.regs.set_bl(ctx.cpu.regs.get_al());
-    ctx.dump_dosbox(0x14e);
     // 0d72:014e xor bh,bh
     ctx.cpu.regs.set_bh(xor(
         ctx.cpu.regs.get_bh(),
         ctx.cpu.regs.get_bh(),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x150);
     // 0d72:0150 mov ax,cs:[bx+2EAh]
     ctx.cpu.regs.set_ax(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_cs(),
         ctx.cpu.regs.get_bx().wrapping_add(0x2eau16),
     )));
-    ctx.dump_dosbox(0x155);
     // 0d72:0155 mov bl,cl
     ctx.cpu.regs.set_bl(ctx.cpu.regs.get_cl());
-    ctx.dump_dosbox(0x157);
     // 0d72:0157 jmp ax
     ctx.indirect16((ctx.cpu.regs.cs, ctx.cpu.regs.get_ax()).into())
 }
 
 pub fn x0d72_0159(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x159);
     // 0d72:0159 mov al,cs:[bx+4A9Ch]
     ctx.cpu.regs.set_al(ctx.memory.read::<u8>(segofs(
         ctx.cpu.regs.get_cs(),
         ctx.cpu.regs.get_bx().wrapping_add(0x4a9cu16),
     )));
-    ctx.dump_dosbox(0x15e);
     // 0d72:015e and al,10h
     ctx.cpu
         .regs
         .set_al(and(ctx.cpu.regs.get_al(), 0x10u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x160);
     // 0d72:0160 je short 0183h
     ctx.je(Cont(x0d72_0162), Cont(x0d72_0183))
 }
 
 pub fn x0d72_0162(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x162);
     // 0d72:0162 inc byte ptr [bp+3]
     ctx.memory.write::<u8>(
         segofs(
@@ -11289,7 +5036,6 @@ pub fn x0d72_0162(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0x165);
     // 0d72:0165 add si,[bp+0Ch]
     ctx.cpu.regs.set_si(add(
         ctx.cpu.regs.get_si(),
@@ -11299,50 +5045,41 @@ pub fn x0d72_0162(ctx: &mut Context) -> Cont {
         )),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x168);
     // 0d72:0168 mov bl,ch
     ctx.cpu.regs.set_bl(ctx.cpu.regs.get_ch());
-    ctx.dump_dosbox(0x16a);
     // 0d72:016a mov al,cs:[bx+4A9Ch]
     ctx.cpu.regs.set_al(ctx.memory.read::<u8>(segofs(
         ctx.cpu.regs.get_cs(),
         ctx.cpu.regs.get_bx().wrapping_add(0x4a9cu16),
     )));
-    ctx.dump_dosbox(0x16f);
     // 0d72:016f and al,10h
     ctx.cpu
         .regs
         .set_al(and(ctx.cpu.regs.get_al(), 0x10u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x171);
     // 0d72:0171 je short 0183h
     ctx.je(Cont(x0d72_0173), Cont(x0d72_0183))
 }
 
 pub fn x0d72_0173(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x173);
     // 0d72:0173 mov bl,cs:[di+1]
     ctx.cpu.regs.set_bl(ctx.memory.read::<u8>(segofs(
         ctx.cpu.regs.get_cs(),
         ctx.cpu.regs.get_di().wrapping_add(0x1u16),
     )));
-    ctx.dump_dosbox(0x177);
     // 0d72:0177 mov al,cs:[bx+4A3Ch]
     ctx.cpu.regs.set_al(ctx.memory.read::<u8>(segofs(
         ctx.cpu.regs.get_cs(),
         ctx.cpu.regs.get_bx().wrapping_add(0x4a3cu16),
     )));
-    ctx.dump_dosbox(0x17c);
     // 0d72:017c and al,1
     ctx.cpu
         .regs
         .set_al(and(ctx.cpu.regs.get_al(), 0x1u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x17e);
     // 0d72:017e jne short 0140h
     ctx.jne(Cont(x0d72_0180), Cont(x0d72_0140))
 }
 
 pub fn x0d72_0180(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x180);
     // 0d72:0180 mov [bp+0Eh],di
     ctx.memory.write::<u16>(
         segofs(
@@ -11355,30 +5092,25 @@ pub fn x0d72_0180(ctx: &mut Context) -> Cont {
 }
 
 pub fn x0d72_0183(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x183);
     // 0d72:0183 ret
     ctx.ret16(0)
 }
 
 pub fn x0d72_0184(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x184);
     // 0d72:0184 mov al,cs:[bx+4A9Ch]
     ctx.cpu.regs.set_al(ctx.memory.read::<u8>(segofs(
         ctx.cpu.regs.get_cs(),
         ctx.cpu.regs.get_bx().wrapping_add(0x4a9cu16),
     )));
-    ctx.dump_dosbox(0x189);
     // 0d72:0189 and al,1
     ctx.cpu
         .regs
         .set_al(and(ctx.cpu.regs.get_al(), 0x1u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x18b);
     // 0d72:018b je short 0194h
     ctx.je(Cont(x0d72_018d), Cont(x0d72_0194))
 }
 
 pub fn x0d72_018d(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x18d);
     // 0d72:018d inc byte ptr [bp+3]
     ctx.memory.write::<u8>(
         segofs(
@@ -11393,7 +5125,6 @@ pub fn x0d72_018d(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0x190);
     // 0d72:0190 add si,[bp+0Ch]
     ctx.cpu.regs.set_si(add(
         ctx.cpu.regs.get_si(),
@@ -11407,13 +5138,11 @@ pub fn x0d72_018d(ctx: &mut Context) -> Cont {
 }
 
 pub fn x0d72_0193(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x193);
     // 0d72:0193 ret
     ctx.ret16(0)
 }
 
 pub fn x0d72_0194(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x194);
     // 0d72:0194 cmp word ptr [bp+0Ch],1
     sub(
         ctx.memory.read::<u16>(segofs(
@@ -11423,31 +5152,25 @@ pub fn x0d72_0194(ctx: &mut Context) -> Cont {
         0x1u16,
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x198);
     // 0d72:0198 je short 0193h
     ctx.je(Cont(x0d72_019a), Cont(x0d72_0193))
 }
 
 pub fn x0d72_019a(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x19a);
     // 0d72:019a cmp ch,51h
     sub(ctx.cpu.regs.get_ch(), 0x51u8, &mut ctx.cpu.flags);
-    ctx.dump_dosbox(0x19d);
     // 0d72:019d jne short 0193h
     ctx.jne(Cont(x0d72_019f), Cont(x0d72_0193))
 }
 
 pub fn x0d72_019f(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x19f);
     // 0d72:019f cmp cl,55h
     sub(ctx.cpu.regs.get_cl(), 0x55u8, &mut ctx.cpu.flags);
-    ctx.dump_dosbox(0x1a2);
     // 0d72:01a2 jne short 0193h
     ctx.jne(Cont(x0d72_01a4), Cont(x0d72_0193))
 }
 
 pub fn x0d72_01a4(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x1a4);
     // 0d72:01a4 add si,[bp+0Ch]
     ctx.cpu.regs.set_si(add(
         ctx.cpu.regs.get_si(),
@@ -11457,13 +5180,11 @@ pub fn x0d72_01a4(ctx: &mut Context) -> Cont {
         )),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x1a7);
     // 0d72:01a7 jmp short 018Dh
     Cont(x0d72_018d)
 }
 
 pub fn x0d72_01a9(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x1a9);
     // 0d72:01a9 inc byte ptr [bp+3]
     ctx.memory.write::<u8>(
         segofs(
@@ -11478,24 +5199,20 @@ pub fn x0d72_01a9(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0x1ac);
     // 0d72:01ac mov al,cs:[bx+4A9Ch]
     ctx.cpu.regs.set_al(ctx.memory.read::<u8>(segofs(
         ctx.cpu.regs.get_cs(),
         ctx.cpu.regs.get_bx().wrapping_add(0x4a9cu16),
     )));
-    ctx.dump_dosbox(0x1b1);
     // 0d72:01b1 and al,1
     ctx.cpu
         .regs
         .set_al(and(ctx.cpu.regs.get_al(), 0x1u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x1b3);
     // 0d72:01b3 je short 01C6h
     ctx.je(Cont(x0d72_01b5), Cont(x0d72_01c6))
 }
 
 pub fn x0d72_01b5(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x1b5);
     // 0d72:01b5 add si,[bp+0Ch]
     ctx.cpu.regs.set_si(add(
         ctx.cpu.regs.get_si(),
@@ -11505,27 +5222,22 @@ pub fn x0d72_01b5(ctx: &mut Context) -> Cont {
         )),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x1b8);
     // 0d72:01b8 mov bl,ch
     ctx.cpu.regs.set_bl(ctx.cpu.regs.get_ch());
-    ctx.dump_dosbox(0x1ba);
     // 0d72:01ba mov al,cs:[bx+4A9Ch]
     ctx.cpu.regs.set_al(ctx.memory.read::<u8>(segofs(
         ctx.cpu.regs.get_cs(),
         ctx.cpu.regs.get_bx().wrapping_add(0x4a9cu16),
     )));
-    ctx.dump_dosbox(0x1bf);
     // 0d72:01bf and al,1
     ctx.cpu
         .regs
         .set_al(and(ctx.cpu.regs.get_al(), 0x1u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x1c1);
     // 0d72:01c1 je short 01C6h
     ctx.je(Cont(x0d72_01c3), Cont(x0d72_01c6))
 }
 
 pub fn x0d72_01c3(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x1c3);
     // 0d72:01c3 mov [bp+0Eh],di
     ctx.memory.write::<u16>(
         segofs(
@@ -11538,57 +5250,45 @@ pub fn x0d72_01c3(ctx: &mut Context) -> Cont {
 }
 
 pub fn x0d72_01c6(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x1c6);
     // 0d72:01c6 ret
     ctx.ret16(0)
 }
 
 pub fn x0d72_01c7(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x1c7);
     // 0d72:01c7 cmp cl,48h
     sub(ctx.cpu.regs.get_cl(), 0x48u8, &mut ctx.cpu.flags);
-    ctx.dump_dosbox(0x1ca);
     // 0d72:01ca jne short 01E1h
     ctx.jne(Cont(x0d72_01cc), Cont(x0d72_01e1))
 }
 
 pub fn x0d72_01cc(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x1cc);
     // 0d72:01cc mov al,ch
     ctx.cpu.regs.set_al(ctx.cpu.regs.get_ch());
-    ctx.dump_dosbox(0x1ce);
     // 0d72:01ce cmp al,43h
     sub(ctx.cpu.regs.get_al(), 0x43u8, &mut ctx.cpu.flags);
-    ctx.dump_dosbox(0x1d0);
     // 0d72:01d0 je short 01DAh
     ctx.je(Cont(x0d72_01d2), Cont(x0d72_01da))
 }
 
 pub fn x0d72_01d2(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x1d2);
     // 0d72:01d2 cmp al,53h
     sub(ctx.cpu.regs.get_al(), 0x53u8, &mut ctx.cpu.flags);
-    ctx.dump_dosbox(0x1d4);
     // 0d72:01d4 je short 01DAh
     ctx.je(Cont(x0d72_01d6), Cont(x0d72_01da))
 }
 
 pub fn x0d72_01d6(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x1d6);
     // 0d72:01d6 cmp al,54h
     sub(ctx.cpu.regs.get_al(), 0x54u8, &mut ctx.cpu.flags);
-    ctx.dump_dosbox(0x1d8);
     // 0d72:01d8 jne short 01EEh
     ctx.jne(Cont(x0d72_01da), Cont(x0d72_01ee))
 }
 
 pub fn x0d72_01da(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x1da);
     // 0d72:01da sub si,2
     ctx.cpu
         .regs
         .set_si(sub(ctx.cpu.regs.get_si(), 0x2u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x1dd);
     // 0d72:01dd inc byte ptr [bp+3]
     ctx.memory.write::<u8>(
         segofs(
@@ -11603,35 +5303,29 @@ pub fn x0d72_01da(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0x1e0);
     // 0d72:01e0 ret
     ctx.ret16(0)
 }
 
 pub fn x0d72_01e1(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x1e1);
     // 0d72:01e1 mov al,cs:[bx+4A9Ch]
     ctx.cpu.regs.set_al(ctx.memory.read::<u8>(segofs(
         ctx.cpu.regs.get_cs(),
         ctx.cpu.regs.get_bx().wrapping_add(0x4a9cu16),
     )));
-    ctx.dump_dosbox(0x1e6);
     // 0d72:01e6 and al,4
     ctx.cpu
         .regs
         .set_al(and(ctx.cpu.regs.get_al(), 0x4u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x1e8);
     // 0d72:01e8 je short 01EEh
     ctx.je(Cont(x0d72_01ea), Cont(x0d72_01ee))
 }
 
 pub fn x0d72_01ea(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x1ea);
     // 0d72:01ea dec si
     ctx.cpu
         .regs
         .set_si(dec(ctx.cpu.regs.get_si(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x1eb);
     // 0d72:01eb inc byte ptr [bp+3]
     ctx.memory.write::<u8>(
         segofs(
@@ -11650,30 +5344,25 @@ pub fn x0d72_01ea(ctx: &mut Context) -> Cont {
 }
 
 pub fn x0d72_01ee(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x1ee);
     // 0d72:01ee ret
     ctx.ret16(0)
 }
 
 pub fn x0d72_01ef(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x1ef);
     // 0d72:01ef mov al,cs:[bx+4A9Ch]
     ctx.cpu.regs.set_al(ctx.memory.read::<u8>(segofs(
         ctx.cpu.regs.get_cs(),
         ctx.cpu.regs.get_bx().wrapping_add(0x4a9cu16),
     )));
-    ctx.dump_dosbox(0x1f4);
     // 0d72:01f4 and al,1
     ctx.cpu
         .regs
         .set_al(and(ctx.cpu.regs.get_al(), 0x1u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x1f6);
     // 0d72:01f6 je short 020Dh
     ctx.je(Cont(x0d72_01f8), Cont(x0d72_020d))
 }
 
 pub fn x0d72_01f8(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x1f8);
     // 0d72:01f8 inc byte ptr [bp+3]
     ctx.memory.write::<u8>(
         segofs(
@@ -11688,7 +5377,6 @@ pub fn x0d72_01f8(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0x1fb);
     // 0d72:01fb add si,[bp+0Ch]
     ctx.cpu.regs.set_si(add(
         ctx.cpu.regs.get_si(),
@@ -11698,27 +5386,22 @@ pub fn x0d72_01f8(ctx: &mut Context) -> Cont {
         )),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x1fe);
     // 0d72:01fe mov bl,ch
     ctx.cpu.regs.set_bl(ctx.cpu.regs.get_ch());
-    ctx.dump_dosbox(0x200);
     // 0d72:0200 mov al,cs:[bx+4A9Ch]
     ctx.cpu.regs.set_al(ctx.memory.read::<u8>(segofs(
         ctx.cpu.regs.get_cs(),
         ctx.cpu.regs.get_bx().wrapping_add(0x4a9cu16),
     )));
-    ctx.dump_dosbox(0x205);
     // 0d72:0205 and al,1
     ctx.cpu
         .regs
         .set_al(and(ctx.cpu.regs.get_al(), 0x1u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x207);
     // 0d72:0207 je short 020Ch
     ctx.je(Cont(x0d72_0209), Cont(x0d72_020c))
 }
 
 pub fn x0d72_0209(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x209);
     // 0d72:0209 mov [bp+0Eh],di
     ctx.memory.write::<u16>(
         segofs(
@@ -11731,13 +5414,11 @@ pub fn x0d72_0209(ctx: &mut Context) -> Cont {
 }
 
 pub fn x0d72_020c(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x20c);
     // 0d72:020c ret
     ctx.ret16(0)
 }
 
 pub fn x0d72_020d(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x20d);
     // 0d72:020d cmp word ptr [bp+0Ch],1
     sub(
         ctx.memory.read::<u16>(segofs(
@@ -11747,31 +5428,25 @@ pub fn x0d72_020d(ctx: &mut Context) -> Cont {
         0x1u16,
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x211);
     // 0d72:0211 je short 020Ch
     ctx.je(Cont(x0d72_0213), Cont(x0d72_020c))
 }
 
 pub fn x0d72_0213(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x213);
     // 0d72:0213 cmp ch,51h
     sub(ctx.cpu.regs.get_ch(), 0x51u8, &mut ctx.cpu.flags);
-    ctx.dump_dosbox(0x216);
     // 0d72:0216 jne short 020Ch
     ctx.jne(Cont(x0d72_0218), Cont(x0d72_020c))
 }
 
 pub fn x0d72_0218(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x218);
     // 0d72:0218 cmp cl,55h
     sub(ctx.cpu.regs.get_cl(), 0x55u8, &mut ctx.cpu.flags);
-    ctx.dump_dosbox(0x21b);
     // 0d72:021b jne short 020Ch
     ctx.jne(Cont(x0d72_021d), Cont(x0d72_020c))
 }
 
 pub fn x0d72_021d(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x21d);
     // 0d72:021d add si,[bp+0Ch]
     ctx.cpu.regs.set_si(add(
         ctx.cpu.regs.get_si(),
@@ -11781,30 +5456,25 @@ pub fn x0d72_021d(ctx: &mut Context) -> Cont {
         )),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x220);
     // 0d72:0220 jmp short 01F8h
     Cont(x0d72_01f8)
 }
 
 pub fn x0d72_0222(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x222);
     // 0d72:0222 mov al,cs:[bx+4A9Ch]
     ctx.cpu.regs.set_al(ctx.memory.read::<u8>(segofs(
         ctx.cpu.regs.get_cs(),
         ctx.cpu.regs.get_bx().wrapping_add(0x4a9cu16),
     )));
-    ctx.dump_dosbox(0x227);
     // 0d72:0227 and al,8
     ctx.cpu
         .regs
         .set_al(and(ctx.cpu.regs.get_al(), 0x8u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x229);
     // 0d72:0229 je short 0231h
     ctx.je(Cont(x0d72_022b), Cont(x0d72_0231))
 }
 
 pub fn x0d72_022b(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x22b);
     // 0d72:022b inc byte ptr [bp+3]
     ctx.memory.write::<u8>(
         segofs(
@@ -11819,7 +5489,6 @@ pub fn x0d72_022b(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0x22e);
     // 0d72:022e add si,[bp+0Ch]
     ctx.cpu.regs.set_si(add(
         ctx.cpu.regs.get_si(),
@@ -11833,56 +5502,45 @@ pub fn x0d72_022b(ctx: &mut Context) -> Cont {
 }
 
 pub fn x0d72_0231(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x231);
     // 0d72:0231 ret
     ctx.ret16(0)
 }
 
 pub fn x0d72_0232(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x232);
     // 0d72:0232 ret
     ctx.ret16(0)
 }
 
 pub fn x0d72_0233(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x233);
     // 0d72:0233 cmp bl,45h
     sub(ctx.cpu.regs.get_bl(), 0x45u8, &mut ctx.cpu.flags);
-    ctx.dump_dosbox(0x236);
     // 0d72:0236 jne short 0269h
     ctx.jne(Cont(x0d72_0238), Cont(x0d72_0269))
 }
 
 pub fn x0d72_0238(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x238);
     // 0d72:0238 xor bx,bx
     ctx.cpu.regs.set_bx(xor(
         ctx.cpu.regs.get_bx(),
         ctx.cpu.regs.get_bx(),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x23a);
     // 0d72:023a mov al,ch
     ctx.cpu.regs.set_al(ctx.cpu.regs.get_ch());
-    ctx.dump_dosbox(0x23c);
     // 0d72:023c cmp al,44h
     sub(ctx.cpu.regs.get_al(), 0x44u8, &mut ctx.cpu.flags);
-    ctx.dump_dosbox(0x23e);
     // 0d72:023e je short 025Ch
     ctx.je(Cont(x0d72_0240), Cont(x0d72_025c))
 }
 
 pub fn x0d72_0240(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x240);
     // 0d72:0240 cmp al,52h
     sub(ctx.cpu.regs.get_al(), 0x52u8, &mut ctx.cpu.flags);
-    ctx.dump_dosbox(0x242);
     // 0d72:0242 jne short 024Ch
     ctx.jne(Cont(x0d72_0244), Cont(x0d72_024c))
 }
 
 pub fn x0d72_0244(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x244);
     // 0d72:0244 cmp byte ptr [si+2],53h
     sub(
         ctx.memory.read::<u8>(segofs(
@@ -11892,37 +5550,30 @@ pub fn x0d72_0244(ctx: &mut Context) -> Cont {
         0x53u8,
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x248);
     // 0d72:0248 jne short 025Ch
     ctx.jne(Cont(x0d72_024a), Cont(x0d72_025c))
 }
 
 pub fn x0d72_024a(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x24a);
     // 0d72:024a je short 025Bh
     ctx.je(Cont(x0d72_024c), Cont(x0d72_025b))
 }
 
 pub fn x0d72_024c(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x24c);
     // 0d72:024c cmp al,53h
     sub(ctx.cpu.regs.get_al(), 0x53u8, &mut ctx.cpu.flags);
-    ctx.dump_dosbox(0x24e);
     // 0d72:024e je short 025Ch
     ctx.je(Cont(x0d72_0250), Cont(x0d72_025c))
 }
 
 pub fn x0d72_0250(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x250);
     // 0d72:0250 cmp al,4Ch
     sub(ctx.cpu.regs.get_al(), 0x4cu8, &mut ctx.cpu.flags);
-    ctx.dump_dosbox(0x252);
     // 0d72:0252 jne short 025Dh
     ctx.jne(Cont(x0d72_0254), Cont(x0d72_025d))
 }
 
 pub fn x0d72_0254(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x254);
     // 0d72:0254 cmp byte ptr [si+2],59h
     sub(
         ctx.memory.read::<u8>(segofs(
@@ -11932,19 +5583,16 @@ pub fn x0d72_0254(ctx: &mut Context) -> Cont {
         0x59u8,
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x258);
     // 0d72:0258 je short 025Bh
     ctx.je(Cont(x0d72_025a), Cont(x0d72_025b))
 }
 
 pub fn x0d72_025a(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x25a);
     // 0d72:025a ret
     ctx.ret16(0)
 }
 
 pub fn x0d72_025b(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x25b);
     // 0d72:025b inc bx
     ctx.cpu
         .regs
@@ -11953,7 +5601,6 @@ pub fn x0d72_025b(ctx: &mut Context) -> Cont {
 }
 
 pub fn x0d72_025c(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x25c);
     // 0d72:025c inc bx
     ctx.cpu
         .regs
@@ -11962,12 +5609,10 @@ pub fn x0d72_025c(ctx: &mut Context) -> Cont {
 }
 
 pub fn x0d72_025d(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x25d);
     // 0d72:025d inc bx
     ctx.cpu
         .regs
         .set_bx(inc(ctx.cpu.regs.get_bx(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x25e);
     // 0d72:025e cmp byte ptr [bx+si],41h
     sub(
         ctx.memory.read::<u8>(segofs(
@@ -11977,13 +5622,11 @@ pub fn x0d72_025d(ctx: &mut Context) -> Cont {
         0x41u8,
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x261);
     // 0d72:0261 jae short 0285h
     ctx.jae(Cont(x0d72_0263), Cont(x0d72_0285))
 }
 
 pub fn x0d72_0263(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x263);
     // 0d72:0263 inc byte ptr [bp+3]
     ctx.memory.write::<u8>(
         segofs(
@@ -11998,38 +5641,31 @@ pub fn x0d72_0263(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0x266);
     // 0d72:0266 add si,bx
     ctx.cpu.regs.set_si(add(
         ctx.cpu.regs.get_si(),
         ctx.cpu.regs.get_bx(),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x268);
     // 0d72:0268 ret
     ctx.ret16(0)
 }
 
 pub fn x0d72_0269(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x269);
     // 0d72:0269 cmp bl,49h
     sub(ctx.cpu.regs.get_bl(), 0x49u8, &mut ctx.cpu.flags);
-    ctx.dump_dosbox(0x26c);
     // 0d72:026c jne short 0285h
     ctx.jne(Cont(x0d72_026e), Cont(x0d72_0285))
 }
 
 pub fn x0d72_026e(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x26e);
     // 0d72:026e cmp ch,4Eh
     sub(ctx.cpu.regs.get_ch(), 0x4eu8, &mut ctx.cpu.flags);
-    ctx.dump_dosbox(0x271);
     // 0d72:0271 jne short 0285h
     ctx.jne(Cont(x0d72_0273), Cont(x0d72_0285))
 }
 
 pub fn x0d72_0273(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x273);
     // 0d72:0273 cmp byte ptr [si+2],47h
     sub(
         ctx.memory.read::<u8>(segofs(
@@ -12039,13 +5675,11 @@ pub fn x0d72_0273(ctx: &mut Context) -> Cont {
         0x47u8,
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x277);
     // 0d72:0277 je short 027Fh
     ctx.je(Cont(x0d72_0279), Cont(x0d72_027f))
 }
 
 pub fn x0d72_0279(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x279);
     // 0d72:0279 cmp byte ptr [si+2],27h
     sub(
         ctx.memory.read::<u8>(segofs(
@@ -12055,13 +5689,11 @@ pub fn x0d72_0279(ctx: &mut Context) -> Cont {
         0x27u8,
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x27d);
     // 0d72:027d jne short 0285h
     ctx.jne(Cont(x0d72_027f), Cont(x0d72_0285))
 }
 
 pub fn x0d72_027f(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x27f);
     // 0d72:027f inc byte ptr [bp+3]
     ctx.memory.write::<u8>(
         segofs(
@@ -12076,7 +5708,6 @@ pub fn x0d72_027f(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0x282);
     // 0d72:0282 add si,3
     ctx.cpu
         .regs
@@ -12085,45 +5716,36 @@ pub fn x0d72_027f(ctx: &mut Context) -> Cont {
 }
 
 pub fn x0d72_0285(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x285);
     // 0d72:0285 ret
     ctx.ret16(0)
 }
 
 pub fn x0d72_0286(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x286);
     // 0d72:0286 cmp bl,48h
     sub(ctx.cpu.regs.get_bl(), 0x48u8, &mut ctx.cpu.flags);
-    ctx.dump_dosbox(0x289);
     // 0d72:0289 jne short 029Ch
     ctx.jne(Cont(x0d72_028b), Cont(x0d72_029c))
 }
 
 pub fn x0d72_028b(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x28b);
     // 0d72:028b cmp ch,43h
     sub(ctx.cpu.regs.get_ch(), 0x43u8, &mut ctx.cpu.flags);
-    ctx.dump_dosbox(0x28e);
     // 0d72:028e je short 0295h
     ctx.je(Cont(x0d72_0290), Cont(x0d72_0295))
 }
 
 pub fn x0d72_0290(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x290);
     // 0d72:0290 cmp ch,53h
     sub(ctx.cpu.regs.get_ch(), 0x53u8, &mut ctx.cpu.flags);
-    ctx.dump_dosbox(0x293);
     // 0d72:0293 jne short 02A9h
     ctx.jne(Cont(x0d72_0295), Cont(x0d72_02a9))
 }
 
 pub fn x0d72_0295(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x295);
     // 0d72:0295 sub si,2
     ctx.cpu
         .regs
         .set_si(sub(ctx.cpu.regs.get_si(), 0x2u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x298);
     // 0d72:0298 inc byte ptr [bp+3]
     ctx.memory.write::<u8>(
         segofs(
@@ -12138,35 +5760,29 @@ pub fn x0d72_0295(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0x29b);
     // 0d72:029b ret
     ctx.ret16(0)
 }
 
 pub fn x0d72_029c(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x29c);
     // 0d72:029c mov al,cs:[bx+4A9Ch]
     ctx.cpu.regs.set_al(ctx.memory.read::<u8>(segofs(
         ctx.cpu.regs.get_cs(),
         ctx.cpu.regs.get_bx().wrapping_add(0x4a9cu16),
     )));
-    ctx.dump_dosbox(0x2a1);
     // 0d72:02a1 and al,2
     ctx.cpu
         .regs
         .set_al(and(ctx.cpu.regs.get_al(), 0x2u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x2a3);
     // 0d72:02a3 je short 02A9h
     ctx.je(Cont(x0d72_02a5), Cont(x0d72_02a9))
 }
 
 pub fn x0d72_02a5(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2a5);
     // 0d72:02a5 dec si
     ctx.cpu
         .regs
         .set_si(dec(ctx.cpu.regs.get_si(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x2a6);
     // 0d72:02a6 inc byte ptr [bp+3]
     ctx.memory.write::<u8>(
         segofs(
@@ -12185,28 +5801,23 @@ pub fn x0d72_02a5(ctx: &mut Context) -> Cont {
 }
 
 pub fn x0d72_02a9(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2a9);
     // 0d72:02a9 ret
     ctx.ret16(0)
 }
 
 pub fn x0d72_02aa(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2aa);
     // 0d72:02aa mov al,cs:[bx+4A9Ch]
     ctx.cpu.regs.set_al(ctx.memory.read::<u8>(segofs(
         ctx.cpu.regs.get_cs(),
         ctx.cpu.regs.get_bx().wrapping_add(0x4a9cu16),
     )));
-    ctx.dump_dosbox(0x2af);
     // 0d72:02af cmp al,30h
     sub(ctx.cpu.regs.get_al(), 0x30u8, &mut ctx.cpu.flags);
-    ctx.dump_dosbox(0x2b1);
     // 0d72:02b1 jne short 02B9h
     ctx.jne(Cont(x0d72_02b3), Cont(x0d72_02b9))
 }
 
 pub fn x0d72_02b3(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2b3);
     // 0d72:02b3 inc byte ptr [bp+3]
     ctx.memory.write::<u8>(
         segofs(
@@ -12221,7 +5832,6 @@ pub fn x0d72_02b3(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0x2b6);
     // 0d72:02b6 add si,[bp+0Ch]
     ctx.cpu.regs.set_si(add(
         ctx.cpu.regs.get_si(),
@@ -12235,88 +5845,70 @@ pub fn x0d72_02b3(ctx: &mut Context) -> Cont {
 }
 
 pub fn x0d72_02b9(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2b9);
     // 0d72:02b9 ret
     ctx.ret16(0)
 }
 
 pub fn x0d72_02ba(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2ba);
     // 0d72:02ba cmp bl,41h
     sub(ctx.cpu.regs.get_bl(), 0x41u8, &mut ctx.cpu.flags);
-    ctx.dump_dosbox(0x2bd);
     // 0d72:02bd jb short 0307h
     ctx.jb(Cont(x0d72_02bf), Cont(x0d72_0307))
 }
 
 pub fn x0d72_02bf(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2bf);
     // 0d72:02bf cmp bl,53h
     sub(ctx.cpu.regs.get_bl(), 0x53u8, &mut ctx.cpu.flags);
-    ctx.dump_dosbox(0x2c2);
     // 0d72:02c2 jne short 02CAh
     ctx.jne(Cont(x0d72_02c4), Cont(x0d72_02ca))
 }
 
 pub fn x0d72_02c4(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2c4);
     // 0d72:02c4 cmp ch,41h
     sub(ctx.cpu.regs.get_ch(), 0x41u8, &mut ctx.cpu.flags);
-    ctx.dump_dosbox(0x2c7);
     // 0d72:02c7 jb short 0306h
     ctx.jb(Cont(x0d72_02c9), Cont(x0d72_0306))
 }
 
 pub fn x0d72_02c9(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2c9);
     // 0d72:02c9 ret
     ctx.ret16(0)
 }
 
 pub fn x0d72_02ca(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2ca);
     // 0d72:02ca cmp bl,4Ch
     sub(ctx.cpu.regs.get_bl(), 0x4cu8, &mut ctx.cpu.flags);
-    ctx.dump_dosbox(0x2cd);
     // 0d72:02cd jne short 02D5h
     ctx.jne(Cont(x0d72_02cf), Cont(x0d72_02d5))
 }
 
 pub fn x0d72_02cf(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2cf);
     // 0d72:02cf cmp ch,59h
     sub(ctx.cpu.regs.get_ch(), 0x59u8, &mut ctx.cpu.flags);
-    ctx.dump_dosbox(0x2d2);
     // 0d72:02d2 je short 0305h
     ctx.je(Cont(x0d72_02d4), Cont(x0d72_0305))
 }
 
 pub fn x0d72_02d4(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2d4);
     // 0d72:02d4 ret
     ctx.ret16(0)
 }
 
 pub fn x0d72_02d5(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2d5);
     // 0d72:02d5 cmp bl,4Dh
     sub(ctx.cpu.regs.get_bl(), 0x4du8, &mut ctx.cpu.flags);
-    ctx.dump_dosbox(0x2d8);
     // 0d72:02d8 jne short 02EDh
     ctx.jne(Cont(x0d72_02da), Cont(x0d72_02ed))
 }
 
 pub fn x0d72_02da(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2da);
     // 0d72:02da cmp ch,45h
     sub(ctx.cpu.regs.get_ch(), 0x45u8, &mut ctx.cpu.flags);
-    ctx.dump_dosbox(0x2dd);
     // 0d72:02dd jne short 030Ah
     ctx.jne(Cont(x0d72_02df), Cont(x0d72_030a))
 }
 
 pub fn x0d72_02df(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2df);
     // 0d72:02df cmp byte ptr [si+2],4Eh
     sub(
         ctx.memory.read::<u8>(segofs(
@@ -12326,13 +5918,11 @@ pub fn x0d72_02df(ctx: &mut Context) -> Cont {
         0x4eu8,
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x2e3);
     // 0d72:02e3 jne short 030Ah
     ctx.jne(Cont(x0d72_02e5), Cont(x0d72_030a))
 }
 
 pub fn x0d72_02e5(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2e5);
     // 0d72:02e5 cmp byte ptr [si+3],54h
     sub(
         ctx.memory.read::<u8>(segofs(
@@ -12342,37 +5932,30 @@ pub fn x0d72_02e5(ctx: &mut Context) -> Cont {
         0x54u8,
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x2e9);
     // 0d72:02e9 jne short 030Ah
     ctx.jne(Cont(x0d72_02eb), Cont(x0d72_030a))
 }
 
 pub fn x0d72_02eb(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2eb);
     // 0d72:02eb jmp short 0303h
     Cont(x0d72_0303)
 }
 
 pub fn x0d72_02ed(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2ed);
     // 0d72:02ed cmp bl,4Eh
     sub(ctx.cpu.regs.get_bl(), 0x4eu8, &mut ctx.cpu.flags);
-    ctx.dump_dosbox(0x2f0);
     // 0d72:02f0 jne short 030Ah
     ctx.jne(Cont(x0d72_02f2), Cont(x0d72_030a))
 }
 
 pub fn x0d72_02f2(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2f2);
     // 0d72:02f2 cmp ch,45h
     sub(ctx.cpu.regs.get_ch(), 0x45u8, &mut ctx.cpu.flags);
-    ctx.dump_dosbox(0x2f5);
     // 0d72:02f5 jne short 030Ah
     ctx.jne(Cont(x0d72_02f7), Cont(x0d72_030a))
 }
 
 pub fn x0d72_02f7(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2f7);
     // 0d72:02f7 cmp byte ptr [si+2],53h
     sub(
         ctx.memory.read::<u8>(segofs(
@@ -12382,13 +5965,11 @@ pub fn x0d72_02f7(ctx: &mut Context) -> Cont {
         0x53u8,
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x2fb);
     // 0d72:02fb jne short 030Ah
     ctx.jne(Cont(x0d72_02fd), Cont(x0d72_030a))
 }
 
 pub fn x0d72_02fd(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x2fd);
     // 0d72:02fd cmp byte ptr [si+3],53h
     sub(
         ctx.memory.read::<u8>(segofs(
@@ -12398,18 +5979,15 @@ pub fn x0d72_02fd(ctx: &mut Context) -> Cont {
         0x53u8,
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x301);
     // 0d72:0301 jne short 030Ah
     ctx.jne(Cont(x0d72_0303), Cont(x0d72_030a))
 }
 
 pub fn x0d72_0303(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x303);
     // 0d72:0303 inc si
     ctx.cpu
         .regs
         .set_si(inc(ctx.cpu.regs.get_si(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x304);
     // 0d72:0304 inc si
     ctx.cpu
         .regs
@@ -12418,7 +5996,6 @@ pub fn x0d72_0303(ctx: &mut Context) -> Cont {
 }
 
 pub fn x0d72_0305(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x305);
     // 0d72:0305 inc si
     ctx.cpu
         .regs
@@ -12427,7 +6004,6 @@ pub fn x0d72_0305(ctx: &mut Context) -> Cont {
 }
 
 pub fn x0d72_0306(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x306);
     // 0d72:0306 inc si
     ctx.cpu
         .regs
@@ -12436,7 +6012,6 @@ pub fn x0d72_0306(ctx: &mut Context) -> Cont {
 }
 
 pub fn x0d72_0307(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x307);
     // 0d72:0307 inc byte ptr [bp+3]
     ctx.memory.write::<u8>(
         segofs(
@@ -12455,22 +6030,18 @@ pub fn x0d72_0307(ctx: &mut Context) -> Cont {
 }
 
 pub fn x0d72_030a(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x30a);
     // 0d72:030a ret
     ctx.ret16(0)
 }
 
 pub fn x0d72_030b(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x30b);
     // 0d72:030b cmp bl,59h
     sub(ctx.cpu.regs.get_bl(), 0x59u8, &mut ctx.cpu.flags);
-    ctx.dump_dosbox(0x30e);
     // 0d72:030e jne short 0317h
     ctx.jne(Cont(x0d72_0310), Cont(x0d72_0317))
 }
 
 pub fn x0d72_0310(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x310);
     // 0d72:0310 inc byte ptr [bp+3]
     ctx.memory.write::<u8>(
         segofs(
@@ -12485,7 +6056,6 @@ pub fn x0d72_0310(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0x313);
     // 0d72:0313 add si,[bp+0Ch]
     ctx.cpu.regs.set_si(add(
         ctx.cpu.regs.get_si(),
@@ -12495,31 +6065,25 @@ pub fn x0d72_0310(ctx: &mut Context) -> Cont {
         )),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x316);
     // 0d72:0316 ret
     ctx.ret16(0)
 }
 
 pub fn x0d72_0317(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x317);
     // 0d72:0317 cmp bl,49h
     sub(ctx.cpu.regs.get_bl(), 0x49u8, &mut ctx.cpu.flags);
-    ctx.dump_dosbox(0x31a);
     // 0d72:031a jne short 032Bh
     ctx.jne(Cont(x0d72_031c), Cont(x0d72_032b))
 }
 
 pub fn x0d72_031c(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x31c);
     // 0d72:031c cmp ch,45h
     sub(ctx.cpu.regs.get_ch(), 0x45u8, &mut ctx.cpu.flags);
-    ctx.dump_dosbox(0x31f);
     // 0d72:031f jne short 032Bh
     ctx.jne(Cont(x0d72_0321), Cont(x0d72_032b))
 }
 
 pub fn x0d72_0321(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x321);
     // 0d72:0321 inc byte ptr [bp+3]
     ctx.memory.write::<u8>(
         segofs(
@@ -12534,18 +6098,15 @@ pub fn x0d72_0321(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0x324);
     // 0d72:0324 mov ax,[bp+0Ch]
     ctx.cpu.regs.set_ax(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0xcu16),
     )));
-    ctx.dump_dosbox(0x327);
     // 0d72:0327 shl ax,1
     ctx.cpu
         .regs
         .set_ax(shl(ctx.cpu.regs.get_ax(), 0x1u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x329);
     // 0d72:0329 add si,ax
     ctx.cpu.regs.set_si(add(
         ctx.cpu.regs.get_si(),
@@ -12556,22 +6117,18 @@ pub fn x0d72_0321(ctx: &mut Context) -> Cont {
 }
 
 pub fn x0d72_032b(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x32b);
     // 0d72:032b ret
     ctx.ret16(0)
 }
 
 pub fn x0d72_08d7(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x8d7);
     // 0d72:08d7 pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x8da);
     // 0d72:08da inc sp
     ctx.cpu
         .regs
         .set_sp(inc(ctx.cpu.regs.get_sp(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x8db);
     // 0d72:08db and cs:[0E6Ah],dx
     ctx.memory.write::<u16>(
         segofs(ctx.cpu.regs.get_cs(), 0xe6au16),
@@ -12582,7 +6139,6 @@ pub fn x0d72_08d7(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0x8e0);
     // 0d72:08e0 and ds:[6A40h],ch
     ctx.memory.write::<u8>(
         segofs(ctx.cpu.regs.get_ds(), 0x6a40u16),
@@ -12593,7 +6149,6 @@ pub fn x0d72_08d7(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0x8e4);
     // 0d72:08e4 adc al,2Eh
     let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
     ctx.cpu.regs.set_al(addc(
@@ -12602,17 +6157,14 @@ pub fn x0d72_08d7(ctx: &mut Context) -> Cont {
         carry as _,
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x8e6);
     // 0d72:08e6 add al,20h
     ctx.cpu
         .regs
         .set_al(add(ctx.cpu.regs.get_al(), 0x20u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x8e8);
     // 0d72:08e8 inc ax
     ctx.cpu
         .regs
         .set_ax(inc(ctx.cpu.regs.get_ax(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x8e9);
     // 0d72:08e9 and cs:[bx+si],si
     ctx.memory.write::<u16>(
         segofs(
@@ -12628,21 +6180,17 @@ pub fn x0d72_08d7(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0x8ec);
     // 0d72:08ec jnp short 08FBh
     ctx.jnp(Cont(x0d72_08ee), Cont(x0d72_08fb))
 }
 
 pub fn x0d72_08ee(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x8ee);
     // 0d72:08ee pop bp
     let x = ctx.pop16();
     ctx.cpu.regs.set_bp(x);
-    ctx.dump_dosbox(0x8ef);
     // 0d72:08ef pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x8f0);
     // 0d72:08f0 and [si],bl
     ctx.memory.write::<u8>(
         segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_si()),
@@ -12653,16 +6201,13 @@ pub fn x0d72_08ee(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0x8f2);
     // 0d72:08f2 xor al,4
     ctx.cpu
         .regs
         .set_al(xor(ctx.cpu.regs.get_al(), 0x4u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x8f4);
     // 0d72:08f4 pop bx
     let x = ctx.pop16();
     ctx.cpu.regs.set_bx(x);
-    ctx.dump_dosbox(0x8f5);
     // 0d72:08f5 and [bx+si+2Eh],bh
     ctx.memory.write::<u8>(
         segofs(
@@ -12686,7 +6231,6 @@ pub fn x0d72_08ee(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0x8f8);
     // 0d72:08f8 and [di+0Dh],di
     ctx.memory.write::<u16>(
         segofs(
@@ -12706,13 +6250,11 @@ pub fn x0d72_08ee(ctx: &mut Context) -> Cont {
 }
 
 pub fn x0d72_08fb(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x8fb);
     // 0d72:08fb insb
     panic!("Insb not implemented");
 }
 
 pub fn x0d72_091b(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x91b);
     // 0d72:091b sbb [bp+0Ah],dl
     ctx.memory.write::<u8>(
         segofs(
@@ -12728,11 +6270,9 @@ pub fn x0d72_091b(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0x91e);
     // 0d72:091e pop bp
     let x = ctx.pop16();
     ctx.cpu.regs.set_bp(x);
-    ctx.dump_dosbox(0x91f);
     // 0d72:091f pop ax
     let x = ctx.pop16();
     ctx.cpu.regs.set_ax(x);
@@ -12740,11 +6280,9 @@ pub fn x0d72_091b(ctx: &mut Context) -> Cont {
 }
 
 pub fn x0d72_0920(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x920);
     // 0d72:0920 pop ss
     let x = ctx.pop16();
     ctx.cpu.regs.set_ss(x);
-    ctx.dump_dosbox(0x921);
     // 0d72:0921 cmp ax,[bx+si]
     sub(
         ctx.cpu.regs.get_ax(),
@@ -12754,13 +6292,11 @@ pub fn x0d72_0920(ctx: &mut Context) -> Cont {
         )),
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x923);
     // 0d72:0923 jbe short 092Ah
     ctx.jbe(Cont(x0d72_0925), Cont(x0d72_092a))
 }
 
 pub fn x0d72_0925(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x925);
     // 0d72:0925 sbb [bx+si+0Bh],ch
     ctx.memory.write::<u8>(
         segofs(
@@ -12784,26 +6320,21 @@ pub fn x0d72_0925(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0x928);
     // 0d72:0928 outsb
     panic!("Outsb not implemented");
     Cont(x0d72_092a)
 }
 
 pub fn x0d72_092a(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x92a);
     // 0d72:092a xor al,29h
     ctx.cpu
         .regs
         .set_al(xor(ctx.cpu.regs.get_al(), 0x29u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x92c);
     // 0d72:092c push 20h
     ctx.push16(0x20u16);
-    ctx.dump_dosbox(0x92e);
     // 0d72:092e pop sp
     let x = ctx.pop16();
     ctx.cpu.regs.set_sp(x);
-    ctx.dump_dosbox(0x92f);
     // 0d72:092f and cs:[bp+si+0Fh],dx
     ctx.memory.write::<u16>(
         segofs(
@@ -12827,17 +6358,14 @@ pub fn x0d72_092a(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0x933);
     // 0d72:0933 outsw
     panic!("Outsw not implemented");
 }
 
 pub fn x0d72_0949(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x949);
     // 0d72:0949 pop dx
     let x = ctx.pop16();
     ctx.cpu.regs.set_dx(x);
-    ctx.dump_dosbox(0x94a);
     // 0d72:094a and cs:[bp+si+0Eh],ax
     ctx.memory.write::<u16>(
         segofs(
@@ -12861,13 +6389,11 @@ pub fn x0d72_0949(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0x94e);
     // 0d72:094e ja short 0978h
     ctx.ja(Cont(x0d72_0950), Cont(x0d72_0978))
 }
 
 pub fn x0d72_0950(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x950);
     // 0d72:0950 xor [di],dx
     ctx.memory.write::<u16>(
         segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_di()),
@@ -12878,7 +6404,6 @@ pub fn x0d72_0950(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0x952);
     // 0d72:0952 xor [bp+20h],dx
     ctx.memory.write::<u16>(
         segofs(
@@ -12894,27 +6419,22 @@ pub fn x0d72_0950(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0x955);
     // 0d72:0955 and al,7Eh
     ctx.cpu
         .regs
         .set_al(and(ctx.cpu.regs.get_al(), 0x7eu8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x958);
     // 0d72:0958 xor al,18h
     ctx.cpu
         .regs
         .set_al(xor(ctx.cpu.regs.get_al(), 0x18u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x95a);
     // 0d72:095a inc bp
     ctx.cpu
         .regs
         .set_bp(inc(ctx.cpu.regs.get_bp(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x95b);
     // 0d72:095b or ax,286Ah
     ctx.cpu
         .regs
         .set_ax(or(ctx.cpu.regs.get_ax(), 0x286au16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x95e);
     // 0d72:095e xor [di],dx
     ctx.memory.write::<u16>(
         segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_di()),
@@ -12925,7 +6445,6 @@ pub fn x0d72_0950(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0x960);
     // 0d72:0960 xor [si+20h],ax
     ctx.memory.write::<u16>(
         segofs(
@@ -12941,7 +6460,6 @@ pub fn x0d72_0950(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0x963);
     // 0d72:0963 add [bp+si+2Eh],ah
     ctx.memory.write::<u8>(
         segofs(
@@ -12965,7 +6483,6 @@ pub fn x0d72_0950(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0x966);
     // 0d72:0966 and [bx+si+0Ch],bx
     ctx.memory.write::<u16>(
         segofs(
@@ -12993,7 +6510,6 @@ pub fn x0d72_0950(ctx: &mut Context) -> Cont {
 }
 
 pub fn x0d72_0969(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x969);
     // 0d72:0969 and [di+14h],ah
     ctx.memory.write::<u8>(
         segofs(
@@ -13009,22 +6525,18 @@ pub fn x0d72_0969(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0x96c);
     // 0d72:096c inc bp
     ctx.cpu
         .regs
         .set_bp(inc(ctx.cpu.regs.get_bp(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x96d);
     // 0d72:096d pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x96f);
     // 0d72:096f jle short 0976h
     ctx.jle(Cont(x0d72_0971), Cont(x0d72_0976))
 }
 
 pub fn x0d72_0971(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x971);
     // 0d72:0971 sbb [bx+si],dh
     ctx.memory.write::<u8>(
         segofs(
@@ -13040,12 +6552,10 @@ pub fn x0d72_0971(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0x973);
     // 0d72:0973 inc di
     ctx.cpu
         .regs
         .set_di(inc(ctx.cpu.regs.get_di(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x974);
     // 0d72:0974 or ch,[bp+77h]
     ctx.cpu.regs.set_ch(or(
         ctx.cpu.regs.get_ch(),
@@ -13055,7 +6565,6 @@ pub fn x0d72_0971(ctx: &mut Context) -> Cont {
         )),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x977);
     // 0d72:0977 and [si],dh
     ctx.memory.write::<u8>(
         segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_si()),
@@ -13066,7 +6575,6 @@ pub fn x0d72_0971(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0x979);
     // 0d72:0979 cmp sp,[di+34h]
     sub(
         ctx.cpu.regs.get_sp(),
@@ -13076,7 +6584,6 @@ pub fn x0d72_0971(ctx: &mut Context) -> Cont {
         )),
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x97c);
     // 0d72:097c sbb [bx+di+0Ch],al
     ctx.memory.write::<u8>(
         segofs(
@@ -13100,7 +6607,6 @@ pub fn x0d72_0971(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0x97f);
     // 0d72:097f imul ax,[si],56h
     ctx.cpu.regs.set_ax(imul2_16(
         ctx.memory
@@ -13108,7 +6614,6 @@ pub fn x0d72_0971(ctx: &mut Context) -> Cont {
         0x56u16,
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x982);
     // 0d72:0982 and [bx],bl
     ctx.memory.write::<u8>(
         segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_bx()),
@@ -13119,48 +6624,39 @@ pub fn x0d72_0971(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0x984);
     // 0d72:0984 pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x985);
     // 0d72:0985 aaa
     panic!("Aaa not implemented");
 }
 
 pub fn x0d72_0976(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x976);
     // 0d72:0976 ja short 0998h
     ctx.ja(Cont(x0d72_0978), Cont(x0d72_0998))
 }
 
 pub fn x0d72_0978(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x978);
     // 0d72:0978 xor al,3Bh
     ctx.cpu
         .regs
         .set_al(xor(ctx.cpu.regs.get_al(), 0x3bu8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x97a);
     // 0d72:097a xor al,18h
     ctx.cpu
         .regs
         .set_al(xor(ctx.cpu.regs.get_al(), 0x18u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x97d);
     // 0d72:097d inc cx
     ctx.cpu
         .regs
         .set_cx(inc(ctx.cpu.regs.get_cx(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x97e);
     // 0d72:097e or al,6Bh
     ctx.cpu
         .regs
         .set_al(or(ctx.cpu.regs.get_al(), 0x6bu8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x980);
     // 0d72:0980 add al,56h
     ctx.cpu
         .regs
         .set_al(add(ctx.cpu.regs.get_al(), 0x56u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x982);
     // 0d72:0982 and [bx],bl
     ctx.memory.write::<u8>(
         segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_bx()),
@@ -13171,24 +6667,20 @@ pub fn x0d72_0978(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0x984);
     // 0d72:0984 pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x985);
     // 0d72:0985 aaa
     panic!("Aaa not implemented");
     Cont(x0d72_0998)
 }
 
 pub fn x0d72_0998(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x998);
     // 0d72:0998 das
     panic!("Das not implemented");
 }
 
 pub fn x0d72_09af(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x9af);
     // 0d72:09af xor [di],dx
     ctx.memory.write::<u16>(
         segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_di()),
@@ -13199,38 +6691,30 @@ pub fn x0d72_09af(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0x9b1);
     // 0d72:09b1 pop ax
     let x = ctx.pop16();
     ctx.cpu.regs.set_ax(x);
-    ctx.dump_dosbox(0x9b2);
     // 0d72:09b2 pop ss
     let x = ctx.pop16();
     ctx.cpu.regs.set_ss(x);
-    ctx.dump_dosbox(0x9b3);
     // 0d72:09b3 aaa
     panic!("Aaa not implemented");
 }
 
 pub fn x0d72_09c4(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x9c4);
     // 0d72:09c4 pop dx
     let x = ctx.pop16();
     ctx.cpu.regs.set_dx(x);
-    ctx.dump_dosbox(0x9c5);
     // 0d72:09c5 or ax,1761h
     ctx.cpu
         .regs
         .set_ax(or(ctx.cpu.regs.get_ax(), 0x1761u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x9c8);
     // 0d72:09c8 xor ax,243Bh
     ctx.cpu
         .regs
         .set_ax(xor(ctx.cpu.regs.get_ax(), 0x243bu16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x9cb);
     // 0d72:09cb push 20h
     ctx.push16(0x20u16);
-    ctx.dump_dosbox(0x9cd);
     // 0d72:09cd add [di+2Eh],dl
     ctx.memory.write::<u8>(
         segofs(
@@ -13246,7 +6730,6 @@ pub fn x0d72_09c4(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0x9d0);
     // 0d72:09d0 and [bp+si+0Dh],bp
     ctx.memory.write::<u16>(
         segofs(
@@ -13270,13 +6753,11 @@ pub fn x0d72_09c4(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0x9d3);
     // 0d72:09d3 outsw
     panic!("Outsw not implemented");
 }
 
 pub fn x0d72_09dd(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x9dd);
     // 0d72:09dd sbb [bp+0Bh],dh
     ctx.memory.write::<u8>(
         segofs(
@@ -13292,16 +6773,13 @@ pub fn x0d72_09dd(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0x9e0);
     // 0d72:09e0 pusha
     panic!("Pusha not implemented");
 }
 
 pub fn x0d72_09f2(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x9f2);
     // 0d72:09f2 push si
     ctx.push16(ctx.cpu.regs.get_si());
-    ctx.dump_dosbox(0x9f4);
     // 0d72:09f4 or [bp+5Fh],sp
     ctx.memory.write::<u16>(
         segofs(
@@ -13321,54 +6799,43 @@ pub fn x0d72_09f2(ctx: &mut Context) -> Cont {
 }
 
 pub fn x0d72_09f7(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x9f7);
     // 0d72:09f7 das
     panic!("Das not implemented");
     Cont(x0d72_0a11)
 }
 
 pub fn x0d72_0a11(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xa11);
     // 0d72:0a11 jo short 0A1Fh
     ctx.jo(Cont(x0d72_0a13), Cont(x0d72_0a1f))
 }
 
 pub fn x0d72_0a13(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xa13);
     // 0d72:0a13 pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0xa14);
     // 0d72:0a14 pusha
     panic!("Pusha not implemented");
 }
 
 pub fn x0d72_0a1f(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xa1f);
     // 0d72:0a1f pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0xa20);
     // 0d72:0a20 inc sp
     ctx.cpu
         .regs
         .set_sp(inc(ctx.cpu.regs.get_sp(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xa21);
     // 0d72:0a21 push di
     ctx.push16(ctx.cpu.regs.get_di());
-    ctx.dump_dosbox(0xa22);
     // 0d72:0a22 sub al,56h
     ctx.cpu
         .regs
         .set_al(sub(ctx.cpu.regs.get_al(), 0x56u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xa24);
     // 0d72:0a24 pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0xa26);
     // 0d72:0a26 push bp
     ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0xa27);
     // 0d72:0a27 or dl,[bx+33h]
     ctx.cpu.regs.set_dl(or(
         ctx.cpu.regs.get_dl(),
@@ -13378,13 +6845,11 @@ pub fn x0d72_0a1f(ctx: &mut Context) -> Cont {
         )),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0xa2a);
     // 0d72:0a2a jp short 0A33h
     ctx.jp(Cont(x0d72_0a2c), Cont(x0d72_0a33))
 }
 
 pub fn x0d72_0a2c(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xa2c);
     // 0d72:0a2c sub [bx+si+5],di
     ctx.memory.write::<u16>(
         segofs(
@@ -13408,18 +6873,15 @@ pub fn x0d72_0a2c(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xa2f);
     // 0d72:0a2f add ax,0B72h
     ctx.cpu
         .regs
         .set_ax(add(ctx.cpu.regs.get_ax(), 0xb72u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xa32);
     // 0d72:0a32 jle short 0A53h
     ctx.jle(Cont(x0d72_0a34), Cont(x0d72_0a53))
 }
 
 pub fn x0d72_0a33(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xa33);
     // 0d72:0a33 pop ds
     let x = ctx.pop16();
     ctx.cpu.regs.set_ds(x);
@@ -13427,7 +6889,6 @@ pub fn x0d72_0a33(ctx: &mut Context) -> Cont {
 }
 
 pub fn x0d72_0a34(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xa34);
     // 0d72:0a34 xor bp,[bp+di+7]
     ctx.cpu.regs.set_bp(xor(
         ctx.cpu.regs.get_bp(),
@@ -13441,7 +6902,6 @@ pub fn x0d72_0a34(ctx: &mut Context) -> Cont {
         )),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0xa37);
     // 0d72:0a37 sub [si+5],di
     ctx.memory.write::<u16>(
         segofs(
@@ -13457,22 +6917,18 @@ pub fn x0d72_0a34(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xa3a);
     // 0d72:0a3a add ax,0C47h
     ctx.cpu
         .regs
         .set_ax(add(ctx.cpu.regs.get_ax(), 0xc47u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xa3d);
     // 0d72:0a3d pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0xa3e);
     // 0d72:0a3e jle short 0A68h
     ctx.jle(Cont(x0d72_0a40), Cont(x0d72_0a68))
 }
 
 pub fn x0d72_0a40(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xa40);
     // 0d72:0a40 xor [di],dx
     ctx.memory.write::<u16>(
         segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_di()),
@@ -13483,12 +6939,10 @@ pub fn x0d72_0a40(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xa42);
     // 0d72:0a42 dec ax
     ctx.cpu
         .regs
         .set_ax(dec(ctx.cpu.regs.get_ax(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xa43);
     // 0d72:0a43 sub [bp+si+2Eh],di
     ctx.memory.write::<u16>(
         segofs(
@@ -13512,29 +6966,23 @@ pub fn x0d72_0a40(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xa46);
     // 0d72:0a46 pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0xa47);
     // 0d72:0a47 inc bx
     ctx.cpu
         .regs
         .set_bx(inc(ctx.cpu.regs.get_bx(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xa48);
     // 0d72:0a48 push cs
     ctx.push16(ctx.cpu.regs.get_cs());
-    ctx.dump_dosbox(0xa49);
     // 0d72:0a49 pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0xa4a);
     // 0d72:0a4a jle short 0A74h
     ctx.jle(Cont(x0d72_0a4c), Cont(x0d72_0a74))
 }
 
 pub fn x0d72_0a4c(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xa4c);
     // 0d72:0a4c xor [di],dx
     ctx.memory.write::<u16>(
         segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_di()),
@@ -13545,10 +6993,8 @@ pub fn x0d72_0a4c(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xa4e);
     // 0d72:0a4e push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0xa4f);
     // 0d72:0a4f and [si],dl
     ctx.memory.write::<u8>(
         segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_si()),
@@ -13559,33 +7005,27 @@ pub fn x0d72_0a4c(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xa51);
     // 0d72:0a51 add ax,3805h
     ctx.cpu
         .regs
         .set_ax(add(ctx.cpu.regs.get_ax(), 0x3805u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xa55);
     // 0d72:0a55 jbe short 0A63h
     ctx.jbe(Cont(x0d72_0a57), Cont(x0d72_0a63))
 }
 
 pub fn x0d72_0a53(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xa53);
     // 0d72:0a53 add ax,7638h
     ctx.cpu
         .regs
         .set_ax(add(ctx.cpu.regs.get_ax(), 0x7638u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xa56);
     // 0d72:0a56 or al,7
     ctx.cpu
         .regs
         .set_al(or(ctx.cpu.regs.get_al(), 0x7u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xa58);
     // 0d72:0a58 inc dx
     ctx.cpu
         .regs
         .set_dx(inc(ctx.cpu.regs.get_dx(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xa59);
     // 0d72:0a59 sub [bx+di],dh
     ctx.memory.write::<u8>(
         segofs(
@@ -13601,7 +7041,6 @@ pub fn x0d72_0a53(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xa5b);
     // 0d72:0a5b adc ax,2060h
     let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
     ctx.cpu.regs.set_ax(addc(
@@ -13610,23 +7049,19 @@ pub fn x0d72_0a53(ctx: &mut Context) -> Cont {
         carry as _,
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0xa5e);
     // 0d72:0a5e push bp
     ctx.push16(ctx.cpu.regs.get_bp());
     Cont(x0d72_0a5f)
 }
 
 pub fn x0d72_0a57(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xa57);
     // 0d72:0a57 pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0xa58);
     // 0d72:0a58 inc dx
     ctx.cpu
         .regs
         .set_dx(inc(ctx.cpu.regs.get_dx(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xa59);
     // 0d72:0a59 sub [bx+di],dh
     ctx.memory.write::<u8>(
         segofs(
@@ -13642,7 +7077,6 @@ pub fn x0d72_0a57(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xa5b);
     // 0d72:0a5b adc ax,2060h
     let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
     ctx.cpu.regs.set_ax(addc(
@@ -13651,23 +7085,19 @@ pub fn x0d72_0a57(ctx: &mut Context) -> Cont {
         carry as _,
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0xa5e);
     // 0d72:0a5e push bp
     ctx.push16(ctx.cpu.regs.get_bp());
     Cont(x0d72_0a5f)
 }
 
 pub fn x0d72_0a5f(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xa5f);
     // 0d72:0a5f pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0xa61);
     // 0d72:0a61 dec dx
     ctx.cpu
         .regs
         .set_dx(dec(ctx.cpu.regs.get_dx(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xa62);
     // 0d72:0a62 or al,[bx]
     ctx.cpu.regs.set_al(or(
         ctx.cpu.regs.get_al(),
@@ -13675,23 +7105,19 @@ pub fn x0d72_0a5f(ctx: &mut Context) -> Cont {
             .read::<u8>(segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_bx())),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0xa64);
     // 0d72:0a64 je short 0ADCh
     ctx.je(Cont(x0d72_0a66), Cont(x0d72_0adc))
 }
 
 pub fn x0d72_0a63(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xa63);
     // 0d72:0a63 pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0xa64);
     // 0d72:0a64 je short 0ADCh
     ctx.je(Cont(x0d72_0a66), Cont(x0d72_0adc))
 }
 
 pub fn x0d72_0a66(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xa66);
     // 0d72:0a66 xor [bx+si+5],ax
     ctx.memory.write::<u16>(
         segofs(
@@ -13715,7 +7141,6 @@ pub fn x0d72_0a66(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xa69);
     // 0d72:0a69 cmp cs:[bx+si+9],dl
     sub(
         ctx.memory.read::<u8>(segofs(
@@ -13729,28 +7154,22 @@ pub fn x0d72_0a66(ctx: &mut Context) -> Cont {
         ctx.cpu.regs.get_dl(),
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0xa6d);
     // 0d72:0a6d pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0xa6e);
     // 0d72:0a6e push si
     ctx.push16(ctx.cpu.regs.get_si());
-    ctx.dump_dosbox(0xa6f);
     // 0d72:0a6f outsw
     panic!("Outsw not implemented");
 }
 
 pub fn x0d72_0a68(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xa68);
     // 0d72:0a68 add ax,382Eh
     ctx.cpu
         .regs
         .set_ax(add(ctx.cpu.regs.get_ax(), 0x382eu16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xa6b);
     // 0d72:0a6b push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0xa6c);
     // 0d72:0a6c or [bx],ax
     ctx.memory.write::<u16>(
         segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_bx()),
@@ -13761,21 +7180,17 @@ pub fn x0d72_0a68(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xa6e);
     // 0d72:0a6e push si
     ctx.push16(ctx.cpu.regs.get_si());
-    ctx.dump_dosbox(0xa6f);
     // 0d72:0a6f outsw
     panic!("Outsw not implemented");
 }
 
 pub fn x0d72_0a72(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xa72);
     // 0d72:0a72 add ax,7638h
     ctx.cpu
         .regs
         .set_ax(add(ctx.cpu.regs.get_ax(), 0x7638u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xa75);
     // 0d72:0a75 or dh,[si]
     ctx.cpu.regs.set_dh(or(
         ctx.cpu.regs.get_dh(),
@@ -13787,50 +7202,40 @@ pub fn x0d72_0a72(ctx: &mut Context) -> Cont {
 }
 
 pub fn x0d72_0a74(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xa74);
     // 0d72:0a74 jbe short 0A80h
     ctx.jbe(Cont(x0d72_0a76), Cont(x0d72_0a80))
 }
 
 pub fn x0d72_0a76(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xa76);
     // 0d72:0a76 xor al,7
     ctx.cpu
         .regs
         .set_al(xor(ctx.cpu.regs.get_al(), 0x7u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xa78);
     // 0d72:0a78 push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0xa79);
     // 0d72:0a79 dec bx
     ctx.cpu
         .regs
         .set_bx(dec(ctx.cpu.regs.get_bx(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xa7a);
     // 0d72:0a7a jle short 0AAAh
     ctx.jle(Cont(x0d72_0a7c), Cont(x0d72_0aaa))
 }
 
 pub fn x0d72_0a77(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xa77);
     // 0d72:0a77 pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0xa78);
     // 0d72:0a78 push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0xa79);
     // 0d72:0a79 dec bx
     ctx.cpu
         .regs
         .set_bx(dec(ctx.cpu.regs.get_bx(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xa7a);
     // 0d72:0a7a jle short 0AAAh
     ctx.jle(Cont(x0d72_0a7c), Cont(x0d72_0aaa))
 }
 
 pub fn x0d72_0a7c(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xa7c);
     // 0d72:0a7c adc [bx+si],di
     let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
     ctx.memory.write::<u16>(
@@ -13848,12 +7253,10 @@ pub fn x0d72_0a7c(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xa7e);
     // 0d72:0a7e dec ax
     ctx.cpu
         .regs
         .set_ax(dec(ctx.cpu.regs.get_ax(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xa7f);
     // 0d72:0a7f or si,[si]
     ctx.cpu.regs.set_si(or(
         ctx.cpu.regs.get_si(),
@@ -13861,7 +7264,6 @@ pub fn x0d72_0a7c(ctx: &mut Context) -> Cont {
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_si())),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0xa81);
     // 0d72:0a81 xor ax,[si]
     ctx.cpu.regs.set_ax(xor(
         ctx.cpu.regs.get_ax(),
@@ -13869,10 +7271,8 @@ pub fn x0d72_0a7c(ctx: &mut Context) -> Cont {
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_si())),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0xa83);
     // 0d72:0a83 push 5D67h
     ctx.push16(0x5d67u16);
-    ctx.dump_dosbox(0xa86);
     // 0d72:0a86 and cs:[bx+di],bx
     ctx.memory.write::<u16>(
         segofs(
@@ -13888,27 +7288,22 @@ pub fn x0d72_0a7c(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xa89);
     // 0d72:0a89 jbe short 0A98h
     ctx.jbe(Cont(x0d72_0a8b), Cont(x0d72_0a98))
 }
 
 pub fn x0d72_0a80(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xa80);
     // 0d72:0a80 xor al,33h
     ctx.cpu
         .regs
         .set_al(xor(ctx.cpu.regs.get_al(), 0x33u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xa82);
     // 0d72:0a82 add al,68h
     ctx.cpu
         .regs
         .set_al(add(ctx.cpu.regs.get_al(), 0x68u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xa84);
     // 0d72:0a84 pop bp
     let x = ctx.pop16();
     ctx.cpu.regs.set_bp(x);
-    ctx.dump_dosbox(0xa86);
     // 0d72:0a86 and cs:[bx+di],bx
     ctx.memory.write::<u16>(
         segofs(
@@ -13924,18 +7319,15 @@ pub fn x0d72_0a80(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xa89);
     // 0d72:0a89 jbe short 0A98h
     ctx.jbe(Cont(x0d72_0a8b), Cont(x0d72_0a98))
 }
 
 pub fn x0d72_0a8b(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xa8b);
     // 0d72:0a8b xor al,43h
     ctx.cpu
         .regs
         .set_al(xor(ctx.cpu.regs.get_al(), 0x43u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xa8d);
     // 0d72:0a8d and [bp+si],ah
     ctx.memory.write::<u8>(
         segofs(
@@ -13951,22 +7343,18 @@ pub fn x0d72_0a8b(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xa8f);
     // 0d72:0a8f add ax,4117h
     ctx.cpu
         .regs
         .set_ax(add(ctx.cpu.regs.get_ax(), 0x4117u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xa92);
     // 0d72:0a92 add al,4Eh
     ctx.cpu
         .regs
         .set_al(add(ctx.cpu.regs.get_al(), 0x4eu8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xa94);
     // 0d72:0a94 add ax,4C18h
     ctx.cpu
         .regs
         .set_ax(add(ctx.cpu.regs.get_ax(), 0x4c18u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xa97);
     // 0d72:0a97 or [si],dh
     ctx.memory.write::<u8>(
         segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_si()),
@@ -13977,7 +7365,6 @@ pub fn x0d72_0a8b(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xa99);
     // 0d72:0a99 imul di,[bx+si+68h],212Eh
     ctx.cpu.regs.set_di(imul2_16(
         ctx.memory.read::<u16>(segofs(
@@ -13991,24 +7378,20 @@ pub fn x0d72_0a8b(ctx: &mut Context) -> Cont {
         0x212eu16,
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0xa9e);
     // 0d72:0a9e jp short 0AA8h
     ctx.jp(Cont(x0d72_0aa0), Cont(x0d72_0aa8))
 }
 
 pub fn x0d72_0a98(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xa98);
     // 0d72:0a98 xor al,69h
     ctx.cpu
         .regs
         .set_al(xor(ctx.cpu.regs.get_al(), 0x69u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xa9a);
     // 0d72:0a9a js short 0B04h
     ctx.js(Cont(x0d72_0a9c), Cont(x0d72_0b04))
 }
 
 pub fn x0d72_0a9c(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xa9c);
     // 0d72:0a9c and cs:[bp+si+8],di
     ctx.memory.write::<u16>(
         segofs(
@@ -14036,7 +7419,6 @@ pub fn x0d72_0a9c(ctx: &mut Context) -> Cont {
 }
 
 pub fn x0d72_0aa0(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xaa0);
     // 0d72:0aa0 and [bp+48h],di
     ctx.memory.write::<u16>(
         segofs(
@@ -14052,18 +7434,15 @@ pub fn x0d72_0aa0(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xaa3);
     // 0d72:0aa3 popa
     panic!("Popa not implemented");
     Cont(x0d72_0aa8)
 }
 
 pub fn x0d72_0aa8(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xaa8);
     // 0d72:0aa8 pop ds
     let x = ctx.pop16();
     ctx.cpu.regs.set_ds(x);
-    ctx.dump_dosbox(0xaa9);
     // 0d72:0aa9 inc di
     ctx.cpu
         .regs
@@ -14072,10 +7451,8 @@ pub fn x0d72_0aa8(ctx: &mut Context) -> Cont {
 }
 
 pub fn x0d72_0aaa(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xaaa);
     // 0d72:0aaa push cx
     ctx.push16(ctx.cpu.regs.get_cx());
-    ctx.dump_dosbox(0xaab);
     // 0d72:0aab and [bx+di],dl
     ctx.memory.write::<u8>(
         segofs(
@@ -14091,12 +7468,10 @@ pub fn x0d72_0aaa(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xaad);
     // 0d72:0aad xor ax,3407h
     ctx.cpu
         .regs
         .set_ax(xor(ctx.cpu.regs.get_ax(), 0x3407u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xab0);
     // 0d72:0ab0 and [bp+5],cl
     ctx.memory.write::<u8>(
         segofs(
@@ -14112,7 +7487,6 @@ pub fn x0d72_0aaa(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xab3);
     // 0d72:0ab3 sbb [bp+di+8],dh
     ctx.memory.write::<u8>(
         segofs(
@@ -14136,23 +7510,19 @@ pub fn x0d72_0aaa(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xab6);
     // 0d72:0ab6 pop ds
     let x = ctx.pop16();
     ctx.cpu.regs.set_ds(x);
-    ctx.dump_dosbox(0xab7);
     // 0d72:0ab7 outsb
     panic!("Outsb not implemented");
     Cont(x0d72_0b04)
 }
 
 pub fn x0d72_0adc(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xadc);
     // 0d72:0adc inc cx
     ctx.cpu
         .regs
         .set_cx(inc(ctx.cpu.regs.get_cx(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xadd);
     // 0d72:0add or si,[bp+si+11h]
     ctx.cpu.regs.set_si(or(
         ctx.cpu.regs.get_si(),
@@ -14166,12 +7536,10 @@ pub fn x0d72_0adc(ctx: &mut Context) -> Cont {
         )),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0xae0);
     // 0d72:0ae0 sbb al,60h
     ctx.cpu
         .regs
         .set_al(sbb(ctx.cpu.regs.get_al(), 0x60u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xae2);
     // 0d72:0ae2 cmp bp,[bx]
     sub(
         ctx.cpu.regs.get_bp(),
@@ -14179,17 +7547,14 @@ pub fn x0d72_0adc(ctx: &mut Context) -> Cont {
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_bx())),
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0xae4);
     // 0d72:0ae4 dec ax
     ctx.cpu
         .regs
         .set_ax(dec(ctx.cpu.regs.get_ax(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xae5);
     // 0d72:0ae5 add ax,592Eh
     ctx.cpu
         .regs
         .set_ax(add(ctx.cpu.regs.get_ax(), 0x592eu16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xae8);
     // 0d72:0ae8 adc [bp+di],di
     let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
     ctx.memory.write::<u16>(
@@ -14207,7 +7572,6 @@ pub fn x0d72_0adc(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xaea);
     // 0d72:0aea and dl,[bx+di]
     ctx.cpu.regs.set_dl(and(
         ctx.cpu.regs.get_dl(),
@@ -14217,24 +7581,20 @@ pub fn x0d72_0adc(ctx: &mut Context) -> Cont {
         )),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0xaec);
     // 0d72:0aec add ax,707Ch
     ctx.cpu
         .regs
         .set_ax(add(ctx.cpu.regs.get_ax(), 0x707cu16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xaef);
     // 0d72:0aef aas
     panic!("Aas not implemented");
     Cont(x0d72_0b04)
 }
 
 pub fn x0d72_0b04(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xb04);
     // 0d72:0b04 add ax,6C2Eh
     ctx.cpu
         .regs
         .set_ax(add(ctx.cpu.regs.get_ax(), 0x6c2eu16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xb07);
     // 0d72:0b07 or dh,[di+31h]
     ctx.cpu.regs.set_dh(or(
         ctx.cpu.regs.get_dh(),
@@ -14244,12 +7604,10 @@ pub fn x0d72_0b04(ctx: &mut Context) -> Cont {
         )),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0xb0a);
     // 0d72:0b0a dec dx
     ctx.cpu
         .regs
         .set_dx(dec(ctx.cpu.regs.get_dx(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xb0b);
     // 0d72:0b0b cmp si,[si]
     sub(
         ctx.cpu.regs.get_si(),
@@ -14257,13 +7615,11 @@ pub fn x0d72_0b04(ctx: &mut Context) -> Cont {
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_si())),
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0xb0d);
     // 0d72:0b0d jo short 0B14h
     ctx.jo(Cont(x0d72_0b0f), Cont(x0d72_0b14))
 }
 
 pub fn x0d72_0b0f(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xb0f);
     // 0d72:0b0f sbb [bp+si+0Ah],ah
     ctx.memory.write::<u8>(
         segofs(
@@ -14287,7 +7643,6 @@ pub fn x0d72_0b0f(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xb12);
     // 0d72:0b12 cmp cx,[bx+2Fh]
     sub(
         ctx.cpu.regs.get_cx(),
@@ -14297,30 +7652,25 @@ pub fn x0d72_0b0f(ctx: &mut Context) -> Cont {
         )),
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0xb15);
     // 0d72:0b15 jb short 0B2Bh
     ctx.jb(Cont(x0d72_0b17), Cont(x0d72_0b2b))
 }
 
 pub fn x0d72_0b14(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xb14);
     // 0d72:0b14 das
     panic!("Das not implemented");
 }
 
 pub fn x0d72_0b17(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xb17);
     // 0d72:0b17 jne short 0B1Eh
     ctx.jne(Cont(x0d72_0b19), Cont(x0d72_0b1e))
 }
 
 pub fn x0d72_0b19(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xb19);
     // 0d72:0b19 add ax,0C6Bh
     ctx.cpu
         .regs
         .set_ax(add(ctx.cpu.regs.get_ax(), 0xc6bu16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xb1c);
     // 0d72:0b1c cmp bp,[bx+di]
     sub(
         ctx.cpu.regs.get_bp(),
@@ -14334,23 +7684,19 @@ pub fn x0d72_0b19(ctx: &mut Context) -> Cont {
 }
 
 pub fn x0d72_0b1e(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xb1e);
     // 0d72:0b1e jl short 0B7Eh
     ctx.jl(Cont(x0d72_0b20), Cont(x0d72_0b7e))
 }
 
 pub fn x0d72_0b20(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xb20);
     // 0d72:0b20 sub al,6Ah
     ctx.cpu
         .regs
         .set_al(sub(ctx.cpu.regs.get_al(), 0x6au8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xb22);
     // 0d72:0b22 add ax,0C18h
     ctx.cpu
         .regs
         .set_ax(add(ctx.cpu.regs.get_ax(), 0xc18u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xb25);
     // 0d72:0b25 add si,[bp+si+0Ah]
     ctx.cpu.regs.set_si(add(
         ctx.cpu.regs.get_si(),
@@ -14364,7 +7710,6 @@ pub fn x0d72_0b20(ctx: &mut Context) -> Cont {
         )),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0xb28);
     // 0d72:0b28 cmp sp,[bx+si+4Ch]
     sub(
         ctx.cpu.regs.get_sp(),
@@ -14382,18 +7727,15 @@ pub fn x0d72_0b20(ctx: &mut Context) -> Cont {
 }
 
 pub fn x0d72_0b2b(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xb2b);
     // 0d72:0b2b das
     panic!("Das not implemented");
 }
 
 pub fn x0d72_0b5a(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xb5a);
     // 0d72:0b5a add ax,1018h
     ctx.cpu
         .regs
         .set_ax(add(ctx.cpu.regs.get_ax(), 0x1018u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xb5e);
     // 0d72:0b5e adc al,[di]
     let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
     ctx.cpu.regs.set_al(addc(
@@ -14403,7 +7745,6 @@ pub fn x0d72_0b5a(ctx: &mut Context) -> Cont {
         carry as _,
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0xb60);
     // 0d72:0b60 sbb [si],cl
     ctx.memory.write::<u8>(
         segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_si()),
@@ -14414,13 +7755,11 @@ pub fn x0d72_0b5a(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xb62);
     // 0d72:0b62 jle short 0B72h
     ctx.jle(Cont(x0d72_0b64), Cont(x0d72_0b72))
 }
 
 pub fn x0d72_0b64(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xb64);
     // 0d72:0b64 sbb bh,[bp+di]
     ctx.cpu.regs.set_bh(sbb(
         ctx.cpu.regs.get_bh(),
@@ -14430,7 +7769,6 @@ pub fn x0d72_0b64(ctx: &mut Context) -> Cont {
         )),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0xb66);
     // 0d72:0b66 and [di+51h],si
     ctx.memory.write::<u16>(
         segofs(
@@ -14446,20 +7784,16 @@ pub fn x0d72_0b64(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xb69);
     // 0d72:0b69 push cx
     ctx.push16(ctx.cpu.regs.get_cx());
-    ctx.dump_dosbox(0xb6a);
     // 0d72:0b6a add ax,1018h
     ctx.cpu
         .regs
         .set_ax(add(ctx.cpu.regs.get_ax(), 0x1018u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xb6d);
     // 0d72:0b6d or al,34h
     ctx.cpu
         .regs
         .set_al(or(ctx.cpu.regs.get_al(), 0x34u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xb6f);
     // 0d72:0b6f and [bp+si+10h],dx
     ctx.memory.write::<u16>(
         segofs(
@@ -14487,22 +7821,18 @@ pub fn x0d72_0b64(ctx: &mut Context) -> Cont {
 }
 
 pub fn x0d72_0b72(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xb72);
     // 0d72:0b72 add al,33h
     ctx.cpu
         .regs
         .set_al(add(ctx.cpu.regs.get_al(), 0x33u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xb74);
     // 0d72:0b74 dec cx
     ctx.cpu
         .regs
         .set_cx(dec(ctx.cpu.regs.get_cx(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xb75);
     // 0d72:0b75 dec sp
     ctx.cpu
         .regs
         .set_sp(dec(ctx.cpu.regs.get_sp(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xb76);
     // 0d72:0b76 cmp si,cs:[bx+di]
     sub(
         ctx.cpu.regs.get_si(),
@@ -14512,13 +7842,11 @@ pub fn x0d72_0b72(ctx: &mut Context) -> Cont {
         )),
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0xb79);
     // 0d72:0b79 jns short 0B80h
     ctx.jns(Cont(x0d72_0b7b), Cont(x0d72_0b80))
 }
 
 pub fn x0d72_0b7b(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xb7b);
     // 0d72:0b7b sbb cs:[bp+di],ax
     ctx.memory.write::<u16>(
         segofs(
@@ -14538,10 +7866,8 @@ pub fn x0d72_0b7b(ctx: &mut Context) -> Cont {
 }
 
 pub fn x0d72_0b7e(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xb7e);
     // 0d72:0b7e push es
     ctx.push16(ctx.cpu.regs.get_es());
-    ctx.dump_dosbox(0xb7f);
     // 0d72:0b7f adc [bp+si+0Eh],bx
     let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
     ctx.memory.write::<u16>(
@@ -14567,57 +7893,45 @@ pub fn x0d72_0b7e(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xb82);
     // 0d72:0b82 add al,33h
     ctx.cpu
         .regs
         .set_al(add(ctx.cpu.regs.get_al(), 0x33u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xb84);
     // 0d72:0b84 pop cx
     let x = ctx.pop16();
     ctx.cpu.regs.set_cx(x);
-    ctx.dump_dosbox(0xb85);
     // 0d72:0b85 pop bp
     let x = ctx.pop16();
     ctx.cpu.regs.set_bp(x);
-    ctx.dump_dosbox(0xb86);
     // 0d72:0b86 aaa
     panic!("Aaa not implemented");
 }
 
 pub fn x0d72_0b80(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xb80);
     // 0d72:0b80 pop dx
     let x = ctx.pop16();
     ctx.cpu.regs.set_dx(x);
-    ctx.dump_dosbox(0xb81);
     // 0d72:0b81 push cs
     ctx.push16(ctx.cpu.regs.get_cs());
-    ctx.dump_dosbox(0xb82);
     // 0d72:0b82 add al,33h
     ctx.cpu
         .regs
         .set_al(add(ctx.cpu.regs.get_al(), 0x33u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xb84);
     // 0d72:0b84 pop cx
     let x = ctx.pop16();
     ctx.cpu.regs.set_cx(x);
-    ctx.dump_dosbox(0xb85);
     // 0d72:0b85 pop bp
     let x = ctx.pop16();
     ctx.cpu.regs.set_bp(x);
-    ctx.dump_dosbox(0xb86);
     // 0d72:0b86 aaa
     panic!("Aaa not implemented");
 }
 
 pub fn x0d72_0bb9(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xbb9);
     // 0d72:0bb9 dec dx
     ctx.cpu
         .regs
         .set_dx(dec(ctx.cpu.regs.get_dx(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xbbb);
     // 0d72:0bbb or bx,[bx+di+28h]
     ctx.cpu.regs.set_bx(or(
         ctx.cpu.regs.get_bx(),
@@ -14635,7 +7949,6 @@ pub fn x0d72_0bb9(ctx: &mut Context) -> Cont {
 }
 
 pub fn x0d72_0bbe(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xbbe);
     // 0d72:0bbe xor [bx+4],si
     ctx.memory.write::<u16>(
         segofs(
@@ -14651,38 +7964,31 @@ pub fn x0d72_0bbe(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xbc1);
     // 0d72:0bc1 sub al,66h
     ctx.cpu
         .regs
         .set_al(sub(ctx.cpu.regs.get_al(), 0x66u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xbc3);
     // 0d72:0bc3 add ax,4B18h
     ctx.cpu
         .regs
         .set_ax(add(ctx.cpu.regs.get_ax(), 0x4b18u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xbc6);
     // 0d72:0bc6 or al,6Ch
     ctx.cpu
         .regs
         .set_al(or(ctx.cpu.regs.get_al(), 0x6cu8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xbc8);
     // 0d72:0bc8 bound ax,dword ptr [si]
     panic!("Bound not implemented");
 }
 
 pub fn x0d72_0bc9(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xbc9);
     // 0d72:0bc9 add al,2Fh
     ctx.cpu
         .regs
         .set_al(add(ctx.cpu.regs.get_al(), 0x2fu8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xbcb);
     // 0d72:0bcb xor al,5
     ctx.cpu
         .regs
         .set_al(xor(ctx.cpu.regs.get_al(), 0x5u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xbcd);
     // 0d72:0bcd cmp ax,[di+5]
     sub(
         ctx.cpu.regs.get_ax(),
@@ -14692,17 +7998,14 @@ pub fn x0d72_0bc9(ctx: &mut Context) -> Cont {
         )),
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0xbd0);
     // 0d72:0bd0 inc cx
     ctx.cpu
         .regs
         .set_cx(inc(ctx.cpu.regs.get_cx(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xbd2);
     // 0d72:0bd2 or al,45h
     ctx.cpu
         .regs
         .set_al(or(ctx.cpu.regs.get_al(), 0x45u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xbd4);
     // 0d72:0bd4 sub [bx+di],dh
     ctx.memory.write::<u8>(
         segofs(
@@ -14718,7 +8021,6 @@ pub fn x0d72_0bc9(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xbd6);
     // 0d72:0bd6 adc ax,455h
     let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
     ctx.cpu.regs.set_ax(addc(
@@ -14727,7 +8029,6 @@ pub fn x0d72_0bc9(ctx: &mut Context) -> Cont {
         carry as _,
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0xbd9);
     // 0d72:0bd9 and [bp+si+5],ch
     ctx.memory.write::<u8>(
         segofs(
@@ -14751,7 +8052,6 @@ pub fn x0d72_0bc9(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xbdc);
     // 0d72:0bdc sbb [bp+si+0Dh],bl
     ctx.memory.write::<u8>(
         segofs(
@@ -14775,12 +8075,10 @@ pub fn x0d72_0bc9(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xbdf);
     // 0d72:0bdf dec dx
     ctx.cpu
         .regs
         .set_dx(dec(ctx.cpu.regs.get_dx(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xbe0);
     // 0d72:0be0 and [si],bl
     ctx.memory.write::<u8>(
         segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_si()),
@@ -14791,7 +8089,6 @@ pub fn x0d72_0bc9(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xbe2);
     // 0d72:0be2 adc al,4Fh
     let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
     ctx.cpu.regs.set_al(addc(
@@ -14800,28 +8097,23 @@ pub fn x0d72_0bc9(ctx: &mut Context) -> Cont {
         carry as _,
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0xbe4);
     // 0d72:0be4 add al,17h
     ctx.cpu
         .regs
         .set_al(add(ctx.cpu.regs.get_al(), 0x17u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xbe6);
     // 0d72:0be6 aaa
     panic!("Aaa not implemented");
 }
 
 pub fn x0d72_0bf6(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xbf6);
     // 0d72:0bf6 dec bp
     ctx.cpu
         .regs
         .set_bp(dec(ctx.cpu.regs.get_bp(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xbf8);
     // 0d72:0bf8 or al,4Fh
     ctx.cpu
         .regs
         .set_al(or(ctx.cpu.regs.get_al(), 0x4fu8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xbfa);
     // 0d72:0bfa sub [bx+di],dh
     ctx.memory.write::<u8>(
         segofs(
@@ -14837,13 +8129,11 @@ pub fn x0d72_0bf6(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xbfc);
     // 0d72:0bfc insw
     panic!("Insw not implemented");
 }
 
 pub fn x0d72_0bfb(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xbfb);
     // 0d72:0bfb xor [di+4],bp
     ctx.memory.write::<u16>(
         segofs(
@@ -14859,17 +8149,14 @@ pub fn x0d72_0bfb(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xbfe);
     // 0d72:0bfe pop ss
     let x = ctx.pop16();
     ctx.cpu.regs.set_ss(x);
-    ctx.dump_dosbox(0xbff);
     // 0d72:0bff aaa
     panic!("Aaa not implemented");
 }
 
 pub fn x0d72_0c21(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xc21);
     // 0d72:0c21 and [bx+di+0Bh],sp
     ctx.memory.write::<u16>(
         segofs(
@@ -14893,12 +8180,10 @@ pub fn x0d72_0c21(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xc24);
     // 0d72:0c24 dec sp
     ctx.cpu
         .regs
         .set_sp(dec(ctx.cpu.regs.get_sp(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xc25);
     // 0d72:0c25 sbb bh,[bp+si+1Ch]
     ctx.cpu.regs.set_bh(sbb(
         ctx.cpu.regs.get_bh(),
@@ -14912,7 +8197,6 @@ pub fn x0d72_0c21(ctx: &mut Context) -> Cont {
         )),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0xc28);
     // 0d72:0c28 and [bx+si],al
     ctx.memory.write::<u8>(
         segofs(
@@ -14928,27 +8212,22 @@ pub fn x0d72_0c21(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xc2a);
     // 0d72:0c2a bound bp,dword ptr ds:[7921h]
     panic!("Bound not implemented");
 }
 
 pub fn x0d72_0c4f(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xc4f);
     // 0d72:0c4f dec cx
     ctx.cpu
         .regs
         .set_cx(dec(ctx.cpu.regs.get_cx(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xc50);
     // 0d72:0c50 sbb al,20h
     ctx.cpu
         .regs
         .set_al(sbb(ctx.cpu.regs.get_al(), 0x20u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xc52);
     // 0d72:0c52 pop di
     let x = ctx.pop16();
     ctx.cpu.regs.set_di(x);
-    ctx.dump_dosbox(0xc54);
     // 0d72:0c54 and cs:[530Ah],di
     ctx.memory.write::<u16>(
         segofs(ctx.cpu.regs.get_cs(), 0x530au16),
@@ -14959,12 +8238,10 @@ pub fn x0d72_0c4f(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xc59);
     // 0d72:0c59 inc dx
     ctx.cpu
         .regs
         .set_dx(inc(ctx.cpu.regs.get_dx(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xc5a);
     // 0d72:0c5a xor bx,[bx]
     ctx.cpu.regs.set_bx(xor(
         ctx.cpu.regs.get_bx(),
@@ -14972,18 +8249,15 @@ pub fn x0d72_0c4f(ctx: &mut Context) -> Cont {
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_bx())),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0xc5c);
     // 0d72:0c5c outs dx,word ptr cs:[si]
     panic!("Outsw not implemented");
 }
 
 pub fn x0d72_0c64(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xc64);
     // 0d72:0c64 and al,6Ah
     ctx.cpu
         .regs
         .set_al(and(ctx.cpu.regs.get_al(), 0x6au8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xc66);
     // 0d72:0c66 or ch,ds:[4104h]
     ctx.cpu.regs.set_ch(or(
         ctx.cpu.regs.get_ch(),
@@ -14991,7 +8265,6 @@ pub fn x0d72_0c64(ctx: &mut Context) -> Cont {
             .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x4104u16)),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0xc6a);
     // 0d72:0c6a and cs:[di+0Ch],bx
     ctx.memory.write::<u16>(
         segofs(
@@ -15007,32 +8280,26 @@ pub fn x0d72_0c64(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xc6e);
     // 0d72:0c6e push si
     ctx.push16(ctx.cpu.regs.get_si());
-    ctx.dump_dosbox(0xc6f);
     // 0d72:0c6f daa
     panic!("Daa not implemented");
     Cont(x0d72_0c93)
 }
 
 pub fn x0d72_0c93(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xc93);
     // 0d72:0c93 add al,29h
     ctx.cpu
         .regs
         .set_al(add(ctx.cpu.regs.get_al(), 0x29u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xc95);
     // 0d72:0c95 sub al,7Eh
     ctx.cpu
         .regs
         .set_al(sub(ctx.cpu.regs.get_al(), 0x7eu8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xc97);
     // 0d72:0c97 add ax,3E18h
     ctx.cpu
         .regs
         .set_ax(add(ctx.cpu.regs.get_ax(), 0x3e18u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xc9a);
     // 0d72:0c9a or ah,[bp+9]
     ctx.cpu.regs.set_ah(or(
         ctx.cpu.regs.get_ah(),
@@ -15042,12 +8309,10 @@ pub fn x0d72_0c93(ctx: &mut Context) -> Cont {
         )),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0xc9d);
     // 0d72:0c9d xor al,5Ch
     ctx.cpu
         .regs
         .set_al(xor(ctx.cpu.regs.get_al(), 0x5cu8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xc9f);
     // 0d72:0c9f cmp sp,[bx+5]
     sub(
         ctx.cpu.regs.get_sp(),
@@ -15057,7 +8322,6 @@ pub fn x0d72_0c93(ctx: &mut Context) -> Cont {
         )),
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0xca2);
     // 0d72:0ca2 sbb [bx+di+0Bh],cl
     ctx.memory.write::<u8>(
         segofs(
@@ -15081,22 +8345,18 @@ pub fn x0d72_0c93(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xca5);
     // 0d72:0ca5 pop si
     let x = ctx.pop16();
     ctx.cpu.regs.set_si(x);
-    ctx.dump_dosbox(0xca6);
     // 0d72:0ca6 outsb
     panic!("Outsb not implemented");
 }
 
 pub fn x0d72_0cc5(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xcc5);
     // 0d72:0cc5 sbb al,5
     ctx.cpu
         .regs
         .set_al(sbb(ctx.cpu.regs.get_al(), 0x5u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xcc7);
     // 0d72:0cc7 adc al,7Dh
     let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
     ctx.cpu.regs.set_al(addc(
@@ -15105,62 +8365,49 @@ pub fn x0d72_0cc5(ctx: &mut Context) -> Cont {
         carry as _,
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0xcc9);
     // 0d72:0cc9 pop ss
     let x = ctx.pop16();
     ctx.cpu.regs.set_ss(x);
-    ctx.dump_dosbox(0xcca);
     // 0d72:0cca dec bx
     ctx.cpu
         .regs
         .set_bx(dec(ctx.cpu.regs.get_bx(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xccb);
     // 0d72:0ccb add ax,6518h
     ctx.cpu
         .regs
         .set_ax(add(ctx.cpu.regs.get_ax(), 0x6518u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xcce);
     // 0d72:0cce pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0xccf);
     // 0d72:0ccf inc bx
     ctx.cpu
         .regs
         .set_bx(inc(ctx.cpu.regs.get_bx(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xcd0);
     // 0d72:0cd0 inc dx
     ctx.cpu
         .regs
         .set_dx(inc(ctx.cpu.regs.get_dx(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xcd1);
     // 0d72:0cd1 push dx
     ctx.push16(ctx.cpu.regs.get_dx());
-    ctx.dump_dosbox(0xcd2);
     // 0d72:0cd2 add ax,3E2Eh
     ctx.cpu
         .regs
         .set_ax(add(ctx.cpu.regs.get_ax(), 0x3e2eu16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xcd5);
     // 0d72:0cd5 push ss
     ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0xcd6);
     // 0d72:0cd6 pop ss
     let x = ctx.pop16();
     ctx.cpu.regs.set_ss(x);
-    ctx.dump_dosbox(0xcd8);
     // 0d72:0cd8 add ax,1C1Fh
     ctx.cpu
         .regs
         .set_ax(add(ctx.cpu.regs.get_ax(), 0x1c1fu16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xcdb);
     // 0d72:0cdb insb
     panic!("Insb not implemented");
     Cont(x0d72_0ce1)
 }
 
 pub fn x0d72_0ce1(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xce1);
     // 0d72:0ce1 adc [si],dh
     let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
     ctx.memory.write::<u8>(
@@ -15173,7 +8420,6 @@ pub fn x0d72_0ce1(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xce3);
     // 0d72:0ce3 sbb [si],bh
     ctx.memory.write::<u8>(
         segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_si()),
@@ -15184,7 +8430,6 @@ pub fn x0d72_0ce1(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xce5);
     // 0d72:0ce5 sbb ax,[di]
     ctx.cpu.regs.set_ax(sbb(
         ctx.cpu.regs.get_ax(),
@@ -15192,7 +8437,6 @@ pub fn x0d72_0ce1(ctx: &mut Context) -> Cont {
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_di())),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0xce7);
     // 0d72:0ce7 adc ds:[4A3Dh],cx
     let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
     ctx.memory.write::<u16>(
@@ -15205,49 +8449,40 @@ pub fn x0d72_0ce1(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xceb);
     // 0d72:0ceb or al,2Eh
     ctx.cpu
         .regs
         .set_al(or(ctx.cpu.regs.get_al(), 0x2eu8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xced);
     // 0d72:0ced dec di
     ctx.cpu
         .regs
         .set_di(dec(ctx.cpu.regs.get_di(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xcee);
     // 0d72:0cee and al,56h
     ctx.cpu
         .regs
         .set_al(and(ctx.cpu.regs.get_al(), 0x56u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xcf0);
     // 0d72:0cf0 das
     panic!("Das not implemented");
 }
 
 pub fn x0d72_0d1d(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xd1d);
     // 0d72:0d1d inc bp
     ctx.cpu
         .regs
         .set_bp(inc(ctx.cpu.regs.get_bp(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xd1e);
     // 0d72:0d1e daa
     panic!("Daa not implemented");
 }
 
 pub fn x0d72_0d28(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xd28);
     // 0d72:0d28 dec bx
     ctx.cpu
         .regs
         .set_bx(dec(ctx.cpu.regs.get_bx(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xd2a);
     // 0d72:0d2a and al,3Eh
     ctx.cpu
         .regs
         .set_al(and(ctx.cpu.regs.get_al(), 0x3eu8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xd2c);
     // 0d72:0d2c or [bx+di],si
     ctx.memory.write::<u16>(
         segofs(
@@ -15263,30 +8498,25 @@ pub fn x0d72_0d28(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xd2e);
     // 0d72:0d2e outsb
     panic!("Outsb not implemented");
 }
 
 pub fn x0d72_0d34(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xd34);
     // 0d72:0d34 hnt je short 0D5Bh
     ctx.je(Cont(x0d72_0d37), Cont(x0d72_0d5b))
 }
 
 pub fn x0d72_0d37(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xd37);
     // 0d72:0d37 das
     panic!("Das not implemented");
 }
 
 pub fn x0d72_0d41(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xd41);
     // 0d72:0d41 xor al,4
     ctx.cpu
         .regs
         .set_al(xor(ctx.cpu.regs.get_al(), 0x4u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xd43);
     // 0d72:0d43 xor bx,[bp+di+74h]
     ctx.cpu.regs.set_bx(xor(
         ctx.cpu.regs.get_bx(),
@@ -15300,7 +8530,6 @@ pub fn x0d72_0d41(ctx: &mut Context) -> Cont {
         )),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0xd46);
     // 0d72:0d46 adc [si],dh
     let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
     ctx.memory.write::<u8>(
@@ -15313,7 +8542,6 @@ pub fn x0d72_0d41(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xd49);
     // 0d72:0d49 and [si],si
     ctx.memory.write::<u16>(
         segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_si()),
@@ -15324,7 +8552,6 @@ pub fn x0d72_0d41(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xd4b);
     // 0d72:0d4b sbb [si],al
     ctx.memory.write::<u8>(
         segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_si()),
@@ -15335,7 +8562,6 @@ pub fn x0d72_0d41(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xd4d);
     // 0d72:0d4d xor cx,[di+11h]
     ctx.cpu.regs.set_cx(xor(
         ctx.cpu.regs.get_cx(),
@@ -15345,35 +8571,28 @@ pub fn x0d72_0d41(ctx: &mut Context) -> Cont {
         )),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0xd50);
     // 0d72:0d50 xor ax,1120h
     ctx.cpu
         .regs
         .set_ax(xor(ctx.cpu.regs.get_ax(), 0x1120u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xd53);
     // 0d72:0d53 dec ax
     ctx.cpu
         .regs
         .set_ax(dec(ctx.cpu.regs.get_ax(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xd54);
     // 0d72:0d54 and al,4Bh
     ctx.cpu
         .regs
         .set_al(and(ctx.cpu.regs.get_al(), 0x4bu8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xd56);
     // 0d72:0d56 and al,3Eh
     ctx.cpu
         .regs
         .set_al(and(ctx.cpu.regs.get_al(), 0x3eu8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xd58);
     // 0d72:0d58 cmp al,10h
     sub(ctx.cpu.regs.get_al(), 0x10u8, &mut ctx.cpu.flags);
-    ctx.dump_dosbox(0xd5a);
     // 0d72:0d5a xor ax,201Eh
     ctx.cpu
         .regs
         .set_ax(xor(ctx.cpu.regs.get_ax(), 0x201eu16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xd5d);
     // 0d72:0d5d adc [di],di
     let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
     ctx.memory.write::<u16>(
@@ -15386,24 +8605,19 @@ pub fn x0d72_0d41(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xd5f);
     // 0d72:0d5f push 0Fh
     ctx.push16(0xfu16);
-    ctx.dump_dosbox(0xd61);
     // 0d72:0d61 pop ds
     let x = ctx.pop16();
     ctx.cpu.regs.set_ds(x);
-    ctx.dump_dosbox(0xd62);
     // 0d72:0d62 sbb al,61h
     ctx.cpu
         .regs
         .set_al(sbb(ctx.cpu.regs.get_al(), 0x61u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xd64);
     // 0d72:0d64 and al,69h
     ctx.cpu
         .regs
         .set_al(and(ctx.cpu.regs.get_al(), 0x69u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xd66);
     // 0d72:0d66 xor [bx+di+3Ch],dx
     ctx.memory.write::<u16>(
         segofs(
@@ -15427,7 +8641,6 @@ pub fn x0d72_0d41(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xd69);
     // 0d72:0d69 adc [si],dh
     let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
     ctx.memory.write::<u8>(
@@ -15440,7 +8653,6 @@ pub fn x0d72_0d41(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xd6b);
     // 0d72:0d6b adc ds:[783Dh],cx
     let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
     ctx.memory.write::<u16>(
@@ -15453,12 +8665,10 @@ pub fn x0d72_0d41(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xd6f);
     // 0d72:0d6f or ax,6C05h
     ctx.cpu
         .regs
         .set_ax(or(ctx.cpu.regs.get_ax(), 0x6c05u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xd72);
     // 0d72:0d72 imul di,[bp+di],3Bh
     ctx.cpu.regs.set_di(imul2_16(
         ctx.memory.read::<u16>(segofs(
@@ -15468,21 +8678,17 @@ pub fn x0d72_0d41(ctx: &mut Context) -> Cont {
         0x3bu16,
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0xd75);
     // 0d72:0d75 xor al,1Ch
     ctx.cpu
         .regs
         .set_al(xor(ctx.cpu.regs.get_al(), 0x1cu8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xd77);
     // 0d72:0d77 jbe short 0D89h
     ctx.jbe(Cont(x0d72_0d79), Cont(x0d72_0d89))
 }
 
 pub fn x0d72_0d5b(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xd5b);
     // 0d72:0d5b push ds
     ctx.push16(ctx.cpu.regs.get_ds());
-    ctx.dump_dosbox(0xd5c);
     // 0d72:0d5c and [bx+di],dl
     ctx.memory.write::<u8>(
         segofs(
@@ -15498,24 +8704,19 @@ pub fn x0d72_0d5b(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xd5e);
     // 0d72:0d5e cmp ax,0F6Ah
     sub(ctx.cpu.regs.get_ax(), 0xf6au16, &mut ctx.cpu.flags);
-    ctx.dump_dosbox(0xd61);
     // 0d72:0d61 pop ds
     let x = ctx.pop16();
     ctx.cpu.regs.set_ds(x);
-    ctx.dump_dosbox(0xd62);
     // 0d72:0d62 sbb al,61h
     ctx.cpu
         .regs
         .set_al(sbb(ctx.cpu.regs.get_al(), 0x61u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xd64);
     // 0d72:0d64 and al,69h
     ctx.cpu
         .regs
         .set_al(and(ctx.cpu.regs.get_al(), 0x69u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xd66);
     // 0d72:0d66 xor [bx+di+3Ch],dx
     ctx.memory.write::<u16>(
         segofs(
@@ -15539,7 +8740,6 @@ pub fn x0d72_0d5b(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xd69);
     // 0d72:0d69 adc [si],dh
     let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
     ctx.memory.write::<u8>(
@@ -15552,7 +8752,6 @@ pub fn x0d72_0d5b(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xd6b);
     // 0d72:0d6b adc ds:[783Dh],cx
     let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
     ctx.memory.write::<u16>(
@@ -15565,12 +8764,10 @@ pub fn x0d72_0d5b(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xd6f);
     // 0d72:0d6f or ax,6C05h
     ctx.cpu
         .regs
         .set_ax(or(ctx.cpu.regs.get_ax(), 0x6c05u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xd72);
     // 0d72:0d72 imul di,[bp+di],3Bh
     ctx.cpu.regs.set_di(imul2_16(
         ctx.memory.read::<u16>(segofs(
@@ -15580,33 +8777,27 @@ pub fn x0d72_0d5b(ctx: &mut Context) -> Cont {
         0x3bu16,
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0xd75);
     // 0d72:0d75 xor al,1Ch
     ctx.cpu
         .regs
         .set_al(xor(ctx.cpu.regs.get_al(), 0x1cu8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xd77);
     // 0d72:0d77 jbe short 0D89h
     ctx.jbe(Cont(x0d72_0d79), Cont(x0d72_0d89))
 }
 
 pub fn x0d72_0d79(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xd79);
     // 0d72:0d79 add ax,6518h
     ctx.cpu
         .regs
         .set_ax(add(ctx.cpu.regs.get_ax(), 0x6518u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xd7c);
     // 0d72:0d7c or ax,4E05h
     ctx.cpu
         .regs
         .set_ax(or(ctx.cpu.regs.get_ax(), 0x4e05u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xd7f);
     // 0d72:0d7f dec si
     ctx.cpu
         .regs
         .set_si(dec(ctx.cpu.regs.get_si(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xd80);
     // 0d72:0d80 cmp di,[bp+di]
     sub(
         ctx.cpu.regs.get_di(),
@@ -15616,12 +8807,10 @@ pub fn x0d72_0d79(ctx: &mut Context) -> Cont {
         )),
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0xd82);
     // 0d72:0d82 xor ax,5F35h
     ctx.cpu
         .regs
         .set_ax(xor(ctx.cpu.regs.get_ax(), 0x5f35u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xd85);
     // 0d72:0d85 adc [di],al
     let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
     ctx.memory.write::<u8>(
@@ -15634,7 +8823,6 @@ pub fn x0d72_0d79(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xd87);
     // 0d72:0d87 sbb [bx],bh
     ctx.memory.write::<u8>(
         segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_bx()),
@@ -15649,31 +8837,25 @@ pub fn x0d72_0d79(ctx: &mut Context) -> Cont {
 }
 
 pub fn x0d72_0d89(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xd89);
     // 0d72:0d89 or al,5
     ctx.cpu
         .regs
         .set_al(or(ctx.cpu.regs.get_al(), 0x5u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xd8b);
     // 0d72:0d8b dec bp
     ctx.cpu
         .regs
         .set_bp(dec(ctx.cpu.regs.get_bp(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xd8c);
     // 0d72:0d8c jae short 0DC9h
     ctx.jae(Cont(unk_e4ae), Cont(x0d72_0dc9))
 }
 
 pub fn x0d72_0dc9(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xdc9);
     // 0d72:0dc9 add ax,1021h
     ctx.cpu
         .regs
         .set_ax(add(ctx.cpu.regs.get_ax(), 0x1021u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xdcc);
     // 0d72:0dcc push dx
     ctx.push16(ctx.cpu.regs.get_dx());
-    ctx.dump_dosbox(0xdcd);
     // 0d72:0dcd or [bp+di+31h],bl
     ctx.memory.write::<u8>(
         segofs(
@@ -15697,7 +8879,6 @@ pub fn x0d72_0dc9(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xdd0);
     // 0d72:0dd0 sub [bp+di+20h],ax
     ctx.memory.write::<u16>(
         segofs(
@@ -15721,23 +8902,19 @@ pub fn x0d72_0dc9(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xdd3);
     // 0d72:0dd3 js short 0E36h
     ctx.js(Cont(x0d72_0dd5), Cont(unk_e556))
 }
 
 pub fn x0d72_0dd5(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xdd5);
     // 0d72:0dd5 or al,35h
     ctx.cpu
         .regs
         .set_al(or(ctx.cpu.regs.get_al(), 0x35u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xdd7);
     // 0d72:0dd7 dec dx
     ctx.cpu
         .regs
         .set_dx(dec(ctx.cpu.regs.get_dx(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xdd8);
     // 0d72:0dd8 xor [bp+29h],bx
     ctx.memory.write::<u16>(
         segofs(
@@ -15753,28 +8930,23 @@ pub fn x0d72_0dd5(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xddb);
     // 0d72:0ddb aaa
     panic!("Aaa not implemented");
 }
 
 pub fn x0d72_0dde(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xdde);
     // 0d72:0dde add ax,3F11h
     ctx.cpu
         .regs
         .set_ax(add(ctx.cpu.regs.get_ax(), 0x3f11u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xde1);
     // 0d72:0de1 or ax,3B35h
     ctx.cpu
         .regs
         .set_ax(or(ctx.cpu.regs.get_ax(), 0x3b35u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xde4);
     // 0d72:0de4 inc cx
     ctx.cpu
         .regs
         .set_cx(inc(ctx.cpu.regs.get_cx(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xde5);
     // 0d72:0de5 adc al,4Bh
     let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
     ctx.cpu.regs.set_al(addc(
@@ -15783,13 +8955,11 @@ pub fn x0d72_0dde(ctx: &mut Context) -> Cont {
         carry as _,
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0xde7);
     // 0d72:0de7 jo short 0DF9h
     ctx.jo(Cont(x0d72_0de9), Cont(x0d72_0df9))
 }
 
 pub fn x0d72_0de9(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xde9);
     // 0d72:0de9 adc al,[di]
     let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
     ctx.cpu.regs.set_al(addc(
@@ -15799,7 +8969,6 @@ pub fn x0d72_0de9(ctx: &mut Context) -> Cont {
         carry as _,
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0xdeb);
     // 0d72:0deb sbb [si],cl
     ctx.memory.write::<u8>(
         segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_si()),
@@ -15810,18 +8979,15 @@ pub fn x0d72_0de9(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xded);
     // 0d72:0ded jnp short 0DFEh
     ctx.jnp(Cont(x0d72_0def), Cont(x0d72_0dfe))
 }
 
 pub fn x0d72_0def(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xdef);
     // 0d72:0def xor ax,4607h
     ctx.cpu
         .regs
         .set_ax(xor(ctx.cpu.regs.get_ax(), 0x4607u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xdf2);
     // 0d72:0df2 adc [bp+di],si
     let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
     ctx.memory.write::<u16>(
@@ -15839,23 +9005,19 @@ pub fn x0d72_0def(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xdf4);
     // 0d72:0df4 xor al,2Eh
     ctx.cpu
         .regs
         .set_al(xor(ctx.cpu.regs.get_al(), 0x2eu8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xdf6);
     // 0d72:0df6 add al,68h
     ctx.cpu
         .regs
         .set_al(add(ctx.cpu.regs.get_al(), 0x68u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xdf8);
     // 0d72:0df8 je short 0E0Ah
     ctx.je(Cont(x0d72_0dfa), Cont(x0d72_0e0a))
 }
 
 pub fn x0d72_0df9(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xdf9);
     // 0d72:0df9 adc ds:[4007h],ch
     let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
     ctx.memory.write::<u8>(
@@ -15868,7 +9030,6 @@ pub fn x0d72_0df9(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xdfd);
     // 0d72:0dfd pop ss
     let x = ctx.pop16();
     ctx.cpu.regs.set_ss(x);
@@ -15876,16 +9037,13 @@ pub fn x0d72_0df9(ctx: &mut Context) -> Cont {
 }
 
 pub fn x0d72_0dfa(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xdfa);
     // 0d72:0dfa pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0xdfc);
     // 0d72:0dfc inc ax
     ctx.cpu
         .regs
         .set_ax(inc(ctx.cpu.regs.get_ax(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xdfd);
     // 0d72:0dfd pop ss
     let x = ctx.pop16();
     ctx.cpu.regs.set_ss(x);
@@ -15893,27 +9051,22 @@ pub fn x0d72_0dfa(ctx: &mut Context) -> Cont {
 }
 
 pub fn x0d72_0dfe(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xdfe);
     // 0d72:0dfe pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0xdff);
     // 0d72:0dff add ax,270Ah
     ctx.cpu
         .regs
         .set_ax(add(ctx.cpu.regs.get_ax(), 0x270au16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xe03);
     // 0d72:0e03 add ax,201Ch
     ctx.cpu
         .regs
         .set_ax(add(ctx.cpu.regs.get_ax(), 0x201cu16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xe06);
     // 0d72:0e06 ht je short 0E83h
     ctx.je(Cont(x0d72_0e09), Cont(x0d72_0e83))
 }
 
 pub fn x0d72_0e09(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xe09);
     // 0d72:0e09 adc [bx+si],bh
     let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
     ctx.memory.write::<u8>(
@@ -15931,7 +9084,6 @@ pub fn x0d72_0e09(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xe0b);
     // 0d72:0e0b adc cs:[bp+di],bx
     let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
     ctx.memory.write::<u16>(
@@ -15949,7 +9101,6 @@ pub fn x0d72_0e09(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xe0e);
     // 0d72:0e0e cmp [di],ax
     sub(
         ctx.memory
@@ -15957,7 +9108,6 @@ pub fn x0d72_0e09(ctx: &mut Context) -> Cont {
         ctx.cpu.regs.get_ax(),
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0xe10);
     // 0d72:0e10 sbb [di],cl
     ctx.memory.write::<u8>(
         segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_di()),
@@ -15968,7 +9118,6 @@ pub fn x0d72_0e09(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xe12);
     // 0d72:0e12 xor [bx+si+11h],ah
     ctx.memory.write::<u8>(
         segofs(
@@ -15992,27 +9141,22 @@ pub fn x0d72_0e09(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xe15);
     // 0d72:0e15 pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0xe16);
     // 0d72:0e16 xor al,20h
     ctx.cpu
         .regs
         .set_al(xor(ctx.cpu.regs.get_al(), 0x20u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xe18);
     // 0d72:0e18 add ax,434h
     ctx.cpu
         .regs
         .set_ax(add(ctx.cpu.regs.get_ax(), 0x434u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xe1b);
     // 0d72:0e1b jno short 0E67h
     ctx.jno(Cont(unk_e53d), Cont(x0d72_0e67))
 }
 
 pub fn x0d72_0e0a(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xe0a);
     // 0d72:0e0a cmp ds:[1B11h],ch
     sub(
         ctx.memory
@@ -16020,7 +9164,6 @@ pub fn x0d72_0e0a(ctx: &mut Context) -> Cont {
         ctx.cpu.regs.get_ch(),
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0xe0e);
     // 0d72:0e0e cmp [di],ax
     sub(
         ctx.memory
@@ -16028,7 +9171,6 @@ pub fn x0d72_0e0a(ctx: &mut Context) -> Cont {
         ctx.cpu.regs.get_ax(),
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0xe10);
     // 0d72:0e10 sbb [di],cl
     ctx.memory.write::<u8>(
         segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_di()),
@@ -16039,7 +9181,6 @@ pub fn x0d72_0e0a(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xe12);
     // 0d72:0e12 xor [bx+si+11h],ah
     ctx.memory.write::<u8>(
         segofs(
@@ -16063,35 +9204,28 @@ pub fn x0d72_0e0a(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xe15);
     // 0d72:0e15 pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0xe16);
     // 0d72:0e16 xor al,20h
     ctx.cpu
         .regs
         .set_al(xor(ctx.cpu.regs.get_al(), 0x20u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xe18);
     // 0d72:0e18 add ax,434h
     ctx.cpu
         .regs
         .set_ax(add(ctx.cpu.regs.get_ax(), 0x434u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xe1b);
     // 0d72:0e1b jno short 0E67h
     ctx.jno(Cont(unk_e53d), Cont(x0d72_0e67))
 }
 
 pub fn x0d72_0e67(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xe67);
     // 0d72:0e67 add ax,192Eh
     ctx.cpu
         .regs
         .set_ax(add(ctx.cpu.regs.get_ax(), 0x192eu16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xe6a);
     // 0d72:0e6a cmp al,55h
     sub(ctx.cpu.regs.get_al(), 0x55u8, &mut ctx.cpu.flags);
-    ctx.dump_dosbox(0xe6c);
     // 0d72:0e6c adc ax,405h
     let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
     ctx.cpu.regs.set_ax(addc(
@@ -16100,34 +9234,26 @@ pub fn x0d72_0e67(ctx: &mut Context) -> Cont {
         carry as _,
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0xe6f);
     // 0d72:0e6f add ax,529h
     ctx.cpu
         .regs
         .set_ax(add(ctx.cpu.regs.get_ax(), 0x529u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xe72);
     // 0d72:0e72 push sp
     ctx.push16(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0xe73);
     // 0d72:0e73 pop dx
     let x = ctx.pop16();
     ctx.cpu.regs.set_dx(x);
-    ctx.dump_dosbox(0xe74);
     // 0d72:0e74 pop sp
     let x = ctx.pop16();
     ctx.cpu.regs.set_sp(x);
-    ctx.dump_dosbox(0xe75);
     // 0d72:0e75 cmp al,1Bh
     sub(ctx.cpu.regs.get_al(), 0x1bu8, &mut ctx.cpu.flags);
-    ctx.dump_dosbox(0xe77);
     // 0d72:0e77 add ax,192Eh
     ctx.cpu
         .regs
         .set_ax(add(ctx.cpu.regs.get_ax(), 0x192eu16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xe7a);
     // 0d72:0e7a cmp ax,1805h
     sub(ctx.cpu.regs.get_ax(), 0x1805u16, &mut ctx.cpu.flags);
-    ctx.dump_dosbox(0xe7d);
     // 0d72:0e7d add ax,[di]
     ctx.cpu.regs.set_ax(add(
         ctx.cpu.regs.get_ax(),
@@ -16135,7 +9261,6 @@ pub fn x0d72_0e67(ctx: &mut Context) -> Cont {
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_di())),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0xe7f);
     // 0d72:0e7f sbb [bp+0Dh],dh
     ctx.memory.write::<u8>(
         segofs(
@@ -16151,35 +9276,28 @@ pub fn x0d72_0e67(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xe82);
     // 0d72:0e82 add ax,6C04h
     ctx.cpu
         .regs
         .set_ax(add(ctx.cpu.regs.get_ax(), 0x6c04u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xe85);
     // 0d72:0e85 and al,4Ah
     ctx.cpu
         .regs
         .set_al(and(ctx.cpu.regs.get_al(), 0x4au8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xe87);
     // 0d72:0e87 add ax,1B58h
     ctx.cpu
         .regs
         .set_ax(add(ctx.cpu.regs.get_ax(), 0x1b58u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xe8a);
     // 0d72:0e8a add ax,1918h
     ctx.cpu
         .regs
         .set_ax(add(ctx.cpu.regs.get_ax(), 0x1918u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xe8d);
     // 0d72:0e8d dec bp
     ctx.cpu
         .regs
         .set_bp(dec(ctx.cpu.regs.get_bp(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xe8e);
     // 0d72:0e8e push ss
     ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0xe8f);
     // 0d72:0e8f adc [bx],ax
     let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
     ctx.memory.write::<u16>(
@@ -16192,12 +9310,10 @@ pub fn x0d72_0e67(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xe91);
     // 0d72:0e91 xor al,1Ch
     ctx.cpu
         .regs
         .set_al(xor(ctx.cpu.regs.get_al(), 0x1cu8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xe93);
     // 0d72:0e93 and [si],dl
     ctx.memory.write::<u8>(
         segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_si()),
@@ -16208,46 +9324,37 @@ pub fn x0d72_0e67(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xe95);
     // 0d72:0e95 add ax,521Ch
     ctx.cpu
         .regs
         .set_ax(add(ctx.cpu.regs.get_ax(), 0x521cu16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xe98);
     // 0d72:0e98 jne short 0EEDh
     ctx.jne(Cont(x0d72_0e9a), Cont(x0d72_0eed))
 }
 
 pub fn x0d72_0e83(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xe83);
     // 0d72:0e83 add al,6Ch
     ctx.cpu
         .regs
         .set_al(add(ctx.cpu.regs.get_al(), 0x6cu8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xe85);
     // 0d72:0e85 and al,4Ah
     ctx.cpu
         .regs
         .set_al(and(ctx.cpu.regs.get_al(), 0x4au8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xe87);
     // 0d72:0e87 add ax,1B58h
     ctx.cpu
         .regs
         .set_ax(add(ctx.cpu.regs.get_ax(), 0x1b58u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xe8a);
     // 0d72:0e8a add ax,1918h
     ctx.cpu
         .regs
         .set_ax(add(ctx.cpu.regs.get_ax(), 0x1918u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xe8d);
     // 0d72:0e8d dec bp
     ctx.cpu
         .regs
         .set_bp(dec(ctx.cpu.regs.get_bp(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xe8e);
     // 0d72:0e8e push ss
     ctx.push16(ctx.cpu.regs.get_ss());
-    ctx.dump_dosbox(0xe8f);
     // 0d72:0e8f adc [bx],ax
     let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
     ctx.memory.write::<u16>(
@@ -16260,12 +9367,10 @@ pub fn x0d72_0e83(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xe91);
     // 0d72:0e91 xor al,1Ch
     ctx.cpu
         .regs
         .set_al(xor(ctx.cpu.regs.get_al(), 0x1cu8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xe93);
     // 0d72:0e93 and [si],dl
     ctx.memory.write::<u8>(
         segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_si()),
@@ -16276,18 +9381,15 @@ pub fn x0d72_0e83(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xe95);
     // 0d72:0e95 add ax,521Ch
     ctx.cpu
         .regs
         .set_ax(add(ctx.cpu.regs.get_ax(), 0x521cu16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xe98);
     // 0d72:0e98 jne short 0EEDh
     ctx.jne(Cont(x0d72_0e9a), Cont(x0d72_0eed))
 }
 
 pub fn x0d72_0e9a(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xe9a);
     // 0d72:0e9a sbb di,[bx+si]
     ctx.cpu.regs.set_di(sbb(
         ctx.cpu.regs.get_di(),
@@ -16297,17 +9399,14 @@ pub fn x0d72_0e9a(ctx: &mut Context) -> Cont {
         )),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0xe9c);
     // 0d72:0e9c xor al,11h
     ctx.cpu
         .regs
         .set_al(xor(ctx.cpu.regs.get_al(), 0x11u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xe9e);
     // 0d72:0e9e or ax,50Fh
     ctx.cpu
         .regs
         .set_ax(or(ctx.cpu.regs.get_ax(), 0x50fu16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xea1);
     // 0d72:0ea1 sbb [di],cl
     ctx.memory.write::<u8>(
         segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_di()),
@@ -16318,10 +9417,8 @@ pub fn x0d72_0e9a(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xea3);
     // 0d72:0ea3 push 0Fh
     ctx.push16(0xfu16);
-    ctx.dump_dosbox(0xea5);
     // 0d72:0ea5 adc [bx],ax
     let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
     ctx.memory.write::<u16>(
@@ -16334,18 +9431,15 @@ pub fn x0d72_0e9a(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xea7);
     // 0d72:0ea7 xor al,4Eh
     ctx.cpu
         .regs
         .set_al(xor(ctx.cpu.regs.get_al(), 0x4eu8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xea9);
     // 0d72:0ea9 js short 0EC7h
     ctx.js(Cont(x0d72_0eab), Cont(x0d72_0ec7))
 }
 
 pub fn x0d72_0eab(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xeab);
     // 0d72:0eab and [bx],dh
     ctx.memory.write::<u8>(
         segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_bx()),
@@ -16356,13 +9450,11 @@ pub fn x0d72_0eab(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xead);
     // 0d72:0ead bound bx,dword ptr [bp+di]
     panic!("Bound not implemented");
 }
 
 pub fn x0d72_0ebd(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xebd);
     // 0d72:0ebd cmp [di],al
     sub(
         ctx.memory
@@ -16370,7 +9462,6 @@ pub fn x0d72_0ebd(ctx: &mut Context) -> Cont {
         ctx.cpu.regs.get_al(),
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0xebf);
     // 0d72:0ebf and [bp+di+8],cx
     ctx.memory.write::<u16>(
         segofs(
@@ -16394,7 +9485,6 @@ pub fn x0d72_0ebd(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xec2);
     // 0d72:0ec2 adc [bx],di
     let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
     ctx.memory.write::<u16>(
@@ -16407,21 +9497,17 @@ pub fn x0d72_0ebd(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xec4);
     // 0d72:0ec4 pop bp
     let x = ctx.pop16();
     ctx.cpu.regs.set_bp(x);
-    ctx.dump_dosbox(0xec5);
     // 0d72:0ec5 pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0xec6);
     // 0d72:0ec6 ja short 0EE3h
     ctx.ja(Cont(x0d72_0ec8), Cont(x0d72_0ee3))
 }
 
 pub fn x0d72_0ec7(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xec7);
     // 0d72:0ec7 sbb cx,[bp+di+8]
     ctx.cpu.regs.set_cx(sbb(
         ctx.cpu.regs.get_cx(),
@@ -16435,7 +9521,6 @@ pub fn x0d72_0ec7(ctx: &mut Context) -> Cont {
         )),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0xeca);
     // 0d72:0eca adc [bx+di+5Ch],sp
     let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
     ctx.memory.write::<u16>(
@@ -16461,7 +9546,6 @@ pub fn x0d72_0ec7(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xecd);
     // 0d72:0ecd cmp cx,[bx+si+1Bh]
     sub(
         ctx.cpu.regs.get_cx(),
@@ -16475,12 +9559,10 @@ pub fn x0d72_0ec7(ctx: &mut Context) -> Cont {
         )),
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0xed0);
     // 0d72:0ed0 dec ax
     ctx.cpu
         .regs
         .set_ax(dec(ctx.cpu.regs.get_ax(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xed1);
     // 0d72:0ed1 or [bx+di],dx
     ctx.memory.write::<u16>(
         segofs(
@@ -16496,18 +9578,15 @@ pub fn x0d72_0ec7(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xed3);
     // 0d72:0ed3 jo short 0F40h
     ctx.jo(Cont(x0d72_0ed5), Cont(x0d72_0f40))
 }
 
 pub fn x0d72_0ec8(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xec8);
     // 0d72:0ec8 dec bx
     ctx.cpu
         .regs
         .set_bx(dec(ctx.cpu.regs.get_bx(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xec9);
     // 0d72:0ec9 or [bx+di],dl
     ctx.memory.write::<u8>(
         segofs(
@@ -16523,13 +9602,11 @@ pub fn x0d72_0ec8(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xecb);
     // 0d72:0ecb popa
     panic!("Popa not implemented");
 }
 
 pub fn x0d72_0ed5(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xed5);
     // 0d72:0ed5 adc al,45h
     let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
     ctx.cpu.regs.set_al(addc(
@@ -16542,7 +9619,6 @@ pub fn x0d72_0ed5(ctx: &mut Context) -> Cont {
 }
 
 pub fn x0d72_0ed8(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xed8);
     // 0d72:0ed8 sbb si,[bx+di+0Ch]
     ctx.cpu.regs.set_si(sbb(
         ctx.cpu.regs.get_si(),
@@ -16556,7 +9632,6 @@ pub fn x0d72_0ed8(ctx: &mut Context) -> Cont {
         )),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0xedb);
     // 0d72:0edb adc ds:[752h],bp
     let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
     ctx.memory.write::<u16>(
@@ -16569,12 +9644,10 @@ pub fn x0d72_0ed8(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xedf);
     // 0d72:0edf xor ax,6648h
     ctx.cpu
         .regs
         .set_ax(xor(ctx.cpu.regs.get_ax(), 0x6648u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xee2);
     // 0d72:0ee2 sbb si,[si]
     ctx.cpu.regs.set_si(sbb(
         ctx.cpu.regs.get_si(),
@@ -16582,7 +9655,6 @@ pub fn x0d72_0ed8(ctx: &mut Context) -> Cont {
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_si())),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0xee4);
     // 0d72:0ee4 sbb [bp+si+9],dl
     ctx.memory.write::<u8>(
         segofs(
@@ -16606,7 +9678,6 @@ pub fn x0d72_0ed8(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xee7);
     // 0d72:0ee7 adc [bp+2Eh],cx
     let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
     ctx.memory.write::<u16>(
@@ -16624,22 +9695,18 @@ pub fn x0d72_0ed8(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xeea);
     // 0d72:0eea das
     panic!("Das not implemented");
     Cont(x0d72_0eed)
 }
 
 pub fn x0d72_0ee3(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xee3);
     // 0d72:0ee3 xor al,18h
     ctx.cpu
         .regs
         .set_al(xor(ctx.cpu.regs.get_al(), 0x18u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xee5);
     // 0d72:0ee5 push dx
     ctx.push16(ctx.cpu.regs.get_dx());
-    ctx.dump_dosbox(0xee6);
     // 0d72:0ee6 or [bx+di],dx
     ctx.memory.write::<u16>(
         segofs(
@@ -16655,19 +9722,16 @@ pub fn x0d72_0ee3(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xee8);
     // 0d72:0ee8 dec si
     ctx.cpu
         .regs
         .set_si(dec(ctx.cpu.regs.get_si(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xee9);
     // 0d72:0ee9 das
     panic!("Das not implemented");
     Cont(x0d72_0eed)
 }
 
 pub fn x0d72_0eed(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xeed);
     // 0d72:0eed sbb bx,[bp+di+11h]
     ctx.cpu.regs.set_bx(sbb(
         ctx.cpu.regs.get_bx(),
@@ -16681,7 +9745,6 @@ pub fn x0d72_0eed(ctx: &mut Context) -> Cont {
         )),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0xef0);
     // 0d72:0ef0 adc [di],ax
     let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
     ctx.memory.write::<u16>(
@@ -16694,36 +9757,28 @@ pub fn x0d72_0eed(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xef2);
     // 0d72:0ef2 pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0xef3);
     // 0d72:0ef3 add ax,4549h
     ctx.cpu
         .regs
         .set_ax(add(ctx.cpu.regs.get_ax(), 0x4549u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xef6);
     // 0d72:0ef6 inc di
     ctx.cpu
         .regs
         .set_di(inc(ctx.cpu.regs.get_di(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xef7);
     // 0d72:0ef7 cmp al,1Bh
     sub(ctx.cpu.regs.get_al(), 0x1bu8, &mut ctx.cpu.flags);
-    ctx.dump_dosbox(0xef9);
     // 0d72:0ef9 add ax,382Eh
     ctx.cpu
         .regs
         .set_ax(add(ctx.cpu.regs.get_ax(), 0x382eu16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xefc);
     // 0d72:0efc cmp ax,1834h
     sub(ctx.cpu.regs.get_ax(), 0x1834u16, &mut ctx.cpu.flags);
-    ctx.dump_dosbox(0xeff);
     // 0d72:0eff pop cx
     let x = ctx.pop16();
     ctx.cpu.regs.set_cx(x);
-    ctx.dump_dosbox(0xf00);
     // 0d72:0f00 or dl,[bx+di]
     ctx.cpu.regs.set_dl(or(
         ctx.cpu.regs.get_dl(),
@@ -16733,24 +9788,19 @@ pub fn x0d72_0eed(ctx: &mut Context) -> Cont {
         )),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0xf02);
     // 0d72:0f02 dec bx
     ctx.cpu
         .regs
         .set_bx(dec(ctx.cpu.regs.get_bx(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xf03);
     // 0d72:0f03 pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0xf04);
     // 0d72:0f04 add ax,540h
     ctx.cpu
         .regs
         .set_ax(add(ctx.cpu.regs.get_ax(), 0x540u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xf07);
     // 0d72:0f07 push bx
     ctx.push16(ctx.cpu.regs.get_bx());
-    ctx.dump_dosbox(0xf08);
     // 0d72:0f08 sbb di,[bp+si+0Ah]
     ctx.cpu.regs.set_di(sbb(
         ctx.cpu.regs.get_di(),
@@ -16764,7 +9814,6 @@ pub fn x0d72_0eed(ctx: &mut Context) -> Cont {
         )),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0xf0b);
     // 0d72:0f0b adc [bx+si+7],di
     let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
     ctx.memory.write::<u16>(
@@ -16790,16 +9839,13 @@ pub fn x0d72_0eed(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xf0e);
     // 0d72:0f0e add ax,3442h
     ctx.cpu
         .regs
         .set_ax(add(ctx.cpu.regs.get_ax(), 0x3442u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xf11);
     // 0d72:0f11 pop dx
     let x = ctx.pop16();
     ctx.cpu.regs.set_dx(x);
-    ctx.dump_dosbox(0xf12);
     // 0d72:0f12 sbb cx,[bp+di+12h]
     ctx.cpu.regs.set_cx(sbb(
         ctx.cpu.regs.get_cx(),
@@ -16813,7 +9859,6 @@ pub fn x0d72_0eed(ctx: &mut Context) -> Cont {
         )),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0xf15);
     // 0d72:0f15 adc [si],si
     let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
     ctx.memory.write::<u16>(
@@ -16826,16 +9871,13 @@ pub fn x0d72_0eed(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xf17);
     // 0d72:0f17 pop ss
     let x = ctx.pop16();
     ctx.cpu.regs.set_ss(x);
-    ctx.dump_dosbox(0xf18);
     // 0d72:0f18 add ax,6956h
     ctx.cpu
         .regs
         .set_ax(add(ctx.cpu.regs.get_ax(), 0x6956u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xf1b);
     // 0d72:0f1b xor si,[di]
     ctx.cpu.regs.set_si(xor(
         ctx.cpu.regs.get_si(),
@@ -16843,13 +9885,11 @@ pub fn x0d72_0eed(ctx: &mut Context) -> Cont {
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_di())),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0xf1d);
     // 0d72:0f1d jb short 0F3Bh
     ctx.jb(Cont(x0d72_0f1f), Cont(x0d72_0f3b))
 }
 
 pub fn x0d72_0f1f(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xf1f);
     // 0d72:0f1f adc [si],si
     let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
     ctx.memory.write::<u16>(
@@ -16862,7 +9902,6 @@ pub fn x0d72_0f1f(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xf21);
     // 0d72:0f21 sbb [bp+di],bl
     ctx.memory.write::<u8>(
         segofs(
@@ -16878,12 +9917,10 @@ pub fn x0d72_0f1f(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xf23);
     // 0d72:0f23 add ax,7D05h
     ctx.cpu
         .regs
         .set_ax(add(ctx.cpu.regs.get_ax(), 0x7d05u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xf26);
     // 0d72:0f26 adc [bx+di],dl
     let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
     ctx.memory.write::<u8>(
@@ -16901,12 +9938,10 @@ pub fn x0d72_0f1f(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xf28);
     // 0d72:0f28 add ax,714Ch
     ctx.cpu
         .regs
         .set_ax(add(ctx.cpu.regs.get_ax(), 0x714cu16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xf2b);
     // 0d72:0f2b adc al,1Ah
     let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
     ctx.cpu.regs.set_al(addc(
@@ -16915,14 +9950,11 @@ pub fn x0d72_0f1f(ctx: &mut Context) -> Cont {
         carry as _,
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0xf2d);
     // 0d72:0f2d pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0xf2f);
     // 0d72:0f2f push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0xf30);
     // 0d72:0f30 xor [si],bl
     ctx.memory.write::<u8>(
         segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_si()),
@@ -16933,7 +9965,6 @@ pub fn x0d72_0f1f(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xf32);
     // 0d72:0f32 adc ds:[5B21h],bp
     let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
     ctx.memory.write::<u16>(
@@ -16946,22 +9977,18 @@ pub fn x0d72_0f1f(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xf36);
     // 0d72:0f36 or ax,6011h
     ctx.cpu
         .regs
         .set_ax(or(ctx.cpu.regs.get_ax(), 0x6011u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xf39);
     // 0d72:0f39 jns short 0F40h
     ctx.jns(Cont(x0d72_0f3b), Cont(x0d72_0f40))
 }
 
 pub fn x0d72_0f3b(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xf3b);
     // 0d72:0f3b pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0xf3c);
     // 0d72:0f3c cmp si,[di]
     sub(
         ctx.cpu.regs.get_si(),
@@ -16969,7 +9996,6 @@ pub fn x0d72_0f3b(ctx: &mut Context) -> Cont {
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_di())),
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0xf3e);
     // 0d72:0f3e and [bp+di+1Ch],cl
     ctx.memory.write::<u8>(
         segofs(
@@ -16993,7 +10019,6 @@ pub fn x0d72_0f3b(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xf41);
     // 0d72:0f41 adc [di+0Dh],dx
     let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
     ctx.memory.write::<u16>(
@@ -17011,7 +10036,6 @@ pub fn x0d72_0f3b(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xf44);
     // 0d72:0f44 adc [bx+si+3Eh],di
     let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
     ctx.memory.write::<u16>(
@@ -17037,62 +10061,50 @@ pub fn x0d72_0f3b(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xf47);
     // 0d72:0f47 add ax,3B07h
     ctx.cpu
         .regs
         .set_ax(add(ctx.cpu.regs.get_ax(), 0x3b07u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xf4a);
     // 0d72:0f4a add al,58h
     ctx.cpu
         .regs
         .set_al(add(ctx.cpu.regs.get_al(), 0x58u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xf4d);
     // 0d72:0f4d sbb al,11h
     ctx.cpu
         .regs
         .set_al(sbb(ctx.cpu.regs.get_al(), 0x11u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xf4f);
     // 0d72:0f4f js short 0F5Dh
     ctx.js(Cont(x0d72_0f51), Cont(x0d72_0f5d))
 }
 
 pub fn x0d72_0f40(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xf40);
     // 0d72:0f40 sbb al,11h
     ctx.cpu
         .regs
         .set_al(sbb(ctx.cpu.regs.get_al(), 0x11u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xf42);
     // 0d72:0f42 push bp
     ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0xf43);
     // 0d72:0f43 or ax,7811h
     ctx.cpu
         .regs
         .set_ax(or(ctx.cpu.regs.get_ax(), 0x7811u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xf46);
     // 0d72:0f46 add ax,3B07h
     ctx.cpu
         .regs
         .set_ax(add(ctx.cpu.regs.get_ax(), 0x3b07u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xf4a);
     // 0d72:0f4a add al,58h
     ctx.cpu
         .regs
         .set_al(add(ctx.cpu.regs.get_al(), 0x58u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xf4d);
     // 0d72:0f4d sbb al,11h
     ctx.cpu
         .regs
         .set_al(sbb(ctx.cpu.regs.get_al(), 0x11u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xf4f);
     // 0d72:0f4f js short 0F5Dh
     ctx.js(Cont(x0d72_0f51), Cont(x0d72_0f5d))
 }
 
 pub fn x0d72_0f51(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xf51);
     // 0d72:0f51 adc [bx+di+61h],bx
     let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
     ctx.memory.write::<u16>(
@@ -17118,11 +10130,9 @@ pub fn x0d72_0f51(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xf54);
     // 0d72:0f54 pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0xf56);
     // 0d72:0f56 and [bp+di],di
     ctx.memory.write::<u16>(
         segofs(
@@ -17138,23 +10148,19 @@ pub fn x0d72_0f51(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xf58);
     // 0d72:0f58 dec si
     ctx.cpu
         .regs
         .set_si(dec(ctx.cpu.regs.get_si(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xf59);
     // 0d72:0f59 sbb al,11h
     ctx.cpu
         .regs
         .set_al(sbb(ctx.cpu.regs.get_al(), 0x11u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xf5b);
     // 0d72:0f5b jno short 0F66h
     ctx.jno(Cont(x0d72_0f5d), Cont(x0d72_0f66))
 }
 
 pub fn x0d72_0f5d(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xf5d);
     // 0d72:0f5d adc [bp+si+5Eh],bp
     let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
     ctx.memory.write::<u16>(
@@ -17180,26 +10186,21 @@ pub fn x0d72_0f5d(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xf60);
     // 0d72:0f60 arpl [bx+si],si
     panic!("Arpl not implemented");
 }
 
 pub fn x0d72_0f66(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xf66);
     // 0d72:0f66 xor al,70h
     ctx.cpu
         .regs
         .set_al(xor(ctx.cpu.regs.get_al(), 0x70u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xf68);
     // 0d72:0f68 sbb al,24h
     ctx.cpu
         .regs
         .set_al(sbb(ctx.cpu.regs.get_al(), 0x24u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xf6a);
     // 0d72:0f6a push dx
     ctx.push16(ctx.cpu.regs.get_dx());
-    ctx.dump_dosbox(0xf6b);
     // 0d72:0f6b xor [di+0Dh],bp
     ctx.memory.write::<u16>(
         segofs(
@@ -17215,12 +10216,10 @@ pub fn x0d72_0f66(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xf6e);
     // 0d72:0f6e add ax,4121h
     ctx.cpu
         .regs
         .set_ax(add(ctx.cpu.regs.get_ax(), 0x4121u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xf71);
     // 0d72:0f71 or si,[si]
     ctx.cpu.regs.set_si(or(
         ctx.cpu.regs.get_si(),
@@ -17228,15 +10227,12 @@ pub fn x0d72_0f66(ctx: &mut Context) -> Cont {
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_si())),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0xf73);
     // 0d72:0f73 push cx
     ctx.push16(ctx.cpu.regs.get_cx());
-    ctx.dump_dosbox(0xf74);
     // 0d72:0f74 add al,7Dh
     ctx.cpu
         .regs
         .set_al(add(ctx.cpu.regs.get_al(), 0x7du8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xf76);
     // 0d72:0f76 cmp sp,[bx+di+0Dh]
     sub(
         ctx.cpu.regs.get_sp(),
@@ -17250,28 +10246,23 @@ pub fn x0d72_0f66(ctx: &mut Context) -> Cont {
         )),
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0xf79);
     // 0d72:0f79 add ax,5518h
     ctx.cpu
         .regs
         .set_ax(add(ctx.cpu.regs.get_ax(), 0x5518u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xf7c);
     // 0d72:0f7c or ax,5534h
     ctx.cpu
         .regs
         .set_ax(or(ctx.cpu.regs.get_ax(), 0x5534u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xf7f);
     // 0d72:0f7f jl short 0F86h
     ctx.jl(Cont(x0d72_0f81), Cont(x0d72_0f86))
 }
 
 pub fn x0d72_0f69(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xf69);
     // 0d72:0f69 and al,52h
     ctx.cpu
         .regs
         .set_al(and(ctx.cpu.regs.get_al(), 0x52u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xf6b);
     // 0d72:0f6b xor [di+0Dh],bp
     ctx.memory.write::<u16>(
         segofs(
@@ -17287,12 +10278,10 @@ pub fn x0d72_0f69(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xf6e);
     // 0d72:0f6e add ax,4121h
     ctx.cpu
         .regs
         .set_ax(add(ctx.cpu.regs.get_ax(), 0x4121u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xf71);
     // 0d72:0f71 or si,[si]
     ctx.cpu.regs.set_si(or(
         ctx.cpu.regs.get_si(),
@@ -17300,15 +10289,12 @@ pub fn x0d72_0f69(ctx: &mut Context) -> Cont {
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_si())),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0xf73);
     // 0d72:0f73 push cx
     ctx.push16(ctx.cpu.regs.get_cx());
-    ctx.dump_dosbox(0xf74);
     // 0d72:0f74 add al,7Dh
     ctx.cpu
         .regs
         .set_al(add(ctx.cpu.regs.get_al(), 0x7du8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xf76);
     // 0d72:0f76 cmp sp,[bx+di+0Dh]
     sub(
         ctx.cpu.regs.get_sp(),
@@ -17322,23 +10308,19 @@ pub fn x0d72_0f69(ctx: &mut Context) -> Cont {
         )),
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0xf79);
     // 0d72:0f79 add ax,5518h
     ctx.cpu
         .regs
         .set_ax(add(ctx.cpu.regs.get_ax(), 0x5518u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xf7c);
     // 0d72:0f7c or ax,5534h
     ctx.cpu
         .regs
         .set_ax(or(ctx.cpu.regs.get_ax(), 0x5534u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xf7f);
     // 0d72:0f7f jl short 0F86h
     ctx.jl(Cont(x0d72_0f81), Cont(x0d72_0f86))
 }
 
 pub fn x0d72_0f81(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xf81);
     // 0d72:0f81 and [bx],dh
     ctx.memory.write::<u8>(
         segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_bx()),
@@ -17349,10 +10331,8 @@ pub fn x0d72_0f81(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xf83);
     // 0d72:0f83 push bp
     ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0xf84);
     // 0d72:0f84 sbb al,11h
     ctx.cpu
         .regs
@@ -17361,7 +10341,6 @@ pub fn x0d72_0f81(ctx: &mut Context) -> Cont {
 }
 
 pub fn x0d72_0f85(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xf85);
     // 0d72:0f85 adc [si],si
     let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
     ctx.memory.write::<u16>(
@@ -17374,7 +10353,6 @@ pub fn x0d72_0f85(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xf87);
     // 0d72:0f87 and [bx+0Ah],si
     ctx.memory.write::<u16>(
         segofs(
@@ -17390,85 +10368,69 @@ pub fn x0d72_0f85(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xf8a);
     // 0d72:0f8a xor al,60h
     ctx.cpu
         .regs
         .set_al(xor(ctx.cpu.regs.get_al(), 0x60u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xf8c);
     // 0d72:0f8c dec sp
     ctx.cpu
         .regs
         .set_sp(dec(ctx.cpu.regs.get_sp(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xf8d);
     // 0d72:0f8d add ax,403Bh
     ctx.cpu
         .regs
         .set_ax(add(ctx.cpu.regs.get_ax(), 0x403bu16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xf90);
     // 0d72:0f90 sbb al,11h
     ctx.cpu
         .regs
         .set_al(sbb(ctx.cpu.regs.get_al(), 0x11u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xf92);
     // 0d72:0f92 ja short 0F9Eh
     ctx.ja(Cont(x0d72_0f94), Cont(x0d72_0f9e))
 }
 
 pub fn x0d72_0f86(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xf86);
     // 0d72:0f86 xor al,21h
     ctx.cpu
         .regs
         .set_al(xor(ctx.cpu.regs.get_al(), 0x21u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xf88);
     // 0d72:0f88 ja short 0F94h
     ctx.ja(Cont(x0d72_0f8a), Cont(x0d72_0f94))
 }
 
 pub fn x0d72_0f8a(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xf8a);
     // 0d72:0f8a xor al,60h
     ctx.cpu
         .regs
         .set_al(xor(ctx.cpu.regs.get_al(), 0x60u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xf8c);
     // 0d72:0f8c dec sp
     ctx.cpu
         .regs
         .set_sp(dec(ctx.cpu.regs.get_sp(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xf8d);
     // 0d72:0f8d add ax,403Bh
     ctx.cpu
         .regs
         .set_ax(add(ctx.cpu.regs.get_ax(), 0x403bu16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xf90);
     // 0d72:0f90 sbb al,11h
     ctx.cpu
         .regs
         .set_al(sbb(ctx.cpu.regs.get_al(), 0x11u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xf92);
     // 0d72:0f92 ja short 0F9Eh
     ctx.ja(Cont(x0d72_0f94), Cont(x0d72_0f9e))
 }
 
 pub fn x0d72_0f94(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xf94);
     // 0d72:0f94 xor al,79h
     ctx.cpu
         .regs
         .set_al(xor(ctx.cpu.regs.get_al(), 0x79u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xf96);
     // 0d72:0f96 dec si
     ctx.cpu
         .regs
         .set_si(dec(ctx.cpu.regs.get_si(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xf97);
     // 0d72:0f97 add ax,1C79h
     ctx.cpu
         .regs
         .set_ax(add(ctx.cpu.regs.get_ax(), 0x1c79u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xf9a);
     // 0d72:0f9a adc [bx+di],ax
     let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
     ctx.memory.write::<u16>(
@@ -17486,12 +10448,10 @@ pub fn x0d72_0f94(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xf9c);
     // 0d72:0f9c inc ax
     ctx.cpu
         .regs
         .set_ax(inc(ctx.cpu.regs.get_ax(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xf9d);
     // 0d72:0f9d or [si],si
     ctx.memory.write::<u16>(
         segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_si()),
@@ -17502,35 +10462,29 @@ pub fn x0d72_0f94(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xf9f);
     // 0d72:0f9f inc bp
     ctx.cpu
         .regs
         .set_bp(inc(ctx.cpu.regs.get_bp(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xfa0);
     // 0d72:0fa0 jle short 0FD7h
     ctx.jle(Cont(x0d72_0fa2), Cont(x0d72_0fd7))
 }
 
 pub fn x0d72_0f9e(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xf9e);
     // 0d72:0f9e xor al,45h
     ctx.cpu
         .regs
         .set_al(xor(ctx.cpu.regs.get_al(), 0x45u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xfa0);
     // 0d72:0fa0 jle short 0FD7h
     ctx.jle(Cont(x0d72_0fa2), Cont(x0d72_0fd7))
 }
 
 pub fn x0d72_0fa2(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xfa2);
     // 0d72:0fa2 jae short 0FC0h
     ctx.jae(Cont(x0d72_0fa4), Cont(x0d72_0fc0))
 }
 
 pub fn x0d72_0fa4(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xfa4);
     // 0d72:0fa4 adc [si+0Ah],sp
     let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
     ctx.memory.write::<u16>(
@@ -17548,33 +10502,27 @@ pub fn x0d72_0fa4(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xfa7);
     // 0d72:0fa7 xor al,4Bh
     ctx.cpu
         .regs
         .set_al(xor(ctx.cpu.regs.get_al(), 0x4bu8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xfa9);
     // 0d72:0fa9 jns short 0FD9h
     ctx.jns(Cont(x0d72_0fab), Cont(x0d72_0fd9))
 }
 
 pub fn x0d72_0fab(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xfab);
     // 0d72:0fab add al,45h
     ctx.cpu
         .regs
         .set_al(add(ctx.cpu.regs.get_al(), 0x45u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xfad);
     // 0d72:0fad sbb al,11h
     ctx.cpu
         .regs
         .set_al(sbb(ctx.cpu.regs.get_al(), 0x11u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xfaf);
     // 0d72:0faf dec di
     ctx.cpu
         .regs
         .set_di(dec(ctx.cpu.regs.get_di(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xfb0);
     // 0d72:0fb0 or [bx],dx
     ctx.memory.write::<u16>(
         segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_bx()),
@@ -17585,43 +10533,35 @@ pub fn x0d72_0fab(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xfb2);
     // 0d72:0fb2 jno short 1032h
     ctx.jno(Cont(x0d72_0fb4), Cont(x0d72_1032))
 }
 
 pub fn x0d72_0fb4(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xfb4);
     // 0d72:0fb4 aaa
     panic!("Aaa not implemented");
 }
 
 pub fn x0d72_0fbc(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xfbc);
     // 0d72:0fbc pop ss
     let x = ctx.pop16();
     ctx.cpu.regs.set_ss(x);
-    ctx.dump_dosbox(0xfbd);
     // 0d72:0fbd outsb
     panic!("Outsb not implemented");
     Cont(x0d72_0fc0)
 }
 
 pub fn x0d72_0fc0(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xfc0);
     // 0d72:0fc0 push bx
     ctx.push16(ctx.cpu.regs.get_bx());
-    ctx.dump_dosbox(0xfc1);
     // 0d72:0fc1 aas
     panic!("Aas not implemented");
 }
 
 pub fn x0d72_0fd3(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xfd3);
     // 0d72:0fd3 pop ax
     let x = ctx.pop16();
     ctx.cpu.regs.set_ax(x);
-    ctx.dump_dosbox(0xfd4);
     // 0d72:0fd4 sbb ax,[di]
     ctx.cpu.regs.set_ax(sbb(
         ctx.cpu.regs.get_ax(),
@@ -17629,7 +10569,6 @@ pub fn x0d72_0fd3(ctx: &mut Context) -> Cont {
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_di())),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0xfd6);
     // 0d72:0fd6 adc [bx],cx
     let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
     ctx.memory.write::<u16>(
@@ -17642,7 +10581,6 @@ pub fn x0d72_0fd3(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xfd8);
     // 0d72:0fd8 sub al,[di]
     ctx.cpu.regs.set_al(sub(
         ctx.cpu.regs.get_al(),
@@ -17650,7 +10588,6 @@ pub fn x0d72_0fd3(ctx: &mut Context) -> Cont {
             .read::<u8>(segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_di())),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0xfda);
     // 0d72:0fda sbb [bx+di],bl
     ctx.memory.write::<u8>(
         segofs(
@@ -17666,16 +10603,13 @@ pub fn x0d72_0fd3(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xfdc);
     // 0d72:0fdc xor al,21h
     ctx.cpu
         .regs
         .set_al(xor(ctx.cpu.regs.get_al(), 0x21u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xfde);
     // 0d72:0fde pop cx
     let x = ctx.pop16();
     ctx.cpu.regs.set_cx(x);
-    ctx.dump_dosbox(0xfdf);
     // 0d72:0fdf or si,[di]
     ctx.cpu.regs.set_si(or(
         ctx.cpu.regs.get_si(),
@@ -17683,33 +10617,27 @@ pub fn x0d72_0fd3(ctx: &mut Context) -> Cont {
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_di())),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0xfe1);
     // 0d72:0fe1 jp short 104Fh
     ctx.jp(Cont(x0d72_0fe3), Cont(x0d72_104f))
 }
 
 pub fn x0d72_0fd7(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xfd7);
     // 0d72:0fd7 cvtpi2ps xmm0,qword ptr [di]
     panic!("Cvtpi2ps not implemented");
 }
 
 pub fn x0d72_0fd9(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xfd9);
     // 0d72:0fd9 add ax,1918h
     ctx.cpu
         .regs
         .set_ax(add(ctx.cpu.regs.get_ax(), 0x1918u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xfdc);
     // 0d72:0fdc xor al,21h
     ctx.cpu
         .regs
         .set_al(xor(ctx.cpu.regs.get_al(), 0x21u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xfde);
     // 0d72:0fde pop cx
     let x = ctx.pop16();
     ctx.cpu.regs.set_cx(x);
-    ctx.dump_dosbox(0xfdf);
     // 0d72:0fdf or si,[di]
     ctx.cpu.regs.set_si(or(
         ctx.cpu.regs.get_si(),
@@ -17717,13 +10645,11 @@ pub fn x0d72_0fd9(ctx: &mut Context) -> Cont {
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_di())),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0xfe1);
     // 0d72:0fe1 jp short 104Fh
     ctx.jp(Cont(x0d72_0fe3), Cont(x0d72_104f))
 }
 
 pub fn x0d72_0fe3(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xfe3);
     // 0d72:0fe3 adc al,0
     let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
     ctx.cpu.regs.set_al(addc(
@@ -17732,12 +10658,10 @@ pub fn x0d72_0fe3(ctx: &mut Context) -> Cont {
         carry as _,
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0xfe5);
     // 0d72:0fe5 dec bp
     ctx.cpu
         .regs
         .set_bp(dec(ctx.cpu.regs.get_bp(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xfe6);
     // 0d72:0fe6 sbb ax,[di]
     ctx.cpu.regs.set_ax(sbb(
         ctx.cpu.regs.get_ax(),
@@ -17745,7 +10669,6 @@ pub fn x0d72_0fe3(ctx: &mut Context) -> Cont {
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_di())),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0xfe8);
     // 0d72:0fe8 adc [di+0Fh],si
     let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
     ctx.memory.write::<u16>(
@@ -17763,38 +10686,31 @@ pub fn x0d72_0fe3(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xfeb);
     // 0d72:0feb add ax,522h
     ctx.cpu
         .regs
         .set_ax(add(ctx.cpu.regs.get_ax(), 0x522u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xfee);
     // 0d72:0fee jl short 1033h
     ctx.jl(Cont(x0d72_0ff0), Cont(x0d72_1033))
 }
 
 pub fn x0d72_0ff0(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xff0);
     // 0d72:0ff0 pop ss
     let x = ctx.pop16();
     ctx.cpu.regs.set_ss(x);
-    ctx.dump_dosbox(0xff1);
     // 0d72:0ff1 jne short 100Eh
     ctx.jne(Cont(x0d72_0ff3), Cont(x0d72_100e))
 }
 
 pub fn x0d72_0ff3(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xff3);
     // 0d72:0ff3 add ax,2A18h
     ctx.cpu
         .regs
         .set_ax(add(ctx.cpu.regs.get_ax(), 0x2a18u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xff6);
     // 0d72:0ff6 add ax,592Eh
     ctx.cpu
         .regs
         .set_ax(add(ctx.cpu.regs.get_ax(), 0x592eu16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0xff9);
     // 0d72:0ff9 adc [di],ax
     let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
     ctx.memory.write::<u16>(
@@ -17807,19 +10723,15 @@ pub fn x0d72_0ff3(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xffb);
     // 0d72:0ffb pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0xffc);
     // 0d72:0ffc pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0xfff);
     // 0d72:0fff pop eax
     let x = ctx.pop32();
     ctx.cpu.regs.eax = x;
-    ctx.dump_dosbox(0x1001);
     // 0d72:1001 sbb ax,gs:[di]
     ctx.cpu.regs.set_ax(sbb(
         ctx.cpu.regs.get_ax(),
@@ -17827,7 +10739,6 @@ pub fn x0d72_0ff3(ctx: &mut Context) -> Cont {
             .read::<u16>(segofs(ctx.cpu.regs.get_gs(), ctx.cpu.regs.get_di())),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x1004);
     // 0d72:1004 sbb [bx+si],bh
     ctx.memory.write::<u8>(
         segofs(
@@ -17843,12 +10754,10 @@ pub fn x0d72_0ff3(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0x1006);
     // 0d72:1006 xor al,11h
     ctx.cpu
         .regs
         .set_al(xor(ctx.cpu.regs.get_al(), 0x11u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x1008);
     // 0d72:1008 cmp [di+0Ch],dh
     sub(
         ctx.memory.read::<u8>(segofs(
@@ -17858,12 +10767,10 @@ pub fn x0d72_0ff3(ctx: &mut Context) -> Cont {
         ctx.cpu.regs.get_dh(),
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x100b);
     // 0d72:100b add ax,6761h
     ctx.cpu
         .regs
         .set_ax(add(ctx.cpu.regs.get_ax(), 0x6761u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x100e);
     // 0d72:100e and al,[di]
     ctx.cpu.regs.set_al(and(
         ctx.cpu.regs.get_al(),
@@ -17871,7 +10778,6 @@ pub fn x0d72_0ff3(ctx: &mut Context) -> Cont {
             .read::<u8>(segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_di())),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x1010);
     // 0d72:1010 sbb dl,[bp+di+1Bh]
     ctx.cpu.regs.set_dl(sbb(
         ctx.cpu.regs.get_dl(),
@@ -17885,7 +10791,6 @@ pub fn x0d72_0ff3(ctx: &mut Context) -> Cont {
         )),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x1013);
     // 0d72:1013 and cs:[di+0Fh],dx
     ctx.memory.write::<u16>(
         segofs(
@@ -17901,22 +10806,18 @@ pub fn x0d72_0ff3(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0x1017);
     // 0d72:1017 xor ax,353Bh
     ctx.cpu
         .regs
         .set_ax(xor(ctx.cpu.regs.get_ax(), 0x353bu16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x101a);
     // 0d72:101a add al,71h
     ctx.cpu
         .regs
         .set_al(add(ctx.cpu.regs.get_al(), 0x71u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x101c);
     // 0d72:101c dec bp
     ctx.cpu
         .regs
         .set_bp(dec(ctx.cpu.regs.get_bp(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x101d);
     // 0d72:101d cmp dx,cs:[bx+1Bh]
     sub(
         ctx.cpu.regs.get_dx(),
@@ -17926,11 +10827,9 @@ pub fn x0d72_0ff3(ctx: &mut Context) -> Cont {
         )),
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x1021);
     // 0d72:1021 pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x1023);
     // 0d72:1023 sbb [bp+si+11h],bp
     ctx.memory.write::<u16>(
         segofs(
@@ -17954,22 +10853,18 @@ pub fn x0d72_0ff3(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0x1026);
     // 0d72:1026 xor ax,353Bh
     ctx.cpu
         .regs
         .set_ax(xor(ctx.cpu.regs.get_ax(), 0x353bu16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x1029);
     // 0d72:1029 jge short 1074h
     ctx.jge(Cont(x0d72_102b), Cont(x0d72_1074))
 }
 
 pub fn x0d72_0ff7(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0xff7);
     // 0d72:0ff7 pop cx
     let x = ctx.pop16();
     ctx.cpu.regs.set_cx(x);
-    ctx.dump_dosbox(0xff9);
     // 0d72:0ff9 adc [di],ax
     let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
     ctx.memory.write::<u16>(
@@ -17982,19 +10877,15 @@ pub fn x0d72_0ff7(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0xffb);
     // 0d72:0ffb pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0xffc);
     // 0d72:0ffc pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0xfff);
     // 0d72:0fff pop eax
     let x = ctx.pop32();
     ctx.cpu.regs.eax = x;
-    ctx.dump_dosbox(0x1001);
     // 0d72:1001 sbb ax,gs:[di]
     ctx.cpu.regs.set_ax(sbb(
         ctx.cpu.regs.get_ax(),
@@ -18002,7 +10893,6 @@ pub fn x0d72_0ff7(ctx: &mut Context) -> Cont {
             .read::<u16>(segofs(ctx.cpu.regs.get_gs(), ctx.cpu.regs.get_di())),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x1004);
     // 0d72:1004 sbb [bx+si],bh
     ctx.memory.write::<u8>(
         segofs(
@@ -18018,12 +10908,10 @@ pub fn x0d72_0ff7(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0x1006);
     // 0d72:1006 xor al,11h
     ctx.cpu
         .regs
         .set_al(xor(ctx.cpu.regs.get_al(), 0x11u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x1008);
     // 0d72:1008 cmp [di+0Ch],dh
     sub(
         ctx.memory.read::<u8>(segofs(
@@ -18033,7 +10921,6 @@ pub fn x0d72_0ff7(ctx: &mut Context) -> Cont {
         ctx.cpu.regs.get_dh(),
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x100b);
     // 0d72:100b add ax,6761h
     ctx.cpu
         .regs
@@ -18042,7 +10929,6 @@ pub fn x0d72_0ff7(ctx: &mut Context) -> Cont {
 }
 
 pub fn x0d72_100e(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x100e);
     // 0d72:100e and al,[di]
     ctx.cpu.regs.set_al(and(
         ctx.cpu.regs.get_al(),
@@ -18050,7 +10936,6 @@ pub fn x0d72_100e(ctx: &mut Context) -> Cont {
             .read::<u8>(segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_di())),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x1010);
     // 0d72:1010 sbb dl,[bp+di+1Bh]
     ctx.cpu.regs.set_dl(sbb(
         ctx.cpu.regs.get_dl(),
@@ -18064,7 +10949,6 @@ pub fn x0d72_100e(ctx: &mut Context) -> Cont {
         )),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x1013);
     // 0d72:1013 and cs:[di+0Fh],dx
     ctx.memory.write::<u16>(
         segofs(
@@ -18080,22 +10964,18 @@ pub fn x0d72_100e(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0x1017);
     // 0d72:1017 xor ax,353Bh
     ctx.cpu
         .regs
         .set_ax(xor(ctx.cpu.regs.get_ax(), 0x353bu16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x101a);
     // 0d72:101a add al,71h
     ctx.cpu
         .regs
         .set_al(add(ctx.cpu.regs.get_al(), 0x71u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x101c);
     // 0d72:101c dec bp
     ctx.cpu
         .regs
         .set_bp(dec(ctx.cpu.regs.get_bp(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x101d);
     // 0d72:101d cmp dx,cs:[bx+1Bh]
     sub(
         ctx.cpu.regs.get_dx(),
@@ -18105,11 +10985,9 @@ pub fn x0d72_100e(ctx: &mut Context) -> Cont {
         )),
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x1021);
     // 0d72:1021 pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x1023);
     // 0d72:1023 sbb [bp+si+11h],bp
     ctx.memory.write::<u16>(
         segofs(
@@ -18133,18 +11011,15 @@ pub fn x0d72_100e(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0x1026);
     // 0d72:1026 xor ax,353Bh
     ctx.cpu
         .regs
         .set_ax(xor(ctx.cpu.regs.get_ax(), 0x353bu16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x1029);
     // 0d72:1029 jge short 1074h
     ctx.jge(Cont(x0d72_102b), Cont(x0d72_1074))
 }
 
 pub fn x0d72_1028(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x1028);
     // 0d72:1028 xor ax,497Dh
     ctx.cpu
         .regs
@@ -18153,17 +11028,14 @@ pub fn x0d72_1028(ctx: &mut Context) -> Cont {
 }
 
 pub fn x0d72_102b(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x102b);
     // 0d72:102b add al,34h
     ctx.cpu
         .regs
         .set_al(add(ctx.cpu.regs.get_al(), 0x34u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x102d);
     // 0d72:102d add ax,1B65h
     ctx.cpu
         .regs
         .set_ax(add(ctx.cpu.regs.get_ax(), 0x1b65u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x1030);
     // 0d72:1030 add ax,0C18h
     ctx.cpu
         .regs
@@ -18172,15 +11044,12 @@ pub fn x0d72_102b(ctx: &mut Context) -> Cont {
 }
 
 pub fn x0d72_1032(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x1032);
     // 0d72:1032 or al,35h
     ctx.cpu
         .regs
         .set_al(or(ctx.cpu.regs.get_al(), 0x35u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x1034);
     // 0d72:1034 push ds
     ctx.push16(ctx.cpu.regs.get_ds());
-    ctx.dump_dosbox(0x1035);
     // 0d72:1035 adc [di],dh
     let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
     ctx.memory.write::<u8>(
@@ -18193,7 +11062,6 @@ pub fn x0d72_1032(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0x1038);
     // 0d72:1038 cmp si,[di]
     sub(
         ctx.cpu.regs.get_si(),
@@ -18201,23 +11069,19 @@ pub fn x0d72_1032(ctx: &mut Context) -> Cont {
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_di())),
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x103a);
     // 0d72:103a dec dx
     ctx.cpu
         .regs
         .set_dx(dec(ctx.cpu.regs.get_dx(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x103b);
     // 0d72:103b jnp short 1041h
     ctx.jnp(Cont(x0d72_103d), Cont(x0d72_1041))
 }
 
 pub fn x0d72_1033(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x1033);
     // 0d72:1033 xor ax,3E1Eh
     ctx.cpu
         .regs
         .set_ax(xor(ctx.cpu.regs.get_ax(), 0x3e1eu16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x1036);
     // 0d72:1036 adc [di],dh
     let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
     ctx.memory.write::<u8>(
@@ -18230,7 +11094,6 @@ pub fn x0d72_1033(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0x1038);
     // 0d72:1038 cmp si,[di]
     sub(
         ctx.cpu.regs.get_si(),
@@ -18238,30 +11101,25 @@ pub fn x0d72_1033(ctx: &mut Context) -> Cont {
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_di())),
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x103a);
     // 0d72:103a dec dx
     ctx.cpu
         .regs
         .set_dx(dec(ctx.cpu.regs.get_dx(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x103b);
     // 0d72:103b jnp short 1041h
     ctx.jnp(Cont(x0d72_103d), Cont(x0d72_1041))
 }
 
 pub fn x0d72_103d(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x103d);
     // 0d72:103d aaa
     panic!("Aaa not implemented");
     Cont(x0d72_1041)
 }
 
 pub fn x0d72_1041(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x1041);
     // 0d72:1041 add ax,50Ch
     ctx.cpu
         .regs
         .set_ax(add(ctx.cpu.regs.get_ax(), 0x50cu16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x1044);
     // 0d72:1044 sbb [bp+si+0Ch],al
     ctx.memory.write::<u8>(
         segofs(
@@ -18285,12 +11143,10 @@ pub fn x0d72_1041(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0x1047);
     // 0d72:1047 xor ax,5E3Fh
     ctx.cpu
         .regs
         .set_ax(xor(ctx.cpu.regs.get_ax(), 0x5e3fu16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x104a);
     // 0d72:104a cmp si,[di]
     sub(
         ctx.cpu.regs.get_si(),
@@ -18298,12 +11154,10 @@ pub fn x0d72_1041(ctx: &mut Context) -> Cont {
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_di())),
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x104c);
     // 0d72:104c add al,59h
     ctx.cpu
         .regs
         .set_al(add(ctx.cpu.regs.get_al(), 0x59u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x104e);
     // 0d72:104e sbb si,[di]
     ctx.cpu.regs.set_si(sbb(
         ctx.cpu.regs.get_si(),
@@ -18311,54 +11165,44 @@ pub fn x0d72_1041(ctx: &mut Context) -> Cont {
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_di())),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x1050);
     // 0d72:1050 push ds
     ctx.push16(ctx.cpu.regs.get_ds());
-    ctx.dump_dosbox(0x1051);
     // 0d72:1051 inc sp
     ctx.cpu
         .regs
         .set_sp(inc(ctx.cpu.regs.get_sp(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x1052);
     // 0d72:1052 or al,35h
     ctx.cpu
         .regs
         .set_al(or(ctx.cpu.regs.get_al(), 0x35u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x1054);
     // 0d72:1054 arpl [bx+di+3Bh],dx
     panic!("Arpl not implemented");
     Cont(x0d72_1074)
 }
 
 pub fn x0d72_104f(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x104f);
     // 0d72:104f xor ax,441Eh
     ctx.cpu
         .regs
         .set_ax(xor(ctx.cpu.regs.get_ax(), 0x441eu16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x1052);
     // 0d72:1052 or al,35h
     ctx.cpu
         .regs
         .set_al(or(ctx.cpu.regs.get_al(), 0x35u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x1054);
     // 0d72:1054 arpl [bx+di+3Bh],dx
     panic!("Arpl not implemented");
     Cont(x0d72_1074)
 }
 
 pub fn x0d72_1074(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x1074);
     // 0d72:1074 add ax,0B63h
     ctx.cpu
         .regs
         .set_ax(add(ctx.cpu.regs.get_ax(), 0xb63u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x1077);
     // 0d72:1077 xor ax,5779h
     ctx.cpu
         .regs
         .set_ax(xor(ctx.cpu.regs.get_ax(), 0x5779u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x107a);
     // 0d72:107a cmp di,[bp+di]
     sub(
         ctx.cpu.regs.get_di(),
@@ -18368,10 +11212,8 @@ pub fn x0d72_1074(ctx: &mut Context) -> Cont {
         )),
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x107c);
     // 0d72:107c push 51Bh
     ctx.push16(0x51bu16);
-    ctx.dump_dosbox(0x107f);
     // 0d72:107f sbb [di+0Bh],ah
     ctx.memory.write::<u8>(
         segofs(
@@ -18387,12 +11229,10 @@ pub fn x0d72_1074(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0x1082);
     // 0d72:1082 xor ax,774Eh
     ctx.cpu
         .regs
         .set_ax(xor(ctx.cpu.regs.get_ax(), 0x774eu16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x1085);
     // 0d72:1085 adc al,37h
     let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
     ctx.cpu.regs.set_al(addc(
@@ -18401,20 +11241,16 @@ pub fn x0d72_1074(ctx: &mut Context) -> Cont {
         carry as _,
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x1087);
     // 0d72:1087 push 51Bh
     ctx.push16(0x51bu16);
-    ctx.dump_dosbox(0x108a);
     // 0d72:108a add ax,0B49h
     ctx.cpu
         .regs
         .set_ax(add(ctx.cpu.regs.get_ax(), 0xb49u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x108d);
     // 0d72:108d xor ax,5C4Eh
     ctx.cpu
         .regs
         .set_ax(xor(ctx.cpu.regs.get_ax(), 0x5c4eu16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x1090);
     // 0d72:1090 adc al,27h
     let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
     ctx.cpu.regs.set_al(addc(
@@ -18423,13 +11259,11 @@ pub fn x0d72_1074(ctx: &mut Context) -> Cont {
         carry as _,
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x1092);
     // 0d72:1092 arpl [bp+di],bx
     panic!("Arpl not implemented");
 }
 
 pub fn x0d72_10c1(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x10c1);
     // 0d72:10c1 sbb ax,[di]
     ctx.cpu.regs.set_ax(sbb(
         ctx.cpu.regs.get_ax(),
@@ -18437,22 +11271,18 @@ pub fn x0d72_10c1(ctx: &mut Context) -> Cont {
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_di())),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x10c3);
     // 0d72:10c3 add ax,3D0Fh
     ctx.cpu
         .regs
         .set_ax(add(ctx.cpu.regs.get_ax(), 0x3d0fu16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x10c6);
     // 0d72:10c6 add ax,7518h
     ctx.cpu
         .regs
         .set_ax(add(ctx.cpu.regs.get_ax(), 0x7518u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x10c9);
     // 0d72:10c9 or ax,5F35h
     ctx.cpu
         .regs
         .set_ax(or(ctx.cpu.regs.get_ax(), 0x5f35u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x10cc);
     // 0d72:10cc imul dx,[si],3514h
     ctx.cpu.regs.set_dx(imul2_16(
         ctx.memory
@@ -18460,12 +11290,10 @@ pub fn x0d72_10c1(ctx: &mut Context) -> Cont {
         0x3514u16,
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x10d0);
     // 0d72:10d0 add al,72h
     ctx.cpu
         .regs
         .set_al(add(ctx.cpu.regs.get_al(), 0x72u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x10d2);
     // 0d72:10d2 sbb ax,[di]
     ctx.cpu.regs.set_ax(sbb(
         ctx.cpu.regs.get_ax(),
@@ -18473,35 +11301,28 @@ pub fn x0d72_10c1(ctx: &mut Context) -> Cont {
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_di())),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x10d4);
     // 0d72:10d4 add ax,155Bh
     ctx.cpu
         .regs
         .set_ax(add(ctx.cpu.regs.get_ax(), 0x155bu16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x10d7);
     // 0d72:10d7 xor ax,1414h
     ctx.cpu
         .regs
         .set_ax(xor(ctx.cpu.regs.get_ax(), 0x1414u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x10da);
     // 0d72:10da pop ds
     let x = ctx.pop16();
     ctx.cpu.regs.set_ds(x);
-    ctx.dump_dosbox(0x10db);
     // 0d72:10db push bx
     ctx.push16(ctx.cpu.regs.get_bx());
-    ctx.dump_dosbox(0x10dc);
     // 0d72:10dc outsw
     panic!("Outsw not implemented");
 }
 
 pub fn x0d72_10fd(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x10fd);
     // 0d72:10fd add al,61h
     ctx.cpu
         .regs
         .set_al(add(ctx.cpu.regs.get_al(), 0x61u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x10ff);
     // 0d72:10ff sbb ax,[di]
     ctx.cpu.regs.set_ax(sbb(
         ctx.cpu.regs.get_ax(),
@@ -18509,7 +11330,6 @@ pub fn x0d72_10fd(ctx: &mut Context) -> Cont {
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_di())),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x1101);
     // 0d72:1101 adc [bp+si+13h],si
     let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
     ctx.memory.write::<u16>(
@@ -18535,79 +11355,62 @@ pub fn x0d72_10fd(ctx: &mut Context) -> Cont {
             &mut ctx.cpu.flags,
         ),
     );
-    ctx.dump_dosbox(0x1104);
     // 0d72:1104 xor ax,2214h
     ctx.cpu
         .regs
         .set_ax(xor(ctx.cpu.regs.get_ax(), 0x2214u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x1107);
     // 0d72:1107 add ax,4807h
     ctx.cpu
         .regs
         .set_ax(add(ctx.cpu.regs.get_ax(), 0x4807u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x110a);
     // 0d72:110a ja short 1111h
     ctx.ja(Cont(unk_e82c), Cont(unk_e831))
 }
 
 pub fn x0d72_4b0c(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x4b0c);
     // 0d72:4b0c push bp
     ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x4b0d);
     // 0d72:4b0d mov bp,sp
     ctx.cpu.regs.set_bp(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x4b0f);
     // 0d72:4b0f sub sp,0
     ctx.cpu
         .regs
         .set_sp(sub(ctx.cpu.regs.get_sp(), 0x0u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x4b13);
     // 0d72:4b13 push word ptr [bp+8]
     ctx.push16(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x8u16),
     )));
-    ctx.dump_dosbox(0x4b16);
     // 0d72:4b16 push ds
     ctx.push16(ctx.cpu.regs.get_ds());
-    ctx.dump_dosbox(0x4b17);
     // 0d72:4b17 push word ptr [bp+6]
     ctx.push16(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x6u16),
     )));
-    ctx.dump_dosbox(0x4b1a);
     // 0d72:4b1a call far ptr 0D72h:66CCh
     ctx.callf16(0x4b1f, 0xd72, Cont(x0d72_66cc))
 }
 
 pub fn x0d72_4b1f(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x4b1f);
     // 0d72:4b1f mov sp,bp
     ctx.cpu.regs.set_sp(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x4b21);
     // 0d72:4b21 pop bp
     let x = ctx.pop16();
     ctx.cpu.regs.set_bp(x);
-    ctx.dump_dosbox(0x4b22);
     // 0d72:4b22 ret 6
     ctx.ret16(6)
 }
 
 pub fn x0d72_4b25(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x4b25);
     // 0d72:4b25 push bp
     ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x4b26);
     // 0d72:4b26 mov bp,sp
     ctx.cpu.regs.set_bp(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x4b28);
     // 0d72:4b28 sub sp,2
     ctx.cpu
         .regs
         .set_sp(sub(ctx.cpu.regs.get_sp(), 0x2u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x4b2c);
     // 0d72:4b2c cmp word ptr ds:[4EAh],10h
     sub(
         ctx.memory
@@ -18615,73 +11418,54 @@ pub fn x0d72_4b25(ctx: &mut Context) -> Cont {
         0x10u16,
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x4b31);
     // 0d72:4b31 jne short 4B41h
     ctx.jne(Cont(x0d72_4b33), Cont(x0d72_4b41))
 }
 
 pub fn x0d72_4b33(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x4b33);
     // 0d72:4b33 mov di,4ECh
     ctx.cpu.regs.set_di(0x4ecu16);
-    ctx.dump_dosbox(0x4b36);
     // 0d72:4b36 push ds
     ctx.push16(ctx.cpu.regs.get_ds());
-    ctx.dump_dosbox(0x4b37);
     // 0d72:4b37 pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x4b38);
     // 0d72:4b38 mov si,20C7h
     ctx.cpu.regs.set_si(0x20c7u16);
-    ctx.dump_dosbox(0x4b3b);
     // 0d72:4b3b cld
     cld(ctx);
-    ctx.dump_dosbox(0x4b3c);
     // 0d72:4b3c movsw
     ctx.movsw();
-    ctx.dump_dosbox(0x4b3d);
     // 0d72:4b3d movsw
     ctx.movsw();
-    ctx.dump_dosbox(0x4b3e);
     // 0d72:4b3e movsw
     ctx.movsw();
-    ctx.dump_dosbox(0x4b3f);
     // 0d72:4b3f jmp short 4B4Dh
     Cont(x0d72_4b4d)
 }
 
 pub fn x0d72_4b41(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x4b41);
     // 0d72:4b41 mov di,4ECh
     ctx.cpu.regs.set_di(0x4ecu16);
-    ctx.dump_dosbox(0x4b44);
     // 0d72:4b44 push ds
     ctx.push16(ctx.cpu.regs.get_ds());
-    ctx.dump_dosbox(0x4b45);
     // 0d72:4b45 pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x4b46);
     // 0d72:4b46 mov si,20CDh
     ctx.cpu.regs.set_si(0x20cdu16);
-    ctx.dump_dosbox(0x4b49);
     // 0d72:4b49 cld
     cld(ctx);
-    ctx.dump_dosbox(0x4b4a);
     // 0d72:4b4a movsw
     ctx.movsw();
-    ctx.dump_dosbox(0x4b4b);
     // 0d72:4b4b movsw
     ctx.movsw();
-    ctx.dump_dosbox(0x4b4c);
     // 0d72:4b4c movsw
     ctx.movsw();
     Cont(x0d72_4b4d)
 }
 
 pub fn x0d72_4b4d(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x4b4d);
     // 0d72:4b4d mov word ptr [bp-2],5
     ctx.memory.write::<u16>(
         segofs(
@@ -18694,7 +11478,6 @@ pub fn x0d72_4b4d(ctx: &mut Context) -> Cont {
 }
 
 pub fn x0d72_4b52(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x4b52);
     // 0d72:4b52 cmp word ptr [bp+6],0
     sub(
         ctx.memory.read::<u16>(segofs(
@@ -18704,32 +11487,27 @@ pub fn x0d72_4b52(ctx: &mut Context) -> Cont {
         0x0u16,
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x4b56);
     // 0d72:4b56 je short 4B8Fh
     ctx.je(Cont(x0d72_4b58), Cont(x0d72_4b8f))
 }
 
 pub fn x0d72_4b58(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x4b58);
     // 0d72:4b58 mov di,[bp-2]
     ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0xfffeu16),
     )));
-    ctx.dump_dosbox(0x4b5b);
     // 0d72:4b5b mov ax,[bp+6]
     ctx.cpu.regs.set_ax(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x6u16),
     )));
-    ctx.dump_dosbox(0x4b5e);
     // 0d72:4b5e xor dx,dx
     ctx.cpu.regs.set_dx(xor(
         ctx.cpu.regs.get_dx(),
         ctx.cpu.regs.get_dx(),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x4b60);
     // 0d72:4b60 div word ptr ds:[4EAh]
     let (quot, rem) = div(
         ctx.cpu.regs.get_dx_ax(),
@@ -18738,19 +11516,16 @@ pub fn x0d72_4b58(ctx: &mut Context) -> Cont {
     );
     ctx.cpu.regs.set_ax(quot as u16);
     ctx.cpu.regs.set_dx(rem as u16);
-    ctx.dump_dosbox(0x4b64);
     // 0d72:4b64 add dx,30h
     ctx.cpu
         .regs
         .set_dx(add(ctx.cpu.regs.get_dx(), 0x30u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x4b67);
     // 0d72:4b67 xor dh,dh
     ctx.cpu.regs.set_dh(xor(
         ctx.cpu.regs.get_dh(),
         ctx.cpu.regs.get_dh(),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x4b69);
     // 0d72:4b69 mov [di+4EBh],dl
     ctx.memory.write::<u8>(
         segofs(
@@ -18759,7 +11534,6 @@ pub fn x0d72_4b58(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_dl(),
     );
-    ctx.dump_dosbox(0x4b6d);
     // 0d72:4b6d cmp byte ptr [di+4EBh],39h
     sub(
         ctx.memory.read::<u8>(segofs(
@@ -18769,38 +11543,32 @@ pub fn x0d72_4b58(ctx: &mut Context) -> Cont {
         0x39u8,
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x4b72);
     // 0d72:4b72 jbe short 4B83h
     ctx.jbe(Cont(x0d72_4b74), Cont(x0d72_4b83))
 }
 
 pub fn x0d72_4b74(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x4b74);
     // 0d72:4b74 mov al,[di+4EBh]
     ctx.cpu.regs.set_al(ctx.memory.read::<u8>(segofs(
         ctx.cpu.regs.get_ds(),
         ctx.cpu.regs.get_di().wrapping_add(0x4ebu16),
     )));
-    ctx.dump_dosbox(0x4b78);
     // 0d72:4b78 xor ah,ah
     ctx.cpu.regs.set_ah(xor(
         ctx.cpu.regs.get_ah(),
         ctx.cpu.regs.get_ah(),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x4b7a);
     // 0d72:4b7a add ax,7
     ctx.cpu
         .regs
         .set_ax(add(ctx.cpu.regs.get_ax(), 0x7u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x4b7d);
     // 0d72:4b7d xor ah,ah
     ctx.cpu.regs.set_ah(xor(
         ctx.cpu.regs.get_ah(),
         ctx.cpu.regs.get_ah(),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x4b7f);
     // 0d72:4b7f mov [di+4EBh],al
     ctx.memory.write::<u8>(
         segofs(
@@ -18813,20 +11581,17 @@ pub fn x0d72_4b74(ctx: &mut Context) -> Cont {
 }
 
 pub fn x0d72_4b83(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x4b83);
     // 0d72:4b83 mov ax,[bp+6]
     ctx.cpu.regs.set_ax(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x6u16),
     )));
-    ctx.dump_dosbox(0x4b86);
     // 0d72:4b86 xor dx,dx
     ctx.cpu.regs.set_dx(xor(
         ctx.cpu.regs.get_dx(),
         ctx.cpu.regs.get_dx(),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x4b88);
     // 0d72:4b88 div word ptr ds:[4EAh]
     let (quot, rem) = div(
         ctx.cpu.regs.get_dx_ax(),
@@ -18835,7 +11600,6 @@ pub fn x0d72_4b83(ctx: &mut Context) -> Cont {
     );
     ctx.cpu.regs.set_ax(quot as u16);
     ctx.cpu.regs.set_dx(rem as u16);
-    ctx.dump_dosbox(0x4b8c);
     // 0d72:4b8c mov [bp+6],ax
     ctx.memory.write::<u16>(
         segofs(
@@ -18848,18 +11612,15 @@ pub fn x0d72_4b83(ctx: &mut Context) -> Cont {
 }
 
 pub fn x0d72_4b8f(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x4b8f);
     // 0d72:4b8f mov ax,[bp-2]
     ctx.cpu.regs.set_ax(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0xfffeu16),
     )));
-    ctx.dump_dosbox(0x4b92);
     // 0d72:4b92 dec ax
     ctx.cpu
         .regs
         .set_ax(dec(ctx.cpu.regs.get_ax(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x4b93);
     // 0d72:4b93 mov [bp-2],ax
     ctx.memory.write::<u16>(
         segofs(
@@ -18868,191 +11629,146 @@ pub fn x0d72_4b8f(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_ax(),
     );
-    ctx.dump_dosbox(0x4b96);
     // 0d72:4b96 jne short 4B52h
     ctx.jne(Cont(x0d72_4b98), Cont(x0d72_4b52))
 }
 
 pub fn x0d72_4b98(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x4b98);
     // 0d72:4b98 mov ax,5
     ctx.cpu.regs.set_ax(0x5u16);
-    ctx.dump_dosbox(0x4b9b);
     // 0d72:4b9b push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x4b9c);
     // 0d72:4b9c mov ax,4ECh
     ctx.cpu.regs.set_ax(0x4ecu16);
-    ctx.dump_dosbox(0x4b9f);
     // 0d72:4b9f push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x4ba0);
     // 0d72:4ba0 push word ptr [bp+4]
     ctx.push16(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x4ba3);
     // 0d72:4ba3 call 4B0Ch
     ctx.call16(0x4ba6, Cont(x0d72_4b0c))
 }
 
 pub fn x0d72_4ba6(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x4ba6);
     // 0d72:4ba6 mov sp,bp
     ctx.cpu.regs.set_sp(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x4ba8);
     // 0d72:4ba8 pop bp
     let x = ctx.pop16();
     ctx.cpu.regs.set_bp(x);
-    ctx.dump_dosbox(0x4ba9);
     // 0d72:4ba9 ret 4
     ctx.ret16(4)
 }
 
 pub fn x0d72_4bac(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x4bac);
     // 0d72:4bac push bp
     ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x4bad);
     // 0d72:4bad mov bp,sp
     ctx.cpu.regs.set_bp(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x4baf);
     // 0d72:4baf sub sp,4
     ctx.cpu
         .regs
         .set_sp(sub(ctx.cpu.regs.get_sp(), 0x4u16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x4bb3);
     // 0d72:4bb3 push di
     ctx.push16(ctx.cpu.regs.get_di());
-    ctx.dump_dosbox(0x4bb4);
     // 0d72:4bb4 push si
     ctx.push16(ctx.cpu.regs.get_si());
-    ctx.dump_dosbox(0x4bb5);
     // 0d72:4bb5 mov ax,0Ah
     ctx.cpu.regs.set_ax(0xau16);
-    ctx.dump_dosbox(0x4bb8);
     // 0d72:4bb8 push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x4bb9);
     // 0d72:4bb9 call far ptr 0D72h:4FCCh
     ctx.callf16(0x4bbe, 0xd72, Cont(x0d72_4fcc))
 }
 
 pub fn x0d72_4bbe(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x4bbe);
     // 0d72:4bbe call far ptr 0D72h:673Ah
     ctx.callf16(0x4bc3, 0xd72, Cont(x0d72_673a))
 }
 
 pub fn x0d72_4bc3(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x4bc3);
     // 0d72:4bc3 mov ax,9
     ctx.cpu.regs.set_ax(0x9u16);
-    ctx.dump_dosbox(0x4bc6);
     // 0d72:4bc6 push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x4bc7);
     // 0d72:4bc7 mov ax,20D3h
     ctx.cpu.regs.set_ax(0x20d3u16);
-    ctx.dump_dosbox(0x4bca);
     // 0d72:4bca push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x4bcb);
     // 0d72:4bcb push bp
     ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x4bcc);
     // 0d72:4bcc call 4B0Ch
     ctx.call16(0x4bcf, Cont(x0d72_4b0c))
 }
 
 pub fn x0d72_4bcf(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x4bcf);
     // 0d72:4bcf mov di,[bp+0Ah]
     ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0xau16),
     )));
-    ctx.dump_dosbox(0x4bd2);
     // 0d72:4bd2 mov al,[di]
     ctx.cpu.regs.set_al(
         ctx.memory
             .read::<u8>(segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_di())),
     );
-    ctx.dump_dosbox(0x4bd4);
     // 0d72:4bd4 xor ah,ah
     ctx.cpu.regs.set_ah(xor(
         ctx.cpu.regs.get_ah(),
         ctx.cpu.regs.get_ah(),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x4bd6);
     // 0d72:4bd6 push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x4bd7);
     // 0d72:4bd7 lea ax,[di+1]
     ctx.cpu
         .regs
         .set_ax(ctx.cpu.regs.get_di().wrapping_add(0x1u16));
-    ctx.dump_dosbox(0x4bda);
     // 0d72:4bda push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x4bdb);
     // 0d72:4bdb push bp
     ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x4bdc);
     // 0d72:4bdc call 4B0Ch
     ctx.call16(0x4bdf, Cont(x0d72_4b0c))
 }
 
 pub fn x0d72_4bdf(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x4bdf);
     // 0d72:4bdf call far ptr 0D72h:673Ah
     ctx.callf16(0x4be4, 0xd72, Cont(x0d72_673a))
 }
 
 pub fn x0d72_4be4(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x4be4);
     // 0d72:4be4 mov ax,0Ch
     ctx.cpu.regs.set_ax(0xcu16);
-    ctx.dump_dosbox(0x4be7);
     // 0d72:4be7 push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x4be8);
     // 0d72:4be8 mov ax,20DDh
     ctx.cpu.regs.set_ax(0x20ddu16);
-    ctx.dump_dosbox(0x4beb);
     // 0d72:4beb push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x4bec);
     // 0d72:4bec push bp
     ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x4bed);
     // 0d72:4bed call 4B0Ch
     ctx.call16(0x4bf0, Cont(x0d72_4b0c))
 }
 
 pub fn x0d72_4bf0(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x4bf0);
     // 0d72:4bf0 mov word ptr ds:[4EAh],0Ah
     ctx.memory
         .write::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x4eau16), 0xau16);
-    ctx.dump_dosbox(0x4bf6);
     // 0d72:4bf6 push word ptr [bp+8]
     ctx.push16(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x8u16),
     )));
-    ctx.dump_dosbox(0x4bf9);
     // 0d72:4bf9 push bp
     ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x4bfa);
     // 0d72:4bfa call 4B25h
     ctx.call16(0x4bfd, Cont(x0d72_4b25))
 }
 
 pub fn x0d72_4bfd(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x4bfd);
     // 0d72:4bfd cmp word ptr [bp+6],0
     sub(
         ctx.memory.read::<u16>(segofs(
@@ -19062,59 +11778,46 @@ pub fn x0d72_4bfd(ctx: &mut Context) -> Cont {
         0x0u16,
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x4c01);
     // 0d72:4c01 je short 4C1Ch
     ctx.je(Cont(x0d72_4c03), Cont(x0d72_4c1c))
 }
 
 pub fn x0d72_4c03(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x4c03);
     // 0d72:4c03 mov ax,9
     ctx.cpu.regs.set_ax(0x9u16);
-    ctx.dump_dosbox(0x4c06);
     // 0d72:4c06 push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x4c07);
     // 0d72:4c07 mov ax,20EBh
     ctx.cpu.regs.set_ax(0x20ebu16);
-    ctx.dump_dosbox(0x4c0a);
     // 0d72:4c0a push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x4c0b);
     // 0d72:4c0b push bp
     ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x4c0c);
     // 0d72:4c0c call 4B0Ch
     ctx.call16(0x4c0f, Cont(x0d72_4b0c))
 }
 
 pub fn x0d72_4c0f(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x4c0f);
     // 0d72:4c0f mov word ptr ds:[4EAh],10h
     ctx.memory
         .write::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x4eau16), 0x10u16);
-    ctx.dump_dosbox(0x4c15);
     // 0d72:4c15 push word ptr [bp+6]
     ctx.push16(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x6u16),
     )));
-    ctx.dump_dosbox(0x4c18);
     // 0d72:4c18 push bp
     ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x4c19);
     // 0d72:4c19 call 4B25h
     ctx.call16(0x4c1c, Cont(x0d72_4b25))
 }
 
 pub fn x0d72_4c1c(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x4c1c);
     // 0d72:4c1c call far ptr 0D72h:673Ah
     ctx.callf16(0x4c21, 0xd72, Cont(x0d72_673a))
 }
 
 pub fn x0d72_4c21(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x4c21);
     // 0d72:4c21 cmp word ptr ds:[5F8h],0
     sub(
         ctx.memory
@@ -19122,13 +11825,11 @@ pub fn x0d72_4c21(ctx: &mut Context) -> Cont {
         0x0u16,
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x4c26);
     // 0d72:4c26 je short 4CA1h
     ctx.je(Cont(x0d72_4c28), Cont(x0d72_4ca1))
 }
 
 pub fn x0d72_4c28(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x4c28);
     // 0d72:4c28 cmp word ptr ds:[5FAh],0
     sub(
         ctx.memory
@@ -19136,122 +11837,95 @@ pub fn x0d72_4c28(ctx: &mut Context) -> Cont {
         0x0u16,
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x4c2d);
     // 0d72:4c2d je short 4C49h
     ctx.je(Cont(x0d72_4c2f), Cont(x0d72_4c49))
 }
 
 pub fn x0d72_4c2f(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x4c2f);
     // 0d72:4c2f mov ax,6
     ctx.cpu.regs.set_ax(0x6u16);
-    ctx.dump_dosbox(0x4c32);
     // 0d72:4c32 push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x4c33);
     // 0d72:4c33 mov ax,20F5h
     ctx.cpu.regs.set_ax(0x20f5u16);
-    ctx.dump_dosbox(0x4c36);
     // 0d72:4c36 push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x4c37);
     // 0d72:4c37 push bp
     ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x4c38);
     // 0d72:4c38 call 4B0Ch
     ctx.call16(0x4c3b, Cont(x0d72_4b0c))
 }
 
 pub fn x0d72_4c3b(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x4c3b);
     // 0d72:4c3b mov word ptr ds:[4EAh],0Ah
     ctx.memory
         .write::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x4eau16), 0xau16);
-    ctx.dump_dosbox(0x4c41);
     // 0d72:4c41 push word ptr ds:[5FAh]
     ctx.push16(
         ctx.memory
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x5fau16)),
     );
-    ctx.dump_dosbox(0x4c45);
     // 0d72:4c45 push bp
     ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x4c46);
     // 0d72:4c46 call 4B25h
     ctx.call16(0x4c49, Cont(x0d72_4b25))
 }
 
 pub fn x0d72_4c49(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x4c49);
     // 0d72:4c49 mov ax,4
     ctx.cpu.regs.set_ax(0x4u16);
-    ctx.dump_dosbox(0x4c4c);
     // 0d72:4c4c push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x4c4d);
     // 0d72:4c4d mov ax,20FDh
     ctx.cpu.regs.set_ax(0x20fdu16);
-    ctx.dump_dosbox(0x4c50);
     // 0d72:4c50 push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x4c51);
     // 0d72:4c51 push bp
     ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x4c52);
     // 0d72:4c52 call 4B0Ch
     ctx.call16(0x4c55, Cont(x0d72_4b0c))
 }
 
 pub fn x0d72_4c55(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x4c55);
     // 0d72:4c55 mov di,ds:[5F8h]
     ctx.cpu.regs.set_di(
         ctx.memory
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x5f8u16)),
     );
-    ctx.dump_dosbox(0x4c59);
     // 0d72:4c59 mov di,[di+2]
     ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ds(),
         ctx.cpu.regs.get_di().wrapping_add(0x2u16),
     )));
-    ctx.dump_dosbox(0x4c5c);
     // 0d72:4c5c mov al,[di+4]
     ctx.cpu.regs.set_al(ctx.memory.read::<u8>(segofs(
         ctx.cpu.regs.get_ds(),
         ctx.cpu.regs.get_di().wrapping_add(0x4u16),
     )));
-    ctx.dump_dosbox(0x4c5f);
     // 0d72:4c5f xor ah,ah
     ctx.cpu.regs.set_ah(xor(
         ctx.cpu.regs.get_ah(),
         ctx.cpu.regs.get_ah(),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x4c61);
     // 0d72:4c61 push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x4c62);
     // 0d72:4c62 mov di,ds:[5F8h]
     ctx.cpu.regs.set_di(
         ctx.memory
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x5f8u16)),
     );
-    ctx.dump_dosbox(0x4c66);
     // 0d72:4c66 mov di,[di+2]
     ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ds(),
         ctx.cpu.regs.get_di().wrapping_add(0x2u16),
     )));
-    ctx.dump_dosbox(0x4c69);
     // 0d72:4c69 lea ax,[di+5]
     ctx.cpu
         .regs
         .set_ax(ctx.cpu.regs.get_di().wrapping_add(0x5u16));
-    ctx.dump_dosbox(0x4c6c);
     // 0d72:4c6c push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x4c6d);
     // 0d72:4c6d mov [bp-2],di
     ctx.memory.write::<u16>(
         segofs(
@@ -19260,85 +11934,67 @@ pub fn x0d72_4c55(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_di(),
     );
-    ctx.dump_dosbox(0x4c70);
     // 0d72:4c70 push bp
     ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x4c71);
     // 0d72:4c71 call 4B0Ch
     ctx.call16(0x4c74, Cont(x0d72_4b0c))
 }
 
 pub fn x0d72_4c74(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x4c74);
     // 0d72:4c74 mov ax,4
     ctx.cpu.regs.set_ax(0x4u16);
-    ctx.dump_dosbox(0x4c77);
     // 0d72:4c77 push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x4c78);
     // 0d72:4c78 mov ax,2103h
     ctx.cpu.regs.set_ax(0x2103u16);
-    ctx.dump_dosbox(0x4c7b);
     // 0d72:4c7b push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x4c7c);
     // 0d72:4c7c push bp
     ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x4c7d);
     // 0d72:4c7d call 4B0Ch
     ctx.call16(0x4c80, Cont(x0d72_4b0c))
 }
 
 pub fn x0d72_4c80(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x4c80);
     // 0d72:4c80 mov di,ds:[5F8h]
     ctx.cpu.regs.set_di(
         ctx.memory
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x5f8u16)),
     );
-    ctx.dump_dosbox(0x4c84);
     // 0d72:4c84 mov di,[di]
     ctx.cpu.regs.set_di(
         ctx.memory
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_di())),
     );
-    ctx.dump_dosbox(0x4c86);
     // 0d72:4c86 mov al,[di]
     ctx.cpu.regs.set_al(
         ctx.memory
             .read::<u8>(segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_di())),
     );
-    ctx.dump_dosbox(0x4c88);
     // 0d72:4c88 xor ah,ah
     ctx.cpu.regs.set_ah(xor(
         ctx.cpu.regs.get_ah(),
         ctx.cpu.regs.get_ah(),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x4c8a);
     // 0d72:4c8a push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x4c8b);
     // 0d72:4c8b mov di,ds:[5F8h]
     ctx.cpu.regs.set_di(
         ctx.memory
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x5f8u16)),
     );
-    ctx.dump_dosbox(0x4c8f);
     // 0d72:4c8f mov di,[di]
     ctx.cpu.regs.set_di(
         ctx.memory
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_di())),
     );
-    ctx.dump_dosbox(0x4c91);
     // 0d72:4c91 lea ax,[di+1]
     ctx.cpu
         .regs
         .set_ax(ctx.cpu.regs.get_di().wrapping_add(0x1u16));
-    ctx.dump_dosbox(0x4c94);
     // 0d72:4c94 push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x4c95);
     // 0d72:4c95 mov [bp-4],di
     ctx.memory.write::<u16>(
         segofs(
@@ -19347,22 +12003,18 @@ pub fn x0d72_4c80(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_di(),
     );
-    ctx.dump_dosbox(0x4c98);
     // 0d72:4c98 push bp
     ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x4c99);
     // 0d72:4c99 call 4B0Ch
     ctx.call16(0x4c9c, Cont(x0d72_4b0c))
 }
 
 pub fn x0d72_4c9c(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x4c9c);
     // 0d72:4c9c call far ptr 0D72h:673Ah
     ctx.callf16(0x4ca1, 0xd72, Cont(x0d72_673a))
 }
 
 pub fn x0d72_4ca1(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x4ca1);
     // 0d72:4ca1 cmp word ptr ds:[602h],0
     sub(
         ctx.memory
@@ -19370,120 +12022,90 @@ pub fn x0d72_4ca1(ctx: &mut Context) -> Cont {
         0x0u16,
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x4ca6);
     // 0d72:4ca6 je short 4D21h
     ctx.je(Cont(x0d72_4ca8), Cont(x0d72_4d21))
 }
 
 pub fn x0d72_4ca8(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x4ca8);
     // 0d72:4ca8 mov word ptr ds:[4EAh],10h
     ctx.memory
         .write::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x4eau16), 0x10u16);
-    ctx.dump_dosbox(0x4cae);
     // 0d72:4cae mov ax,4
     ctx.cpu.regs.set_ax(0x4u16);
-    ctx.dump_dosbox(0x4cb1);
     // 0d72:4cb1 push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x4cb2);
     // 0d72:4cb2 mov ax,2109h
     ctx.cpu.regs.set_ax(0x2109u16);
-    ctx.dump_dosbox(0x4cb5);
     // 0d72:4cb5 push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x4cb6);
     // 0d72:4cb6 push bp
     ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x4cb7);
     // 0d72:4cb7 call 4B0Ch
     ctx.call16(0x4cba, Cont(x0d72_4b0c))
 }
 
 pub fn x0d72_4cba(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x4cba);
     // 0d72:4cba push word ptr ds:[608h]
     ctx.push16(
         ctx.memory
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x608u16)),
     );
-    ctx.dump_dosbox(0x4cbe);
     // 0d72:4cbe push bp
     ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x4cbf);
     // 0d72:4cbf call 4B25h
     ctx.call16(0x4cc2, Cont(x0d72_4b25))
 }
 
 pub fn x0d72_4cc2(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x4cc2);
     // 0d72:4cc2 mov ax,1
     ctx.cpu.regs.set_ax(0x1u16);
-    ctx.dump_dosbox(0x4cc5);
     // 0d72:4cc5 push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x4cc6);
     // 0d72:4cc6 mov ax,210Fh
     ctx.cpu.regs.set_ax(0x210fu16);
-    ctx.dump_dosbox(0x4cc9);
     // 0d72:4cc9 push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x4cca);
     // 0d72:4cca push bp
     ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x4ccb);
     // 0d72:4ccb call 4B0Ch
     ctx.call16(0x4cce, Cont(x0d72_4b0c))
 }
 
 pub fn x0d72_4cce(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x4cce);
     // 0d72:4cce push word ptr ds:[606h]
     ctx.push16(
         ctx.memory
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x606u16)),
     );
-    ctx.dump_dosbox(0x4cd2);
     // 0d72:4cd2 push bp
     ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x4cd3);
     // 0d72:4cd3 call 4B25h
     ctx.call16(0x4cd6, Cont(x0d72_4b25))
 }
 
 pub fn x0d72_4cd6(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x4cd6);
     // 0d72:4cd6 mov ax,6
     ctx.cpu.regs.set_ax(0x6u16);
-    ctx.dump_dosbox(0x4cd9);
     // 0d72:4cd9 push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x4cda);
     // 0d72:4cda mov ax,2111h
     ctx.cpu.regs.set_ax(0x2111u16);
-    ctx.dump_dosbox(0x4cdd);
     // 0d72:4cdd push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x4cde);
     // 0d72:4cde push bp
     ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x4cdf);
     // 0d72:4cdf call 4B0Ch
     ctx.call16(0x4ce2, Cont(x0d72_4b0c))
 }
 
 pub fn x0d72_4ce2(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x4ce2);
     // 0d72:4ce2 mov bx,5FAh
     ctx.cpu.regs.set_bx(0x5fau16);
-    ctx.dump_dosbox(0x4ce5);
     // 0d72:4ce5 push ds
     ctx.push16(ctx.cpu.regs.get_ds());
-    ctx.dump_dosbox(0x4ce6);
     // 0d72:4ce6 pop es
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
-    ctx.dump_dosbox(0x4ce7);
     // 0d72:4ce7 mov [bp-4],bx
     ctx.memory.write::<u16>(
         segofs(
@@ -19492,7 +12114,6 @@ pub fn x0d72_4ce2(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_bx(),
     );
-    ctx.dump_dosbox(0x4cea);
     // 0d72:4cea mov [bp-2],es
     ctx.memory.write::<u16>(
         segofs(
@@ -19501,139 +12122,106 @@ pub fn x0d72_4ce2(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_es(),
     );
-    ctx.dump_dosbox(0x4ced);
     // 0d72:4ced mov bx,es
     ctx.cpu.regs.set_bx(ctx.cpu.regs.get_es());
-    ctx.dump_dosbox(0x4cef);
     // 0d72:4cef push bx
     ctx.push16(ctx.cpu.regs.get_bx());
-    ctx.dump_dosbox(0x4cf0);
     // 0d72:4cf0 push bp
     ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x4cf1);
     // 0d72:4cf1 call 4B25h
     ctx.call16(0x4cf4, Cont(x0d72_4b25))
 }
 
 pub fn x0d72_4cf4(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x4cf4);
     // 0d72:4cf4 mov ax,6
     ctx.cpu.regs.set_ax(0x6u16);
-    ctx.dump_dosbox(0x4cf7);
     // 0d72:4cf7 push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x4cf8);
     // 0d72:4cf8 mov ax,2119h
     ctx.cpu.regs.set_ax(0x2119u16);
-    ctx.dump_dosbox(0x4cfb);
     // 0d72:4cfb push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x4cfc);
     // 0d72:4cfc push bp
     ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x4cfd);
     // 0d72:4cfd call 4B0Ch
     ctx.call16(0x4d00, Cont(x0d72_4b0c))
 }
 
 pub fn x0d72_4d00(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x4d00);
     // 0d72:4d00 push word ptr ds:[604h]
     ctx.push16(
         ctx.memory
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x604u16)),
     );
-    ctx.dump_dosbox(0x4d04);
     // 0d72:4d04 push bp
     ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x4d05);
     // 0d72:4d05 call 4B25h
     ctx.call16(0x4d08, Cont(x0d72_4b25))
 }
 
 pub fn x0d72_4d08(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x4d08);
     // 0d72:4d08 mov ax,6
     ctx.cpu.regs.set_ax(0x6u16);
-    ctx.dump_dosbox(0x4d0b);
     // 0d72:4d0b push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x4d0c);
     // 0d72:4d0c mov ax,2121h
     ctx.cpu.regs.set_ax(0x2121u16);
-    ctx.dump_dosbox(0x4d0f);
     // 0d72:4d0f push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x4d10);
     // 0d72:4d10 push bp
     ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x4d11);
     // 0d72:4d11 call 4B0Ch
     ctx.call16(0x4d14, Cont(x0d72_4b0c))
 }
 
 pub fn x0d72_4d14(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x4d14);
     // 0d72:4d14 push word ptr ds:[602h]
     ctx.push16(
         ctx.memory
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x602u16)),
     );
-    ctx.dump_dosbox(0x4d18);
     // 0d72:4d18 push bp
     ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x4d19);
     // 0d72:4d19 call 4B25h
     ctx.call16(0x4d1c, Cont(x0d72_4b25))
 }
 
 pub fn x0d72_4d1c(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x4d1c);
     // 0d72:4d1c call far ptr 0D72h:673Ah
     ctx.callf16(0x4d21, 0xd72, Cont(x0d72_673a))
 }
 
 pub fn x0d72_4d21(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x4d21);
     // 0d72:4d21 call far ptr 0D72h:656Dh
     ctx.callf16(0x4d26, 0xd72, Cont(x0d72_656d))
 }
 
 pub fn x0d72_4d26(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x4d26);
     // 0d72:4d26 call far ptr 0D72h:5004h
     ctx.callf16(0x4d2b, 0xd72, Cont(x0d72_5004))
 }
 
 pub fn x0d72_4d2b(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x4d2b);
     // 0d72:4d2b pop si
     let x = ctx.pop16();
     ctx.cpu.regs.set_si(x);
-    ctx.dump_dosbox(0x4d2c);
     // 0d72:4d2c pop di
     let x = ctx.pop16();
     ctx.cpu.regs.set_di(x);
-    ctx.dump_dosbox(0x4d2d);
     // 0d72:4d2d mov sp,bp
     ctx.cpu.regs.set_sp(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x4d2f);
     // 0d72:4d2f pop bp
     let x = ctx.pop16();
     ctx.cpu.regs.set_bp(x);
-    ctx.dump_dosbox(0x4d30);
     // 0d72:4d30 retf 8
     ctx.retf16(8)
 }
 
 pub fn x0d72_4fcc(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x4fcc);
     // 0d72:4fcc push bp
     ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x4fcd);
     // 0d72:4fcd mov bp,sp
     ctx.cpu.regs.set_bp(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x4fcf);
     // 0d72:4fcf cmp word ptr ds:[602h],0
     sub(
         ctx.memory
@@ -19641,83 +12229,69 @@ pub fn x0d72_4fcc(ctx: &mut Context) -> Cont {
         0x0u16,
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x4fd4);
     // 0d72:4fd4 jne short 4FFEh
     ctx.jne(Cont(x0d72_4fd6), Cont(x0d72_4ffe))
 }
 
 pub fn x0d72_4fd6(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x4fd6);
     // 0d72:4fd6 mov bx,[bp+6]
     ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x6u16),
     )));
-    ctx.dump_dosbox(0x4fd9);
     // 0d72:4fd9 neg bx
     ctx.cpu
         .regs
         .set_bx(neg(ctx.cpu.regs.get_bx(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x4fdb);
     // 0d72:4fdb mov dx,[bp]
     ctx.cpu.regs.set_dx(
         ctx.memory
             .read::<u16>(segofs(ctx.cpu.regs.get_ss(), ctx.cpu.regs.get_bp())),
     );
-    ctx.dump_dosbox(0x4fde);
     // 0d72:4fde and dx,0FFFEh
     ctx.cpu
         .regs
         .set_dx(and(ctx.cpu.regs.get_dx(), 0xfffeu16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x4fe1);
     // 0d72:4fe1 add bx,dx
     ctx.cpu.regs.set_bx(add(
         ctx.cpu.regs.get_bx(),
         ctx.cpu.regs.get_dx(),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x4fe3);
     // 0d72:4fe3 lea ax,[bp+2]
     ctx.cpu
         .regs
         .set_ax(ctx.cpu.regs.get_bp().wrapping_add(0x2u16));
-    ctx.dump_dosbox(0x4fe6);
     // 0d72:4fe6 mov ds:[602h],ax
     ctx.memory.write::<u16>(
         segofs(ctx.cpu.regs.get_ds(), 0x602u16),
         ctx.cpu.regs.get_ax(),
     );
-    ctx.dump_dosbox(0x4fe9);
     // 0d72:4fe9 mov ax,ss:[bx-2]
     ctx.cpu.regs.set_ax(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bx().wrapping_add(0xfffeu16),
     )));
-    ctx.dump_dosbox(0x4fed);
     // 0d72:4fed mov ds:[604h],ax
     ctx.memory.write::<u16>(
         segofs(ctx.cpu.regs.get_ds(), 0x604u16),
         ctx.cpu.regs.get_ax(),
     );
-    ctx.dump_dosbox(0x4ff0);
     // 0d72:4ff0 mov ax,ss:[bx]
     ctx.cpu.regs.set_ax(
         ctx.memory
             .read::<u16>(segofs(ctx.cpu.regs.get_ss(), ctx.cpu.regs.get_bx())),
     );
-    ctx.dump_dosbox(0x4ff3);
     // 0d72:4ff3 mov bx,ss:[bx+2]
     ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bx().wrapping_add(0x2u16),
     )));
-    ctx.dump_dosbox(0x4ff7);
     // 0d72:4ff7 mov ds:[606h],ax
     ctx.memory.write::<u16>(
         segofs(ctx.cpu.regs.get_ds(), 0x606u16),
         ctx.cpu.regs.get_ax(),
     );
-    ctx.dump_dosbox(0x4ffa);
     // 0d72:4ffa mov ds:[608h],bx
     ctx.memory.write::<u16>(
         segofs(ctx.cpu.regs.get_ds(), 0x608u16),
@@ -19727,42 +12301,33 @@ pub fn x0d72_4fd6(ctx: &mut Context) -> Cont {
 }
 
 pub fn x0d72_4ffe(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x4ffe);
     // 0d72:4ffe mov sp,bp
     ctx.cpu.regs.set_sp(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x5000);
     // 0d72:5000 pop bp
     let x = ctx.pop16();
     ctx.cpu.regs.set_bp(x);
-    ctx.dump_dosbox(0x5001);
     // 0d72:5001 retf 2
     ctx.retf16(2)
 }
 
 pub fn x0d72_5004(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x5004);
     // 0d72:5004 push bp
     ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x5005);
     // 0d72:5005 mov bp,sp
     ctx.cpu.regs.set_bp(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x5007);
     // 0d72:5007 mov bx,[bp]
     ctx.cpu.regs.set_bx(
         ctx.memory
             .read::<u16>(segofs(ctx.cpu.regs.get_ss(), ctx.cpu.regs.get_bp())),
     );
-    ctx.dump_dosbox(0x500a);
     // 0d72:500a and bx,0FFFEh
     ctx.cpu
         .regs
         .set_bx(and(ctx.cpu.regs.get_bx(), 0xfffeu16, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x500d);
     // 0d72:500d lea ax,[bx+2]
     ctx.cpu
         .regs
         .set_ax(ctx.cpu.regs.get_bx().wrapping_add(0x2u16));
-    ctx.dump_dosbox(0x5010);
     // 0d72:5010 cmp ax,ds:[602h]
     sub(
         ctx.cpu.regs.get_ax(),
@@ -19770,13 +12335,11 @@ pub fn x0d72_5004(ctx: &mut Context) -> Cont {
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x602u16)),
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x5014);
     // 0d72:5014 jb short 501Ch
     ctx.jb(Cont(x0d72_5016), Cont(x0d72_501c))
 }
 
 pub fn x0d72_5016(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x5016);
     // 0d72:5016 mov word ptr ds:[602h],0
     ctx.memory
         .write::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x602u16), 0x0u16);
@@ -19784,278 +12347,218 @@ pub fn x0d72_5016(ctx: &mut Context) -> Cont {
 }
 
 pub fn x0d72_501c(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x501c);
     // 0d72:501c mov sp,bp
     ctx.cpu.regs.set_sp(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x501e);
     // 0d72:501e pop bp
     let x = ctx.pop16();
     ctx.cpu.regs.set_bp(x);
-    ctx.dump_dosbox(0x501f);
     // 0d72:501f retf
     ctx.retf16(0)
 }
 
 pub fn x0d72_507e(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x507e);
     // 0d72:507e push bp
     ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x507f);
     // 0d72:507f mov bp,sp
     ctx.cpu.regs.set_bp(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x5081);
     // 0d72:5081 push ds
     ctx.push16(ctx.cpu.regs.get_ds());
-    ctx.dump_dosbox(0x5082);
     // 0d72:5082 mov ax,[bp+0Eh]
     ctx.cpu.regs.set_ax(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0xeu16),
     )));
-    ctx.dump_dosbox(0x5085);
     // 0d72:5085 mov ds,ax
     ctx.cpu.regs.set_ds(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x5087);
     // 0d72:5087 mov si,[bp+0Ch]
     ctx.cpu.regs.set_si(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0xcu16),
     )));
-    ctx.dump_dosbox(0x508a);
     // 0d72:508a mov ax,[bp+0Ah]
     ctx.cpu.regs.set_ax(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0xau16),
     )));
-    ctx.dump_dosbox(0x508d);
     // 0d72:508d mov es,ax
     ctx.cpu.regs.set_es(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x508f);
     // 0d72:508f mov di,[bp+8]
     ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x8u16),
     )));
-    ctx.dump_dosbox(0x5092);
     // 0d72:5092 mov cx,[bp+6]
     ctx.cpu.regs.set_cx(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x6u16),
     )));
-    ctx.dump_dosbox(0x5095);
     // 0d72:5095 cld
     cld(ctx);
-    ctx.dump_dosbox(0x5096);
     // 0d72:5096 shr cx,1
     ctx.cpu
         .regs
         .set_cx(shr(ctx.cpu.regs.get_cx(), 0x1u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x5098);
     // 0d72:5098 rep movsw
     ctx.rep(Rep::REP, Context::movsw);
-    ctx.dump_dosbox(0x509a);
     // 0d72:509a jae short 509Dh
     ctx.jae(Cont(x0d72_509c), Cont(x0d72_509d))
 }
 
 pub fn x0d72_509c(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x509c);
     // 0d72:509c movsb
     ctx.movsb();
     Cont(x0d72_509d)
 }
 
 pub fn x0d72_509d(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x509d);
     // 0d72:509d pop ds
     let x = ctx.pop16();
     ctx.cpu.regs.set_ds(x);
-    ctx.dump_dosbox(0x509e);
     // 0d72:509e mov sp,bp
     ctx.cpu.regs.set_sp(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x50a0);
     // 0d72:50a0 pop bp
     let x = ctx.pop16();
     ctx.cpu.regs.set_bp(x);
-    ctx.dump_dosbox(0x50a1);
     // 0d72:50a1 retf 0Ah
     ctx.retf16(10)
 }
 
 pub fn x0d72_50a4(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x50a4);
     // 0d72:50a4 push bp
     ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x50a5);
     // 0d72:50a5 mov bp,sp
     ctx.cpu.regs.set_bp(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x50a7);
     // 0d72:50a7 push ds
     ctx.push16(ctx.cpu.regs.get_ds());
-    ctx.dump_dosbox(0x50a8);
     // 0d72:50a8 mov ax,[bp+0Eh]
     ctx.cpu.regs.set_ax(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0xeu16),
     )));
-    ctx.dump_dosbox(0x50ab);
     // 0d72:50ab mov ds,ax
     ctx.cpu.regs.set_ds(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x50ad);
     // 0d72:50ad mov si,[bp+0Ch]
     ctx.cpu.regs.set_si(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0xcu16),
     )));
-    ctx.dump_dosbox(0x50b0);
     // 0d72:50b0 mov ax,[bp+0Ah]
     ctx.cpu.regs.set_ax(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0xau16),
     )));
-    ctx.dump_dosbox(0x50b3);
     // 0d72:50b3 mov es,ax
     ctx.cpu.regs.set_es(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x50b5);
     // 0d72:50b5 mov di,[bp+8]
     ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x8u16),
     )));
-    ctx.dump_dosbox(0x50b8);
     // 0d72:50b8 mov cx,[bp+6]
     ctx.cpu.regs.set_cx(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x6u16),
     )));
-    ctx.dump_dosbox(0x50bb);
     // 0d72:50bb add si,cx
     ctx.cpu.regs.set_si(add(
         ctx.cpu.regs.get_si(),
         ctx.cpu.regs.get_cx(),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x50bd);
     // 0d72:50bd dec si
     ctx.cpu
         .regs
         .set_si(dec(ctx.cpu.regs.get_si(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x50be);
     // 0d72:50be add di,cx
     ctx.cpu.regs.set_di(add(
         ctx.cpu.regs.get_di(),
         ctx.cpu.regs.get_cx(),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x50c0);
     // 0d72:50c0 dec di
     ctx.cpu
         .regs
         .set_di(dec(ctx.cpu.regs.get_di(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x50c1);
     // 0d72:50c1 std
     std(ctx);
-    ctx.dump_dosbox(0x50c2);
     // 0d72:50c2 rep movsb
     ctx.rep(Rep::REP, Context::movsb);
-    ctx.dump_dosbox(0x50c4);
     // 0d72:50c4 cld
     cld(ctx);
-    ctx.dump_dosbox(0x50c5);
     // 0d72:50c5 pop ds
     let x = ctx.pop16();
     ctx.cpu.regs.set_ds(x);
-    ctx.dump_dosbox(0x50c6);
     // 0d72:50c6 mov sp,bp
     ctx.cpu.regs.set_sp(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x50c8);
     // 0d72:50c8 pop bp
     let x = ctx.pop16();
     ctx.cpu.regs.set_bp(x);
-    ctx.dump_dosbox(0x50c9);
     // 0d72:50c9 retf 0Ah
     ctx.retf16(10)
 }
 
 pub fn x0d72_538c(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x538c);
     // 0d72:538c push bp
     ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x538d);
     // 0d72:538d mov bp,sp
     ctx.cpu.regs.set_bp(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x538f);
     // 0d72:538f push ds
     ctx.push16(ctx.cpu.regs.get_ds());
-    ctx.dump_dosbox(0x5390);
     // 0d72:5390 mov ds,ax
     ctx.cpu.regs.set_ds(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x5392);
     // 0d72:5392 mov al,[si]
     ctx.cpu.regs.set_al(
         ctx.memory
             .read::<u8>(segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_si())),
     );
-    ctx.dump_dosbox(0x5394);
     // 0d72:5394 xor ah,ah
     ctx.cpu.regs.set_ah(xor(
         ctx.cpu.regs.get_ah(),
         ctx.cpu.regs.get_ah(),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x5396);
     // 0d72:5396 dec cx
     ctx.cpu
         .regs
         .set_cx(dec(ctx.cpu.regs.get_cx(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x5397);
     // 0d72:5397 cmp ax,cx
     sub(
         ctx.cpu.regs.get_ax(),
         ctx.cpu.regs.get_cx(),
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x5399);
     // 0d72:5399 jae short 539Dh
     ctx.jae(Cont(x0d72_539b), Cont(x0d72_539d))
 }
 
 pub fn x0d72_539b(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x539b);
     // 0d72:539b mov cx,ax
     ctx.cpu.regs.set_cx(ctx.cpu.regs.get_ax());
     Cont(x0d72_539d)
 }
 
 pub fn x0d72_539d(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x539d);
     // 0d72:539d mov es:[di],cl
     ctx.memory.write::<u8>(
         segofs(ctx.cpu.regs.get_es(), ctx.cpu.regs.get_di()),
         ctx.cpu.regs.get_cl(),
     );
-    ctx.dump_dosbox(0x53a0);
     // 0d72:53a0 inc si
     ctx.cpu
         .regs
         .set_si(inc(ctx.cpu.regs.get_si(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x53a1);
     // 0d72:53a1 inc di
     ctx.cpu
         .regs
         .set_di(inc(ctx.cpu.regs.get_di(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x53a2);
     // 0d72:53a2 shr cx,1
     ctx.cpu
         .regs
         .set_cx(shr(ctx.cpu.regs.get_cx(), 0x1u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x53a4);
     // 0d72:53a4 cld
     cld(ctx);
-    ctx.dump_dosbox(0x53a5);
     // 0d72:53a5 rep movsw
     ctx.rep(Rep::REP, Context::movsw);
-    ctx.dump_dosbox(0x53a7);
     // 0d72:53a7 adc cx,cx
     let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
     ctx.cpu.regs.set_cx(addc(
@@ -20064,61 +12567,48 @@ pub fn x0d72_539d(ctx: &mut Context) -> Cont {
         carry as _,
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x53a9);
     // 0d72:53a9 rep movsb
     ctx.rep(Rep::REP, Context::movsb);
-    ctx.dump_dosbox(0x53ab);
     // 0d72:53ab pop ds
     let x = ctx.pop16();
     ctx.cpu.regs.set_ds(x);
-    ctx.dump_dosbox(0x53ac);
     // 0d72:53ac mov sp,bp
     ctx.cpu.regs.set_sp(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x53ae);
     // 0d72:53ae pop bp
     let x = ctx.pop16();
     ctx.cpu.regs.set_bp(x);
-    ctx.dump_dosbox(0x53af);
     // 0d72:53af retf
     ctx.retf16(0)
 }
 
 pub fn x0d72_53b0(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x53b0);
     // 0d72:53b0 pop word ptr ds:[5F2h]
     let x = ctx.pop16();
     ctx.memory
         .write::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x5f2u16), x);
-    ctx.dump_dosbox(0x53b4);
     // 0d72:53b4 pop word ptr ds:[5F4h]
     let x = ctx.pop16();
     ctx.memory
         .write::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x5f4u16), x);
-    ctx.dump_dosbox(0x53b8);
     // 0d72:53b8 mov ax,cx
     ctx.cpu.regs.set_ax(ctx.cpu.regs.get_cx());
-    ctx.dump_dosbox(0x53ba);
     // 0d72:53ba shl ax,1
     ctx.cpu
         .regs
         .set_ax(shl(ctx.cpu.regs.get_ax(), 0x1u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x53bc);
     // 0d72:53bc mov di,sp
     ctx.cpu.regs.set_di(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x53be);
     // 0d72:53be sub di,ax
     ctx.cpu.regs.set_di(sub(
         ctx.cpu.regs.get_di(),
         ctx.cpu.regs.get_ax(),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x53c0);
     // 0d72:53c0 jb short 53C8h
     ctx.jb(Cont(x0d72_53c2), Cont(x0d72_53c8))
 }
 
 pub fn x0d72_53c2(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x53c2);
     // 0d72:53c2 cmp di,ds:[792h]
     sub(
         ctx.cpu.regs.get_di(),
@@ -20126,51 +12616,42 @@ pub fn x0d72_53c2(ctx: &mut Context) -> Cont {
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x792u16)),
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x53c6);
     // 0d72:53c6 jae short 53E6h
     ctx.jae(Cont(x0d72_53c8), Cont(x0d72_53e6))
 }
 
 pub fn x0d72_53c8(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x53c8);
     // 0d72:53c8 mov ds:[5ECh],bx
     ctx.memory.write::<u16>(
         segofs(ctx.cpu.regs.get_ds(), 0x5ecu16),
         ctx.cpu.regs.get_bx(),
     );
-    ctx.dump_dosbox(0x53cc);
     // 0d72:53cc mov ds:[5EEh],cx
     ctx.memory.write::<u16>(
         segofs(ctx.cpu.regs.get_ds(), 0x5eeu16),
         ctx.cpu.regs.get_cx(),
     );
-    ctx.dump_dosbox(0x53d0);
     // 0d72:53d0 mov ds:[5E8h],es
     ctx.memory.write::<u16>(
         segofs(ctx.cpu.regs.get_ds(), 0x5e8u16),
         ctx.cpu.regs.get_es(),
     );
-    ctx.dump_dosbox(0x53d4);
     // 0d72:53d4 call far ptr 0D72h:6B88h
     ctx.callf16(0x53d9, 0xd72, Cont(x0d72_6b88))
 }
 
 pub fn x0d72_53d9(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x53d9);
     // 0d72:53d9 nop
-    ctx.dump_dosbox(0x53da);
     // 0d72:53da mov bx,ds:[5ECh]
     ctx.cpu.regs.set_bx(
         ctx.memory
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x5ecu16)),
     );
-    ctx.dump_dosbox(0x53de);
     // 0d72:53de mov cx,ds:[5EEh]
     ctx.cpu.regs.set_cx(
         ctx.memory
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x5eeu16)),
     );
-    ctx.dump_dosbox(0x53e2);
     // 0d72:53e2 mov es,ds:[5E8h]
     ctx.cpu.regs.set_es(
         ctx.memory
@@ -20180,52 +12661,43 @@ pub fn x0d72_53d9(ctx: &mut Context) -> Cont {
 }
 
 pub fn x0d72_53e6(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x53e6);
     // 0d72:53e6 mov sp,di
     ctx.cpu.regs.set_sp(ctx.cpu.regs.get_di());
     Cont(x0d72_53e8)
 }
 
 pub fn x0d72_53e8(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x53e8);
     // 0d72:53e8 mov ax,es:[bx]
     ctx.cpu.regs.set_ax(
         ctx.memory
             .read::<u16>(segofs(ctx.cpu.regs.get_es(), ctx.cpu.regs.get_bx())),
     );
-    ctx.dump_dosbox(0x53eb);
     // 0d72:53eb inc bx
     ctx.cpu
         .regs
         .set_bx(inc(ctx.cpu.regs.get_bx(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x53ec);
     // 0d72:53ec inc bx
     ctx.cpu
         .regs
         .set_bx(inc(ctx.cpu.regs.get_bx(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x53ed);
     // 0d72:53ed mov [di],ax
     ctx.memory.write::<u16>(
         segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_di()),
         ctx.cpu.regs.get_ax(),
     );
-    ctx.dump_dosbox(0x53ef);
     // 0d72:53ef inc di
     ctx.cpu
         .regs
         .set_di(inc(ctx.cpu.regs.get_di(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x53f0);
     // 0d72:53f0 inc di
     ctx.cpu
         .regs
         .set_di(inc(ctx.cpu.regs.get_di(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x53f1);
     // 0d72:53f1 loop 53E8h
     ctx.loop_(Cont(x0d72_53f3), Cont(x0d72_53e8))
 }
 
 pub fn x0d72_53f3(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x53f3);
     // 0d72:53f3 jmp dword ptr ds:[5F2h]
     let addr = ctx
         .memory
@@ -20235,34 +12707,27 @@ pub fn x0d72_53f3(ctx: &mut Context) -> Cont {
 }
 
 pub fn x0d72_5452(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x5452);
     // 0d72:5452 push bp
     ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x5453);
     // 0d72:5453 mov bp,sp
     ctx.cpu.regs.set_bp(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x5455);
     // 0d72:5455 mov si,[bp+0Ch]
     ctx.cpu.regs.set_si(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0xcu16),
     )));
-    ctx.dump_dosbox(0x5458);
     // 0d72:5458 shr si,1
     ctx.cpu
         .regs
         .set_si(shr(ctx.cpu.regs.get_si(), 0x1u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x545a);
     // 0d72:545a shr si,1
     ctx.cpu
         .regs
         .set_si(shr(ctx.cpu.regs.get_si(), 0x1u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x545c);
     // 0d72:545c shr si,1
     ctx.cpu
         .regs
         .set_si(shr(ctx.cpu.regs.get_si(), 0x1u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x545e);
     // 0d72:545e cmp si,[bp+0Ah]
     sub(
         ctx.cpu.regs.get_si(),
@@ -20272,13 +12737,11 @@ pub fn x0d72_5452(ctx: &mut Context) -> Cont {
         )),
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x5461);
     // 0d72:5461 ja short 547Ah
     ctx.ja(Cont(x0d72_5463), Cont(x0d72_547a))
 }
 
 pub fn x0d72_5463(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x5463);
     // 0d72:5463 les bx,[bp+6]
     let ptr = ctx.memory.read::<u32>(segofs(
         ctx.cpu.regs.get_ss(),
@@ -20286,52 +12749,43 @@ pub fn x0d72_5463(ctx: &mut Context) -> Cont {
     ));
     ctx.cpu.regs.es = (ptr >> 16) as u16;
     ctx.cpu.regs.set_bx(ptr as u16);
-    ctx.dump_dosbox(0x5466);
     // 0d72:5466 add si,bx
     ctx.cpu.regs.set_si(add(
         ctx.cpu.regs.get_si(),
         ctx.cpu.regs.get_bx(),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x5468);
     // 0d72:5468 mov cx,[bp+0Ch]
     ctx.cpu.regs.set_cx(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0xcu16),
     )));
-    ctx.dump_dosbox(0x546b);
     // 0d72:546b and cl,7
     ctx.cpu
         .regs
         .set_cl(and(ctx.cpu.regs.get_cl(), 0x7u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x546e);
     // 0d72:546e inc cl
     ctx.cpu
         .regs
         .set_cl(inc(ctx.cpu.regs.get_cl(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x5470);
     // 0d72:5470 mov ch,es:[si]
     ctx.cpu.regs.set_ch(
         ctx.memory
             .read::<u8>(segofs(ctx.cpu.regs.get_es(), ctx.cpu.regs.get_si())),
     );
-    ctx.dump_dosbox(0x5473);
     // 0d72:5473 shl ch,cl
     ctx.cpu.regs.set_ch(shl(
         ctx.cpu.regs.get_ch(),
         ctx.cpu.regs.get_cl(),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x5475);
     // 0d72:5475 mov ax,1
     ctx.cpu.regs.set_ax(0x1u16);
-    ctx.dump_dosbox(0x5478);
     // 0d72:5478 jb short 547Ch
     ctx.jb(Cont(x0d72_547a), Cont(x0d72_547c))
 }
 
 pub fn x0d72_547a(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x547a);
     // 0d72:547a xor ax,ax
     ctx.cpu.regs.set_ax(xor(
         ctx.cpu.regs.get_ax(),
@@ -20342,47 +12796,36 @@ pub fn x0d72_547a(ctx: &mut Context) -> Cont {
 }
 
 pub fn x0d72_547c(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x547c);
     // 0d72:547c mov sp,bp
     ctx.cpu.regs.set_sp(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x547e);
     // 0d72:547e pop bp
     let x = ctx.pop16();
     ctx.cpu.regs.set_bp(x);
-    ctx.dump_dosbox(0x547f);
     // 0d72:547f retf 8
     ctx.retf16(8)
 }
 
 pub fn x0d72_5570(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x5570);
     // 0d72:5570 mov ax,6
     ctx.cpu.regs.set_ax(0x6u16);
-    ctx.dump_dosbox(0x5573);
     // 0d72:5573 call 5C2Ah
     ctx.call16(0x5576, Cont(x0d72_5c2a))
 }
 
 pub fn x0d72_5576(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x5576);
     // 0d72:5576 push di
     ctx.push16(ctx.cpu.regs.get_di());
-    ctx.dump_dosbox(0x5577);
     // 0d72:5577 push si
     ctx.push16(ctx.cpu.regs.get_si());
-    ctx.dump_dosbox(0x5578);
     // 0d72:5578 mov ax,0Ah
     ctx.cpu.regs.set_ax(0xau16);
-    ctx.dump_dosbox(0x557b);
     // 0d72:557b push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x557c);
     // 0d72:557c call far ptr 0D72h:4FCCh
     ctx.callf16(0x5581, 0xd72, Cont(x0d72_4fcc))
 }
 
 pub fn x0d72_5581(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x5581);
     // 0d72:5581 les di,[bp+0Ah]
     let ptr = ctx.memory.read::<u32>(segofs(
         ctx.cpu.regs.get_ss(),
@@ -20390,13 +12833,11 @@ pub fn x0d72_5581(ctx: &mut Context) -> Cont {
     ));
     ctx.cpu.regs.es = (ptr >> 16) as u16;
     ctx.cpu.regs.set_di(ptr as u16);
-    ctx.dump_dosbox(0x5584);
     // 0d72:5584 mov al,es:[di]
     ctx.cpu.regs.set_al(
         ctx.memory
             .read::<u8>(segofs(ctx.cpu.regs.get_es(), ctx.cpu.regs.get_di())),
     );
-    ctx.dump_dosbox(0x5587);
     // 0d72:5587 les di,[bp+6]
     let ptr = ctx.memory.read::<u32>(segofs(
         ctx.cpu.regs.get_ss(),
@@ -20404,7 +12845,6 @@ pub fn x0d72_5581(ctx: &mut Context) -> Cont {
     ));
     ctx.cpu.regs.es = (ptr >> 16) as u16;
     ctx.cpu.regs.set_di(ptr as u16);
-    ctx.dump_dosbox(0x558a);
     // 0d72:558a cmp al,es:[di]
     sub(
         ctx.cpu.regs.get_al(),
@@ -20412,16 +12852,13 @@ pub fn x0d72_5581(ctx: &mut Context) -> Cont {
             .read::<u8>(segofs(ctx.cpu.regs.get_es(), ctx.cpu.regs.get_di())),
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x558d);
     // 0d72:558d mov cx,0
     ctx.cpu.regs.set_cx(0x0u16);
-    ctx.dump_dosbox(0x5590);
     // 0d72:5590 jne short 5593h
     ctx.jne(Cont(x0d72_5592), Cont(x0d72_5593))
 }
 
 pub fn x0d72_5592(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x5592);
     // 0d72:5592 inc cx
     ctx.cpu
         .regs
@@ -20430,7 +12867,6 @@ pub fn x0d72_5592(ctx: &mut Context) -> Cont {
 }
 
 pub fn x0d72_5593(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x5593);
     // 0d72:5593 mov [bp-2],cl
     ctx.memory.write::<u8>(
         segofs(
@@ -20439,7 +12875,6 @@ pub fn x0d72_5593(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_cl(),
     );
-    ctx.dump_dosbox(0x5596);
     // 0d72:5596 test byte ptr [bp-2],1
     and(
         ctx.memory.read::<u8>(segofs(
@@ -20449,20 +12884,17 @@ pub fn x0d72_5593(ctx: &mut Context) -> Cont {
         0x1u8,
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x559a);
     // 0d72:559a je short 55D0h
     ctx.je(Cont(x0d72_559c), Cont(x0d72_55d0))
 }
 
 pub fn x0d72_559c(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x559c);
     // 0d72:559c xor ah,ah
     ctx.cpu.regs.set_ah(xor(
         ctx.cpu.regs.get_ah(),
         ctx.cpu.regs.get_ah(),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x559e);
     // 0d72:559e mov [bp-6],ax
     ctx.memory.write::<u16>(
         segofs(
@@ -20471,7 +12903,6 @@ pub fn x0d72_559c(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_ax(),
     );
-    ctx.dump_dosbox(0x55a1);
     // 0d72:55a1 cmp word ptr [bp-6],1
     sub(
         ctx.memory.read::<u16>(segofs(
@@ -20481,13 +12912,11 @@ pub fn x0d72_559c(ctx: &mut Context) -> Cont {
         0x1u16,
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x55a5);
     // 0d72:55a5 jb short 55D0h
     ctx.jb(Cont(x0d72_55a7), Cont(x0d72_55d0))
 }
 
 pub fn x0d72_55a7(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x55a7);
     // 0d72:55a7 mov word ptr [bp-4],1
     ctx.memory.write::<u16>(
         segofs(
@@ -20500,13 +12929,11 @@ pub fn x0d72_55a7(ctx: &mut Context) -> Cont {
 }
 
 pub fn x0d72_55ac(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x55ac);
     // 0d72:55ac mov di,[bp-4]
     ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0xfffcu16),
     )));
-    ctx.dump_dosbox(0x55af);
     // 0d72:55af les bx,[bp+0Ah]
     let ptr = ctx.memory.read::<u32>(segofs(
         ctx.cpu.regs.get_ss(),
@@ -20514,13 +12941,11 @@ pub fn x0d72_55ac(ctx: &mut Context) -> Cont {
     ));
     ctx.cpu.regs.es = (ptr >> 16) as u16;
     ctx.cpu.regs.set_bx(ptr as u16);
-    ctx.dump_dosbox(0x55b2);
     // 0d72:55b2 mov al,es:[bx+di]
     ctx.cpu.regs.set_al(ctx.memory.read::<u8>(segofs(
         ctx.cpu.regs.get_es(),
         ctx.cpu.regs.get_bx().wrapping_add(ctx.cpu.regs.get_di()),
     )));
-    ctx.dump_dosbox(0x55b5);
     // 0d72:55b5 les bx,[bp+6]
     let ptr = ctx.memory.read::<u32>(segofs(
         ctx.cpu.regs.get_ss(),
@@ -20528,7 +12953,6 @@ pub fn x0d72_55ac(ctx: &mut Context) -> Cont {
     ));
     ctx.cpu.regs.es = (ptr >> 16) as u16;
     ctx.cpu.regs.set_bx(ptr as u16);
-    ctx.dump_dosbox(0x55b8);
     // 0d72:55b8 cmp al,es:[bx+di]
     sub(
         ctx.cpu.regs.get_al(),
@@ -20538,13 +12962,11 @@ pub fn x0d72_55ac(ctx: &mut Context) -> Cont {
         )),
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x55bb);
     // 0d72:55bb je short 55C3h
     ctx.je(Cont(x0d72_55bd), Cont(x0d72_55c3))
 }
 
 pub fn x0d72_55bd(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x55bd);
     // 0d72:55bd mov byte ptr [bp-2],0
     ctx.memory.write::<u8>(
         segofs(
@@ -20553,24 +12975,20 @@ pub fn x0d72_55bd(ctx: &mut Context) -> Cont {
         ),
         0x0u8,
     );
-    ctx.dump_dosbox(0x55c1);
     // 0d72:55c1 jmp short 55D0h
     Cont(x0d72_55d0)
 }
 
 pub fn x0d72_55c3(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x55c3);
     // 0d72:55c3 mov ax,[bp-4]
     ctx.cpu.regs.set_ax(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0xfffcu16),
     )));
-    ctx.dump_dosbox(0x55c6);
     // 0d72:55c6 inc ax
     ctx.cpu
         .regs
         .set_ax(inc(ctx.cpu.regs.get_ax(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x55c7);
     // 0d72:55c7 mov [bp-4],ax
     ctx.memory.write::<u16>(
         segofs(
@@ -20579,12 +12997,10 @@ pub fn x0d72_55c3(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_ax(),
     );
-    ctx.dump_dosbox(0x55ca);
     // 0d72:55ca dec ax
     ctx.cpu
         .regs
         .set_ax(dec(ctx.cpu.regs.get_ax(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x55cb);
     // 0d72:55cb cmp ax,[bp-6]
     sub(
         ctx.cpu.regs.get_ax(),
@@ -20594,73 +13010,57 @@ pub fn x0d72_55c3(ctx: &mut Context) -> Cont {
         )),
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x55ce);
     // 0d72:55ce jne short 55ACh
     ctx.jne(Cont(x0d72_55d0), Cont(x0d72_55ac))
 }
 
 pub fn x0d72_55d0(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x55d0);
     // 0d72:55d0 call far ptr 0D72h:5004h
     ctx.callf16(0x55d5, 0xd72, Cont(x0d72_5004))
 }
 
 pub fn x0d72_55d5(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x55d5);
     // 0d72:55d5 mov ax,[bp-2]
     ctx.cpu.regs.set_ax(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0xfffeu16),
     )));
-    ctx.dump_dosbox(0x55d8);
     // 0d72:55d8 pop si
     let x = ctx.pop16();
     ctx.cpu.regs.set_si(x);
-    ctx.dump_dosbox(0x55d9);
     // 0d72:55d9 pop di
     let x = ctx.pop16();
     ctx.cpu.regs.set_di(x);
-    ctx.dump_dosbox(0x55da);
     // 0d72:55da mov sp,bp
     ctx.cpu.regs.set_sp(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x55dc);
     // 0d72:55dc pop bp
     let x = ctx.pop16();
     ctx.cpu.regs.set_bp(x);
-    ctx.dump_dosbox(0x55dd);
     // 0d72:55dd retf 8
     ctx.retf16(8)
 }
 
 pub fn x0d72_55e0(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x55e0);
     // 0d72:55e0 mov ax,2
     ctx.cpu.regs.set_ax(0x2u16);
-    ctx.dump_dosbox(0x55e3);
     // 0d72:55e3 call 5C2Ah
     ctx.call16(0x55e6, Cont(x0d72_5c2a))
 }
 
 pub fn x0d72_55e6(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x55e6);
     // 0d72:55e6 push di
     ctx.push16(ctx.cpu.regs.get_di());
-    ctx.dump_dosbox(0x55e7);
     // 0d72:55e7 push si
     ctx.push16(ctx.cpu.regs.get_si());
-    ctx.dump_dosbox(0x55e8);
     // 0d72:55e8 mov ax,0Ah
     ctx.cpu.regs.set_ax(0xau16);
-    ctx.dump_dosbox(0x55eb);
     // 0d72:55eb push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x55ec);
     // 0d72:55ec call far ptr 0D72h:4FCCh
     ctx.callf16(0x55f1, 0xd72, Cont(x0d72_4fcc))
 }
 
 pub fn x0d72_55f1(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x55f1);
     // 0d72:55f1 les di,[bp+0Ah]
     let ptr = ctx.memory.read::<u32>(segofs(
         ctx.cpu.regs.get_ss(),
@@ -20668,13 +13068,10 @@ pub fn x0d72_55f1(ctx: &mut Context) -> Cont {
     ));
     ctx.cpu.regs.es = (ptr >> 16) as u16;
     ctx.cpu.regs.set_di(ptr as u16);
-    ctx.dump_dosbox(0x55f4);
     // 0d72:55f4 push es
     ctx.push16(ctx.cpu.regs.get_es());
-    ctx.dump_dosbox(0x55f5);
     // 0d72:55f5 push di
     ctx.push16(ctx.cpu.regs.get_di());
-    ctx.dump_dosbox(0x55f6);
     // 0d72:55f6 les di,[bp+6]
     let ptr = ctx.memory.read::<u32>(segofs(
         ctx.cpu.regs.get_ss(),
@@ -20682,24 +13079,19 @@ pub fn x0d72_55f1(ctx: &mut Context) -> Cont {
     ));
     ctx.cpu.regs.es = (ptr >> 16) as u16;
     ctx.cpu.regs.set_di(ptr as u16);
-    ctx.dump_dosbox(0x55f9);
     // 0d72:55f9 push es
     ctx.push16(ctx.cpu.regs.get_es());
-    ctx.dump_dosbox(0x55fa);
     // 0d72:55fa push di
     ctx.push16(ctx.cpu.regs.get_di());
-    ctx.dump_dosbox(0x55fb);
     // 0d72:55fb call far ptr 0D72h:5570h
     ctx.callf16(0x5600, 0xd72, Cont(x0d72_5570))
 }
 
 pub fn x0d72_5600(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x5600);
     // 0d72:5600 xor al,1
     ctx.cpu
         .regs
         .set_al(xor(ctx.cpu.regs.get_al(), 0x1u8, &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x5602);
     // 0d72:5602 mov [bp-2],al
     ctx.memory.write::<u8>(
         segofs(
@@ -20708,67 +13100,52 @@ pub fn x0d72_5600(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_al(),
     );
-    ctx.dump_dosbox(0x5605);
     // 0d72:5605 call far ptr 0D72h:5004h
     ctx.callf16(0x560a, 0xd72, Cont(x0d72_5004))
 }
 
 pub fn x0d72_560a(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x560a);
     // 0d72:560a mov ax,[bp-2]
     ctx.cpu.regs.set_ax(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0xfffeu16),
     )));
-    ctx.dump_dosbox(0x560d);
     // 0d72:560d pop si
     let x = ctx.pop16();
     ctx.cpu.regs.set_si(x);
-    ctx.dump_dosbox(0x560e);
     // 0d72:560e pop di
     let x = ctx.pop16();
     ctx.cpu.regs.set_di(x);
-    ctx.dump_dosbox(0x560f);
     // 0d72:560f mov sp,bp
     ctx.cpu.regs.set_sp(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x5611);
     // 0d72:5611 pop bp
     let x = ctx.pop16();
     ctx.cpu.regs.set_bp(x);
-    ctx.dump_dosbox(0x5612);
     // 0d72:5612 retf 8
     ctx.retf16(8)
 }
 
 pub fn x0d72_5615(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x5615);
     // 0d72:5615 mov ax,8
     ctx.cpu.regs.set_ax(0x8u16);
-    ctx.dump_dosbox(0x5618);
     // 0d72:5618 call 5C2Ah
     ctx.call16(0x561b, Cont(x0d72_5c2a))
 }
 
 pub fn x0d72_561b(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x561b);
     // 0d72:561b push di
     ctx.push16(ctx.cpu.regs.get_di());
-    ctx.dump_dosbox(0x561c);
     // 0d72:561c push si
     ctx.push16(ctx.cpu.regs.get_si());
-    ctx.dump_dosbox(0x561d);
     // 0d72:561d mov ax,0Ah
     ctx.cpu.regs.set_ax(0xau16);
-    ctx.dump_dosbox(0x5620);
     // 0d72:5620 push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x5621);
     // 0d72:5621 call far ptr 0D72h:4FCCh
     ctx.callf16(0x5626, 0xd72, Cont(x0d72_4fcc))
 }
 
 pub fn x0d72_5626(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x5626);
     // 0d72:5626 les di,[bp+0Ah]
     let ptr = ctx.memory.read::<u32>(segofs(
         ctx.cpu.regs.get_ss(),
@@ -20776,13 +13153,11 @@ pub fn x0d72_5626(ctx: &mut Context) -> Cont {
     ));
     ctx.cpu.regs.es = (ptr >> 16) as u16;
     ctx.cpu.regs.set_di(ptr as u16);
-    ctx.dump_dosbox(0x5629);
     // 0d72:5629 mov al,es:[di]
     ctx.cpu.regs.set_al(
         ctx.memory
             .read::<u8>(segofs(ctx.cpu.regs.get_es(), ctx.cpu.regs.get_di())),
     );
-    ctx.dump_dosbox(0x562c);
     // 0d72:562c les di,[bp+6]
     let ptr = ctx.memory.read::<u32>(segofs(
         ctx.cpu.regs.get_ss(),
@@ -20790,7 +13165,6 @@ pub fn x0d72_5626(ctx: &mut Context) -> Cont {
     ));
     ctx.cpu.regs.es = (ptr >> 16) as u16;
     ctx.cpu.regs.set_di(ptr as u16);
-    ctx.dump_dosbox(0x562f);
     // 0d72:562f cmp al,es:[di]
     sub(
         ctx.cpu.regs.get_al(),
@@ -20798,16 +13172,13 @@ pub fn x0d72_5626(ctx: &mut Context) -> Cont {
             .read::<u8>(segofs(ctx.cpu.regs.get_es(), ctx.cpu.regs.get_di())),
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x5632);
     // 0d72:5632 mov cx,0
     ctx.cpu.regs.set_cx(0x0u16);
-    ctx.dump_dosbox(0x5635);
     // 0d72:5635 jae short 5638h
     ctx.jae(Cont(x0d72_5637), Cont(x0d72_5638))
 }
 
 pub fn x0d72_5637(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x5637);
     // 0d72:5637 inc cx
     ctx.cpu
         .regs
@@ -20816,7 +13187,6 @@ pub fn x0d72_5637(ctx: &mut Context) -> Cont {
 }
 
 pub fn x0d72_5638(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x5638);
     // 0d72:5638 mov [bp-2],cl
     ctx.memory.write::<u8>(
         segofs(
@@ -20825,23 +13195,19 @@ pub fn x0d72_5638(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_cl(),
     );
-    ctx.dump_dosbox(0x563b);
     // 0d72:563b mov dx,ax
     ctx.cpu.regs.set_dx(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x563d);
     // 0d72:563d mov al,es:[di]
     ctx.cpu.regs.set_al(
         ctx.memory
             .read::<u8>(segofs(ctx.cpu.regs.get_es(), ctx.cpu.regs.get_di())),
     );
-    ctx.dump_dosbox(0x5640);
     // 0d72:5640 xor ah,ah
     ctx.cpu.regs.set_ah(xor(
         ctx.cpu.regs.get_ah(),
         ctx.cpu.regs.get_ah(),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x5642);
     // 0d72:5642 mov [bp-6],ax
     ctx.memory.write::<u16>(
         segofs(
@@ -20850,7 +13216,6 @@ pub fn x0d72_5638(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_ax(),
     );
-    ctx.dump_dosbox(0x5645);
     // 0d72:5645 test byte ptr [bp-2],1
     and(
         ctx.memory.read::<u8>(segofs(
@@ -20860,25 +13225,21 @@ pub fn x0d72_5638(ctx: &mut Context) -> Cont {
         0x1u8,
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x5649);
     // 0d72:5649 je short 5651h
     ctx.je(Cont(x0d72_564b), Cont(x0d72_5651))
 }
 
 pub fn x0d72_564b(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x564b);
     // 0d72:564b xchg dx,ax
     let t = ctx.cpu.regs.get_dx();
     ctx.cpu.regs.set_dx(ctx.cpu.regs.get_ax());
     ctx.cpu.regs.set_ax(t);
-    ctx.dump_dosbox(0x564c);
     // 0d72:564c xor ah,ah
     ctx.cpu.regs.set_ah(xor(
         ctx.cpu.regs.get_ah(),
         ctx.cpu.regs.get_ah(),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x564e);
     // 0d72:564e mov [bp-6],ax
     ctx.memory.write::<u16>(
         segofs(
@@ -20891,13 +13252,11 @@ pub fn x0d72_564b(ctx: &mut Context) -> Cont {
 }
 
 pub fn x0d72_5651(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x5651);
     // 0d72:5651 mov ax,[bp-6]
     ctx.cpu.regs.set_ax(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0xfffau16),
     )));
-    ctx.dump_dosbox(0x5654);
     // 0d72:5654 mov [bp-8],ax
     ctx.memory.write::<u16>(
         segofs(
@@ -20906,7 +13265,6 @@ pub fn x0d72_5651(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_ax(),
     );
-    ctx.dump_dosbox(0x5657);
     // 0d72:5657 cmp word ptr [bp-8],1
     sub(
         ctx.memory.read::<u16>(segofs(
@@ -20916,13 +13274,11 @@ pub fn x0d72_5651(ctx: &mut Context) -> Cont {
         0x1u16,
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x565b);
     // 0d72:565b jb short 568Eh
     ctx.jb(Cont(x0d72_565d), Cont(x0d72_568e))
 }
 
 pub fn x0d72_565d(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x565d);
     // 0d72:565d mov word ptr [bp-4],1
     ctx.memory.write::<u16>(
         segofs(
@@ -20935,13 +13291,11 @@ pub fn x0d72_565d(ctx: &mut Context) -> Cont {
 }
 
 pub fn x0d72_5662(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x5662);
     // 0d72:5662 mov di,[bp-4]
     ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0xfffcu16),
     )));
-    ctx.dump_dosbox(0x5665);
     // 0d72:5665 les bx,[bp+0Ah]
     let ptr = ctx.memory.read::<u32>(segofs(
         ctx.cpu.regs.get_ss(),
@@ -20949,13 +13303,11 @@ pub fn x0d72_5662(ctx: &mut Context) -> Cont {
     ));
     ctx.cpu.regs.es = (ptr >> 16) as u16;
     ctx.cpu.regs.set_bx(ptr as u16);
-    ctx.dump_dosbox(0x5668);
     // 0d72:5668 mov al,es:[bx+di]
     ctx.cpu.regs.set_al(ctx.memory.read::<u8>(segofs(
         ctx.cpu.regs.get_es(),
         ctx.cpu.regs.get_bx().wrapping_add(ctx.cpu.regs.get_di()),
     )));
-    ctx.dump_dosbox(0x566b);
     // 0d72:566b les bx,[bp+6]
     let ptr = ctx.memory.read::<u32>(segofs(
         ctx.cpu.regs.get_ss(),
@@ -20963,7 +13315,6 @@ pub fn x0d72_5662(ctx: &mut Context) -> Cont {
     ));
     ctx.cpu.regs.es = (ptr >> 16) as u16;
     ctx.cpu.regs.set_bx(ptr as u16);
-    ctx.dump_dosbox(0x566e);
     // 0d72:566e cmp al,es:[bx+di]
     sub(
         ctx.cpu.regs.get_al(),
@@ -20973,13 +13324,11 @@ pub fn x0d72_5662(ctx: &mut Context) -> Cont {
         )),
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x5671);
     // 0d72:5671 je short 5681h
     ctx.je(Cont(x0d72_5673), Cont(x0d72_5681))
 }
 
 pub fn x0d72_5673(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x5673);
     // 0d72:5673 cmp al,es:[bx+di]
     sub(
         ctx.cpu.regs.get_al(),
@@ -20989,16 +13338,13 @@ pub fn x0d72_5673(ctx: &mut Context) -> Cont {
         )),
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x5676);
     // 0d72:5676 mov cx,0
     ctx.cpu.regs.set_cx(0x0u16);
-    ctx.dump_dosbox(0x5679);
     // 0d72:5679 jae short 567Ch
     ctx.jae(Cont(x0d72_567b), Cont(x0d72_567c))
 }
 
 pub fn x0d72_567b(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x567b);
     // 0d72:567b inc cx
     ctx.cpu
         .regs
@@ -21007,7 +13353,6 @@ pub fn x0d72_567b(ctx: &mut Context) -> Cont {
 }
 
 pub fn x0d72_567c(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x567c);
     // 0d72:567c mov [bp-2],cl
     ctx.memory.write::<u8>(
         segofs(
@@ -21016,24 +13361,20 @@ pub fn x0d72_567c(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_cl(),
     );
-    ctx.dump_dosbox(0x567f);
     // 0d72:567f jmp short 568Eh
     Cont(x0d72_568e)
 }
 
 pub fn x0d72_5681(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x5681);
     // 0d72:5681 mov ax,[bp-4]
     ctx.cpu.regs.set_ax(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0xfffcu16),
     )));
-    ctx.dump_dosbox(0x5684);
     // 0d72:5684 inc ax
     ctx.cpu
         .regs
         .set_ax(inc(ctx.cpu.regs.get_ax(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x5685);
     // 0d72:5685 mov [bp-4],ax
     ctx.memory.write::<u16>(
         segofs(
@@ -21042,12 +13383,10 @@ pub fn x0d72_5681(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_ax(),
     );
-    ctx.dump_dosbox(0x5688);
     // 0d72:5688 dec ax
     ctx.cpu
         .regs
         .set_ax(dec(ctx.cpu.regs.get_ax(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x5689);
     // 0d72:5689 cmp ax,[bp-8]
     sub(
         ctx.cpu.regs.get_ax(),
@@ -21057,73 +13396,57 @@ pub fn x0d72_5681(ctx: &mut Context) -> Cont {
         )),
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x568c);
     // 0d72:568c jne short 5662h
     ctx.jne(Cont(x0d72_568e), Cont(x0d72_5662))
 }
 
 pub fn x0d72_568e(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x568e);
     // 0d72:568e call far ptr 0D72h:5004h
     ctx.callf16(0x5693, 0xd72, Cont(x0d72_5004))
 }
 
 pub fn x0d72_5693(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x5693);
     // 0d72:5693 mov ax,[bp-2]
     ctx.cpu.regs.set_ax(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0xfffeu16),
     )));
-    ctx.dump_dosbox(0x5696);
     // 0d72:5696 pop si
     let x = ctx.pop16();
     ctx.cpu.regs.set_si(x);
-    ctx.dump_dosbox(0x5697);
     // 0d72:5697 pop di
     let x = ctx.pop16();
     ctx.cpu.regs.set_di(x);
-    ctx.dump_dosbox(0x5698);
     // 0d72:5698 mov sp,bp
     ctx.cpu.regs.set_sp(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x569a);
     // 0d72:569a pop bp
     let x = ctx.pop16();
     ctx.cpu.regs.set_bp(x);
-    ctx.dump_dosbox(0x569b);
     // 0d72:569b retf 8
     ctx.retf16(8)
 }
 
 pub fn x0d72_582a(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x582a);
     // 0d72:582a mov ax,4
     ctx.cpu.regs.set_ax(0x4u16);
-    ctx.dump_dosbox(0x582d);
     // 0d72:582d call 5C2Ah
     ctx.call16(0x5830, Cont(x0d72_5c2a))
 }
 
 pub fn x0d72_5830(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x5830);
     // 0d72:5830 push di
     ctx.push16(ctx.cpu.regs.get_di());
-    ctx.dump_dosbox(0x5831);
     // 0d72:5831 push si
     ctx.push16(ctx.cpu.regs.get_si());
-    ctx.dump_dosbox(0x5832);
     // 0d72:5832 mov ax,0Eh
     ctx.cpu.regs.set_ax(0xeu16);
-    ctx.dump_dosbox(0x5835);
     // 0d72:5835 push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x5836);
     // 0d72:5836 call far ptr 0D72h:4FCCh
     ctx.callf16(0x583b, 0xd72, Cont(x0d72_4fcc))
 }
 
 pub fn x0d72_583b(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x583b);
     // 0d72:583b les di,[bp+0Ch]
     let ptr = ctx.memory.read::<u32>(segofs(
         ctx.cpu.regs.get_ss(),
@@ -21131,20 +13454,17 @@ pub fn x0d72_583b(ctx: &mut Context) -> Cont {
     ));
     ctx.cpu.regs.es = (ptr >> 16) as u16;
     ctx.cpu.regs.set_di(ptr as u16);
-    ctx.dump_dosbox(0x583e);
     // 0d72:583e mov al,es:[di]
     ctx.cpu.regs.set_al(
         ctx.memory
             .read::<u8>(segofs(ctx.cpu.regs.get_es(), ctx.cpu.regs.get_di())),
     );
-    ctx.dump_dosbox(0x5841);
     // 0d72:5841 xor ah,ah
     ctx.cpu.regs.set_ah(xor(
         ctx.cpu.regs.get_ah(),
         ctx.cpu.regs.get_ah(),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x5843);
     // 0d72:5843 add ax,[bp+0Ah]
     ctx.cpu.regs.set_ax(add(
         ctx.cpu.regs.get_ax(),
@@ -21154,7 +13474,6 @@ pub fn x0d72_583b(ctx: &mut Context) -> Cont {
         )),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x5846);
     // 0d72:5846 cmp ax,[bp+10h]
     sub(
         ctx.cpu.regs.get_ax(),
@@ -21164,19 +13483,16 @@ pub fn x0d72_583b(ctx: &mut Context) -> Cont {
         )),
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x5849);
     // 0d72:5849 jle short 5850h
     ctx.jle(Cont(x0d72_584b), Cont(x0d72_5850))
 }
 
 pub fn x0d72_584b(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x584b);
     // 0d72:584b call far ptr 0D72h:5CA6h
     ctx.callf16(0x5850, 0xd72, Cont(x0d72_5ca6))
 }
 
 pub fn x0d72_5850(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x5850);
     // 0d72:5850 les di,[bp+6]
     let ptr = ctx.memory.read::<u32>(segofs(
         ctx.cpu.regs.get_ss(),
@@ -21184,13 +13500,10 @@ pub fn x0d72_5850(ctx: &mut Context) -> Cont {
     ));
     ctx.cpu.regs.es = (ptr >> 16) as u16;
     ctx.cpu.regs.set_di(ptr as u16);
-    ctx.dump_dosbox(0x5853);
     // 0d72:5853 push es
     ctx.push16(ctx.cpu.regs.get_es());
-    ctx.dump_dosbox(0x5854);
     // 0d72:5854 push di
     ctx.push16(ctx.cpu.regs.get_di());
-    ctx.dump_dosbox(0x5855);
     // 0d72:5855 les di,[bp+0Ch]
     let ptr = ctx.memory.read::<u32>(segofs(
         ctx.cpu.regs.get_ss(),
@@ -21198,37 +13511,31 @@ pub fn x0d72_5850(ctx: &mut Context) -> Cont {
     ));
     ctx.cpu.regs.es = (ptr >> 16) as u16;
     ctx.cpu.regs.set_di(ptr as u16);
-    ctx.dump_dosbox(0x5858);
     // 0d72:5858 mov al,es:[di]
     ctx.cpu.regs.set_al(
         ctx.memory
             .read::<u8>(segofs(ctx.cpu.regs.get_es(), ctx.cpu.regs.get_di())),
     );
-    ctx.dump_dosbox(0x585b);
     // 0d72:585b xor ah,ah
     ctx.cpu.regs.set_ah(xor(
         ctx.cpu.regs.get_ah(),
         ctx.cpu.regs.get_ah(),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x585d);
     // 0d72:585d xchg si,ax
     let t = ctx.cpu.regs.get_si();
     ctx.cpu.regs.set_si(ctx.cpu.regs.get_ax());
     ctx.cpu.regs.set_ax(t);
-    ctx.dump_dosbox(0x585e);
     // 0d72:585e inc si
     ctx.cpu
         .regs
         .set_si(inc(ctx.cpu.regs.get_si(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x585f);
     // 0d72:585f add di,si
     ctx.cpu.regs.set_di(add(
         ctx.cpu.regs.get_di(),
         ctx.cpu.regs.get_si(),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x5861);
     // 0d72:5861 mov [bp-4],di
     ctx.memory.write::<u16>(
         segofs(
@@ -21237,7 +13544,6 @@ pub fn x0d72_5850(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_di(),
     );
-    ctx.dump_dosbox(0x5864);
     // 0d72:5864 mov [bp-2],es
     ctx.memory.write::<u16>(
         segofs(
@@ -21246,25 +13552,20 @@ pub fn x0d72_5850(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_es(),
     );
-    ctx.dump_dosbox(0x5867);
     // 0d72:5867 push es
     ctx.push16(ctx.cpu.regs.get_es());
-    ctx.dump_dosbox(0x5868);
     // 0d72:5868 push di
     ctx.push16(ctx.cpu.regs.get_di());
-    ctx.dump_dosbox(0x5869);
     // 0d72:5869 push word ptr [bp+0Ah]
     ctx.push16(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0xau16),
     )));
-    ctx.dump_dosbox(0x586c);
     // 0d72:586c call far ptr 0D72h:507Eh
     ctx.callf16(0x5871, 0xd72, Cont(x0d72_507e))
 }
 
 pub fn x0d72_5871(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x5871);
     // 0d72:5871 les di,[bp+0Ch]
     let ptr = ctx.memory.read::<u32>(segofs(
         ctx.cpu.regs.get_ss(),
@@ -21272,20 +13573,17 @@ pub fn x0d72_5871(ctx: &mut Context) -> Cont {
     ));
     ctx.cpu.regs.es = (ptr >> 16) as u16;
     ctx.cpu.regs.set_di(ptr as u16);
-    ctx.dump_dosbox(0x5874);
     // 0d72:5874 mov al,es:[di]
     ctx.cpu.regs.set_al(
         ctx.memory
             .read::<u8>(segofs(ctx.cpu.regs.get_es(), ctx.cpu.regs.get_di())),
     );
-    ctx.dump_dosbox(0x5877);
     // 0d72:5877 xor ah,ah
     ctx.cpu.regs.set_ah(xor(
         ctx.cpu.regs.get_ah(),
         ctx.cpu.regs.get_ah(),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x5879);
     // 0d72:5879 add ax,[bp+0Ah]
     ctx.cpu.regs.set_ax(add(
         ctx.cpu.regs.get_ax(),
@@ -21295,80 +13593,63 @@ pub fn x0d72_5871(ctx: &mut Context) -> Cont {
         )),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x587c);
     // 0d72:587c xor ah,ah
     ctx.cpu.regs.set_ah(xor(
         ctx.cpu.regs.get_ah(),
         ctx.cpu.regs.get_ah(),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x587e);
     // 0d72:587e mov es:[di],al
     ctx.memory.write::<u8>(
         segofs(ctx.cpu.regs.get_es(), ctx.cpu.regs.get_di()),
         ctx.cpu.regs.get_al(),
     );
-    ctx.dump_dosbox(0x5881);
     // 0d72:5881 call far ptr 0D72h:5004h
     ctx.callf16(0x5886, 0xd72, Cont(x0d72_5004))
 }
 
 pub fn x0d72_5886(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x5886);
     // 0d72:5886 pop si
     let x = ctx.pop16();
     ctx.cpu.regs.set_si(x);
-    ctx.dump_dosbox(0x5887);
     // 0d72:5887 pop di
     let x = ctx.pop16();
     ctx.cpu.regs.set_di(x);
-    ctx.dump_dosbox(0x5888);
     // 0d72:5888 mov sp,bp
     ctx.cpu.regs.set_sp(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x588a);
     // 0d72:588a pop bp
     let x = ctx.pop16();
     ctx.cpu.regs.set_bp(x);
-    ctx.dump_dosbox(0x588b);
     // 0d72:588b retf 0Ch
     ctx.retf16(12)
 }
 
 pub fn x0d72_588e(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x588e);
     // 0d72:588e mov ax,8
     ctx.cpu.regs.set_ax(0x8u16);
-    ctx.dump_dosbox(0x5891);
     // 0d72:5891 call 5C2Ah
     ctx.call16(0x5894, Cont(x0d72_5c2a))
 }
 
 pub fn x0d72_5894(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x5894);
     // 0d72:5894 push di
     ctx.push16(ctx.cpu.regs.get_di());
-    ctx.dump_dosbox(0x5895);
     // 0d72:5895 push si
     ctx.push16(ctx.cpu.regs.get_si());
-    ctx.dump_dosbox(0x5896);
     // 0d72:5896 mov ax,0Ch
     ctx.cpu.regs.set_ax(0xcu16);
-    ctx.dump_dosbox(0x5899);
     // 0d72:5899 push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x589a);
     // 0d72:589a call far ptr 0D72h:4FCCh
     ctx.callf16(0x589f, 0xd72, Cont(x0d72_4fcc))
 }
 
 pub fn x0d72_589f(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x589f);
     // 0d72:589f mov ax,[bp+6]
     ctx.cpu.regs.set_ax(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x6u16),
     )));
-    ctx.dump_dosbox(0x58a2);
     // 0d72:58a2 add ax,[bp+8]
     ctx.cpu.regs.set_ax(add(
         ctx.cpu.regs.get_ax(),
@@ -21378,15 +13659,12 @@ pub fn x0d72_589f(ctx: &mut Context) -> Cont {
         )),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x58a5);
     // 0d72:58a5 dec ax
     ctx.cpu
         .regs
         .set_ax(dec(ctx.cpu.regs.get_ax(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x58a6);
     // 0d72:58a6 mov dx,ax
     ctx.cpu.regs.set_dx(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x58a8);
     // 0d72:58a8 les di,[bp+0Ah]
     let ptr = ctx.memory.read::<u32>(segofs(
         ctx.cpu.regs.get_ss(),
@@ -21394,39 +13672,33 @@ pub fn x0d72_589f(ctx: &mut Context) -> Cont {
     ));
     ctx.cpu.regs.es = (ptr >> 16) as u16;
     ctx.cpu.regs.set_di(ptr as u16);
-    ctx.dump_dosbox(0x58ab);
     // 0d72:58ab mov al,es:[di]
     ctx.cpu.regs.set_al(
         ctx.memory
             .read::<u8>(segofs(ctx.cpu.regs.get_es(), ctx.cpu.regs.get_di())),
     );
-    ctx.dump_dosbox(0x58ae);
     // 0d72:58ae xor ah,ah
     ctx.cpu.regs.set_ah(xor(
         ctx.cpu.regs.get_ah(),
         ctx.cpu.regs.get_ah(),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x58b0);
     // 0d72:58b0 cmp dx,ax
     sub(
         ctx.cpu.regs.get_dx(),
         ctx.cpu.regs.get_ax(),
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x58b2);
     // 0d72:58b2 jbe short 58B9h
     ctx.jbe(Cont(x0d72_58b4), Cont(x0d72_58b9))
 }
 
 pub fn x0d72_58b4(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x58b4);
     // 0d72:58b4 call far ptr 0D72h:5CA6h
     ctx.callf16(0x58b9, 0xd72, Cont(x0d72_5ca6))
 }
 
 pub fn x0d72_58b9(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x58b9);
     // 0d72:58b9 les di,[bp+0Ah]
     let ptr = ctx.memory.read::<u32>(segofs(
         ctx.cpu.regs.get_ss(),
@@ -21434,20 +13706,17 @@ pub fn x0d72_58b9(ctx: &mut Context) -> Cont {
     ));
     ctx.cpu.regs.es = (ptr >> 16) as u16;
     ctx.cpu.regs.set_di(ptr as u16);
-    ctx.dump_dosbox(0x58bc);
     // 0d72:58bc mov al,es:[di]
     ctx.cpu.regs.set_al(
         ctx.memory
             .read::<u8>(segofs(ctx.cpu.regs.get_es(), ctx.cpu.regs.get_di())),
     );
-    ctx.dump_dosbox(0x58bf);
     // 0d72:58bf xor ah,ah
     ctx.cpu.regs.set_ah(xor(
         ctx.cpu.regs.get_ah(),
         ctx.cpu.regs.get_ah(),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x58c1);
     // 0d72:58c1 sub ax,[bp+6]
     ctx.cpu.regs.set_ax(sub(
         ctx.cpu.regs.get_ax(),
@@ -21457,26 +13726,22 @@ pub fn x0d72_58b9(ctx: &mut Context) -> Cont {
         )),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x58c4);
     // 0d72:58c4 xor ah,ah
     ctx.cpu.regs.set_ah(xor(
         ctx.cpu.regs.get_ah(),
         ctx.cpu.regs.get_ah(),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x58c6);
     // 0d72:58c6 mov es:[di],al
     ctx.memory.write::<u8>(
         segofs(ctx.cpu.regs.get_es(), ctx.cpu.regs.get_di()),
         ctx.cpu.regs.get_al(),
     );
-    ctx.dump_dosbox(0x58c9);
     // 0d72:58c9 mov di,[bp+6]
     ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x6u16),
     )));
-    ctx.dump_dosbox(0x58cc);
     // 0d72:58cc add di,[bp+8]
     ctx.cpu.regs.set_di(add(
         ctx.cpu.regs.get_di(),
@@ -21486,7 +13751,6 @@ pub fn x0d72_58b9(ctx: &mut Context) -> Cont {
         )),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x58cf);
     // 0d72:58cf les si,[bp+0Ah]
     let ptr = ctx.memory.read::<u32>(segofs(
         ctx.cpu.regs.get_ss(),
@@ -21494,14 +13758,12 @@ pub fn x0d72_58b9(ctx: &mut Context) -> Cont {
     ));
     ctx.cpu.regs.es = (ptr >> 16) as u16;
     ctx.cpu.regs.set_si(ptr as u16);
-    ctx.dump_dosbox(0x58d2);
     // 0d72:58d2 add si,di
     ctx.cpu.regs.set_si(add(
         ctx.cpu.regs.get_si(),
         ctx.cpu.regs.get_di(),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x58d4);
     // 0d72:58d4 mov [bp-4],si
     ctx.memory.write::<u16>(
         segofs(
@@ -21510,7 +13772,6 @@ pub fn x0d72_58b9(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_si(),
     );
-    ctx.dump_dosbox(0x58d7);
     // 0d72:58d7 mov [bp-2],es
     ctx.memory.write::<u16>(
         segofs(
@@ -21519,13 +13780,10 @@ pub fn x0d72_58b9(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_es(),
     );
-    ctx.dump_dosbox(0x58da);
     // 0d72:58da push es
     ctx.push16(ctx.cpu.regs.get_es());
-    ctx.dump_dosbox(0x58db);
     // 0d72:58db push si
     ctx.push16(ctx.cpu.regs.get_si());
-    ctx.dump_dosbox(0x58dc);
     // 0d72:58dc les di,[bp+0Ah]
     let ptr = ctx.memory.read::<u32>(segofs(
         ctx.cpu.regs.get_ss(),
@@ -21533,7 +13791,6 @@ pub fn x0d72_58b9(ctx: &mut Context) -> Cont {
     ));
     ctx.cpu.regs.es = (ptr >> 16) as u16;
     ctx.cpu.regs.set_di(ptr as u16);
-    ctx.dump_dosbox(0x58df);
     // 0d72:58df add di,[bp+8]
     ctx.cpu.regs.set_di(add(
         ctx.cpu.regs.get_di(),
@@ -21543,7 +13800,6 @@ pub fn x0d72_58b9(ctx: &mut Context) -> Cont {
         )),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x58e2);
     // 0d72:58e2 mov [bp-8],di
     ctx.memory.write::<u16>(
         segofs(
@@ -21552,7 +13808,6 @@ pub fn x0d72_58b9(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_di(),
     );
-    ctx.dump_dosbox(0x58e5);
     // 0d72:58e5 mov [bp-6],es
     ctx.memory.write::<u16>(
         segofs(
@@ -21561,13 +13816,10 @@ pub fn x0d72_58b9(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_es(),
     );
-    ctx.dump_dosbox(0x58e8);
     // 0d72:58e8 push es
     ctx.push16(ctx.cpu.regs.get_es());
-    ctx.dump_dosbox(0x58e9);
     // 0d72:58e9 push di
     ctx.push16(ctx.cpu.regs.get_di());
-    ctx.dump_dosbox(0x58ea);
     // 0d72:58ea les di,[bp+0Ah]
     let ptr = ctx.memory.read::<u32>(segofs(
         ctx.cpu.regs.get_ss(),
@@ -21575,20 +13827,17 @@ pub fn x0d72_58b9(ctx: &mut Context) -> Cont {
     ));
     ctx.cpu.regs.es = (ptr >> 16) as u16;
     ctx.cpu.regs.set_di(ptr as u16);
-    ctx.dump_dosbox(0x58ed);
     // 0d72:58ed mov al,es:[di]
     ctx.cpu.regs.set_al(
         ctx.memory
             .read::<u8>(segofs(ctx.cpu.regs.get_es(), ctx.cpu.regs.get_di())),
     );
-    ctx.dump_dosbox(0x58f0);
     // 0d72:58f0 xor ah,ah
     ctx.cpu.regs.set_ah(xor(
         ctx.cpu.regs.get_ah(),
         ctx.cpu.regs.get_ah(),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x58f2);
     // 0d72:58f2 sub ax,[bp+8]
     ctx.cpu.regs.set_ax(sub(
         ctx.cpu.regs.get_ax(),
@@ -21598,75 +13847,58 @@ pub fn x0d72_58b9(ctx: &mut Context) -> Cont {
         )),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x58f5);
     // 0d72:58f5 inc ax
     ctx.cpu
         .regs
         .set_ax(inc(ctx.cpu.regs.get_ax(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x58f6);
     // 0d72:58f6 push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x58f7);
     // 0d72:58f7 call far ptr 0D72h:507Eh
     ctx.callf16(0x58fc, 0xd72, Cont(x0d72_507e))
 }
 
 pub fn x0d72_58fc(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x58fc);
     // 0d72:58fc call far ptr 0D72h:5004h
     ctx.callf16(0x5901, 0xd72, Cont(x0d72_5004))
 }
 
 pub fn x0d72_5901(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x5901);
     // 0d72:5901 pop si
     let x = ctx.pop16();
     ctx.cpu.regs.set_si(x);
-    ctx.dump_dosbox(0x5902);
     // 0d72:5902 pop di
     let x = ctx.pop16();
     ctx.cpu.regs.set_di(x);
-    ctx.dump_dosbox(0x5903);
     // 0d72:5903 mov sp,bp
     ctx.cpu.regs.set_sp(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x5905);
     // 0d72:5905 pop bp
     let x = ctx.pop16();
     ctx.cpu.regs.set_bp(x);
-    ctx.dump_dosbox(0x5906);
     // 0d72:5906 retf 0Ah
     ctx.retf16(10)
 }
 
 pub fn x0d72_5909(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x5909);
     // 0d72:5909 mov ax,0Ch
     ctx.cpu.regs.set_ax(0xcu16);
-    ctx.dump_dosbox(0x590c);
     // 0d72:590c call 5C2Ah
     ctx.call16(0x590f, Cont(x0d72_5c2a))
 }
 
 pub fn x0d72_590f(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x590f);
     // 0d72:590f push di
     ctx.push16(ctx.cpu.regs.get_di());
-    ctx.dump_dosbox(0x5910);
     // 0d72:5910 push si
     ctx.push16(ctx.cpu.regs.get_si());
-    ctx.dump_dosbox(0x5911);
     // 0d72:5911 mov ax,10h
     ctx.cpu.regs.set_ax(0x10u16);
-    ctx.dump_dosbox(0x5914);
     // 0d72:5914 push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x5915);
     // 0d72:5915 call far ptr 0D72h:4FCCh
     ctx.callf16(0x591a, 0xd72, Cont(x0d72_4fcc))
 }
 
 pub fn x0d72_591a(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x591a);
     // 0d72:591a les di,[bp+8]
     let ptr = ctx.memory.read::<u32>(segofs(
         ctx.cpu.regs.get_ss(),
@@ -21674,23 +13906,19 @@ pub fn x0d72_591a(ctx: &mut Context) -> Cont {
     ));
     ctx.cpu.regs.es = (ptr >> 16) as u16;
     ctx.cpu.regs.set_di(ptr as u16);
-    ctx.dump_dosbox(0x591d);
     // 0d72:591d mov al,es:[di]
     ctx.cpu.regs.set_al(
         ctx.memory
             .read::<u8>(segofs(ctx.cpu.regs.get_es(), ctx.cpu.regs.get_di())),
     );
-    ctx.dump_dosbox(0x5920);
     // 0d72:5920 mov dx,ax
     ctx.cpu.regs.set_dx(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x5922);
     // 0d72:5922 xor ah,ah
     ctx.cpu.regs.set_ah(xor(
         ctx.cpu.regs.get_ah(),
         ctx.cpu.regs.get_ah(),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x5924);
     // 0d72:5924 add ax,[bp+12h]
     ctx.cpu.regs.set_ax(add(
         ctx.cpu.regs.get_ax(),
@@ -21700,7 +13928,6 @@ pub fn x0d72_591a(ctx: &mut Context) -> Cont {
         )),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x5927);
     // 0d72:5927 cmp ax,[bp+0Ch]
     sub(
         ctx.cpu.regs.get_ax(),
@@ -21710,30 +13937,25 @@ pub fn x0d72_591a(ctx: &mut Context) -> Cont {
         )),
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x592a);
     // 0d72:592a jg short 5935h
     ctx.jg(Cont(x0d72_592c), Cont(x0d72_5935))
 }
 
 pub fn x0d72_592c(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x592c);
     // 0d72:592c xchg dx,ax
     let t = ctx.cpu.regs.get_dx();
     ctx.cpu.regs.set_dx(ctx.cpu.regs.get_ax());
     ctx.cpu.regs.set_ax(t);
-    ctx.dump_dosbox(0x592d);
     // 0d72:592d xor ah,ah
     ctx.cpu.regs.set_ah(xor(
         ctx.cpu.regs.get_ah(),
         ctx.cpu.regs.get_ah(),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x592f);
     // 0d72:592f inc ax
     ctx.cpu
         .regs
         .set_ax(inc(ctx.cpu.regs.get_ax(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x5930);
     // 0d72:5930 cmp ax,[bp+6]
     sub(
         ctx.cpu.regs.get_ax(),
@@ -21743,19 +13965,16 @@ pub fn x0d72_592c(ctx: &mut Context) -> Cont {
         )),
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x5933);
     // 0d72:5933 jge short 593Ah
     ctx.jge(Cont(x0d72_5935), Cont(x0d72_593a))
 }
 
 pub fn x0d72_5935(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x5935);
     // 0d72:5935 call far ptr 0D72h:5CA6h
     ctx.callf16(0x593a, 0xd72, Cont(x0d72_5ca6))
 }
 
 pub fn x0d72_593a(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x593a);
     // 0d72:593a les di,[bp+8]
     let ptr = ctx.memory.read::<u32>(segofs(
         ctx.cpu.regs.get_ss(),
@@ -21763,7 +13982,6 @@ pub fn x0d72_593a(ctx: &mut Context) -> Cont {
     ));
     ctx.cpu.regs.es = (ptr >> 16) as u16;
     ctx.cpu.regs.set_di(ptr as u16);
-    ctx.dump_dosbox(0x593d);
     // 0d72:593d add di,[bp+6]
     ctx.cpu.regs.set_di(add(
         ctx.cpu.regs.get_di(),
@@ -21773,7 +13991,6 @@ pub fn x0d72_593a(ctx: &mut Context) -> Cont {
         )),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x5940);
     // 0d72:5940 mov [bp-4],di
     ctx.memory.write::<u16>(
         segofs(
@@ -21782,7 +13999,6 @@ pub fn x0d72_593a(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_di(),
     );
-    ctx.dump_dosbox(0x5943);
     // 0d72:5943 mov [bp-2],es
     ctx.memory.write::<u16>(
         segofs(
@@ -21791,19 +14007,15 @@ pub fn x0d72_593a(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_es(),
     );
-    ctx.dump_dosbox(0x5946);
     // 0d72:5946 push es
     ctx.push16(ctx.cpu.regs.get_es());
-    ctx.dump_dosbox(0x5947);
     // 0d72:5947 push di
     ctx.push16(ctx.cpu.regs.get_di());
-    ctx.dump_dosbox(0x5948);
     // 0d72:5948 mov di,[bp+12h]
     ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x12u16),
     )));
-    ctx.dump_dosbox(0x594b);
     // 0d72:594b add di,[bp+6]
     ctx.cpu.regs.set_di(add(
         ctx.cpu.regs.get_di(),
@@ -21813,7 +14025,6 @@ pub fn x0d72_593a(ctx: &mut Context) -> Cont {
         )),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x594e);
     // 0d72:594e les si,[bp+8]
     let ptr = ctx.memory.read::<u32>(segofs(
         ctx.cpu.regs.get_ss(),
@@ -21821,14 +14032,12 @@ pub fn x0d72_593a(ctx: &mut Context) -> Cont {
     ));
     ctx.cpu.regs.es = (ptr >> 16) as u16;
     ctx.cpu.regs.set_si(ptr as u16);
-    ctx.dump_dosbox(0x5951);
     // 0d72:5951 add si,di
     ctx.cpu.regs.set_si(add(
         ctx.cpu.regs.get_si(),
         ctx.cpu.regs.get_di(),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x5953);
     // 0d72:5953 mov [bp-8],si
     ctx.memory.write::<u16>(
         segofs(
@@ -21837,7 +14046,6 @@ pub fn x0d72_593a(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_si(),
     );
-    ctx.dump_dosbox(0x5956);
     // 0d72:5956 mov [bp-6],es
     ctx.memory.write::<u16>(
         segofs(
@@ -21846,13 +14054,10 @@ pub fn x0d72_593a(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_es(),
     );
-    ctx.dump_dosbox(0x5959);
     // 0d72:5959 push es
     ctx.push16(ctx.cpu.regs.get_es());
-    ctx.dump_dosbox(0x595a);
     // 0d72:595a push si
     ctx.push16(ctx.cpu.regs.get_si());
-    ctx.dump_dosbox(0x595b);
     // 0d72:595b les di,[bp+8]
     let ptr = ctx.memory.read::<u32>(segofs(
         ctx.cpu.regs.get_ss(),
@@ -21860,20 +14065,17 @@ pub fn x0d72_593a(ctx: &mut Context) -> Cont {
     ));
     ctx.cpu.regs.es = (ptr >> 16) as u16;
     ctx.cpu.regs.set_di(ptr as u16);
-    ctx.dump_dosbox(0x595e);
     // 0d72:595e mov al,es:[di]
     ctx.cpu.regs.set_al(
         ctx.memory
             .read::<u8>(segofs(ctx.cpu.regs.get_es(), ctx.cpu.regs.get_di())),
     );
-    ctx.dump_dosbox(0x5961);
     // 0d72:5961 xor ah,ah
     ctx.cpu.regs.set_ah(xor(
         ctx.cpu.regs.get_ah(),
         ctx.cpu.regs.get_ah(),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x5963);
     // 0d72:5963 sub ax,[bp+6]
     ctx.cpu.regs.set_ax(sub(
         ctx.cpu.regs.get_ax(),
@@ -21883,21 +14085,17 @@ pub fn x0d72_593a(ctx: &mut Context) -> Cont {
         )),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x5966);
     // 0d72:5966 inc ax
     ctx.cpu
         .regs
         .set_ax(inc(ctx.cpu.regs.get_ax(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x5967);
     // 0d72:5967 push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x5968);
     // 0d72:5968 call far ptr 0D72h:50A4h
     ctx.callf16(0x596d, 0xd72, Cont(x0d72_50a4))
 }
 
 pub fn x0d72_596d(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x596d);
     // 0d72:596d les di,[bp+0Eh]
     let ptr = ctx.memory.read::<u32>(segofs(
         ctx.cpu.regs.get_ss(),
@@ -21905,13 +14103,10 @@ pub fn x0d72_596d(ctx: &mut Context) -> Cont {
     ));
     ctx.cpu.regs.es = (ptr >> 16) as u16;
     ctx.cpu.regs.set_di(ptr as u16);
-    ctx.dump_dosbox(0x5970);
     // 0d72:5970 push es
     ctx.push16(ctx.cpu.regs.get_es());
-    ctx.dump_dosbox(0x5971);
     // 0d72:5971 push di
     ctx.push16(ctx.cpu.regs.get_di());
-    ctx.dump_dosbox(0x5972);
     // 0d72:5972 les di,[bp+8]
     let ptr = ctx.memory.read::<u32>(segofs(
         ctx.cpu.regs.get_ss(),
@@ -21919,7 +14114,6 @@ pub fn x0d72_596d(ctx: &mut Context) -> Cont {
     ));
     ctx.cpu.regs.es = (ptr >> 16) as u16;
     ctx.cpu.regs.set_di(ptr as u16);
-    ctx.dump_dosbox(0x5975);
     // 0d72:5975 add di,[bp+6]
     ctx.cpu.regs.set_di(add(
         ctx.cpu.regs.get_di(),
@@ -21929,7 +14123,6 @@ pub fn x0d72_596d(ctx: &mut Context) -> Cont {
         )),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x5978);
     // 0d72:5978 mov [bp-0Ch],di
     ctx.memory.write::<u16>(
         segofs(
@@ -21938,7 +14131,6 @@ pub fn x0d72_596d(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_di(),
     );
-    ctx.dump_dosbox(0x597b);
     // 0d72:597b mov [bp-0Ah],es
     ctx.memory.write::<u16>(
         segofs(
@@ -21947,25 +14139,20 @@ pub fn x0d72_596d(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_es(),
     );
-    ctx.dump_dosbox(0x597e);
     // 0d72:597e push es
     ctx.push16(ctx.cpu.regs.get_es());
-    ctx.dump_dosbox(0x597f);
     // 0d72:597f push di
     ctx.push16(ctx.cpu.regs.get_di());
-    ctx.dump_dosbox(0x5980);
     // 0d72:5980 push word ptr [bp+12h]
     ctx.push16(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0x12u16),
     )));
-    ctx.dump_dosbox(0x5983);
     // 0d72:5983 call far ptr 0D72h:507Eh
     ctx.callf16(0x5988, 0xd72, Cont(x0d72_507e))
 }
 
 pub fn x0d72_5988(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x5988);
     // 0d72:5988 les di,[bp+8]
     let ptr = ctx.memory.read::<u32>(segofs(
         ctx.cpu.regs.get_ss(),
@@ -21973,20 +14160,17 @@ pub fn x0d72_5988(ctx: &mut Context) -> Cont {
     ));
     ctx.cpu.regs.es = (ptr >> 16) as u16;
     ctx.cpu.regs.set_di(ptr as u16);
-    ctx.dump_dosbox(0x598b);
     // 0d72:598b mov al,es:[di]
     ctx.cpu.regs.set_al(
         ctx.memory
             .read::<u8>(segofs(ctx.cpu.regs.get_es(), ctx.cpu.regs.get_di())),
     );
-    ctx.dump_dosbox(0x598e);
     // 0d72:598e xor ah,ah
     ctx.cpu.regs.set_ah(xor(
         ctx.cpu.regs.get_ah(),
         ctx.cpu.regs.get_ah(),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x5990);
     // 0d72:5990 add ax,[bp+12h]
     ctx.cpu.regs.set_ax(add(
         ctx.cpu.regs.get_ax(),
@@ -21996,73 +14180,58 @@ pub fn x0d72_5988(ctx: &mut Context) -> Cont {
         )),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x5993);
     // 0d72:5993 xor ah,ah
     ctx.cpu.regs.set_ah(xor(
         ctx.cpu.regs.get_ah(),
         ctx.cpu.regs.get_ah(),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x5995);
     // 0d72:5995 mov es:[di],al
     ctx.memory.write::<u8>(
         segofs(ctx.cpu.regs.get_es(), ctx.cpu.regs.get_di()),
         ctx.cpu.regs.get_al(),
     );
-    ctx.dump_dosbox(0x5998);
     // 0d72:5998 call far ptr 0D72h:5004h
     ctx.callf16(0x599d, 0xd72, Cont(x0d72_5004))
 }
 
 pub fn x0d72_599d(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x599d);
     // 0d72:599d pop si
     let x = ctx.pop16();
     ctx.cpu.regs.set_si(x);
-    ctx.dump_dosbox(0x599e);
     // 0d72:599e pop di
     let x = ctx.pop16();
     ctx.cpu.regs.set_di(x);
-    ctx.dump_dosbox(0x599f);
     // 0d72:599f mov sp,bp
     ctx.cpu.regs.set_sp(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x59a1);
     // 0d72:59a1 pop bp
     let x = ctx.pop16();
     ctx.cpu.regs.set_bp(x);
-    ctx.dump_dosbox(0x59a2);
     // 0d72:59a2 retf 0Eh
     ctx.retf16(14)
 }
 
 pub fn x0d72_5c2a(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x5c2a);
     // 0d72:5c2a pop cx
     let x = ctx.pop16();
     ctx.cpu.regs.set_cx(x);
-    ctx.dump_dosbox(0x5c2b);
     // 0d72:5c2b push bp
     ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x5c2c);
     // 0d72:5c2c mov bp,sp
     ctx.cpu.regs.set_bp(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x5c2e);
     // 0d72:5c2e mov bx,sp
     ctx.cpu.regs.set_bx(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x5c30);
     // 0d72:5c30 sub bx,ax
     ctx.cpu.regs.set_bx(sub(
         ctx.cpu.regs.get_bx(),
         ctx.cpu.regs.get_ax(),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x5c32);
     // 0d72:5c32 jb short 5C3Eh
     ctx.jb(Cont(x0d72_5c34), Cont(x0d72_5c3e))
 }
 
 pub fn x0d72_5c34(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x5c34);
     // 0d72:5c34 cmp bx,ds:[792h]
     sub(
         ctx.cpu.regs.get_bx(),
@@ -22070,149 +14239,114 @@ pub fn x0d72_5c34(ctx: &mut Context) -> Cont {
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x792u16)),
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x5c38);
     // 0d72:5c38 jb short 5C3Eh
     ctx.jb(Cont(x0d72_5c3a), Cont(x0d72_5c3e))
 }
 
 pub fn x0d72_5c3a(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x5c3a);
     // 0d72:5c3a mov sp,bx
     ctx.cpu.regs.set_sp(ctx.cpu.regs.get_bx());
-    ctx.dump_dosbox(0x5c3c);
     // 0d72:5c3c jmp cx
     ctx.indirect16((ctx.cpu.regs.cs, ctx.cpu.regs.get_cx()).into())
 }
 
 pub fn x0d72_5c3e(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x5c3e);
     // 0d72:5c3e push cs
     ctx.push16(ctx.cpu.regs.get_cs());
-    ctx.dump_dosbox(0x5c3f);
     // 0d72:5c3f push cx
     ctx.push16(ctx.cpu.regs.get_cx());
-    ctx.dump_dosbox(0x5c40);
     // 0d72:5c40 jmp far ptr 0D72h:6B88h
     ctx.cpu.regs.cs = 0xd72;
     Cont(x0d72_6b88)
 }
 
 pub fn x0d72_5ca6(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x5ca6);
     // 0d72:5ca6 mov ax,0
     ctx.cpu.regs.set_ax(0x0u16);
-    ctx.dump_dosbox(0x5ca9);
     // 0d72:5ca9 call 5FFDh
     ctx.call16(0x5cac, Cont(x0d72_5ffd))
 }
 
 pub fn x0d72_5cac(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x5cac);
     // 0d72:5cac push di
     ctx.push16(ctx.cpu.regs.get_di());
-    ctx.dump_dosbox(0x5cad);
     // 0d72:5cad push si
     ctx.push16(ctx.cpu.regs.get_si());
-    ctx.dump_dosbox(0x5cae);
     // 0d72:5cae mov ax,2
     ctx.cpu.regs.set_ax(0x2u16);
-    ctx.dump_dosbox(0x5cb1);
     // 0d72:5cb1 push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x5cb2);
     // 0d72:5cb2 call far ptr 0D72h:4FCCh
     ctx.callf16(0x5cb7, 0xd72, Cont(x0d72_4fcc))
 }
 
 pub fn x0d72_5cb7(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x5cb7);
     // 0d72:5cb7 mov ax,27h
     ctx.cpu.regs.set_ax(0x27u16);
-    ctx.dump_dosbox(0x5cba);
     // 0d72:5cba push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x5cbb);
     // 0d72:5cbb mov ax,216Ch
     ctx.cpu.regs.set_ax(0x216cu16);
-    ctx.dump_dosbox(0x5cbe);
     // 0d72:5cbe push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x5cbf);
     // 0d72:5cbf mov ax,867h
     ctx.cpu.regs.set_ax(0x867u16);
-    ctx.dump_dosbox(0x5cc2);
     // 0d72:5cc2 push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x5cc3);
     // 0d72:5cc3 xor ax,ax
     ctx.cpu.regs.set_ax(xor(
         ctx.cpu.regs.get_ax(),
         ctx.cpu.regs.get_ax(),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x5cc5);
     // 0d72:5cc5 push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x5cc6);
     // 0d72:5cc6 call far ptr 0D72h:4BACh
     ctx.callf16(0x5ccb, 0xd72, Cont(x0d72_4bac))
 }
 
 pub fn x0d72_5ccb(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x5ccb);
     // 0d72:5ccb call far ptr 0D72h:5004h
     ctx.callf16(0x5cd0, 0xd72, Cont(x0d72_5004))
 }
 
 pub fn x0d72_5cd0(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x5cd0);
     // 0d72:5cd0 pop si
     let x = ctx.pop16();
     ctx.cpu.regs.set_si(x);
-    ctx.dump_dosbox(0x5cd1);
     // 0d72:5cd1 pop di
     let x = ctx.pop16();
     ctx.cpu.regs.set_di(x);
-    ctx.dump_dosbox(0x5cd2);
     // 0d72:5cd2 mov sp,bp
     ctx.cpu.regs.set_sp(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x5cd4);
     // 0d72:5cd4 pop bp
     let x = ctx.pop16();
     ctx.cpu.regs.set_bp(x);
-    ctx.dump_dosbox(0x5cd5);
     // 0d72:5cd5 retf
     ctx.retf16(0)
 }
 
 pub fn x0d72_5ffd(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x5ffd);
     // 0d72:5ffd pop cx
     let x = ctx.pop16();
     ctx.cpu.regs.set_cx(x);
-    ctx.dump_dosbox(0x5ffe);
     // 0d72:5ffe push bp
     ctx.push16(ctx.cpu.regs.get_bp());
-    ctx.dump_dosbox(0x5fff);
     // 0d72:5fff mov bp,sp
     ctx.cpu.regs.set_bp(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x6001);
     // 0d72:6001 mov bx,sp
     ctx.cpu.regs.set_bx(ctx.cpu.regs.get_sp());
-    ctx.dump_dosbox(0x6003);
     // 0d72:6003 sub bx,ax
     ctx.cpu.regs.set_bx(sub(
         ctx.cpu.regs.get_bx(),
         ctx.cpu.regs.get_ax(),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x6005);
     // 0d72:6005 jb short 6011h
     ctx.jb(Cont(x0d72_6007), Cont(x0d72_6011))
 }
 
 pub fn x0d72_6007(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x6007);
     // 0d72:6007 cmp bx,ds:[792h]
     sub(
         ctx.cpu.regs.get_bx(),
@@ -22220,62 +14354,48 @@ pub fn x0d72_6007(ctx: &mut Context) -> Cont {
             .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x792u16)),
         &mut ctx.cpu.flags,
     );
-    ctx.dump_dosbox(0x600b);
     // 0d72:600b jb short 6011h
     ctx.jb(Cont(x0d72_600d), Cont(x0d72_6011))
 }
 
 pub fn x0d72_600d(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x600d);
     // 0d72:600d mov sp,bx
     ctx.cpu.regs.set_sp(ctx.cpu.regs.get_bx());
-    ctx.dump_dosbox(0x600f);
     // 0d72:600f jmp cx
     ctx.indirect16((ctx.cpu.regs.cs, ctx.cpu.regs.get_cx()).into())
 }
 
 pub fn x0d72_6011(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x6011);
     // 0d72:6011 push cs
     ctx.push16(ctx.cpu.regs.get_cs());
-    ctx.dump_dosbox(0x6012);
     // 0d72:6012 push cx
     ctx.push16(ctx.cpu.regs.get_cx());
-    ctx.dump_dosbox(0x6013);
     // 0d72:6013 jmp far ptr 0D72h:6B88h
     ctx.cpu.regs.cs = 0xd72;
     Cont(x0d72_6b88)
 }
 
 pub fn x0d72_604f(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x604f);
     // 0d72:604f mov ax,4
     ctx.cpu.regs.set_ax(0x4u16);
-    ctx.dump_dosbox(0x6052);
     // 0d72:6052 call 64C8h
     ctx.call16(0x6055, Cont(x0d72_64c8))
 }
 
 pub fn x0d72_6055(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x6055);
     // 0d72:6055 push di
     ctx.push16(ctx.cpu.regs.get_di());
-    ctx.dump_dosbox(0x6056);
     // 0d72:6056 push si
     ctx.push16(ctx.cpu.regs.get_si());
-    ctx.dump_dosbox(0x6057);
     // 0d72:6057 mov ax,10h
     ctx.cpu.regs.set_ax(0x10u16);
-    ctx.dump_dosbox(0x605a);
     // 0d72:605a push ax
     ctx.push16(ctx.cpu.regs.get_ax());
-    ctx.dump_dosbox(0x605b);
     // 0d72:605b call far ptr 0D72h:4FCCh
     ctx.callf16(0x6060, 0xd72, Cont(x0d72_4fcc))
 }
 
 pub fn x0d72_6060(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x6060);
     // 0d72:6060 mov word ptr [bp-2],0
     ctx.memory.write::<u16>(
         segofs(
@@ -22288,13 +14408,11 @@ pub fn x0d72_6060(ctx: &mut Context) -> Cont {
 }
 
 pub fn x0d72_6065(ctx: &mut Context) -> Cont {
-    ctx.dump_dosbox(0x6065);
     // 0d72:6065 mov di,[bp-2]
     ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0xfffeu16),
     )));
-    ctx.dump_dosbox(0x6068);
     // 0d72:6068 add di,[bp+6]
     ctx.cpu.regs.set_di(add(
         ctx.cpu.regs.get_di(),
@@ -22304,22 +14422,18 @@ pub fn x0d72_6065(ctx: &mut Context) -> Cont {
         )),
         &mut ctx.cpu.flags,
     ));
-    ctx.dump_dosbox(0x606b);
     // 0d72:606b mov byte ptr [di],0
     ctx.memory
         .write::<u8>(segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_di()), 0x0u8);
-    ctx.dump_dosbox(0x606e);
     // 0d72:606e mov ax,[bp-2]
     ctx.cpu.regs.set_ax(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
         ctx.cpu.regs.get_bp().wrapping_add(0xfffeu16),
     )));
-    ctx.dump_dosbox(0x6071);
     // 0d72:6071 inc ax
     ctx.cpu
         .regs
         .set_ax(inc(ctx.cpu.regs.get_ax(), &mut ctx.cpu.flags));
-    ctx.dump_dosbox(0x6072);
     // 0d72:6072 mov [bp-2],ax
     ctx.memory.write::<u16>(
         segofs(
@@ -22328,10 +14442,7274 @@ pub fn x0d72_6065(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_ax(),
     );
-    ctx.dump_dosbox(0x6075);
     // 0d72:6075 cmp ax,20h
     sub(ctx.cpu.regs.get_ax(), 0x20u16, &mut ctx.cpu.flags);
-    ctx.dump_dosbox(0x6078);
     // 0d72:6078 jne short 6065h
     ctx.jne(Cont(x0d72_607a), Cont(x0d72_6065))
+}
+
+pub fn x0d72_607a(ctx: &mut Context) -> Cont {
+    // 0d72:607a mov ax,[bp+12h]
+    ctx.cpu.regs.set_ax(ctx.memory.read::<u16>(segofs(
+        ctx.cpu.regs.get_ss(),
+        ctx.cpu.regs.get_bp().wrapping_add(0x12u16),
+    )));
+    // 0d72:607d mov [bp-4],ax
+    ctx.memory.write::<u16>(
+        segofs(
+            ctx.cpu.regs.get_ss(),
+            ctx.cpu.regs.get_bp().wrapping_add(0xfffcu16),
+        ),
+        ctx.cpu.regs.get_ax(),
+    );
+    // 0d72:6080 mov word ptr [bp-2],0
+    ctx.memory.write::<u16>(
+        segofs(
+            ctx.cpu.regs.get_ss(),
+            ctx.cpu.regs.get_bp().wrapping_add(0xfffeu16),
+        ),
+        0x0u16,
+    );
+    Cont(x0d72_6085)
+}
+
+pub fn x0d72_6085(ctx: &mut Context) -> Cont {
+    // 0d72:6085 mov di,[bp+6]
+    ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
+        ctx.cpu.regs.get_ss(),
+        ctx.cpu.regs.get_bp().wrapping_add(0x6u16),
+    )));
+    // 0d72:6088 add di,[bp-2]
+    ctx.cpu.regs.set_di(add(
+        ctx.cpu.regs.get_di(),
+        ctx.memory.read::<u16>(segofs(
+            ctx.cpu.regs.get_ss(),
+            ctx.cpu.regs.get_bp().wrapping_add(0xfffeu16),
+        )),
+        &mut ctx.cpu.flags,
+    ));
+    // 0d72:608b mov si,[bp-2]
+    ctx.cpu.regs.set_si(ctx.memory.read::<u16>(segofs(
+        ctx.cpu.regs.get_ss(),
+        ctx.cpu.regs.get_bp().wrapping_add(0xfffeu16),
+    )));
+    // 0d72:608e les bx,[bp+0Eh]
+    let ptr = ctx.memory.read::<u32>(segofs(
+        ctx.cpu.regs.get_ss(),
+        ctx.cpu.regs.get_bp().wrapping_add(0xeu16),
+    ));
+    ctx.cpu.regs.es = (ptr >> 16) as u16;
+    ctx.cpu.regs.set_bx(ptr as u16);
+    // 0d72:6091 mov al,es:[bx+si]
+    ctx.cpu.regs.set_al(ctx.memory.read::<u8>(segofs(
+        ctx.cpu.regs.get_es(),
+        ctx.cpu.regs.get_bx().wrapping_add(ctx.cpu.regs.get_si()),
+    )));
+    // 0d72:6094 mov [di],al
+    ctx.memory.write::<u8>(
+        segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_di()),
+        ctx.cpu.regs.get_al(),
+    );
+    // 0d72:6096 mov ax,[bp-2]
+    ctx.cpu.regs.set_ax(ctx.memory.read::<u16>(segofs(
+        ctx.cpu.regs.get_ss(),
+        ctx.cpu.regs.get_bp().wrapping_add(0xfffeu16),
+    )));
+    // 0d72:6099 inc ax
+    ctx.cpu
+        .regs
+        .set_ax(inc(ctx.cpu.regs.get_ax(), &mut ctx.cpu.flags));
+    // 0d72:609a mov [bp-2],ax
+    ctx.memory.write::<u16>(
+        segofs(
+            ctx.cpu.regs.get_ss(),
+            ctx.cpu.regs.get_bp().wrapping_add(0xfffeu16),
+        ),
+        ctx.cpu.regs.get_ax(),
+    );
+    // 0d72:609d dec ax
+    ctx.cpu
+        .regs
+        .set_ax(dec(ctx.cpu.regs.get_ax(), &mut ctx.cpu.flags));
+    // 0d72:609e cmp ax,[bp-4]
+    sub(
+        ctx.cpu.regs.get_ax(),
+        ctx.memory.read::<u16>(segofs(
+            ctx.cpu.regs.get_ss(),
+            ctx.cpu.regs.get_bp().wrapping_add(0xfffcu16),
+        )),
+        &mut ctx.cpu.flags,
+    );
+    // 0d72:60a1 jne short 6085h
+    ctx.jne(Cont(x0d72_60a3), Cont(x0d72_6085))
+}
+
+pub fn x0d72_60a3(ctx: &mut Context) -> Cont {
+    // 0d72:60a3 mov ax,[bp+0Ch]
+    ctx.cpu.regs.set_ax(ctx.memory.read::<u16>(segofs(
+        ctx.cpu.regs.get_ss(),
+        ctx.cpu.regs.get_bp().wrapping_add(0xcu16),
+    )));
+    // 0d72:60a6 mov [bp-4],ax
+    ctx.memory.write::<u16>(
+        segofs(
+            ctx.cpu.regs.get_ss(),
+            ctx.cpu.regs.get_bp().wrapping_add(0xfffcu16),
+        ),
+        ctx.cpu.regs.get_ax(),
+    );
+    // 0d72:60a9 mov word ptr [bp-2],0
+    ctx.memory.write::<u16>(
+        segofs(
+            ctx.cpu.regs.get_ss(),
+            ctx.cpu.regs.get_bp().wrapping_add(0xfffeu16),
+        ),
+        0x0u16,
+    );
+    Cont(x0d72_60ae)
+}
+
+pub fn x0d72_60ae(ctx: &mut Context) -> Cont {
+    // 0d72:60ae mov di,[bp+6]
+    ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
+        ctx.cpu.regs.get_ss(),
+        ctx.cpu.regs.get_bp().wrapping_add(0x6u16),
+    )));
+    // 0d72:60b1 add di,[bp-2]
+    ctx.cpu.regs.set_di(add(
+        ctx.cpu.regs.get_di(),
+        ctx.memory.read::<u16>(segofs(
+            ctx.cpu.regs.get_ss(),
+            ctx.cpu.regs.get_bp().wrapping_add(0xfffeu16),
+        )),
+        &mut ctx.cpu.flags,
+    ));
+    // 0d72:60b4 mov al,[di]
+    ctx.cpu.regs.set_al(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_di())),
+    );
+    // 0d72:60b6 mov si,[bp-2]
+    ctx.cpu.regs.set_si(ctx.memory.read::<u16>(segofs(
+        ctx.cpu.regs.get_ss(),
+        ctx.cpu.regs.get_bp().wrapping_add(0xfffeu16),
+    )));
+    // 0d72:60b9 les bx,[bp+8]
+    let ptr = ctx.memory.read::<u32>(segofs(
+        ctx.cpu.regs.get_ss(),
+        ctx.cpu.regs.get_bp().wrapping_add(0x8u16),
+    ));
+    ctx.cpu.regs.es = (ptr >> 16) as u16;
+    ctx.cpu.regs.set_bx(ptr as u16);
+    // 0d72:60bc or al,es:[bx+si]
+    ctx.cpu.regs.set_al(or(
+        ctx.cpu.regs.get_al(),
+        ctx.memory.read::<u8>(segofs(
+            ctx.cpu.regs.get_es(),
+            ctx.cpu.regs.get_bx().wrapping_add(ctx.cpu.regs.get_si()),
+        )),
+        &mut ctx.cpu.flags,
+    ));
+    // 0d72:60bf mov [di],al
+    ctx.memory.write::<u8>(
+        segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_di()),
+        ctx.cpu.regs.get_al(),
+    );
+    // 0d72:60c1 mov ax,[bp-2]
+    ctx.cpu.regs.set_ax(ctx.memory.read::<u16>(segofs(
+        ctx.cpu.regs.get_ss(),
+        ctx.cpu.regs.get_bp().wrapping_add(0xfffeu16),
+    )));
+    // 0d72:60c4 inc ax
+    ctx.cpu
+        .regs
+        .set_ax(inc(ctx.cpu.regs.get_ax(), &mut ctx.cpu.flags));
+    // 0d72:60c5 mov [bp-2],ax
+    ctx.memory.write::<u16>(
+        segofs(
+            ctx.cpu.regs.get_ss(),
+            ctx.cpu.regs.get_bp().wrapping_add(0xfffeu16),
+        ),
+        ctx.cpu.regs.get_ax(),
+    );
+    // 0d72:60c8 dec ax
+    ctx.cpu
+        .regs
+        .set_ax(dec(ctx.cpu.regs.get_ax(), &mut ctx.cpu.flags));
+    // 0d72:60c9 cmp ax,[bp-4]
+    sub(
+        ctx.cpu.regs.get_ax(),
+        ctx.memory.read::<u16>(segofs(
+            ctx.cpu.regs.get_ss(),
+            ctx.cpu.regs.get_bp().wrapping_add(0xfffcu16),
+        )),
+        &mut ctx.cpu.flags,
+    );
+    // 0d72:60cc jne short 60AEh
+    ctx.jne(Cont(x0d72_60ce), Cont(x0d72_60ae))
+}
+
+pub fn x0d72_60ce(ctx: &mut Context) -> Cont {
+    // 0d72:60ce call far ptr 0D72h:5004h
+    ctx.callf16(0x60d3, 0xd72, Cont(x0d72_5004))
+}
+
+pub fn x0d72_60d3(ctx: &mut Context) -> Cont {
+    // 0d72:60d3 mov ax,[bp+6]
+    ctx.cpu.regs.set_ax(ctx.memory.read::<u16>(segofs(
+        ctx.cpu.regs.get_ss(),
+        ctx.cpu.regs.get_bp().wrapping_add(0x6u16),
+    )));
+    // 0d72:60d6 pop si
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_si(x);
+    // 0d72:60d7 pop di
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_di(x);
+    // 0d72:60d8 mov sp,bp
+    ctx.cpu.regs.set_sp(ctx.cpu.regs.get_bp());
+    // 0d72:60da pop bp
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_bp(x);
+    // 0d72:60db retf 0Eh
+    ctx.retf16(14)
+}
+
+pub fn x0d72_64c8(ctx: &mut Context) -> Cont {
+    // 0d72:64c8 pop cx
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_cx(x);
+    // 0d72:64c9 push bp
+    ctx.push16(ctx.cpu.regs.get_bp());
+    // 0d72:64ca mov bp,sp
+    ctx.cpu.regs.set_bp(ctx.cpu.regs.get_sp());
+    // 0d72:64cc mov bx,sp
+    ctx.cpu.regs.set_bx(ctx.cpu.regs.get_sp());
+    // 0d72:64ce sub bx,ax
+    ctx.cpu.regs.set_bx(sub(
+        ctx.cpu.regs.get_bx(),
+        ctx.cpu.regs.get_ax(),
+        &mut ctx.cpu.flags,
+    ));
+    // 0d72:64d0 jb short 64DCh
+    ctx.jb(Cont(x0d72_64d2), Cont(x0d72_64dc))
+}
+
+pub fn x0d72_64d2(ctx: &mut Context) -> Cont {
+    // 0d72:64d2 cmp bx,ds:[792h]
+    sub(
+        ctx.cpu.regs.get_bx(),
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x792u16)),
+        &mut ctx.cpu.flags,
+    );
+    // 0d72:64d6 jb short 64DCh
+    ctx.jb(Cont(x0d72_64d8), Cont(x0d72_64dc))
+}
+
+pub fn x0d72_64d8(ctx: &mut Context) -> Cont {
+    // 0d72:64d8 mov sp,bx
+    ctx.cpu.regs.set_sp(ctx.cpu.regs.get_bx());
+    // 0d72:64da jmp cx
+    ctx.indirect16((ctx.cpu.regs.cs, ctx.cpu.regs.get_cx()).into())
+}
+
+pub fn x0d72_64dc(ctx: &mut Context) -> Cont {
+    // 0d72:64dc push cs
+    ctx.push16(ctx.cpu.regs.get_cs());
+    // 0d72:64dd push cx
+    ctx.push16(ctx.cpu.regs.get_cx());
+    // 0d72:64de jmp far ptr 0D72h:6B88h
+    ctx.cpu.regs.cs = 0xd72;
+    Cont(x0d72_6b88)
+}
+
+pub fn x0d72_656d(ctx: &mut Context) -> Cont {
+    // 0d72:656d push bp
+    ctx.push16(ctx.cpu.regs.get_bp());
+    // 0d72:656e mov bp,sp
+    ctx.cpu.regs.set_bp(ctx.cpu.regs.get_sp());
+    // 0d72:6570 push word ptr ds:[60Eh]
+    ctx.push16(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x60eu16)),
+    );
+    // 0d72:6574 call far ptr 0D72h:6E28h
+    ctx.callf16(0x6579, 0xd72, Cont(x0d72_6e28))
+}
+
+pub fn x0d72_6579(ctx: &mut Context) -> Cont {
+    // 0d72:6579 mov sp,bp
+    ctx.cpu.regs.set_sp(ctx.cpu.regs.get_bp());
+    // 0d72:657b pop bp
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_bp(x);
+    // 0d72:657c retf
+    ctx.retf16(0)
+}
+
+pub fn x0d72_66cc(ctx: &mut Context) -> Cont {
+    // 0d72:66cc mov ax,8
+    ctx.cpu.regs.set_ax(0x8u16);
+    // 0d72:66cf call 676Bh
+    ctx.call16(0x66d2, Cont(x0d72_676b))
+}
+
+pub fn x0d72_66d2(ctx: &mut Context) -> Cont {
+    // 0d72:66d2 push di
+    ctx.push16(ctx.cpu.regs.get_di());
+    // 0d72:66d3 push si
+    ctx.push16(ctx.cpu.regs.get_si());
+    // 0d72:66d4 mov word ptr [bp-2],0
+    ctx.memory.write::<u16>(
+        segofs(
+            ctx.cpu.regs.get_ss(),
+            ctx.cpu.regs.get_bp().wrapping_add(0xfffeu16),
+        ),
+        0x0u16,
+    );
+    Cont(x0d72_66d9)
+}
+
+pub fn x0d72_66d9(ctx: &mut Context) -> Cont {
+    // 0d72:66d9 cmp word ptr [bp+0Ah],55h
+    sub(
+        ctx.memory.read::<u16>(segofs(
+            ctx.cpu.regs.get_ss(),
+            ctx.cpu.regs.get_bp().wrapping_add(0xau16),
+        )),
+        0x55u16,
+        &mut ctx.cpu.flags,
+    );
+    // 0d72:66dd ja short 66E7h
+    ctx.ja(Cont(x0d72_66df), Cont(x0d72_66e7))
+}
+
+pub fn x0d72_66df(ctx: &mut Context) -> Cont {
+    // 0d72:66df mov ax,[bp+0Ah]
+    ctx.cpu.regs.set_ax(ctx.memory.read::<u16>(segofs(
+        ctx.cpu.regs.get_ss(),
+        ctx.cpu.regs.get_bp().wrapping_add(0xau16),
+    )));
+    // 0d72:66e2 mov [bp-4],ax
+    ctx.memory.write::<u16>(
+        segofs(
+            ctx.cpu.regs.get_ss(),
+            ctx.cpu.regs.get_bp().wrapping_add(0xfffcu16),
+        ),
+        ctx.cpu.regs.get_ax(),
+    );
+    // 0d72:66e5 jmp short 66ECh
+    Cont(x0d72_66ec)
+}
+
+pub fn x0d72_66e7(ctx: &mut Context) -> Cont {
+    // 0d72:66e7 mov word ptr [bp-4],55h
+    ctx.memory.write::<u16>(
+        segofs(
+            ctx.cpu.regs.get_ss(),
+            ctx.cpu.regs.get_bp().wrapping_add(0xfffcu16),
+        ),
+        0x55u16,
+    );
+    Cont(x0d72_66ec)
+}
+
+pub fn x0d72_66ec(ctx: &mut Context) -> Cont {
+    // 0d72:66ec les di,[bp+6]
+    let ptr = ctx.memory.read::<u32>(segofs(
+        ctx.cpu.regs.get_ss(),
+        ctx.cpu.regs.get_bp().wrapping_add(0x6u16),
+    ));
+    ctx.cpu.regs.es = (ptr >> 16) as u16;
+    ctx.cpu.regs.set_di(ptr as u16);
+    // 0d72:66ef add di,[bp-2]
+    ctx.cpu.regs.set_di(add(
+        ctx.cpu.regs.get_di(),
+        ctx.memory.read::<u16>(segofs(
+            ctx.cpu.regs.get_ss(),
+            ctx.cpu.regs.get_bp().wrapping_add(0xfffeu16),
+        )),
+        &mut ctx.cpu.flags,
+    ));
+    // 0d72:66f2 mov [bp-8],di
+    ctx.memory.write::<u16>(
+        segofs(
+            ctx.cpu.regs.get_ss(),
+            ctx.cpu.regs.get_bp().wrapping_add(0xfff8u16),
+        ),
+        ctx.cpu.regs.get_di(),
+    );
+    // 0d72:66f5 mov [bp-6],es
+    ctx.memory.write::<u16>(
+        segofs(
+            ctx.cpu.regs.get_ss(),
+            ctx.cpu.regs.get_bp().wrapping_add(0xfffau16),
+        ),
+        ctx.cpu.regs.get_es(),
+    );
+    // 0d72:66f8 push es
+    ctx.push16(ctx.cpu.regs.get_es());
+    // 0d72:66f9 push di
+    ctx.push16(ctx.cpu.regs.get_di());
+    // 0d72:66fa mov ax,724h
+    ctx.cpu.regs.set_ax(0x724u16);
+    // 0d72:66fd push ds
+    ctx.push16(ctx.cpu.regs.get_ds());
+    // 0d72:66fe push ax
+    ctx.push16(ctx.cpu.regs.get_ax());
+    // 0d72:66ff push word ptr [bp-4]
+    ctx.push16(ctx.memory.read::<u16>(segofs(
+        ctx.cpu.regs.get_ss(),
+        ctx.cpu.regs.get_bp().wrapping_add(0xfffcu16),
+    )));
+    // 0d72:6702 call far ptr 0D72h:507Eh
+    ctx.callf16(0x6707, 0xd72, Cont(x0d72_507e))
+}
+
+pub fn x0d72_6707(ctx: &mut Context) -> Cont {
+    // 0d72:6707 mov ax,1
+    ctx.cpu.regs.set_ax(0x1u16);
+    // 0d72:670a push ax
+    ctx.push16(ctx.cpu.regs.get_ax());
+    // 0d72:670b mov ax,724h
+    ctx.cpu.regs.set_ax(0x724u16);
+    // 0d72:670e push ax
+    ctx.push16(ctx.cpu.regs.get_ax());
+    // 0d72:670f push word ptr [bp-4]
+    ctx.push16(ctx.memory.read::<u16>(segofs(
+        ctx.cpu.regs.get_ss(),
+        ctx.cpu.regs.get_bp().wrapping_add(0xfffcu16),
+    )));
+    // 0d72:6712 call far ptr 0D72h:67FFh
+    ctx.callf16(0x6717, 0xd72, Cont(x0d72_67ff))
+}
+
+pub fn x0d72_6717(ctx: &mut Context) -> Cont {
+    // 0d72:6717 or ax,ax
+    ctx.cpu.regs.set_ax(or(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_ax(),
+        &mut ctx.cpu.flags,
+    ));
+    // 0d72:6719 jge short 671Dh
+    ctx.jge(Cont(x0d72_671b), Cont(x0d72_671d))
+}
+
+pub fn x0d72_671b(ctx: &mut Context) -> Cont {
+    // 0d72:671b jmp short 6732h
+    Cont(x0d72_6732)
+}
+
+pub fn x0d72_671d(ctx: &mut Context) -> Cont {
+    // 0d72:671d add word ptr [bp-2],55h
+    ctx.memory.write::<u16>(
+        segofs(
+            ctx.cpu.regs.get_ss(),
+            ctx.cpu.regs.get_bp().wrapping_add(0xfffeu16),
+        ),
+        add(
+            ctx.memory.read::<u16>(segofs(
+                ctx.cpu.regs.get_ss(),
+                ctx.cpu.regs.get_bp().wrapping_add(0xfffeu16),
+            )),
+            0x55u16,
+            &mut ctx.cpu.flags,
+        ),
+    );
+    // 0d72:6721 add word ptr [bp+0Ah],0FFABh
+    ctx.memory.write::<u16>(
+        segofs(
+            ctx.cpu.regs.get_ss(),
+            ctx.cpu.regs.get_bp().wrapping_add(0xau16),
+        ),
+        add(
+            ctx.memory.read::<u16>(segofs(
+                ctx.cpu.regs.get_ss(),
+                ctx.cpu.regs.get_bp().wrapping_add(0xau16),
+            )),
+            0xffabu16,
+            &mut ctx.cpu.flags,
+        ),
+    );
+    // 0d72:6725 cmp word ptr [bp+0Ah],0
+    sub(
+        ctx.memory.read::<u16>(segofs(
+            ctx.cpu.regs.get_ss(),
+            ctx.cpu.regs.get_bp().wrapping_add(0xau16),
+        )),
+        0x0u16,
+        &mut ctx.cpu.flags,
+    );
+    // 0d72:6729 je short 6732h
+    ctx.je(Cont(x0d72_672b), Cont(x0d72_6732))
+}
+
+pub fn x0d72_672b(ctx: &mut Context) -> Cont {
+    // 0d72:672b cmp word ptr [bp+0Ah],7FFFh
+    sub(
+        ctx.memory.read::<u16>(segofs(
+            ctx.cpu.regs.get_ss(),
+            ctx.cpu.regs.get_bp().wrapping_add(0xau16),
+        )),
+        0x7fffu16,
+        &mut ctx.cpu.flags,
+    );
+    // 0d72:6730 jbe short 66D9h
+    ctx.jbe(Cont(x0d72_6732), Cont(x0d72_66d9))
+}
+
+pub fn x0d72_6732(ctx: &mut Context) -> Cont {
+    // 0d72:6732 pop si
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_si(x);
+    // 0d72:6733 pop di
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_di(x);
+    // 0d72:6734 mov sp,bp
+    ctx.cpu.regs.set_sp(ctx.cpu.regs.get_bp());
+    // 0d72:6736 pop bp
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_bp(x);
+    // 0d72:6737 retf 6
+    ctx.retf16(6)
+}
+
+pub fn x0d72_673a(ctx: &mut Context) -> Cont {
+    // 0d72:673a mov ax,0
+    ctx.cpu.regs.set_ax(0x0u16);
+    // 0d72:673d call 676Bh
+    ctx.call16(0x6740, Cont(x0d72_676b))
+}
+
+pub fn x0d72_6740(ctx: &mut Context) -> Cont {
+    // 0d72:6740 push di
+    ctx.push16(ctx.cpu.regs.get_di());
+    // 0d72:6741 push si
+    ctx.push16(ctx.cpu.regs.get_si());
+    // 0d72:6742 mov ax,1
+    ctx.cpu.regs.set_ax(0x1u16);
+    // 0d72:6745 push ax
+    ctx.push16(ctx.cpu.regs.get_ax());
+    // 0d72:6746 mov ax,22BBh
+    ctx.cpu.regs.set_ax(0x22bbu16);
+    // 0d72:6749 push ax
+    ctx.push16(ctx.cpu.regs.get_ax());
+    // 0d72:674a mov ax,2
+    ctx.cpu.regs.set_ax(0x2u16);
+    // 0d72:674d push ax
+    ctx.push16(ctx.cpu.regs.get_ax());
+    // 0d72:674e call far ptr 0D72h:67FFh
+    ctx.callf16(0x6753, 0xd72, Cont(x0d72_67ff))
+}
+
+pub fn x0d72_6753(ctx: &mut Context) -> Cont {
+    // 0d72:6753 pop si
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_si(x);
+    // 0d72:6754 pop di
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_di(x);
+    // 0d72:6755 mov sp,bp
+    ctx.cpu.regs.set_sp(ctx.cpu.regs.get_bp());
+    // 0d72:6757 pop bp
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_bp(x);
+    // 0d72:6758 retf
+    ctx.retf16(0)
+}
+
+pub fn x0d72_676b(ctx: &mut Context) -> Cont {
+    // 0d72:676b pop cx
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_cx(x);
+    // 0d72:676c push bp
+    ctx.push16(ctx.cpu.regs.get_bp());
+    // 0d72:676d mov bp,sp
+    ctx.cpu.regs.set_bp(ctx.cpu.regs.get_sp());
+    // 0d72:676f mov bx,sp
+    ctx.cpu.regs.set_bx(ctx.cpu.regs.get_sp());
+    // 0d72:6771 sub bx,ax
+    ctx.cpu.regs.set_bx(sub(
+        ctx.cpu.regs.get_bx(),
+        ctx.cpu.regs.get_ax(),
+        &mut ctx.cpu.flags,
+    ));
+    // 0d72:6773 jb short 677Fh
+    ctx.jb(Cont(x0d72_6775), Cont(x0d72_677f))
+}
+
+pub fn x0d72_6775(ctx: &mut Context) -> Cont {
+    // 0d72:6775 cmp bx,ds:[792h]
+    sub(
+        ctx.cpu.regs.get_bx(),
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x792u16)),
+        &mut ctx.cpu.flags,
+    );
+    // 0d72:6779 jb short 677Fh
+    ctx.jb(Cont(x0d72_677b), Cont(x0d72_677f))
+}
+
+pub fn x0d72_677b(ctx: &mut Context) -> Cont {
+    // 0d72:677b mov sp,bx
+    ctx.cpu.regs.set_sp(ctx.cpu.regs.get_bx());
+    // 0d72:677d jmp cx
+    ctx.indirect16((ctx.cpu.regs.cs, ctx.cpu.regs.get_cx()).into())
+}
+
+pub fn x0d72_677f(ctx: &mut Context) -> Cont {
+    // 0d72:677f push cs
+    ctx.push16(ctx.cpu.regs.get_cs());
+    // 0d72:6780 push cx
+    ctx.push16(ctx.cpu.regs.get_cx());
+    // 0d72:6781 jmp far ptr 0D72h:6B88h
+    ctx.cpu.regs.cs = 0xd72;
+    Cont(x0d72_6b88)
+}
+
+pub fn x0d72_67ff(ctx: &mut Context) -> Cont {
+    // 0d72:67ff push bp
+    ctx.push16(ctx.cpu.regs.get_bp());
+    // 0d72:6800 mov bp,sp
+    ctx.cpu.regs.set_bp(ctx.cpu.regs.get_sp());
+    // 0d72:6802 mov cx,[bp+6]
+    ctx.cpu.regs.set_cx(ctx.memory.read::<u16>(segofs(
+        ctx.cpu.regs.get_ss(),
+        ctx.cpu.regs.get_bp().wrapping_add(0x6u16),
+    )));
+    // 0d72:6805 mov dx,[bp+8]
+    ctx.cpu.regs.set_dx(ctx.memory.read::<u16>(segofs(
+        ctx.cpu.regs.get_ss(),
+        ctx.cpu.regs.get_bp().wrapping_add(0x8u16),
+    )));
+    // 0d72:6808 mov bx,[bp+0Ah]
+    ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
+        ctx.cpu.regs.get_ss(),
+        ctx.cpu.regs.get_bp().wrapping_add(0xau16),
+    )));
+    // 0d72:680b mov ah,40h
+    ctx.cpu.regs.set_ah(0x40u8);
+    // 0d72:680d call 687Bh
+    ctx.call16(0x6810, Cont(x0d72_687b))
+}
+
+pub fn x0d72_6810(ctx: &mut Context) -> Cont {
+    // 0d72:6810 mov sp,bp
+    ctx.cpu.regs.set_sp(ctx.cpu.regs.get_bp());
+    // 0d72:6812 pop bp
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_bp(x);
+    // 0d72:6813 retf 6
+    ctx.retf16(6)
+}
+
+pub fn x0d72_6871(ctx: &mut Context) -> Cont {
+    // 0d72:6871 mov ds:[805h],ax
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_ds(), 0x805u16),
+        ctx.cpu.regs.get_ax(),
+    );
+    // 0d72:6874 mov ax,0FFFFh
+    ctx.cpu.regs.set_ax(0xffffu16);
+    // 0d72:6877 mov dx,ax
+    ctx.cpu.regs.set_dx(ctx.cpu.regs.get_ax());
+    // 0d72:6879 jmp short 6885h
+    Cont(x0d72_6885)
+}
+
+pub fn x0d72_687b(ctx: &mut Context) -> Cont {
+    // 0d72:687b int 21h
+    dos::int(ctx, 0x687d, 0x21)
+}
+
+pub fn x0d72_687d(ctx: &mut Context) -> Cont {
+    // 0d72:687d jb short 6871h
+    ctx.jb(Cont(x0d72_687f), Cont(x0d72_6871))
+}
+
+pub fn x0d72_687f(ctx: &mut Context) -> Cont {
+    // 0d72:687f xor bx,bx
+    ctx.cpu.regs.set_bx(xor(
+        ctx.cpu.regs.get_bx(),
+        ctx.cpu.regs.get_bx(),
+        &mut ctx.cpu.flags,
+    ));
+    // 0d72:6881 mov ds:[805h],bx
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_ds(), 0x805u16),
+        ctx.cpu.regs.get_bx(),
+    );
+    Cont(x0d72_6885)
+}
+
+pub fn x0d72_6885(ctx: &mut Context) -> Cont {
+    // 0d72:6885 ret
+    ctx.ret16(0)
+}
+
+pub fn x0d72_6b88(ctx: &mut Context) -> Cont {
+    // 0d72:6b88 pop cx
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_cx(x);
+    // 0d72:6b89 pop dx
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_dx(x);
+    // 0d72:6b8a mov bx,sp
+    ctx.cpu.regs.set_bx(ctx.cpu.regs.get_sp());
+    // 0d72:6b8c sub bx,ax
+    ctx.cpu.regs.set_bx(sub(
+        ctx.cpu.regs.get_bx(),
+        ctx.cpu.regs.get_ax(),
+        &mut ctx.cpu.flags,
+    ));
+    // 0d72:6b8e jb short 6B9Bh
+    ctx.jb(Cont(x0d72_6b90), Cont(x0d72_6b9b))
+}
+
+pub fn x0d72_6b90(ctx: &mut Context) -> Cont {
+    // 0d72:6b90 cmp bx,ds:[792h]
+    sub(
+        ctx.cpu.regs.get_bx(),
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x792u16)),
+        &mut ctx.cpu.flags,
+    );
+    // 0d72:6b94 jb short 6B9Bh
+    ctx.jb(Cont(x0d72_6b96), Cont(x0d72_6b9b))
+}
+
+pub fn x0d72_6b96(ctx: &mut Context) -> Cont {
+    // 0d72:6b96 mov sp,bx
+    ctx.cpu.regs.set_sp(ctx.cpu.regs.get_bx());
+    // 0d72:6b98 push dx
+    ctx.push16(ctx.cpu.regs.get_dx());
+    // 0d72:6b99 push cx
+    ctx.push16(ctx.cpu.regs.get_cx());
+    // 0d72:6b9a retf
+    ctx.retf16(0)
+}
+
+pub fn x0d72_6b9b(ctx: &mut Context) -> Cont {
+    // 0d72:6b9b mov ax,ds:[78Eh]
+    ctx.cpu.regs.set_ax(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x78eu16)),
+    );
+    // 0d72:6b9e inc ax
+    ctx.cpu
+        .regs
+        .set_ax(inc(ctx.cpu.regs.get_ax(), &mut ctx.cpu.flags));
+    // 0d72:6b9f jne short 6BA6h
+    ctx.jne(Cont(x0d72_6ba1), Cont(x0d72_6ba6))
+}
+
+pub fn x0d72_6ba1(ctx: &mut Context) -> Cont {
+    // 0d72:6ba1 xor ax,ax
+    ctx.cpu.regs.set_ax(xor(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_ax(),
+        &mut ctx.cpu.flags,
+    ));
+    // 0d72:6ba3 jmp near ptr 6D29h
+    Cont(x0d72_6d29)
+}
+
+pub fn x0d72_6ba6(ctx: &mut Context) -> Cont {
+    // 0d72:6ba6 push dx
+    ctx.push16(ctx.cpu.regs.get_dx());
+    // 0d72:6ba7 push cx
+    ctx.push16(ctx.cpu.regs.get_cx());
+    // 0d72:6ba8 jmp dword ptr ds:[78Eh]
+    let addr = ctx
+        .memory
+        .read::<SegOfs>(segofs(ctx.cpu.regs.get_ds(), 0x78eu16));
+    ctx.cpu.regs.cs = addr.seg;
+    ctx.indirect16(addr)
+}
+
+pub fn x0d72_6d29(ctx: &mut Context) -> Cont {
+    // 0d72:6d29 push ax
+    ctx.push16(ctx.cpu.regs.get_ax());
+    // 0d72:6d2a call far ptr 0D72h:6ECCh
+    ctx.callf16(0x6d2f, 0xd72, Cont(x0d72_6ecc))
+}
+
+pub fn x0d72_6d2f(ctx: &mut Context) -> Cont {
+    // 0d72:6d2f call far ptr 0D72h:6F1Bh
+    ctx.callf16(0x6d34, 0xd72, Cont(x0d72_6f1b))
+}
+
+pub fn x0d72_6d34(ctx: &mut Context) -> Cont {
+    // 0d72:6d34 mov ax,0FFh
+    ctx.cpu.regs.set_ax(0xffu16);
+    // 0d72:6d37 push ax
+    ctx.push16(ctx.cpu.regs.get_ax());
+    // 0d72:6d38 push cs
+    ctx.push16(ctx.cpu.regs.get_cs());
+    // 0d72:6d39 call word ptr ds:[798h]
+    let addr = ctx
+        .memory
+        .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x798u16));
+    ctx.call16(0x6d3d, ctx.indirect16((ctx.cpu.regs.cs, addr).into()))
+}
+
+pub fn x0d72_6d3d(ctx: &mut Context) -> Cont {
+    // 0d72:6d3d add [bp+33h],dl
+    ctx.memory.write::<u8>(
+        segofs(
+            ctx.cpu.regs.get_ss(),
+            ctx.cpu.regs.get_bp().wrapping_add(0x33u16),
+        ),
+        add(
+            ctx.memory.read::<u8>(segofs(
+                ctx.cpu.regs.get_ss(),
+                ctx.cpu.regs.get_bp().wrapping_add(0x33u16),
+            )),
+            ctx.cpu.regs.get_dl(),
+            &mut ctx.cpu.flags,
+        ),
+    );
+    // 0d72:6d40 idiv byte ptr [bx+di+42h]
+    let x = ctx.cpu.regs.get_ax() as i16;
+    let y = ctx.memory.read::<u8>(segofs(
+        ctx.cpu.regs.get_ds(),
+        ctx.cpu
+            .regs
+            .get_bx()
+            .wrapping_add(ctx.cpu.regs.get_di())
+            .wrapping_add(0x42u16),
+    )) as i8 as i16;
+    ctx.cpu.regs.set_al((x / y) as i8 as u8);
+    ctx.cpu.regs.set_ah((x % y) as i8 as u8);
+    // 0d72:6d44 xor ah,ah
+    ctx.cpu.regs.set_ah(xor(
+        ctx.cpu.regs.get_ah(),
+        ctx.cpu.regs.get_ah(),
+        &mut ctx.cpu.flags,
+    ));
+    // 0d72:6d46 cld
+    cld(ctx);
+    Cont(x0d72_6d47)
+}
+
+pub fn x0d72_6d3e(ctx: &mut Context) -> Cont {
+    // 0d72:6d3e push si
+    ctx.push16(ctx.cpu.regs.get_si());
+    // 0d72:6d3f xor si,si
+    ctx.cpu.regs.set_si(xor(
+        ctx.cpu.regs.get_si(),
+        ctx.cpu.regs.get_si(),
+        &mut ctx.cpu.flags,
+    ));
+    // 0d72:6d41 mov cx,42h
+    ctx.cpu.regs.set_cx(0x42u16);
+    // 0d72:6d44 xor ah,ah
+    ctx.cpu.regs.set_ah(xor(
+        ctx.cpu.regs.get_ah(),
+        ctx.cpu.regs.get_ah(),
+        &mut ctx.cpu.flags,
+    ));
+    // 0d72:6d46 cld
+    cld(ctx);
+    Cont(x0d72_6d47)
+}
+
+pub fn x0d72_6d47(ctx: &mut Context) -> Cont {
+    // 0d72:6d47 lodsb
+    ctx.lodsb();
+    // 0d72:6d48 xor ah,al
+    ctx.cpu.regs.set_ah(xor(
+        ctx.cpu.regs.get_ah(),
+        ctx.cpu.regs.get_al(),
+        &mut ctx.cpu.flags,
+    ));
+    // 0d72:6d4a loop 6D47h
+    ctx.loop_(Cont(x0d72_6d4c), Cont(x0d72_6d47))
+}
+
+pub fn x0d72_6d4c(ctx: &mut Context) -> Cont {
+    // 0d72:6d4c xor ah,55h
+    ctx.cpu
+        .regs
+        .set_ah(xor(ctx.cpu.regs.get_ah(), 0x55u8, &mut ctx.cpu.flags));
+    // 0d72:6d4f je short 6D62h
+    ctx.je(Cont(x0d72_6d51), Cont(x0d72_6d62))
+}
+
+pub fn x0d72_6d51(ctx: &mut Context) -> Cont {
+    // 0d72:6d51 call far ptr 0D72h:6ECCh
+    ctx.callf16(0x6d56, 0xd72, Cont(x0d72_6ecc))
+}
+
+pub fn x0d72_6d56(ctx: &mut Context) -> Cont {
+    // 0d72:6d56 mov ax,1
+    ctx.cpu.regs.set_ax(0x1u16);
+    // 0d72:6d59 push ax
+    ctx.push16(ctx.cpu.regs.get_ax());
+    // 0d72:6d5a call far ptr 0D72h:6F1Bh
+    ctx.callf16(0x6d5f, 0xd72, Cont(x0d72_6f1b))
+}
+
+pub fn x0d72_6d5f(ctx: &mut Context) -> Cont {
+    // 0d72:6d5f mov ax,1
+    ctx.cpu.regs.set_ax(0x1u16);
+    Cont(x0d72_6d62)
+}
+
+pub fn x0d72_6d62(ctx: &mut Context) -> Cont {
+    // 0d72:6d62 pop si
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_si(x);
+    // 0d72:6d63 retf
+    ctx.retf16(0)
+}
+
+pub fn x0d72_6e28(ctx: &mut Context) -> Cont {
+    // 0d72:6e28 push bp
+    ctx.push16(ctx.cpu.regs.get_bp());
+    // 0d72:6e29 mov bp,sp
+    ctx.cpu.regs.set_bp(ctx.cpu.regs.get_sp());
+    // 0d72:6e2b mov si,2398h
+    ctx.cpu.regs.set_si(0x2398u16);
+    // 0d72:6e2e mov di,2398h
+    ctx.cpu.regs.set_di(0x2398u16);
+    // 0d72:6e31 call 6EB3h
+    ctx.call16(0x6e34, Cont(x0d72_6eb3))
+}
+
+pub fn x0d72_6e34(ctx: &mut Context) -> Cont {
+    // 0d72:6e34 mov si,1BC0h
+    ctx.cpu.regs.set_si(0x1bc0u16);
+    // 0d72:6e37 mov di,1BC0h
+    ctx.cpu.regs.set_di(0x1bc0u16);
+    // 0d72:6e3a call 6EB3h
+    ctx.call16(0x6e3d, Cont(x0d72_6eb3))
+}
+
+pub fn x0d72_6e3d(ctx: &mut Context) -> Cont {
+    // 0d72:6e3d jmp short 6E42h
+    Cont(x0d72_6e42)
+}
+
+pub fn x0d72_6e42(ctx: &mut Context) -> Cont {
+    // 0d72:6e42 mov si,1BAEh
+    ctx.cpu.regs.set_si(0x1baeu16);
+    // 0d72:6e45 mov di,1BB2h
+    ctx.cpu.regs.set_di(0x1bb2u16);
+    // 0d72:6e48 call 6EB3h
+    ctx.call16(0x6e4b, Cont(x0d72_6eb3))
+}
+
+pub fn x0d72_6e4b(ctx: &mut Context) -> Cont {
+    // 0d72:6e4b mov si,1BC0h
+    ctx.cpu.regs.set_si(0x1bc0u16);
+    // 0d72:6e4e mov di,1BC0h
+    ctx.cpu.regs.set_di(0x1bc0u16);
+    // 0d72:6e51 call 6EB3h
+    ctx.call16(0x6e54, Cont(x0d72_6eb3))
+}
+
+pub fn x0d72_6e54(ctx: &mut Context) -> Cont {
+    // 0d72:6e54 call far ptr 0D72h:6D3Eh
+    ctx.callf16(0x6e59, 0xd72, Cont(x0d72_6d3e))
+}
+
+pub fn x0d72_6e59(ctx: &mut Context) -> Cont {
+    // 0d72:6e59 or ax,ax
+    ctx.cpu.regs.set_ax(or(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_ax(),
+        &mut ctx.cpu.flags,
+    ));
+    // 0d72:6e5b je short 6E68h
+    ctx.je(Cont(x0d72_6e5d), Cont(x0d72_6e68))
+}
+
+pub fn x0d72_6e5d(ctx: &mut Context) -> Cont {
+    // 0d72:6e5d cmp word ptr [bp+6],0
+    sub(
+        ctx.memory.read::<u16>(segofs(
+            ctx.cpu.regs.get_ss(),
+            ctx.cpu.regs.get_bp().wrapping_add(0x6u16),
+        )),
+        0x0u16,
+        &mut ctx.cpu.flags,
+    );
+    // 0d72:6e61 jne short 6E68h
+    ctx.jne(Cont(x0d72_6e63), Cont(x0d72_6e68))
+}
+
+pub fn x0d72_6e63(ctx: &mut Context) -> Cont {
+    // 0d72:6e63 mov word ptr [bp+6],0FFh
+    ctx.memory.write::<u16>(
+        segofs(
+            ctx.cpu.regs.get_ss(),
+            ctx.cpu.regs.get_bp().wrapping_add(0x6u16),
+        ),
+        0xffu16,
+    );
+    Cont(x0d72_6e68)
+}
+
+pub fn x0d72_6e68(ctx: &mut Context) -> Cont {
+    // 0d72:6e68 mov cx,0Fh
+    ctx.cpu.regs.set_cx(0xfu16);
+    // 0d72:6e6b mov bx,5
+    ctx.cpu.regs.set_bx(0x5u16);
+    Cont(x0d72_6e6e)
+}
+
+pub fn x0d72_6e6e(ctx: &mut Context) -> Cont {
+    // 0d72:6e6e test byte ptr [bx+814h],1
+    and(
+        ctx.memory.read::<u8>(segofs(
+            ctx.cpu.regs.get_ds(),
+            ctx.cpu.regs.get_bx().wrapping_add(0x814u16),
+        )),
+        0x1u8,
+        &mut ctx.cpu.flags,
+    );
+    // 0d72:6e73 je short 6E79h
+    ctx.je(Cont(x0d72_6e75), Cont(x0d72_6e79))
+}
+
+pub fn x0d72_6e75(ctx: &mut Context) -> Cont {
+    // 0d72:6e75 mov ah,3Eh
+    ctx.cpu.regs.set_ah(0x3eu8);
+    // 0d72:6e77 int 21h
+    dos::int(ctx, 0x6e79, 0x21)
+}
+
+pub fn x0d72_6e79(ctx: &mut Context) -> Cont {
+    // 0d72:6e79 inc bx
+    ctx.cpu
+        .regs
+        .set_bx(inc(ctx.cpu.regs.get_bx(), &mut ctx.cpu.flags));
+    // 0d72:6e7a loop 6E6Eh
+    ctx.loop_(Cont(x0d72_6e7c), Cont(x0d72_6e6e))
+}
+
+pub fn x0d72_6e7c(ctx: &mut Context) -> Cont {
+    // 0d72:6e7c call 6E86h
+    ctx.call16(0x6e7f, Cont(x0d72_6e86))
+}
+
+pub fn x0d72_6e7f(ctx: &mut Context) -> Cont {
+    // 0d72:6e7f mov ax,[bp+6]
+    ctx.cpu.regs.set_ax(ctx.memory.read::<u16>(segofs(
+        ctx.cpu.regs.get_ss(),
+        ctx.cpu.regs.get_bp().wrapping_add(0x6u16),
+    )));
+    // 0d72:6e82 mov ah,4Ch
+    ctx.cpu.regs.set_ah(0x4cu8);
+    // 0d72:6e84 int 21h
+    dos::int(ctx, 0x6e86, 0x21)
+}
+
+pub fn x0d72_6e86(ctx: &mut Context) -> Cont {
+    // 0d72:6e86 mov cx,ds:[1BB6h]
+    ctx.cpu.regs.set_cx(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x1bb6u16)),
+    );
+    // 0d72:6e8a jcxz 6E93h
+    ctx.jcxz(Cont(x0d72_6e8c), Cont(x0d72_6e93))
+}
+
+pub fn x0d72_6e8c(ctx: &mut Context) -> Cont {
+    // 0d72:6e8c mov bx,2
+    ctx.cpu.regs.set_bx(0x2u16);
+    // 0d72:6e8f call dword ptr ds:[1BB4h]
+    let addr = ctx
+        .memory
+        .read::<SegOfs>(segofs(ctx.cpu.regs.get_ds(), 0x1bb4u16));
+    ctx.callf16(0x6e93, addr.seg, ctx.indirect16(addr))
+}
+
+pub fn x0d72_6e93(ctx: &mut Context) -> Cont {
+    // 0d72:6e93 push ds
+    ctx.push16(ctx.cpu.regs.get_ds());
+    // 0d72:6e94 lds dx,ds:[7F9h]
+    let ptr = ctx
+        .memory
+        .read::<u32>(segofs(ctx.cpu.regs.get_ds(), 0x7f9u16));
+    ctx.cpu.regs.ds = (ptr >> 16) as u16;
+    ctx.cpu.regs.set_dx(ptr as u16);
+    // 0d72:6e98 mov ax,2500h
+    ctx.cpu.regs.set_ax(0x2500u16);
+    // 0d72:6e9b int 21h
+    dos::int(ctx, 0x6e9d, 0x21)
+}
+
+pub fn x0d72_6e9d(ctx: &mut Context) -> Cont {
+    // 0d72:6e9d pop ds
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_ds(x);
+    // 0d72:6e9e cmp byte ptr ds:[83Ah],0
+    sub(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x83au16)),
+        0x0u8,
+        &mut ctx.cpu.flags,
+    );
+    // 0d72:6ea3 je short 6EB2h
+    ctx.je(Cont(x0d72_6ea5), Cont(x0d72_6eb2))
+}
+
+pub fn x0d72_6ea5(ctx: &mut Context) -> Cont {
+    // 0d72:6ea5 push ds
+    ctx.push16(ctx.cpu.regs.get_ds());
+    // 0d72:6ea6 mov al,ds:[83Bh]
+    ctx.cpu.regs.set_al(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x83bu16)),
+    );
+    // 0d72:6ea9 lds dx,ds:[83Ch]
+    let ptr = ctx
+        .memory
+        .read::<u32>(segofs(ctx.cpu.regs.get_ds(), 0x83cu16));
+    ctx.cpu.regs.ds = (ptr >> 16) as u16;
+    ctx.cpu.regs.set_dx(ptr as u16);
+    // 0d72:6ead mov ah,25h
+    ctx.cpu.regs.set_ah(0x25u8);
+    // 0d72:6eaf int 21h
+    dos::int(ctx, 0x6eb1, 0x21)
+}
+
+pub fn x0d72_6eb1(ctx: &mut Context) -> Cont {
+    // 0d72:6eb1 pop ds
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_ds(x);
+    Cont(x0d72_6eb2)
+}
+
+pub fn x0d72_6eb2(ctx: &mut Context) -> Cont {
+    // 0d72:6eb2 ret
+    ctx.ret16(0)
+}
+
+pub fn x0d72_6eb3(ctx: &mut Context) -> Cont {
+    // 0d72:6eb3 cmp si,di
+    sub(
+        ctx.cpu.regs.get_si(),
+        ctx.cpu.regs.get_di(),
+        &mut ctx.cpu.flags,
+    );
+    // 0d72:6eb5 jae short 6EC5h
+    ctx.jae(Cont(x0d72_6eb7), Cont(x0d72_6ec5))
+}
+
+pub fn x0d72_6eb7(ctx: &mut Context) -> Cont {
+    // 0d72:6eb7 sub di,4
+    ctx.cpu
+        .regs
+        .set_di(sub(ctx.cpu.regs.get_di(), 0x4u16, &mut ctx.cpu.flags));
+    // 0d72:6eba mov ax,[di]
+    ctx.cpu.regs.set_ax(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_di())),
+    );
+    // 0d72:6ebc or ax,[di+2]
+    ctx.cpu.regs.set_ax(or(
+        ctx.cpu.regs.get_ax(),
+        ctx.memory.read::<u16>(segofs(
+            ctx.cpu.regs.get_ds(),
+            ctx.cpu.regs.get_di().wrapping_add(0x2u16),
+        )),
+        &mut ctx.cpu.flags,
+    ));
+    // 0d72:6ebf je short 6EB3h
+    ctx.je(Cont(x0d72_6ec1), Cont(x0d72_6eb3))
+}
+
+pub fn x0d72_6ec1(ctx: &mut Context) -> Cont {
+    // 0d72:6ec1 call dword ptr [di]
+    let addr = ctx
+        .memory
+        .read::<SegOfs>(segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_di()));
+    ctx.callf16(0x6ec3, addr.seg, ctx.indirect16(addr))
+}
+
+pub fn x0d72_6ec3(ctx: &mut Context) -> Cont {
+    // 0d72:6ec3 jmp short 6EB3h
+    Cont(x0d72_6eb3)
+}
+
+pub fn x0d72_6ec5(ctx: &mut Context) -> Cont {
+    // 0d72:6ec5 ret
+    ctx.ret16(0)
+}
+
+pub fn x0d72_6ecc(ctx: &mut Context) -> Cont {
+    // 0d72:6ecc push bp
+    ctx.push16(ctx.cpu.regs.get_bp());
+    // 0d72:6ecd mov bp,sp
+    ctx.cpu.regs.set_bp(ctx.cpu.regs.get_sp());
+    // 0d72:6ecf mov ax,0FCh
+    ctx.cpu.regs.set_ax(0xfcu16);
+    // 0d72:6ed2 push ax
+    ctx.push16(ctx.cpu.regs.get_ax());
+    // 0d72:6ed3 call far ptr 0D72h:6F1Bh
+    ctx.callf16(0x6ed8, 0xd72, Cont(x0d72_6f1b))
+}
+
+pub fn x0d72_6ed8(ctx: &mut Context) -> Cont {
+    // 0d72:6ed8 cmp word ptr ds:[842h],0
+    sub(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x842u16)),
+        0x0u16,
+        &mut ctx.cpu.flags,
+    );
+    // 0d72:6edd je short 6EE3h
+    ctx.je(Cont(x0d72_6edf), Cont(x0d72_6ee3))
+}
+
+pub fn x0d72_6edf(ctx: &mut Context) -> Cont {
+    // 0d72:6edf call dword ptr ds:[840h]
+    let addr = ctx
+        .memory
+        .read::<SegOfs>(segofs(ctx.cpu.regs.get_ds(), 0x840u16));
+    ctx.callf16(0x6ee3, addr.seg, ctx.indirect16(addr))
+}
+
+pub fn x0d72_6ee3(ctx: &mut Context) -> Cont {
+    // 0d72:6ee3 mov ax,0FFh
+    ctx.cpu.regs.set_ax(0xffu16);
+    // 0d72:6ee6 push ax
+    ctx.push16(ctx.cpu.regs.get_ax());
+    // 0d72:6ee7 call far ptr 0D72h:6F1Bh
+    ctx.callf16(0x6eec, 0xd72, Cont(x0d72_6f1b))
+}
+
+pub fn x0d72_6eec(ctx: &mut Context) -> Cont {
+    // 0d72:6eec mov sp,bp
+    ctx.cpu.regs.set_sp(ctx.cpu.regs.get_bp());
+    // 0d72:6eee pop bp
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_bp(x);
+    // 0d72:6eef retf
+    ctx.retf16(0)
+}
+
+pub fn x0d72_6ef0(ctx: &mut Context) -> Cont {
+    // 0d72:6ef0 push bp
+    ctx.push16(ctx.cpu.regs.get_bp());
+    // 0d72:6ef1 mov bp,sp
+    ctx.cpu.regs.set_bp(ctx.cpu.regs.get_sp());
+    // 0d72:6ef3 push si
+    ctx.push16(ctx.cpu.regs.get_si());
+    // 0d72:6ef4 push di
+    ctx.push16(ctx.cpu.regs.get_di());
+    // 0d72:6ef5 push ds
+    ctx.push16(ctx.cpu.regs.get_ds());
+    // 0d72:6ef6 pop es
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_es(x);
+    // 0d72:6ef7 mov dx,[bp+6]
+    ctx.cpu.regs.set_dx(ctx.memory.read::<u16>(segofs(
+        ctx.cpu.regs.get_ss(),
+        ctx.cpu.regs.get_bp().wrapping_add(0x6u16),
+    )));
+    // 0d72:6efa mov si,22C6h
+    ctx.cpu.regs.set_si(0x22c6u16);
+    Cont(x0d72_6efd)
+}
+
+pub fn x0d72_6efd(ctx: &mut Context) -> Cont {
+    // 0d72:6efd lodsw
+    ctx.lodsw();
+    // 0d72:6efe cmp ax,dx
+    sub(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_dx(),
+        &mut ctx.cpu.flags,
+    );
+    // 0d72:6f00 je short 6F12h
+    ctx.je(Cont(x0d72_6f02), Cont(x0d72_6f12))
+}
+
+pub fn x0d72_6f02(ctx: &mut Context) -> Cont {
+    // 0d72:6f02 inc ax
+    ctx.cpu
+        .regs
+        .set_ax(inc(ctx.cpu.regs.get_ax(), &mut ctx.cpu.flags));
+    // 0d72:6f03 xchg si,ax
+    let t = ctx.cpu.regs.get_si();
+    ctx.cpu.regs.set_si(ctx.cpu.regs.get_ax());
+    ctx.cpu.regs.set_ax(t);
+    // 0d72:6f04 je short 6F12h
+    ctx.je(Cont(x0d72_6f06), Cont(x0d72_6f12))
+}
+
+pub fn x0d72_6f06(ctx: &mut Context) -> Cont {
+    // 0d72:6f06 xchg di,ax
+    let t = ctx.cpu.regs.get_di();
+    ctx.cpu.regs.set_di(ctx.cpu.regs.get_ax());
+    ctx.cpu.regs.set_ax(t);
+    // 0d72:6f07 xor ax,ax
+    ctx.cpu.regs.set_ax(xor(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_ax(),
+        &mut ctx.cpu.flags,
+    ));
+    // 0d72:6f09 mov cx,0FFFFh
+    ctx.cpu.regs.set_cx(0xffffu16);
+    // 0d72:6f0c repne scasb
+    ctx.rep(Rep::REPNE, Context::scasb);
+    // 0d72:6f0e mov si,di
+    ctx.cpu.regs.set_si(ctx.cpu.regs.get_di());
+    // 0d72:6f10 jmp short 6EFDh
+    Cont(x0d72_6efd)
+}
+
+pub fn x0d72_6f12(ctx: &mut Context) -> Cont {
+    // 0d72:6f12 xchg si,ax
+    let t = ctx.cpu.regs.get_si();
+    ctx.cpu.regs.set_si(ctx.cpu.regs.get_ax());
+    ctx.cpu.regs.set_ax(t);
+    // 0d72:6f13 pop di
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_di(x);
+    // 0d72:6f14 pop si
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_si(x);
+    // 0d72:6f15 mov sp,bp
+    ctx.cpu.regs.set_sp(ctx.cpu.regs.get_bp());
+    // 0d72:6f17 pop bp
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_bp(x);
+    // 0d72:6f18 retf 2
+    ctx.retf16(2)
+}
+
+pub fn x0d72_6f1b(ctx: &mut Context) -> Cont {
+    // 0d72:6f1b push bp
+    ctx.push16(ctx.cpu.regs.get_bp());
+    // 0d72:6f1c mov bp,sp
+    ctx.cpu.regs.set_bp(ctx.cpu.regs.get_sp());
+    // 0d72:6f1e push di
+    ctx.push16(ctx.cpu.regs.get_di());
+    // 0d72:6f1f push word ptr [bp+6]
+    ctx.push16(ctx.memory.read::<u16>(segofs(
+        ctx.cpu.regs.get_ss(),
+        ctx.cpu.regs.get_bp().wrapping_add(0x6u16),
+    )));
+    // 0d72:6f22 call far ptr 0D72h:6EF0h
+    ctx.callf16(0x6f27, 0xd72, Cont(x0d72_6ef0))
+}
+
+pub fn x0d72_6f27(ctx: &mut Context) -> Cont {
+    // 0d72:6f27 or ax,ax
+    ctx.cpu.regs.set_ax(or(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_ax(),
+        &mut ctx.cpu.flags,
+    ));
+    // 0d72:6f29 je short 6F3Fh
+    ctx.je(Cont(x0d72_6f2b), Cont(x0d72_6f3f))
+}
+
+pub fn x0d72_6f2b(ctx: &mut Context) -> Cont {
+    // 0d72:6f2b xchg dx,ax
+    let t = ctx.cpu.regs.get_dx();
+    ctx.cpu.regs.set_dx(ctx.cpu.regs.get_ax());
+    ctx.cpu.regs.set_ax(t);
+    // 0d72:6f2c mov di,dx
+    ctx.cpu.regs.set_di(ctx.cpu.regs.get_dx());
+    // 0d72:6f2e xor ax,ax
+    ctx.cpu.regs.set_ax(xor(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_ax(),
+        &mut ctx.cpu.flags,
+    ));
+    // 0d72:6f30 mov cx,0FFFFh
+    ctx.cpu.regs.set_cx(0xffffu16);
+    // 0d72:6f33 repne scasb
+    ctx.rep(Rep::REPNE, Context::scasb);
+    // 0d72:6f35 not cx
+    ctx.cpu.regs.set_cx(!ctx.cpu.regs.get_cx());
+    // 0d72:6f37 dec cx
+    ctx.cpu
+        .regs
+        .set_cx(dec(ctx.cpu.regs.get_cx(), &mut ctx.cpu.flags));
+    // 0d72:6f38 mov bx,2
+    ctx.cpu.regs.set_bx(0x2u16);
+    // 0d72:6f3b mov ah,40h
+    ctx.cpu.regs.set_ah(0x40u8);
+    // 0d72:6f3d int 21h
+    dos::int(ctx, 0x6f3f, 0x21)
+}
+
+pub fn x0d72_6f3f(ctx: &mut Context) -> Cont {
+    // 0d72:6f3f pop di
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_di(x);
+    // 0d72:6f40 mov sp,bp
+    ctx.cpu.regs.set_sp(ctx.cpu.regs.get_bp());
+    // 0d72:6f42 pop bp
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_bp(x);
+    // 0d72:6f43 retf 2
+    ctx.retf16(2)
+}
+
+pub fn x1483_013e(ctx: &mut Context) -> Cont {
+    // 1483:013e push bp
+    ctx.push16(ctx.cpu.regs.get_bp());
+    // 1483:013f push ds
+    ctx.push16(ctx.cpu.regs.get_ds());
+    // 1483:0140 push es
+    ctx.push16(ctx.cpu.regs.get_es());
+    // 1483:0141 mov bp,sp
+    ctx.cpu.regs.set_bp(ctx.cpu.regs.get_sp());
+    // 1483:0143 cld
+    cld(ctx);
+    // 1483:0144 mov ax,30F7h
+    ctx.cpu.regs.set_ax(0x30f7u16);
+    // 1483:0147 mov ds,ax
+    ctx.cpu.regs.set_ds(ctx.cpu.regs.get_ax());
+    // 1483:0149 mov ax,[bp+0Eh]
+    ctx.cpu.regs.set_ax(ctx.memory.read::<u16>(segofs(
+        ctx.cpu.regs.get_ss(),
+        ctx.cpu.regs.get_bp().wrapping_add(0xeu16),
+    )));
+    // 1483:014c or ax,ax
+    ctx.cpu.regs.set_ax(or(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_ax(),
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:014e jns short 0152h
+    ctx.jns(Cont(x1483_0150), Cont(x1483_0152))
+}
+
+pub fn x1483_0150(ctx: &mut Context) -> Cont {
+    // 1483:0150 xor ax,ax
+    ctx.cpu.regs.set_ax(xor(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_ax(),
+        &mut ctx.cpu.flags,
+    ));
+    Cont(x1483_0152)
+}
+
+pub fn x1483_0152(ctx: &mut Context) -> Cont {
+    // 1483:0152 cmp ax,9
+    sub(ctx.cpu.regs.get_ax(), 0x9u16, &mut ctx.cpu.flags);
+    // 1483:0155 jle short 015Ah
+    ctx.jle(Cont(x1483_0157), Cont(x1483_015a))
+}
+
+pub fn x1483_0157(ctx: &mut Context) -> Cont {
+    // 1483:0157 mov ax,9
+    ctx.cpu.regs.set_ax(0x9u16);
+    Cont(x1483_015a)
+}
+
+pub fn x1483_015a(ctx: &mut Context) -> Cont {
+    // 1483:015a mov ds:[0A60h],ax
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_ds(), 0xa60u16),
+        ctx.cpu.regs.get_ax(),
+    );
+    // 1483:015d mov ax,[bp+0Ch]
+    ctx.cpu.regs.set_ax(ctx.memory.read::<u16>(segofs(
+        ctx.cpu.regs.get_ss(),
+        ctx.cpu.regs.get_bp().wrapping_add(0xcu16),
+    )));
+    // 1483:0160 or ax,ax
+    ctx.cpu.regs.set_ax(or(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_ax(),
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:0162 jns short 0166h
+    ctx.jns(Cont(x1483_0164), Cont(x1483_0166))
+}
+
+pub fn x1483_0164(ctx: &mut Context) -> Cont {
+    // 1483:0164 xor ax,ax
+    ctx.cpu.regs.set_ax(xor(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_ax(),
+        &mut ctx.cpu.flags,
+    ));
+    Cont(x1483_0166)
+}
+
+pub fn x1483_0166(ctx: &mut Context) -> Cont {
+    // 1483:0166 cmp ax,9
+    sub(ctx.cpu.regs.get_ax(), 0x9u16, &mut ctx.cpu.flags);
+    // 1483:0169 jle short 016Eh
+    ctx.jle(Cont(x1483_016b), Cont(x1483_016e))
+}
+
+pub fn x1483_016b(ctx: &mut Context) -> Cont {
+    // 1483:016b mov ax,9
+    ctx.cpu.regs.set_ax(0x9u16);
+    Cont(x1483_016e)
+}
+
+pub fn x1483_016e(ctx: &mut Context) -> Cont {
+    // 1483:016e mov ds:[0A62h],ax
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_ds(), 0xa62u16),
+        ctx.cpu.regs.get_ax(),
+    );
+    // 1483:0171 mov ax,[bp+0Ah]
+    ctx.cpu.regs.set_ax(ctx.memory.read::<u16>(segofs(
+        ctx.cpu.regs.get_ss(),
+        ctx.cpu.regs.get_bp().wrapping_add(0xau16),
+    )));
+    // 1483:0174 or ax,ax
+    ctx.cpu.regs.set_ax(or(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_ax(),
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:0176 jns short 017Ah
+    ctx.jns(Cont(x1483_0178), Cont(x1483_017a))
+}
+
+pub fn x1483_0178(ctx: &mut Context) -> Cont {
+    // 1483:0178 sub ax,ax
+    ctx.cpu.regs.set_ax(sub(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_ax(),
+        &mut ctx.cpu.flags,
+    ));
+    Cont(x1483_017a)
+}
+
+pub fn x1483_017a(ctx: &mut Context) -> Cont {
+    // 1483:017a cmp ax,9
+    sub(ctx.cpu.regs.get_ax(), 0x9u16, &mut ctx.cpu.flags);
+    // 1483:017d jle short 0182h
+    ctx.jle(Cont(x1483_017f), Cont(x1483_0182))
+}
+
+pub fn x1483_017f(ctx: &mut Context) -> Cont {
+    // 1483:017f mov ax,9
+    ctx.cpu.regs.set_ax(0x9u16);
+    Cont(x1483_0182)
+}
+
+pub fn x1483_0182(ctx: &mut Context) -> Cont {
+    // 1483:0182 mov ds:[0A64h],ax
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_ds(), 0xa64u16),
+        ctx.cpu.regs.get_ax(),
+    );
+    // 1483:0185 mov ax,[bp+10h]
+    ctx.cpu.regs.set_ax(ctx.memory.read::<u16>(segofs(
+        ctx.cpu.regs.get_ss(),
+        ctx.cpu.regs.get_bp().wrapping_add(0x10u16),
+    )));
+    // 1483:0188 xor ah,ah
+    ctx.cpu.regs.set_ah(xor(
+        ctx.cpu.regs.get_ah(),
+        ctx.cpu.regs.get_ah(),
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:018a or al,al
+    ctx.cpu.regs.set_al(or(
+        ctx.cpu.regs.get_al(),
+        ctx.cpu.regs.get_al(),
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:018c je short 0191h
+    ctx.je(Cont(x1483_018e), Cont(x1483_0191))
+}
+
+pub fn x1483_018e(ctx: &mut Context) -> Cont {
+    // 1483:018e mov ax,1
+    ctx.cpu.regs.set_ax(0x1u16);
+    Cont(x1483_0191)
+}
+
+pub fn x1483_0191(ctx: &mut Context) -> Cont {
+    // 1483:0191 mov ds:[0A66h],ax
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_ds(), 0xa66u16),
+        ctx.cpu.regs.get_ax(),
+    );
+    // 1483:0194 les si,[bp+12h]
+    let ptr = ctx.memory.read::<u32>(segofs(
+        ctx.cpu.regs.get_ss(),
+        ctx.cpu.regs.get_bp().wrapping_add(0x12u16),
+    ));
+    ctx.cpu.regs.es = (ptr >> 16) as u16;
+    ctx.cpu.regs.set_si(ptr as u16);
+    // 1483:0197 lods byte ptr es:[si]
+    ctx.lodsb();
+    // 1483:0199 xor ah,ah
+    ctx.cpu.regs.set_ah(xor(
+        ctx.cpu.regs.get_ah(),
+        ctx.cpu.regs.get_ah(),
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:019b or ax,ax
+    ctx.cpu.regs.set_ax(or(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_ax(),
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:019d jne short 01A2h
+    ctx.jne(Cont(x1483_019f), Cont(x1483_01a2))
+}
+
+pub fn x1483_019f(ctx: &mut Context) -> Cont {
+    // 1483:019f jmp near ptr 051Dh
+    Cont(x1483_051d)
+}
+
+pub fn x1483_01a2(ctx: &mut Context) -> Cont {
+    // 1483:01a2 mov word ptr ds:[0A72h],0
+    ctx.memory
+        .write::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xa72u16), 0x0u16);
+    // 1483:01a8 mov word ptr ds:[0A70h],0
+    ctx.memory
+        .write::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xa70u16), 0x0u16);
+    // 1483:01ae mov ds:[0A74h],ax
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_ds(), 0xa74u16),
+        ctx.cpu.regs.get_ax(),
+    );
+    // 1483:01b1 xor ch,ch
+    ctx.cpu.regs.set_ch(xor(
+        ctx.cpu.regs.get_ch(),
+        ctx.cpu.regs.get_ch(),
+        &mut ctx.cpu.flags,
+    ));
+    Cont(x1483_01b3)
+}
+
+pub fn x1483_01b3(ctx: &mut Context) -> Cont {
+    // 1483:01b3 inc word ptr ds:[0A72h]
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_ds(), 0xa72u16),
+        inc(
+            ctx.memory
+                .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xa72u16)),
+            &mut ctx.cpu.flags,
+        ),
+    );
+    // 1483:01b7 mov ax,ds:[0A72h]
+    ctx.cpu.regs.set_ax(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xa72u16)),
+    );
+    // 1483:01ba cmp ax,ds:[0A74h]
+    sub(
+        ctx.cpu.regs.get_ax(),
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xa74u16)),
+        &mut ctx.cpu.flags,
+    );
+    // 1483:01be jbe short 01C3h
+    ctx.jbe(Cont(x1483_01c0), Cont(x1483_01c3))
+}
+
+pub fn x1483_01c0(ctx: &mut Context) -> Cont {
+    // 1483:01c0 jmp near ptr 02F6h
+    Cont(x1483_02f6)
+}
+
+pub fn x1483_01c3(ctx: &mut Context) -> Cont {
+    // 1483:01c3 lods byte ptr es:[si]
+    ctx.lodsb();
+    // 1483:01c5 cmp al,7Eh
+    sub(ctx.cpu.regs.get_al(), 0x7eu8, &mut ctx.cpu.flags);
+    // 1483:01c7 jbe short 01CCh
+    ctx.jbe(Cont(x1483_01c9), Cont(x1483_01cc))
+}
+
+pub fn x1483_01c9(ctx: &mut Context) -> Cont {
+    // 1483:01c9 jmp near ptr 029Fh
+    Cont(x1483_029f)
+}
+
+pub fn x1483_01cc(ctx: &mut Context) -> Cont {
+    // 1483:01cc cmp al,20h
+    sub(ctx.cpu.regs.get_al(), 0x20u8, &mut ctx.cpu.flags);
+    // 1483:01ce ja short 01D5h
+    ctx.ja(Cont(x1483_01d0), Cont(x1483_01d5))
+}
+
+pub fn x1483_01d0(ctx: &mut Context) -> Cont {
+    // 1483:01d0 mov al,20h
+    ctx.cpu.regs.set_al(0x20u8);
+    // 1483:01d2 jmp near ptr 02DCh
+    Cont(x1483_02dc)
+}
+
+pub fn x1483_01d5(ctx: &mut Context) -> Cont {
+    // 1483:01d5 cmp al,41h
+    sub(ctx.cpu.regs.get_al(), 0x41u8, &mut ctx.cpu.flags);
+    // 1483:01d7 jge short 01DCh
+    ctx.jge(Cont(x1483_01d9), Cont(x1483_01dc))
+}
+
+pub fn x1483_01d9(ctx: &mut Context) -> Cont {
+    // 1483:01d9 jmp near ptr 02DCh
+    Cont(x1483_02dc)
+}
+
+pub fn x1483_01dc(ctx: &mut Context) -> Cont {
+    // 1483:01dc cmp al,5Ah
+    sub(ctx.cpu.regs.get_al(), 0x5au8, &mut ctx.cpu.flags);
+    // 1483:01de jle short 0203h
+    ctx.jle(Cont(x1483_01e0), Cont(x1483_0203))
+}
+
+pub fn x1483_01e0(ctx: &mut Context) -> Cont {
+    // 1483:01e0 cmp al,6Ah
+    sub(ctx.cpu.regs.get_al(), 0x6au8, &mut ctx.cpu.flags);
+    // 1483:01e2 je short 01E7h
+    ctx.je(Cont(x1483_01e4), Cont(x1483_01e7))
+}
+
+pub fn x1483_01e4(ctx: &mut Context) -> Cont {
+    // 1483:01e4 jmp near ptr 02DCh
+    Cont(x1483_02dc)
+}
+
+pub fn x1483_01e7(ctx: &mut Context) -> Cont {
+    // 1483:01e7 inc word ptr ds:[0A70h]
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_ds(), 0xa70u16),
+        inc(
+            ctx.memory
+                .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xa70u16)),
+            &mut ctx.cpu.flags,
+        ),
+    );
+    // 1483:01eb mov di,ds:[0A70h]
+    ctx.cpu.regs.set_di(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xa70u16)),
+    );
+    // 1483:01ef mov byte ptr [di+860h],13h
+    ctx.memory.write::<u8>(
+        segofs(
+            ctx.cpu.regs.get_ds(),
+            ctx.cpu.regs.get_di().wrapping_add(0x860u16),
+        ),
+        0x13u8,
+    );
+    // 1483:01f4 inc word ptr ds:[0A70h]
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_ds(), 0xa70u16),
+        inc(
+            ctx.memory
+                .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xa70u16)),
+            &mut ctx.cpu.flags,
+        ),
+    );
+    // 1483:01f8 mov di,ds:[0A70h]
+    ctx.cpu.regs.set_di(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xa70u16)),
+    );
+    // 1483:01fc mov byte ptr [di+860h],1Ch
+    ctx.memory.write::<u8>(
+        segofs(
+            ctx.cpu.regs.get_ds(),
+            ctx.cpu.regs.get_di().wrapping_add(0x860u16),
+        ),
+        0x1cu8,
+    );
+    // 1483:0201 jmp short 01B3h
+    Cont(x1483_01b3)
+}
+
+pub fn x1483_0203(ctx: &mut Context) -> Cont {
+    // 1483:0203 cmp al,42h
+    sub(ctx.cpu.regs.get_al(), 0x42u8, &mut ctx.cpu.flags);
+    // 1483:0205 jne short 020Ch
+    ctx.jne(Cont(x1483_0207), Cont(x1483_020c))
+}
+
+pub fn x1483_0207(ctx: &mut Context) -> Cont {
+    // 1483:0207 mov al,56h
+    ctx.cpu.regs.set_al(0x56u8);
+    // 1483:0209 jmp near ptr 02DCh
+    Cont(x1483_02dc)
+}
+
+pub fn x1483_020c(ctx: &mut Context) -> Cont {
+    // 1483:020c cmp al,54h
+    sub(ctx.cpu.regs.get_al(), 0x54u8, &mut ctx.cpu.flags);
+    // 1483:020e jne short 0224h
+    ctx.jne(Cont(x1483_0210), Cont(x1483_0224))
+}
+
+pub fn x1483_0210(ctx: &mut Context) -> Cont {
+    // 1483:0210 cmp byte ptr es:[si],48h
+    sub(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_es(), ctx.cpu.regs.get_si())),
+        0x48u8,
+        &mut ctx.cpu.flags,
+    );
+    // 1483:0214 je short 0221h
+    ctx.je(Cont(x1483_0216), Cont(x1483_0221))
+}
+
+pub fn x1483_0216(ctx: &mut Context) -> Cont {
+    // 1483:0216 cmp byte ptr es:[si],58h
+    sub(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_es(), ctx.cpu.regs.get_si())),
+        0x58u8,
+        &mut ctx.cpu.flags,
+    );
+    // 1483:021a je short 0221h
+    ctx.je(Cont(x1483_021c), Cont(x1483_0221))
+}
+
+pub fn x1483_021c(ctx: &mut Context) -> Cont {
+    // 1483:021c mov al,57h
+    ctx.cpu.regs.set_al(0x57u8);
+    // 1483:021e jmp near ptr 02DCh
+    Cont(x1483_02dc)
+}
+
+pub fn x1483_0221(ctx: &mut Context) -> Cont {
+    // 1483:0221 jmp near ptr 02A5h
+    Cont(x1483_02a5)
+}
+
+pub fn x1483_0224(ctx: &mut Context) -> Cont {
+    // 1483:0224 cmp al,53h
+    sub(ctx.cpu.regs.get_al(), 0x53u8, &mut ctx.cpu.flags);
+    // 1483:0226 jne short 0237h
+    ctx.jne(Cont(x1483_0228), Cont(x1483_0237))
+}
+
+pub fn x1483_0228(ctx: &mut Context) -> Cont {
+    // 1483:0228 cmp byte ptr es:[si],48h
+    sub(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_es(), ctx.cpu.regs.get_si())),
+        0x48u8,
+        &mut ctx.cpu.flags,
+    );
+    // 1483:022c je short 02A5h
+    ctx.je(Cont(x1483_022e), Cont(x1483_02a5))
+}
+
+pub fn x1483_022e(ctx: &mut Context) -> Cont {
+    // 1483:022e call 0544h
+    ctx.call16(0x231, Cont(x1483_0544))
+}
+
+pub fn x1483_0231(ctx: &mut Context) -> Cont {
+    // 1483:0231 add ax,41h
+    ctx.cpu
+        .regs
+        .set_ax(add(ctx.cpu.regs.get_ax(), 0x41u16, &mut ctx.cpu.flags));
+    // 1483:0234 jmp near ptr 02DCh
+    Cont(x1483_02dc)
+}
+
+pub fn x1483_0237(ctx: &mut Context) -> Cont {
+    // 1483:0237 cmp al,44h
+    sub(ctx.cpu.regs.get_al(), 0x44u8, &mut ctx.cpu.flags);
+    // 1483:0239 jne short 0258h
+    ctx.jne(Cont(x1483_023b), Cont(x1483_0258))
+}
+
+pub fn x1483_023b(ctx: &mut Context) -> Cont {
+    // 1483:023b cmp byte ptr es:[si],48h
+    sub(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_es(), ctx.cpu.regs.get_si())),
+        0x48u8,
+        &mut ctx.cpu.flags,
+    );
+    // 1483:023f je short 02A5h
+    ctx.je(Cont(x1483_0241), Cont(x1483_02a5))
+}
+
+pub fn x1483_0241(ctx: &mut Context) -> Cont {
+    // 1483:0241 cmp byte ptr es:[si],58h
+    sub(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_es(), ctx.cpu.regs.get_si())),
+        0x58u8,
+        &mut ctx.cpu.flags,
+    );
+    // 1483:0245 je short 02A5h
+    ctx.je(Cont(x1483_0247), Cont(x1483_02a5))
+}
+
+pub fn x1483_0247(ctx: &mut Context) -> Cont {
+    // 1483:0247 cmp byte ptr es:[si],30h
+    sub(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_es(), ctx.cpu.regs.get_si())),
+        0x30u8,
+        &mut ctx.cpu.flags,
+    );
+    // 1483:024b jb short 029Fh
+    ctx.jb(Cont(x1483_024d), Cont(x1483_029f))
+}
+
+pub fn x1483_024d(ctx: &mut Context) -> Cont {
+    // 1483:024d cmp byte ptr es:[si],39h
+    sub(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_es(), ctx.cpu.regs.get_si())),
+        0x39u8,
+        &mut ctx.cpu.flags,
+    );
+    // 1483:0251 ja short 029Fh
+    ctx.ja(Cont(x1483_0253), Cont(x1483_029f))
+}
+
+pub fn x1483_0253(ctx: &mut Context) -> Cont {
+    // 1483:0253 mov al,55h
+    ctx.cpu.regs.set_al(0x55u8);
+    // 1483:0255 jmp near ptr 02DCh
+    Cont(x1483_02dc)
+}
+
+pub fn x1483_0258(ctx: &mut Context) -> Cont {
+    // 1483:0258 cmp al,56h
+    sub(ctx.cpu.regs.get_al(), 0x56u8, &mut ctx.cpu.flags);
+    // 1483:025a jne short 0264h
+    ctx.jne(Cont(x1483_025c), Cont(x1483_0264))
+}
+
+pub fn x1483_025c(ctx: &mut Context) -> Cont {
+    // 1483:025c call 0544h
+    ctx.call16(0x25f, Cont(x1483_0544))
+}
+
+pub fn x1483_025f(ctx: &mut Context) -> Cont {
+    // 1483:025f add ax,4Bh
+    ctx.cpu
+        .regs
+        .set_ax(add(ctx.cpu.regs.get_ax(), 0x4bu16, &mut ctx.cpu.flags));
+    // 1483:0262 jmp short 02DCh
+    Cont(x1483_02dc)
+}
+
+pub fn x1483_0264(ctx: &mut Context) -> Cont {
+    // 1483:0264 cmp al,43h
+    sub(ctx.cpu.regs.get_al(), 0x43u8, &mut ctx.cpu.flags);
+    // 1483:0266 jne short 027Fh
+    ctx.jne(Cont(x1483_0268), Cont(x1483_027f))
+}
+
+pub fn x1483_0268(ctx: &mut Context) -> Cont {
+    // 1483:0268 cmp byte ptr es:[si],48h
+    sub(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_es(), ctx.cpu.regs.get_si())),
+        0x48u8,
+        &mut ctx.cpu.flags,
+    );
+    // 1483:026c jne short 02A5h
+    ctx.jne(Cont(x1483_026e), Cont(x1483_02a5))
+}
+
+pub fn x1483_026e(ctx: &mut Context) -> Cont {
+    // 1483:026e inc word ptr ds:[0A70h]
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_ds(), 0xa70u16),
+        inc(
+            ctx.memory
+                .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xa70u16)),
+            &mut ctx.cpu.flags,
+        ),
+    );
+    // 1483:0272 mov di,ds:[0A70h]
+    ctx.cpu.regs.set_di(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xa70u16)),
+    );
+    // 1483:0276 mov byte ptr [di+860h],0Dh
+    ctx.memory.write::<u8>(
+        segofs(
+            ctx.cpu.regs.get_ds(),
+            ctx.cpu.regs.get_di().wrapping_add(0x860u16),
+        ),
+        0xdu8,
+    );
+    // 1483:027b mov al,53h
+    ctx.cpu.regs.set_al(0x53u8);
+    // 1483:027d jmp short 02A5h
+    Cont(x1483_02a5)
+}
+
+pub fn x1483_027f(ctx: &mut Context) -> Cont {
+    // 1483:027f cmp al,57h
+    sub(ctx.cpu.regs.get_al(), 0x57u8, &mut ctx.cpu.flags);
+    // 1483:0281 jne short 02A5h
+    ctx.jne(Cont(x1483_0283), Cont(x1483_02a5))
+}
+
+pub fn x1483_0283(ctx: &mut Context) -> Cont {
+    // 1483:0283 cmp byte ptr es:[si],48h
+    sub(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_es(), ctx.cpu.regs.get_si())),
+        0x48u8,
+        &mut ctx.cpu.flags,
+    );
+    // 1483:0287 jne short 02A5h
+    ctx.jne(Cont(x1483_0289), Cont(x1483_02a5))
+}
+
+pub fn x1483_0289(ctx: &mut Context) -> Cont {
+    // 1483:0289 inc word ptr ds:[0A70h]
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_ds(), 0xa70u16),
+        inc(
+            ctx.memory
+                .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xa70u16)),
+            &mut ctx.cpu.flags,
+        ),
+    );
+    // 1483:028d mov di,ds:[0A70h]
+    ctx.cpu.regs.set_di(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xa70u16)),
+    );
+    // 1483:0291 mov byte ptr [di+860h],22h
+    ctx.memory.write::<u8>(
+        segofs(
+            ctx.cpu.regs.get_ds(),
+            ctx.cpu.regs.get_di().wrapping_add(0x860u16),
+        ),
+        0x22u8,
+    );
+    // 1483:0296 inc word ptr ds:[0A72h]
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_ds(), 0xa72u16),
+        inc(
+            ctx.memory
+                .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xa72u16)),
+            &mut ctx.cpu.flags,
+        ),
+    );
+    // 1483:029a inc si
+    ctx.cpu
+        .regs
+        .set_si(inc(ctx.cpu.regs.get_si(), &mut ctx.cpu.flags));
+    // 1483:029b mov al,77h
+    ctx.cpu.regs.set_al(0x77u8);
+    // 1483:029d jmp short 02DCh
+    Cont(x1483_02dc)
+}
+
+pub fn x1483_029f(ctx: &mut Context) -> Cont {
+    // 1483:029f mov ax,ds:[0A72h]
+    ctx.cpu.regs.set_ax(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xa72u16)),
+    );
+    // 1483:02a2 jmp near ptr 051Dh
+    Cont(x1483_051d)
+}
+
+pub fn x1483_02a5(ctx: &mut Context) -> Cont {
+    // 1483:02a5 mov di,ax
+    ctx.cpu.regs.set_di(ctx.cpu.regs.get_ax());
+    // 1483:02a7 mov bl,al
+    ctx.cpu.regs.set_bl(ctx.cpu.regs.get_al());
+    // 1483:02a9 mov cl,cs:[di-27h]
+    ctx.cpu.regs.set_cl(ctx.memory.read::<u8>(segofs(
+        ctx.cpu.regs.get_cs(),
+        ctx.cpu.regs.get_di().wrapping_add(0xffd9u16),
+    )));
+    // 1483:02ae inc word ptr ds:[0A72h]
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_ds(), 0xa72u16),
+        inc(
+            ctx.memory
+                .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xa72u16)),
+            &mut ctx.cpu.flags,
+        ),
+    );
+    // 1483:02b2 lods byte ptr es:[si]
+    ctx.lodsb();
+    // 1483:02b4 cmp al,41h
+    sub(ctx.cpu.regs.get_al(), 0x41u8, &mut ctx.cpu.flags);
+    // 1483:02b6 jb short 029Fh
+    ctx.jb(Cont(x1483_02b8), Cont(x1483_029f))
+}
+
+pub fn x1483_02b8(ctx: &mut Context) -> Cont {
+    // 1483:02b8 cmp al,5Ah
+    sub(ctx.cpu.regs.get_al(), 0x5au8, &mut ctx.cpu.flags);
+    // 1483:02ba ja short 029Fh
+    ctx.ja(Cont(x1483_02bc), Cont(x1483_029f))
+}
+
+pub fn x1483_02bc(ctx: &mut Context) -> Cont {
+    // 1483:02bc mov bh,al
+    ctx.cpu.regs.set_bh(ctx.cpu.regs.get_al());
+    // 1483:02be mov di,ax
+    ctx.cpu.regs.set_di(ctx.cpu.regs.get_ax());
+    // 1483:02c0 add cl,cs:[di-27h]
+    ctx.cpu.regs.set_cl(add(
+        ctx.cpu.regs.get_cl(),
+        ctx.memory.read::<u8>(segofs(
+            ctx.cpu.regs.get_cs(),
+            ctx.cpu.regs.get_di().wrapping_add(0xffd9u16),
+        )),
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:02c5 add cx,cx
+    ctx.cpu.regs.set_cx(add(
+        ctx.cpu.regs.get_cx(),
+        ctx.cpu.regs.get_cx(),
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:02c7 mov di,cx
+    ctx.cpu.regs.set_di(ctx.cpu.regs.get_cx());
+    // 1483:02c9 cmp bx,cs:[di+34h]
+    sub(
+        ctx.cpu.regs.get_bx(),
+        ctx.memory.read::<u16>(segofs(
+            ctx.cpu.regs.get_cs(),
+            ctx.cpu.regs.get_di().wrapping_add(0x34u16),
+        )),
+        &mut ctx.cpu.flags,
+    );
+    // 1483:02ce jne short 029Fh
+    ctx.jne(Cont(x1483_02d0), Cont(x1483_029f))
+}
+
+pub fn x1483_02d0(ctx: &mut Context) -> Cont {
+    // 1483:02d0 sar di,1
+    ctx.cpu
+        .regs
+        .set_di(sar(ctx.cpu.regs.get_di(), 0x1u8, &mut ctx.cpu.flags));
+    // 1483:02d2 cmp di,1Ah
+    sub(ctx.cpu.regs.get_di(), 0x1au16, &mut ctx.cpu.flags);
+    // 1483:02d5 jne short 02DEh
+    ctx.jne(Cont(x1483_02d7), Cont(x1483_02de))
+}
+
+pub fn x1483_02d7(ctx: &mut Context) -> Cont {
+    // 1483:02d7 xor ax,ax
+    ctx.cpu.regs.set_ax(xor(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_ax(),
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:02d9 jmp near ptr 051Dh
+    Cont(x1483_051d)
+}
+
+pub fn x1483_02dc(ctx: &mut Context) -> Cont {
+    // 1483:02dc mov di,ax
+    ctx.cpu.regs.set_di(ctx.cpu.regs.get_ax());
+    Cont(x1483_02de)
+}
+
+pub fn x1483_02de(ctx: &mut Context) -> Cont {
+    // 1483:02de mov al,cs:[di+0AAh]
+    ctx.cpu.regs.set_al(ctx.memory.read::<u8>(segofs(
+        ctx.cpu.regs.get_cs(),
+        ctx.cpu.regs.get_di().wrapping_add(0xaau16),
+    )));
+    // 1483:02e3 cmp al,0FFh
+    sub(ctx.cpu.regs.get_al(), 0xffu8, &mut ctx.cpu.flags);
+    // 1483:02e5 je short 029Fh
+    ctx.je(Cont(x1483_02e7), Cont(x1483_029f))
+}
+
+pub fn x1483_02e7(ctx: &mut Context) -> Cont {
+    // 1483:02e7 inc word ptr ds:[0A70h]
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_ds(), 0xa70u16),
+        inc(
+            ctx.memory
+                .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xa70u16)),
+            &mut ctx.cpu.flags,
+        ),
+    );
+    // 1483:02eb mov di,ds:[0A70h]
+    ctx.cpu.regs.set_di(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xa70u16)),
+    );
+    // 1483:02ef mov [di+860h],al
+    ctx.memory.write::<u8>(
+        segofs(
+            ctx.cpu.regs.get_ds(),
+            ctx.cpu.regs.get_di().wrapping_add(0x860u16),
+        ),
+        ctx.cpu.regs.get_al(),
+    );
+    // 1483:02f3 jmp near ptr 01B3h
+    Cont(x1483_01b3)
+}
+
+pub fn x1483_02f6(ctx: &mut Context) -> Cont {
+    // 1483:02f6 mov byte ptr ds:[0B8Bh],0
+    ctx.memory
+        .write::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xb8bu16), 0x0u8);
+    // 1483:02fb inc word ptr ds:[0A70h]
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_ds(), 0xa70u16),
+        inc(
+            ctx.memory
+                .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xa70u16)),
+            &mut ctx.cpu.flags,
+        ),
+    );
+    // 1483:02ff mov di,ds:[0A70h]
+    ctx.cpu.regs.set_di(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xa70u16)),
+    );
+    // 1483:0303 mov byte ptr [di+860h],0
+    ctx.memory.write::<u8>(
+        segofs(
+            ctx.cpu.regs.get_ds(),
+            ctx.cpu.regs.get_di().wrapping_add(0x860u16),
+        ),
+        0x0u8,
+    );
+    // 1483:0308 mov byte ptr ds:[0B86h],0
+    ctx.memory
+        .write::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xb86u16), 0x0u8);
+    // 1483:030d mov ax,ds
+    ctx.cpu.regs.set_ax(ctx.cpu.regs.get_ds());
+    // 1483:030f mov es,ax
+    ctx.cpu.regs.set_es(ctx.cpu.regs.get_ax());
+    // 1483:0311 mov cx,80h
+    ctx.cpu.regs.set_cx(0x80u16);
+    // 1483:0314 xor ax,ax
+    ctx.cpu.regs.set_ax(xor(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_ax(),
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:0316 lea di,ds:[0A84h]
+    ctx.cpu.regs.set_di(0xa84u16);
+    // 1483:031a rep stosw
+    ctx.rep(Rep::REP, Context::stosw);
+    // 1483:031c mov byte ptr ds:[0B91h],1
+    ctx.memory
+        .write::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xb91u16), 0x1u8);
+    // 1483:0321 mov byte ptr ds:[0B92h],0
+    ctx.memory
+        .write::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xb92u16), 0x0u8);
+    // 1483:0326 mov byte ptr ds:[0B93h],1
+    ctx.memory
+        .write::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xb93u16), 0x1u8);
+    // 1483:032b mov ax,5
+    ctx.cpu.regs.set_ax(0x5u16);
+    // 1483:032e sub ax,ds:[0A60h]
+    ctx.cpu.regs.set_ax(sub(
+        ctx.cpu.regs.get_ax(),
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xa60u16)),
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:0332 mov bl,0Ah
+    ctx.cpu.regs.set_bl(0xau8);
+    // 1483:0334 imul bl
+    ctx.cpu.regs.set_ax(imul1_8(
+        ctx.cpu.regs.eax as u8,
+        ctx.cpu.regs.get_bl(),
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:0336 mov ds:[0B89h],al
+    ctx.memory.write::<u8>(
+        segofs(ctx.cpu.regs.get_ds(), 0xb89u16),
+        ctx.cpu.regs.get_al(),
+    );
+    // 1483:0339 mov ds:[0B8Ah],al
+    ctx.memory.write::<u8>(
+        segofs(ctx.cpu.regs.get_ds(), 0xb8au16),
+        ctx.cpu.regs.get_al(),
+    );
+    // 1483:033c cbw
+    ctx.cpu
+        .regs
+        .set_ax(ctx.cpu.regs.get_al() as i8 as i16 as u16);
+    // 1483:033d shl ax,1
+    ctx.cpu
+        .regs
+        .set_ax(shl(ctx.cpu.regs.get_ax(), 0x1u8, &mut ctx.cpu.flags));
+    // 1483:033f mov cl,13h
+    ctx.cpu.regs.set_cl(0x13u8);
+    // 1483:0341 idiv cl
+    let x = ctx.cpu.regs.get_ax() as i16;
+    let y = ctx.cpu.regs.get_cl() as i8 as i16;
+    ctx.cpu.regs.set_al((x / y) as i8 as u8);
+    ctx.cpu.regs.set_ah((x % y) as i8 as u8);
+    // 1483:0343 cbw
+    ctx.cpu
+        .regs
+        .set_ax(ctx.cpu.regs.get_al() as i8 as i16 as u16);
+    // 1483:0344 mov ds:[0A7Eh],ax
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_ds(), 0xa7eu16),
+        ctx.cpu.regs.get_ax(),
+    );
+    // 1483:0347 mov word ptr ds:[0A7Ah],0
+    ctx.memory
+        .write::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xa7au16), 0x0u16);
+    // 1483:034d mov word ptr ds:[0A7Ch],0
+    ctx.memory
+        .write::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xa7cu16), 0x0u16);
+    // 1483:0353 mov ax,ds:[0A62h]
+    ctx.cpu.regs.set_ax(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xa62u16)),
+    );
+    // 1483:0356 mov ds:[0A76h],ax
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_ds(), 0xa76u16),
+        ctx.cpu.regs.get_ax(),
+    );
+    // 1483:0359 mov ds:[0A78h],ax
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_ds(), 0xa78u16),
+        ctx.cpu.regs.get_ax(),
+    );
+    // 1483:035c mov ax,ds:[0A66h]
+    ctx.cpu.regs.set_ax(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xa66u16)),
+    );
+    // 1483:035f mov ds:[0A68h],ax
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_ds(), 0xa68u16),
+        ctx.cpu.regs.get_ax(),
+    );
+    // 1483:0362 call 0523h
+    ctx.call16(0x365, Cont(x1483_0523))
+}
+
+pub fn x1483_0365(ctx: &mut Context) -> Cont {
+    // 1483:0365 mov ds:[0A80h],ax
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_ds(), 0xa80u16),
+        ctx.cpu.regs.get_ax(),
+    );
+    // 1483:0368 mov byte ptr ds:[0B8Fh],80h
+    ctx.memory
+        .write::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xb8fu16), 0x80u8);
+    // 1483:036d mov byte ptr ds:[0B90h],80h
+    ctx.memory
+        .write::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xb90u16), 0x80u8);
+    // 1483:0372 mov byte ptr ds:[0B84h],80h
+    ctx.memory
+        .write::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xb84u16), 0x80u8);
+    // 1483:0377 mov ax,ds:[0A64h]
+    ctx.cpu.regs.set_ax(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xa64u16)),
+    );
+    // 1483:037a add ax,ds:[0A66h]
+    ctx.cpu.regs.set_ax(add(
+        ctx.cpu.regs.get_ax(),
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xa66u16)),
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:037e call 055Ah
+    ctx.call16(0x381, Cont(x1483_055a))
+}
+
+pub fn x1483_0381(ctx: &mut Context) -> Cont {
+    // 1483:0381 mov byte ptr ds:[0B8Dh],0
+    ctx.memory
+        .write::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xb8du16), 0x0u8);
+    // 1483:0386 mov word ptr ds:[0A72h],1
+    ctx.memory
+        .write::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xa72u16), 0x1u16);
+    // 1483:038c push ds
+    ctx.push16(ctx.cpu.regs.get_ds());
+    // 1483:038d push si
+    ctx.push16(ctx.cpu.regs.get_si());
+    // 1483:038e mov si,1D6h
+    ctx.cpu.regs.set_si(0x1d6u16);
+    // 1483:0391 mov ax,823h
+    ctx.cpu.regs.set_ax(0x823u16);
+    // 1483:0394 mov ds,ax
+    ctx.cpu.regs.set_ds(ctx.cpu.regs.get_ax());
+    // 1483:0396 mov ax,[si]
+    ctx.cpu.regs.set_ax(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_si())),
+    );
+    // 1483:0398 pop si
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_si(x);
+    // 1483:0399 pop ds
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_ds(x);
+    // 1483:039a call dword ptr cs:[0Ah]
+    let addr = ctx
+        .memory
+        .read::<SegOfs>(segofs(ctx.cpu.regs.get_cs(), 0xau16));
+    ctx.callf16(0x39f, addr.seg, ctx.indirect16(addr))
+}
+
+pub fn x1483_039f(ctx: &mut Context) -> Cont {
+    // 1483:039f mov ah,1
+    ctx.cpu.regs.set_ah(0x1u8);
+    // 1483:03a1 int 16h
+    dos::int(ctx, 0x3a3, 0x16)
+}
+
+pub fn x1483_03a3(ctx: &mut Context) -> Cont {
+    // 1483:03a3 je short 03B0h
+    ctx.je(Cont(x1483_03a5), Cont(x1483_03b0))
+}
+
+pub fn x1483_03a5(ctx: &mut Context) -> Cont {
+    // 1483:03a5 call dword ptr cs:[0Eh]
+    let addr = ctx
+        .memory
+        .read::<SegOfs>(segofs(ctx.cpu.regs.get_cs(), 0xeu16));
+    ctx.callf16(0x3aa, addr.seg, ctx.indirect16(addr))
+}
+
+pub fn x1483_03aa(ctx: &mut Context) -> Cont {
+    // 1483:03aa mov ax,0FFFFh
+    ctx.cpu.regs.set_ax(0xffffu16);
+    // 1483:03ad jmp near ptr 051Dh
+    Cont(x1483_051d)
+}
+
+pub fn x1483_03b0(ctx: &mut Context) -> Cont {
+    // 1483:03b0 mov si,ds:[0A72h]
+    ctx.cpu.regs.set_si(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xa72u16)),
+    );
+    // 1483:03b4 mov al,[si+860h]
+    ctx.cpu.regs.set_al(ctx.memory.read::<u8>(segofs(
+        ctx.cpu.regs.get_ds(),
+        ctx.cpu.regs.get_si().wrapping_add(0x860u16),
+    )));
+    // 1483:03b8 cmp al,2Ch
+    sub(ctx.cpu.regs.get_al(), 0x2cu8, &mut ctx.cpu.flags);
+    // 1483:03ba jae short 03C2h
+    ctx.jae(Cont(x1483_03bc), Cont(x1483_03c2))
+}
+
+pub fn x1483_03bc(ctx: &mut Context) -> Cont {
+    // 1483:03bc call 056Dh
+    ctx.call16(0x3bf, Cont(x1483_056d))
+}
+
+pub fn x1483_03bf(ctx: &mut Context) -> Cont {
+    // 1483:03bf jmp near ptr 04FFh
+    Cont(x1483_04ff)
+}
+
+pub fn x1483_03c2(ctx: &mut Context) -> Cont {
+    // 1483:03c2 cmp al,2Eh
+    sub(ctx.cpu.regs.get_al(), 0x2eu8, &mut ctx.cpu.flags);
+    // 1483:03c4 jae short 03EBh
+    ctx.jae(Cont(x1483_03c6), Cont(x1483_03eb))
+}
+
+pub fn x1483_03c6(ctx: &mut Context) -> Cont {
+    // 1483:03c6 mov bl,[si+861h]
+    ctx.cpu.regs.set_bl(ctx.memory.read::<u8>(segofs(
+        ctx.cpu.regs.get_ds(),
+        ctx.cpu.regs.get_si().wrapping_add(0x861u16),
+    )));
+    // 1483:03ca sub bl,37h
+    ctx.cpu
+        .regs
+        .set_bl(sub(ctx.cpu.regs.get_bl(), 0x37u8, &mut ctx.cpu.flags));
+    // 1483:03cd ja short 03DAh
+    ctx.ja(Cont(x1483_03cf), Cont(x1483_03da))
+}
+
+pub fn x1483_03cf(ctx: &mut Context) -> Cont {
+    // 1483:03cf cmp bl,0F6h
+    sub(ctx.cpu.regs.get_bl(), 0xf6u8, &mut ctx.cpu.flags);
+    // 1483:03d2 jle short 03DAh
+    ctx.jle(Cont(x1483_03d4), Cont(x1483_03da))
+}
+
+pub fn x1483_03d4(ctx: &mut Context) -> Cont {
+    // 1483:03d4 inc word ptr ds:[0A72h]
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_ds(), 0xa72u16),
+        inc(
+            ctx.memory
+                .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xa72u16)),
+            &mut ctx.cpu.flags,
+        ),
+    );
+    // 1483:03d8 jmp short 03DCh
+    Cont(x1483_03dc)
+}
+
+pub fn x1483_03da(ctx: &mut Context) -> Cont {
+    // 1483:03da mov bl,0FBh
+    ctx.cpu.regs.set_bl(0xfbu8);
+    Cont(x1483_03dc)
+}
+
+pub fn x1483_03dc(ctx: &mut Context) -> Cont {
+    // 1483:03dc cmp al,2Ch
+    sub(ctx.cpu.regs.get_al(), 0x2cu8, &mut ctx.cpu.flags);
+    // 1483:03de jne short 03E2h
+    ctx.jne(Cont(x1483_03e0), Cont(x1483_03e2))
+}
+
+pub fn x1483_03e0(ctx: &mut Context) -> Cont {
+    // 1483:03e0 neg bl
+    ctx.cpu
+        .regs
+        .set_bl(neg(ctx.cpu.regs.get_bl(), &mut ctx.cpu.flags));
+    Cont(x1483_03e2)
+}
+
+pub fn x1483_03e2(ctx: &mut Context) -> Cont {
+    // 1483:03e2 mov al,bl
+    ctx.cpu.regs.set_al(ctx.cpu.regs.get_bl());
+    // 1483:03e4 cbw
+    ctx.cpu
+        .regs
+        .set_ax(ctx.cpu.regs.get_al() as i8 as i16 as u16);
+    // 1483:03e5 mov ds:[0A7Ch],ax
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_ds(), 0xa7cu16),
+        ctx.cpu.regs.get_ax(),
+    );
+    // 1483:03e8 jmp near ptr 04FFh
+    Cont(x1483_04ff)
+}
+
+pub fn x1483_03eb(ctx: &mut Context) -> Cont {
+    // 1483:03eb cmp al,38h
+    sub(ctx.cpu.regs.get_al(), 0x38u8, &mut ctx.cpu.flags);
+    // 1483:03ed jae short 041Eh
+    ctx.jae(Cont(x1483_03ef), Cont(x1483_041e))
+}
+
+pub fn x1483_03ef(ctx: &mut Context) -> Cont {
+    // 1483:03ef sub al,2Dh
+    ctx.cpu
+        .regs
+        .set_al(sub(ctx.cpu.regs.get_al(), 0x2du8, &mut ctx.cpu.flags));
+    // 1483:03f1 cbw
+    ctx.cpu
+        .regs
+        .set_ax(ctx.cpu.regs.get_al() as i8 as i16 as u16);
+    // 1483:03f2 sub ax,ds:[0A60h]
+    ctx.cpu.regs.set_ax(sub(
+        ctx.cpu.regs.get_ax(),
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xa60u16)),
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:03f6 mov cl,0Ah
+    ctx.cpu.regs.set_cl(0xau8);
+    // 1483:03f8 imul cl
+    ctx.cpu.regs.set_ax(imul1_8(
+        ctx.cpu.regs.eax as u8,
+        ctx.cpu.regs.get_cl(),
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:03fa mov bl,[si+861h]
+    ctx.cpu.regs.set_bl(ctx.memory.read::<u8>(segofs(
+        ctx.cpu.regs.get_ds(),
+        ctx.cpu.regs.get_si().wrapping_add(0x861u16),
+    )));
+    // 1483:03fe sub bl,37h
+    ctx.cpu
+        .regs
+        .set_bl(sub(ctx.cpu.regs.get_bl(), 0x37u8, &mut ctx.cpu.flags));
+    // 1483:0401 ja short 040Eh
+    ctx.ja(Cont(x1483_0403), Cont(x1483_040e))
+}
+
+pub fn x1483_0403(ctx: &mut Context) -> Cont {
+    // 1483:0403 cmp bl,0F6h
+    sub(ctx.cpu.regs.get_bl(), 0xf6u8, &mut ctx.cpu.flags);
+    // 1483:0406 jle short 040Eh
+    ctx.jle(Cont(x1483_0408), Cont(x1483_040e))
+}
+
+pub fn x1483_0408(ctx: &mut Context) -> Cont {
+    // 1483:0408 inc word ptr ds:[0A72h]
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_ds(), 0xa72u16),
+        inc(
+            ctx.memory
+                .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xa72u16)),
+            &mut ctx.cpu.flags,
+        ),
+    );
+    // 1483:040c add al,bl
+    ctx.cpu.regs.set_al(add(
+        ctx.cpu.regs.get_al(),
+        ctx.cpu.regs.get_bl(),
+        &mut ctx.cpu.flags,
+    ));
+    Cont(x1483_040e)
+}
+
+pub fn x1483_040e(ctx: &mut Context) -> Cont {
+    // 1483:040e mov ds:[0B8Ah],al
+    ctx.memory.write::<u8>(
+        segofs(ctx.cpu.regs.get_ds(), 0xb8au16),
+        ctx.cpu.regs.get_al(),
+    );
+    // 1483:0411 cmp byte ptr ds:[0B8Bh],0
+    sub(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xb8bu16)),
+        0x0u8,
+        &mut ctx.cpu.flags,
+    );
+    // 1483:0416 jne short 041Bh
+    ctx.jne(Cont(x1483_0418), Cont(x1483_041b))
+}
+
+pub fn x1483_0418(ctx: &mut Context) -> Cont {
+    // 1483:0418 mov ds:[0B88h],al
+    ctx.memory.write::<u8>(
+        segofs(ctx.cpu.regs.get_ds(), 0xb88u16),
+        ctx.cpu.regs.get_al(),
+    );
+    Cont(x1483_041b)
+}
+
+pub fn x1483_041b(ctx: &mut Context) -> Cont {
+    // 1483:041b jmp near ptr 04FFh
+    Cont(x1483_04ff)
+}
+
+pub fn x1483_041e(ctx: &mut Context) -> Cont {
+    // 1483:041e cmp al,40h
+    sub(ctx.cpu.regs.get_al(), 0x40u8, &mut ctx.cpu.flags);
+    // 1483:0420 jae short 0449h
+    ctx.jae(Cont(x1483_0422), Cont(x1483_0449))
+}
+
+pub fn x1483_0422(ctx: &mut Context) -> Cont {
+    // 1483:0422 cmp al,38h
+    sub(ctx.cpu.regs.get_al(), 0x38u8, &mut ctx.cpu.flags);
+    // 1483:0424 jne short 0437h
+    ctx.jne(Cont(x1483_0426), Cont(x1483_0437))
+}
+
+pub fn x1483_0426(ctx: &mut Context) -> Cont {
+    // 1483:0426 cmp byte ptr ds:[0B8Ah],0CEh
+    sub(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xb8au16)),
+        0xceu8,
+        &mut ctx.cpu.flags,
+    );
+    // 1483:042b jge short 0430h
+    ctx.jge(Cont(x1483_042d), Cont(x1483_0430))
+}
+
+pub fn x1483_042d(ctx: &mut Context) -> Cont {
+    // 1483:042d jmp near ptr 04FFh
+    Cont(x1483_04ff)
+}
+
+pub fn x1483_0430(ctx: &mut Context) -> Cont {
+    // 1483:0430 sub byte ptr ds:[0B8Ah],0Ah
+    ctx.memory.write::<u8>(
+        segofs(ctx.cpu.regs.get_ds(), 0xb8au16),
+        sub(
+            ctx.memory
+                .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xb8au16)),
+            0xau8,
+            &mut ctx.cpu.flags,
+        ),
+    );
+    // 1483:0435 jmp short 0446h
+    Cont(x1483_0446)
+}
+
+pub fn x1483_0437(ctx: &mut Context) -> Cont {
+    // 1483:0437 cmp byte ptr ds:[0B8Ah],46h
+    sub(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xb8au16)),
+        0x46u8,
+        &mut ctx.cpu.flags,
+    );
+    // 1483:043c jle short 0441h
+    ctx.jle(Cont(x1483_043e), Cont(x1483_0441))
+}
+
+pub fn x1483_043e(ctx: &mut Context) -> Cont {
+    // 1483:043e jmp near ptr 04FFh
+    Cont(x1483_04ff)
+}
+
+pub fn x1483_0441(ctx: &mut Context) -> Cont {
+    // 1483:0441 add byte ptr ds:[0B8Ah],0Ah
+    ctx.memory.write::<u8>(
+        segofs(ctx.cpu.regs.get_ds(), 0xb8au16),
+        add(
+            ctx.memory
+                .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xb8au16)),
+            0xau8,
+            &mut ctx.cpu.flags,
+        ),
+    );
+    Cont(x1483_0446)
+}
+
+pub fn x1483_0446(ctx: &mut Context) -> Cont {
+    // 1483:0446 jmp near ptr 04FFh
+    Cont(x1483_04ff)
+}
+
+pub fn x1483_0449(ctx: &mut Context) -> Cont {
+    // 1483:0449 cmp al,4Ah
+    sub(ctx.cpu.regs.get_al(), 0x4au8, &mut ctx.cpu.flags);
+    // 1483:044b jae short 0467h
+    ctx.jae(Cont(x1483_044d), Cont(x1483_0467))
+}
+
+pub fn x1483_044d(ctx: &mut Context) -> Cont {
+    // 1483:044d cbw
+    ctx.cpu
+        .regs
+        .set_ax(ctx.cpu.regs.get_al() as i8 as i16 as u16);
+    // 1483:044e add ax,ds:[0A62h]
+    ctx.cpu.regs.set_ax(add(
+        ctx.cpu.regs.get_ax(),
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xa62u16)),
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:0452 sub ax,45h
+    ctx.cpu
+        .regs
+        .set_ax(sub(ctx.cpu.regs.get_ax(), 0x45u16, &mut ctx.cpu.flags));
+    // 1483:0455 jae short 0459h
+    ctx.jae(Cont(x1483_0457), Cont(x1483_0459))
+}
+
+pub fn x1483_0457(ctx: &mut Context) -> Cont {
+    // 1483:0457 xor ax,ax
+    ctx.cpu.regs.set_ax(xor(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_ax(),
+        &mut ctx.cpu.flags,
+    ));
+    Cont(x1483_0459)
+}
+
+pub fn x1483_0459(ctx: &mut Context) -> Cont {
+    // 1483:0459 cmp ax,9
+    sub(ctx.cpu.regs.get_ax(), 0x9u16, &mut ctx.cpu.flags);
+    // 1483:045c jbe short 0461h
+    ctx.jbe(Cont(x1483_045e), Cont(x1483_0461))
+}
+
+pub fn x1483_045e(ctx: &mut Context) -> Cont {
+    // 1483:045e mov ax,9
+    ctx.cpu.regs.set_ax(0x9u16);
+    Cont(x1483_0461)
+}
+
+pub fn x1483_0461(ctx: &mut Context) -> Cont {
+    // 1483:0461 mov ds:[0A78h],ax
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_ds(), 0xa78u16),
+        ctx.cpu.regs.get_ax(),
+    );
+    // 1483:0464 jmp near ptr 04FFh
+    Cont(x1483_04ff)
+}
+
+pub fn x1483_0467(ctx: &mut Context) -> Cont {
+    // 1483:0467 cmp al,54h
+    sub(ctx.cpu.regs.get_al(), 0x54u8, &mut ctx.cpu.flags);
+    // 1483:0469 jae short 047Eh
+    ctx.jae(Cont(x1483_046b), Cont(x1483_047e))
+}
+
+pub fn x1483_046b(ctx: &mut Context) -> Cont {
+    // 1483:046b xor ah,ah
+    ctx.cpu.regs.set_ah(xor(
+        ctx.cpu.regs.get_ah(),
+        ctx.cpu.regs.get_ah(),
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:046d add ax,ds:[0A68h]
+    ctx.cpu.regs.set_ax(add(
+        ctx.cpu.regs.get_ax(),
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xa68u16)),
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:0471 add ax,ds:[0A64h]
+    ctx.cpu.regs.set_ax(add(
+        ctx.cpu.regs.get_ax(),
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xa64u16)),
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:0475 sub ax,4Fh
+    ctx.cpu
+        .regs
+        .set_ax(sub(ctx.cpu.regs.get_ax(), 0x4fu16, &mut ctx.cpu.flags));
+    // 1483:0478 call 055Ah
+    ctx.call16(0x47b, Cont(x1483_055a))
+}
+
+pub fn x1483_047b(ctx: &mut Context) -> Cont {
+    // 1483:047b jmp near ptr 04FFh
+    Cont(x1483_04ff)
+}
+
+pub fn x1483_047e(ctx: &mut Context) -> Cont {
+    // 1483:047e cmp al,54h
+    sub(ctx.cpu.regs.get_al(), 0x54u8, &mut ctx.cpu.flags);
+    // 1483:0480 jne short 04DCh
+    ctx.jne(Cont(x1483_0482), Cont(x1483_04dc))
+}
+
+pub fn x1483_0482(ctx: &mut Context) -> Cont {
+    // 1483:0482 mov al,0
+    ctx.cpu.regs.set_al(0x0u8);
+    // 1483:0484 mov byte ptr ds:[0B92h],1
+    ctx.memory
+        .write::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xb92u16), 0x1u8);
+    // 1483:0489 call 056Dh
+    ctx.call16(0x48c, Cont(x1483_056d))
+}
+
+pub fn x1483_048c(ctx: &mut Context) -> Cont {
+    // 1483:048c mov byte ptr ds:[0B92h],0
+    ctx.memory
+        .write::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xb92u16), 0x0u8);
+    // 1483:0491 mov si,ds:[0A72h]
+    ctx.cpu.regs.set_si(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xa72u16)),
+    );
+    // 1483:0495 mov al,[si+861h]
+    ctx.cpu.regs.set_al(ctx.memory.read::<u8>(segofs(
+        ctx.cpu.regs.get_ds(),
+        ctx.cpu.regs.get_si().wrapping_add(0x861u16),
+    )));
+    // 1483:0499 sub al,37h
+    ctx.cpu
+        .regs
+        .set_al(sub(ctx.cpu.regs.get_al(), 0x37u8, &mut ctx.cpu.flags));
+    // 1483:049b neg al
+    ctx.cpu
+        .regs
+        .set_al(neg(ctx.cpu.regs.get_al(), &mut ctx.cpu.flags));
+    // 1483:049d mov bl,0Ah
+    ctx.cpu.regs.set_bl(0xau8);
+    // 1483:049f mul bl
+    let res = mul(
+        ctx.cpu.regs.eax as u8 as u16,
+        ctx.cpu.regs.get_bl() as u16,
+        &mut ctx.cpu.flags,
+    );
+    ctx.cpu.regs.set_ax(res);
+    // 1483:04a1 inc word ptr ds:[0A72h]
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_ds(), 0xa72u16),
+        inc(
+            ctx.memory
+                .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xa72u16)),
+            &mut ctx.cpu.flags,
+        ),
+    );
+    // 1483:04a5 mov bl,[si+862h]
+    ctx.cpu.regs.set_bl(ctx.memory.read::<u8>(segofs(
+        ctx.cpu.regs.get_ds(),
+        ctx.cpu.regs.get_si().wrapping_add(0x862u16),
+    )));
+    // 1483:04a9 sub bl,37h
+    ctx.cpu
+        .regs
+        .set_bl(sub(ctx.cpu.regs.get_bl(), 0x37u8, &mut ctx.cpu.flags));
+    // 1483:04ac ja short 04BBh
+    ctx.ja(Cont(x1483_04ae), Cont(x1483_04bb))
+}
+
+pub fn x1483_04ae(ctx: &mut Context) -> Cont {
+    // 1483:04ae cmp bl,0F6h
+    sub(ctx.cpu.regs.get_bl(), 0xf6u8, &mut ctx.cpu.flags);
+    // 1483:04b1 jle short 04BBh
+    ctx.jle(Cont(x1483_04b3), Cont(x1483_04bb))
+}
+
+pub fn x1483_04b3(ctx: &mut Context) -> Cont {
+    // 1483:04b3 inc word ptr ds:[0A72h]
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_ds(), 0xa72u16),
+        inc(
+            ctx.memory
+                .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xa72u16)),
+            &mut ctx.cpu.flags,
+        ),
+    );
+    // 1483:04b7 neg bl
+    ctx.cpu
+        .regs
+        .set_bl(neg(ctx.cpu.regs.get_bl(), &mut ctx.cpu.flags));
+    // 1483:04b9 add al,bl
+    ctx.cpu.regs.set_al(add(
+        ctx.cpu.regs.get_al(),
+        ctx.cpu.regs.get_bl(),
+        &mut ctx.cpu.flags,
+    ));
+    Cont(x1483_04bb)
+}
+
+pub fn x1483_04bb(ctx: &mut Context) -> Cont {
+    // 1483:04bb mov bl,45h
+    ctx.cpu.regs.set_bl(0x45u8);
+    // 1483:04bd mul bl
+    let res = mul(
+        ctx.cpu.regs.eax as u8 as u16,
+        ctx.cpu.regs.get_bl() as u16,
+        &mut ctx.cpu.flags,
+    );
+    ctx.cpu.regs.set_ax(res);
+    // 1483:04bf shr ax,1
+    ctx.cpu
+        .regs
+        .set_ax(shr(ctx.cpu.regs.get_ax(), 0x1u8, &mut ctx.cpu.flags));
+    // 1483:04c1 shr ax,1
+    ctx.cpu
+        .regs
+        .set_ax(shr(ctx.cpu.regs.get_ax(), 0x1u8, &mut ctx.cpu.flags));
+    // 1483:04c3 shr ax,1
+    ctx.cpu
+        .regs
+        .set_ax(shr(ctx.cpu.regs.get_ax(), 0x1u8, &mut ctx.cpu.flags));
+    // 1483:04c5 adc ax,0
+    let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
+    ctx.cpu.regs.set_ax(addc(
+        ctx.cpu.regs.get_ax(),
+        0x0u16,
+        carry as _,
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:04c8 je short 04FFh
+    ctx.je(Cont(x1483_04ca), Cont(x1483_04ff))
+}
+
+pub fn x1483_04ca(ctx: &mut Context) -> Cont {
+    // 1483:04ca mov ds:[0A82h],ax
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_ds(), 0xa82u16),
+        ctx.cpu.regs.get_ax(),
+    );
+    // 1483:04cd mov byte ptr ds:[0B91h],0
+    ctx.memory
+        .write::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xb91u16), 0x0u8);
+    // 1483:04d2 call 0738h
+    ctx.call16(0x4d5, Cont(x1483_0738))
+}
+
+pub fn x1483_04d5(ctx: &mut Context) -> Cont {
+    // 1483:04d5 mov byte ptr ds:[0B91h],1
+    ctx.memory
+        .write::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xb91u16), 0x1u8);
+    // 1483:04da jmp short 04FFh
+    Cont(x1483_04ff)
+}
+
+pub fn x1483_04dc(ctx: &mut Context) -> Cont {
+    // 1483:04dc cmp al,57h
+    sub(ctx.cpu.regs.get_al(), 0x57u8, &mut ctx.cpu.flags);
+    // 1483:04de jae short 04F8h
+    ctx.jae(Cont(x1483_04e0), Cont(x1483_04f8))
+}
+
+pub fn x1483_04e0(ctx: &mut Context) -> Cont {
+    // 1483:04e0 and ax,1
+    ctx.cpu
+        .regs
+        .set_ax(and(ctx.cpu.regs.get_ax(), 0x1u16, &mut ctx.cpu.flags));
+    // 1483:04e3 cmp ax,ds:[0A68h]
+    sub(
+        ctx.cpu.regs.get_ax(),
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xa68u16)),
+        &mut ctx.cpu.flags,
+    );
+    // 1483:04e7 je short 04FFh
+    ctx.je(Cont(x1483_04e9), Cont(x1483_04ff))
+}
+
+pub fn x1483_04e9(ctx: &mut Context) -> Cont {
+    // 1483:04e9 mov ds:[0A68h],ax
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_ds(), 0xa68u16),
+        ctx.cpu.regs.get_ax(),
+    );
+    // 1483:04ec shl ax,1
+    ctx.cpu
+        .regs
+        .set_ax(shl(ctx.cpu.regs.get_ax(), 0x1u8, &mut ctx.cpu.flags));
+    // 1483:04ee dec ax
+    ctx.cpu
+        .regs
+        .set_ax(dec(ctx.cpu.regs.get_ax(), &mut ctx.cpu.flags));
+    // 1483:04ef add ax,ds:[0A6Ch]
+    ctx.cpu.regs.set_ax(add(
+        ctx.cpu.regs.get_ax(),
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xa6cu16)),
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:04f3 call 055Ah
+    ctx.call16(0x4f6, Cont(x1483_055a))
+}
+
+pub fn x1483_04f6(ctx: &mut Context) -> Cont {
+    // 1483:04f6 jmp short 04FFh
+    Cont(x1483_04ff)
+}
+
+pub fn x1483_04f8(ctx: &mut Context) -> Cont {
+    // 1483:04f8 jne short 04FFh
+    ctx.jne(Cont(x1483_04fa), Cont(x1483_04ff))
+}
+
+pub fn x1483_04fa(ctx: &mut Context) -> Cont {
+    // 1483:04fa mov byte ptr ds:[0B93h],1
+    ctx.memory
+        .write::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xb93u16), 0x1u8);
+    Cont(x1483_04ff)
+}
+
+pub fn x1483_04ff(ctx: &mut Context) -> Cont {
+    // 1483:04ff inc word ptr ds:[0A72h]
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_ds(), 0xa72u16),
+        inc(
+            ctx.memory
+                .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xa72u16)),
+            &mut ctx.cpu.flags,
+        ),
+    );
+    // 1483:0503 mov ax,ds:[0A70h]
+    ctx.cpu.regs.set_ax(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xa70u16)),
+    );
+    // 1483:0506 cmp ax,ds:[0A72h]
+    sub(
+        ctx.cpu.regs.get_ax(),
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xa72u16)),
+        &mut ctx.cpu.flags,
+    );
+    // 1483:050a jb short 0516h
+    ctx.jb(Cont(x1483_050c), Cont(x1483_0516))
+}
+
+pub fn x1483_050c(ctx: &mut Context) -> Cont {
+    // 1483:050c jne short 0513h
+    ctx.jne(Cont(x1483_050e), Cont(x1483_0513))
+}
+
+pub fn x1483_050e(ctx: &mut Context) -> Cont {
+    // 1483:050e mov byte ptr ds:[0B92h],1
+    ctx.memory
+        .write::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xb92u16), 0x1u8);
+    Cont(x1483_0513)
+}
+
+pub fn x1483_0513(ctx: &mut Context) -> Cont {
+    // 1483:0513 jmp near ptr 039Fh
+    Cont(x1483_039f)
+}
+
+pub fn x1483_0516(ctx: &mut Context) -> Cont {
+    // 1483:0516 call dword ptr cs:[0Eh]
+    let addr = ctx
+        .memory
+        .read::<SegOfs>(segofs(ctx.cpu.regs.get_cs(), 0xeu16));
+    ctx.callf16(0x51b, addr.seg, ctx.indirect16(addr))
+}
+
+pub fn x1483_051b(ctx: &mut Context) -> Cont {
+    // 1483:051b xor ax,ax
+    ctx.cpu.regs.set_ax(xor(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_ax(),
+        &mut ctx.cpu.flags,
+    ));
+    Cont(x1483_051d)
+}
+
+pub fn x1483_051d(ctx: &mut Context) -> Cont {
+    // 1483:051d pop es
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_es(x);
+    // 1483:051e pop ds
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_ds(x);
+    // 1483:051f pop bp
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_bp(x);
+    // 1483:0520 retf 0Ch
+    ctx.retf16(12)
+}
+
+pub fn x1483_0523(ctx: &mut Context) -> Cont {
+    // 1483:0523 mov ax,ds:[0A76h]
+    ctx.cpu.regs.set_ax(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xa76u16)),
+    );
+    // 1483:0526 add ax,ds:[0A7Ah]
+    ctx.cpu.regs.set_ax(add(
+        ctx.cpu.regs.get_ax(),
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xa7au16)),
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:052a add ax,ds:[0A7Eh]
+    ctx.cpu.regs.set_ax(add(
+        ctx.cpu.regs.get_ax(),
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xa7eu16)),
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:052e jns short 0532h
+    ctx.jns(Cont(x1483_0530), Cont(x1483_0532))
+}
+
+pub fn x1483_0530(ctx: &mut Context) -> Cont {
+    // 1483:0530 xor ax,ax
+    ctx.cpu.regs.set_ax(xor(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_ax(),
+        &mut ctx.cpu.flags,
+    ));
+    Cont(x1483_0532)
+}
+
+pub fn x1483_0532(ctx: &mut Context) -> Cont {
+    // 1483:0532 cmp ax,9
+    sub(ctx.cpu.regs.get_ax(), 0x9u16, &mut ctx.cpu.flags);
+    // 1483:0535 jbe short 053Ah
+    ctx.jbe(Cont(x1483_0537), Cont(x1483_053a))
+}
+
+pub fn x1483_0537(ctx: &mut Context) -> Cont {
+    // 1483:0537 mov ax,9
+    ctx.cpu.regs.set_ax(0x9u16);
+    Cont(x1483_053a)
+}
+
+pub fn x1483_053a(ctx: &mut Context) -> Cont {
+    // 1483:053a mov di,ax
+    ctx.cpu.regs.set_di(ctx.cpu.regs.get_ax());
+    // 1483:053c shl di,1
+    ctx.cpu
+        .regs
+        .set_di(shl(ctx.cpu.regs.get_di(), 0x1u8, &mut ctx.cpu.flags));
+    // 1483:053e mov ax,cs:[di+12Ah]
+    ctx.cpu.regs.set_ax(ctx.memory.read::<u16>(segofs(
+        ctx.cpu.regs.get_cs(),
+        ctx.cpu.regs.get_di().wrapping_add(0x12au16),
+    )));
+    // 1483:0543 ret
+    ctx.ret16(0)
+}
+
+pub fn x1483_0544(ctx: &mut Context) -> Cont {
+    // 1483:0544 inc word ptr ds:[0A72h]
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_ds(), 0xa72u16),
+        inc(
+            ctx.memory
+                .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xa72u16)),
+            &mut ctx.cpu.flags,
+        ),
+    );
+    // 1483:0548 lods byte ptr es:[si]
+    ctx.lodsb();
+    // 1483:054a cmp al,39h
+    sub(ctx.cpu.regs.get_al(), 0x39u8, &mut ctx.cpu.flags);
+    // 1483:054c ja short 0554h
+    ctx.ja(Cont(x1483_054e), Cont(x1483_0554))
+}
+
+pub fn x1483_054e(ctx: &mut Context) -> Cont {
+    // 1483:054e sub al,30h
+    ctx.cpu
+        .regs
+        .set_al(sub(ctx.cpu.regs.get_al(), 0x30u8, &mut ctx.cpu.flags));
+    // 1483:0550 jb short 0554h
+    ctx.jb(Cont(x1483_0552), Cont(x1483_0554))
+}
+
+pub fn x1483_0552(ctx: &mut Context) -> Cont {
+    // 1483:0552 cbw
+    ctx.cpu
+        .regs
+        .set_ax(ctx.cpu.regs.get_al() as i8 as i16 as u16);
+    // 1483:0553 ret
+    ctx.ret16(0)
+}
+
+pub fn x1483_0554(ctx: &mut Context) -> Cont {
+    // 1483:0554 add sp,2
+    ctx.cpu
+        .regs
+        .set_sp(add(ctx.cpu.regs.get_sp(), 0x2u16, &mut ctx.cpu.flags));
+    // 1483:0557 jmp near ptr 029Fh
+    Cont(x1483_029f)
+}
+
+pub fn x1483_055a(ctx: &mut Context) -> Cont {
+    // 1483:055a cmp ax,0
+    sub(ctx.cpu.regs.get_ax(), 0x0u16, &mut ctx.cpu.flags);
+    // 1483:055d jge short 0561h
+    ctx.jge(Cont(x1483_055f), Cont(x1483_0561))
+}
+
+pub fn x1483_055f(ctx: &mut Context) -> Cont {
+    // 1483:055f xor ax,ax
+    ctx.cpu.regs.set_ax(xor(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_ax(),
+        &mut ctx.cpu.flags,
+    ));
+    Cont(x1483_0561)
+}
+
+pub fn x1483_0561(ctx: &mut Context) -> Cont {
+    // 1483:0561 cmp ax,0Ah
+    sub(ctx.cpu.regs.get_ax(), 0xau16, &mut ctx.cpu.flags);
+    // 1483:0564 jl short 0569h
+    ctx.jl(Cont(x1483_0566), Cont(x1483_0569))
+}
+
+pub fn x1483_0566(ctx: &mut Context) -> Cont {
+    // 1483:0566 mov ax,9
+    ctx.cpu.regs.set_ax(0x9u16);
+    Cont(x1483_0569)
+}
+
+pub fn x1483_0569(ctx: &mut Context) -> Cont {
+    // 1483:0569 mov ds:[0A6Ch],ax
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_ds(), 0xa6cu16),
+        ctx.cpu.regs.get_ax(),
+    );
+    // 1483:056c ret
+    ctx.ret16(0)
+}
+
+pub fn x1483_056d(ctx: &mut Context) -> Cont {
+    // 1483:056d mov ds:[0B8Ch],al
+    ctx.memory.write::<u8>(
+        segofs(ctx.cpu.regs.get_ds(), 0xb8cu16),
+        ctx.cpu.regs.get_al(),
+    );
+    // 1483:0570 mov bl,al
+    ctx.cpu.regs.set_bl(ctx.cpu.regs.get_al());
+    // 1483:0572 mov al,ds:[0B8Bh]
+    ctx.cpu.regs.set_al(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xb8bu16)),
+    );
+    // 1483:0575 mov cl,30h
+    ctx.cpu.regs.set_cl(0x30u8);
+    // 1483:0577 mul cl
+    let res = mul(
+        ctx.cpu.regs.eax as u8 as u16,
+        ctx.cpu.regs.get_cl() as u16,
+        &mut ctx.cpu.flags,
+    );
+    ctx.cpu.regs.set_ax(res);
+    // 1483:0579 xor bh,bh
+    ctx.cpu.regs.set_bh(xor(
+        ctx.cpu.regs.get_bh(),
+        ctx.cpu.regs.get_bh(),
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:057b add ax,bx
+    ctx.cpu.regs.set_ax(add(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_bx(),
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:057d add ax,ax
+    ctx.cpu.regs.set_ax(add(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_ax(),
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:057f mov di,ax
+    ctx.cpu.regs.set_di(ctx.cpu.regs.get_ax());
+    // 1483:0581 cmp byte ptr ds:[0B91h],1
+    sub(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xb91u16)),
+        0x1u8,
+        &mut ctx.cpu.flags,
+    );
+    // 1483:0586 je short 05A3h
+    ctx.je(Cont(x1483_0588), Cont(x1483_05a3))
+}
+
+pub fn x1483_0588(ctx: &mut Context) -> Cont {
+    // 1483:0588 mov si,cs:[di+1490h]
+    ctx.cpu.regs.set_si(ctx.memory.read::<u16>(segofs(
+        ctx.cpu.regs.get_cs(),
+        ctx.cpu.regs.get_di().wrapping_add(0x1490u16),
+    )));
+    // 1483:058d cmp si,0FFFFh
+    sub(ctx.cpu.regs.get_si(), 0xffffu16, &mut ctx.cpu.flags);
+    // 1483:0590 je short 05A3h
+    ctx.je(Cont(x1483_0592), Cont(x1483_05a3))
+}
+
+pub fn x1483_0592(ctx: &mut Context) -> Cont {
+    // 1483:0592 push di
+    ctx.push16(ctx.cpu.regs.get_di());
+    // 1483:0593 mov al,ds:[0B8Bh]
+    ctx.cpu.regs.set_al(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xb8bu16)),
+    );
+    // 1483:0596 sub al,1
+    ctx.cpu
+        .regs
+        .set_al(sub(ctx.cpu.regs.get_al(), 0x1u8, &mut ctx.cpu.flags));
+    // 1483:0598 mov al,0
+    ctx.cpu.regs.set_al(0x0u8);
+    // 1483:059a rcl al,1
+    ctx.cpu
+        .regs
+        .set_al(rcl(ctx.cpu.regs.get_al(), 0x1u8, &mut ctx.cpu.flags));
+    // 1483:059c mov ds:[0B94h],al
+    ctx.memory.write::<u8>(
+        segofs(ctx.cpu.regs.get_ds(), 0xb94u16),
+        ctx.cpu.regs.get_al(),
+    );
+    // 1483:059f call 0613h
+    ctx.call16(0x5a2, Cont(x1483_0613))
+}
+
+pub fn x1483_05a2(ctx: &mut Context) -> Cont {
+    // 1483:05a2 pop di
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_di(x);
+    Cont(x1483_05a3)
+}
+
+pub fn x1483_05a3(ctx: &mut Context) -> Cont {
+    // 1483:05a3 mov al,ds:[0B8Ah]
+    ctx.cpu.regs.set_al(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xb8au16)),
+    );
+    // 1483:05a6 mov ds:[0B89h],al
+    ctx.memory.write::<u8>(
+        segofs(ctx.cpu.regs.get_ds(), 0xb89u16),
+        ctx.cpu.regs.get_al(),
+    );
+    // 1483:05a9 cmp byte ptr ds:[0B93h],1
+    sub(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xb93u16)),
+        0x1u8,
+        &mut ctx.cpu.flags,
+    );
+    // 1483:05ae jne short 05B8h
+    ctx.jne(Cont(x1483_05b0), Cont(x1483_05b8))
+}
+
+pub fn x1483_05b0(ctx: &mut Context) -> Cont {
+    // 1483:05b0 mov ds:[0B88h],al
+    ctx.memory.write::<u8>(
+        segofs(ctx.cpu.regs.get_ds(), 0xb88u16),
+        ctx.cpu.regs.get_al(),
+    );
+    // 1483:05b3 mov byte ptr ds:[0B93h],0
+    ctx.memory
+        .write::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xb93u16), 0x0u8);
+    Cont(x1483_05b8)
+}
+
+pub fn x1483_05b8(ctx: &mut Context) -> Cont {
+    // 1483:05b8 cbw
+    ctx.cpu
+        .regs
+        .set_ax(ctx.cpu.regs.get_al() as i8 as i16 as u16);
+    // 1483:05b9 shl ax,1
+    ctx.cpu
+        .regs
+        .set_ax(shl(ctx.cpu.regs.get_ax(), 0x1u8, &mut ctx.cpu.flags));
+    // 1483:05bb mov cl,13h
+    ctx.cpu.regs.set_cl(0x13u8);
+    // 1483:05bd idiv cl
+    let x = ctx.cpu.regs.get_ax() as i16;
+    let y = ctx.cpu.regs.get_cl() as i8 as i16;
+    ctx.cpu.regs.set_al((x / y) as i8 as u8);
+    ctx.cpu.regs.set_ah((x % y) as i8 as u8);
+    // 1483:05bf cbw
+    ctx.cpu
+        .regs
+        .set_ax(ctx.cpu.regs.get_al() as i8 as i16 as u16);
+    // 1483:05c0 mov ds:[0A7Eh],ax
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_ds(), 0xa7eu16),
+        ctx.cpu.regs.get_ax(),
+    );
+    // 1483:05c3 mov ax,ds:[0A78h]
+    ctx.cpu.regs.set_ax(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xa78u16)),
+    );
+    // 1483:05c6 mov ds:[0A76h],ax
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_ds(), 0xa76u16),
+        ctx.cpu.regs.get_ax(),
+    );
+    // 1483:05c9 mov ax,ds:[0A7Ch]
+    ctx.cpu.regs.set_ax(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xa7cu16)),
+    );
+    // 1483:05cc mov ds:[0A7Ah],ax
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_ds(), 0xa7au16),
+        ctx.cpu.regs.get_ax(),
+    );
+    // 1483:05cf mov word ptr ds:[0A7Ch],0
+    ctx.memory
+        .write::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xa7cu16), 0x0u16);
+    // 1483:05d5 push di
+    ctx.push16(ctx.cpu.regs.get_di());
+    // 1483:05d6 call 0523h
+    ctx.call16(0x5d9, Cont(x1483_0523))
+}
+
+pub fn x1483_05d9(ctx: &mut Context) -> Cont {
+    // 1483:05d9 pop di
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_di(x);
+    // 1483:05da mov ds:[0A80h],ax
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_ds(), 0xa80u16),
+        ctx.cpu.regs.get_ax(),
+    );
+    // 1483:05dd mov ax,ds:[0A6Ch]
+    ctx.cpu.regs.set_ax(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xa6cu16)),
+    );
+    // 1483:05e0 mov ds:[0A6Ah],ax
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_ds(), 0xa6au16),
+        ctx.cpu.regs.get_ax(),
+    );
+    // 1483:05e3 mov ax,ds:[0A68h]
+    ctx.cpu.regs.set_ax(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xa68u16)),
+    );
+    // 1483:05e6 mov ds:[0A66h],ax
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_ds(), 0xa66u16),
+        ctx.cpu.regs.get_ax(),
+    );
+    // 1483:05e9 mov al,ds:[0B92h]
+    ctx.cpu.regs.set_al(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xb92u16)),
+    );
+    // 1483:05ec mov ds:[0B91h],al
+    ctx.memory.write::<u8>(
+        segofs(ctx.cpu.regs.get_ds(), 0xb91u16),
+        ctx.cpu.regs.get_al(),
+    );
+    // 1483:05ef cmp al,1
+    sub(ctx.cpu.regs.get_al(), 0x1u8, &mut ctx.cpu.flags);
+    // 1483:05f1 je short 060Ch
+    ctx.je(Cont(x1483_05f3), Cont(x1483_060c))
+}
+
+pub fn x1483_05f3(ctx: &mut Context) -> Cont {
+    // 1483:05f3 mov si,cs:[di+2690h]
+    ctx.cpu.regs.set_si(ctx.memory.read::<u16>(segofs(
+        ctx.cpu.regs.get_cs(),
+        ctx.cpu.regs.get_di().wrapping_add(0x2690u16),
+    )));
+    // 1483:05f8 cmp si,0FFFFh
+    sub(ctx.cpu.regs.get_si(), 0xffffu16, &mut ctx.cpu.flags);
+    // 1483:05fb je short 060Ch
+    ctx.je(Cont(x1483_05fd), Cont(x1483_060c))
+}
+
+pub fn x1483_05fd(ctx: &mut Context) -> Cont {
+    // 1483:05fd mov al,ds:[0B8Ch]
+    ctx.cpu.regs.set_al(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xb8cu16)),
+    );
+    // 1483:0600 sub al,1
+    ctx.cpu
+        .regs
+        .set_al(sub(ctx.cpu.regs.get_al(), 0x1u8, &mut ctx.cpu.flags));
+    // 1483:0602 mov al,0
+    ctx.cpu.regs.set_al(0x0u8);
+    // 1483:0604 rcl al,1
+    ctx.cpu
+        .regs
+        .set_al(rcl(ctx.cpu.regs.get_al(), 0x1u8, &mut ctx.cpu.flags));
+    // 1483:0606 mov ds:[0B94h],al
+    ctx.memory.write::<u8>(
+        segofs(ctx.cpu.regs.get_ds(), 0xb94u16),
+        ctx.cpu.regs.get_al(),
+    );
+    // 1483:0609 call 0613h
+    ctx.call16(0x60c, Cont(x1483_0613))
+}
+
+pub fn x1483_060c(ctx: &mut Context) -> Cont {
+    // 1483:060c mov al,ds:[0B8Ch]
+    ctx.cpu.regs.set_al(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xb8cu16)),
+    );
+    // 1483:060f mov ds:[0B8Bh],al
+    ctx.memory.write::<u8>(
+        segofs(ctx.cpu.regs.get_ds(), 0xb8bu16),
+        ctx.cpu.regs.get_al(),
+    );
+    // 1483:0612 ret
+    ctx.ret16(0)
+}
+
+pub fn x1483_0613(ctx: &mut Context) -> Cont {
+    // 1483:0613 add si,0
+    ctx.cpu
+        .regs
+        .set_si(add(ctx.cpu.regs.get_si(), 0x0u16, &mut ctx.cpu.flags));
+    Cont(x1483_0617)
+}
+
+pub fn x1483_0617(ctx: &mut Context) -> Cont {
+    // 1483:0617 mov ax,182Ch
+    ctx.cpu.regs.set_ax(0x182cu16);
+    // 1483:061a mov es,ax
+    ctx.cpu.regs.set_es(ctx.cpu.regs.get_ax());
+    // 1483:061c lods word ptr es:[si]
+    ctx.lodsw();
+    // 1483:061e or ah,ah
+    ctx.cpu.regs.set_ah(or(
+        ctx.cpu.regs.get_ah(),
+        ctx.cpu.regs.get_ah(),
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:0620 jne short 0627h
+    ctx.jne(Cont(x1483_0622), Cont(x1483_0627))
+}
+
+pub fn x1483_0622(ctx: &mut Context) -> Cont {
+    // 1483:0622 call 0628h
+    ctx.call16(0x625, Cont(x1483_0628))
+}
+
+pub fn x1483_0625(ctx: &mut Context) -> Cont {
+    // 1483:0625 jmp short 0617h
+    Cont(x1483_0617)
+}
+
+pub fn x1483_0627(ctx: &mut Context) -> Cont {
+    // 1483:0627 ret
+    ctx.ret16(0)
+}
+
+pub fn x1483_0628(ctx: &mut Context) -> Cont {
+    // 1483:0628 mov bx,ax
+    ctx.cpu.regs.set_bx(ctx.cpu.regs.get_ax());
+    // 1483:062a lods word ptr es:[si]
+    ctx.lodsw();
+    // 1483:062c mov cx,ax
+    ctx.cpu.regs.set_cx(ctx.cpu.regs.get_ax());
+    // 1483:062e lods word ptr es:[si]
+    ctx.lodsw();
+    // 1483:0630 mov ds:[0B85h],ah
+    ctx.memory.write::<u8>(
+        segofs(ctx.cpu.regs.get_ds(), 0xb85u16),
+        ctx.cpu.regs.get_ah(),
+    );
+    // 1483:0634 rol al,1
+    ctx.cpu
+        .regs
+        .set_al(rol(ctx.cpu.regs.get_al(), 0x1u8, &mut ctx.cpu.flags));
+    // 1483:0636 and al,1
+    ctx.cpu
+        .regs
+        .set_al(and(ctx.cpu.regs.get_al(), 0x1u8, &mut ctx.cpu.flags));
+    // 1483:0638 xor al,1
+    ctx.cpu
+        .regs
+        .set_al(xor(ctx.cpu.regs.get_al(), 0x1u8, &mut ctx.cpu.flags));
+    // 1483:063a mov ds:[0B8Dh],al
+    ctx.memory.write::<u8>(
+        segofs(ctx.cpu.regs.get_ds(), 0xb8du16),
+        ctx.cpu.regs.get_al(),
+    );
+    // 1483:063d mov ds:[0B8Eh],al
+    ctx.memory.write::<u8>(
+        segofs(ctx.cpu.regs.get_ds(), 0xb8eu16),
+        ctx.cpu.regs.get_al(),
+    );
+    // 1483:0640 mov word ptr ds:[0A82h],1
+    ctx.memory
+        .write::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xa82u16), 0x1u16);
+    // 1483:0646 push si
+    ctx.push16(ctx.cpu.regs.get_si());
+    // 1483:0647 shr bx,1
+    ctx.cpu
+        .regs
+        .set_bx(shr(ctx.cpu.regs.get_bx(), 0x1u8, &mut ctx.cpu.flags));
+    // 1483:0649 rcr cx,1
+    ctx.cpu
+        .regs
+        .set_cx(rcr(ctx.cpu.regs.get_cx(), 0x1u8, &mut ctx.cpu.flags));
+    // 1483:064b rcr bx,1
+    ctx.cpu
+        .regs
+        .set_bx(rcr(ctx.cpu.regs.get_bx(), 0x1u8, &mut ctx.cpu.flags));
+    // 1483:064d rcr cx,1
+    ctx.cpu
+        .regs
+        .set_cx(rcr(ctx.cpu.regs.get_cx(), 0x1u8, &mut ctx.cpu.flags));
+    // 1483:064f rcr bx,1
+    ctx.cpu
+        .regs
+        .set_bx(rcr(ctx.cpu.regs.get_bx(), 0x1u8, &mut ctx.cpu.flags));
+    // 1483:0651 rcr cx,1
+    ctx.cpu
+        .regs
+        .set_cx(rcr(ctx.cpu.regs.get_cx(), 0x1u8, &mut ctx.cpu.flags));
+    // 1483:0653 rcr bx,1
+    ctx.cpu
+        .regs
+        .set_bx(rcr(ctx.cpu.regs.get_bx(), 0x1u8, &mut ctx.cpu.flags));
+    // 1483:0655 rcr cx,1
+    ctx.cpu
+        .regs
+        .set_cx(rcr(ctx.cpu.regs.get_cx(), 0x1u8, &mut ctx.cpu.flags));
+    // 1483:0657 rcr bx,1
+    ctx.cpu
+        .regs
+        .set_bx(rcr(ctx.cpu.regs.get_bx(), 0x1u8, &mut ctx.cpu.flags));
+    // 1483:0659 mov ax,ds
+    ctx.cpu.regs.set_ax(ctx.cpu.regs.get_ds());
+    // 1483:065b mov es,ax
+    ctx.cpu.regs.set_es(ctx.cpu.regs.get_ax());
+    // 1483:065d mov ax,1BEBh
+    ctx.cpu.regs.set_ax(0x1bebu16);
+    // 1483:0660 mov si,0
+    ctx.cpu.regs.set_si(0x0u16);
+    // 1483:0663 add ax,cx
+    ctx.cpu.regs.set_ax(add(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_cx(),
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:0665 mov ds,ax
+    ctx.cpu.regs.set_ds(ctx.cpu.regs.get_ax());
+    // 1483:0667 mov cl,4
+    ctx.cpu.regs.set_cl(0x4u8);
+    // 1483:0669 rol bx,cl
+    ctx.cpu.regs.set_bx(rol(
+        ctx.cpu.regs.get_bx(),
+        ctx.cpu.regs.get_cl(),
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:066b add si,bx
+    ctx.cpu.regs.set_si(add(
+        ctx.cpu.regs.get_si(),
+        ctx.cpu.regs.get_bx(),
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:066d mov dl,80h
+    ctx.cpu.regs.set_dl(0x80u8);
+    // 1483:066f mov dh,80h
+    ctx.cpu.regs.set_dh(0x80u8);
+    // 1483:0671 lea di,ds:[960h]
+    ctx.cpu.regs.set_di(0x960u16);
+    // 1483:0675 mov al,es:[0B85h]
+    ctx.cpu.regs.set_al(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_es(), 0xb85u16)),
+    );
+    // 1483:0679 mov es:[0B87h],al
+    ctx.memory.write::<u8>(
+        segofs(ctx.cpu.regs.get_es(), 0xb87u16),
+        ctx.cpu.regs.get_al(),
+    );
+    // 1483:067d lodsw
+    ctx.lodsw();
+    // 1483:067e xchg al,ah
+    let t = ctx.cpu.regs.get_ah();
+    ctx.cpu.regs.set_ah(ctx.cpu.regs.get_al());
+    ctx.cpu.regs.set_al(t);
+    // 1483:0680 xor bh,bh
+    ctx.cpu.regs.set_bh(xor(
+        ctx.cpu.regs.get_bh(),
+        ctx.cpu.regs.get_bh(),
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:0682 mov bl,ah
+    ctx.cpu.regs.set_bl(ctx.cpu.regs.get_ah());
+    // 1483:0684 mov cl,8
+    ctx.cpu.regs.set_cl(0x8u8);
+    Cont(x1483_0686)
+}
+
+pub fn x1483_0686(ctx: &mut Context) -> Cont {
+    // 1483:0686 add bx,3890h
+    ctx.cpu
+        .regs
+        .set_bx(add(ctx.cpu.regs.get_bx(), 0x3890u16, &mut ctx.cpu.flags));
+    // 1483:068a mov ch,cs:[bx+100h]
+    ctx.cpu.regs.set_ch(ctx.memory.read::<u8>(segofs(
+        ctx.cpu.regs.get_cs(),
+        ctx.cpu.regs.get_bx().wrapping_add(0x100u16),
+    )));
+    // 1483:068f cmp ch,10h
+    sub(ctx.cpu.regs.get_ch(), 0x10u8, &mut ctx.cpu.flags);
+    // 1483:0692 jne short 06C0h
+    ctx.jne(Cont(x1483_0694), Cont(x1483_06c0))
+}
+
+pub fn x1483_0694(ctx: &mut Context) -> Cont {
+    // 1483:0694 cmp cl,8
+    sub(ctx.cpu.regs.get_cl(), 0x8u8, &mut ctx.cpu.flags);
+    // 1483:0697 jne short 06A3h
+    ctx.jne(Cont(x1483_0699), Cont(x1483_06a3))
+}
+
+pub fn x1483_0699(ctx: &mut Context) -> Cont {
+    // 1483:0699 add dl,al
+    ctx.cpu.regs.set_dl(add(
+        ctx.cpu.regs.get_dl(),
+        ctx.cpu.regs.get_al(),
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:069b mov es:[di],dl
+    ctx.memory.write::<u8>(
+        segofs(ctx.cpu.regs.get_es(), ctx.cpu.regs.get_di()),
+        ctx.cpu.regs.get_dl(),
+    );
+    // 1483:069e lodsw
+    ctx.lodsw();
+    // 1483:069f xchg al,ah
+    let t = ctx.cpu.regs.get_ah();
+    ctx.cpu.regs.set_ah(ctx.cpu.regs.get_al());
+    ctx.cpu.regs.set_al(t);
+    // 1483:06a1 jmp short 06E5h
+    Cont(x1483_06e5)
+}
+
+pub fn x1483_06a3(ctx: &mut Context) -> Cont {
+    // 1483:06a3 shl ax,cl
+    ctx.cpu.regs.set_ax(shl(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_cl(),
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:06a5 lodsb
+    ctx.lodsb();
+    // 1483:06a6 mov ch,8
+    ctx.cpu.regs.set_ch(0x8u8);
+    // 1483:06a8 sub ch,cl
+    ctx.cpu.regs.set_ch(sub(
+        ctx.cpu.regs.get_ch(),
+        ctx.cpu.regs.get_cl(),
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:06aa xchg cl,ch
+    let t = ctx.cpu.regs.get_ch();
+    ctx.cpu.regs.set_ch(ctx.cpu.regs.get_cl());
+    ctx.cpu.regs.set_cl(t);
+    // 1483:06ac shl ax,cl
+    ctx.cpu.regs.set_ax(shl(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_cl(),
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:06ae xchg cl,ch
+    let t = ctx.cpu.regs.get_ch();
+    ctx.cpu.regs.set_ch(ctx.cpu.regs.get_cl());
+    ctx.cpu.regs.set_cl(t);
+    // 1483:06b0 add dl,ah
+    ctx.cpu.regs.set_dl(add(
+        ctx.cpu.regs.get_dl(),
+        ctx.cpu.regs.get_ah(),
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:06b2 mov es:[di],dl
+    ctx.memory.write::<u8>(
+        segofs(ctx.cpu.regs.get_es(), ctx.cpu.regs.get_di()),
+        ctx.cpu.regs.get_dl(),
+    );
+    // 1483:06b5 shl ax,cl
+    ctx.cpu.regs.set_ax(shl(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_cl(),
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:06b7 lodsb
+    ctx.lodsb();
+    // 1483:06b8 xchg cl,ch
+    let t = ctx.cpu.regs.get_ch();
+    ctx.cpu.regs.set_ch(ctx.cpu.regs.get_cl());
+    ctx.cpu.regs.set_cl(t);
+    // 1483:06ba shl ax,cl
+    ctx.cpu.regs.set_ax(shl(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_cl(),
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:06bc mov cl,ch
+    ctx.cpu.regs.set_cl(ctx.cpu.regs.get_ch());
+    // 1483:06be jmp short 06E5h
+    Cont(x1483_06e5)
+}
+
+pub fn x1483_06c0(ctx: &mut Context) -> Cont {
+    // 1483:06c0 add dl,cs:[bx]
+    ctx.cpu.regs.set_dl(add(
+        ctx.cpu.regs.get_dl(),
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_cs(), ctx.cpu.regs.get_bx())),
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:06c3 mov es:[di],dl
+    ctx.memory.write::<u8>(
+        segofs(ctx.cpu.regs.get_es(), ctx.cpu.regs.get_di()),
+        ctx.cpu.regs.get_dl(),
+    );
+    // 1483:06c6 cmp cl,ch
+    sub(
+        ctx.cpu.regs.get_cl(),
+        ctx.cpu.regs.get_ch(),
+        &mut ctx.cpu.flags,
+    );
+    // 1483:06c8 jbe short 06D4h
+    ctx.jbe(Cont(x1483_06ca), Cont(x1483_06d4))
+}
+
+pub fn x1483_06ca(ctx: &mut Context) -> Cont {
+    // 1483:06ca xchg cl,ch
+    let t = ctx.cpu.regs.get_ch();
+    ctx.cpu.regs.set_ch(ctx.cpu.regs.get_cl());
+    ctx.cpu.regs.set_cl(t);
+    // 1483:06cc shl ax,cl
+    ctx.cpu.regs.set_ax(shl(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_cl(),
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:06ce xchg cl,ch
+    let t = ctx.cpu.regs.get_ch();
+    ctx.cpu.regs.set_ch(ctx.cpu.regs.get_cl());
+    ctx.cpu.regs.set_cl(t);
+    // 1483:06d0 sub cl,ch
+    ctx.cpu.regs.set_cl(sub(
+        ctx.cpu.regs.get_cl(),
+        ctx.cpu.regs.get_ch(),
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:06d2 jmp short 06E5h
+    Cont(x1483_06e5)
+}
+
+pub fn x1483_06d4(ctx: &mut Context) -> Cont {
+    // 1483:06d4 shl ax,cl
+    ctx.cpu.regs.set_ax(shl(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_cl(),
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:06d6 sub ch,cl
+    ctx.cpu.regs.set_ch(sub(
+        ctx.cpu.regs.get_ch(),
+        ctx.cpu.regs.get_cl(),
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:06d8 lodsb
+    ctx.lodsb();
+    // 1483:06d9 mov cl,8
+    ctx.cpu.regs.set_cl(0x8u8);
+    // 1483:06db je short 06E5h
+    ctx.je(Cont(x1483_06dd), Cont(x1483_06e5))
+}
+
+pub fn x1483_06dd(ctx: &mut Context) -> Cont {
+    // 1483:06dd xchg cl,ch
+    let t = ctx.cpu.regs.get_ch();
+    ctx.cpu.regs.set_ch(ctx.cpu.regs.get_cl());
+    ctx.cpu.regs.set_cl(t);
+    // 1483:06df shl ax,cl
+    ctx.cpu.regs.set_ax(shl(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_cl(),
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:06e1 xchg cl,ch
+    let t = ctx.cpu.regs.get_ch();
+    ctx.cpu.regs.set_ch(ctx.cpu.regs.get_cl());
+    ctx.cpu.regs.set_cl(t);
+    // 1483:06e3 sub cl,ch
+    ctx.cpu.regs.set_cl(sub(
+        ctx.cpu.regs.get_cl(),
+        ctx.cpu.regs.get_ch(),
+        &mut ctx.cpu.flags,
+    ));
+    Cont(x1483_06e5)
+}
+
+pub fn x1483_06e5(ctx: &mut Context) -> Cont {
+    // 1483:06e5 inc di
+    ctx.cpu
+        .regs
+        .set_di(inc(ctx.cpu.regs.get_di(), &mut ctx.cpu.flags));
+    // 1483:06e6 xor bh,bh
+    ctx.cpu.regs.set_bh(xor(
+        ctx.cpu.regs.get_bh(),
+        ctx.cpu.regs.get_bh(),
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:06e8 mov bl,ah
+    ctx.cpu.regs.set_bl(ctx.cpu.regs.get_ah());
+    // 1483:06ea dec byte ptr es:[0B87h]
+    ctx.memory.write::<u8>(
+        segofs(ctx.cpu.regs.get_es(), 0xb87u16),
+        dec(
+            ctx.memory
+                .read::<u8>(segofs(ctx.cpu.regs.get_es(), 0xb87u16)),
+            &mut ctx.cpu.flags,
+        ),
+    );
+    // 1483:06ef jne short 0686h
+    ctx.jne(Cont(x1483_06f1), Cont(x1483_0686))
+}
+
+pub fn x1483_06f1(ctx: &mut Context) -> Cont {
+    // 1483:06f1 mov ax,30F7h
+    ctx.cpu.regs.set_ax(0x30f7u16);
+    // 1483:06f4 mov ds,ax
+    ctx.cpu.regs.set_ds(ctx.cpu.regs.get_ax());
+    // 1483:06f6 mov al,ds:[0B85h]
+    ctx.cpu.regs.set_al(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xb85u16)),
+    );
+    // 1483:06f9 xor ah,ah
+    ctx.cpu.regs.set_ah(xor(
+        ctx.cpu.regs.get_ah(),
+        ctx.cpu.regs.get_ah(),
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:06fb mov si,ax
+    ctx.cpu.regs.set_si(ctx.cpu.regs.get_ax());
+    // 1483:06fd mov cx,100h
+    ctx.cpu.regs.set_cx(0x100u16);
+    // 1483:0700 sub cx,ax
+    ctx.cpu.regs.set_cx(sub(
+        ctx.cpu.regs.get_cx(),
+        ctx.cpu.regs.get_ax(),
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:0702 mov al,80h
+    ctx.cpu.regs.set_al(0x80u8);
+    // 1483:0704 lea di,[si+960h]
+    ctx.cpu
+        .regs
+        .set_di(ctx.cpu.regs.get_si().wrapping_add(0x960u16));
+    // 1483:0708 rep stosb
+    ctx.rep(Rep::REP, Context::stosb);
+    // 1483:070a test byte ptr ds:[0B8Dh],1
+    and(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xb8du16)),
+        0x1u8,
+        &mut ctx.cpu.flags,
+    );
+    // 1483:070f jne short 0716h
+    ctx.jne(Cont(x1483_0711), Cont(x1483_0716))
+}
+
+pub fn x1483_0711(ctx: &mut Context) -> Cont {
+    // 1483:0711 call 0767h
+    ctx.call16(0x714, Cont(x1483_0767))
+}
+
+pub fn x1483_0714(ctx: &mut Context) -> Cont {
+    // 1483:0714 jmp short 0719h
+    Cont(x1483_0719)
+}
+
+pub fn x1483_0716(ctx: &mut Context) -> Cont {
+    // 1483:0716 call 07CDh
+    ctx.call16(0x719, Cont(x1483_07cd))
+}
+
+pub fn x1483_0719(ctx: &mut Context) -> Cont {
+    // 1483:0719 pop si
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_si(x);
+    // 1483:071a ret
+    ctx.ret16(0)
+}
+
+pub fn x1483_071b(ctx: &mut Context) -> Cont {
+    // 1483:071b call 0523h
+    ctx.call16(0x71e, Cont(x1483_0523))
+}
+
+pub fn x1483_071e(ctx: &mut Context) -> Cont {
+    // 1483:071e add ds:[0A80h],ax
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_ds(), 0xa80u16),
+        add(
+            ctx.memory
+                .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xa80u16)),
+            ctx.cpu.regs.get_ax(),
+            &mut ctx.cpu.flags,
+        ),
+    );
+    // 1483:0722 cmp di,0Ah
+    sub(ctx.cpu.regs.get_di(), 0xau16, &mut ctx.cpu.flags);
+    // 1483:0725 je short 0737h
+    ctx.je(Cont(x1483_0727), Cont(x1483_0737))
+}
+
+pub fn x1483_0727(ctx: &mut Context) -> Cont {
+    // 1483:0727 jge short 072Eh
+    ctx.jge(Cont(x1483_0729), Cont(x1483_072e))
+}
+
+pub fn x1483_0729(ctx: &mut Context) -> Cont {
+    // 1483:0729 inc word ptr ds:[0A82h]
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_ds(), 0xa82u16),
+        inc(
+            ctx.memory
+                .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xa82u16)),
+            &mut ctx.cpu.flags,
+        ),
+    );
+    // 1483:072d ret
+    ctx.ret16(0)
+}
+
+pub fn x1483_072e(ctx: &mut Context) -> Cont {
+    // 1483:072e dec word ptr ds:[0A82h]
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_ds(), 0xa82u16),
+        dec(
+            ctx.memory
+                .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xa82u16)),
+            &mut ctx.cpu.flags,
+        ),
+    );
+    // 1483:0732 jne short 0737h
+    ctx.jne(Cont(x1483_0734), Cont(x1483_0737))
+}
+
+pub fn x1483_0734(ctx: &mut Context) -> Cont {
+    // 1483:0734 add sp,4
+    ctx.cpu
+        .regs
+        .set_sp(add(ctx.cpu.regs.get_sp(), 0x4u16, &mut ctx.cpu.flags));
+    Cont(x1483_0737)
+}
+
+pub fn x1483_0737(ctx: &mut Context) -> Cont {
+    // 1483:0737 ret
+    ctx.ret16(0)
+}
+
+pub fn x1483_0738(ctx: &mut Context) -> Cont {
+    // 1483:0738 mov ax,ds
+    ctx.cpu.regs.set_ax(ctx.cpu.regs.get_ds());
+    // 1483:073a mov es,ax
+    ctx.cpu.regs.set_es(ctx.cpu.regs.get_ax());
+    // 1483:073c lea di,ds:[960h]
+    ctx.cpu.regs.set_di(0x960u16);
+    // 1483:0740 mov al,80h
+    ctx.cpu.regs.set_al(0x80u8);
+    // 1483:0742 mov ah,al
+    ctx.cpu.regs.set_ah(ctx.cpu.regs.get_al());
+    // 1483:0744 mov cx,80h
+    ctx.cpu.regs.set_cx(0x80u16);
+    // 1483:0747 rep stosw
+    ctx.rep(Rep::REP, Context::stosw);
+    // 1483:0749 mov byte ptr ds:[0B85h],60h
+    ctx.memory
+        .write::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xb85u16), 0x60u8);
+    // 1483:074e mov byte ptr ds:[0B86h],60h
+    ctx.memory
+        .write::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xb86u16), 0x60u8);
+    // 1483:0753 mov byte ptr ds:[0B8Eh],0
+    ctx.memory
+        .write::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xb8eu16), 0x0u8);
+    // 1483:0758 mov byte ptr ds:[0B8Dh],1
+    ctx.memory
+        .write::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xb8du16), 0x1u8);
+    Cont(x1483_075d)
+}
+
+pub fn x1483_075d(ctx: &mut Context) -> Cont {
+    // 1483:075d call 07FEh
+    ctx.call16(0x760, Cont(x1483_07fe))
+}
+
+pub fn x1483_0760(ctx: &mut Context) -> Cont {
+    // 1483:0760 dec word ptr ds:[0A82h]
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_ds(), 0xa82u16),
+        dec(
+            ctx.memory
+                .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xa82u16)),
+            &mut ctx.cpu.flags,
+        ),
+    );
+    // 1483:0764 jne short 075Dh
+    ctx.jne(Cont(x1483_0766), Cont(x1483_075d))
+}
+
+pub fn x1483_0766(ctx: &mut Context) -> Cont {
+    // 1483:0766 ret
+    ctx.ret16(0)
+}
+
+pub fn x1483_0767(ctx: &mut Context) -> Cont {
+    // 1483:0767 mov al,ds:[0B89h]
+    ctx.cpu.regs.set_al(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xb89u16)),
+    );
+    // 1483:076a sub al,ds:[0B88h]
+    ctx.cpu.regs.set_al(sub(
+        ctx.cpu.regs.get_al(),
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xb88u16)),
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:076e je short 077Ch
+    ctx.je(Cont(x1483_0770), Cont(x1483_077c))
+}
+
+pub fn x1483_0770(ctx: &mut Context) -> Cont {
+    // 1483:0770 mov cl,4
+    ctx.cpu.regs.set_cl(0x4u8);
+    // 1483:0772 jns short 0778h
+    ctx.jns(Cont(x1483_0774), Cont(x1483_0778))
+}
+
+pub fn x1483_0774(ctx: &mut Context) -> Cont {
+    // 1483:0774 sar al,cl
+    ctx.cpu.regs.set_al(sar(
+        ctx.cpu.regs.get_al(),
+        ctx.cpu.regs.get_cl(),
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:0776 jmp short 077Ch
+    Cont(x1483_077c)
+}
+
+pub fn x1483_0778(ctx: &mut Context) -> Cont {
+    // 1483:0778 sar al,cl
+    ctx.cpu.regs.set_al(sar(
+        ctx.cpu.regs.get_al(),
+        ctx.cpu.regs.get_cl(),
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:077a inc al
+    ctx.cpu
+        .regs
+        .set_al(inc(ctx.cpu.regs.get_al(), &mut ctx.cpu.flags));
+    Cont(x1483_077c)
+}
+
+pub fn x1483_077c(ctx: &mut Context) -> Cont {
+    // 1483:077c add ds:[0B88h],al
+    ctx.memory.write::<u8>(
+        segofs(ctx.cpu.regs.get_ds(), 0xb88u16),
+        add(
+            ctx.memory
+                .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xb88u16)),
+            ctx.cpu.regs.get_al(),
+            &mut ctx.cpu.flags,
+        ),
+    );
+    // 1483:0780 mov al,ds:[0B88h]
+    ctx.cpu.regs.set_al(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xb88u16)),
+    );
+    // 1483:0783 mov bl,ds:[0B85h]
+    ctx.cpu.regs.set_bl(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xb85u16)),
+    );
+    // 1483:0787 jle short 07B8h
+    ctx.jle(Cont(x1483_0789), Cont(x1483_07b8))
+}
+
+pub fn x1483_0789(ctx: &mut Context) -> Cont {
+    // 1483:0789 mov ds:[0B86h],al
+    ctx.memory.write::<u8>(
+        segofs(ctx.cpu.regs.get_ds(), 0xb86u16),
+        ctx.cpu.regs.get_al(),
+    );
+    // 1483:078c call dword ptr cs:[12h]
+    let addr = ctx
+        .memory
+        .read::<SegOfs>(segofs(ctx.cpu.regs.get_cs(), 0x12u16));
+    ctx.callf16(0x791, addr.seg, ctx.indirect16(addr))
+}
+
+pub fn x1483_0791(ctx: &mut Context) -> Cont {
+    // 1483:0791 mov cl,ds:[0B86h]
+    ctx.cpu.regs.set_cl(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xb86u16)),
+    );
+    // 1483:0795 xor ch,ch
+    ctx.cpu.regs.set_ch(xor(
+        ctx.cpu.regs.get_ch(),
+        ctx.cpu.regs.get_ch(),
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:0797 mov bx,ds:[0A6Ah]
+    ctx.cpu.regs.set_bx(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xa6au16)),
+    );
+    // 1483:079b xchg bl,bh
+    let t = ctx.cpu.regs.get_bh();
+    ctx.cpu.regs.set_bh(ctx.cpu.regs.get_bl());
+    ctx.cpu.regs.set_bl(t);
+    // 1483:079d lea bx,[bx+942h]
+    ctx.cpu
+        .regs
+        .set_bx(ctx.cpu.regs.get_bx().wrapping_add(0x942u16));
+    // 1483:07a1 mov al,ds:[0B90h]
+    ctx.cpu.regs.set_al(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xb90u16)),
+    );
+    Cont(x1483_07a4)
+}
+
+pub fn x1483_07a4(ctx: &mut Context) -> Cont {
+    // 1483:07a4 call dword ptr cs:[6]
+    let addr = ctx
+        .memory
+        .read::<SegOfs>(segofs(ctx.cpu.regs.get_cs(), 0x6u16));
+    ctx.callf16(0x7a9, addr.seg, ctx.indirect16(addr))
+}
+
+pub fn x1483_07a9(ctx: &mut Context) -> Cont {
+    // 1483:07a9 loop 07A4h
+    ctx.loop_(Cont(x1483_07ab), Cont(x1483_07a4))
+}
+
+pub fn x1483_07ab(ctx: &mut Context) -> Cont {
+    // 1483:07ab call dword ptr cs:[16h]
+    let addr = ctx
+        .memory
+        .read::<SegOfs>(segofs(ctx.cpu.regs.get_cs(), 0x16u16));
+    ctx.callf16(0x7b0, addr.seg, ctx.indirect16(addr))
+}
+
+pub fn x1483_07b0(ctx: &mut Context) -> Cont {
+    // 1483:07b0 mov al,ds:[0B85h]
+    ctx.cpu.regs.set_al(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xb85u16)),
+    );
+    // 1483:07b3 mov ds:[0B86h],al
+    ctx.memory.write::<u8>(
+        segofs(ctx.cpu.regs.get_ds(), 0xb86u16),
+        ctx.cpu.regs.get_al(),
+    );
+    // 1483:07b6 jmp short 07C3h
+    Cont(x1483_07c3)
+}
+
+pub fn x1483_07b8(ctx: &mut Context) -> Cont {
+    // 1483:07b8 cmp bl,4Bh
+    sub(ctx.cpu.regs.get_bl(), 0x4bu8, &mut ctx.cpu.flags);
+    // 1483:07bb jb short 07BFh
+    ctx.jb(Cont(x1483_07bd), Cont(x1483_07bf))
+}
+
+pub fn x1483_07bd(ctx: &mut Context) -> Cont {
+    // 1483:07bd add bl,al
+    ctx.cpu.regs.set_bl(add(
+        ctx.cpu.regs.get_bl(),
+        ctx.cpu.regs.get_al(),
+        &mut ctx.cpu.flags,
+    ));
+    Cont(x1483_07bf)
+}
+
+pub fn x1483_07bf(ctx: &mut Context) -> Cont {
+    // 1483:07bf mov ds:[0B86h],bl
+    ctx.memory.write::<u8>(
+        segofs(ctx.cpu.regs.get_ds(), 0xb86u16),
+        ctx.cpu.regs.get_bl(),
+    );
+    Cont(x1483_07c3)
+}
+
+pub fn x1483_07c3(ctx: &mut Context) -> Cont {
+    // 1483:07c3 call 07FEh
+    ctx.call16(0x7c6, Cont(x1483_07fe))
+}
+
+pub fn x1483_07c6(ctx: &mut Context) -> Cont {
+    // 1483:07c6 dec word ptr ds:[0A82h]
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_ds(), 0xa82u16),
+        dec(
+            ctx.memory
+                .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xa82u16)),
+            &mut ctx.cpu.flags,
+        ),
+    );
+    // 1483:07ca jne short 0767h
+    ctx.jne(Cont(x1483_07cc), Cont(x1483_0767))
+}
+
+pub fn x1483_07cc(ctx: &mut Context) -> Cont {
+    // 1483:07cc ret
+    ctx.ret16(0)
+}
+
+pub fn x1483_07cd(ctx: &mut Context) -> Cont {
+    // 1483:07cd mov al,ds:[0B85h]
+    ctx.cpu.regs.set_al(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xb85u16)),
+    );
+    // 1483:07d0 mov bl,al
+    ctx.cpu.regs.set_bl(ctx.cpu.regs.get_al());
+    // 1483:07d2 mov cl,3
+    ctx.cpu.regs.set_cl(0x3u8);
+    // 1483:07d4 shr al,cl
+    ctx.cpu.regs.set_al(shr(
+        ctx.cpu.regs.get_al(),
+        ctx.cpu.regs.get_cl(),
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:07d6 mov ds:[0B87h],al
+    ctx.memory.write::<u8>(
+        segofs(ctx.cpu.regs.get_ds(), 0xb87u16),
+        ctx.cpu.regs.get_al(),
+    );
+    // 1483:07d9 add al,bl
+    ctx.cpu.regs.set_al(add(
+        ctx.cpu.regs.get_al(),
+        ctx.cpu.regs.get_bl(),
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:07db mov ds:[0B86h],al
+    ctx.memory.write::<u8>(
+        segofs(ctx.cpu.regs.get_ds(), 0xb86u16),
+        ctx.cpu.regs.get_al(),
+    );
+    Cont(x1483_07de)
+}
+
+pub fn x1483_07de(ctx: &mut Context) -> Cont {
+    // 1483:07de mov al,ds:[0B87h]
+    ctx.cpu.regs.set_al(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xb87u16)),
+    );
+    // 1483:07e1 sub ds:[0B86h],al
+    ctx.memory.write::<u8>(
+        segofs(ctx.cpu.regs.get_ds(), 0xb86u16),
+        sub(
+            ctx.memory
+                .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xb86u16)),
+            ctx.cpu.regs.get_al(),
+            &mut ctx.cpu.flags,
+        ),
+    );
+    // 1483:07e5 mov al,ds:[0B86h]
+    ctx.cpu.regs.set_al(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xb86u16)),
+    );
+    // 1483:07e8 cmp al,ds:[0B87h]
+    sub(
+        ctx.cpu.regs.get_al(),
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xb87u16)),
+        &mut ctx.cpu.flags,
+    );
+    // 1483:07ec jae short 07F4h
+    ctx.jae(Cont(x1483_07ee), Cont(x1483_07f4))
+}
+
+pub fn x1483_07ee(ctx: &mut Context) -> Cont {
+    // 1483:07ee mov al,ds:[0B87h]
+    ctx.cpu.regs.set_al(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xb87u16)),
+    );
+    // 1483:07f1 mov ds:[0B86h],al
+    ctx.memory.write::<u8>(
+        segofs(ctx.cpu.regs.get_ds(), 0xb86u16),
+        ctx.cpu.regs.get_al(),
+    );
+    Cont(x1483_07f4)
+}
+
+pub fn x1483_07f4(ctx: &mut Context) -> Cont {
+    // 1483:07f4 call 07FEh
+    ctx.call16(0x7f7, Cont(x1483_07fe))
+}
+
+pub fn x1483_07f7(ctx: &mut Context) -> Cont {
+    // 1483:07f7 dec word ptr ds:[0A82h]
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_ds(), 0xa82u16),
+        dec(
+            ctx.memory
+                .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xa82u16)),
+            &mut ctx.cpu.flags,
+        ),
+    );
+    // 1483:07fb jne short 07DEh
+    ctx.jne(Cont(x1483_07fd), Cont(x1483_07de))
+}
+
+pub fn x1483_07fd(ctx: &mut Context) -> Cont {
+    // 1483:07fd ret
+    ctx.ret16(0)
+}
+
+pub fn x1483_07fe(ctx: &mut Context) -> Cont {
+    // 1483:07fe test byte ptr ds:[0B94h],1
+    and(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xb94u16)),
+        0x1u8,
+        &mut ctx.cpu.flags,
+    );
+    // 1483:0803 jne short 0813h
+    ctx.jne(Cont(x1483_0805), Cont(x1483_0813))
+}
+
+pub fn x1483_0805(ctx: &mut Context) -> Cont {
+    // 1483:0805 test byte ptr ds:[0B8Dh],1
+    and(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xb8du16)),
+        0x1u8,
+        &mut ctx.cpu.flags,
+    );
+    // 1483:080a je short 0813h
+    ctx.je(Cont(x1483_080c), Cont(x1483_0813))
+}
+
+pub fn x1483_080c(ctx: &mut Context) -> Cont {
+    // 1483:080c cmp word ptr ds:[0A82h],1
+    sub(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xa82u16)),
+        0x1u16,
+        &mut ctx.cpu.flags,
+    );
+    // 1483:0811 jbe short 081Dh
+    ctx.jbe(Cont(x1483_0813), Cont(x1483_081d))
+}
+
+pub fn x1483_0813(ctx: &mut Context) -> Cont {
+    // 1483:0813 sub word ptr ds:[0A80h],10h
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_ds(), 0xa80u16),
+        sub(
+            ctx.memory
+                .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xa80u16)),
+            0x10u16,
+            &mut ctx.cpu.flags,
+        ),
+    );
+    // 1483:0818 jg short 081Dh
+    ctx.jg(Cont(x1483_081a), Cont(x1483_081d))
+}
+
+pub fn x1483_081a(ctx: &mut Context) -> Cont {
+    // 1483:081a call 071Bh
+    ctx.call16(0x81d, Cont(x1483_071b))
+}
+
+pub fn x1483_081d(ctx: &mut Context) -> Cont {
+    // 1483:081d mov word ptr ds:[0A74h],0
+    ctx.memory
+        .write::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xa74u16), 0x0u16);
+    // 1483:0823 mov word ptr ds:[0A6Eh],0
+    ctx.memory
+        .write::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xa6eu16), 0x0u16);
+    // 1483:0829 push es
+    ctx.push16(ctx.cpu.regs.get_es());
+    // 1483:082a mov ax,ds
+    ctx.cpu.regs.set_ax(ctx.cpu.regs.get_ds());
+    // 1483:082c mov es,ax
+    ctx.cpu.regs.set_es(ctx.cpu.regs.get_ax());
+    // 1483:082e test byte ptr ds:[0B8Dh],1
+    and(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xb8du16)),
+        0x1u8,
+        &mut ctx.cpu.flags,
+    );
+    // 1483:0833 jne short 087Ch
+    ctx.jne(Cont(x1483_0835), Cont(x1483_087c))
+}
+
+pub fn x1483_0835(ctx: &mut Context) -> Cont {
+    // 1483:0835 xor ah,ah
+    ctx.cpu.regs.set_ah(xor(
+        ctx.cpu.regs.get_ah(),
+        ctx.cpu.regs.get_ah(),
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:0837 mov al,ds:[0B86h]
+    ctx.cpu.regs.set_al(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xb86u16)),
+    );
+    // 1483:083a mov cl,al
+    ctx.cpu.regs.set_cl(ctx.cpu.regs.get_al());
+    // 1483:083c mov si,ax
+    ctx.cpu.regs.set_si(ctx.cpu.regs.get_ax());
+    // 1483:083e mov al,ds:[0B85h]
+    ctx.cpu.regs.set_al(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xb85u16)),
+    );
+    // 1483:0841 cmp ax,si
+    sub(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_si(),
+        &mut ctx.cpu.flags,
+    );
+    // 1483:0843 jle short 087Ch
+    ctx.jle(Cont(x1483_0845), Cont(x1483_087c))
+}
+
+pub fn x1483_0845(ctx: &mut Context) -> Cont {
+    // 1483:0845 mov di,ax
+    ctx.cpu.regs.set_di(ctx.cpu.regs.get_ax());
+    // 1483:0847 mov al,[di+95Fh]
+    ctx.cpu.regs.set_al(ctx.memory.read::<u8>(segofs(
+        ctx.cpu.regs.get_ds(),
+        ctx.cpu.regs.get_di().wrapping_add(0x95fu16),
+    )));
+    // 1483:084b sub al,[si+95Fh]
+    ctx.cpu.regs.set_al(sub(
+        ctx.cpu.regs.get_al(),
+        ctx.memory.read::<u8>(segofs(
+            ctx.cpu.regs.get_ds(),
+            ctx.cpu.regs.get_si().wrapping_add(0x95fu16),
+        )),
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:084f je short 087Ch
+    ctx.je(Cont(x1483_0851), Cont(x1483_087c))
+}
+
+pub fn x1483_0851(ctx: &mut Context) -> Cont {
+    // 1483:0851 mov ah,0
+    ctx.cpu.regs.set_ah(0x0u8);
+    // 1483:0853 sbb ah,0
+    ctx.cpu
+        .regs
+        .set_ah(sbb(ctx.cpu.regs.get_ah(), 0x0u8, &mut ctx.cpu.flags));
+    // 1483:0856 mov bx,ax
+    ctx.cpu.regs.set_bx(ctx.cpu.regs.get_ax());
+    // 1483:0858 idiv cl
+    let x = ctx.cpu.regs.get_ax() as i16;
+    let y = ctx.cpu.regs.get_cl() as i8 as i16;
+    ctx.cpu.regs.set_al((x / y) as i8 as u8);
+    ctx.cpu.regs.set_ah((x % y) as i8 as u8);
+    // 1483:085a cbw
+    ctx.cpu
+        .regs
+        .set_ax(ctx.cpu.regs.get_al() as i8 as i16 as u16);
+    // 1483:085b xchg bx,ax
+    let t = ctx.cpu.regs.get_bx();
+    ctx.cpu.regs.set_bx(ctx.cpu.regs.get_ax());
+    ctx.cpu.regs.set_ax(t);
+    // 1483:085c std
+    std(ctx);
+    // 1483:085d lea di,[si+0A83h]
+    ctx.cpu
+        .regs
+        .set_di(ctx.cpu.regs.get_si().wrapping_add(0xa83u16));
+    // 1483:0861 xor cx,cx
+    ctx.cpu.regs.set_cx(xor(
+        ctx.cpu.regs.get_cx(),
+        ctx.cpu.regs.get_cx(),
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:0863 or ax,ax
+    ctx.cpu.regs.set_ax(or(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_ax(),
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:0865 js short 0870h
+    ctx.js(Cont(x1483_0867), Cont(x1483_0870))
+}
+
+pub fn x1483_0867(ctx: &mut Context) -> Cont {
+    // 1483:0867 inc bx
+    ctx.cpu
+        .regs
+        .set_bx(inc(ctx.cpu.regs.get_bx(), &mut ctx.cpu.flags));
+    Cont(x1483_0868)
+}
+
+pub fn x1483_0868(ctx: &mut Context) -> Cont {
+    // 1483:0868 stosb
+    ctx.stosb();
+    // 1483:0869 inc cx
+    ctx.cpu
+        .regs
+        .set_cx(inc(ctx.cpu.regs.get_cx(), &mut ctx.cpu.flags));
+    // 1483:086a sub ax,bx
+    ctx.cpu.regs.set_ax(sub(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_bx(),
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:086c jns short 0868h
+    ctx.jns(Cont(x1483_086e), Cont(x1483_0868))
+}
+
+pub fn x1483_086e(ctx: &mut Context) -> Cont {
+    // 1483:086e jmp short 0877h
+    Cont(x1483_0877)
+}
+
+pub fn x1483_0870(ctx: &mut Context) -> Cont {
+    // 1483:0870 dec bx
+    ctx.cpu
+        .regs
+        .set_bx(dec(ctx.cpu.regs.get_bx(), &mut ctx.cpu.flags));
+    Cont(x1483_0871)
+}
+
+pub fn x1483_0871(ctx: &mut Context) -> Cont {
+    // 1483:0871 stosb
+    ctx.stosb();
+    // 1483:0872 inc cx
+    ctx.cpu
+        .regs
+        .set_cx(inc(ctx.cpu.regs.get_cx(), &mut ctx.cpu.flags));
+    // 1483:0873 sub ax,bx
+    ctx.cpu.regs.set_ax(sub(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_bx(),
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:0875 js short 0871h
+    ctx.js(Cont(x1483_0877), Cont(x1483_0871))
+}
+
+pub fn x1483_0877(ctx: &mut Context) -> Cont {
+    // 1483:0877 mov ds:[0A74h],cx
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_ds(), 0xa74u16),
+        ctx.cpu.regs.get_cx(),
+    );
+    // 1483:087b cld
+    cld(ctx);
+    Cont(x1483_087c)
+}
+
+pub fn x1483_087c(ctx: &mut Context) -> Cont {
+    // 1483:087c test byte ptr ds:[0B8Eh],1
+    and(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xb8eu16)),
+        0x1u8,
+        &mut ctx.cpu.flags,
+    );
+    // 1483:0881 jne short 08B3h
+    ctx.jne(Cont(x1483_0883), Cont(x1483_08b3))
+}
+
+pub fn x1483_0883(ctx: &mut Context) -> Cont {
+    // 1483:0883 mov al,ds:[0B84h]
+    ctx.cpu.regs.set_al(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xb84u16)),
+    );
+    // 1483:0886 sub al,ds:[960h]
+    ctx.cpu.regs.set_al(sub(
+        ctx.cpu.regs.get_al(),
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x960u16)),
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:088a je short 08B3h
+    ctx.je(Cont(x1483_088c), Cont(x1483_08b3))
+}
+
+pub fn x1483_088c(ctx: &mut Context) -> Cont {
+    // 1483:088c mov ah,0
+    ctx.cpu.regs.set_ah(0x0u8);
+    // 1483:088e sbb ah,0
+    ctx.cpu
+        .regs
+        .set_ah(sbb(ctx.cpu.regs.get_ah(), 0x0u8, &mut ctx.cpu.flags));
+    // 1483:0891 mov bx,ax
+    ctx.cpu.regs.set_bx(ctx.cpu.regs.get_ax());
+    // 1483:0893 mov cl,ds:[0B86h]
+    ctx.cpu.regs.set_cl(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xb86u16)),
+    );
+    // 1483:0897 idiv cl
+    let x = ctx.cpu.regs.get_ax() as i16;
+    let y = ctx.cpu.regs.get_cl() as i8 as i16;
+    ctx.cpu.regs.set_al((x / y) as i8 as u8);
+    ctx.cpu.regs.set_ah((x % y) as i8 as u8);
+    // 1483:0899 cbw
+    ctx.cpu
+        .regs
+        .set_ax(ctx.cpu.regs.get_al() as i8 as i16 as u16);
+    // 1483:089a xchg bx,ax
+    let t = ctx.cpu.regs.get_bx();
+    ctx.cpu.regs.set_bx(ctx.cpu.regs.get_ax());
+    ctx.cpu.regs.set_ax(t);
+    // 1483:089b lea di,ds:[0A84h]
+    ctx.cpu.regs.set_di(0xa84u16);
+    // 1483:089f xor cx,cx
+    ctx.cpu.regs.set_cx(xor(
+        ctx.cpu.regs.get_cx(),
+        ctx.cpu.regs.get_cx(),
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:08a1 or ax,ax
+    ctx.cpu.regs.set_ax(or(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_ax(),
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:08a3 js short 08A8h
+    ctx.js(Cont(x1483_08a5), Cont(x1483_08a8))
+}
+
+pub fn x1483_08a5(ctx: &mut Context) -> Cont {
+    // 1483:08a5 inc bx
+    ctx.cpu
+        .regs
+        .set_bx(inc(ctx.cpu.regs.get_bx(), &mut ctx.cpu.flags));
+    // 1483:08a6 jmp short 08A9h
+    Cont(x1483_08a9)
+}
+
+pub fn x1483_08a8(ctx: &mut Context) -> Cont {
+    // 1483:08a8 dec bx
+    ctx.cpu
+        .regs
+        .set_bx(dec(ctx.cpu.regs.get_bx(), &mut ctx.cpu.flags));
+    Cont(x1483_08a9)
+}
+
+pub fn x1483_08a9(ctx: &mut Context) -> Cont {
+    // 1483:08a9 stosb
+    ctx.stosb();
+    // 1483:08aa inc cx
+    ctx.cpu
+        .regs
+        .set_cx(inc(ctx.cpu.regs.get_cx(), &mut ctx.cpu.flags));
+    // 1483:08ab sub ax,bx
+    ctx.cpu.regs.set_ax(sub(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_bx(),
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:08ad jae short 08A9h
+    ctx.jae(Cont(x1483_08af), Cont(x1483_08a9))
+}
+
+pub fn x1483_08af(ctx: &mut Context) -> Cont {
+    // 1483:08af mov ds:[0A6Eh],cx
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_ds(), 0xa6eu16),
+        ctx.cpu.regs.get_cx(),
+    );
+    Cont(x1483_08b3)
+}
+
+pub fn x1483_08b3(ctx: &mut Context) -> Cont {
+    // 1483:08b3 pop es
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_es(x);
+    // 1483:08b4 mov al,ds:[0B86h]
+    ctx.cpu.regs.set_al(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xb86u16)),
+    );
+    // 1483:08b7 call dword ptr cs:[12h]
+    let addr = ctx
+        .memory
+        .read::<SegOfs>(segofs(ctx.cpu.regs.get_cs(), 0x12u16));
+    ctx.callf16(0x8bc, addr.seg, ctx.indirect16(addr))
+}
+
+pub fn x1483_08bc(ctx: &mut Context) -> Cont {
+    // 1483:08bc mov bx,ds:[0A6Ah]
+    ctx.cpu.regs.set_bx(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xa6au16)),
+    );
+    // 1483:08c0 xchg bl,bh
+    let t = ctx.cpu.regs.get_bh();
+    ctx.cpu.regs.set_bh(ctx.cpu.regs.get_bl());
+    ctx.cpu.regs.set_bl(t);
+    // 1483:08c2 lea bx,[bx+942h]
+    ctx.cpu
+        .regs
+        .set_bx(ctx.cpu.regs.get_bx().wrapping_add(0x942u16));
+    // 1483:08c6 mov cl,ds:[0B86h]
+    ctx.cpu.regs.set_cl(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xb86u16)),
+    );
+    // 1483:08ca xor ch,ch
+    ctx.cpu.regs.set_ch(xor(
+        ctx.cpu.regs.get_ch(),
+        ctx.cpu.regs.get_ch(),
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:08cc lea si,ds:[960h]
+    ctx.cpu.regs.set_si(0x960u16);
+    // 1483:08d0 test word ptr ds:[0A66h],1
+    and(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xa66u16)),
+        0x1u16,
+        &mut ctx.cpu.flags,
+    );
+    // 1483:08d6 je short 08F6h
+    ctx.je(Cont(x1483_08d8), Cont(x1483_08f6))
+}
+
+pub fn x1483_08d8(ctx: &mut Context) -> Cont {
+    // 1483:08d8 mov ah,ds:[0B8Fh]
+    ctx.cpu.regs.set_ah(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xb8fu16)),
+    );
+    Cont(x1483_08dc)
+}
+
+pub fn x1483_08dc(ctx: &mut Context) -> Cont {
+    // 1483:08dc lodsb
+    ctx.lodsb();
+    // 1483:08dd add al,[si+123h]
+    ctx.cpu.regs.set_al(add(
+        ctx.cpu.regs.get_al(),
+        ctx.memory.read::<u8>(segofs(
+            ctx.cpu.regs.get_ds(),
+            ctx.cpu.regs.get_si().wrapping_add(0x123u16),
+        )),
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:08e1 xchg al,ah
+    let t = ctx.cpu.regs.get_ah();
+    ctx.cpu.regs.set_ah(ctx.cpu.regs.get_al());
+    ctx.cpu.regs.set_al(t);
+    // 1483:08e3 sub al,ah
+    ctx.cpu.regs.set_al(sub(
+        ctx.cpu.regs.get_al(),
+        ctx.cpu.regs.get_ah(),
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:08e5 add al,80h
+    ctx.cpu
+        .regs
+        .set_al(add(ctx.cpu.regs.get_al(), 0x80u8, &mut ctx.cpu.flags));
+    // 1483:08e7 xlat byte ptr cs:[bx]
+    ctx.xlat();
+    // 1483:08e9 call dword ptr cs:[6]
+    let addr = ctx
+        .memory
+        .read::<SegOfs>(segofs(ctx.cpu.regs.get_cs(), 0x6u16));
+    ctx.callf16(0x8ee, addr.seg, ctx.indirect16(addr))
+}
+
+pub fn x1483_08ee(ctx: &mut Context) -> Cont {
+    // 1483:08ee loop 08DCh
+    ctx.loop_(Cont(x1483_08f0), Cont(x1483_08dc))
+}
+
+pub fn x1483_08f0(ctx: &mut Context) -> Cont {
+    // 1483:08f0 mov ds:[0B8Fh],ah
+    ctx.memory.write::<u8>(
+        segofs(ctx.cpu.regs.get_ds(), 0xb8fu16),
+        ctx.cpu.regs.get_ah(),
+    );
+    // 1483:08f4 jmp short 0904h
+    Cont(x1483_0904)
+}
+
+pub fn x1483_08f6(ctx: &mut Context) -> Cont {
+    // 1483:08f6 lodsb
+    ctx.lodsb();
+    // 1483:08f7 add al,[si+123h]
+    ctx.cpu.regs.set_al(add(
+        ctx.cpu.regs.get_al(),
+        ctx.memory.read::<u8>(segofs(
+            ctx.cpu.regs.get_ds(),
+            ctx.cpu.regs.get_si().wrapping_add(0x123u16),
+        )),
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:08fb xlat byte ptr cs:[bx]
+    ctx.xlat();
+    // 1483:08fd call dword ptr cs:[6]
+    let addr = ctx
+        .memory
+        .read::<SegOfs>(segofs(ctx.cpu.regs.get_cs(), 0x6u16));
+    ctx.callf16(0x902, addr.seg, ctx.indirect16(addr))
+}
+
+pub fn x1483_0902(ctx: &mut Context) -> Cont {
+    // 1483:0902 loop 08F6h
+    ctx.loop_(Cont(x1483_0904), Cont(x1483_08f6))
+}
+
+pub fn x1483_0904(ctx: &mut Context) -> Cont {
+    // 1483:0904 mov ds:[0B90h],al
+    ctx.memory.write::<u8>(
+        segofs(ctx.cpu.regs.get_ds(), 0xb90u16),
+        ctx.cpu.regs.get_al(),
+    );
+    // 1483:0907 mov al,[si-1]
+    ctx.cpu.regs.set_al(ctx.memory.read::<u8>(segofs(
+        ctx.cpu.regs.get_ds(),
+        ctx.cpu.regs.get_si().wrapping_add(0xffffu16),
+    )));
+    // 1483:090a add al,[si+123h]
+    ctx.cpu.regs.set_al(add(
+        ctx.cpu.regs.get_al(),
+        ctx.memory.read::<u8>(segofs(
+            ctx.cpu.regs.get_ds(),
+            ctx.cpu.regs.get_si().wrapping_add(0x123u16),
+        )),
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:090e mov ds:[0B84h],al
+    ctx.memory.write::<u8>(
+        segofs(ctx.cpu.regs.get_ds(), 0xb84u16),
+        ctx.cpu.regs.get_al(),
+    );
+    // 1483:0911 call dword ptr cs:[16h]
+    let addr = ctx
+        .memory
+        .read::<SegOfs>(segofs(ctx.cpu.regs.get_cs(), 0x16u16));
+    ctx.callf16(0x916, addr.seg, ctx.indirect16(addr))
+}
+
+pub fn x1483_0916(ctx: &mut Context) -> Cont {
+    // 1483:0916 push es
+    ctx.push16(ctx.cpu.regs.get_es());
+    // 1483:0917 mov ax,ds
+    ctx.cpu.regs.set_ax(ctx.cpu.regs.get_ds());
+    // 1483:0919 mov es,ax
+    ctx.cpu.regs.set_es(ctx.cpu.regs.get_ax());
+    // 1483:091b xor ax,ax
+    ctx.cpu.regs.set_ax(xor(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_ax(),
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:091d mov cx,ds:[0A74h]
+    ctx.cpu.regs.set_cx(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xa74u16)),
+    );
+    // 1483:0921 jcxz 0931h
+    ctx.jcxz(Cont(x1483_0923), Cont(x1483_0931))
+}
+
+pub fn x1483_0923(ctx: &mut Context) -> Cont {
+    // 1483:0923 mov bl,ds:[0B86h]
+    ctx.cpu.regs.set_bl(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xb86u16)),
+    );
+    // 1483:0927 xor bh,bh
+    ctx.cpu.regs.set_bh(xor(
+        ctx.cpu.regs.get_bh(),
+        ctx.cpu.regs.get_bh(),
+        &mut ctx.cpu.flags,
+    ));
+    // 1483:0929 lea di,[bx+0A83h]
+    ctx.cpu
+        .regs
+        .set_di(ctx.cpu.regs.get_bx().wrapping_add(0xa83u16));
+    // 1483:092d std
+    std(ctx);
+    // 1483:092e rep stosb
+    ctx.rep(Rep::REP, Context::stosb);
+    // 1483:0930 cld
+    cld(ctx);
+    Cont(x1483_0931)
+}
+
+pub fn x1483_0931(ctx: &mut Context) -> Cont {
+    // 1483:0931 mov cx,ds:[0A6Eh]
+    ctx.cpu.regs.set_cx(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xa6eu16)),
+    );
+    // 1483:0935 jcxz 0940h
+    ctx.jcxz(Cont(x1483_0937), Cont(x1483_0940))
+}
+
+pub fn x1483_0937(ctx: &mut Context) -> Cont {
+    // 1483:0937 inc cx
+    ctx.cpu
+        .regs
+        .set_cx(inc(ctx.cpu.regs.get_cx(), &mut ctx.cpu.flags));
+    // 1483:0938 shr cx,1
+    ctx.cpu
+        .regs
+        .set_cx(shr(ctx.cpu.regs.get_cx(), 0x1u8, &mut ctx.cpu.flags));
+    // 1483:093a lea di,ds:[0A84h]
+    ctx.cpu.regs.set_di(0xa84u16);
+    // 1483:093e rep stosw
+    ctx.rep(Rep::REP, Context::stosw);
+    Cont(x1483_0940)
+}
+
+pub fn x1483_0940(ctx: &mut Context) -> Cont {
+    // 1483:0940 pop es
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_es(x);
+    // 1483:0941 ret
+    ctx.ret16(0)
+}
+
+pub fn x34c4_0000(ctx: &mut Context) -> Cont {
+    // 34c4:0000 jmp far ptr 34C4h:103Bh
+    ctx.cpu.regs.cs = 0x34c4;
+    Cont(x34c4_103b)
+}
+
+pub fn x34c4_0005(ctx: &mut Context) -> Cont {
+    // 34c4:0005 jmp far ptr 34C4h:1071h
+    ctx.cpu.regs.cs = 0x34c4;
+    Cont(x34c4_1071)
+}
+
+pub fn x34c4_000a(ctx: &mut Context) -> Cont {
+    // 34c4:000a jmp far ptr 34C4h:11BBh
+    ctx.cpu.regs.cs = 0x34c4;
+    Cont(x34c4_11bb)
+}
+
+pub fn x34c4_000f(ctx: &mut Context) -> Cont {
+    // 34c4:000f jmp far ptr 34C4h:1060h
+    ctx.cpu.regs.cs = 0x34c4;
+    Cont(x34c4_1060)
+}
+
+pub fn x34c4_0014(ctx: &mut Context) -> Cont {
+    // 34c4:0014 jmp far ptr 34C4h:1070h
+    ctx.cpu.regs.cs = 0x34c4;
+    Cont(x34c4_1070)
+}
+
+pub fn x34c4_0c7a(ctx: &mut Context) -> Cont {
+    // 34c4:0c7a mov ah,al
+    ctx.cpu.regs.set_ah(ctx.cpu.regs.get_al());
+    // 34c4:0c7c mov al,0F0h
+    ctx.cpu.regs.set_al(0xf0u8);
+    Cont(x34c4_0c7e)
+}
+
+pub fn x34c4_0c7e(ctx: &mut Context) -> Cont {
+    // 34c4:0c7e in al,dx
+    let input = dos::in_(ctx, ctx.cpu.regs.get_dx() as u16);
+    ctx.cpu.regs.set_al(input);
+    // 34c4:0c7f or al,al
+    ctx.cpu.regs.set_al(or(
+        ctx.cpu.regs.get_al(),
+        ctx.cpu.regs.get_al(),
+        &mut ctx.cpu.flags,
+    ));
+    // 34c4:0c81 js short 0C7Eh
+    ctx.js(Cont(x34c4_0c83), Cont(x34c4_0c7e))
+}
+
+pub fn x34c4_0c83(ctx: &mut Context) -> Cont {
+    // 34c4:0c83 mov al,ah
+    ctx.cpu.regs.set_al(ctx.cpu.regs.get_ah());
+    // 34c4:0c85 out dx,al
+    dos::out(ctx, ctx.cpu.regs.get_dx(), ctx.cpu.regs.get_al());
+    // 34c4:0c86 ret
+    ctx.ret16(0)
+}
+
+pub fn x34c4_0d0e(ctx: &mut Context) -> Cont {
+    // 34c4:0d0e push bx
+    ctx.push16(ctx.cpu.regs.get_bx());
+    // 34c4:0d0f mov bx,ax
+    ctx.cpu.regs.set_bx(ctx.cpu.regs.get_ax());
+    // 34c4:0d11 mov cs:[239Eh],dx
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_cs(), 0x239eu16),
+        ctx.cpu.regs.get_dx(),
+    );
+    // 34c4:0d16 mov al,cs:[2388h]
+    ctx.cpu.regs.set_al(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_cs(), 0x2388u16)),
+    );
+    // 34c4:0d1a mov dx,cs:[238Ah]
+    ctx.cpu.regs.set_dx(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_cs(), 0x238au16)),
+    );
+    // 34c4:0d1f out dx,al
+    dos::out(ctx, ctx.cpu.regs.get_dx(), ctx.cpu.regs.get_al());
+    // 34c4:0d20 sub al,al
+    ctx.cpu.regs.set_al(sub(
+        ctx.cpu.regs.get_al(),
+        ctx.cpu.regs.get_al(),
+        &mut ctx.cpu.flags,
+    ));
+    // 34c4:0d22 mov dx,cs:[238Ch]
+    ctx.cpu.regs.set_dx(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_cs(), 0x238cu16)),
+    );
+    // 34c4:0d27 out dx,al
+    dos::out(ctx, ctx.cpu.regs.get_dx(), ctx.cpu.regs.get_al());
+    // 34c4:0d28 mov dx,cs:[239Eh]
+    ctx.cpu.regs.set_dx(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_cs(), 0x239eu16)),
+    );
+    // 34c4:0d2d mov al,dh
+    ctx.cpu.regs.set_al(ctx.cpu.regs.get_dh());
+    // 34c4:0d2f mov dx,cs:[238Eh]
+    ctx.cpu.regs.set_dx(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_cs(), 0x238eu16)),
+    );
+    // 34c4:0d34 out dx,al
+    dos::out(ctx, ctx.cpu.regs.get_dx(), ctx.cpu.regs.get_al());
+    // 34c4:0d35 mov al,bl
+    ctx.cpu.regs.set_al(ctx.cpu.regs.get_bl());
+    // 34c4:0d37 mov dx,cs:[2390h]
+    ctx.cpu.regs.set_dx(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_cs(), 0x2390u16)),
+    );
+    // 34c4:0d3c out dx,al
+    dos::out(ctx, ctx.cpu.regs.get_dx(), ctx.cpu.regs.get_al());
+    // 34c4:0d3d mov al,bh
+    ctx.cpu.regs.set_al(ctx.cpu.regs.get_bh());
+    // 34c4:0d3f mov dx,cs:[2390h]
+    ctx.cpu.regs.set_dx(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_cs(), 0x2390u16)),
+    );
+    // 34c4:0d44 out dx,al
+    dos::out(ctx, ctx.cpu.regs.get_dx(), ctx.cpu.regs.get_al());
+    // 34c4:0d45 mov al,cl
+    ctx.cpu.regs.set_al(ctx.cpu.regs.get_cl());
+    // 34c4:0d47 mov dx,cs:[2392h]
+    ctx.cpu.regs.set_dx(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_cs(), 0x2392u16)),
+    );
+    // 34c4:0d4c out dx,al
+    dos::out(ctx, ctx.cpu.regs.get_dx(), ctx.cpu.regs.get_al());
+    // 34c4:0d4d mov al,ch
+    ctx.cpu.regs.set_al(ctx.cpu.regs.get_ch());
+    // 34c4:0d4f mov dx,cs:[2392h]
+    ctx.cpu.regs.set_dx(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_cs(), 0x2392u16)),
+    );
+    // 34c4:0d54 out dx,al
+    dos::out(ctx, ctx.cpu.regs.get_dx(), ctx.cpu.regs.get_al());
+    // 34c4:0d55 mov dx,cs:[239Eh]
+    ctx.cpu.regs.set_dx(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_cs(), 0x239eu16)),
+    );
+    // 34c4:0d5a mov al,dl
+    ctx.cpu.regs.set_al(ctx.cpu.regs.get_dl());
+    // 34c4:0d5c mov dx,cs:[2394h]
+    ctx.cpu.regs.set_dx(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_cs(), 0x2394u16)),
+    );
+    // 34c4:0d61 out dx,al
+    dos::out(ctx, ctx.cpu.regs.get_dx(), ctx.cpu.regs.get_al());
+    // 34c4:0d62 mov al,ds:[23A5h]
+    ctx.cpu.regs.set_al(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x23a5u16)),
+    );
+    // 34c4:0d65 mov dx,cs:[238Ah]
+    ctx.cpu.regs.set_dx(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_cs(), 0x238au16)),
+    );
+    // 34c4:0d6a out dx,al
+    dos::out(ctx, ctx.cpu.regs.get_dx(), ctx.cpu.regs.get_al());
+    // 34c4:0d6b mov dx,cs:[239Eh]
+    ctx.cpu.regs.set_dx(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_cs(), 0x239eu16)),
+    );
+    // 34c4:0d70 pop bx
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_bx(x);
+    // 34c4:0d71 ret
+    ctx.ret16(0)
+}
+
+pub fn x34c4_0d72(ctx: &mut Context) -> Cont {
+    // 34c4:0d72 push cx
+    ctx.push16(ctx.cpu.regs.get_cx());
+    // 34c4:0d73 mov cl,4
+    ctx.cpu.regs.set_cl(0x4u8);
+    // 34c4:0d75 rol dx,cl
+    ctx.cpu.regs.set_dx(rol(
+        ctx.cpu.regs.get_dx(),
+        ctx.cpu.regs.get_cl(),
+        &mut ctx.cpu.flags,
+    ));
+    // 34c4:0d77 mov cx,dx
+    ctx.cpu.regs.set_cx(ctx.cpu.regs.get_dx());
+    // 34c4:0d79 and dx,0Fh
+    ctx.cpu
+        .regs
+        .set_dx(and(ctx.cpu.regs.get_dx(), 0xfu16, &mut ctx.cpu.flags));
+    // 34c4:0d7c and cx,0FFF0h
+    ctx.cpu
+        .regs
+        .set_cx(and(ctx.cpu.regs.get_cx(), 0xfff0u16, &mut ctx.cpu.flags));
+    // 34c4:0d7f add ax,cx
+    ctx.cpu.regs.set_ax(add(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_cx(),
+        &mut ctx.cpu.flags,
+    ));
+    // 34c4:0d81 adc dx,0
+    let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
+    ctx.cpu.regs.set_dx(addc(
+        ctx.cpu.regs.get_dx(),
+        0x0u16,
+        carry as _,
+        &mut ctx.cpu.flags,
+    ));
+    // 34c4:0d84 pop cx
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_cx(x);
+    // 34c4:0d85 ret
+    ctx.ret16(0)
+}
+
+pub fn x34c4_0d86(ctx: &mut Context) -> Cont {
+    // 34c4:0d86 pushf
+    ctx.push16(ctx.cpu.flags.bits() as u16);
+    // 34c4:0d87 push bx
+    ctx.push16(ctx.cpu.regs.get_bx());
+    // 34c4:0d88 push cx
+    ctx.push16(ctx.cpu.regs.get_cx());
+    // 34c4:0d89 push dx
+    ctx.push16(ctx.cpu.regs.get_dx());
+    // 34c4:0d8a cli
+    ctx.cli();
+    // 34c4:0d8b mov cl,al
+    ctx.cpu.regs.set_cl(ctx.cpu.regs.get_al());
+    // 34c4:0d8d add al,8
+    ctx.cpu
+        .regs
+        .set_al(add(ctx.cpu.regs.get_al(), 0x8u8, &mut ctx.cpu.flags));
+    // 34c4:0d8f cbw
+    ctx.cpu
+        .regs
+        .set_ax(ctx.cpu.regs.get_al() as i8 as i16 as u16);
+    // 34c4:0d90 shl ax,1
+    ctx.cpu
+        .regs
+        .set_ax(shl(ctx.cpu.regs.get_ax(), 0x1u8, &mut ctx.cpu.flags));
+    // 34c4:0d92 shl ax,1
+    ctx.cpu
+        .regs
+        .set_ax(shl(ctx.cpu.regs.get_ax(), 0x1u8, &mut ctx.cpu.flags));
+    // 34c4:0d94 mov di,ax
+    ctx.cpu.regs.set_di(ctx.cpu.regs.get_ax());
+    // 34c4:0d96 push es
+    ctx.push16(ctx.cpu.regs.get_es());
+    // 34c4:0d97 sub ax,ax
+    ctx.cpu.regs.set_ax(sub(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_ax(),
+        &mut ctx.cpu.flags,
+    ));
+    // 34c4:0d99 mov es,ax
+    ctx.cpu.regs.set_es(ctx.cpu.regs.get_ax());
+    // 34c4:0d9b mov ax,es:[di]
+    ctx.cpu.regs.set_ax(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_es(), ctx.cpu.regs.get_di())),
+    );
+    // 34c4:0d9e mov [bx],ax
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_bx()),
+        ctx.cpu.regs.get_ax(),
+    );
+    // 34c4:0da0 mov es:[di],dx
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_es(), ctx.cpu.regs.get_di()),
+        ctx.cpu.regs.get_dx(),
+    );
+    // 34c4:0da3 mov ax,es:[di+2]
+    ctx.cpu.regs.set_ax(ctx.memory.read::<u16>(segofs(
+        ctx.cpu.regs.get_es(),
+        ctx.cpu.regs.get_di().wrapping_add(0x2u16),
+    )));
+    // 34c4:0da7 mov [bx+2],ax
+    ctx.memory.write::<u16>(
+        segofs(
+            ctx.cpu.regs.get_ds(),
+            ctx.cpu.regs.get_bx().wrapping_add(0x2u16),
+        ),
+        ctx.cpu.regs.get_ax(),
+    );
+    // 34c4:0daa mov es:[di+2],cs
+    ctx.memory.write::<u16>(
+        segofs(
+            ctx.cpu.regs.get_es(),
+            ctx.cpu.regs.get_di().wrapping_add(0x2u16),
+        ),
+        ctx.cpu.regs.get_cs(),
+    );
+    // 34c4:0dae pop es
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_es(x);
+    // 34c4:0daf pop dx
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_dx(x);
+    // 34c4:0db0 pop cx
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_cx(x);
+    // 34c4:0db1 pop bx
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_bx(x);
+    // 34c4:0db2 popf
+    let flags = ctx.pop16();
+    ctx.cpu.flags = Flags::from_bits_retain((ctx.cpu.flags.bits() & 0xFFFF_0000) | flags as u32);
+    // 34c4:0db3 ret
+    ctx.ret16(0)
+}
+
+pub fn x34c4_0e6d(ctx: &mut Context) -> Cont {
+    // 34c4:0e6d mov cx,0FFFFh
+    ctx.cpu.regs.set_cx(0xffffu16);
+    // 34c4:0e70 cmp byte ptr ds:[0C34h],0
+    sub(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xc34u16)),
+        0x0u8,
+        &mut ctx.cpu.flags,
+    );
+    // 34c4:0e75 jne short 0E7Fh
+    ctx.jne(Cont(x34c4_0e77), Cont(x34c4_0e7f))
+}
+
+pub fn x34c4_0e77(ctx: &mut Context) -> Cont {
+    // 34c4:0e77 inc byte ptr ds:[0C34h]
+    ctx.memory.write::<u8>(
+        segofs(ctx.cpu.regs.get_ds(), 0xc34u16),
+        inc(
+            ctx.memory
+                .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xc34u16)),
+            &mut ctx.cpu.flags,
+        ),
+    );
+    // 34c4:0e7b mov cx,ds:[0C39h]
+    ctx.cpu.regs.set_cx(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xc39u16)),
+    );
+    Cont(x34c4_0e7f)
+}
+
+pub fn x34c4_0e7f(ctx: &mut Context) -> Cont {
+    // 34c4:0e7f sub cx,ds:[0C30h]
+    ctx.cpu.regs.set_cx(sub(
+        ctx.cpu.regs.get_cx(),
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xc30u16)),
+        &mut ctx.cpu.flags,
+    ));
+    // 34c4:0e83 mov ds:[0C32h],cx
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_ds(), 0xc32u16),
+        ctx.cpu.regs.get_cx(),
+    );
+    // 34c4:0e87 inc cx
+    ctx.cpu
+        .regs
+        .set_cx(inc(ctx.cpu.regs.get_cx(), &mut ctx.cpu.flags));
+    // 34c4:0e88 je short 0E95h
+    ctx.je(Cont(x34c4_0e8a), Cont(x34c4_0e95))
+}
+
+pub fn x34c4_0e8a(ctx: &mut Context) -> Cont {
+    // 34c4:0e8a sub ds:[0C35h],cx
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_ds(), 0xc35u16),
+        sub(
+            ctx.memory
+                .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xc35u16)),
+            ctx.cpu.regs.get_cx(),
+            &mut ctx.cpu.flags,
+        ),
+    );
+    // 34c4:0e8e sbb word ptr ds:[0C37h],0
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_ds(), 0xc37u16),
+        sbb(
+            ctx.memory
+                .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xc37u16)),
+            0x0u16,
+            &mut ctx.cpu.flags,
+        ),
+    );
+    // 34c4:0e93 jmp short 0E99h
+    Cont(x34c4_0e99)
+}
+
+pub fn x34c4_0e95(ctx: &mut Context) -> Cont {
+    // 34c4:0e95 dec word ptr ds:[0C37h]
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_ds(), 0xc37u16),
+        dec(
+            ctx.memory
+                .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xc37u16)),
+            &mut ctx.cpu.flags,
+        ),
+    );
+    Cont(x34c4_0e99)
+}
+
+pub fn x34c4_0e99(ctx: &mut Context) -> Cont {
+    // 34c4:0e99 mov dh,cs:[2387h]
+    ctx.cpu.regs.set_dh(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_cs(), 0x2387u16)),
+    );
+    // 34c4:0e9e mov dl,ds:[0C2Fh]
+    ctx.cpu.regs.set_dl(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xc2fu16)),
+    );
+    // 34c4:0ea2 mov ax,ds:[0C30h]
+    ctx.cpu.regs.set_ax(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xc30u16)),
+    );
+    // 34c4:0ea5 mov cx,ds:[0C32h]
+    ctx.cpu.regs.set_cx(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xc32u16)),
+    );
+    // 34c4:0ea9 call 0D0Eh
+    ctx.call16(0xeac, Cont(x34c4_0d0e))
+}
+
+pub fn x34c4_0eac(ctx: &mut Context) -> Cont {
+    // 34c4:0eac dec byte ptr ds:[0C34h]
+    ctx.memory.write::<u8>(
+        segofs(ctx.cpu.regs.get_ds(), 0xc34u16),
+        dec(
+            ctx.memory
+                .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xc34u16)),
+            &mut ctx.cpu.flags,
+        ),
+    );
+    // 34c4:0eb0 inc byte ptr ds:[0C2Fh]
+    ctx.memory.write::<u8>(
+        segofs(ctx.cpu.regs.get_ds(), 0xc2fu16),
+        inc(
+            ctx.memory
+                .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xc2fu16)),
+            &mut ctx.cpu.flags,
+        ),
+    );
+    // 34c4:0eb4 mov word ptr ds:[0C30h],0
+    ctx.memory
+        .write::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xc30u16), 0x0u16);
+    // 34c4:0eba mov cx,ds:[0C32h]
+    ctx.cpu.regs.set_cx(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xc32u16)),
+    );
+    // 34c4:0ebe mov dx,ds:[0C3Bh]
+    ctx.cpu.regs.set_dx(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xc3bu16)),
+    );
+    // 34c4:0ec2 add dl,0Ch
+    ctx.cpu
+        .regs
+        .set_dl(add(ctx.cpu.regs.get_dl(), 0xcu8, &mut ctx.cpu.flags));
+    // 34c4:0ec5 mov al,14h
+    ctx.cpu.regs.set_al(0x14u8);
+    // 34c4:0ec7 call 0C7Ah
+    ctx.call16(0xeca, Cont(x34c4_0c7a))
+}
+
+pub fn x34c4_0eca(ctx: &mut Context) -> Cont {
+    // 34c4:0eca mov al,cl
+    ctx.cpu.regs.set_al(ctx.cpu.regs.get_cl());
+    // 34c4:0ecc call 0C7Ah
+    ctx.call16(0xecf, Cont(x34c4_0c7a))
+}
+
+pub fn x34c4_0ecf(ctx: &mut Context) -> Cont {
+    // 34c4:0ecf mov al,ch
+    ctx.cpu.regs.set_al(ctx.cpu.regs.get_ch());
+    // 34c4:0ed1 call 0C7Ah
+    ctx.call16(0xed4, Cont(x34c4_0c7a))
+}
+
+pub fn x34c4_0ed4(ctx: &mut Context) -> Cont {
+    // 34c4:0ed4 ret
+    ctx.ret16(0)
+}
+
+pub fn x34c4_0f49(ctx: &mut Context) -> Cont {
+    // 34c4:0f49 push bp
+    ctx.push16(ctx.cpu.regs.get_bp());
+    // 34c4:0f4a mov bp,sp
+    ctx.cpu.regs.set_bp(ctx.cpu.regs.get_sp());
+    // 34c4:0f4c push ds
+    ctx.push16(ctx.cpu.regs.get_ds());
+    // 34c4:0f4d push es
+    ctx.push16(ctx.cpu.regs.get_es());
+    // 34c4:0f4e push di
+    ctx.push16(ctx.cpu.regs.get_di());
+    // 34c4:0f4f push si
+    ctx.push16(ctx.cpu.regs.get_si());
+    // 34c4:0f50 push ax
+    ctx.push16(ctx.cpu.regs.get_ax());
+    // 34c4:0f51 push cx
+    ctx.push16(ctx.cpu.regs.get_cx());
+    // 34c4:0f52 mov ax,34C4h
+    ctx.cpu.regs.set_ax(0x34c4u16);
+    // 34c4:0f55 mov ds,ax
+    ctx.cpu.regs.set_ds(ctx.cpu.regs.get_ax());
+    // 34c4:0f57 mov es,ax
+    ctx.cpu.regs.set_es(ctx.cpu.regs.get_ax());
+    // 34c4:0f59 mov ds:[0C40h],bx
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_ds(), 0xc40u16),
+        ctx.cpu.regs.get_bx(),
+    );
+    // 34c4:0f5d mov ax,di
+    ctx.cpu.regs.set_ax(ctx.cpu.regs.get_di());
+    // 34c4:0f5f mov ds:[0C42h],ax
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_ds(), 0xc42u16),
+        ctx.cpu.regs.get_ax(),
+    );
+    // 34c4:0f62 cmp word ptr cs:[19h],0
+    sub(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_cs(), 0x19u16)),
+        0x0u16,
+        &mut ctx.cpu.flags,
+    );
+    // 34c4:0f68 je short 0F70h
+    ctx.je(Cont(x34c4_0f6a), Cont(x34c4_0f70))
+}
+
+pub fn x34c4_0f6a(ctx: &mut Context) -> Cont {
+    // 34c4:0f6a mov ax,1
+    ctx.cpu.regs.set_ax(0x1u16);
+    // 34c4:0f6d jmp near ptr 1004h
+    Cont(x34c4_1004)
+}
+
+pub fn x34c4_0f70(ctx: &mut Context) -> Cont {
+    // 34c4:0f70 mov word ptr cs:[19h],1
+    ctx.memory
+        .write::<u16>(segofs(ctx.cpu.regs.get_cs(), 0x19u16), 0x1u16);
+    // 34c4:0f77 mov dx,ds:[0C3Bh]
+    ctx.cpu.regs.set_dx(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xc3bu16)),
+    );
+    // 34c4:0f7b add dl,0Ch
+    ctx.cpu
+        .regs
+        .set_dl(add(ctx.cpu.regs.get_dl(), 0xcu8, &mut ctx.cpu.flags));
+    // 34c4:0f7e mov dx,0Fh
+    ctx.cpu.regs.set_dx(0xfu16);
+    // 34c4:0f81 mov ax,4240h
+    ctx.cpu.regs.set_ax(0x4240u16);
+    // 34c4:0f84 mov cx,ds:[0C3Eh]
+    ctx.cpu.regs.set_cx(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xc3eu16)),
+    );
+    // 34c4:0f88 div cx
+    let (quot, rem) = div(ctx.cpu.regs.get_dx_ax(), ctx.cpu.regs.get_cx() as u32);
+    ctx.cpu.regs.set_ax(quot as u16);
+    ctx.cpu.regs.set_dx(rem as u16);
+    // 34c4:0f8a mov cl,al
+    ctx.cpu.regs.set_cl(ctx.cpu.regs.get_al());
+    // 34c4:0f8c neg cl
+    ctx.cpu
+        .regs
+        .set_cl(neg(ctx.cpu.regs.get_cl(), &mut ctx.cpu.flags));
+    // 34c4:0f8e mov dx,ds:[0C3Bh]
+    ctx.cpu.regs.set_dx(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xc3bu16)),
+    );
+    // 34c4:0f92 add dl,0Ch
+    ctx.cpu
+        .regs
+        .set_dl(add(ctx.cpu.regs.get_dl(), 0xcu8, &mut ctx.cpu.flags));
+    // 34c4:0f95 mov al,40h
+    ctx.cpu.regs.set_al(0x40u8);
+    // 34c4:0f97 call 0C7Ah
+    ctx.call16(0xf9a, Cont(x34c4_0c7a))
+}
+
+pub fn x34c4_0f9a(ctx: &mut Context) -> Cont {
+    // 34c4:0f9a mov al,cl
+    ctx.cpu.regs.set_al(ctx.cpu.regs.get_cl());
+    // 34c4:0f9c call 0C7Ah
+    ctx.call16(0xf9f, Cont(x34c4_0c7a))
+}
+
+pub fn x34c4_0f9f(ctx: &mut Context) -> Cont {
+    // 34c4:0f9f mov al,ds:[0C3Dh]
+    ctx.cpu.regs.set_al(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xc3du16)),
+    );
+    // 34c4:0fa2 mov dx,0E2Ch
+    ctx.cpu.regs.set_dx(0xe2cu16);
+    // 34c4:0fa5 mov bx,0C1Fh
+    ctx.cpu.regs.set_bx(0xc1fu16);
+    // 34c4:0fa8 call 0D86h
+    ctx.call16(0xfab, Cont(x34c4_0d86))
+}
+
+pub fn x34c4_0fab(ctx: &mut Context) -> Cont {
+    // 34c4:0fab mov cl,ds:[0C3Dh]
+    ctx.cpu.regs.set_cl(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xc3du16)),
+    );
+    // 34c4:0faf cmp cl,6Ah
+    sub(ctx.cpu.regs.get_cl(), 0x6au8, &mut ctx.cpu.flags);
+    // 34c4:0fb2 jne short 0FBCh
+    ctx.jne(Cont(x34c4_0fb4), Cont(x34c4_0fbc))
+}
+
+pub fn x34c4_0fb4(ctx: &mut Context) -> Cont {
+    // 34c4:0fb4 mov ah,0F9h
+    ctx.cpu.regs.set_ah(0xf9u8);
+    // 34c4:0fb6 in al,0A1h
+    let input = dos::in_(ctx, 0xa1u8 as u16);
+    ctx.cpu.regs.set_al(input);
+    // 34c4:0fb8 and al,ah
+    ctx.cpu.regs.set_al(and(
+        ctx.cpu.regs.get_al(),
+        ctx.cpu.regs.get_ah(),
+        &mut ctx.cpu.flags,
+    ));
+    // 34c4:0fba out 0A1h,al
+    dos::out(ctx, 0xa1u16, ctx.cpu.regs.get_al());
+    Cont(x34c4_0fbc)
+}
+
+pub fn x34c4_0fbc(ctx: &mut Context) -> Cont {
+    // 34c4:0fbc mov ah,1
+    ctx.cpu.regs.set_ah(0x1u8);
+    // 34c4:0fbe shl ah,cl
+    ctx.cpu.regs.set_ah(shl(
+        ctx.cpu.regs.get_ah(),
+        ctx.cpu.regs.get_cl(),
+        &mut ctx.cpu.flags,
+    ));
+    // 34c4:0fc0 not ah
+    ctx.cpu.regs.set_ah(!ctx.cpu.regs.get_ah());
+    // 34c4:0fc2 in al,21h
+    let input = dos::in_(ctx, 0x21u8 as u16);
+    ctx.cpu.regs.set_al(input);
+    // 34c4:0fc4 and al,ah
+    ctx.cpu.regs.set_al(and(
+        ctx.cpu.regs.get_al(),
+        ctx.cpu.regs.get_ah(),
+        &mut ctx.cpu.flags,
+    ));
+    // 34c4:0fc6 out 21h,al
+    dos::out(ctx, 0x21u16, ctx.cpu.regs.get_al());
+    // 34c4:0fc8 mov ax,cs
+    ctx.cpu.regs.set_ax(ctx.cpu.regs.get_cs());
+    // 34c4:0fca mov dx,ax
+    ctx.cpu.regs.set_dx(ctx.cpu.regs.get_ax());
+    // 34c4:0fcc mov ax,ds:[0C42h]
+    ctx.cpu.regs.set_ax(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xc42u16)),
+    );
+    // 34c4:0fcf call 0D72h
+    ctx.call16(0xfd2, Cont(x34c4_0d72))
+}
+
+pub fn x34c4_0fd2(ctx: &mut Context) -> Cont {
+    // 34c4:0fd2 mov ds:[0C2Fh],dl
+    ctx.memory.write::<u8>(
+        segofs(ctx.cpu.regs.get_ds(), 0xc2fu16),
+        ctx.cpu.regs.get_dl(),
+    );
+    // 34c4:0fd6 mov ds:[0C30h],ax
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_ds(), 0xc30u16),
+        ctx.cpu.regs.get_ax(),
+    );
+    // 34c4:0fd9 mov cx,ds:[0C40h]
+    ctx.cpu.regs.set_cx(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xc40u16)),
+    );
+    // 34c4:0fdd mov ds:[0C35h],cx
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_ds(), 0xc35u16),
+        ctx.cpu.regs.get_cx(),
+    );
+    // 34c4:0fe1 mov word ptr ds:[0C37h],0
+    ctx.memory
+        .write::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xc37u16), 0x0u16);
+    // 34c4:0fe7 add ax,ds:[0C40h]
+    ctx.cpu.regs.set_ax(add(
+        ctx.cpu.regs.get_ax(),
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xc40u16)),
+        &mut ctx.cpu.flags,
+    ));
+    // 34c4:0feb adc dl,0
+    let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
+    ctx.cpu.regs.set_dl(addc(
+        ctx.cpu.regs.get_dl(),
+        0x0u8,
+        carry as _,
+        &mut ctx.cpu.flags,
+    ));
+    // 34c4:0fee sub ax,1
+    ctx.cpu
+        .regs
+        .set_ax(sub(ctx.cpu.regs.get_ax(), 0x1u16, &mut ctx.cpu.flags));
+    // 34c4:0ff1 sbb dl,0
+    ctx.cpu
+        .regs
+        .set_dl(sbb(ctx.cpu.regs.get_dl(), 0x0u8, &mut ctx.cpu.flags));
+    // 34c4:0ff4 mov ds:[0C39h],ax
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_ds(), 0xc39u16),
+        ctx.cpu.regs.get_ax(),
+    );
+    // 34c4:0ff7 sub dl,ds:[0C2Fh]
+    ctx.cpu.regs.set_dl(sub(
+        ctx.cpu.regs.get_dl(),
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xc2fu16)),
+        &mut ctx.cpu.flags,
+    ));
+    // 34c4:0ffb mov ds:[0C34h],dl
+    ctx.memory.write::<u8>(
+        segofs(ctx.cpu.regs.get_ds(), 0xc34u16),
+        ctx.cpu.regs.get_dl(),
+    );
+    // 34c4:0fff call 0E6Dh
+    ctx.call16(0x1002, Cont(x34c4_0e6d))
+}
+
+pub fn x34c4_1002(ctx: &mut Context) -> Cont {
+    // 34c4:1002 sub ax,ax
+    ctx.cpu.regs.set_ax(sub(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_ax(),
+        &mut ctx.cpu.flags,
+    ));
+    Cont(x34c4_1004)
+}
+
+pub fn x34c4_1004(ctx: &mut Context) -> Cont {
+    // 34c4:1004 pop cx
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_cx(x);
+    // 34c4:1005 pop ax
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_ax(x);
+    // 34c4:1006 pop si
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_si(x);
+    // 34c4:1007 pop di
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_di(x);
+    // 34c4:1008 pop es
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_es(x);
+    // 34c4:1009 pop ds
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_ds(x);
+    // 34c4:100a pop bp
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_bp(x);
+    // 34c4:100b ret
+    ctx.ret16(0)
+}
+
+pub fn x34c4_100c(ctx: &mut Context) -> Cont {
+    // 34c4:100c cmp word ptr cs:[19h],0
+    sub(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_cs(), 0x19u16)),
+        0x0u16,
+        &mut ctx.cpu.flags,
+    );
+    // 34c4:1012 jne short 100Ch
+    ctx.jne(Cont(x34c4_1014), Cont(x34c4_100c))
+}
+
+pub fn x34c4_1014(ctx: &mut Context) -> Cont {
+    // 34c4:1014 cmp bx,0
+    sub(ctx.cpu.regs.get_bx(), 0x0u16, &mut ctx.cpu.flags);
+    // 34c4:1017 je short 101Ch
+    ctx.je(Cont(x34c4_1019), Cont(x34c4_101c))
+}
+
+pub fn x34c4_1019(ctx: &mut Context) -> Cont {
+    // 34c4:1019 call 0F49h
+    ctx.call16(0x101c, Cont(x34c4_0f49))
+}
+
+pub fn x34c4_101c(ctx: &mut Context) -> Cont {
+    // 34c4:101c mov bx,0
+    ctx.cpu.regs.set_bx(0x0u16);
+    // 34c4:101f cmp byte ptr cs:[1Ch],1
+    sub(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_cs(), 0x1cu16)),
+        0x1u8,
+        &mut ctx.cpu.flags,
+    );
+    // 34c4:1025 je short 1031h
+    ctx.je(Cont(x34c4_1027), Cont(x34c4_1031))
+}
+
+pub fn x34c4_1027(ctx: &mut Context) -> Cont {
+    // 34c4:1027 mov byte ptr cs:[1Ch],1
+    ctx.memory
+        .write::<u8>(segofs(ctx.cpu.regs.get_cs(), 0x1cu16), 0x1u8);
+    // 34c4:102d mov di,1Fh
+    ctx.cpu.regs.set_di(0x1fu16);
+    // 34c4:1030 ret
+    ctx.ret16(0)
+}
+
+pub fn x34c4_1031(ctx: &mut Context) -> Cont {
+    // 34c4:1031 mov byte ptr cs:[1Ch],2
+    ctx.memory
+        .write::<u8>(segofs(ctx.cpu.regs.get_cs(), 0x1cu16), 0x2u8);
+    // 34c4:1037 mov di,61Fh
+    ctx.cpu.regs.set_di(0x61fu16);
+    // 34c4:103a ret
+    ctx.ret16(0)
+}
+
+pub fn x34c4_103b(ctx: &mut Context) -> Cont {
+    // 34c4:103b push bx
+    ctx.push16(ctx.cpu.regs.get_bx());
+    // 34c4:103c mov bx,cs:[1Dh]
+    ctx.cpu.regs.set_bx(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_cs(), 0x1du16)),
+    );
+    // 34c4:1041 cmp bx,600h
+    sub(ctx.cpu.regs.get_bx(), 0x600u16, &mut ctx.cpu.flags);
+    // 34c4:1045 jne short 104Ah
+    ctx.jne(Cont(x34c4_1047), Cont(x34c4_104a))
+}
+
+pub fn x34c4_1047(ctx: &mut Context) -> Cont {
+    // 34c4:1047 call 100Ch
+    ctx.call16(0x104a, Cont(x34c4_100c))
+}
+
+pub fn x34c4_104a(ctx: &mut Context) -> Cont {
+    // 34c4:104a cmp word ptr cs:[13CCh],0
+    sub(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_cs(), 0x13ccu16)),
+        0x0u16,
+        &mut ctx.cpu.flags,
+    );
+    // 34c4:1050 je short 1055h
+    ctx.je(Cont(x34c4_1052), Cont(x34c4_1055))
+}
+
+pub fn x34c4_1052(ctx: &mut Context) -> Cont {
+    // 34c4:1052 call 11F1h
+    ctx.call16(0x1055, Cont(x34c4_11f1))
+}
+
+pub fn x34c4_1055(ctx: &mut Context) -> Cont {
+    // 34c4:1055 mov cs:[bx+di],al
+    ctx.memory.write::<u8>(
+        segofs(
+            ctx.cpu.regs.get_cs(),
+            ctx.cpu.regs.get_bx().wrapping_add(ctx.cpu.regs.get_di()),
+        ),
+        ctx.cpu.regs.get_al(),
+    );
+    // 34c4:1058 inc bx
+    ctx.cpu
+        .regs
+        .set_bx(inc(ctx.cpu.regs.get_bx(), &mut ctx.cpu.flags));
+    // 34c4:1059 mov cs:[1Dh],bx
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_cs(), 0x1du16),
+        ctx.cpu.regs.get_bx(),
+    );
+    // 34c4:105e pop bx
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_bx(x);
+    // 34c4:105f retf
+    ctx.retf16(0)
+}
+
+pub fn x34c4_1060(ctx: &mut Context) -> Cont {
+    // 34c4:1060 cmp byte ptr cs:[1Ch],1
+    sub(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_cs(), 0x1cu16)),
+        0x1u8,
+        &mut ctx.cpu.flags,
+    );
+    // 34c4:1066 je short 106Ch
+    ctx.je(Cont(x34c4_1068), Cont(x34c4_106c))
+}
+
+pub fn x34c4_1068(ctx: &mut Context) -> Cont {
+    // 34c4:1068 mov di,61Fh
+    ctx.cpu.regs.set_di(0x61fu16);
+    // 34c4:106b retf
+    ctx.retf16(0)
+}
+
+pub fn x34c4_106c(ctx: &mut Context) -> Cont {
+    // 34c4:106c mov di,1Fh
+    ctx.cpu.regs.set_di(0x1fu16);
+    // 34c4:106f retf
+    ctx.retf16(0)
+}
+
+pub fn x34c4_1070(ctx: &mut Context) -> Cont {
+    // 34c4:1070 retf
+    ctx.retf16(0)
+}
+
+pub fn x34c4_1071(ctx: &mut Context) -> Cont {
+    // 34c4:1071 mov bp,sp
+    ctx.cpu.regs.set_bp(ctx.cpu.regs.get_sp());
+    // 34c4:1073 push ds
+    ctx.push16(ctx.cpu.regs.get_ds());
+    // 34c4:1074 mov bx,34C4h
+    ctx.cpu.regs.set_bx(0x34c4u16);
+    // 34c4:1077 mov ds,bx
+    ctx.cpu.regs.set_ds(ctx.cpu.regs.get_bx());
+    // 34c4:1079 mov es,bx
+    ctx.cpu.regs.set_es(ctx.cpu.regs.get_bx());
+    // 34c4:107b mov bl,cs:[1Bh]
+    ctx.cpu.regs.set_bl(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_cs(), 0x1bu16)),
+    );
+    // 34c4:1080 cmp bl,2
+    sub(ctx.cpu.regs.get_bl(), 0x2u8, &mut ctx.cpu.flags);
+    // 34c4:1083 je short 108Eh
+    ctx.je(Cont(x34c4_1085), Cont(x34c4_108e))
+}
+
+pub fn x34c4_1085(ctx: &mut Context) -> Cont {
+    // 34c4:1085 mov word ptr ds:[0C3Bh],220h
+    ctx.memory
+        .write::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xc3bu16), 0x220u16);
+    // 34c4:108b jmp short 1091h
+    Cont(x34c4_1091)
+}
+
+pub fn x34c4_108e(ctx: &mut Context) -> Cont {
+    // 34c4:108e jmp near ptr 115Ch
+    Cont(x34c4_115c)
+}
+
+pub fn x34c4_1091(ctx: &mut Context) -> Cont {
+    // 34c4:1091 mov byte ptr ds:[0C3Dh],7
+    ctx.memory
+        .write::<u8>(segofs(ctx.cpu.regs.get_ds(), 0xc3du16), 0x7u8);
+    // 34c4:1096 call 1276h
+    ctx.call16(0x1099, Cont(x34c4_1276))
+}
+
+pub fn x34c4_1099(ctx: &mut Context) -> Cont {
+    // 34c4:1099 cmp word ptr ds:[23A2h],0
+    sub(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x23a2u16)),
+        0x0u16,
+        &mut ctx.cpu.flags,
+    );
+    // 34c4:109e je short 10A6h
+    ctx.je(Cont(x34c4_10a0), Cont(x34c4_10a6))
+}
+
+pub fn x34c4_10a0(ctx: &mut Context) -> Cont {
+    // 34c4:10a0 mov ax,ds:[23A2h]
+    ctx.cpu.regs.set_ax(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x23a2u16)),
+    );
+    // 34c4:10a3 mov ds:[0C3Bh],ax
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_ds(), 0xc3bu16),
+        ctx.cpu.regs.get_ax(),
+    );
+    Cont(x34c4_10a6)
+}
+
+pub fn x34c4_10a6(ctx: &mut Context) -> Cont {
+    // 34c4:10a6 cmp byte ptr ds:[23A4h],0
+    sub(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x23a4u16)),
+        0x0u8,
+        &mut ctx.cpu.flags,
+    );
+    // 34c4:10ab je short 10C2h
+    ctx.je(Cont(x34c4_10ad), Cont(x34c4_10c2))
+}
+
+pub fn x34c4_10ad(ctx: &mut Context) -> Cont {
+    // 34c4:10ad cmp byte ptr ds:[23A4h],1
+    sub(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x23a4u16)),
+        0x1u8,
+        &mut ctx.cpu.flags,
+    );
+    // 34c4:10b2 jne short 10BCh
+    ctx.jne(Cont(x34c4_10b4), Cont(x34c4_10bc))
+}
+
+pub fn x34c4_10b4(ctx: &mut Context) -> Cont {
+    // 34c4:10b4 mov al,6Ah
+    ctx.cpu.regs.set_al(0x6au8);
+    // 34c4:10b6 mov ds:[0C3Dh],al
+    ctx.memory.write::<u8>(
+        segofs(ctx.cpu.regs.get_ds(), 0xc3du16),
+        ctx.cpu.regs.get_al(),
+    );
+    // 34c4:10b9 jmp short 10C2h
+    Cont(x34c4_10c2)
+}
+
+pub fn x34c4_10bc(ctx: &mut Context) -> Cont {
+    // 34c4:10bc mov al,ds:[23A4h]
+    ctx.cpu.regs.set_al(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x23a4u16)),
+    );
+    // 34c4:10bf mov ds:[0C3Dh],al
+    ctx.memory.write::<u8>(
+        segofs(ctx.cpu.regs.get_ds(), 0xc3du16),
+        ctx.cpu.regs.get_al(),
+    );
+    Cont(x34c4_10c2)
+}
+
+pub fn x34c4_10c2(ctx: &mut Context) -> Cont {
+    // 34c4:10c2 cmp byte ptr cs:[23A5h],0Fh
+    sub(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_cs(), 0x23a5u16)),
+        0xfu8,
+        &mut ctx.cpu.flags,
+    );
+    // 34c4:10c8 je short 112Bh
+    ctx.je(Cont(x34c4_10ca), Cont(x34c4_112b))
+}
+
+pub fn x34c4_10ca(ctx: &mut Context) -> Cont {
+    // 34c4:10ca cmp byte ptr cs:[23A5h],1
+    sub(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_cs(), 0x23a5u16)),
+        0x1u8,
+        &mut ctx.cpu.flags,
+    );
+    // 34c4:10d0 je short 112Bh
+    ctx.je(Cont(x34c4_10d2), Cont(x34c4_112b))
+}
+
+pub fn x34c4_10d2(ctx: &mut Context) -> Cont {
+    // 34c4:10d2 cmp byte ptr cs:[23A5h],0
+    sub(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_cs(), 0x23a5u16)),
+        0x0u8,
+        &mut ctx.cpu.flags,
+    );
+    // 34c4:10d8 jne short 1100h
+    ctx.jne(Cont(x34c4_10da), Cont(x34c4_1100))
+}
+
+pub fn x34c4_10da(ctx: &mut Context) -> Cont {
+    // 34c4:10da mov byte ptr cs:[2388h],4
+    ctx.memory
+        .write::<u8>(segofs(ctx.cpu.regs.get_cs(), 0x2388u16), 0x4u8);
+    // 34c4:10e0 nop
+    // 34c4:10e1 mov word ptr cs:[2390h],0
+    ctx.memory
+        .write::<u16>(segofs(ctx.cpu.regs.get_cs(), 0x2390u16), 0x0u16);
+    // 34c4:10e8 mov word ptr cs:[2392h],1
+    ctx.memory
+        .write::<u16>(segofs(ctx.cpu.regs.get_cs(), 0x2392u16), 0x1u16);
+    // 34c4:10ef mov word ptr cs:[2394h],87h
+    ctx.memory
+        .write::<u16>(segofs(ctx.cpu.regs.get_cs(), 0x2394u16), 0x87u16);
+    // 34c4:10f6 mov byte ptr cs:[2387h],48h
+    ctx.memory
+        .write::<u8>(segofs(ctx.cpu.regs.get_cs(), 0x2387u16), 0x48u8);
+    // 34c4:10fc nop
+    // 34c4:10fd jmp short 112Bh
+    Cont(x34c4_112b)
+}
+
+pub fn x34c4_1100(ctx: &mut Context) -> Cont {
+    // 34c4:1100 cmp byte ptr cs:[23A5h],3
+    sub(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_cs(), 0x23a5u16)),
+        0x3u8,
+        &mut ctx.cpu.flags,
+    );
+    // 34c4:1106 jne short 112Bh
+    ctx.jne(Cont(x34c4_1108), Cont(x34c4_112b))
+}
+
+pub fn x34c4_1108(ctx: &mut Context) -> Cont {
+    // 34c4:1108 mov byte ptr cs:[2388h],7
+    ctx.memory
+        .write::<u8>(segofs(ctx.cpu.regs.get_cs(), 0x2388u16), 0x7u8);
+    // 34c4:110e nop
+    // 34c4:110f mov word ptr cs:[2390h],6
+    ctx.memory
+        .write::<u16>(segofs(ctx.cpu.regs.get_cs(), 0x2390u16), 0x6u16);
+    // 34c4:1116 mov word ptr cs:[2392h],7
+    ctx.memory
+        .write::<u16>(segofs(ctx.cpu.regs.get_cs(), 0x2392u16), 0x7u16);
+    // 34c4:111d mov word ptr cs:[2394h],82h
+    ctx.memory
+        .write::<u16>(segofs(ctx.cpu.regs.get_cs(), 0x2394u16), 0x82u16);
+    // 34c4:1124 mov byte ptr cs:[2387h],4Bh
+    ctx.memory
+        .write::<u8>(segofs(ctx.cpu.regs.get_cs(), 0x2387u16), 0x4bu8);
+    // 34c4:112a nop
+    Cont(x34c4_112b)
+}
+
+pub fn x34c4_112b(ctx: &mut Context) -> Cont {
+    // 34c4:112b mov word ptr cs:[19h],0
+    ctx.memory
+        .write::<u16>(segofs(ctx.cpu.regs.get_cs(), 0x19u16), 0x0u16);
+    // 34c4:1132 mov ax,0
+    ctx.cpu.regs.set_ax(0x0u16);
+    // 34c4:1135 cmp ax,0
+    sub(ctx.cpu.regs.get_ax(), 0x0u16, &mut ctx.cpu.flags);
+    // 34c4:1138 jne short 115Fh
+    ctx.jne(Cont(x34c4_113a), Cont(x34c4_115f))
+}
+
+pub fn x34c4_113a(ctx: &mut Context) -> Cont {
+    // 34c4:113a mov al,2
+    ctx.cpu.regs.set_al(0x2u8);
+    // 34c4:113c mov cs:[1Bh],al
+    ctx.memory.write::<u8>(
+        segofs(ctx.cpu.regs.get_cs(), 0x1bu16),
+        ctx.cpu.regs.get_al(),
+    );
+    // 34c4:1140 mov cs:[239Eh],dx
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_cs(), 0x239eu16),
+        ctx.cpu.regs.get_dx(),
+    );
+    // 34c4:1145 mov cs:[239Ah],ax
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_cs(), 0x239au16),
+        ctx.cpu.regs.get_ax(),
+    );
+    // 34c4:1149 mov dx,ds:[0C3Bh]
+    ctx.cpu.regs.set_dx(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0xc3bu16)),
+    );
+    // 34c4:114d add dx,0Ch
+    ctx.cpu
+        .regs
+        .set_dx(add(ctx.cpu.regs.get_dx(), 0xcu16, &mut ctx.cpu.flags));
+    // 34c4:1150 mov al,0D1h
+    ctx.cpu.regs.set_al(0xd1u8);
+    // 34c4:1152 out dx,al
+    dos::out(ctx, ctx.cpu.regs.get_dx(), ctx.cpu.regs.get_al());
+    // 34c4:1153 mov dx,cs:[239Eh]
+    ctx.cpu.regs.set_dx(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_cs(), 0x239eu16)),
+    );
+    // 34c4:1158 mov ax,cs:[239Ah]
+    ctx.cpu.regs.set_ax(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_cs(), 0x239au16)),
+    );
+    Cont(x34c4_115c)
+}
+
+pub fn x34c4_115c(ctx: &mut Context) -> Cont {
+    // 34c4:115c jmp short 1162h
+    Cont(x34c4_1162)
+}
+
+pub fn x34c4_115f(ctx: &mut Context) -> Cont {
+    // 34c4:115f jmp short 11B9h
+    Cont(x34c4_11b9)
+}
+
+pub fn x34c4_1162(ctx: &mut Context) -> Cont {
+    // 34c4:1162 mov byte ptr cs:[1Ch],1
+    ctx.memory
+        .write::<u8>(segofs(ctx.cpu.regs.get_cs(), 0x1cu16), 0x1u8);
+    // 34c4:1168 call far ptr 34C4h:1060h
+    ctx.callf16(0x116d, 0x34c4, Cont(x34c4_1060))
+}
+
+pub fn x34c4_116d(ctx: &mut Context) -> Cont {
+    // 34c4:116d mov bx,0
+    ctx.cpu.regs.set_bx(0x0u16);
+    // 34c4:1170 call 100Ch
+    ctx.call16(0x1173, Cont(x34c4_100c))
+}
+
+pub fn x34c4_1173(ctx: &mut Context) -> Cont {
+    // 34c4:1173 mov cs:[1Dh],bx
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_cs(), 0x1du16),
+        ctx.cpu.regs.get_bx(),
+    );
+    // 34c4:1178 mov ax,es
+    ctx.cpu.regs.set_ax(ctx.cpu.regs.get_es());
+    // 34c4:117a mov cs:[2396h],ax
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_cs(), 0x2396u16),
+        ctx.cpu.regs.get_ax(),
+    );
+    // 34c4:117e mov cs:[2398h],di
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_cs(), 0x2398u16),
+        ctx.cpu.regs.get_di(),
+    );
+    // 34c4:1183 mov cs:[239Ch],bx
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_cs(), 0x239cu16),
+        ctx.cpu.regs.get_bx(),
+    );
+    // 34c4:1188 mov ax,0
+    ctx.cpu.regs.set_ax(0x0u16);
+    // 34c4:118b cli
+    ctx.cli();
+    // 34c4:118c cld
+    cld(ctx);
+    // 34c4:118d mov es,ax
+    ctx.cpu.regs.set_es(ctx.cpu.regs.get_ax());
+    // 34c4:118f mov ax,0F3h
+    ctx.cpu.regs.set_ax(0xf3u16);
+    // 34c4:1192 shl ax,1
+    ctx.cpu
+        .regs
+        .set_ax(shl(ctx.cpu.regs.get_ax(), 0x1u8, &mut ctx.cpu.flags));
+    // 34c4:1194 shl ax,1
+    ctx.cpu
+        .regs
+        .set_ax(shl(ctx.cpu.regs.get_ax(), 0x1u8, &mut ctx.cpu.flags));
+    // 34c4:1196 mov di,ax
+    ctx.cpu.regs.set_di(ctx.cpu.regs.get_ax());
+    // 34c4:1198 mov ax,13CCh
+    ctx.cpu.regs.set_ax(0x13ccu16);
+    // 34c4:119b stosw
+    ctx.stosw();
+    // 34c4:119c mov ax,cs
+    ctx.cpu.regs.set_ax(ctx.cpu.regs.get_cs());
+    // 34c4:119e stosw
+    ctx.stosw();
+    // 34c4:119f sti
+    ctx.sti();
+    // 34c4:11a0 mov ax,1234h
+    ctx.cpu.regs.set_ax(0x1234u16);
+    // 34c4:11a3 mov ds:[13CEh],ax
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_ds(), 0x13ceu16),
+        ctx.cpu.regs.get_ax(),
+    );
+    // 34c4:11a6 mov ax,cs:[2396h]
+    ctx.cpu.regs.set_ax(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_cs(), 0x2396u16)),
+    );
+    // 34c4:11aa mov es,ax
+    ctx.cpu.regs.set_es(ctx.cpu.regs.get_ax());
+    // 34c4:11ac mov bx,cs:[239Ch]
+    ctx.cpu.regs.set_bx(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_cs(), 0x239cu16)),
+    );
+    // 34c4:11b1 mov di,cs:[2398h]
+    ctx.cpu.regs.set_di(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_cs(), 0x2398u16)),
+    );
+    // 34c4:11b6 mov ax,0
+    ctx.cpu.regs.set_ax(0x0u16);
+    Cont(x34c4_11b9)
+}
+
+pub fn x34c4_11b9(ctx: &mut Context) -> Cont {
+    // 34c4:11b9 pop ds
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_ds(x);
+    // 34c4:11ba retf
+    ctx.retf16(0)
+}
+
+pub fn x34c4_11bb(ctx: &mut Context) -> Cont {
+    // 34c4:11bb mov bp,sp
+    ctx.cpu.regs.set_bp(ctx.cpu.regs.get_sp());
+    // 34c4:11bd push ds
+    ctx.push16(ctx.cpu.regs.get_ds());
+    // 34c4:11be mov ax,34C4h
+    ctx.cpu.regs.set_ax(0x34c4u16);
+    // 34c4:11c1 mov ds,ax
+    ctx.cpu.regs.set_ds(ctx.cpu.regs.get_ax());
+    // 34c4:11c3 call far ptr 34C4h:1060h
+    ctx.callf16(0x11c8, 0x34c4, Cont(x34c4_1060))
+}
+
+pub fn x34c4_11c8(ctx: &mut Context) -> Cont {
+    // 34c4:11c8 mov bx,cs:[1Dh]
+    ctx.cpu.regs.set_bx(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_cs(), 0x1du16)),
+    );
+    // 34c4:11cd call 100Ch
+    ctx.call16(0x11d0, Cont(x34c4_100c))
+}
+
+pub fn x34c4_11d0(ctx: &mut Context) -> Cont {
+    // 34c4:11d0 mov cs:[1Dh],bx
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_cs(), 0x1du16),
+        ctx.cpu.regs.get_bx(),
+    );
+    Cont(x34c4_11d5)
+}
+
+pub fn x34c4_11d5(ctx: &mut Context) -> Cont {
+    // 34c4:11d5 cmp word ptr cs:[19h],0
+    sub(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_cs(), 0x19u16)),
+        0x0u16,
+        &mut ctx.cpu.flags,
+    );
+    // 34c4:11db jne short 11D5h
+    ctx.jne(Cont(x34c4_11dd), Cont(x34c4_11d5))
+}
+
+pub fn x34c4_11dd(ctx: &mut Context) -> Cont {
+    // 34c4:11dd mov cs:[239Eh],dx
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_cs(), 0x239eu16),
+        ctx.cpu.regs.get_dx(),
+    );
+    // 34c4:11e2 mov cs:[239Ah],ax
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_cs(), 0x239au16),
+        ctx.cpu.regs.get_ax(),
+    );
+    // 34c4:11e6 mov dx,cs:[239Eh]
+    ctx.cpu.regs.set_dx(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_cs(), 0x239eu16)),
+    );
+    // 34c4:11eb mov ax,cs:[239Ah]
+    ctx.cpu.regs.set_ax(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_cs(), 0x239au16)),
+    );
+    // 34c4:11ef pop ds
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_ds(x);
+    // 34c4:11f0 retf
+    ctx.retf16(0)
+}
+
+pub fn x34c4_11f1(ctx: &mut Context) -> Cont {
+    // 34c4:11f1 mov cs:[13D5h],ah
+    ctx.memory.write::<u8>(
+        segofs(ctx.cpu.regs.get_cs(), 0x13d5u16),
+        ctx.cpu.regs.get_ah(),
+    );
+    // 34c4:11f6 mov cs:[2398h],di
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_cs(), 0x2398u16),
+        ctx.cpu.regs.get_di(),
+    );
+    // 34c4:11fb mov di,cs:[13D2h]
+    ctx.cpu.regs.set_di(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_cs(), 0x13d2u16)),
+    );
+    // 34c4:1200 cmp word ptr cs:[13CCh],0F6Eh
+    sub(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_cs(), 0x13ccu16)),
+        0xf6eu16,
+        &mut ctx.cpu.flags,
+    );
+    // 34c4:1207 jbe short 1210h
+    ctx.jbe(Cont(x34c4_1209), Cont(x34c4_1210))
+}
+
+pub fn x34c4_1209(ctx: &mut Context) -> Cont {
+    // 34c4:1209 mov word ptr cs:[13CCh],0F6Eh
+    ctx.memory
+        .write::<u16>(segofs(ctx.cpu.regs.get_cs(), 0x13ccu16), 0xf6eu16);
+    Cont(x34c4_1210)
+}
+
+pub fn x34c4_1210(ctx: &mut Context) -> Cont {
+    // 34c4:1210 shr al,1
+    ctx.cpu
+        .regs
+        .set_al(shr(ctx.cpu.regs.get_al(), 0x1u8, &mut ctx.cpu.flags));
+    // 34c4:1212 add al,40h
+    ctx.cpu
+        .regs
+        .set_al(add(ctx.cpu.regs.get_al(), 0x40u8, &mut ctx.cpu.flags));
+    // 34c4:1214 mov ah,cs:[di+13D6h]
+    ctx.cpu.regs.set_ah(ctx.memory.read::<u8>(segofs(
+        ctx.cpu.regs.get_cs(),
+        ctx.cpu.regs.get_di().wrapping_add(0x13d6u16),
+    )));
+    // 34c4:1219 shr ah,1
+    ctx.cpu
+        .regs
+        .set_ah(shr(ctx.cpu.regs.get_ah(), 0x1u8, &mut ctx.cpu.flags));
+    // 34c4:121b sub ah,40h
+    ctx.cpu
+        .regs
+        .set_ah(sub(ctx.cpu.regs.get_ah(), 0x40u8, &mut ctx.cpu.flags));
+    // 34c4:121e jb short 1227h
+    ctx.jb(Cont(x34c4_1220), Cont(x34c4_1227))
+}
+
+pub fn x34c4_1220(ctx: &mut Context) -> Cont {
+    // 34c4:1220 add al,ah
+    ctx.cpu.regs.set_al(add(
+        ctx.cpu.regs.get_al(),
+        ctx.cpu.regs.get_ah(),
+        &mut ctx.cpu.flags,
+    ));
+    // 34c4:1222 jb short 122Eh
+    ctx.jb(Cont(x34c4_1224), Cont(x34c4_122e))
+}
+
+pub fn x34c4_1224(ctx: &mut Context) -> Cont {
+    // 34c4:1224 jmp short 1235h
+    Cont(x34c4_1235)
+}
+
+pub fn x34c4_1227(ctx: &mut Context) -> Cont {
+    // 34c4:1227 add al,ah
+    ctx.cpu.regs.set_al(add(
+        ctx.cpu.regs.get_al(),
+        ctx.cpu.regs.get_ah(),
+        &mut ctx.cpu.flags,
+    ));
+    // 34c4:1229 jae short 1233h
+    ctx.jae(Cont(x34c4_122b), Cont(x34c4_1233))
+}
+
+pub fn x34c4_122b(ctx: &mut Context) -> Cont {
+    // 34c4:122b jmp short 1235h
+    Cont(x34c4_1235)
+}
+
+pub fn x34c4_122e(ctx: &mut Context) -> Cont {
+    // 34c4:122e mov al,0FEh
+    ctx.cpu.regs.set_al(0xfeu8);
+    // 34c4:1230 jmp short 1235h
+    Cont(x34c4_1235)
+}
+
+pub fn x34c4_1233(ctx: &mut Context) -> Cont {
+    // 34c4:1233 mov al,1
+    ctx.cpu.regs.set_al(0x1u8);
+    Cont(x34c4_1235)
+}
+
+pub fn x34c4_1235(ctx: &mut Context) -> Cont {
+    // 34c4:1235 mov di,cs:[13D0h]
+    ctx.cpu.regs.set_di(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_cs(), 0x13d0u16)),
+    );
+    // 34c4:123a mov cs:[di+13D6h],al
+    ctx.memory.write::<u8>(
+        segofs(
+            ctx.cpu.regs.get_cs(),
+            ctx.cpu.regs.get_di().wrapping_add(0x13d6u16),
+        ),
+        ctx.cpu.regs.get_al(),
+    );
+    // 34c4:123f inc word ptr cs:[13D0h]
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_cs(), 0x13d0u16),
+        inc(
+            ctx.memory
+                .read::<u16>(segofs(ctx.cpu.regs.get_cs(), 0x13d0u16)),
+            &mut ctx.cpu.flags,
+        ),
+    );
+    // 34c4:1244 inc di
+    ctx.cpu
+        .regs
+        .set_di(inc(ctx.cpu.regs.get_di(), &mut ctx.cpu.flags));
+    // 34c4:1245 cmp di,cs:[13CCh]
+    sub(
+        ctx.cpu.regs.get_di(),
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_cs(), 0x13ccu16)),
+        &mut ctx.cpu.flags,
+    );
+    // 34c4:124a jbe short 1253h
+    ctx.jbe(Cont(x34c4_124c), Cont(x34c4_1253))
+}
+
+pub fn x34c4_124c(ctx: &mut Context) -> Cont {
+    // 34c4:124c mov word ptr cs:[13D0h],0
+    ctx.memory
+        .write::<u16>(segofs(ctx.cpu.regs.get_cs(), 0x13d0u16), 0x0u16);
+    Cont(x34c4_1253)
+}
+
+pub fn x34c4_1253(ctx: &mut Context) -> Cont {
+    // 34c4:1253 inc word ptr cs:[13D2h]
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_cs(), 0x13d2u16),
+        inc(
+            ctx.memory
+                .read::<u16>(segofs(ctx.cpu.regs.get_cs(), 0x13d2u16)),
+            &mut ctx.cpu.flags,
+        ),
+    );
+    // 34c4:1258 mov di,cs:[13D2h]
+    ctx.cpu.regs.set_di(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_cs(), 0x13d2u16)),
+    );
+    // 34c4:125d cmp di,cs:[13CCh]
+    sub(
+        ctx.cpu.regs.get_di(),
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_cs(), 0x13ccu16)),
+        &mut ctx.cpu.flags,
+    );
+    // 34c4:1262 jbe short 126Bh
+    ctx.jbe(Cont(x34c4_1264), Cont(x34c4_126b))
+}
+
+pub fn x34c4_1264(ctx: &mut Context) -> Cont {
+    // 34c4:1264 mov word ptr cs:[13D2h],0
+    ctx.memory
+        .write::<u16>(segofs(ctx.cpu.regs.get_cs(), 0x13d2u16), 0x0u16);
+    Cont(x34c4_126b)
+}
+
+pub fn x34c4_126b(ctx: &mut Context) -> Cont {
+    // 34c4:126b mov ah,cs:[13D5h]
+    ctx.cpu.regs.set_ah(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_cs(), 0x13d5u16)),
+    );
+    // 34c4:1270 mov di,cs:[2398h]
+    ctx.cpu.regs.set_di(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_cs(), 0x2398u16)),
+    );
+    // 34c4:1275 ret
+    ctx.ret16(0)
+}
+
+pub fn x34c4_1276(ctx: &mut Context) -> Cont {
+    // 34c4:1276 push es
+    ctx.push16(ctx.cpu.regs.get_es());
+    // 34c4:1277 mov ax,352Eh
+    ctx.cpu.regs.set_ax(0x352eu16);
+    // 34c4:127a int 21h
+    dos::int(ctx, 0x127c, 0x21)
+}
+
+pub fn x34c4_127c(ctx: &mut Context) -> Cont {
+    // 34c4:127c mov dx,es:[2Ch]
+    ctx.cpu.regs.set_dx(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_es(), 0x2cu16)),
+    );
+    // 34c4:1281 mov ds:[23A6h],dx
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_ds(), 0x23a6u16),
+        ctx.cpu.regs.get_dx(),
+    );
+    // 34c4:1285 mov word ptr ds:[23A8h],0
+    ctx.memory
+        .write::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x23a8u16), 0x0u16);
+    // 34c4:128b mov di,0
+    ctx.cpu.regs.set_di(0x0u16);
+    // 34c4:128e dec dx
+    ctx.cpu
+        .regs
+        .set_dx(dec(ctx.cpu.regs.get_dx(), &mut ctx.cpu.flags));
+    // 34c4:128f mov es,dx
+    ctx.cpu.regs.set_es(ctx.cpu.regs.get_dx());
+    // 34c4:1291 mov ax,es:[3]
+    ctx.cpu.regs.set_ax(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_es(), 0x3u16)),
+    );
+    // 34c4:1295 mov cl,4
+    ctx.cpu.regs.set_cl(0x4u8);
+    // 34c4:1297 shl ax,cl
+    ctx.cpu.regs.set_ax(shl(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_cl(),
+        &mut ctx.cpu.flags,
+    ));
+    // 34c4:1299 mov ds:[23AAh],ax
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_ds(), 0x23aau16),
+        ctx.cpu.regs.get_ax(),
+    );
+    // 34c4:129c mov cx,ax
+    ctx.cpu.regs.set_cx(ctx.cpu.regs.get_ax());
+    // 34c4:129e mov ax,ds:[23A6h]
+    ctx.cpu.regs.set_ax(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x23a6u16)),
+    );
+    // 34c4:12a1 mov es,ax
+    ctx.cpu.regs.set_es(ctx.cpu.regs.get_ax());
+    // 34c4:12a3 mov di,ds:[23A8h]
+    ctx.cpu.regs.set_di(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x23a8u16)),
+    );
+    Cont(x34c4_12a7)
+}
+
+pub fn x34c4_12a7(ctx: &mut Context) -> Cont {
+    // 34c4:12a7 mov al,3Dh
+    ctx.cpu.regs.set_al(0x3du8);
+    // 34c4:12a9 call 13ABh
+    ctx.call16(0x12ac, Cont(x34c4_13ab))
+}
+
+pub fn x34c4_12ac(ctx: &mut Context) -> Cont {
+    // 34c4:12ac cmp al,0
+    sub(ctx.cpu.regs.get_al(), 0x0u8, &mut ctx.cpu.flags);
+    // 34c4:12ae jne short 12BEh
+    ctx.jne(Cont(x34c4_12b0), Cont(x34c4_12be))
+}
+
+pub fn x34c4_12b0(ctx: &mut Context) -> Cont {
+    // 34c4:12b0 cmp di,ds:[23AAh]
+    sub(
+        ctx.cpu.regs.get_di(),
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x23aau16)),
+        &mut ctx.cpu.flags,
+    );
+    // 34c4:12b4 jae short 12B8h
+    ctx.jae(Cont(x34c4_12b6), Cont(x34c4_12b8))
+}
+
+pub fn x34c4_12b6(ctx: &mut Context) -> Cont {
+    // 34c4:12b6 jmp short 12A7h
+    Cont(x34c4_12a7)
+}
+
+pub fn x34c4_12b8(ctx: &mut Context) -> Cont {
+    // 34c4:12b8 jmp near ptr 13A9h
+    Cont(x34c4_13a9)
+}
+
+pub fn x34c4_12bb(ctx: &mut Context) -> Cont {
+    // 34c4:12bb jmp near ptr 1397h
+    Cont(x34c4_1397)
+}
+
+pub fn x34c4_12be(ctx: &mut Context) -> Cont {
+    // 34c4:12be mov ds:[23ACh],di
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_ds(), 0x23acu16),
+        ctx.cpu.regs.get_di(),
+    );
+    // 34c4:12c2 cld
+    cld(ctx);
+    // 34c4:12c3 mov cx,7
+    ctx.cpu.regs.set_cx(0x7u16);
+    // 34c4:12c6 sub di,7
+    ctx.cpu
+        .regs
+        .set_di(sub(ctx.cpu.regs.get_di(), 0x7u16, &mut ctx.cpu.flags));
+    // 34c4:12c9 mov si,23AEh
+    ctx.cpu.regs.set_si(0x23aeu16);
+    // 34c4:12cc call 13B8h
+    ctx.call16(0x12cf, Cont(x34c4_13b8))
+}
+
+pub fn x34c4_12cf(ctx: &mut Context) -> Cont {
+    // 34c4:12cf cmp al,0
+    sub(ctx.cpu.regs.get_al(), 0x0u8, &mut ctx.cpu.flags);
+    // 34c4:12d1 je short 12BBh
+    ctx.je(Cont(x34c4_12d3), Cont(x34c4_12bb))
+}
+
+pub fn x34c4_12d3(ctx: &mut Context) -> Cont {
+    // 34c4:12d3 mov di,ds:[23ACh]
+    ctx.cpu.regs.set_di(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x23acu16)),
+    );
+    // 34c4:12d7 inc di
+    ctx.cpu
+        .regs
+        .set_di(inc(ctx.cpu.regs.get_di(), &mut ctx.cpu.flags));
+    // 34c4:12d8 mov si,2401h
+    ctx.cpu.regs.set_si(0x2401u16);
+    Cont(x34c4_12db)
+}
+
+pub fn x34c4_12db(ctx: &mut Context) -> Cont {
+    // 34c4:12db mov al,es:[di]
+    ctx.cpu.regs.set_al(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_es(), ctx.cpu.regs.get_di())),
+    );
+    // 34c4:12de cmp al,0
+    sub(ctx.cpu.regs.get_al(), 0x0u8, &mut ctx.cpu.flags);
+    // 34c4:12e0 je short 12E8h
+    ctx.je(Cont(x34c4_12e2), Cont(x34c4_12e8))
+}
+
+pub fn x34c4_12e2(ctx: &mut Context) -> Cont {
+    // 34c4:12e2 mov [si],al
+    ctx.memory.write::<u8>(
+        segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_si()),
+        ctx.cpu.regs.get_al(),
+    );
+    // 34c4:12e4 inc di
+    ctx.cpu
+        .regs
+        .set_di(inc(ctx.cpu.regs.get_di(), &mut ctx.cpu.flags));
+    // 34c4:12e5 inc si
+    ctx.cpu
+        .regs
+        .set_si(inc(ctx.cpu.regs.get_si(), &mut ctx.cpu.flags));
+    // 34c4:12e6 jmp short 12DBh
+    Cont(x34c4_12db)
+}
+
+pub fn x34c4_12e8(ctx: &mut Context) -> Cont {
+    // 34c4:12e8 mov al,0Dh
+    ctx.cpu.regs.set_al(0xdu8);
+    // 34c4:12ea mov [si],al
+    ctx.memory.write::<u8>(
+        segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_si()),
+        ctx.cpu.regs.get_al(),
+    );
+    // 34c4:12ec mov al,0Ah
+    ctx.cpu.regs.set_al(0xau8);
+    // 34c4:12ee mov [si],al
+    ctx.memory.write::<u8>(
+        segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_si()),
+        ctx.cpu.regs.get_al(),
+    );
+    // 34c4:12f0 mov al,24h
+    ctx.cpu.regs.set_al(0x24u8);
+    // 34c4:12f2 mov [si],al
+    ctx.memory.write::<u8>(
+        segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_si()),
+        ctx.cpu.regs.get_al(),
+    );
+    // 34c4:12f4 push ds
+    ctx.push16(ctx.cpu.regs.get_ds());
+    // 34c4:12f5 pop es
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_es(x);
+    // 34c4:12f6 mov al,41h
+    ctx.cpu.regs.set_al(0x41u8);
+    // 34c4:12f8 mov cx,0Ah
+    ctx.cpu.regs.set_cx(0xau16);
+    // 34c4:12fb mov di,2401h
+    ctx.cpu.regs.set_di(0x2401u16);
+    // 34c4:12fe call 13ABh
+    ctx.call16(0x1301, Cont(x34c4_13ab))
+}
+
+pub fn x34c4_1301(ctx: &mut Context) -> Cont {
+    // 34c4:1301 cmp al,0
+    sub(ctx.cpu.regs.get_al(), 0x0u8, &mut ctx.cpu.flags);
+    // 34c4:1303 jne short 1353h
+    ctx.jne(Cont(x34c4_1305), Cont(x34c4_1353))
+}
+
+pub fn x34c4_1305(ctx: &mut Context) -> Cont {
+    // 34c4:1305 mov al,61h
+    ctx.cpu.regs.set_al(0x61u8);
+    // 34c4:1307 mov cx,0Ah
+    ctx.cpu.regs.set_cx(0xau16);
+    // 34c4:130a mov di,2401h
+    ctx.cpu.regs.set_di(0x2401u16);
+    // 34c4:130d call 13ABh
+    ctx.call16(0x1310, Cont(x34c4_13ab))
+}
+
+pub fn x34c4_1310(ctx: &mut Context) -> Cont {
+    // 34c4:1310 cmp al,0
+    sub(ctx.cpu.regs.get_al(), 0x0u8, &mut ctx.cpu.flags);
+    // 34c4:1312 jne short 1353h
+    ctx.jne(Cont(x34c4_1314), Cont(x34c4_1353))
+}
+
+pub fn x34c4_1314(ctx: &mut Context) -> Cont {
+    // 34c4:1314 mov al,49h
+    ctx.cpu.regs.set_al(0x49u8);
+    // 34c4:1316 mov cx,0Ah
+    ctx.cpu.regs.set_cx(0xau16);
+    // 34c4:1319 mov di,2401h
+    ctx.cpu.regs.set_di(0x2401u16);
+    // 34c4:131c call 13ABh
+    ctx.call16(0x131f, Cont(x34c4_13ab))
+}
+
+pub fn x34c4_131f(ctx: &mut Context) -> Cont {
+    // 34c4:131f cmp al,0
+    sub(ctx.cpu.regs.get_al(), 0x0u8, &mut ctx.cpu.flags);
+    // 34c4:1321 jne short 137Ch
+    ctx.jne(Cont(x34c4_1323), Cont(x34c4_137c))
+}
+
+pub fn x34c4_1323(ctx: &mut Context) -> Cont {
+    // 34c4:1323 mov al,69h
+    ctx.cpu.regs.set_al(0x69u8);
+    // 34c4:1325 mov cx,0Ah
+    ctx.cpu.regs.set_cx(0xau16);
+    // 34c4:1328 mov di,2401h
+    ctx.cpu.regs.set_di(0x2401u16);
+    // 34c4:132b call 13ABh
+    ctx.call16(0x132e, Cont(x34c4_13ab))
+}
+
+pub fn x34c4_132e(ctx: &mut Context) -> Cont {
+    // 34c4:132e cmp al,0
+    sub(ctx.cpu.regs.get_al(), 0x0u8, &mut ctx.cpu.flags);
+    // 34c4:1330 jne short 137Ch
+    ctx.jne(Cont(x34c4_1332), Cont(x34c4_137c))
+}
+
+pub fn x34c4_1332(ctx: &mut Context) -> Cont {
+    // 34c4:1332 mov al,44h
+    ctx.cpu.regs.set_al(0x44u8);
+    // 34c4:1334 mov cx,0Ah
+    ctx.cpu.regs.set_cx(0xau16);
+    // 34c4:1337 mov di,2401h
+    ctx.cpu.regs.set_di(0x2401u16);
+    // 34c4:133a call 13ABh
+    ctx.call16(0x133d, Cont(x34c4_13ab))
+}
+
+pub fn x34c4_133d(ctx: &mut Context) -> Cont {
+    // 34c4:133d cmp al,0
+    sub(ctx.cpu.regs.get_al(), 0x0u8, &mut ctx.cpu.flags);
+    // 34c4:133f jne short 1389h
+    ctx.jne(Cont(x34c4_1341), Cont(x34c4_1389))
+}
+
+pub fn x34c4_1341(ctx: &mut Context) -> Cont {
+    // 34c4:1341 mov al,64h
+    ctx.cpu.regs.set_al(0x64u8);
+    // 34c4:1343 mov cx,0Ah
+    ctx.cpu.regs.set_cx(0xau16);
+    // 34c4:1346 mov di,2401h
+    ctx.cpu.regs.set_di(0x2401u16);
+    // 34c4:1349 call 13ABh
+    ctx.call16(0x134c, Cont(x34c4_13ab))
+}
+
+pub fn x34c4_134c(ctx: &mut Context) -> Cont {
+    // 34c4:134c cmp al,0
+    sub(ctx.cpu.regs.get_al(), 0x0u8, &mut ctx.cpu.flags);
+    // 34c4:134e jne short 1389h
+    ctx.jne(Cont(x34c4_1350), Cont(x34c4_1389))
+}
+
+pub fn x34c4_1350(ctx: &mut Context) -> Cont {
+    // 34c4:1350 jmp short 13A9h
+    Cont(x34c4_13a9)
+}
+
+pub fn x34c4_1353(ctx: &mut Context) -> Cont {
+    // 34c4:1353 inc di
+    ctx.cpu
+        .regs
+        .set_di(inc(ctx.cpu.regs.get_di(), &mut ctx.cpu.flags));
+    // 34c4:1354 mov bx,0
+    ctx.cpu.regs.set_bx(0x0u16);
+    // 34c4:1357 mov al,es:[di]
+    ctx.cpu.regs.set_al(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_es(), ctx.cpu.regs.get_di())),
+    );
+    // 34c4:135a sub al,30h
+    ctx.cpu
+        .regs
+        .set_al(sub(ctx.cpu.regs.get_al(), 0x30u8, &mut ctx.cpu.flags));
+    // 34c4:135c and al,0Fh
+    ctx.cpu
+        .regs
+        .set_al(and(ctx.cpu.regs.get_al(), 0xfu8, &mut ctx.cpu.flags));
+    // 34c4:135e mov bh,al
+    ctx.cpu.regs.set_bh(ctx.cpu.regs.get_al());
+    // 34c4:1360 inc di
+    ctx.cpu
+        .regs
+        .set_di(inc(ctx.cpu.regs.get_di(), &mut ctx.cpu.flags));
+    // 34c4:1361 mov al,es:[di]
+    ctx.cpu.regs.set_al(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_es(), ctx.cpu.regs.get_di())),
+    );
+    // 34c4:1364 sub al,30h
+    ctx.cpu
+        .regs
+        .set_al(sub(ctx.cpu.regs.get_al(), 0x30u8, &mut ctx.cpu.flags));
+    // 34c4:1366 mov bl,al
+    ctx.cpu.regs.set_bl(ctx.cpu.regs.get_al());
+    // 34c4:1368 mov cl,4
+    ctx.cpu.regs.set_cl(0x4u8);
+    // 34c4:136a shl bl,cl
+    ctx.cpu.regs.set_bl(shl(
+        ctx.cpu.regs.get_bl(),
+        ctx.cpu.regs.get_cl(),
+        &mut ctx.cpu.flags,
+    ));
+    // 34c4:136c inc di
+    ctx.cpu
+        .regs
+        .set_di(inc(ctx.cpu.regs.get_di(), &mut ctx.cpu.flags));
+    // 34c4:136d mov al,es:[di]
+    ctx.cpu.regs.set_al(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_es(), ctx.cpu.regs.get_di())),
+    );
+    // 34c4:1370 sub al,30h
+    ctx.cpu
+        .regs
+        .set_al(sub(ctx.cpu.regs.get_al(), 0x30u8, &mut ctx.cpu.flags));
+    // 34c4:1372 and al,0Fh
+    ctx.cpu
+        .regs
+        .set_al(and(ctx.cpu.regs.get_al(), 0xfu8, &mut ctx.cpu.flags));
+    // 34c4:1374 or bl,al
+    ctx.cpu.regs.set_bl(or(
+        ctx.cpu.regs.get_bl(),
+        ctx.cpu.regs.get_al(),
+        &mut ctx.cpu.flags,
+    ));
+    // 34c4:1376 mov ds:[23A2h],bx
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_ds(), 0x23a2u16),
+        ctx.cpu.regs.get_bx(),
+    );
+    // 34c4:137a jmp short 1314h
+    Cont(x34c4_1314)
+}
+
+pub fn x34c4_137c(ctx: &mut Context) -> Cont {
+    // 34c4:137c inc di
+    ctx.cpu
+        .regs
+        .set_di(inc(ctx.cpu.regs.get_di(), &mut ctx.cpu.flags));
+    // 34c4:137d mov al,es:[di]
+    ctx.cpu.regs.set_al(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_es(), ctx.cpu.regs.get_di())),
+    );
+    // 34c4:1380 sub al,30h
+    ctx.cpu
+        .regs
+        .set_al(sub(ctx.cpu.regs.get_al(), 0x30u8, &mut ctx.cpu.flags));
+    // 34c4:1382 and al,0Fh
+    ctx.cpu
+        .regs
+        .set_al(and(ctx.cpu.regs.get_al(), 0xfu8, &mut ctx.cpu.flags));
+    // 34c4:1384 mov ds:[23A4h],al
+    ctx.memory.write::<u8>(
+        segofs(ctx.cpu.regs.get_ds(), 0x23a4u16),
+        ctx.cpu.regs.get_al(),
+    );
+    // 34c4:1387 jmp short 1332h
+    Cont(x34c4_1332)
+}
+
+pub fn x34c4_1389(ctx: &mut Context) -> Cont {
+    // 34c4:1389 inc di
+    ctx.cpu
+        .regs
+        .set_di(inc(ctx.cpu.regs.get_di(), &mut ctx.cpu.flags));
+    // 34c4:138a mov al,es:[di]
+    ctx.cpu.regs.set_al(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_es(), ctx.cpu.regs.get_di())),
+    );
+    // 34c4:138d sub al,30h
+    ctx.cpu
+        .regs
+        .set_al(sub(ctx.cpu.regs.get_al(), 0x30u8, &mut ctx.cpu.flags));
+    // 34c4:138f and al,0Fh
+    ctx.cpu
+        .regs
+        .set_al(and(ctx.cpu.regs.get_al(), 0xfu8, &mut ctx.cpu.flags));
+    // 34c4:1391 mov ds:[23A5h],al
+    ctx.memory.write::<u8>(
+        segofs(ctx.cpu.regs.get_ds(), 0x23a5u16),
+        ctx.cpu.regs.get_al(),
+    );
+    // 34c4:1394 jmp short 13A9h
+    Cont(x34c4_13a9)
+}
+
+pub fn x34c4_1397(ctx: &mut Context) -> Cont {
+    // 34c4:1397 mov di,ds:[23ACh]
+    ctx.cpu.regs.set_di(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x23acu16)),
+    );
+    // 34c4:139b inc di
+    ctx.cpu
+        .regs
+        .set_di(inc(ctx.cpu.regs.get_di(), &mut ctx.cpu.flags));
+    // 34c4:139c mov cx,ds:[23AAh]
+    ctx.cpu.regs.set_cx(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x23aau16)),
+    );
+    // 34c4:13a0 cmp di,cx
+    sub(
+        ctx.cpu.regs.get_di(),
+        ctx.cpu.regs.get_cx(),
+        &mut ctx.cpu.flags,
+    );
+    // 34c4:13a2 jae short 13A9h
+    ctx.jae(Cont(x34c4_13a4), Cont(x34c4_13a9))
+}
+
+pub fn x34c4_13a4(ctx: &mut Context) -> Cont {
+    // 34c4:13a4 sub cx,di
+    ctx.cpu.regs.set_cx(sub(
+        ctx.cpu.regs.get_cx(),
+        ctx.cpu.regs.get_di(),
+        &mut ctx.cpu.flags,
+    ));
+    // 34c4:13a6 jmp near ptr 12A7h
+    Cont(x34c4_12a7)
+}
+
+pub fn x34c4_13a9(ctx: &mut Context) -> Cont {
+    // 34c4:13a9 pop es
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_es(x);
+    // 34c4:13aa ret
+    ctx.ret16(0)
+}
+
+pub fn x34c4_13ab(ctx: &mut Context) -> Cont {
+    // 34c4:13ab jcxz 13B5h
+    ctx.jcxz(Cont(x34c4_13ad), Cont(x34c4_13b5))
+}
+
+pub fn x34c4_13ad(ctx: &mut Context) -> Cont {
+    // 34c4:13ad cmp al,es:[di]
+    sub(
+        ctx.cpu.regs.get_al(),
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_es(), ctx.cpu.regs.get_di())),
+        &mut ctx.cpu.flags,
+    );
+    // 34c4:13b0 je short 13B7h
+    ctx.je(Cont(x34c4_13b2), Cont(x34c4_13b7))
+}
+
+pub fn x34c4_13b2(ctx: &mut Context) -> Cont {
+    // 34c4:13b2 inc di
+    ctx.cpu
+        .regs
+        .set_di(inc(ctx.cpu.regs.get_di(), &mut ctx.cpu.flags));
+    // 34c4:13b3 loop 13ADh
+    ctx.loop_(Cont(x34c4_13b5), Cont(x34c4_13ad))
+}
+
+pub fn x34c4_13b5(ctx: &mut Context) -> Cont {
+    // 34c4:13b5 mov al,0
+    ctx.cpu.regs.set_al(0x0u8);
+    Cont(x34c4_13b7)
+}
+
+pub fn x34c4_13b7(ctx: &mut Context) -> Cont {
+    // 34c4:13b7 ret
+    ctx.ret16(0)
+}
+
+pub fn x34c4_13b8(ctx: &mut Context) -> Cont {
+    // 34c4:13b8 mov al,es:[di]
+    ctx.cpu.regs.set_al(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_es(), ctx.cpu.regs.get_di())),
+    );
+    // 34c4:13bb cmp al,[si]
+    sub(
+        ctx.cpu.regs.get_al(),
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_si())),
+        &mut ctx.cpu.flags,
+    );
+    // 34c4:13bd jne short 13C8h
+    ctx.jne(Cont(x34c4_13bf), Cont(x34c4_13c8))
+}
+
+pub fn x34c4_13bf(ctx: &mut Context) -> Cont {
+    // 34c4:13bf inc di
+    ctx.cpu
+        .regs
+        .set_di(inc(ctx.cpu.regs.get_di(), &mut ctx.cpu.flags));
+    // 34c4:13c0 inc si
+    ctx.cpu
+        .regs
+        .set_si(inc(ctx.cpu.regs.get_si(), &mut ctx.cpu.flags));
+    // 34c4:13c1 loop 13B8h
+    ctx.loop_(Cont(x34c4_13c3), Cont(x34c4_13b8))
+}
+
+pub fn x34c4_13c3(ctx: &mut Context) -> Cont {
+    // 34c4:13c3 mov al,3Dh
+    ctx.cpu.regs.set_al(0x3du8);
+    // 34c4:13c5 jmp short 13CAh
+    Cont(x34c4_13ca)
+}
+
+pub fn x34c4_13c8(ctx: &mut Context) -> Cont {
+    // 34c4:13c8 mov al,0
+    ctx.cpu.regs.set_al(0x0u8);
+    Cont(x34c4_13ca)
+}
+
+pub fn x34c4_13ca(ctx: &mut Context) -> Cont {
+    // 34c4:13ca ret
+    ctx.ret16(0)
+}
+
+pub fn unk_e4ae(_ctx: &mut Context) -> Cont {
+    runtime::unknown_block(0xe4ae)
+}
+
+pub fn unk_e53d(_ctx: &mut Context) -> Cont {
+    runtime::unknown_block(0xe53d)
+}
+
+pub fn unk_e556(_ctx: &mut Context) -> Cont {
+    runtime::unknown_block(0xe556)
+}
+
+pub fn unk_e82c(_ctx: &mut Context) -> Cont {
+    runtime::unknown_block(0xe82c)
+}
+
+pub fn unk_e831(_ctx: &mut Context) -> Cont {
+    runtime::unknown_block(0xe831)
 }
