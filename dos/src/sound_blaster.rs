@@ -24,7 +24,9 @@ impl SoundBlaster {
         log::info!("dsp: set_sampling_rate {args:x?}");
     }
     fn pcm_output(&mut self, args: Vec<u8>) {
-        log::info!("dsp: pcm_output {args:x?}");
+        let [lo, hi] = args.try_into().unwrap();
+        let len = <u16>::from_le_bytes([lo, hi]);
+        log::info!("dsp: pcm_output({len})");
     }
 
     pub fn in_(&mut self, _ctx: &mut Context, port: u16) -> u8 {
