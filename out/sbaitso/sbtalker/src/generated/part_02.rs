@@ -6459,7 +6459,123 @@ pub fn x34c4_0d72(ctx: &mut Context) -> Cont {
 pub fn x34c4_0d86(ctx: &mut Context) -> Cont {
     ctx.dump_dosbox(0xd86);
     // 34c4:0d86 pushf
-    panic!("Pushf not implemented");
+    ctx.push16(ctx.cpu.flags.bits() as u16);
+    ctx.dump_dosbox(0xd87);
+    // 34c4:0d87 push bx
+    ctx.push16(ctx.cpu.regs.get_bx());
+    ctx.dump_dosbox(0xd88);
+    // 34c4:0d88 push cx
+    ctx.push16(ctx.cpu.regs.get_cx());
+    ctx.dump_dosbox(0xd89);
+    // 34c4:0d89 push dx
+    ctx.push16(ctx.cpu.regs.get_dx());
+    ctx.dump_dosbox(0xd8a);
+    // 34c4:0d8a cli
+    ctx.cli();
+    ctx.dump_dosbox(0xd8b);
+    // 34c4:0d8b mov cl,al
+    ctx.cpu.regs.set_cl(ctx.cpu.regs.get_al());
+    ctx.dump_dosbox(0xd8d);
+    // 34c4:0d8d add al,8
+    ctx.cpu
+        .regs
+        .set_al(add(ctx.cpu.regs.get_al(), 0x8u8, &mut ctx.cpu.flags));
+    ctx.dump_dosbox(0xd8f);
+    // 34c4:0d8f cbw
+    ctx.cpu
+        .regs
+        .set_ax(ctx.cpu.regs.get_al() as i8 as i16 as u16);
+    ctx.dump_dosbox(0xd90);
+    // 34c4:0d90 shl ax,1
+    ctx.cpu
+        .regs
+        .set_ax(shl(ctx.cpu.regs.get_ax(), 0x1u8, &mut ctx.cpu.flags));
+    ctx.dump_dosbox(0xd92);
+    // 34c4:0d92 shl ax,1
+    ctx.cpu
+        .regs
+        .set_ax(shl(ctx.cpu.regs.get_ax(), 0x1u8, &mut ctx.cpu.flags));
+    ctx.dump_dosbox(0xd94);
+    // 34c4:0d94 mov di,ax
+    ctx.cpu.regs.set_di(ctx.cpu.regs.get_ax());
+    ctx.dump_dosbox(0xd96);
+    // 34c4:0d96 push es
+    ctx.push16(ctx.cpu.regs.get_es());
+    ctx.dump_dosbox(0xd97);
+    // 34c4:0d97 sub ax,ax
+    ctx.cpu.regs.set_ax(sub(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_ax(),
+        &mut ctx.cpu.flags,
+    ));
+    ctx.dump_dosbox(0xd99);
+    // 34c4:0d99 mov es,ax
+    ctx.cpu.regs.set_es(ctx.cpu.regs.get_ax());
+    ctx.dump_dosbox(0xd9b);
+    // 34c4:0d9b mov ax,es:[di]
+    ctx.cpu.regs.set_ax(
+        ctx.memory
+            .read::<u16>(segofs(ctx.cpu.regs.get_es(), ctx.cpu.regs.get_di())),
+    );
+    ctx.dump_dosbox(0xd9e);
+    // 34c4:0d9e mov [bx],ax
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_ds(), ctx.cpu.regs.get_bx()),
+        ctx.cpu.regs.get_ax(),
+    );
+    ctx.dump_dosbox(0xda0);
+    // 34c4:0da0 mov es:[di],dx
+    ctx.memory.write::<u16>(
+        segofs(ctx.cpu.regs.get_es(), ctx.cpu.regs.get_di()),
+        ctx.cpu.regs.get_dx(),
+    );
+    ctx.dump_dosbox(0xda3);
+    // 34c4:0da3 mov ax,es:[di+2]
+    ctx.cpu.regs.set_ax(ctx.memory.read::<u16>(segofs(
+        ctx.cpu.regs.get_es(),
+        ctx.cpu.regs.get_di().wrapping_add(0x2u16),
+    )));
+    ctx.dump_dosbox(0xda7);
+    // 34c4:0da7 mov [bx+2],ax
+    ctx.memory.write::<u16>(
+        segofs(
+            ctx.cpu.regs.get_ds(),
+            ctx.cpu.regs.get_bx().wrapping_add(0x2u16),
+        ),
+        ctx.cpu.regs.get_ax(),
+    );
+    ctx.dump_dosbox(0xdaa);
+    // 34c4:0daa mov es:[di+2],cs
+    ctx.memory.write::<u16>(
+        segofs(
+            ctx.cpu.regs.get_es(),
+            ctx.cpu.regs.get_di().wrapping_add(0x2u16),
+        ),
+        ctx.cpu.regs.get_cs(),
+    );
+    ctx.dump_dosbox(0xdae);
+    // 34c4:0dae pop es
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_es(x);
+    ctx.dump_dosbox(0xdaf);
+    // 34c4:0daf pop dx
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_dx(x);
+    ctx.dump_dosbox(0xdb0);
+    // 34c4:0db0 pop cx
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_cx(x);
+    ctx.dump_dosbox(0xdb1);
+    // 34c4:0db1 pop bx
+    let x = ctx.pop16();
+    ctx.cpu.regs.set_bx(x);
+    ctx.dump_dosbox(0xdb2);
+    // 34c4:0db2 popf
+    let flags = ctx.pop16();
+    ctx.cpu.flags = Flags::from_bits_retain((ctx.cpu.flags.bits() & 0xFFFF_0000) | flags as u32);
+    ctx.dump_dosbox(0xdb3);
+    // 34c4:0db3 ret
+    ctx.ret16(0)
 }
 
 pub fn x34c4_0e6d(ctx: &mut Context) -> Cont {

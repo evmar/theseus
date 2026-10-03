@@ -117,7 +117,12 @@ impl<'a> CodeGen<'a> {
                 ));
             }
 
+            Pushf => self.line("ctx.push16(ctx.cpu.flags.bits() as u16);"),
             Pushfd => self.line("ctx.push32(ctx.cpu.flags.bits());"),
+            Popf => {
+                self.line("let flags = ctx.pop16();");
+                self.line("ctx.cpu.flags = Flags::from_bits_retain((ctx.cpu.flags.bits() & 0xFFFF_0000) | flags as u32);");
+            }
             Popfd => {
                 // Keep bits we don't model (like ID, bit 21) so that the usual
                 // "can I toggle ID?" probe for cpuid support sees them again.
