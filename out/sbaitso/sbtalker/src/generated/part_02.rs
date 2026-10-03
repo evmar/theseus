@@ -6221,7 +6221,7 @@ pub fn x34c4_0c7e(ctx: &mut Context) -> Cont {
     ctx.dump_dosbox(0xc7e);
     // 34c4:0c7e in al,dx
     let input = dos::in_(ctx, ctx.cpu.regs.get_dx() as u16);
-    ctx.cpu.regs.set_al(input as _);
+    ctx.cpu.regs.set_al(input);
     ctx.dump_dosbox(0xc7f);
     // 34c4:0c7f or al,al
     ctx.cpu.regs.set_al(or(
@@ -6966,7 +6966,7 @@ pub fn x34c4_0fb4(ctx: &mut Context) -> Cont {
     ctx.dump_dosbox(0xfb6);
     // 34c4:0fb6 in al,0A1h
     let input = dos::in_(ctx, 0xa1u8 as u16);
-    ctx.cpu.regs.set_al(input as _);
+    ctx.cpu.regs.set_al(input);
     ctx.dump_dosbox(0xfb8);
     // 34c4:0fb8 and al,ah
     ctx.cpu.regs.set_al(and(
@@ -6997,7 +6997,7 @@ pub fn x34c4_0fbc(ctx: &mut Context) -> Cont {
     ctx.dump_dosbox(0xfc2);
     // 34c4:0fc2 in al,21h
     let input = dos::in_(ctx, 0x21u8 as u16);
-    ctx.cpu.regs.set_al(input as _);
+    ctx.cpu.regs.set_al(input);
     ctx.dump_dosbox(0xfc4);
     // 34c4:0fc4 and al,ah
     ctx.cpu.regs.set_al(and(

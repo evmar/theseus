@@ -1,4 +1,5 @@
 mod dosapi;
+mod sound_blaster;
 mod timer;
 mod vga;
 
@@ -11,7 +12,7 @@ use host::SingleThreader;
 use runtime::{CPU, Context, EXEData, Mappings, Memory, Regs, SegOfs, segofs};
 use zerocopy::FromBytes;
 
-use crate::{timer::PIT, vga::VGA};
+use crate::{sound_blaster::SoundBlaster, timer::PIT, vga::VGA};
 
 /// DOSBox-X loads com files into this segment.
 pub const DOSBOX_SEG: u16 = 0x813;
@@ -170,6 +171,7 @@ pub struct State {
     psp_segment: u16,
     pit: PIT,
     vga: Option<VGA>,
+    sound_blaster: SoundBlaster,
     pub read_file: Option<Box<dyn FnMut(&str) -> Option<Vec<u8>>>>,
     files: Vec<dosapi::File>,
 }
@@ -184,6 +186,7 @@ impl State {
             psp_segment: 0,
             pit: PIT::default(),
             vga: None,
+            sound_blaster: SoundBlaster::default(),
             read_file: None,
             files,
         }
@@ -266,10 +269,28 @@ pub fn int(ctx: &mut Context, next_ip: u16, interrupt: u8) -> runtime::Cont {
     ctx.indirect16((ctx.cpu.regs.cs, next_ip).into())
 }
 
+bitflags::bitflags! {
+    /// Interrupt Mask Register
+    pub struct IMR: u8 {
+        const printer = 1 << 7;
+        const diskette = 1 << 6;
+        const disk = 1 << 5;
+        const serial1 = 1 << 4;
+        const serial2 = 1 << 3;
+        const video = 1 << 2;
+        const input = 1 << 1;
+        const timer = 1 << 0;
+    }
+}
+
 /// IN — Input From Port
-pub fn in_(_ctx: &mut Context, port: u16) -> u32 {
+pub fn in_(_ctx: &mut Context, port: u16) -> u8 {
     // BLASTER=A220 means sound ports are 226, 22a, 22c, and 22e
     match port {
+        0x21 => {
+            // pic data
+            0b1011_1100
+        }
         0x22c => {
             // write-buiffer status
             0 // ready for data
@@ -281,9 +302,11 @@ pub fn in_(_ctx: &mut Context, port: u16) -> u32 {
 }
 
 pub fn out(ctx: &mut Context, port: u16, data: u8) {
+    //log::info!("out({port:x}, {data:x})");
     match port {
         0x20 => { /* end of interrupt, ignore */ }
         0x40..=0x43 => state().pit.out(ctx, port, data),
+        0x220..=0x22f => state().sound_blaster.out(ctx, port, data),
         0x3C0..=0x3DF => state().vga.as_mut().unwrap().io_out(port, data),
         _ => log::error!("TODO: out({:#x}, {:#x})", port, data),
     }

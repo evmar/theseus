@@ -153,7 +153,7 @@ impl<'a> CodeGen<'a> {
                     "let input = dos::in_(ctx, {} as u16);",
                     self.get_op(instr, 1)
                 ));
-                self.line(self.set_op(instr, 0, format!("input as _",)));
+                self.line(self.set_op(instr, 0, "input".into()));
             }
             Out => {
                 assert_eq!(instr.op_count(), 2);

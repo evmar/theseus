@@ -644,7 +644,7 @@ pub fn x0823_0923(ctx: &mut Context) -> Cont {
     ctx.dump_dosbox(0x925);
     // 0823:0925 in al,21h
     let input = dos::in_(ctx, 0x21u8 as u16);
-    ctx.cpu.regs.set_al(input as _);
+    ctx.cpu.regs.set_al(input);
     ctx.dump_dosbox(0x927);
     // 0823:0927 jmp short 0929h
     Cont(x0823_0929)
