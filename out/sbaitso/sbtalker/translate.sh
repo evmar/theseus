@@ -18,5 +18,13 @@ args=(
     # Random jump tables deep in the binary, uhoh.
     --jump-table d72:32c..d72:3ac
     --jump-table 935:3c40..935:3c58
+
+    # BLASTER.DRV
+    --entry-point 34c4:0000
+    --entry-point 34c4:0005
+    --entry-point 34c4:000a
+    --entry-point 34c4:000f
+    --entry-point 34c4:0014
+
 )
 cargo run -p tc -- "${args[@]}"
