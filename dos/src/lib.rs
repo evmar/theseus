@@ -168,7 +168,7 @@ pub fn run_loop(
                 let Some(handler) = state().check_interrupts(ctx) else {
                     break;
                 };
-                state();
+                log::info!("calling interrupt handler {handler}");
                 call_interrupt(ctx, handler);
             }
         }
@@ -181,16 +181,19 @@ pub fn run_loop(
 /// which means putting 3 things on the stack so it can iret.
 fn call_interrupt(ctx: &mut Context, handler: SegOfs) {
     assert!(handler.seg != 0);
-    assert_eq!(ctx.cpu.regs.cs, handler.seg); // TODO: handle seg!=cs
+    let cs = ctx.cpu.regs.cs;
     let esp = ctx.cpu.regs.esp;
     ctx.push16(ctx.cpu.flags.bits() as u16);
-    // We need to push a return address here, but we don't have one and it's never used
-    // anyway, so must push the handler address as it's a known valid one.
+    // We need to push a return address here, but we won't use it for returning.
+    // So push the handler address as it's known to be a valid address.
     ctx.push16(handler.seg);
     ctx.push16(handler.ofs);
 
+    ctx.cpu.regs.cs = handler.seg;
     let f = ctx.indirect16(handler);
+    // TODO: should check ss here too
     run_loop(ctx, f, false, |ctx| ctx.cpu.regs.esp != esp);
+    ctx.cpu.regs.cs = cs;
 }
 
 pub fn run(exe: &EXEData) {
@@ -371,16 +374,17 @@ impl State {
                 self.sound_blaster.len,
                 self.dma.channel.count
             );
-            log::info!("sound addr {:x}", self.dma.channel.addr());
             let len = self.sound_blaster.len.min(self.dma.channel.count) as usize + 1;
             let buf = &ctx.memory[self.dma.channel.addr()..][..len];
-            std::fs::write("sb.raw", buf).unwrap();
+            if !buf.iter().all(|b| *b == 0) {
+                log::info!("got some sound");
+                std::fs::write("sb.raw", buf).unwrap();
+            }
             self.sound_blaster.drq = false;
 
             let vector_offset = 0x8; // 8259 offsets interrupts by this for IVT
             let irq = 7; // from BLASTER
             let handler = ivt(&mut ctx.memory)[vector_offset + irq];
-            log::info!("irq 7 handler {handler}");
             return Some(handler);
         }
         if let Some(vga) = &mut self.vga {

@@ -44,7 +44,11 @@ impl SoundBlaster {
                 // bit 7 set means busy
                 0 // ready for data
             }
-            // 0x22e => {}  // read buffer status
+            0x22e => {
+                // read buffer status
+                // this also is how the status interrupt is ACKed
+                0
+            }
             _ => {
                 todo!("in port {port:x}")
             }

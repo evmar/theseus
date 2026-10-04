@@ -23,18 +23,18 @@ impl Channel {
 
 #[derive(Default)]
 struct FlipFlop {
-    state: bool,
+    high: bool,
 }
 
 impl FlipFlop {
     fn update(&mut self, val: &mut u16, data: u8) {
-        let (lo, hi) = if self.state {
+        let (lo, hi) = if self.high {
             ((*val & 0xFF) as u8, data)
         } else {
             (data, ((*val >> 8) & 0xFF) as u8)
         };
         *val = <u16>::from_le_bytes([lo, hi]);
-        self.state = !self.state;
+        self.high = !self.high;
     }
 }
 
@@ -52,14 +52,10 @@ impl DMA {
     pub fn out(&mut self, _ctx: &mut Context, port: u16, data: u8) {
         match port {
             0x2 => {
-                log::warn!("dma: channel 1 start address data={data:x}");
                 self.flip_flop.update(&mut self.channel.address, data);
-                log::warn!("dma: channel 1 start address {:x}", self.channel.address);
             }
             0x3 => {
-                log::warn!("dma: channel 1 count data={data:x}");
                 self.flip_flop.update(&mut self.channel.count, data);
-                log::warn!("dma: channel 1 count {:x}", self.channel.count);
             }
             0xa => {
                 // Single Channel Mask Register
@@ -67,9 +63,8 @@ impl DMA {
                 let channel = data & 0b11;
                 assert_eq!(channel, 1, "expected channel 1");
                 self.channel.masked = mask;
-                log::warn!("dma: mask {mask} channel {channel}");
                 if !mask {
-                    log::info!("dma configured {:x?}", self.channel);
+                    log::info!("dma configured: {:x?}", self.channel);
                 }
             }
             0xb => {
@@ -84,18 +79,12 @@ impl DMA {
                 assert_eq!(transfer, 2, "expected mem -> device");
                 let channel = data & 0b11;
                 assert_eq!(channel, 1, "expected channel 1");
-                log::warn!(
-                    "dma: mode {mode} down {down} auto {auto} transfer {transfer} channel {channel}"
-                );
             }
             0xc => {
                 // Flip-Flop Reset Register
-                log::warn!("dma: reset flip-flop");
-                self.flip_flop.state = false;
+                self.flip_flop.high = false;
             }
-
             0x83 => {
-                log::warn!("dma: channel 1 page address {data:x}");
                 self.channel.page = data;
             }
             _ => {
