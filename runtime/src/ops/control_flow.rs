@@ -172,7 +172,6 @@ impl Context {
     pub fn iret16(&mut self) -> Cont {
         let ip = self.pop16();
         let cs = self.pop16();
-        log::info!("iret16 {cs:x} {ip:x}");
         self.cpu.regs.set_cs(cs);
         let flags = self.pop16();
         self.cpu.flags = Flags::from_bits(flags as u32).unwrap();
