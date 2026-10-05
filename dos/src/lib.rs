@@ -170,6 +170,7 @@ pub fn run_loop(
                 };
                 log::info!("calling interrupt handler {handler}");
                 call_interrupt(ctx, handler);
+                break;
             }
         }
         f = f.0(ctx);
@@ -344,7 +345,7 @@ pub fn out(ctx: &mut Context, port: u16, data: u8) {
     match port {
         0x0..=0x0f | 0x80..0x8f => state.dma.out(ctx, port, data),
         0x21 => {
-            log::info!("out({port:x}, {data:x}), write pic data");
+            log::info!("out({port:x}, {data:b}), write pic data");
         }
         0x20 => { /* end of interrupt, ignore */ }
         0x40..=0x43 => state.pit.out(ctx, port, data),
@@ -367,29 +368,17 @@ impl State {
             return Some(ivt(&mut ctx.memory)[8]);
         }
 
-        if self.sound_blaster.drq && !self.dma.channel.masked {
-            log::info!("drq + dma ready");
-            log::info!(
-                "sb {:x} dma {:x}",
-                self.sound_blaster.len,
-                self.dma.channel.count
-            );
-            let len = self.sound_blaster.len.min(self.dma.channel.count) as usize + 1;
-            let buf = &ctx.memory[self.dma.channel.addr()..][..len];
-            if !buf.iter().all(|b| *b == 0) {
-                log::info!("got some sound");
-                std::fs::write("sb.raw", buf).unwrap();
-            }
-            self.sound_blaster.drq = false;
-
+        if self.sound_blaster.check(ctx, &mut self.dma) {
             let vector_offset = 0x8; // 8259 offsets interrupts by this for IVT
             let irq = 7; // from BLASTER
             let handler = ivt(&mut ctx.memory)[vector_offset + irq];
             return Some(handler);
         }
+
         if let Some(vga) = &mut self.vga {
             vga.update_screen(ctx);
         }
+
         None
     }
 }

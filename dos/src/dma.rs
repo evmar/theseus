@@ -1,4 +1,4 @@
-use runtime::Context;
+use runtime::{Context, Memory};
 
 #[derive(Default)]
 pub struct DMA {
@@ -19,6 +19,10 @@ impl Channel {
     pub fn addr(&self) -> u32 {
         (self.page as u32) << 16 | self.address as u32
     }
+
+    pub fn avail<'m>(&self, mem: &'m Memory) -> &'m [u8] {
+        &mem[self.addr()..][..self.count as usize + 1]
+    }
 }
 
 #[derive(Default)]
@@ -29,9 +33,9 @@ struct FlipFlop {
 impl FlipFlop {
     fn update(&mut self, val: &mut u16, data: u8) {
         let (lo, hi) = if self.high {
-            ((*val & 0xFF) as u8, data)
+            (val.to_le_bytes()[0], data)
         } else {
-            (data, ((*val >> 8) & 0xFF) as u8)
+            (data, val.to_le_bytes()[1])
         };
         *val = <u16>::from_le_bytes([lo, hi]);
         self.high = !self.high;
