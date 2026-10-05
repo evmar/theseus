@@ -4,7 +4,23 @@ impl<'a> CodeGen<'a> {
     pub fn codegen_string(&mut self, instr: &iced_x86::Instruction) -> bool {
         use iced_x86::Mnemonic::*;
         match instr.mnemonic() {
-            Movsb | Movsw | Movsd | // x
+            Movsb | Movsw | Movsd => {
+                let name = instr_name(instr);
+                // Note: repe/repne behaves the same as rep for these instructions,
+                if instr.has_rep_prefix() || instr.has_repne_prefix() {
+                    let bitness = self.module.bitness();
+                    self.line(format!("let seg = {};", get_reg(instr.memory_segment())));
+                    self.line(format!(
+                        "ctx.rep{bitness}(Rep::REP, |ctx: &mut Context| ctx.{name}(seg));"
+                    ));
+                } else {
+                    self.line(format!(
+                        "ctx.{name}({seg});",
+                        seg = get_reg(instr.memory_segment())
+                    ));
+                }
+            }
+
             Stosb | Stosw | Stosd => {
                 let name = instr_name(instr);
                 // Note: repe/repne behaves the same as rep for these instructions,
@@ -18,30 +34,57 @@ impl<'a> CodeGen<'a> {
 
             Lodsb | Lodsw | Lodsd => {
                 let name = instr_name(instr);
-                let call = format!(
-                    "ctx.{name}({})",
-                    get_reg(instr.memory_segment())
-                );
                 if instr.has_rep_prefix() || instr.has_repne_prefix() {
                     let bitness = self.module.bitness();
-                    self.line(format!("ctx.rep{bitness}(Rep::REP, |ctx: &mut Context| {call});"));
+                    self.line(format!("let seg = {};", get_reg(instr.memory_segment())));
+                    self.line(format!(
+                        "ctx.rep{bitness}(Rep::REP, |ctx: &mut Context| ctx.{name}(seg));"
+                    ));
                 } else {
-                    self.line(format!("{call};"));
+                    self.line(format!(
+                        "ctx.{name}({seg});",
+                        seg = get_reg(instr.memory_segment()),
+                    ));
                 }
             }
 
             // Careful: cmps/scas use repe, not rep
-            Cmpsb | Cmpsw | Cmpsd | //x
-            Scasb | Scasw | Scasd => {
-                // TODO: segment override
+            Cmpsb | Cmpsw | Cmpsd => {
                 let name = instr_name(instr);
-                let bitness = self.module.bitness();
-                if instr.has_repe_prefix() {
-                    self.line(format!("ctx.rep{bitness}(Rep::REPE, Context::{name});"));
-                } else if instr.has_repne_prefix() {
-                    self.line(format!("ctx.rep{bitness}(Rep::REPNE, Context::{name});"));
+                if instr.has_repe_prefix() || instr.has_repne_prefix() {
+                    let bitness = self.module.bitness();
+                    let rep = if instr.has_repe_prefix() {
+                        "REPE"
+                    } else {
+                        "REPNE"
+                    };
+                    self.line(format!("let seg = {};", get_reg(instr.memory_segment())));
+                    self.line(format!(
+                        "ctx.rep{bitness}(Rep::{rep}, |ctx: &mut Context| ctx.{name}(seg));"
+                    ));
                 } else {
-                    self.line(format!("ctx.{name}();"));
+                    self.line(format!(
+                        "ctx.{name}({seg});",
+                        seg = get_reg(instr.memory_segment()),
+                    ));
+                };
+            }
+
+            // Careful: cmps/scas use repe, not rep
+            Scasb | Scasw | Scasd => {
+                let name = instr_name(instr);
+                if instr.has_repe_prefix() || instr.has_repne_prefix() {
+                    let bitness = self.module.bitness();
+                    let rep = if instr.has_repe_prefix() {
+                        "REPE"
+                    } else {
+                        "REPNE"
+                    };
+                    self.line(format!(
+                        "ctx.rep{bitness}(Rep::{rep}, |ctx: &mut Context| ctx.{name}());"
+                    ));
+                } else {
+                    self.line(format!("ctx.{name}();",));
                 };
             }
 

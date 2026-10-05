@@ -150,11 +150,8 @@ impl Context {
         self.scas::<u32>()
     }
 
-    fn cmps<S: StringInt>(&mut self) {
-        // TODO: ds segment can be overridden
-        let src = self
-            .memory
-            .read::<S>(self.addr(self.cpu.regs.ds, self.cpu.regs.esi));
+    fn cmps<S: StringInt>(&mut self, segment: u16) {
+        let src = self.memory.read::<S>(self.addr(segment, self.cpu.regs.esi));
         let dst = self
             .memory
             .read::<S>(self.addr(self.cpu.regs.es, self.cpu.regs.edi));
@@ -169,19 +166,18 @@ impl Context {
         }
     }
 
-    pub fn cmpsb(&mut self) {
-        self.cmps::<u8>()
+    pub fn cmpsb(&mut self, segment: u16) {
+        self.cmps::<u8>(segment)
     }
-    pub fn cmpsw(&mut self) {
-        self.cmps::<u16>()
+    pub fn cmpsw(&mut self, segment: u16) {
+        self.cmps::<u16>(segment)
     }
-    pub fn cmpsd(&mut self) {
-        self.cmps::<u32>()
+    pub fn cmpsd(&mut self, segment: u16) {
+        self.cmps::<u32>(segment)
     }
 
-    fn movs<S: StringInt>(&mut self) {
-        // TODO: ds segment can be overridden
-        let src_addr = self.addr(self.cpu.regs.ds, self.cpu.regs.esi);
+    fn movs<S: StringInt>(&mut self, segment: u16) {
+        let src_addr = self.addr(segment, self.cpu.regs.esi);
         let val = self.memory.read::<S>(src_addr);
         let dst_addr = self.addr(self.cpu.regs.es, self.cpu.regs.edi);
         self.memory.write::<S>(dst_addr, val);
@@ -195,13 +191,13 @@ impl Context {
         }
     }
 
-    pub fn movsb(&mut self) {
-        self.movs::<u8>()
+    pub fn movsb(&mut self, segment: u16) {
+        self.movs::<u8>(segment)
     }
-    pub fn movsw(&mut self) {
-        self.movs::<u16>()
+    pub fn movsw(&mut self, segment: u16) {
+        self.movs::<u16>(segment)
     }
-    pub fn movsd(&mut self) {
-        self.movs::<u32>()
+    pub fn movsd(&mut self, segment: u16) {
+        self.movs::<u32>(segment)
     }
 }

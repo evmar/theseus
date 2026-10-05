@@ -733,7 +733,8 @@ pub fn x0823_09ae(ctx: &mut Context) -> Cont {
     // 0823:09b4 mov di,0
     ctx.cpu.regs.set_di(0x0u16);
     // 0823:09b7 repne movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0823:09b9 mov ax,ds
     ctx.cpu.regs.set_ax(ctx.cpu.regs.get_ds());
     // 0823:09bb add ax,400h
@@ -847,7 +848,8 @@ pub fn x0823_09e5(ctx: &mut Context) -> Cont {
     // 0823:09f7 mov cx,200h
     ctx.cpu.regs.set_cx(0x200u16);
     // 0823:09fa repne movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0823:09fc pop ax
     let x = ctx.pop16();
     ctx.cpu.regs.set_ax(x);
@@ -1195,7 +1197,8 @@ pub fn x0823_0aa5(ctx: &mut Context) -> Cont {
     // 0823:0ab3 cld
     cld(ctx);
     // 0823:0ab4 repe cmpsb
-    ctx.rep16(Rep::REPE, Context::cmpsb);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REPE, |ctx: &mut Context| ctx.cmpsb(seg));
     // 0823:0ab6 jne short 0AE1h
     ctx.jne(Cont(x0823_0ab8), Cont(x0823_0ae1))
 }
@@ -1556,7 +1559,7 @@ pub fn x0823_0b8a(ctx: &mut Context) -> Cont {
     // 0823:0b8a mov al,2Fh
     ctx.cpu.regs.set_al(0x2fu8);
     // 0823:0b8c repne scasb
-    ctx.rep16(Rep::REPNE, Context::scasb);
+    ctx.rep16(Rep::REPNE, |ctx: &mut Context| ctx.scasb());
     // 0823:0b8e jcxz 0BAFh
     ctx.jcxz(Cont(x0823_0b90), Cont(x0823_0baf))
 }
@@ -1657,7 +1660,7 @@ pub fn x0823_0bb7(ctx: &mut Context) -> Cont {
     // 0823:0bb7 mov al,2Fh
     ctx.cpu.regs.set_al(0x2fu8);
     // 0823:0bb9 repne scasb
-    ctx.rep16(Rep::REPNE, Context::scasb);
+    ctx.rep16(Rep::REPNE, |ctx: &mut Context| ctx.scasb());
     // 0823:0bbb jcxz 0BDFh
     ctx.jcxz(Cont(x0823_0bbd), Cont(x0823_0bdf))
 }
@@ -7861,7 +7864,8 @@ pub fn x0935_093e(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:0954 rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:0956 mov si,1BE2h
     ctx.cpu.regs.set_si(0x1be2u16);
     // 0935:0959 mov cx,7
@@ -7880,7 +7884,8 @@ pub fn x0935_093e(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:0964 rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:0966 xor ax,ax
     ctx.cpu.regs.set_ax(xor(
         ctx.cpu.regs.get_ax(),
@@ -12689,7 +12694,8 @@ pub fn x0935_12fc(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:1331 rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:1333 mov [bp-110h],dx
     ctx.memory.write::<u16>(
         segofs(
@@ -13003,7 +13009,8 @@ pub fn x0935_13e1(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:13f0 rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:13f2 les bx,[bp-8]
     let ptr = ctx.memory.read::<u32>(segofs(
         ctx.cpu.regs.get_ss(),
@@ -13403,7 +13410,8 @@ pub fn x0935_14d4(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:14e4 rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:14e6 mov bx,[bp+4]
     ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
@@ -13451,7 +13459,8 @@ pub fn x0935_14f6(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:1505 rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:1507 push word ptr ds:[1D24h]
     ctx.push16(
         ctx.memory
@@ -13504,7 +13513,8 @@ pub fn x0935_151b(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:152a rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:152c push word ptr ds:[1D26h]
     ctx.push16(
         ctx.memory
@@ -13624,7 +13634,8 @@ pub fn x0935_1563(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:1572 rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:1574 mov si,1D28h
     ctx.cpu.regs.set_si(0x1d28u16);
     // 0935:1577 mov cx,6
@@ -13643,7 +13654,8 @@ pub fn x0935_1563(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:1582 rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:1584 mov bx,[bp+4]
     ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
@@ -13714,7 +13726,8 @@ pub fn x0935_15a1(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:15b0 rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:15b2 push word ptr ds:[1D34h]
     ctx.push16(
         ctx.memory
@@ -14038,7 +14051,8 @@ pub fn x0935_1665(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:1674 rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:1676 push word ptr ds:[1D58h]
     ctx.push16(
         ctx.memory
@@ -14082,7 +14096,8 @@ pub fn x0935_1687(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:1696 rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:1698 push word ptr ds:[1D5Ah]
     ctx.push16(
         ctx.memory
@@ -14131,7 +14146,8 @@ pub fn x0935_16a9(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:16b8 rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:16ba mov di,[bp+4]
     ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
@@ -14194,11 +14210,11 @@ pub fn x0935_16a9(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:16dc movsw
-    ctx.movsw();
+    ctx.movsw(ctx.cpu.regs.get_ds());
     // 0935:16dd movsw
-    ctx.movsw();
+    ctx.movsw(ctx.cpu.regs.get_ds());
     // 0935:16de movsw
-    ctx.movsw();
+    ctx.movsw(ctx.cpu.regs.get_ds());
     // 0935:16df mov bx,[bp+4]
     ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
@@ -14508,7 +14524,8 @@ pub fn x0935_1766(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:1775 rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:1777 mov di,[bp-2]
     ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
@@ -14567,7 +14584,8 @@ pub fn x0935_1766(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:1796 rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:1798 mov bx,[bp+4]
     ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
@@ -14699,7 +14717,8 @@ pub fn x0935_17d0(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:17e0 rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:17e2 push bp
     ctx.push16(ctx.cpu.regs.get_bp());
     // 0935:17e3 call 16FFh
@@ -15184,7 +15203,8 @@ pub fn x0935_18d4(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:18e3 rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:18e5 mov si,1D60h
     ctx.cpu.regs.set_si(0x1d60u16);
     // 0935:18e8 mov cx,6
@@ -15203,7 +15223,8 @@ pub fn x0935_18d4(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:18f3 rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:18f5 mov bx,[bp+4]
     ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
@@ -15380,7 +15401,8 @@ pub fn x0935_1940(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:1959 rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:195b push bp
     ctx.push16(ctx.cpu.regs.get_bp());
     // 0935:195c call 16FFh
@@ -15454,7 +15476,8 @@ pub fn x0935_197b(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:198a rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:198c mov si,1D6Ch
     ctx.cpu.regs.set_si(0x1d6cu16);
     // 0935:198f mov cx,6
@@ -15473,7 +15496,8 @@ pub fn x0935_197b(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:199a rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:199c mov bx,[bp+4]
     ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
@@ -15512,7 +15536,8 @@ pub fn x0935_19a7(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:19b6 rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:19b8 mov cx,3
     ctx.cpu.regs.set_cx(0x3u16);
     // 0935:19bb mov ax,[bp-2]
@@ -15563,13 +15588,13 @@ pub fn x0935_19a7(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:19d4 movsw
-    ctx.movsw();
+    ctx.movsw(ctx.cpu.regs.get_ds());
     // 0935:19d5 movsw
-    ctx.movsw();
+    ctx.movsw(ctx.cpu.regs.get_ds());
     // 0935:19d6 movsw
-    ctx.movsw();
+    ctx.movsw(ctx.cpu.regs.get_ds());
     // 0935:19d7 movsw
-    ctx.movsw();
+    ctx.movsw(ctx.cpu.regs.get_ds());
     // 0935:19d8 mov bx,[bp+4]
     ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
@@ -15603,7 +15628,8 @@ pub fn x0935_19e1(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:19f0 rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:19f2 mov si,1D78h
     ctx.cpu.regs.set_si(0x1d78u16);
     // 0935:19f5 mov cx,5
@@ -15622,7 +15648,8 @@ pub fn x0935_19e1(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:1a00 rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:1a02 mov bx,[bp+4]
     ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
@@ -15874,7 +15901,8 @@ pub fn x0935_1a7a(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:1a89 rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:1a8b mov ax,0Ah
     ctx.cpu.regs.set_ax(0xau16);
     // 0935:1a8e mul word ptr [bp-4]
@@ -15911,7 +15939,8 @@ pub fn x0935_1a7a(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:1aa1 rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:1aa3 mov bx,[bp+4]
     ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
@@ -15945,7 +15974,8 @@ pub fn x0935_1aac(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:1abb rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:1abd mov si,1D86h
     ctx.cpu.regs.set_si(0x1d86u16);
     // 0935:1ac0 mov cx,5
@@ -15964,7 +15994,8 @@ pub fn x0935_1aac(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:1acb rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:1acd mov bx,[bp+4]
     ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
@@ -16119,7 +16150,8 @@ pub fn x0935_1b0d(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:1b1c rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:1b1e mov cx,0Ah
     ctx.cpu.regs.set_cx(0xau16);
     // 0935:1b21 mov ax,[bp-4]
@@ -16169,7 +16201,8 @@ pub fn x0935_1b0d(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:1b3c rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:1b3e mov bx,[bp+4]
     ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
@@ -16249,7 +16282,8 @@ pub fn x0935_1b5e(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:1b6d rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:1b6f mov ax,0Ah
     ctx.cpu.regs.set_ax(0xau16);
     // 0935:1b72 mul word ptr [bp-4]
@@ -16286,7 +16320,8 @@ pub fn x0935_1b5e(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:1b85 rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:1b87 mov bx,[bp+4]
     ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
@@ -16320,7 +16355,8 @@ pub fn x0935_1b90(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:1b9f rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:1ba1 mov si,1D90h
     ctx.cpu.regs.set_si(0x1d90u16);
     // 0935:1ba4 sub sp,6
@@ -16337,11 +16373,11 @@ pub fn x0935_1b90(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:1bac movsw
-    ctx.movsw();
+    ctx.movsw(ctx.cpu.regs.get_ds());
     // 0935:1bad movsw
-    ctx.movsw();
+    ctx.movsw(ctx.cpu.regs.get_ds());
     // 0935:1bae movsw
-    ctx.movsw();
+    ctx.movsw(ctx.cpu.regs.get_ds());
     // 0935:1baf mov bx,[bp+4]
     ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
@@ -16380,7 +16416,8 @@ pub fn x0935_1bba(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:1bc9 rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:1bcb mov ax,0Ah
     ctx.cpu.regs.set_ax(0xau16);
     // 0935:1bce mul word ptr [bp-4]
@@ -16417,7 +16454,8 @@ pub fn x0935_1bba(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:1be1 rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:1be3 mov bx,[bp+4]
     ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
@@ -16544,7 +16582,8 @@ pub fn x0935_1c19(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:1c28 rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:1c2a push word ptr ds:[1D98h]
     ctx.push16(
         ctx.memory
@@ -16731,7 +16770,8 @@ pub fn x0935_1c77(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:1c88 rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:1c8a mov [bp-108h],ax
     ctx.memory.write::<u16>(
         segofs(
@@ -16816,7 +16856,8 @@ pub fn x0935_1ca9(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:1cb8 rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:1cba mov ax,0Ah
     ctx.cpu.regs.set_ax(0xau16);
     // 0935:1cbd mul word ptr [bp-4]
@@ -16853,7 +16894,8 @@ pub fn x0935_1ca9(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:1cd0 rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:1cd2 mov bx,[bp+4]
     ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
@@ -16892,7 +16934,8 @@ pub fn x0935_1cdd(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:1cec rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:1cee mov ax,0Ah
     ctx.cpu.regs.set_ax(0xau16);
     // 0935:1cf1 mul word ptr [bp-4]
@@ -16929,7 +16972,8 @@ pub fn x0935_1cdd(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:1d04 rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:1d06 mov bx,[bp+4]
     ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
@@ -16977,7 +17021,8 @@ pub fn x0935_1d15(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:1d24 rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:1d26 push word ptr ds:[1D9Ch]
     ctx.push16(
         ctx.memory
@@ -17112,7 +17157,8 @@ pub fn x0935_1d63(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:1d72 rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:1d74 push word ptr ds:[1DA0h]
     ctx.push16(
         ctx.memory
@@ -17164,7 +17210,8 @@ pub fn x0935_1d89(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:1d98 rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:1d9a push word ptr ds:[1DA4h]
     ctx.push16(
         ctx.memory
@@ -17753,7 +17800,8 @@ pub fn x0935_1ec7(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:1ee6 rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:1ee8 mov [bp-0Ah],dx
     ctx.memory.write::<u16>(
         segofs(
@@ -18045,7 +18093,8 @@ pub fn x0935_1f70(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:1f7f rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:1f81 mov si,1DC2h
     ctx.cpu.regs.set_si(0x1dc2u16);
     // 0935:1f84 mov cx,7
@@ -18064,7 +18113,8 @@ pub fn x0935_1f70(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:1f8f rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:1f91 mov bx,[bp+4]
     ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
@@ -18816,7 +18866,8 @@ pub fn x0935_236c(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:237b rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:237d mov si,1E3Ah
     ctx.cpu.regs.set_si(0x1e3au16);
     // 0935:2380 sub sp,6
@@ -18833,11 +18884,11 @@ pub fn x0935_236c(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:2388 movsw
-    ctx.movsw();
+    ctx.movsw(ctx.cpu.regs.get_ds());
     // 0935:2389 movsw
-    ctx.movsw();
+    ctx.movsw(ctx.cpu.regs.get_ds());
     // 0935:238a movsw
-    ctx.movsw();
+    ctx.movsw(ctx.cpu.regs.get_ds());
     // 0935:238b mov bx,[bp+4]
     ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
@@ -18888,7 +18939,8 @@ pub fn x0935_239f(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:23ae rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:23b0 mov si,1E40h
     ctx.cpu.regs.set_si(0x1e40u16);
     // 0935:23b3 mov cx,5
@@ -18907,7 +18959,8 @@ pub fn x0935_239f(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:23be rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:23c0 mov bx,[bp+4]
     ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
@@ -19059,7 +19112,8 @@ pub fn x0935_240e(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:2426 rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:2428 mov [bp-204h],dx
     ctx.memory.write::<u16>(
         segofs(
@@ -19236,7 +19290,8 @@ pub fn x0935_2485(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:2498 rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:249a push word ptr [bp+4]
     ctx.push16(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
@@ -19412,7 +19467,8 @@ pub fn x0935_24e6(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:250a rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:250c mov [bp-204h],dx
     ctx.memory.write::<u16>(
         segofs(
@@ -20061,7 +20117,8 @@ pub fn x0935_2690(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:269f rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:26a1 mov si,1E7Eh
     ctx.cpu.regs.set_si(0x1e7eu16);
     // 0935:26a4 sub sp,6
@@ -20078,11 +20135,11 @@ pub fn x0935_2690(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:26ac movsw
-    ctx.movsw();
+    ctx.movsw(ctx.cpu.regs.get_ds());
     // 0935:26ad movsw
-    ctx.movsw();
+    ctx.movsw(ctx.cpu.regs.get_ds());
     // 0935:26ae movsw
-    ctx.movsw();
+    ctx.movsw(ctx.cpu.regs.get_ds());
     // 0935:26af mov bx,[bp+4]
     ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
@@ -20284,7 +20341,8 @@ pub fn x0935_271d(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:272c rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:272e push word ptr ds:[1E84h]
     ctx.push16(
         ctx.memory
@@ -20336,7 +20394,8 @@ pub fn x0935_273b(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:2753 rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:2755 mov [bp-206h],dx
     ctx.memory.write::<u16>(
         segofs(
@@ -20602,7 +20661,8 @@ pub fn x0935_27e8(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:27fb rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:27fd push word ptr [bp+4]
     ctx.push16(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
@@ -20643,7 +20703,8 @@ pub fn x0935_280a(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:2819 rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:281b push word ptr ds:[1E86h]
     ctx.push16(
         ctx.memory
@@ -20741,7 +20802,8 @@ pub fn x0935_2851(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:2860 rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:2862 push word ptr ds:[1E8Ch]
     ctx.push16(
         ctx.memory
@@ -20826,7 +20888,8 @@ pub fn x0935_288e(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:289d rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:289f push word ptr ds:[1E90h]
     ctx.push16(
         ctx.memory
@@ -20870,7 +20933,8 @@ pub fn x0935_28ae(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:28bd rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:28bf push word ptr ds:[1E94h]
     ctx.push16(
         ctx.memory
@@ -21038,7 +21102,8 @@ pub fn x0935_291d(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:292c rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:292e push word ptr ds:[1E98h]
     ctx.push16(
         ctx.memory
@@ -21090,7 +21155,8 @@ pub fn x0935_2941(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:2950 rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:2952 push word ptr ds:[1E9Ah]
     ctx.push16(
         ctx.memory
@@ -21141,7 +21207,8 @@ pub fn x0935_2966(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:2975 rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:2977 mov si,1E9Ch
     ctx.cpu.regs.set_si(0x1e9cu16);
     // 0935:297a sub sp,8
@@ -21158,13 +21225,13 @@ pub fn x0935_2966(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:2982 movsw
-    ctx.movsw();
+    ctx.movsw(ctx.cpu.regs.get_ds());
     // 0935:2983 movsw
-    ctx.movsw();
+    ctx.movsw(ctx.cpu.regs.get_ds());
     // 0935:2984 movsw
-    ctx.movsw();
+    ctx.movsw(ctx.cpu.regs.get_ds());
     // 0935:2985 movsw
-    ctx.movsw();
+    ctx.movsw(ctx.cpu.regs.get_ds());
     // 0935:2986 mov bx,[bp+4]
     ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
@@ -21239,7 +21306,8 @@ pub fn x0935_29aa(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:29b9 rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:29bb push word ptr ds:[1EA6h]
     ctx.push16(
         ctx.memory
@@ -21418,7 +21486,8 @@ pub fn x0935_2a17(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:2a2a rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:2a2c push word ptr [bp+4]
     ctx.push16(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
@@ -21466,7 +21535,8 @@ pub fn x0935_2a3c(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:2a4c rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:2a4e lea ax,[bp-2]
     ctx.cpu
         .regs
@@ -21517,7 +21587,8 @@ pub fn x0935_2a5f(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:2a6e rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:2a70 mov si,1EA8h
     ctx.cpu.regs.set_si(0x1ea8u16);
     // 0935:2a73 sub sp,6
@@ -21534,11 +21605,11 @@ pub fn x0935_2a5f(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:2a7b movsw
-    ctx.movsw();
+    ctx.movsw(ctx.cpu.regs.get_ds());
     // 0935:2a7c movsw
-    ctx.movsw();
+    ctx.movsw(ctx.cpu.regs.get_ds());
     // 0935:2a7d movsw
-    ctx.movsw();
+    ctx.movsw(ctx.cpu.regs.get_ds());
     // 0935:2a7e mov bx,[bp+4]
     ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
@@ -21592,7 +21663,8 @@ pub fn x0935_2a96(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:2aa5 rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:2aa7 mov si,1EAEh
     ctx.cpu.regs.set_si(0x1eaeu16);
     // 0935:2aaa sub sp,6
@@ -21609,11 +21681,11 @@ pub fn x0935_2a96(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:2ab2 movsw
-    ctx.movsw();
+    ctx.movsw(ctx.cpu.regs.get_ds());
     // 0935:2ab3 movsw
-    ctx.movsw();
+    ctx.movsw(ctx.cpu.regs.get_ds());
     // 0935:2ab4 movsw
-    ctx.movsw();
+    ctx.movsw(ctx.cpu.regs.get_ds());
     // 0935:2ab5 mov bx,[bp+4]
     ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
@@ -21661,7 +21733,8 @@ pub fn x0935_2ac4(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:2ad3 rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:2ad5 push word ptr ds:[1EB4h]
     ctx.push16(
         ctx.memory
@@ -21705,7 +21778,8 @@ pub fn x0935_2ae4(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:2af3 rep movsw
-    ctx.rep16(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0935:2af5 mov si,1EB6h
     ctx.cpu.regs.set_si(0x1eb6u16);
     // 0935:2af8 sub sp,6
@@ -21722,11 +21796,11 @@ pub fn x0935_2ae4(ctx: &mut Context) -> Cont {
     let x = ctx.pop16();
     ctx.cpu.regs.set_es(x);
     // 0935:2b00 movsw
-    ctx.movsw();
+    ctx.movsw(ctx.cpu.regs.get_ds());
     // 0935:2b01 movsw
-    ctx.movsw();
+    ctx.movsw(ctx.cpu.regs.get_ds());
     // 0935:2b02 movsw
-    ctx.movsw();
+    ctx.movsw(ctx.cpu.regs.get_ds());
     // 0935:2b03 mov bx,[bp+4]
     ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
         ctx.cpu.regs.get_ss(),
@@ -21739,252 +21813,4 @@ pub fn x0935_2ae4(ctx: &mut Context) -> Cont {
     )));
     // 0935:2b09 call 109Fh
     ctx.call16(0x2b0c, Cont(x0935_109f))
-}
-
-pub fn x0935_2b0c(ctx: &mut Context) -> Cont {
-    // 0935:2b0c xor ax,ax
-    ctx.cpu.regs.set_ax(xor(
-        ctx.cpu.regs.get_ax(),
-        ctx.cpu.regs.get_ax(),
-        &mut ctx.cpu.flags,
-    ));
-    // 0935:2b0e push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    // 0935:2b0f lea ax,[bp-102h]
-    ctx.cpu
-        .regs
-        .set_ax(ctx.cpu.regs.get_bp().wrapping_add(0xfefeu16));
-    // 0935:2b13 push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    // 0935:2b14 push word ptr [bp+4]
-    ctx.push16(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    // 0935:2b17 call 1742h
-    ctx.call16(0x2b1a, Cont(x0935_1742))
-}
-
-pub fn x0935_2b1a(ctx: &mut Context) -> Cont {
-    // 0935:2b1a mov byte ptr ds:[56h],0
-    ctx.memory
-        .write::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x56u16), 0x0u8);
-    // 0935:2b1f cmp byte ptr ds:[164h],27h
-    sub(
-        ctx.memory
-            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x164u16)),
-        0x27u8,
-        &mut ctx.cpu.flags,
-    );
-    // 0935:2b24 je short 2B29h
-    ctx.je(Cont(x0935_2b26), Cont(x0935_2b29))
-}
-
-pub fn x0935_2b26(ctx: &mut Context) -> Cont {
-    // 0935:2b26 jmp near ptr 2BE6h
-    Cont(x0935_2be6)
-}
-
-pub fn x0935_2b29(ctx: &mut Context) -> Cont {
-    // 0935:2b29 mov di,[bp+4]
-    ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    // 0935:2b2c mov di,[di+4]
-    ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ds(),
-        ctx.cpu.regs.get_di().wrapping_add(0x4u16),
-    )));
-    // 0935:2b2f mov dx,di
-    ctx.cpu.regs.set_dx(ctx.cpu.regs.get_di());
-    // 0935:2b31 les di,[di+0Ch]
-    let ptr = ctx.memory.read::<u32>(segofs(
-        ctx.cpu.regs.get_ds(),
-        ctx.cpu.regs.get_di().wrapping_add(0xcu16),
-    ));
-    ctx.cpu.regs.es = (ptr >> 16) as u16;
-    ctx.cpu.regs.set_di(ptr as u16);
-    // 0935:2b34 mov al,es:[di]
-    ctx.cpu.regs.set_al(
-        ctx.memory
-            .read::<u8>(segofs(ctx.cpu.regs.get_es(), ctx.cpu.regs.get_di())),
-    );
-    // 0935:2b37 xor ah,ah
-    ctx.cpu.regs.set_ah(xor(
-        ctx.cpu.regs.get_ah(),
-        ctx.cpu.regs.get_ah(),
-        &mut ctx.cpu.flags,
-    ));
-    // 0935:2b39 cmp ax,ds:[160h]
-    sub(
-        ctx.cpu.regs.get_ax(),
-        ctx.memory
-            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x160u16)),
-        &mut ctx.cpu.flags,
-    );
-    // 0935:2b3d jge short 2B42h
-    ctx.jge(Cont(x0935_2b3f), Cont(x0935_2b42))
-}
-
-pub fn x0935_2b3f(ctx: &mut Context) -> Cont {
-    // 0935:2b3f jmp near ptr 2BE6h
-    Cont(x0935_2be6)
-}
-
-pub fn x0935_2b42(ctx: &mut Context) -> Cont {
-    // 0935:2b42 mov bx,ds:[160h]
-    ctx.cpu.regs.set_bx(
-        ctx.memory
-            .read::<u16>(segofs(ctx.cpu.regs.get_ds(), 0x160u16)),
-    );
-    // 0935:2b46 mov al,es:[bx+di]
-    ctx.cpu.regs.set_al(ctx.memory.read::<u8>(segofs(
-        ctx.cpu.regs.get_es(),
-        ctx.cpu.regs.get_bx().wrapping_add(ctx.cpu.regs.get_di()),
-    )));
-    // 0935:2b49 xor ah,ah
-    ctx.cpu.regs.set_ah(xor(
-        ctx.cpu.regs.get_ah(),
-        ctx.cpu.regs.get_ah(),
-        &mut ctx.cpu.flags,
-    ));
-    // 0935:2b4b push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    // 0935:2b4c mov ax,0Fh
-    ctx.cpu.regs.set_ax(0xfu16);
-    // 0935:2b4f push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    // 0935:2b50 mov ax,1EBCh
-    ctx.cpu.regs.set_ax(0x1ebcu16);
-    // 0935:2b53 push ds
-    ctx.push16(ctx.cpu.regs.get_ds());
-    // 0935:2b54 push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    // 0935:2b55 mov [bp-204h],dx
-    ctx.memory.write::<u16>(
-        segofs(
-            ctx.cpu.regs.get_ss(),
-            ctx.cpu.regs.get_bp().wrapping_add(0xfdfcu16),
-        ),
-        ctx.cpu.regs.get_dx(),
-    );
-    // 0935:2b59 call far ptr 0D72h:5452h
-    ctx.callf16(0x2b5e, 0xd72, Cont(x0d72_5452))
-}
-
-pub fn x0935_2b5e(ctx: &mut Context) -> Cont {
-    // 0935:2b5e shr ax,1
-    ctx.cpu
-        .regs
-        .set_ax(shr(ctx.cpu.regs.get_ax(), 0x1u8, &mut ctx.cpu.flags));
-    // 0935:2b60 jb short 2B65h
-    ctx.jb(Cont(x0935_2b62), Cont(x0935_2b65))
-}
-
-pub fn x0935_2b62(ctx: &mut Context) -> Cont {
-    // 0935:2b62 jmp near ptr 2BE6h
-    Cont(x0935_2be6)
-}
-
-pub fn x0935_2b65(ctx: &mut Context) -> Cont {
-    // 0935:2b65 mov bx,[bp+4]
-    ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    // 0935:2b68 push word ptr [bx+4]
-    ctx.push16(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ds(),
-        ctx.cpu.regs.get_bx().wrapping_add(0x4u16),
-    )));
-    // 0935:2b6b call 11A0h
-    ctx.call16(0x2b6e, Cont(x0935_11a0))
-}
-
-pub fn x0935_2b6e(ctx: &mut Context) -> Cont {
-    // 0935:2b6e mov bx,[bp+4]
-    ctx.cpu.regs.set_bx(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    // 0935:2b71 push word ptr [bx+4]
-    ctx.push16(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ds(),
-        ctx.cpu.regs.get_bx().wrapping_add(0x4u16),
-    )));
-    // 0935:2b74 call 11A0h
-    ctx.call16(0x2b77, Cont(x0935_11a0))
-}
-
-pub fn x0935_2b77(ctx: &mut Context) -> Cont {
-    // 0935:2b77 mov di,[bp+4]
-    ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    // 0935:2b7a mov di,[di+4]
-    ctx.cpu.regs.set_di(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ds(),
-        ctx.cpu.regs.get_di().wrapping_add(0x4u16),
-    )));
-    // 0935:2b7d mov dx,di
-    ctx.cpu.regs.set_dx(ctx.cpu.regs.get_di());
-    // 0935:2b7f les di,[di+8]
-    let ptr = ctx.memory.read::<u32>(segofs(
-        ctx.cpu.regs.get_ds(),
-        ctx.cpu.regs.get_di().wrapping_add(0x8u16),
-    ));
-    ctx.cpu.regs.es = (ptr >> 16) as u16;
-    ctx.cpu.regs.set_di(ptr as u16);
-    // 0935:2b82 mov al,es:[di]
-    ctx.cpu.regs.set_al(
-        ctx.memory
-            .read::<u8>(segofs(ctx.cpu.regs.get_es(), ctx.cpu.regs.get_di())),
-    );
-    // 0935:2b85 xor ah,ah
-    ctx.cpu.regs.set_ah(xor(
-        ctx.cpu.regs.get_ah(),
-        ctx.cpu.regs.get_ah(),
-        &mut ctx.cpu.flags,
-    ));
-    // 0935:2b87 xchg si,ax
-    let t = ctx.cpu.regs.get_si();
-    ctx.cpu.regs.set_si(ctx.cpu.regs.get_ax());
-    ctx.cpu.regs.set_ax(t);
-    // 0935:2b88 mov bx,si
-    ctx.cpu.regs.set_bx(ctx.cpu.regs.get_si());
-    // 0935:2b8a mov al,es:[bx+di]
-    ctx.cpu.regs.set_al(ctx.memory.read::<u8>(segofs(
-        ctx.cpu.regs.get_es(),
-        ctx.cpu.regs.get_bx().wrapping_add(ctx.cpu.regs.get_di()),
-    )));
-    // 0935:2b8d xor ah,ah
-    ctx.cpu.regs.set_ah(xor(
-        ctx.cpu.regs.get_ah(),
-        ctx.cpu.regs.get_ah(),
-        &mut ctx.cpu.flags,
-    ));
-    // 0935:2b8f push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    // 0935:2b90 mov ax,0Fh
-    ctx.cpu.regs.set_ax(0xfu16);
-    // 0935:2b93 push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    // 0935:2b94 mov ax,1ECCh
-    ctx.cpu.regs.set_ax(0x1eccu16);
-    // 0935:2b97 push ds
-    ctx.push16(ctx.cpu.regs.get_ds());
-    // 0935:2b98 push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    // 0935:2b99 mov [bp-206h],dx
-    ctx.memory.write::<u16>(
-        segofs(
-            ctx.cpu.regs.get_ss(),
-            ctx.cpu.regs.get_bp().wrapping_add(0xfdfau16),
-        ),
-        ctx.cpu.regs.get_dx(),
-    );
-    // 0935:2b9d call far ptr 0D72h:5452h
-    ctx.callf16(0x2ba2, 0xd72, Cont(x0d72_5452))
 }
