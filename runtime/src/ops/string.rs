@@ -48,8 +48,20 @@ impl StringInt for u32 {
 }
 
 impl Context {
-    pub fn rep(&mut self, rep: Rep, func: impl Fn(&mut Context)) {
-        while self.cpu.regs.ecx > 0 {
+    pub fn rep16(&mut self, rep: Rep, func: impl Fn(&mut Context)) {
+        while self.cpu.regs.get_cx() != 0 {
+            func(self);
+            self.cpu.regs.set_cx(self.cpu.regs.get_cx().wrapping_sub(1));
+            match rep {
+                Rep::REPE if !self.cpu.flags.contains(Flags::ZF) => break,
+                Rep::REPNE if self.cpu.flags.contains(Flags::ZF) => break,
+                _ => {}
+            }
+        }
+    }
+
+    pub fn rep32(&mut self, rep: Rep, func: impl Fn(&mut Context)) {
+        while self.cpu.regs.ecx != 0 {
             func(self);
             self.cpu.regs.ecx = self.cpu.regs.ecx.wrapping_sub(1);
             match rep {
@@ -68,9 +80,9 @@ impl Context {
         }
     }
 
-    fn lods<S: StringInt>(&mut self) {
+    fn lods<S: StringInt>(&mut self, segment: u16) {
         self.memory
-            .read::<S>(self.addr(self.cpu.regs.ds, self.cpu.regs.esi))
+            .read::<S>(self.addr(segment, self.cpu.regs.esi))
             .set_eax(&mut self.cpu.regs);
         let step = std::mem::size_of::<S>() as u32;
         if self.cpu.flags.contains(Flags::DF) {
@@ -80,17 +92,18 @@ impl Context {
         }
     }
 
-    pub fn lodsb(&mut self) {
-        self.lods::<u8>()
+    pub fn lodsb(&mut self, segment: u16) {
+        self.lods::<u8>(segment)
     }
-    pub fn lodsw(&mut self) {
-        self.lods::<u16>()
+    pub fn lodsw(&mut self, segment: u16) {
+        self.lods::<u16>(segment)
     }
-    pub fn lodsd(&mut self) {
-        self.lods::<u32>()
+    pub fn lodsd(&mut self, segment: u16) {
+        self.lods::<u32>(segment)
     }
 
     fn stos<S: StringInt>(&mut self) {
+        // Note: no segment override allowed.
         self.memory.write::<S>(
             self.addr(self.cpu.regs.es, self.cpu.regs.edi),
             S::from_eax(self.cpu.regs.eax),
@@ -114,6 +127,7 @@ impl Context {
     }
 
     fn scas<S: StringInt>(&mut self) {
+        // Note: no segment override allowed.
         let mem = self
             .memory
             .read::<S>(self.addr(self.cpu.regs.es, self.cpu.regs.edi));
@@ -137,6 +151,7 @@ impl Context {
     }
 
     fn cmps<S: StringInt>(&mut self) {
+        // TODO: ds segment can be overridden
         let src = self
             .memory
             .read::<S>(self.addr(self.cpu.regs.ds, self.cpu.regs.esi));
@@ -165,6 +180,7 @@ impl Context {
     }
 
     fn movs<S: StringInt>(&mut self) {
+        // TODO: ds segment can be overridden
         let src_addr = self.addr(self.cpu.regs.ds, self.cpu.regs.esi);
         let val = self.memory.read::<S>(src_addr);
         let dst_addr = self.addr(self.cpu.regs.es, self.cpu.regs.edi);

@@ -133,13 +133,23 @@ impl<'a> CodeGen<'a> {
                 ));
             }
             Je | Jne | Jb | Js | Jns | Ja | Jae | Jl | Jg | Jge | Jecxz | Jle | Jbe | Jcxz | Jp
-            | Jnp | Jo | Jno | Loop | Loopne => {
+            | Jnp | Jo | Jno => {
                 let next = self.resolve_jmp(instr.next_ip());
                 let (None, None, cont) = self.jmp_target(instr) else {
                     panic!()
                 };
                 let func = instr_name(&instr.iced);
                 self.line(format!("ctx.{func}({next}, {cont})"));
+            }
+
+            Loop | Loopne => {
+                let next = self.resolve_jmp(instr.next_ip());
+                let (None, None, cont) = self.jmp_target(instr) else {
+                    panic!()
+                };
+                let func = instr_name(&instr.iced);
+                let bitness = self.module.bitness();
+                self.line(format!("ctx.{func}{bitness}({next}, {cont})"));
             }
 
             _ => return false,

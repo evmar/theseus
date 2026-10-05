@@ -190,12 +190,28 @@ impl Context {
         self.indirect16((seg, ofs).into())
     }
 
-    pub fn loop_(&mut self, from: Cont, x: Cont) -> Cont {
+    pub fn loop16(&mut self, from: Cont, x: Cont) -> Cont {
+        let cx = self.cpu.regs.get_cx().wrapping_sub(1);
+        self.cpu.regs.set_cx(cx);
+        if cx != 0 { x } else { from }
+    }
+
+    pub fn loop32(&mut self, from: Cont, x: Cont) -> Cont {
         self.cpu.regs.ecx = self.cpu.regs.ecx.wrapping_sub(1);
         if self.cpu.regs.ecx != 0 { x } else { from }
     }
 
-    pub fn loopne(&mut self, from: Cont, x: Cont) -> Cont {
+    pub fn loopne16(&mut self, from: Cont, x: Cont) -> Cont {
+        let cx = self.cpu.regs.get_cx().wrapping_sub(1);
+        self.cpu.regs.set_cx(cx);
+        if cx != 0 && !self.cpu.flags.contains(Flags::ZF) {
+            x
+        } else {
+            from
+        }
+    }
+
+    pub fn loopne32(&mut self, from: Cont, x: Cont) -> Cont {
         self.cpu.regs.ecx = self.cpu.regs.ecx.wrapping_sub(1);
         if self.cpu.regs.ecx != 0 && !self.cpu.flags.contains(Flags::ZF) {
             x
