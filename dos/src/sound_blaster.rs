@@ -104,7 +104,7 @@ impl SoundBlaster {
             log::info!("dma->sb {len:x} bytes");
             self.drq = false;
             self.write_complete =
-                Some(std::time::Instant::now() + std::time::Duration::from_millis(500));
+                Some(std::time::Instant::now() + std::time::Duration::from_millis(10));
             log::info!("next write at {:?}", self.write_complete);
             return false;
         } else {
@@ -124,10 +124,14 @@ impl SoundBlaster {
         // TODO: this is not required
         assert_eq!(len, self.len as usize + 1);
         let buf = &buf_avail[..len];
-        if !buf.iter().all(|b| *b == 0) {
-            log::info!("got some sound");
-            std::fs::write("sb.raw", buf).unwrap();
-        }
+
+        use std::io::Write;
+        let mut f = std::fs::OpenOptions::new()
+            .append(true)
+            .create(true)
+            .open("sb.raw")
+            .unwrap();
+        f.write_all(buf).unwrap();
         self.drq = false;
         len
     }
