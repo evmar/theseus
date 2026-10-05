@@ -745,7 +745,7 @@ pub fn x401386(ctx: &mut Context) -> Cont {
     // 0040138e lea edi,[esp+14h]
     ctx.cpu.regs.edi = ctx.cpu.regs.esp.wrapping_add(0x14u32);
     // 00401392 rep stosd
-    ctx.rep(Rep::REP, Context::stosd);
+    ctx.rep32(Rep::REP, Context::stosd);
     // 00401394 mov eax,ds:[409584h]
     ctx.cpu.regs.eax = ctx.memory.read::<u32>(0x409584u32);
     // 00401399 push 0
@@ -1402,7 +1402,7 @@ pub fn x401640(ctx: &mut Context) -> Cont {
     // 00401661 lea edi,[esp+18h]
     ctx.cpu.regs.edi = ctx.cpu.regs.esp.wrapping_add(0x18u32);
     // 00401665 rep stosd
-    ctx.rep(Rep::REP, Context::stosd);
+    ctx.rep32(Rep::REP, Context::stosd);
     // 00401667 mov eax,[esp+0A0h]
     ctx.cpu.regs.eax = ctx
         .memory
@@ -15055,7 +15055,8 @@ pub fn x403e68(ctx: &mut Context) -> Cont {
 
 pub fn x403e73(ctx: &mut Context) -> Cont {
     // 00403e73 rep movsd
-    ctx.rep(Rep::REP, Context::movsd);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep32(Rep::REP, |ctx: &mut Context| ctx.movsd(seg));
     // 00403e75 jmp dword ptr [edx*4+403F88h]
     let addr = ctx
         .memory
@@ -15138,7 +15139,8 @@ pub fn x403eb0(ctx: &mut Context) -> Cont {
 
 pub fn x403ed0(ctx: &mut Context) -> Cont {
     // 00403ed0 rep movsd
-    ctx.rep(Rep::REP, Context::movsd);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep32(Rep::REP, |ctx: &mut Context| ctx.movsd(seg));
     // 00403ed2 jmp dword ptr [edx*4+403F88h]
     let addr = ctx
         .memory
@@ -15175,7 +15177,8 @@ pub fn x403edc(ctx: &mut Context) -> Cont {
 
 pub fn x403ef6(ctx: &mut Context) -> Cont {
     // 00403ef6 rep movsd
-    ctx.rep(Rep::REP, Context::movsd);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep32(Rep::REP, |ctx: &mut Context| ctx.movsd(seg));
     // 00403ef8 jmp dword ptr [edx*4+403F88h]
     let addr = ctx
         .memory
@@ -15205,7 +15208,8 @@ pub fn x403f00(ctx: &mut Context) -> Cont {
 
 pub fn x403f10(ctx: &mut Context) -> Cont {
     // 00403f10 rep movsd
-    ctx.rep(Rep::REP, Context::movsd);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep32(Rep::REP, |ctx: &mut Context| ctx.movsd(seg));
     // 00403f12 jmp dword ptr [edx*4+403F88h]
     let addr = ctx
         .memory
@@ -15514,7 +15518,8 @@ pub fn x403ff3(ctx: &mut Context) -> Cont {
     // 00403ff3 std
     std(ctx);
     // 00403ff4 rep movsd
-    ctx.rep(Rep::REP, Context::movsd);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep32(Rep::REP, |ctx: &mut Context| ctx.movsd(seg));
     // 00403ff6 cld
     cld(ctx);
     // 00403ff7 jmp dword ptr [edx*4+404120h]
@@ -15591,7 +15596,8 @@ pub fn x40404a(ctx: &mut Context) -> Cont {
     // 0040404a std
     std(ctx);
     // 0040404b rep movsd
-    ctx.rep(Rep::REP, Context::movsd);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep32(Rep::REP, |ctx: &mut Context| ctx.movsd(seg));
     // 0040404d cld
     cld(ctx);
     // 0040404e jmp dword ptr [edx*4+404120h]
@@ -15634,7 +15640,8 @@ pub fn x404074(ctx: &mut Context) -> Cont {
     // 00404074 std
     std(ctx);
     // 00404075 rep movsd
-    ctx.rep(Rep::REP, Context::movsd);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep32(Rep::REP, |ctx: &mut Context| ctx.movsd(seg));
     // 00404077 cld
     cld(ctx);
     // 00404078 jmp dword ptr [edx*4+404120h]
@@ -15684,7 +15691,8 @@ pub fn x4040a6(ctx: &mut Context) -> Cont {
     // 004040a6 std
     std(ctx);
     // 004040a7 rep movsd
-    ctx.rep(Rep::REP, Context::movsd);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep32(Rep::REP, |ctx: &mut Context| ctx.movsd(seg));
     // 004040a9 cld
     cld(ctx);
     // 004040aa jmp dword ptr [edx*4+404120h]
@@ -16175,7 +16183,7 @@ pub fn x40420e(ctx: &mut Context) -> Cont {
     // 0040421c mov ds:[409748h],esi
     ctx.memory.write::<u32>(0x409748u32, ctx.cpu.regs.esi);
     // 00404222 rep stosd
-    ctx.rep(Rep::REP, Context::stosd);
+    ctx.rep32(Rep::REP, Context::stosd);
     // 00404224 stosb
     ctx.stosb();
     // 00404225 mov ds:[409964h],ebx
@@ -16260,7 +16268,7 @@ pub fn x404261(ctx: &mut Context) -> Cont {
     // 00404266 mov edi,409860h
     ctx.cpu.regs.edi = 0x409860u32;
     // 0040426b rep stosd
-    ctx.rep(Rep::REP, Context::stosd);
+    ctx.rep32(Rep::REP, Context::stosd);
     // 0040426d lea esi,[edx+edx*2]
     ctx.cpu.regs.esi = ctx.cpu.regs.edx.wrapping_add((ctx.cpu.regs.edx * 2));
     // 00404270 mov [ebp-4],ebx
@@ -16407,16 +16415,16 @@ pub fn x4042d4(ctx: &mut Context) -> Cont {
     // 004042da mov edi,409750h
     ctx.cpu.regs.edi = 0x409750u32;
     // 004042df movsd
-    ctx.movsd();
+    ctx.movsd(ctx.cpu.regs.get_ds());
     // 004042e0 movsd
-    ctx.movsd();
+    ctx.movsd(ctx.cpu.regs.get_ds());
     // 004042e1 pop ecx
     let x = ctx.pop32();
     ctx.cpu.regs.ecx = x;
     // 004042e2 mov ds:[409964h],eax
     ctx.memory.write::<u32>(0x409964u32, ctx.cpu.regs.eax);
     // 004042e7 movsd
-    ctx.movsd();
+    ctx.movsd(ctx.cpu.regs.get_ds());
     // 004042e8 jmp short 0040433Fh
     Cont(x40433f)
 }
@@ -16696,7 +16704,7 @@ pub fn x4043cd(ctx: &mut Context) -> Cont {
     // 004043d3 mov edi,409860h
     ctx.cpu.regs.edi = 0x409860u32;
     // 004043d8 rep stosd
-    ctx.rep(Rep::REP, Context::stosd);
+    ctx.rep32(Rep::REP, Context::stosd);
     // 004043da stosb
     ctx.stosb();
     // 004043db xor eax,eax
@@ -16830,13 +16838,13 @@ pub fn x404449(ctx: &mut Context) -> Cont {
     // 0040445a shr ecx,2
     ctx.cpu.regs.ecx = shr(ctx.cpu.regs.ecx, 0x2u8, &mut ctx.cpu.flags);
     // 0040445d rep stosd
-    ctx.rep(Rep::REP, Context::stosd);
+    ctx.rep32(Rep::REP, Context::stosd);
     // 0040445f mov ecx,ebx
     ctx.cpu.regs.ecx = ctx.cpu.regs.ebx;
     // 00404461 and ecx,3
     ctx.cpu.regs.ecx = and(ctx.cpu.regs.ecx, 0x3u32, &mut ctx.cpu.flags);
     // 00404464 rep stosb
-    ctx.rep(Rep::REP, Context::stosb);
+    ctx.rep32(Rep::REP, Context::stosb);
     Cont(x404466)
 }
 
@@ -19138,7 +19146,7 @@ pub fn x404a8b(ctx: &mut Context) -> Cont {
     // 00404a92 xor eax,eax
     ctx.cpu.regs.eax = xor(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
     // 00404a94 repne scasb
-    ctx.rep(Rep::REPNE, Context::scasb);
+    ctx.rep32(Rep::REPNE, |ctx: &mut Context| ctx.scasb());
     // 00404a96 neg ecx
     ctx.cpu.regs.ecx = neg(ctx.cpu.regs.ecx, &mut ctx.cpu.flags);
     // 00404a98 add ecx,ebx
@@ -19150,7 +19158,8 @@ pub fn x404a8b(ctx: &mut Context) -> Cont {
         .memory
         .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0xcu32));
     // 00404a9f repe cmpsb
-    ctx.rep(Rep::REPE, Context::cmpsb);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep32(Rep::REPE, |ctx: &mut Context| ctx.cmpsb(seg));
     // 00404aa1 mov al,[esi-1]
     ctx.cpu.regs.set_al(
         ctx.memory
@@ -19854,7 +19863,8 @@ pub fn x404ca8(ctx: &mut Context) -> Cont {
 
 pub fn x404cb3(ctx: &mut Context) -> Cont {
     // 00404cb3 rep movsd
-    ctx.rep(Rep::REP, Context::movsd);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep32(Rep::REP, |ctx: &mut Context| ctx.movsd(seg));
     // 00404cb5 jmp dword ptr [edx*4+404DC8h]
     let addr = ctx
         .memory
@@ -19937,7 +19947,8 @@ pub fn x404cf0(ctx: &mut Context) -> Cont {
 
 pub fn x404d10(ctx: &mut Context) -> Cont {
     // 00404d10 rep movsd
-    ctx.rep(Rep::REP, Context::movsd);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep32(Rep::REP, |ctx: &mut Context| ctx.movsd(seg));
     // 00404d12 jmp dword ptr [edx*4+404DC8h]
     let addr = ctx
         .memory
@@ -19974,7 +19985,8 @@ pub fn x404d1c(ctx: &mut Context) -> Cont {
 
 pub fn x404d36(ctx: &mut Context) -> Cont {
     // 00404d36 rep movsd
-    ctx.rep(Rep::REP, Context::movsd);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep32(Rep::REP, |ctx: &mut Context| ctx.movsd(seg));
     // 00404d38 jmp dword ptr [edx*4+404DC8h]
     let addr = ctx
         .memory
@@ -20004,7 +20016,8 @@ pub fn x404d40(ctx: &mut Context) -> Cont {
 
 pub fn x404d50(ctx: &mut Context) -> Cont {
     // 00404d50 rep movsd
-    ctx.rep(Rep::REP, Context::movsd);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep32(Rep::REP, |ctx: &mut Context| ctx.movsd(seg));
     // 00404d52 jmp dword ptr [edx*4+404DC8h]
     let addr = ctx
         .memory
@@ -20209,34 +20222,5 @@ pub fn x404de0(ctx: &mut Context) -> Cont {
     // 00404de9 leave
     ctx.leave();
     // 00404dea ret
-    ctx.ret32(0)
-}
-
-pub fn x404dec(ctx: &mut Context) -> Cont {
-    // 00404dec mov al,[esi]
-    ctx.cpu.regs.set_al(ctx.memory.read::<u8>(ctx.cpu.regs.esi));
-    // 00404dee mov [edi],al
-    ctx.memory
-        .write::<u8>(ctx.cpu.regs.edi, ctx.cpu.regs.get_al());
-    // 00404df0 mov al,[esi+1]
-    ctx.cpu
-        .regs
-        .set_al(ctx.memory.read::<u8>(ctx.cpu.regs.esi.wrapping_add(0x1u32)));
-    // 00404df3 mov [edi+1],al
-    ctx.memory
-        .write::<u8>(ctx.cpu.regs.edi.wrapping_add(0x1u32), ctx.cpu.regs.get_al());
-    // 00404df6 mov eax,[ebp+8]
-    ctx.cpu.regs.eax = ctx
-        .memory
-        .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0x8u32));
-    // 00404df9 pop esi
-    let x = ctx.pop32();
-    ctx.cpu.regs.esi = x;
-    // 00404dfa pop edi
-    let x = ctx.pop32();
-    ctx.cpu.regs.edi = x;
-    // 00404dfb leave
-    ctx.leave();
-    // 00404dfc ret
     ctx.ret32(0)
 }

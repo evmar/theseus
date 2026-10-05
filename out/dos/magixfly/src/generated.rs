@@ -123,7 +123,7 @@ pub fn x0813_0119(ctx: &mut Context) -> Cont {
         &mut ctx.cpu.flags,
     );
     // 0813:012a loopne 0119h
-    ctx.loopne(Cont(x0813_012c), Cont(x0813_0119))
+    ctx.loopne16(Cont(x0813_012c), Cont(x0813_0119))
 }
 
 pub fn x0813_012c(ctx: &mut Context) -> Cont {

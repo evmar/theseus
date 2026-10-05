@@ -738,7 +738,7 @@ pub fn x401329(ctx: &mut Context) -> Cont {
     // 00401331 xor eax,eax
     ctx.cpu.regs.eax = xor(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
     // 00401333 rep stosb
-    ctx.rep(Rep::REP, Context::stosb);
+    ctx.rep32(Rep::REP, Context::stosb);
     // 00401335 mov dword ptr [ebp-12h],6Ch
     ctx.memory
         .write::<u32>(ctx.cpu.regs.ebp.wrapping_add(0xffffffeeu32), 0x6cu32);
@@ -787,7 +787,7 @@ pub fn x40136f(ctx: &mut Context) -> Cont {
     // 00401377 xor eax,eax
     ctx.cpu.regs.eax = xor(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
     // 00401379 rep stosb
-    ctx.rep(Rep::REP, Context::stosb);
+    ctx.rep32(Rep::REP, Context::stosb);
     // 0040137b push 43302Ch
     ctx.push32(0x43302cu32);
     // 00401380 lea ecx,[ebp+7Ah]
@@ -825,7 +825,7 @@ pub fn x40139e(ctx: &mut Context) -> Cont {
     // 004013a6 xor eax,eax
     ctx.cpu.regs.eax = xor(ctx.cpu.regs.eax, ctx.cpu.regs.eax, &mut ctx.cpu.flags);
     // 004013a8 rep stosb
-    ctx.rep(Rep::REP, Context::stosb);
+    ctx.rep32(Rep::REP, Context::stosb);
     // 004013aa lea ecx,[ebp+5Ah]
     ctx.cpu.regs.ecx = ctx.cpu.regs.ebp.wrapping_add(0x5au32);
     // 004013ad mov eax,ds:[433028h]
@@ -3529,7 +3529,8 @@ pub fn x401dfa(ctx: &mut Context) -> Cont {
     // 00401e0b shl ecx,2
     ctx.cpu.regs.ecx = shl(ctx.cpu.regs.ecx, 0x2u8, &mut ctx.cpu.flags);
     // 00401e0e rep movsb
-    ctx.rep(Rep::REP, Context::movsb);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep32(Rep::REP, |ctx: &mut Context| ctx.movsb(seg));
     // 00401e10 leave
     ctx.leave();
     // 00401e11 pop edi
@@ -4135,7 +4136,8 @@ pub fn x402005(ctx: &mut Context) -> Cont {
     // 00402016 shl ecx,2
     ctx.cpu.regs.ecx = shl(ctx.cpu.regs.ecx, 0x2u8, &mut ctx.cpu.flags);
     // 00402019 rep movsb
-    ctx.rep(Rep::REP, Context::movsb);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep32(Rep::REP, |ctx: &mut Context| ctx.movsb(seg));
     // 0040201b leave
     ctx.leave();
     // 0040201c pop edi
@@ -4725,7 +4727,8 @@ pub fn x40220e(ctx: &mut Context) -> Cont {
     // 0040221f shl ecx,2
     ctx.cpu.regs.ecx = shl(ctx.cpu.regs.ecx, 0x2u8, &mut ctx.cpu.flags);
     // 00402222 rep movsb
-    ctx.rep(Rep::REP, Context::movsb);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep32(Rep::REP, |ctx: &mut Context| ctx.movsb(seg));
     // 00402224 leave
     ctx.leave();
     // 00402225 pop edi
@@ -6698,7 +6701,8 @@ pub fn x4028a2(ctx: &mut Context) -> Cont {
     // 004028b3 shl ecx,2
     ctx.cpu.regs.ecx = shl(ctx.cpu.regs.ecx, 0x2u8, &mut ctx.cpu.flags);
     // 004028b6 rep movsb
-    ctx.rep(Rep::REP, Context::movsb);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep32(Rep::REP, |ctx: &mut Context| ctx.movsb(seg));
     // 004028b8 leave
     ctx.leave();
     // 004028b9 pop edi

@@ -6,6 +6,7 @@
 #![allow(non_snake_case)]
 
 use runtime::*;
+
 use winapi::*;
 fn init(regs: &mut runtime::Regs, memory: &mut runtime::Memory, mappings: &mut runtime::Mappings) {
     mappings.reserve(runtime::Mapping {

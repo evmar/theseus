@@ -497,7 +497,7 @@ pub fn x44d92c(ctx: &mut Context) -> Cont {
     // 0044d946 mov eax,ebx
     ctx.cpu.regs.eax = ctx.cpu.regs.ebx;
     // 0044d948 loop 0044D923h
-    ctx.loop_(Cont(x44d94a), Cont(x44d923))
+    ctx.loop32(Cont(x44d94a), Cont(x44d923))
 }
 
 pub fn x44d94a(ctx: &mut Context) -> Cont {
@@ -574,7 +574,7 @@ pub fn x44d96f(ctx: &mut Context) -> Cont {
     // 0044d973 dec eax
     ctx.cpu.regs.eax = dec(ctx.cpu.regs.eax, &mut ctx.cpu.flags);
     // 0044d974 repne scasb
-    ctx.rep(Rep::REPNE, Context::scasb);
+    ctx.rep32(Rep::REPNE, |ctx: &mut Context| ctx.scasb());
     // 0044d976 push edx
     ctx.push32(ctx.cpu.regs.edx);
     // 0044d977 call dword ptr [esi+4E3F8h]

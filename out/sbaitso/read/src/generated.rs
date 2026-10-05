@@ -15,7 +15,7 @@ fn init(regs: &mut runtime::Regs, memory: &mut runtime::Memory, mappings: &mut r
         section: true,
     });
     mappings.reserve(runtime::Mapping {
-        desc: "dos data".to_string(),
+        desc: "dos image".to_string(),
         addr: 0x8230,
         size: 0x409a,
         section: true,
@@ -985,7 +985,8 @@ pub fn x0823_04d2(ctx: &mut Context) -> Cont {
     // 0823:04e2 cld
     cld(ctx);
     // 0823:04e3 repne movsb
-    ctx.rep(Rep::REP, Context::movsb);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsb(seg));
     // 0823:04e5 pop di
     let x = ctx.pop16();
     ctx.cpu.regs.set_di(x);
@@ -1394,7 +1395,7 @@ pub fn x0823_0707(ctx: &mut Context) -> Cont {
         &mut ctx.cpu.flags,
     ));
     // 0823:0719 rep stosb
-    ctx.rep(Rep::REP, Context::stosb);
+    ctx.rep16(Rep::REP, Context::stosb);
     // 0823:071b push ss
     ctx.push16(ctx.cpu.regs.get_ss());
     // 0823:071c pop ds
@@ -1707,7 +1708,8 @@ pub fn x0823_07e3(ctx: &mut Context) -> Cont {
     // 0823:07e6 mov si,212h
     ctx.cpu.regs.set_si(0x212u16);
     // 0823:07e9 repe cmpsb
-    ctx.rep(Rep::REPE, Context::cmpsb);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REPE, |ctx: &mut Context| ctx.cmpsb(seg));
     // 0823:07eb je short 07F8h
     ctx.je(Cont(x0823_07ed), Cont(x0823_07f8))
 }
@@ -1722,7 +1724,7 @@ pub fn x0823_07ed(ctx: &mut Context) -> Cont {
         &mut ctx.cpu.flags,
     ));
     // 0823:07f2 repne scasb
-    ctx.rep(Rep::REPNE, Context::scasb);
+    ctx.rep16(Rep::REPNE, |ctx: &mut Context| ctx.scasb());
     // 0823:07f4 jne short 0817h
     ctx.jne(Cont(x0823_07f6), Cont(x0823_0817))
 }
@@ -1754,7 +1756,7 @@ pub fn x0823_07f8(ctx: &mut Context) -> Cont {
 
 pub fn x0823_0803(ctx: &mut Context) -> Cont {
     // 0823:0803 lodsb
-    ctx.lodsb();
+    ctx.lodsb(ctx.cpu.regs.get_ds());
     // 0823:0804 sub al,41h
     ctx.cpu
         .regs
@@ -1775,7 +1777,7 @@ pub fn x0823_0808(ctx: &mut Context) -> Cont {
     ctx.cpu.regs.set_dx(ctx.cpu.regs.get_ax());
     ctx.cpu.regs.set_ax(t);
     // 0823:080b lodsb
-    ctx.lodsb();
+    ctx.lodsb(ctx.cpu.regs.get_ds());
     // 0823:080c sub al,41h
     ctx.cpu
         .regs
@@ -2396,7 +2398,7 @@ pub fn x0823_0954(ctx: &mut Context) -> Cont {
 
 pub fn x0823_095d(ctx: &mut Context) -> Cont {
     // 0823:095d lodsb
-    ctx.lodsb();
+    ctx.lodsb(ctx.cpu.regs.get_ds());
     // 0823:095e xor ah,al
     ctx.cpu.regs.set_ah(xor(
         ctx.cpu.regs.get_ah(),
@@ -2404,7 +2406,7 @@ pub fn x0823_095d(ctx: &mut Context) -> Cont {
         &mut ctx.cpu.flags,
     ));
     // 0823:0960 loop 095Dh
-    ctx.loop_(Cont(x0823_0962), Cont(x0823_095d))
+    ctx.loop16(Cont(x0823_0962), Cont(x0823_095d))
 }
 
 pub fn x0823_0962(ctx: &mut Context) -> Cont {
@@ -2508,7 +2510,7 @@ pub fn x0823_0988(ctx: &mut Context) -> Cont {
 
 pub fn x0823_099d(ctx: &mut Context) -> Cont {
     // 0823:099d repne scasb
-    ctx.rep(Rep::REPNE, Context::scasb);
+    ctx.rep16(Rep::REPNE, |ctx: &mut Context| ctx.scasb());
     // 0823:099f scasb
     ctx.scasb();
     // 0823:09a0 jne short 099Dh
@@ -2532,7 +2534,7 @@ pub fn x0823_09a2(ctx: &mut Context) -> Cont {
     // 0823:09a8 mov cx,0FFFFh
     ctx.cpu.regs.set_cx(0xffffu16);
     // 0823:09ab repne scasb
-    ctx.rep(Rep::REPNE, Context::scasb);
+    ctx.rep16(Rep::REPNE, |ctx: &mut Context| ctx.scasb());
     // 0823:09ad not cx
     ctx.cpu.regs.set_cx(!ctx.cpu.regs.get_cx());
     // 0823:09af mov dx,cx
@@ -2555,7 +2557,7 @@ pub fn x0823_09b1(ctx: &mut Context) -> Cont {
 
 pub fn x0823_09bb(ctx: &mut Context) -> Cont {
     // 0823:09bb lodsb
-    ctx.lodsb();
+    ctx.lodsb(ctx.cpu.regs.get_ds());
     // 0823:09bc cmp al,20h
     sub(ctx.cpu.regs.get_al(), 0x20u8, &mut ctx.cpu.flags);
     // 0823:09be je short 09BBh
@@ -2605,7 +2607,7 @@ pub fn x0823_09cd(ctx: &mut Context) -> Cont {
 
 pub fn x0823_09ce(ctx: &mut Context) -> Cont {
     // 0823:09ce lodsb
-    ctx.lodsb();
+    ctx.lodsb(ctx.cpu.regs.get_ds());
     // 0823:09cf cmp al,20h
     sub(ctx.cpu.regs.get_al(), 0x20u8, &mut ctx.cpu.flags);
     // 0823:09d1 je short 09BBh
@@ -2676,7 +2678,7 @@ pub fn x0823_09ec(ctx: &mut Context) -> Cont {
         .regs
         .set_cx(inc(ctx.cpu.regs.get_cx(), &mut ctx.cpu.flags));
     // 0823:09ed lodsb
-    ctx.lodsb();
+    ctx.lodsb(ctx.cpu.regs.get_ds());
     // 0823:09ee cmp al,5Ch
     sub(ctx.cpu.regs.get_al(), 0x5cu8, &mut ctx.cpu.flags);
     // 0823:09f0 je short 09ECh
@@ -2737,7 +2739,7 @@ pub fn x0823_0a06(ctx: &mut Context) -> Cont {
 
 pub fn x0823_0a07(ctx: &mut Context) -> Cont {
     // 0823:0a07 lodsb
-    ctx.lodsb();
+    ctx.lodsb(ctx.cpu.regs.get_ds());
     // 0823:0a08 cmp al,0Dh
     sub(ctx.cpu.regs.get_al(), 0xdu8, &mut ctx.cpu.flags);
     // 0823:0a0a je short 0A37h
@@ -2794,7 +2796,7 @@ pub fn x0823_0a1d(ctx: &mut Context) -> Cont {
         .regs
         .set_cx(inc(ctx.cpu.regs.get_cx(), &mut ctx.cpu.flags));
     // 0823:0a1e lodsb
-    ctx.lodsb();
+    ctx.lodsb(ctx.cpu.regs.get_ds());
     // 0823:0a1f cmp al,5Ch
     sub(ctx.cpu.regs.get_al(), 0x5cu8, &mut ctx.cpu.flags);
     // 0823:0a21 je short 0A1Dh
@@ -2934,7 +2936,7 @@ pub fn x0823_0a37(ctx: &mut Context) -> Cont {
 
 pub fn x0823_0a5e(ctx: &mut Context) -> Cont {
     // 0823:0a5e lodsb
-    ctx.lodsb();
+    ctx.lodsb(ctx.cpu.regs.get_ds());
     // 0823:0a5f stosb
     ctx.stosb();
     // 0823:0a60 or al,al
@@ -2973,7 +2975,7 @@ pub fn x0823_0a6e(ctx: &mut Context) -> Cont {
 
 pub fn x0823_0a71(ctx: &mut Context) -> Cont {
     // 0823:0a71 lodsb
-    ctx.lodsb();
+    ctx.lodsb(ctx.cpu.regs.get_ds());
     // 0823:0a72 cmp al,20h
     sub(ctx.cpu.regs.get_al(), 0x20u8, &mut ctx.cpu.flags);
     // 0823:0a74 je short 0A71h
@@ -3032,7 +3034,7 @@ pub fn x0823_0a87(ctx: &mut Context) -> Cont {
 
 pub fn x0823_0a88(ctx: &mut Context) -> Cont {
     // 0823:0a88 lodsb
-    ctx.lodsb();
+    ctx.lodsb(ctx.cpu.regs.get_ds());
     // 0823:0a89 cmp al,20h
     sub(ctx.cpu.regs.get_al(), 0x20u8, &mut ctx.cpu.flags);
     // 0823:0a8b je short 0A6Eh
@@ -3101,7 +3103,7 @@ pub fn x0823_0aa6(ctx: &mut Context) -> Cont {
         .regs
         .set_cx(inc(ctx.cpu.regs.get_cx(), &mut ctx.cpu.flags));
     // 0823:0aa7 lodsb
-    ctx.lodsb();
+    ctx.lodsb(ctx.cpu.regs.get_ds());
     // 0823:0aa8 cmp al,5Ch
     sub(ctx.cpu.regs.get_al(), 0x5cu8, &mut ctx.cpu.flags);
     // 0823:0aaa je short 0AA6h
@@ -3119,7 +3121,7 @@ pub fn x0823_0ab0(ctx: &mut Context) -> Cont {
     // 0823:0ab0 mov al,5Ch
     ctx.cpu.regs.set_al(0x5cu8);
     // 0823:0ab2 rep stosb
-    ctx.rep(Rep::REP, Context::stosb);
+    ctx.rep16(Rep::REP, Context::stosb);
     // 0823:0ab4 jmp short 0A87h
     Cont(x0823_0a87)
 }
@@ -3132,7 +3134,7 @@ pub fn x0823_0ab6(ctx: &mut Context) -> Cont {
         .regs
         .set_cx(shr(ctx.cpu.regs.get_cx(), 0x1u8, &mut ctx.cpu.flags));
     // 0823:0aba rep stosb
-    ctx.rep(Rep::REP, Context::stosb);
+    ctx.rep16(Rep::REP, Context::stosb);
     // 0823:0abc jae short 0AC4h
     ctx.jae(Cont(x0823_0abe), Cont(x0823_0ac4))
 }
@@ -3156,7 +3158,7 @@ pub fn x0823_0ac3(ctx: &mut Context) -> Cont {
 
 pub fn x0823_0ac4(ctx: &mut Context) -> Cont {
     // 0823:0ac4 lodsb
-    ctx.lodsb();
+    ctx.lodsb(ctx.cpu.regs.get_ds());
     // 0823:0ac5 cmp al,0Dh
     sub(ctx.cpu.regs.get_al(), 0xdu8, &mut ctx.cpu.flags);
     // 0823:0ac7 je short 0AF7h
@@ -3211,7 +3213,7 @@ pub fn x0823_0ada(ctx: &mut Context) -> Cont {
         .regs
         .set_cx(inc(ctx.cpu.regs.get_cx(), &mut ctx.cpu.flags));
     // 0823:0adb lodsb
-    ctx.lodsb();
+    ctx.lodsb(ctx.cpu.regs.get_ds());
     // 0823:0adc cmp al,5Ch
     sub(ctx.cpu.regs.get_al(), 0x5cu8, &mut ctx.cpu.flags);
     // 0823:0ade je short 0ADAh
@@ -3229,7 +3231,7 @@ pub fn x0823_0ae4(ctx: &mut Context) -> Cont {
     // 0823:0ae4 mov al,5Ch
     ctx.cpu.regs.set_al(0x5cu8);
     // 0823:0ae6 rep stosb
-    ctx.rep(Rep::REP, Context::stosb);
+    ctx.rep16(Rep::REP, Context::stosb);
     // 0823:0ae8 jmp short 0AC3h
     Cont(x0823_0ac3)
 }
@@ -3242,7 +3244,7 @@ pub fn x0823_0aea(ctx: &mut Context) -> Cont {
         .regs
         .set_cx(shr(ctx.cpu.regs.get_cx(), 0x1u8, &mut ctx.cpu.flags));
     // 0823:0aee rep stosb
-    ctx.rep(Rep::REP, Context::stosb);
+    ctx.rep16(Rep::REP, Context::stosb);
     // 0823:0af0 jae short 0A88h
     ctx.jae(Cont(x0823_0af2), Cont(x0823_0a88))
 }
@@ -3346,7 +3348,7 @@ pub fn x0823_0b20(ctx: &mut Context) -> Cont {
 
 pub fn x0823_0b28(ctx: &mut Context) -> Cont {
     // 0823:0b28 repne scasb
-    ctx.rep(Rep::REPNE, Context::scasb);
+    ctx.rep16(Rep::REPNE, |ctx: &mut Context| ctx.scasb());
     // 0823:0b2a inc si
     ctx.cpu
         .regs
@@ -3459,7 +3461,8 @@ pub fn x0823_0b5e(ctx: &mut Context) -> Cont {
     // 0823:0b64 mov cx,6
     ctx.cpu.regs.set_cx(0x6u16);
     // 0823:0b67 repe cmpsw
-    ctx.rep(Rep::REPE, Context::cmpsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REPE, |ctx: &mut Context| ctx.cmpsw(seg));
     // 0823:0b69 pop di
     let x = ctx.pop16();
     ctx.cpu.regs.set_di(x);
@@ -3492,7 +3495,7 @@ pub fn x0823_0b6e(ctx: &mut Context) -> Cont {
 
 pub fn x0823_0b73(ctx: &mut Context) -> Cont {
     // 0823:0b73 lodsb
-    ctx.lodsb();
+    ctx.lodsb(ctx.cpu.regs.get_ds());
     // 0823:0b74 stosb
     ctx.stosb();
     // 0823:0b75 or al,al
@@ -3507,7 +3510,7 @@ pub fn x0823_0b73(ctx: &mut Context) -> Cont {
 
 pub fn x0823_0b79(ctx: &mut Context) -> Cont {
     // 0823:0b79 loop 0B55h
-    ctx.loop_(Cont(x0823_0b7b), Cont(x0823_0b55))
+    ctx.loop16(Cont(x0823_0b7b), Cont(x0823_0b55))
 }
 
 pub fn x0823_0b7b(ctx: &mut Context) -> Cont {
@@ -3552,7 +3555,7 @@ pub fn x0823_0b82(ctx: &mut Context) -> Cont {
 
 pub fn x0823_0b8f(ctx: &mut Context) -> Cont {
     // 0823:0b8f lodsw
-    ctx.lodsw();
+    ctx.lodsw(ctx.cpu.regs.get_ds());
     // 0823:0b90 cmp ax,dx
     sub(
         ctx.cpu.regs.get_ax(),
@@ -3590,7 +3593,7 @@ pub fn x0823_0b98(ctx: &mut Context) -> Cont {
     // 0823:0b9b mov cx,0FFFFh
     ctx.cpu.regs.set_cx(0xffffu16);
     // 0823:0b9e repne scasb
-    ctx.rep(Rep::REPNE, Context::scasb);
+    ctx.rep16(Rep::REPNE, |ctx: &mut Context| ctx.scasb());
     // 0823:0ba0 mov si,di
     ctx.cpu.regs.set_si(ctx.cpu.regs.get_di());
     // 0823:0ba2 jmp short 0B8Fh
@@ -3660,7 +3663,7 @@ pub fn x0823_0bbb(ctx: &mut Context) -> Cont {
     // 0823:0bc0 mov cx,0FFFFh
     ctx.cpu.regs.set_cx(0xffffu16);
     // 0823:0bc3 repne scasb
-    ctx.rep(Rep::REPNE, Context::scasb);
+    ctx.rep16(Rep::REPNE, |ctx: &mut Context| ctx.scasb());
     // 0823:0bc5 not cx
     ctx.cpu.regs.set_cx(!ctx.cpu.regs.get_cx());
     // 0823:0bc7 dec cx
@@ -3871,7 +3874,7 @@ pub fn x0823_0c4e(ctx: &mut Context) -> Cont {
     // 0823:0c4e mov bx,26Ch
     ctx.cpu.regs.set_bx(0x26cu16);
     // 0823:0c51 xlatb
-    ctx.xlat();
+    ctx.xlat(ctx.cpu.regs.get_ds());
     Cont(x0823_0c52)
 }
 
@@ -6297,7 +6300,7 @@ pub fn x0823_10e7(ctx: &mut Context) -> Cont {
         ctx.cpu.regs.get_bp().wrapping_add(0x6u16),
     )));
     // 0823:10ea lodsb
-    ctx.lodsb();
+    ctx.lodsb(ctx.cpu.regs.get_ds());
     // 0823:10eb mov [bp+6],si
     ctx.memory.write::<u16>(
         segofs(
@@ -6363,7 +6366,7 @@ pub fn x0823_1101(ctx: &mut Context) -> Cont {
 
 pub fn x0823_110a(ctx: &mut Context) -> Cont {
     // 0823:110a xlatb
-    ctx.xlat();
+    ctx.xlat(ctx.cpu.regs.get_ds());
     // 0823:110b and al,0Fh
     ctx.cpu
         .regs
@@ -6397,7 +6400,7 @@ pub fn x0823_1111(ctx: &mut Context) -> Cont {
         &mut ctx.cpu.flags,
     ));
     // 0823:1118 xlatb
-    ctx.xlat();
+    ctx.xlat(ctx.cpu.regs.get_ds());
     // 0823:1119 inc cl
     ctx.cpu
         .regs
@@ -7192,7 +7195,7 @@ pub fn x0823_1287(ctx: &mut Context) -> Cont {
         &mut ctx.cpu.flags,
     ));
     // 0823:1289 repne scasb
-    ctx.rep(Rep::REPNE, Context::scasb);
+    ctx.rep16(Rep::REPNE, |ctx: &mut Context| ctx.scasb());
     // 0823:128b jne short 128Eh
     ctx.jne(Cont(x0823_128d), Cont(x0823_128e))
 }
@@ -7755,7 +7758,7 @@ pub fn x0823_1393(ctx: &mut Context) -> Cont {
     // 0823:1397 mov al,0
     ctx.cpu.regs.set_al(0x0u8);
     // 0823:1399 repne scasb
-    ctx.rep(Rep::REPNE, Context::scasb);
+    ctx.rep16(Rep::REPNE, |ctx: &mut Context| ctx.scasb());
     // 0823:139b dec di
     ctx.cpu
         .regs
@@ -8516,7 +8519,7 @@ pub fn x0823_14de(ctx: &mut Context) -> Cont {
         ctx.cpu.regs.get_bp().wrapping_add(0x8u16),
     )));
     // 0823:14e1 lodsw
-    ctx.lodsw();
+    ctx.lodsw(ctx.cpu.regs.get_ds());
     // 0823:14e2 mov [bp+8],si
     ctx.memory.write::<u16>(
         segofs(
@@ -8536,11 +8539,11 @@ pub fn x0823_14e6(ctx: &mut Context) -> Cont {
         ctx.cpu.regs.get_bp().wrapping_add(0x8u16),
     )));
     // 0823:14e9 lodsw
-    ctx.lodsw();
+    ctx.lodsw(ctx.cpu.regs.get_ds());
     // 0823:14ea mov dx,ax
     ctx.cpu.regs.set_dx(ctx.cpu.regs.get_ax());
     // 0823:14ec lodsw
-    ctx.lodsw();
+    ctx.lodsw(ctx.cpu.regs.get_ds());
     // 0823:14ed xchg dx,ax
     let t = ctx.cpu.regs.get_dx();
     ctx.cpu.regs.set_dx(ctx.cpu.regs.get_ax());
@@ -8767,7 +8770,7 @@ pub fn x0823_153a(ctx: &mut Context) -> Cont {
 
 pub fn x0823_1542(ctx: &mut Context) -> Cont {
     // 0823:1542 lods byte ptr es:[si]
-    ctx.lodsb();
+    ctx.lodsb(ctx.cpu.regs.get_es());
     // 0823:1544 call 150Fh
     ctx.call16(0x1547, Cont(x0823_150f))
 }
@@ -8780,7 +8783,7 @@ pub fn x0823_1547(ctx: &mut Context) -> Cont {
         &mut ctx.cpu.flags,
     ));
     // 0823:1549 loop 1542h
-    ctx.loop_(Cont(x0823_154b), Cont(x0823_1542))
+    ctx.loop16(Cont(x0823_154b), Cont(x0823_1542))
 }
 
 pub fn x0823_154b(ctx: &mut Context) -> Cont {
@@ -8861,7 +8864,7 @@ pub fn x0823_1563(ctx: &mut Context) -> Cont {
         &mut ctx.cpu.flags,
     ));
     // 0823:1565 loop 155Eh
-    ctx.loop_(Cont(x0823_1567), Cont(x0823_155e))
+    ctx.loop16(Cont(x0823_1567), Cont(x0823_155e))
 }
 
 pub fn x0823_1567(ctx: &mut Context) -> Cont {
@@ -9497,7 +9500,7 @@ pub fn x0823_1681(ctx: &mut Context) -> Cont {
 
 pub fn x0823_1686(ctx: &mut Context) -> Cont {
     // 0823:1686 lodsb
-    ctx.lodsb();
+    ctx.lodsb(ctx.cpu.regs.get_ds());
     // 0823:1687 cmp al,ah
     sub(
         ctx.cpu.regs.get_al(),
@@ -9550,7 +9553,7 @@ pub fn x0823_1696(ctx: &mut Context) -> Cont {
 
 pub fn x0823_1699(ctx: &mut Context) -> Cont {
     // 0823:1699 loop 1686h
-    ctx.loop_(Cont(x0823_169b), Cont(x0823_1686))
+    ctx.loop16(Cont(x0823_169b), Cont(x0823_1686))
 }
 
 pub fn x0823_169b(ctx: &mut Context) -> Cont {
@@ -9946,7 +9949,7 @@ pub fn x0823_1765(ctx: &mut Context) -> Cont {
     // 0823:1765 mov al,0Ah
     ctx.cpu.regs.set_al(0xau8);
     // 0823:1767 repne scasb
-    ctx.rep(Rep::REPNE, Context::scasb);
+    ctx.rep16(Rep::REPNE, |ctx: &mut Context| ctx.scasb());
     // 0823:1769 jne short 17B5h
     ctx.jne(Cont(x0823_176b), Cont(x0823_17b5))
 }
@@ -10010,7 +10013,7 @@ pub fn x0823_1783(ctx: &mut Context) -> Cont {
 
 pub fn x0823_178e(ctx: &mut Context) -> Cont {
     // 0823:178e lodsb
-    ctx.lodsb();
+    ctx.lodsb(ctx.cpu.regs.get_ds());
     // 0823:178f cmp al,0Ah
     sub(ctx.cpu.regs.get_al(), 0xau8, &mut ctx.cpu.flags);
     // 0823:1791 je short 179Fh
@@ -10032,7 +10035,7 @@ pub fn x0823_1797(ctx: &mut Context) -> Cont {
     // 0823:1797 stosb
     ctx.stosb();
     // 0823:1798 loop 178Eh
-    ctx.loop_(Cont(x0823_179a), Cont(x0823_178e))
+    ctx.loop16(Cont(x0823_179a), Cont(x0823_178e))
 }
 
 pub fn x0823_179a(ctx: &mut Context) -> Cont {
@@ -10653,7 +10656,7 @@ pub fn x0823_18db(ctx: &mut Context) -> Cont {
 
 pub fn x0823_18df(ctx: &mut Context) -> Cont {
     // 0823:18df lodsw
-    ctx.lodsw();
+    ctx.lodsw(ctx.cpu.regs.get_ds());
     // 0823:18e0 test al,1
     and(ctx.cpu.regs.get_al(), 0x1u8, &mut ctx.cpu.flags);
     // 0823:18e2 je short 18D4h
@@ -10696,7 +10699,7 @@ pub fn x0823_18ef(ctx: &mut Context) -> Cont {
     // 0823:18ef mov dx,ax
     ctx.cpu.regs.set_dx(ctx.cpu.regs.get_ax());
     // 0823:18f1 lodsw
-    ctx.lodsw();
+    ctx.lodsw(ctx.cpu.regs.get_ds());
     // 0823:18f2 test al,1
     and(ctx.cpu.regs.get_al(), 0x1u8, &mut ctx.cpu.flags);
     // 0823:18f4 je short 18D4h
@@ -11382,7 +11385,7 @@ pub fn x0823_1a0e(ctx: &mut Context) -> Cont {
 
 pub fn x0823_1a11(ctx: &mut Context) -> Cont {
     // 0823:1a11 lodsw
-    ctx.lodsw();
+    ctx.lodsw(ctx.cpu.regs.get_ds());
     // 0823:1a12 cmp ax,0FFFEh
     sub(ctx.cpu.regs.get_ax(), 0xfffeu16, &mut ctx.cpu.flags);
     // 0823:1a15 je short 1A1Fh
@@ -11451,7 +11454,7 @@ pub fn x0823_1a26(ctx: &mut Context) -> Cont {
     // 0823:1a36 mov cx,0FFFFh
     ctx.cpu.regs.set_cx(0xffffu16);
     // 0823:1a39 repne scasb
-    ctx.rep(Rep::REPNE, Context::scasb);
+    ctx.rep16(Rep::REPNE, |ctx: &mut Context| ctx.scasb());
     // 0823:1a3b lea si,[di-1]
     ctx.cpu
         .regs
@@ -11464,7 +11467,7 @@ pub fn x0823_1a26(ctx: &mut Context) -> Cont {
     // 0823:1a41 mov cx,0FFFFh
     ctx.cpu.regs.set_cx(0xffffu16);
     // 0823:1a44 repne scasb
-    ctx.rep(Rep::REPNE, Context::scasb);
+    ctx.rep16(Rep::REPNE, |ctx: &mut Context| ctx.scasb());
     // 0823:1a46 not cx
     ctx.cpu.regs.set_cx(!ctx.cpu.regs.get_cx());
     // 0823:1a48 sub di,cx
@@ -11490,7 +11493,7 @@ pub fn x0823_1a26(ctx: &mut Context) -> Cont {
 
 pub fn x0823_1a55(ctx: &mut Context) -> Cont {
     // 0823:1a55 movsb
-    ctx.movsb();
+    ctx.movsb(ctx.cpu.regs.get_ds());
     // 0823:1a56 dec cx
     ctx.cpu
         .regs
@@ -11504,7 +11507,8 @@ pub fn x0823_1a57(ctx: &mut Context) -> Cont {
         .regs
         .set_cx(shr(ctx.cpu.regs.get_cx(), 0x1u8, &mut ctx.cpu.flags));
     // 0823:1a59 rep movsw
-    ctx.rep(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0823:1a5b adc cx,cx
     let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
     ctx.cpu.regs.set_cx(addc(
@@ -11514,7 +11518,8 @@ pub fn x0823_1a57(ctx: &mut Context) -> Cont {
         &mut ctx.cpu.flags,
     ));
     // 0823:1a5d rep movsb
-    ctx.rep(Rep::REP, Context::movsb);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsb(seg));
     // 0823:1a5f mov si,bx
     ctx.cpu.regs.set_si(ctx.cpu.regs.get_bx());
     // 0823:1a61 mov di,dx
@@ -11555,7 +11560,7 @@ pub fn x0823_1a66(ctx: &mut Context) -> Cont {
     // 0823:1a78 mov cx,0FFFFh
     ctx.cpu.regs.set_cx(0xffffu16);
     // 0823:1a7b repne scasb
-    ctx.rep(Rep::REPNE, Context::scasb);
+    ctx.rep16(Rep::REPNE, |ctx: &mut Context| ctx.scasb());
     // 0823:1a7d not cx
     ctx.cpu.regs.set_cx(!ctx.cpu.regs.get_cx());
     // 0823:1a7f mov di,[bp+4]
@@ -11573,7 +11578,7 @@ pub fn x0823_1a66(ctx: &mut Context) -> Cont {
 
 pub fn x0823_1a88(ctx: &mut Context) -> Cont {
     // 0823:1a88 movsb
-    ctx.movsb();
+    ctx.movsb(ctx.cpu.regs.get_ds());
     // 0823:1a89 dec cx
     ctx.cpu
         .regs
@@ -11587,7 +11592,8 @@ pub fn x0823_1a8a(ctx: &mut Context) -> Cont {
         .regs
         .set_cx(shr(ctx.cpu.regs.get_cx(), 0x1u8, &mut ctx.cpu.flags));
     // 0823:1a8c rep movsw
-    ctx.rep(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0823:1a8e adc cx,cx
     let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
     ctx.cpu.regs.set_cx(addc(
@@ -11597,7 +11603,8 @@ pub fn x0823_1a8a(ctx: &mut Context) -> Cont {
         &mut ctx.cpu.flags,
     ));
     // 0823:1a90 rep movsb
-    ctx.rep(Rep::REP, Context::movsb);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsb(seg));
     // 0823:1a92 mov si,bx
     ctx.cpu.regs.set_si(ctx.cpu.regs.get_bx());
     // 0823:1a94 mov di,dx
@@ -11641,7 +11648,7 @@ pub fn x0823_1a98(ctx: &mut Context) -> Cont {
     // 0823:1aab mov cx,0FFFFh
     ctx.cpu.regs.set_cx(0xffffu16);
     // 0823:1aae repne scasb
-    ctx.rep(Rep::REPNE, Context::scasb);
+    ctx.rep16(Rep::REPNE, |ctx: &mut Context| ctx.scasb());
     // 0823:1ab0 not cx
     ctx.cpu.regs.set_cx(!ctx.cpu.regs.get_cx());
     // 0823:1ab2 sub di,cx
@@ -11651,7 +11658,8 @@ pub fn x0823_1a98(ctx: &mut Context) -> Cont {
         &mut ctx.cpu.flags,
     ));
     // 0823:1ab4 repe cmpsb
-    ctx.rep(Rep::REPE, Context::cmpsb);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REPE, |ctx: &mut Context| ctx.cmpsb(seg));
     // 0823:1ab6 je short 1ABDh
     ctx.je(Cont(x0823_1ab8), Cont(x0823_1abd))
 }
@@ -11707,7 +11715,7 @@ pub fn x0823_1ac4(ctx: &mut Context) -> Cont {
     // 0823:1ad2 mov cx,0FFFFh
     ctx.cpu.regs.set_cx(0xffffu16);
     // 0823:1ad5 repne scasb
-    ctx.rep(Rep::REPNE, Context::scasb);
+    ctx.rep16(Rep::REPNE, |ctx: &mut Context| ctx.scasb());
     // 0823:1ad7 not cx
     ctx.cpu.regs.set_cx(!ctx.cpu.regs.get_cx());
     // 0823:1ad9 dec cx
@@ -11777,7 +11785,7 @@ pub fn x0823_1b70(ctx: &mut Context) -> Cont {
 
 pub fn x0823_1b76(ctx: &mut Context) -> Cont {
     // 0823:1b76 lodsb
-    ctx.lodsb();
+    ctx.lodsb(ctx.cpu.regs.get_ds());
     // 0823:1b77 stosb
     ctx.stosb();
     // 0823:1b78 cmp al,ah
@@ -11787,7 +11795,7 @@ pub fn x0823_1b76(ctx: &mut Context) -> Cont {
         &mut ctx.cpu.flags,
     );
     // 0823:1b7a loopne 1B76h
-    ctx.loopne(Cont(x0823_1b7c), Cont(x0823_1b76))
+    ctx.loopne16(Cont(x0823_1b7c), Cont(x0823_1b76))
 }
 
 pub fn x0823_1b7c(ctx: &mut Context) -> Cont {
@@ -12207,7 +12215,7 @@ pub fn x0823_1c46(ctx: &mut Context) -> Cont {
 
 pub fn x0823_1c4a(ctx: &mut Context) -> Cont {
     // 0823:1c4a movsb
-    ctx.movsb();
+    ctx.movsb(ctx.cpu.regs.get_ds());
     // 0823:1c4b dec cx
     ctx.cpu
         .regs
@@ -12221,7 +12229,8 @@ pub fn x0823_1c4c(ctx: &mut Context) -> Cont {
         .regs
         .set_cx(shr(ctx.cpu.regs.get_cx(), 0x1u8, &mut ctx.cpu.flags));
     // 0823:1c4e rep movsw
-    ctx.rep(Rep::REP, Context::movsw);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsw(seg));
     // 0823:1c50 adc cx,cx
     let carry = ctx.cpu.flags.contains(Flags::CF) as u32;
     ctx.cpu.regs.set_cx(addc(
@@ -12231,7 +12240,8 @@ pub fn x0823_1c4c(ctx: &mut Context) -> Cont {
         &mut ctx.cpu.flags,
     ));
     // 0823:1c52 rep movsb
-    ctx.rep(Rep::REP, Context::movsb);
+    let seg = ctx.cpu.regs.get_ds();
+    ctx.rep16(Rep::REP, |ctx: &mut Context| ctx.movsb(seg));
     Cont(x0823_1c54)
 }
 

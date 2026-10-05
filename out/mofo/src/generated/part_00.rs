@@ -9928,7 +9928,7 @@ pub fn x403bb2(ctx: &mut Context) -> Cont {
     // 00403bbf inc esi
     ctx.cpu.regs.esi = inc(ctx.cpu.regs.esi, &mut ctx.cpu.flags);
     // 00403bc0 loop 00403BB2h
-    ctx.loop_(Cont(x403bc2), Cont(x403bb2))
+    ctx.loop32(Cont(x403bc2), Cont(x403bb2))
 }
 
 pub fn x403bc2(ctx: &mut Context) -> Cont {
@@ -12262,14 +12262,14 @@ pub fn x404526(ctx: &mut Context) -> Cont {
     // 00404527 mov ecx,50h
     ctx.cpu.regs.ecx = 0x50u32;
     // 0040452c rep stosd
-    ctx.rep(Rep::REP, Context::stosd);
+    ctx.rep32(Rep::REP, Context::stosd);
     // 0040452e add edi,140h
     ctx.cpu.regs.edi = add(ctx.cpu.regs.edi, 0x140u32, &mut ctx.cpu.flags);
     // 00404534 pop ecx
     let x = ctx.pop32();
     ctx.cpu.regs.ecx = x;
     // 00404535 loop 00404526h
-    ctx.loop_(Cont(x404537), Cont(x404526))
+    ctx.loop32(Cont(x404537), Cont(x404526))
 }
 
 pub fn x404537(ctx: &mut Context) -> Cont {
@@ -12335,7 +12335,7 @@ pub fn x40454e(ctx: &mut Context) -> Cont {
     // 0040457c add edi,8
     ctx.cpu.regs.edi = add(ctx.cpu.regs.edi, 0x8u32, &mut ctx.cpu.flags);
     // 0040457f loop 0040454Eh
-    ctx.loop_(Cont(x404581), Cont(x40454e))
+    ctx.loop32(Cont(x404581), Cont(x40454e))
 }
 
 pub fn x404581(ctx: &mut Context) -> Cont {
@@ -12345,7 +12345,7 @@ pub fn x404581(ctx: &mut Context) -> Cont {
     let x = ctx.pop32();
     ctx.cpu.regs.ecx = x;
     // 00404588 loop 00404548h
-    ctx.loop_(Cont(x40458a), Cont(x404548))
+    ctx.loop32(Cont(x40458a), Cont(x404548))
 }
 
 pub fn x40458a(ctx: &mut Context) -> Cont {
@@ -12467,7 +12467,7 @@ pub fn x4045ad(ctx: &mut Context) -> Cont {
     // 00404610 add edi,8
     ctx.cpu.regs.edi = add(ctx.cpu.regs.edi, 0x8u32, &mut ctx.cpu.flags);
     // 00404613 loop 004045ADh
-    ctx.loop_(Cont(x404615), Cont(x4045ad))
+    ctx.loop32(Cont(x404615), Cont(x4045ad))
 }
 
 pub fn x404615(ctx: &mut Context) -> Cont {
@@ -12477,7 +12477,7 @@ pub fn x404615(ctx: &mut Context) -> Cont {
     let x = ctx.pop32();
     ctx.cpu.regs.ecx = x;
     // 0040461c loop 004045A7h
-    ctx.loop_(Cont(x40461e), Cont(x4045a7))
+    ctx.loop32(Cont(x40461e), Cont(x4045a7))
 }
 
 pub fn x40461e(ctx: &mut Context) -> Cont {
@@ -16427,7 +16427,7 @@ pub fn x405542(ctx: &mut Context) -> Cont {
     // 00405552 inc esi
     ctx.cpu.regs.esi = inc(ctx.cpu.regs.esi, &mut ctx.cpu.flags);
     // 00405553 loop 00405542h
-    ctx.loop_(Cont(x405555), Cont(x405542))
+    ctx.loop32(Cont(x405555), Cont(x405542))
 }
 
 pub fn x405555(ctx: &mut Context) -> Cont {
@@ -16437,7 +16437,7 @@ pub fn x405555(ctx: &mut Context) -> Cont {
     let x = ctx.pop32();
     ctx.cpu.regs.ecx = x;
     // 0040555c loop 00405536h
-    ctx.loop_(Cont(x40555e), Cont(x405536))
+    ctx.loop32(Cont(x40555e), Cont(x405536))
 }
 
 pub fn x40555e(ctx: &mut Context) -> Cont {
@@ -17139,7 +17139,7 @@ pub fn x405803(ctx: &mut Context) -> Cont {
     // 00405806 inc edi
     ctx.cpu.regs.edi = inc(ctx.cpu.regs.edi, &mut ctx.cpu.flags);
     // 00405807 loop 004057F1h
-    ctx.loop_(Cont(x405809), Cont(x4057f1))
+    ctx.loop32(Cont(x405809), Cont(x4057f1))
 }
 
 pub fn x405809(ctx: &mut Context) -> Cont {
@@ -17149,7 +17149,7 @@ pub fn x405809(ctx: &mut Context) -> Cont {
     let x = ctx.pop32();
     ctx.cpu.regs.ecx = x;
     // 00405810 loop 004057EBh
-    ctx.loop_(Cont(x405812), Cont(x4057eb))
+    ctx.loop32(Cont(x405812), Cont(x4057eb))
 }
 
 pub fn x405812(ctx: &mut Context) -> Cont {
@@ -17246,7 +17246,7 @@ pub fn x40584e(ctx: &mut Context) -> Cont {
     // 00405865 add edi,2
     ctx.cpu.regs.edi = add(ctx.cpu.regs.edi, 0x2u32, &mut ctx.cpu.flags);
     // 00405868 loop 0040584Eh
-    ctx.loop_(Cont(x40586a), Cont(x40584e))
+    ctx.loop32(Cont(x40586a), Cont(x40584e))
 }
 
 pub fn x40586a(ctx: &mut Context) -> Cont {
@@ -17256,7 +17256,7 @@ pub fn x40586a(ctx: &mut Context) -> Cont {
     let x = ctx.pop32();
     ctx.cpu.regs.ecx = x;
     // 00405871 loop 00405848h
-    ctx.loop_(Cont(x405873), Cont(x405848))
+    ctx.loop32(Cont(x405873), Cont(x405848))
 }
 
 pub fn x405873(ctx: &mut Context) -> Cont {

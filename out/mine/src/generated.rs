@@ -11182,7 +11182,7 @@ pub fn x1003cee(ctx: &mut Context) -> Cont {
     // 01003cee mov esi,10013B8h
     ctx.cpu.regs.esi = 0x10013b8u32;
     // 01003cf3 movsd
-    ctx.movsd();
+    ctx.movsd(ctx.cpu.regs.get_ds());
     // 01003cf4 jmp short 01003D05h
     Cont(x1003d05)
 }
@@ -11193,11 +11193,11 @@ pub fn x1003cf6(ctx: &mut Context) -> Cont {
     // 01003cfb lea edi,[ebp-0FCh]
     ctx.cpu.regs.edi = ctx.cpu.regs.ebp.wrapping_add(0xffffff04u32);
     // 01003d01 movsd
-    ctx.movsd();
+    ctx.movsd(ctx.cpu.regs.get_ds());
     // 01003d02 movsd
-    ctx.movsd();
+    ctx.movsd(ctx.cpu.regs.get_ds());
     // 01003d03 movsw
-    ctx.movsw();
+    ctx.movsw(ctx.cpu.regs.get_ds());
     Cont(x1003d05)
 }
 
@@ -11212,7 +11212,7 @@ pub fn x1003d05(ctx: &mut Context) -> Cont {
             .read::<u32>(ctx.cpu.regs.ebp.wrapping_add(0xcu32)),
     );
     // 01003d10 movsb
-    ctx.movsb();
+    ctx.movsb(ctx.cpu.regs.get_ds());
     // 01003d11 push eax
     ctx.push32(ctx.cpu.regs.eax);
     // 01003d12 call dword ptr ds:[1001168h]
