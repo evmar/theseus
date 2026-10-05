@@ -19365,7 +19365,7 @@ pub fn x1483_08dc(ctx: &mut Context) -> Cont {
         .regs
         .set_al(add(ctx.cpu.regs.get_al(), 0x80u8, &mut ctx.cpu.flags));
     // 1483:08e7 xlat byte ptr cs:[bx]
-    ctx.xlat();
+    ctx.xlat(ctx.cpu.regs.get_cs());
     // 1483:08e9 call dword ptr cs:[6]
     let addr = ctx
         .memory
@@ -19401,7 +19401,7 @@ pub fn x1483_08f6(ctx: &mut Context) -> Cont {
         &mut ctx.cpu.flags,
     ));
     // 1483:08fb xlat byte ptr cs:[bx]
-    ctx.xlat();
+    ctx.xlat(ctx.cpu.regs.get_cs());
     // 1483:08fd call dword ptr cs:[6]
     let addr = ctx
         .memory

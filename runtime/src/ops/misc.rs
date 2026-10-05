@@ -129,14 +129,14 @@ impl Context {
         // TODO: self.cpu.flags.remove(Flags::IF);
     }
 
-    pub fn xlat(&mut self) {
+    pub fn xlat(&mut self, segment: u16) {
         let offset = if self.cpu.real_mode {
             self.cpu.regs.get_bx() as u32
         } else {
             self.cpu.regs.ebx
         };
         let offset = offset.wrapping_add(self.cpu.regs.get_al() as u32);
-        let value = self.memory.read::<u8>(self.addr(self.cpu.regs.ds, offset));
+        let value = self.memory.read::<u8>(self.addr(segment, offset));
         self.cpu.regs.set_al(value);
     }
 }

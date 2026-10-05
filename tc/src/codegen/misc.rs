@@ -1,4 +1,4 @@
-use crate::codegen::{CodeGen, get_mem, instr_name, op_size};
+use crate::codegen::{CodeGen, get_mem, get_reg, instr_name, op_size};
 
 impl<'a> CodeGen<'a> {
     pub fn codegen_misc(&mut self, instr: &iced_x86::Instruction) -> bool {
@@ -191,7 +191,7 @@ impl<'a> CodeGen<'a> {
                 self.line(self.set_op(instr, 0, "ptr as u16".into()));
             }
 
-            Xlatb => self.line("ctx.xlat();"),
+            Xlatb => self.line(format!("ctx.xlat({});", get_reg(instr.memory_segment()))),
 
             _ => return false,
         }
