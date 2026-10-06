@@ -3,13 +3,32 @@
 Theseus is:
 
 1. A compiler that translates DOS and 32-bit Windows x86 code to Rust.
-2. An implementation of some of the DOS/win32 API used by the above.
+2. An implementation of (some of) the DOS/win32 API needed by the above.
 
-Together, Theseus takes in a `.exe` file and turns it into a native binary that
-doesn't depend on x86 or DOS/Windows.
+Together, Theseus takes in a `.exe` file and turns it into Rust source code. It
+can then be compiled with the Rust toolchain to build a native binary that
+doesn't depend on x86 or DOS/Windows. I personally develop Theseus on an ARM
+processor Mac and it also can target the web with WebAssembly.
 
 [I wrote a longer blog post motivating the project](https://neugierig.org/software/blog/2026/04/theseus.html).
 
-Theseus is very experimental and probably won't work on a program you try.
+## Status
+
+Theseus is very experimental and likely won't work on a program you try. But
+also it might be a small amount of work to fix it!
+
+There are a few programs in the `out/` directory that I've used while developing
+Theseus, including simple hello-world executables, basic DirectX demos,
+Minesweeper, and some demoscene programs. A few intrepid people have succesfully
+brought up some commercial games using Theseus, but those are not checked in
+here.
+
+## Using Theseus
+
+Look at how an existing program works under `out/`, e.g.
+[`out/winapi/`](out/winapi). There's a file `translate.sh` that invokes `tc`
+(the translator) to generate some code, and then there are a few supporting
+files you add by hand. You then build/run the resulting project with the normal
+Rust build commands.
 
 See [doc/development.md](doc/development.md) for more details on the code.
