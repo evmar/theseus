@@ -12,12 +12,12 @@ zerocopy = { workspace = true }
 
 # These optional dependencies are used by an external project that
 # reuses some of this code in a web context.
+schemars = { optional = true, version = "1.2" }
 serde = { optional = true, version = "1.0" }
 ts-rs = { optional = true, version = "12.0.1" }
-schemars = { optional = true, version = "1.2" }
 
 # Alternative allocator, used when targeting wasm.
-wee_alloc = { optional = true, version = "0.4.5", }
+wee_alloc = { optional = true, version = "0.4.5" }
 
 [features]
 wasm = ["dep:wee_alloc"]

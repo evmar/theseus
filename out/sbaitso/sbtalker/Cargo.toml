@@ -5,6 +5,6 @@ edition = "2024"
 
 [dependencies]
 dos = { workspace = true }
+log = { workspace = true }
 runtime = { workspace = true }
 zerocopy = { workspace = true }
-log = { workspace = true }
