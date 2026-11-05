@@ -8,3 +8,9 @@ dos = { workspace = true }
 log = { workspace = true }
 runtime = { workspace = true }
 zerocopy = { workspace = true }
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[target.'cfg(target_family = "wasm")'.dependencies]
+wasm-bindgen = { workspace = true }

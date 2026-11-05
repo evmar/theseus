@@ -28,12 +28,17 @@ fi
 
 
 desired="$1"
-for package in winapi-exe mine basicdd; do
-    file=$(sed -e 's/-exe//' <<< "$package")
+for package in winapi-exe mine basicdd sbaitso-sbtalker; do
+    file=$(sed -e 's/-exe//' -e 's/-/_/' <<< "$package")
     if [[ "$desired" != "" && "$desired" != "$file" ]]; then
         continue
     fi
     cargo +nightly build --lib $build_mode -Z build-std=std,panic_abort --target wasm32-unknown-unknown -p $package
     wasm-bindgen --out-dir web/exe/${file} --typescript --target web --reference-types \
         target/wasm32-unknown-unknown/$build_path/${file}.wasm
+
+    if [[ $build_mode == "--release" ]]; then
+        path=web/exe/${file}/${file}_bg.wasm
+        wasm-opt -Oz -o "$path" "$path"
+    fi
 done

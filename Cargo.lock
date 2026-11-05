@@ -437,6 +437,7 @@ dependencies = [
  "dos",
  "log",
  "runtime",
+ "wasm-bindgen",
  "zerocopy",
 ]
 
