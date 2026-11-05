@@ -45,8 +45,8 @@ pub use part_00::*;
 mod part_01;
 pub use part_01::*;
 
-const BLOCKS: [(u32, ContFn); 1871] = [
-    (0x11, crate::externs::driver_loaded),
+const BLOCKS: [(u32, ContFn); 1870] = [
+    (0x11, crate::externs::tsr_loaded),
     (0x8a34, x0823_0804),
     (0x8a5e, x0823_082e),
     (0x8a7d, x0823_084d),
@@ -163,8 +163,7 @@ const BLOCKS: [(u32, ContFn); 1871] = [
     (0x8e6c, x0823_0c3c),
     (0x8e70, x0823_0c40),
     (0x8e75, x0823_0c45),
-    (0x8ea4, x0823_0c74),
-    (0x8ea7, x0823_0c77),
+    (0x8e94, crate::externs::noop_load_driver),
     (0x8ea8, x0823_0c78),
     (0x8ea9, x0823_0c79),
     (0x8ead, x0823_0c7d),
@@ -1911,11 +1910,11 @@ const BLOCKS: [(u32, ContFn); 1871] = [
     (0x15161, x1483_0931),
     (0x15167, x1483_0937),
     (0x15170, x1483_0940),
-    (0x34c40, crate::externs::audio_put_sample),
-    (0x34c45, crate::externs::audio_init),
-    (0x34c4a, crate::externs::audio_flush),
-    (0x34c4f, crate::externs::audio_get_buffer),
-    (0x34c54, crate::externs::audio_noop),
+    (0x34c40, crate::externs::blaster::api::put_sample),
+    (0x34c45, crate::externs::blaster::api::init),
+    (0x34c4a, crate::externs::blaster::api::flush),
+    (0x34c4f, crate::externs::blaster::api::get_buffer),
+    (0x34c54, crate::externs::blaster::api::noop),
     (
         runtime::RETURN_FROM_X86_ADDR16.abs(),
         Context::return_from_x86,

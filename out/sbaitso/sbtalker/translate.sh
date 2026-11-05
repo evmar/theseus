@@ -17,22 +17,22 @@ args=(
     --jump-table 935:3c40..935:3c58
 
     # Fake return address used after TSR loads.
-    --extern 0:11=driver_loaded
+    --extern 0:11=tsr_loaded
 
     # BLASTER.DRV
-    # --load 34c4:scratch/dos/sbaitso/BLASTER.DRV
-    # API entry points
-    # --entry-point 34c4:0000
-    --extern 34c4:0000=audio_put_sample
-    # --entry-point 34c4:0005
-    --extern 34c4:0005=audio_init
-    # --entry-point 34c4:000a
-    --extern 34c4:000a=audio_flush
-    # --entry-point 34c4:000f
-    --extern 34c4:000f=audio_get_buffer
-    # --entry-point 34c4:0014
-    --extern 34c4:0014=audio_noop
-    # IRQ handler
-    # --entry-point 34c4:0e2c
+    # This is dynamically loaded as an interface to the underlying Sound Blaster.
+    # By loading it a part of translation it's already in memory to be translated
+    # ahead of time:
+    #   --load 34c4:scratch/dos/sbaitso/BLASTER.DRV
+    # But we don't even want all that logic!  Rather than loading it, we patch
+    # out the call that loads it:
+    --extern 823:c64=noop_load_driver
+
+    # And then provide implementations of all its API entry points:
+    --extern 34c4:0000=blaster::api::put_sample
+    --extern 34c4:0005=blaster::api::init
+    --extern 34c4:000a=blaster::api::flush
+    --extern 34c4:000f=blaster::api::get_buffer
+    --extern 34c4:0014=blaster::api::noop
 )
 cargo run -p tc -- "${args[@]}"

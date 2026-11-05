@@ -1,5 +1,4 @@
-use std::sync::Mutex;
-
+pub(crate) use super::blaster;
 use runtime::{Cont, Context, SegOfs};
 use zerocopy::FromBytes;
 
@@ -28,7 +27,7 @@ impl StrBuf {
 /// sbtalker header, as returned by the int 2f entry point.
 #[repr(C)]
 #[derive(zerocopy::FromBytes, zerocopy::KnownLayout, zerocopy::IntoBytes, Debug)]
-struct DriverData {
+struct TSRData {
     sig: [u8; 2],
     version: u16,
     entry_point: SegOfs,
@@ -44,7 +43,7 @@ struct DriverData {
     action: u16,
 }
 
-impl DriverData {
+impl TSRData {
     /// Call int 2f to ask the TSR for the driver entry point.
     #[allow(unused)]
     fn get_addr(ctx: &mut Context) -> SegOfs {
@@ -55,12 +54,12 @@ impl DriverData {
         addr
     }
 
-    fn from_context(ctx: &mut Context) -> &mut DriverData {
+    fn from_context(ctx: &mut Context) -> &mut TSRData {
         // let driver_addr = Self::get_addr(ctx);
         // println!("driver at {addr}");
         let driver_addr = SegOfs::new(0x823, 0x1ce);
         println!("driver at {}", driver_addr);
-        <DriverData>::mut_from_prefix(&mut ctx.memory[driver_addr.abs()..])
+        <TSRData>::mut_from_prefix(&mut ctx.memory[driver_addr.abs()..])
             .unwrap()
             .0
     }
@@ -76,61 +75,33 @@ fn call(ctx: &mut Context, addr: SegOfs) {
     dos::run_loop(ctx, f, true, |ctx| ctx.cpu.regs.get_sp() != orig_sp);
 }
 
-pub fn driver_loaded(ctx: &mut Context) -> Cont {
-    let driver = DriverData::from_context(ctx);
-    driver.buf1.set(b"hello mastodon, i am dr. sbaitso.");
-    driver.buf2.set(b"test text");
+pub fn tsr_loaded(ctx: &mut Context) -> Cont {
+    let tsr = TSRData::from_context(ctx);
+    tsr.buf1.set(b"hello mastodon, i am dr. sbaitso.");
+    tsr.buf2.set(b"test text");
 
-    let entry_point = driver.entry_point;
+    let entry_point = tsr.entry_point;
     println!("entry point {}", entry_point);
     ctx.cpu.regs.set_al(/* parse */ 0);
     call(ctx, entry_point);
 
-    let driver = DriverData::from_context(ctx);
+    let driver = TSRData::from_context(ctx);
     println!("buf1: {:?}", driver.buf1.to_str());
     println!("buf2: {:?}", driver.buf2.to_str());
 
     ctx.cpu.regs.set_al(/* say */ 7);
     call(ctx, entry_point);
 
-    let audio = AUDIO.lock().unwrap();
+    let audio = blaster::AUDIO.lock().unwrap();
     log::info!("audio buffer: {:x} bytes", audio.buf.len());
     std::fs::write("sb.raw", &audio.buf).unwrap();
 
     todo!()
 }
 
-struct Audio {
-    buf: Vec<u8>,
-}
-static AUDIO: Mutex<Audio> = Mutex::new(Audio { buf: vec![] });
-
-pub fn audio_init(ctx: &mut Context) -> Cont {
-    println!("audio init called");
-    ctx.cpu.regs.set_ax(0); // success
-    ctx.cpu.regs.set_di(0); // buffer id
-    ctx.retf16(0)
-}
-
-pub fn audio_get_buffer(ctx: &mut Context) -> Cont {
-    // let audio = AUDIO.lock().unwrap();
-    ctx.cpu.regs.set_di(0); // buffer id
-    ctx.retf16(0)
-}
-
-pub fn audio_put_sample(ctx: &mut Context) -> Cont {
-    let sample = ctx.cpu.regs.get_al();
-    let mut audio = AUDIO.lock().unwrap();
-    audio.buf.push(sample);
-    ctx.cpu.regs.set_di(0);
-    ctx.retf16(0)
-}
-
-pub fn audio_noop(ctx: &mut Context) -> Cont {
-    ctx.retf16(0)
-}
-
-pub fn audio_flush(ctx: &mut Context) -> Cont {
-    ctx.cpu.regs.set_di(0);
-    ctx.retf16(0)
+pub fn noop_load_driver(ctx: &mut Context) -> Cont {
+    //ctx.cpu.flags.remove(runtime::Flags::CF); // success
+    let ds = ctx.pop16();
+    ctx.cpu.regs.set_ds(ds);
+    ctx.ret16(0)
 }

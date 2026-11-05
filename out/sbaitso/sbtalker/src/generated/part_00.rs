@@ -1970,42 +1970,7 @@ pub fn x0823_0c45(ctx: &mut Context) -> Cont {
         ),
         ctx.cpu.regs.get_ax(),
     );
-    // 0823:0c64 mov ax,si
-    ctx.cpu.regs.set_ax(ctx.cpu.regs.get_si());
-    // 0823:0c66 add ax,4
-    ctx.cpu
-        .regs
-        .set_ax(add(ctx.cpu.regs.get_ax(), 0x4u16, &mut ctx.cpu.flags));
-    // 0823:0c69 mov dx,ax
-    ctx.cpu.regs.set_dx(ctx.cpu.regs.get_ax());
-    // 0823:0c6b push si
-    ctx.push16(ctx.cpu.regs.get_si());
-    // 0823:0c6c pop bx
-    let x = ctx.pop16();
-    ctx.cpu.regs.set_bx(x);
-    // 0823:0c6d push cs
-    ctx.push16(ctx.cpu.regs.get_cs());
-    // 0823:0c6e pop es
-    let x = ctx.pop16();
-    ctx.cpu.regs.set_es(x);
-    // 0823:0c6f mov ax,4B03h
-    ctx.cpu.regs.set_ax(0x4b03u16);
-    // 0823:0c72 int 21h
-    dos::int(ctx, 0xc74, 0x21)
-}
-
-pub fn x0823_0c74(ctx: &mut Context) -> Cont {
-    // 0823:0c74 pop ds
-    let x = ctx.pop16();
-    ctx.cpu.regs.set_ds(x);
-    // 0823:0c75 jb short 0C78h
-    ctx.jb(Cont(x0823_0c77), Cont(x0823_0c78))
-}
-
-pub fn x0823_0c77(ctx: &mut Context) -> Cont {
-    // 0823:0c77 clc
-    clc(ctx);
-    Cont(x0823_0c78)
+    Cont(crate::externs::noop_load_driver)
 }
 
 pub fn x0823_0c78(ctx: &mut Context) -> Cont {
@@ -21813,4 +21778,43 @@ pub fn x0935_2ae4(ctx: &mut Context) -> Cont {
     )));
     // 0935:2b09 call 109Fh
     ctx.call16(0x2b0c, Cont(x0935_109f))
+}
+
+pub fn x0935_2b0c(ctx: &mut Context) -> Cont {
+    // 0935:2b0c xor ax,ax
+    ctx.cpu.regs.set_ax(xor(
+        ctx.cpu.regs.get_ax(),
+        ctx.cpu.regs.get_ax(),
+        &mut ctx.cpu.flags,
+    ));
+    // 0935:2b0e push ax
+    ctx.push16(ctx.cpu.regs.get_ax());
+    // 0935:2b0f lea ax,[bp-102h]
+    ctx.cpu
+        .regs
+        .set_ax(ctx.cpu.regs.get_bp().wrapping_add(0xfefeu16));
+    // 0935:2b13 push ax
+    ctx.push16(ctx.cpu.regs.get_ax());
+    // 0935:2b14 push word ptr [bp+4]
+    ctx.push16(ctx.memory.read::<u16>(segofs(
+        ctx.cpu.regs.get_ss(),
+        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
+    )));
+    // 0935:2b17 call 1742h
+    ctx.call16(0x2b1a, Cont(x0935_1742))
+}
+
+pub fn x0935_2b1a(ctx: &mut Context) -> Cont {
+    // 0935:2b1a mov byte ptr ds:[56h],0
+    ctx.memory
+        .write::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x56u16), 0x0u8);
+    // 0935:2b1f cmp byte ptr ds:[164h],27h
+    sub(
+        ctx.memory
+            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x164u16)),
+        0x27u8,
+        &mut ctx.cpu.flags,
+    );
+    // 0935:2b24 je short 2B29h
+    ctx.je(Cont(x0935_2b26), Cont(x0935_2b29))
 }

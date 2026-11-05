@@ -7,45 +7,6 @@
 
 use super::*;
 
-pub fn x0935_2b0c(ctx: &mut Context) -> Cont {
-    // 0935:2b0c xor ax,ax
-    ctx.cpu.regs.set_ax(xor(
-        ctx.cpu.regs.get_ax(),
-        ctx.cpu.regs.get_ax(),
-        &mut ctx.cpu.flags,
-    ));
-    // 0935:2b0e push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    // 0935:2b0f lea ax,[bp-102h]
-    ctx.cpu
-        .regs
-        .set_ax(ctx.cpu.regs.get_bp().wrapping_add(0xfefeu16));
-    // 0935:2b13 push ax
-    ctx.push16(ctx.cpu.regs.get_ax());
-    // 0935:2b14 push word ptr [bp+4]
-    ctx.push16(ctx.memory.read::<u16>(segofs(
-        ctx.cpu.regs.get_ss(),
-        ctx.cpu.regs.get_bp().wrapping_add(0x4u16),
-    )));
-    // 0935:2b17 call 1742h
-    ctx.call16(0x2b1a, Cont(x0935_1742))
-}
-
-pub fn x0935_2b1a(ctx: &mut Context) -> Cont {
-    // 0935:2b1a mov byte ptr ds:[56h],0
-    ctx.memory
-        .write::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x56u16), 0x0u8);
-    // 0935:2b1f cmp byte ptr ds:[164h],27h
-    sub(
-        ctx.memory
-            .read::<u8>(segofs(ctx.cpu.regs.get_ds(), 0x164u16)),
-        0x27u8,
-        &mut ctx.cpu.flags,
-    );
-    // 0935:2b24 je short 2B29h
-    ctx.je(Cont(x0935_2b26), Cont(x0935_2b29))
-}
-
 pub fn x0935_2b26(ctx: &mut Context) -> Cont {
     // 0935:2b26 jmp near ptr 2BE6h
     Cont(x0935_2be6)
