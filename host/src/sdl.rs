@@ -39,6 +39,10 @@ impl Host {
             main_thread: SingleThreader::new(MainThread::new(headless)),
         }
     }
+
+    pub fn exit(&self, code: i32) -> ! {
+        std::process::exit(code);
+    }
 }
 
 fn mouse_buttons_from_sdl(state: sdl::mouse::SDL_MouseButtonFlags) -> host::MouseButton {

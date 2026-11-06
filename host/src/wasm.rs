@@ -96,6 +96,10 @@ impl Host {
         }
     }
 
+    pub fn exit(&self, code: i32) -> ! {
+        wasm_bindgen::throw_val(code.into());
+    }
+
     pub fn poll(&self) -> Option<host::Message> {
         self.chan.lock().unwrap().poll_message()
     }
@@ -300,9 +304,13 @@ impl WebHostSendChannel {
 
     fn send_sync_buf(&mut self, msg: &str, args: js_sys::Array, buf: &mut [i32]) {
         send_to_host(msg, args, buf.as_ptr() as *mut i32 as u32);
+        #[cfg(feature = "wasm_worker")]
         unsafe {
             wasm32::memory_atomic_wait32(buf.as_ptr() as *mut _, 0, -1);
         }
+
+        #[cfg(not(feature = "wasm_worker"))]
+        unimplemented!("synchronous blocking requires worker mode");
     }
 
     fn send_async(&mut self, msg: &str, args: js_sys::Array) {

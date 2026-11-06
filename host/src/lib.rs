@@ -1,7 +1,10 @@
 //! Interface for the host environment, for APIs like "create window" or "play sound".
 //! Implemented using SDL or web technologies.
 
-#![cfg_attr(target_family = "wasm", feature(stdarch_wasm_atomic_wait))]
+#![cfg_attr(
+    all(target_family = "wasm", feature = "wasm_worker"),
+    feature(stdarch_wasm_atomic_wait)
+)]
 
 use std::sync::LazyLock;
 

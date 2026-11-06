@@ -13,7 +13,6 @@ pub mod api {
     use super::*;
 
     pub fn init(ctx: &mut Context) -> Cont {
-        println!("audio init called");
         ctx.cpu.regs.set_ax(0); // success
         ctx.cpu.regs.set_di(0); // buffer id
         ctx.retf16(0)
