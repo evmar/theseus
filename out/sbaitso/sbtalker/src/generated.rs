@@ -45,8 +45,7 @@ pub use part_00::*;
 mod part_01;
 pub use part_01::*;
 
-const BLOCKS: [(u32, ContFn); 1870] = [
-    (0x11, crate::externs::tsr_loaded),
+const BLOCKS: [(u32, ContFn); 1869] = [
     (0x8a34, x0823_0804),
     (0x8a5e, x0823_082e),
     (0x8a7d, x0823_084d),

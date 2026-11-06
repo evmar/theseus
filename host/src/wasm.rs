@@ -96,10 +96,6 @@ impl Host {
         }
     }
 
-    pub fn exit(&self, code: i32) -> ! {
-        wasm_bindgen::throw_val(code.into());
-    }
-
     pub fn poll(&self) -> Option<host::Message> {
         self.chan.lock().unwrap().poll_message()
     }

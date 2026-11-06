@@ -81,8 +81,8 @@ impl SBTalker {
         ctx.cpu.regs.set_al(func);
         let orig_sp = ctx.cpu.regs.get_sp();
 
-        ctx.push16(0); // cs
-        ctx.push16(0x11); // ip
+        ctx.push16(runtime::RETURN_FROM_X86_ADDR16.seg);
+        ctx.push16(runtime::RETURN_FROM_X86_ADDR16.ofs);
 
         let f = ctx.jmpf16(self.entry_point.seg, self.entry_point.ofs);
         dos::run_loop(ctx, f, true, |ctx| ctx.cpu.regs.get_sp() != orig_sp);

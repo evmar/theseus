@@ -3,16 +3,7 @@ import * as exe from "../exe/sbaitso_sbtalker/sbaitso_sbtalker.js";
 
 async function init_sbaitso(): Promise<SBTalker> {
   await exe.default();
-  const sbtalker = exe._new();
-  try {
-    sbtalker.start();
-  } catch (err) {
-    // hack: 0 indicates exit from TSR
-    if (err !== 0) {
-      throw err;
-    }
-  }
-  return sbtalker!;
+  return exe.init();
 }
 
 function init_dom(sbtalker: SBTalker) {

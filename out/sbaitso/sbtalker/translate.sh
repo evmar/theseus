@@ -16,9 +16,6 @@ args=(
     --jump-table d72:32c..d72:3ac
     --jump-table 935:3c40..935:3c58
 
-    # Fake return address used after TSR loads.
-    --extern 0:11=tsr_loaded
-
     # BLASTER.DRV
     # This is dynamically loaded as an interface to the underlying Sound Blaster.
     # By loading it a part of translation it's already in memory to be translated

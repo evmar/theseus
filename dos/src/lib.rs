@@ -148,7 +148,10 @@ pub fn load(exe: &EXEData, command_line: Option<&str>) -> Context {
 
 pub fn start(ctx: &mut Context, exe: &EXEData) {
     assert!(ctx.cpu.real_mode);
-    run_loop(ctx, exe.entry_point, true, |_ctx| true);
+    let exited = state().exited.clone();
+    run_loop(ctx, exe.entry_point, true, |_ctx| {
+        !exited.load(std::sync::atomic::Ordering::Relaxed)
+    });
 }
 
 pub fn run_loop(
@@ -206,6 +209,9 @@ static STATE: LazyLock<SingleThreader<RefCell<State>>> =
     LazyLock::new(|| SingleThreader::new(RefCell::new(State::new())));
 
 pub struct State {
+    /// Whether the process has exited.
+    // We wrap this in some threading goop so that we can check it on every iteration through the main trampoline.
+    exited: std::sync::Arc<std::sync::atomic::AtomicBool>,
     psp_segment: u16,
     pit: PIT,
     vga: Option<VGA>,
@@ -222,6 +228,7 @@ impl State {
         // TODO: the JFT belongs in the PSP I guess.
         files.resize_with(5, Default::default);
         State {
+            exited: Default::default(),
             psp_segment: 0,
             pit: PIT::default(),
             vga: None,
@@ -385,5 +392,8 @@ impl State {
 
 /// Handler for address 0; what happens if the entry point returns.
 pub fn exit(_ctx: &mut Context) -> runtime::Cont {
-    host::host().exit(0);
+    state()
+        .exited
+        .store(true, std::sync::atomic::Ordering::Relaxed);
+    runtime::Cont(Context::return_from_x86)
 }

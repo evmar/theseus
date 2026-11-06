@@ -80,6 +80,7 @@ impl Context {
     }
 
     pub fn return_from_x86(&mut self) -> Cont {
+        // This should never be called; it's a marker that the trampoline loop should stop.
         panic!();
     }
 }

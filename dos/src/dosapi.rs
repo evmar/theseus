@@ -57,13 +57,13 @@ pub fn int21(ctx: &mut Context) -> Option<runtime::Cont> {
             let exit_code = ctx.cpu.regs.get_al();
             let size = ctx.cpu.regs.get_dx() as u32 * 0x10;
             trace!("TSR", exit_code, size);
-            ctx.cpu.dump();
+
+            // When a TSR exits it returns to this address, if any.
             let ret = ivt(&mut ctx.memory)[0x22];
-            if ret.is_null() {
-                log::error!("TSR exiting with no next step");
-                std::process::exit(exit_code as i32);
+            if !ret.is_null() {
+                return Some(ctx.jmpf16(ret.seg, ret.ofs));
             }
-            return Some(ctx.jmpf16(ret.seg, ret.ofs));
+            return Some(super::exit(ctx));
         }
         // read from interrupt table
         0x35 => {
