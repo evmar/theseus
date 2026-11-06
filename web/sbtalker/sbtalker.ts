@@ -8,16 +8,18 @@ async function init_sbaitso(): Promise<SBTalker> {
 
 function init_dom(sbtalker: SBTalker) {
   const form = document.getElementById('speak') as HTMLFormElement;
-  const input = form.elements.namedItem('text') as HTMLInputElement;
+  const input = form.elements.namedItem('text') as HTMLTextAreaElement;
   const output = document.getElementById('output')!;
   output.innerText = sbtalker.parse(input.value);
 
+  // The API itself limits to 255 chars but we crash on smaller inputs, TODO.
+  const maxInput = 50;
   input.addEventListener('input', () => {
-    output.innerText = sbtalker.parse(input.value);
+    output.innerText = sbtalker.parse(input.value.substring(0, maxInput));
   });
   form.addEventListener('submit', (e) => {
     e.preventDefault();
-    play_audio(sbtalker, input.value);
+    play_audio(sbtalker, input.value.substring(0, maxInput));
   });
 }
 
