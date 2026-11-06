@@ -7,12 +7,17 @@ async function init_sbaitso(): Promise<SBTalker> {
 }
 
 function init_dom(sbtalker: SBTalker) {
-  const form = document.getElementById('speak')! as HTMLFormElement;
+  const form = document.getElementById('speak') as HTMLFormElement;
+  const input = form.elements.namedItem('text') as HTMLInputElement;
+  const output = document.getElementById('output')!;
+  output.innerText = sbtalker.parse(input.value);
+
+  input.addEventListener('input', () => {
+    output.innerText = sbtalker.parse(input.value);
+  });
   form.addEventListener('submit', (e) => {
     e.preventDefault();
-    const data = new FormData(form);
-    const text = data.get('text') as string;
-    play_audio(sbtalker, text);
+    play_audio(sbtalker, input.value);
   });
 }
 

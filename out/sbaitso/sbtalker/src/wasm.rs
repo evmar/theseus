@@ -11,9 +11,13 @@ pub struct SBTalker {
 
 #[wasm_bindgen]
 impl SBTalker {
-    pub fn init(mut ctx: Context) -> Self {
+    pub(crate) fn init(mut ctx: Context) -> Self {
         let sbtalker = sbtalker::SBTalker::new(&mut ctx);
         SBTalker { ctx, sbtalker }
+    }
+
+    pub fn parse(&mut self, text: &str) -> String {
+        self.sbtalker.parse(&mut self.ctx, text)
     }
 
     pub fn speak(&mut self, text: &str) -> Box<[u8]> {
