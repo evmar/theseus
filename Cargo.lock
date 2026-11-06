@@ -46,6 +46,7 @@ checksum = "c08606f8c3cbf4ce6ec8e28fb0014a2c086708fe954eaa885384a6165172e7e8"
 name = "basicdd"
 version = "0.1.0"
 dependencies = [
+ "host",
  "runtime",
  "wasm-bindgen",
  "winapi 0.1.0",
@@ -313,6 +314,7 @@ checksum = "8452105ba047068f40ff7093dd1d9da90898e63dd61736462e9cdda6a90ad3c3"
 name = "mine"
 version = "0.1.0"
 dependencies = [
+ "host",
  "runtime",
  "wasm-bindgen",
  "winapi 0.1.0",
@@ -755,6 +757,7 @@ dependencies = [
 name = "winapi-exe"
 version = "0.1.0"
 dependencies = [
+ "host",
  "runtime",
  "wasm-bindgen",
  "winapi 0.1.0",

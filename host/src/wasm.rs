@@ -1,4 +1,4 @@
-use std::{arch::wasm32, sync::Mutex};
+use std::sync::Mutex;
 
 use web_sys::wasm_bindgen::prelude::*;
 
@@ -302,7 +302,7 @@ impl WebHostSendChannel {
         send_to_host(msg, args, buf.as_ptr() as *mut i32 as u32);
         #[cfg(feature = "wasm_worker")]
         unsafe {
-            wasm32::memory_atomic_wait32(buf.as_ptr() as *mut _, 0, -1);
+            std::arch::wasm32::memory_atomic_wait32(buf.as_ptr() as *mut _, 0, -1);
         }
 
         #[cfg(not(feature = "wasm_worker"))]

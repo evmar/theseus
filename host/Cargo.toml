@@ -16,3 +16,6 @@ console_error_panic_hook = { workspace = true }
 wasm-bindgen = { workspace = true }
 js-sys = { workspace = true }
 web-sys = { workspace = true, features = ["Performance", "WorkerGlobalScope"] }
+
+[features]
+wasm_worker = []

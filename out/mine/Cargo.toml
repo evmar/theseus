@@ -7,8 +7,12 @@ edition = "2024"
 crate-type = ["cdylib"]
 
 [dependencies]
+host = { workspace = true }
 runtime = { workspace = true }
 winapi = { workspace = true }
 
 [target.'cfg(target_family = "wasm")'.dependencies]
 wasm-bindgen = { workspace = true }
+
+[features]
+wasm_worker = ['host/wasm_worker']
